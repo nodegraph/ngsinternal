@@ -1,0 +1,8 @@
+freetype uses a configure script so you'll need to use msys with the android env variables set
+
+# Configure freetype-2.5.2 as follows:
+./configure --prefix=/d/devandroid/local/freetype-2.5.2 --host=arm --without-png --without-zlib
+
+--without-zlib makes it freetype use its own internal copy of zlib
+
+

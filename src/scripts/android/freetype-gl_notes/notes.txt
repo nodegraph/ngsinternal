@@ -1,0 +1,28 @@
+0) freetype-gl use cmake and not automake/configure tools.
+1) See the CMakeLists.txt file for the changes made to that file in freetype-gl.
+2) use cmake-gui
+3) press "configure" and choose the android tool chain file in the dialogs that pop up.
+4) uncheck all extra build options:
+- freetype_gl_BUILD_APIDOCS
+- freetype_gl_BUILD_DEMOS
+- freetype_gl_BUILD_HARFBUZZ
+- freetype_gl_BUILD_MAKEFONT
+5) however make sure this is check, we make use of vaos.
+- freetype_gl_BUILD_VAO
+6) set up the freetype variables as follows;
+FREETYPE_INCLUDE_DIR_freetype2 = D:/devandroid/local/freetype-2.5.2/include
+FREETYPE_INCLUDE_DIR_ft2build = D:/devandroid/local/freetype-2.5.2/include/freetype2
+FREETYPE_LIBRARY =D:/devandroid/local/freetype-2.5.2/lib/libfreetype.a
+7) now build with make
+8) you'll see an error with freetype-gl/opengl.h
+- replace: # include <GL/glew.h>, include <GL/gl.h>
+- with:
+        #else
+        //#  include <GL/glew.h>
+        //#  include <GL/gl.h>
+        #include <GLES3/gl3.h>
+        #include <GLES3/gl3ext.h>
+        #endif
+- because we're targetting gles 3.0
+
+9) also set the CMAKE_BUILD_TYPE to Release

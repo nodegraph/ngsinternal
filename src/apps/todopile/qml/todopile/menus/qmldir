@@ -1,0 +1,7 @@
+module menus
+
+GroupNodeMenu 1.0 GroupNodeMenu.qml
+NodeGraphMenu 1.0 NodeGraphMenu.qml
+NodeMenu 1.0 NodeMenu.qml
+ViewNodeMenu 1.0 ViewNodeMenu.qml
+WebBrowserMenu 1.0 WebBrowserMenu.qml

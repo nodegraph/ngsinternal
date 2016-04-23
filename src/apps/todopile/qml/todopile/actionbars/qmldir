@@ -1,0 +1,5 @@
+module actionbars
+
+MainBar 1.0 MainBar.qml
+CopyPasteBar 1.0 CopyPasteBar.qml
+Splitter 1.0 Splitter.qml

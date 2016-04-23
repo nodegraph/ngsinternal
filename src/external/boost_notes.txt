@@ -1,0 +1,30 @@
+These headers were extract from boost 1.59.0, using its "bcp" tool.
+None of the headers have been modified.
+
+-- build b2 in the root boost directory
+./bootstrap.sh
+
+-- do the following to build bcp
+cd tools/bcp
+../../b2
+
+-- now do the following to extract header files that we need
+cd ../..
+./dist/bin/bcp boost/lexical_cast.hpp ../local/boost_headers
+./dist/bin/bcp boost/math/constants/constants.hpp ../local/boost_headers
+./dist/bin/bcp boost/math/special_functions/round.hpp ../local/boost_headers
+./dist/bin/bcp boost/type_index.hpp ../local/boost_headers
+./dist/bin/bcp boost/any.hpp ../local/boost_headers
+./dist/bin/bcp boost/variant/variant.hpp ../local/boost_headers
+./dist/bin/bcp boost/functional/hash.hpp ../local/boost_headers
+
+-- on windows you'll need to switch the forward slash to back slashes.
+.\dist\bin\bcp boost\lexical_cast.hpp ..\local\boost_headers
+.\dist\bin\bcp boost\math\constants\constants.hpp ..\local\boost_headers
+.\dist\bin\bcp boost\math\special_functions\round.hpp ..\local\boost_headers
+.\dist\bin\bcp boost\type_index.hpp ..\local\boost_headers
+.\dist\bin\bcp boost\any.hpp ..\local\boost_headers
+.\dist\bin\bcp boost\variant\variant.hpp ..\local\boost_headers
+.\dist\bin\bcp boost\functional\hash.hpp ..\local\boost_headers
+
+-- then copy the files from ../local/boost_headers into the nodegraphsoftware/src/external area.

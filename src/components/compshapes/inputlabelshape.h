@@ -1,0 +1,52 @@
+#pragma once
+#include <components/compshapes/compshapes_export.h>
+#include <components/compshapes/compshape.h>
+
+namespace ngs {
+
+class BaseFactory;
+class Resources;
+class InputShape;
+class LinkShape;
+
+class COMPSHAPES_EXPORT InputLabelShape: public CompShape {
+ public:
+
+  COMPONENT_ID(CompShape, InputLabelShape);
+
+  static const float default_text_angle;
+
+  InputLabelShape(Entity* entity);
+  virtual ~InputLabelShape();
+
+  // Our state.
+  virtual HierarchyUpdate update_hierarchy();
+  virtual bool update_deps();
+  virtual void update_state();
+
+  // Our selected state.
+  virtual bool is_selected() const;
+
+  // Our shape instances.
+  virtual const std::vector<CharInstance> * get_char_instances() const;
+
+ private:
+
+  // Our fixed deps.
+  Dep<BaseFactory> _factory;
+  Dep<Resources> _resources;
+  Dep<InputShape> _input_shape;
+
+  // Our dynamic deps. This is not serialized, but gathered.
+  Dep<LinkShape> _link_shape;
+
+  // Our char instances.
+  std::vector<CharInstance> _chars;
+  unsigned char _state;
+
+  // Our text bounds.
+  glm::vec2 _text_min;
+  glm::vec2 _text_max;
+};
+
+}

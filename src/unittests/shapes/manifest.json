@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "testshapes",
+  "version": "0.0.4",
+  "description": "unit testing",
+  
+  "app": {
+    "background": {
+      "scripts": ["unittest.js"]
+    }
+  },
+  
+  "offline_enabled": true,
+  
+  "permissions": [
+    "http://*/*",
+    "background",
+    "nativeMessaging",
+    "unlimitedStorage"
+   ]
+    
+}

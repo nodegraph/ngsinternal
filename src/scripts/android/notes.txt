@@ -1,0 +1,11 @@
+
+The scripts in here use bash, so on windows you'll need a shell environment.
+On windows, MSys seems to work the best for our purposes.
+
+1) Build our standalone toolchain. Goto the root of your NDK installation and type this:
+./build/tools/make-standalone-toolchain.sh --verbose --toolchain=arm-linux-androideabi-4.9 --platform=android-21 --install-dir=d:/android_toolchain --stl=gnustl --system=windows-x86_64
+
+2) Now you can use the adnroid_toolchain.cmake when building cmake based projects.
+
+3) Also you can use android_env.sh when building autotools/automake/configure script based projects.
+

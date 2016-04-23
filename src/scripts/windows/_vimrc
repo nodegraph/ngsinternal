@@ -1,0 +1,146 @@
+
+" disable the creation ~ files
+set nobackup
+
+if version >= 700
+  " Disable swap files.
+  set noswapfile
+
+
+  " These settings are to avoid vim from inserting line break as line grows
+  set wrap
+  set linebreak
+  set nolist " list disable linebreak
+  set textwidth=0
+  set wrapmargin=0
+
+  " Highlight all search matches
+  set hlsearch
+  " Set search highlight color.
+  "hi Search guibg=Yellow.
+
+  set ruler
+  set autoindent
+  set smartindent
+  let g:netrw_winsize = '20'
+
+  " This allows you to press v in the Explorer to split off the file contents in a window to the right.
+  "let g:netrw_altv = 1    
+
+  " This hightlights the row your cursor is on.
+  "set cursorline
+
+  " This hightlights the column your cursor is on.
+  "set cursorcolumn
+
+
+  " dark mode
+  "set background=dark
+
+  " dark mode
+  highlight Normal guibg=Black guifg=Grey
+  highlight Cursor guibg=Green guifg=#3f0000
+  highlight Visual guibg=Green guifg=#3f0000
+
+  set bs=2
+
+  " light mode
+  " highlight Normal guibg=grey90
+  " highlight NonText guibg=grey80
+  " highlight Constant gui=NONE guibg=grey95
+  " highlight Special gui=NONE guibg=grey95
+ 
+  " Hide the mouse pointer while typing
+  set mousehide
+ 
+  " this makes it so it expands out the tabs to spaces
+  " note you can use "retab to change all existing tab characters to match
+  " current tabbing scheme
+  set expandtab
+
+  " this makes vim use 4 spaces for the tabs
+  set tabstop=4
+
+  " this set how many columns to insert when tab is pressed in insert mode
+  set softtabstop=4 
+  
+  " this sets how many columns to shift when using the ">>" and "<<" reindent operations.
+  set shiftwidth=4
+
+  " make the text searches in vim be case sensitive
+  " type set ignorecase to make it insensitive
+  set ignorecase
+
+  " allows shifting/unshifting block visually by relecting previous 
+  " selection in visual mode after ">" or "<" shifing
+  vnoremap > >gv
+  vnoremap < <gv
+
+  " Switch on syntax highlighting.
+  syntax on
+
+  set makeprg=scons\ -D\ -j\ 10
+
+  " avoid // comments on subsequent new lines in c++ files
+  " set comments-=://
+  autocmd FileType c,cpp set comments-=://
+
+
+  ab xxinter2 #pragma once
+// Inter package headers.
+#include "Types/NamespaceMacros.h"
+#include Header_Types_File(OgTypes.h)
+  ab xxinter // Inter package headers.
+  ab xxintra // Intra package headers.
+  ab xxclassdef Start__Namespace
+
+class _
+{
+public:
+
+private:
+
+};
+
+End__Namespace
+  ab xxclassimp Start__Namespace
+
+
+
+End__Namespace
+
+endif
+
+au BufRead,BufNewFile *.chtml set filetype=chtml
+
+" Ability to fold and open block of code betwen "{" and "}"
+" The function has been mapped to the command "OUTLINE" or the F12 key.
+
+function! OutlineToggle()
+    echo "Starting the OutlineToggle routine"
+    if (! exists ("b:outline_mode"))
+        let b:outline_mode = 0
+    endif
+
+    if (b:outline_mode == 0)
+        syn region myFold start="{" end="}" transparent fold
+        "syn sync fromstart
+        set foldmethod=syntax
+
+        silent! exec "%s/{{{/<<</"
+        silent! exec "%s/}}}/>>>/"
+
+        let b:outline_mode = 1
+    else
+        set foldmethod=marker
+
+        silent! exec "%s/<<</{{{/"
+        silent! exec "%s/>>>/}}}/"
+
+        let b:outline_mode = 0
+    endif
+endfunction
+
+:command! -nargs=0 OUTLINE call OutlineToggle()
+map <silent> <F12> :OUTLINE<CR> 
+

@@ -1,0 +1,147 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/">
+    
+        <!-- Main Window -->
+        <file>qml/main.qml</file>
+        <file>qml/loader.qml</file>
+        
+        <!-- Test Images -->
+        <file alias="images/icon.png">../../external/images/icon.png</file>
+        
+        <!-- Action Bars -->
+        <file>qml/todopile/actionbars/qmldir</file>
+        <file>qml/todopile/actionbars/MainBar.qml</file>
+        <file>qml/todopile/actionbars/CopyPasteBar.qml</file>
+        <file>qml/todopile/actionbars/Splitter.qml</file>
+        
+        <!-- Menus -->
+        <file>qml/todopile/menus/qmldir</file>
+        <file>qml/todopile/menus/WebBrowserMenu.qml</file>
+        <file>qml/todopile/menus/NodeGraphMenu.qml</file>
+        <file>qml/todopile/menus/NodeMenu.qml</file>
+        <file>qml/todopile/menus/GroupNodeMenu.qml</file>
+        <file>qml/todopile/menus/ViewNodeMenu.qml</file>
+        
+        <!-- Dialogs -->
+        <file>qml/todopile/dialogs/qmldir</file>
+        <file>qml/todopile/dialogs/ChooseFileDialog.qml</file>
+        <file>qml/todopile/dialogs/NodeNameDialog.qml</file>
+        <file>qml/todopile/dialogs/UrlDialog.qml</file>
+        <file>qml/todopile/dialogs/MessageDialog.qml</file>
+        
+        <!-- Tools -->
+        <file>qml/todopile/tools/qmldir</file>
+        <file>qml/todopile/tools/AppImageButton.qml</file>
+        <file>qml/todopile/tools/AppTextField.qml</file>
+        <file>qml/todopile/tools/AppTooltip.qml</file>
+        <file>qml/todopile/tools/AppUnits.qml</file>
+        <file>qml/todopile/tools/AppMenu.qml</file>
+        
+        <!-- Test Data -->
+        <file>qml/todopile/testdata/qmldir</file>
+        <file>qml/todopile/testdata/TestModel.qml</file>
+        <file>qml/todopile/testdata/default.txt</file>
+        
+        <!-- Configuration -->
+        <file>qml/todopile/config/qmldir</file>
+        <file>qml/todopile/config/AppSettings.qml</file>
+        
+        <!-- Pages -->
+        <file>qml/todopile/pages/qmldir</file>
+        <file>qml/todopile/pages/WebBrowserPage.qml</file>
+        <file>qml/todopile/pages/PostsPage.qml</file>
+        <file>qml/todopile/pages/SettingsPage.qml</file>
+        <file>qml/todopile/pages/UrlEntryPage.qml</file>
+        <file>qml/todopile/pages/ViewNodePage.qml</file>
+        <file>qml/todopile/pages/EditNodePage.qml</file>
+        <file>qml/todopile/pages/EmptyPage.qml</file>
+        <file>qml/todopile/pages/NodeGraphPage.qml</file>
+        <file>qml/todopile/pages/SplashPage.qml</file>
+        
+        <!-- APIs -->
+        <file>qml/todopile/apis/qmldir</file>
+        <file>qml/todopile/apis/NodePoolAPI.qml</file>
+        
+        <!-- JS Compute Nodes -->
+        <file>nodes/node.js</file>
+        <file>nodes/nodepool.js</file>
+        <file>nodes/nodes.js</file>
+        <file>nodes/noopnode.js</file>
+        
+        <!-- Browser Scripts -->
+        <file>browser/eventrecorder.js</file>
+        <file>browser/geterrors.js</file>
+        <file>browser/getevent.js</file>
+        <file>browser/unittest.js</file>
+        
+        <!-- Tree View Icons. -->
+        <file alias="icons/ic_add_circle_outline_black_48dp.png">../../external/icons/ic_add_circle_outline_black_48dp.png</file>
+        
+        <file alias="icons/ic_add_circle_outline_white_48dp.png">../../external/icons/ic_add_circle_outline_white_48dp.png</file>
+        <file alias="icons/ic_remove_circle_outline_black_48dp.png">../../external/icons/ic_remove_circle_outline_black_48dp.png</file>
+        <file alias="icons/ic_remove_circle_outline_white_48dp.png">../../external/icons/ic_remove_circle_outline_white_48dp.png</file>
+        
+        <!-- Web Browser Icons. -->
+        <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>
+        <file alias="icons/ic_cancel_white_48dp.png">../../external/icons/ic_cancel_white_48dp.png</file>
+        <file alias="icons/ic_check_black_48dp.png">../../external/icons/ic_check_black_48dp.png</file>
+        <file alias="icons/ic_check_white_48dp.png">../../external/icons/ic_check_white_48dp.png</file>
+        <file alias="icons/ic_refresh_black_48dp.png">../../external/icons/ic_refresh_black_48dp.png</file>
+        <file alias="icons/ic_refresh_white_48dp.png">../../external/icons/ic_refresh_white_48dp.png</file>
+        
+        <!-- Content Icons. -->
+        <file alias="icons/ic_select_all_black_48dp.png">../../external/icons/ic_select_all_black_48dp.png</file>
+        <file alias="icons/ic_select_all_white_48dp.png">../../external/icons/ic_select_all_white_48dp.png</file>
+        <file alias="icons/ic_content_paste_black_48dp.png">../../external/icons/ic_content_paste_black_48dp.png</file>
+        <file alias="icons/ic_content_paste_white_48dp.png">../../external/icons/ic_content_paste_white_48dp.png</file>
+        <file alias="icons/ic_content_copy_black_48dp.png">../../external/icons/ic_content_copy_black_48dp.png</file>
+        <file alias="icons/ic_content_copy_white_48dp.png">../../external/icons/ic_content_copy_white_48dp.png</file>
+        <file alias="icons/ic_content_cut_black_48dp.png">../../external/icons/ic_content_cut_black_48dp.png</file>
+        <file alias="icons/ic_content_cut_white_48dp.png">../../external/icons/ic_content_cut_white_48dp.png</file>
+        
+        <!-- Navigation Icons. -->
+        <file alias="icons/ic_arrow_back_black_48dp.png">../../external/icons/ic_arrow_back_black_48dp.png</file>
+        <file alias="icons/ic_arrow_back_white_48dp.png">../../external/icons/ic_arrow_back_white_48dp.png</file>
+        <file alias="icons/ic_arrow_forward_black_48dp.png">../../external/icons/ic_arrow_forward_black_48dp.png</file>
+        <file alias="icons/ic_arrow_forward_white_48dp.png">../../external/icons/ic_arrow_forward_white_48dp.png</file>
+ 
+        <!-- Action Bar Icons. -->
+        <file alias="icons/ic_chevron_left_black_48dp.png">../../external/icons/ic_chevron_left_black_48dp.png</file>
+        <file alias="icons/ic_chevron_left_white_48dp.png">../../external/icons/ic_chevron_left_white_48dp.png</file>
+        <file alias="icons/ic_chevron_right_black_48dp.png">../../external/icons/ic_chevron_right_black_48dp.png</file>
+        <file alias="icons/ic_chevron_right_white_48dp.png">../../external/icons/ic_chevron_right_white_48dp.png</file>
+        <file alias="icons/ic_expand_less_black_48dp.png">../../external/icons/ic_expand_less_black_48dp.png</file>
+        <file alias="icons/ic_expand_less_white_48dp.png">../../external/icons/ic_expand_less_white_48dp.png</file>
+        <file alias="icons/ic_expand_more_black_48dp.png">../../external/icons/ic_expand_more_black_48dp.png</file>
+        <file alias="icons/ic_expand_more_white_48dp.png">../../external/icons/ic_expand_more_white_48dp.png</file>
+        <file alias="icons/ic_menu_48px.png">../../external/icons/ic_menu_48px.svg</file>
+        <file alias="icons/ic_menu_black_48dp.png">../../external/icons/ic_menu_black_48dp.png</file>
+        <file alias="icons/ic_menu_white_48dp.png">../../external/icons/ic_menu_white_48dp.png</file>
+        <file alias="icons/ic_more_horiz_black_48dp.png">../../external/icons/ic_more_horiz_black_48dp.png</file>
+        <file alias="icons/ic_more_horiz_white_48dp.png">../../external/icons/ic_more_horiz_white_48dp.png</file>
+        <file alias="icons/ic_more_vert_black_48dp.png">../../external/icons/ic_more_vert_black_48dp.png</file>
+        <file alias="icons/ic_more_vert_white_48dp.png">../../external/icons/ic_more_vert_white_48dp.png</file>
+        <file alias="icons/ic_public_black_48dp.png">../../external/icons/ic_public_black_48dp.png</file>
+        <file alias="icons/ic_public_white_48dp.png">../../external/icons/ic_public_white_48dp.png</file>
+        <file alias="icons/ic_search_black_48dp.png">../../external/icons/ic_search_black_48dp.png</file>
+        <file alias="icons/ic_search_white_48dp.png">../../external/icons/ic_search_white_48dp.png</file>
+        <file alias="icons/ic_settings_black_48dp.png">../../external/icons/ic_settings_black_48dp.png</file>
+        <file alias="icons/ic_settings_white_48dp.png">../../external/icons/ic_settings_white_48dp.png</file>
+        <file alias="icons/ic_whatshot_black_48dp.png">../../external/icons/ic_whatshot_black_48dp.png</file>
+        <file alias="icons/ic_whatshot_white_48dp.png">../../external/icons/ic_whatshot_white_48dp.png</file>
+        <file alias="icons/ic_widgets_black_48dp.png">../../external/icons/ic_widgets_black_48dp.png</file>
+        <file alias="icons/ic_widgets_white_48dp.png">../../external/icons/ic_widgets_white_48dp.png</file>
+        
+        <!-- logo -->
+        <!--
+        <file alias="logo/mindmap/mind_map-16.png">../../external/logo/mindmap/mind_map-16.png</file>
+        <file alias="logo/mindmap/mind_map-32.png">../../external/logo/mindmap/mind_map-32.png</file>
+        <file alias="logo/mindmap/mind_map-64.png">../../external/logo/mindmap/mind_map-64.png</file>
+        <file alias="logo/mindmap/mind_map-128.png">../../external/logo/mindmap/mind_map-128.png</file>
+        <file alias="logo/mindmap/mind_map-256.png">../../external/logo/mindmap/mind_map-256.png</file>
+        <file alias="logo/mindmap/mind_map-512.png">../../external/logo/mindmap/mind_map-512.png</file>
+        -->
+        
+        
+    </qresource>
+</RCC>
