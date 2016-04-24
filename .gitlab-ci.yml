@@ -1,7 +1,7 @@
 ngs_windows_debug:
   script:
-    - echo %PATH%
-    - cmd //c "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+    - echo "hello there"
+    - echo call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
     - export ARCH=ARCH_WINDOWS
     - source ./src/scripts/msys2/setup_env.sh
     - rm -fr ngs_windows_debug
