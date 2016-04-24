@@ -1,9 +1,9 @@
 ngs_windows_debug:
   script:
     - echo %PATH%
-    - echo %ARCH%
-    - call src\scripts\msys2\launch_msys2.bat ARCH_WINDOWS
-    - rm -fr ngs_windows_debug
+    - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+    - set PATH="D:\installs\windowsunpack\ninja-win";%PATH%
+    - rmdir /s ngs_windows_debug
     - mkdir ngs_windows_debug
     - cd ngs_windows_debug
     - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug ../src
