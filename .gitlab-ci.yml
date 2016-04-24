@@ -14,6 +14,7 @@ ngs_windows_release:
   script:
     - echo "NGS WINDOW RELEASE"
     - ARCH=ARCH_WINDOWS
+    - source ./src/scripts/msys2/setup_env.sh
     - rm -fr ngs_windows_release
     - mkdir ngs_windows_release
     - cd ngs_windows_release
@@ -25,18 +26,19 @@ ngs_winrt_debug:
   script:
     - echo "NGS WINRT DEBUG"
     - ARCH=ARCH_WINRT
+    - source ./src/scripts/msys2/setup_env.sh
     - rm -fr ngs_winrt_debug
     - mkdir ngs_winrt_debug
     - cd ngs_winrt_debug
     - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
-    - ninja install
-    - ninja install_todopile
+    - cmake --build . --target install
   tags:
     - ngsrunner
 ngs_winrt_release:
   script:
     - echo "NGS WINRT RELEASE"
     - ARCH=ARCH_WINRT
+    - source ./src/scripts/msys2/setup_env.sh
     - rm -fr ngs_winrt_release
     - mkdir ngs_winrt_release
     - cd ngs_winrt_release
