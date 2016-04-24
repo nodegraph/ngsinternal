@@ -156,7 +156,7 @@ void test_replace_by_regex() {
 
 void test_simple_serialization_binary() {
 
-  std::string filename = get_env("DEV_ROOT")+"/serializationtest.bin";
+  std::string filename = get_env("SRC_ROOT")+"/serializationtest.bin";
 
   // --------------------------------------------------------------------------
   // Test writing to binary file.

@@ -110,7 +110,7 @@ add_custom_command (
   	--input ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json 
   	--android-platform android-23 
   	--deployment bundled 
-  	--ant C:/Users/shing/Documents/apps/apache-ant-1.9.6/bin/ant.bat
+  	--ant ${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat
   	--device ${ANDROID_DEVICE_ID}
 )
 
@@ -135,7 +135,7 @@ add_custom_command (
   	--input ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json 
   	--android-platform android-23 
   	--deployment bundled 
-  	--ant C:/Users/shing/Documents/apps/apache-ant-1.9.6/bin/ant.bat
+  	--ant ${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat
   	--device ${ANDROID_DEVICE_ID}
 )
 

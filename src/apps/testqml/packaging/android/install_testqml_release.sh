@@ -13,10 +13,10 @@ ninja prep_testqml
   	--input @ANDROID_PACKAGE_SOURCE_DIRECTORY@/deployment-settings.json\
   	--android-platform android-23\
   	--deployment bundled\
-  	--ant C:/Users/shing/Documents/apps/apache-ant-1.9.6/bin/ant.bat\
+  	--ant @PLATFORM_ROOT@/windowsunpack/apache-ant-1.9.6/bin/ant.bat\
   	\
   	--device @ANDROID_DEVICE_ID@\
   	--storepass  $STORE_PASS\
-  	--sign C:/Users/shing/Documents/critical/publishing/android/android_release.keystore todopile\
+  	--sign @SRC_ROOT@/publishing/android/android_release.keystore todopile\
   	
   	

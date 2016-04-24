@@ -27,4 +27,4 @@ cd ../..
 .\dist\bin\bcp boost\variant\variant.hpp ..\local\boost_headers
 .\dist\bin\bcp boost\functional\hash.hpp ..\local\boost_headers
 
--- then copy the files from ../local/boost_headers into the nodegraphsoftware/src/external area.
+-- then copy the files from ../local/boost_headers into the ngsinternal/src/external area.

@@ -1,7 +1,7 @@
 # OPEN NODE GRAPH
 cmake_minimum_required (VERSION 2.8.10)
 
-project (nodegraphsoftware)
+project (ngs)
 include (GenerateExportHeader)
 
 # The INSTALL command won't keep the directory structure.

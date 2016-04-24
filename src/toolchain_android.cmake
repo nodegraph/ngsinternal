@@ -3,7 +3,6 @@
 string(REPLACE "\\" "/" ANDROID_SDK_ROOT $ENV{ANDROID_SDK_ROOT})
 string(REPLACE "\\" "/" ANDROID_NDK_ROOT $ENV{ANDROID_NDK_ROOT})
 string(REPLACE "\\" "/" ANDROID_TOOLCHAIN_ROOT $ENV{ANDROID_TOOLCHAIN_ROOT})
-string(REPLACE "\\" "/" ANDROID_DEV_ROOT $ENV{ANDROID_DEV_ROOT})
 set(ANDROID_DEVICE_ID $ENV{ANDROID_DEVICE_ID})
 message("android device id is: $ENV{ANDROID_DEVICE_ID}")
 
@@ -34,7 +33,6 @@ set(gles_use_angle 0 CACHE STRING "whether to use angle .. 1 means yes, 0 means 
 #message("android sdk root is: ${ANDROID_SDK_ROOT}")
 #message("android ndk root is: ${ANDROID_NDK_ROOT}")
 #message("android toolchain root is: ${ANDROID_TOOLCHAIN_ROOT}")
-#message("android dev root is: ${ANDROID_DEV_ROOT}")
 
 # the name of the target operating system
 set(CMAKE_SYSTEM_NAME Generic) # this make the cxx compiler test not give this: --out-implib: unknown option

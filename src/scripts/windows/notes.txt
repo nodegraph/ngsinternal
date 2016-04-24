@@ -23,7 +23,7 @@ To automatically launch a cmd shell from a shortcut, the target should look some
 %comspec% /k ""/path/to/env.bat"" some_arguments
 
 For example for the env.bat, it would look like the following
-%comspec% /k ""%DEV_ROOT%\nodegraph\scripts\windows\env.bat""
+%comspec% /k ""%SRC_ROOT%\nodegraph\scripts\windows\env.bat""
 
 
 

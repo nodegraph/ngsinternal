@@ -37,7 +37,7 @@ add_custom_command (
 	COMMAND echo "you must use the following command to sign the appx package but the PASSWORD with the real one" 
 	COMMAND echo " - not you must use it from a raw visual studio command shell " 
 	COMMAND echo "**********************************************************************************************" 
-	COMMAND echo signtool sign /fd sha256 /f C:/Users/shing/Documents/critical/publishing/winrt/MyKey.pfx /p PASSWORD ${CMAKE_BINARY_DIR}/install_todopile/todopile.appx
+	COMMAND echo signtool sign /fd sha256 /f ${SRC_ROOT}/publishing/winrt/MyKey.pfx /p PASSWORD ${CMAKE_BINARY_DIR}/install_todopile/todopile.appx
 	)
 	
 add_custom_target (pack_todopile

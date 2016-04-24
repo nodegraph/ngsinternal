@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 
 # Grab some variables from our environment.
-# Switch backslashes to forward slashes in DEV_ROOT.
-string(REPLACE "\\" "/" DEV_ROOT $ENV{DEV_ROOT})
-message("dev root is set to: ${DEV_ROOT}")
+# Switch backslashes to forward slashes in SRC_ROOT.
+string(REPLACE "\\" "/" SRC_ROOT $ENV{SRC_ROOT})
+message("src root is set to: ${SRC_ROOT}")
 
 # ---------------------------------------------------------
 # Qt Directory.
@@ -18,10 +18,10 @@ set(QT5_DIR "D:/installs/windows/Qt5.6.0/5.6/msvc2015_64")
 # Custom Directories.
 # ---------------------------------------------------------
 
-set(FREETYPE_DIR "${DEV_ROOT}/nodegraphexternal/vs2015/freetype-2.5.2")
-set(GLEW_DIR "${DEV_ROOT}/nodegraphexternal/vs2015/glew-1.13.0")
-set(GLM_DIR "${DEV_ROOT}/nodegraphexternal/vs2015/glm-0.9.5.4")
-set(FREETYPE_GL_DIR "${DEV_ROOT}/nodegraphexternal/vs2015/freetype-gl")
+set(FREETYPE_DIR "${SRC_ROOT}/ngsexternal/vs2015/freetype-2.5.2")
+set(GLEW_DIR "${SRC_ROOT}/ngsexternal/vs2015/glew-1.13.0")
+set(GLM_DIR "${SRC_ROOT}/ngsexternal/vs2015/glm-0.9.5.4")
+set(FREETYPE_GL_DIR "${SRC_ROOT}/ngsexternal/vs2015/freetype-gl")
 
 # ---------------------------------------------------------
 # Our build setup for windows.

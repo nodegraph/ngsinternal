@@ -43,7 +43,3 @@ INSTALL(TARGETS testguiqml
 # yum install libstdc++.i686
 # yum install zlib.i686
 
-# run this from the install dir
-# cp -fr /home/raindrop/devandroid/local/Qt5.5.0/5.5/android_armv7/src/android/java/* /tmp/android_test
-# cp -fr /home/raindrop/devandroid/nodegraphsoftware-build/install/lib/* /tmp/android_test/libs/armeabi-v7a
-# androiddeployqt --input ~/dev/nodegraphsoftware/src/unittests/guiqml/android-deployment-settings.json --verbose --output /tmp/android_test

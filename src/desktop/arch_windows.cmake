@@ -2,13 +2,19 @@
 # Qt runtime files. 
 # ------------------------------------------------------------------
 
+if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
+    set(build_type_flag "debug")
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL Release)
+    set(build_type_flag "release")
+endif ()
+
 add_custom_command (
-  DEPENDS install
+  #DEPENDS install
   OUTPUT install_desktop_cmd
-  COMMAND ${QT5_DIR}/bin/windeployqt --debug --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
-  COMMAND ${QT5_DIR}/bin/windeployqt --debug --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/todopile.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/todopile/qml 
-  COMMAND ${QT5_DIR}/bin/windeployqt --debug --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
-  COMMAND ${QT5_DIR}/bin/windeployqt --debug --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
+  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type_flag} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
+  #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type_flag} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/todopile.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/todopile/qml 
+  #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type_flag} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
+  #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type_flag} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
 )
 
 add_custom_target (install_desktop
@@ -43,32 +49,32 @@ INSTALL(
 #		CONFIGURATIONS Debug Release)
 		
 # ------------------------------------------------------------------
-# Select Qt libraries that we need. 
+# windeployqt misses some libs on windows release
 # ------------------------------------------------------------------
 		
-#INSTALL(FILES 
-#			"${QT5_DIR}/bin/Qt5Cored.dll"
-#			"${QT5_DIR}/bin/Qt5Widgetsd.dll"
-#			"${QT5_DIR}/bin/Qt5Guid.dll"
-#			"${QT5_DIR}/bin/Qt5Quickd.dll"
-#			"${QT5_DIR}/bin/Qt5Qmld.dll"
-#			"${QT5_DIR}/bin/Qt5Networkd.dll"
-#			"${QT5_DIR}/bin/Qt5OpenGLd.dll"
-#		DESTINATION bin
-#		COMPONENT thirdparty
-#		CONFIGURATIONS Debug)
+INSTALL(FILES 
+			"${QT5_DIR}/bin/Qt5Cored.dll"
+			"${QT5_DIR}/bin/Qt5Widgetsd.dll"
+			"${QT5_DIR}/bin/Qt5Guid.dll"
+			"${QT5_DIR}/bin/Qt5Quickd.dll"
+			"${QT5_DIR}/bin/Qt5Qmld.dll"
+			"${QT5_DIR}/bin/Qt5Networkd.dll"
+			"${QT5_DIR}/bin/Qt5OpenGLd.dll"
+		DESTINATION bin
+		COMPONENT thirdparty
+		CONFIGURATIONS Debug)
 		
-#INSTALL(FILES 
-#			"${QT5_DIR}/bin/Qt5Core.dll"
-#			"${QT5_DIR}/bin/Qt5Widgets.dll"
-#			"${QT5_DIR}/bin/Qt5Gui.dll"
-#			"${QT5_DIR}/bin/Qt5Quick.dll"
-#			"${QT5_DIR}/bin/Qt5Qml.dll"
-#			"${QT5_DIR}/bin/Qt5Network.dll"
-#			"${QT5_DIR}/bin/Qt5OpenGL.dll"
-#		DESTINATION bin
-#		COMPONENT thirdparty
-#		CONFIGURATIONS Release)
+INSTALL(FILES 
+			"${QT5_DIR}/bin/Qt5Core.dll"
+			"${QT5_DIR}/bin/Qt5Widgets.dll"
+			"${QT5_DIR}/bin/Qt5Gui.dll"
+			"${QT5_DIR}/bin/Qt5Quick.dll"
+			"${QT5_DIR}/bin/Qt5Qml.dll"
+			"${QT5_DIR}/bin/Qt5Network.dll"
+			"${QT5_DIR}/bin/Qt5OpenGL.dll"
+		DESTINATION bin
+		COMPONENT thirdparty
+		CONFIGURATIONS Release)
 		
 # QtWebEngine
 #INSTALL(FILES 
@@ -100,12 +106,12 @@ INSTALL(
 # ------------------------------------------------------------------
 
 #INSTALL(FILES 
-#			"${DEV_ROOT}/nodegraphexternal/vs2013/glew-1.13.0/lib/debugMX/glew32mxd.dll"
+#			"${SRC_ROOT}/ngsexternal/vs2013/glew-1.13.0/lib/debugMX/glew32mxd.dll"
 #		DESTINATION bin
 #		COMPONENT thirdparty
 #		CONFIGURATIONS Debug)
 #INSTALL(FILES 
-#			"${DEV_ROOT}/nodegraphexternal/vs2013/glew-1.13.0/lib/releaseMX/glew32mx.dll"
+#			"${SRC_ROOT}/ngsexternal/vs2013/glew-1.13.0/lib/releaseMX/glew32mx.dll"
 #		DESTINATION bin
 #		COMPONENT thirdparty
 #		CONFIGURATIONS Release)
