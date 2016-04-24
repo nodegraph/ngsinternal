@@ -1,8 +1,39 @@
 ngs_windows_debug:
   script:
-    - mkdir -p /d/ci_builds/ngs_windows_debug
-    - cd /d/ci_builds/ngs_windows_debug
-    - cmake -G "Visual Studio 14 Win64" -D CMAKE_BUILD_TYPE=Debug ..
+    - rm -fr ngs_windows_debug
+    - mkdir ngs_windows_debug
+    - cd ngs_windows_debug
+    - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug ../src
     - cmake --build . --target install
   tags:
     - ngsrunner
+ngs_windows_release:
+  script:
+    - rm -fr ngs_windows_release
+    - mkdir ngs_windows_release
+    - cd ngs_windows_release
+    - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ../src
+    - cmake --build . --target install
+  tags:
+    - ngsrunner
+ngs_winrt_debug:
+  script:
+    - rm -fr ngs_winrt_debug
+    - mkdir ngs_winrt_debug
+    - cd ngs_winrt_debug
+    - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
+    - ninja install
+    - ninja install_todopile
+  tags:
+    - ngsrunner
+ngs_winrt_release:
+  script:
+    - rm -fr ngs_winrt_release
+    - mkdir ngs_winrt_release
+    - cd ngs_winrt_release
+    - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
+    - cmake --build . --target install
+  tags:
+    - ngsrunner
+
+
