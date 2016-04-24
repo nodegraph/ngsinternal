@@ -1,7 +1,8 @@
 ngs_windows_debug:
   script:
-    - echo ${PATH}
-    - echo ${ARCH}
+    - echo %PATH%
+    - echo %ARCH%
+    - call src\scripts\msys2\launch_msys2.bat ARCH_WINDOWS
     - rm -fr ngs_windows_debug
     - mkdir ngs_windows_debug
     - cd ngs_windows_debug
