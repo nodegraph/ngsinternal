@@ -48,6 +48,9 @@ PATH=${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin:${PATH}
 # Android platform tools
 PATH=/d/installs/android/android-sdk/platform-tools:${PATH}
 
+# GitLab CI
+PATH=/d/installs/windowsunpack/gitlab_ci:${PATH}
+
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"
 

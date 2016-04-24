@@ -31,6 +31,15 @@ add_custom_target (run_todopile
 )
 
 add_custom_command (
+	OUTPUT unregister_todopile_cmd
+	COMMAND ${QT5_DIR}/bin/winrtrunner --device 0 --test --wait 0 --profile appx ${CMAKE_BINARY_DIR}/install_todopile/bin/todopile.exe
+)
+
+add_custom_target (unregister_todopile
+   DEPENDS unregister_todopile_cmd
+)
+
+add_custom_command (
 	OUTPUT pack_todopile_cmd
 	COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_todopile/bin /p ${CMAKE_BINARY_DIR}/install_todopile/todopile.appx /o /v
 	COMMAND echo "**********************************************************************************************" 

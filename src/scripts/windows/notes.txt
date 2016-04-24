@@ -1,5 +1,17 @@
 
 --------------------------------------------------------------------------------------------------------
+When installing/running winrt apps you may get errors.
+--------------------------------------------------------------------------------------------------------
+This is likely because you moved your build directories.
+This can be resolved as follows. Make sure to use the windows 10 power shell as administrator.
+
+Find your app name with the following or just parse the error output.
+Get-AppxPackage -AllUsers
+
+Then remove your appx package with the following.
+Remove-AppxPackage -Package 4fa8aeae-b7f6-4d61-8a88-0590f68bb79c_1.0.0.0_x64__pg273zw4y5b80
+
+--------------------------------------------------------------------------------------------------------
 Universal Windows Platform App Signing
 --------------------------------------------------------------------------------------------------------
 Windows signing key was created as follows: (Make sure you use a raw Visual Studio Command shell)

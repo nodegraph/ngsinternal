@@ -1,8 +1,8 @@
-build-visual-studio:
+ngs_windows_debug:
   script:
-    - mkdir build
-    - cd build
+    - mkdir -p /d/ci_builds/ngs_windows_debug
+    - cd /d/ci_builds/ngs_windows_debug
     - cmake -G "Visual Studio 14 Win64" -D CMAKE_BUILD_TYPE=Debug ..
-    - cmake --build . --target todopile
+    - cmake --build . --target install
   tags:
     - ngsrunner
