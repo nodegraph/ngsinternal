@@ -1,5 +1,7 @@
 ngs_windows_debug:
   script:
+    - echo ${PATH}
+    - echo ${ARCH}
     - rm -fr ngs_windows_debug
     - mkdir ngs_windows_debug
     - cd ngs_windows_debug
