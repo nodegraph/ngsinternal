@@ -30,6 +30,9 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # FileChecksumVerifier
 PATH=${PLATFORM_ROOT}/windowsunpack/FileChecksumIntegrityVerifier:${PATH}
 
+# CMake
+PATH="/c/Program Files (x86)/CMake/bin":${PATH}
+
 # Path for xxd, which is part of vim for windows
 PATH="/c/Program Files (x86)/Vim/vim74":${PATH}
 
