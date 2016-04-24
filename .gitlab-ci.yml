@@ -1,40 +1,46 @@
 ngs_windows_debug:
   script:
-    - echo "hello there"
+    - echo "NGS WINDOWS DEBUG"
     - ARCH=ARCH_WINDOWS
     - source ./src/scripts/msys2/setup_env.sh
     - rm -fr ngs_windows_debug
     - mkdir ngs_windows_debug
     - cd ngs_windows_debug
-    - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug ../src
+    - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug ../src
     - cmake --build . --target install
   tags:
     - ngsrunner
 ngs_windows_release:
   script:
+    - echo "NGS WINDOW RELEASE"
+    - ARCH=ARCH_WINDOWS
     - rm -fr ngs_windows_release
     - mkdir ngs_windows_release
     - cd ngs_windows_release
-    - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ../src
+    - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release ../src
     - cmake --build . --target install
   tags:
     - ngsrunner
 ngs_winrt_debug:
   script:
+    - echo "NGS WINRT DEBUG"
+    - ARCH=ARCH_WINRT
     - rm -fr ngs_winrt_debug
     - mkdir ngs_winrt_debug
     - cd ngs_winrt_debug
-    - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
+    - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - ninja install
     - ninja install_todopile
   tags:
     - ngsrunner
 ngs_winrt_release:
   script:
+    - echo "NGS WINRT RELEASE"
+    - ARCH=ARCH_WINRT
     - rm -fr ngs_winrt_release
     - mkdir ngs_winrt_release
     - cd ngs_winrt_release
-    - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
+    - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
   tags:
     - ngsrunner
