@@ -36,8 +36,8 @@ ngs_winrt_debug:
     - cmake --build . --target install_testqml
     - cmake --build . --target pack_todopile
     - cmake --build . --target pack_testqml
-    - cmake --build . --target run_todopile
-    - cmake --build . --target run_testqml
+    #- cmake --build . --target run_todopile
+    #- cmake --build . --target run_testqml
   tags:
     - ngsrunner
 ngs_winrt_release:
@@ -54,8 +54,8 @@ ngs_winrt_release:
     - cmake --build . --target install_testqml
     - cmake --build . --target pack_todopile
     - cmake --build . --target pack_testqml
-    - cmake --build . --target run_todopile
-    - cmake --build . --target run_testqml
+    #- cmake --build . --target run_todopile
+    #- cmake --build . --target run_testqml
   tags:
     - ngsrunner
 ngs_android_debug:
