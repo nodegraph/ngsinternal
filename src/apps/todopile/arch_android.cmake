@@ -106,11 +106,11 @@ add_custom_command (
   COMMAND ${ANDROID_DEPLOY_QT} 
   	--verbose
   	--debug
-  	--output ${CMAKE_BINARY_DIR}/install_todopile 
-  	--input ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json 
+  	--output "${CMAKE_BINARY_DIR}/install_todopile"
+  	--input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
   	--android-platform android-23 
   	--deployment bundled 
-  	--ant ${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat
+  	--ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
   	--device ${ANDROID_DEVICE_ID}
 )
 
@@ -131,11 +131,11 @@ add_custom_command (
   	--verbose
   	--debug
   	--reinstall
-  	--output ${CMAKE_BINARY_DIR}/install_todopile 
-  	--input ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json 
+  	--output "${CMAKE_BINARY_DIR}/install_todopile" 
+  	--input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
   	--android-platform android-23 
   	--deployment bundled 
-  	--ant ${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat
+  	--ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
   	--device ${ANDROID_DEVICE_ID}
 )
 

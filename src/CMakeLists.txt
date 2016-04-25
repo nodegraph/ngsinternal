@@ -4,6 +4,13 @@ cmake_minimum_required (VERSION 2.8.10)
 project (ngs)
 include (GenerateExportHeader)
 
+# Grab some variables from our environment.
+# Switch backslashes to forward slashes in SRC_ROOT.
+string(REPLACE "\\" "/" SRC_ROOT $ENV{SRC_ROOT})
+message("src root is set to: ${SRC_ROOT}")
+string(REPLACE "\\" "/" PLATFORM_ROOT $ENV{PLATFORM_ROOT})
+
+
 # The INSTALL command won't keep the directory structure.
 # So we use this hack  
 function (install_headers headers dest)

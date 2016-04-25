@@ -5,7 +5,7 @@
 
 # Grab some variables from our environment.
 # Switch backslashes to forward slashes in SRC_ROOT.
-string(REPLACE "\\" "/" SRC_ROOT $ENV{SRC_ROOT})
+#string(REPLACE "\\" "/" SRC_ROOT $ENV{SRC_ROOT})
 
 # ---------------------------------------------------------
 # Qt Directories.
