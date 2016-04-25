@@ -56,7 +56,7 @@ PATH=/d/installs/windowsunpack/gitlab_ci:${PATH}
 
 # Java home
 export JAVA_HOME="/c/Program Files (x86)Javajdk1.7.0_55"
-PATH="/c/Program Files (x86)/Java/jdk1.7.0_55":${PATH}
+PATH="/c/Program Files (x86)/Java/jdk1.7.0_55/bin":${PATH}
 
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"
