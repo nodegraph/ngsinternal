@@ -15,7 +15,7 @@ add_custom_command (
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/install_testqml/bin/assets
   # Copy our assets over.
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/packaging/winrt/assets ${CMAKE_BINARY_DIR}/install_testqml/bin/assets
-  COMMAND ${QT5_DIR}/bin/windeployqt --debug --verbose 3 --angle ${CMAKE_BINARY_DIR}/install_testqml/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
+  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install_testqml/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
 )
 
 add_custom_target (install_testqml
@@ -33,7 +33,9 @@ add_custom_target (run_testqml
 
 add_custom_command (
 	OUTPUT pack_testqml_cmd
-	COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_testqml/bin /p ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx
+	COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_testqml/bin /p ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx /o /v
+    COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_todopile/bin /p ${CMAKE_BINARY_DIR}/install_todopile/todopile.appx /o /v
+	COMMAND signtool sign /fd sha256 /f ${SRC_ROOT}/publishing/winrt/MyKey.pfx /p ${PASSWORD} ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx
 	)
 	
 add_custom_target (pack_testqml

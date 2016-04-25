@@ -7,12 +7,12 @@
   IgnorableNamespaces="uap mp mobile">
   
   <Identity
-    Name="4fa8aeae-b7f6-4d61-8a88-0590f68bb79c"
+    Name="ecb83ccc-7f9a-4501-ba30-9a2801cbe309"
     ProcessorArchitecture="x64"
     Publisher="CN=Node Graph Software"
     Version="1.0.0.0" />
     
-  <mp:PhoneIdentity PhoneProductId="c4d67a36-7a30-4115-818e-41fc7bd688b6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="ecb83ccc-7f9a-4501-ba30-9a2801cbe309" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     
   <Properties>
     <DisplayName>test qml</DisplayName>

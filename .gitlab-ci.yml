@@ -34,6 +34,10 @@ ngs_winrt_debug:
     - cmake --build . --target install
     - cmake --build . --target install_todopile
     - cmake --build . --target install_testqml
+    - cmake --build . --target pack_todopile
+    - cmake --build . --target pack_testqml
+    - cmake --build . --target run_todopile
+    - cmake --build . --target run_testqml
   tags:
     - ngsrunner
 ngs_winrt_release:
@@ -48,6 +52,10 @@ ngs_winrt_release:
     - cmake --build . --target install
     - cmake --build . --target install_todopile
     - cmake --build . --target install_testqml
+    - cmake --build . --target pack_todopile
+    - cmake --build . --target pack_testqml
+    - cmake --build . --target run_todopile
+    - cmake --build . --target run_testqml
   tags:
     - ngsrunner
 ngs_android_debug:
@@ -61,8 +69,10 @@ ngs_android_debug:
     - cd ngs_android_debug
     - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_android.cmake ../src
     - ninja install
-    - ninja install_todopile_debug
-    - ninja install_testqml_debug
+    - ninja install_todopile
+    - ninja install_testqml
+    - ninja run_todopile
+    - ninja run_testqml
   tags:
     - ngsrunner
 ngs_android_release:
@@ -76,6 +86,10 @@ ngs_android_release:
     - cd ngs_android_release
     - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_android.cmake ../src
     - ninja install
+    - ninja install_todopile
+    - ninja install_testqml
+    - ninja run_todopile
+    - ninja run_testqml
   tags:
     - ngsrunner
 

@@ -7,9 +7,8 @@ include (GenerateExportHeader)
 # Grab some variables from our environment.
 # Switch backslashes to forward slashes in SRC_ROOT.
 string(REPLACE "\\" "/" SRC_ROOT $ENV{SRC_ROOT})
-message("src root is set to: ${SRC_ROOT}")
 string(REPLACE "\\" "/" PLATFORM_ROOT $ENV{PLATFORM_ROOT})
-
+set(PASSWORD $ENV{PASSWORD})
 
 # The INSTALL command won't keep the directory structure.
 # So we use this hack  
@@ -83,8 +82,10 @@ set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/install" CACHE PATH "Choose the 
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Debug Release RelWithDebInfo MinSizeRel.")
 if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
     add_definitions("-DBUILD_TYPE=${kdebug}")
+    set(build_type "debug")
 elseif ("${CMAKE_BUILD_TYPE}" STREQUAL Release)
     add_definitions("-DBUILD_TYPE=${krelease}")
+    set(build_type "release")
 endif ()
 
 # We build shared libs by default.

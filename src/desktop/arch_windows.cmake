@@ -2,19 +2,13 @@
 # Qt runtime files. 
 # ------------------------------------------------------------------
 
-if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
-    set(build_type_flag "debug")
-elseif ("${CMAKE_BUILD_TYPE}" STREQUAL Release)
-    set(build_type_flag "release")
-endif ()
-
 add_custom_command (
   #DEPENDS install
   OUTPUT install_desktop_cmd
-  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type_flag} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
-  #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type_flag} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/todopile.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/todopile/qml 
-  #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type_flag} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
-  #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type_flag} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
+  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
+  #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/todopile.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/todopile/qml 
+  #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
+  #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
 )
 
 add_custom_target (install_desktop

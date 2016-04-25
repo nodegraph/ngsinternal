@@ -1,19 +1,15 @@
 
-if (${ARCH} STREQUAL ARCH_ANDROID)
-	# Remove the export symbols flag from the compiler flags.
-	# This makes all symbols get exported.
-	string(REPLACE "${EXPORT_SYMBOLS_FLAG}" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
-	string(REPLACE "${EXPORT_SYMBOLS_FLAG}" "" CMAKE_C_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG})
-	string(REPLACE "${EXPORT_SYMBOLS_FLAG}" "" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
-	string(REPLACE "${EXPORT_SYMBOLS_FLAG}" "" CMAKE_C_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE})
-endif()
+# Remove the export symbols flag from the compiler flags.
+# This makes all symbols get exported.
+string(REPLACE "${EXPORT_SYMBOLS_FLAG}" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
+string(REPLACE "${EXPORT_SYMBOLS_FLAG}" "" CMAKE_C_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG})
+string(REPLACE "${EXPORT_SYMBOLS_FLAG}" "" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
+string(REPLACE "${EXPORT_SYMBOLS_FLAG}" "" CMAKE_C_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE})
 
 
 message("android ndk root is: ${ANDROID_NDK_ROOT}")
 message("android device is: ${ANDROID_DEVICE_ID}")
 
-
-if (${ARCH} STREQUAL ARCH_ANDROID)
 
 INSTALL(FILES 
 			"${QT5_DIR}/lib/libQt5Core.so"
@@ -64,31 +60,27 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/install_testqml_overrides")
 # Setup our deployment settings overrides. (Note this is done at configure time)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/packaging/android/deployment-settings.json ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json @ONLY)
 
-# Setup our release install_testqml scripts. These are separated out in order handle passwords. (Note this is done at configure time)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/packaging/android/install_testqml_release.sh ${CMAKE_BINARY_DIR}/install_testqml_release.sh @ONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/packaging/android/run_testqml_release.sh ${CMAKE_BINARY_DIR}/run_testqml_release.sh @ONLY)
-
 # ------------------------------------------------------------------------------------
 # Custom command to prep the_testqml install dir.
 # ------------------------------------------------------------------------------------
 add_custom_command (
-  DEPENDS install
-  OUTPUT prep_testqml_cmd
-  # copy the installed libs into the install_testqml/libs/armeabi-v7a folder
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/install/lib ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a
-  # copy the gdb server file over
-  COMMAND ${CMAKE_COMMAND} -E copy ${ANDROID_NDK_ROOT}/prebuilt/android-arm/gdbserver/gdbserver ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a
-  # rename gdbserver to gdbserver.so
-  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a/gdbserver ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a/gdbserver.so
-  COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a/gdbserver
-  # Copy our android manifest override at build time.
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/packaging/android/AndroidManifest.xml ${ANDROID_PACKAGE_SOURCE_DIRECTORY}
-  # Copy our java classes tree at build time.
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/src
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/packaging/android/src ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/src
-  # Copy our resources at build time.
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/res
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/packaging/android/res ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/res
+    DEPENDS install
+    OUTPUT prep_testqml_cmd
+    # copy the installed libs into the install_testqml/libs/armeabi-v7a folder
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/install/lib ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a
+    # copy the gdb server file over
+    COMMAND ${CMAKE_COMMAND} -E copy ${ANDROID_NDK_ROOT}/prebuilt/android-arm/gdbserver/gdbserver ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a
+    # rename gdbserver to gdbserver.so
+    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a/gdbserver ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a/gdbserver.so
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/install_testqml/libs/armeabi-v7a/gdbserver
+    # Copy our android manifest override at build time.
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/packaging/android/AndroidManifest.xml ${ANDROID_PACKAGE_SOURCE_DIRECTORY}
+    # Copy our java classes tree at build time.
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/src
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/packaging/android/src ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/src
+    # Copy our resources at build time.
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/res
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/packaging/android/res ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/res
 )
 
 add_custom_target (prep_testqml
@@ -99,22 +91,40 @@ add_custom_target (prep_testqml
 # Custom command to create the debug apk.
 # ------------------------------------------------------------------------------------
 # Note that JAVA_HOME must be set in the environment for this to work.
-add_custom_command (
-  DEPENDS prep_testqml
-  OUTPUT install_testqml_debug_cmd
-  COMMAND ${ANDROID_DEPLOY_QT} 
-  	--verbose
-  	--debug
-  	--output ${CMAKE_BINARY_DIR}/install_testqml 
-  	--input ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json 
-  	--android-platform android-23 
-  	--deployment bundled 
-  	--ant ${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat
-  	--device ${ANDROID_DEVICE_ID}
-)
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_custom_command (
+        DEPENDS prep_testqml
+        OUTPUT install_testqml_cmd
+        COMMAND ${ANDROID_DEPLOY_QT} 
+            --verbose
+            --debug
+            --output "${CMAKE_BINARY_DIR}/install_testqml"
+            --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json" 
+            --android-platform android-23 
+            --deployment bundled 
+            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+            --device ${ANDROID_DEVICE_ID}
+    )
+else()
+    add_custom_command (
+        DEPENDS prep_testqml
+        OUTPUT install_testqml_cmd
+        COMMAND ${ANDROID_DEPLOY_QT}
+            --verbose
+            --release
+            --output "${CMAKE_BINARY_DIR}/install_testqml"
+            --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
+            --android-platform android-23
+            --deployment bundled
+            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+            --device ${ANDROID_DEVICE_ID}
+            --storepass  ${PASSWORD}
+            --sign ${SRC_ROOT}/publishing/android/android_release.keystore todopile
+    )
+endif()
 
-add_custom_target (install_testqml_debug
-   DEPENDS install_testqml_debug_cmd
+add_custom_target (install_testqml
+   DEPENDS install_testqml_cmd
 )
 
 # ------------------------------------------------------------------------------------
@@ -123,23 +133,41 @@ add_custom_target (install_testqml_debug
 # Note that JAVA_HOME must be set in the environment for this to work.
 # --no-build
 # --reinstall
-add_custom_command (
-  DEPENDS prep_testqml
-  OUTPUT run_testqml_debug_cmd
-  COMMAND ${ANDROID_DEPLOY_QT} 
-  	--verbose
-  	--debug
-  	--reinstall
-  	--output ${CMAKE_BINARY_DIR}/install_testqml 
-  	--input ${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json 
-  	--android-platform android-23 
-  	--deployment bundled 
-  	--ant ${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat
-  	--device ${ANDROID_DEVICE_ID}
-)
-
-add_custom_target (run_testqml_debug
-   DEPENDS run_testqml_debug_cmd
-)
-
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_custom_command (
+        DEPENDS prep_testqml
+        OUTPUT run_testqml_cmd
+        COMMAND ${ANDROID_DEPLOY_QT} 
+            --verbose
+            --debug
+            --reinstall
+            --output "${CMAKE_BINARY_DIR}/install_testqml"
+            --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
+            --android-platform android-23 
+            --deployment bundled 
+            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+            --device ${ANDROID_DEVICE_ID}
+    )
+else()
+    add_custom_command (
+        DEPENDS prep_testqml
+        OUTPUT run_testqml_cmd
+        COMMAND ${ANDROID_DEPLOY_QT}
+ 	        --reinstall
+            --verbose
+            --release
+            --output "${CMAKE_BINARY_DIR}/install_testqml"
+            --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
+            --android-platform android-23
+            --deployment bundled
+            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+            --device ${ANDROID_DEVICE_ID}
+            --storepass  ${PASSWORD}
+            --sign ${SRC_ROOT}/publishing/android/android_release.keystore todopile
+    )
 endif()
+
+add_custom_target (run_testqml
+   DEPENDS run_testqml_cmd
+)
+
