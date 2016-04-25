@@ -55,8 +55,13 @@ PATH=/d/installs/android/android-sdk/platform-tools:${PATH}
 PATH=/d/installs/windowsunpack/gitlab_ci:${PATH}
 
 # Java home
-export JAVA_HOME="/c/Program Files (x86)Javajdk1.7.0_55"
-PATH="/c/Program Files (x86)/Java/jdk1.7.0_55/bin":${PATH}
+# This is the 32 bit version of the jdk which was installed by Qt
+# and is need by androiddeployqt.
+# Note that a 64bit version of jdk8 is on the path also.
+# The 64bit version is neede for eclipse.
+# Putting the 32bit version of the jdk7 first messes up eclipse startup.
+export JAVA_HOME="/c/Program Files (x86)/Java/jdk1.7.0_55"
+#PATH="/c/Program Files (x86)/Java/jdk1.7.0_55/bin":${PATH}
 
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"

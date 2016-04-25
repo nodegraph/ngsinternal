@@ -1,13 +1,5 @@
 
 # ---------------------------------------------------------
-# Our custom cmake variables.
-# ---------------------------------------------------------
-
-# Grab some variables from our environment.
-# Switch backslashes to forward slashes in SRC_ROOT.
-#string(REPLACE "\\" "/" SRC_ROOT $ENV{SRC_ROOT})
-
-# ---------------------------------------------------------
 # Qt Directories.
 # --------------------------------------------------------
 #set(QT5_DIR "D:/installs/winrt/Qt5.5.1/5.5/winrt_x64")

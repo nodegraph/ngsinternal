@@ -2,11 +2,6 @@
 # Check our toolchain cmake variables.
 # ---------------------------------------------------------
 
-# Grab some variables from our environment.
-# Switch backslashes to forward slashes in SRC_ROOT.
-#string(REPLACE "\\" "/" SRC_ROOT $ENV{SRC_ROOT})
-#message("src root is set to: ${SRC_ROOT}")
-
 # The android toolchain should have already grabbed these
 # environment variables from the environment.
 
