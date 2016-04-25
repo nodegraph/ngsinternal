@@ -53,8 +53,8 @@ ngs_winrt_release:
 ngs_android_debug:
   script:
     - echo "NGS ANDROID DEBUG"
-    - ARCH=ARCH_ANDROID
-    - ANDROID_DEVICE_ID=1234567890123456
+    - export ARCH=ARCH_ANDROID
+    - export ANDROID_DEVICE_ID=1234567890123456
     - source ./src/scripts/msys2/setup_env.sh
     - rm -fr ngs_android_debug
     - mkdir ngs_android_debug
@@ -68,8 +68,8 @@ ngs_android_debug:
 ngs_android_release:
   script:
     - echo "NGS ANDROID RELEASE"
-    - ARCH=ARCH_ANDROID
-    - ANDROID_DEVICE_ID=1234567890123456
+    - export ARCH=ARCH_ANDROID
+    - export ANDROID_DEVICE_ID=1234567890123456
     - source ./src/scripts/msys2/setup_env.sh
     - rm -fr ngs_android_release
     - mkdir ngs_android_release
