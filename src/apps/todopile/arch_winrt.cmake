@@ -42,7 +42,7 @@ add_custom_target (unregister_todopile
 add_custom_command (
 	OUTPUT pack_todopile_cmd
 	COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_todopile/bin /p ${CMAKE_BINARY_DIR}/install_todopile/todopile.appx /o /v
-	COMMAND signtool sign /fd sha256 /f ${SRC_ROOT}/publishing/winrt/MyKey.pfx /p ${PASSWORD} ${CMAKE_BINARY_DIR}/install_todopile/todopile.appx
+	COMMAND signtool sign /fd sha256 /f ${PLATFORM_ROOT}/srcdeps/publishing/winrt/MyKey.pfx /p ${PASSWORD} ${CMAKE_BINARY_DIR}/install_todopile/todopile.appx
 	)
 	
 add_custom_target (pack_todopile

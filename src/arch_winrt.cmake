@@ -15,11 +15,11 @@ endif ()
 # ---------------------------------------------------------
 # Our Directories.
 # ---------------------------------------------------------
-set(FREETYPE_DIR "${SRC_ROOT}/ngsexternal/vs2015/freetype-2.5.2")
-set(GLEW_DIR "${SRC_ROOT}/ngsexternal/vs2015/glew-1.13.0")
-set(GLM_DIR "${SRC_ROOT}/ngsexternal/vs2015/glm-0.9.5.4")
-set(FREETYPE_GL_DIR "${SRC_ROOT}/ngsexternal/vs2015/freetype-gl")
-#set(ANGLE_DIR "${SRC_ROOT}/ngsexternal/nuget/angle.windowsstore.2.1.8")
+set(FREETYPE_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-2.5.2")
+set(GLEW_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glew-1.13.0")
+set(GLM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glm-0.9.5.4")
+set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-gl")
+#set(ANGLE_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/nuget/angle.windowsstore.2.1.8")
 
 message("src root is set to: ${SRC_ROOT}")
 

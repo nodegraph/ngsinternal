@@ -54,16 +54,16 @@ find_package(Qt5Widgets)
 # Setup up our cpp flags.
 include_directories("${QT5_DIR}/include")
 include_directories("${ANDROID_TOOLCHAIN_ROOT}/system/usr/include")
-include_directories("${SRC_ROOT}/ngsexternal/android/freetype-2.5.2/include")
-include_directories("${SRC_ROOT}/ngsexternal/android/freetype-gl/include")
-include_directories("${SRC_ROOT}/ngsexternal/android/glm-0.9.5.4")
+include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-2.5.2/include")
+include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-gl/include")
+include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/glm-0.9.5.4")
 
 # Setup up our link flags.
 link_directories("${QT5_DIR}/lib")
 link_directories("${PROJECT_BINARY_DIR}")
 link_directories("${ANDROID_TOOLCHAIN_ROOT}/system/usr/lib}") # this is where we find libGLESv3.so
 link_directories("${ANDROID_NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a") # this is where we find libgnustl_shared.so
-link_directories("${SRC_ROOT}/ngsexternal/android/freetype-2.5.2/lib")
-link_directories("${SRC_ROOT}/ngsexternal/android/freetype-gl/lib")
+link_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-2.5.2/lib")
+link_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-gl/lib")
 
 

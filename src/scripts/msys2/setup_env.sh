@@ -13,12 +13,13 @@ export ANDROID_TOOLCHAIN_ROOT=/d/installs/android/android_toolchain
 # setup the software locations
 
 # SRC_ROOT points to the location where you checked out the repos,
-# like ngsinternal, ngsexternal and ngsrelease.
+# like ngsinternal
 export SRC_ROOT=/d/src
 
 # PLATFORM_ROOT points to the location where you install applications
 # on your system, like eclipse. You can search for uses of
 # PLATOFRM_ROOT to see what types of apps we have installed.
+# We currently expect ngsexternal to be checkout in ${PLATFORM_ROOT}/srcdeps.
 export PLATFORM_ROOT=/d/installs
 
 # --------------------------------------------------------------------
@@ -76,8 +77,8 @@ if [ ${ARCH} == "ARCH_WINDOWS" ]; then
     PATH=/d/installs/windows/Qt5.6.0/5.6/msvc2015_64/bin:${PATH}
 	
 	# Dll search dirs.
-	PATH=${SRC_ROOT}/ngsexternal/vs2013/glew-1.13.0/lib/debugMX:${PATH}
-	PATH=${SRC_ROOT}/ngsexternal/vs2013/glew-1.13.0/lib/releaseMX:${PATH}
+	PATH="${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glew-1.13.0/lib/Debug MX/x64":${PATH}
+	PATH="${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glew-1.13.0/lib/Release MX/x64":${PATH}
 	
 elif [ ${ARCH} == "ARCH_WINRT" ]; then
 	echo setting up for ARCH_WINRT

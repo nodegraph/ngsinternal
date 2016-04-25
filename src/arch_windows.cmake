@@ -9,10 +9,10 @@ set(QT5_DIR "D:/installs/windows/Qt5.6.0/5.6/msvc2015_64")
 # Custom Directories.
 # ---------------------------------------------------------
 
-set(FREETYPE_DIR "${SRC_ROOT}/ngsexternal/vs2015/freetype-2.5.2")
-set(GLEW_DIR "${SRC_ROOT}/ngsexternal/vs2015/glew-1.13.0")
-set(GLM_DIR "${SRC_ROOT}/ngsexternal/vs2015/glm-0.9.5.4")
-set(FREETYPE_GL_DIR "${SRC_ROOT}/ngsexternal/vs2015/freetype-gl")
+set(FREETYPE_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-2.5.2")
+set(GLEW_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glew-1.13.0")
+set(GLM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glm-0.9.5.4")
+set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-gl")
 
 # ---------------------------------------------------------
 # Our build setup for windows.

@@ -119,7 +119,7 @@ else()
             --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
             --device ${ANDROID_DEVICE_ID}
             --storepass  ${PASSWORD}
-            --sign ${SRC_ROOT}/publishing/android/android_release.keystore todopile
+            --sign ${PLATFORM_ROOT}/srcdeps/publishing/android/android_release.keystore todopile
     )
 endif()
 
@@ -163,7 +163,7 @@ else()
             --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
             --device ${ANDROID_DEVICE_ID}
             --storepass  ${PASSWORD}
-            --sign ${SRC_ROOT}/publishing/android/android_release.keystore todopile
+            --sign ${PLATFORM_ROOT}/srcdeps/publishing/android/android_release.keystore todopile
     )
 endif()
 

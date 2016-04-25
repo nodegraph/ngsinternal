@@ -35,7 +35,7 @@ add_custom_command (
 	OUTPUT pack_testqml_cmd
 	COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_testqml/bin /p ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx /o /v
     COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_todopile/bin /p ${CMAKE_BINARY_DIR}/install_todopile/todopile.appx /o /v
-	COMMAND signtool sign /fd sha256 /f ${SRC_ROOT}/publishing/winrt/MyKey.pfx /p ${PASSWORD} ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx
+	COMMAND signtool sign /fd sha256 /f ${PLATFORM_ROOT}/srcdeps/publishing/winrt/MyKey.pfx /p ${PASSWORD} ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx
 	)
 	
 add_custom_target (pack_testqml

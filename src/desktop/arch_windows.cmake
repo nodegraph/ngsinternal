@@ -100,12 +100,12 @@ INSTALL(FILES
 # ------------------------------------------------------------------
 
 #INSTALL(FILES 
-#			"${SRC_ROOT}/ngsexternal/vs2013/glew-1.13.0/lib/debugMX/glew32mxd.dll"
+#			"${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2013/glew-1.13.0/lib/debugMX/glew32mxd.dll"
 #		DESTINATION bin
 #		COMPONENT thirdparty
 #		CONFIGURATIONS Debug)
 #INSTALL(FILES 
-#			"${SRC_ROOT}/ngsexternal/vs2013/glew-1.13.0/lib/releaseMX/glew32mx.dll"
+#			"${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2013/glew-1.13.0/lib/releaseMX/glew32mx.dll"
 #		DESTINATION bin
 #		COMPONENT thirdparty
 #		CONFIGURATIONS Release)
