@@ -1,3 +1,7 @@
+# Test values for the following variables are supplied by the gitlab
+# secure project variables.
+# ANDROID_DEVICE_ID 
+# PASSWORD
 ngs_windows_debug:
   script:
     - echo "NGS WINDOWS DEBUG"
@@ -49,6 +53,42 @@ ngs_winrt_release:
     - mkdir ngs_winrt_release
     - cd ngs_winrt_release
     - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
+    - cmake --build . --target install
+    - cmake --build . --target install_todopile
+    - cmake --build . --target install_testqml
+    - cmake --build . --target pack_todopile
+    - cmake --build . --target pack_testqml
+    #- cmake --build . --target run_todopile
+    #- cmake --build . --target run_testqml
+  tags:
+    - ngsrunner
+ngs_winrt_x86_debug:
+  script:
+    - echo "NGS WINRT X86 DEBUG"
+    - ARCH=ARCH_WINRT
+    - source ./src/scripts/msys2/setup_env.sh
+    - rm -fr ngs_winrt_x86_debug
+    - mkdir ngs_winrt_x86_debug
+    - cd ngs_winrt_x86_debug
+    - cmake -G "Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
+    - cmake --build . --target install
+    - cmake --build . --target install_todopile
+    - cmake --build . --target install_testqml
+    - cmake --build . --target pack_todopile
+    - cmake --build . --target pack_testqml
+    #- cmake --build . --target run_todopile
+    #- cmake --build . --target run_testqml
+  tags:
+    - ngsrunner
+ngs_winrt_x86_release:
+  script:
+    - echo "NGS WINRT X86 RELEASE"
+    - ARCH=ARCH_WINRT
+    - source ./src/scripts/msys2/setup_env.sh
+    - rm -fr ngs_winrt_x86_release
+    - mkdir ngs_winrt_x86_release
+    - cd ngs_winrt_x86_release
+    - cmake -G "Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
     - cmake --build . --target install_todopile
     - cmake --build . --target install_testqml

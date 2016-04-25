@@ -1,4 +1,4 @@
-0) freetype-gl use cmake and not automake/configure tools.
+0) freetype-gl uses cmake and not automake/configure tools.
 1) See the CMakeLists.txt file for the changes made to that file in freetype-gl.
 2) use cmake-gui
 3) press "configure" and choose the android tool chain file in the dialogs that pop up.
