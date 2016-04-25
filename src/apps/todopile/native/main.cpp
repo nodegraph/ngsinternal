@@ -258,6 +258,7 @@ int main(int argc, char *argv[]) {
 
   // Shutdown.
   shutdown_memory_tracker();
-  return execReturn;
+  //return execReturn;
+  return 0;
 }
 

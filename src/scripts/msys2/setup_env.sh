@@ -5,10 +5,7 @@
 # The other variables below depend on where you installed other tools
 # like eclipse, ninja etc.
 
-# setup android variables
-export ANDROID_SDK_ROOT=/d/installs/android/android-sdk
-export ANDROID_NDK_ROOT=/d/installs/android/android-ndk-r10e
-export ANDROID_TOOLCHAIN_ROOT=/d/installs/android/android_toolchain
+
 
 # setup the software locations
 
@@ -25,10 +22,6 @@ export SRC_ROOT=`readlink -f ${SCRIPT_DIR}/../../../..`
 export PLATFORM_ROOT=/d/installs
 
 # --------------------------------------------------------------------
-
-
-# get the directory of this script
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # FileChecksumVerifier
 PATH=${PLATFORM_ROOT}/windowsunpack/FileChecksumIntegrityVerifier:${PATH}
@@ -73,41 +66,15 @@ alias cd_src="cd ${SRC_ROOT}"
 if [ ${ARCH} == "ARCH_WINDOWS" ]; then 
 	echo setting up for ARCH_WINDOWS
 	
-	# Qt dir.
-	#PATH=/c/Qt/Qt5.5.1/5.5/msvc2013_64/bin:${PATH}
-    #PATH=/d/installs/windows/Qt5.5.1/5.5/msvc2013_64/bin:${PATH}
-    PATH=/d/installs/windows/Qt5.6.0/5.6/msvc2015_64/bin:${PATH}
-	
-	# Dll search dirs.
-	PATH="${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glew-1.13.0/lib/Debug MX/x64":${PATH}
-	PATH="${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glew-1.13.0/lib/Release MX/x64":${PATH}
-	
 elif [ ${ARCH} == "ARCH_WINRT" ]; then
 	echo setting up for ARCH_WINRT
-	
-	# Qt dir.
-	#PATH=/d/installs/winrt/Qt5.5.1/5.5/winrt_x64/bin:${PATH}
-    PATH=/d/installs/winrt/Qt5.6.0/5.6/winrt_x64_msvc2015/bin:${PATH}
 
-	
-elif [ ${ARCH} == "ARCH_WINRT_ARM" ]; then
-	echo setting up for ARCH_WINRT_ARM
-	
-	# Qt dir.
-	PATH=/d/installs/winrt/Qt5.5.1/5.5/winphone_arm/bin:${PATH}
-	
-elif [ ${ARCH} == "ARCH_WINRT_X86" ]; then
-	echo setting up for ARCH_WINRT_X86
-	
-	# Qt dir.
-	PATH=/d/installs/winrt/Qt5.5.1/5.5/winphone_x86/bin:${PATH}
-	
 elif [ ${ARCH} == "ARCH_ANDROID" ]; then
-	echo setting up for ARCH_ANDROID
 	
-	# Qt dir.
-	#PATH=/d/installs/android/Qt5.5.1/5.5/android_armv7/bin:${PATH}
-    PATH=/D/installs/android/Qt5.6.0/5.6/android_armv7/bin:${PATH}
+	# setup android variables
+	export ANDROID_SDK_ROOT=/d/installs/android/android-sdk
+	export ANDROID_NDK_ROOT=/d/installs/android/android-ndk-r10e
+	export ANDROID_TOOLCHAIN_ROOT=/d/installs/android/android_toolchain
 	
 	# check our android variables
 	echo "           sdk root: $ANDROID_SDK_ROOT"

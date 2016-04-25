@@ -14,7 +14,19 @@ rem - -------------------------------------------------------------
 rem - launch the visual studio native 64 bit shell
 rem - if you want to use the 32 to 64 bit cross compiler, use x86_amd64
 rem - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+
+if "%1"=="x64" (
+	echo "setting up vs2015 for 64 bits"
+	set ARCH_BITS="x64"
+	call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+) 
+if "%1"=="x86" (
+	echo "setting up vs2015 for 32 bits"
+	set ARCH_BITS="x86"
+ 	call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+)
+if [%1] == [] echo "Error: ARCH_BITS was not set!"
+
 
 rem - add our msys2 scripts to the path.
 rem - you can start it with msys2_shell.bat

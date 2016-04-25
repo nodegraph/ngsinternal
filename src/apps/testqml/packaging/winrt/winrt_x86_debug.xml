@@ -7,16 +7,16 @@
   IgnorableNamespaces="uap mp mobile">
   
   <Identity
-    Name="c4d67a36-7a30-4115-818e-41fc7bd688b6"
-    ProcessorArchitecture="x64"
+    Name="a55981fc-fd66-4709-93af-af5c9ee202a5"
+    ProcessorArchitecture="x86"
     Publisher="CN=Node Graph Software"
     Version="1.0.0.0" />
     
-  <mp:PhoneIdentity PhoneProductId="c4d67a36-7a30-4115-818e-41fc7bd688b6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="a55981fc-fd66-4709-93af-af5c9ee202a5" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     
   <Properties>
-    <DisplayName>to do pile</DisplayName>
-    <PublisherDisplayName>to do pile</PublisherDisplayName>
+    <DisplayName>test qml</DisplayName>
+    <PublisherDisplayName>test qml</PublisherDisplayName>
     <Logo>assets/logo_store.png</Logo>
   </Properties>
   
@@ -31,8 +31,8 @@
   
   <Applications>
     <Application Id="App"
-      Executable="todopile.exe"
-      EntryPoint="todopile.App">
+      Executable="testqml.exe"
+      EntryPoint="testqml.App">
       <uap:VisualElements
         DisplayName="minibrowser"
         Description="Default package description"

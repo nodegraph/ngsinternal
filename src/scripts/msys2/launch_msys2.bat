@@ -10,10 +10,12 @@ rem - %[number] will return the respective argument passed on the
 rem   on the command line when calling this script
 rem - -------------------------------------------------------------
 
-rem - this batch file takes the ARCH as an argument.
+rem - this batch file takes the following arguments in the order specified
+rem - 1) the ARCH as an argument.
+rem - 2) the hardware bits 32 or 64
 
 rem - load the regular windows env setup batch file
-call %~dp0/../windows/env.bat
+call %~dp0/../windows/env.bat %2
 
 set ARCH=%1
 

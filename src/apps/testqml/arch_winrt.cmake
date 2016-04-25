@@ -8,9 +8,9 @@ add_custom_command (
   # Copy the install files over to install_testqml.
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/install ${CMAKE_BINARY_DIR}/install_testqml
   # Copy our AppxManifext.xml file over.
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/packaging/winrt/winrt_x64_debug.xml ${CMAKE_BINARY_DIR}/install_testqml/bin
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/packaging/winrt/winrt_${ARCH_BITS}_${build_type}.xml ${CMAKE_BINARY_DIR}/install_testqml/bin
   # Rename it.
-  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/install_testqml/bin/winrt_x64_debug.xml ${CMAKE_BINARY_DIR}/install_testqml/bin/AppxManifest.xml
+  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/install_testqml/bin/winrt_${ARCH_BITS}_${build_type}.xml ${CMAKE_BINARY_DIR}/install_testqml/bin/AppxManifest.xml
   # Make the asset dir.
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/install_testqml/bin/assets
   # Copy our assets over.
@@ -29,6 +29,15 @@ add_custom_command (
 
 add_custom_target (run_testqml
    DEPENDS run_testqml_cmd
+)
+
+add_custom_command (
+    OUTPUT unregister_testqml_cmd
+    COMMAND ${QT5_DIR}/bin/winrtrunner --device 0 --remove --wait 0 --profile appx ${CMAKE_BINARY_DIR}/install_testqml/bin/testqml.exe
+)
+
+add_custom_target (unregister_testqml
+   DEPENDS unregister_testqml_cmd
 )
 
 add_custom_command (

@@ -9,6 +9,7 @@ include (GenerateExportHeader)
 string(REPLACE "\\" "/" SRC_ROOT $ENV{SRC_ROOT})
 string(REPLACE "\\" "/" PLATFORM_ROOT $ENV{PLATFORM_ROOT})
 set(PASSWORD $ENV{PASSWORD})
+set(ARCH_BITS $ENV{ARCH_BITS})
 
 # The INSTALL command won't keep the directory structure.
 # So we use this hack  

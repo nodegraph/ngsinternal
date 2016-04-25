@@ -7,9 +7,9 @@ add_custom_command (
   # Copy the install files over to install_todopile.
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/install ${CMAKE_BINARY_DIR}/install_todopile
   # Copy our AppxManifext.xml file over.
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/packaging/winrt/winrt_x64_debug.xml ${CMAKE_BINARY_DIR}/install_todopile/bin
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/packaging/winrt/winrt_${ARCH_BITS}_${build_type}.xml ${CMAKE_BINARY_DIR}/install_todopile/bin
   # Rename it.
-  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/install_todopile/bin/winrt_x64_debug.xml ${CMAKE_BINARY_DIR}/install_todopile/bin/AppxManifest.xml
+  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/install_todopile/bin/winrt_${ARCH_BITS}_${build_type}.xml ${CMAKE_BINARY_DIR}/install_todopile/bin/AppxManifest.xml
   # Make the asset dir.
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/install_todopile/bin/assets
   # Copy our assets over.
@@ -32,7 +32,7 @@ add_custom_target (run_todopile
 
 add_custom_command (
 	OUTPUT unregister_todopile_cmd
-	COMMAND ${QT5_DIR}/bin/winrtrunner --device 0 --test --wait 0 --profile appx ${CMAKE_BINARY_DIR}/install_todopile/bin/todopile.exe
+	COMMAND ${QT5_DIR}/bin/winrtrunner --device 0 --remove --wait 0 --profile appx ${CMAKE_BINARY_DIR}/install_todopile/bin/todopile.exe
 )
 
 add_custom_target (unregister_todopile

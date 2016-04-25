@@ -7,22 +7,22 @@
   IgnorableNamespaces="uap mp mobile">
   
   <Identity
-    Name="c4d67a36-7a30-4115-818e-41fc7bd688b6"
-    ProcessorArchitecture="x64"
+    Name="65bbcb5a-97cb-405c-a63b-481a76e03779"
+    ProcessorArchitecture="x86"
     Publisher="CN=Node Graph Software"
     Version="1.0.0.0" />
     
-  <mp:PhoneIdentity PhoneProductId="c4d67a36-7a30-4115-818e-41fc7bd688b6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="65bbcb5a-97cb-405c-a63b-481a76e03779" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     
   <Properties>
-    <DisplayName>to do pile</DisplayName>
-    <PublisherDisplayName>to do pile</PublisherDisplayName>
+    <DisplayName>test qml</DisplayName>
+    <PublisherDisplayName>test qml</PublisherDisplayName>
     <Logo>assets/logo_store.png</Logo>
   </Properties>
   
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.10240.0" MaxVersionTested="10.0.10586.0" />
-    <PackageDependency Name="Microsoft.VCLibs.140.00.Debug" MinVersion="14.0.0.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+    <PackageDependency Name="Microsoft.VCLibs.140.00" MinVersion="14.0.0.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
   </Dependencies>
   
   <Resources>
@@ -31,8 +31,8 @@
   
   <Applications>
     <Application Id="App"
-      Executable="todopile.exe"
-      EntryPoint="todopile.App">
+      Executable="testqml.exe"
+      EntryPoint="testqml.App">
       <uap:VisualElements
         DisplayName="minibrowser"
         Description="Default package description"

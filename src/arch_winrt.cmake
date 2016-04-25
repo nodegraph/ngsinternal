@@ -1,10 +1,5 @@
 
-# For the winrt case we handle both x86 and x64 configurations.
-if (${CMAKE_GENERATOR} STREQUAL "Visual Studio 14 2015 Win64")
-	set(winrt_x64 TRUE)
-else ()
-	set(winrt_x64 FALSE)
-endif ()
+message("ARCH_BITS for winrt is: ${ARCH_BITS}")
 
 # ---------------------------------------------------------
 # Qt Directories.
@@ -52,7 +47,7 @@ link_directories("${QT5_DIR}/bin")
 
 if (winrt_x64)
 	link_directories("${FREETYPE_DIR}/lib/win64")
-	link_directories("${FREETYPE_GL_DIR}/lib/win32")
+	link_directories("${FREETYPE_GL_DIR}/lib/win64")
 else ()
 	link_directories("${FREETYPE_DIR}/lib/win32")
 	link_directories("${FREETYPE_GL_DIR}/lib/win32")

@@ -7,12 +7,12 @@
   IgnorableNamespaces="uap mp mobile">
   
   <Identity
-    Name="c4d67a36-7a30-4115-818e-41fc7bd688b6"
-    ProcessorArchitecture="x64"
+    Name="8a8c8577-80fe-4e23-9f3e-e6d2fde4e262"
+    ProcessorArchitecture="x86"
     Publisher="CN=Node Graph Software"
     Version="1.0.0.0" />
     
-  <mp:PhoneIdentity PhoneProductId="c4d67a36-7a30-4115-818e-41fc7bd688b6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="8a8c8577-80fe-4e23-9f3e-e6d2fde4e262" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     
   <Properties>
     <DisplayName>to do pile</DisplayName>
@@ -22,7 +22,7 @@
   
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.10240.0" MaxVersionTested="10.0.10586.0" />
-    <PackageDependency Name="Microsoft.VCLibs.140.00.Debug" MinVersion="14.0.0.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+    <PackageDependency Name="Microsoft.VCLibs.140.00" MinVersion="14.0.0.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
   </Dependencies>
   
   <Resources>
