@@ -2,7 +2,7 @@
 
 # --------------------------------------------------------------------
 # These are the main env variables that need to be configured.
-# The other variables below depend on where use installed other tools
+# The other variables below depend on where you installed other tools
 # like eclipse, ninja etc.
 
 # setup android variables
@@ -13,8 +13,10 @@ export ANDROID_TOOLCHAIN_ROOT=/d/installs/android/android_toolchain
 # setup the software locations
 
 # SRC_ROOT points to the location where you checked out the repos,
-# like ngsinternal
-export SRC_ROOT=/d/src
+# like ngsinternal. This file is expected to be in that repo.
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+export SRC_ROOT=`readlink -f ${SCRIPT_DIR}/../../../..`
+#echo "SRC_ROOT is: ${SRC_ROOT}"
 
 # PLATFORM_ROOT points to the location where you install applications
 # on your system, like eclipse. You can search for uses of
