@@ -2,6 +2,7 @@
 # secure project variables.
 # ANDROID_DEVICE_ID 
 # PASSWORD
+
 .windows_debug: &windows_debug_tmpt
   script:
     - echo "NGS WINDOWS DEBUG"
