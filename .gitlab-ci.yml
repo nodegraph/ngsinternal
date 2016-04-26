@@ -3,6 +3,11 @@
 # ANDROID_DEVICE_ID 
 # PASSWORD
 
+# Disable caching by instructing to cache a bogus file.
+cache:
+  paths:
+  - non_existent_dir/dummy.txt
+
 .windows_debug: &windows_debug_tmpt
   script:
     - echo "NGS WINDOWS DEBUG"
