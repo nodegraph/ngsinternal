@@ -12,7 +12,7 @@ import QtWebView 1.1
 import SceneGraphRendering 1.0
 
 ApplicationWindow {
-    title: qsTr("todopile")
+    title: qsTr("octoplier")
     width: 640
     height: 480
     visible: true

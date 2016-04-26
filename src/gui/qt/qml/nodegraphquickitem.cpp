@@ -57,8 +57,8 @@ const int NodeGraphQuickItem::kLongPressTimeThreshold = 400; // in milli seconds
 const float NodeGraphQuickItem::kLongPressDistanceThreshold = 30; // in object space.
 const int NodeGraphQuickItem::kDoublePressTimeThreshold = 300; // max time between release events for a double tap/click.
 
-const QString NodeGraphQuickItem::kLinkableFile = "com.todopile.app.nodegraph.lkb";
-const QString NodeGraphQuickItem::kLinkableDir = "com.todopile.app";
+const QString NodeGraphQuickItem::kLinkableFile = "com.octoplier.app.nodegraph.lkb";
+const QString NodeGraphQuickItem::kLinkableDir = "com.octoplier.app";
 
 const int NodeGraphQuickItem::kMinimumIdleLength = 1000; // 1 second in milli seconds.
 
@@ -547,14 +547,14 @@ QString NodeGraphQuickItem::get_linkable_file() {
     QDir().mkpath(home_dir);
   }
 
-  // Make sure the todopile dir exists.
+  // Make sure the octoplier dir exists.
   QString linkable_dir = home_dir + "/" + kLinkableDir;
   QFileInfo info(linkable_dir);
   if (!info.exists()) {
     QDir().mkpath(linkable_dir);
   }
 
-  // Return the todopile file.
+  // Return the octoplier file.
   return linkable_dir + "/" + kLinkableFile;
 }
 
@@ -588,7 +588,7 @@ void NodeGraphQuickItem::save() {
 //    _last_save_raw = ss.str();
 //  }
 //
-//  // Open the todopile file.
+//  // Open the octoplier file.
 //  QString linkable_file = get_linkable_file();
 //  QFile file(linkable_file);
 //  file.open(QIODevice::ReadWrite);
@@ -606,7 +606,7 @@ void NodeGraphQuickItem::load() {
 //  if (!info.exists()) {
 //    // Prodedurally create the default node graph.
 //    restore_default_node_graph();
-//    // This will create the todopile file.
+//    // This will create the octoplier file.
 //    //save();
 //    return;
 //  }
