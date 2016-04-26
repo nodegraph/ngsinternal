@@ -159,7 +159,7 @@ windows_debug_tag:
         - tags
     artifacts:
         paths:
-            - ngs_windows_debug/desktop.zip
+            - windows_debug/install/
 windows_release:
     <<: *windows_release_tmpt
     except:
@@ -170,7 +170,7 @@ windows_release_tag:
         - tags
     artifacts:
         paths:
-            - ngs_windows_release/desktop.zip
+            - windows_release/install
 # ------------------------------------
 winrt_debug:
     <<: *winrt_debug_tmpt
@@ -182,7 +182,7 @@ winrt_debug_tag:
         - tags
     artifacts:
         paths:
-            - ngs_winrt_debug/install_todopile/todopile.appx
+            - winrt_debug/install_todopile/todopile.appx
 winrt_release:
     <<: *winrt_release_tmpt
     except:
@@ -193,7 +193,7 @@ winrt_release_tag:
         - tags
     artifacts:
         paths:
-            - ngs_winrt_release/install_todopile/todopile.appx
+            - winrt_release/install_todopile/todopile.appx
 # ------------------------------------
 winrt_x86_debug:
     <<: *winrt_x86_debug_tmpt
@@ -205,7 +205,7 @@ winrt_x86_debug_tag:
         - tags
     artifacts:
         paths:
-            - ngs_winrt_x86_debug/install_todopile/todopile.appx
+            - winrt_x86_debug/install_todopile/todopile.appx
 winrt_x86_release:
     <<: *winrt_x86_release_tmpt
     except:
@@ -216,7 +216,7 @@ winrt_x86_release_tag:
         - tags
     artifacts:
         paths:
-            - ngs_winrt_x86_release/install_todopile/todopile.appx
+            - winrt_x86_release/install_todopile/todopile.appx
 # ------------------------------------
 android_debug:
     <<: *android_debug_tmpt
@@ -228,7 +228,7 @@ android_debug_tag:
         - tags
     artifacts:
         paths:
-            - ngs_android_debug/install_todopile/bin/QtApp-debug.apk
+            - android_debug/install_todopile/bin/QtApp-debug.apk
 android_release:
     <<: *android_release_tmpt
     except:
@@ -239,6 +239,6 @@ android_release_tag:
         - tags
     artifacts:
         paths:
-            - ngs_android_release/install_todopile/bin/QtApp-release-signed.apk
+            - android_release/install_todopile/bin/QtApp-release-signed.apk
 # ------------------------------------
 
