@@ -4,7 +4,7 @@ message("ARCH_BITS for winrt is: ${ARCH_BITS}")
 # ---------------------------------------------------------
 # Qt Directories.
 # --------------------------------------------------------
-if (winrt_x64)
+if (${ARCH_BITS} STREQUAL "x64")
 	set(QT5_DIR "D:/installs/winrt/Qt5.6.0/5.6/winrt_x64_msvc2015")
 else()
 	set(QT5_DIR "D:/installs/winrt/Qt5.6.0/5.6/winrt_x86_msvc2015")
@@ -45,7 +45,7 @@ include_directories("${QT5_DIR}/include/QtANGLE")
 link_directories("${QT5_DIR}/lib")
 link_directories("${QT5_DIR}/bin")
 
-if (winrt_x64)
+if (${ARCH_BITS} STREQUAL "x64")
 	link_directories("${FREETYPE_DIR}/lib/win64")
 	link_directories("${FREETYPE_GL_DIR}/lib/win64")
 else ()
