@@ -110,8 +110,17 @@ INSTALL(FILES
 #		COMPONENT thirdparty
 #		CONFIGURATIONS Release)
 
+# ------------------------------------------------------------------
+# Simple Packaging
+# ------------------------------------------------------------------
+add_custom_command(
+    OUTPUT pack_desktop_cmd
+    COMMAND ${CMAKE_COMMAND} -E tar "cfv" "${CMAKE_BINARY_DIR}/desktop.zip" --format=zip ${CMAKE_BINARY_DIR}/install
+    )
 
-
+add_custom_target (pack_desktop
+   DEPENDS pack_desktop_cmd
+)
 
 # ------------------------------------------------------------------
 # Desktop Packaging

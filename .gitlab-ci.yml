@@ -2,41 +2,43 @@
 # secure project variables.
 # ANDROID_DEVICE_ID 
 # PASSWORD
-ngs_windows_debug:
+.windows_debug: &windows_debug_tmpt
   script:
     - echo "NGS WINDOWS DEBUG"
     - export ARCH=ARCH_WINDOWS
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
-    - rm -fr ngs_windows_debug
-    - mkdir ngs_windows_debug
-    - cd ngs_windows_debug
+    - rm -fr windows_debug
+    - mkdir windows_debug
+    - cd windows_debug
     - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug ../src
     - cmake --build . --target install
+    - cmake --build . --target pack_desktop 
   tags:
     - ngsrunner
-ngs_windows_release:
+.windows_release: &windows_release_tmpt
   script:
     - echo "NGS WINDOW RELEASE"
     - export ARCH=ARCH_WINDOWS
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
-    - rm -fr ngs_windows_release
-    - mkdir ngs_windows_release
-    - cd ngs_windows_release
+    - rm -fr windows_release
+    - mkdir windows_release
+    - cd windows_release
     - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release ../src
     - cmake --build . --target install
+    - cmake --build . --target pack_desktop 
   tags:
     - ngsrunner
-ngs_winrt_debug:
+.winrt_debug: &winrt_debug_tmpt
   script:
     - echo "NGS WINRT DEBUG"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
-    - rm -fr ngs_winrt_debug
-    - mkdir ngs_winrt_debug
-    - cd ngs_winrt_debug
+    - rm -fr winrt_debug
+    - mkdir winrt_debug
+    - cd winrt_debug
     - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
     - cmake --build . --target install_todopile
@@ -49,15 +51,15 @@ ngs_winrt_debug:
     #- cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
-ngs_winrt_release:
+.winrt_release: &winrt_release_tmpt
   script:
     - echo "NGS WINRT RELEASE"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
-    - rm -fr ngs_winrt_release
-    - mkdir ngs_winrt_release
-    - cd ngs_winrt_release
+    - rm -fr winrt_release
+    - mkdir winrt_release
+    - cd winrt_release
     - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
     - cmake --build . --target install_todopile
@@ -70,15 +72,15 @@ ngs_winrt_release:
     #- cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
-ngs_winrt_x86_debug:
+.winrt_x86_debug: &winrt_x86_debug_tmpt
   script:
     - echo "NGS WINRT X86 DEBUG"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x86
     - source ./src/scripts/msys2/setup_env.sh
-    - rm -fr ngs_winrt_x86_debug
-    - mkdir ngs_winrt_x86_debug
-    - cd ngs_winrt_x86_debug
+    - rm -fr winrt_x86_debug
+    - mkdir winrt_x86_debug
+    - cd winrt_x86_debug
     - cmake -G "Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
     - cmake --build . --target install_todopile
@@ -91,15 +93,15 @@ ngs_winrt_x86_debug:
     #- cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
-ngs_winrt_x86_release:
+.winrt_x86_release: &winrt_x86_release_tmpt
   script:
     - echo "NGS WINRT X86 RELEASE"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x86
     - source ./src/scripts/msys2/setup_env.sh
-    - rm -fr ngs_winrt_x86_release
-    - mkdir ngs_winrt_x86_release
-    - cd ngs_winrt_x86_release
+    - rm -fr winrt_x86_release
+    - mkdir winrt_x86_release
+    - cd winrt_x86_release
     - cmake -G "Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
     - cmake --build . --target install_todopile
@@ -112,15 +114,15 @@ ngs_winrt_x86_release:
     #- cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
-ngs_android_debug:
+.android_debug: &android_debug_tmpt
   script:
     - echo "NGS ANDROID DEBUG"
     - export ARCH=ARCH_ANDROID
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
-    - rm -fr ngs_android_debug
-    - mkdir ngs_android_debug
-    - cd ngs_android_debug
+    - rm -fr android_debug
+    - mkdir android_debug
+    - cd android_debug
     - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_android.cmake ../src
     - ninja install
     - ninja install_todopile
@@ -129,15 +131,15 @@ ngs_android_debug:
     - ninja run_testqml
   tags:
     - ngsrunner
-ngs_android_release:
+.android_release: &android_release_tmpt
   script:
     - echo "NGS ANDROID RELEASE"
     - export ARCH=ARCH_ANDROID
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
-    - rm -fr ngs_android_release
-    - mkdir ngs_android_release
-    - cd ngs_android_release
+    - rm -fr android_release
+    - mkdir android_release
+    - cd android_release
     - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_android.cmake ../src
     - ninja install
     - ninja install_todopile
@@ -146,4 +148,97 @@ ngs_android_release:
     - ninja run_testqml
   tags:
     - ngsrunner
+# ------------------------------------
+windows_debug:
+    <<: *windows_debug_tmpt
+    except:
+        - tags
+windows_debug_tag:
+    <<: *windows_debug_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ngs_windows_debug/desktop.zip
+windows_release:
+    <<: *windows_release_tmpt
+    except:
+        - tags
+windows_release_tag:
+    <<: *windows_release_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ngs_windows_release/desktop.zip
+# ------------------------------------
+winrt_debug:
+    <<: *winrt_debug_tmpt
+    except:
+        - tags
+winrt_debug_tag:
+    <<: *winrt_debug_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ngs_winrt_debug/install_todopile/todopile.appx
+winrt_release:
+    <<: *winrt_release_tmpt
+    except:
+        - tags
+winrt_release_tag:
+    <<: *winrt_release_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ngs_winrt_release/install_todopile/todopile.appx
+# ------------------------------------
+winrt_x86_debug:
+    <<: *winrt_x86_debug_tmpt
+    except:
+        - tags
+winrt_x86_debug_tag:
+    <<: *winrt_x86_debug_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ngs_winrt_x86_debug/install_todopile/todopile.appx
+winrt_x86_release:
+    <<: *winrt_x86_release_tmpt
+    except:
+        - tags
+winrt_x86_release_tag:
+    <<: *winrt_x86_release_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ngs_winrt_x86_release/install_todopile/todopile.appx
+# ------------------------------------
+android_debug:
+    <<: *android_debug_tmpt
+    except:
+        - tags
+android_debug_tag:
+    <<: *android_debug_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ngs_android_debug/install_todopile/bin/QtApp-debug.apk
+android_release:
+    <<: *android_release_tmpt
+    except:
+        - tags
+android_release_tag:
+    <<: *android_release_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ngs_android_release/install_todopile/bin/QtApp-release-signed.apk
+# ------------------------------------
 
