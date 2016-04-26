@@ -18,7 +18,7 @@ import octoplier.config 1.0
 ApplicationWindow {
 
     id: app_window
-    title: qsTr("to do pile")
+    title: qsTr("octoplier")
     width: (Qt.platform.os == "android") ? Screen.width : 640
     height: (Qt.platform.os == "android") ? Screen.height : 480
     visible: true

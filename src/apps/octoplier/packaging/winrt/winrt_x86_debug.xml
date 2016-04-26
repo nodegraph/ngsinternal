@@ -15,8 +15,8 @@
   <mp:PhoneIdentity PhoneProductId="3c4c1d05-5336-42c5-9970-b6c9d7ef86f5" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     
   <Properties>
-    <DisplayName>to do pile</DisplayName>
-    <PublisherDisplayName>to do pile</PublisherDisplayName>
+    <DisplayName>octoplier</DisplayName>
+    <PublisherDisplayName>octoplier</PublisherDisplayName>
     <Logo>assets/logo_store.png</Logo>
   </Properties>
   

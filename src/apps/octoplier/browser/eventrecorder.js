@@ -6,36 +6,36 @@ try {
 
     // Catch any uncaught exceptions at the top level window.
     window.onerror = function (errorMsg, url, lineNumber) {
-        TODOPILE_IS_AWESOME.g_debugger.log_error('Error caught at Window: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
+        OCTOPLIER_IS_AWESOME.g_debugger.log_error('Error caught at Window: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
     }
 
-    // The TODOPILE namespace.
-    // TODOPILE_IS_AWESOME is assumed to be unique in the browser for all
+    // The OCTOPLIER namespace.
+    // OCTOPLIER_IS_AWESOME is assumed to be unique in the browser for all
     // possible web pages we may visit. Of course it's impossible to guarantee
     // this, but we can minimize the chances of conflict by using a long name.
-    var TODOPILE_IS_AWESOME = {};
+    var OCTOPLIER_IS_AWESOME = {};
 
     // --------------------------------------------------------------------
     // Error logging.
     // --------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.Debugger = function() {
+    OCTOPLIER_IS_AWESOME.Debugger = function() {
             this.errors = [];
     }
 
-    TODOPILE_IS_AWESOME.Debugger.prototype = new Object();
+    OCTOPLIER_IS_AWESOME.Debugger.prototype = new Object();
 
-    TODOPILE_IS_AWESOME.Debugger.prototype.get_errors = function() {
+    OCTOPLIER_IS_AWESOME.Debugger.prototype.get_errors = function() {
         var temp = this.errors;
         this.errors = [];
         return temp;
     }
 
-    TODOPILE_IS_AWESOME.Debugger.prototype.log_error = function(message) {
+    OCTOPLIER_IS_AWESOME.Debugger.prototype.log_error = function(message) {
         this.errors.push(message);
     }
 
-    TODOPILE_IS_AWESOME.Debugger.prototype.log_exception = function(e) {
+    OCTOPLIER_IS_AWESOME.Debugger.prototype.log_exception = function(e) {
         this.log_error("exeption: " + e.message + "\nstacktrace: " + e.stack);
     }
 
@@ -45,7 +45,7 @@ try {
 
     // Retrieves the contents of a url.
     // The url can be a qrc resource file.
-    TODOPILE_IS_AWESOME.get_url_contents = function(url,urlContentsCallback) {
+    OCTOPLIER_IS_AWESOME.get_url_contents = function(url,urlContentsCallback) {
         var request = new XMLHttpRequest();
         request.open('GET', url);
         request.onreadystatechange = function(event) {
@@ -57,25 +57,25 @@ try {
     },
 
     // Retrieves the contents of a url and runs it in a web view.
-    TODOPILE_IS_AWESOME.eval_java_script = function(web_view,url,evalResultCallback) {
+    OCTOPLIER_IS_AWESOME.eval_java_script = function(web_view,url,evalResultCallback) {
         this.get_url_contents(url, function(urlContents){web_view.runJavaScript(urlContents, evalResultCallback);});
     },
 
     // --------------------------------------------------------------------
     // Get favicons.
     // --------------------------------------------------------------------
-//    TODOPILE_IS_AWESOME.get_favicon = function(contentsCallback){
+//    OCTOPLIER_IS_AWESOME.get_favicon = function(contentsCallback){
 //        try {
 //            queryURL = "http://www.google.com/s2/favicons?domain="+window.location.href;
-//            TODOPILE_IS_AWESOME.g_debugger.log_error("url: "+window.location.href);
-//            TODOPILE_IS_AWESOME.get_url_contents(queryURL, contentsCallback);
+//            OCTOPLIER_IS_AWESOME.g_debugger.log_error("url: "+window.location.href);
+//            OCTOPLIER_IS_AWESOME.get_url_contents(queryURL, contentsCallback);
 //        } catch (e) {
-//            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+//            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
 //            return "booya";
 //        }
 //    },
 
-    TODOPILE_IS_AWESOME.get_favicon = function(){
+    OCTOPLIER_IS_AWESOME.get_favicon = function(){
         var favicon = undefined;
         var nodeList = document.getElementsByTagName("link");
         for (var i = 0; i < nodeList.length; i++)
@@ -95,7 +95,7 @@ try {
     // Stringification.
     // --------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.help_dump_object = function(obj, visited, prefix, depth, maxDepth) {
+    OCTOPLIER_IS_AWESOME.help_dump_object = function(obj, visited, prefix, depth, maxDepth) {
         // Check for cycles.
         if (visited.indexOf(obj) != -1) {
             return "CYCLE_DETECTED;"
@@ -130,7 +130,7 @@ try {
                     dump += propValue + ";\n";
                 }
             } catch(e) {
-                TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+                OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
             }
         }
 
@@ -139,7 +139,7 @@ try {
         return dump;
     },
 
-    TODOPILE_IS_AWESOME.dump_object = function(obj,maxDepth) {
+    OCTOPLIER_IS_AWESOME.dump_object = function(obj,maxDepth) {
         var visited = [];
         var depth = 0;
         return this.help_dump_object(obj,visited, "", depth, maxDepth);
@@ -148,7 +148,7 @@ try {
     // --------------------------------------------------------------------
     // Object Comparisons.
     // --------------------------------------------------------------------
-    TODOPILE_IS_AWESOME.has_same_contents = function(obj1, obj2) {
+    OCTOPLIER_IS_AWESOME.has_same_contents = function(obj1, obj2) {
         try {
             if (obj1 === null){
                 if (obj2 === null){
@@ -190,7 +190,7 @@ try {
             }
             return true;
         } catch (e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     },
 
@@ -198,7 +198,7 @@ try {
     // Dom Element Utilities.
     // --------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.get_css_path = function(el) {
+    OCTOPLIER_IS_AWESOME.get_css_path = function(el) {
         if (!(el instanceof Element))
             return;
         var path = [];
@@ -227,7 +227,7 @@ try {
     // The Browser Action class. (Used for actions like forward, back and reload.)
     // ---------------------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.BrowserAction = function(type) {
+    OCTOPLIER_IS_AWESOME.BrowserAction = function(type) {
         // Create a new instance of our base.
         // Note because we declared our prototype here, any methods needs to be created
         // in this function as well.
@@ -239,7 +239,7 @@ try {
     // The Event Info class.
     // ---------------------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.EventInfo = function(event)  {
+    OCTOPLIER_IS_AWESOME.EventInfo = function(event)  {
         try {
             // Create a new instance of our base.
             // Note because we declared our prototype here, any methods needs to be created
@@ -247,7 +247,7 @@ try {
             this.__proto__ = new Object();
 
             this.type = event.type;
-            this.target_selector = TODOPILE_IS_AWESOME.get_css_path(event.target);
+            this.target_selector = OCTOPLIER_IS_AWESOME.get_css_path(event.target);
             this.value = event.target.value; // Note not all elements will have a value.
 
             // Create a sub object to hold initialization info.
@@ -258,7 +258,7 @@ try {
             this.event_init.cancelable = event.cancelable;
 
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
@@ -266,18 +266,18 @@ try {
     // The UIEvent Info class.
     // ---------------------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.UIEventInfo = function(event) {
+    OCTOPLIER_IS_AWESOME.UIEventInfo = function(event) {
         try {
             // Create a new instance of our base.
             // Note because we declared our prototype here, any methods needs to be created
             // in this function as well.
-            this.__proto__ = new TODOPILE_IS_AWESOME.EventInfo(event);
+            this.__proto__ = new OCTOPLIER_IS_AWESOME.EventInfo(event);
 
             // UIEvent initialization info.
             this.event_init.detail = event.detail;
             this.event_init.view = null;// event.view; //null;
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
@@ -285,12 +285,12 @@ try {
     // The MouseEvent Info class.
     // ---------------------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.MouseEventInfo = function (event) {
+    OCTOPLIER_IS_AWESOME.MouseEventInfo = function (event) {
         try {
             // Create a new instance of our base.
             // Note because we declared our prototype here, any methods needs to be created
             // in this function as well.
-            this.__proto__ = new TODOPILE_IS_AWESOME.UIEventInfo(event);
+            this.__proto__ = new OCTOPLIER_IS_AWESOME.UIEventInfo(event);
 
             // MouseEvent initialization info.
             this.event_init.screenX = event.screenX;
@@ -306,7 +306,7 @@ try {
             this.event_init.buttons = event.buttons;
 
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
@@ -314,12 +314,12 @@ try {
     // The KeyboardEvent Info class.
     // ---------------------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.KeyboardEventInfo = function(event) {
+    OCTOPLIER_IS_AWESOME.KeyboardEventInfo = function(event) {
         try {
             // Create a new instance of our base.
             // Note because we declared our prototype here, any methods needs to be created
             // in this function as well.
-            this.__proto__ = new TODOPILE_IS_AWESOME.UIEventInfo(event);
+            this.__proto__ = new OCTOPLIER_IS_AWESOME.UIEventInfo(event);
 
             // KeyboardEvent initialization info.
             this.event_init.key = event.key; //String.fromCharCode(event.keyCode);
@@ -336,7 +336,7 @@ try {
             this.event_init.which = event.which;
 
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
@@ -344,18 +344,18 @@ try {
     // The InputEvent Info class.
     // ---------------------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.InputEventInfo = function(event) {
+    OCTOPLIER_IS_AWESOME.InputEventInfo = function(event) {
         try {
             // Create a new instance of our base.
             // Note because we declared our prototype here, any methods needs to be created
             // in this function as well.
-            this.__proto__ = new TODOPILE_IS_AWESOME.UIEventInfo(event);
+            this.__proto__ = new OCTOPLIER_IS_AWESOME.UIEventInfo(event);
 
             // InputEvent initialization info.
             this.event_init.isComposing = event.isComposing;
 
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
@@ -364,51 +364,51 @@ try {
     // The Event Recorder class.
     // ---------------------------------------------------------------------------------
 
-    TODOPILE_IS_AWESOME.EventRecorder = function() {
+    OCTOPLIER_IS_AWESOME.EventRecorder = function() {
         try {
             this.window = null;
             this.blocked_infos = [];
             this.unblocked_infos = [];
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
-    TODOPILE_IS_AWESOME.EventRecorder.prototype = new Object();
+    OCTOPLIER_IS_AWESOME.EventRecorder.prototype = new Object();
 
-    TODOPILE_IS_AWESOME.EventRecorder.prototype.block = function(info) {
+    OCTOPLIER_IS_AWESOME.EventRecorder.prototype.block = function(info) {
         try {
             this.blocked_infos.push(info);
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
-    TODOPILE_IS_AWESOME.EventRecorder.prototype.get_num_blocked = function() {
+    OCTOPLIER_IS_AWESOME.EventRecorder.prototype.get_num_blocked = function() {
         try {
             return this.blocked_infos.length;
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
-    TODOPILE_IS_AWESOME.EventRecorder.prototype.get_num_unblocked = function() {
+    OCTOPLIER_IS_AWESOME.EventRecorder.prototype.get_num_unblocked = function() {
         try {
             return this.unblocked_infos.length;
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
-    TODOPILE_IS_AWESOME.EventRecorder.prototype.unblock = function() {
+    OCTOPLIER_IS_AWESOME.EventRecorder.prototype.unblock = function() {
         try {
             if (this.blocked_infos.length == 0) {
                 return null;
             }
 
-//            var debugQueues = " num blocked: " + TODOPILE_IS_AWESOME.g_event_recorder.get_num_blocked()
-//                            + " num unblocked: " + TODOPILE_IS_AWESOME.g_event_recorder.get_num_unblocked();
-//            TODOPILE_IS_AWESOME.g_debugger.log_error(debugQueues);
+//            var debugQueues = " num blocked: " + OCTOPLIER_IS_AWESOME.g_event_recorder.get_num_blocked()
+//                            + " num unblocked: " + OCTOPLIER_IS_AWESOME.g_event_recorder.get_num_unblocked();
+//            OCTOPLIER_IS_AWESOME.g_debugger.log_error(debugQueues);
 
             var info = this.blocked_infos[0];
             switch(info.type) {
@@ -425,13 +425,13 @@ try {
                 this.blocked_infos.shift();
                 this.unblocked_infos.push(info);
 
-                //TODOPILE_IS_AWESOME.g_debugger.log_exception("dispatching event to selector: " + info.target_selector + "with type: " + event.type);
+                //OCTOPLIER_IS_AWESOME.g_debugger.log_exception("dispatching event to selector: " + info.target_selector + "with type: " + event.type);
 
                 var element = document.querySelector(info.target_selector);
                 if (element) {
                     element.dispatchEvent(event);
                 } else {
-                    TODOPILE_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
+                    OCTOPLIER_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
                 }
                 break;
             }
@@ -480,7 +480,7 @@ try {
                 if (element) {
                     element.dispatchEvent(event);
                 } else {
-                    TODOPILE_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
+                    OCTOPLIER_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
                 }
                 break;
             }
@@ -488,13 +488,13 @@ try {
                 this.blocked_infos.shift();
                 // no need to pass the info to the unblocked queue as we're going to handle it here.
 
-                TODOPILE_IS_AWESOME.g_debugger.log_error("setting tiny change text on: " + info.target_selector + " with value: " + info.value);
+                OCTOPLIER_IS_AWESOME.g_debugger.log_error("setting tiny change text on: " + info.target_selector + " with value: " + info.value);
 
                 var element = document.querySelector(info.target_selector);
                 if (element) {
                     element.value = info.value;
                 } else {
-                    TODOPILE_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
+                    OCTOPLIER_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
                 }
                 break;
             }
@@ -502,13 +502,13 @@ try {
                 this.blocked_infos.shift();
                 // no need to pass the info to the unblocked queue as we're going to handle it here.
 
-                TODOPILE_IS_AWESOME.g_debugger.log_error("setting change text on: " + info.target_selector + " with value: " + info.value);
+                OCTOPLIER_IS_AWESOME.g_debugger.log_error("setting change text on: " + info.target_selector + " with value: " + info.value);
 
                 var element = document.querySelector(info.target_selector);
                 if (element) {
                     element.value = info.value;
                 } else {
-                    TODOPILE_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
+                    OCTOPLIER_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
                 }
                 break;
             }
@@ -516,13 +516,13 @@ try {
                 this.blocked_infos.shift();
                 // no need to pass the info to the unblocked queue as we're going to handle it here.
 
-                TODOPILE_IS_AWESOME.g_debugger.log_error("setting change text on: " + info.target_selector + " with value: " + info.value);
+                OCTOPLIER_IS_AWESOME.g_debugger.log_error("setting change text on: " + info.target_selector + " with value: " + info.value);
 
                 var element = document.querySelector(info.target_selector);
                 if (element) {
                     element.submit();
                 } else {
-                    TODOPILE_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
+                    OCTOPLIER_IS_AWESOME.g_debugger.log_exception("could not find element to dispatch to");
                 }
                 break;
             }
@@ -530,11 +530,11 @@ try {
 
             return info;
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
-    TODOPILE_IS_AWESOME.EventRecorder.prototype.extract_info = function(event) {
+    OCTOPLIER_IS_AWESOME.EventRecorder.prototype.extract_info = function(event) {
         try {
             // Event types that we're interested in.
             // The properties are taken from the DOM Level 3 Events Specification.
@@ -548,35 +548,35 @@ try {
             case "mousemove":
             case "mouseout":
             case "change": {
-                return new TODOPILE_IS_AWESOME.MouseEventInfo(event);
+                return new OCTOPLIER_IS_AWESOME.MouseEventInfo(event);
             }
             // KeyboardEvent types: keydown, keypress, keyup
             case "keydown":
             case "keypress":
             case "keyup": {
-                return new TODOPILE_IS_AWESOME.KeyboardEventInfo(event);
+                return new OCTOPLIER_IS_AWESOME.KeyboardEventInfo(event);
             }
             // "input" type
             case "input": {
-                return new TODOPILE_IS_AWESOME.InputEventInfo(event);
+                return new OCTOPLIER_IS_AWESOME.InputEventInfo(event);
             }
             // "change" type
             case "change": {
-                return new TODOPILE_IS_AWESOME.EventInfo(event);
+                return new OCTOPLIER_IS_AWESOME.EventInfo(event);
             }
             // "submmit" type
             case "submit": {
-                return new TODOPILE_IS_AWESOME.EventInfo(event);
+                return new OCTOPLIER_IS_AWESOME.EventInfo(event);
             }
 
             }
             return null;
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
-    TODOPILE_IS_AWESOME.EventRecorder.prototype.handle_event = function(event) {
+    OCTOPLIER_IS_AWESOME.EventRecorder.prototype.handle_event = function(event) {
         try {
 
             // If the event is one of our unblocked events we let it
@@ -595,22 +595,22 @@ try {
 
             // Extract the info from the event.
             var info = this.extract_info(event);
-            //TODOPILE_IS_AWESOME.g_debugger.log_exception("handle_event: " + dump_object(info,2));
+            //OCTOPLIER_IS_AWESOME.g_debugger.log_exception("handle_event: " + dump_object(info,2));
 
             // The info will be null if it's an event we're not interested in tracking.
             if (info === null) {
                 // We block this event by stopping its propagation.
                 event.preventDefault();
                 event.stopImmediatePropagation();
-                TODOPILE_IS_AWESOME.g_debugger.log_exception("letting event through because it's null");
+                OCTOPLIER_IS_AWESOME.g_debugger.log_exception("letting event through because it's null");
                 return true;
             }
 
             // Check if this info matches one of our unblocked ones.
             for (var i = 0; i < this.get_num_unblocked(); i++) {
-                if (TODOPILE_IS_AWESOME.has_same_contents(this.unblocked_infos[i],info)) {
+                if (OCTOPLIER_IS_AWESOME.has_same_contents(this.unblocked_infos[i],info)) {
                     this.unblocked_infos.splice(0, i+1);
-                    //TODOPILE_IS_AWESOME.g_debugger.log_exception("letting event through with this many blocked"+this.get_num_unblocked());
+                    //OCTOPLIER_IS_AWESOME.g_debugger.log_exception("letting event through with this many blocked"+this.get_num_unblocked());
                     // Return if this event is permitted to flow.
                     return true;
                 }
@@ -623,15 +623,15 @@ try {
             event.preventDefault();
             event.stopImmediatePropagation();
 
-            //TODOPILE_IS_AWESOME.g_debugger.log_exception("blocking this event:" + dump_object(info.event_init,1));
+            //OCTOPLIER_IS_AWESOME.g_debugger.log_exception("blocking this event:" + dump_object(info.event_init,1));
 
             return false;
         } catch(e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
-    TODOPILE_IS_AWESOME.EventRecorder.prototype.connect_to_window = function() {
+    OCTOPLIER_IS_AWESOME.EventRecorder.prototype.connect_to_window = function() {
         try {
             if (typeof(window) === "undefined") {
                 return;
@@ -680,20 +680,20 @@ try {
 
             }
         } catch (e) {
-            TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+            OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
         }
     }
 
     // Create our singleton event recorder if it doesn't exist.
-    if (typeof(TODOPILE_IS_AWESOME.g_event_recorder) === "undefined") {
-        TODOPILE_IS_AWESOME.g_event_recorder = new TODOPILE_IS_AWESOME.EventRecorder();
+    if (typeof(OCTOPLIER_IS_AWESOME.g_event_recorder) === "undefined") {
+        OCTOPLIER_IS_AWESOME.g_event_recorder = new OCTOPLIER_IS_AWESOME.EventRecorder();
     }
 
     // Create our singleton debugger if it doesn't exist.
-    if (typeof(TODOPILE_IS_AWESOME.g_debugger) === "undefined") {
-        TODOPILE_IS_AWESOME.g_debugger = new TODOPILE_IS_AWESOME.Debugger();
+    if (typeof(OCTOPLIER_IS_AWESOME.g_debugger) === "undefined") {
+        OCTOPLIER_IS_AWESOME.g_debugger = new OCTOPLIER_IS_AWESOME.Debugger();
     }
 
 } catch (e) {
-    TODOPILE_IS_AWESOME.g_debugger.log_exception(e);
+    OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
 }

@@ -103,7 +103,7 @@ Item{
     function vibrate() {
         // On android we vibrate.
         if (Qt.platform.os == "android") {
-            //java_bridge.notify("ToDoPile Message!","Node graph has yield some data!")
+            //java_bridge.notify("Octoplier Message!","Node graph has yield some data!")
             java_bridge.vibrate(10)
         }
     }

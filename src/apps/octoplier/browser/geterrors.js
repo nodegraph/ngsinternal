@@ -2,16 +2,16 @@
 
 var result="";
 
-if (typeof(TODOPILE_IS_AWESOME) === "undefined") {
+if (typeof(OCTOPLIER_IS_AWESOME) === "undefined") {
     result = "";
 } else {
     try {
         // Grab any debug messages.
-        result = TODOPILE_IS_AWESOME.g_debugger.get_errors();
+        result = OCTOPLIER_IS_AWESOME.g_debugger.get_errors();
         result = JSON.stringify(result);
-        result += "favicon:" + TODOPILE_IS_AWESOME.get_favicon();
+        result += "favicon:" + OCTOPLIER_IS_AWESOME.get_favicon();
     } catch(e) {
-        TODOPILE_IS_AWESOME.log_exception(e);
+        OCTOPLIER_IS_AWESOME.log_exception(e);
     }
 }
 

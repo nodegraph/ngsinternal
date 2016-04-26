@@ -111,7 +111,7 @@ Rectangle {
         //                    } else if (loadRequest.status == WebView.LoadSucceededStatus) {
         //                        message_dialog.show(qsTr("page load has succeeded"))
         //                        // Inject the user blockedActions recorder.
-        //                        web_view.runJavaScript(Scripts.TODOPILE_BROWSER_SCRIPTS.USER_ACTIONS_RECORDER_SCRIPT);
+        //                        web_view.runJavaScript(Scripts.OCTOPLIER_BROWSER_SCRIPTS.USER_ACTIONS_RECORDER_SCRIPT);
         //                    } else if (loadRequest.status == WebView.LoadFailedStatus) {
         //                        message_dialog.show(qsTr("page load has failed"))
         //                    } else {
