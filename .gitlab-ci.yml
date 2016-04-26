@@ -41,13 +41,13 @@
     - cd winrt_debug
     - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
-    - cmake --build . --target install_todopile
+    - cmake --build . --target install_octoplier
     - cmake --build . --target install_testqml
-    - cmake --build . --target pack_todopile
+    - cmake --build . --target pack_octoplier
     - cmake --build . --target pack_testqml
-    #- cmake --build . --target run_todopile
+    #- cmake --build . --target run_octoplier
     #- cmake --build . --target run_testqml
-    #- cmake --build . --target unregister_todopile
+    #- cmake --build . --target unregister_octoplier
     #- cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
@@ -62,13 +62,13 @@
     - cd winrt_release
     - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
-    - cmake --build . --target install_todopile
+    - cmake --build . --target install_octoplier
     - cmake --build . --target install_testqml
-    - cmake --build . --target pack_todopile
+    - cmake --build . --target pack_octoplier
     - cmake --build . --target pack_testqml
-    #- cmake --build . --target run_todopile
+    #- cmake --build . --target run_octoplier
     #- cmake --build . --target run_testqml
-    #- cmake --build . --target unregister_todopile
+    #- cmake --build . --target unregister_octoplier
     #- cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
@@ -83,13 +83,13 @@
     - cd winrt_x86_debug
     - cmake -G "Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
-    - cmake --build . --target install_todopile
+    - cmake --build . --target install_octoplier
     - cmake --build . --target install_testqml
-    - cmake --build . --target pack_todopile
+    - cmake --build . --target pack_octoplier
     - cmake --build . --target pack_testqml
-    #- cmake --build . --target run_todopile
+    #- cmake --build . --target run_octoplier
     #- cmake --build . --target run_testqml
-    #- cmake --build . --target unregister_todopile
+    #- cmake --build . --target unregister_octoplier
     #- cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
@@ -104,13 +104,13 @@
     - cd winrt_x86_release
     - cmake -G "Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_winrt.cmake ../src
     - cmake --build . --target install
-    - cmake --build . --target install_todopile
+    - cmake --build . --target install_octoplier
     - cmake --build . --target install_testqml
-    - cmake --build . --target pack_todopile
+    - cmake --build . --target pack_octoplier
     - cmake --build . --target pack_testqml
-    #- cmake --build . --target run_todopile
+    #- cmake --build . --target run_octoplier
     #- cmake --build . --target run_testqml
-    #- cmake --build . --target unregister_todopile
+    #- cmake --build . --target unregister_octoplier
     #- cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
@@ -125,9 +125,9 @@
     - cd android_debug
     - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_android.cmake ../src
     - ninja install
-    - ninja install_todopile
+    - ninja install_octoplier
     - ninja install_testqml
-    - ninja run_todopile
+    - ninja run_octoplier
     - ninja run_testqml
   tags:
     - ngsrunner
@@ -142,9 +142,9 @@
     - cd android_release
     - cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_android.cmake ../src
     - ninja install
-    - ninja install_todopile
+    - ninja install_octoplier
     - ninja install_testqml
-    - ninja run_todopile
+    - ninja run_octoplier
     - ninja run_testqml
   tags:
     - ngsrunner
@@ -182,7 +182,7 @@ winrt_debug_tag:
         - tags
     artifacts:
         paths:
-            - winrt_debug/install_todopile/todopile.appx
+            - winrt_debug/install_octoplier/octoplier.appx
 winrt_release:
     <<: *winrt_release_tmpt
     except:
@@ -193,7 +193,7 @@ winrt_release_tag:
         - tags
     artifacts:
         paths:
-            - winrt_release/install_todopile/todopile.appx
+            - winrt_release/install_octoplier/octoplier.appx
 # ------------------------------------
 winrt_x86_debug:
     <<: *winrt_x86_debug_tmpt
@@ -205,7 +205,7 @@ winrt_x86_debug_tag:
         - tags
     artifacts:
         paths:
-            - winrt_x86_debug/install_todopile/todopile.appx
+            - winrt_x86_debug/install_octoplier/octoplier.appx
 winrt_x86_release:
     <<: *winrt_x86_release_tmpt
     except:
@@ -216,7 +216,7 @@ winrt_x86_release_tag:
         - tags
     artifacts:
         paths:
-            - winrt_x86_release/install_todopile/todopile.appx
+            - winrt_x86_release/install_octoplier/octoplier.appx
 # ------------------------------------
 android_debug:
     <<: *android_debug_tmpt
@@ -228,7 +228,7 @@ android_debug_tag:
         - tags
     artifacts:
         paths:
-            - android_debug/install_todopile/bin/QtApp-debug.apk
+            - android_debug/install_octoplier/bin/QtApp-debug.apk
 android_release:
     <<: *android_release_tmpt
     except:
@@ -239,6 +239,6 @@ android_release_tag:
         - tags
     artifacts:
         paths:
-            - android_release/install_todopile/bin/QtApp-release-signed.apk
+            - android_release/install_octoplier/bin/QtApp-release-signed.apk
 # ------------------------------------
 
