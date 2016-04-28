@@ -6,6 +6,7 @@
 add_custom_command (
   #DEPENDS install
   OUTPUT install_desktop_cmd
+  COMMAND echo dummy spot reserving
   #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
   #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/octoplier.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/octoplier/qml 
   #COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
