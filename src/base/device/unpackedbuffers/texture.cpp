@@ -78,15 +78,17 @@ Texture::Texture(unsigned int tex_unit, PackedTexture& packed_texture,
 		bool normalized_access) :
 		_chunk_geometry(packed_texture.get_chunk_geometry()), // copy the chunk slice
 		_dirty(true) {
+  gpu();
+
 	// Set default unpacked formats.
 	_unpacked_format.set_unpacked_defaults(_chunk_geometry.get_element_id(), _chunk_geometry.get_num_channels(),
 			_chunk_geometry.get_dim_interpretation(), normalized_access);
-
+	gpu();
 	// Packed Format.
 	PackedFormat packed_format;
 	packed_format.set_packed_defaults(_chunk_geometry.get_element_id(), _chunk_geometry.get_num_channels(),
 			normalized_access);
-
+	gpu();
 	// Create and load the texture.
 	create_name();
 	set_defaults();

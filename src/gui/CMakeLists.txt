@@ -1,9 +1,2 @@
-if (${ARCH} MATCHES "ARCH_WINDOWS")
-    add_subdirectory(qt)
-elseif (${ARCH} MATCHES "ARCH_WINRT")
-    add_subdirectory(qt)
-elseif (${ARCH} MATCHES "ARCH_ANDROID")
-    add_subdirectory(qt)
-elseif (${ARCH} MATCHES "ARCH_LINUX")
-    add_subdirectory(qt)
-endif ()
+
+add_subdirectory(qt)

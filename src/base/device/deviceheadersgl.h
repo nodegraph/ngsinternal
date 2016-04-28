@@ -7,7 +7,15 @@
 #endif
 
 
+#if (ARCH == ARCH_MACOS)
+    //#include <GL/glew.h>
+    #include <OpenGL/gl3.h>
+    #include <OpenGL/gl3ext.h>
+    //#include <base/glewhelper/glewhelper.h>
+    #define glClearDepthf glClearDepth
+#endif
 
+//Basically if Angle is being used, we use these.
 #if (ARCH == ARCH_WINRT) || (ARCH == ARCH_WINDOWS)
 #define GL_GLEXT_PROTOTYPES
   #if GLES_MAJOR_VERSION==2

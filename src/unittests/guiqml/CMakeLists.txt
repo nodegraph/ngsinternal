@@ -2,9 +2,16 @@ qt5_add_resources(resources resources.qrc)
 
 if (${ARCH} STREQUAL ARCH_LINUX)
 	add_executable(testguiqml main.cpp ${resources})
+	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	target_link_libraries(testguiqml 
 		debug Qt5WebEngined optimized Qt5WebEngine 
 		debug Qt5Qmld optimized Qt5Qml)
+elseif (${ARCH} STREQUAL ARCH_MACOS)
+	add_executable(testguiqml main.cpp ${resources})
+	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
+	target_link_libraries(testguiqml 
+		Qt5::WebEngine 
+		Qt5::Qml)
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_executable(testguiqml main.cpp ${resources})
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
@@ -22,12 +29,6 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
 endif ()
 
 target_link_libraries(testguiqml ngs_memoryallocator ngs_gui_qt ngs_entities)
-
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    
-else()
-
-endif()
 
 # Install.
 INSTALL(TARGETS testguiqml

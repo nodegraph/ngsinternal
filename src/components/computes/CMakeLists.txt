@@ -32,11 +32,14 @@ generate_export_header(ngs_computes EXPORT_MACRO_NAME COMPUTES_EXPORT EXPORT_FIL
 target_link_libraries(ngs_computes ngs_memoryallocator ngs_objectmodel ngs_memoryallocator)
 
 if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(ngs_computes gnustl_shared Qt5Core)
+    target_link_libraries(ngs_computes gnustl_shared 
+	Qt5Core)
 else()
 	target_link_libraries(ngs_computes 
-		debug Qt5Cored optimized Qt5Core)
+		Qt5::Core)
 endif()
+
+qt5_use_modules(ngs_computes Core)
 
 # Install.
 INSTALL(TARGETS ngs_computes

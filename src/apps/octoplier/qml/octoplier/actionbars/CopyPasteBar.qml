@@ -49,7 +49,7 @@ Rectangle {
         }
 
         tooltip_text: "Back"
-        image_url: "qrc://../icons/ic_arrow_back_white_48dp.png"
+        image_url: "qrc:///icons/ic_arrow_back_white_48dp.png"
 
         onClicked: {
             text_editor.deselect()
@@ -66,7 +66,7 @@ Rectangle {
         }
         
         tooltip_text: "Select all"
-        image_url: "qrc://../icons/ic_select_all_white_48dp.png"
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
         
         onClicked: {
             text_editor.selectAll()
@@ -82,7 +82,7 @@ Rectangle {
         }
         
         tooltip_text: "Cut"
-        image_url: "qrc://../icons/ic_content_cut_white_48dp.png"
+        image_url: "qrc:///icons/ic_content_cut_white_48dp.png"
 
         onClicked: {
             text_editor.cut()
@@ -98,7 +98,7 @@ Rectangle {
         }
     
         tooltip_text: "Copy"
-        image_url: "qrc://../icons/ic_content_copy_white_48dp.png"
+        image_url: "qrc:///icons/ic_content_copy_white_48dp.png"
     
         onClicked: {
             text_editor.copy()
@@ -114,7 +114,7 @@ Rectangle {
         }
     
         tooltip_text: "Paste"
-        image_url: "qrc://../icons/ic_content_paste_white_48dp.png"
+        image_url: "qrc:///icons/ic_content_paste_white_48dp.png"
     
         onClicked: {
             text_editor.paste()

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <QtCore/QDebug>
 #include <QtQml/QQmlApplicationEngine>
+#include <QtQuick/QQuickView>
 #include <QtWidgets/QSplashScreen>
 
 #include <components/computes/computeglobals.h>
@@ -25,8 +26,11 @@ void CppBridge::post_init() {
   qDebug() << "RRRRRRRRRRRunning cpp bridge post init !!!!!!!!\n";
 
   // Find the NodePoolAPI.
-  QList<QObject *> root_objects = g_qml_app_engine->rootObjects();
-  g_node_pool_api = root_objects[0]->findChild<QObject*>(QStringLiteral("node_pool_api_object"));
+//  QList<QObject *> root_objects = g_qml_app_engine->rootObjects();
+//  g_node_pool_api = root_objects[0]->findChild<QObject*>(QStringLiteral("node_pool_api_object"));
+
+  g_node_pool_api = g_quick_view->rootObject()->findChild<QObject*>(QStringLiteral("node_pool_api_object"));
+
   if (g_node_pool_api) {
     qDebug() << "found node pool api";
   } else {

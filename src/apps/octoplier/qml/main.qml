@@ -15,12 +15,14 @@ import octoplier.tools 1.0
 import octoplier.apis 1.0
 import octoplier.config 1.0
 
-ApplicationWindow {
+Rectangle {
 
     id: app_window
-    title: qsTr("octoplier")
-    width: (Qt.platform.os == "android") ? Screen.width : 640
-    height: (Qt.platform.os == "android") ? Screen.height : 480
+    //title: qsTr("octoplier")
+
+    anchors.fill: parent
+    //width: (Qt.platform.os == "android") ? Screen.width : 640
+    //height: (Qt.platform.os == "android") ? Screen.height : 480
     visible: true
     color: "blue"
 
@@ -69,11 +71,11 @@ ApplicationWindow {
 //        num_components: app_window.num_components
 //    }
 
-    style: ApplicationWindowStyle {
-        background: Rectangle {
-            color: "#FF03A9F4"
-        }
-    }
+//    style: ApplicationWindowStyle {
+//        background: Rectangle {
+//            color: "#FF03A9F4"
+//        }
+//    }
 
     // Global App Objects.
     AppUnits {
@@ -422,22 +424,22 @@ ApplicationWindow {
     // Intercept the android back button.
     // We allow this behavior on desktops also for testing.
     // On desktops trying to close the app_window will just pop off the browser stack, until it's empty.
-    onClosing: {
-        //if (Qt.platform.os == "android") {
-        if (web_browser_page.visible == true) {
-            if (web_browser_page.web_view_alias.canGoBack) {
-                web_browser_page.web_view_alias.goBack()
-                close.accepted = false
-            }
-        }
-        //}
+//    onClosing: {
+//        //if (Qt.platform.os == "android") {
+//        if (web_browser_page.visible == true) {
+//            if (web_browser_page.web_view_alias.canGoBack) {
+//                web_browser_page.web_view_alias.goBack()
+//                close.accepted = false
+//            }
+//        }
+//        //}
 
-        // Cleanup the node pool if we're closing down.
-        if (close.accepted) {
-            node_graph_page.node_graph.shutdown()
-            console.log("Shutting down qml app.")
-        }
-    }
+//        // Cleanup the node pool if we're closing down.
+//        if (close.accepted) {
+//            node_graph_page.node_graph.shutdown()
+//            console.log("Shutting down qml app.")
+//        }
+//    }
 
     // --------------------------------------------
     // Styles

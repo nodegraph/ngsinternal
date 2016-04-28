@@ -28,9 +28,9 @@ target_link_libraries(
     ngs_interactions
     ngs_memoryallocator)
 
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(ngs_entities gnustl_shared)
-endif()
+#if(${ARCH} STREQUAL ARCH_ANDROID)
+#    target_link_libraries(ngs_entities gnustl_shared)
+#endif()
 
 # Install.
 INSTALL(TARGETS ngs_entities

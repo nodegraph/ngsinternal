@@ -3,7 +3,7 @@
 #if GLES_MAJOR_VERSION >= 3
 
 #include <base/device/transforms/glmhelper.h>
-#include <components/resources/dataheaders/es3_shaders.h>
+#include <components/resources/dataheaders/unittestshaders.h>
 
 
 namespace ngs {

@@ -59,6 +59,18 @@ if (${ARCH} STREQUAL ARCH_LINUX)
 		Qt5Cored 
 		Qt5Quickd 
 		) 
+elseif (${ARCH} STREQUAL ARCH_MACOS)
+	target_link_libraries(ngs_gui_qt 
+		ngs_objectmodel 
+		ngs_device
+		ngs_interactions
+		ngs_glewhelper
+	    Qt5::Widgets
+    	Qt5::OpenGL
+    	Qt5::Gui
+    	Qt5::Core
+    	Qt5::Quick
+		) 
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
     target_link_libraries(ngs_gui_qt 
     	ngs_objectmodel

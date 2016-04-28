@@ -12,7 +12,7 @@
 #include <gui/qt/qml/texturedisplaynode.h>
 
 // QtQuick.
-#include <QtQuick/QQuickWindow>
+#include <QtQuick/QQuickView>
 #include <QtQuick/QSGTexture>
 
 // System.
@@ -43,10 +43,10 @@ void FBOWorker::initialize_gl() {
   // The size doesn't need to be accurate.
   QSize size(1500, 1500);
 
-  qDebug() << "FBOwORKER:: g_quick_window is set to: " << g_quick_window << "\n";
+  qDebug() << "FBOwORKER:: g_quick_view is set to: " << g_quick_view << "\n";
 
-  _display_texture_wrapper = g_quick_window->createTextureFromId(_renderer->get_display_texture_name(), size);
-  _render_texture_wrapper = g_quick_window->createTextureFromId(_renderer->get_render_texture_name(), size);
+  _display_texture_wrapper = g_quick_view->createTextureFromId(_renderer->get_display_texture_name(), size);
+  _render_texture_wrapper = g_quick_view->createTextureFromId(_renderer->get_render_texture_name(), size);
 
   _display_texture_wrapper->setHorizontalWrapMode(QSGTexture::Repeat);
   _display_texture_wrapper->setVerticalWrapMode(QSGTexture::Repeat);

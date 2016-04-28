@@ -1,8 +1,8 @@
-#if (ARCH != ARCH_ANDROID) && (GLES_USE_ANGLE != 1)
+#if (ARCH != ARCH_ANDROID) && (GLES_USE_ANGLE != 1) && (ARCH != ARCH_MACOS)
 
 #include <base/memoryallocator/taggednew.h>
 #include <base/device/deviceheadersgl.h>
-//#include <base/device/devicedebug.h>
+#include <base/device/devicedebug.h>
 
 
 #include <thread>
@@ -13,9 +13,11 @@
 #if (ARCH == ARCH_WINDOWS) 
 __declspec(thread) GLEWContext* g_thread_local_glew_context = NULL;
 #elif (ARCH == ARCH_LINUX) || (ARCH == ARCH_ANDROID)
-thread_local GLEWContext* g_thread_local_glew_context
+thread_local GLEWContext* g_thread_local_glew_context;
 #else
-  // No glew on winrt.
+  // This is a hack which works because we only ever have one glew context.
+  // On macos clang doesn't yet support thead locals.
+  GLEWContext* g_thread_local_glew_context;
 #endif
 
 #if (ARCH != ARCH_WINRT)
@@ -45,6 +47,11 @@ void start_glew() {
   if (err != GLEW_OK) {
     std::cerr << "Error initializing glew: " << glewGetErrorString(err) << "\n";
     exit(1);
+  }
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    std::cerr << "GL error after glew init: " << error << "\n";
   }
 
   std::cerr << "done initializing glew\n";

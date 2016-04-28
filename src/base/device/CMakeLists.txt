@@ -188,7 +188,15 @@ elseif (${ARCH} MATCHES "ARCH_WINRT")
 		debug libGLESv2d optimized libGLESv2
 		)
 elseif (${ARCH} MATCHES "ARCH_LINUX")
-    target_link_libraries(ngs_device freetype-gl GLEWmx GL GLU)
+    target_link_libraries(ngs_device
+	freetype
+	freetype-gl
+	GLEWmx GL GLU)
+elseif (${ARCH} MATCHES "ARCH_MACOS")
+    target_link_libraries(ngs_device 
+	freetype
+	freetype-gl
+	GLEWmx GL GLU)
 elseif (${ARCH} MATCHES "ARCH_ANDROID")
 	target_link_libraries(ngs_device log)
 	if (gles_major_version EQUAL 2) 
@@ -203,8 +211,7 @@ elseif (${ARCH} MATCHES "ARCH_ANDROID")
 			debug GLESv3 optimized GLESv3
 			)
 	endif ()
-	
-endif (${ARCH} MATCHES "ARCH_WINDOWS")
+endif ()
 
 # Install.
 INSTALL(TARGETS ngs_device

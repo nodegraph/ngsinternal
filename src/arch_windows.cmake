@@ -1,4 +1,19 @@
 # ---------------------------------------------------------
+# OpenGL Settings.
+# --------------------------------------------------------
+
+# GLES_MAJOR_VERSION AND GLES_MINOR_VERSION define which version of opengl es to use.
+# When the GLES_MAJOR_VERSION is greater than 100, it is assumed to mean desktop opengl 4.0 and greater.
+
+set(gles_major_version 2)
+set(gles_minor_version 0)
+set(gles_use_angle 1)
+
+add_definitions("-DGLES_MAJOR_VERSION=${gles_major_version}")
+add_definitions("-DGLES_MINOR_VERSION=${gles_minor_version}")
+add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
+
+# ---------------------------------------------------------
 # Qt Directory.
 # ---------------------------------------------------------
 

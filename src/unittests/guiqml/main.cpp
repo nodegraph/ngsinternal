@@ -57,6 +57,24 @@ int main(int argc, char **argv)
     Entity* root_group = new_ff GroupNodeEntity(g_app_root, "root");
     root_group->create_internals();
 
+    QSurfaceFormat format;
+#if ARCH == ARCH_MACOS
+  format.setVersion(3, 3);
+  format.setProfile(QSurfaceFormat::CoreProfile);
+  format.setSamples(2);
+  format.setDepthBufferSize(24);
+  format.setStencilBufferSize(8);
+  QSurfaceFormat::setDefaultFormat(format);
+
+#else
+#if (GLES_MAJOR_VERSION <= 3)
+  // This sets up the app to use opengl es.
+  QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
+  format.setRenderableType(QSurfaceFormat::OpenGLES);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+#endif
+
     // App the FBOWorker and FBORender components to the app root.
     new_ff FBORenderer(g_app_root);
     new_ff FBOWorker(g_app_root);
@@ -66,13 +84,7 @@ int main(int argc, char **argv)
     g_app_root->update_deps_and_hierarchy();
 
     QApplication app(argc, argv);
-#if (GLES_MAJOR_VERSION <= 3)
-  // This sets up the app to use opengl es.
-  QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
-  QSurfaceFormat format;
-  format.setRenderableType(QSurfaceFormat::OpenGLES);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
+
 #ifdef QT_WEBVIEW_WEBENGINE_BACKEND
     QtWebEngine::initialize();
 #else
@@ -83,17 +95,27 @@ int main(int argc, char **argv)
     //QGuiApplication app(argc, argv);
     qmlRegisterType<NodeGraphQuickItem>("SceneGraphRendering", 1, 0, "NodeGraphQuickItem");
 
-    // Create our qml engine.
-    QQmlApplicationEngine engine;
-    QQmlContext *context = engine.rootContext();
+//    // Create our qml engine.
+//    QQmlApplicationEngine engine;
+//    QQmlContext *context = engine.rootContext();
+//
+//    // Load our qml doc.
+//    engine.load(QUrl(QStringLiteral("qrc:/deviceitem.qml")));
+//
+//    // Get the top level qml objects.
+//    QList<QObject *> root_objects = engine.rootObjects();
+//    qDebug() << "number of root objects is: " << root_objects.size();
+//    QQuickWindow* window = static_cast<QQuickWindow *> (engine.rootObjects().first());
 
-    // Load our qml doc.
-    engine.load(QUrl(QStringLiteral("qrc:/deviceitem.qml")));
+    QQuickView view;
+    g_quick_view = &view;
 
-    // Get the top level qml objects.
-    QList<QObject *> root_objects = engine.rootObjects();
-    qDebug() << "number of root objects is: " << root_objects.size();
-    //static_cast<QQuickWindow *> (engine.rootObjects().first());
+    view.setWidth(640);
+    view.setHeight(480);
+    view.setResizeMode(QQuickView::SizeRootObjectToView);
+    view.setFormat(format);
+    view.setSource(QUrl(QStringLiteral("qrc:/deviceitem.qml")));
+    view.show();
 
     execReturn = app.exec();
   }

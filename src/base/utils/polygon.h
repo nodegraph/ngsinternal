@@ -8,6 +8,7 @@ namespace ngs {
 
 class UTILS_EXPORT Polygon {
 public:
+  Polygon(){}
   // The vertices should contain the points on the border of the polygon.
   // They should be in counter-clockwise order and should only contain one loop.
   // The last/first point on the loop should not be repeated.

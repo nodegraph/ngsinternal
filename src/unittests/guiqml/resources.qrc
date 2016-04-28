@@ -2,6 +2,7 @@
 <qresource>
 
     <file>deviceitem.qml</file>
+    <file alias="icons/ic_whatshot_white_48dp.png">../../external/icons/ic_whatshot_white_48dp.png</file>
     
 </qresource>
 </RCC>

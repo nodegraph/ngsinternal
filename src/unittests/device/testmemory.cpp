@@ -45,8 +45,6 @@ RenderBuffer* TestMemory::create_depth_rbo(int width, int height) {
 
 #if GLES_MAJOR_VERSION >= 3
 void TestMemory::rundown_memory_with_depth_textures() {
-  int total_mem = Device::get_total_memory_kb();
-  int available_mem(0);
   int count(0);
   std::vector<FrameBuffer*> fbos;
   std::vector<Texture*> depth_textures;
@@ -55,8 +53,7 @@ void TestMemory::rundown_memory_with_depth_textures() {
   // Allocate almost all of the gpu memory.
   do {
     ++count;
-    available_mem = Device::get_available_memory_kb();
-    std::cerr<<"DepthTexture: #"<<count<<" Total mem: "<<total_mem<<"  Available mem: "<<available_mem<<"\n";
+    std::cerr<<"DepthTexture: #"<<count<<"\n";
 
     // Create our depth texture.
     Texture* depth_texture = create_depth_stencil_texture(0, _width, _height);
@@ -96,22 +93,19 @@ void TestMemory::rundown_memory_with_depth_textures() {
     // Unbind the fbo.
     fbo->unbind();
 
-  } while (available_mem > _min_gpu_mem);
+  } while (count < 100);
 
   // Cleanup
   for (size_t i = 0; i < textures.size(); i++) {
     delete_ff(textures[i]);
     delete_ff(depth_textures[i]);
     delete_ff(fbos[i]);
-
-	available_mem = Device::get_available_memory_kb();
-	std::cerr << "DepthTexture #" << i << " now available: " << available_mem << "\n";
+    std::cerr << "DepthTexture #" << i << "\n";
   }
 }
 #endif
 
 void TestMemory::rundown_memory_with_depth_rbos() {
-  int available_mem(0);
   int count(0);
   std::vector<FrameBuffer*> fbos;
   std::vector<RenderBuffer*> rbos;
@@ -179,7 +173,6 @@ void TestMemory::rundown_memory_with_depth_rbos() {
 }
 
 void TestMemory::rundown_memory_with_textures() {
-  int available_mem(0);
   int count(0);
   std::vector<Texture*> textures;
 

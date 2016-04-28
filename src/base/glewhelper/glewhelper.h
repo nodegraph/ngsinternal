@@ -1,7 +1,7 @@
 #pragma once
 
 
-#if !( (ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1))
+#if !( (ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
 
 #include <base/glewhelper/glewhelper_export.h>
 

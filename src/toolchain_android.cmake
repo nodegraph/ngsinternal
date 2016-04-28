@@ -25,10 +25,6 @@ set(ANDROID_TOOLCHAIN_BIN ${ANDROID_TOOLCHAIN_ROOT}/bin)
 set(ANDROID_TOOLCHAIN_OTHER ${ANDROID_TOOLCHAIN_ROOT}/arm-linux-androideabi/bin)
 set(ANDROID_SYSTEM_ROOT ${ANDROID_TOOLCHAIN_ROOT}/sysroot)
 
-set(gles_major_version 3 CACHE STRING "gles major version")
-set(gles_minor_version 0 CACHE STRING "gles minor version")
-set(gles_use_angle 0 CACHE STRING "whether to use angle .. 1 means yes, 0 means no")
-
 # debugging
 #message("android sdk root is: ${ANDROID_SDK_ROOT}")
 #message("android ndk root is: ${ANDROID_NDK_ROOT}")

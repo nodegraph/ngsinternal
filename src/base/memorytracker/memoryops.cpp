@@ -1,5 +1,6 @@
 #include <base/memorytracker/memoryops.h>
 #include <base/memorytracker/memorytracker.h>
+#include <cstdlib>
 
 namespace ngs {
 

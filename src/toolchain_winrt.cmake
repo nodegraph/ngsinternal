@@ -35,7 +35,3 @@ set(CMAKE_SYSTEM_VERSION "10.0" CACHE STRING "system version")
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Debug Release RelWithDebInfo MinSizeRel.")
 set(ARCH "ARCH_WINRT" CACHE STRING "ARCH_LINUX, ARCH_WINDOWS, ARCH_ANDROID")
 
-set(gles_major_version 2 CACHE STRING "gles major version")
-set(gles_minor_version 0 CACHE STRING "gles minor version")
-set(gles_use_angle 1 CACHE STRING "whether to use angle .. 1 means yes, 0 means no")
-

@@ -16,6 +16,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStaticAssertFailure>
 #include <QtQml/QtQml>
+#include <QtQml/QQmlEngine>
 //#include <QtWidgets/QSplashScreen>
 //#include <QtCore/QTimer>
 
@@ -78,12 +79,19 @@ int main(int argc, char *argv[]) {
     // Create our application. Note that QGUIApplication has no dependency on widgets.
     QApplication app(argc, argv);
 
+    QSurfaceFormat format;
+#if ARCH == ARCH_MACOS
+  format.setVersion(3, 3);
+  format.setProfile(QSurfaceFormat::CoreProfile);
+  QSurfaceFormat::setDefaultFormat(format);
+  format.setSamples(2);
+#else
 #if (GLES_MAJOR_VERSION <= 3)
   // This sets up the app to use opengl es.
   QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
-  QSurfaceFormat format;
   format.setRenderableType(QSurfaceFormat::OpenGLES);
   QSurfaceFormat::setDefaultFormat(format);
+#endif
 #endif
 
 #ifdef QT_WEBVIEW_WEBENGINE_BACKEND
@@ -165,15 +173,30 @@ int main(int argc, char *argv[]) {
     file.close();
 
     // Create our qml engine.
-    QQmlApplicationEngine engine;
-    g_qml_app_engine = &engine;
-    engine.addImportPath("qrc:/qml");
-    engine.addImportPath("qrc:/");
+//    QQmlApplicationEngine engine;
+//    g_qml_app_engine = &engine;
+//    engine.addImportPath("qrc:/qml");
+//    engine.addImportPath("qrc:/");
+//
+//    QQmlContext *context = engine.rootContext();
 
-    QQmlContext *context = engine.rootContext();
+    QQuickView view;
+    g_quick_view = &view;
+
+    view.setWidth(640);
+    view.setHeight(480);
+    view.setResizeMode(QQuickView::SizeRootObjectToView);
+    view.setFormat(format);
+    g_qml_engine = view.engine();
+    g_qml_engine->addImportPath("qrc:/qml");
+    g_qml_engine->addImportPath("qrc:/");
+
+    view.setSource(QUrl(QStringLiteral("qrc:/deviceitem.qml")));
+    QQmlContext* context = g_qml_engine->rootContext();
+    view.show();
 
     // Create helpers.
-    Utils* utils = new_ff Utils(&engine);
+    Utils* utils = new_ff Utils(g_qml_engine);
     Scripts* scripts = new_ff Scripts();
 
     qDebug() << "physical dots per inch: " << QGuiApplication::primaryScreen()->physicalDotsPerInch() << "\n";
@@ -197,11 +220,11 @@ int main(int argc, char *argv[]) {
     context->setContextProperty(QStringLiteral("cpp_bridge"), cpp_bridge);
 
     // Load our qml doc.
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    view.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     // Get the top level qml objects.
-    QList<QObject *> root_objects = engine.rootObjects();
-    qDebug() << "number of root objects is: " << root_objects.size();
+    //QList<QObject *> root_objects = engine.rootObjects();
+    //qDebug() << "number of root objects is: " << root_objects.size();
 //    QQuickWindow *window = static_cast<QQuickWindow *>(engine.rootObjects().first());
 
     // Set our multisampling settings.

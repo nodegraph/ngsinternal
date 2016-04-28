@@ -233,8 +233,8 @@ void TextPipelineSetup::draw() {
 
   // Since we are drawing in Qt's render thread and need to make sure we restore all gl state.
   // It's better if we don't enable blending for now.
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   // Enable texture unit zero.
   Device::enable_texture_target(0, GL_TEXTURE_2D);

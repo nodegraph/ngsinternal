@@ -49,6 +49,8 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
     target_link_libraries(ngs_utils gnustl_shared)
 elseif (${ARCH} STREQUAL ARCH_LINUX)
 	target_link_libraries(ngs_utils)
+elseif (${ARCH} STREQUAL ARCH_MACOS)
+	target_link_libraries(ngs_utils)
 endif ()
 
 

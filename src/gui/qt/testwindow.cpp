@@ -1,8 +1,11 @@
+
+
+#include <base/device/deviceheadersgl.h>
+#include <base/device/devicedebug.h>
+
 #include <gui/qt/testwindow.h>
 #include <QtCore/QDebug>
 #include <QtGui/QOpenGLFunctions>
-
-#include <base/device/devicedebug.h>
 
 #include <iostream>
 
@@ -13,6 +16,17 @@ namespace ngs {
 TestWindow::TestWindow(QWidget * parent):
     QGLWidget(parent),
     _done(false){
+
+#if ARCH == ARCH_MACOS
+  QGLFormat glFormat;
+  glFormat.setVersion(3, 3);
+  glFormat.setProfile(QGLFormat::CoreProfile);
+  //glFormat.setSampleBuffers(true);
+  QGLFormat::setDefaultFormat(glFormat);
+  //glFormat.setSwapInterval(1);
+  setFormat(glFormat);
+#endif
+
 //  QSurfaceFormat fmt;
 //  fmt.setProfile(QSurfaceFormat::CoreProfile);
 //  fmt.setRenderableType(QSurfaceFormat ::OpenGLES);
@@ -25,8 +39,9 @@ TestWindow::~TestWindow() {
 
 void TestWindow::paintGL() {
   if (_done) {
-    gpu(glClearColor(0, 0, 1, 1));
-    gpu(glClear( GL_COLOR_BUFFER_BIT));
+    //gpu(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    //gpu(glClearColor(0, 0, 1, 1));
+    //gpu(glClear( GL_COLOR_BUFFER_BIT));
     swapBuffers();
     return;
   } else {
@@ -37,17 +52,21 @@ void TestWindow::paintGL() {
   std::cerr << "glGetString: " << glGetString << "\n";
 
   {
-    QOpenGLFunctions gl;
-    gl.initializeOpenGLFunctions();
-
-    const GLubyte * version = gl.glGetString(GL_VERSION);
-    std::cerr << "ccccccccccccccc\n";
-    if (version == 0) {
-      std::cerr << "error getting the gl version string\n";
-    } else {
-      std::cerr << "version: " << version << "\n";
-    }
+    std::cerr << "OpenGL version " << glGetString(GL_VERSION)<< endl;
+    std::cerr << "GLSL version " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
   }
+//  {
+//    QOpenGLFunctions gl;
+//    gl.initializeOpenGLFunctions();
+//
+//    const GLubyte * version = gl.glGetString(GL_VERSION);
+//    std::cerr << "ccccccccccccccc\n";
+//    if (version == 0) {
+//      std::cerr << "error getting the gl version string\n";
+//    } else {
+//      std::cerr << "qt reported gl version: " << version << "\n";
+//    }
+//  }
 
   {
     const GLubyte * version = glGetString(GL_VERSION);

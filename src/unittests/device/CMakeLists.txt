@@ -23,11 +23,11 @@ set(headers
 add_executable(testdevice ${sources} ${headers})
 target_link_libraries(testdevice ngs_memoryallocator ngs_device ngs_resources ngs_gui_qt)
 target_link_libraries(testdevice 
-		debug Qt5Cored optimized Qt5Core
-    	debug Qt5Widgetsd optimized Qt5Widgets
-    	debug Qt5OpenGLd optimized Qt5OpenGL
-    	debug Qt5Guid optimized Qt5Gui
-    	debug Qt5Cored optimized Qt5Core
+		Qt5::Core
+    	Qt5::Widgets
+    	Qt5::OpenGL
+    	Qt5::Gui
+    	Qt5::Core
     	)
 
 # Link libraries.

@@ -1,37 +1,14 @@
 #include "nodegrapheditor.h"
 
-//#include <base/memoryallocator/taggednew.h>
-
-//#include <base/device/program/pipeline.h>
-
 #include <base/device/devicedebug.h>
-//#include <base/device/pipelinesetups/quadpipelinesetup.h>
-//#include <base/device/transforms/glmhelper.h>
 #include <base/device/transforms/keyinfo.h>
 #include <base/device/transforms/mouseinfo.h>
 #include <base/device/transforms/viewparams.h>
 #include <base/device/transforms/wheelinfo.h>
-//#include <base/objectmodel/component.h>
-//#include <base/objectmodel/entity.h>
+#include <base/glewhelper/glewhelper.h>
+
 #include <base/objectmodel/deploader.h>
-//#include <iostream>
 
-//#include <glm/gtc/matrix_transform.hpp>
-//
-//#include <base/utils/simplesaver.h>
-//#include <base/utils/simpleloader.h>
-//#include <components/resources/resources.h>
-
-//// To create a test node graph.
-//#include <components/compshapes/nodeshape.h>
-//
-//
-//#include <base/utils/fileutil.h>
-//#include <base/utils/idgenerator.h>
-//#include <base/utils/path.h>
-//#include <components/compshapes/compshapecollective.h>
-//#include <components/compshapes/nodegraphselection.h>
-//#include <components/computes/compute.h>
 #include <components/interactions/graphbuilder.h>
 #include <components/interactions/shapecanvas.h>
 #include <components/interactions/groupinteraction.h>
@@ -91,8 +68,17 @@ NodeGraphEditor::NodeGraphEditor(Entity* entity, QWidget* parent, const QGLWidge
   get_dep_loader()->register_fixed_dep(_canvas, "");
   get_dep_loader()->register_fixed_dep(_graph_builder, "");
 
+
+#if ARCH == ARCH_MACOS
+  QGLFormat glFormat;
+  glFormat.setVersion(3, 3);
+  glFormat.setProfile(QGLFormat::CoreProfile);
+  QGLFormat::setDefaultFormat(glFormat);
+  setFormat(glFormat);
+#endif
+
 #if GLES_MAJOR_VERSION > 2
-  // Multi sampling not supported on GLES 2.0.
+  // Multi sampling is not supported on GLES 2.0.
   // Enable multi-sampling.
   QGLFormat glf = QGLFormat::defaultFormat();
   glf.setSampleBuffers(true);
@@ -127,7 +113,7 @@ void NodeGraphEditor::initializeGL() {
   // This is main entry point for initialize gl resources in our system.
   std::cerr << "initialize gl called\n";
 
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1))
+#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
   if (glewGetContext()==NULL) {
     std::cerr << "starting glew 2222\n";
     start_glew(); // Initialize glew for the scene graph render thread.
@@ -144,7 +130,7 @@ void NodeGraphEditor::resizeGL(int w, int h) {
 }
 
 void NodeGraphEditor::paintGL() {
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1))
+#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
   if (glewGetContext()==NULL) {
     start_glew(); // Initialize glew for the scene graph render thread.
   }

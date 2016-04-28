@@ -11,10 +11,11 @@ import QtWebView 1.1
 //import QtQuick 2.0
 import SceneGraphRendering 1.0
 
-ApplicationWindow {
-    title: qsTr("octoplier")
-    width: 640
-    height: 480
+Rectangle {
+    anchors.fill: parent
+    //title: qsTr("octoplier")
+    //width: 640
+    //height: 480
     visible: true
 
     Component.onCompleted: {
@@ -67,13 +68,23 @@ ApplicationWindow {
         height: 200
         color: "blue"
 
-        WebView {
-            id: web_view
-            objectName: "web_view_object"
+//        WebView {
+//            id: web_view
+//            objectName: "web_view_object"
 
+//            anchors.fill: parent
+//            url: "http://www.google.com"
+
+//        }
+
+        Image {
+            z: 10
+            source: "qrc:///icons/ic_whatshot_white_48dp.png"
             anchors.fill: parent
-            url: "http://www.google.com"
-
+            //width: parent.height * 1
+            //height: parent.height * 1
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 

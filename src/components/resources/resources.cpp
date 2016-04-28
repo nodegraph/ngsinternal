@@ -3,9 +3,8 @@
 #include <components/resources/dataheaders/vera_ttf.h>
 #include <components/resources/dataheaders/verabd_ttf.h>
 #include <components/resources/dataheaders/dejavusansmono_ttf.h>
-#include <components/resources/dataheaders/es2_shaders.h>
-#include <components/resources/dataheaders/monitor_shaders.h>
-//#include <components/resources/dataheaders/monitor_shaders_gles3.h>
+#include <components/resources/dataheaders/displayshaders_gles2.h>
+#include <components/resources/dataheaders/displayshaders_gles3.h>
 #include <components/resources/textures/distance_map.h>
 
 #include <base/utils/idgenerator.h>
@@ -42,15 +41,23 @@ namespace ngs {
 Resources::Resources(Entity* entity)
     : Component(entity, kIID(), kDID()) {
 
-//#if GLES_MAJOR_VERSION <= 2
-//  _quad_vs = std::string(es2_poly_vert);
-//  _quad_fs = std::string(es2_poly_frag);
-//#else
-  _quad_vs = std::string(monitor_poly_vert);
-  _quad_fs = std::string(monitor_poly_frag);
+#if GLES_MAJOR_VERSION <= 2
+  _quad_vs = std::string(monitor_poly_vert_gles2);
+  _quad_fs = std::string(monitor_poly_frag_gles2);
   _text_vs = std::string(text_vert);
-  _text_fs = std::string(text_frag);
-//#endif
+  _text_fs = std::string(text_frag_gles2);
+#else
+  std::string version;
+#if (ARCH == ARCH_LINUX) || (ARCH == ARCH_MACOS)
+  version = "#version 330\n";
+#else
+  version = "#version 300 es\n";
+#endif
+  _quad_vs = version+std::string(monitor_poly_vert_gles3);
+  _quad_fs = version+std::string(monitor_poly_frag_gles3);
+  _text_vs = version+std::string(text_vert_gles3);
+  _text_fs = version+std::string(text_frag_gles3);
+#endif
 
   //_text_font = std::string((const char*) Vera_ttf, Vera_ttf_len);
   _text_font = std::string((const char*) VeraBd_ttf, VeraBd_ttf_len);

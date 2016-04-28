@@ -30,12 +30,16 @@ set(karch_linux 0)
 set(karch_windows 1)
 set(karch_winrt 2)
 set(karch_android 3)
+set(karch_macos 4)
+set(karch_ios 5)
 
 # Architecture Defines.
 add_definitions("-DARCH_LINUX=${karch_linux}")
 add_definitions("-DARCH_WINDOWS=${karch_windows}")
 add_definitions("-DARCH_WINRT=${karch_winrt}")
 add_definitions("-DARCH_ANDROID=${karch_android}")
+add_definitions("-DARCH_MACOS=${karch_macos}")
+add_definitions("-DARCH_IOS=${karch_ios}")
 
 # Force Qt's scene graph rendering to happen in the main thread.
 # add_definitions("-DQSG_RENDER_LOOP=basic")
@@ -55,22 +59,10 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 	SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "the install prefix" FORCE)
 endif()
 
-# By default ARCH will be set to desktop linux.
-set(ARCH "ARCH_WINDOWS" CACHE STRING "ARCH_LINUX, ARCH_WINDOWS, DESKTOP_NACL, DEKSTOP_PNACL, ARCH_ANDROID")
+# By default the ARCH is set to windows.
+# When using a cmake toolchain file, that file will set the ARCH.
+set(ARCH "ARCH_WINDOWS" CACHE STRING "ARCH_LINUX, ARCH_WINDOWS, ARCH_WINRT, ARCH_ANDROID, ARCH_MACOS, ARCH_IOS")
 message("building for ${ARCH}")
-
-# GLES_MAJOR_VERSION AND GLES_MINOR_VERSION define which version of opengl es to use.
-# When the GLES_MAJOR_VERSION is greater than 100, it is assumed to mean desktop opengl 4.0 and greater.
-
-# By default GLES_MAJOR_VERSION will be set to 2.
-# By default GLES_MINOR_VERSION will be set to 0.
-set(gles_major_version 2 CACHE STRING "gles major version")
-set(gles_minor_version 0 CACHE STRING "gles minor version")
-set(gles_use_angle 1 CACHE STRING "whether to use angle .. 1 means yes, 0 means no")
-
-add_definitions("-DGLES_MAJOR_VERSION=${gles_major_version}")
-add_definitions("-DGLES_MINOR_VERSION=${gles_minor_version}")
-add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/build CACHE PATH "Library output path")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/build CACHE PATH "Executable output path")
@@ -80,7 +72,9 @@ set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/install" CACHE PATH "Choose the 
 
 # Determine what type of build to perform.
 # Note only Debug and Release are supported on Android builds, because we use the android-cmake utility.
-set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Debug Release RelWithDebInfo MinSizeRel.")
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif()
 if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
     add_definitions("-DBUILD_TYPE=${kdebug}")
     set(build_type "debug")
@@ -118,6 +112,12 @@ elseif (${ARCH} STREQUAL ARCH_WINRT)
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
 	add_definitions("-DARCH=${karch_android}")
 	include("./arch_android.cmake")
+elseif (${ARCH} STREQUAL ARCH_MACOS)
+	add_definitions("-DARCH=${karch_macos}")
+	include("./arch_macos.cmake")
+elseif (${ARCH} STREQUAL ARCH_IOS)
+	add_definitions("-DARCH=${karch_ios}")
+	include("./arch_ios.cmake")
 else ()
 	message("error: unknown architecture specified")
 endif ()
@@ -127,6 +127,11 @@ configure_file (
     "${PROJECT_SOURCE_DIR}/NodeGraphVersion.h.in"
     "${PROJECT_BINARY_DIR}/NodeGraphVersion.h"
   )
+  
+
+# Check the chosen gl version.
+message("gl version: ${gles_major_version}.${gles_minor_version}")
+message("use angle: ${gles_use_angle}")
 
 # SubDirectories.
 add_subdirectory(apps)

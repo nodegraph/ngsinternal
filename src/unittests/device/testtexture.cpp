@@ -29,7 +29,9 @@ using namespace ngs;
 TestTexture::TestTexture(ElementID element_id, bool normalized_access) :
 		_element_id(element_id), _normalized_access(normalized_access), _packed_texture(
 				NULL), _texture(NULL), _read_back_packed_texture(NULL) {
+  gpu();
 	create_packed_texture();
+	gpu();
 	create_texture();
 	create_read_back_packed_texture();
 	check_read_back_packed_texture();
@@ -102,6 +104,7 @@ void TestTexture::create_packed_texture() {
 }
 
 void TestTexture::create_texture() {
+  gpu();
 	// Create our texture.
 	_texture = new_ff Texture(0, *_packed_texture, _normalized_access);
 	_texture->unbind(0);

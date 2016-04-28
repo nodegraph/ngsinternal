@@ -6,6 +6,7 @@
 #include <QtWidgets/QStyleOptionProgressBar>
 
 #include <iostream>
+#include <cmath>
 
 namespace ngs {
 

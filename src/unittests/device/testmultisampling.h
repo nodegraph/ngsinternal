@@ -5,7 +5,7 @@
 #include <string>
 
 #include <base/device/transforms/glmhelper.h>
-#include <components/resources/dataheaders/es3_shaders.h>
+#include <components/resources/dataheaders/unittestshaders.h>
 #include <base/device/geometry/quad.h>
 
 

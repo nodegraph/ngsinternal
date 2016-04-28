@@ -1,4 +1,4 @@
-#include <components/resources/dataheaders/es3_shaders.h>
+#include <components/resources/dataheaders/unittestshaders.h>
 
 namespace ngs {
 
@@ -202,8 +202,8 @@ const char* es3_centroid_model_view_project_vert = "#version 330\n"
 "in vec2 tex_coord;\n"
 "out VertexAttributes\n"
 "{\n"
-"    smooth centroid vec2 tex_coord;\n"
-"    smooth centroid vec3 normal;\n"
+"    smooth centroid out vec2 tex_coord;\n"
+"    smooth centroid out vec3 normal;\n"
 
 "} attr_out;\n"
 "void main()\n"
@@ -230,8 +230,8 @@ const char* es3_centroid_multisampling_frag = "#version 330\n"
     "// Inputs\n"
     "in VertexAttributes\n"
     "{\n"
-    "    smooth centroid vec2 tex_coord;\n"
-    "    smooth centroid vec3 normal;\n"
+    "    smooth centroid in vec2 tex_coord;\n"
+    "    smooth centroid in vec3 normal;\n"
     "} attr_in;\n"
     "void main()\n"
     "{\n"

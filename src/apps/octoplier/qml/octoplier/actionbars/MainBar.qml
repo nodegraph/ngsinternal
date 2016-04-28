@@ -80,7 +80,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: node_graph_button.left
         
-        image_url: "qrc://../icons/ic_more_vert_white_48dp.png"
+        image_url: "qrc:///icons/ic_more_vert_white_48dp.png"
         tooltip_text: "More actions"
         
         onClicked: {
@@ -95,7 +95,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: browser_button.left
         
-        image_url: "qrc://../icons/ic_widgets_white_48dp.png"
+        image_url: "qrc:///icons/ic_widgets_white_48dp.png"
         tooltip_text: "Nodes"
         
         onClicked: {
@@ -110,7 +110,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: posts_button.left
         
-        image_url: "qrc://../icons/ic_public_white_48dp.png"
+        image_url: "qrc:///icons/ic_public_white_48dp.png"
         tooltip_text: "Browser"
         
         onClicked: {
@@ -125,7 +125,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: settings_button.left
         
-        image_url: "qrc://../icons/ic_whatshot_white_48dp.png"
+        image_url: "qrc:///icons/ic_whatshot_white_48dp.png"
         tooltip_text: "Posts"
         
         onClicked: {
@@ -140,7 +140,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         
-        image_url: "qrc://../icons/ic_settings_white_48dp.png"
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
             tooltip_text: "Settings"
         
         onClicked: {

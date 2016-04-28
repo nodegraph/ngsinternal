@@ -119,7 +119,7 @@ void test() {
   bootstrap_memory_tracker();
   {
     // Initialize glew.
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1))
+#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
     start_glew();
 #endif
 
@@ -152,7 +152,7 @@ void test() {
 
   }
 
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1))
+#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
   // Finish using glew after all the gl related have been destroyed.
   finish_glew();
 #endif
@@ -165,13 +165,17 @@ int main(int argc, char **argv) {
 
   QApplication app(argc, argv);
 
-#if (GLES_MAJOR_VERSION <= 3)
+#if (ARCH == ARCH_MACOS)
+  // On Mac OS setting the default surface format won't stick.
+  // So you need to set the format in each gui widget which will use opengl.
+#elif (GLES_MAJOR_VERSION <= 3)
   // This sets up the app to use opengl es.
   QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
   QSurfaceFormat format;
   format.setRenderableType(QSurfaceFormat::OpenGLES);
   QSurfaceFormat::setDefaultFormat(format);
 #endif
+
 
   qDebug() << "OpenGL Versions Supported: " << QGLFormat::openGLVersionFlags();
 

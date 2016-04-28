@@ -20,6 +20,17 @@ if (${ARCH} STREQUAL ARCH_LINUX)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(testqml ${sources})
 	target_link_libraries(testqml Qt5Qml Qt5WebEngine Qt5Multimedia Qt5OpenGL)
+elseif (${ARCH} STREQUAL ARCH_MACOS)
+	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
+	add_executable(testqml ${sources})
+	target_link_libraries(testqml 
+		Qt5::Core
+		Qt5::Quick
+		Qt5::Widgets
+		Qt5::Gui
+		Qt5::Qml 
+		Qt5::Network
+		)
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(testqml ${sources})

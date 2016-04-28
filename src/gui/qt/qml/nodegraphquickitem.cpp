@@ -118,9 +118,6 @@ void NodeGraphQuickItem::initialize_fixed_deps() {
   Component::initialize_fixed_deps();
   _entity_instancer = _factory->get_entity_instancer();
 
-  // Set the global variable used by fboworker and fborenderer in initialize_gl.
-  g_quick_window = window();
-
 //  #if ARCH == ARCH_ANDROID
 //      {
 //        QSurfaceFormat format = window()->format();
@@ -144,7 +141,7 @@ void NodeGraphQuickItem::cleanup() {
   g_app_root->uninitialize_gl();
   g_app_root->uninitialize_deps();
 
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1))
+#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
   finish_glew();
 #endif
 }
@@ -176,10 +173,15 @@ void NodeGraphQuickItem::handle_window_changed(QQuickWindow *win) {
 // it in the scenegraph.
 QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*) {
 
+  {
+    std::cerr << "OpenGL version " << glGetString(GL_VERSION)<< endl;
+    std::cerr << "GLSL version " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
+  }
+
   // Since we render in Qt's opengl context we need to make sure
   // that all of the gl state is left the way we found it.
   // This will restore the gl state on destruction.
-  CaptureDeviceState capture_state;
+  //CaptureDeviceState capture_state;
 
   qDebug() << "NodeGraphQuickItem::updatePaintNode called\n";
 
@@ -190,7 +192,7 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
 
     qDebug() << "NodeGraphQuickItem::is initializing\n";
 
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1))
+#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
     if (glewGetContext()==NULL) {
       start_glew(); // Initialize glew for the scene graph render thread.
       gpu();
@@ -200,6 +202,7 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
     g_app_root->initialize_deps();
     g_app_root->update_deps_and_hierarchy();
     g_app_root->initialize_gl();
+
   }
 
   // We can only clean ourself on the rendering thread, due to components

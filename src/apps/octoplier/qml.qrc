@@ -131,17 +131,7 @@
         <file alias="icons/ic_whatshot_white_48dp.png">../../external/icons/ic_whatshot_white_48dp.png</file>
         <file alias="icons/ic_widgets_black_48dp.png">../../external/icons/ic_widgets_black_48dp.png</file>
         <file alias="icons/ic_widgets_white_48dp.png">../../external/icons/ic_widgets_white_48dp.png</file>
-        
-        <!-- logo -->
-        <!--
-        <file alias="logo/mindmap/mind_map-16.png">../../external/logo/mindmap/mind_map-16.png</file>
-        <file alias="logo/mindmap/mind_map-32.png">../../external/logo/mindmap/mind_map-32.png</file>
-        <file alias="logo/mindmap/mind_map-64.png">../../external/logo/mindmap/mind_map-64.png</file>
-        <file alias="logo/mindmap/mind_map-128.png">../../external/logo/mindmap/mind_map-128.png</file>
-        <file alias="logo/mindmap/mind_map-256.png">../../external/logo/mindmap/mind_map-256.png</file>
-        <file alias="logo/mindmap/mind_map-512.png">../../external/logo/mindmap/mind_map-512.png</file>
-        -->
-        
+                
         
     </qresource>
 </RCC>

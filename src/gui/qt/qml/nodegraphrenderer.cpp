@@ -60,7 +60,6 @@ NodeGraphRenderer::~NodeGraphRenderer() {
 void NodeGraphRenderer::initialize_fixed_deps() {
   std::cerr << "NodeGraphRenderer is initializing fixed deps\n";
   Component::initialize_fixed_deps();
-  g_quick_window = window();
 }
 
 void NodeGraphRenderer::build_test_graph() {
@@ -83,7 +82,7 @@ void NodeGraphRenderer::render() {
 //  int test;
 //  std::cin >> test;
   std::cerr << "NodeGraphRenderer::render called\n";
-  if (!g_quick_window) {
+  if (!g_quick_view) {
     std::cerr << "but g quick window was not set\n";
     return;
   }
