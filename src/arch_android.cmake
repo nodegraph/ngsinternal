@@ -42,12 +42,7 @@ endif()
 #set(QT5_DIR "D:/installs/android/Qt5.5.1/5.5/android_armv7")
 set(QT5_DIR "D:/installs/android/Qt5.6.0/5.6/android_armv7")
 
-# Debug Settings.
-if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
-    add_definitions("-DQT_DECLARATIVE_DEBUG")
-    add_definitions("-DQT_QML_DEBUG")
-elseif ("${CMAKE_BUILD_TYPE}" STREQUAL Release)
-endif ()
+
 
 # ---------------------------------------------------------
 # Custom Directories.
@@ -62,9 +57,9 @@ endif ()
 SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 
 # Find qt library.
-set(CMAKE_PREFIX_PATH ${QT5_DIR})
-find_package(Qt5Core)
-find_package(Qt5Widgets)
+#set(CMAKE_PREFIX_PATH ${QT5_DIR})
+#find_package(Qt5Core)
+#find_package(Qt5Widgets)
 
 # Setup up our cpp flags.
 include_directories("${QT5_DIR}/include")

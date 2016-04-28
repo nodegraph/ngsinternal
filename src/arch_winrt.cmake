@@ -20,17 +20,12 @@ add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 # Qt Directories.
 # --------------------------------------------------------
 if (${ARCH_BITS} STREQUAL "x64")
+    message("aaaaaaaaaaaaaaa x64")
 	set(QT5_DIR "D:/installs/winrt/Qt5.6.0/5.6/winrt_x64_msvc2015")
 else()
+    message("bbbbbbbbbbbbbb x86")
 	set(QT5_DIR "D:/installs/winrt/Qt5.6.0/5.6/winrt_x86_msvc2015")
 endif()
-
-# Debug Settings.
-if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
-    add_definitions("-DQT_DECLARATIVE_DEBUG")
-    add_definitions("-DQT_QML_DEBUG")
-elseif ("${CMAKE_BUILD_TYPE}" STREQUAL Release)
-endif ()
 
 # ---------------------------------------------------------
 # Our Directories.
@@ -43,9 +38,9 @@ set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-gl")
 message("src root is set to: ${SRC_ROOT}")
 
 # Find qt library.
-set(CMAKE_PREFIX_PATH ${QT5_DIR})
-find_package(Qt5Core)
-find_package(Qt5Widgets)
+#set(CMAKE_PREFIX_PATH ${QT5_DIR})
+#find_package(Qt5Core)
+#find_package(Qt5Widgets)
 
 # Setup up our cpp flags.
 include_directories("${QT5_DIR}/include")

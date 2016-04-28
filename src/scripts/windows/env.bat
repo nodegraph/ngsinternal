@@ -17,12 +17,12 @@ rem - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat
 
 if "%1"=="x64" (
 	echo "setting up vs2015 for 64 bits"
-	set ARCH_BITS="x64"
+	set ARCH_BITS=x64
 	call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
 ) 
 if "%1"=="x86" (
 	echo "setting up vs2015 for 32 bits"
-	set ARCH_BITS="x86"
+	set ARCH_BITS=x86
  	call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 )
 if [%1] == [] echo "Error: ARCH_BITS was not set!"

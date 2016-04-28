@@ -128,6 +128,47 @@ configure_file (
     "${PROJECT_BINARY_DIR}/NodeGraphVersion.h"
   )
   
+# Find qt library.
+set(CMAKE_PREFIX_PATH ${QT5_DIR})
+find_package(Qt5Core)
+find_package(Qt5Widgets)
+
+find_package(Qt5OpenGL)
+find_package(Qt5OpenGLExtensions)
+
+find_package(Qt5WebView)
+find_package(Qt5WebChannel)
+
+if ((${ARCH} STREQUAL "ARCH_LINUX") OR (${ARCH} STREQUAL "ARCH_MACOS"))
+	find_package(Qt5WebEngine)
+elseif(${ARCH} STREQUAL "ARCH_ARNDROID")
+	find_package(Qt5AndroidExtras)
+endif()
+
+find_package(Qt5Qml)
+find_package(Qt5Quick)
+find_package(Qt5QuickWidgets)
+find_package(Qt5Multimedia)
+find_package(Qt5MultimediaWidgets)
+
+# Debug Settings.
+if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
+    add_definitions("-DQT_DECLARATIVE_DEBUG")
+    add_definitions("-DQT_QML_DEBUG")
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL Release)
+endif ()
+
+# The offline installer of Qt has some rpath issue.
+# You may need to type this into a shell to fix it.
+# install_name_tool -add_rpath <install_loc>/Qt5.6.0/5.6/clang_64/lib <intall_loc>/Qt5.6.0/5.6/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
+
+
+#get_target_property(QtCore_location Qt5::Core LOCATION)
+#message("the qt core location is: ${QtCore_location}")
+
+
+# Set policy to automatically link qtmain.lib into executables.  
+cmake_policy(SET CMP0020 NEW)
 
 # Check the chosen gl version.
 message("gl version: ${gles_major_version}.${gles_minor_version}")

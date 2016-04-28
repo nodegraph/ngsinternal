@@ -57,8 +57,13 @@ typedef char GLchar;
 //  typedef ptrdiff_t GLintptr;
 //#endif
 
+#if (ARCH == ARCH_ANDROID)
+  typedef signed long int GLsizeiptr;
+  typedef signed long int GLintptr;
+#else
   typedef ptrdiff_t GLsizeiptr;
   typedef ptrdiff_t GLintptr;
+#endif
 
 #endif
 

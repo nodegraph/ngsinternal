@@ -45,9 +45,9 @@ set(CMAKE_C_FLAGS_RELEASE   "-O3 -Wl,-z,defs -Wl,--no-undefined -fvisibility=hid
 add_definitions("-DGLEW_MX")
 
 # Find qt library.
-set(CMAKE_PREFIX_PATH ${QT5_DIR})
-find_package(Qt5Core)
-find_package(Qt5Widgets)
+#set(CMAKE_PREFIX_PATH ${QT5_DIR})
+#find_package(Qt5Core)
+#find_package(Qt5Widgets)
 
 # Setup up our cpp flags.
 include_directories("${QT5_DIR}/include")

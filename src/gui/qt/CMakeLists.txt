@@ -51,20 +51,20 @@ target_link_libraries(ngs_gui_qt ngs_memoryallocator)
  
 if (${ARCH} STREQUAL ARCH_LINUX)
 	target_link_libraries(ngs_gui_qt 
-		ngs_entities
-		ngs_ftgl 
-		Qt5Widgetsd
-		Qt5OpenGLd
-		Qt5Guid
-		Qt5Cored 
-		Qt5Quickd 
+		ngs_objectmodel 
+		ngs_device
+		ngs_interactions
+	    Qt5::Widgets
+    	Qt5::OpenGL
+    	Qt5::Gui
+    	Qt5::Core
+    	Qt5::Quick
 		) 
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	target_link_libraries(ngs_gui_qt 
 		ngs_objectmodel 
 		ngs_device
 		ngs_interactions
-		ngs_glewhelper
 	    Qt5::Widgets
     	Qt5::OpenGL
     	Qt5::Gui
@@ -76,43 +76,37 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
     	ngs_objectmodel
     	ngs_device
     	ngs_interactions
-    	debug Qt5Widgetsd optimized Qt5Widgets
-    	debug Qt5OpenGLd optimized Qt5OpenGL
-    	debug Qt5Guid optimized Qt5Gui
-    	debug Qt5Cored optimized Qt5Core
-    	debug Qt5Quickd optimized Qt5Quick
+    	ngs_glewhelper
+	    Qt5::Widgets
+    	Qt5::OpenGL
+    	Qt5::Gui
+    	Qt5::Core
+    	Qt5::Quick
     	) 
-    	if (NOT(${gles_use_angle} STREQUAL "1"))
-    		target_link_libraries(ngs_gui_qt 
-    			ngs_glewhelper
-    		)
-    	endif()
 elseif (${ARCH} STREQUAL ARCH_WINRT)
     target_link_libraries(ngs_gui_qt 
     	ngs_objectmodel
     	ngs_device
     	ngs_interactions
-    	debug Qt5Widgetsd optimized Qt5Widgets
-    	debug Qt5OpenGLd optimized Qt5OpenGL
-    	debug Qt5Guid optimized Qt5Gui
-    	debug Qt5Cored optimized Qt5Core
-    	debug Qt5Quickd optimized Qt5Quick
+    	ngs_glewhelper
+	    Qt5::Widgets
+    	Qt5::OpenGL
+    	Qt5::Gui
+    	Qt5::Core
+    	Qt5::Quick
     	) 
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
 	target_link_libraries(ngs_gui_qt 
 		ngs_entities
-		Qt5Core
-		Qt5Gui
-		Qt5OpenGL
-		Qt5OpenGLExtensions
-		Qt5Quick
-		Qt5MultimediaWidgets
-		Qt5Widgets
-		Qt5QuickWidgets
-		Qt5Widgets 
-		Qt5OpenGL 
-		Qt5Gui 
-		Qt5Core ) 
+		Qt5::Core
+		Qt5::Gui
+		Qt5::OpenGL
+		Qt5::OpenGLExtensions
+		Qt5::Quick
+		Qt5::MultimediaWidgets
+		Qt5::Widgets
+		Qt5::QuickWidgets
+	) 
 endif ()
 
 if(${ARCH} STREQUAL ARCH_ANDROID)

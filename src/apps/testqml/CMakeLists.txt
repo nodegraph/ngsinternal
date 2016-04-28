@@ -35,23 +35,22 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(testqml ${sources})
 	target_link_libraries(testqml
-		debug Qt5Cored optimized Qt5Core
-		debug Qt5Quickd optimized Qt5Quick
-		debug Qt5Widgetsd optimized Qt5Widgets
-		debug Qt5Guid optimized Qt5Gui
-		debug Qt5Qmld optimized Qt5Qml
-		debug Qt5Networkd optimized Qt5Network
+		Qt5::Core
+		Qt5::Quick
+		Qt5::Widgets
+		Qt5::Gui
+		Qt5::Qml 
+		Qt5::Network
 		)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(testqml WIN32 ${sources})
 	target_link_libraries(testqml  runtimeobject windowscodecs kernel32 ole32
-		debug qtmaind optimized qtmain
-		debug Qt5Cored optimized Qt5Core
-		debug Qt5Quickd optimized Qt5Quick
-		debug Qt5Widgetsd optimized Qt5Widgets
-		debug Qt5Guid optimized Qt5Gui
-		debug Qt5Qmld optimized Qt5Qml
-		debug Qt5Networkd optimized Qt5Network
+		Qt5::Core
+		Qt5::Quick
+		Qt5::Widgets
+		Qt5::Gui
+		Qt5::Qml 
+		Qt5::Network
 		debug libEGLd optimized libEGL
 		debug libGLESv2d optimized libGLESv2
 		)
@@ -62,16 +61,13 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
     list(APPEND sources ${moc_imps2})
     add_library(testqml SHARED ${sources})
 	target_link_libraries(testqml gnustl_shared
-		Qt5Core
-		Qt5Quick
-		Qt5Widgets
-		Qt5Gui
-		Qt5Qml
-		Qt5Network
-		Qt5Core
-		Qt5Multimedia
-		Qt5OpenGL
-		Qt5AndroidExtras
+		Qt5::Core
+		Qt5::Quick
+		Qt5::Widgets
+		Qt5::Gui
+		Qt5::Qml 
+		Qt5::Network
+		Qt5::AndroidExtras
 	)
 endif ()
 

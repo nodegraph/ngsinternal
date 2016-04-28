@@ -44,7 +44,7 @@ Resources::Resources(Entity* entity)
 #if GLES_MAJOR_VERSION <= 2
   _quad_vs = std::string(monitor_poly_vert_gles2);
   _quad_fs = std::string(monitor_poly_frag_gles2);
-  _text_vs = std::string(text_vert);
+  _text_vs = std::string(text_vert_gles2);
   _text_fs = std::string(text_frag_gles2);
 #else
   std::string version;

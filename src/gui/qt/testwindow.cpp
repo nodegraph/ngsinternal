@@ -1,11 +1,10 @@
 
 
-#include <base/device/deviceheadersgl.h>
+//#include <base/device/deviceheadersgl.h>
 #include <base/device/devicedebug.h>
 
 #include <gui/qt/testwindow.h>
 #include <QtCore/QDebug>
-#include <QtGui/QOpenGLFunctions>
 
 #include <iostream>
 

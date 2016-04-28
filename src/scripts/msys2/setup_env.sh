@@ -62,13 +62,13 @@ export JAVA_HOME="/c/Program Files (x86)/Java/jdk1.7.0_55"
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"
 
+echo setting up for ${ARCH} ${ARCH_BITS}
+
 # ARCH specific paths.
 if [ ${ARCH} == "ARCH_WINDOWS" ]; then 
-	echo setting up for ARCH_WINDOWS
-	
+	echo
 elif [ ${ARCH} == "ARCH_WINRT" ]; then
-	echo setting up for ARCH_WINRT
-
+	echo
 elif [ ${ARCH} == "ARCH_ANDROID" ]; then
 	
 	# setup android variables
