@@ -4,14 +4,14 @@
 # PASSWORD
 
 # Disable caching by instructing to cache a bogus file.
-cache:
-  paths:
-  - .gitignore
+#cache:
+#  paths:
+#  - .gitignore
 
 # adb will lock on dirs holding the app
 # we need to kill it otherwise the next build job won't be able to delete the dir when syncing to a clean repo.
 before_script:
-    - /d/installs/android/android-sdk/platform-tools/adb kill-server
+    - if [ -f /d/installs/android/android-sdk/platform-tools/adb ] ; then /d/installs/android/android-sdk/platform-tools/adb kill-server; fi
 
 .windows_debug: &windows_debug_tmpt
   script:
