@@ -16,6 +16,7 @@ add_custom_command (
   # Copy our assets over.
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/packaging/winrt/assets ${CMAKE_BINARY_DIR}/install_testqml/bin/assets
   COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install_testqml/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
+  COMMAND echo done installing testqml
 )
 
 add_custom_target (install_testqml
