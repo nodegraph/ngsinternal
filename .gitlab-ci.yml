@@ -41,7 +41,7 @@ cache:
     - echo "MACOS DEBUG"
     - export ARCH=ARCH_MACOS
     - export ARCH_BITS=x64
-    - source ./src/scripts/msys2/setup_env.sh
+    - source ./src/scripts/macos/setup_env.sh
     - rm -fr macos_debug
     - mkdir macos_debug
     - cd macos_debug
@@ -54,7 +54,7 @@ cache:
     - echo "MACOS RELEASE"
     - export ARCH=ARCH_MACOS
     - export ARCH_BITS=x64
-    - source ./src/scripts/msys2/setup_env.sh
+    - source ./src/scripts/macos/setup_env.sh
     - rm -fr macos_release
     - mkdir macos_release
     - cd macos_release
@@ -211,22 +211,22 @@ windows_release_tag:
             - windows_release/install
 # ------------------------------------
 macos_debug:
-    <<: *windows_debug_tmpt
+    <<: *macos_debug_tmpt
     except:
         - tags
 macos_debug_tag:
-    <<: *windows_debug_tmpt
+    <<: *macos_debug_tmpt
     only:
         - tags
     artifacts:
         paths:
             - mac_debug/install/
 macos_release:
-    <<: *windows_release_tmpt
+    <<: *macos_release_tmpt
     except:
         - tags
 macos_release_tag:
-    <<: *windows_release_tmpt
+    <<: *macos_release_tmpt
     only:
         - tags
     artifacts:
