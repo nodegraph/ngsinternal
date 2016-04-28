@@ -11,7 +11,7 @@ cache:
 # adb will lock on dirs holding the app
 # we need to kill it otherwise the next build job won't be able to delete the dir when syncing to a clean repo.
 before_script:
-    - adb kill-server
+    - /d/installs/android/android-sdk/platform-tools/adb kill-server
 
 .windows_debug: &windows_debug_tmpt
   script:
