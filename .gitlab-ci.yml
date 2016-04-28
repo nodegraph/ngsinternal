@@ -47,6 +47,7 @@ cache:
     - cd macos_debug
     - cmake -G "Eclipse CDT4 - Unix Makefiles" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Debug ../src
     - make install -j8
+    - make install_desktop -j8
   tags:
     - macngsrunner
 .macos_release: &macos_release_tmpt
@@ -60,6 +61,7 @@ cache:
     - cd macos_release
     - cmake -G "Eclipse CDT4 - Unix Makefiles" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Release ../src
     - make install -j8
+    - make install_desktop -j8
   tags:
     - macngsrunner
 .winrt_debug: &winrt_debug_tmpt
