@@ -139,6 +139,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_custom_command (
     DEPENDS prep_octoplier
     OUTPUT run_octoplier_cmd
+    COMMAND adb uninstall com.octoplier.app
     COMMAND ${ANDROID_DEPLOY_QT} 
   	    --verbose
   	    --debug
@@ -154,6 +155,7 @@ else()
     add_custom_command (
     DEPENDS prep_octoplier
     OUTPUT run_octoplier_cmd
+    COMMAND adb uninstall com.octoplier.app
     COMMAND ${ANDROID_DEPLOY_QT}
   	    --verbose
         --release

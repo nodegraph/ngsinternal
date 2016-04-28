@@ -137,6 +137,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_custom_command (
         DEPENDS prep_testqml
         OUTPUT run_testqml_cmd
+        COMMAND adb uninstall com.octoplier.testqml
         COMMAND ${ANDROID_DEPLOY_QT} 
             --verbose
             --debug
@@ -152,6 +153,7 @@ else()
     add_custom_command (
         DEPENDS prep_testqml
         OUTPUT run_testqml_cmd
+        COMMAND adb uninstall com.octoplier.testqml
         COMMAND ${ANDROID_DEPLOY_QT}
  	        --reinstall
             --verbose
