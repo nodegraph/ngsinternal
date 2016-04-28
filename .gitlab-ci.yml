@@ -46,7 +46,7 @@ cache:
     - mkdir macos_debug
     - cd macos_debug
     - cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src
-    - make install
+    - make install -j8
   tags:
     - macngsrunner
 .macos_release: &macos_release_tmpt
@@ -59,7 +59,7 @@ cache:
     - mkdir macos_release
     - cd macos_release
     - cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src
-    - make install
+    - make install -j8
   tags:
     - macngsrunner
 .winrt_debug: &winrt_debug_tmpt
@@ -209,6 +209,29 @@ windows_release_tag:
     artifacts:
         paths:
             - windows_release/install
+# ------------------------------------
+macos_debug:
+    <<: *windows_debug_tmpt
+    except:
+        - tags
+macos_debug_tag:
+    <<: *windows_debug_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - mac_debug/install/
+macos_release:
+    <<: *windows_release_tmpt
+    except:
+        - tags
+macos_release_tag:
+    <<: *windows_release_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - macos_release/install
 # ------------------------------------
 winrt_debug:
     <<: *winrt_debug_tmpt
