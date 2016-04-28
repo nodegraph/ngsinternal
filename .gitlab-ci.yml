@@ -10,7 +10,7 @@ cache:
 
 .windows_debug: &windows_debug_tmpt
   script:
-    - echo "NGS WINDOWS DEBUG"
+    - echo "WINDOWS DEBUG"
     - export ARCH=ARCH_WINDOWS
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
@@ -24,7 +24,7 @@ cache:
     - ngsrunner
 .windows_release: &windows_release_tmpt
   script:
-    - echo "NGS WINDOW RELEASE"
+    - echo "WINDOW RELEASE"
     - export ARCH=ARCH_WINDOWS
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
@@ -36,9 +36,35 @@ cache:
     - cmake --build . --target pack_desktop 
   tags:
     - ngsrunner
+.macos_debug: &macos_debug_tmpt
+  script:
+    - echo "MACOS DEBUG"
+    - export ARCH=ARCH_MACOS
+    - export ARCH_BITS=x64
+    - source ./src/scripts/msys2/setup_env.sh
+    - rm -fr macos_debug
+    - mkdir macos_debug
+    - cd macos_debug
+    - cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src
+    - make install
+  tags:
+    - macngsrunner
+.macos_release: &macos_release_tmpt
+  script:
+    - echo "MACOS RELEASE"
+    - export ARCH=ARCH_MACOS
+    - export ARCH_BITS=x64
+    - source ./src/scripts/msys2/setup_env.sh
+    - rm -fr macos_release
+    - mkdir macos_release
+    - cd macos_release
+    - cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src
+    - make install
+  tags:
+    - macngsrunner
 .winrt_debug: &winrt_debug_tmpt
   script:
-    - echo "NGS WINRT DEBUG"
+    - echo "WINRT DEBUG"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
@@ -59,7 +85,7 @@ cache:
     - ngsrunner
 .winrt_release: &winrt_release_tmpt
   script:
-    - echo "NGS WINRT RELEASE"
+    - echo "WINRT RELEASE"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
@@ -80,7 +106,7 @@ cache:
     - ngsrunner
 .winrt_x86_debug: &winrt_x86_debug_tmpt
   script:
-    - echo "NGS WINRT X86 DEBUG"
+    - echo "WINRT X86 DEBUG"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x86
     - source ./src/scripts/msys2/setup_env.sh
@@ -101,7 +127,7 @@ cache:
     - ngsrunner
 .winrt_x86_release: &winrt_x86_release_tmpt
   script:
-    - echo "NGS WINRT X86 RELEASE"
+    - echo "WINRT X86 RELEASE"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x86
     - source ./src/scripts/msys2/setup_env.sh
@@ -122,7 +148,7 @@ cache:
     - ngsrunner
 .android_debug: &android_debug_tmpt
   script:
-    - echo "NGS ANDROID DEBUG"
+    - echo "ANDROID DEBUG"
     - export ARCH=ARCH_ANDROID
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
@@ -142,7 +168,7 @@ cache:
     - ngsrunner
 .android_release: &android_release_tmpt
   script:
-    - echo "NGS ANDROID RELEASE"
+    - echo "ANDROID RELEASE"
     - export ARCH=ARCH_ANDROID
     - export ARCH_BITS=x64
     - source ./src/scripts/msys2/setup_env.sh
