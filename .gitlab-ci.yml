@@ -135,6 +135,9 @@ cache:
     - ninja install_testqml
     - ninja run_octoplier
     - ninja run_testqml
+    # adb will lock on dirs holding the app
+    # we need to kill it otherwise the next build job won't be able to delete the dir when syncing to a clean repo.
+    - adb kill-server
   tags:
     - ngsrunner
 .android_release: &android_release_tmpt
@@ -152,6 +155,9 @@ cache:
     - ninja install_testqml
     - ninja run_octoplier
     - ninja run_testqml
+    # adb will lock on dirs holding the app
+    # we need to kill it otherwise the next build job won't be able to delete the dir when syncing to a clean repo.
+    - adb kill-server
   tags:
     - ngsrunner
 # ------------------------------------
