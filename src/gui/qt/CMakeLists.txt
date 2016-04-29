@@ -45,7 +45,7 @@ list(APPEND sources ${moc_imps})
 qt5_wrap_cpp(moc_qml_imps ${moc_qml_headers})
 list(APPEND qml_sources ${moc_qml_imps})
     
-add_library(ngs_gui_qt SHARED ${sources} ${qml_sources})
+add_library(ngs_gui_qt  ${sources} ${qml_sources})
 generate_export_header(ngs_gui_qt EXPORT_MACRO_NAME GUI_QT_EXPORT EXPORT_FILE_NAME gui_qt_export.h)
 target_link_libraries(ngs_gui_qt ngs_memoryallocator)
  

@@ -22,7 +22,7 @@ if (${ARCH} STREQUAL ARCH_LINUX)
 	target_link_libraries(testqml Qt5Qml Qt5WebEngine Qt5Multimedia Qt5OpenGL)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
-	add_executable(testqml ${sources})
+	add_executable(testqml MACOSX_BUNDLE ${sources})
 	target_link_libraries(testqml 
 		Qt5::Core
 		Qt5::Quick
@@ -76,6 +76,7 @@ INSTALL(TARGETS testqml
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT apps
 )
 

@@ -8,7 +8,7 @@ set(headers
     memoryops.h
     )
 
-add_library(ngs_memorytracker ${sources} ${headers}) #STATIC
+add_library(ngs_memorytracker  ${sources} ${headers}) #STATIC
 generate_export_header(ngs_memorytracker EXPORT_MACRO_NAME MEMORYTRACKER_EXPORT EXPORT_FILE_NAME memorytracker_export.h)
 
 

@@ -14,7 +14,6 @@ add_definitions("-DGLES_MAJOR_VERSION=${gles_major_version}")
 add_definitions("-DGLES_MINOR_VERSION=${gles_minor_version}")
 add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 
-
 # ---------------------------------------------------------
 # Qt Directory.
 # ---------------------------------------------------------

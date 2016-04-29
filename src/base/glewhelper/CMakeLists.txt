@@ -13,7 +13,7 @@ list(APPEND sources)
 list(APPEND headers)
 
 # Create a library.
-add_library(ngs_glewhelper ${sources} ${headers})
+add_library(ngs_glewhelper  ${sources} ${headers})
 generate_export_header(ngs_glewhelper EXPORT_MACRO_NAME GLEWHELPER_EXPORT EXPORT_FILE_NAME glewhelper_export.h)
 
 target_link_libraries(ngs_glewhelper ngs_memoryallocator)

@@ -36,7 +36,7 @@ if (${ARCH} STREQUAL ARCH_LINUX)
 	target_link_libraries(octoplier ngs_gui_qt Qt5Qml Qt5WebEngine Qt5Multimedia Qt5OpenGL)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
-	add_executable(octoplier ${sources})
+	add_executable(octoplier MACOSX_BUNDLE ${sources})
 	target_link_libraries(octoplier 
 		ngs_gui_qt 
 		ngs_entities
@@ -82,11 +82,16 @@ INSTALL(TARGETS octoplier
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT apps
 )
+
+
 
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	
 elseif (${ARCH} MATCHES "ARCH_ANDROID")
-	include("./arch_android.cmake")	
+	include("./arch_android.cmake")
+elseif (${ARCH} MATCHES "ARCH_MACOS")
+	include("./arch_macos.cmake")
 endif()

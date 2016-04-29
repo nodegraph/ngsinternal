@@ -156,7 +156,7 @@ list(APPEND sources ${module_cpp} ${geometry_cpp} ${packedbuffers_cpp} ${pipelin
 list(APPEND headers ${module_h} ${geometry_h} ${packedbuffers_h} ${pipelinesetups_h} ${program_h} ${vertexattributes_h} ${transforms_h} ${unpackedbuffers_h})
 
 # Create a library.
-add_library(ngs_device ${sources} ${headers})
+add_library(ngs_device  ${sources} ${headers})
 generate_export_header(ngs_device EXPORT_MACRO_NAME DEVICE_EXPORT EXPORT_FILE_NAME device_export.h)
 
 
@@ -196,7 +196,7 @@ elseif (${ARCH} MATCHES "ARCH_MACOS")
     target_link_libraries(ngs_device 
 	freetype
 	freetype-gl
-	GLEWmx GL GLU)
+	GLEWmx GL GLU) 
 elseif (${ARCH} MATCHES "ARCH_ANDROID")
 	target_link_libraries(ngs_device log)
 	if (gles_major_version EQUAL 2) 

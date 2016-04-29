@@ -27,7 +27,7 @@ set(headers
     scriptnodecompute.h
     )
     
-add_library(ngs_computes ${sources} ${headers})
+add_library(ngs_computes  ${sources} ${headers})
 generate_export_header(ngs_computes EXPORT_MACRO_NAME COMPUTES_EXPORT EXPORT_FILE_NAME computes_export.h)
 target_link_libraries(ngs_computes ngs_memoryallocator ngs_objectmodel ngs_memoryallocator)
 

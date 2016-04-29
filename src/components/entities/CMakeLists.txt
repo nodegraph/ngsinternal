@@ -17,7 +17,7 @@ set(headers
 	nonguientities.h
     )
     
-add_library(ngs_entities ${sources} ${headers})
+add_library(ngs_entities  ${sources} ${headers})
 generate_export_header(ngs_entities EXPORT_MACRO_NAME ENTITIES_EXPORT EXPORT_FILE_NAME entities_export.h)
 target_link_libraries(
     ngs_entities 

@@ -47,6 +47,10 @@ PATH=${PLATFORM_ROOT}/macosunpacks/gitlab_ci:${PATH}
 export JAVA_HOME="/c/Program Files (x86)/Java/jdk1.7.0_55"
 #PATH="/c/Program Files (x86)/Java/jdk1.7.0_55/bin":${PATH}
 
+# SourceTree
+PATH=/Users/raindrop/installs/macosunpacks/SourceTree.app/Contents/MacOS:${PATH}
+
+
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"
 

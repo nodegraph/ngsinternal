@@ -11,7 +11,7 @@ set(headers
 	dataheaders/displayshaders_gles3.h
 )
 
-add_library(ngs_resources ${sources} ${headers})
+add_library(ngs_resources  ${sources} ${headers})
 generate_export_header(ngs_resources EXPORT_MACRO_NAME RESOURCES_EXPORT EXPORT_FILE_NAME resources_export.h)
 target_link_libraries(ngs_resources ngs_memoryallocator ngs_utils ngs_objectmodel)
 

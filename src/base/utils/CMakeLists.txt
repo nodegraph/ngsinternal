@@ -36,7 +36,7 @@ set(headers
 	tuplehelper.h
     )
 
-add_library(ngs_utils ${sources} ${headers})
+add_library(ngs_utils  ${sources} ${headers})
 generate_export_header(ngs_utils EXPORT_MACRO_NAME UTILS_EXPORT EXPORT_FILE_NAME utils_export.h)
 
 target_link_libraries(ngs_utils ngs_memoryallocator)

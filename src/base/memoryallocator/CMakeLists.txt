@@ -23,7 +23,7 @@ elseif (${ARCH} STREQUAL "ARCH_WINRT")
 	# Make a static lib.
 	add_library(ngs_memoryallocator STATIC ${sources} ${headers})
 else()
-	add_library(ngs_memoryallocator SHARED ${sources} ${headers})
+	add_library(ngs_memoryallocator SHARED  ${sources} ${headers})
 endif()
 
 generate_export_header(ngs_memoryallocator EXPORT_MACRO_NAME MEMORYALLOCATOR_EXPORT EXPORT_FILE_NAME memoryallocator_export.h)
