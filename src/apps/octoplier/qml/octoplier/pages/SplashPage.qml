@@ -53,7 +53,7 @@ Window {
         id: splash_image
         x: 0
         y: 0
-        source: "qrc:///images/icon.png"
+        source: "qrc:///images/octopus_blue.png"
     }
 
 //    // Bar.

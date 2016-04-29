@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <manifest package="com.octoplier.app" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" android:installLocation="auto">
-    <application android:icon="@mipmap/icon" android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="octoplier">
+    <application android:icon="@mipmap/octopus_blue" android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="octoplier">
         <!-- android:theme="@style/AppTheme" -->
         <!-- android:theme="@android:style/Theme.NoTitleBar.Fullscreen" -->
         <activity android:name="com.octoplier.app.JavaBridgeImp"
