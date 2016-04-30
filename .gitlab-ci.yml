@@ -1,7 +1,15 @@
+
+# Note you need to make adb server is not running on CI build machines 
+# at the beginning of these runs, because adb will lock on build dirs.
+# To kill adb just issue the command: adb kill-server
+# The after_script runs it so in most cases you won't need to do this.
+# Only when the build does not finish will adb be left locking dirs.
+
 # Test values for the following variables are supplied by the gitlab
 # secure project variables.
 # ANDROID_DEVICE_ID 
 # PASSWORD
+
 
 # Disable caching by instructing to cache a bogus file.
 #cache:
