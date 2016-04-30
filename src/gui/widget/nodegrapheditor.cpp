@@ -113,12 +113,10 @@ void NodeGraphEditor::initializeGL() {
   // This is main entry point for initialize gl resources in our system.
   std::cerr << "initialize gl called\n";
 
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
   if (glewGetContext()==NULL) {
     std::cerr << "starting glew 2222\n";
     start_glew(); // Initialize glew for the scene graph render thread.
   }
-#endif
 
   get_app_root()->initialize_deps();
   get_app_root()->update_deps_and_hierarchy();
@@ -130,11 +128,9 @@ void NodeGraphEditor::resizeGL(int w, int h) {
 }
 
 void NodeGraphEditor::paintGL() {
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
   if (glewGetContext()==NULL) {
     start_glew(); // Initialize glew for the scene graph render thread.
   }
-#endif
 
   // The render thread handles all our painting.
   draw_canvas_gl();

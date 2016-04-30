@@ -26,7 +26,7 @@ if (${ARCH} MATCHES "ARCH_LINUX")
     target_link_libraries(ngs_glewhelper 
     	GLEWmx GL GLU)
 elseif (${ARCH} MATCHES "ARCH_WINDOWS")
-	if (NOT (${gles_use_angle} MATCHES "1"))
+	if (${gles_use_angle} MATCHES "0")
 		target_link_libraries(ngs_glewhelper 
 			debug glew32mxd optimized glew32mx 
 			debug opengl32 optimized opengl32
@@ -34,7 +34,6 @@ elseif (${ARCH} MATCHES "ARCH_WINDOWS")
 	endif()
 elseif (${ARCH} MATCHES "ARCH_MACOS")
 elseif (${ARCH} MATCHES "ARCH_ANDROID")
-	target_link_libraries(ngs_glewhelper log)	
 endif ()
 
 # Install.

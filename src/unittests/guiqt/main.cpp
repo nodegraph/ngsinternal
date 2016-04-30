@@ -123,9 +123,7 @@ int main(int argc, char *argv[]) {
     delete_ff(window);
 
     // Finish using glew. The NodeGraphEditor starts using glew in intializeGL(), not intialize_gl().
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
     finish_glew();
-#endif
   }
 
   // Cleanup.

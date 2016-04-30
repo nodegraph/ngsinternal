@@ -119,9 +119,7 @@ void test() {
   bootstrap_memory_tracker();
   {
     // Initialize glew.
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
     start_glew();
-#endif
 
     // Test gpu memory.
     std::cerr << "testinging gpu memory ...\n";
@@ -152,10 +150,8 @@ void test() {
 
   }
 
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
   // Finish using glew after all the gl related have been destroyed.
   finish_glew();
-#endif
 
   // Cleanup all the global objects.
   shutdown_memory_tracker();

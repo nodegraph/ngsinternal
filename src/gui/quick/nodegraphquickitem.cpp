@@ -141,9 +141,7 @@ void NodeGraphQuickItem::cleanup() {
   g_app_root->uninitialize_gl();
   g_app_root->uninitialize_deps();
 
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
   finish_glew();
-#endif
 }
 
 void NodeGraphQuickItem::releaseResources() {
@@ -192,12 +190,10 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
 
     qDebug() << "NodeGraphQuickItem::is initializing\n";
 
-#if !((ARCH == ARCH_ANDROID) || (GLES_USE_ANGLE == 1) || (ARCH == ARCH_MACOS))
     if (glewGetContext()==NULL) {
       start_glew(); // Initialize glew for the scene graph render thread.
       gpu();
     }
-#endif
 
     g_app_root->initialize_deps();
     g_app_root->update_deps_and_hierarchy();

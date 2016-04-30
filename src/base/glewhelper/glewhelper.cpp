@@ -1,5 +1,3 @@
-//#if (ARCH != ARCH_ANDROID) && (GLES_USE_ANGLE != 1) && (ARCH != ARCH_MACOS)
-
 #include <base/glewhelper/glewhelper.h>
 #include <base/memoryallocator/taggednew.h>
 #include <base/device/deviceheadersgl.h>
@@ -11,9 +9,10 @@
 #include <iostream>
 
 #if (ARCH == ARCH_WINRT) || (ARCH == ARCH_ANDROID) || (ARCH == ARCH_IOS) || (ARCH == ARCH_MACOS) || (GLES_USE_ANGLE == 1)
-GLEWContext* glewGetContext() {return NULL;}
-void start_glew() {}
-void finish_glew() {}
+GLEWContext* g_thread_local_glew_context = NULL;
+GLEWContext* glewGetContext() {return g_thread_local_glew_context;}
+void start_glew() {g_thread_local_glew_context = 1;}
+void finish_glew() {g_thread_local_glew_context = 0;}
 #else
 
 
