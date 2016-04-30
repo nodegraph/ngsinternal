@@ -49,74 +49,15 @@ add_library(ngs_gui_qt  ${sources} ${qml_sources})
 generate_export_header(ngs_gui_qt EXPORT_MACRO_NAME GUI_QT_EXPORT EXPORT_FILE_NAME gui_qt_export.h)
 target_link_libraries(ngs_gui_qt ngs_memoryallocator)
  
-if (${ARCH} STREQUAL ARCH_LINUX)
-	target_link_libraries(ngs_gui_qt 
-		ngs_objectmodel 
-		ngs_device
-		ngs_interactions
-	    Qt5::Widgets
-    	Qt5::OpenGL
-    	Qt5::Gui
-    	Qt5::Core
-    	Qt5::Quick
-		) 
-elseif (${ARCH} STREQUAL ARCH_MACOS)
-	target_link_libraries(ngs_gui_qt 
-		ngs_objectmodel 
-		ngs_device
-		ngs_interactions
-	    Qt5::Widgets
-    	Qt5::OpenGL
-    	Qt5::Gui
-    	Qt5::Core
-    	Qt5::Quick
-		) 
-elseif (${ARCH} STREQUAL ARCH_WINDOWS)
-    target_link_libraries(ngs_gui_qt 
-    	ngs_objectmodel
-    	ngs_device
-    	ngs_interactions
-    	ngs_glewhelper
-	    Qt5::Widgets
-    	Qt5::OpenGL
-    	Qt5::Gui
-    	Qt5::Core
-    	Qt5::Quick
-    	) 
-elseif (${ARCH} STREQUAL ARCH_WINRT)
-    target_link_libraries(ngs_gui_qt 
-    	ngs_objectmodel
-    	ngs_device
-    	ngs_interactions
-    	ngs_glewhelper
-	    Qt5::Widgets
-    	Qt5::OpenGL
-    	Qt5::Gui
-    	Qt5::Core
-    	Qt5::Quick
-    	) 
-elseif (${ARCH} STREQUAL ARCH_ANDROID)
-	target_link_libraries(ngs_gui_qt 
-    	ngs_objectmodel
-    	ngs_device
-    	ngs_interactions
-    	ngs_glewhelper
-    	Qt5::Widgets
-    	Qt5::OpenGL
-		Qt5::Gui
-		Qt5::Core
-		Qt5::Quick
-		#Qt5::OpenGLExtensions
-		#Qt5::MultimediaWidgets
-		#Qt5::Widgets
-		#Qt5::QuickWidgets
-	) 
-endif ()
-
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(ngs_gui_qt gnustl_shared)
-endif()
-
+target_link_libraries(ngs_gui_qt 
+	ngs_objectmodel
+	ngs_device
+	ngs_interactions
+	ngs_glewhelper
+	Qt5::OpenGL
+	Qt5::Quick
+) 
+ 
 # Install.
 INSTALL(TARGETS ngs_gui_qt
   RUNTIME DESTINATION bin
