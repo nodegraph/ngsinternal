@@ -93,10 +93,11 @@ after_script:
     - cmake --build . --target install_testqml
     - cmake --build . --target pack_octoplier
     - cmake --build . --target pack_testqml
+    # skip running apps
     #- cmake --build . --target run_octoplier
     #- cmake --build . --target run_testqml
-    #- cmake --build . --target unregister_octoplier
-    #- cmake --build . --target unregister_testqml
+    - cmake --build . --target unregister_octoplier
+    - cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
 .winrt_release: &winrt_release_tmpt
@@ -114,10 +115,11 @@ after_script:
     - cmake --build . --target install_testqml
     - cmake --build . --target pack_octoplier
     - cmake --build . --target pack_testqml
+    # skip running apps
     #- cmake --build . --target run_octoplier
     #- cmake --build . --target run_testqml
-    #- cmake --build . --target unregister_octoplier
-    #- cmake --build . --target unregister_testqml
+    - cmake --build . --target unregister_octoplier
+    - cmake --build . --target unregister_testqml
   tags:
     - ngsrunner
 .winrt_x86_debug: &winrt_x86_debug_tmpt

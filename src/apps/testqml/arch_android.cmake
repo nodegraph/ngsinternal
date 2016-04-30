@@ -96,7 +96,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         DEPENDS prep_testqml
         OUTPUT install_testqml_cmd
         COMMAND ${ANDROID_DEPLOY_QT} 
-            --verbose
+            #--verbose
             --debug
             --output "${CMAKE_BINARY_DIR}/install_testqml"
             --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json" 
@@ -110,7 +110,7 @@ else()
         DEPENDS prep_testqml
         OUTPUT install_testqml_cmd
         COMMAND ${ANDROID_DEPLOY_QT}
-            --verbose
+            #--verbose
             --release
             --output "${CMAKE_BINARY_DIR}/install_testqml"
             --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
@@ -139,7 +139,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         OUTPUT run_testqml_cmd
         COMMAND adb uninstall com.octoplier.testqml
         COMMAND ${ANDROID_DEPLOY_QT} 
-            --verbose
+            #--verbose
             --debug
             --reinstall
             --output "${CMAKE_BINARY_DIR}/install_testqml"
@@ -156,7 +156,7 @@ else()
         COMMAND adb uninstall com.octoplier.testqml
         COMMAND ${ANDROID_DEPLOY_QT}
  	        --reinstall
-            --verbose
+            #--verbose
             --release
             --output "${CMAKE_BINARY_DIR}/install_testqml"
             --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"

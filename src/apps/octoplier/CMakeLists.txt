@@ -68,7 +68,8 @@ elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(octoplier WIN32 ${sources})
 	target_link_libraries(octoplier 
 		ngs_gui 
-		ngs_entities runtimeobject windowscodecs kernel32 ole32
+		ngs_entities 
+		#runtimeobject windowscodecs kernel32 ole32
 		Qt5::Widgets
 		Qt5::Qml 
 		Qt5::OpenGL

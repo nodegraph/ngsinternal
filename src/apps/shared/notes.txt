@@ -1,0 +1,5 @@
+1) When trying to run winrt program you may see an error like:
+qt.winrtrunner: Unable to register package: "Windows cannot install package c4d67a36-7a30-4115-818e-41fc7bd688b6_1.0.0.0_x64__kdy9ka2b8hv7w because a different package c4d67a36-7a30-4115-818e-41fc7bd688b6_1.0.0.0_x64__pg273zw4y5b80 with the same name is already installed. Remove package c4d67a36-7a30-4115-818e-41fc7bd688b6_1.0.0.0_x64__pg273zw4y5b80 before installing."
+
+-- In this case simply open up powershell as administrator and do something like the following to remove the installed package.
+Remove-AppxPackage c4d67a36-7a30-4115-818e-41fc7bd688b6_1.0.0.0_x64__pg273zw4y5b80

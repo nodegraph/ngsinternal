@@ -97,7 +97,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     DEPENDS prep_octoplier
     OUTPUT install_octoplier_cmd
     COMMAND ${ANDROID_DEPLOY_QT} 
-  	    --verbose
+  	    #--verbose
   	    --debug
   	    --output "${CMAKE_BINARY_DIR}/install_octoplier"
   	    --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
@@ -111,7 +111,7 @@ else()
     DEPENDS prep_octoplier
     OUTPUT install_octoplier_cmd
     COMMAND ${ANDROID_DEPLOY_QT}
-        --verbose
+        #--verbose
         --release
   	    --output "${CMAKE_BINARY_DIR}/install_octoplier"
   	    --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
@@ -141,7 +141,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     OUTPUT run_octoplier_cmd
     COMMAND adb uninstall com.octoplier.app
     COMMAND ${ANDROID_DEPLOY_QT} 
-  	    --verbose
+  	    #--verbose
   	    --debug
   	    --reinstall
   	    --output "${CMAKE_BINARY_DIR}/install_octoplier" 
@@ -157,7 +157,7 @@ else()
     OUTPUT run_octoplier_cmd
     COMMAND adb uninstall com.octoplier.app
     COMMAND ${ANDROID_DEPLOY_QT}
-  	    --verbose
+  	    #--verbose
         --release
 	    --reinstall
   	    --output "${CMAKE_BINARY_DIR}/install_octoplier"
