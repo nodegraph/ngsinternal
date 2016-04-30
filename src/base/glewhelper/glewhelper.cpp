@@ -9,10 +9,10 @@
 #include <iostream>
 
 #if (ARCH == ARCH_WINRT) || (ARCH == ARCH_ANDROID) || (ARCH == ARCH_IOS) || (ARCH == ARCH_MACOS) || (GLES_USE_ANGLE == 1)
-GLEWContext* g_thread_local_glew_context = NULL;
+GLEWContext* g_thread_local_glew_context = reinterpret_cast<GLEWContext*>(NULL);
 GLEWContext* glewGetContext() {return g_thread_local_glew_context;}
-void start_glew() {g_thread_local_glew_context = 1;}
-void finish_glew() {g_thread_local_glew_context = 0;}
+void start_glew() {g_thread_local_glew_context = reinterpret_cast<GLEWContext*>(1);}
+void finish_glew() {g_thread_local_glew_context = reinterpret_cast<GLEWContext*>(0);}
 #else
 
 
