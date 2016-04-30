@@ -226,7 +226,8 @@ macos_debug_tag:
         - tags
     artifacts:
         paths:
-            - mac_debug/install/
+            - mac_debug/build/octoplier_pimped.dmg
+            - mac_debug/build/testqml_pimped.dmg
 macos_release:
     <<: *macos_release_tmpt
     except:
@@ -237,7 +238,8 @@ macos_release_tag:
         - tags
     artifacts:
         paths:
-            - macos_release/install
+            - mac_debug/build/octoplier_pimped.dmg
+            - mac_debug/build/testqml_pimped.dmg
 # ------------------------------------
 winrt_debug:
     <<: *winrt_debug_tmpt

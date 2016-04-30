@@ -173,6 +173,9 @@ cmake_policy(SET CMP0020 NEW)
 # Set policy to use rpaths.
 cmake_policy(SET CMP0042 NEW)
 
+# Set policy to ignore the old settings of COMPILE_DEFINITIONS_<CONFIG>.
+cmake_policy(SET CMP0043 NEW)
+
 # Check the chosen gl version.
 message("gl version: ${gles_major_version}.${gles_minor_version}")
 message("use angle: ${gles_use_angle}")

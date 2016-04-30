@@ -83,5 +83,7 @@ INSTALL(TARGETS testqml
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	
 elseif (${ARCH} MATCHES "ARCH_ANDROID")
-	include("./arch_android.cmake")	
+	include("./arch_android.cmake")
+elseif (${ARCH} MATCHES "ARCH_MACOS")
+	include("./arch_macos.cmake")
 endif()

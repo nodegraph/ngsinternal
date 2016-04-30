@@ -9,7 +9,7 @@
 
 # SRC_ROOT points to the location where you checked out the repos,
 # like ngsinternal. This file is expected to be in that repo.
-SCRIPT_DIR=$(cd "$(dirname -- "$0")"; pwd)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo script dir is: ${SCRIPT_DIR}
 
 export SRC_ROOT=$(cd "$(dirname "${SCRIPT_DIR}/../../../../..")"; pwd)
