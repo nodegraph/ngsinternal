@@ -34,7 +34,7 @@ add_custom_target (run_testqml
 
 add_custom_command (
     OUTPUT unregister_testqml_cmd
-    COMMAND ${QT5_DIR}/bin/winrtrunner --device 0 --remove --wait 0 --profile appx ${CMAKE_BINARY_DIR}/install_testqml/bin/testqml.exe
+    COMMAND ${QT5_DIR}/bin/winrtrunner --device 0 --remove --profile appx ${CMAKE_BINARY_DIR}/install_testqml/bin/testqml.exe
 )
 
 add_custom_target (unregister_testqml

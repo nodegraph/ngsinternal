@@ -32,7 +32,7 @@ add_custom_target (run_octoplier
 
 add_custom_command (
 	OUTPUT unregister_octoplier_cmd
-	COMMAND ${QT5_DIR}/bin/winrtrunner --device 0 --remove --wait 0 --profile appx ${CMAKE_BINARY_DIR}/install_octoplier/bin/octoplier.exe
+	COMMAND ${QT5_DIR}/bin/winrtrunner --device 0 --remove --profile appx ${CMAKE_BINARY_DIR}/install_octoplier/bin/octoplier.exe
 )
 
 add_custom_target (unregister_octoplier
