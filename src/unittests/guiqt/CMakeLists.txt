@@ -20,7 +20,7 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
 	add_library(testguiqt SHARED ${sources})
 endif ()
 
-target_link_libraries(testguiqt ngs_memoryallocator ngs_gui_qt ngs_entities)
+target_link_libraries(testguiqt ngs_memoryallocator ngs_gui ngs_entities)
 
 if(${ARCH} STREQUAL ARCH_ANDROID)
     target_link_libraries(testguiqt gnustl_shared)

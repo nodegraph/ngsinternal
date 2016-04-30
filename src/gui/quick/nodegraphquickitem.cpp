@@ -9,11 +9,11 @@
 #include <components/interactions/groupinteraction.h>
 #include <components/interactions/graphbuilder.h>
 
-#include <gui/qt/qml/fboworker.h>
-#include <gui/qt/qml/fborenderer.h>
-#include <gui/qt/qml/texturedisplaynode.h>
-#include <gui/qt/eventtoinfo.h>
-#include <gui/qt/splashscreen.h>
+#include <gui/quick/fboworker.h>
+#include <gui/quick/fborenderer.h>
+#include <gui/quick/texturedisplaynode.h>
+#include <gui/widget/eventtoinfo.h>
+#include <gui/widget/splashscreen.h>
 
 
 #include <base/device/transforms/wheelinfo.h>
@@ -30,8 +30,8 @@
 #include <components/compshapes/compshape.h>
 #include <components/compshapes/compshapecollective.h>
 
-#include <gui/qt/qml/nodegraphquickitem.h>
-#include <gui/qt/qml/nodegraphquickitemglobals.h>
+#include <gui/quick/nodegraphquickitem.h>
+#include <gui/quick/nodegraphquickitemglobals.h>
 
 #include <base/objectmodel/basefactory.h>
 #include <components/compshapes/nodegraphselection.h>

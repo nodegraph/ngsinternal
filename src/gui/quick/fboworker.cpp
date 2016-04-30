@@ -5,11 +5,11 @@
 #include <base/objectmodel/entity.h>
 #include <components/compshapes/nodegraphselection.h>
 #include <components/interactions/shapecanvas.h>
-#include <gui/qt/qml/fboworker.h>
-#include <gui/qt/qml/fborenderer.h>
-#include <gui/qt/qml/nodegraphquickitem.h>
-#include <gui/qt/qml/nodegraphquickitemglobals.h>
-#include <gui/qt/qml/texturedisplaynode.h>
+#include <gui/quick/fboworker.h>
+#include <gui/quick/fborenderer.h>
+#include <gui/quick/nodegraphquickitem.h>
+#include <gui/quick/nodegraphquickitemglobals.h>
+#include <gui/quick/texturedisplaynode.h>
 
 // QtQuick.
 #include <QtQuick/QQuickView>

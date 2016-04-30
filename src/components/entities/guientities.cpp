@@ -41,7 +41,7 @@
 #include <components/interactions/graphbuilder.h>
 #include <components/interactions/viewcontrols.h>
 
-#include <gui/qt/nodegrapheditor.h>
+#include <gui/widget/nodegrapheditor.h>
 
 namespace ngs {
 

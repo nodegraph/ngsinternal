@@ -42,10 +42,10 @@
 
 #include <components/entities/factory.h>
 
-//#include <gui/qt/qml/fborenderer.h>
-//#include <gui/qt/qml/fboworker.h>
-//#include <gui/qt/qml/nodegraphquickitem.h>
-//#include <gui/qt/nodegrapheditor.h>
+//#include <gui/quick/fborenderer.h>
+//#include <gui/quick/fboworker.h>
+//#include <gui/quick/nodegraphquickitem.h>
+//#include <gui/widget/nodegrapheditor.h>
 
 #include <iostream>
 #include <cassert>

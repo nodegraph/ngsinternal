@@ -3,7 +3,7 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/memoryallocator/bootstrap.h>
 #include <base/glewhelper/glewhelper.h>
-#include <gui/qt/testwindow.h>
+#include <gui/widget/testwindow.h>
 
 #include <QtWidgets/QApplication>
 #include <QtOpenGL/QGLWidget>

@@ -3,7 +3,7 @@
 //#include <base/device/deviceheadersgl.h>
 #include <base/device/devicedebug.h>
 
-#include <gui/qt/testwindow.h>
+#include <gui/widget/testwindow.h>
 #include <QtCore/QDebug>
 
 #include <iostream>

@@ -11,8 +11,8 @@
 //#include <components/interactions/groupinteraction.h>
 //#include <components/interactions/nodegraphstate.h>
 //#include <components/interactions/nodegroup.h>
-//#include <gui/qt/qml/nodegraphquickitem.h>
-//#include <gui/qt/qml/nodegraphquickitemglobals.h>
+//#include <gui/quick/nodegraphquickitem.h>
+//#include <gui/quick/nodegraphquickitemglobals.h>
 //
 //// System.
 //#include <iostream>

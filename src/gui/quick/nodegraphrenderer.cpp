@@ -1,4 +1,4 @@
-#include <gui/qt/qml/nodegraphrenderer.h>
+#include <gui/quick/nodegraphrenderer.h>
 #include "nodegraphrenderer.h"
 #include "nodegraphquickitemglobals.h"
 

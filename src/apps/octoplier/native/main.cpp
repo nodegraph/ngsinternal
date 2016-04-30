@@ -32,13 +32,13 @@
 
 #include <components/entities/guientities.h>
 #include <components/interactions/graphbuilder.h>
-#include <gui/qt/qml/nodegraphquickitem.h>
-#include <gui/qt/qml/nodegraphrenderer.h>
-#include <gui/qt/qml/nodegraphquickitemglobals.h>
+#include <gui/quick/nodegraphquickitem.h>
+#include <gui/quick/nodegraphrenderer.h>
+#include <gui/quick/nodegraphquickitemglobals.h>
 #include <native/cppbridge.h>
-#include <gui/qt/qml/fborenderer.h>
-#include <gui/qt/qml/fboworker.h>
-#include <gui/qt/splashscreen.h>
+#include <gui/quick/fborenderer.h>
+#include <gui/quick/fboworker.h>
+#include <gui/widget/splashscreen.h>
 
 #if (ARCH == ARCH_ANDROID)
 #include <native/javabridge.h>

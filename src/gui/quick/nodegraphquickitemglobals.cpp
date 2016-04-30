@@ -1,4 +1,4 @@
-#include <gui/qt/qml/nodegraphquickitemglobals.h>
+#include <gui/quick/nodegraphquickitemglobals.h>
 #include <cstddef>
 
 namespace ngs {

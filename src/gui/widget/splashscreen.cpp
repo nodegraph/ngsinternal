@@ -1,4 +1,4 @@
-#include <gui/qt/splashscreen.h>
+#include <gui/widget/splashscreen.h>
 #include <QtWidgets/QApplication>
 #include <QtCore/QDebug>
 #include <QtGui/QPainter>

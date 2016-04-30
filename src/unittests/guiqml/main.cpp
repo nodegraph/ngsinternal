@@ -12,8 +12,8 @@
 #include <components/compshapes/compshapecollective.h>
 #include <components/entities/guientities.h>
 #include <components/interactions/graphbuilder.h>
-#include <gui/qt/qml/nodegraphquickitem.h>
-#include <gui/qt/qml/nodegraphquickitemglobals.h>
+#include <gui/quick/nodegraphquickitem.h>
+#include <gui/quick/nodegraphquickitemglobals.h>
 
 // Qt.
 #include <QtCore/QThread>
@@ -23,9 +23,9 @@
 #include <QtQml/QQmlContext>
 #include <QtQuick/QQuickView>
 
-#include <gui/qt/qml/fborenderer.h>
-#include <gui/qt/qml/fboworker.h>
-#include <gui/qt/qml/nodegraphquickitem.h>
+#include <gui/quick/fborenderer.h>
+#include <gui/quick/fboworker.h>
+#include <gui/quick/nodegraphquickitem.h>
 
 #ifdef QT_WEBVIEW_WEBENGINE_BACKEND
 #include <QtWebEngine/QtWebEngine>

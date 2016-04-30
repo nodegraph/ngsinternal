@@ -21,7 +21,7 @@ set(headers
 
 # Add the executable object.
 add_executable(testdevice ${sources} ${headers})
-target_link_libraries(testdevice ngs_memoryallocator ngs_device ngs_resources ngs_gui_qt)
+target_link_libraries(testdevice ngs_memoryallocator ngs_device ngs_resources ngs_gui)
 target_link_libraries(testdevice 
 		Qt5::Core
     	Qt5::Widgets

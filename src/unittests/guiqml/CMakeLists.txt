@@ -28,7 +28,7 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
 	target_link_libraries(testguiqml gnustl_shared Qt5Qml Qt5WebView)
 endif ()
 
-target_link_libraries(testguiqml ngs_memoryallocator ngs_gui_qt ngs_entities)
+target_link_libraries(testguiqml ngs_memoryallocator ngs_gui ngs_entities)
 
 # Install.
 INSTALL(TARGETS testguiqml

@@ -4,8 +4,8 @@
 #include <native/variantmaptreemodel.h>
 
 #include <components/interactions/shapecanvas.h>
-#include <gui/qt/qml/nodegraphquickitem.h>
-#include <gui/qt/qml/nodegraphquickitemglobals.h>
+#include <gui/quick/nodegraphquickitem.h>
+#include <gui/quick/nodegraphquickitemglobals.h>
 
 #include <iostream>
 #include <QtCore/QDebug>
@@ -14,7 +14,7 @@
 #include <QtWidgets/QSplashScreen>
 
 #include <components/computes/computeglobals.h>
-#include <gui/qt/splashscreen.h>
+#include <gui/widget/splashscreen.h>
 
 namespace ngs {
 

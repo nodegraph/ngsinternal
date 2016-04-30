@@ -33,12 +33,12 @@ list(APPEND sources ${moc_imps})
 if (${ARCH} STREQUAL ARCH_LINUX)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(octoplier ${sources})
-	target_link_libraries(octoplier ngs_gui_qt Qt5Qml Qt5WebEngine Qt5Multimedia Qt5OpenGL)
+	target_link_libraries(octoplier ngs_gui Qt5Qml Qt5WebEngine Qt5Multimedia Qt5OpenGL)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(octoplier MACOSX_BUNDLE ${sources})
 	target_link_libraries(octoplier 
-		ngs_gui_qt 
+		ngs_gui 
 		ngs_entities
 		Qt5::Widgets
 		Qt5::Qml 
@@ -53,7 +53,7 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(octoplier ${sources})
 	target_link_libraries(octoplier 
-		ngs_gui_qt 
+		ngs_gui 
 		ngs_entities
 		Qt5::Widgets
 		Qt5::Qml 
@@ -67,7 +67,7 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(octoplier WIN32 ${sources})
 	target_link_libraries(octoplier 
-		ngs_gui_qt 
+		ngs_gui 
 		ngs_entities runtimeobject windowscodecs kernel32 ole32
 		Qt5::Widgets
 		Qt5::Qml 
@@ -85,7 +85,7 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
     list(APPEND sources ${moc_imps2})
     add_library(octoplier SHARED ${sources})
 	target_link_libraries(octoplier 
-		ngs_gui_qt 
+		ngs_gui 
 		ngs_entities
 		Qt5Qml 
 		Qt5Multimedia 
