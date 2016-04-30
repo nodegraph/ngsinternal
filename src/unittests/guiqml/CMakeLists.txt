@@ -25,7 +25,7 @@ elseif (${ARCH} STREQUAL ARCH_WINRT)
 		debug Qt5Qmld optimized Qt5Qml)
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
 	add_library(testguiqml SHARED main.cpp ${resources})
-	target_link_libraries(testguiqml gnustl_shared Qt5Qml Qt5WebView)
+	target_link_libraries(testguiqml Qt5Qml Qt5WebView)
 endif ()
 
 target_link_libraries(testguiqml ngs_memoryallocator ngs_gui ngs_entities)

@@ -20,10 +20,6 @@ add_library(ngs_api  ${sources} ${headers})
 generate_export_header(ngs_api EXPORT_MACRO_NAME API_EXPORT EXPORT_FILE_NAME api_export.h)
 target_link_libraries(ngs_api ngs_memoryallocator ngs_computesr)
 
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(ngs_api gnustl_shared)
-endif()
-
 # Install.
 INSTALL(TARGETS ngs_api
   RUNTIME DESTINATION bin

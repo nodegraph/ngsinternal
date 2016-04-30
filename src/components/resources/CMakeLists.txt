@@ -26,6 +26,3 @@ INSTALL(TARGETS ngs_resources
   COMPONENT components
 )
 
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(ngs_resources gnustl_shared)
-endif()

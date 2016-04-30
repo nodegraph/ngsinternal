@@ -19,10 +19,6 @@ elseif ((${ARCH} STREQUAL ARCH_WINDOWS) OR (${ARCH} STREQUAL ARCH_WINRT))
 elseif (${ARCH} STREQUAL DESKTOP_ANDROID)
 endif ()
   
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(testshapes gnustl_shared)
-endif()
-  
 # Install.
 INSTALL(TARGETS testshapes
   RUNTIME DESTINATION bin

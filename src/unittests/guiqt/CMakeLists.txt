@@ -22,10 +22,6 @@ endif ()
 
 target_link_libraries(testguiqt ngs_memoryallocator ngs_gui ngs_entities)
 
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(testguiqt gnustl_shared)
-endif()
-
 INSTALL(TARGETS testguiqt
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib

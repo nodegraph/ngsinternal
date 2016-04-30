@@ -15,10 +15,6 @@ add_executable(testnodegraph ${sources} ${headers})
 # Link libraries.
 target_link_libraries(testnodegraph ngs_memoryallocator ngs_entities)
     
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(testnodegraph gnustl_shared)
-endif()
-    
 # Install.
 INSTALL(TARGETS testnodegraph
   RUNTIME DESTINATION bin

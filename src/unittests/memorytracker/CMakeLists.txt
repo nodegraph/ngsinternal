@@ -11,10 +11,6 @@ add_executable(testmemorytracker ${sources} ${headers})
 # Link libraries.
 target_link_libraries(testmemorytracker ngs_memoryallocator)
     
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(testmemorytracker gnustl_shared)
-endif()
-    
 # Install.
 INSTALL(TARGETS testmemorytracker
   RUNTIME DESTINATION bin

@@ -34,7 +34,7 @@ elseif (${ARCH} STREQUAL "ARCH_MACOS")
 elseif (${ARCH} STREQUAL "ARCH_LINUX")
     target_link_libraries(ngs_objectmodel )
 elseif (${ARCH} STREQUAL "ARCH_ANDROID")
-	target_link_libraries(ngs_objectmodel gnustl_shared)
+	target_link_libraries(ngs_objectmodel)
 endif()
 
 

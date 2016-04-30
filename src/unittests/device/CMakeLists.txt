@@ -40,10 +40,6 @@ elseif (${ARCH} STREQUAL ARCH_WINRT)
 elseif (${ARCH} STREQUAL DESKTOP_ANDROID)
 endif ()
 
-if(${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(testdevice gnustl_shared)
-endif()
-    
 # Install.
 INSTALL(TARGETS testdevice
   RUNTIME DESTINATION bin
