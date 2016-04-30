@@ -33,21 +33,18 @@ list(APPEND sources ${moc_imps})
 if (${ARCH} STREQUAL ARCH_LINUX)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(octoplier ${sources})
-	target_link_libraries(octoplier ngs_gui Qt5Qml Qt5WebEngine Qt5Multimedia Qt5OpenGL)
+	target_link_libraries(octoplier 
+		ngs_gui 
+		ngs_entities
+		Qt5::WebEngine 
+		)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(octoplier MACOSX_BUNDLE ${sources})
 	target_link_libraries(octoplier 
 		ngs_gui 
 		ngs_entities
-		Qt5::Widgets
-		Qt5::Qml 
-    	Qt5::OpenGL
-    	Qt5::Gui
-    	Qt5::Core
-    	Qt5::Quick
 		Qt5::WebEngine 
-		Qt5::Multimedia
 		)
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
@@ -55,42 +52,26 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	target_link_libraries(octoplier 
 		ngs_gui 
 		ngs_entities
-		Qt5::Widgets
-		Qt5::Qml 
-    	Qt5::OpenGL
-    	Qt5::Gui
-    	Qt5::Core
-    	Qt5::Quick
 		Qt5::WebEngine 
-		Qt5::Multimedia
 		)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(octoplier WIN32 ${sources})
 	target_link_libraries(octoplier 
 		ngs_gui 
 		ngs_entities 
-		#runtimeobject windowscodecs kernel32 ole32
-		Qt5::Widgets
-		Qt5::Qml 
-		Qt5::OpenGL
-		Qt5::Gui
-		Qt5::Core
-		Qt5::Quick
 		Qt5::WebView
-		Qt5::Multimedia
 		)
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
-    list(APPEND sources native/javabridge.cpp)
-    list(APPEND moc_headers2 native/javabridge.h)
-    qt5_wrap_cpp(moc_imps2 ${moc_headers2})
-    list(APPEND sources ${moc_imps2})
-    add_library(octoplier SHARED ${sources})
+    list(APPEND sources 
+    	native/javabridge.cpp)
+    list(APPEND moc_headers2 
+    	native/javabridge.h)
+    qt5_wrap_cpp(moc_imps2 
+    	${moc_headers2})
+    add_library(octoplier SHARED ${sources} ${moc_imps2})
 	target_link_libraries(octoplier 
 		ngs_gui 
 		ngs_entities
-		Qt5Qml 
-		Qt5Multimedia 
-		Qt5OpenGL
 		Qt5WebView
 		Qt5AndroidExtras )
 endif ()
