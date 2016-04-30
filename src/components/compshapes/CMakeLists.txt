@@ -36,7 +36,12 @@ set(headers
     
 add_library(ngs_compshapes  ${sources} ${headers})
 generate_export_header(ngs_compshapes EXPORT_MACRO_NAME COMPSHAPES_EXPORT EXPORT_FILE_NAME compshapes_export.h)
-target_link_libraries(ngs_compshapes ngs_memoryallocator ngs_objectmodel ngs_device ngs_resources ngs_computes)
+target_link_libraries(ngs_compshapes 
+	ngs_memoryallocator 
+	ngs_objectmodel 
+	ngs_device 
+	ngs_resources 
+	ngs_computes)
 
 # Install.
 INSTALL(TARGETS ngs_compshapes

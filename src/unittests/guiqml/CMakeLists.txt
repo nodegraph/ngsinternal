@@ -4,8 +4,8 @@ if (${ARCH} STREQUAL ARCH_LINUX)
 	add_executable(testguiqml main.cpp ${resources})
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	target_link_libraries(testguiqml 
-		debug Qt5WebEngined optimized Qt5WebEngine 
-		debug Qt5Qmld optimized Qt5Qml)
+		Qt5::WebEngine 
+		Qt5::Qml)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	add_executable(testguiqml main.cpp ${resources})
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
@@ -16,16 +16,18 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_executable(testguiqml main.cpp ${resources})
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	target_link_libraries(testguiqml 
-		debug Qt5WebEngined optimized Qt5WebEngine 
-		debug Qt5Qmld optimized Qt5Qml)
+		Qt5::WebEngine 
+		Qt5::Qml)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(testguiqml main.cpp ${resources})
 	target_link_libraries(testguiqml 
-		debug Qt5WebViewd optimized Qt5WebView 
-		debug Qt5Qmld optimized Qt5Qml)
+		Qt5::WebView 
+		Qt5::Qml)
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
 	add_library(testguiqml SHARED main.cpp ${resources})
-	target_link_libraries(testguiqml Qt5Qml Qt5WebView)
+	target_link_libraries(testguiqml 
+		Qt5::WebView 
+		Qt5::Qml)
 endif ()
 
 target_link_libraries(testguiqml ngs_memoryallocator ngs_gui ngs_entities)

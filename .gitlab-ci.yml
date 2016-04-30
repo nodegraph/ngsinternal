@@ -175,8 +175,10 @@ after_script:
     - ninja install
     - ninja install_octoplier
     - ninja install_testqml
-    - ninja run_octoplier
-    - ninja run_testqml
+    # installing debug apks onto the device will compete with the release apks
+    # so we comment these out and only allow the release apks to get to the device
+    #- ninja run_octoplier
+    #- ninja run_testqml
   tags:
     - ngsrunner
 .android_release: &android_release_tmpt

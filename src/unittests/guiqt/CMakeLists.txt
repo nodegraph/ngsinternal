@@ -20,7 +20,10 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
 	add_library(testguiqt SHARED ${sources})
 endif ()
 
-target_link_libraries(testguiqt ngs_memoryallocator ngs_gui ngs_entities)
+target_link_libraries(testguiqt 
+	ngs_memoryallocator 
+	ngs_gui 
+	ngs_entities)
 
 INSTALL(TARGETS testguiqt
   RUNTIME DESTINATION bin
