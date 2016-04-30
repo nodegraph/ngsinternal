@@ -97,15 +97,19 @@ elseif (${ARCH} STREQUAL ARCH_WINRT)
     	) 
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
 	target_link_libraries(ngs_gui_qt 
-		ngs_entities
-		Qt5::Core
+    	ngs_objectmodel
+    	ngs_device
+    	ngs_interactions
+    	ngs_glewhelper
+    	Qt5::Widgets
+    	Qt5::OpenGL
 		Qt5::Gui
-		Qt5::OpenGL
-		Qt5::OpenGLExtensions
+		Qt5::Core
 		Qt5::Quick
-		Qt5::MultimediaWidgets
-		Qt5::Widgets
-		Qt5::QuickWidgets
+		#Qt5::OpenGLExtensions
+		#Qt5::MultimediaWidgets
+		#Qt5::Widgets
+		#Qt5::QuickWidgets
 	) 
 endif ()
 
