@@ -196,8 +196,8 @@ after_script:
     - ninja install
     - ninja install_octoplier
     - ninja install_testqml
-    - yes | ninja run_octoplier
-    - yes | ninja run_testqml
+    - echo "\n" | ninja run_octoplier
+    - echo "\n" | ninja run_testqml
   tags:
     - ngsrunner
 # ------------------------------------
