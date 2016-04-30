@@ -36,7 +36,7 @@
       <uap:VisualElements
         DisplayName="minibrowser"
         Description="Default package description"
-        BackgroundColor="green"
+        BackgroundColor="#03A9F4"
         Square150x150Logo="assets/logo_150x150.png"
         Square44x44Logo="assets/logo_44x44.png">
 
