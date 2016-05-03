@@ -12,6 +12,9 @@ if (${ARCH} STREQUAL ARCH_LINUX)
 	add_executable(testguiqt ${sources})
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	add_executable(testguiqt ${sources})
+elseif (${ARCH} STREQUAL ARCH_IOS)
+	add_executable(testguiqt ${sources})
+	set_target_properties(testguiqt PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_executable(testguiqt ${sources})
 elseif (${ARCH} STREQUAL ARCH_WINRT)
@@ -23,12 +26,14 @@ endif ()
 target_link_libraries(testguiqt 
 	ngs_memoryallocator 
 	ngs_gui 
-	ngs_entities)
+	ngs_entities
+	${ios_libs})
 
 INSTALL(TARGETS testguiqt
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT unitttests
 )
 

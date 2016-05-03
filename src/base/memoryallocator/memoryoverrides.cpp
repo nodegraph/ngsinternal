@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-#if (ARCH == ARCH_LINUX) || (ARCH == ARCH_MACOS) || (ARCH == ARCH_ANDROID)
+#if (ARCH == ARCH_LINUX) || (ARCH == ARCH_MACOS) || (ARCH == ARCH_IOS) || (ARCH == ARCH_ANDROID)
 // Standard new.
 void* operator new(size_t size) {
   return ngs::new_override(size);

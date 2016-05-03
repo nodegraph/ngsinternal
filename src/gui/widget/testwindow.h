@@ -5,6 +5,7 @@
 namespace ngs {
 
 class GUI_EXPORT TestWindow : public QGLWidget {
+Q_OBJECT
  public:
   TestWindow(QWidget * parent = 0);
   virtual ~TestWindow();

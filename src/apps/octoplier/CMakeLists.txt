@@ -46,6 +46,16 @@ elseif (${ARCH} STREQUAL ARCH_MACOS)
 		ngs_entities
 		Qt5::WebEngine 
 		)
+elseif (${ARCH} STREQUAL ARCH_IOS)
+	add_executable(octoplier MACOSX_BUNDLE ${sources})
+	target_link_libraries(octoplier 
+		ngs_gui 
+		ngs_entities
+		Qt5::WebView
+		Qt5::Quick
+		${ios_libs}
+		)
+	set_target_properties(octoplier PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(octoplier ${sources})
@@ -93,4 +103,6 @@ elseif (${ARCH} MATCHES "ARCH_ANDROID")
 	include("./arch_android.cmake")
 elseif (${ARCH} MATCHES "ARCH_MACOS")
 	include("./arch_macos.cmake")
+elseif (${ARCH} MATCHES "ARCH_IOS")
+	include("./arch_ios.cmake")
 endif()

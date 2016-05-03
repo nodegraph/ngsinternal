@@ -31,6 +31,8 @@ elseif (${ARCH} STREQUAL "ARCH_WINRT")
 	target_link_libraries(ngs_objectmodel)
 elseif (${ARCH} STREQUAL "ARCH_MACOS")
 	target_link_libraries(ngs_objectmodel)
+elseif (${ARCH} STREQUAL "ARCH_IOS")
+	target_link_libraries(ngs_objectmodel)
 elseif (${ARCH} STREQUAL "ARCH_LINUX")
     target_link_libraries(ngs_objectmodel )
 elseif (${ARCH} STREQUAL "ARCH_ANDROID")
@@ -43,6 +45,7 @@ INSTALL(TARGETS ngs_objectmodel
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT base
 )
 

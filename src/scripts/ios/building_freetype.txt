@@ -1,0 +1,83 @@
+------------------------------------------
+Building the freetype 2.5.2 libs
+------------------------------------------
+
+Basically you'll need to build the library 4 times for different architectures and then combine them.
+- source the ios_env.sh script then do the following:
+
+iphoneos_armv7_env
+make distclean
+configure_helper --prefix=/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_armv7 --without-png
+make clean
+make -j8
+make install
+
+iphoneos_arm64_env
+make distclean
+configure_helper --prefix=/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_arm64 --without-png
+make clean
+make -j8
+make install
+
+iphonesimulator_i386_env
+make distclean
+configure_helper --prefix=/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_i386 --without-png
+make clean
+make -j8
+make install
+
+iphonesimulator_x86_64_env
+make distclean
+configure_helper --prefix=/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_x86_64 --without-png
+make clean
+make -j8
+make install
+
+-- Then create the universal binary as follows in root of the source directory outside of local.
+mkdir ../local/freetype-2.5.2/universal
+lipo -create -output ../local/freetype-2.5.2/universal/libfreetype.a\
+  ../local/freetype-2.5.2/iphoneos_armv7/lib/libfreetype.a\
+  ../local/freetype-2.5.2/iphoneos_arm64/lib/libfreetype.a\
+  ../local/freetype-2.5.2/iphonesimulator_i386/lib/libfreetype.a\
+  ../local/freetype-2.5.2/iphonesimulator_x86_64/lib/libfreetype.a
+
+------------------------------------------
+Building the freetype-gl libs
+------------------------------------------
+Basically you'll need to build the library 4 times for different architectures and then combine them.
+- source the ios_env.sh script then do the following:
+
+iphoneos_armv7_env
+make distclean
+configure_helper --prefix=/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_armv7 --without-png
+make clean
+make -j8
+make install
+
+iphoneos_arm64_env
+make distclean
+configure_helper --prefix=/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_arm64 --without-png
+make clean
+make -j8
+make install
+
+iphonesimulator_i386_env
+make distclean
+configure_helper --prefix=/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_i386 --without-png
+make clean
+make -j8
+make install
+
+iphonesimulator_x86_64_env
+make distclean
+configure_helper --prefix=/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_x86_64 --without-png
+make clean
+make -j8
+make install
+
+-- Then create the universal binary as follows in root of the source directory outside of local.
+lipo -create -output libfreetype.a\
+  local/freetype-2.5.2/iphoneos_armv7/lib/libfreetype.a\
+  local/freetype-2.5.2/iphoneos_arm64/lib/libfreetype.a\
+  local/freetype-2.5.2/iphonesimulator_i386/lib/libfreetype.a\
+  local/freetype-2.5.2/iphonesimulator_x86_64/lib/libfreetype.a

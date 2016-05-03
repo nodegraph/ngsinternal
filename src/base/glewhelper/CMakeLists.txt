@@ -33,6 +33,7 @@ elseif (${ARCH} MATCHES "ARCH_WINDOWS")
 			debug glu32 optimized glu32)
 	endif()
 elseif (${ARCH} MATCHES "ARCH_MACOS")
+elseif (${ARCH} MATCHES "ARCH_IOS")
 elseif (${ARCH} MATCHES "ARCH_ANDROID")
 endif ()
 
@@ -41,6 +42,7 @@ INSTALL(TARGETS ngs_glewhelper
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT base
 )
 

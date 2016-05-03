@@ -20,6 +20,8 @@ elseif (${ARCH} STREQUAL "ARCH_LINUX")
     target_link_libraries(ngs_memorytracker dl pthread)
 elseif (${ARCH} STREQUAL "ARCH_MACOS")
     target_link_libraries(ngs_memorytracker dl pthread)
+elseif (${ARCH} STREQUAL "ARCH_IOS")
+    target_link_libraries(ngs_memorytracker dl pthread)
 elseif (${ARCH} STREQUAL "ARCH_ANDROID")
 	target_link_libraries(ngs_memorytracker gnustl_shared)
 endif()
@@ -29,6 +31,7 @@ INSTALL(TARGETS ngs_memorytracker
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT base
 )
 

@@ -15,6 +15,14 @@
     #define glClearDepthf glClearDepth
 #endif
 
+#if (ARCH == ARCH_IOS)
+    //#include <GL/glew.h>
+    #include <ES3/gl.h>
+    #include <ES3/glext.h>
+    //#include <base/glewhelper/glewhelper.h>
+    //#define glClearDepthf glClearDepth
+#endif
+
 //Basically if Angle is being used, we use these.
 #if (ARCH == ARCH_WINRT) || (ARCH == ARCH_WINDOWS)
 #define GL_GLEXT_PROTOTYPES

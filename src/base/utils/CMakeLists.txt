@@ -51,6 +51,8 @@ elseif (${ARCH} STREQUAL ARCH_LINUX)
 	target_link_libraries(ngs_utils)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	target_link_libraries(ngs_utils)
+elseif (${ARCH} STREQUAL ARCH_IOS)
+	target_link_libraries(ngs_utils)
 endif ()
 
 
@@ -60,6 +62,7 @@ INSTALL(TARGETS ngs_utils
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT base
 )
 

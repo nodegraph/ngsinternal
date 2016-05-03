@@ -1,0 +1,87 @@
+- use cmake-gui with the ios toolchain
+- you'll need to modify the CMakeLists.txt file so that it doesn't require GLEW.
+
+#if(NOT APPLE)
+#    find_package(GLEW REQUIRED)
+#endif()
+
+include_directories(
+    ${OPENGL_INCLUDE_DIRS}
+    ${FREETYPE_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${VS789FIX_INCLUDE_DIR}
+#    ${GLEW_INCLUDE_PATH}
+)
+
+
+- uncheck all the optional products even use-vao, as it seems to cause some compile issues
+- set the opengl libs to the following:
+-------------------------
+iphoneos_armv7
+-------------------------
+-OPENGL_INCLUDE_DIR
+----/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework/Headers/ES3
+-OPENGL_gl_LIBRARY
+----/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework/OpenGLES.tbd
+-FREETYPE_LIBRARY
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_armv7/lib/libfreetype.a
+-FREETYPE_INCLUDE_DIR_freetype2
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_armv7/include
+-FREETYPE_INCLUDE_DIR_ft2build
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_armv7/include/freetype2
+
+-------------------------
+iphoneos_arm64
+-------------------------
+
+-OPENGL_INCLUDE_DIR
+----/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework/Headers/ES3
+-OPENGL_gl_LIBRARY
+----/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework/OpenGLES.tbd
+-FREETYPE_LIBRARY
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_arm64/lib/libfreetype.a
+-FREETYPE_INCLUDE_DIR_freetype2
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_arm64/include
+-FREETYPE_INCLUDE_DIR_ft2build
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphoneos_arm64/include/freetype2
+
+-------------------------
+iphonesimulator_i386
+-------------------------
+
+-OPENGL_INCLUDE_DIR
+----/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework/Headers/ES3
+-OPENGL_gl_LIBRARY
+----/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework/libGLProgrammability.dylib
+-FREETYPE_LIBRARY
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_i386/lib/libfreetype.a
+-FREETYPE_INCLUDE_DIR_freetype2
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_i386/include
+-FREETYPE_INCLUDE_DIR_ft2build
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_i386/include/freetype2
+
+-------------------------
+iphonesimulator_x86_64
+-------------------------
+
+-OPENGL_INCLUDE_DIR
+----/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework/Headers/ES3
+-OPENGL_gl_LIBRARY
+----/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework/libGLProgrammability.dylib
+-FREETYPE_LIBRARY
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_x86_64/lib/libfreetype.a
+-FREETYPE_INCLUDE_DIR_freetype2
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_x86_64/include
+-FREETYPE_INCLUDE_DIR_ft2build
+----/Users/raindrop/srcios/local/freetype-2.5.2/iphonesimulator_x86_64/include/freetype2
+
+-------------------------
+universal
+-------------------------
+- after building all 4 arches above do the following from the root source directory where all the 4 cmake build dirs are.
+mkdir -p ./local/freetype-gl/universal
+lipo -create -output ./local/freetype-gl/universal/libfreetype-gl.a\
+  ./freetype-gl-build-armv7/libfreetype-gl.a\
+  ./freetype-gl-build-arm64/libfreetype-gl.a\
+  ./freetype-gl-build-i386/libfreetype-gl.a\
+  ./freetype-gl-build-x86_64/libfreetype-gl.a

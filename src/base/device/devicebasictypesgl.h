@@ -60,6 +60,10 @@ typedef char GLchar;
 #if (ARCH == ARCH_ANDROID)
   typedef signed long int GLsizeiptr;
   typedef signed long int GLintptr;
+#elif (ARCH == ARCH_IOS)
+#include <inttypes.h>
+  typedef intptr_t GLsizeiptr;
+  typedef intptr_t GLintptr;
 #else
   typedef ptrdiff_t GLsizeiptr;
   typedef ptrdiff_t GLintptr;

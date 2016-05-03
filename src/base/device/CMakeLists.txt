@@ -196,7 +196,12 @@ elseif (${ARCH} MATCHES "ARCH_MACOS")
     target_link_libraries(ngs_device 
 	freetype
 	freetype-gl
-	GLEWmx GL GLU) 
+	GL GLU) 
+elseif (${ARCH} MATCHES "ARCH_IOS")
+    target_link_libraries(ngs_device 
+	freetype
+	freetype-gl
+	gll) 
 elseif (${ARCH} MATCHES "ARCH_ANDROID")
 	target_link_libraries(ngs_device log)
 	if (gles_major_version EQUAL 2) 
@@ -218,6 +223,7 @@ INSTALL(TARGETS ngs_device
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT base
 )
 

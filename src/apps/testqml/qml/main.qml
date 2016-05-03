@@ -1,11 +1,18 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
+import QtQuick.Window 2.2
 
 ApplicationWindow {
     visible: true
-    width: 640
-    height: 480
+    //width: 640
+    //height: 480
+    //width: (Qt.platform.os == "android") || (Qt.platform.os == "ios") ? Screen.width : 640
+    //height: (Qt.platform.os == "android") || (Qt.platform.os == "ios") ? Screen.height : 480
+    
+    width: Screen.width
+    height: Screen.height
+    
     title: qsTr("Hello World")
 
     menuBar: MenuBar {

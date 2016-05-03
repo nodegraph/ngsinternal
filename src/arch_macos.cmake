@@ -48,32 +48,16 @@ set(CMAKE_C_FLAGS_RELEASE   "-O3 -fvisibility=hidden -fPIC"              ) # CAC
 # Add glew defines.
 add_definitions("-DGLEW_MX")
 
-# Find qt library.
-#set(CMAKE_PREFIX_PATH ${QT5_DIR})
-#find_package(Qt5Core)
-#find_package(Qt5Widgets)
-#find_package(Qt5Multimedia)
-#find_package(Qt5OpenGL)
-#find_package(Qt5Qml)
-#find_package(Qt5WebView)
-#find_package(Qt5WebEngine)
-#find_package(Qt5WebChannel)
-#find_package(Qt5Quick)
-
-# The offline installer of Qt has some rpath issue.
+# The offline installer of Qt has some rpath issues in macos.
 # You may need to type this into a shell to fix it.
 # install_name_tool -add_rpath <install_loc>/Qt5.6.0/5.6/clang_64/lib <intall_loc>/Qt5.6.0/5.6/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
 
-
-#get_target_property(QtCore_location Qt5::Core LOCATION)
-#message("the qt core location is: ${QtCore_location}")
-
 # Setup up our cpp flags.
-#include_directories("${QT5_DIR}/../Src/qtbase/include")
 include_directories("${FREETYPE_DIR}/include")
 include_directories("${GLEW_DIR}/include")
 include_directories("${GLM_DIR}")
 include_directories("${FREETYPE_GL_DIR}/include")
+
 # GL headers are here on macos
 include_directories("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework/Headers")
 

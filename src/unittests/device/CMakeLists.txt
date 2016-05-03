@@ -38,6 +38,11 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	target_link_libraries(testdevice)
 elseif (${ARCH} STREQUAL DESKTOP_ANDROID)
+elseif (${ARCH} STREQUAL ARCH_IOS)
+	target_link_libraries(testdevice
+		${ios_libs}
+	)
+	set_target_properties(testdevice PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
 endif ()
 
 # Install.
@@ -45,6 +50,7 @@ INSTALL(TARGETS testdevice
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT unittests
 )
 

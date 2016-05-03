@@ -12,6 +12,14 @@ elseif (${ARCH} STREQUAL ARCH_MACOS)
 	target_link_libraries(testguiqml 
 		Qt5::WebEngine 
 		Qt5::Qml)
+elseif (${ARCH} STREQUAL ARCH_IOS)
+	add_executable(testguiqml main.cpp ${resources})
+	target_link_libraries(testguiqml 
+		Qt5::WebView 
+		Qt5::Qml
+		${ios_libs}
+		)
+	set_target_properties(testguiqml PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_executable(testguiqml main.cpp ${resources})
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
@@ -37,6 +45,7 @@ INSTALL(TARGETS testguiqml
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
   COMPONENT unittests
 )
 
