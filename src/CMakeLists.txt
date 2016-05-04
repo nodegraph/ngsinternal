@@ -151,6 +151,15 @@ find_package(Qt5QuickWidgets)
 find_package(Qt5Multimedia)
 find_package(Qt5MultimediaWidgets)
 
+find_package(Qt5DBus)
+find_package(Qt5Widgets)
+find_package(Qt5Quick)
+find_package(Qt5Gui)
+find_package(Qt5Qml)
+find_package(Qt5Network)
+find_package(Qt5Core)
+
+
 # Debug Settings.
 if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
     #add_definitions("-DQT_DECLARATIVE_DEBUG")

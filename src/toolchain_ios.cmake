@@ -2,28 +2,19 @@
 
 
 # grab some environment variables
-set(IOS_SDK_ARCH $ENV{IOS_SDK_ARCH})
+set(ARCH_SIM $ENV{ARCH_SIM})
 
 # check that we got the environment variables
-if (NOT IOS_SDK_ARCH)
-    message(FATAL_ERROR "IOS_SDK_ARCH was not defined in shell!")
+if (NOT ARCH_SIM)
+    message(FATAL_ERROR "ARCH_SIM was not defined in shell!")
 endif()
 
-if (${IOS_SDK_ARCH} STREQUAL "iphoneos_armv7")
+
+if (${ARCH_SIM} STREQUAL "device")
+	SET (CMAKE_OSX_ARCHITECTURES "armv7" "arm64")
 	set(ios_sdk "iphoneos")
 	set(target "arm-apple-darwin")
-	set(ios_arch "-arch armv7")
-	set(min_ios_sdk "-mios-version-min=8.0")
-	execute_process(COMMAND xcrun -sdk ${ios_sdk} --show-sdk-path
-	  OUTPUT_VARIABLE sysroot
-	  OUTPUT_STRIP_TRAILING_WHITESPACE)
-	execute_process(COMMAND xcodebuild -sdk ${ios_sdk} -version SDKVersion
-  		OUTPUT_VARIABLE IOS_SDK_VERSION
-  		OUTPUT_STRIP_TRAILING_WHITESPACE)
-elseif (${IOS_SDK_ARCH} STREQUAL "iphoneos_arm64")
-	set(ios_sdk "iphoneos")
-	set(target "arm-apple-darwin")
-	set(ios_arch "-arch arm64")
+	set(ios_arch "-arch armv7 -arch arm64")
 	set(min_ios_sdk "-mios-version-min=8.0")
 	execute_process(COMMAND xcrun -sdk ${ios_sdk} --show-sdk-path
 	  OUTPUT_VARIABLE sysroot
@@ -31,21 +22,12 @@ elseif (${IOS_SDK_ARCH} STREQUAL "iphoneos_arm64")
 	execute_process(COMMAND xcodebuild -sdk ${ios_sdk} -version SDKVersion
 		OUTPUT_VARIABLE IOS_SDK_VERSION
 		OUTPUT_STRIP_TRAILING_WHITESPACE)
-elseif (${IOS_SDK_ARCH} STREQUAL "iphonesimulator_i386")
+elseif (${ARCH_SIM} STREQUAL "simulator")
+	SET (CMAKE_OSX_ARCHITECTURES "i386" "x86_64")
 	set(ios_sdk "iphonesimulator")
-	set(target "i386-apple-darwin")
-	set(ios_arch "-arch i386")
-	set(min_ios_sdk "-mios-version-min=8.0")
-	execute_process(COMMAND xcrun -sdk ${ios_sdk} --show-sdk-path
-	  OUTPUT_VARIABLE sysroot
-	  OUTPUT_STRIP_TRAILING_WHITESPACE)
-	execute_process(COMMAND xcodebuild -sdk ${ios_sdk} -version SDKVersion
-		OUTPUT_VARIABLE IOS_SDK_VERSION
-		OUTPUT_STRIP_TRAILING_WHITESPACE)
-elseif (${IOS_SDK_ARCH} STREQUAL "iphonesimulator_x86_64")
-	set(ios_sdk "iphonesimulator")
-	set(target "x86_64-apple-darwin")
-	set(ios_arch "-arch x86_64")
+	#set(target "i386-apple-darwin")
+	set(target "x86_64-apple-darwin")        
+	set(ios_arch "-arch i386 -arch x86_64")
 	set(min_ios_sdk "-mios-version-min=8.0")
 	execute_process(COMMAND xcrun -sdk ${ios_sdk} --show-sdk-path
 	  OUTPUT_VARIABLE sysroot
@@ -58,16 +40,11 @@ endif()
 
 
 # debugging
-message("IOS ARCH IS: ${IOS_SDK_ARCH}")
+message("ARCH SIM IS: ${ARCH_SIM}")
 message("ios sdk is: ${ios_sdk}")
-message("target is: ${target}")
 message("ios arch is: ${ios_arch}")
 message("sysroot is: ${sysroot}")
 message("min ios sdk: ${min_ios_sdk}")
-
-# the name of the target operating system
-#set(CMAKE_SYSTEM_NAME Generic) # this make the cxx compiler test not give this: --out-implib: unknown option
-
 
 set(CMAKE_OSX_SYSROOT ${sysroot} CACHE PATH "" FORCE)
 exec_program(/usr/bin/xcode-select ARGS -print-path OUTPUT_VARIABLE CMAKE_XCODE_DEVELOPER_DIR)

@@ -67,9 +67,10 @@ include_directories("${FREETYPE_GL_DIR}/include")
 link_directories("${QT5_DIR}/lib")
 link_directories("${QT5_DIR}/plugins/platforms")
 link_directories("${QT5_DIR}/plugins/qmltooling")
-link_directories("${FREETYPE_DIR}/${IOS_SDK_ARCH}/lib")
-link_directories("${FREETYPE_GL_DIR}/lib/${IOS_SDK_ARCH}")
+link_directories("${FREETYPE_DIR}/universal")
+link_directories("${FREETYPE_GL_DIR}/lib/universal")
 
+# Find IOS frameworks.
 find_library(SystemConfiguration SystemConfiguration)
 find_library(CoreFoundation CoreFoundation)
 find_library(OpenGLES OpenGLES)
@@ -89,26 +90,30 @@ find_library(AssetsLibrary AssetsLibrary)
 
 
 # GL setup.
-if (${IOS_SDK_ARCH} STREQUAL "iphoneos_armv7")
+if (${ARCH_SIM} STREQUAL "device")
 	include_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework/Headers")
 	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework")
 	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/lib")
 	set(gl_libs OpenGLES)
-elseif (${IOS_SDK_ARCH} STREQUAL "iphoneos_arm64")
-	include_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework/Headers")
-	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework")
-	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/lib")
-	set(gl_libs OpenGLES)
-elseif (${IOS_SDK_ARCH} STREQUAL "iphonesimulator_i386")
+elseif (${ARCH_SIM} STREQUAL "simulator")
 	include_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework/Headers")
 	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework")
 	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/lib")
 	set(gl_libs GLProgrammability)
-elseif (${IOS_SDK_ARCH} STREQUAL "iphonesimulator_x86_64")
-	include_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework/Headers")
-	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework")
-	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/lib")
-	set(gl_libs GLProgrammability)
+endif()
+
+if (${ARCH_SIM} STREQUAL "simulator")
+	if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+		set(suffix _iphonesimulator_debug)
+	else()
+		set(suffix _iphonesimulator)
+	endif()
+else()
+	if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+		set(suffix _debug)
+	else()
+		set(suffix )
+	endif()
 endif()
 
 set(ios_libs
@@ -128,87 +133,87 @@ set(ios_libs
 		${ImageIO}
 		${IOKit}
 		#
+		Qt5::DBus
+		Qt5::Widgets
+		Qt5::Quick
+		Qt5::Gui
+		Qt5::Qml
+		Qt5::Network
+		Qt5::Core
+		#
 		z
 		m
-		qios_debug
-		Qt5PlatformSupport_debug
-		Qt5DBus_debug
-		qtfreetype_debug
-		Qt5Widgets_debug
-		qtquick2plugin_debug
-		qtquickcontrolsplugin_debug
-		dialogplugin_debug
-		windowplugin_debug
-		qmlfolderlistmodelplugin_debug
-		qmlsettingsplugin_debug
-		dialogsprivateplugin_debug
-		qquicklayoutsplugin_debug
-		qtquickextrasplugin_debug
-		qtgraphicaleffectsprivate_debug
-		modelsplugin_debug
-		qdds_debug
-		qicns_debug
-		qico_debug
-		qtga_debug
-		qtiff_debug
-		qwbmp_debug
-		qwebp_debug
-		qmldbg_debugger_debug
-		qmldbg_inspector_debug
-		Qt5Quick_debug
-		qmldbg_local_debug
-		qmldbg_native_debug
-		Qt5Gui_debug
-		qtharfbuzzng_debug
-		qmldbg_profiler_debug
-		qmldbg_server_debug
-		qmldbg_tcp_debug
-		Qt5Qml_debug
-		qgenericbearer_debug
-		Qt5Network_debug
-		Qt5Core_debug
-		qtpcre_debug
-		
-		
-		qtlabscalendarplugin_debug
-		qtlabscontrolsplugin_debug
-		qtlabsmaterialstyleplugin_debug
-		qtlabsuniversalstyleplugin_debug
-		qmlfolderlistmodelplugin_debug
-		qmlsettingsplugin_debug
-		qtlabstemplatesplugin_debug
-		quick3dcoreplugin_debug
-		quick3dinputplugin_debug
-		quick3dlogicplugin_debug
-		quick3drenderplugin_debug
-		declarative_audioengine_debug
-		declarative_bluetooth_debug
-		qtcanvas3d_debug
-		qtgraphicaleffectsprivate_debug
-		declarative_location_debug
-		declarative_multimedia_debug
-		declarative_nfc_debug
-		declarative_positioning_debug
-		modelsplugin_debug
-		qtqmlstatemachine_debug
-		qtquickcontrolsplugin_debug
-		qtquickextrasflatplugin_debug
-		dialogplugin_debug
-		dialogsprivateplugin_debug
-		qtquickextrasplugin_debug
-		qquicklayoutsplugin_debug
-		qmllocalstorageplugin_debug
-		particlesplugin_debug
-		widgetsplugin_debug
-		qtquickscene3dplugin_debug
-		windowplugin_debug
-		qmlxmllistmodelplugin_debug
-		qtquick2plugin_debug
-		declarative_sensors_debug
-		qmltestplugin_debug
-		declarative_webchannel_debug
-		declarative_qmlwebsockets_debug
-		declarative_webview_debug
+		Qt5PlatformSupport${suffix}
+		qios${suffix}
+		qtfreetype${suffix}
+		qtquick2plugin${suffix}
+		qtquickcontrolsplugin${suffix}
+		dialogplugin${suffix}
+		windowplugin${suffix}
+		qmlfolderlistmodelplugin${suffix}
+		qmlsettingsplugin${suffix}
+		dialogsprivateplugin${suffix}
+		qquicklayoutsplugin${suffix}
+		qtquickextrasplugin${suffix}
+		qtgraphicaleffectsprivate${suffix}
+		modelsplugin${suffix}
+		qdds${suffix}
+		qicns${suffix}
+		qico${suffix}
+		qtga${suffix}
+		qtiff${suffix}
+		qwbmp${suffix}
+		qwebp${suffix}
+		qmldbg_debugger${suffix}
+		qmldbg_inspector${suffix}
+		qmldbg_local${suffix}
+		qmldbg_native${suffix}
+		qtharfbuzzng${suffix}
+		qmldbg_profiler${suffix}
+		qmldbg_server${suffix}
+		qmldbg_tcp${suffix}
+		qgenericbearer${suffix}
+		qtpcre${suffix}
+		#
+		qtlabscalendarplugin${suffix}
+		qtlabscontrolsplugin${suffix}
+		qtlabsmaterialstyleplugin${suffix}
+		qtlabsuniversalstyleplugin${suffix}
+		qmlfolderlistmodelplugin${suffix}
+		qmlsettingsplugin${suffix}
+		qtlabstemplatesplugin${suffix}
+		quick3dcoreplugin${suffix}
+		quick3dinputplugin${suffix}
+		quick3dlogicplugin${suffix}
+		quick3drenderplugin${suffix}
+		declarative_audioengine${suffix}
+		declarative_bluetooth${suffix}
+		qtcanvas3d${suffix}
+		qtgraphicaleffectsprivate${suffix}
+		declarative_location${suffix}
+		declarative_multimedia${suffix}
+		declarative_nfc${suffix}
+		declarative_positioning${suffix}
+		modelsplugin${suffix}
+		qtqmlstatemachine${suffix}
+		qtquickcontrolsplugin${suffix}
+		qtquickextrasflatplugin${suffix}
+		dialogplugin${suffix}
+		dialogsprivateplugin${suffix}
+		qtquickextrasplugin${suffix}
+		qquicklayoutsplugin${suffix}
+		qmllocalstorageplugin${suffix}
+		particlesplugin${suffix}
+		widgetsplugin${suffix}
+		qtquickscene3dplugin${suffix}
+		windowplugin${suffix}
+		qmlxmllistmodelplugin${suffix}
+		qtquick2plugin${suffix}
+		declarative_sensors${suffix}
+		qmltestplugin${suffix}
+		declarative_webchannel${suffix}
+		declarative_qmlwebsockets${suffix}
+		declarative_webview${suffix}
 		
 		)
 link_directories(

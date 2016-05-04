@@ -56,11 +56,6 @@ set(QT5_DIR "D:/installs/android/Qt5.6.0/5.6/android_armv7")
 # Global Properties.
 SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 
-# Find qt library.
-#set(CMAKE_PREFIX_PATH ${QT5_DIR})
-#find_package(Qt5Core)
-#find_package(Qt5Widgets)
-
 # Setup up our cpp flags.
 include_directories("${QT5_DIR}/include")
 include_directories("${ANDROID_TOOLCHAIN_ROOT}/system/usr/include")

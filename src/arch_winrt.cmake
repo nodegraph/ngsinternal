@@ -37,11 +37,6 @@ set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-gl")
 
 message("src root is set to: ${SRC_ROOT}")
 
-# Find qt library.
-#set(CMAKE_PREFIX_PATH ${QT5_DIR})
-#find_package(Qt5Core)
-#find_package(Qt5Widgets)
-
 # Setup up our cpp flags.
 include_directories("${QT5_DIR}/include")
 include_directories("${FREETYPE_DIR}/include")
