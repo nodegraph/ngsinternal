@@ -201,7 +201,8 @@ elseif (${ARCH} MATCHES "ARCH_IOS")
     target_link_libraries(ngs_device 
 	freetype
 	freetype-gl
-	gll) 
+	${OpenGLES}
+	) 
 elseif (${ARCH} MATCHES "ARCH_ANDROID")
 	target_link_libraries(ngs_device log)
 	if (gles_major_version EQUAL 2) 

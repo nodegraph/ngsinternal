@@ -15,7 +15,7 @@ set(headers
     toFloat.h
 	)
 	
-add_library(ngs_half SHARED  ${sources} ${headers})
+add_library(ngs_half ${sources} ${headers})
 generate_export_header(ngs_half EXPORT_MACRO_NAME HALF_EXPORT EXPORT_FILE_NAME half_export.h)
 
 target_link_libraries(ngs_half ngs_memoryallocator)

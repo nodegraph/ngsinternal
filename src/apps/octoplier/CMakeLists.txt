@@ -47,7 +47,15 @@ elseif (${ARCH} STREQUAL ARCH_MACOS)
 		Qt5::WebEngine 
 		)
 elseif (${ARCH} STREQUAL ARCH_IOS)
-	add_executable(octoplier MACOSX_BUNDLE ${sources})
+	file (GLOB icon_images ${CMAKE_CURRENT_SOURCE_DIR}/packaging/ios/icons/*.png)
+	file (GLOB launch_images ${CMAKE_CURRENT_SOURCE_DIR}/packaging/ios/launch/*.png)
+	set_source_files_properties(${icon_images} PROPERTIES MACOSX_PACKAGE_LOCATION "/octoplier.app")
+	set_source_files_properties(${launch_images} PROPERTIES MACOSX_PACKAGE_LOCATION "/octoplier.app")
+	#message("icons are: ${icon_images}")
+	#message("launch are: ${launch_images}")
+
+	# The target will pick up the bundle settings from above.
+	add_executable(octoplier MACOSX_BUNDLE ${sources} ${icon_images} ${launch_images})
 	target_link_libraries(octoplier 
 		ngs_gui 
 		ngs_entities
@@ -55,7 +63,6 @@ elseif (${ARCH} STREQUAL ARCH_IOS)
 		Qt5::Quick
 		${ios_libs}
 		)
-	set_target_properties(octoplier PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(octoplier ${sources})

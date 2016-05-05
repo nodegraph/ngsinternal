@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.2
 MessageDialog {
     id: message_dialog
     title: qsTr("May I have your attention, please?")
-    height: 100
+    //height: 100
 
     function show(caption) {
         message_dialog.text = caption

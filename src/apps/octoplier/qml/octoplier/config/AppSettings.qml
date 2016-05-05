@@ -107,5 +107,10 @@ Item{
             java_bridge.vibrate(10)
         }
     }
+    
+    // Stuff to do when this component is completed.
+    Component.onCompleted: {
+        console.log("appsettings page width height: "+page_width+","+page_height)
+    }
 }
 

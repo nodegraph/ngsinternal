@@ -5,12 +5,12 @@
 
 namespace ngs {
 
-MouseInfo get_mouse_info(QTouchEvent *event) {
+MouseInfo get_mouse_info(QTouchEvent *event, int device_pixel_ratio) {
   MouseInfo info;
   QList<QTouchEvent::TouchPoint> touchPoints = event->touchPoints();
   // We only use the first touch point.
   const QTouchEvent::TouchPoint &touchPoint = touchPoints.first();
-  info.screen_pos = glm::vec2(touchPoint.pos().x(),touchPoint.pos().y());
+  info.screen_pos = glm::vec2(device_pixel_ratio*touchPoint.pos().x(), device_pixel_ratio*touchPoint.pos().y());
   // The touch is always considered to be a left button mouse click.
   info.left_button=true;
   info.middle_button=false;
@@ -22,9 +22,9 @@ MouseInfo get_mouse_info(QTouchEvent *event) {
   return info;
 }
 
-MouseInfo get_mouse_info(QMouseEvent *event) {
+MouseInfo get_mouse_info(QMouseEvent *event, int device_pixel_ratio) {
   MouseInfo info;
-  info.screen_pos = glm::vec2(event->x(),event->y());
+  info.screen_pos = glm::vec2(device_pixel_ratio*event->x(), device_pixel_ratio*event->y());
   info.left_button=(event->button() == Qt::LeftButton) || (event->buttons() == Qt::LeftButton);
   info.middle_button=(event->button() == Qt::MidButton) || (event->buttons() == Qt::MidButton);
   info.right_button=(event->button() == Qt::RightButton) || (event->buttons() == Qt::RightButton);

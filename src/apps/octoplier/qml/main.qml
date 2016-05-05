@@ -6,6 +6,8 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
+
+
 import NodeGraphRendering 1.0
 import octoplier.actionbars 1.0
 import octoplier.pages 1.0
@@ -86,6 +88,11 @@ Rectangle {
         id: app_settings
     }
     
+    MessageDialog {
+    	id: message_dialog
+    }
+
+    
     // Our custom node graph quick item won't load dynamically in Qt 5.6.
     // So we declare it here.
     //NodeGraphPage {
@@ -110,13 +117,16 @@ Rectangle {
 //    }
     
     //Component.onCompleted: {
-    //    deviceItem.build_test_graph()
+        //deviceItem.build_test_graph()
     //}
     
     // Stuff to do when this component is completed.
     Component.onCompleted: {
     	//update()
         load_components()
+        console.log("appsettings page width height: "+app_settings.page_width+","+app_settings.page_height)
+        //message_dialog.visible = true
+        message_dialog.show("hello there we finished loading")
     }
 
     // Methods.
@@ -168,7 +178,7 @@ Rectangle {
     }
 
     function load_components() {
-        console.log('wwwwww: '+num_components)
+        console.log('num components: '+num_components)
         cpp_bridge.set_max_load_progress(num_components + 1) // The +1 is for updating the dependencies between components.
         cpp_bridge.set_marker_1(num_components)
         //cpp_bridge.process_events();
@@ -176,6 +186,11 @@ Rectangle {
         // Here we create qml objects dynamically from javascript.
         // Quote from Qt 5.6 docs:
         // Also, note that while dynamically created objects may be used the same as other objects, they do not have an id in QML.
+
+        load_component("node_graph_page","octoplier/pages/NodeGraphPage.qml",
+            app_window, {
+                "visible": false
+           })
 
         load_component("web_browser_page", "octoplier/pages/WebBrowserPage.qml",
                                           app_window, {
@@ -215,29 +230,29 @@ Rectangle {
                                             z: app_settings.copy_paste_bar_z
                                         })
         load_component("splitter","octoplier/actionbars/Splitter.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
 
         // Our Menus.
         load_component("web_browser_menu","octoplier/menus/WebBrowserMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
         load_component("node_graph_menu","octoplier/menus/NodeGraphMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
         load_component("node_menu","octoplier/menus/NodeMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
         load_component("group_node_menu","octoplier/menus/GroupNodeMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
         load_component("view_node_menu","octoplier/menus/ViewNodeMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
 
 //        // Our Dialogs.
-        load_component("message_dialog","octoplier/dialogs/MessageDialog.qml",
-                                        app_window, {"visible": false})
+//        load_component("message_dialog","octoplier/dialogs/MessageDialog.qml",
+//                                        app_window.contentItem, {"visible": false})
 //        load_component("choose_file_dialog","octoplier/dialogs/ChooseFileDialog.qml",
-//                                        app_window, {"visible": false})
+//                                        app_window.contentItem, {"visible": false})
         load_component("url_dialog","octoplier/dialogs/UrlDialog.qml",
-                                        app_window, {"visible": false})
+                                        app_window.contentItem, {"visible": false})
         load_component("node_name_dialog","octoplier/dialogs/NodeNameDialog.qml",
-                                        app_window, {"visible": false})
+                                        app_window.contentItem, {"visible": false})
 
         // Our App Tools.
         // This always draws on top of everything else.
@@ -248,10 +263,7 @@ Rectangle {
         load_component("node_pool_api","octoplier/apis/NodePoolAPI.qml",
                                     app_window, {"visible": false})
                                     
-        load_component("node_graph_page","octoplier/pages/NodeGraphPage.qml",
-                    app_window, {
-                        "visible": false
-                   })
+
 
 
         update_dependencies()
@@ -317,15 +329,15 @@ Rectangle {
 
         // Our Menus.
         load_component2("web_browser_menu","octoplier/menus/WebBrowserMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
         load_component2("node_graph_menu","octoplier/menus/NodeGraphMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
         load_component2("node_menu","octoplier/menus/NodeMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
         load_component2("group_node_menu","octoplier/menus/GroupNodeMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
         load_component2("view_node_menu","octoplier/menus/ViewNodeMenu.qml",
-                                  app_window, {"visible": false})
+                                  app_window, {"visible": true})
 
 //        // Our Dialogs.
         load_component2("message_dialog","octoplier/dialogs/MessageDialog.qml",

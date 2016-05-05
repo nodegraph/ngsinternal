@@ -41,6 +41,8 @@
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
 #include <QtCore/QRunnable>
+#include <QtGui/QGuiApplication>
+#include <QtGui/QScreen>
 
 #include <iostream>
 #include <cassert>
@@ -87,6 +89,8 @@ NodeGraphQuickItem::NodeGraphQuickItem(QQuickItem *parent)
   get_dep_loader()->register_fixed_dep(_canvas, "");
   get_dep_loader()->register_fixed_dep(_factory, "");
   get_dep_loader()->register_fixed_dep(_graph_builder, "");
+
+  _device_pixel_ratio = static_cast<GLsizei>(QGuiApplication::primaryScreen()->devicePixelRatio());
 
   // Configure.
   setAcceptedMouseButtons(Qt::AllButtons);
@@ -179,7 +183,7 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
   // Since we render in Qt's opengl context we need to make sure
   // that all of the gl state is left the way we found it.
   // This will restore the gl state on destruction.
-  //CaptureDeviceState capture_state;
+  CaptureDeviceState capture_state;
 
   qDebug() << "NodeGraphQuickItem::updatePaintNode called\n";
 
@@ -215,7 +219,7 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
     node->setTexture(_fbo_worker->get_display_texture());
     node->setRect(boundingRect());
     // Set the initial size.
-    get_current_interaction()->resize_gl(width(),height());
+    get_current_interaction()->resize_gl(_device_pixel_ratio*width(), _device_pixel_ratio*height());
   }
 
 
@@ -245,7 +249,7 @@ void NodeGraphQuickItem::geometryChanged(const QRectF & newGeometry, const QRect
   QQuickItem::geometryChanged(newGeometry, oldGeometry);
   const Dep<GroupInteraction>& interaction = get_current_interaction();
   if (interaction) {
-    interaction->resize_gl(newGeometry.width(),newGeometry.height());
+    interaction->resize_gl(_device_pixel_ratio*newGeometry.width(), _device_pixel_ratio*newGeometry.height());
   }
   update();
 }
@@ -262,12 +266,12 @@ void NodeGraphQuickItem::focusOutEvent(QFocusEvent * event) {
 
 // Mouse overrides.
 void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
-  MouseInfo info = get_mouse_info(event);
+  MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   update();
 }
 
 void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
-  MouseInfo info = get_mouse_info(event);
+  MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->moved(info);
   update();
 }
@@ -280,7 +284,7 @@ void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
 
 void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
   _long_press_timer.start();
-  _last_press = get_mouse_info(event);
+  _last_press = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->update_mouse_info(_last_press);
   _last_pressed_shape = get_current_interaction()->pressed(_last_press);
   update();
@@ -293,7 +297,7 @@ void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
   }
 
   // Deal with the release event.
-  MouseInfo info = get_mouse_info(event);
+  MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->released(info);
   update();
 
@@ -334,7 +338,7 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
         if (state&Qt::TouchPointPressed) {
           _long_press_timer.start();
 
-          _last_press = get_mouse_info(event);
+          _last_press = get_mouse_info(event, _device_pixel_ratio);
           get_current_interaction()->update_mouse_info(_last_press);
           _last_pressed_shape = get_current_interaction()->pressed(_last_press);
           update();
@@ -346,11 +350,11 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
           }
 
           // Deal with the release event.
-          MouseInfo info = get_mouse_info(event);
+          MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
           get_current_interaction()->released(info);
           update();
         } else if (state&Qt::TouchPointMoved) {
-          MouseInfo info = get_mouse_info(event);
+          MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
           get_current_interaction()->moved(info);
           update();
         } else if (state&Qt::TouchPointStationary) {

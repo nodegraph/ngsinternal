@@ -27,7 +27,7 @@ elseif (${ARCH_SIM} STREQUAL "simulator")
 	set(ios_sdk "iphonesimulator")
 	#set(target "i386-apple-darwin")
 	set(target "x86_64-apple-darwin")        
-	set(ios_arch "-arch i386 -arch x86_64")
+	set(ios_arch "-arch x86_64") # -arch i386  <- qt doesn't package these
 	set(min_ios_sdk "-mios-version-min=8.0")
 	execute_process(COMMAND xcrun -sdk ${ios_sdk} --show-sdk-path
 	  OUTPUT_VARIABLE sysroot
@@ -47,10 +47,12 @@ message("sysroot is: ${sysroot}")
 message("min ios sdk: ${min_ios_sdk}")
 
 set(CMAKE_OSX_SYSROOT ${sysroot} CACHE PATH "" FORCE)
+#set(CMAKE_OSX_DEPLOYMENT_TARGET 9.3)
 exec_program(/usr/bin/xcode-select ARGS -print-path OUTPUT_VARIABLE CMAKE_XCODE_DEVELOPER_DIR)
 
 set(CMAKE_MACOSX_BUNDLE YES)
 set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
+set(CMAKE_XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf")  #"dwarf-with-dsym"
 
 set(CMAKE_SYSTEM_NAME Darwin CACHE STRING "" FORCE)
 set(CMAKE_SYSTEM_VERSION ${IOS_SDK_VERSION} CACHE STRING "" FORCE)

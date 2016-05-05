@@ -18,14 +18,11 @@ add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 # Qt Directory.
 # ---------------------------------------------------------
 
-set(QT5_DIR "/Users/raindrop/installs/iosandroid/Qt5.6.0/5.6/ios")
-
-
-#set(OUR_LINK_FLAGS " -L${sysroot}/usr/lib -force_load  ${QT5_DIR}/plugins/platforms/libqios.a ")
-#set(CMAKE_EXE_LINKER_FLAGS "${OUR_LINK_FLAGS} " CACHE STRING "" FORCE) 
-#set(CMAKE_MODULE_LINKER_FLAGS "${OUR_LINK_FLAGS}" CACHE STRING "" FORCE)
-#set(CMAKE_SHARED_LINKER_FLAGS "${OUR_LINK_FLAGS}" CACHE STRING "" FORCE)
-
+if (${ARCH_SIM} STREQUAL "device")
+	set(QT5_DIR "/Users/raindrop/installs/iosandroid/Qt5.6.0/5.6/ios")
+elseif (${ARCH_SIM} STREQUAL "simulator")
+	set(QT5_DIR "/Users/raindrop/installs/iosandroid/Qt5.6.0/5.6/clang_64")
+endif()
 
 # ---------------------------------------------------------
 # Custom Directories. 
@@ -87,19 +84,15 @@ find_library(MobileCoreServices MobileCoreServices)
 find_library(QuartzCore QuartzCore)
 find_library(UIKit UIKit)
 find_library(AssetsLibrary AssetsLibrary)
+find_library(OpenGLES OpenGLES)
 
+message("OpenGLES framework is at: ${OpenGLES}")
 
 # GL setup.
 if (${ARCH_SIM} STREQUAL "device")
-	include_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework/Headers")
-	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/OpenGLES.framework")
-	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/lib")
-	set(gl_libs OpenGLES)
+	include_directories("${OpenGLES}/Headers")
 elseif (${ARCH_SIM} STREQUAL "simulator")
-	include_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework/Headers")
-	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/OpenGLES.framework")
-	link_directories("/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/lib")
-	set(gl_libs GLProgrammability)
+	include_directories("${OpenGLES}/Headers")
 endif()
 
 if (${ARCH_SIM} STREQUAL "simulator")
@@ -140,6 +133,7 @@ set(ios_libs
 		Qt5::Qml
 		Qt5::Network
 		Qt5::Core
+		Qt5::WebView
 		#
 		z
 		m

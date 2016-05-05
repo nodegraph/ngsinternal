@@ -129,7 +129,7 @@ configure_file (
   )
   
 # Find qt library.
-set(CMAKE_PREFIX_PATH ${QT5_DIR})
+set(CMAKE_PREFIX_PATH ${QT5_DIR} /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework/Headers)
 find_package(Qt5Core)
 find_package(Qt5Widgets)
 

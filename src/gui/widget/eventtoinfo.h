@@ -11,8 +11,8 @@ class QWheelEvent;
 
 namespace ngs {
 
-  MouseInfo get_mouse_info(QTouchEvent *event);
-  MouseInfo get_mouse_info(QMouseEvent *event);
+  MouseInfo get_mouse_info(QTouchEvent *event, int device_pixel_ratio);
+  MouseInfo get_mouse_info(QMouseEvent *event, int device_pixel_ratio);
 
   MouseInfo get_hover_info(QHoverEvent* event);
 

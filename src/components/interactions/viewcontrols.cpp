@@ -9,7 +9,7 @@ const float ViewControls::_background_screen_z = 0.09980995208024979;
 
 
 ViewControls::ViewControls()
-    : track_ball(-1000) {
+    : track_ball(-50) {
   track_ball.reset();
 }
 

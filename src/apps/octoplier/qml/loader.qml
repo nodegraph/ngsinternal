@@ -7,6 +7,8 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
+import QtWebView 1.1
+
 import NodeGraphRendering 1.0
 import octoplier.actionbars 1.0
 import octoplier.pages 1.0
@@ -70,8 +72,25 @@ ApplicationWindow {
 
 //    }
 
-    NodeGraphPage {
-        id: node_graph_page
+    //NodeGraphPage {
+    //    id: node_graph_page
+    //}
+    
+    WebView {
+        id: web_view
+        objectName: "web_view_object"
+
+	    // Dimensions.
+	    height: app_settings.page_height
+	    width: app_settings.page_width
+	
+	    // Positioning.
+	    x: app_settings.page_x
+	    y: app_settings.page_y
+	    z: app_settings.page_z
+
+        // Initial url.
+        url: "http://www.google.com"
     }
 
 

@@ -36,7 +36,7 @@ class DEVICE_EXPORT PerspectiveLens: public Lens {
 
 class DEVICE_EXPORT OrthographicLens: public Lens {
  public:
-  OrthographicLens(float left=0.0, float right=512.0, float bottom=0.0, float top=512.0, float near_z=1, float far_z=10000.0);
+  OrthographicLens(float left=0.0, float right=512.0, float bottom=0.0, float top=512.0, float near_z=1, float far_z=100.0);
   virtual ~OrthographicLens();
 
   virtual void resize(float width, float height);

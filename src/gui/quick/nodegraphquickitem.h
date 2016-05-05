@@ -1,5 +1,6 @@
 #pragma once
 #include <gui/gui_export.h>
+#include <base/device/devicebasictypesgl.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
 #include <components/entities/componentids.h>
@@ -166,6 +167,9 @@ Q_OBJECT
 
   // Pinching mode.
   bool _pinch_mode;
+
+  // In OpenGL pixels are always in device pixels.
+  GLsizei _device_pixel_ratio;
 };
 
 }

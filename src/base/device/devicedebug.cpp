@@ -14,7 +14,7 @@
 
 //#include <QtCore/QDebug>
 
-#define CAPTURE_ESSENTIALS
+#define CAPTURE_ALL
 
 namespace ngs {
 
@@ -22,7 +22,7 @@ namespace ngs {
 
 CaptureDeviceState::CaptureDeviceState():
   _program_name(0) {
-#ifndef CAPTURE_ESSENTIALS
+#ifdef CAPTURE_ALL
   glGetIntegerv(GL_ACTIVE_TEXTURE, &_active_texture);
 
   for (int i = 0; i < Device::get_num_texture_units(); i++) {
@@ -45,7 +45,7 @@ CaptureDeviceState::CaptureDeviceState():
 }
 
 CaptureDeviceState::~CaptureDeviceState() {
-#ifndef CAPTURE_ESSENTIALS
+#ifdef CAPTURE_ALL
   for (int i = 0; i < Device::get_num_texture_units(); i++) {
     Device::set_active_texture_unit(i);
     // Finally restore the previous binding.

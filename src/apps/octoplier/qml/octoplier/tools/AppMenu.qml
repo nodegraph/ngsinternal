@@ -7,7 +7,8 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
 Menu {
-    title: "Some Kind of Menu"        
+    title: "Some Kind of Menu"
+
     style: MenuStyle {
         id: desktop_menu_style
 

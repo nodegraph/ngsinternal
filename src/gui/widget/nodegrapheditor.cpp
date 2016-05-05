@@ -14,7 +14,8 @@
 #include <components/interactions/groupinteraction.h>
 
 #include <QtGui/QMouseEvent>
-
+#include <QtGui/QGuiApplication>
+#include <QtGui/QScreen>
 
 namespace {
 using namespace ngs;
@@ -124,7 +125,8 @@ void NodeGraphEditor::initializeGL() {
 }
 
 void NodeGraphEditor::resizeGL(int w, int h) {
-  _canvas->get_current_interaction()->resize_gl(w, h);
+  GLsizei dpr = static_cast<GLsizei>(QGuiApplication::primaryScreen()->devicePixelRatio());
+  _canvas->get_current_interaction()->resize_gl(dpr*w, dpr*h);
 }
 
 void NodeGraphEditor::paintGL() {

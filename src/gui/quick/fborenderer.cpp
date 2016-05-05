@@ -160,8 +160,9 @@ void FBORenderer::render() {
 
   qDebug() << "FBORenderer::render viewport: " << p.x << "," << p.y << "," << p.width << "," << p.height << "\n";
 
+
 	if (p.width != get_texture_width() || p.height != get_texture_height()) {
-	  resize_gl(p.width,p.height);
+	  resize_gl(p.width, p.height);
 	}
 
   // Bind the fbo.

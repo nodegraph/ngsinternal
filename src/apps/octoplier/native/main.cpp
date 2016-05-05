@@ -5,8 +5,8 @@
 #include <native/utils.h>
 
 #include <QtWidgets/QApplication>
-//#include <QtGui/QGuiApplication>
-#include <QtQml/QQmlApplicationEngine>
+#include <QtGui/QGuiApplication>
+//#include <QtQml/QQmlApplicationEngine>
 
 #include <QtCore/QDebug>
 
@@ -61,6 +61,51 @@
 //  return app.exec();
 //}
 
+#if ARCH == ARCH_IOS
+  #include <QtPlugin>
+  Q_IMPORT_PLUGIN(QtQuick2Plugin)
+  Q_IMPORT_PLUGIN(QtQuickControlsPlugin)
+  Q_IMPORT_PLUGIN(QtQuick2DialogsPlugin)
+  Q_IMPORT_PLUGIN(QtQuick2WindowPlugin)
+
+  //Q_IMPORT_PLUGIN(DialogPlugin)
+  //Q_IMPORT_PLUGIN(WindowPlugin)
+  Q_IMPORT_PLUGIN(QmlFolderListModelPlugin)
+  Q_IMPORT_PLUGIN(QmlSettingsPlugin)
+  //Q_IMPORT_PLUGIN(DialogsPrivatePlugin)
+  Q_IMPORT_PLUGIN(QtQuickLayoutsPlugin)
+  Q_IMPORT_PLUGIN(QtQuickExtrasPlugin)
+  //Q_IMPORT_PLUGIN(QtGraphicalEffectsPrivate)
+  //Q_IMPORT_PLUGIN(ModelsPlugin)
+
+
+  Q_IMPORT_PLUGIN(QtQuick2DialogsPrivatePlugin)
+  Q_IMPORT_PLUGIN(QtQmlModelsPlugin)
+  Q_IMPORT_PLUGIN(QtQuick2PrivateWidgetsPlugin)
+
+  // WebView.=.
+  Q_IMPORT_PLUGIN(QWebViewModule)
+  Q_IMPORT_PLUGIN(QtGraphicalEffectsPlugin)
+
+  Q_IMPORT_PLUGIN(QDDSPlugin)
+  Q_IMPORT_PLUGIN(QICNSPlugin)
+  Q_IMPORT_PLUGIN(QICOPlugin)
+  Q_IMPORT_PLUGIN(QTgaPlugin)
+  Q_IMPORT_PLUGIN(QTiffPlugin)
+  Q_IMPORT_PLUGIN(QWbmpPlugin)
+  Q_IMPORT_PLUGIN(QWebpPlugin)
+  Q_IMPORT_PLUGIN(QQmlDebuggerServiceFactory)
+  Q_IMPORT_PLUGIN(QQmlInspectorServiceFactory)
+  Q_IMPORT_PLUGIN(QLocalClientConnectionFactory)
+  Q_IMPORT_PLUGIN(QQmlNativeDebugConnectorFactory)
+  Q_IMPORT_PLUGIN(QQmlProfilerServiceFactory)
+  Q_IMPORT_PLUGIN(QQmlDebugServerFactory)
+  Q_IMPORT_PLUGIN(QTcpServerConnectionFactory)
+  Q_IMPORT_PLUGIN(QGenericEnginePlugin)
+
+
+#endif
+
 int main(int argc, char *argv[]) {
 
 //  QSurfaceFormat format;
@@ -77,7 +122,7 @@ int main(int argc, char *argv[]) {
   {
 
     // Create our application. Note that QGUIApplication has no dependency on widgets.
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
     QSurfaceFormat format;
 #if ARCH == ARCH_MACOS
@@ -90,6 +135,10 @@ int main(int argc, char *argv[]) {
   // This sets up the app to use opengl es.
   QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
   format.setRenderableType(QSurfaceFormat::OpenGLES);
+  format.setDepthBufferSize(24);
+  format.setStencilBufferSize(8);
+  format.setAlphaBufferSize(8);
+  format.setSamples(2);
   QSurfaceFormat::setDefaultFormat(format);
 #endif
 #endif
@@ -182,16 +231,64 @@ int main(int argc, char *argv[]) {
 
     QQuickView view;
     g_quick_view = &view;
-
-    view.setWidth(640);
-    view.setHeight(480);
+    view.setWidth(QGuiApplication::primaryScreen()->size().width() );
+    view.setHeight(QGuiApplication::primaryScreen()->size().height() );
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     view.setFormat(format);
     g_qml_engine = view.engine();
     g_qml_engine->addImportPath("qrc:/qml");
     g_qml_engine->addImportPath("qrc:/");
 
-    view.setSource(QUrl(QStringLiteral("qrc:/deviceitem.qml")));
+
+#if ARCH == ARCH_IOS
+  // Register QML types.
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2Plugin().instance())->registerTypes("QtQuick");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2PrivateWidgetsPlugin().instance())->registerTypes("QtQuick.PrivateWidgets");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->registerTypes("QtQuick.Controls");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->registerTypes("QtQuick.Controls.Private");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->registerTypes("QtQuick.Controls.Styles");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2DialogsPlugin().instance())->registerTypes("QtQuick.Dialogs");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2DialogsPrivatePlugin().instance())->registerTypes("QtQuick.Dialogs.Private");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickLayoutsPlugin().instance())->registerTypes("QtQuick.Layouts");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2WindowPlugin().instance())->registerTypes("QtQuick.Window");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickExtrasPlugin().instance())->registerTypes("QtQuick.Extras");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQmlModelsPlugin().instance())->registerTypes("QtQml.Models");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QWebViewModule().instance())->registerTypes("QtWebView");
+
+  // Initialize engine with these QML types.
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2Plugin().instance())->initializeEngine(g_qml_engine, "QtQuick");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2PrivateWidgetsPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.PrivateWidgets");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Controls");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->initializeEngine(g_qml_engine,
+                                                                                                            "QtQuick.Controls.Private");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->initializeEngine(g_qml_engine,
+                                                                                                            "QtQuick.Controls.Styles");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2DialogsPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Dialogs");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2DialogsPrivatePlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Dialogs.Private");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickLayoutsPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Layouts");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2WindowPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Window");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickExtrasPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Extras");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQmlModelsPlugin().instance())->initializeEngine(g_qml_engine, "QtQml.Models");
+
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QWebViewModule().instance())->initializeEngine(g_qml_engine, "QtWebView");
+
+
+  //qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtGraphicalEffectsPlugin().instance())->registerTypes("QtGraphicalEffects.private");
+  //qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtGraphicalEffectsPlugin().instance())->initializeEngine(&engine, "QtQraphicalEffects");
+
+#endif
+
+
     QQmlContext* context = g_qml_engine->rootContext();
     view.show();
 

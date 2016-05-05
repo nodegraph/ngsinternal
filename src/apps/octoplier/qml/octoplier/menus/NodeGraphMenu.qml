@@ -16,11 +16,13 @@ AppMenu {
     
     // Methods.
     function on_popup_menu() {
+        console.log("trying to popup node graph menu")
         app_settings.vibrate()
         center_new_nodes = false
         popup()
     }
     function on_popup_menu_with_centering() {
+        console.log("trying to popup node graph menu with centering")
         app_settings.vibrate()
         center_new_nodes = true
         popup()

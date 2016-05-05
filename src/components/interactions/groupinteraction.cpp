@@ -912,7 +912,7 @@ void GroupInteraction::explode(const Dep<CompShape>& cs) {
 
 void GroupInteraction::resize_gl(GLsizei width, GLsizei height) {
   start_method();
-  _view_controls.resize(width,height);
+  _view_controls.resize(width, height);
 }
 
 const ViewportParams& GroupInteraction::get_viewport_params() const {
