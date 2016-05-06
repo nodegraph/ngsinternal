@@ -50,9 +50,9 @@
 
 #ifdef QT_WEBVIEW_WEBENGINE_BACKEND
 #include <QtWebEngine/QtWebEngine>
-#endif
-
+#else
 #include <QtWebView/QtWebView>
+#endif
 
 //int main(int argc, char *argv[]) {
 //  qDebug() << "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\n";
@@ -231,8 +231,13 @@ int main(int argc, char *argv[]) {
 
     QQuickView view;
     g_quick_view = &view;
+#if ARCH == ARCH_WINDOWS
+    view.setWidth(800);
+    view.setHeight(1024);
+#else
     view.setWidth(QGuiApplication::primaryScreen()->size().width() );
     view.setHeight(QGuiApplication::primaryScreen()->size().height() );
+#endif
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     view.setFormat(format);
     g_qml_engine = view.engine();
@@ -296,10 +301,10 @@ int main(int argc, char *argv[]) {
     Utils* utils = new_ff Utils(g_qml_engine);
     Scripts* scripts = new_ff Scripts();
 
-    qDebug() << "physical dots per inch: " << QGuiApplication::primaryScreen()->physicalDotsPerInch() << "\n";
-    qDebug() << "device pixel ratio: " << QGuiApplication::primaryScreen()->devicePixelRatio() << "\n";
-    qDebug() << "width: " << QGuiApplication::primaryScreen()->size().width() << "\n";
-    qDebug() << "height: " << QGuiApplication::primaryScreen()->size().height() << "\n";
+    qDebug() << "physical dots per inch: " << QGuiApplication::primaryScreen()->physicalDotsPerInch();
+    qDebug() << "device pixel ratio: " << QGuiApplication::primaryScreen()->devicePixelRatio();
+    qDebug() << "width: " << QGuiApplication::primaryScreen()->size().width();
+    qDebug() << "height: " << QGuiApplication::primaryScreen()->size().height();
 
     // Expose some c++ objects to qml.
     context->setContextProperty("pdpi", QGuiApplication::primaryScreen()->physicalDotsPerInch());

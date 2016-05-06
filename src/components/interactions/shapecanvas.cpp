@@ -72,7 +72,7 @@ void ShapeCanvas::update_state() {
     const ViewportParams& viewport = _current_interaction->get_viewport_params();
 
     glViewport(viewport.x,viewport.y,viewport.width,viewport.height);
-    qDebug() << "shape canvas viewport: " << viewport.x << "," << viewport.y << "," << viewport.width << "," << viewport.height << "\n";
+    //qDebug() << "shape canvas viewport: " << viewport.x << "," << viewport.y << "," << viewport.width << "," << viewport.height << "\n";
 
     // Update our quad pipeline.
     _quad_pipeline->use();
@@ -140,23 +140,17 @@ void ShapeCanvas::draw_gl() {
 
   // Clear the depth.
   if (_clear_depth) {
-    qDebug() << "shape canvas clearing depth\n";
     _quad_pipeline->clear_depth();
   }
 
   // Clear the color.
   if (_clear_color) {
-    qDebug() << "shape canvas clearing color\n";
     _quad_pipeline->clear_color();
   }
-
-  qDebug() << "shape canvas drawing quads\n";
 
   // Draw our quad pipeline.
   _quad_pipeline->use();
   _quad_pipeline->draw();
-
-  qDebug() << "shape canvas drawing text\n";
 
   // Draw our text pipeline.
   _text_pipeline->use();

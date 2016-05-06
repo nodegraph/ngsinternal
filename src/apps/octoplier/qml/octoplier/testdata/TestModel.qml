@@ -1,16 +1,64 @@
-import QtQuick 2.4
+import QtQuick 2.6
 
 ListModel {
     ListElement {
-        name: "Bill Smith"
-        number: "555 3264"
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
     }
     ListElement {
-        name: "John Brown"
-        number: "555 8426"
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
     }
     ListElement {
-        name: "Sam Wise"
-        number: "555 0473"
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Add"
+        description: "Add two values together."
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "Second Last add"
+        description: "Add two values together."
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        title: "LAST ADD"
+        description: "Add two values together."
     }
 }

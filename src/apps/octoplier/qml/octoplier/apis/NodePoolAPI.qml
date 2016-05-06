@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.6
 
 import "/nodes/nodes.js" as Nodes
 

@@ -45,11 +45,7 @@ void CppBridge::post_init() {
 }
 
 void CppBridge::set_max_load_progress(size_t max) {
-  qDebug() << "xxxxxxxxxxxx " << max;
-  qDebug() << "xxxxxxxxxxxx " << max;
-  qDebug() << "xxxxxxxxxxxx " << max;
   if (g_splash_screen) {
-    qDebug() << "yyyyyyyyyyyyyy "<< max;
     g_splash_screen->set_max_progress(max);
   }
   //qApp->processEvents();

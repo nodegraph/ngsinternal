@@ -59,6 +59,7 @@
         <file>qml/octoplier/pages/EmptyPage.qml</file>
         <file>qml/octoplier/pages/NodeGraphPage.qml</file>
         <file>qml/octoplier/pages/SplashPage.qml</file>
+        <file>qml/octoplier/pages/MenuPage.qml</file>
         
         <!-- APIs -->
         <file>qml/octoplier/apis/qmldir</file>

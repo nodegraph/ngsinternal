@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.6
 import QtQuick.Controls 1.4
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
@@ -90,6 +90,10 @@ Rectangle {
     
     MessageDialog {
     	id: message_dialog
+    }
+
+    MenuPage {
+        id: settings_page
     }
 
     
@@ -201,10 +205,10 @@ Rectangle {
                                     app_window, {
                                         "visible": false
                                     })
-        load_component("settings_page","octoplier/pages/SettingsPage.qml",
-                                    app_window, {
-                                        "visible": false
-                                    })
+//        load_component("settings_page","octoplier/pages/SettingsPage.qml",
+//                                    app_window, {
+//                                        "visible": false
+//                                    })
         load_component("edit_node_page","octoplier/pages/EditNodePage.qml",
                                     app_window, {
                                         "visible": false

@@ -47,47 +47,16 @@ void TestWindow::paintGL() {
     _done = true;
   }
 
-  std::cerr << "xxxxxxxxxxxxxx\n";
-  std::cerr << "glGetString: " << glGetString << "\n";
-
   {
-    std::cerr << "OpenGL version " << glGetString(GL_VERSION)<< endl;
-    std::cerr << "GLSL version " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
-  }
-//  {
-//    QOpenGLFunctions gl;
-//    gl.initializeOpenGLFunctions();
-//
-//    const GLubyte * version = gl.glGetString(GL_VERSION);
-//    std::cerr << "ccccccccccccccc\n";
-//    if (version == 0) {
-//      std::cerr << "error getting the gl version string\n";
-//    } else {
-//      std::cerr << "qt reported gl version: " << version << "\n";
-//    }
-//  }
-
-  {
-    const GLubyte * version = glGetString(GL_VERSION);
-    std::cerr << "qqqqqqqqqqqqqqqqq\n";
-    if (version == 0) {
-      std::cerr << "error getting the gl version string\n";
-    } else {
-      std::cerr << "version: " << version << "\n";
-    }
+    //std::cerr << "OpenGL version " << glGetString(GL_VERSION)<< endl;
+    //std::cerr << "GLSL version " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
   }
 
-  //  QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
-//  qDebug() << "Driver Version String:" << versionString;
-//  qDebug() << "Current Context:" << format();
-
-  std::cerr << "yyyyy\n";
   try {
     test_callback();
   } catch (...) {
-    std::cerr << "wwwwwww we caught an exception\n";
+    std::cerr << "TestWindow has caught an exception!\n";
   }
-  std::cerr << "zzzzz\n";
 }
 
 }

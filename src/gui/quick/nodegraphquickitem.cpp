@@ -176,23 +176,18 @@ void NodeGraphQuickItem::handle_window_changed(QQuickWindow *win) {
 QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*) {
 
   {
-    std::cerr << "OpenGL version " << glGetString(GL_VERSION)<< endl;
-    std::cerr << "GLSL version " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
+    //std::cerr << "OpenGL version " << glGetString(GL_VERSION)<< endl;
+    //std::cerr << "GLSL version " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
   }
 
   // Since we render in Qt's opengl context we need to make sure
   // that all of the gl state is left the way we found it.
   // This will restore the gl state on destruction.
   CaptureDeviceState capture_state;
-
-  qDebug() << "NodeGraphQuickItem::updatePaintNode called\n";
-
   gpu();
 
   // Initialize the opengl objects for the fbo render thread.
   if (!_canvas->is_initialized_gl()) {
-
-    qDebug() << "NodeGraphQuickItem::is initializing\n";
 
     if (glewGetContext()==NULL) {
       start_glew(); // Initialize glew for the scene graph render thread.
@@ -222,26 +217,15 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
     get_current_interaction()->resize_gl(_device_pixel_ratio*width(), _device_pixel_ratio*height());
   }
 
-
-  qDebug() << "NodeGraphQuickItem::starting the act of rendering -------------------- \n";
-
   // Render to a texture in another thread, but we block until it finishes.
   _fbo_worker->render_next_texture();
 
-  qDebug() << "NodeGraphQuickItem::swapping buffers -------------------- \n";
   // Swap the textures and retrieve the current display texture.
   QSGTexture* display_texture = _fbo_worker->swap_buffers();
 
   // Update our display node with the newly rendered texture.
   node->setTexture(display_texture);
   node->setRect(boundingRect());
-
-  qDebug() << "bounding rect is: " << boundingRect() << "\n";
-
-  qDebug() << "NodeGraphQuickItem::updatePaintNode finished -------------------- \n";
-
-// window()->resetOpenGLState();
-// window()->update();
   return node;
 }
 

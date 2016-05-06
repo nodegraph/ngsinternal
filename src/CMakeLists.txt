@@ -139,9 +139,11 @@ find_package(Qt5OpenGLExtensions)
 find_package(Qt5WebView)
 find_package(Qt5WebChannel)
 
-if ((${ARCH} STREQUAL "ARCH_LINUX") OR (${ARCH} STREQUAL "ARCH_MACOS"))
+if ((${ARCH} STREQUAL "ARCH_LINUX") OR (${ARCH} STREQUAL "ARCH_WINDOWS") OR (${ARCH} STREQUAL "ARCH_MACOS"))
 	find_package(Qt5WebEngine)
-elseif(${ARCH} STREQUAL "ARCH_ANDROID")
+endif()
+
+if (${ARCH} STREQUAL "ARCH_ANDROID")
 	find_package(Qt5AndroidExtras)
 endif()
 

@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.6
 import QtQuick.Controls 1.4
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
@@ -26,6 +26,10 @@ Item{
     property int action_bar_x: 0
     property int action_bar_y: 0
     property int action_bar_z: 0
+
+    property int list_item_height_large: app_units.dp(120)
+    property int list_item_height_small: app_units.dp(60)
+    property int list_item_border_width: app_units.dp(1)
     
     // Splitter Properties.
     property int splitter_height: app_units.dp(2)
@@ -72,6 +76,7 @@ Item{
     // The node graph bg color (3.0f/255.0f, 169.0f/255.0f, 244.0f/255.0f, 1.00).
     property color ng_bg_color: "#FF03A9F4"
     property color ng_bg_alternate_color: "#FF29B6F6"
+    property color ng_bg_alternate_transparent_color: "#9929B6F6"
         
     // Font Properties.
     property double font_point_size: 25

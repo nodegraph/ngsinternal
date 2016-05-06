@@ -158,9 +158,6 @@ void FBORenderer::render() {
   const ViewportParams& p = _ng_canvas->get_current_interaction()->get_viewport_params();
   glViewport(p.x, p.y, p.width, p.height);
 
-  qDebug() << "FBORenderer::render viewport: " << p.x << "," << p.y << "," << p.width << "," << p.height << "\n";
-
-
 	if (p.width != get_texture_width() || p.height != get_texture_height()) {
 	  resize_gl(p.width, p.height);
 	}
