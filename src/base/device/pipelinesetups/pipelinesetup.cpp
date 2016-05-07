@@ -12,8 +12,8 @@
 
 namespace ngs {
 
-//const glm::vec4 PipelineSetup::kClearColor(3.0f/255.0f, 169.0f/255.0f, 244.0f/255.0f, 1.00 );
-const glm::vec4 PipelineSetup::kClearColor(255.0f/255.0f, 0.0f/255.0f, 0.0f/255.0f, 1.00 );
+const glm::vec4 PipelineSetup::kClearColor(3.0f/255.0f, 169.0f/255.0f, 244.0f/255.0f, 1.00 );
+
 PipelineSetup::PipelineSetup(const std::string& vertex_shader, const std::string& fragment_shader)
     : _pipeline(NULL),
       _frag_data_infos(NULL),

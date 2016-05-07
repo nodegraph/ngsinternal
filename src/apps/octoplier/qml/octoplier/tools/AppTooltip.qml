@@ -56,7 +56,7 @@ Rectangle {
     visible: false
     
     // Background color.
-    color: app_settings.tree_view_selected_row_bg_color //"#FFFF80AB" //"#DD7090FF" //"pink"
+    color: app_settings.tooltip_bg_color //"#FFFF80AB" //"#DD7090FF" //"pink"
         
 //    // By default we anchor the tooltip direct under its target.
 //    anchors {

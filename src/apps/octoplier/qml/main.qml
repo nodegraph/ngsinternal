@@ -16,6 +16,7 @@ import octoplier.menus 1.0
 import octoplier.tools 1.0
 import octoplier.apis 1.0
 import octoplier.config 1.0
+import octoplier.data 1.0
 
 Rectangle {
 
@@ -87,15 +88,34 @@ Rectangle {
     AppSettings {
         id: app_settings
     }
+
+    // Global App Objects.
+    AppLoader {
+        id: app_loader
+    }
     
     MessageDialog {
     	id: message_dialog
     }
 
-    MenuPage {
+    MenuStack {
         id: settings_page
     }
 
+    MainBar {
+        id: main_bar
+    }
+
+    CopyPasteBar {
+        id: copy_paste_bar
+        visible: false
+        z: app_settings.copy_paste_bar_z
+    }
+
+    Splitter {
+        id: splitter
+        visible: true
+    }
     
     // Our custom node graph quick item won't load dynamically in Qt 5.6.
     // So we declare it here.
@@ -131,6 +151,8 @@ Rectangle {
         console.log("appsettings page width height: "+app_settings.page_width+","+app_settings.page_height)
         //message_dialog.visible = true
         message_dialog.show("hello there we finished loading")
+
+        settings_page.test()
     }
 
     // Methods.
@@ -227,14 +249,14 @@ Rectangle {
                                     })
 
         // Our Action Bars.
-        load_component("main_bar","octoplier/actionbars/MainBar.qml", app_window, {})
-        load_component("copy_paste_bar","octoplier/actionbars/CopyPasteBar.qml",
-                                        app_window, {
-                                            "visible": false,
-                                            z: app_settings.copy_paste_bar_z
-                                        })
-        load_component("splitter","octoplier/actionbars/Splitter.qml",
-                                  app_window, {"visible": true})
+        //load_component("main_bar","octoplier/actionbars/MainBar.qml", app_window, {})
+        //load_component("copy_paste_bar","octoplier/actionbars/CopyPasteBar.qml",
+        //                                app_window, {
+        //                                    "visible": false,
+        //                                    z: app_settings.copy_paste_bar_z
+        //                                })
+        //load_component("splitter","octoplier/actionbars/Splitter.qml",
+        //                          app_window, {"visible": true})
 
         // Our Menus.
         load_component("web_browser_menu","octoplier/menus/WebBrowserMenu.qml",
@@ -378,7 +400,7 @@ Rectangle {
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(web_browser_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
+       // main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(view_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(url_entry_page.on_switch_to_mode)
@@ -397,12 +419,12 @@ Rectangle {
         view_node_page.popup_menu.connect(view_node_menu.on_popup_menu)
 
         // Node graph connections.
-        node_graph_page.node_graph.node_graph_context_menu_requested.connect(
-                    node_graph_menu.on_popup_menu)
-        node_graph_page.node_graph.node_context_menu_requested.connect(
-                    node_menu.on_popup_menu)
-        node_graph_page.node_graph.group_node_context_menu_requested.connect(
-                    group_node_menu.on_popup_menu)
+        //node_graph_page.node_graph.node_graph_context_menu_requested.connect(
+        //            node_graph_menu.on_popup_menu)
+        //node_graph_page.node_graph.node_context_menu_requested.connect(
+        //            node_menu.on_popup_menu)
+        //node_graph_page.node_graph.group_node_context_menu_requested.connect(
+        //            group_node_menu.on_popup_menu)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.

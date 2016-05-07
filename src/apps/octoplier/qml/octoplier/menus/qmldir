@@ -5,3 +5,6 @@ NodeGraphMenu 1.0 NodeGraphMenu.qml
 NodeMenu 1.0 NodeMenu.qml
 ViewNodeMenu 1.0 ViewNodeMenu.qml
 WebBrowserMenu 1.0 WebBrowserMenu.qml
+
+MenuStack 1.0 MenuStack.qml
+MenuPage 1.0 MenuPage.qml

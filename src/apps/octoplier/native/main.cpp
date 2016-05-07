@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
     //qmlRegisterUncreatableType<SystemSignals>("com.octoplier.api.systemproperties", 1, 0, "SystemProperties", "You cannot create this type QML.");
 
     // Load the treemodel from disk.
-    QFile file(":/qml/octoplier/testdata/default.txt");
+    QFile file(":/qml/octoplier/data/default.txt");
     file.open(QIODevice::ReadOnly);
     VariantMapTreeModel* tree_model = new_ff VariantMapTreeModel((QString)file.readAll());
     file.close();
@@ -263,6 +263,8 @@ int main(int argc, char *argv[]) {
   qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickExtrasPlugin().instance())->registerTypes("QtQuick.Extras");
   qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQmlModelsPlugin().instance())->registerTypes("QtQml.Models");
 
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtGraphicalEffectsPlugin().instance())->registerTypes("QtGraphicalEffects");
+
   qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QWebViewModule().instance())->registerTypes("QtWebView");
 
   // Initialize engine with these QML types.
@@ -287,9 +289,7 @@ int main(int argc, char *argv[]) {
 
   qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QWebViewModule().instance())->initializeEngine(g_qml_engine, "QtWebView");
 
-
-  //qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtGraphicalEffectsPlugin().instance())->registerTypes("QtGraphicalEffects.private");
-  //qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtGraphicalEffectsPlugin().instance())->initializeEngine(&engine, "QtQraphicalEffects");
+  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtGraphicalEffectsPlugin().instance())->initializeEngine(g_qml_engine, "QtGraphicalEffects");
 
 #endif
 

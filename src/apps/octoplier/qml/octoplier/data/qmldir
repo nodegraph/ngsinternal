@@ -1,2 +1,3 @@
-module testdata
-TestModel 1.0 TestModel.qml
+module data
+NodeTypeChoices 1.0 NodeTypeChoices.qml
+NodeContextChoices 1.0 NodeContextChoices.qml

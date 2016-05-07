@@ -15,7 +15,7 @@ Item{
     // -------------------------------------------------------------------
         
     // Action Bar Properties.
-    property color action_bar_bg_color: "#FF0288D1" //"#FF424242"
+    property color action_bar_bg_color: "#FF0288D1" // a darker blue than the node graph blue
     property color action_bar_pressed_color: ng_bg_alternate_color //"#FF212121"
     
     property int action_bar_left_margin:  app_units.dp(10)
@@ -27,9 +27,16 @@ Item{
     property int action_bar_y: 0
     property int action_bar_z: 0
 
+    // List View Properties.
     property int list_item_height_large: app_units.dp(120)
     property int list_item_height_small: app_units.dp(60)
     property int list_item_border_width: app_units.dp(1)
+
+    // Menu Stack Properties.
+    property color menu_stack_header_bg_color: "#FF4CAF50" // a light green color
+    property color menu_stack_header_border_color: "#FFFFFFFF" // pure white
+    property int menu_stack_header_border_width: app_units.dp(2)
+    property double menu_stack_header_radius: app_units.dp(0)
     
     // Splitter Properties.
     property int splitter_height: app_units.dp(2)
@@ -41,9 +48,20 @@ Item{
     // Page Properties.
     property int page_height: parent.height - action_bar_height - splitter_height
     property int page_width: parent.width
+    // These values are with respect to the whole screen.
     property int page_x: 0
     property int page_y: action_bar_height + splitter_height
     property int page_z: 0
+
+    // Menu Page Properties.
+    property int menu_page_height: page_height - action_bar_height
+    property int menu_page_width: page_width
+    // These values are with respect to the menu page.
+    property int menu_page_x: 0
+    property int menu_page_y: action_bar_height
+    property int menu_page_z: 0
+    property double menu_page_title_point_size: 22
+    property double menu_page_description_point_size: 22
     
     // -------------------------------------------------------------------
     // Modes
@@ -74,9 +92,9 @@ Item{
     
     // Node Graph.
     // The node graph bg color (3.0f/255.0f, 169.0f/255.0f, 244.0f/255.0f, 1.00).
-    property color ng_bg_color: "#FF03A9F4"
-    property color ng_bg_alternate_color: "#FF29B6F6"
-    property color ng_bg_alternate_transparent_color: "#9929B6F6"
+    property color ng_bg_color: "#FF03A9F4" // a darker blue
+    property color ng_bg_alternate_color: "#FF29B6F6" // a lighter blue
+    property color ng_bg_alternate_transparent_color: "#9929B6F6" // a transparent ligher blue
         
     // Font Properties.
     property double font_point_size: 25
@@ -85,6 +103,8 @@ Item{
     // Image Button Properties.
     property int image_button_width: app_units.dp(50)
     property int image_button_height: app_units.dp(50)
+    property color image_button_press_color: "#FF4CAF50" // a light green color
+    property int image_button_radius: app_units.dp(5)
     
     // Text Field Properties.
     property int text_field_height: app_units.dp(50)
@@ -102,7 +122,10 @@ Item{
     property double tree_view_header_left_margin:  app_units.dp(15)
     
     property color tree_view_item_text_color: "#FFFFFFFF"
-    property color tree_view_selected_row_bg_color: "#FF4CAF50" //"#FFF06292"
+    property color tree_view_selected_row_bg_color: "#FF4CAF50" // a light green color
+
+    // Tooltip Properties.
+    property color tooltip_bg_color: "#FF4CAF50" // a light green color
         
         
     function vibrate() {
