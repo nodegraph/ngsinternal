@@ -65,6 +65,8 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
 
   // Mouse Presses.
   virtual Dep<CompShape> pressed(const MouseInfo& mouse_info);
+  virtual void accumulate_select(const MouseInfo& a, const MouseInfo& b);
+  virtual void reset_state();
 
   // Mouse Releases.
   virtual void released(const MouseInfo& mouse_info);
@@ -200,6 +202,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
 
   // Panning.
   bool _panning_selection;
+
 };
 
 }

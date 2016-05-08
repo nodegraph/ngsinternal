@@ -1,3 +1,9 @@
 module data
-NodeTypeChoices 1.0 NodeTypeChoices.qml
-NodeContextChoices 1.0 NodeContextChoices.qml
+CreateNodeActions 1.0 CreateNodeActions.qml
+NodeActions 1.0 NodeActions.qml
+GroupNodeActions 1.0 GroupNodeActions.qml
+NodeGraphActions 1.0 NodeGraphActions.qml
+FrameNodeActions 1.0 FrameNodeActions.qml
+SelectNodeActions 1.0 SelectNodeActions.qml
+CopyPasteNodeActions 1.0 CopyPasteNodeActions.qml
+ExplodeCollapseNodeActions 1.0 ExplodeCollapseNodeActions.qml

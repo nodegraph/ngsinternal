@@ -168,6 +168,43 @@ Dep<LinkShape> GroupInteraction::find_link(const Dep<InputCompute>& input_comput
   return Dep<LinkShape>(NULL);
 }
 
+void GroupInteraction::reset_state() {
+  // Reset our finite state machine
+  if (_link_shape) {
+    delete2_ff(_link_shape->our_entity());
+  }
+
+  // Transition to the default state.
+  _state = kNodeSelectionAndDragging;
+  _panning_selection = false;
+
+  // Reset our interactive dragging state.
+  _link_shape.reset();
+  _link_input_compute.reset();
+  _link_output_compute.reset();
+
+  // Stop the tracking.
+  _view_controls.track_ball.stop_tracking();
+}
+
+void GroupInteraction::accumulate_select(const MouseInfo& a, const MouseInfo& b) {
+  MouseInfo ua = a;
+  MouseInfo ub = b;
+  _view_controls.update_coord_spaces(ua);
+  _view_controls.update_coord_spaces(ub);
+
+  // Do a hit test.
+  HitRegion region;
+  Dep<CompShape> cs_a = _shape_collective->hit_test(ua.object_space_pos.xy(), region);
+  Dep<CompShape> cs_b = _shape_collective->hit_test(ub.object_space_pos.xy(), region);
+
+  if (cs_a) {
+    _selection->toggle_selected(cs_a);
+  } else if (cs_b) {
+    _selection->toggle_selected(cs_b);
+  }
+}
+
 Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
   start_method();
   // Record the selection state, before anything changes.
@@ -314,7 +351,8 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
           // Clear out the current selection.
           _selection->clear_selection();
           _mouse_down_node_positions.clear();
-          // Make this the sole selection.
+
+          // Add this to the selection.
           _selection->select(comp_shape);
           _mouse_down_node_positions[comp_shape] = comp_shape->get_pos();
         }
@@ -634,23 +672,11 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
       }
     } else {
       if ( (_state==kDraggingLinkHead) || (_state==kTwoClickOutputToInput) || (_state==kDraggingLinkTail) || (_state==kTwoClickInputToOutput) ) {
-
-    clear_selection:
-        // Reset our finite state machine
-        if (_link_shape) {
-          delete2_ff(_link_shape->our_entity());
-        }
-
-        // Transition to the default state.
-        _state = kNodeSelectionAndDragging;
-
-        // Reset our interactive dragging state.
-        _link_shape.reset();
-        _link_input_compute.reset();
-        _link_output_compute.reset();
+        clear_selection:
+        reset_state();
       }
 
-      // Stop the tracking. (New feature we now have left mouse panning.)
+      // Stop the tracking.
       _view_controls.track_ball.stop_tracking();
     }
   }
@@ -766,6 +792,9 @@ void GroupInteraction::frame_all() {
 
 void GroupInteraction::frame_selected(const DepUSet<CompShape>& selected) {
   start_method();
+  if (selected.empty()) {
+    return;
+  }
   glm::vec2 min;
   glm::vec2 max;
   _shape_collective->get_aa_bounds(selected,min,max);

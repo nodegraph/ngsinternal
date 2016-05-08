@@ -67,17 +67,18 @@ Item{
     // Modes
     // -------------------------------------------------------------------
     
-    property int node_graph_mode: 0
-    property int web_browser_mode: 1
-    property int posts_mode: 2
-    property int settings_mode: 3
+    property int menu_mode: 0
+    property int node_graph_mode: 1
+    property int web_browser_mode: 2
+    property int posts_mode: 3
+    property int settings_mode: 4
     
-    property int view_node_mode: 4
-    property int edit_node_mode: 5
+    property int view_node_mode: 5
+    property int edit_node_mode: 6
     
-    property int more_menu_mode: 6
+    property int more_menu_mode: 7
     
-    property int url_entry_mode: 7
+    property int url_entry_mode: 8
     
     // -------------------------------------------------------------------
     // Layering.

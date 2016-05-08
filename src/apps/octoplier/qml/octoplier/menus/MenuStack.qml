@@ -14,6 +14,8 @@ import octoplier.tools 1.0
 import octoplier.data 1.0
 
 Rectangle{
+    id: menu_stack_page
+
     height: app_settings.page_height
     width: app_settings.page_width
 
@@ -22,6 +24,10 @@ Rectangle{
     z: app_settings.page_z
 
     color: app_settings.action_bar_bg_color
+
+    property bool center_new_nodes: false
+
+    property alias stack_view: stack_view
 
     // Dependencies.
     property var copy_paste_bar
@@ -35,8 +41,23 @@ Rectangle{
         }
     }
 
-    function test() {
-        stack_view.test()
+    // Slots.
+    function on_node_context_menu() {
+        visible = true
+        stack_view.clear_models()
+        stack_view.push_model_name("NodeActions")
+    }
+
+    function on_group_node_context_menu(){
+        visible = true
+        stack_view.clear_models()
+        stack_view.push_model_name("GroupNodeActions")
+    }
+
+    function on_node_graph_context_menu() {
+        visible = true
+        stack_view.clear_models()
+        stack_view.push_model_name("NodeGraphActions")
     }
 
     // The Stack View Header
@@ -44,8 +65,6 @@ Rectangle{
         id: stack_view_header
         height: app_settings.action_bar_height
         width: app_settings.page_width
-
-        property alias title_text: _title_text
 
         x: 0
         y: 0
@@ -56,6 +75,22 @@ Rectangle{
         border.color: app_settings.menu_stack_header_border_color
         radius: app_settings.menu_stack_header_radius
 
+        property var header_title_stack: []
+
+        function push_header_title(title) {
+            header_title_stack.push(title)
+            title_text.text = header_title_stack[header_title_stack.length-1];
+        }
+
+        function pop_header_title() {
+            header_title_stack.pop()
+            title_text.text = header_title_stack[header_title_stack.length-1];
+        }
+
+        function clear_header_titles() {
+            header_title_stack = []
+        }
+
         AppImageButton {
             id: back_button
             anchors.verticalCenter: parent.verticalCenter
@@ -63,14 +98,19 @@ Rectangle{
 
             tooltip_text: "Back up"
             image_url: "qrc:///icons/ic_arrow_back_white_48dp.png"
-            opacity: stack_view.depth > 1 ? 1 : 0
+            //opacity: stack_view.depth > 1 ? 1 : 0
             onClicked: {
-                stack_view.pop()
+                console.log("stack view depth: " + stack_view.depth)
+                if (stack_view.depth > 1) {
+                    stack_view.pop_model()
+                } else {
+                    menu_stack_page.visible = false
+                }
             }
         }
 
         Text {
-            id: _title_text
+            id: title_text
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -132,37 +172,39 @@ Rectangle{
                 }
             }
 
-            property var header_title_stack: []
-            function push_header_title(title) {
-                header_title_stack.push(title)
-                stack_view_header.title_text.text = title;
-            }
-            function pop_title() {
-                var title = header_title_stack.pop()
-                stack_view_header.title_text.text = title;
-            }
-
-            //Component.onCompleted:
-
-            //initialItem: MenuPage {
-            //    id: menu_page
-            //}
-
-            function push_model(model) {
+            function push_model(next_model) {
                 var next_page = app_loader.load_component("qrc:///qml/octoplier/menus/MenuPage.qml", app_window, {})
-                next_page.model = model
+                next_page.model = next_model
                 push(next_page);
-                push_header_title(next_menu_model.get(0).navigator_title)
+                stack_view_header.push_header_title(next_model.get(0).navigator_title)
             }
 
             function push_model_url(url) {
-                var next_menu_model = app_loader.load_component("qrc:///qml/octoplier/data/NodeContextChoices.qml", this, {})
+                var next_menu_model = app_loader.load_component(url, this, {})
                 push_model(next_menu_model)
             }
 
-            function test() {
-                push_model_url("qrc:///qml/octoplier/data/NodeContextChoices.qml")
+            function push_model_name(model_name) {
+                var url = "qrc:///qml/octoplier/data/" + model_name + ".qml"
+                push_model_url(url)
             }
+
+            function pop_model() {
+                pop()
+                stack_view_header.pop_header_title()
+            }
+
+            function clear_models(){
+                clear()
+                stack_view_header.clear_header_titles()
+            }
+
+            function execute_script(script) {
+                console.log("evaluating script: " + script)
+                eval(script)
+                menu_stack_page.visible = false
+            }
+
         }
 
 

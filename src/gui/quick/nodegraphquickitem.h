@@ -86,6 +86,10 @@ Q_OBJECT
   Q_INVOKABLE void collapse_to_group();
   Q_INVOKABLE void explode_group();
 
+  // Lock Graph.
+  Q_INVOKABLE void lock_graph();
+  Q_INVOKABLE void unlock_graph();
+
  public Q_SLOTS:
   void cleanup();
 
@@ -153,7 +157,7 @@ Q_OBJECT
   Dep<GraphBuilder> _graph_builder;
   BaseEntityInstancer* _entity_instancer;
 
-  // Used to detect long press taps/clicks.
+  // Used to detect long press.
   QTimer _long_press_timer;
 
   // Info about our last press, used when handling long presses.

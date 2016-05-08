@@ -5,11 +5,29 @@
 
 namespace ngs {
 
-MouseInfo get_mouse_info(QTouchEvent *event, int device_pixel_ratio) {
+//MouseInfo get_mouse_info(QTouchEvent *event, int device_pixel_ratio) {
+//  MouseInfo info;
+//  QList<QTouchEvent::TouchPoint> touchPoints = event->touchPoints();
+//  // We only use the first touch point.
+//  const QTouchEvent::TouchPoint &touchPoint = touchPoints.first();
+//  info.screen_pos = glm::vec2(device_pixel_ratio*touchPoint.pos().x(), device_pixel_ratio*touchPoint.pos().y());
+//  // The touch is always considered to be a left button mouse click.
+//  info.left_button=true;
+//  info.middle_button=false;
+//  info.right_button=false;
+//  // Touch are always considered to be modifier free.
+//  info.control_modifier=false;
+//  info.alt_modifier=false;
+//  info.shift_modifier=false;
+//  return info;
+//}
+
+MouseInfo get_mouse_info(QTouchEvent *event, int device_pixel_ratio, size_t index) {
   MouseInfo info;
   QList<QTouchEvent::TouchPoint> touchPoints = event->touchPoints();
-  // We only use the first touch point.
-  const QTouchEvent::TouchPoint &touchPoint = touchPoints.first();
+
+  // Use the touch point at the given index.
+  const QTouchEvent::TouchPoint &touchPoint = touchPoints[index];
   info.screen_pos = glm::vec2(device_pixel_ratio*touchPoint.pos().x(), device_pixel_ratio*touchPoint.pos().y());
   // The touch is always considered to be a left button mouse click.
   info.left_button=true;
@@ -21,6 +39,7 @@ MouseInfo get_mouse_info(QTouchEvent *event, int device_pixel_ratio) {
   info.shift_modifier=false;
   return info;
 }
+
 
 MouseInfo get_mouse_info(QMouseEvent *event, int device_pixel_ratio) {
   MouseInfo info;

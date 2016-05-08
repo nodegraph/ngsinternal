@@ -23,6 +23,9 @@ ScrollView {
     x: app_settings.page_x
     y: app_settings.page_y
     z: app_settings.page_z
+
+    // Appearance.
+    //color: "pink"
     
     // Scrolling.
     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
@@ -35,6 +38,8 @@ ScrollView {
     function on_switch_to_mode(mode) {
     	if (mode == app_settings.settings_mode) {
             visible = true;
+            menu_stack_page.visible = false
+            console.log("switching to settings page!")
         } else {
         	visible = false;
         }
@@ -68,11 +73,11 @@ ScrollView {
                 Layout.fillWidth: true
                 ColumnLayout {
                     anchors.fill: parent
-                    TextField { 
+                    TextField {
                         height: app_settings.text_field_height
-//                        placeholderText: "Password"; 
-//                        echoMode: TextInput.Password; 
-                        Layout.fillWidth: true 
+//                        placeholderText: "Password";
+//                        echoMode: TextInput.Password;
+                        Layout.fillWidth: true
                         font.pointSize: app_settings.font_point_size
                         textColor: "#FFFFFFFF"
                         }
@@ -90,13 +95,13 @@ ScrollView {
                 title: "web browser initial url"
                 //Layout.fillWidth: true
                     //anchors.fill: parent
-                    //TextField { 
+                    //TextField {
                     AppTextField {
                         copy_paste_bar: page.copy_paste_bar
                         width: parent.width
 //                        anchors.fill: parent
-                        //placeholderText: "..."; 
-//                        Layout.fillWidth: true; 
+                        //placeholderText: "...";
+//                        Layout.fillWidth: true;
 //                        z: 1
                         
 //                        menu: Component {

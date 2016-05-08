@@ -39,6 +39,7 @@ Rectangle {
     function on_switch_to_mode(mode) {
         if (mode == app_settings.node_graph_mode) {
             visible = true
+            menu_stack_page.visible = false
         } else {
             visible = false
         }
@@ -47,7 +48,10 @@ Rectangle {
         if (visible) {
             // The node graph menu is being launched from the action bar,
             // so we center any nodes that are created.
-            popup_menu_with_centering()
+            //popup_menu_with_centering()
+            menu_stack_page.visible = true
+            menu_stack_page.stack_view.clear()
+            menu_stack_page.stack_view.push_model_name("NodeActions")
         }
     }
 

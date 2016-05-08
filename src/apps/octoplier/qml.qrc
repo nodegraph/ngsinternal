@@ -44,8 +44,15 @@
         
         <!-- Data -->
         <file>qml/octoplier/data/qmldir</file>
-        <file>qml/octoplier/data/NodeTypeChoices.qml</file>
-        <file>qml/octoplier/data/NodeContextChoices.qml</file>
+        <file>qml/octoplier/data/default.txt</file>
+        <file>qml/octoplier/data/CreateNodeActions.qml</file>
+        <file>qml/octoplier/data/NodeActions.qml</file>
+        <file>qml/octoplier/data/GroupNodeActions.qml</file>
+        <file>qml/octoplier/data/NodeGraphActions.qml</file>
+        <file>qml/octoplier/data/FrameNodeActions.qml</file>
+        <file>qml/octoplier/data/SelectNodeActions.qml</file>
+        <file>qml/octoplier/data/CopyPasteNodeActions.qml</file>
+        <file>qml/octoplier/data/ExplodeCollapseNodeActions.qml</file>
         
         <!-- Configuration -->
         <file>qml/octoplier/config/qmldir</file>

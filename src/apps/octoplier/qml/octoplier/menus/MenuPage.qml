@@ -29,7 +29,7 @@ Rectangle {
 
     color: app_settings.ng_bg_color
 
-    property var model:  NodeContextChoices {}
+    property var model:  NodeActions {}
 
     Component {
         id: list_view_delegate
@@ -80,14 +80,10 @@ Rectangle {
                     console.debug("rect click")
                     delegate.ListView.view.currentIndex = index
                     if (typeof next_model !== "undefined") {
-                        var next_menu_model = app_loader.load_component(next_model, app_window, {})
-                        var next_page = app_loader.load_component("qrc:///qml/octoplier/menus/MenuPage.qml", this, {})
-                        next_page.model = next_menu_model
-                        stack_view.push(next_page);
-                        stack_view_header.push_title(next_menu_model.get(0).navigator_title)
-                        //stack_view.push({item: "qrc:///qml/octoplier/menus/MenuPage.qml", properties: {model: next_model}})
+                        console.log("click for next model: " + next_model)
+                        menu_stack_page.stack_view.push_model_name(next_model);
                     } else if (typeof script != "undefined") {
-                        eval(script)
+                        menu_stack_page.stack_view.execute_script(script)
                     }
                 }
             }
@@ -107,7 +103,6 @@ Rectangle {
         // CurrentIndex.
         currentIndex: -1
 
-        //NodeContextChoices {}
         model: menu_page.model
 
         delegate: list_view_delegate

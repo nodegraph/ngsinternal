@@ -27,7 +27,9 @@ namespace ngs {
 NodeGraphSelection::NodeGraphSelection(Entity* entity)
     : Component(entity, kIID(), kDID()),
       _edit_node(this),
-      _view_node(this){
+      _view_node(this),
+      _locked(false),
+      _accumulate(false){
 }
 
 NodeGraphSelection::~NodeGraphSelection() {
@@ -230,6 +232,19 @@ void NodeGraphSelection::paste(Entity* group) {
     return;
   }
   group->paste_from_string(_raw_copy);
+}
+
+// Locking.
+void NodeGraphSelection::lock() {
+  _locked = true;
+}
+
+void NodeGraphSelection::unlock() {
+  _locked = false;
+}
+
+bool NodeGraphSelection::is_locked() {
+  return _locked;
 }
 
 }

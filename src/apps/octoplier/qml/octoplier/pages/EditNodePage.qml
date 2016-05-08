@@ -18,6 +18,7 @@ Rectangle {
     function on_switch_to_mode(mode) {
         if (mode == app_settings.edit_node_mode) {
             visible = true;
+            menu_stack_page.visible = false
         } else {
             visible = false;
         }

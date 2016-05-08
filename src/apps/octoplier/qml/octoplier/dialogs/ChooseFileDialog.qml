@@ -3,21 +3,21 @@ import QtQuick.Controls 1.4
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
-//FileDialog {
-//    id: fileDialog
-//    title: "Please choose a file"
-//    sidebarVisible: false
-//    folder: shortcuts.home
+FileDialog {
+    id: fileDialog
+    title: "Please choose a file"
+    sidebarVisible: false
+    folder: shortcuts.home
 
-//    height: 100
+    height: 100
 
-//    onAccepted: {
-//        console.log("You chose: " + fileDialog.fileUrls)
-//    }
-//    onRejected: {
-//        console.log("Canceled")
-//    }
-//}
+    onAccepted: {
+        console.log("You chose: " + fileDialog.fileUrls)
+    }
+    onRejected: {
+        console.log("Canceled")
+    }
+}
 
 //FileDialog {
 //    id: fileDialog
@@ -30,6 +30,7 @@ import QtQuick.Dialogs 1.2
 //    onRejected: {
 //        console.log("Canceled")
 //        Qt.quit()
+
 //    }
 //    //Component.onCompleted: visible = true
 //}

@@ -34,6 +34,7 @@ Rectangle {
     function on_switch_to_mode(mode) {
         if (mode == app_settings.url_entry_mode) {
             visible = true;
+            menu_stack_page.visible = false
         } else {
             visible = false;
         }
