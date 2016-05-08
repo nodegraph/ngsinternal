@@ -4,12 +4,12 @@ namespace ngs {
 
 const float InputNodeShape::indicator_bg_depth = 1.0f;
 const float InputNodeShape::indicator_fg_depth = 2.0f;
-const float InputNodeShape::indicator_border_width = 6.0f;
+const float InputNodeShape::indicator_border_width = 10.0f;
 const float InputNodeShape::indicator_offset = 140.0f;
 
 const glm::vec2 InputNodeShape::indicator_size(160.0f, 160.0f *sqrt(3.0f)/2.0f);
 
-const std::array<unsigned char,4> InputNodeShape::indicator_bg_color = { 38, 38, 38, 255 };
+const std::array<unsigned char,4> InputNodeShape::indicator_bg_color = { 255, 255, 255, 255 };
 const std::array<unsigned char,4> InputNodeShape::indicator_fg_color = { 255, 128, 171, 255 };
 
 InputNodeShape::InputNodeShape(Entity* entity)

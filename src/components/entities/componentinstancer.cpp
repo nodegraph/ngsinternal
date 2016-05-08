@@ -6,7 +6,6 @@
 #include <components/compshapes/nodeshape.h>
 #include <components/compshapes/outputnodeshape.h>
 #include <components/compshapes/compshapecollective.h>
-#include <components/compshapes/noteshape.h>
 #include <components/interactions/canvas.h>
 #include <components/interactions/shapecanvas.h>
 #include <components/interactions/groupinteraction.h>
@@ -63,7 +62,6 @@ namespace ngs {
     case_statement(InputShape)\
     case_statement(LinkShape)\
     case_statement(NodeShape)\
-    case_statement(NoteShape)\
     case_statement(OutputNodeShape)\
     case_statement(OutputLabelShape)\
     case_statement(OutputShape)\

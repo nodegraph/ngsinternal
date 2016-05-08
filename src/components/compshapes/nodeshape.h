@@ -27,16 +27,9 @@ class COMPSHAPES_EXPORT NodeShape: public CompShape {
   static const float button_fg_depth;
   static const std::array<unsigned char, 4> node_bg_color;
   static const std::array<unsigned char, 4> node_fg_color;
-  static const std::array<unsigned char, 4> right_bg_color;
-  static const std::array<unsigned char, 4> right_fg_on_color;
-  static const std::array<unsigned char, 4> right_fg_off_color;
-  static const std::array<unsigned char, 4> left_bg_color;
-  static const std::array<unsigned char, 4> left_fg_on_color;
-  static const std::array<unsigned char, 4> left_fg_off_color;
+
   // Node Geometry.
   static const glm::vec2 node_border_size;
-  static const glm::vec2 button_border_size;
-  static const glm::vec2 button_offset;
 
   NodeShape(Entity* entity);
   NodeShape(Entity* entity, size_t did, size_t num_extra_quads);
@@ -69,10 +62,8 @@ class COMPSHAPES_EXPORT NodeShape: public CompShape {
   std::vector<ShapeInstance> _quads;
   virtual void select(bool selected);
   virtual bool is_selected() const;
-  virtual void edit(bool on);
-  virtual bool is_being_edited() const;
-  virtual void view(bool on);
-  virtual bool is_being_viewed() const;
+
+  virtual size_t get_num_base_quads() const;
 
  private:
   void init(size_t num_quads);
@@ -96,15 +87,9 @@ class COMPSHAPES_EXPORT NodeShape: public CompShape {
   // Our quad instances.
   ShapeInstance* _bg_quad;
   ShapeInstance* _fg_quad;
-  ShapeInstance* _left_bg_quad;
-  ShapeInstance* _left_fg_quad;
-  ShapeInstance* _right_bg_quad;
-  ShapeInstance* _right_fg_quad;
 
   // Our quad bounds.
   Polygon _bg_bounds;
-  Polygon _left_bounds;
-  Polygon _right_bounds;
 
   // Our text bounds.
   glm::vec2 _text_min;

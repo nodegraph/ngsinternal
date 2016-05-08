@@ -52,7 +52,6 @@ enum ComponentDID {
   kInputShape,
   kLinkShape,
   kNodeShape,
-  kNoteShape,
   kOutputNodeShape,
   kOutputLabelShape,
   kOutputShape,

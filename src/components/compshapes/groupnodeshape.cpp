@@ -17,9 +17,9 @@ const float GroupNodeShape::indicator_offset = 140.0f;
 const float GroupNodeShape::indicator_rotation = boost::math::constants::pi<float>()/4.0f;
 
 const glm::vec2 GroupNodeShape::indicator_size(130.0f, 130.0f);
-const glm::vec2 GroupNodeShape::indicator_border_size(6,6);
+const glm::vec2 GroupNodeShape::indicator_border_size(10,10);
 
-const std::array<unsigned char,4> GroupNodeShape::indicator_bg_color = { 38, 38, 38, 255 };
+const std::array<unsigned char,4> GroupNodeShape::indicator_bg_color = { 255, 255, 255, 255 };
 const std::array<unsigned char,4> GroupNodeShape::indicator_fg_color = { 255, 128, 171, 255 };
 
 struct {
@@ -36,8 +36,8 @@ GroupNodeShape::GroupNodeShape(Entity* entity)
   get_dep_loader()->register_fixed_dep(_factory, "");
   get_dep_loader()->register_fixed_dep(_lower_change, ".");
 
-  _bg_quad = &_quads[6];
-  _fg_quad = &_quads[7];
+  _bg_quad = &_quads[get_num_base_quads()+0];
+  _fg_quad = &_quads[get_num_base_quads()+1];
 }
 
 GroupNodeShape::~GroupNodeShape() {

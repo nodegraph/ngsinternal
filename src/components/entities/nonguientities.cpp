@@ -97,19 +97,6 @@ void BaseOutputNodeEntity::create_internals() {
   }
 }
 
-void BaseNoteNodeEntity::create_internals() {
-  // Our components.
-  // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-  }
-}
-
 void BaseMockNodeEntity::create_internals() {
   // Our components.
   new_ff MockNodeCompute(this);

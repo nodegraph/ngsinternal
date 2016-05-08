@@ -17,11 +17,11 @@ namespace ngs {
 
 const float InputShape::bg_depth = 1.0f;
 const float InputShape::fg_depth = 2.0f;
-const std::array<unsigned char,4> InputShape::bg_color = { 38, 38, 38, 255 };
-const std::array<unsigned char,4> InputShape::fg_color = { 77, 77, 77, 255 };
+const std::array<unsigned char,4> InputShape::bg_color = { 64, 64, 64, 255 };
+const std::array<unsigned char,4> InputShape::fg_color = { 100, 100, 100, 255 };
 
-const glm::vec2 InputShape::plug_size(70,70);
-const glm::vec2 InputShape::plug_border_size(6,6);
+const glm::vec2 InputShape::plug_size(100,100);
+const glm::vec2 InputShape::plug_border_size(10,10);
 const float InputShape::plug_radius = 50;
 const float InputShape::plug_offset = 10;
 

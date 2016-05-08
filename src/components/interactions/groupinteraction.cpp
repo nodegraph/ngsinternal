@@ -11,7 +11,6 @@
 #include <base/device/transforms/wheelinfo.h>
 
 #include <components/compshapes/compshapecollective.h>
-#include <components/compshapes/noteshape.h>
 #include <components/compshapes/linkshape.h>
 #include <components/compshapes/inputlabelshape.h>
 #include <components/compshapes/outputlabelshape.h>
@@ -361,40 +360,6 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         const DepUSet<CompShape>& selected = _selection->get_selected();
         for(const Dep<CompShape>& d: selected) {
           _mouse_down_node_positions[d] = d->get_pos();
-        }
-
-        if (comp_shape->get_did() == NoteShape::kDID()) {
-          //_resizing_selectable = comp_shape_entity;
-          //_mouse_down_anchor = comp_shape->get_anchor_position();
-          //_mouse_down_aux = comp_shape->get_aux_position();
-          switch(region) {
-            case kLeftEdge:
-              _state = kLeftEdgeResizing;
-              break;
-            case kRightEdge:
-              _state = kRightEdgeResizing;
-              break;
-            case kBottomEdge:
-              _state = kBottomEdgeResizing;
-              break;
-            case kTopEdge:
-              _state = kTopEdgeResizing;
-              break;
-            case kBottomLeftCorner:
-              _state = kBottomLeftCornerResizing;
-              break;
-            case kBottomRightCorner:
-              _state = kBottomRightCornerResizing;
-              break;
-            case kTopLeftCorner:
-              _state = kTopLeftCornerResizing;
-              break;
-            case kTopRightCorner:
-              _state = kTopRightCornerResizing;
-              break;
-            default:
-              _state = kNodeSelectionAndDragging;
-          }
         }
       }
       if (_state == kNodeSelectionAndDragging) {

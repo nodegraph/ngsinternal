@@ -10,7 +10,6 @@ set(sources
     linkshape.cpp
     nodegraphselection.cpp
     nodeshape.cpp
-    noteshape.cpp
     outputlabelshape.cpp
     outputnodeshape.cpp
     outputshape.cpp
@@ -31,7 +30,6 @@ set(headers
     outputlabelshape.h
 	outputnodeshape.h
     outputshape.h
-    noteshape.h
     )
     
 add_library(ngs_compshapes  ${sources} ${headers})

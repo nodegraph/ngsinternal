@@ -22,8 +22,6 @@ namespace ngs {
     case_statement(BaseOutputNodeEntity)\
     /* Dot Node. */\
     case_statement(BaseDotNodeEntity)\
-    /* Note Node. */\
-    case_statement(BaseNoteNodeEntity)\
     /* Other Nodes. */\
     case_statement(BaseMockNodeEntity)\
     case_statement(BaseComputeNodeEntity)\
@@ -46,8 +44,6 @@ namespace ngs {
     case_statement(OutputNodeEntity)\
     /* Dot Node. */\
     case_statement(DotNodeEntity)\
-    /* Note Node. */\
-    case_statement(NoteNodeEntity)\
     /* Other Nodes. */\
     case_statement(MockNodeEntity)\
     case_statement(ComputeNodeEntity)\

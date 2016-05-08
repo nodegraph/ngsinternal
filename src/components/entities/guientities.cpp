@@ -22,7 +22,6 @@
 #include <components/compshapes/linkshape.h>
 #include <components/compshapes/outputlabelshape.h>
 #include <components/compshapes/outputnodeshape.h>
-#include <components/compshapes/noteshape.h>
 #include <components/compshapes/nodegraphselection.h>
 #include <components/compshapes/outputshape.h>
 #include <components/compshapes/groupnodeshape.h>
@@ -160,21 +159,6 @@ void OutputNodeEntity::create_internals() {
     inputs->create_internals();
     Entity* input = new_ff InputEntity(inputs, "in");
     input->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-  }
-}
-
-void NoteNodeEntity::create_internals() {
-  // Our components.
-  // Gui related.
-  new_ff NoteShape(this);
-  // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
   }
   {
     Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");

@@ -12,11 +12,11 @@ namespace ngs {
 
 const float DotNodeShape::bg_depth = 10;
 const float DotNodeShape::fg_depth = 11;
-const std::array<unsigned char, 4> DotNodeShape::bg_color = { 38, 38, 38, 255 };
-const std::array<unsigned char, 4> DotNodeShape::fg_color = { 64, 64, 64, 255 };
+const std::array<unsigned char, 4> DotNodeShape::bg_color = { 64, 64, 64, 255 };
+const std::array<unsigned char, 4> DotNodeShape::fg_color = { 100, 100, 100, 255 };
 
-const float DotNodeShape::border_width = 6.0f;
-const float DotNodeShape::radius = 30.0f;
+const float DotNodeShape::border_width = 10.0f;
+const float DotNodeShape::radius = 50.0f;
 
 
 DotNodeShape::DotNodeShape(Entity* entity):

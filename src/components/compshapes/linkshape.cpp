@@ -15,14 +15,14 @@ namespace ngs {
 
 const float LinkShape::bg_depth = 3;
 const float LinkShape::fg_depth = 4;
-const std::array<unsigned char,4> LinkShape::bg_color = { 38, 38, 38, 255 };
-const std::array<unsigned char,4> LinkShape::fg_color = { 77, 77, 77, 255 };
+const std::array<unsigned char,4> LinkShape::bg_color = { 64, 64, 64, 255 };
+const std::array<unsigned char,4> LinkShape::fg_color = { 100, 100, 100, 255 };
 
 const glm::vec2 LinkShape::tri_size(100.0f, 80.0f);
 const float LinkShape::body_height = 40.0f;
 const float LinkShape::text_head_offset = 5.0f;
 const float LinkShape::text_tail_offset = 5.0f;
-const float LinkShape::border_width = 6;
+const float LinkShape::border_width = 10;
 
 LinkShape::LinkShape(Entity* entity)
     : CompShape(entity, kDID()),

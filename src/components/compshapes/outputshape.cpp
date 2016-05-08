@@ -16,11 +16,11 @@ namespace ngs {
 
 const float OutputShape::bg_depth = 1.0f;
 const float OutputShape::fg_depth = 2.0f;
-const std::array<unsigned char,4> OutputShape::bg_color = { 38, 38, 38, 255 };
-const std::array<unsigned char,4> OutputShape::fg_color = { 77, 77, 77, 255 };
+const std::array<unsigned char,4> OutputShape::bg_color = { 64, 64, 64, 255 };
+const std::array<unsigned char,4> OutputShape::fg_color = { 100, 100, 100, 255 };
 
-const glm::vec2 OutputShape::plug_size(85.0f, 85.0f *sqrt(3.0f)/2.0f); // The plug is an upside down isosceles triangle.
-const float OutputShape::plug_border_width = 6.0f;
+const glm::vec2 OutputShape::plug_size(120.0f, 120.0f *sqrt(3.0f)/2.0f); // The plug is an upside down isosceles triangle.
+const float OutputShape::plug_border_width = 10.0f;
 const float OutputShape::plug_radius = 50.0f;
 const float OutputShape::plug_offset = 10.0f;
 

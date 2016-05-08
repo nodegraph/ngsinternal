@@ -70,14 +70,6 @@ class ENTITIES_EXPORT OutputNodeEntity : public Entity {
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT NoteNodeEntity : public Entity {
- public:
-  ENTITY_ID(NoteNodeEntity, "note")
-  using Entity::Entity;
-  NoteNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-  virtual void create_internals();
-};
-
 class ENTITIES_EXPORT MockNodeEntity : public Entity {
  public:
   ENTITY_ID(MockNodeEntity, "mock")

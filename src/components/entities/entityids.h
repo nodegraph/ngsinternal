@@ -46,8 +46,6 @@ enum EntityDID {
   kBaseOutputNodeEntity,
   // Dot Node.
   kBaseDotNodeEntity,
-  // Note Node.
-  kBaseNoteNodeEntity,
   // Other Nodes.
   kBaseMockNodeEntity,
   kBaseComputeNodeEntity,
@@ -70,8 +68,6 @@ enum EntityDID {
   kOutputNodeEntity,
   // Dot Node.
   kDotNodeEntity,
-  // Note Node.
-  kNoteNodeEntity,
   // Other Nodes.
   kMockNodeEntity,
   kComputeNodeEntity,
