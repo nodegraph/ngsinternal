@@ -4,7 +4,7 @@ import QtQuick 2.6
 
 ListModel {
     ListElement {
-        navigator_title: "Create Node"
+        navigator_title: "Create"
 
         image_url: "qrc:///icons/ic_settings_white_48dp.png"
         title: "Group Node"

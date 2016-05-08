@@ -77,6 +77,11 @@ Rectangle {
                 anchors.fill: parent
                 onPressed: {
                     mouse.accepted = true
+                    delegate.ListView.view.currentIndex = index
+                }
+
+                onDoubleClicked: {
+                    mouse.accepted = true
                     console.debug("rect click")
                     delegate.ListView.view.currentIndex = index
                     if (typeof next_model !== "undefined") {

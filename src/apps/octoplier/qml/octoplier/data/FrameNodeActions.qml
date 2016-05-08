@@ -4,16 +4,16 @@ import QtQuick 2.6
 
 ListModel {
     ListElement {
-        navigator_title: "Frame Nodes"
+        navigator_title: "Frame"
         image_url: "qrc:///icons/ic_settings_white_48dp.png"
         title: "Frame All Nodes"
-        description: "Frame all nodes, so that they all fit on the screen."
+        description: "Frame all nodes to fit the screen."
         script: "node_graph_page.node_graph.frame_all()"
     }
     ListElement {
         image_url: "qrc:///icons/ic_settings_white_48dp.png"
         title: "Frame Selected Nodes"
-        description: "Frame selected nodes, so that they all fit on the screen."
+        description: "Frame selected nodes to fit the screen."
         script: "node_graph_page.node_graph.frame_selected()"
     }
 }

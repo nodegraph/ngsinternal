@@ -24,13 +24,6 @@ import octoplier.data 1.0
 //        popup()
 //    }
 
-//	MenuItem {
-//		text: "Toggle Selected State"
-//		onTriggered: {
-//                node_graph_page.node_graph.toggle_selection_under_long_press();
-//			}
-//	}
-    
 //    MenuItem {
 //        text: "View"
 //        onTriggered: {

@@ -487,6 +487,8 @@ void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
   }
   // The parenting group node needs to update its inputs and outputs.
   get_app_root()->update_deps_and_hierarchy();
+  _selection->clear_selection();
+  _selection->select(cs);
   update();
 }
 

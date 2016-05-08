@@ -4,7 +4,7 @@ import QtQuick 2.6
 
 ListModel {
     ListElement {
-        navigator_title: "Copy Paste Nodes"
+        navigator_title: "Copy and Paste"
 
         image_url: "qrc:///icons/ic_settings_white_48dp.png"
         title: "Copy"

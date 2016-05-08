@@ -33,7 +33,8 @@ Item{
     property int list_item_border_width: app_units.dp(1)
 
     // Menu Stack Properties.
-    property color menu_stack_header_bg_color: "#FF4CAF50" // a light green color
+    property color menu_stack_bg_color: "#EE0288D1"
+    property color menu_stack_header_bg_color: "#554CAF50" // a light green color
     property color menu_stack_header_border_color: "#FFFFFFFF" // pure white
     property int menu_stack_header_border_width: app_units.dp(2)
     property double menu_stack_header_radius: app_units.dp(0)
@@ -61,7 +62,7 @@ Item{
     property int menu_page_y: action_bar_height
     property int menu_page_z: 0
     property double menu_page_title_point_size: 22
-    property double menu_page_description_point_size: 22
+    property double menu_page_description_point_size: 19
     
     // -------------------------------------------------------------------
     // Modes

@@ -23,7 +23,7 @@ Rectangle{
     y: app_settings.page_y
     z: app_settings.page_z
 
-    color: app_settings.action_bar_bg_color
+    color: app_settings.menu_stack_bg_color
 
     property bool center_new_nodes: false
 
@@ -43,18 +43,21 @@ Rectangle{
 
     // Slots.
     function on_node_context_menu() {
+        center_new_nodes = false
         visible = true
         stack_view.clear_models()
         stack_view.push_model_name("NodeActions")
     }
 
     function on_group_node_context_menu(){
+        center_new_nodes = false
         visible = true
         stack_view.clear_models()
         stack_view.push_model_name("GroupNodeActions")
     }
 
     function on_node_graph_context_menu() {
+        center_new_nodes = false
         visible = true
         stack_view.clear_models()
         stack_view.push_model_name("NodeGraphActions")

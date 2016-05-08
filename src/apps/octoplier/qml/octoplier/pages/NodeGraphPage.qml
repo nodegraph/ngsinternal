@@ -1,17 +1,6 @@
 import QtQuick 2.6
 import NodeGraphRendering 1.0
 
-
-// The node graph.
-//NodeGraphQuickItem {
-//    id: our_node_graph
-//    objectName: "node_graph_object"
-//    anchors.fill: parent
-//    anchors.margins: 0
-//    opacity: 1
-//    visible: true
-//}
-
 Rectangle {
     id: node_graph_page
     property alias node_graph: our_node_graph
@@ -49,9 +38,10 @@ Rectangle {
             // The node graph menu is being launched from the action bar,
             // so we center any nodes that are created.
             //popup_menu_with_centering()
+            menu_stack_page.center_new_nodes = true
             menu_stack_page.visible = true
             menu_stack_page.stack_view.clear()
-            menu_stack_page.stack_view.push_model_name("NodeActions")
+            menu_stack_page.stack_view.push_model_name("NodeGraphActions")
         }
     }
 
