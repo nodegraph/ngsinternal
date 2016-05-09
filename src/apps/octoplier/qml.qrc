@@ -8,7 +8,7 @@
         <!-- Test Images -->
         <file alias="images/icon.png">../../external/images/icon.png</file>
         <file alias="images/octopus_blue.png">../../external/images/octopus_blue.png</file>
-        <file alias="images/octopus_blue.png">../../external/images/octopus_white.png</file>
+        <file alias="images/octopus_white.png">../../external/images/octopus_white.png</file>
         
         <!-- Action Bars -->
         <file>qml/octoplier/actionbars/qmldir</file>

@@ -19,13 +19,13 @@ SplashScreen::SplashScreen():
   // Determine the screen size to fill with our splash screen.
   QScreen *screen = QApplication::screens().at(0);
 
-//#if (ARCH == ARCH_ANDROID)
+#if (ARCH == ARCH_WINDOWS)
+  _width = 800;
+  _height = 1024;
+#else
   _width = screen->size().width();
   _height = screen->size().height();
-//#else
-//  _width = 800;
-//  _height = 1000;
-//#endif
+#endif
 
   // Load our logo.
   QPixmap logo;

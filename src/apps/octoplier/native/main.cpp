@@ -240,6 +240,8 @@ int main(int argc, char *argv[]) {
 #endif
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     view.setFormat(format);
+    view.setColor(QColor(3,169,244,255));
+    view.update();
     g_qml_engine = view.engine();
     g_qml_engine->addImportPath("qrc:/qml");
     g_qml_engine->addImportPath("qrc:/");
@@ -295,7 +297,7 @@ int main(int argc, char *argv[]) {
 
 
     QQmlContext* context = g_qml_engine->rootContext();
-    view.show();
+
 
     // Create helpers.
     Utils* utils = new_ff Utils(g_qml_engine);
@@ -322,6 +324,11 @@ int main(int argc, char *argv[]) {
     context->setContextProperty(QStringLiteral("cpp_bridge"), cpp_bridge);
 
     // Load our qml doc.
+    view.setSource(QUrl(QStringLiteral("qrc:/qml/loader.qml")));
+    view.show();
+    view.update();
+    app.processEvents();
+
     view.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     // Get the top level qml objects.
