@@ -927,6 +927,14 @@ void GroupInteraction::explode(const Dep<CompShape>& cs) {
       cs->set_pos(pos);
     }
   }
+
+  // Select the exploded contents.
+  _selection->clear_selection();
+  for (Entity* p : pasted) {
+    Dep<CompShape> cs = get_dep<CompShape>(p);
+    _selection->select(cs);
+  }
+
 }
 
 void GroupInteraction::resize_gl(GLsizei width, GLsizei height) {

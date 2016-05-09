@@ -273,7 +273,7 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
   _last_press = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->update_mouse_info(_last_press);
 
-  if (_link_locked) {
+  if (_link_locked && _last_press.left_button) {
     // We only allow the press to go through if a node is pressed
     // or the background is pressed.
     if (get_current_interaction()->node_hit(_last_press) ||
