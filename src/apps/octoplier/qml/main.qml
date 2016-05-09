@@ -26,6 +26,8 @@ Rectangle {
     visible: true
     color: "blue"
 
+    property alias node_graph_page: node_graph_page
+
 //    // Splash Page.
 //    SplashPage {
 //        id: splash_page

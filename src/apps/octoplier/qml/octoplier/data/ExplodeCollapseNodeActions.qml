@@ -3,6 +3,9 @@ import QtQuick 2.6
 // The first element contains the title to display in the stack view navigator.
 
 ListModel {
+
+    function update(props) {}
+
     ListElement {
         navigator_title: "Explode and Collapse"
 

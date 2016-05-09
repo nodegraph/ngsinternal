@@ -54,11 +54,6 @@ class COMPSHAPES_EXPORT NodeGraphSelection: public Component {
   virtual void copy();
   virtual void paste(Entity* group);
 
-  // Locking.
-  virtual void lock();
-  virtual void unlock();
-  virtual bool is_locked();
-
  private:
 
   // We have exclusive control over the following shapes.

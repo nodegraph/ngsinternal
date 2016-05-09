@@ -87,8 +87,8 @@ Q_OBJECT
   Q_INVOKABLE void explode_group();
 
   // Lock Graph.
-  Q_INVOKABLE void lock_graph();
-  Q_INVOKABLE void unlock_graph();
+  Q_INVOKABLE void lock_links(bool locked);
+  Q_INVOKABLE bool links_are_locked();
 
  public Q_SLOTS:
   void cleanup();
@@ -174,6 +174,9 @@ Q_OBJECT
 
   // In OpenGL pixels are always in device pixels.
   GLsizei _device_pixel_ratio;
+
+  // Whether the node graph is locked.
+  bool _link_locked;
 };
 
 }

@@ -4,6 +4,8 @@ import QtQuick 2.6
 
 ListModel {
 
+    function update(props) {}
+
     ListElement {
         navigator_title: "Node Actions"
         image_url: "qrc:///icons/ic_settings_white_48dp.png"

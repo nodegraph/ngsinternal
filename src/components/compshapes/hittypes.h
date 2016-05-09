@@ -7,17 +7,7 @@ enum COMPSHAPES_EXPORT HitRegion {
   kMissed,
   kLinkHead,
   kLinkTail,
-  kEditButton,
-  kViewButton,
   kShape,
-  kLeftEdge,
-  kRightEdge,
-  kBottomEdge,
-  kTopEdge,
-  kBottomLeftCorner,
-  kBottomRightCorner,
-  kTopLeftCorner,
-  kTopRightCorner
 };
 
 }

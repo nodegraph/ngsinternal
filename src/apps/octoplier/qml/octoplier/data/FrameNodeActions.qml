@@ -3,6 +3,9 @@ import QtQuick 2.6
 // The first element contains the title to display in the stack view navigator.
 
 ListModel {
+
+    function update(props) {}
+
     ListElement {
         navigator_title: "Frame"
         image_url: "qrc:///icons/ic_settings_white_48dp.png"

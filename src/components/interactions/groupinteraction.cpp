@@ -186,6 +186,38 @@ void GroupInteraction::reset_state() {
   _view_controls.track_ball.stop_tracking();
 }
 
+bool GroupInteraction::bg_hit(const MouseInfo& info) {
+  MouseInfo updated_info = info;
+  _view_controls.update_coord_spaces(updated_info);
+
+  // Do a hit test.
+  HitRegion region;
+  Dep<CompShape> cs = _shape_collective->hit_test(updated_info.object_space_pos.xy(), region);
+  if (!cs)  {
+    return true;
+  }
+  return false;
+}
+
+bool GroupInteraction::node_hit(const MouseInfo& info) {
+  MouseInfo updated_info = info;
+  _view_controls.update_coord_spaces(updated_info);
+
+  // Do a hit test.
+  HitRegion region;
+  Dep<CompShape> cs = _shape_collective->hit_test(updated_info.object_space_pos.xy(), region);
+  if (!cs) {
+    return false;
+  }
+  if ( (cs->our_entity()->get_did() == kInputEntity) ||
+      (cs->our_entity()->get_did() == kOutputEntity) ){
+    return false;
+  } else if (cs->our_entity()->has<Compute>()) {
+    return true;
+  }
+  return false;
+}
+
 void GroupInteraction::accumulate_select(const MouseInfo& a, const MouseInfo& b) {
   MouseInfo ua = a;
   MouseInfo ub = b;
@@ -363,14 +395,12 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         }
       }
       if (_state == kNodeSelectionAndDragging) {
-        if ((region != kEditButton) && (region != kViewButton)) {
-          // We get here if we might be starting to pan some nodes.
-          _panning_selection = true;
-          // Set the trackball's pivot and start tracking.
-          _view_controls.track_ball.set_pivot(updated_mouse_info.object_space_pos);
-          _view_controls.start_tracking(updated_mouse_info);
-          _mouse_over_info = updated_mouse_info;
-        }
+        // We get here if we might be starting to pan some nodes.
+        _panning_selection = true;
+        // Set the trackball's pivot and start tracking.
+        _view_controls.track_ball.set_pivot(updated_mouse_info.object_space_pos);
+        _view_controls.start_tracking(updated_mouse_info);
+        _mouse_over_info = updated_mouse_info;
       }
     } else if (is_link_head) {
       if (_state == kNodeSelectionAndDragging) {
@@ -616,11 +646,6 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
         _state=kTwoClickInputToOutput;
       }else if (_state==kDraggingLinkHead) {
         _state=kTwoClickOutputToInput;
-      }
-      if (region == kEditButton) {
-        _selection->set_edit_node(comp_shape);
-      }else if (region == kViewButton) {
-        _selection->set_view_node(comp_shape);
       }
     } else if (is_link_head) {
       if (_state==kDraggingLinkHead) {

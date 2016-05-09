@@ -82,7 +82,8 @@ NodeGraphQuickItem::NodeGraphQuickItem(QQuickItem *parent)
       _factory(this),
       _graph_builder(this),
       _last_pressed_shape(this),
-      _pinch_mode(false) {
+      _pinch_mode(false),
+      _link_locked(false){
 
   get_dep_loader()->register_fixed_dep(_fbo_worker, "");
   get_dep_loader()->register_fixed_dep(_selection, "");
@@ -271,15 +272,26 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
   _long_press_timer.start();
   _last_press = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->update_mouse_info(_last_press);
-  if (_last_press.middle_button) {
-    // Simulate touching with two fingers on a desktop.
-    get_current_interaction()->accumulate_select(_last_press, _last_press);
-  } else if (_last_press.right_button) {
-    // Simulate a long press touch.
-    _last_pressed_shape = get_current_interaction()->pressed(_last_press);
-    on_long_press();
+
+  if (_link_locked) {
+    // We only allow the press to go through if a node is pressed
+    // or the background is pressed.
+    if (get_current_interaction()->node_hit(_last_press) ||
+        get_current_interaction()->bg_hit(_last_press)) {
+      _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+    }
   } else {
-    _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+    if (_last_press.middle_button) {
+      // Simulate touching with two fingers on a desktop.
+      get_current_interaction()->accumulate_select(_last_press, _last_press);
+    } else if (_last_press.right_button) {
+      // Simulate a long press touch.
+      _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+      _long_press_timer.stop();
+      on_long_press();
+    } else {
+      _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+    }
   }
   update();
 }
@@ -333,7 +345,18 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
           _long_press_timer.start();
           _last_press = get_mouse_info(event, _device_pixel_ratio);
           get_current_interaction()->update_mouse_info(_last_press);
-          _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+
+          if (_link_locked) {
+            // We only allow the press to go through if a node is pressed
+            // or the background is pressed.
+            if (get_current_interaction()->node_hit(_last_press) ||
+                get_current_interaction()->bg_hit(_last_press)) {
+              _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+            }
+          } else {
+            _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+          }
+
           qDebug() << "111 - mouse pressed\n";
           update();
         } else if (state&Qt::TouchPointReleased) {
@@ -770,13 +793,14 @@ void NodeGraphQuickItem::explode_group() {
 }
 
 // Lock Graph.
-void NodeGraphQuickItem::lock_graph() {
-  _selection->lock();
+void NodeGraphQuickItem::lock_links(bool locked) {
+  _link_locked = locked;
 }
 
-void NodeGraphQuickItem::unlock_graph() {
-  _selection->unlock();
+bool NodeGraphQuickItem::links_are_locked() {
+  return _link_locked;
 }
+
 
 }
 

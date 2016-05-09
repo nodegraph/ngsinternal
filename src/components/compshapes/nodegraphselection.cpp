@@ -234,17 +234,4 @@ void NodeGraphSelection::paste(Entity* group) {
   group->paste_from_string(_raw_copy);
 }
 
-// Locking.
-void NodeGraphSelection::lock() {
-  _locked = true;
-}
-
-void NodeGraphSelection::unlock() {
-  _locked = false;
-}
-
-bool NodeGraphSelection::is_locked() {
-  return _locked;
-}
-
 }

@@ -4,6 +4,8 @@ import QtQuick 2.6
 
 ListModel {
 
+    function update(props) {}
+
     ListElement {
         navigator_title: "Group Node Actions"
 

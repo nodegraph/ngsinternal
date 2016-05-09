@@ -184,6 +184,9 @@ Rectangle{
 
             function push_model_url(url) {
                 var next_menu_model = app_loader.load_component(url, this, {})
+                var props = {}
+                props["links_are_locked"]=app_window.node_graph_page.node_graph.links_are_locked()
+                next_menu_model.update(props)
                 push_model(next_menu_model)
             }
 
