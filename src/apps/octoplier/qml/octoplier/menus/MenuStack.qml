@@ -12,6 +12,7 @@ import octoplier.config 1.0
 import octoplier.menus 1.0
 import octoplier.tools 1.0
 import octoplier.data 1.0
+import octoplier.subpages 1.0
 
 Rectangle{
     id: menu_stack_page
@@ -28,6 +29,7 @@ Rectangle{
     property bool center_new_nodes: false
 
     property alias stack_view: stack_view
+    property alias stack_view_header: stack_view_header
 
     // Dependencies.
     property var copy_paste_bar
@@ -61,6 +63,24 @@ Rectangle{
         visible = true
         stack_view.clear_models()
         stack_view.push_model_name("NodeGraphActions")
+    }
+
+    function on_create_file_page() {
+        create_file_page.visible = true
+        create_file_page.mode = "create"
+        stack_view.push(create_file_page)
+        stack_view_header.push_header_title("Create File")
+        menu_stack_page.visible = true
+    }
+    
+    function on_edit_file_page() {
+        create_file_page.visible = true
+        create_file_page.mode = "update"
+        create_file_page.title_field.text = file_page.get_current_title()
+        create_file_page.description_field.text = file_page.get_current_description()
+        stack_view.push(create_file_page)
+        stack_view_header.push_header_title("Update File")
+        menu_stack_page.visible = true
     }
 
     // The Stack View Header
@@ -103,7 +123,6 @@ Rectangle{
             image_url: "qrc:///icons/ic_arrow_back_white_48dp.png"
             //opacity: stack_view.depth > 1 ? 1 : 0
             onClicked: {
-                console.log("stack view depth: " + stack_view.depth)
                 if (stack_view.depth > 1) {
                     stack_view.pop_model()
                 } else {
@@ -206,9 +225,7 @@ Rectangle{
             }
 
             function execute_script(script) {
-                console.log("evaluating script: " + script)
                 eval(script)
-                menu_stack_page.visible = false
             }
 
         }

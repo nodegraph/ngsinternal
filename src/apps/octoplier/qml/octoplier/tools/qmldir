@@ -7,3 +7,5 @@ AppTextField 1.0 AppTextField.qml
 AppTooltip 1.0 AppTooltip.qml
 AppUnits 1.0 AppUnits.qml
 AppLoader 1.0 AppLoader.qml
+AppLabelButton 1.0 AppLabelButton.qml
+AppLabel 1.0 AppLabel.qml

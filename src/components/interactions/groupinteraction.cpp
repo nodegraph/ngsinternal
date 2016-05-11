@@ -734,14 +734,6 @@ void GroupInteraction::pinch_zoom(const glm::vec2& origin, float factor) {
   _view_controls.track_ball.pinch_zoom(info.camera_space_pos, factor);
 }
 
-bool GroupInteraction::is_safe_to_save() const {
-  start_method();
-  if (!_mouse_is_down && _state == kNodeSelectionAndDragging) {
-    return true;
-  }
-  return false;
-}
-
 const glm::mat4 GroupInteraction::get_mouse_model_view() const {
   start_method();
   glm::mat4 m(1);

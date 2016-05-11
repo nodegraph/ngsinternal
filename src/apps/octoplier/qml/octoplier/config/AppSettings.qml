@@ -34,7 +34,7 @@ Item{
 
     // Menu Stack Properties.
     property color menu_stack_bg_color: "#EE0288D1"
-    property color menu_stack_header_bg_color: "#554CAF50" // a light green color
+    property color menu_stack_header_bg_color: "#FF4CAF50" // a light green color
     property color menu_stack_header_border_color: "#FFFFFFFF" // pure white
     property int menu_stack_header_border_width: app_units.dp(2)
     property double menu_stack_header_radius: app_units.dp(0)
@@ -53,6 +53,7 @@ Item{
     property int page_x: 0
     property int page_y: action_bar_height + splitter_height
     property int page_z: 0
+    property int column_layout_spacing: app_units.dp(20)
 
     // Menu Page Properties.
     property int menu_page_height: page_height - action_bar_height
@@ -69,10 +70,11 @@ Item{
     // -------------------------------------------------------------------
     
     property int menu_mode: 0
-    property int node_graph_mode: 1
-    property int web_browser_mode: 2
-    property int posts_mode: 3
-    property int settings_mode: 4
+    property int file_mode: 1
+    property int node_graph_mode: 2
+    property int web_browser_mode: 3
+    property int posts_mode: 4
+    property int settings_mode: 5
     
     property int view_node_mode: 5
     property int edit_node_mode: 6

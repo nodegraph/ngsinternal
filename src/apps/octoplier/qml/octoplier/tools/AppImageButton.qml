@@ -46,21 +46,17 @@ Button {
             mouse.accepted = true
             app_tooltip.show(image_button,tooltip_text)
             app_settings.vibrate()
-            console.debug("mouse hold over button")
         }
         onPressed: {
             mouse.accepted = true
             image_button.clicked(mouse)
-            console.debug("mouse pressed over button")
         }
         onReleased: {
             app_tooltip.hide();
             mouse.accepted = true
-            console.debug("mouse release over button")
         }
         onExited: {
             app_tooltip.hide();
-            console.debug("mouse release over button")
         }
 
     }

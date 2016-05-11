@@ -31,9 +31,6 @@ ScrollView {
     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
     verticalScrollBarPolicy: (Qt.platform.os == "android") ? Qt.ScrollBarAlwaysOff : Qt.ScrollBarAsNeeded
 
-    // Dependencies.
-    property var copy_paste_bar
-
     // Methods.
     function on_switch_to_mode(mode) {
     	if (mode == app_settings.settings_mode) {
@@ -96,9 +93,9 @@ ScrollView {
                 //Layout.fillWidth: true
                     //anchors.fill: parent
                     //TextField {
-                    AppTextField {
-                        copy_paste_bar: page.copy_paste_bar
-                        width: parent.width
+//                    AppTextField {
+//                        tool_bar: page.copy_paste_bar
+//                        width: parent.width
 //                        anchors.fill: parent
                         //placeholderText: "...";
 //                        Layout.fillWidth: true;
@@ -120,7 +117,7 @@ ScrollView {
 //                                text_selection_menu.popup();
 //                            }
 //                        }
-                    }
+//                    }
                     //TextField { placeholderText: "Password"; echoMode: TextInput.Password; Layout.fillWidth: true }
                 
 

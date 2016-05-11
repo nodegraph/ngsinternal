@@ -2,67 +2,70 @@ import QtQuick 2.6
 import QtQuick.Controls 1.4
 
 TextField {
-    id: urlField
+    id: text_field
     
     // Dependencies.
-    property var copy_paste_bar
+    property var tool_bar
 
     // Dimensions.
     height: app_settings.text_field_height
+
+    anchors {
+        left: parent.left
+        right: parent.right
+        leftMargin: app_settings.action_bar_left_margin
+        rightMargin: app_settings.action_bar_right_margin
+    }
     
     // Input hints.
     inputMethodHints: Qt.ImhUrlCharactersOnly | Qt.ImhPreferLowercase
     
     // Text.
     text: "hello"
-    textColor: "white"
+    textColor: "black"
     font.pointSize: app_settings.font_point_size
     
     onSelectionStartChanged: {
         if (activeFocus) {
-            copy_paste_bar.text_editor = urlField
-            copy_paste_bar.visible = true
+            tool_bar.text_editor = text_field
+            tool_bar.visible = true
         }
     }
     
     onSelectionEndChanged: {
         if (activeFocus) {
-            copy_paste_bar.text_editor = urlField
-            copy_paste_bar.visible = true
+            tool_bar.text_editor = text_field
+            tool_bar.visible = true
         }
     }
         
     onSelectedTextChanged: {
         if (activeFocus) {
-            copy_paste_bar.text_editor = urlField
-            copy_paste_bar.visible = true
+            tool_bar.text_editor = text_field
+            tool_bar.visible = true
         }
     }   
         
     onActiveFocusChanged: {
         if (activeFocus) {
-            console.log("urlField is: " + urlField)
-            console.log("copy_paste_bar is: " + copy_paste_bar)
-            copy_paste_bar.text_editor = urlField
-            copy_paste_bar.visible = true
+            tool_bar.text_editor = text_field
+            tool_bar.visible = true
         }
     }
         
     onAccepted: {
-        copy_paste_bar.visible = false
-        //copy_paste_bar.text_editor = null
-        // Move the focus else where
-        empty_page.forceActiveFocus();
+        tool_bar.visible = false
+        tool_bar.text_editor = null
     }
         
-//    onVisibleChanged: {
-//        if (!parent.visible) {
-//            if (copy_paste_bar.text_editor == urlField) {
-//                copy_paste_bar.visible = false
-//                copy_paste_bar.text_editor = null
-//            }
-//        }
-//    }
+    onVisibleChanged: {
+        if (!parent.visible) {
+            if (tool_bar.text_editor == text_field) {
+                tool_bar.visible = false
+                tool_bar.text_editor = null
+            }
+        }
+    }
         
     // When the TextFieldStyle is present, the selection handles don't
     // show up on Android. So we comment these out for now.

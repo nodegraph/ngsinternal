@@ -82,6 +82,7 @@ class OBJECTMODEL_EXPORT Component {
   Entity* has_entity(const Path& path) const;
   void destroy_entity(const Path& path) const;
   Entity* get_app_root() const;
+  Entity* get_root_group() const;
   std::string get_path_as_string() const;
   const std::string& get_name() const;
 

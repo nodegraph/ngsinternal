@@ -8,5 +8,6 @@ ViewNodePage 1.0 ViewNodePage.qml
 WebBrowserPage 1.0 WebBrowserPage.qml
 NodeGraphPage 1.0 NodeGraphPage.qml
 SplashPage 1.0 SplashPage.qml
+FilePage 1.0 FilePage.qml
 
 

@@ -8,15 +8,15 @@ ListModel {
 
     ListElement {
         navigator_title: "Frame"
-        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        image_url: "qrc:///icons/ic_crop_free_white_48dp.png"
         title: "Frame All Nodes"
         description: "Frame all nodes to fit the screen."
-        script: "node_graph_page.node_graph.frame_all()"
+        script: "node_graph_page.node_graph.frame_all(); menu_stack_page.visible = false"
     }
     ListElement {
-        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+        image_url: "qrc:///icons/ic_filter_center_focus_white_48dp.png"
         title: "Frame Selected Nodes"
         description: "Frame selected nodes to fit the screen."
-        script: "node_graph_page.node_graph.frame_selected()"
+        script: "node_graph_page.node_graph.frame_selected(); menu_stack_page.visible = false"
     }
 }

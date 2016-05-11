@@ -14,6 +14,7 @@ import octoplier.tools 1.0
 import octoplier.apis 1.0
 import octoplier.config 1.0
 import octoplier.data 1.0
+import octoplier.subpages 1.0
 
 Rectangle {
 
@@ -113,6 +114,11 @@ Rectangle {
         visible: false
     }
 
+    FilePage {
+        id: file_page
+        visible: false
+    }
+
     PostsPage {
         id: posts_page
         visible: false
@@ -145,6 +151,12 @@ Rectangle {
 
     MenuStack {
         id: menu_stack_page
+        visible: false
+    }
+
+    // Stacked Pages.
+    CreateFilePage {
+        id: create_file_page
         visible: false
     }
 
@@ -186,12 +198,14 @@ Rectangle {
         main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(view_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(url_entry_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(file_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(menu_stack_page.on_switch_to_mode)
 
         // More option connections.
         main_bar.open_more_options.connect(node_graph_page.on_open_more_options)
-        main_bar.open_more_options.connect(
-                    web_browser_page.on_open_more_options)
+        main_bar.open_more_options.connect(web_browser_page.on_open_more_options)
         main_bar.open_more_options.connect(view_node_page.on_open_more_options)
+        main_bar.open_more_options.connect(file_page.on_open_more_options)
 
         // More option popup menu connections.
         //node_graph_page.popup_menu.connect(node_graph_menu.on_popup_menu)
@@ -226,15 +240,14 @@ Rectangle {
                     > 100 ? 0 : web_browser_page.web_view_alias.loadProgress
         })
 
-        node_name_dialog.copy_paste_bar = copy_paste_bar
-        url_dialog.copy_paste_bar = copy_paste_bar
-        url_entry_page.copy_paste_bar = copy_paste_bar
+        //node_name_dialog.tool_bar = copy_paste_bar
+        //url_dialog.tool_bar = copy_paste_bar
+        //url_entry_page.tool_bar = copy_paste_bar
 
         // Other setup.
         main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-        node_graph_page.node_graph.build_test_graph()
-        node_graph_page.node_graph.on_load()
-        
+        file_model.load_graph()
+        node_graph_page.node_graph.update()
 
         // Update the progress now that we've finished updating the dependencies.
         cpp_bridge.mark_load_progress()

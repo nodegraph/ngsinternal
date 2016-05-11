@@ -115,6 +115,10 @@ Entity* Component::get_app_root() const {
   return our_entity()->get_app_root();
 }
 
+Entity* Component::get_root_group() const {
+  return our_entity()->get_root_group();
+}
+
 size_t Component::get_iid() const {
   return _iid;
 }

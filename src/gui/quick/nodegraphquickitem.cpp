@@ -59,9 +59,6 @@ const int NodeGraphQuickItem::kLongPressTimeThreshold = 400; // in milli seconds
 const float NodeGraphQuickItem::kLongPressDistanceThreshold = 30; // in object space.
 const int NodeGraphQuickItem::kDoublePressTimeThreshold = 300; // max time between release events for a double tap/click.
 
-const QString NodeGraphQuickItem::kLinkableFile = "com.octoplier.app.nodegraph.lkb";
-const QString NodeGraphQuickItem::kLinkableDir = "com.octoplier.app";
-
 const int NodeGraphQuickItem::kMinimumIdleLength = 1000; // 1 second in milli seconds.
 
 class CleanUpGL : public QRunnable
@@ -80,7 +77,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(QQuickItem *parent)
       _selection(this),
       _canvas(this),
       _factory(this),
-      _graph_builder(this),
+      _file_model(this),
       _last_pressed_shape(this),
       _pinch_mode(false),
       _link_locked(false){
@@ -89,7 +86,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(QQuickItem *parent)
   get_dep_loader()->register_fixed_dep(_selection, "");
   get_dep_loader()->register_fixed_dep(_canvas, "");
   get_dep_loader()->register_fixed_dep(_factory, "");
-  get_dep_loader()->register_fixed_dep(_graph_builder, "");
+  get_dep_loader()->register_fixed_dep(_file_model, "");
 
   _device_pixel_ratio = static_cast<GLsizei>(QGuiApplication::primaryScreen()->devicePixelRatio());
 
@@ -132,11 +129,6 @@ void NodeGraphQuickItem::initialize_fixed_deps() {
 //        window()->setFormat(format);
 //      }
 //  #endif
-}
-
-void NodeGraphQuickItem::build_test_graph() {
-  // Build a test graph.
-  _graph_builder->build_test_graph();
 }
 
 // This gets called from the scene graph render thread.
@@ -211,7 +203,6 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
     clean();
     node = new_ff TextureDisplayNode();
     QSGTexture* test = _fbo_worker->get_display_texture();
-    std::cerr << "fbo worker's qsgtexture is: " << test << "\n";
     node->setTexture(_fbo_worker->get_display_texture());
     node->setRect(boundingRect());
     // Set the initial size.
@@ -585,24 +576,6 @@ void NodeGraphQuickItem::frame_selected() {
   update();
 }
 
-QString NodeGraphQuickItem::get_linkable_file() {
-  // Make sure the home dir exists.
-  QString home_dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-  if (!QDir(home_dir).exists()) {
-    QDir().mkpath(home_dir);
-  }
-
-  // Make sure the octoplier dir exists.
-  QString linkable_dir = home_dir + "/" + kLinkableDir;
-  QFileInfo info(linkable_dir);
-  if (!info.exists()) {
-    QDir().mkpath(linkable_dir);
-  }
-
-  // Return the octoplier file.
-  return linkable_dir + "/" + kLinkableFile;
-}
-
 void NodeGraphQuickItem::make_save_point() {
 
 }
@@ -610,7 +583,7 @@ void NodeGraphQuickItem::make_save_point() {
 void NodeGraphQuickItem::save() {
 //  // There are times where it is not safe to save,
 //  // like in the middle of dragging entities.
-//  Interaction* current_interaction = _canvas->get_current_interaction();
+//  GroupInteraction* current_interaction = _canvas->get_current_interaction();
 //  if (!current_interaction->is_safe_to_save()) {
 //    return;
 //  }
@@ -684,10 +657,6 @@ void NodeGraphQuickItem::on_save() {
   }
   _idle_length.restart();
   save();
-}
-
-void NodeGraphQuickItem::on_load() {
-  load();
 }
 
 void NodeGraphQuickItem::shutdown() {

@@ -82,9 +82,6 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   // Pinch Zoom.
   virtual void pinch_zoom(const glm::vec2& origin, float factor);
 
-  // Wheter it's safe to save.
-  virtual bool is_safe_to_save() const;
-
   // Long press.
   virtual const Dep<CompShape>& get_current_hit_shape() const;
   virtual void revert_to_pre_pressed_selection();

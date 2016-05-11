@@ -82,7 +82,6 @@ Rectangle {
 
                 onDoubleClicked: {
                     mouse.accepted = true
-                    console.debug("rect click")
                     delegate.ListView.view.currentIndex = index
                     if (typeof next_model !== "undefined") {
                         console.log("click for next model: " + next_model)

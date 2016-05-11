@@ -105,6 +105,7 @@ class OBJECTMODEL_EXPORT Entity {
   virtual void remove_child(Entity* child);
   void reparent_child(Entity* child, Entity* next_parent);
   void destroy_all_children();
+  void destroy_all_children_except(const std::unordered_set<size_t>& dids);
   void rename_child(const std::string& prev_name, const std::string& next_name);
   const NameToChildMap& get_children() const;
 
@@ -122,6 +123,9 @@ class OBJECTMODEL_EXPORT Entity {
   // Get common entities.
   Entity* get_app_root() const; // Gets the top most entity.
   bool is_app_root() const; // Are we the top most entity.
+
+  Entity* get_root_group() const;
+  bool is_root_group() const;
 
   // Initialize deps.
   void initialize_deps();

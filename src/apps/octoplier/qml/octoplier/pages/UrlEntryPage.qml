@@ -25,7 +25,6 @@ Rectangle {
 
     // Dependencies.
     property var web_browser_page
-    property var copy_paste_bar
 
     // Signals.
     signal switch_to_mode(int mode)
@@ -49,7 +48,7 @@ Rectangle {
         // URL Text Entry Field.
         AppTextField {
             id: urlField
-            copy_paste_bar: url_entry_page.copy_paste_bar
+            tool_bar: copy_paste_bar
             anchors {
                 left: parent.left
                 right: parent.right

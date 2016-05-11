@@ -26,14 +26,12 @@ QtObject {
             console.log("Error: unable to load: " + file)
             return null
         }
-        console.log("Info: loaded: " + file)
         return obj
     }
 
     // Load a component from a file asynchronously.
     function load_component_async(file, parent, properties) {
         var comp = Qt.createComponent(file)
-        console.log("Info: starting to load: " + file)
         var incubator = comp.incubateObject(parent, properties);
 
         // Check if the qml file has syntax errors.

@@ -58,6 +58,9 @@ void ShapeCanvas::initialize_fixed_deps() {
   Component::initialize_fixed_deps();
   if (_group_stack.empty()) {
 	  push_group(get_entity("root"));
+  } else if (!_current_interaction) {
+    _group_stack.clear();
+    push_group(get_entity("root"));
   }
 }
 

@@ -156,6 +156,17 @@ void Entity::destroy_all_children() {
   assert(_children.empty());
 }
 
+void Entity::destroy_all_children_except(const std::unordered_set<size_t>& dids) {
+  // The order of deletion of child entities is random.
+  // Deleting children will modify our children's set so we make a copy.
+  NameToChildMap copy = _children;
+  for (auto &e : copy) {
+    if (!dids.count(e.second->get_did())) {
+      delete_ff(e.second);
+    }
+  }
+}
+
 void Entity::rename_child(const std::string& prev_name, const std::string& next_name) {
   if (!has_child_name(prev_name)) {
     return;
@@ -181,6 +192,17 @@ Entity* Entity::get_app_root() const {
 
 bool Entity::is_app_root() const {
   if (!get_parent()) {
+    return true;
+  }
+  return false;
+}
+
+Entity* Entity::get_root_group() const {
+  return get_app_root()->get_entity("./root");
+}
+
+bool Entity::is_root_group() const {
+  if (this == get_root_group()) {
     return true;
   }
   return false;
@@ -646,8 +668,9 @@ Entity* Entity::paste_entity_with_merging(SimpleLoader& loader) {
   if (!entity) {
     BaseEntityInstancer* ei = get_app_root()->get<BaseFactory>()->get_entity_instancer();
     entity = ei->instance(this, name, did);
-    entity->load_helper(loader);
   }
+  entity->load_helper(loader);
+
   assert(entity);
   return entity;
 }

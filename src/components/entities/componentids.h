@@ -29,6 +29,7 @@ enum ComponentIID {
   kINodeGraphEditor,
   kINodeGraphQuickItem,
   kINodeGraphRenderer,
+  kIFileModel,
   kILinkGroup,
   kINodeGraphSelection,
   kIOutputPlug,
@@ -79,6 +80,7 @@ enum ComponentDID {
   kNodeGraphEditor,
   kNodeGraphQuickItem,
   kNodeGraphRenderer,
+  kFileModel,
   // --
   kNodeGraphSelection,
   kResources,

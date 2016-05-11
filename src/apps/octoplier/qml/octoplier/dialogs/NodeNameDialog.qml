@@ -30,7 +30,7 @@ Dialog {
     // URL Text Entry Field.
     AppTextField {
         id: node_name_field
-        copy_paste_bar: parent.copy_paste_bar
+        tool_bar: parent.copy_paste_bar
         anchors {
             left: parent.left
             right: parent.right

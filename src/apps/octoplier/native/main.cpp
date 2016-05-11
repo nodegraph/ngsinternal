@@ -1,4 +1,3 @@
-#include <native/app.h>
 #include <native/scripts.h>
 #include <native/treeitem.h>
 #include <native/variantmaptreemodel.h>
@@ -173,6 +172,11 @@ int main(int argc, char *argv[]) {
     new_ff FBORenderer(g_app_root);
     new_ff FBOWorker(g_app_root);
 
+    FileModel* file_model = new_ff FileModel();
+    //QSortFilterProxyModel file_model_proxy;
+    //file_model_proxy.setSourceModel(file_model);
+    //file_model_proxy.sort(0,Qt::AscendingOrder);
+
     // Link up our default dependencies.
     g_app_root->initialize_deps();
     g_app_root->update_deps_and_hierarchy();
@@ -220,6 +224,7 @@ int main(int argc, char *argv[]) {
     file.open(QIODevice::ReadOnly);
     VariantMapTreeModel* tree_model = new_ff VariantMapTreeModel((QString)file.readAll());
     file.close();
+
 
     // Create our qml engine.
 //    QQmlApplicationEngine engine;
@@ -315,6 +320,7 @@ int main(int argc, char *argv[]) {
     context->setContextProperty(QStringLiteral("initialUrl"), Utils::url_from_input("www.google.com"));
     context->setContextProperty(QStringLiteral("scripts"), scripts);
     context->setContextProperty(QStringLiteral("treemodel"), tree_model);
+    context->setContextProperty(QStringLiteral("file_model"), file_model);
 
     //context->setContextProperty(QStringLiteral("system_properties"),dynamic_cast<QObject*>(ng_root->get_component<SystemSignals>()));
 

@@ -25,14 +25,16 @@ Rectangle {
     signal open_more_options()
 
     Component.onCompleted: {
-        console.log("mainbar dim: ", main_bar.width, "," , main_bar.height)
     }
     
     // Methods.
     // Set the current mode of the action bar.
     function on_switch_to_mode(m) {
-        if (m == app_settings.node_graph_mode) {
-            action_bar_title.text = "Nodes"
+        if (m == app_settings.file_mode) {
+            action_bar_title.text = "Files"
+            more_menu_button.visible = true;
+        } else if (m == app_settings.node_graph_mode) {
+            action_bar_title.text = file_model.get_working_title()
             more_menu_button.visible = true;
         } else if (m == app_settings.web_browser_mode) {
             action_bar_title.text = "Browser"
@@ -78,13 +80,28 @@ Rectangle {
         id: more_menu_button
         
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: node_graph_button.left
+        anchors.right: file_button.left
         
         image_url: "qrc:///icons/ic_more_vert_white_48dp.png"
         tooltip_text: "More actions"
         
         onClicked: {
             open_more_options();
+        }
+    }
+
+    // Node Graph Mode Button.
+    AppImageButton {
+        id: file_button
+
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: node_graph_button.left
+
+        image_url: "qrc:///icons/ic_folder_open_white_48dp.png"
+        tooltip_text: "Files"
+
+        onClicked: {
+            on_switch_to_mode(app_settings.file_mode)
         }
     }
 

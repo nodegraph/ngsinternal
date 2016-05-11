@@ -30,7 +30,7 @@ Dialog {
     // URL Text Entry Field.
     AppTextField {
         id: urlField
-        copy_paste_bar: url_dialog.copy_paste_bar
+        tool_bar: url_dialog.copy_paste_bar
         anchors {
             left: parent.left
             right: parent.right

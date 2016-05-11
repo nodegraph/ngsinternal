@@ -1,10 +1,12 @@
 #pragma once
 #include <gui/gui_export.h>
+
 #include <base/device/devicebasictypesgl.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
 #include <components/entities/componentids.h>
 #include <base/device/transforms/mouseinfo.h>
+#include <gui/quick/filemodel.h>
 
 // Qt includes.
 #include <QtQuick/QQuickItem>
@@ -21,7 +23,7 @@ class NodeGraphSelection;
 class CompShape;
 class BaseFactory;
 class BaseEntityInstancer;
-class GraphBuilder;
+
 
 class GUI_EXPORT NodeGraphQuickItem : public QQuickItem, public Component
 {
@@ -34,8 +36,6 @@ Q_OBJECT
   static const float kLongPressDistanceThreshold; // in object space.
   static const int kDoublePressTimeThreshold; // max time between release events for a double tap/click.
 
-  static const QString kLinkableFile;
-  static const QString kLinkableDir;
 
   static const int kMinimumIdleLength; // in milli seconds
 
@@ -43,9 +43,6 @@ Q_OBJECT
   virtual ~NodeGraphQuickItem();
 
   virtual void initialize_fixed_deps();
-
-  // Testing.
-  Q_INVOKABLE void build_test_graph();
 
   // Node Creation.
   Q_INVOKABLE void create_group_node(bool centered);
@@ -69,7 +66,6 @@ Q_OBJECT
   Q_INVOKABLE void frame_selected();
 
   // Serialization.
-  Q_INVOKABLE QString get_linkable_file();
   Q_INVOKABLE void make_save_point();
   Q_INVOKABLE void save();
   Q_INVOKABLE void load();
@@ -102,7 +98,6 @@ Q_OBJECT
 
   void on_long_press();
   void on_save();
-  void on_load();
 
 
  signals:
@@ -154,7 +149,8 @@ Q_OBJECT
   Dep<NodeGraphSelection> _selection;
   Dep<ShapeCanvas> _canvas;
   Dep<BaseFactory> _factory;
-  Dep<GraphBuilder> _graph_builder;
+  Dep<FileModel> _file_model;
+
   BaseEntityInstancer* _entity_instancer;
 
   // Used to detect long press.

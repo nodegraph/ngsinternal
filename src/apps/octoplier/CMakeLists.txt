@@ -4,7 +4,6 @@ include_directories("${PROJECT_SOURCE_DIR}/apps/octoplier")
 
 set(sources
 	${resources}
-	native/app.cpp
 	native/main.cpp
 	native/scripts.cpp
 	native/treeitem.cpp
@@ -24,7 +23,6 @@ set(moc_headers
     
 set(headers
 	native/treeitem.h
-	native/app.h
 )
 
 qt5_wrap_cpp(moc_imps ${moc_headers})

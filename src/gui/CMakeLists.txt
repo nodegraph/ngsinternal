@@ -14,6 +14,7 @@ set(quick_src
 	quick/fborenderer.cpp
 	quick/fboworker.cpp
 	quick/texturedisplaynode.cpp
+	quick/filemodel.cpp
     )
    
 set(widget_headers
@@ -37,6 +38,7 @@ set(moc_quick
 	quick/nodegraphquickitem.h
     quick/fboworker.h
     quick/texturedisplaynode.h
+    quick/filemodel.h
     )
     
 qt5_wrap_cpp(widget_imps ${moc_widget})
