@@ -78,6 +78,31 @@ after_script:
     - make install_desktop -j8
   tags:
     - macngsrunner
+.ios_debug: &ios_debug_tmpt
+  script:
+    - echo "IOS DEBUG"
+    - export ARCH=ARCH_IOS
+    - export ARCH_SIM=device
+    - rm -fr ios_debug
+    - mkdir ios_debug
+    - cd ios_debug
+    - cmake -G "Eclipse CDT4 - Unix Makefiles" -DARCH=ARCH_IOS -DARCH_SIM=device -DCMAKE_BUILD_TYPE=Debug ../src
+    - make install -j8
+  tags:
+    - macngsrunner
+.ios_release: &ios_release_tmpt
+  script:
+    - echo "IOS RELEASE"
+    - export ARCH=ARCH_IOS
+    - export ARCH_SIM=device
+    - rm -fr ios_release
+    - mkdir ios_release
+    - cd ios_release
+    - cmake -G "Eclipse CDT4 - Unix Makefiles" -DARCH=ARCH_IOS -DARCH_SIM-device -DCMAKE_BUILD_TYPE=Release ../src
+    - make install -j8
+  tags:
+    - macngsrunner
+
 .winrt_debug: &winrt_debug_tmpt
   script:
     - echo "WINRT DEBUG"
@@ -248,6 +273,29 @@ macos_release_tag:
         paths:
             - mac_debug/build/octoplier_pimped.dmg
             - mac_debug/build/testqml_pimped.dmg
+# ------------------------------------
+ios_debug:
+    <<: *ios_debug_tmpt
+    except:
+        - tags
+ios_debug_tag:
+    <<: *ios_debug_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ios_debug/build/
+ios_release:
+    <<: *ios_release_tmpt
+    except:
+        - tags
+ios_release_tag:
+    <<: *ios_release_tmpt
+    only:
+        - tags
+    artifacts:
+        paths:
+            - ios_debug/build/
 # ------------------------------------
 winrt_debug:
     <<: *winrt_debug_tmpt

@@ -1,5 +1,10 @@
 - use cmake-gui with the ios toolchain
+- our ios toolchain has 2 modes - device and simulator
+- device mode will build armv7 and arm64
+- simulator mode will build i386 and x86_64
+- * note * so you only need to build one device lib(armv7,arm64) and one simulator lib (i386,x86_64)
 - you'll need to modify the CMakeLists.txt file so that it doesn't require GLEW.
+- don't forget to pick release instead of debug
 
 #if(NOT APPLE)
 #    find_package(GLEW REQUIRED)
@@ -78,10 +83,9 @@ iphonesimulator_x86_64
 -------------------------
 universal
 -------------------------
-- after building all 4 arches above do the following from the root source directory where all the 4 cmake build dirs are.
+- after building a device and simulator binary from above do the following from the root source directory where all the 4 cmake build dirs are.
+- note we we are linking only 2 binarys, although we have ino for 4 builds above
 mkdir -p ./local/freetype-gl/universal
 lipo -create -output ./local/freetype-gl/universal/libfreetype-gl.a\
-  ./freetype-gl-build-armv7/libfreetype-gl.a\
   ./freetype-gl-build-arm64/libfreetype-gl.a\
-  ./freetype-gl-build-i386/libfreetype-gl.a\
   ./freetype-gl-build-x86_64/libfreetype-gl.a
