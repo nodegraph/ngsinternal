@@ -98,7 +98,7 @@ after_script:
     - rm -fr ios_release
     - mkdir ios_release
     - cd ios_release
-    - cmake -G "Eclipse CDT4 - Unix Makefiles" -DARCH=ARCH_IOS -DARCH_SIM-device -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_ios.cmake ../src
+    - cmake -G "Eclipse CDT4 - Unix Makefiles" -DARCH=ARCH_IOS -DARCH_SIM=device -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../src/toolchain_ios.cmake ../src
     - make install -j8
   tags:
     - macngsrunner
