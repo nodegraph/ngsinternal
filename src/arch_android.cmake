@@ -62,6 +62,7 @@ include_directories("${ANDROID_TOOLCHAIN_ROOT}/system/usr/include")
 include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-2.5.2/include")
 include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-gl/include")
 include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/glm-0.9.5.4")
+include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/libsodium-1.0.10/libsodium-android-armv7-a/include")
 
 # Setup up our link flags.
 link_directories("${QT5_DIR}/lib")
@@ -70,5 +71,6 @@ link_directories("${ANDROID_TOOLCHAIN_ROOT}/system/usr/lib}") # this is where we
 link_directories("${ANDROID_NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a") # this is where we find libgnustl_shared.so
 link_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-2.5.2/lib")
 link_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-gl/lib")
+link_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/libsodium-1.0.10/libsodium-android-armv7-a/lib")
 
 

@@ -1,0 +1,8 @@
+1) use the usual mechanism to launch a shell for android
+3) export ANDROID_NDK_HOME=/d/installs/android/android-ndk-r10e
+4) cd /d/dev/android/libsodium-1.0.10
+5) ./autogen.sh
+6) ./dist-build/android-armv7-a.sh
+
+
+

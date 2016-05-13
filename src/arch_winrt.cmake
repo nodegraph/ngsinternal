@@ -34,6 +34,7 @@ set(FREETYPE_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-2.5.2")
 set(GLEW_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glew-1.13.0")
 set(GLM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glm-0.9.5.4")
 set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-gl")
+set(LIBSODIUM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/libsodium-1.0.10")
 
 message("src root is set to: ${SRC_ROOT}")
 
@@ -43,8 +44,8 @@ include_directories("${FREETYPE_DIR}/include")
 include_directories("${GLEW_DIR}/include")
 include_directories("${GLM_DIR}")
 include_directories("${FREETYPE_GL_DIR}/include")
-#include_directories("${ANGLE_DIR}/Include")
 include_directories("${QT5_DIR}/include/QtANGLE")
+include_directories("${LIBSODIUM_DIR}/include")
 
 # Setup up our link flags.
 link_directories("${QT5_DIR}/lib")
@@ -53,9 +54,11 @@ link_directories("${QT5_DIR}/bin")
 if (${ARCH_BITS} STREQUAL "x64")
 	link_directories("${FREETYPE_DIR}/lib/win64")
 	link_directories("${FREETYPE_GL_DIR}/lib/win64")
+    link_directories("${LIBSODIUM_DIR}/x64/${CMAKE_BUILD_TYPE}/v140/static")
 else ()
 	link_directories("${FREETYPE_DIR}/lib/win32")
 	link_directories("${FREETYPE_GL_DIR}/lib/win32")
+    link_directories("${LIBSODIUM_DIR}/Win32/${CMAKE_BUILD_TYPE}/v140/static")
 endif ()
 
 

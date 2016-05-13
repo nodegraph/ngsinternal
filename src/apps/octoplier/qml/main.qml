@@ -187,8 +187,8 @@ Rectangle {
 
         // Update dependencies.
         //web_browser_menu.web_browser_page = web_browser_page
-        url_entry_page.web_browser_page = web_browser_page
-        url_dialog.web_browser_page = web_browser_page
+        //url_entry_page.web_browser_page = web_browser_page
+        //url_dialog.web_browser_page = web_browser_page
 
         // Mode change connections.
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
@@ -197,7 +197,7 @@ Rectangle {
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(view_node_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(url_entry_page.on_switch_to_mode)
+        //main_bar.switch_to_mode.connect(url_entry_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(file_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(menu_stack_page.on_switch_to_mode)
 

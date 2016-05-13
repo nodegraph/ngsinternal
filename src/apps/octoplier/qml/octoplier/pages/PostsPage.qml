@@ -1,6 +1,11 @@
 import QtQuick 2.6
 import NodeGraphTesting 1.0
 
+import octoplier.config 1.0
+import octoplier.menus 1.0
+import octoplier.tools 1.0
+import octoplier.data 1.0
+
 Rectangle {
     // Dimensions.
     height: app_settings.page_height
@@ -12,7 +17,7 @@ Rectangle {
     z: app_settings.page_z
     
     // Appearance.
-    color: "yellow"
+    color: app_settings.ng_bg_color
     
     // Methods.
     function on_switch_to_mode(mode) {

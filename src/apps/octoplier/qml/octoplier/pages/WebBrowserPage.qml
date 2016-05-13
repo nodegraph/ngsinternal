@@ -42,7 +42,10 @@ Rectangle {
     }
     function on_open_more_options() {
         if (visible) {
-            popup_menu();
+            menu_stack_page.center_new_nodes = true
+            menu_stack_page.visible = true
+            menu_stack_page.stack_view.clear()
+            menu_stack_page.stack_view.push_model_name("WebBrowserActions")
         }
     }
     

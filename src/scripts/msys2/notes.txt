@@ -9,3 +9,12 @@ You will like want to create a desktop shortcuts similar to the following:
 
 Note that these shortcuts are setting the $ARCH env variable for setup_env.sh to read.
 
+-------------------------------------------------------------------------------------------
+
+In the msys2 install, especially after updating with pacman, you'll need to uncomment the
+following from the installed msys2_shell.bat file. Otherwise the msys2 shell won't pick
+up the visual studio environment variable making cmake-gui harder to use.
+
+rem To export full current PATH from environment into MSYS2 uncomment next line
+*rem* set MSYS2_PATH_TYPE=inherit
+

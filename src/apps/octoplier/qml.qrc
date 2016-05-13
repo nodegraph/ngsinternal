@@ -51,6 +51,7 @@
         <file>qml/octoplier/data/CopyPasteNodeActions.qml</file>
         <file>qml/octoplier/data/ExplodeCollapseNodeActions.qml</file>
         <file>qml/octoplier/data/FileActions.qml</file>
+        <file>qml/octoplier/data/WebBrowserActions.qml</file>
         
         <!-- Configuration -->
         <file>qml/octoplier/config/qmldir</file>
@@ -103,6 +104,12 @@
         <file alias="icons/ic_check_white_48dp.png">../../external/icons/ic_check_white_48dp.png</file>
         <file alias="icons/ic_refresh_black_48dp.png">../../external/icons/ic_refresh_black_48dp.png</file>
         <file alias="icons/ic_refresh_white_48dp.png">../../external/icons/ic_refresh_white_48dp.png</file>
+        <file alias="icons/ic_close_black_48dp.png">../../external/icons/ic_close_black_48dp.png</file>
+        <file alias="icons/ic_close_white_48dp.png">../../external/icons/ic_close_white_48dp.png</file>
+        <file alias="icons/ic_arrow_back_black_48dp.png">../../external/icons/ic_arrow_back_black_48dp.png</file>
+        <file alias="icons/ic_arrow_back_white_48dp.png">../../external/icons/ic_arrow_back_white_48dp.png</file>
+        <file alias="icons/ic_arrow_forward_black_48dp.png">../../external/icons/ic_arrow_forward_black_48dp.png</file>
+        <file alias="icons/ic_arrow_forward_white_48dp.png">../../external/icons/ic_arrow_forward_white_48dp.png</file>
         
         <!-- Content Icons. -->
         <file alias="icons/ic_select_all_black_48dp.png">../../external/icons/ic_select_all_black_48dp.png</file>
@@ -113,12 +120,6 @@
         <file alias="icons/ic_content_copy_white_48dp.png">../../external/icons/ic_content_copy_white_48dp.png</file>
         <file alias="icons/ic_content_cut_black_48dp.png">../../external/icons/ic_content_cut_black_48dp.png</file>
         <file alias="icons/ic_content_cut_white_48dp.png">../../external/icons/ic_content_cut_white_48dp.png</file>
-        
-        <!-- Navigation Icons. -->
-        <file alias="icons/ic_arrow_back_black_48dp.png">../../external/icons/ic_arrow_back_black_48dp.png</file>
-        <file alias="icons/ic_arrow_back_white_48dp.png">../../external/icons/ic_arrow_back_white_48dp.png</file>
-        <file alias="icons/ic_arrow_forward_black_48dp.png">../../external/icons/ic_arrow_forward_black_48dp.png</file>
-        <file alias="icons/ic_arrow_forward_white_48dp.png">../../external/icons/ic_arrow_forward_white_48dp.png</file>
         
         <file alias="icons/ic_arrow_downward_black_48dp.png">../../external/icons/ic_arrow_downward_black_48dp.png</file>
         <file alias="icons/ic_arrow_downward_white_48dp.png">../../external/icons/ic_arrow_downward_white_48dp.png</file>
@@ -159,12 +160,14 @@
         <file alias="icons/ic_delete_forever_white_48dp.png">../../external/icons/ic_delete_forever_white_48dp.png</file>
         <file alias="icons/ic_insert_drive_file_black_48dp.png">../../external/icons/ic_insert_drive_file_black_48dp.png</file>
         <file alias="icons/ic_insert_drive_file_white_48dp.png">../../external/icons/ic_insert_drive_file_white_48dp.png</file>
-        <file alias="icons/ic_mode_edit_black_48dp.png">../../external/icons/ic_mode_edit_black_48dp.png</file>
-        <file alias="icons/ic_mode_edit_white_48dp.png">../../external/icons/ic_mode_edit_white_48dp.png</file>
         <file alias="icons/ic_note_add_black_48dp.png">../../external/icons/ic_note_add_black_48dp.png</file>
         <file alias="icons/ic_note_add_white_48dp.png">../../external/icons/ic_note_add_white_48dp.png</file>
         <file alias="icons/ic_open_in_browser_black_48dp.png">../../external/icons/ic_open_in_browser_black_48dp.png</file>
         <file alias="icons/ic_open_in_browser_white_48dp.png">../../external/icons/ic_open_in_browser_white_48dp.png</file>
+        <file alias="icons/ic_create_new_folder_black_48dp.png">../../external/icons/ic_create_new_folder_black_48dp.png</file>
+        <file alias="icons/ic_create_new_folder_white_48dp.png">../../external/icons/ic_create_new_folder_white_48dp.png</file>
+        <file alias="icons/ic_folder_black_48dp.png">../../external/icons/ic_folder_black_48dp.png</file>
+        <file alias="icons/ic_folder_white_48dp.png">../../external/icons/ic_folder_white_48dp.png</file>
         
         <!-- Node Graph Menu Icons. -->
         <file alias="icons/ic_lock_open_black_48dp.png">../../external/icons/ic_lock_open_black_48dp.png</file>
@@ -199,6 +202,12 @@
         <file alias="icons/ic_fiber_manual_record_white_48dp.png">../../external/icons/ic_fiber_manual_record_white_48dp.png</file>
         <file alias="icons/ic_gesture_black_48dp.png">../../external/icons/ic_gesture_black_48dp.png</file>
         <file alias="icons/ic_gesture_white_48dp.png">../../external/icons/ic_gesture_white_48dp.png</file>
+        
+        <!-- Node Actions -->
+        <file alias="icons/ic_mode_edit_black_48dp.png">../../external/icons/ic_mode_edit_black_48dp.png</file>
+        <file alias="icons/ic_mode_edit_white_48dp.png">../../external/icons/ic_mode_edit_white_48dp.png</file>
+        <file alias="icons/ic_settings_system_daydream_black_48dp.png">../../external/icons/ic_settings_system_daydream_black_48dp.png</file>
+        <file alias="icons/ic_settings_system_daydream_white_48dp.png">../../external/icons/ic_settings_system_daydream_white_48dp.png</file>
         
     </qresource>
 </RCC>

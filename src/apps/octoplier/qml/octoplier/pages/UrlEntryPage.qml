@@ -12,76 +12,61 @@ Rectangle {
     id: url_entry_page
 
     // Dimensions.
-    height: app_settings.page_height
-    width: app_settings.page_width
-    
+    height: app_settings.menu_page_height
+    width: app_settings.menu_page_width
+
     // Positioning.
-    x: app_settings.page_x
-    y: app_settings.page_y
-    z: app_settings.page_z
+    x: 0
+    y: 0
+    z: 0
     
     // Properties.
     color: app_settings.ng_bg_color
 
-    // Dependencies.
-    property var web_browser_page
-
-    // Signals.
-    signal switch_to_mode(int mode)
-
-    // Methods.
-    function on_switch_to_mode(mode) {
-        if (mode == app_settings.url_entry_mode) {
-            visible = true;
-            menu_stack_page.visible = false
-        } else {
-            visible = false;
-        }
-    }
-
     ColumnLayout {
-        y: app_settings.page_y
-        
-        anchors.left: parent.left
-        anchors.right: parent.right
-        
+        //height: app_settings.menu_page_height
+        width: app_settings.menu_page_width
+        spacing: app_settings.column_layout_spacing
+
+        Rectangle {
+            height: app_settings.column_layout_spacing
+            width: app_settings.menu_page_width
+        }
+
+        AppLabel {
+            text: "URL"
+        }
+
         // URL Text Entry Field.
         AppTextField {
             id: urlField
             tool_bar: copy_paste_bar
-            anchors {
-                left: parent.left
-                right: parent.right
-                leftMargin: app_settings.action_bar_left_margin
-                rightMargin: app_settings.action_bar_right_margin
-            }
-
             //text: web_browser_page.web_view_alias.url
-                
+            text: "www."
             onAccepted: {
                 switch_to_mode(app_settings.web_browser_mode)
                 web_browser_page.web_view_alias.url = utils.url_from_input(urlField.text)
             }
         }
         
-//        // Buttons.
-//        RowLayout {
-//            Item {Layout.fillWidth: true}
-//            Button {
-//                text: "ok"
-//                onClicked: {
-//                   switch_to_mode(app_settings.web_browser_mode);
-//                    web_browser_page.web_view_alias.url = utils.url_from_input(urlField.text)
-//                }
-//            }
-//            Button {
-//                text: "cancel"
-//                onClicked: { 
-//                    switch_to_mode(app_settings.web_browser_mode);
-//                }
-//            }
-//            Item {Layout.fillWidth: true}
-//        }
+        // Buttons.
+        RowLayout {
+            Item {Layout.fillWidth: true}
+            AppLabelButton {
+                text: "accept"
+                onClicked: {
+                    main_bar.switch_to_mode(app_settings.web_browser_mode);
+                    web_browser_page.web_view_alias.url = utils.url_from_input(urlField.text)
+                }
+            }
+            AppLabelButton {
+                text: "cancel"
+                onClicked: {
+                    main_bar.switch_to_mode(app_settings.web_browser_mode);
+                }
+            }
+            Item {Layout.fillWidth: true}
+        }
     }
     }
     

@@ -47,6 +47,9 @@ PATH=${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin:${PATH}
 # Android platform tools
 PATH=/d/installs/android/android-sdk/platform-tools:${PATH}
 
+# Git
+PATH="/c/Program Files/Git/bin":${PATH}
+
 # GitLab CI
 PATH=/d/installs/windowsunpack/gitlab_ci:${PATH}
 
@@ -58,6 +61,7 @@ PATH=/d/installs/windowsunpack/gitlab_ci:${PATH}
 # Putting the 32bit version of the jdk7 first messes up eclipse startup.
 export JAVA_HOME="/c/Program Files (x86)/Java/jdk1.7.0_55"
 #PATH="/c/Program Files (x86)/Java/jdk1.7.0_55/bin":${PATH}
+PATH="/c/Program Files/Java/jdk1.8.0_74/bin":${PATH}
 
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"

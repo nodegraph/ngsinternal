@@ -3,6 +3,7 @@
 #include <base/utils/simplesaver.h>
 #include <base/utils/simpleloader.h>
 #include <base/utils/signal.h>
+#include <base/utils/crypto.h>
 
 #include <base/memoryallocator/taggednew.h>
 #include <base/memoryallocator/bootstrap.h>
@@ -32,6 +33,8 @@ void test_simple_serialization_binary();
 // signals
 void test_signals();
 
+void test_crypto();
+
 }
 
 // Main routine.
@@ -56,6 +59,9 @@ int main(int argc, char **argv) {
 
     // signals.
     test_signals();
+
+    // crypto.
+    test_crypto();
   }
   shutdown_memory_tracker();
 
@@ -75,15 +81,15 @@ void test_circle_samples() {
 }
 
 void test_get_env() {
-  std::string env_value;
-
-  // Test getting a variable that exists.
-  env_value = get_env("PATH");
-  assert(env_value != "");
-
-  // Test getting a variable that doesn't exist.
-  env_value = get_env("lkjweoirukldfs");
-  assert(env_value == "");
+//  std::string env_value;
+//
+//  // Test getting a variable that exists.
+//  env_value = get_env("PATH");
+//  assert(env_value != "");
+//
+//  // Test getting a variable that doesn't exist.
+//  env_value = get_env("lkjweoirukldfs");
+//  assert(env_value == "");
 }
 
 void test_split_by_char() {
@@ -291,8 +297,18 @@ void test_signals() {
     delete_ff(connection2);
 
   }
+}
 
+void test_crypto() {
+  // Test full crypto pipe.
+  std::string salt = generate_salt();
+  std::string nonce = generate_nonce();
+  test_password_encrypt_decrypt("hello there where in the world is this 123456789",
+                                "this_is_a_Password!!#@$",
+                                salt, nonce);
 
+  // Simple test.
+  test_encrypt_decrypt("hello there where in the world is this 123456789\n");
 }
 
 }

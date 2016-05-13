@@ -28,6 +28,7 @@ set(FREETYPE_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-2.5.2")
 set(GLEW_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glew-1.13.0")
 set(GLM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glm-0.9.5.4")
 set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-gl")
+set(LIBSODIUM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/libsodium-1.0.10")
 
 # ---------------------------------------------------------
 # Our build setup for windows.
@@ -62,6 +63,7 @@ include_directories("${QT5_DIR}/include")
 include_directories("${FREETYPE_DIR}/include")
 include_directories("${GLM_DIR}")
 include_directories("${FREETYPE_GL_DIR}/include")
+include_directories("${LIBSODIUM_DIR}/include")
 
 if (${gles_use_angle} STREQUAL "1")
 	message("arch windows is using angle GL includes")
@@ -75,6 +77,7 @@ endif()
 link_directories("${QT5_DIR}/lib")
 link_directories("${FREETYPE_DIR}/lib/win64")
 link_directories("${FREETYPE_GL_DIR}/lib/win64")
+link_directories("${LIBSODIUM_DIR}/x64/${CMAKE_BUILD_TYPE}/v140/static")
 
 if (${gles_use_angle} STREQUAL "0")
 	link_directories("${GLEW_DIR}/lib/Debug MX/x64")

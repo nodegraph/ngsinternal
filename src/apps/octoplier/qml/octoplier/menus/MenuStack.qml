@@ -83,6 +83,17 @@ Rectangle{
         menu_stack_page.visible = true
     }
 
+    function on_url_entry_page() {
+        if (web_browser_page.web_view_alias.loading) {
+            web_browser_page.web_view_alias.stop()
+        }
+
+        url_entry_page.visible = true
+        stack_view.push(url_entry_page)
+        stack_view_header.push_header_title("Go to URL")
+        menu_stack_page.visible = true
+    }
+
     // The Stack View Header
     Rectangle {
         id: stack_view_header

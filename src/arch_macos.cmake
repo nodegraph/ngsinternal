@@ -28,6 +28,7 @@ set(FREETYPE_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/macos/freetype-2.5.2")
 set(GLEW_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/macos/glew-1.13.0")
 set(GLM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/macos/glm-0.9.5.4")
 set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/macos/freetype-gl")
+set(LIBSODIUM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/macos/libsodium-1.0.10")
 
 # ---------------------------------------------------------
 # Our build setup for macos.
@@ -57,6 +58,7 @@ include_directories("${FREETYPE_DIR}/include")
 include_directories("${GLEW_DIR}/include")
 include_directories("${GLM_DIR}")
 include_directories("${FREETYPE_GL_DIR}/include")
+include_directories("${LIBSODIUM_DIR}/include")
 
 # GL headers are here on macos
 include_directories("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework/Headers")
@@ -67,6 +69,7 @@ link_directories("${QT5_DIR}/lib")
 link_directories("${FREETYPE_DIR}/lib")
 link_directories("${FREETYPE_GL_DIR}/lib")
 link_directories("${GLEW_DIR}/lib")
+link_directories("${LIBSODIUM_DIR}/lib")
 # GL libraries are here on macos
 link_directories("/System/Library/Frameworks/OpenGL.framework/Libraries") 
 
