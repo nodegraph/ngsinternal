@@ -41,20 +41,20 @@ set(headers
 add_library(ngs_utils  ${sources} ${headers})
 generate_export_header(ngs_utils EXPORT_MACRO_NAME UTILS_EXPORT EXPORT_FILE_NAME utils_export.h)
 
-target_link_libraries(ngs_utils ngs_memoryallocator libsodium)
+target_link_libraries(ngs_utils ngs_memoryallocator)
 
 if (${ARCH} STREQUAL ARCH_WINDOWS)
-	target_link_libraries(ngs_utils )
+	target_link_libraries(ngs_utils libsodium)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
-	target_link_libraries(ngs_utils )
+	target_link_libraries(ngs_utils libsodium)
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(ngs_utils)
+    target_link_libraries(ngs_utils sodium)
 elseif (${ARCH} STREQUAL ARCH_LINUX)
-	target_link_libraries(ngs_utils)
+	target_link_libraries(ngs_utils sodium)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
-	target_link_libraries(ngs_utils)
+	target_link_libraries(ngs_utils sodium)
 elseif (${ARCH} STREQUAL ARCH_IOS)
-	target_link_libraries(ngs_utils)
+	target_link_libraries(ngs_utils sodium)
 endif ()
 
 
