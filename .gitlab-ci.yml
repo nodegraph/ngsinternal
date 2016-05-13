@@ -105,6 +105,7 @@ after_script:
 
 .winrt_debug: &winrt_debug_tmpt
   script:
+    - "c:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat" amd64
     - echo "WINRT DEBUG"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x64
@@ -127,6 +128,7 @@ after_script:
     - ngsrunner
 .winrt_release: &winrt_release_tmpt
   script:
+    - "c:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat" amd64
     - echo "WINRT RELEASE"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x64
@@ -149,6 +151,7 @@ after_script:
     - ngsrunner
 .winrt_x86_debug: &winrt_x86_debug_tmpt
   script:
+    - "c:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat" x86 
     - echo "WINRT X86 DEBUG"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x86
@@ -170,6 +173,7 @@ after_script:
     - ngsrunner
 .winrt_x86_release: &winrt_x86_release_tmpt
   script:
+    - "c:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat" x86
     - echo "WINRT X86 RELEASE"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x86

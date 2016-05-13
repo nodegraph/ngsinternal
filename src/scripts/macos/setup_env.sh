@@ -24,7 +24,7 @@ export PLATFORM_ROOT=/Users/raindrop/installs
 # --------------------------------------------------------------------
 
 # CMake
-PATH=${PLATFORM_ROOT}/macosunpacks//CMake.app/Contents/bin:${PATH}
+PATH=${PLATFORM_ROOT}/macosunpacks/CMake.app/Contents/bin:${PATH}
 
 # Ninja build tool
 PATH=${PLATFORM_ROOT}/macosunpacks/ninja:${PATH}
