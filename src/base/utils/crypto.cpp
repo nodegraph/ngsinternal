@@ -4,16 +4,13 @@
 #include <string>
 #include <cassert>
 
-#if ARCH==ARCH_ANDROID || ARCH==ARCH_IOS
 #define SODIUM_STATIC
-#endif
-
 #include <sodium.h>
 
 namespace ngs {
 
 // Returns the nonce.
-std::string generate_nonce() {
+std::string Crypto::generate_nonce() {
   std::string nonce;
   nonce.resize(crypto_secretbox_NONCEBYTES, 'a');
   randombytes_buf(&nonce[0], nonce.size());
@@ -21,7 +18,7 @@ std::string generate_nonce() {
 }
 
 // Returns a random key.
-std::string generate_random_key() {
+std::string Crypto::generate_random_key() {
   std::string key;
   key.resize(crypto_secretbox_KEYBYTES, 'a');
   randombytes_buf(&key[0], key.size());
@@ -29,7 +26,7 @@ std::string generate_random_key() {
 }
 
 // Returns the salt.
-std::string generate_salt() {
+std::string Crypto::generate_salt() {
   std::string salt;
   salt.resize(crypto_pwhash_SALTBYTES);
   randombytes_buf((unsigned char*)&salt[0], salt.size());
@@ -37,14 +34,14 @@ std::string generate_salt() {
 }
 
 // Returns the key.
-std::string generate_private_key(const std::string &password, const std::string &salt) {
+std::string Crypto::generate_private_key(const std::string &password, const std::string &salt) {
   std::string key;
   key.resize(crypto_box_SEEDBYTES);
   if (crypto_pwhash((unsigned char*)&key[0], key.size(),
                     &password[0], password.size(),
                     (unsigned char*)&salt[0],
-                    crypto_pwhash_OPSLIMIT_INTERACTIVE,
-                    crypto_pwhash_MEMLIMIT_INTERACTIVE,
+                    crypto_pwhash_OPSLIMIT_SENSITIVE ,
+                    crypto_pwhash_MEMLIMIT_SENSITIVE,
                     crypto_pwhash_ALG_DEFAULT) != 0)
   {
     // out of memory?
@@ -53,8 +50,34 @@ std::string generate_private_key(const std::string &password, const std::string 
   return key;
 }
 
+std::string Crypto::generate_hashed_password(const std::string &password) {
+  std::string hashed_password;
+  hashed_password.resize(crypto_pwhash_STRBYTES);
+
+  if (crypto_pwhash_str(&hashed_password[0],
+                        &password[0],
+                        password.size(),
+                        crypto_pwhash_OPSLIMIT_SENSITIVE,
+                        crypto_pwhash_MEMLIMIT_SENSITIVE) != 0) {
+    /* out of memory */
+    assert(false);
+  }
+  return hashed_password;
+}
+
+bool Crypto::check_password(const std::string& password, const std::string& hashed_password) {
+  assert(hashed_password.size() == crypto_pwhash_STRBYTES);
+  if (crypto_pwhash_str_verify(&hashed_password[0],
+                               &password[0],
+                               password.size()) != 0) {
+    /* wrong password */
+    return false;
+  }
+  return true;
+}
+
 // Returns cipher text.
-std::string encrypt(const std::string& message, const std::string& key, const std::string& nonce) {
+std::string Crypto::encrypt(const std::string& message, const std::string& key, const std::string& nonce) {
   // Allocate space for cipher text.
   std::string cipher_text;
   size_t cipher_length = crypto_secretbox_MACBYTES + message.size();
@@ -70,7 +93,7 @@ std::string encrypt(const std::string& message, const std::string& key, const st
 }
 
 // Returns original message.
-std::string decrypt(const std::string& cipher_text, const std::string& key, const std::string& nonce) {
+std::string Crypto::decrypt(const std::string& cipher_text, const std::string& key, const std::string& nonce) {
   // Allocate space for the original message.
   std::string decrypted;
   decrypted.resize(cipher_text.size() - crypto_secretbox_MACBYTES);
@@ -84,7 +107,7 @@ std::string decrypt(const std::string& cipher_text, const std::string& key, cons
   return decrypted;
 }
 
-void test_password_encrypt_decrypt(const std::string &message, const std::string &password, const std::string& salt, const std::string& nonce) {
+void Crypto::test_password_encrypt_decrypt(const std::string &message, const std::string &password, const std::string& salt, const std::string& nonce) {
   std::string key = generate_private_key(password, salt);
 
   // Encrypt.
@@ -99,7 +122,7 @@ void test_password_encrypt_decrypt(const std::string &message, const std::string
   assert(decrypted == message);
 }
 
-void test_encrypt_decrypt(const std::string &message) {
+void Crypto::test_encrypt_decrypt(const std::string &message) {
   std::string nonce = generate_nonce();
   std::string key = generate_random_key();
 

@@ -4,6 +4,7 @@
 #include <base/utils/simplesaver.h>
 #include <base/utils/simpleloader.h>
 #include <base/utils/bits.h>
+#include <base/utils/crypto.h>
 
 #include <components/interactions/graphbuilder.h>
 #include <components/entities/entityids.h>
@@ -20,6 +21,7 @@
 
 namespace ngs {
 
+const QString FileModel::kCryptoFile = "app_init.dat";
 const QString FileModel::kAppFile = "app_data.dat";
 const QString FileModel::kAppDir = "app_data";
 
@@ -73,6 +75,59 @@ void FileModel::on_item_changed(QStandardItem* item) {
   save_model();
 }
 
+void FileModel::create_crypto(const std::string& chosen_password) {
+  assert(_nonce.empty());
+  assert(_key.empty());
+
+  _nonce = Crypto::generate_nonce();
+  _salt = Crypto::generate_salt();
+  _hashed_password = Crypto::generate_hashed_password(chosen_password);
+  _key = Crypto::generate_private_key(chosen_password, _salt); // The key is never saved.
+
+  // Save out the crypto config.
+  {
+    std::stringstream ss;
+    SimpleSaver saver(ss);
+    saver.save(_nonce);
+    saver.save(_salt);
+    saver.save(_hashed_password);
+    write_file(kCryptoFile, ss.str());
+  }
+}
+
+bool FileModel::crypto_exists() const {
+  if (file_exists(kCryptoFile)) {
+    return true;
+  }
+  return false;
+}
+
+void FileModel::load_crypto() {
+  if (!file_exists(kCryptoFile)) {
+    return;
+  }
+
+  // Load the crypto file.
+  QByteArray contents = load_file(kCryptoFile);
+  Bits* bits = create_bits_from_raw(contents.data(), contents.size());
+  SimpleLoader loader(bits);
+
+  // Extract the nonce and salt.
+  loader.load(_nonce);
+  loader.load(_salt);
+  loader.load(_hashed_password);
+}
+
+bool FileModel::check_password(const std::string& password) {
+  if (!Crypto::check_password(password, _hashed_password)) {
+    return false;
+  }
+  // Generate the private key.
+  _key = Crypto::generate_private_key(password, _salt);
+  return true;
+}
+
+
 void FileModel::sort_files() {
   QString title = data(index(_working_row,0), Qt::UserRole).toString();
   sort(0,Qt::AscendingOrder);
@@ -105,15 +160,43 @@ QString FileModel::get_description(int row) const {
   return data(index(row,0), kDescriptionRole).toString();
 }
 
-QString FileModel::get_app_filename() {
-  return get_prefixed_file(kAppFile);
-}
-
-QString FileModel::get_prefixed_file(const QString& file) {
+QString FileModel::get_prefixed_file(const QString& file) const {
   return _app_dir + "/" + file;
 }
 
-bool FileModel::title_exists(const QString& title) {
+void FileModel::write_file(const QString& filename, const std::string& data) const {
+  QString full_name = get_prefixed_file(filename);
+  QFile file(full_name);
+  file.open(QIODevice::ReadWrite);
+
+  // Save the string to the file.
+  file.write(data.c_str(), data.size());
+  file.close();
+}
+
+QByteArray FileModel::load_file(const QString& filename) const {
+  QString full_name = get_prefixed_file(filename);
+
+  // If this file doesn't exist there is nothing to load.
+  if (!QFileInfo::exists(full_name)) {
+    return QByteArray();
+  }
+
+  // Read all the bytes from the file.
+  QFile file(full_name);
+  file.open(QIODevice::ReadOnly);
+  QByteArray contents = file.readAll();
+  return contents;
+}
+
+void FileModel::destroy_file(const QString& filename) const {
+  QString full_name = get_prefixed_file(filename);
+  // Erase the file.
+  QFile file(full_name);
+  file.remove();
+}
+
+bool FileModel::title_exists(const QString& title) const {
   for (int i=0; i<rowCount(); ++i) {
     if (title == data(index(i,0), Qt::UserRole).toString()) {
       return true;
@@ -122,7 +205,7 @@ bool FileModel::title_exists(const QString& title) {
   return false;
 }
 
-QString FileModel::make_title_unique(const QString& title) {
+QString FileModel::make_title_unique(const QString& title) const {
   std::string name = title.toStdString();
   size_t last_index = name.find_last_not_of("0123456789");
   std::string suffix = name.substr(last_index + 1);
@@ -145,7 +228,7 @@ QString FileModel::make_title_unique(const QString& title) {
   return "error";
 }
 
-bool FileModel::file_exists(const QString& filename) {
+bool FileModel::file_exists(const QString& filename) const {
   QString full = get_prefixed_file(filename);
   QFileInfo info(full);
   if (info.exists()) {
@@ -154,7 +237,7 @@ bool FileModel::file_exists(const QString& filename) {
   return false;
 }
 
-QString FileModel::make_filename_unique(const QString& filename) {
+QString FileModel::make_filename_unique(const QString& filename) const {
   std::string name = filename.toStdString();
   size_t last_index = name.find_last_not_of("0123456789");
   std::string suffix = name.substr(last_index + 1);
@@ -178,18 +261,7 @@ QString FileModel::make_filename_unique(const QString& filename) {
 }
 
 void FileModel::load_model() {
-  QString app_file = get_app_filename();
-
-  // If this file doesn't exist there is nothing to load.
-  QFileInfo info(app_file);
-  if (!info.exists()) {
-    return;
-  }
-
-  // Read all the bytes from the file.
-  QFile file(app_file);
-  file.open(QIODevice::ReadOnly);
-  QByteArray contents = file.readAll();
+  QByteArray contents = load_file(kAppFile);
 
   // Now load them.
   Bits* bits = create_bits_from_raw(contents.data(),contents.size());
@@ -222,7 +294,7 @@ void FileModel::load_model() {
   assert(_working_row >= 0);
 }
 
-void FileModel::save_model() {
+void FileModel::save_model() const {
   // Save out our data to a string.
   std::stringstream ss;
   {
@@ -242,14 +314,8 @@ void FileModel::save_model() {
     }
   }
 
-  // Open the app file.
-  QString filename = get_app_filename();
-  QFile file(filename);
-  file.open(QIODevice::ReadWrite);
-
-  // Save the string to the file.
-  file.write(ss.str().c_str(), ss.str().size());
-  file.close();
+  // Save the data.
+  write_file(kAppFile, ss.str());
 }
 
 void FileModel::load_graph() {
@@ -274,18 +340,10 @@ void FileModel::save_graph() {
 void FileModel::load_graph(int row) {
   _working_row = row;
 
-  // If the current filename doesn't exist, something has gone wrong.
+  // Load the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
-  graph_file = get_prefixed_file(graph_file);
   std::cerr << "trying to load graph from: " << graph_file.toStdString() << "\n";
-
-  QFileInfo info(graph_file);
-  assert(info.exists());
-
-  // Read all the bytes from the file.
-  QFile file(graph_file);
-  file.open(QIODevice::ReadOnly);
-  QByteArray contents = file.readAll();
+  QByteArray contents = load_file(graph_file);
 
   // Now load the data into the app root entity.
   Bits* bits = create_bits_from_raw(contents.data(),contents.size());
@@ -300,7 +358,7 @@ void FileModel::load_graph(int row) {
   //get_root_group()->destroy_all_children();
   get_root_group()->load(loader);
 
-  // Although everything down from the root group is update by the load.
+  // Although everything down from the root group is updated by the load.
   // Everything from the app root is not updated. So we update it here.
   get_app_root()->initialize_deps();
   get_app_root()->update_deps_and_hierarchy();
@@ -320,17 +378,10 @@ void FileModel::save_graph(int row) {
     this->get_root_group()->save(saver);
   }
 
-  // Open the graph file.
+  // Write the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
-  graph_file = get_prefixed_file(graph_file);
-  std::cerr << "trying to save graph to: " << graph_file.toStdString() << "\n";
-
-  QFile file(graph_file);
-  file.open(QIODevice::ReadWrite);
-
-  // Save the string to the file.
-  file.write(ss.str().c_str(), ss.str().size());
-  file.close();
+  std::cerr << "Saving graph to: " << graph_file.toStdString() << "\n";
+  write_file(graph_file, ss.str());
 }
 
 void FileModel::create_graph(const QString& title, const QString& description) {
@@ -376,11 +427,7 @@ void FileModel::destroy_graph(int row) {
 
   // Get the filename at row.
   QString filename = data(index(row,0), kFilenameRole).toString();
-  filename = get_prefixed_file(filename);
-
-  // Erase the file.
-  QFile file(filename);
-  file.remove();
+  destroy_file(filename);
 
   // Remove the row.
   removeRows(row,1);

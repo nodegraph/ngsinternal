@@ -301,14 +301,14 @@ void test_signals() {
 
 void test_crypto() {
   // Test full crypto pipe.
-  std::string salt = generate_salt();
-  std::string nonce = generate_nonce();
-  test_password_encrypt_decrypt("hello there where in the world is this 123456789",
+  std::string salt = Crypto::generate_salt();
+  std::string nonce = Crypto::generate_nonce();
+  Crypto::test_password_encrypt_decrypt("hello there where in the world is this 123456789",
                                 "this_is_a_Password!!#@$",
                                 salt, nonce);
 
   // Simple test.
-  test_encrypt_decrypt("hello there where in the world is this 123456789\n");
+  Crypto::test_encrypt_decrypt("hello there where in the world is this 123456789\n");
 }
 
 }
