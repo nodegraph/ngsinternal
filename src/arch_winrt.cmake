@@ -58,7 +58,7 @@ if (${ARCH_BITS} STREQUAL "x64")
 else ()
 	link_directories("${FREETYPE_DIR}/lib/win32")
 	link_directories("${FREETYPE_GL_DIR}/lib/win32")
-    link_directories("${LIBSODIUM_DIR}/Win32/${CMAKE_BUILD_TYPE}/v140/static")
+    link_directories("${LIBSODIUM_DIR}/Win32/${CMAKE_BUILD_TYPE}/v140/dynamic")
 endif ()
 
 

@@ -47,12 +47,6 @@ if (${ARCH} STREQUAL ARCH_WINDOWS)
 	target_link_libraries(ngs_utils libsodium)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	target_link_libraries(ngs_utils libsodium)
-	SET_TARGET_PROPERTIES(ngs_utils PROPERTIES LINK_FLAGS_RELEASE 
-	"/NODEFAULTLIB:LIBCMT.lib" ) 
-	  SET_TARGET_PROPERTIES(ngs_utils PROPERTIES LINK_FLAGS_RELWITHDEBINFO 
-	"/NODEFAULTLIB:LIBCMT.lib" ) 
-	  SET_TARGET_PROPERTIES(ngs_utils PROPERTIES LINK_FLAGS_DEBUG 
-	"/NODEFAULTLIB:LIBCMTD.lib" ) 
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
     target_link_libraries(ngs_utils sodium)
 elseif (${ARCH} STREQUAL ARCH_LINUX)

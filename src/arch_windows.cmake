@@ -77,7 +77,7 @@ endif()
 link_directories("${QT5_DIR}/lib")
 link_directories("${FREETYPE_DIR}/lib/win64")
 link_directories("${FREETYPE_GL_DIR}/lib/win64")
-link_directories("${LIBSODIUM_DIR}/x64/${CMAKE_BUILD_TYPE}/v140/static")
+link_directories("${LIBSODIUM_DIR}/x64/${CMAKE_BUILD_TYPE}/v140/dynamic")
 
 if (${gles_use_angle} STREQUAL "0")
 	link_directories("${GLEW_DIR}/lib/Debug MX/x64")
