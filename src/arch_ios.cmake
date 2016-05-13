@@ -31,6 +31,7 @@ endif()
 set(FREETYPE_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/ios/freetype-2.5.2")
 set(GLM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/ios/glm-0.9.5.4")
 set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/ios/freetype-gl")
+set(LIBSODIUM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/ios/libsodium-1.0.10")
 
 # ---------------------------------------------------------
 # Our build setup for ios.
@@ -59,6 +60,7 @@ set(CMAKE_C_FLAGS_RELEASE   "-O3 -fvisibility=hidden -fPIC"              ) # CAC
 include_directories("${FREETYPE_DIR}/${IOS_SDK_ARCH}/include")
 include_directories("${GLM_DIR}")
 include_directories("${FREETYPE_GL_DIR}/include")
+include_directories("${LIBSODIUM_DIR}/include")
 
 # Setup up our link flags.
 link_directories("${QT5_DIR}/lib")
@@ -66,6 +68,7 @@ link_directories("${QT5_DIR}/plugins/platforms")
 link_directories("${QT5_DIR}/plugins/qmltooling")
 link_directories("${FREETYPE_DIR}/universal")
 link_directories("${FREETYPE_GL_DIR}/lib/universal")
+link_directories("${LIBSODIUM_DIR}/lib")
 
 # Find IOS frameworks.
 find_library(SystemConfiguration SystemConfiguration)
