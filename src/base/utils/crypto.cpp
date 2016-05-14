@@ -4,7 +4,10 @@
 #include <string>
 #include <cassert>
 
+//#if ARCH==ARCH_ANDROID || ARCH==ARCH_IOS
 #define SODIUM_STATIC
+//#endif
+
 #include <sodium.h>
 
 namespace ngs {
