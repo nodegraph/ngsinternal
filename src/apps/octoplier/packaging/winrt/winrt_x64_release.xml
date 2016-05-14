@@ -34,7 +34,7 @@
       Executable="octoplier.exe"
       EntryPoint="octoplier.App">
       <uap:VisualElements
-        DisplayName="minibrowser"
+        DisplayName="octoplier"
         Description="Default package description"
         BackgroundColor="#03A9F4"
         Square150x150Logo="assets/logo_150x150.png"

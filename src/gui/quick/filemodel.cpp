@@ -262,6 +262,9 @@ QString FileModel::make_filename_unique(const QString& filename) const {
 
 void FileModel::load_model() {
   QByteArray contents = load_file(kAppFile);
+  if (contents.size()==0) {
+    return;
+  }
 
   // Now load them.
   Bits* bits = create_bits_from_raw(contents.data(),contents.size());

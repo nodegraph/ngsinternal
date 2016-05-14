@@ -42,16 +42,14 @@ endif()
 #set(QT5_DIR "D:/installs/android/Qt5.5.1/5.5/android_armv7")
 set(QT5_DIR "D:/installs/android/Qt5.6.0/5.6/android_armv7")
 
-
-
-# ---------------------------------------------------------
-# Custom Directories.
-# ---------------------------------------------------------
-
-
 # ---------------------------------------------------------
 # Our directories.
 # ---------------------------------------------------------
+
+set(FREETYPE_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-2.5.2")
+set(GLM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/android/glm-0.9.5.4")
+set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-gl")
+set(LIBSODIUM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/android/libsodium-1.0.10/libsodium-android-armv7-a")
 
 # Global Properties.
 SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
@@ -59,18 +57,18 @@ SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 # Setup up our cpp flags.
 include_directories("${QT5_DIR}/include")
 include_directories("${ANDROID_TOOLCHAIN_ROOT}/system/usr/include")
-include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-2.5.2/include")
-include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-gl/include")
-include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/glm-0.9.5.4")
-include_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/libsodium-1.0.10/libsodium-android-armv7-a/include")
+include_directories("${FREETYPE_DIR}/include")
+include_directories("${FREETYPE_GL_DIR}/include")
+include_directories("${GLM_DIR}")
+include_directories("${LIBSODIUM_DIR}/include")
 
 # Setup up our link flags.
 link_directories("${QT5_DIR}/lib")
 link_directories("${PROJECT_BINARY_DIR}")
 link_directories("${ANDROID_TOOLCHAIN_ROOT}/system/usr/lib}") # this is where we find libGLESv3.so
 link_directories("${ANDROID_NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a") # this is where we find libgnustl_shared.so
-link_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-2.5.2/lib")
-link_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/freetype-gl/lib")
-link_directories("${PLATFORM_ROOT}/srcdeps/ngsexternal/android/libsodium-1.0.10/libsodium-android-armv7-a/lib")
+link_directories("${FREETYPE_DIR}/lib")
+link_directories("${FREETYPE_GL_DIR}/lib")
+link_directories("${LIBSODIUM_DIR}/lib")
 
 

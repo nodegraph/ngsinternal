@@ -153,7 +153,7 @@ find_package(Qt5QuickWidgets)
 find_package(Qt5Multimedia)
 find_package(Qt5MultimediaWidgets)
 
-find_package(Qt5DBus)
+#find_package(Qt5DBus)
 find_package(Qt5Widgets)
 find_package(Qt5Quick)
 find_package(Qt5Gui)
