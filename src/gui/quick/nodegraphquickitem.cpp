@@ -176,8 +176,10 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
   // Since we render in Qt's opengl context we need to make sure
   // that all of the gl state is left the way we found it.
   // This will restore the gl state on destruction.
+#if ARCH != ARCH_MACOS
   CaptureDeviceState capture_state;
   gpu();
+#endif
 
   // Initialize the opengl objects for the fbo render thread.
   if (!_canvas->is_initialized_gl()) {

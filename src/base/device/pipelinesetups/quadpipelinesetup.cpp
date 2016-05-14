@@ -134,6 +134,18 @@ void QuadPipelineSetup::feed_elements_to_attrs() {
   }
 }
 
+bool QuadPipelineSetup::has_instances() const {
+  if ((_num_quads == 0) && (_num_tris == 0) && (_num_circles == 0)) {
+    return false;
+  }
+  return true;
+}
+
+void QuadPipelineSetup::draw_garbage() {
+  _quad->bind();
+  _quad->draw();
+}
+
 void QuadPipelineSetup::draw() {
   _quad->bind();
   _quads->bind();

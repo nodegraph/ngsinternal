@@ -141,6 +141,11 @@ bool ShapeCanvas::is_initialized_gl() {
 void ShapeCanvas::draw_gl() {
   start_method();
 
+  // To deal macos artifacts when there is nothing to draw.
+  if (!_quad_pipeline->has_instances()) {
+    _quad_pipeline->draw_garbage();
+  }
+
   // Clear the depth.
   if (_clear_depth) {
     _quad_pipeline->clear_depth();
@@ -159,6 +164,7 @@ void ShapeCanvas::draw_gl() {
   _text_pipeline->use();
   _text_pipeline->draw();
 
+  _quad_pipeline->disable();
   _text_pipeline->disable();
 }
 

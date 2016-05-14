@@ -75,7 +75,7 @@ CaptureDeviceState::~CaptureDeviceState() {
       #endif
     #else
       #if ARCH == ARCH_MACOS
-        gpu(glVertexAttribDivisorARB(i, 0));
+        gpu(glVertexAttribDivisor(i, 0));
       #else
         gpu(glVertexAttribDivisor(i, 0));
       #endif

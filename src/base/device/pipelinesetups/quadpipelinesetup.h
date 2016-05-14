@@ -30,7 +30,9 @@ class DEVICE_EXPORT QuadPipelineSetup: public PipelineSetup {
   void set_selected_mvp(const glm::mat4& m);
 
   // Draw.
+  virtual bool has_instances() const;
   virtual void draw();
+  virtual void draw_garbage(); // used on macos to deal with artifacts when drawing an empty node graph
 
   // Quad pipeline specific methods.
   virtual void load_quad_instances(const std::vector<ShapeInstance>& instances);

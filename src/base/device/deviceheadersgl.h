@@ -9,6 +9,7 @@
 
 #if (ARCH == ARCH_MACOS)
     //#include <GL/glew.h>
+#define GL3_PROTOTYPES
     #include <OpenGL/gl3.h>
     #include <OpenGL/gl3ext.h>
     //#include <base/glewhelper/glewhelper.h>

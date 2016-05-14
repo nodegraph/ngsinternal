@@ -165,17 +165,9 @@ void FBORenderer::render() {
   // Bind the fbo.
   _render_fbo->bind();
   assert(_render_fbo->is_complete());
-
-  // Clear the buffers.
-  gpu(glClearColor(1.0f, 0.0f, 0.0f, 1.0f));
-  gpu(glClearDepthf(1.0));
-  gpu(glClear (GL_COLOR_BUFFER_BIT));
-  gpu(glClear (GL_DEPTH_BUFFER_BIT));
-  gpu(glDisable(GL_CULL_FACE));
-
   // Draw the geometry.
   draw();
-
+  // Unbind the fbo.
   _render_fbo->unbind();
 }
 
