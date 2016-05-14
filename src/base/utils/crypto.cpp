@@ -4,9 +4,9 @@
 #include <string>
 #include <cassert>
 
-//#if ARCH==ARCH_ANDROID || ARCH==ARCH_IOS
+#if ARCH==ARCH_ANDROID || ARCH==ARCH_IOS
 #define SODIUM_STATIC
-//#endif
+#endif
 
 #include <sodium.h>
 
