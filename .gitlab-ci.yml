@@ -24,7 +24,7 @@ after_script:
 
 .windows_debug: &windows_debug_tmpt
   script:
-    - "D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINDOWS x64
+    - D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat ARCH_WINDOWS x64
     - echo "WINDOWS DEBUG"
     - export ARCH=ARCH_WINDOWS
     - export ARCH_BITS=x64
@@ -39,7 +39,7 @@ after_script:
     - ngsrunner
 .windows_release: &windows_release_tmpt
   script:
-    - "D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINDOWS x64
+    - D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat ARCH_WINDOWS x64
     - echo "WINDOW RELEASE"
     - export ARCH=ARCH_WINDOWS
     - export ARCH_BITS=x64
@@ -107,7 +107,7 @@ after_script:
 
 .winrt_debug: &winrt_debug_tmpt
   script:
-    - "D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINDOWS x64
+    - D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat ARCH_WINDOWS x64
     - echo "WINRT DEBUG"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x64
@@ -130,7 +130,7 @@ after_script:
     - ngsrunner
 .winrt_release: &winrt_release_tmpt
   script:
-    - "D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINDOWS x64
+    - D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat ARCH_WINDOWS x64
     - echo "WINRT RELEASE"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x64
@@ -153,7 +153,7 @@ after_script:
     - ngsrunner
 .winrt_x86_debug: &winrt_x86_debug_tmpt
   script:
-    - "D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINDOWS x86
+    - D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat ARCH_WINDOWS x86
     - echo "WINRT X86 DEBUG"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x86
@@ -175,7 +175,7 @@ after_script:
     - ngsrunner
 .winrt_x86_release: &winrt_x86_release_tmpt
   script:
-    - "D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINDOWS x86
+    - D:\src\ngsinternal\src\scripts\msys2\launch_msys2.bat ARCH_WINDOWS x86
     - echo "WINRT X86 RELEASE"
     - export ARCH=ARCH_WINRT
     - export ARCH_BITS=x86
