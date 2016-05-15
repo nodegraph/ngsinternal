@@ -43,6 +43,9 @@ class DEVICE_EXPORT QuadPipelineSetup: public PipelineSetup {
   virtual void initialize_gl_resources();
 
  private:
+  // Load garbage quads. This is used to deal with macos artifacts with empty node graphs.
+  virtual void load_garbage_quad_instances();
+
   // Configure our pipeline's attribute locations.
   virtual void feed_elements_to_attrs();
 

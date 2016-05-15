@@ -142,8 +142,11 @@ bool QuadPipelineSetup::has_instances() const {
 }
 
 void QuadPipelineSetup::draw_garbage() {
+  load_garbage_quad_instances();
   _quad->bind();
-  _quad->draw();
+  _quads->bind();
+  _quads->bind_positions();
+  _quad->draw_instances(1);
 }
 
 void QuadPipelineSetup::draw() {
@@ -170,6 +173,12 @@ void QuadPipelineSetup::draw() {
 
   _circle->unbind();
   _circles->unbind();
+}
+
+void QuadPipelineSetup::load_garbage_quad_instances() {
+  static ShapeInstance dummy;
+  _quads->bind();
+  _quads->load(sizeof(ShapeInstance)*1, &dummy);
 }
 
 void QuadPipelineSetup::load_quad_instances(const std::vector<ShapeInstance>& instances) {

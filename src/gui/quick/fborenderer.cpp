@@ -47,7 +47,7 @@ FBORenderer::~FBORenderer() {
 }
 
 void FBORenderer::update_state() {
-  render();
+  //render();
 }
 
 GLuint FBORenderer::get_display_texture_name() {

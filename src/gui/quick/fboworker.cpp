@@ -34,7 +34,7 @@ FBOWorker::~FBOWorker() {
 }
 
 void FBOWorker::update_state() {
-  render_next_texture();
+  //render_next_texture();
 }
 
 // This gets called from the main scene graph render thread.
