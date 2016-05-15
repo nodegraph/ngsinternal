@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import NodeGraphRendering 1.0
 import octoplier.actionbars 1.0
 import octoplier.pages 1.0
-import octoplier.dialogs 1.0
+//import octoplier.dialogs 1.0
 import octoplier.menus 1.0
 import octoplier.tools 1.0
 import octoplier.apis 1.0
@@ -71,18 +71,6 @@ Rectangle {
     
     MessageDialog {
     	id: message_dialog
-    }
-
-    ChooseFileDialog {
-        id: choose_file_dialog
-    }
-
-    UrlDialog {
-        id: url_dialog
-    }
-
-    NodeNameDialog {
-        id: node_name_dialog
     }
 
     // Action Bars.
