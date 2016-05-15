@@ -22,17 +22,16 @@ Rectangle{
 
     x: app_settings.page_x
     y: app_settings.page_y
-    z: app_settings.page_z
+    z: app_settings.page_z + 1
 
     color: app_settings.menu_stack_bg_color
 
     property bool center_new_nodes: false
+    property var last_mode;
 
     property alias stack_view: stack_view
     property alias stack_view_header: stack_view_header
 
-    // Dependencies.
-    property var copy_paste_bar
 
     // Methods.
     function on_switch_to_mode(mode) {
@@ -70,6 +69,7 @@ Rectangle{
         create_file_page.mode = "create"
         stack_view.push(create_file_page)
         stack_view_header.push_header_title("Create File")
+        menu_stack_page.last_mode = app_settings.file_mode
         menu_stack_page.visible = true
     }
     
@@ -80,6 +80,7 @@ Rectangle{
         create_file_page.description_field.text = file_page.get_current_description()
         stack_view.push(create_file_page)
         stack_view_header.push_header_title("Update File")
+        menu_stack_page.last_mode = app_settings.file_mode
         menu_stack_page.visible = true
     }
 
@@ -91,6 +92,7 @@ Rectangle{
         url_entry_page.visible = true
         stack_view.push(url_entry_page)
         stack_view_header.push_header_title("Go to URL")
+        menu_stack_page.last_mode = app_settings.web_browser_mode
         menu_stack_page.visible = true
     }
 
@@ -138,6 +140,9 @@ Rectangle{
                     stack_view.pop_model()
                 } else {
                     menu_stack_page.visible = false
+                    if (last_mode) {
+                    	main_bar.on_switch_to_mode(last_mode)
+                    }
                 }
             }
         }

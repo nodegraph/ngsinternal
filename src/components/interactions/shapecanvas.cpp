@@ -143,6 +143,7 @@ void ShapeCanvas::draw_gl() {
 
   // To deal macos artifacts when there is nothing to draw.
   if (!_quad_pipeline->has_instances()) {
+    _quad_pipeline->use();
     _quad_pipeline->draw_garbage();
   }
 

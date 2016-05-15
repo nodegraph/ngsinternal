@@ -83,6 +83,11 @@ Rectangle {
                     }
                 }
             }
+            Rectangle {
+                color: "transparent"
+                height: app_settings.action_bar_height
+                width: app_settings.button_spacing
+            }
             AppLabelButton {
                 text: "cancel"
                 onClicked: {

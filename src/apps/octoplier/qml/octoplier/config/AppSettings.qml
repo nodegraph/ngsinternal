@@ -33,7 +33,7 @@ Item{
     property int list_item_border_width: app_units.dp(1)
 
     // Menu Stack Properties.
-    property color menu_stack_bg_color: "#EE0288D1"
+    property color menu_stack_bg_color: "#FF0288D1"
     property color menu_stack_header_bg_color: "#FF4CAF50" // a light green color
     property color menu_stack_header_border_color: "#FFFFFFFF" // pure white
     property int menu_stack_header_border_width: app_units.dp(2)
@@ -108,12 +108,16 @@ Item{
     property int image_button_width: app_units.dp(50)
     property int image_button_height: app_units.dp(50)
     property color image_button_press_color: "#FF4CAF50" // a light green color
-    property int image_button_radius: app_units.dp(5)
+    property int image_button_radius: app_units.dp(10)
+
+    // Button Spacing.
+    property int button_spacing: app_units.dp(20)
     
     // Text Field Properties.
     property int text_field_height: app_units.dp(50)
     property double text_field_border_size: app_units.dp(2)
-    property double text_field_radius: app_units.dp(2)
+    property double text_field_radius: app_units.dp(10)
+    property color dark_blue_bg: "#FF01579B"
     
     // Tree View.
     property double tree_view_header_height: app_units.dp(60)

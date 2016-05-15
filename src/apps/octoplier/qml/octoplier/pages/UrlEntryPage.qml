@@ -59,6 +59,11 @@ Rectangle {
                     web_browser_page.web_view_alias.url = utils.url_from_input(urlField.text)
                 }
             }
+            Rectangle {
+                color: "transparent"
+                height: app_settings.action_bar_height
+                width: app_settings.button_spacing
+            }
             AppLabelButton {
                 text: "cancel"
                 onClicked: {

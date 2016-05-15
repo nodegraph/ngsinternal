@@ -30,32 +30,37 @@ Rectangle {
     // Methods.
     // Set the current mode of the action bar.
     function on_switch_to_mode(m) {
+        clear_lit_buttons()
         if (m == app_settings.file_mode) {
+            file_button.lit = true
             action_bar_title.text = "Files"
             more_menu_button.visible = true;
         } else if (m == app_settings.node_graph_mode) {
+            node_graph_button.lit = true
             action_bar_title.text = file_model.get_working_title()
             more_menu_button.visible = true;
         } else if (m == app_settings.web_browser_mode) {
+            browser_button.lit = true
             action_bar_title.text = "Browser"
             more_menu_button.visible = true;
         } else if (m == app_settings.posts_mode) {
+            posts_button.lit = true
             action_bar_title.text = "Posts"
             more_menu_button.visible = false;
         } else if (m == app_settings.settings_mode) {
+            settings_button.lit = true
             action_bar_title.text = "Settings"
-            more_menu_button.visible = false;
-        } else if (m == app_settings.view_node_mode) {
-            action_bar_title.text = "Nodal Output"
-            more_menu_button.visible = true;
-        } else if (m == app_settings.edit_node_mode) {
-            action_bar_title.txt = "Nodal Params"
-            more_menu_button.visible = false;
-        } else if (m == app_settings.url_entry_mode) {
-            action_bar_title.text = "Url Entry"
             more_menu_button.visible = false;
         }
         switch_to_mode(m)
+    }
+
+    function clear_lit_buttons() {
+        file_button.lit = false
+        node_graph_button.lit = false
+        browser_button.lit = false
+        posts_button.lit = false
+        settings_button.lit = false
     }
     
     // Background Setup.

@@ -35,7 +35,7 @@ Button {
           font.family: "Arial" //"Helvetica"
           font.pointSize: app_settings.font_point_size
           color: "white"
-          text: control.text
+          text: " " + control.text + " "
         }
     }
 
@@ -58,6 +58,6 @@ Button {
         onExited: {
             app_tooltip.hide();
         }
-
     }
+
 }

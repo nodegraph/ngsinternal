@@ -42,10 +42,20 @@ Rectangle {
     }
     function on_open_more_options() {
         if (visible) {
+            console.log("web browser is opening more options")
+            
+            // Hide this web browser page, as on mobile platforms the
+            // webview don't allow anything to be drawn over them.
+            visible = false
+			
+			// Set up the menu stack page.            
+            menu_stack_page.last_mode = app_settings.web_browser_mode
             menu_stack_page.center_new_nodes = true
             menu_stack_page.visible = true
             menu_stack_page.stack_view.clear()
             menu_stack_page.stack_view.push_model_name("WebBrowserActions")
+        } else {
+            console.log("web browser is not opening more options")
         }
     }
     
@@ -59,7 +69,7 @@ Rectangle {
         // Positioning.
         x: 0
         y: 0
-        z: app_settings.page_z+1
+        z: app_settings.page_z
         
         // Dimensions.
         height: parent.height

@@ -11,6 +11,7 @@ Button {
     // Public Properties.
     property url image_url
     property string tooltip_text: "no tooltip!"
+    property bool lit: false
 
     // Dimensions.
     width: app_settings.image_button_width
@@ -34,7 +35,7 @@ Button {
 
     style: ButtonStyle {
         background: Rectangle {
-            color: mouse_area.pressed ? app_settings.image_button_press_color : app_settings.action_bar_bg_color
+            color: (mouse_area.pressed || lit) ? app_settings.image_button_press_color : app_settings.action_bar_bg_color
             radius: app_settings.image_button_radius
         }
     }

@@ -8,17 +8,18 @@ ListModel {
 
     ListElement {
         navigator_title: "File Actions"
-        image_url: "qrc:///icons/ic_note_add_white_48dp.png"
-        title: "New"
-        description: "Create a new graph file."
-        script: "menu_stack_page.on_create_file_page()"
-    }
 
-    ListElement {
         image_url: "qrc:///icons/ic_open_in_browser_white_48dp.png"
         title: "Load"
         description: "Load the selected graph file."
         script: "file_page.load_current()"
+    }
+
+    ListElement {
+        image_url: "qrc:///icons/ic_note_add_white_48dp.png"
+        title: "New"
+        description: "Create a new graph file."
+        script: "menu_stack_page.on_create_file_page()"
     }
 
     ListElement {

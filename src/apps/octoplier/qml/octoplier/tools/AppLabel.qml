@@ -10,7 +10,7 @@ import octoplier.tools 1.0
 Label {
     id: app_label
     text: "Hello world"
-    font.pixelSize: app_settings.font_point_size
+    font.pointSize: app_settings.font_point_size
     font.italic: false
     color: "white"
 

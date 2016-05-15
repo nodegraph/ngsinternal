@@ -1,5 +1,6 @@
 import QtQuick 2.6
 import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 
 TextField {
     id: text_field
@@ -22,7 +23,7 @@ TextField {
     
     // Text.
     text: "hello"
-    textColor: "black"
+    textColor: "white"
     font.pointSize: app_settings.font_point_size
     
     onSelectionStartChanged: {
@@ -71,21 +72,21 @@ TextField {
     // show up on Android. So we comment these out for now.
         
     // Our Style.
-//    style: TextFieldStyle {
-//        
-//        // Text Properties.
-//        textColor: "white"
-//        font.pointSize: app_settings.font_point_size
-//
-//        // Background with border.
-//        background: Rectangle {
-//            radius: app_settings.text_field_radius
-//            height: app_settings.text_field_height
-//            border.color: "#FFFFFFFF"
-//            border.width: app_settings.text_field_border_size
-//            color: app_settings.action_bar_bg_color
-//        }
-//    }
+    style: TextFieldStyle {
+
+        // Text Properties.
+        textColor: "white"
+        font.pointSize: app_settings.font_point_size
+
+        // Background with border.
+        background: Rectangle {
+            radius: app_settings.text_field_radius
+            height: app_settings.text_field_height
+            border.color: "#FFFFFFFF"
+            border.width: app_settings.text_field_border_size
+            color: "#FF01579B" //app_settings.action_bar_bg_color
+        }
+    }
         
     // You should implement these slots when instancing this component.
     // onAccepted: {} -- called when return is pressed or when accept/go button is pressed on android.

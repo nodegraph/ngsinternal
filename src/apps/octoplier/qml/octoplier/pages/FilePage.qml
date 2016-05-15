@@ -23,7 +23,7 @@ Rectangle{
     y: app_settings.page_y
     z: app_settings.page_z
 
-    color: app_settings.ng_bg_color
+    color: app_settings.action_bar_bg_color //app_settings.ng_bg_color
 
     // Methods.
     function on_switch_to_mode(mode) {
@@ -41,6 +41,7 @@ Rectangle{
             // so we center any nodes that are created.
             //popup_menu_with_centering()
             menu_stack_page.center_new_nodes = true
+            menu_stack_page.last_mode = app_settings.file_mode
             menu_stack_page.visible = true
             menu_stack_page.stack_view.clear()
             menu_stack_page.stack_view.push_model_name("FileActions")
@@ -129,9 +130,10 @@ Rectangle{
                     mouse.accepted = true
                     console.debug("rect click")
                     delegate.ListView.view.currentIndex = index
-                    file_model.load_graph(index)
-                    node_graph_page.node_graph.update()
-                    main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+                    //file_model.load_graph(index)
+                    //node_graph_page.node_graph.update()
+                    //main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+                    on_open_more_options()
                 }
             }
         }

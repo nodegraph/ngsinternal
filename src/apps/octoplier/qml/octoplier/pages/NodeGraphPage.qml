@@ -39,6 +39,7 @@ Rectangle {
             // so we center any nodes that are created.
             //popup_menu_with_centering()
             menu_stack_page.center_new_nodes = true
+            menu_stack_page.last_mode = app_settings.node_graph_mode
             menu_stack_page.visible = true
             menu_stack_page.stack_view.clear()
             menu_stack_page.stack_view.push_model_name("NodeGraphActions")
