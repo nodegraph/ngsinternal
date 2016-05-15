@@ -170,14 +170,6 @@ Rectangle {
     function update_dependencies() {
         console.log("staring to update dependencies between components")
 
-        // Add the dynamically loaded components under app_windows so that they now render.
-
-
-        // Update dependencies.
-        //web_browser_menu.web_browser_page = web_browser_page
-        //url_entry_page.web_browser_page = web_browser_page
-        //url_dialog.web_browser_page = web_browser_page
-
         // Mode change connections.
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(web_browser_page.on_switch_to_mode)
@@ -185,7 +177,6 @@ Rectangle {
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(view_node_page.on_switch_to_mode)
-        //main_bar.switch_to_mode.connect(url_entry_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(file_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(menu_stack_page.on_switch_to_mode)
 
@@ -194,13 +185,6 @@ Rectangle {
         main_bar.open_more_options.connect(web_browser_page.on_open_more_options)
         main_bar.open_more_options.connect(view_node_page.on_open_more_options)
         main_bar.open_more_options.connect(file_page.on_open_more_options)
-
-        // More option popup menu connections.
-        //node_graph_page.popup_menu.connect(node_graph_menu.on_popup_menu)
-        //node_graph_page.popup_menu_with_centering.connect(
-        //            node_graph_menu.on_popup_menu_with_centering)
-        //web_browser_page.popup_menu.connect(web_browser_menu.on_popup_menu)
-        //view_node_page.popup_menu.connect(view_node_menu.on_popup_menu)
 
         // Node graph connections.
         node_graph_page.node_graph.node_graph_context_menu_requested.connect(
@@ -213,33 +197,21 @@ Rectangle {
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.
         Qt.inputMethod.visibleChanged.connect(
-                    copy_paste_bar.on_virtual_keyboard_visibility_changed)
-
-        // Url Entry and back connections.
-        //web_browser_menu.switch_to_mode.connect(main_bar.on_switch_to_mode)
-        //url_entry_page.switch_to_mode.connect(main_bar.on_switch_to_mode)
+      		copy_paste_bar.on_virtual_keyboard_visibility_changed)
 
         // The progress bar is visible when the web browser is loading something.
-        splitter.progress_bar.visible = Qt.binding(function () {
-            return web_browser_page.web_view_alias.loading
-        })
-        splitter.progress_bar.value = Qt.binding(function () {
-            return web_browser_page.web_view_alias.loadProgress
-                    > 100 ? 0 : web_browser_page.web_view_alias.loadProgress
-        })
-
-        //node_name_dialog.tool_bar = copy_paste_bar
-        //url_dialog.tool_bar = copy_paste_bar
-        //url_entry_page.tool_bar = copy_paste_bar
+        //splitter.progress_bar.visible = Qt.binding(function () {
+        //    return web_browser_page.web_view_alias.loading
+        //})
+        //splitter.progress_bar.value = Qt.binding(function () {
+        //    return web_browser_page.web_view_alias.loadProgress
+        //            > 100 ? 0 : web_browser_page.web_view_alias.loadProgress
+        //})
 
         // Other setup.
         main_bar.on_switch_to_mode(app_settings.node_graph_mode)
         file_model.load_graph()
         node_graph_page.node_graph.update()
-
-        // Update the progress now that we've finished updating the dependencies.
-        cpp_bridge.mark_load_progress()
-        console.log("done updating dependencies between components")
     }
 
     // Intercept the android back button.

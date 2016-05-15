@@ -25,10 +25,10 @@ Rectangle {
         id: our_progress_bar
         anchors.fill: parent
         z: 1
-        //visible: web_browser_page.web_view_alias.loading
+        visible: web_browser_page.web_view_alias.loading
         minimumValue: 0
         maximumValue: 100
-        //value: web_browser_page.web_view_alias.loadProgress > 100 ? 0 : web_browser_page.web_view_alias.loadProgress
+        value: web_browser_page.web_view_alias.loadProgress >= 100 ? 0 : web_browser_page.web_view_alias.loadProgress
 
         style: ProgressBarStyle {
             background: Rectangle {
