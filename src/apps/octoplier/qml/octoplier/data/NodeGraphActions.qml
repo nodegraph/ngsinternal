@@ -42,6 +42,13 @@ ListModel {
     }
 
     ListElement {
+        image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
+        title: "Delete"
+        description: "Delete the selected nodes."
+        script: "node_graph_page.node_graph.destroy_selection(); menu_stack_page.visible = false"
+    }
+
+    ListElement {
         image_url: "qrc:///icons/ic_crop_free_white_48dp.png"
         title: "Frame..."
         description: "Frame nodes so that they fill the screen."
@@ -58,7 +65,7 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_content_copy_white_48dp.png"
         title: "Copy and Paste..."
-        description: "Copy, cut, paste or destroy nodes."
+        description: "Copy, cut, and paste nodes."
         next_model: "CopyPasteNodeActions"
     }
 

@@ -26,11 +26,5 @@ ListModel {
         description: "Paste nodes copied from the last copy."
         script: "node_graph_page.node_graph.paste(center_new_nodes); menu_stack_page.visible = false"
     }
-    ListElement {
-        image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
-        title: "Delete"
-        description: "Delete the selected nodes."
-        script: "node_graph_page.node_graph.destroy_selection(); menu_stack_page.visible = false"
-    }
 }
 

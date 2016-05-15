@@ -45,23 +45,26 @@ Rectangle{
     // Slots.
     function on_node_context_menu() {
         center_new_nodes = false
-        visible = true
         stack_view.clear_models()
         stack_view.push_model_name("NodeActions")
+        last_mode = app_settings.node_graph_mode
+        visible = true
     }
 
     function on_group_node_context_menu(){
         center_new_nodes = false
-        visible = true
         stack_view.clear_models()
         stack_view.push_model_name("GroupNodeActions")
+        last_mode = app_settings.node_graph_mode
+        visible = true
     }
 
     function on_node_graph_context_menu() {
         center_new_nodes = false
-        visible = true
         stack_view.clear_models()
         stack_view.push_model_name("NodeGraphActions")
+        last_mode = app_settings.node_graph_mode
+        visible = true
     }
 
     function on_create_file_page() {
@@ -69,8 +72,8 @@ Rectangle{
         create_file_page.mode = "create"
         stack_view.push(create_file_page)
         stack_view_header.push_header_title("Create File")
-        menu_stack_page.last_mode = app_settings.file_mode
-        menu_stack_page.visible = true
+        last_mode = app_settings.file_mode
+        visible = true
     }
     
     function on_edit_file_page() {
@@ -80,8 +83,8 @@ Rectangle{
         create_file_page.description_field.text = file_page.get_current_description()
         stack_view.push(create_file_page)
         stack_view_header.push_header_title("Update File")
-        menu_stack_page.last_mode = app_settings.file_mode
-        menu_stack_page.visible = true
+        last_mode = app_settings.file_mode
+        visible = true
     }
 
     function on_url_entry_page() {
@@ -92,8 +95,8 @@ Rectangle{
         url_entry_page.visible = true
         stack_view.push(url_entry_page)
         stack_view_header.push_header_title("Go to URL")
-        menu_stack_page.last_mode = app_settings.web_browser_mode
-        menu_stack_page.visible = true
+        last_mode = app_settings.web_browser_mode
+        visible = true
     }
 
     // The Stack View Header
