@@ -100,13 +100,16 @@ Rectangle{
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
-                        text: '<b>' + title + '</b>'
+                        text: title
+                        font.bold: true
+                        font.family: "Arial"
                         font.pointSize: app_settings.menu_page_title_point_size
                         font.italic: false
                         color: "white"
                     }
                     Text {
                         text: description
+                        font.family: "Arial"
                         font.pointSize: app_settings.menu_page_description_point_size
                         font.italic: false
                         color: "white"

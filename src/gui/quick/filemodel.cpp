@@ -72,6 +72,7 @@ void FileModel::initialize_fixed_deps() {
 
 void FileModel::on_item_changed(QStandardItem* item) {
   save_graph(_working_row);
+  std::cerr << "saving model on item change\n";
   save_model();
 }
 
@@ -206,11 +207,17 @@ bool FileModel::title_exists(const QString& title) const {
 }
 
 QString FileModel::make_title_unique(const QString& title) const {
+  if (!title_exists(title)) {
+    return title;
+  }
+
   std::string name = title.toStdString();
   size_t last_index = name.find_last_not_of("0123456789");
   std::string suffix = name.substr(last_index + 1);
   std::string prefix = name.substr(0,last_index+1);
-  size_t number=0;
+
+  // We start numbering at 1.
+  size_t number=1;
   try {
     number = boost::lexical_cast<size_t>(suffix);
   } catch (...) {
@@ -287,10 +294,14 @@ void FileModel::load_model() {
     std::string description;
     loader.load(description);
 
+    std::cerr << "loading:----" << title << "----\n";
+
     QStandardItem *item = new_ff QStandardItem();
-    item->setData(title.c_str(), Qt::UserRole);
+    QString qtitle(title.c_str());
+    item->setData(qtitle, Qt::UserRole);
     item->setData(filename.c_str(), kFilenameRole);
     item->setData(description.c_str(), kDescriptionRole);
+    setItem(i, 0, item);
     setItem(i, 0, item);
   }
 
@@ -311,6 +322,9 @@ void FileModel::save_model() const {
     saver.save(row_count);
 
     for (size_t i=0; i<row_count; ++i) {
+
+      std::cerr << "saving: " << data(index(i,0), Qt::UserRole).toString().toStdString() << "\n";
+
       saver.save(data(index(i,0), Qt::UserRole).toString().toStdString());
       saver.save(data(index(i,0), kFilenameRole).toString().toStdString());
       saver.save(data(index(i,0), kDescriptionRole).toString().toStdString());
@@ -407,6 +421,7 @@ void FileModel::create_graph(const QString& title, const QString& description) {
 
   // Now sort everyting.
   sort_files();
+  save_model();
 
   // Save the new empty graph as the new graph.
   save_graph();
@@ -444,6 +459,8 @@ void FileModel::destroy_graph(int row) {
 
 void FileModel::update_graph(int row, const QString& title, const QString& description) {
   QString row_title = data(index(row,0),Qt::UserRole).toString();
+  qDebug() << "updating row: " << row_title << "\n";
+
   if (row_title != title) {
     row_title = make_title_unique(title);
   }
@@ -453,9 +470,9 @@ void FileModel::update_graph(int row, const QString& title, const QString& descr
   it->setData(description, kDescriptionRole);
   setItem(row,0,it);
 
-  if (row_title != title) {
-    sort_files();
-  }
+  // Sort the files.
+  sort_files();
+  save_model();
 }
 
 }
