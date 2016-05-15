@@ -341,6 +341,8 @@ void FileModel::load_graph() {
     create_graph("demo", "A simple demo.");
     // Build the default graph.
     _graph_builder->build_test_graph();
+    get_app_root()->initialize_deps();
+    get_app_root()->update_deps_and_hierarchy();
     save_graph();
   } else {
     load_graph(_working_row);

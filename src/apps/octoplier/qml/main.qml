@@ -188,6 +188,7 @@ Rectangle {
         // Other setup.
         main_bar.on_switch_to_mode(app_settings.node_graph_mode)
         file_model.load_graph()
+        //node_graph_page.node_graph.frame_all() // We can't frame all here as it causes gl resources to be allocated before the first draw request.
         node_graph_page.node_graph.update()
     }
 

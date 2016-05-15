@@ -90,6 +90,9 @@ void TrackBall::dolly(float z_trans) {
 }
 
 void TrackBall::frame(float view_width, float view_height, const glm::vec2& min_point, const glm::vec2& max_point) {
+  if (min_point == max_point) {
+    return;
+  }
   // Currently this only works for orthogonal projection.
   // The projection is setup to map (0,0) to the bottom left, and (view_width,view_height) to the top right.
 

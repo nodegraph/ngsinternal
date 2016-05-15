@@ -23,7 +23,7 @@ Rectangle {
     // URL loading progress overlay.
     // Note that the progress bar won't show anything on ios and winrt platforms.
     // This is due to way webview's loading and loadProgress are currently imlemented.
-    // This is as of Qt 5.6.
+    // This is as of Qt 5.6. See the Qt minibrowser example for more details.
     ProgressBar {
         id: our_progress_bar
         anchors.fill: parent

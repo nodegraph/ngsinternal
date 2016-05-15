@@ -281,7 +281,7 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
       // Simulate a long press touch.
       _last_pressed_shape = get_current_interaction()->pressed(_last_press);
       _long_press_timer.stop();
-      on_long_press();
+      popup_context_menu();
     } else {
       _last_pressed_shape = get_current_interaction()->pressed(_last_press);
     }
@@ -447,39 +447,44 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
 //  update();
 //}
 
+void NodeGraphQuickItem::popup_context_menu() {
+  // Revert to selection, before this node was pressed.
+  // Pressing on unselected nodes, clears the selection and selects this one node.
+  // Long presses reverses that selection change, so that user can decide what to do.
+  {
+    get_current_interaction()->revert_to_pre_pressed_selection();
+    update();
+  }
+
+  // Depending on the entity type that the long press is over, we emit
+  // signals to request different types of context menus.
+  {
+    if (_last_pressed_shape) {
+      Entity* e = _last_pressed_shape->our_entity();
+      size_t did = e->get_did();
+      // Send out context menu request signals.
+      if (did == kGroupNodeEntity) {
+        // Show the group context menu.
+        emit group_node_context_menu_requested();
+      } else if (e->has<Compute>()) {
+        // Show the node context menu.
+        emit node_context_menu_requested();
+      }
+    } else {
+      // Show the node graph context menu.
+      emit node_graph_context_menu_requested(false);
+    }
+  }
+}
+
 void NodeGraphQuickItem::on_long_press() {
   glm::vec2 d = get_current_interaction()->get_drag_delta();
+
   // If we haven't moven't that much from the mouse press
   // point during the timer's count down, then we have a
   // real long press action by the user.
   if (glm::length(d)<kLongPressDistanceThreshold) {
-    // Revert to selection, before this node was pressed.
-    // Pressing on unselected nodes, clears the selection and selects this one node.
-    // Long presses reverses that selection change, so that user can decide what to do.
-    {
-      get_current_interaction()->revert_to_pre_pressed_selection();
-      update();
-    }
-
-    // Depending on the entity type that the long press is over, we emit
-    // signals to request different types of context menus.
-    {
-      if (_last_pressed_shape) {
-        Entity* e = _last_pressed_shape->our_entity();
-        size_t did = e->get_did();
-        // Send out context menu request signals.
-        if (did == kGroupNodeEntity) {
-          // Show the group context menu.
-          emit group_node_context_menu_requested();
-        } else if (e->has<Compute>()) {
-          // Show the node context menu.
-          emit node_context_menu_requested();
-        }
-      } else {
-        // Show the node graph context menu.
-        emit node_graph_context_menu_requested(false);
-      }
-    }
+    popup_context_menu();
   }
 }
 
@@ -547,6 +552,7 @@ void NodeGraphQuickItem::dive() {
   // We don't allow inter-group selections.
   _canvas->dive(_last_pressed_shape->our_entity());
   _selection->clear_selection();
+  frame_all();
   update();
 }
 
@@ -569,6 +575,7 @@ void NodeGraphQuickItem::deselect_all() {
 }
 
 void NodeGraphQuickItem::frame_all() {
+  _canvas->clean();
   get_current_interaction()->frame_all();
   update();
 }

@@ -139,6 +139,7 @@ Q_OBJECT
 
  private:
 
+  void popup_context_menu();
   void finish_creating_node(Entity* e, bool centered);
 
 

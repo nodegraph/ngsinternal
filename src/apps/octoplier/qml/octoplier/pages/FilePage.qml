@@ -62,6 +62,7 @@ Rectangle{
 
     function load_current() {
         file_model.load_graph(list_view.currentIndex)
+        node_graph_page.node_graph.frame_all()
         node_graph_page.node_graph.update()
         main_bar.on_switch_to_mode(app_settings.node_graph_mode)
     }
@@ -130,9 +131,6 @@ Rectangle{
                     mouse.accepted = true
                     console.debug("rect click")
                     delegate.ListView.view.currentIndex = index
-                    //file_model.load_graph(index)
-                    //node_graph_page.node_graph.update()
-                    //main_bar.on_switch_to_mode(app_settings.node_graph_mode)
                     on_open_more_options()
                 }
             }
