@@ -145,6 +145,8 @@ endif()
 
 if (${ARCH} STREQUAL "ARCH_ANDROID")
 	find_package(Qt5AndroidExtras)
+elseif (${ARCH} STREQUAL "ARCH_IOS")
+	find_package(Qt5DBus)
 endif()
 
 find_package(Qt5Qml)
@@ -153,7 +155,6 @@ find_package(Qt5QuickWidgets)
 find_package(Qt5Multimedia)
 find_package(Qt5MultimediaWidgets)
 
-#find_package(Qt5DBus)
 find_package(Qt5Widgets)
 find_package(Qt5Quick)
 find_package(Qt5Gui)
