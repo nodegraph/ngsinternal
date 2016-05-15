@@ -19,7 +19,7 @@ TextField {
     }
     
     // Input hints.
-    inputMethodHints: Qt.ImhUrlCharactersOnly | Qt.ImhPreferLowercase
+    inputMethodHints: Qt.ImhPreferLowercase   // Qt.ImhMultiLine | Qt.ImhEmailCharactersOnly | Qt.ImhUrlCharactersOnly
     
     // Text.
     text: "hello"

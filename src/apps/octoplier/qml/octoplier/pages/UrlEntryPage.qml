@@ -42,6 +42,7 @@ Rectangle {
             id: urlField
             tool_bar: copy_paste_bar
             //text: web_browser_page.web_view_alias.url
+            inputMethodHints: Qt.ImhPreferLowercase | Qt.ImhUrlCharactersOnly
             text: "www."
             onAccepted: {
                 switch_to_mode(app_settings.web_browser_mode)
