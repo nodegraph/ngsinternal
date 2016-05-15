@@ -148,20 +148,6 @@ Rectangle {
         visible: false
     }
 
-    // Menus.
-
-    // Our Menus.
-//    load_component("web_browser_menu","octoplier/menus/WebBrowserMenu.qml",
-//                              app_window, {"visible": true})
-//    load_component("node_graph_menu","octoplier/menus/NodeGraphMenu.qml",
-//                              app_window, {"visible": true})
-//    load_component("node_menu","octoplier/menus/NodeMenu.qml",
-//                              app_window, {"visible": true})
-//    load_component("group_node_menu","octoplier/menus/GroupNodeMenu.qml",
-//                              app_window, {"visible": true})
-//    load_component("view_node_menu","octoplier/menus/ViewNodeMenu.qml",
-//                              app_window, {"visible": true})
-
     // Stuff to do when this component is completed.
     Component.onCompleted: {
         update_dependencies()
@@ -198,15 +184,6 @@ Rectangle {
         // Connection to bring up the copy paste menu on android.
         Qt.inputMethod.visibleChanged.connect(
       		copy_paste_bar.on_virtual_keyboard_visibility_changed)
-
-        // The progress bar is visible when the web browser is loading something.
-        //splitter.progress_bar.visible = Qt.binding(function () {
-        //    return web_browser_page.web_view_alias.loading
-        //})
-        //splitter.progress_bar.value = Qt.binding(function () {
-        //    return web_browser_page.web_view_alias.loadProgress
-        //            > 100 ? 0 : web_browser_page.web_view_alias.loadProgress
-        //})
 
         // Other setup.
         main_bar.on_switch_to_mode(app_settings.node_graph_mode)

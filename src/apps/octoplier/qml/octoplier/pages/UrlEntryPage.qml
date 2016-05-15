@@ -45,7 +45,7 @@ Rectangle {
             inputMethodHints: Qt.ImhPreferLowercase | Qt.ImhUrlCharactersOnly
             text: "www."
             onAccepted: {
-                switch_to_mode(app_settings.web_browser_mode)
+                main_bar.on_switch_to_mode(app_settings.web_browser_mode)
                 web_browser_page.web_view_alias.url = utils.url_from_input(urlField.text)
             }
         }
