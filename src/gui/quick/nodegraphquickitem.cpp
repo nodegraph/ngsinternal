@@ -376,13 +376,13 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
         const QTouchEvent::TouchPoint &touch_b = touch_points.last();
 
         // Figure out the zoom facter and origin of the zoom.
-        glm::vec2 a(touch_a.pos().x(),touch_a.pos().y());
-        glm::vec2 b(touch_b.pos().x(),touch_b.pos().y());
+        glm::vec2 a = (float)_device_pixel_ratio * glm::vec2(touch_a.pos().x(),touch_a.pos().y());
+        glm::vec2 b = (float)_device_pixel_ratio * glm::vec2(touch_b.pos().x(),touch_b.pos().y());
 
         Qt::TouchPointStates state = event->touchPointStates();
         if (state&Qt::TouchPointPressed) {
-          _original_pinch_a=glm::vec2(touch_a.pos().x(),touch_a.pos().y());
-          _original_pinch_b=glm::vec2(touch_b.pos().x(),touch_b.pos().y());
+          _original_pinch_a = a;
+          _original_pinch_b = b;
           _original_pinch_center=0.5f*(_original_pinch_a+_original_pinch_b);
         } else if (state&Qt::TouchPointReleased) {
           float zoom_factor = glm::length(b-a)/glm::length(_original_pinch_b-_original_pinch_a);
