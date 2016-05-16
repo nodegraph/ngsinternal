@@ -61,6 +61,7 @@ Rectangle{
     }
 
     function load_current() {
+    	node_graph_page.node_graph.surface_to_root()
         file_model.load_graph(list_view.currentIndex)
         node_graph_page.node_graph.frame_all()
         node_graph_page.node_graph.update()

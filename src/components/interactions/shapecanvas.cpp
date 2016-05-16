@@ -226,6 +226,12 @@ void ShapeCanvas::pop_group() {
   }
 }
 
+void ShapeCanvas::surface_to_root() {
+  while(_group_stack.size()>1) {
+    pop_group();
+  }
+}
+
 Entity* ShapeCanvas::get_current_group() const {
   return _group_stack.back();
 }

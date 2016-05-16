@@ -50,6 +50,7 @@ class INTERACTIONS_EXPORT ShapeCanvas: public Component {
 
   // Group navigation.
   void surface();
+  void surface_to_root();
   void dive(Entity* selected);
   void dive();
   const Dep<GroupInteraction>& get_current_interaction() const;
@@ -60,6 +61,7 @@ class INTERACTIONS_EXPORT ShapeCanvas: public Component {
   // Group navigation management.
   void push_group(Entity* group);
   void pop_group();
+
   Entity* get_current_group() const;
   const Dep<CompShapeCollective>& get_current_shape_collective() const;
 

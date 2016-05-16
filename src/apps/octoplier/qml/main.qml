@@ -207,7 +207,6 @@ Rectangle {
 
 //        // Cleanup the node pool if we're closing down.
 //        if (close.accepted) {
-//            node_graph_page.node_graph.shutdown()
 //            console.log("Shutting down qml app.")
 //        }
 //    }

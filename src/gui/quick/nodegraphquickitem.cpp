@@ -544,6 +544,11 @@ void NodeGraphQuickItem::surface() {
   update();
 }
 
+void NodeGraphQuickItem::surface_to_root() {
+  _canvas->surface_to_root();
+  update();
+}
+
 void NodeGraphQuickItem::select_all() {
   get_current_interaction()->select_all();
   update();
@@ -571,9 +576,6 @@ void NodeGraphQuickItem::save() {
 
 void NodeGraphQuickItem::load() {
   _file_model->load_graph();
-}
-
-void NodeGraphQuickItem::shutdown() {
 }
 
 void NodeGraphQuickItem::copy() {

@@ -54,6 +54,7 @@ Q_OBJECT
   // Group Navigation.
   Q_INVOKABLE void dive();
   Q_INVOKABLE void surface();
+  Q_INVOKABLE void surface_to_root();
 
   // Selection.
   Q_INVOKABLE void toggle_selection_under_long_press();
@@ -68,8 +69,6 @@ Q_OBJECT
   // Serialization.
   Q_INVOKABLE void save();
   Q_INVOKABLE void load();
-
-  Q_INVOKABLE void shutdown();
 
   // Copy and Paste.
   Q_INVOKABLE void copy();

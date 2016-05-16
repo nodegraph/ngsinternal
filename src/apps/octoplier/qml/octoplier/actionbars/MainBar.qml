@@ -75,6 +75,7 @@ Rectangle {
         //renderType: Text.QtRendering //Text.NativeRendering
         font.pointSize: app_settings.font_point_size
         font.italic: false
+        font.bold: true
         color: "white"
         anchors.left: parent.left
         anchors.leftMargin: app_settings.action_bar_left_margin
