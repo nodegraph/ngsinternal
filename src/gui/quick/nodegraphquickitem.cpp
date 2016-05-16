@@ -79,8 +79,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(QQuickItem *parent)
       _factory(this),
       _file_model(this),
       _last_pressed_shape(this),
-      _pinch_mode(false),
-      _link_locked(false){
+      _link_locked(false) {
 
   get_dep_loader()->register_fixed_dep(_fbo_worker, "");
   get_dep_loader()->register_fixed_dep(_selection, "");
@@ -328,11 +327,10 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
   case QEvent::TouchEnd:
   {
       qDebug() << "got touch event: " << event->type() << "\n";
-
       QList<QTouchEvent::TouchPoint> touch_points = event->touchPoints();
       qDebug() << "num touch points: " << touch_points.count() << "\n";
 
-      if (!_pinch_mode && (touch_points.count() == 1)) {
+      if (touch_points.count() == 1) {
         Qt::TouchPointStates state = event->touchPointStates();
         if (state&Qt::TouchPointPressed) {
           _long_press_timer.start();
@@ -349,8 +347,6 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
           } else {
             _last_pressed_shape = get_current_interaction()->pressed(_last_press);
           }
-
-          qDebug() << "111 - mouse pressed\n";
           update();
         } else if (state&Qt::TouchPointReleased) {
           // Stop the long press timer if we get a release event
@@ -358,16 +354,13 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
           if (_long_press_timer.isActive()) {
             _long_press_timer.stop();
           }
-
           // Deal with the release event.
           MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
           get_current_interaction()->released(info);
-          qDebug() << "111 - mouse released\n";
           update();
         } else if (state&Qt::TouchPointMoved) {
           MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
           get_current_interaction()->moved(info);
-          qDebug() << "111 - mouse moved\n";
           update();
         } else if (state&Qt::TouchPointStationary) {
           qDebug() << "YYYYYYYYYYYYYYYYYYYYYYYYY\n";
@@ -381,38 +374,32 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
         // Get the two touch points at two different points in time.
         const QTouchEvent::TouchPoint &touch_a = touch_points.first();
         const QTouchEvent::TouchPoint &touch_b = touch_points.last();
-        glm::vec2 a(touch_a.pos().x(),touch_a.pos().y());
-        glm::vec2 b(touch_b.pos().x(),touch_b.pos().y());
-        glm::vec2 original_a(touch_a.startPos().x(),touch_a.startPos().y());
-        glm::vec2 original_b(touch_b.startPos().x(),touch_b.startPos().y());
 
         // Figure out the zoom facter and origin of the zoom.
-        float zoom_factor = glm::length(b-a)/glm::length(original_b-original_a);
-        glm::vec2 zoom_origin = 0.5f*(original_a+original_b);
+        glm::vec2 a(touch_a.pos().x(),touch_a.pos().y());
+        glm::vec2 b(touch_b.pos().x(),touch_b.pos().y());
 
         Qt::TouchPointStates state = event->touchPointStates();
         if (state&Qt::TouchPointPressed) {
-          qDebug() << "222 - mouse pressed\n";
-          // Do nothing.
+          _original_pinch_a=glm::vec2(touch_a.pos().x(),touch_a.pos().y());
+          _original_pinch_b=glm::vec2(touch_b.pos().x(),touch_b.pos().y());
+          _original_pinch_center=0.5f*(_original_pinch_a+_original_pinch_b);
         } else if (state&Qt::TouchPointReleased) {
+          float zoom_factor = glm::length(b-a)/glm::length(_original_pinch_b-_original_pinch_a);
           if ((zoom_factor > 0.95) && (zoom_factor < 1.05)) {
             MouseInfo a = get_mouse_info(event, _device_pixel_ratio, 0);
             MouseInfo b = get_mouse_info(event, _device_pixel_ratio, 1);
             get_current_interaction()->accumulate_select(a,b);
-            qDebug() << "222 - mouse released\n";
           }
+          get_current_interaction()->finalize_pinch_zoom();
         } else if (state&Qt::TouchPointMoved) {
-          // We official enter into pinch mode.
-          _pinch_mode = true;
-
           // Stop the long press timer.
           if (_long_press_timer.isActive()) {
             _long_press_timer.stop();
           }
-
           // Perform the pinch zoom.
-          get_current_interaction()->pinch_zoom(zoom_origin,zoom_factor);
-          qDebug() << "222 - mouse moved\n";
+          float zoom_factor = glm::length(b-a)/glm::length(_original_pinch_b-_original_pinch_a);
+          get_current_interaction()->pinch_zoom(_original_pinch_center,zoom_factor);
           update();
         } else if (state&Qt::TouchPointStationary) {
           qDebug() << "YYYYYYYYYYYYYYYYYYYYYYYYY\n";
@@ -420,7 +407,6 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
       }
 
       if (event->type() == QEvent::TouchEnd) {
-        _pinch_mode = false;
         // Save the node graph changes.
         save();
       }

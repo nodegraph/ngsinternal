@@ -218,6 +218,10 @@ void TrackBall::pinch_zoom(const glm::vec4& center_in_camera_space, float factor
   update_model_view_thread_safe();
 }
 
+void TrackBall::finalize_pinch_zoom() {
+  _last_model_view = _model_view;
+}
+
 void TrackBall::set_pivot(const glm::vec4& object_space_click) {
   _object_space_pivot = object_space_click;
 }

@@ -161,13 +161,15 @@ Q_OBJECT
   MouseInfo _last_press;
   Dep<CompShape> _last_pressed_shape;
 
+  // Pinch Zoom.
+  glm::vec2 _original_pinch_center;
+  glm::vec2 _original_pinch_a;
+  glm::vec2 _original_pinch_b;
+
   std::string _last_save_raw;
 
   QTimer _idle_timer;
   QTime _idle_length;
-
-  // Pinching mode.
-  bool _pinch_mode;
 
   // In OpenGL pixels are always in device pixels.
   GLsizei _device_pixel_ratio;

@@ -734,6 +734,10 @@ void GroupInteraction::pinch_zoom(const glm::vec2& origin, float factor) {
   _view_controls.track_ball.pinch_zoom(info.camera_space_pos, factor);
 }
 
+void GroupInteraction::finalize_pinch_zoom() {
+  _view_controls.track_ball.finalize_pinch_zoom();
+}
+
 const glm::mat4 GroupInteraction::get_mouse_model_view() const {
   start_method();
   glm::mat4 m(1);

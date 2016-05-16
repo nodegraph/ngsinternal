@@ -50,6 +50,7 @@ class DEVICE_EXPORT TrackBall {
 
   // Pinch Zoom.
   void pinch_zoom(const glm::vec4& center_in_camera_space, float factor);
+  void finalize_pinch_zoom();
 
   // Pivot.
   void set_pivot(const glm::vec4& object_space_click);

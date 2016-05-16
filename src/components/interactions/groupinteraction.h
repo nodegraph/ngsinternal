@@ -81,6 +81,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
 
   // Pinch Zoom.
   virtual void pinch_zoom(const glm::vec2& origin, float factor);
+  virtual void finalize_pinch_zoom();
 
   // Long press.
   virtual const Dep<CompShape>& get_current_hit_shape() const;
