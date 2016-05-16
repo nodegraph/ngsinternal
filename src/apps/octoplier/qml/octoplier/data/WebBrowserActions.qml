@@ -12,7 +12,7 @@ ListModel {
         title: "Google"
         description: "Perform a google search."
         script: "web_browser_page.web_view_alias.url = utils.url_from_input(\"www.google.com\");
-                 menu_stack_page.visible = false"
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
     }
 
     ListElement {
@@ -20,7 +20,7 @@ ListModel {
         title: "Bing"
         description: "Perform a bing search."
         script: "web_browser_page.web_view_alias.url = utils.url_from_input(\"www.bing.com\");
-                 menu_stack_page.visible = false"
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
     }
 
     ListElement {
@@ -28,7 +28,7 @@ ListModel {
         title: "Yahoo"
         description: "Perform a yahoo search."
         script: "web_browser_page.web_view_alias.url = utils.url_from_input(\"www.yahoo.com\");
-                 menu_stack_page.visible = false"
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
     }
 
     ListElement {
@@ -43,7 +43,7 @@ ListModel {
         title: "Back"
         description: "Go back to previous page."
         script: "web_browser_page.web_view_alias.goBack();
-                 menu_stack_page.visible = false"
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
     }
 
     ListElement {
@@ -51,7 +51,7 @@ ListModel {
         title: "Forward"
         description: "Undo the back operation."
         script: "web_browser_page.web_view_alias.goForward();
-                 menu_stack_page.visible = false"
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
     }
 
     ListElement {
@@ -62,7 +62,7 @@ ListModel {
                     web_browser_page.web_view_alias.stop()
                 }
                 web_browser_page.web_view_alias.reload()
-                menu_stack_page.visible = false"
+                main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
     }
 
     ListElement {
@@ -70,7 +70,7 @@ ListModel {
         title: "Stop"
         description: "Stop the browser's current loading operation."
         script: "web_browser_page.web_view_alias.stop();
-                 menu_stack_page.visible = false"
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
     }
 
 }
