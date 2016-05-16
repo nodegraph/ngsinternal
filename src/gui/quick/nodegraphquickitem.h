@@ -66,7 +66,6 @@ Q_OBJECT
   Q_INVOKABLE void frame_selected();
 
   // Serialization.
-  Q_INVOKABLE void make_save_point();
   Q_INVOKABLE void save();
   Q_INVOKABLE void load();
 
@@ -78,7 +77,6 @@ Q_OBJECT
   Q_INVOKABLE void paste(bool centered);
 
   // Explode and Collapse.
-  Q_INVOKABLE void restore_default_node_graph();
   Q_INVOKABLE void collapse_to_group();
   Q_INVOKABLE void explode_group();
 
@@ -93,12 +91,7 @@ Q_OBJECT
   void handle_window_changed(QQuickWindow *win);
 
  public Q_SLOTS:
-
-  //void on_switch_to_mode(int mode);
-
   void on_long_press();
-  void on_save();
-
 
  signals:
 
@@ -152,6 +145,7 @@ Q_OBJECT
   Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;
 
+  // Cached helper.
   BaseEntityInstancer* _entity_instancer;
 
   // Used to detect long press.
@@ -165,11 +159,6 @@ Q_OBJECT
   glm::vec2 _original_pinch_center;
   glm::vec2 _original_pinch_a;
   glm::vec2 _original_pinch_b;
-
-  std::string _last_save_raw;
-
-  QTimer _idle_timer;
-  QTime _idle_length;
 
   // In OpenGL pixels are always in device pixels.
   GLsizei _device_pixel_ratio;

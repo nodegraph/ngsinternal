@@ -102,14 +102,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(QQuickItem *parent)
   _long_press_timer.setInterval(kLongPressTimeThreshold);
   connect(&_long_press_timer,SIGNAL(timeout()),this,SLOT(on_long_press()));
 
-//  // Setup the idle time to save when the event loop is idle.
-//  connect(&_idle_timer, SIGNAL(timeout()), this, SLOT(on_save()));
-//  _idle_timer.start();
-//  _idle_length.start();
-
   initialize_fixed_deps();
-
-  //connect(this,SIGNAL(mark_progress()), g_splash_screen, SLOT(mark_progress()));
 }
 
 NodeGraphQuickItem::~NodeGraphQuickItem() {
@@ -297,10 +290,10 @@ void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
   // Deal with the release event.
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->released(info);
-  update();
 
   // Save the node graph changes.
   save();
+  update();
 }
 
 void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
@@ -496,6 +489,8 @@ void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
   get_app_root()->update_deps_and_hierarchy();
   _selection->clear_selection();
   _selection->select(cs);
+  // Save the node graph changes.
+  save();
   update();
 }
 
@@ -527,10 +522,9 @@ void NodeGraphQuickItem::create_mock_node(bool centered) {
 void NodeGraphQuickItem::destroy_selection() {
   _selection->destroy_selection();
   get_app_root()->update_deps_and_hierarchy();
-  update();
-
   // Save the node graph changes.
   save();
+  update();
 }
 
 void NodeGraphQuickItem::dive() {
@@ -571,87 +565,12 @@ void NodeGraphQuickItem::frame_selected() {
   update();
 }
 
-void NodeGraphQuickItem::make_save_point() {
-
-}
-
 void NodeGraphQuickItem::save() {
-//  // There are times where it is not safe to save,
-//  // like in the middle of dragging entities.
-//  GroupInteraction* current_interaction = _canvas->get_current_interaction();
-//  if (!current_interaction->is_safe_to_save()) {
-//    return;
-//  }
-//
-//  // Save out our data to a string.
-//  std::stringstream ss;
-//  {
-//    SimpleSaver saver(ss);
-//    GroupSerializer* serializer = _ng_state->switch_to<GroupSerializer>();
-//    serializer->save(saver);
-//  }
-//
-//  // If the raw data is exactly the same as our
-//  // last save, then we can return right away.
-//  if (ss.str() == _last_save_raw) {
-//    //qDebug() << "nothing to save";
-//    return;
-//  } else {
-//    qDebug() << "found something different to save !!!!";
-//    _last_save_raw = ss.str();
-//  }
-//
-//  // Open the octoplier file.
-//  QString linkable_file = get_linkable_file();
-//  QFile file(linkable_file);
-//  file.open(QIODevice::ReadWrite);
-//
-//  // Save the string to the file.
-//  file.write(_last_save_raw.c_str(), _last_save_raw.size());
-//  file.close();
+  _file_model->save_graph();
 }
 
 void NodeGraphQuickItem::load() {
-//  QString  linkable_file = get_linkable_file();
-//
-//  // If this file doesn't exist there is nothing to load.
-//  QFileInfo info(linkable_file);
-//  if (!info.exists()) {
-//    // Prodedurally create the default node graph.
-//    restore_default_node_graph();
-//    // This will create the octoplier file.
-//    //save();
-//    return;
-//  }
-//
-//  // Read all the bytes from the file.
-//  QFile file(linkable_file);
-//  file.open(QIODevice::ReadOnly);
-//  QByteArray contents = file.readAll();
-//
-//  // Now load them.
-//  Bits* bits = create_bits_from_raw(contents.data(),contents.size());
-//  SimpleLoader loader(bits);
-//
-////  std::ifstream ifs;
-////  open_input_file_stream("/tmp/ng1.ong", ifs);
-////  Bits* bits = create_bits_from_input_stream(ifs);
-////  SimpleLoader loader(bits);
-//
-//  GroupSerializer* serializer = _ng_state->switch_to<GroupSerializer>();
-//  serializer->load(loader, true);
-//  serializer->switch_to<CompShapeCollective>()->update_component();
-//  update();
-}
-
-void NodeGraphQuickItem::on_save() {
-  // We try to perform save only for every 1 second
-  // of idle time has passed in total.
-  if (_idle_length.elapsed() < kMinimumIdleLength) {
-    return;
-  }
-  _idle_length.restart();
-  save();
+  _file_model->load_graph();
 }
 
 void NodeGraphQuickItem::shutdown() {
@@ -667,8 +586,10 @@ void NodeGraphQuickItem::cut() {
   _selection->destroy_selection();
   // Links may need to be cleaned up.
   get_app_root()->update_deps_and_hierarchy();
-  update();
 
+  // Save the node graph changes.
+  save();
+  update();
 }
 
 void NodeGraphQuickItem::paste(bool centered) {
@@ -721,39 +642,23 @@ void NodeGraphQuickItem::paste(bool centered) {
   for (const Dep<CompShape> &node : comp_shapes) {
     _selection->select(node);
   }
-  update();
-}
-
-void NodeGraphQuickItem::restore_default_node_graph() {
-  // Clear node graph state.
-  _selection->clear_all();
-	
-  // Clear all existing nodes.
-  Entity* root_group = our_entity()->get_child("root");
-  root_group->destroy_all_children();
-	
-  // Add our test nodes.
-  //_factory->build_test_graph();
-  update();
-
   // Save the node graph changes.
-  //save();
+  save();
+  update();
 }
 
 void NodeGraphQuickItem::collapse_to_group() {
   get_current_interaction()->collapse_selected();
-  update();
-
   // Save the node graph changes.
   save();
+  update();
 }
 
 void NodeGraphQuickItem::explode_group() {
   get_current_interaction()->explode_selected();
-  update();
-
   // Save the node graph changes.
   save();
+  update();
 }
 
 // Lock Graph.
