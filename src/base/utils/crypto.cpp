@@ -43,8 +43,8 @@ std::string Crypto::generate_private_key(const std::string &password, const std:
   if (crypto_pwhash((unsigned char*)&key[0], key.size(),
                     &password[0], password.size(),
                     (unsigned char*)&salt[0],
-                    crypto_pwhash_OPSLIMIT_SENSITIVE ,
-                    crypto_pwhash_MEMLIMIT_SENSITIVE,
+                    crypto_pwhash_OPSLIMIT_INTERACTIVE,
+                    crypto_pwhash_MEMLIMIT_INTERACTIVE,
                     crypto_pwhash_ALG_DEFAULT) != 0)
   {
     // out of memory?
@@ -60,8 +60,8 @@ std::string Crypto::generate_hashed_password(const std::string &password) {
   if (crypto_pwhash_str(&hashed_password[0],
                         &password[0],
                         password.size(),
-                        crypto_pwhash_OPSLIMIT_SENSITIVE,
-                        crypto_pwhash_MEMLIMIT_SENSITIVE) != 0) {
+                        crypto_pwhash_OPSLIMIT_INTERACTIVE,
+                        crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0) {
     /* out of memory */
     assert(false);
   }
@@ -87,11 +87,13 @@ std::string Crypto::encrypt(const std::string& message, const std::string& key, 
   cipher_text.resize(cipher_length,'a');
 
   // Encrypt.
-  crypto_secretbox_easy((unsigned char*)&cipher_text[0],
-                        (unsigned char*)&message[0],
-                        message.size(),
-                        (unsigned char*)&nonce[0],
-                        (unsigned char*)&key[0]);
+  if (crypto_secretbox_easy((unsigned char*)&cipher_text[0],
+                            (unsigned char*)&message[0],
+                            message.size(),
+                            (unsigned char*)&nonce[0],
+                            (unsigned char*)&key[0]) != 0) {
+    assert(false);
+  }
   return cipher_text;
 }
 
@@ -110,19 +112,16 @@ std::string Crypto::decrypt(const std::string& cipher_text, const std::string& k
   return decrypted;
 }
 
-void Crypto::test_password_encrypt_decrypt(const std::string &message, const std::string &password, const std::string& salt, const std::string& nonce) {
+void Crypto::test_hashed_password(const std::string &password) {
+  std::string hashed_password = generate_hashed_password(password);
+  assert(check_password(password, hashed_password));
+  assert(!check_password(password+"123", hashed_password));
+}
+
+void Crypto::test_private_key(const std::string &password) {
+  std::string salt = generate_salt();
   std::string key = generate_private_key(password, salt);
-
-  // Encrypt.
-  std::string cipher_text = encrypt(message, key, nonce);
-  //std::cerr << "encrypted: " << cipher_text << "\n";
-
-  // Decrypt.
-  std::string decrypted = decrypt(cipher_text, key, nonce);
-  //std::cerr << "decrypted: " << decrypted << "\n";
-
-  // Check.
-  assert(decrypted == message);
+  assert(key != password);
 }
 
 void Crypto::test_encrypt_decrypt(const std::string &message) {

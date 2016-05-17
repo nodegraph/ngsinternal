@@ -44,16 +44,16 @@ Button {
         anchors.fill: parent
         onPressAndHold: {
             mouse.accepted = true
-            app_tooltip.show(image_button,tooltip_text)
+            app_tooltip.show(label_button,tooltip_text)
             app_settings.vibrate()
         }
         onPressed: {
             mouse.accepted = true
-            label_button.clicked(mouse)
         }
         onReleased: {
             app_tooltip.hide();
             mouse.accepted = true
+            label_button.clicked(mouse)
         }
         onExited: {
             app_tooltip.hide();

@@ -23,7 +23,8 @@ class UTILS_EXPORT Crypto {
   static std::string decrypt(const std::string& cipher_text, const std::string& key, const std::string& nonce);
 
   // Testing.
-  static void test_password_encrypt_decrypt(const std::string &message, const std::string &password, const std::string& salt, const std::string& nonce);
+  static void test_hashed_password(const std::string &password);
+  static void test_private_key(const std::string &password);
   static void test_encrypt_decrypt(const std::string &message);
 
 };

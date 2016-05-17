@@ -4,11 +4,12 @@ import QtQuick.Dialogs 1.2
 
 MessageDialog {
     id: message_dialog
-    title: qsTr("May I have your attention, please?")
+    title: qsTr("This is a message dialog.")
     //height: 100
+    icon: StandardIcon.Critical
 
-    function show(caption) {
-        message_dialog.text = caption
+    function show(text) {
+        message_dialog.text = text
         message_dialog.open()
     }
 }

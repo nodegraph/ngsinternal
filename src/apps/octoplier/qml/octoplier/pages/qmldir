@@ -9,5 +9,7 @@ WebBrowserPage 1.0 WebBrowserPage.qml
 NodeGraphPage 1.0 NodeGraphPage.qml
 SplashPage 1.0 SplashPage.qml
 FilePage 1.0 FilePage.qml
+CreatePasswordPage 1.0 CreatePasswordPage.qml
+CheckPasswordPage 1.0 CheckPasswordPage.qml
 
 

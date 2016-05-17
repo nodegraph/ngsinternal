@@ -31,10 +31,13 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   virtual void initialize_fixed_deps();
 
   // Password Setup.
-  Q_INVOKABLE void create_crypto(const std::string& chosen_password);
+  Q_INVOKABLE void create_crypto(const QString& chosen_password);
   Q_INVOKABLE bool crypto_exists() const;
   Q_INVOKABLE void load_crypto();
-  Q_INVOKABLE bool check_password(const std::string& password);
+  Q_INVOKABLE bool check_password(const QString& password);
+
+  // Model.
+  Q_INVOKABLE void load_model();
 
   // Graph.
   Q_INVOKABLE void load_graph();
@@ -64,9 +67,13 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
  private:
   QString get_prefixed_file(const QString& file) const;
 
+  // Cipher operations.
+  std::string encrypt_data(const std::string& data) const;
+  std::string decrypt_data(const std::string& cipher_text) const;
+
   // File operations.
-  void write_file(const QString& filename, const std::string& data) const;
-  QByteArray load_file(const QString& filename) const;
+  void write_file(const QString& filename, const std::string& data, bool encrypt = false) const;
+  QByteArray load_file(const QString& filename, bool decrypt = false) const;
   void destroy_file(const QString& filename) const;
   bool file_exists(const QString& filename) const;
   QString make_filename_unique(const QString& filename=QString("graph1")) const;
@@ -75,7 +82,7 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   bool title_exists(const QString& title) const;
 
   // Model.
-  void load_model();
+
   void save_model() const;
   void sort_files();
   int find_index(const QString& title) const;

@@ -69,6 +69,8 @@
         <file>qml/octoplier/pages/NodeGraphPage.qml</file>
         <file>qml/octoplier/pages/SplashPage.qml</file>
         <file>qml/octoplier/pages/FilePage.qml</file>
+        <file>qml/octoplier/pages/CreatePasswordPage.qml</file>
+        <file>qml/octoplier/pages/CheckPasswordPage.qml</file>
         
         <!-- SubPages -->
         <file>qml/octoplier/subpages/qmldir</file>

@@ -45,6 +45,10 @@ Item{
     property int splitter_x: 0
     property int splitter_y: action_bar_height
     property int splitter_z: 0
+
+    // Screen Properties.
+    property int screen_height: parent.height
+    property int screen_width: parent.width
     
     // Page Properties.
     property int page_height: parent.height - action_bar_height - splitter_height

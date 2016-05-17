@@ -56,9 +56,6 @@ FileModel::FileModel()
   setSortRole(Qt::UserRole);
   sort(0,Qt::AscendingOrder);
 
-  // Load our model.
-  load_model();
-
   // Connect signals.
   connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(on_item_changed(QStandardItem*)));
 }
@@ -71,19 +68,18 @@ void FileModel::initialize_fixed_deps() {
 }
 
 void FileModel::on_item_changed(QStandardItem* item) {
-  save_graph(_working_row);
   std::cerr << "saving model on item change\n";
   save_model();
 }
 
-void FileModel::create_crypto(const std::string& chosen_password) {
+void FileModel::create_crypto(const QString& chosen_password) {
   assert(_nonce.empty());
   assert(_key.empty());
 
   _nonce = Crypto::generate_nonce();
   _salt = Crypto::generate_salt();
-  _hashed_password = Crypto::generate_hashed_password(chosen_password);
-  _key = Crypto::generate_private_key(chosen_password, _salt); // The key is never saved.
+  _hashed_password = Crypto::generate_hashed_password(chosen_password.toStdString());
+  _key = Crypto::generate_private_key(chosen_password.toStdString(), _salt); // The key is never saved.
 
   // Save out the crypto config.
   {
@@ -93,6 +89,10 @@ void FileModel::create_crypto(const std::string& chosen_password) {
     saver.save(_salt);
     saver.save(_hashed_password);
     write_file(kCryptoFile, ss.str());
+
+    std::cerr << "saving nonce: " << _nonce << "\n";
+    std::cerr << "saving salt: " << _salt << "\n";
+    std::cerr << "saving hpass: " << _hashed_password << "\n";
   }
 }
 
@@ -117,14 +117,18 @@ void FileModel::load_crypto() {
   loader.load(_nonce);
   loader.load(_salt);
   loader.load(_hashed_password);
+
+  std::cerr << "loading nonce: " << _nonce << "\n";
+  std::cerr << "loading salt: " << _salt << "\n";
+  std::cerr << "loading hpass: " << _hashed_password << "\n";
 }
 
-bool FileModel::check_password(const std::string& password) {
-  if (!Crypto::check_password(password, _hashed_password)) {
+bool FileModel::check_password(const QString& password) {
+  if (!Crypto::check_password(password.toStdString(), _hashed_password)) {
     return false;
   }
   // Generate the private key.
-  _key = Crypto::generate_private_key(password, _salt);
+  _key = Crypto::generate_private_key(password.toStdString(), _salt);
   return true;
 }
 
@@ -165,17 +169,42 @@ QString FileModel::get_prefixed_file(const QString& file) const {
   return _app_dir + "/" + file;
 }
 
-void FileModel::write_file(const QString& filename, const std::string& data) const {
+// Data operations.
+std::string FileModel::encrypt_data(const std::string& data) const {
+  return Crypto::encrypt(data, _key, _nonce);
+}
+
+std::string FileModel::decrypt_data(const std::string& encrypted_data) const {
+  return Crypto::decrypt(encrypted_data, _key, _nonce);
+}
+
+void FileModel::write_file(const QString& filename, const std::string& data, bool encrypt) const {
   QString full_name = get_prefixed_file(filename);
+  std::cerr << "saving to file: " << full_name.toStdString() << "\n";
   QFile file(full_name);
   file.open(QIODevice::ReadWrite);
 
-  // Save the string to the file.
-  file.write(data.c_str(), data.size());
+  // Encrypt the data.
+  if (encrypt) {
+    std::string cipher_text = encrypt_data(data);
+    file.write(cipher_text.c_str(), cipher_text.size());
+
+    // test
+    {
+      QByteArray test(cipher_text.c_str(), cipher_text.size());
+      std::string test2(test.data(), test.size());
+      std::string decrypted = decrypt_data(test2);
+      assert(decrypted == data);
+    }
+    std::cerr << "writing out cipher text size: " << cipher_text.size() << "\n";
+  } else {
+    file.write(data.c_str(), data.size());
+  }
+
   file.close();
 }
 
-QByteArray FileModel::load_file(const QString& filename) const {
+QByteArray FileModel::load_file(const QString& filename, bool decrypt) const {
   QString full_name = get_prefixed_file(filename);
 
   // If this file doesn't exist there is nothing to load.
@@ -187,6 +216,17 @@ QByteArray FileModel::load_file(const QString& filename) const {
   QFile file(full_name);
   file.open(QIODevice::ReadOnly);
   QByteArray contents = file.readAll();
+
+  // Decrypt the data.
+  if (decrypt) {
+    std::string cipher_text(contents.data(), contents.size());
+    std::cerr << "loading cipher text size: " << cipher_text.size() << "\n";
+
+    std::string decrypted = decrypt_data(cipher_text);
+    QByteArray contents2(&decrypted[0], decrypted.size());
+    return contents2;
+  }
+
   return contents;
 }
 
@@ -268,7 +308,7 @@ QString FileModel::make_filename_unique(const QString& filename) const {
 }
 
 void FileModel::load_model() {
-  QByteArray contents = load_file(kAppFile);
+  QByteArray contents = load_file(kAppFile, true);
   if (contents.size()==0) {
     return;
   }
@@ -332,7 +372,7 @@ void FileModel::save_model() const {
   }
 
   // Save the data.
-  write_file(kAppFile, ss.str());
+  write_file(kAppFile, ss.str(),true);
 }
 
 void FileModel::load_graph() {
@@ -362,7 +402,7 @@ void FileModel::load_graph(int row) {
   // Load the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
   std::cerr << "trying to load graph from: " << graph_file.toStdString() << "\n";
-  QByteArray contents = load_file(graph_file);
+  QByteArray contents = load_file(graph_file, true);
 
   // Now load the data into the app root entity.
   Bits* bits = create_bits_from_raw(contents.data(),contents.size());
@@ -400,7 +440,7 @@ void FileModel::save_graph(int row) {
   // Write the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
   std::cerr << "Saving graph to: " << graph_file.toStdString() << "\n";
-  write_file(graph_file, ss.str());
+  write_file(graph_file, ss.str(), true);
 }
 
 void FileModel::create_graph(const QString& title, const QString& description) {
@@ -461,8 +501,6 @@ void FileModel::destroy_graph(int row) {
 
 void FileModel::update_graph(int row, const QString& title, const QString& description) {
   QString row_title = data(index(row,0),Qt::UserRole).toString();
-  qDebug() << "updating row: " << row_title << "\n";
-
   if (row_title != title) {
     row_title = make_title_unique(title);
   }

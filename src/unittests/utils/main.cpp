@@ -300,15 +300,10 @@ void test_signals() {
 }
 
 void test_crypto() {
-  // Test full crypto pipe.
-  std::string salt = Crypto::generate_salt();
-  std::string nonce = Crypto::generate_nonce();
-  Crypto::test_password_encrypt_decrypt("hello there where in the world is this 123456789",
-                                "this_is_a_Password!!#@$",
-                                salt, nonce);
-
-  // Simple test.
-  Crypto::test_encrypt_decrypt("hello there where in the world is this 123456789\n");
+  Crypto::test_hashed_password("this_is_a_Password!!#@$");
+  Crypto::test_private_key("this_is_a_Password!!#@$");
+  std::string test(10000, 'a');
+  Crypto::test_encrypt_decrypt(test);
 }
 
 }

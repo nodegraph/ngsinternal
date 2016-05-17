@@ -71,6 +71,12 @@ Rectangle {
     
     MessageDialog {
     	id: message_dialog
+        title: "hello"
+        icon: StandardIcon.Critical
+        function show(text) {
+            message_dialog.text = text
+            message_dialog.open()
+        }
     }
 
     // Action Bars.
@@ -137,6 +143,16 @@ Rectangle {
         visible: false
     }
 
+    CreatePasswordPage {
+        id: create_password_page
+        visible: false
+    }
+
+    CheckPasswordPage {
+        id: check_password_page
+        visible: false
+    }
+
     MenuStack {
         id: menu_stack_page
         visible: false
@@ -185,11 +201,19 @@ Rectangle {
         Qt.inputMethod.visibleChanged.connect(
       		copy_paste_bar.on_virtual_keyboard_visibility_changed)
 
+
+        if (file_model.crypto_exists()) {
+            file_model.load_crypto()
+            check_password_page.visible = true
+        } else {
+            create_password_page.visible = true
+        }
+
         // Other setup.
-        main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-        file_model.load_graph()
+        //main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+        //file_model.load_graph()
         //node_graph_page.node_graph.frame_all() // We can't frame all here as it causes gl resources to be allocated before the first draw request.
-        node_graph_page.node_graph.update()
+        //node_graph_page.node_graph.update()
     }
 
     // Intercept the android back button.
