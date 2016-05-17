@@ -11,7 +11,8 @@ Button {
     id: label_button
 
     // Public Properties.
-    property string tooltip_text: "no tooltip!"
+    property string tooltip_text: ""
+    property alias mouse_area: mouse_area
 
     // Dimensions.
     //width: app_settings.image_button_width
@@ -21,6 +22,9 @@ Button {
     // These are used when the AppImageButton is used inside a non-layout object, like a Rectangle.
     anchors.leftMargin: app_settings.action_bar_left_margin
     anchors.rightMargin: app_settings.action_bar_right_margin
+
+    // Signals
+    signal mouse_pressed()
 
     style: ButtonStyle {
         background: Rectangle {
@@ -44,11 +48,14 @@ Button {
         anchors.fill: parent
         onPressAndHold: {
             mouse.accepted = true
-            app_tooltip.show(label_button,tooltip_text)
-            app_settings.vibrate()
+            if (tooltip_text != "") {
+                app_tooltip.show(label_button,tooltip_text)
+                app_settings.vibrate()
+            }
         }
         onPressed: {
             mouse.accepted = true
+            mouse_pressed()
         }
         onReleased: {
             app_tooltip.hide();

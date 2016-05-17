@@ -32,6 +32,7 @@
         <file>qml/octoplier/tools/qmldir</file>
         <file>qml/octoplier/tools/AppImageButton.qml</file>
         <file>qml/octoplier/tools/AppTextField.qml</file>
+        <file>qml/octoplier/tools/AppPasswordField.qml</file>
         <file>qml/octoplier/tools/AppTooltip.qml</file>
         <file>qml/octoplier/tools/AppUnits.qml</file>
         <file>qml/octoplier/tools/AppMenu.qml</file>

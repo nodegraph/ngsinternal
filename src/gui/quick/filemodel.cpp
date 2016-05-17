@@ -68,7 +68,6 @@ void FileModel::initialize_fixed_deps() {
 }
 
 void FileModel::on_item_changed(QStandardItem* item) {
-  std::cerr << "saving model on item change\n";
   save_model();
 }
 
@@ -89,10 +88,6 @@ void FileModel::create_crypto(const QString& chosen_password) {
     saver.save(_salt);
     saver.save(_hashed_password);
     write_file(kCryptoFile, ss.str());
-
-    std::cerr << "saving nonce: " << _nonce << "\n";
-    std::cerr << "saving salt: " << _salt << "\n";
-    std::cerr << "saving hpass: " << _hashed_password << "\n";
   }
 }
 
@@ -117,10 +112,6 @@ void FileModel::load_crypto() {
   loader.load(_nonce);
   loader.load(_salt);
   loader.load(_hashed_password);
-
-  std::cerr << "loading nonce: " << _nonce << "\n";
-  std::cerr << "loading salt: " << _salt << "\n";
-  std::cerr << "loading hpass: " << _hashed_password << "\n";
 }
 
 bool FileModel::check_password(const QString& password) {
@@ -180,7 +171,7 @@ std::string FileModel::decrypt_data(const std::string& encrypted_data) const {
 
 void FileModel::write_file(const QString& filename, const std::string& data, bool encrypt) const {
   QString full_name = get_prefixed_file(filename);
-  std::cerr << "saving to file: " << full_name.toStdString() << "\n";
+  //std::cerr << "saving to file: " << full_name.toStdString() << "\n";
   QFile file(full_name);
   file.open(QIODevice::ReadWrite);
 
@@ -196,7 +187,6 @@ void FileModel::write_file(const QString& filename, const std::string& data, boo
       std::string decrypted = decrypt_data(test2);
       assert(decrypted == data);
     }
-    std::cerr << "writing out cipher text size: " << cipher_text.size() << "\n";
   } else {
     file.write(data.c_str(), data.size());
   }
@@ -220,8 +210,6 @@ QByteArray FileModel::load_file(const QString& filename, bool decrypt) const {
   // Decrypt the data.
   if (decrypt) {
     std::string cipher_text(contents.data(), contents.size());
-    std::cerr << "loading cipher text size: " << cipher_text.size() << "\n";
-
     std::string decrypted = decrypt_data(cipher_text);
     QByteArray contents2(&decrypted[0], decrypted.size());
     return contents2;
@@ -334,8 +322,6 @@ void FileModel::load_model() {
     std::string description;
     loader.load(description);
 
-    std::cerr << "loading:----" << title << "----\n";
-
     QStandardItem *item = new_ff QStandardItem();
     QString qtitle(title.c_str());
     item->setData(qtitle, Qt::UserRole);
@@ -362,9 +348,6 @@ void FileModel::save_model() const {
     saver.save(row_count);
 
     for (size_t i=0; i<row_count; ++i) {
-
-      std::cerr << "saving: " << data(index(i,0), Qt::UserRole).toString().toStdString() << "\n";
-
       saver.save(data(index(i,0), Qt::UserRole).toString().toStdString());
       saver.save(data(index(i,0), kFilenameRole).toString().toStdString());
       saver.save(data(index(i,0), kDescriptionRole).toString().toStdString());
@@ -401,7 +384,6 @@ void FileModel::load_graph(int row) {
 
   // Load the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
-  std::cerr << "trying to load graph from: " << graph_file.toStdString() << "\n";
   QByteArray contents = load_file(graph_file, true);
 
   // Now load the data into the app root entity.
@@ -421,7 +403,6 @@ void FileModel::load_graph(int row) {
   // Everything from the app root is not updated. So we update it here.
   get_app_root()->initialize_deps();
   get_app_root()->update_deps_and_hierarchy();
-  std::cerr << "done load graph from: " << graph_file.toStdString() << "\n";
 
   // Save the model with the latest row.
   save_model();
@@ -439,7 +420,6 @@ void FileModel::save_graph(int row) {
 
   // Write the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
-  std::cerr << "Saving graph to: " << graph_file.toStdString() << "\n";
   write_file(graph_file, ss.str(), true);
 }
 

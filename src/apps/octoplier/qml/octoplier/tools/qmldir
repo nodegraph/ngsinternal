@@ -4,6 +4,7 @@ module tools
 AppImageButton 1.0 AppImageButton.qml
 AppMenu 1.0 AppMenu.qml
 AppTextField 1.0 AppTextField.qml
+AppPasswordField 1.0 AppPasswordField.qml
 AppTooltip 1.0 AppTooltip.qml
 AppUnits 1.0 AppUnits.qml
 AppLoader 1.0 AppLoader.qml

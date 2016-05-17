@@ -105,6 +105,7 @@ Item{
     property color ng_bg_alternate_transparent_color: "#9929B6F6" // a transparent ligher blue
         
     // Font Properties.
+    property double large_font_point_size: 30
     property double font_point_size: 25
     property double tree_view_font_point_size: 25
 

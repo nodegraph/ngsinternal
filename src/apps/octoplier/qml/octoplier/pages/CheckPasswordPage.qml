@@ -26,58 +26,74 @@ Rectangle {
     ColumnLayout {
         height: app_settings.screen_height
         width: app_settings.screen_width
-        spacing: app_settings.column_layout_spacing
+        spacing: app_settings.column_layout_spacing * 2
 
-        // Logo.
-//        Image {
-//            id: splash_image
-//            width: parent.width / 3
-//            height: width
-//            x: width
-//            y: (parent.height - width) / 2
-//            source: "qrc:///images/octopus_white.png"
-//        }
-
+        // Filler.
         Item {Layout.fillHeight: true}
 
-        AppLabel {
-            text: "Enter password"
+        // Password lablel.
+        Label {
+            id: app_label
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Password"
+            font.pointSize: app_settings.large_font_point_size
+            font.bold: false
+            font.italic: false
+            color: "white"
         }
 
-        // URL Text Entry Field.
-        AppTextField {
+        // Password field.
+        AppPasswordField {
             id: password
-            tool_bar: copy_paste_bar
-            inputMethodHints: Qt.ImhPreferLowercase | Qt.ImhSensitiveData | Qt.ImhHiddenText
-            echoMode: TextInput.Password
-            text: ""
-            onAccepted: {
-            }
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        // Buttons.
-        RowLayout {
-            Item {Layout.fillWidth: true}
-            AppLabelButton {
-                text: "ok"
-                onClicked: {
-                    if (file_model.check_password(password.text)) {
-                        file_model.load_model()
-                        file_model.load_graph()
-                        node_graph_page.node_graph.update()
-                        check_password_page.visible = false
-                        main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-                    } else {
-                        message_dialog.title = "Incorrect Password"
-                        message_dialog.icon = StandardIcon.Critical
-                        message_dialog.show("The password entered is incorrect.")
-                    }
+        // Continue button.
+        AppLabelButton {
+            id: continue_button
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "continue"
+            onClicked: {
+                if (file_model.check_password(password.text)) {
+                    // Load the last node graph.
+                    file_model.load_model()
+                    file_model.load_graph()
+                    node_graph_page.node_graph.update()
+                    // Hide this page and erase password from page.
+                    check_password_page.visible = false
+                    password.text = ""
+                    // Switch to node graph mode.
+                    main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+                } else {
+                    status.text = "password is incorrect"
                 }
             }
-            Item {Layout.fillWidth: true}
+
         }
 
+        // Shows status of password processing.
+        Label {
+            id: status
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: ""
+            font.pointSize: app_settings.font_point_size
+            font.bold: false
+            font.italic: false
+            color: "yellow"
+
+            function on_mouse_pressed() {
+                text = "processing ..."
+                update()
+            }
+        }
+
+        // Filler.
         Item {Layout.fillHeight: true}
+
+        // Hook up our signals.
+        Component.onCompleted: {
+            continue_button.mouse_pressed.connect(status.on_mouse_pressed)
+        }
     }
 }
 

@@ -37,7 +37,7 @@ Rectangle {
             more_menu_button.visible = true;
         } else if (m == app_settings.node_graph_mode) {
             node_graph_button.lit = true
-            action_bar_title.text = file_model.get_working_title()
+            action_bar_title.text = "Nodes"
             more_menu_button.visible = true;
         } else if (m == app_settings.web_browser_mode) {
             browser_button.lit = true
