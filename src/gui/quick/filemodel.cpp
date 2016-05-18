@@ -173,7 +173,7 @@ void FileModel::write_file(const QString& filename, const std::string& data, boo
   QString full_name = get_prefixed_file(filename);
   //std::cerr << "saving to file: " << full_name.toStdString() << "\n";
   QFile file(full_name);
-  file.open(QIODevice::ReadWrite);
+  file.open(QIODevice::WriteOnly);
 
   // Encrypt the data.
   if (encrypt) {
@@ -190,8 +190,8 @@ void FileModel::write_file(const QString& filename, const std::string& data, boo
   } else {
     file.write(data.c_str(), data.size());
   }
-
   file.close();
+  //std::cerr << "done saving to file: " << full_name.toStdString() << "\n";
 }
 
 QByteArray FileModel::load_file(const QString& filename, bool decrypt) const {
