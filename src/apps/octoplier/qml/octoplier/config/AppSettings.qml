@@ -8,7 +8,19 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
 Item{
+    id: app_settings
     visible: false
+
+    function try_catch_wrap(f) {
+        return function() {
+            try {
+                f.apply(this, arguments)
+            } catch(e) {
+                //console.log("Error: caught exception: " + e)
+                console.log("Error: caught exeption: " + e.message + "\nstacktrace: " + e.stack)
+            }
+        }
+    }
     
     // -------------------------------------------------------------------
     // The 3 main sections of our gui.
@@ -33,7 +45,8 @@ Item{
     property int list_item_border_width: app_units.dp(1)
 
     // Menu Stack Properties.
-    property color menu_stack_bg_color: "#FF0288D1"
+    property color menu_stack_bg_color: action_bar_bg_color //"#FF0288D1"
+    property color menu_page_bg_color: action_bar_bg_color //"#FF0288D1"
     property color menu_stack_header_bg_color: "#FF4CAF50" // a light green color
     property color menu_stack_header_border_color: "#FFFFFFFF" // pure white
     property int menu_stack_header_border_width: app_units.dp(2)
@@ -51,7 +64,7 @@ Item{
     property int screen_width: parent.width
     
     // Page Properties.
-    property int page_height: parent.height - action_bar_height - splitter_height
+    property int page_height: (parent.height - action_bar_height - splitter_height)
     property int page_width: parent.width
     // These values are with respect to the whole screen.
     property int page_x: 0
@@ -73,19 +86,15 @@ Item{
     // Modes
     // -------------------------------------------------------------------
     
-    property int menu_mode: 0
-    property int file_mode: 1
-    property int node_graph_mode: 2
-    property int web_browser_mode: 3
-    property int posts_mode: 4
-    property int settings_mode: 5
+    property int file_mode: 0
+    property int node_graph_mode: 1
+    property int web_browser_mode: 2
+    property int posts_mode: 3
+    property int settings_mode: 4
     
     property int view_node_mode: 5
     property int edit_node_mode: 6
     
-    property int more_menu_mode: 7
-    
-    property int url_entry_mode: 8
     
     // -------------------------------------------------------------------
     // Layering.
@@ -148,10 +157,15 @@ Item{
             java_bridge.vibrate(10)
         }
     }
+
+    function dismiss_keyboard_from_webview() {
+        // On android we vibrate.
+        if (Qt.platform.os == "android") {
+            java_bridge.dismiss_keyboard_from_webview()
+        }
+    }
     
-    // Stuff to do when this component is completed.
     Component.onCompleted: {
-        console.log("appsettings page width height: "+page_width+","+page_height)
     }
 }
 

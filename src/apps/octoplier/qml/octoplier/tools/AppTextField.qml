@@ -18,9 +18,14 @@ TextField {
         rightMargin: app_settings.action_bar_right_margin
     }
     
-    // Input hints.
-    inputMethodHints: Qt.ImhPreferLowercase   // Qt.ImhMultiLine | Qt.ImhEmailCharactersOnly | Qt.ImhUrlCharactersOnly
-    
+//    // Input hints.
+//    inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhSensitiveData | Qt.ImhLowercaseOnly | Qt.ImhUrlCharactersOnly // Qt.ImhMultiLine | Qt.ImhEmailCharactersOnly | Qt.ImhUrlCharactersOnly
+    focus: true
+    activeFocusOnPress: true
+    inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase
+    echoMode: TextInput.Normal
+
+
     // Text.
     text: "hello"
     textColor: "white"
@@ -28,6 +33,7 @@ TextField {
     
     onSelectionStartChanged: {
         if (activeFocus) {
+            forceActiveFocus()
             tool_bar.text_editor = text_field
             tool_bar.visible = true
         }
@@ -35,6 +41,7 @@ TextField {
     
     onSelectionEndChanged: {
         if (activeFocus) {
+            forceActiveFocus()
             tool_bar.text_editor = text_field
             tool_bar.visible = true
         }
@@ -42,13 +49,15 @@ TextField {
         
     onSelectedTextChanged: {
         if (activeFocus) {
+            forceActiveFocus()
             tool_bar.text_editor = text_field
             tool_bar.visible = true
         }
-    }   
+    }
         
     onActiveFocusChanged: {
         if (activeFocus) {
+            forceActiveFocus()
             tool_bar.text_editor = text_field
             tool_bar.visible = true
         }

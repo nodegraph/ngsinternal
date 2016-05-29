@@ -22,7 +22,7 @@ Rectangle{
 
     x: app_settings.page_x
     y: app_settings.page_y
-    z: app_settings.page_z + 1
+    z: app_settings.page_z
 
     color: app_settings.menu_stack_bg_color
 
@@ -44,6 +44,7 @@ Rectangle{
 
     // Slots.
     function on_node_context_menu() {
+        app_settings.vibrate()
         center_new_nodes = false
         stack_view.clear_models()
         stack_view.push_model_name("NodeActions")
@@ -52,6 +53,7 @@ Rectangle{
     }
 
     function on_group_node_context_menu(){
+        app_settings.vibrate()
         center_new_nodes = false
         stack_view.clear_models()
         stack_view.push_model_name("GroupNodeActions")
@@ -60,6 +62,7 @@ Rectangle{
     }
 
     function on_node_graph_context_menu() {
+        app_settings.vibrate()
         center_new_nodes = false
         stack_view.clear_models()
         stack_view.push_model_name("NodeGraphActions")
@@ -95,7 +98,7 @@ Rectangle{
         url_entry_page.visible = true
         stack_view.push(url_entry_page)
         stack_view_header.push_header_title("Go to URL")
-        last_mode = app_settings.web_browser_mode
+        last_mode = null
         visible = true
     }
 

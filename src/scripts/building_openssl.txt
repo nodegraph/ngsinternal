@@ -1,0 +1,22 @@
+-- make sure to do a fresh unzip of openssl for every arch
+-- also put nasm on the path
+set PATH="D:\installs\windowsunpack\nasm-2.12.01";%PATH%
+
+-- open a visual studio native x86 comand shell with perl
+perl Configure VC-WIN32 --prefix=D:\dev\windows\openssl-1.0.2h\x86
+ms\do_nasm
+nmake -f ms\nt.mak 
+nmake -f ms\nt.mak install
+
+-- open a visual studio native x86 comand shell with perl
+perl Configure VC-WIN32 --prefix=D:\dev\windows\openssl-1.0.2h\x86_debug
+ms\do_nasm
+-- In a text editor (like Notepad), open ms\nt.mak and replace all occurrences of /Zi with /Z7. There should be two replacements
+nmake -f ms\nt.mak 
+nmake -f ms\nt.mak install
+
+-- open a visual studio native x64 comand shell with perl
+perl Configure VC-WIN64A --prefix=D:\dev\windows\openssl-1.0.2h\x64
+ms\do_nasm
+nmake -f ms\nt.mak 
+nmake -f ms\nt.mak install

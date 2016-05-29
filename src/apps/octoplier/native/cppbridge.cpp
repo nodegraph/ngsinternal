@@ -12,11 +12,14 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
 #include <QtWidgets/QSplashScreen>
+#include <QtGui/QGuiApplication>
 
 #include <components/computes/computeglobals.h>
 #include <gui/widget/splashscreen.h>
 
 namespace ngs {
+
+
 
 CppBridge::CppBridge(QObject *parent)
     : QObject(parent) {
@@ -103,5 +106,61 @@ void CppBridge::on_move_root(int child_row) {
   //_tree_model->push_root(child_row);
 }
 
+void CppBridge::reset_input_method() {
+//  qApp->inputMethod()->commit();
+//  qApp->inputMethod()->reset();
+//  qApp->inputMethod()->update(Qt::ImCurrentSelection);
+
+
+  qApp->inputMethod()->hide();
+//  qApp->inputMethod()->show();
+//  qApp->inputMethod()->invokeAction(QInputMethod::Click, 0);
+  qApp->inputMethod()->hide();
+
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+
+  qApp->inputMethod()->hide();
+
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+
+  qApp->inputMethod()->hide();
+
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+  qApp->processEvents();
+}
+
+void CppBridge::press_down_key(QObject* obj) {
+  QKeyEvent *event = new QKeyEvent ( QEvent::KeyPress, Qt::Key_Close, Qt::NoModifier);
+  qApp->postEvent(obj, event);
+}
+
+void CppBridge::release_down_key(QObject* obj) {
+  QKeyEvent *event = new QKeyEvent ( QEvent::KeyRelease, Qt::Key_Close, Qt::NoModifier);
+  qApp->postEvent(obj, event);
+}
 
 }

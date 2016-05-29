@@ -16,6 +16,8 @@
 #include <QtCore/QStaticAssertFailure>
 #include <QtQml/QtQml>
 #include <QtQml/QQmlEngine>
+//#include <QtWebKitWidgets/QWebView>
+//#include <private/qquickwebview_p.h>
 //#include <QtWidgets/QSplashScreen>
 //#include <QtCore/QTimer>
 
@@ -252,6 +254,7 @@ int main(int argc, char *argv[]) {
     g_qml_engine->addImportPath("qrc:/");
 
 
+
 #if ARCH == ARCH_IOS
   // Register QML types.
   qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2Plugin().instance())->registerTypes("QtQuick");
@@ -308,10 +311,10 @@ int main(int argc, char *argv[]) {
     Utils* utils = new_ff Utils(g_qml_engine);
     Scripts* scripts = new_ff Scripts();
 
-    qDebug() << "physical dots per inch: " << QGuiApplication::primaryScreen()->physicalDotsPerInch();
-    qDebug() << "device pixel ratio: " << QGuiApplication::primaryScreen()->devicePixelRatio();
-    qDebug() << "width: " << QGuiApplication::primaryScreen()->size().width();
-    qDebug() << "height: " << QGuiApplication::primaryScreen()->size().height();
+    //qDebug() << "physical dots per inch: " << QGuiApplication::primaryScreen()->physicalDotsPerInch();
+    //qDebug() << "device pixel ratio: " << QGuiApplication::primaryScreen()->devicePixelRatio();
+    //qDebug() << "width: " << QGuiApplication::primaryScreen()->size().width();
+    //qDebug() << "height: " << QGuiApplication::primaryScreen()->size().height();
 
     // Expose some c++ objects to qml.
     context->setContextProperty("pdpi", QGuiApplication::primaryScreen()->physicalDotsPerInch());
@@ -321,6 +324,7 @@ int main(int argc, char *argv[]) {
     context->setContextProperty(QStringLiteral("scripts"), scripts);
     context->setContextProperty(QStringLiteral("treemodel"), tree_model);
     context->setContextProperty(QStringLiteral("file_model"), file_model);
+    context->setContextProperty(QStringLiteral("quick_view"), g_quick_view);
 
     //context->setContextProperty(QStringLiteral("system_properties"),dynamic_cast<QObject*>(ng_root->get_component<SystemSignals>()));
 
@@ -329,13 +333,13 @@ int main(int argc, char *argv[]) {
     cpp_bridge = new_ff CppBridge(&app);
     context->setContextProperty(QStringLiteral("cpp_bridge"), cpp_bridge);
 
-    // Load our qml doc.
     view.setSource(QUrl(QStringLiteral("qrc:/qml/loader.qml")));
     view.show();
     view.update();
     app.processEvents();
 
     view.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    qApp->setQuitOnLastWindowClosed(false);
 
     // Get the top level qml objects.
     //QList<QObject *> root_objects = engine.rootObjects();

@@ -23,6 +23,8 @@ Rectangle {
     // Properties.
     color: app_settings.ng_bg_color
 
+    property alias url_field: url_field
+
     ColumnLayout {
         //height: app_settings.menu_page_height
         width: app_settings.menu_page_width
@@ -39,14 +41,14 @@ Rectangle {
 
         // URL Text Entry Field.
         AppTextField {
-            id: urlField
+            id: url_field
             tool_bar: copy_paste_bar
             //text: web_browser_page.web_view_alias.url
             inputMethodHints: Qt.ImhPreferLowercase | Qt.ImhUrlCharactersOnly
             text: "www."
             onAccepted: {
+                web_browser_page.web_view_alias.url = utils.url_from_input(url_field.text)
                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)
-                web_browser_page.web_view_alias.url = utils.url_from_input(urlField.text)
             }
         }
         
@@ -56,8 +58,8 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    main_bar.switch_to_mode(app_settings.web_browser_mode);
-                    web_browser_page.web_view_alias.url = utils.url_from_input(urlField.text)
+                    web_browser_page.web_view_alias.url = utils.url_from_input(url_field.text)
+                    main_bar.on_switch_to_mode(app_settings.web_browser_mode)
                 }
             }
             Rectangle {
@@ -68,7 +70,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    main_bar.switch_to_mode(app_settings.web_browser_mode);
+                    main_bar.on_switch_to_mode(app_settings.web_browser_mode)
                 }
             }
             Item {Layout.fillWidth: true}

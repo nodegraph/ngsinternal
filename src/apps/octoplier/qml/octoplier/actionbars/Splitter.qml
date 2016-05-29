@@ -16,9 +16,9 @@ Rectangle {
     width: app_settings.page_width
 
     // Positioning.
-    x: app_settings.page_x
-    y: app_settings.action_bar_height
-    z: app_settings.page_z
+    x: app_settings.splitter_x
+    y: app_settings.splitter_y
+    z: app_settings.splitter_z
 
     // URL loading progress overlay.
     // Note that the progress bar won't show anything on ios and winrt platforms.

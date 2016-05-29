@@ -139,9 +139,6 @@ void NodeGraphQuickItem::releaseResources() {
 
 void NodeGraphQuickItem::handle_window_changed(QQuickWindow *win) {
   if (win) {
-
-    qDebug() << "handling window changed !!!!!!!\n";
-
     //connect(win, SIGNAL(beforeSynchronizing()), this, SLOT(sync()), Qt::DirectConnection);
     connect(win, SIGNAL(sceneGraphInvalidated()), this, SLOT(cleanup()), Qt::DirectConnection);
     win->setClearBeforeRendering(false);

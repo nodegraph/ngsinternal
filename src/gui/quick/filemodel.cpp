@@ -312,9 +312,7 @@ void FileModel::load_model() {
   size_t num_rows;
   loader.load(num_rows);
 
-  setRowCount(num_rows);
   for (size_t i=0; i<num_rows; ++i) {
-
     std::string title;
     loader.load(title);
     std::string filename;

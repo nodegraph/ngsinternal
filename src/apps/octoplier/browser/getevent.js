@@ -1,20 +1,15 @@
-// This file is run in the browser.
+// This file runs in the browser.
 
-var result;
+var result = "";
 
-if (typeof(OCTOPLIER_IS_AWESOME) === "undefined") {
-    result = "event recorder not initialized";
+if (typeof(octoplier) === "undefined") {
+    result = "";
 } else {
     try {
-        // Make sure our recorder is properly connected to the window.
-        OCTOPLIER_IS_AWESOME.g_event_recorder.connect_to_window();
-
-        // Unblock one of our blocked events.
-        result = OCTOPLIER_IS_AWESOME.g_event_recorder.unblock();
+        result = octoplier.event_stack.get_events();
         result = JSON.stringify(result);
-
     } catch(e) {
-        OCTOPLIER_IS_AWESOME.g_debugger.log_exception(e);
+        octoplier.logger.log_exception(e);
     }
 }
 

@@ -130,7 +130,6 @@ Rectangle{
                 }
                 onDoubleClicked: {
                     mouse.accepted = true
-                    console.debug("rect click")
                     delegate.ListView.view.currentIndex = index
                     on_open_more_options()
                 }

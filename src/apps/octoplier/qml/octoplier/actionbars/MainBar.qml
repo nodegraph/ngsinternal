@@ -19,7 +19,7 @@ Rectangle {
     x: app_settings.action_bar_x
     y: app_settings.action_bar_y
     z: app_settings.action_bar_z
-    
+
     // Signals.
     signal switch_to_mode(int mode)
     signal open_more_options()
@@ -40,7 +40,7 @@ Rectangle {
             action_bar_title.text = "Nodes"
             more_menu_button.visible = true;
         } else if (m == app_settings.web_browser_mode) {
-            browser_button.lit = true
+            web_browser_button.lit = true
             action_bar_title.text = "Browser"
             more_menu_button.visible = true;
         } else if (m == app_settings.posts_mode) {
@@ -58,11 +58,11 @@ Rectangle {
     function clear_lit_buttons() {
         file_button.lit = false
         node_graph_button.lit = false
-        browser_button.lit = false
+        web_browser_button.lit = false
         posts_button.lit = false
         settings_button.lit = false
     }
-    
+
     // Background Setup.
     color: app_settings.action_bar_bg_color
 
@@ -96,7 +96,7 @@ Rectangle {
         }
     }
 
-    // Node Graph Mode Button.
+    // File Mode Button.
     AppImageButton {
         id: file_button
 
@@ -116,7 +116,7 @@ Rectangle {
         id: node_graph_button
         
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: browser_button.left
+        anchors.right: web_browser_button.left
         
         image_url: "qrc:///icons/ic_widgets_white_48dp.png"
         tooltip_text: "Nodes"
@@ -128,7 +128,7 @@ Rectangle {
 
     // Web Browser Mode Button.
     AppImageButton {
-        id: browser_button
+        id: web_browser_button
         
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: posts_button.left

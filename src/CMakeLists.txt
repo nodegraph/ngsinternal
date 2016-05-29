@@ -138,6 +138,8 @@ find_package(Qt5OpenGLExtensions)
 
 find_package(Qt5WebView)
 find_package(Qt5WebChannel)
+find_package(Qt5WebSockets)
+find_package(Qt5Network)
 
 if ((${ARCH} STREQUAL "ARCH_LINUX") OR (${ARCH} STREQUAL "ARCH_WINDOWS") OR (${ARCH} STREQUAL "ARCH_MACOS"))
 	find_package(Qt5WebEngine)

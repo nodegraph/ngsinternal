@@ -14,9 +14,11 @@ import octoplier.tools 1.0
 // y: Qt.platform.os === "android" ? app_settings.action_bar_height : 0
 
 Rectangle {
-
+    id: web_browser_page
     // Aliases to our internal objects.
-    property alias web_view_alias: web_view
+    property alias web_view_alias: web_view;
+
+    color: app_settings.ng_bg_color // "#FF01579B" //app_settings.action_bar_bg_color // app_settings.ng_bg_color
 
     // Dimensions.
     height: app_settings.page_height
@@ -33,104 +35,57 @@ Rectangle {
     
     // Methods.
     function on_switch_to_mode(mode) {
-    	if (mode == app_settings.web_browser_mode) {
-            visible = true;
+        if (mode == app_settings.web_browser_mode) {
+            visible = true
             menu_stack_page.visible = false
-	   	} else {
-            visible = false;
-	    }
+        } else {
+            if (visible) {
+                hide_web_view()
+            }
+        }
     }
     function on_open_more_options() {
         if (visible) {
-            console.log("web browser is opening more options")
-            
-            // Hide this web browser page, as on mobile platforms the
+            // Hide this web browser page, as on ios the
             // webview don't allow anything to be drawn over them.
-            visible = false
+            hide_web_view()
 			
 			// Set up the menu stack page.            
-            menu_stack_page.last_mode = app_settings.web_browser_mode
             menu_stack_page.center_new_nodes = true
             menu_stack_page.visible = true
             menu_stack_page.stack_view.clear()
             menu_stack_page.stack_view.push_model_name("WebBrowserActions")
-        } else {
-            console.log("web browser is not opening more options")
         }
     }
-    
-    // -------------------------------------------------
-    // Web View.   
-    // -------------------------------------------------
-    WebView {
-        id: web_view
-        objectName: "web_view_object"
 
-        // Positioning.
-        x: 0
-        y: 0
-        z: app_settings.page_z
-        
-        // Dimensions.
-        height: parent.height
-        width: parent.width
-
-        // Initial url.
-        url: "http://www.google.com"
-
-        // Timer to pulse our web recorder.
-//        Timer {
-//            interval: 500
-//            running: true
-//            repeat: true
-//            onTriggered: {
-//                try {
-//                    var eventRecorderScriptLoaded = function (result) {
-//                        console.log("event recorder loaded")
-//                    }
-
-//                    var getEventHandler = function (result) {
-//                        if (result === "event recorder not initialized") {
-//                            console.log("installing events recorder")
-//                            web_view.runJavaScript(
-//                                        scripts.get_event_recorder_script(),
-//                                        eventRecorderScriptLoaded)
-//                        } else if (result != "null") {
-//                            console.log("dequeuing:" + result)
-//                        }
-//                    }
-//                    // Dequeue the next event info.
-//                    web_view.runJavaScript(scripts.get_event_retriever_script(
-//                                               ), getEventHandler)
-
-//                    var getErrorsHandler = function (result) {
-//                        if (result != "[]") {
-//                            //console.log("debug messages:" + result)
-//                        }
-//                    }
-//                    // Dequeue any debug messages that have built up.
-//                    web_view.runJavaScript(scripts.get_error_retriever_script(
-//                                               ), getErrorsHandler)
-//                } catch (e) {
-//                    console.log("Error in time triggered code: " + e)
-//                }
-//            }
-//        }
-
-        //                onLoadingChanged: {
-        //                    if (loadRequest.status == WebView.LoadStartedStatus) {
-        //                        //message_dialog.show(qsTr("page load has started"))
-        //                    } else if (loadRequest.status == WebView.LoadStoppedStatus) {
-        //                        message_dialog.show(qsTr("page load has stopped"))
-        //                    } else if (loadRequest.status == WebView.LoadSucceededStatus) {
-        //                        message_dialog.show(qsTr("page load has succeeded"))
-        //                        // Inject the user blockedActions recorder.
-        //                        web_view.runJavaScript(Scripts.OCTOPLIER_BROWSER_SCRIPTS.USER_ACTIONS_RECORDER_SCRIPT);
-        //                    } else if (loadRequest.status == WebView.LoadFailedStatus) {
-        //                        message_dialog.show(qsTr("page load has failed"))
-        //                    } else {
-        //                        message_dialog.show(qsTr("got an unknown load status"))
-        //                    }
-        //                }
+    function hide_web_view() {
+        // This is a hack to fix a Qt5.6 issue where the android keyboard won't
+        // popup anymore once it used in a field in the WebView.
+        app_settings.dismiss_keyboard_from_webview()
+        visible = false
+        web_view.focus = false
+        app_settings.dismiss_keyboard_from_webview()
     }
+
+    function start_recording() {
+        // Clear out our current event recording.
+        web_view.events = []
+        web_view.events.push({type: 'goto_url', url: web_view.url})
+
+        // Start recording.
+        web_view.recording = true
+    }
+
+    function stop_recording() {
+        web_view.recording = false
+    }
+
+    function start_replay() {
+        web_view.start_replay()
+    }
+
+    AppWebView {
+        id: web_view
+    }
+
 }

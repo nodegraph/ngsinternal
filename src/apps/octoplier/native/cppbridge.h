@@ -11,6 +11,10 @@ class NodeGraphSelection;
 class NodeGraphQuickItem;
 class VariantMapTreeModel;
 
+
+
+
+
 class CppBridge : public QObject {
 Q_OBJECT
  public:
@@ -41,8 +45,10 @@ signals:
 
   void post_init();
 
+  void reset_input_method();
 
- private:
+  void press_down_key(QObject* obj);
+  void release_down_key(QObject* obj);
 };
 
 }

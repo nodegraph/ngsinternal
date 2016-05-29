@@ -39,6 +39,7 @@
         <file>qml/octoplier/tools/AppLoader.qml</file>
         <file>qml/octoplier/tools/AppLabelButton.qml</file>
         <file>qml/octoplier/tools/AppLabel.qml</file>
+        <file>qml/octoplier/tools/AppWebView.qml</file>
         
         <!-- Data -->
         <file>qml/octoplier/data/qmldir</file>
@@ -92,6 +93,12 @@
         <file>browser/geterrors.js</file>
         <file>browser/getevent.js</file>
         <file>browser/unittest.js</file>
+        <file>browser/startrecording.js</file>
+        <file>browser/stoprecording.js</file>
+        
+        <!-- Javascript -->
+        <file>javascript/test.js</file>
+        <file>javascript/test2.js</file>
         
         <!-- Tree View Icons. -->
         <file alias="icons/ic_add_circle_outline_black_48dp.png">../../external/icons/ic_add_circle_outline_black_48dp.png</file>

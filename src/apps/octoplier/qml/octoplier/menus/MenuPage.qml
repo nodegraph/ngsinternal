@@ -27,7 +27,7 @@ Rectangle {
     y: 0
     z: 0
 
-    color: app_settings.ng_bg_color
+    color: app_settings.menu_page_bg_color
 
     property var model:  NodeActions {}
 

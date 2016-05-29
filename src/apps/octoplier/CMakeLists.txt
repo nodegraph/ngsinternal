@@ -68,6 +68,7 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 		ngs_gui 
 		ngs_entities
 		Qt5::WebEngine 
+		Qt5::Network
 		)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(octoplier WIN32 ${sources})
@@ -88,6 +89,7 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
 		ngs_gui 
 		ngs_entities
 		Qt5WebView
+		Qt5::Network
 		Qt5AndroidExtras )
 endif ()
 

@@ -15,6 +15,7 @@ public:
 
     Q_INVOKABLE void notify(const QString& title, const QString& content);
     Q_INVOKABLE void vibrate(long milli_secs);
+    Q_INVOKABLE void dismiss_keyboard_from_webview();
 
 private:
     void acquire_activity();

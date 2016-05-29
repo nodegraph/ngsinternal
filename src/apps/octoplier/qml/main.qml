@@ -170,8 +170,6 @@ Rectangle {
     }
 
     function update_dependencies() {
-        console.log("staring to update dependencies between components")
-
         // Mode change connections.
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(web_browser_page.on_switch_to_mode)
@@ -214,6 +212,24 @@ Rectangle {
         //file_model.load_graph()
         //node_graph_page.node_graph.frame_all() // We can't frame all here as it causes gl resources to be allocated before the first draw request.
         //node_graph_page.node_graph.update()
+
+        cpp_bridge.post_init()
+
+        quick_view.closing.connect(app_window.onClosing)
+    }
+
+    function onClosing() {
+        return false
+    }
+
+    focus: true
+
+    Keys.onReleased: {
+        if (event.key == Qt.Key_Back) {
+            console.log("Back button captured - wunderbar !")
+            event.accepted = true
+        }
+        console.log("pppppppppppppppppppp pressed key: " + event.key)
     }
 
     // Intercept the android back button.

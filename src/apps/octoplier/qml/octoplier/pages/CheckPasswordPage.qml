@@ -64,6 +64,7 @@ Rectangle {
                     password.text = ""
                     // Switch to node graph mode.
                     main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+                    Qt.inputMethod.hide()
                 } else {
                     status.text = "password is incorrect"
                 }

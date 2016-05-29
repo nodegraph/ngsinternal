@@ -3,11 +3,13 @@
     <application android:icon="@mipmap/octopus_blue" android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="octoplier">
         <!-- android:theme="@style/AppTheme" -->
         <!-- android:theme="@android:style/Theme.NoTitleBar.Fullscreen" -->
+        <!-- android:windowSoftInputMode="stateVisible|adjustResize" -->
         <activity android:name="com.octoplier.app.JavaBridgeImp"
         		  android:theme="@style/AppTheme"
         		  android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation"
                   android:label="octoplier"
                   android:screenOrientation="unspecified"
+                  
                   android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

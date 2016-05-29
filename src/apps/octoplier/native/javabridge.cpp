@@ -43,4 +43,13 @@ void JavaBridge::vibrate(long milli_secs) {
   }
 }
 
+void JavaBridge::dismiss_keyboard_from_webview() {
+  acquire_activity();
+  if (_activity.isValid()) {
+    // Note the jlong cast is important, otherwise a huge (usually) negative is
+    // sent over to the java side.
+    _activity.callMethod<void>("dismiss_keyboard_from_webview");
+  }
+}
+
 }

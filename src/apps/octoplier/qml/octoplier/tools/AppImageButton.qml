@@ -49,6 +49,7 @@ Button {
             app_settings.vibrate()
         }
         onPressed: {
+            app_settings.vibrate()
             mouse.accepted = true
             image_button.clicked(mouse)
         }
