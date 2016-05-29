@@ -96,10 +96,6 @@
         <file>browser/startrecording.js</file>
         <file>browser/stoprecording.js</file>
         
-        <!-- Javascript -->
-        <file>javascript/test.js</file>
-        <file>javascript/test2.js</file>
-        
         <!-- Tree View Icons. -->
         <file alias="icons/ic_add_circle_outline_black_48dp.png">../../external/icons/ic_add_circle_outline_black_48dp.png</file>
         
