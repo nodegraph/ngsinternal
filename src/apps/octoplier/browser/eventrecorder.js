@@ -52,7 +52,7 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 	// Copied from EventProxy.js in theintern/recorder github project,
 	// and slightly modified. References to port or chrome objects have
 	// been removed.
-	var EVENT_TYPES = 'click dblclick mousedown mouseup keydown keypress keyup submit input'.split(' '); 
+	var EVENT_TYPES = 'touchstart touchend touchcancel touchmove click dblclick mousedown mouseup keydown keypress keyup submit input'.split(' '); 
 	
 	// mousemove
 	
@@ -268,7 +268,7 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 			if (event.type === 'mousedown') {
 				lastMouseDown[event.button] = {
 					event: event,
-					elements: this.document.elementsFromPoint(event.clientX, event.clientY)
+					elements: [this.document.elementFromPoint(event.clientX, event.clientY)]
 				};
 			}
 
@@ -279,7 +279,7 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 					// The nearest element to the target that was not also the nearest element to the source is
 					// very likely to be an element that did not move along with the drag
 					var sourceElements = lastMouseDown[event.button].elements;
-					var targetElements = this.document.elementsFromPoint(event.clientX, event.clientY);
+					var targetElements = [this.document.elementFromPoint(event.clientX, event.clientY)];
 					for (var i = 0; i < sourceElements.length; ++i) {
 						if (sourceElements[i] !== targetElements[i]) {
 							return targetElements[i];
@@ -320,7 +320,13 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 				type: event.type,
 				text: target.value,      // input
 				scrollX: window.scrollX, // scroll
-				scrollY: window.scrollY  // scroll
+				scrollY: window.scrollY, // scroll
+				targetTouches: event.targetTouches, // touch
+				touches: event.touches, // touch
+				changedTouches: event.changedTouches, // touch
+				view: event.view,
+				detail: event.detail
+				
 			});
 		},
 		
@@ -418,6 +424,59 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 		            	this.logger.log_error("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
 		            	window.scroll(event.scrollX,event.scrollY)
 		            	break;
+		            }
+		            case "touchstart":
+		            case "touchend":
+		            case "touchcancel":
+		            case "touchmove": {
+		            	// Chrome.
+//		            	initTouchEvent (TouchList touches,
+//		                        TouchList targetTouches,
+//		                        TouchList changedTouches,
+//		                        String type,
+//		                        Window view,
+//		                        number screenX,
+//		                        number screenY,
+//		                        number clientX,
+//		                        number clientY,
+//		                        boolean ctrlKey, 
+//		                        boolean altKey,
+//		                        boolean shiftKey,
+//		                        boolean metaKey);
+		            	// W3C Specification.
+//		            	void initTouchEvent (
+//		            			in DOMString type, 
+//		            			in boolean canBubble, 
+//		            			in boolean cancelable, 
+//		            			in AbstractView view, 
+//		            			in long detail, 
+//		            			in boolean ctrlKey, 
+//		            			in boolean altKey, 
+//		            			in boolean shiftKey, 
+//		            			in boolean metaKey, 
+//		            			in TouchList touches, 
+//		            			in TouchList targetTouches, 
+//		            			in TouchList changedTouches);
+		            	
+		            
+		        		//var fake = new TouchEvent(event.type, event);
+		        		var fake = document.createEvent('TouchEvent');
+		        		fake.initTouchEvent(
+		        				event.type,
+		        				true,
+		        				true,
+		        				event.view,
+		        				event.detail,
+		        				event.ctrlKey,
+		        				event.altKey,
+		        				event.shiftKey,
+		        				event.metaKey,
+		        				event.touches,
+		        				event.targetTouches,
+		        				event.changedTouches,
+		        				)
+		        		element.dispatchEvent(fake);
+		        		break
 		            }
 		            default: {
 		            	this.logger.log_error("unknown event was attempted to be replayed")

@@ -60,10 +60,10 @@ WebView {
         }
 
         var on_played = app_settings.try_catch_wrap(function (result) {
-            if (result === true) {
+            if (String(result) == "true") {
                 console.log("single replay event finished successfully ---------------------------")
                 web_view.event_index = web_view.event_index + 1
-            } else if (result === false) {
+            } else if (String(result) == "false") {
                 console.log("single replay event FAILED ---------------------------")
             }
             web_view.single_replay_done = true
@@ -99,9 +99,12 @@ WebView {
         })
 
         var on_octoplier_checked = app_settings.try_catch_wrap(function (result) {
-            if (result === false) {
+            console.log("is octoplier installed:--" + result + "--")
+            if (String(result) == "false") {
+                console.log("octoplier not loading .. trying to inject")
                 web_view.runJavaScript(scripts.get_event_recorder_script(),on_octoplier_loaded)
             } else {
+                console.log("wwwwwwwwwwwwweird")
                 next_func()
             }
         })
@@ -129,18 +132,13 @@ WebView {
         var on_events_retrieved = app_settings.try_catch_wrap(function (result) {
             if (result != "") {
                 var events = JSON.parse(result);
-                for (var i=0; i<events.length; i++) {
-                    if (events[i].type === "mousemove" && web_view.events.length && web_view.events[web_view.events.length-1].type === "mousemove") {
-                        // We collapse the mouse events down.
+                for (var i=0; i<events.length; i++) {                    
+                    var last = web_view.events[web_view.events.length-1]
+                    if ((events[i].type == "input") && (last.type == "input") &&
+                            (events[i].target == last.target)) {
                         web_view.events[web_view.events.length-1] = events[i]
                     } else {
-                        var last = web_view.events[web_view.events.length-1]
-                        if ((events[i].type == "input") && (last.type == "input") &&
-                                (events[i].target == last.target)) {
-                            web_view.events[web_view.events.length-1] = events[i]
-                        } else {
-                            web_view.events.push(events[i])
-                        }
+                        web_view.events.push(events[i])
                     }
                     console.log("storing event: " + JSON.stringify(events[i]))
                 }

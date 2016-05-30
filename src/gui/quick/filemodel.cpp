@@ -171,6 +171,8 @@ std::string FileModel::decrypt_data(const std::string& encrypted_data) const {
 
 void FileModel::write_file(const QString& filename, const std::string& data, bool encrypt) const {
   QString full_name = get_prefixed_file(filename);
+  std::cerr << "saving to file: " << full_name.toStdString() << "\n";
+
   //std::cerr << "saving to file: " << full_name.toStdString() << "\n";
   QFile file(full_name);
   file.open(QIODevice::WriteOnly);
@@ -191,11 +193,11 @@ void FileModel::write_file(const QString& filename, const std::string& data, boo
     file.write(data.c_str(), data.size());
   }
   file.close();
-  //std::cerr << "done saving to file: " << full_name.toStdString() << "\n";
 }
 
 QByteArray FileModel::load_file(const QString& filename, bool decrypt) const {
   QString full_name = get_prefixed_file(filename);
+  std::cerr << "loading from file: " << full_name.toStdString() << "\n";
 
   // If this file doesn't exist there is nothing to load.
   if (!QFileInfo::exists(full_name)) {

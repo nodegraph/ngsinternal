@@ -159,7 +159,7 @@ Item{
     }
 
     function dismiss_keyboard_from_webview() {
-        // On android we vibrate.
+        // On android we have a special fix for Qt's android keyboard handling issues.
         if (Qt.platform.os == "android") {
             java_bridge.dismiss_keyboard_from_webview()
         }
