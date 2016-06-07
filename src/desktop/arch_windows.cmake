@@ -3,12 +3,18 @@
 # ------------------------------------------------------------------
 
 add_custom_command (
-  #DEPENDS install
+  DEPENDS install
   OUTPUT install_desktop_cmd
   COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
   COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/octoplier.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/octoplier/qml 
   COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
   COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
+  # copy the nodejs windows install into the bin dir
+  COMMAND ${CMAKE_COMMAND} -E copy_directory "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/nodejs/" ${CMAKE_BINARY_DIR}/install/bin
+  # extra nodejs modules
+  COMMAND ${CMAKE_COMMAND} -E copy_directory "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/node_modules" ${CMAKE_BINARY_DIR}/install/bin/node_modules
+  # chromedriver
+  COMMAND ${CMAKE_COMMAND} -E copy "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.21/chromedriver.exe" ${CMAKE_BINARY_DIR}/install/bin
 )
 
 add_custom_target (install_desktop
@@ -58,6 +64,7 @@ INSTALL(FILES
 			"${QT5_DIR}/bin/Qt5WebEngineCored.dll"
 			"${QT5_DIR}/bin/Qt5WebEngineCore.dll"
 			"${QT5_DIR}/bin/Qt5WebChanneld.dll"
+			"${QT5_DIR}/bin/Qt5Multimediad.dll"
 			
 			 # The QtWebEngineProcess is a release binary so we need these also.
 			"${QT5_DIR}/bin/Qt5Core.dll"
@@ -86,6 +93,7 @@ INSTALL(FILES
 			"${QT5_DIR}/bin/Qt5WebEngine.dll"
 			"${QT5_DIR}/bin/Qt5WebEngineCore.dll"
 			"${QT5_DIR}/bin/Qt5WebChannel.dll"
+			"${QT5_DIR}/bin/Qt5Multimedia.dll"
 		DESTINATION bin
 		COMPONENT thirdparty
 		CONFIGURATIONS Release)

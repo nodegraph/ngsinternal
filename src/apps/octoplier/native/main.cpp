@@ -241,6 +241,10 @@ int main(int argc, char *argv[]) {
 #if ARCH == ARCH_WINDOWS
     view.setWidth(800);
     view.setHeight(1024);
+    view.setMaximumWidth(800);
+    view.setMaximumHeight(1024);
+    view.setMinimumWidth(800);
+    view.setMinimumHeight(1024);
 #else
     view.setWidth(QGuiApplication::primaryScreen()->size().width() );
     view.setHeight(QGuiApplication::primaryScreen()->size().height() );
@@ -339,7 +343,7 @@ int main(int argc, char *argv[]) {
     app.processEvents();
 
     view.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-    qApp->setQuitOnLastWindowClosed(false);
+    //qApp->setQuitOnLastWindowClosed(false);
 
     // Get the top level qml objects.
     //QList<QObject *> root_objects = engine.rootObjects();

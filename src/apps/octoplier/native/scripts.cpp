@@ -42,12 +42,12 @@ QString Scripts::get_stop_recording_script() {
   return get_script(":/browser/stoprecording.js");
 }
 
-QString Scripts::get_test_script() {
-  return get_script(":/javascript/test2.js");
+QString Scripts::get_jquery() {
+  return get_script(":/browser/jquery-2.2.4.js");
 }
 
-QString Scripts::get_channel_script() {
-  return get_script(":/qtwebchannel/qwebchannel.js");
+QString Scripts::get_jquery_simulate() {
+  return get_script(":/browser/jquery.simulate.js");
 }
 
 void Scripts::test() {

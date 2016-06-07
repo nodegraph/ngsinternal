@@ -108,6 +108,15 @@ Rectangle {
 
         onClicked: {
             on_switch_to_mode(app_settings.file_mode)
+
+//            var script = "  driver.get('http://www.google.com/ncr');
+//                            driver.findElement(By.name('q')).sendKeys('webdriver');
+//                            driver.findElement(By.name('btnG')).click();
+//                            driver.wait(until.titleIs('webdriver - Google Search'), 1000).then(
+//                                function() {ws.send(\"ok:\")}
+//                            )"
+//            cpp_bridge.push_script(script)
+
         }
     }
 

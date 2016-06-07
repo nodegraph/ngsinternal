@@ -2,6 +2,13 @@
 #include <QtCore/QObject>
 #include <iostream>
 #include <vector>
+#include <deque>
+
+#include <QtWebSockets/QWebSocket>
+
+class QMediaPlayer;
+class QMediaPlaylist;
+class QProcess;
 
 namespace ngs {
 
@@ -12,43 +19,43 @@ class NodeGraphQuickItem;
 class VariantMapTreeModel;
 
 
-
-
-
 class CppBridge : public QObject {
 Q_OBJECT
  public:
   explicit CppBridge(QObject *parent = 0);
+  virtual ~CppBridge();
 
-//  Q_INVOKABLE void destroy_selection();
+  Q_INVOKABLE void push_script(QString script);
+  Q_INVOKABLE void start_recording();
+  Q_INVOKABLE void stop_recording();
 
 signals:
-//void message(const QString &message);
+  void result(const QString&); // Fired after a script has been processsed.
 
  public slots:
 
- // App Loading.
- void set_max_load_progress(size_t max);
- void mark_load_progress();
- size_t get_load_progress();
- void set_marker_1(size_t mark);
- bool at_marker_1();
- bool is_finished_loading();
+  void on_connected();
+  void on_disconnected();
+  void on_error(QAbstractSocket::SocketError error);
+  void on_ssl_error(const QList<QSslError>& errors);
+  void on_text_message_received(const QString & message);
 
- // Event Loop.
- void process_events();
+  void on_browser_controller_started();
 
- // Testing.
-  void on_test_message(const QString &message);
-  void on_test_1(const QVariant& value);
-  void on_move_root(int child_row);
+ private:
+  void start_browser_controller();
+  void close_browser_controller();
+  void connect_to_browser_controller();
+  void process_command();
+  void fire_commands();
 
-  void post_init();
+  bool _use_external_process;
+  QProcess* _process;
+  QWebSocket* _websocket;
 
-  void reset_input_method();
+  std::deque<QString> _commands;
+  QString _result;
 
-  void press_down_key(QObject* obj);
-  void release_down_key(QObject* obj);
 };
 
 }

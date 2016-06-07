@@ -95,6 +95,7 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   int _working_row;
 
   // Crypto.
+  bool _use_encryption;
   std::string _nonce;
   std::string _salt;
   std::string _hashed_password;

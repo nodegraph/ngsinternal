@@ -29,7 +29,8 @@ FileModel::FileModel()
     : QStandardItemModel(),
       Component(g_app_root, kIID(), kDID()),
       _graph_builder(this),
-      _working_row(-1){
+      _working_row(-1),
+      _use_encryption(true){
   get_dep_loader()->register_fixed_dep(_graph_builder, "");
 
   // Make sure the data dir exists.
@@ -355,7 +356,7 @@ void FileModel::save_model() const {
   }
 
   // Save the data.
-  write_file(kAppFile, ss.str(),true);
+  write_file(kAppFile, ss.str(), _use_encryption);
 }
 
 void FileModel::load_graph() {
@@ -420,7 +421,7 @@ void FileModel::save_graph(int row) {
 
   // Write the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
-  write_file(graph_file, ss.str(), true);
+  write_file(graph_file, ss.str(), _use_encryption);
 }
 
 void FileModel::create_graph(const QString& title, const QString& description) {

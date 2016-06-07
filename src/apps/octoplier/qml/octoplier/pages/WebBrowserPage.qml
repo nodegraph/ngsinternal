@@ -70,18 +70,21 @@ Rectangle {
     function start_recording() {
         // Clear out our current event recording.
         web_view.events = []
-        web_view.events.push({type: 'goto_url', url: web_view.url})
+        //web_view.events.push({type: 'goto_url', url: web_view.url})
 
         // Start recording.
-        web_view.recording = true
+        //web_view.recording = true
+
+        cpp_bridge.start_recording()
     }
 
     function stop_recording() {
-        web_view.recording = false
+        //web_view.recording = false
+        cpp_bridge.stop_recording()
     }
 
-    function start_replay() {
-        web_view.start_replay()
+    function replay() {
+        web_view.replay()
     }
 
     AppWebView {

@@ -36,14 +36,12 @@ Window {
     function on_start_loading() {
         progress++
         status.text = progress + "/" + 2 * num_components
-        cpp_bridge.process_events()
         //update()
         console.log("progress: "+progress)
     }
     function on_finished_loading() {
         progress++
         status.text = progress + "/" + 2 * num_components
-        //cpp_bridge.process_events()
         //update()
         console.log("progress: "+progress)
     }

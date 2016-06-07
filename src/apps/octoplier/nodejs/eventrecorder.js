@@ -1,31 +1,15 @@
 // This file runs in the browser.
 
-$.fn.xpathEvaluate = function (xpathExpression) {
-   // NOTE: vars not declared local for debug purposes
-   $this = this.first(); // Don't make me deal with multiples before coffee
-
-   // Evaluate xpath and retrieve matching nodes
-   xpathResult = this[0].evaluate(xpathExpression, this[0], null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-
-   result = [];
-   while (elem = xpathResult.iterateNext()) {
-      result.push(elem);
-   }
-
-   $result = jQuery([]).pushStack( result );
-   return $result;
-}
-
 // Our namespace.
-var octoplier = {}
+window.octoplier = {}
 
 // The Logger.
-octoplier.Logger = function() {
+window.octoplier.Logger = function() {
 	var errors = []
 
 	var get_errors = function() {
-		var temp = errors
-		errors = []
+		var temp = errors.slice()
+		errors.length = 0
 		return temp
 	}
 
@@ -45,12 +29,12 @@ octoplier.Logger = function() {
 }
 	
 // Event Stack.
-octoplier.EventStack = function() {
+window.octoplier.EventStack = function() {
 	var events = []
 	
 	var get_events = function() {
-		var temp = events
-		events = []
+		var temp = events.slice()
+		events.length = 0
 		return temp
 	}
 	
@@ -64,11 +48,11 @@ octoplier.EventStack = function() {
 	}
 }
 	
-octoplier.EventProxy = function (window, document, logger, event_stack) {
+window.octoplier.EventProxy = function (window, document, logger, event_stack) {
 	// Copied from EventProxy.js in theintern/recorder github project,
 	// and slightly modified. References to port or chrome objects have
 	// been removed.
-	var EVENT_TYPES = 'click dblclick mousedown mousemove mouseup keydown keypress keyup submit input'.split(' '); 
+	var EVENT_TYPES = 'click dblclick mousedown mouseup keydown keypress keyup submit input'.split(' '); 
 	// mousemove
 	// mouseover mouseout
 	// beforeinput input change
@@ -120,12 +104,12 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 			passEventBound = passEventRelay.bind(self);
 			delayEventBound = delayEventRelay.bind(self);
 			
-			this.window.addEventListener('message', passEventBound, true);
-			this.window.addEventListener('beforeunload',delayEventBound, true);
-			this.window.addEventListener('scroll',sendEventBound, true);
-			this.window.addEventListener('submit',sendEventBound, true);
+			this.window.addEventListener('message', passEventBound, true, true);
+			this.window.addEventListener('beforeunload',delayEventBound, true, true);
+			this.window.addEventListener('scroll',sendEventBound, true, true);
+			this.window.addEventListener('submit',sendEventBound, true, true);
 			EVENT_TYPES.forEach(function (eventType) {
-				self.document.addEventListener(eventType, sendEventBound, true);
+				self.document.addEventListener(eventType, sendEventBound, true, true);
 			});
 		},
 		
@@ -139,8 +123,8 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 			});
 			this.window.removeEventListener('submit',sendEventBound, true);
 			this.window.removeEventListener('scroll',sendEventBound, true);
-			self.window.removeEventListener('beforeunload', delayEventBound, true);
-			self.window.removeEventListener('message', passEventBound, true);
+			this.window.removeEventListener('beforeunload', delayEventBound, true);
+			this.window.removeEventListener('message', passEventBound, true);
 			
 			sendEventBound = null
 			passEventBound = null
@@ -258,15 +242,17 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 		},
 		
 		delayEvent: function (event) {
-			if (event.type === 'beforeunload') {
-				this.logger.log_error("about to load a new page")
-				var confirmationMessage = "continue to next page";
-				event.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
-				return confirmationMessage;              // Gecko, WebKit, Chrome <34
-			}
+//			if (event.type === 'beforeunload') {
+//				this.logger.log_error("about to load a new page")
+//				var confirmationMessage = "continue to next page";
+//				event.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
+//				return confirmationMessage;              // Gecko, WebKit, Chrome <34
+//			}
 		},
 		
 		sendEvent: function (event) {
+			
+			window.octoplier.logger.log_error("got send event: " + event.type)
 			
 			var lastMouseDown = this.lastMouseDown;
 			var target;
@@ -346,117 +332,6 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 			this.send(data);
 		},
 		
-//		replay_event: function (event) {
-//			try {
-//				// Make sure document is fully loaded.
-//				if (document.readyState != 'complete') {
-//					this.logger.log_error("document not loaded yet");
-//					return false
-//				}
-//					
-//				// Find the target element.
-//				var element = document.evaluate(event.target, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-//				if (!element) {
-//					if ((event.type == "mousemove") ||
-//						(event.type == "mouseover") ||
-//						(event.type == "mouseout")) {
-//						this.logger.log_error("Info: mousemove/over/out could not find element to dispatch to: " + event.target);
-//						return true
-//					}
-//					this.logger.log_error("Error: event could not find element to dispatch to: " + event.target);
-//					return false
-//				}
-//				
-//	            switch(event.type) {
-//		            // MouseEvent types: onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, and onmouseout
-//			        case "click":
-//			        case "dblclick":
-//			        case "mousedown":
-//			        case "mouseup":
-//			        case "mousemove":
-//			        case "mouseover":
-//			        case "mouseout": {
-//		        		var fake = new MouseEvent(event.type, event);
-//		        		element.dispatchEvent(fake);
-//			        	break;
-//			        }
-//			        case "selectstart":
-//			        case "selectionchange":
-//			        case "keydown":
-//		            case "keyup":
-//		            case "keypress": {
-//		            	if (event.keyCode == 13) {
-//			            	var fake = new KeyboardEvent(event.type, event);
-//		            	
-//			                // Chromium Hack
-//			                Object.defineProperty(fake, 'keyCode', {
-//			                                          get : function() {
-//			                                              return this.keyCodeVal;
-//			                                          }
-//			                                      });
-//			                Object.defineProperty(fake, 'charCode', {
-//			                                          get : function() {
-//			                                              return this.charCodeVal;
-//			                                          }
-//			                                      });
-//			                Object.defineProperty(fake, 'which', {
-//			                                          get : function() {
-//			                                              return this.whichVal;
-//			                                          }
-//			                                      });
-//			                Object.defineProperty(fake, 'char', {
-//			                                          get : function() {
-//			                                              return this.charVal;
-//			                                          }
-//			                                      });
-//			                Object.defineProperty(fake, 'key', {
-//			                                          get : function() {
-//			                                              return this.keyVal;
-//			                                          }
-//			                                      });
-//			                fake.keyCodeVal = event.keyCode;
-//			                fake.charCodeVal = event.charCode;
-//			                fake.whichVal = event.which;
-//			                fake.charVal = event.char;
-//			                fake.keyVal = event.key;
-//			                element.dispatchEvent(fake);
-//			                
-//			                var e = $.Event("keydown", { keyCode: 65}); //"keydown" if that's what you're doing
-//			                if ($(document).xpathEvaluate(event.target).length) {
-//			                	this.logger.log_error("FFFFFFFFFFFFF found jquery selector exists")
-//			                	$(document).xpathEvaluate(event.target).trigger(e);
-//			                }
-//		            	}
-//		                break;
-//		            }
-//		            case "input": {
-//					    element.value = event.text
-//		            	break
-//		            }
-//		            case "submit": {
-//		            	this.logger.log_error("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
-//		            	element.submit();
-//		            	break;
-//		            }
-//		            case "scroll": {
-//		            	this.logger.log_error("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
-//		            	window.scroll(event.scrollX,event.scrollY)
-//		            	break;
-//		            }
-//		            default: {
-//		            	this.logger.log_error("unknown event was attempted to be replayed")
-//		            	return false;
-//		            	break;
-//		            }
-//	            }
-//			} catch (e) {
-//				this.logger.log_exception(e)
-//				return false
-//			}
-//			
-//			return true
-//		},
-
 		setStrategy: function (value) {
 			switch (value) {
 				case 'xpath':
@@ -477,7 +352,7 @@ octoplier.EventProxy = function (window, document, logger, event_stack) {
 
 // Catch any uncaught exceptions at the top level window.
 window.onerror = function (message, url, line_number, column_number, error) {
-    octoplier.logger.log_error('Error: caught at Window: ' + message + 
+    window.octoplier.logger.log_error('Error: caught at Window: ' + message + 
     		' Script: ' + url + 
     		' Line: ' + line_number + 
     		' Column: ' + column_number + 
@@ -486,15 +361,18 @@ window.onerror = function (message, url, line_number, column_number, error) {
 
 try {
 	// Octoplier initialization.
-	if (typeof octoplier.logger == 'undefined') {
-		octoplier.logger = octoplier.Logger()
-		octoplier.event_stack = octoplier.EventStack()
-		octoplier.event_proxy = octoplier.EventProxy(window, document, octoplier.logger, octoplier.event_stack)
-		octoplier.event_proxy.setStrategy('xpath');
-		//octoplier.event_proxy.connect()
+	if (typeof window.octoplier.logger == 'undefined') {
+		window.octoplier.logger = window.octoplier.Logger()
+		window.octoplier.event_stack = window.octoplier.EventStack()
+		window.octoplier.event_proxy = window.octoplier.EventProxy(window, window.document, window.octoplier.logger, window.octoplier.event_stack)
+		window.octoplier.event_proxy.setStrategy('xpath');
+		//window.octoplier.event_proxy.connect()
 		//alert("created new octoplier instance")
 	}
 } catch (e) {
-	octoplier.logger.log_exception(e);
+	window.octoplier.logger.log_exception(e);
 }
+
+return true
+
 

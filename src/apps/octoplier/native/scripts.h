@@ -16,10 +16,8 @@ public:
     Q_INVOKABLE QString get_start_recording_script();
     Q_INVOKABLE QString get_stop_recording_script();
 
-    Q_INVOKABLE QString get_test_script();
-    Q_INVOKABLE QString get_channel_script();
-
-
+    Q_INVOKABLE QString get_jquery();
+    Q_INVOKABLE QString get_jquery_simulate();
 
     Q_INVOKABLE void test();
 

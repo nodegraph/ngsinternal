@@ -26,7 +26,7 @@ ListModel {
         image_url: "qrc:///icons/ic_public_white_48dp.png"
         title: "Replay Recording"
         description: "Replay the recorded browser actions."
-        script: "web_browser_page.start_replay(); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
+        script: "web_browser_page.replay(); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
     }
 
     ListElement {

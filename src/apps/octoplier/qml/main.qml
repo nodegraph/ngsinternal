@@ -213,24 +213,21 @@ Rectangle {
         //node_graph_page.node_graph.frame_all() // We can't frame all here as it causes gl resources to be allocated before the first draw request.
         //node_graph_page.node_graph.update()
 
-        cpp_bridge.post_init()
-
-        quick_view.closing.connect(app_window.onClosing)
+        //quick_view.closing.connect(app_window.onClosing)
     }
 
-    function onClosing() {
-        return false
-    }
+//    function onClosing() {
+//        return false
+//    }
 
-    focus: true
+//    focus: true
 
-    Keys.onReleased: {
-        if (event.key == Qt.Key_Back) {
-            console.log("Back button captured - wunderbar !")
-            event.accepted = true
-        }
-        console.log("pppppppppppppppppppp pressed key: " + event.key)
-    }
+//    // Prevent the android hardware back from closing the app.
+//    Keys.onReleased: {
+//        if (event.key == Qt.Key_Back) {
+//            event.accepted = true
+//        }
+//    }
 
     // Intercept the android back button.
     // We allow this behavior on desktops also for testing.

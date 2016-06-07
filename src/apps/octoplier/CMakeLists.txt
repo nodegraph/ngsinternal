@@ -69,6 +69,7 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 		ngs_entities
 		Qt5::WebEngine 
 		Qt5::Network
+		Qt5::WebSockets
 		)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(octoplier WIN32 ${sources})
@@ -102,7 +103,10 @@ INSTALL(TARGETS octoplier
   COMPONENT apps
 )
 
-
+# Our nodejs app which controlls webdriver.
+INSTALL(DIRECTORY nodejs/
+		DESTINATION bin
+		COMPONENT apps)
 
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	
