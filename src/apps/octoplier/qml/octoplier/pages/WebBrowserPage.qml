@@ -81,10 +81,13 @@ Rectangle {
     function stop_recording() {
         //web_view.recording = false
         cpp_bridge.stop_recording()
+        //cpp_bridge.request_recording()
     }
 
     function replay() {
-        web_view.replay()
+        //web_view.replay()
+        //cpp_bridge.push_script(web_view.script)
+        cpp_bridge.replay_last()
     }
 
     AppWebView {

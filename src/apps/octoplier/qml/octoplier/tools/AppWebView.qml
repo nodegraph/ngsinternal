@@ -31,6 +31,7 @@ WebView {
 
     // Recorded Events.
     property var events: []
+    property var script: ""
 
     function convert_key_identifier(id) {
         if (!is_modifier(id)) {
@@ -44,6 +45,10 @@ WebView {
             return true
         }
         return false
+    }
+
+    function on_recording_received(r) {
+        script = r
     }
 
     function send_result() {

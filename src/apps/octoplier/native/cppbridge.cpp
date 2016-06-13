@@ -37,7 +37,6 @@ CppBridge::CppBridge(QObject *parent)
   connect(_websocket, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(on_ssl_error(const QList<QSslError>&)));
   connect(_websocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(on_error(QAbstractSocket::SocketError)));
   connect(_websocket, SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_text_message_received(const QString &)));
-
 }
 
 CppBridge::~CppBridge() {
@@ -57,7 +56,7 @@ void CppBridge::start_browser_controller() {
   _process->setProgram(QString("node.exe"));
   QString folder = qApp->applicationDirPath();
   _process->setWorkingDirectory(folder);
-  QStringList list("browsercontroller.js");
+  QStringList list("controller.js");
   _process->setArguments(list);
   _process->start();
   qDebug() << "process is trying to start";
@@ -120,11 +119,16 @@ void CppBridge::stop_recording() {
   fire_commands();
 }
 
+void CppBridge::replay_last() {
+  push_script(_script);
+}
+
 void CppBridge::on_error(QAbstractSocket::SocketError error) {
   qDebug() << "Error: " << error;
   if (error == QAbstractSocket::RemoteHostClosedError) {
     on_text_message_received("fail:");
   }
+  qDebug() << "Error string: " << _websocket->errorString();
 }
 
 void CppBridge::on_ssl_error(const QList<QSslError>& errors) {
@@ -152,6 +156,18 @@ void CppBridge::on_text_message_received(const QString & message) {
   }
   // If the command succeeded, run the next command.
   if (message.startsWith("ok:")) {
+    process_command();
+  } else if (message.startsWith("recording:")) {
+    QString recording = message;
+    QString header = "recording:";
+    recording.replace(recording.indexOf(header), header.size(), "");
+    emit recording_received(recording);
+    process_command();
+  } else if (message.startsWith("script:")) {
+    qDebug() << "got script";
+    _script = message;
+    QString token = "script:";
+    _script.replace(_script.indexOf(token), token.size(), "");
     process_command();
   } else {
     _commands.clear();
@@ -186,8 +202,8 @@ void CppBridge::process_command() {
     _commands.pop_front();
     return process_command();
   } else if (command.startsWith("connect_to_browser_controller:")) {
-    connect_to_browser_controller();
     qDebug() << "trying to connect to browser";
+    connect_to_browser_controller();
     sent = true;
   } else {
     sent = _websocket->sendTextMessage(command);

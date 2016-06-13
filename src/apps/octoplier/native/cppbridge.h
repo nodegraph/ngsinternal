@@ -28,9 +28,11 @@ Q_OBJECT
   Q_INVOKABLE void push_script(QString script);
   Q_INVOKABLE void start_recording();
   Q_INVOKABLE void stop_recording();
+  Q_INVOKABLE void replay_last();
 
 signals:
   void result(const QString&); // Fired after a script has been processsed.
+  void recording_received(const QString&);
 
  public slots:
 
@@ -55,6 +57,9 @@ signals:
 
   std::deque<QString> _commands;
   QString _result;
+
+  // testing
+  QString _script;
 
 };
 

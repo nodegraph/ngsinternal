@@ -207,6 +207,9 @@ Rectangle {
             create_password_page.visible = true
         }
 
+        // Browser.
+        cpp_bridge.recording_received.connect(web_browser_page.web_view_alias.on_recording_received)
+
         // Other setup.
         //main_bar.on_switch_to_mode(app_settings.node_graph_mode)
         //file_model.load_graph()
