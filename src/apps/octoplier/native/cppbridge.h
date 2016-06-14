@@ -25,10 +25,11 @@ Q_OBJECT
   explicit CppBridge(QObject *parent = 0);
   virtual ~CppBridge();
 
-  Q_INVOKABLE void push_script(QString script);
+  Q_INVOKABLE void replay_recording(QString recording);
   Q_INVOKABLE void start_recording();
   Q_INVOKABLE void stop_recording();
   Q_INVOKABLE void replay_last();
+  Q_INVOKABLE void get_recording();
 
 signals:
   void result(const QString&); // Fired after a script has been processsed.
@@ -48,18 +49,23 @@ signals:
   void start_browser_controller();
   void close_browser_controller();
   void connect_to_browser_controller();
+
+  QString pack_command(const QString& code, const QString& body);
+  void unpack_command(const QString& command, QString& code, QString& body);
   void process_command();
-  void fire_commands();
+  //void fire_commands();
+
+
 
   bool _use_external_process;
   QProcess* _process;
   QWebSocket* _websocket;
 
+  bool _commands_running;
   std::deque<QString> _commands;
-  QString _result;
 
   // testing
-  QString _script;
+  QString _recording;
 
 };
 

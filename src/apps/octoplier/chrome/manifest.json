@@ -20,7 +20,7 @@
   },
   
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["utils.js", "background.js"]
   },
   
   "content_security_policy": "script-src 'self' https://localhost:8083 object-src 'self' ",
@@ -28,7 +28,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["eventrecorder.js"],
+      "js": ["utils.js", "content.js"],
       "css": [ "hidepage.css" ],
       "all_frames": true,
       "run_at": "document_start"

@@ -85,8 +85,6 @@ Rectangle {
     }
 
     function replay() {
-        //web_view.replay()
-        //cpp_bridge.push_script(web_view.script)
         cpp_bridge.replay_last()
     }
 

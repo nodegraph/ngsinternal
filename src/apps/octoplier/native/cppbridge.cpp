@@ -29,7 +29,8 @@ CppBridge::CppBridge(QObject *parent)
     : QObject(parent),
       _process(NULL),
       _websocket(NULL),
-      _use_external_process(true){
+      _use_external_process(true),
+      _commands_running(false){
 
   _websocket  = new_ff QWebSocket();
   connect(_websocket, SIGNAL(connected()), this, SLOT(on_connected()));
@@ -40,7 +41,7 @@ CppBridge::CppBridge(QObject *parent)
 }
 
 CppBridge::~CppBridge() {
-  push_script("close_browser:");
+  replay_recording("close_browser:");
   delete_ff(_websocket);
   delete_ff(_process);
 }
@@ -84,31 +85,35 @@ void CppBridge::on_disconnected() {
   connect_to_browser_controller();
 }
 
-void CppBridge::push_script(QString script) {
-  QString command = "run_driver_script:" + script;
+void CppBridge::replay_recording(QString recording) {
+  QString command = "replay_recording:" + recording;
   _commands.push_back(command);
 
   qDebug() << "pushed command: " << command << "\n";
   qDebug() << "command stack size: " << _commands.size();
 
-  fire_commands();
+  process_command();
 }
 
-void CppBridge::fire_commands() {
-  // If this is the only command in the queue then queue it.
-  if (_commands.size() == 1) {
-    qDebug() << "IIIIIIIIIII starting up command process stack";
-    process_command();
-  } else {
-    for (int i=0; i<_commands.size(); ++i) {
-      qDebug() << _commands[i] << "\n";
-    }
-  }
-}
+//void CppBridge::fire_commands() {
+//  // If this is the only command in the queue then queue it.
+//  if (!_commands_running) {
+//    qDebug() << "IIIIIIIIIII starting up command process stack";
+//    _commands_running = true;
+//    process_command();
+//  } else {
+//    for (int i=0; i<_commands.size(); ++i) {
+//      qDebug() << _commands[i] << "\n";
+//    }
+//  }
+//}
 
 void CppBridge::start_recording() {
+  _commands.push_back("open_browser:");
+  _commands.push_back("goto_url:https://www.google.com");
   _commands.push_back("start_recording:");
-  fire_commands();
+  _commands.push_back("goto_url:https://www.google.com");
+  process_command();
 }
 
 void CppBridge::stop_recording() {
@@ -116,11 +121,16 @@ void CppBridge::stop_recording() {
     _commands.clear();
   }
   _commands.push_back("stop_recording:");
-  fire_commands();
+  process_command();
 }
 
 void CppBridge::replay_last() {
-  push_script(_script);
+  replay_recording("");
+}
+
+void CppBridge::get_recording() {
+  _commands.push_back("get_recording:");
+  process_command();
 }
 
 void CppBridge::on_error(QAbstractSocket::SocketError error) {
@@ -144,54 +154,64 @@ void CppBridge::on_text_message_received(const QString & message) {
 
   qDebug() << "received message: " << message;
 
-  if (!_commands.empty()) {
-    _commands.pop_front();
+  if (!message.startsWith("fail:")) {
+    if (!_commands.empty()) {
+      _commands.pop_front();
+    }
   }
 
   qDebug() << "command stack size is now: " << _commands.size();
 
-  // If the command stack is empty, then we return the result.
-  if (_commands.empty()) {
-    emit result(message);
-  }
+  // Unpack the command.
+  QString code;
+  QString body;
+  unpack_command(message, code, body);
+
   // If the command succeeded, run the next command.
-  if (message.startsWith("ok:")) {
+  if (code == "ok") {
     process_command();
-  } else if (message.startsWith("recording:")) {
-    QString recording = message;
-    QString header = "recording:";
-    recording.replace(recording.indexOf(header), header.size(), "");
-    emit recording_received(recording);
+  } else if (code == "fail") {
     process_command();
-  } else if (message.startsWith("script:")) {
-    qDebug() << "got script";
-    _script = message;
-    QString token = "script:";
-    _script.replace(_script.indexOf(token), token.size(), "");
+  } else if (code == "recording") {
+    _recording = body;
     process_command();
+  } else if (code == "recording_finished") {
+    _recording = body;
   } else {
     _commands.clear();
   }
 }
 
+QString CppBridge::pack_command(const QString& code, const QString& body) {
+  return code + ":" + body;
+}
+
+void CppBridge::unpack_command(const QString& command, QString& code, QString& body) {
+  int pos = command.indexOf(':');
+  code = command.mid(0,pos);
+  body = command.mid(pos+1);
+}
+
 void CppBridge::process_command() {
+  // Update running state.
   if (_commands.empty()) {
+    _commands_running = false;
     return;
+  } else if (_commands_running == false) {
+    _commands_running = true;
   }
 
-  _result.clear();
-
+  // Make sure the controller is running.
   if ((!_use_external_process) && (!_process || (_process->state() != QProcess::Running))) {
-    qDebug() << "pushing start browser controller";
     _commands.push_front("start_browser_controller:");
-  } else if (!_websocket->isValid()) {
-    qDebug() << "pushing connect to browser controller";
+  }
+  // Make sure the connection to the controller is running.
+  else if (!_websocket->isValid()) {
     _commands.push_front("connect_to_browser_controller:");
   }
 
-  bool sent = false;
   const QString &command = _commands.front();
-  std::cerr << "running command: " << command.toStdString() << "\n";
+  qDebug() << "running command: " << command;
 
   if (command.startsWith("start_browser_controller:")) {
     start_browser_controller();
@@ -204,9 +224,9 @@ void CppBridge::process_command() {
   } else if (command.startsWith("connect_to_browser_controller:")) {
     qDebug() << "trying to connect to browser";
     connect_to_browser_controller();
-    sent = true;
   } else {
-    sent = _websocket->sendTextMessage(command);
+    size_t num_bytes = _websocket->sendTextMessage(command);
+    assert(num_bytes);
   }
 }
 

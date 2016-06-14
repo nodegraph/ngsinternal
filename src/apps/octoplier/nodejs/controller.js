@@ -1,33 +1,110 @@
+//------------------------------------------------------------------------------------------------
+//Debugging State.
+//------------------------------------------------------------------------------------------------
+var debugging = true
+var log_info = function(msg) {
+    if (debugging) {
+        console.log("Info: " + msg)
+    }
+}
+var log_error = function(msg) {
+    if (debugging) {
+        console.log("Error: " + msg)
+    }
+}
+var log_exception = function(e) {
+    if (debugging) {
+        console.log("Exception: " + e.message + " stack: " + e.stack)
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+//File I/O.
+//------------------------------------------------------------------------------------------------
 var fs = require('fs');
 
-var dump = function(text) {
-    fs.appendFileSync("./dump.txt", text)
-    console.log(text)
+var write_to_file = function(filename, text) {
+    fs.appendFileSync(filename, text)
 } 
-dump('starting')
 
-process.on('uncaughtException', function(e) {
-  dump('caught exception at nodejs top: lineNumber: ' + e.lineNumber + ' message: ' + e.message + "\nstacktrace: " + e.stack);
-});
+var write_to_dump = function(text) {
+    write_to_file("./dump.txt", test)
+} 
 
-
-
-//scripts
-var get_script = function(filename) {
+var read_file = function(filename) {
     var script = fs.readFileSync(filename, "utf8")
     return script
 }
 
-// Recorded browser events.
-var timer = null
-var script = null
+//------------------------------------------------------------------------------------------------
+//Errors and utils.
+//------------------------------------------------------------------------------------------------
 
-// Command stack
+process.on('uncaughtException', function(e) {
+    log_error("exception caught at top!")
+    log_exception(e)
+});
+
+var convert_key_identifier = function(id) {
+    if (!is_modifier(id)) {
+        return "'" + id.replace('U+','\\u') + "'"
+    }
+    return "Key." + id.toUpperCase()
+}
+
+var is_modifier = function(id) {
+    if ((id.indexOf('U+') != 0)) {
+        return true
+    }
+    return false
+}
+
+//Returns true if it is a DOM node
+function is_node(o){
+  return (
+    typeof Node === "object" ? o instanceof Node : 
+    o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName==="string"
+  );
+}
+
+//Returns true if it is a DOM element    
+function is_element(o){
+  return (
+    typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+    o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
+);
+}
+
+//------------------------------------------------------------------------------------------------
+//The controllers main internal state.
+//------------------------------------------------------------------------------------------------
+
+// Command stack hold currently running or recording script.
 var commands = []
+var ControllerMode = {
+        Idle: 0,
+        Recording: 1,
+        Replaying: 2
+}
+var mode = ControllerMode.Idle
 
-//-------------------------------------------------------
+var process_commands = function() {
+    while(commands.length) {
+        var cmd = commands.shift()
+        if (cmd == "wait_till_page_is_ready()\n") {
+            return
+        }
+        console.log("processing cmd: " + cmd)
+        eval(cmd)
+    }
+    if (commands.length == 0) {
+        mode = ControllerMode.Idle
+    }
+}
+
+//------------------------------------------------------------------------------------------------
 // Secure web socket to communicate with chrome extension.
-//-------------------------------------------------------
+//------------------------------------------------------------------------------------------------
 
 var WebSocketServer = require('ws').Server
 var extension_socket_server = null
@@ -70,79 +147,107 @@ var start_extension_socket = function(){
     extension_socket_server = new WebSocketServer( { server: app } );
     extension_socket_server.on( 'connection', function ( wsConnect ) {
         extension_socket = wsConnect
-        dump("browsercontroller now connected to extension");
-        extension_socket.on('message', function (data) {
-            dump('message from extension: ' + data );
-            var msg = JSON.parse(data)
-            if (msg.code == 'script') {
-                app_socket.send("script:" + msg.commands)
-            } else if (msg.code == 'page_is_ready') {
-                process_commands()
-            }
-        });
+        log_info("browsercontroller now connected to extension");
+        extension_socket.on('message', on_message_from_extension);
     });
+}
+
+var on_message_from_extension = function (data) {
+    log_info('message from extension: ' + data );
+    var msg = JSON.parse(data)
+    if (msg.code == 'page_is_ready') {
+        // Continue replaying the reset of the commands.
+        if (mode == ControllerMode.Replaying) {
+            process_commands()
+        }
+    } else if (msg.code == 'command') {
+        commands.push(msg.command)
+    } else if (msg.code == 'jitter_browser_size') {
+        // Use the webdriver to jitter the browser size.
+        jitter_browser_size()
+    }
 }
 
 start_extension_socket()
 
-var process_commands = function() {
-    while(commands.length) {
-        var cmd = commands.shift()
-        if (cmd == "wait_till_page_is_ready()\n") {
-            return
-        }
-        eval(cmd)
-    }
-}
-
-var clear_browser_cookies = function(callback) {
-    extension_socket.send(JSON.stringify({code: 'clear_browser_cookies'}))
-}
-
-//process.stdin.on('readable', function() {
-//    var chunk = process.stdin.read();
-//    if (chunk !== null) {
-//        dump("got data: " + chunk)
-//        //process.stdout.write('{"data": "' + chunk +'"}');
-//    }
-//});
-
-// -------------------------------------------------------
-// WebSocket to communicate with native app.
-// -------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+// Regular WebSocket to communicate with app.
+//------------------------------------------------------------------------------------------------
 
 var app_socket_server = new WebSocketServer({port: 8082})
 var app_socket = null
 
 app_socket_server.on('connection', function connection(ws_arg) {
     app_socket = ws_arg
-    app_socket.on('message', function incoming(message) {
-        dump("browsercontroller now connected to native app");
-        try {
-            dump('controller received: ' + message);
-            if (message.startsWith('open_browser:')) {
-                open_browser()
-            } else if (message.startsWith('close_browser:')) {
-                close_browser()
-            } else if (message.startsWith('inject_event_recoder:')) {
-                inject_recorder()
-            } else if (message.startsWith('start_recording:')) {
-                start_recording()
-            } else if (message.startsWith('stop_recording:')) {
-                stop_recording()
-            } else if (message.startsWith('run_driver_script:')) {
-                var script = message.replace('run_driver_script:', '')
-                run_in_browser(script) 
-            }
-        } catch (e) {
-            dump('on_message->caught exception: ' + e.message + "\nstacktrace: " + e.stack)
-        }
-    });
+    log_info("browsercontroller now connected to native app");
+    app_socket.on('message', on_message_from_app);
 }); 
 
-// -------------------------------------------------------
-// Webdriver.
-// -------------------------------------------------------
+var on_message_from_app = function (message) {
+    try {
+        log_info('controller received: ' + message);
+        
+        // unpack the message.
+        var pos = message.indexOf(':')
+        var code = message.substr(0,pos)
+        var body = message.substr(pos+1)
+        
+        if (code == 'open_browser') {
+            open_browser()
+            app_socket.send('ok:')
+        } else if (code == 'close_browser') {
+            close_browser()
+            app_socket.send('ok:')
+        } else if (code == 'start_recording') {
+            start_recording()
+            app_socket.send('ok:')
+        } else if (code == 'stop_recording') {
+            stop_recording()
+            app_socket.send('ok:')
+        } else if (code == 'get_recording') {
+            app_socket.send('recording:'+JSON.stringify(commands))
+        } else if (code == 'set_recording') {
+            commands = JSON.parse(body)
+            app_socket.send('ok:')
+        } else if (code == 'replay_recording') {
+            if (body != "") {
+                console.log("got non-empty recording!")
+                cmds = body //JSON.parse(body) //script.split(/\r?\n/)
+                replay_recording(cmds)
+            } else {
+                console.log("got empty recording!")
+                replay_recording(commands) 
+            }
+        } else if (code == 'goto_url') {
+            goto_url(body).then(function(){
+                commands.push("goto_url('" + body + "')")
+                app_socket.send('ok:')
+            }, function(error) {
+                app_socket.send('fail:')
+            })
+        } else if (code == 'back') {
+            navigate_back().then(function(){
+                commands.push("navigate_back()")
+                app_socket.send('ok:')
+            }, function(error) {
+                app_socket.send('fail:')
+            })
+        } else if (code == 'forward') {
+            navigate_forward().then(function(){
+                commands.push("navigate_forward()")
+                app_socket.send('ok:')
+            }, function(error) {
+                app_socket.send('fail:')
+            })
+        }
+    } catch (e) {
+        log_exception(e)
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+// Browser Control.
+//------------------------------------------------------------------------------------------------
 
 var webdriver = null
 var chrome = null
@@ -164,15 +269,16 @@ var open_browser = function () {
         //Win_x64-389148-chrome-win32
         //Win-338428-chrome-win32
         //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
-        chromeOptions.addArguments("load-extension=D:/src/ngsinternal/src/apps/octoplier/chrome")
+        chromeOptions.addArguments("--load-extension=D:/src/ngsinternal/src/apps/octoplier/chrome")
+        chromeOptions.addArguments("--ignore-certificate-errors")
 
         driver = new webdriver.Builder()
         .forBrowser('chrome')//.forBrowser('firefox')
         .setChromeOptions(chromeOptions)
         .build();
 
-        flow = webdriver.promise.controlFlow();
-
+        flow = webdriver.promise.controlFlow()
+        
         // Set default settings.
         driver.manage().timeouts().pageLoadTimeout(60000);
         
@@ -180,7 +286,7 @@ var open_browser = function () {
             console.error('Unhandled error: ' + e);
         });
     } catch (e) {
-        dump('open_browser->caught exception: ' + e.message + "\nstacktrace: " + e.stack)
+        log_exception(e)
     }
 }
 
@@ -192,116 +298,69 @@ var resize_browser = function (width, height) {
     driver.manage().window().setSize(width, height);
 }
 
-var run_in_browser = function (script) {
-    try{
-        commands = JSON.parse(script) //script.split(/\r?\n/)
-        
-        if (!driver) {
-            open_browser()
-            clear_browser_cookies()
-            process_commands()
-            return
-        }
-
-        driver.getTitle().then(
-        function (val) {
-            clear_browser_cookies(process_commands)
-        }
-        , function (err) {
-            dump("browser is not open: " + err)
-            open_browser()
-            clear_browser_cookies()
-            process_commands()
-        })
-    } catch(e) {
-        dump('run_in_browser->caught exception: ' + e.message + "\nstacktrace: " + e.stack)
-    }
-}
-
-
-//-------------------------------------------------------
-// Script Injection.
-//-------------------------------------------------------
-
-
-var run_browser_script = function(script) {
-    return flow.execute(function() {
-        var d = webdriver.promise.defer();
-        driver.executeScript(script).then(
-                function(result) {d.fulfill(result)},
-                function(error) {dump("Error: running browser script: " + script + " error: " + error.message + ":" + error.stack);d.reject(error)}
+var jitter_browser_size = function() {
+    driver.manage().window().getSize(function(s) {
+        driver.manage().window().setSize(s.width+1, s.height+1).then(function() {
+            driver.manage().window().setSize(s.width, s.height);}
         )
-        return d.promise
-    })
+    });
 }
 
-//var record_current_url = function () {
-//	return flow.execute(function() {
-//		var d = webdriver.promise.defer();
-//		driver.getCurrentUrl().then (
-//				function(result) {events.push({type: 'goto_url', url: result}); d.fulfill(result)},
-//				function(error) {"Error: record curren tufl: "+ error.message + ":" + error.stack; d.fulfill(null)})
-//		return d.promise
-//	})
-//}
+var clear_browser_cookies = function(callback) {
+    extension_socket.send(JSON.stringify({code: 'clear_browser_cookies'}))
+}
 
 var start_recording = function () {
+    if (!extension_socket) {
+        app_socket.send('fail:')
+        return
+    }
+    
     extension_socket.send(JSON.stringify({code: 'start_recording'}))
-    app_socket.send('ok:')
+    console.log("starting to record")
+    mode = ControllerMode.Recording
 }
 
 var stop_recording = function () {
     extension_socket.send(JSON.stringify({code: 'stop_recording'}))
-    app_socket.send('ok:')
+    mode = ControllerMode.Idle
+    commands.push("send_result()\n")
 }
 
-var convert_key_identifier = function(id) {
-    if (!is_modifier(id)) {
-        return "'" + id.replace('U+','\\u') + "'"
+var replay_recording = function (recording) {
+    try{
+        mode = ControllerMode.Replaying
+        
+        commands = recording
+        console.log("replaying commands: " + recording)
+        
+        //if (!driver) {
+            open_browser()
+            clear_browser_cookies()
+            process_commands()
+            return
+        //}
+
+//        driver.getTitle().then(
+//        function (val) {
+//            clear_browser_cookies(process_commands)
+//        }
+//        , function (err) {
+//            log_error("browser is not open: " + err)
+//            open_browser()
+//            clear_browser_cookies()
+//            process_commands()
+//        })
+    } catch(e) {
+        log_exception(e)
     }
-    return "Key." + id.toUpperCase()
 }
 
-var is_modifier = function(id) {
-    if ((id.indexOf('U+') != 0)) {
-        return true
-    }
-    return false
-}
+
 	
-//var wrap_script = function (script) {
-//    var wrapped = "function (env) {\n"
-//    wrapped += "app_socket = env.app_socket\n"
-//    wrapped += "webdriver = env.webdriver\n"
-//    wrapped += "driver = env.driver\n"
-//    wrapped += "Key = env.Key\n"
-//    wrapped += "By = env.By\n"
-//    wrapped += "until = env.until\n"
-//    wrapped += "flow = env.flow\n"
-//    wrapped += "resize_browser = env.resize_browser\n"
-//    wrapped += "dump = env.dump\n"
-//    wrapped += "goto_url = env.goto_url\n"
-//    wrapped += "send_key = env.send_key\n"
-//    wrapped += "set_text = env.set_text\n"
-//    wrapped += "click_on_element = env.click_on_element\n"
-//    wrapped += "mouse_over_element = env.mouse_over_element\n"
-//    wrapped += "send_result = env.send_result\n"
-//    wrapped += "\n"
-//    //wrapped += "resize_browser(" + width + ", " + height + ")\n"
-//    wrapped += script
-//    wrapped += "\n"
-//    wrapped += "//return our results\n"
-//    wrapped += "send_result()\n"
-//    wrapped += "}\n"
-//
-//    return wrapped
-//}
-
-
-// -------------------------------------------------------
-// Automation
-// Atomics.
-// -------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+// Browser Actions.
+//------------------------------------------------------------------------------------------------
 
 // Note the returned promise nevers errors.
 // It will try to wait for the xpath
@@ -313,6 +372,16 @@ var critical_wait_time = 5000 //30000
 //Returns a promise which navigates the browser to another url.
 var goto_url = function (url) {
     return driver.get(url)
+}
+
+//Returns a promise which navigates the browser forward in the history.
+var navigate_forward = function () {
+    return driver.navigate().forward();
+}
+
+//Returns a promise which navigates the browser backwards in the history.
+var navigate_back = function () {
+    return driver.navigate().back();
 }
 
 //Waits for a page to be ready.
@@ -338,7 +407,7 @@ var get_element = function (xpath, wait_milli) {
                 d.reject(null)
             }
         }, function(error) {
-            dump('Warning: could not find: ' + xpath)
+            log_info('Warning: could not find: ' + xpath)
             throw error
         })
         return d.promise
@@ -349,7 +418,7 @@ var get_element = function (xpath, wait_milli) {
 var get_visible_element = function (xpath, wait_milli) {
     return get_element(xpath, wait_milli).then(
             function (element) {
-                dump("type of element: " + typeof(element))
+                log_info("type of element: " + typeof(element))
                 return driver.wait(until.elementIsVisible(element), wait_milli)
             }
     )
@@ -402,52 +471,7 @@ var send_result = function () {
 // Helper to terminate promise chains.
 var terminate_chain = function(p) {
     p.catch(function(error){
-        dump("Error in chain: " + error.message + " stack: " + error.stack)
+        log_error("Error in chain!")
+        log_exception(error)
     })
 }
-
-//-------------------------------------------------------
-//Automation.
-//-------------------------------------------------------
-
-//var run_driver_script = function(script) {
-//    dump("now running script")
-//    try {
-//        var content = "exports.run = " + wrap_script(script) + ";";
-//        var options = { flag : 'w' };
-//
-//        var env = {}
-//        env.app_socket = app_socket
-//        env.webdriver = webdriver 
-//        env.driver = driver 
-//        env.Key = Key 
-//        env.By = By 
-//        env.until = until 
-//        env.flow = flow 
-//        env.dump = dump 
-//        env.resize_browser = resize_browser
-//        env.goto_url = goto_url
-//        env.send_key = send_key
-//        env.set_text = set_text
-//        env.click_on_element = click_on_element
-//        env.mouse_over_element = mouse_over_element
-//        env.send_result = send_result
-//
-//        fs.writeFile('./evalscript.js', content, options, function (e) {
-//            try{
-//                if (e) {
-//                    app_socket.send('fail1: ' + e.message + '  stack: ' + e.stack)        
-//                }
-//                delete require.cache[require.resolve('./evalscript')]
-//                var debug = require('./evalscript');
-//                debug.run(env);
-//            }
-//            catch(e2){
-//                 app_socket.send('fail2: ' + e2.message + '  stack: ' + e2.stack);
-//            }
-//        });
-//    } catch(e) {
-//        app_socket.send('fail3: ' + e.message + 'stack: ' + e.stack)
-//    }
-//}
-

@@ -1,29 +1,9 @@
 //------------------------------------------------------------------------------------------------
-//Debugging State.
-//------------------------------------------------------------------------------------------------
-var debugging = true
-var log_info = function(msg) {
-    if (debugging) {
-        console.log("Info: " + msg)
-    }
-}
-var log_error = function(msg) {
-    if (debugging) {
-        console.log("Error: " + msg)
-    }
-}
-var log_exception = function(e) {
-    if (debugging) {
-        console.log("Exception: " + e.message + " stack: " + e.stack)
-    }
-}
-
-//------------------------------------------------------------------------------------------------
 //Our communication state with the controller (node.js).
 //------------------------------------------------------------------------------------------------
 var controller_socket = null
 
-var connect_to_app = function() {
+var connect_to_controller = function() {
 	if (!controller_socket || (controller_socket.readyState != WebSocket.OPEN)) {
 		try {
 			controller_socket = new WebSocket('wss://localhost:8083');
@@ -33,55 +13,69 @@ var connect_to_app = function() {
 			controller_socket.onopen = function (event) {
 				controller_socket.send(JSON.stringify({code: 'background_connected'})); 
 			};
-			controller_socket.onmessage = onmessage
-		} catch(e){}
+			controller_socket.onmessage = on_message_from_controller
+		} catch(e){
+		    controller_socket = null
+		}
 	} else {
 		log_info("background connected")
 	}
 }
 
-//We continuously try to the native app allowing the
+//We continuously try connect to the native app allowing the
 //user to have the flexibility to run or not run the native app.
 var timer = setInterval(function() {
- connect_to_app()
+ connect_to_controller()
 }, 1000)
 
-//Listen for messages from our nodejs browser controller.
-var onmessage = function(event) {
+var start_recording_called = false
+
+//Listen for messages from our nodejs controller.
+var on_message_from_controller = function(event) {
     var msg = JSON.parse(event.data);
-    log_info("received message: " + event.data + " parsed: " + msg.code)
+    console.log("received message: " + event.data + " parsed: " + msg.code)
 
     switch (msg.code) {
         case 'start_recording':
+            start_recording_called = true
+            
+            // Initialize the recording state.
+            // The recording tab id will be retrieved from the first tab to message us.
+            recording = true;
+            recording_tab_id = null;
+            
             // Clear the cookies so that the websites don't
             // present us with customized pages.
-            clear_browser_cookies(function() {
-                get_active_tab(start_recording)
-            })
+            clear_browser_cookies(function() {})
             break
         case 'stop_recording':
+            console.log("start_recording was called: " + start_recording_called)
+            
             // Tell the recording tab to stop recording.
             chrome.tabs.sendMessage(recording_tab_id, {
                 code : "stop_recording"
             });
-            // Build up the script message.
-            commands.push("send_result()\n")
-            var stringified = JSON.stringify(commands)
-            var msg = {
-                code: "script",
-                commands: stringified
-            }
-            // Send the final script back to the controller.
-            controller_socket.send(JSON.stringify(msg))
-            log_info("sending script: " + stringified)
+            
+            // Update our state.
+            recording = false
             recording_tab_id = null
-            commands.length = 0
+            
+//            // Build up the script message.
+//            commands.push("send_result()\n")
+//            var stringified = JSON.stringify(commands)
+//            var msg = {
+//                code: "recording_finished",
+//                commands: stringified
+//            }
+//            // Send the final script back to the controller.
+//            controller_socket.send(JSON.stringify(msg))
+//            log_info("sending script: " + stringified)
             break
         case 'clear_browser_cookies':
             // This gets called from the controller to create
             // a pristine environment in which to replay scripts.
             clear_browser_cookies(function(){})
-            break
+            break         
     }
 }
 
@@ -92,11 +86,16 @@ var onmessage = function(event) {
 //Listen for messages from our content scripts.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     
+    console.log("got content message: " + request.code + " from tabid: " + sender.tab.id)
+    
     //When content scripts tell us they are embedded we respond with
     //whether they should be recording.
     if (request.code == "recorder_embedded") {
-        log_info("background got recorder_embedded message")
-        if (sender.tab.id == recording_tab_id) {
+        log_info("background got recorder_embedded message: " + recording)
+        if (recording && (recording_tab_id == null)) {
+            recording_tab_id = sender.tab.id
+            sendResponse(true)
+        } else if (sender.tab.id == recording_tab_id) {
             sendResponse(true)
         } else {
             sendResponse(false)
@@ -106,6 +105,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     
     // If we get a message from a non recording tab we tell it to stop.
     if (sender.tab.id != recording_tab_id) {
+        console.log("recording tab id is: " + recording_tab_id)
+        console.log("sender tab id is: " + sender.tab.id)
         chrome.tabs.sendMessage(sender.tab.id, {code: "stop_recording"})
         return
     }
@@ -121,7 +122,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         // Notify the controller that the page is ready to be automated.
         controller_socket.send(JSON.stringify({code: 'page_is_ready'})); 
     } else if (request.code == "command") {
-        commands.push(request.command)
+        // request.command is a string
+        console.log("got command: " + request.command)
+        controller_socket.send(JSON.stringify({code: 'command', command: request.command}))
+    } else if (request.code == 'jitter_browser_size') {
+        var msg = {
+                code: "jitter_browser_size",
+        }
+        controller_socket.send(JSON.stringify({code: 'jitter_browser_size'}))
     }
     sendResponse({code: 'ok'})
     return true
@@ -169,35 +177,10 @@ var close_other_tabs = function(tab_id) {
 //------------------------------------------------------------------------------------------------
 //Recording State.
 //------------------------------------------------------------------------------------------------
-var recording_tab_id = null // This will only be non-null during recording.
-var commands = []
 
-//Retrieves the active tab and calls the callback with the tabs array
-//which should only have one element in it
-var get_active_tab = function(callback) {
-    var queryInfo = {
-            active : true,
-            currentWindow : true
-    };
-    chrome.tabs.query(queryInfo, callback)
-}
-
-//Start recording.
-//tabs[0] should contain the active tab
-var start_recording = function(tabs) {
-    if (!tabs[0]) {
-        console.log("There is not active tab to record from!")
-        return
-    }
-    recording_tab_id = tabs[0].id;
-
-    // Initialize the script.
-    commands.length = 0
-    commands.push("goto_url('" + tabs[0].url + "')\n")
-
-    // Reload the active tab to clear prefilled values and to start recording.
-    chrome.tabs.reload(recording_tab_id, {}, function(){});
-}
+//We grab the recording id from the first tab to message us after recording is set to true.
+var recording = false
+var recording_tab_id = null 
 
 
 

@@ -116,7 +116,7 @@ WebView {
         script += "//return our results\n"
         script += send_result()
         script += "}\n"
-        cpp_bridge.push_script(script)
+        cpp_bridge.push_recording(script)
     }
 
     function inject_jquery(next_func) {

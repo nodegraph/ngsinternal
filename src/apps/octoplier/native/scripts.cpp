@@ -23,7 +23,7 @@ QString Scripts::get_script(const std::string& filename) {
 }
 
 QString Scripts::get_event_recorder_script() {
-  return get_script(":/browser/eventrecorder.js");
+  return get_script(":/browser/content.js");
 }
 
 QString Scripts::get_event_retriever_script() {

@@ -247,122 +247,122 @@ windows_release_tag:
     artifacts:
         paths:
             - windows_release/install
-# ------------------------------------
-macos_debug:
-    <<: *macos_debug_tmpt
-    except:
-        - tags
-macos_debug_tag:
-    <<: *macos_debug_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - mac_debug/build/octoplier_pimped.dmg
-            - mac_debug/build/testqml_pimped.dmg
-macos_release:
-    <<: *macos_release_tmpt
-    except:
-        - tags
-macos_release_tag:
-    <<: *macos_release_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - mac_debug/build/octoplier_pimped.dmg
-            - mac_debug/build/testqml_pimped.dmg
-# ------------------------------------
-ios_debug:
-    <<: *ios_debug_tmpt
-    except:
-        - tags
-ios_debug_tag:
-    <<: *ios_debug_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - ios_debug/build/
-ios_release:
-    <<: *ios_release_tmpt
-    except:
-        - tags
-ios_release_tag:
-    <<: *ios_release_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - ios_debug/build/
-# ------------------------------------
-winrt_debug:
-    <<: *winrt_debug_tmpt
-    except:
-        - tags
-winrt_debug_tag:
-    <<: *winrt_debug_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - winrt_debug/install_octoplier/octoplier.appx
-winrt_release:
-    <<: *winrt_release_tmpt
-    except:
-        - tags
-winrt_release_tag:
-    <<: *winrt_release_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - winrt_release/install_octoplier/octoplier.appx
-# ------------------------------------
-winrt_x86_debug:
-    <<: *winrt_x86_debug_tmpt
-    except:
-        - tags
-winrt_x86_debug_tag:
-    <<: *winrt_x86_debug_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - winrt_x86_debug/install_octoplier/octoplier.appx
-winrt_x86_release:
-    <<: *winrt_x86_release_tmpt
-    except:
-        - tags
-winrt_x86_release_tag:
-    <<: *winrt_x86_release_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - winrt_x86_release/install_octoplier/octoplier.appx
-# ------------------------------------
-android_debug:
-    <<: *android_debug_tmpt
-    except:
-        - tags
-android_debug_tag:
-    <<: *android_debug_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - android_debug/install_octoplier/bin/QtApp-debug.apk
-android_release:
-    <<: *android_release_tmpt
-    except:
-        - tags
-android_release_tag:
-    <<: *android_release_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - android_release/install_octoplier/bin/QtApp-release-signed.apk
-# ------------------------------------
+## ------------------------------------
+#macos_debug:
+#    <<: *macos_debug_tmpt
+#    except:
+#        - tags
+#macos_debug_tag:
+#    <<: *macos_debug_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - mac_debug/build/octoplier_pimped.dmg
+#            - mac_debug/build/testqml_pimped.dmg
+#macos_release:
+#    <<: *macos_release_tmpt
+#    except:
+#        - tags
+#macos_release_tag:
+#    <<: *macos_release_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - mac_debug/build/octoplier_pimped.dmg
+#            - mac_debug/build/testqml_pimped.dmg
+## ------------------------------------
+#ios_debug:
+#    <<: *ios_debug_tmpt
+#    except:
+#        - tags
+#ios_debug_tag:
+#    <<: *ios_debug_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - ios_debug/build/
+#ios_release:
+#    <<: *ios_release_tmpt
+#    except:
+#        - tags
+#ios_release_tag:
+#    <<: *ios_release_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - ios_debug/build/
+## ------------------------------------
+#winrt_debug:
+#    <<: *winrt_debug_tmpt
+#    except:
+#        - tags
+#winrt_debug_tag:
+#    <<: *winrt_debug_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - winrt_debug/install_octoplier/octoplier.appx
+#winrt_release:
+#    <<: *winrt_release_tmpt
+#    except:
+#        - tags
+#winrt_release_tag:
+#    <<: *winrt_release_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - winrt_release/install_octoplier/octoplier.appx
+## ------------------------------------
+#winrt_x86_debug:
+#    <<: *winrt_x86_debug_tmpt
+#    except:
+#        - tags
+#winrt_x86_debug_tag:
+#    <<: *winrt_x86_debug_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - winrt_x86_debug/install_octoplier/octoplier.appx
+#winrt_x86_release:
+#    <<: *winrt_x86_release_tmpt
+#    except:
+#        - tags
+#winrt_x86_release_tag:
+#    <<: *winrt_x86_release_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - winrt_x86_release/install_octoplier/octoplier.appx
+## ------------------------------------
+#android_debug:
+#    <<: *android_debug_tmpt
+#    except:
+#        - tags
+#android_debug_tag:
+#    <<: *android_debug_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - android_debug/install_octoplier/bin/QtApp-debug.apk
+#android_release:
+#    <<: *android_release_tmpt
+#    except:
+#        - tags
+#android_release_tag:
+#    <<: *android_release_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - android_release/install_octoplier/bin/QtApp-release-signed.apk
+## ------------------------------------
 

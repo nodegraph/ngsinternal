@@ -5,6 +5,19 @@ var mutations_done_time = 5000 // min time since last mutation, to be considered
 var last_mutation_time = new Date();
 var mutation_timer = null
 
+var start_mutation_timer = function() {
+    if (mutation_timer == null) {
+        // start checking to make things visible
+        console.log("starting mutation observer")
+        mutation_timer = setInterval(check_loading, mutation_check_time)
+    }
+}
+
+var stop_mutation_timer = function() {
+    clearInterval(mutation_timer)
+    mutation_timer = null
+}
+
 //Whether the page has completely loaded, including ajax to the best of our knowledge.
 var page_is_ready = false
 
@@ -13,11 +26,14 @@ var page_is_ready = false
 document.addEventListener ('DOMContentLoaded', on_loaded, false);
 function on_loaded () {
     // Once the dom is loaded, we wait for ajax loading to finish.
-    mutation_timer = setInterval(check_loading, mutation_check_time)
+    console.log("starting mutation observer!")
+    start_mutation_timer()
 }
 
 //Whether we are recording.
 var recording = false
+
+console.log("xxxxxxxxxxxx")
 
 //Ask the background script if we should be recording.
 chrome.runtime.sendMessage({code: 'recorder_embedded'}, function(response) {
@@ -33,12 +49,13 @@ chrome.runtime.sendMessage({code: 'recorder_embedded'}, function(response) {
     }
 })
 
-
 function check_loading() {
     var current_time = new Date()
     var last_mutation_delta = current_time.getTime() - last_mutation_time.getTime()
     
     if (!recording) {
+        show_page()
+    } else if (in_iframe()) {
         show_page()
     } else {
         if (last_mutation_delta > mutations_done_time) {
@@ -49,15 +66,39 @@ function check_loading() {
     }
 }
 
+function in_iframe () {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
+var forceRedraw = function(element){
+
+    if (!element) { return; }
+
+    var n = document.createTextNode(' ');
+    var disp = element.style.display;  // don't worry about previous display style
+
+    element.appendChild(n);
+    element.style.display = 'none';
+
+    setTimeout(function(){
+        element.style.display = disp;
+        n.parentNode.removeChild(n);
+    },20); // you can play with this timeout to make it as short as possible
+}
+
 function show_page() {
     // This is continuously called because some pages like google search will
     // change the dom inplace, and the body will pick up the hidepage.css settings.
     console.log("making page visible!")
     if (window.document.body) {
+        stop_mutation_timer()
         window.document.body.style.setProperty("display", "inherit", "important");
+        chrome.runtime.sendMessage({code: 'jitter_browser_size'})
     }
-    clearInterval(mutation_timer)
-    mutation_timer = null
 }
 
 
@@ -425,10 +466,11 @@ try {
 		var fnCallback = function (mutations) {
 			mutations.forEach(function (mutation) {
 				//chrome.runtime.sendMessage({code: "dom_changed"});
+			    console.log("mutation observed!")
 				last_mutation_time = new Date();
+			    start_mutation_timer()
 		        // mutation.addedNodes.length
 		        // mutation.removedNodes.length
-				check_loading()
 		    });
 		};
 		
