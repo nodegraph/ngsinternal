@@ -1,5 +1,8 @@
 body {
-    display:    none;
-    /*visibility: hidden;*/
-    transform: translateZ(0); 
+	/*pointer-events: none;*/
+	/*visibility: hidden;*/
+	
+    /*display:    none;*/
+    /*transform: translateZ(0); */
 }
+

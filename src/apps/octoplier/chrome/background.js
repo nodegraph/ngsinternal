@@ -44,9 +44,8 @@ var on_message_from_controller = function(event) {
             recording = true;
             recording_tab_id = null;
             
-            // Clear the cookies so that the websites don't
-            // present us with customized pages.
-            clear_browser_cookies(function() {})
+            // Note that we start recordings in a new instance of webdriver,
+            // where all cookies and other caches have been wiped.
             break
         case 'stop_recording':
             console.log("start_recording was called: " + start_recording_called)
@@ -71,11 +70,6 @@ var on_message_from_controller = function(event) {
 //            controller_socket.send(JSON.stringify(msg))
 //            log_info("sending script: " + stringified)
             break
-        case 'clear_browser_cookies':
-            // This gets called from the controller to create
-            // a pristine environment in which to replay scripts.
-            clear_browser_cookies(function(){})
-            break         
     }
 }
 
@@ -103,14 +97,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         return
     }
     
-    // If we get a message from a non recording tab we tell it to stop.
-    if (sender.tab.id != recording_tab_id) {
-        console.log("recording tab id is: " + recording_tab_id)
-        console.log("sender tab id is: " + sender.tab.id)
-        chrome.tabs.sendMessage(sender.tab.id, {code: "stop_recording"})
-        return
-    }
-    
     // Otherwise we process the message.
     if (request.code == "browser_info") {
         log_info(request.error)
@@ -120,8 +106,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         log_error(request.error)
     } else if (request.code == "page_is_ready") {
         // Notify the controller that the page is ready to be automated.
+        console.log("sending page_is_ready to controller !!!")
         controller_socket.send(JSON.stringify({code: 'page_is_ready'})); 
     } else if (request.code == "command") {
+        // If we get a message from a non recording tab we tell it to stop.
+        if (sender.tab.id != recording_tab_id) {
+            console.log("recording tab id is: " + recording_tab_id)
+            console.log("sender tab id is: " + sender.tab.id)
+            chrome.tabs.sendMessage(sender.tab.id, {code: "stop_recording"})
+            return
+        }
+        
         // request.command is a string
         console.log("got command: " + request.command)
         controller_socket.send(JSON.stringify({code: 'command', command: request.command}))

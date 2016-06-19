@@ -1,15 +1,24 @@
-//If there are no dom mutations for 5 seconds,
-//we consider the page to be loaded and ready to be shown.
-var mutation_check_time = 200 // time interval to check whether we've waited long enough
-var mutations_done_time = 5000 // min time since last mutation, to be considered fully completed and done
-var last_mutation_time = new Date();
+//------------------------------------------------------------------------------------------------
+//Page readiness and mutations.
+//------------------------------------------------------------------------------------------------
+
+//If there are no dom mutations for 5 seconds, we consider the page to be loaded 
+//and ready to be shown and interacted with for recording and playback.
+//If there are subsequent dom changes after this, we expect the various browser controller
+//actions to wait for the elements to appear.
+var mutation_check_interval = 200 // time interval to check whether we've waited long enough
+var mutation_done_interval = 5000 // min time since last mutation, to be considered fully completed and done
+var last_mutation_time = null
 var mutation_timer = null
+var page_is_ready = false //Whether the page has seen no dom mutations for 5 seconds.
 
 var start_mutation_timer = function() {
     if (mutation_timer == null) {
         // start checking to make things visible
         console.log("starting mutation observer")
-        mutation_timer = setInterval(check_loading, mutation_check_time)
+        page_is_ready = false
+        last_mutation_time = new Date();
+        mutation_timer = setInterval(check_loading, mutation_check_interval)
     }
 }
 
@@ -18,22 +27,61 @@ var stop_mutation_timer = function() {
     mutation_timer = null
 }
 
-//Whether the page has completely loaded, including ajax to the best of our knowledge.
-var page_is_ready = false
-
-//We can only reverse the hidepage.css effects once the dom is loaded
-//because until then we document.body will be null.
+//Start listening for mutations on page load.
 document.addEventListener ('DOMContentLoaded', on_loaded, false);
 function on_loaded () {
-    // Once the dom is loaded, we wait for ajax loading to finish.
     console.log("starting mutation observer!")
     start_mutation_timer()
 }
 
+function show_page() {
+    // This is continuously called because some pages like google search will
+    // change the dom inplace, and the body will pick up the hidepage.css settings.
+//    console.log("making page visible!")
+//    if (window.document.body) {
+//        //window.document.body.style.setProperty("display", "inherit", "important");
+//        window.document.body.style.setProperty("pointer-events", "inherit", "important");
+//        window.document.body.style.setProperty("visibility", "inherit", "important");
+//        //chrome.runtime.sendMessage({code: 'jitter_browser_size'})
+//    }
+}
+
+function hide_page() {
+    console.log("making page invisible!")
+    if (window.document.body) {
+        //window.document.body.style.setProperty("display", "none", "important");
+        window.document.body.style.setProperty("pointer-events", "none", "important");
+        window.document.body.style.setProperty("visibility", "hidden", "important");
+        //chrome.runtime.sendMessage({code: 'jitter_browser_size'})
+    }
+}
+
+function check_loading() {
+    var current_time = new Date()
+    var last_mutation_delta = current_time.getTime() - last_mutation_time.getTime()
+    
+    if (!recording) {
+        show_page()
+    } 
+    
+    if (last_mutation_delta > mutation_done_interval) {
+        stop_mutation_timer()
+        show_page()
+        page_is_ready = true
+        
+        // Only send the page_is_ready from the top frame.
+        if (this.window == this.window.top) {
+            chrome.runtime.sendMessage({code: 'page_is_ready'})
+        }
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+//Our recording state.
+//------------------------------------------------------------------------------------------------
+
 //Whether we are recording.
 var recording = false
-
-console.log("xxxxxxxxxxxx")
 
 //Ask the background script if we should be recording.
 chrome.runtime.sendMessage({code: 'recorder_embedded'}, function(response) {
@@ -49,61 +97,9 @@ chrome.runtime.sendMessage({code: 'recorder_embedded'}, function(response) {
     }
 })
 
-function check_loading() {
-    var current_time = new Date()
-    var last_mutation_delta = current_time.getTime() - last_mutation_time.getTime()
-    
-    if (!recording) {
-        show_page()
-    } else if (in_iframe()) {
-        show_page()
-    } else {
-        if (last_mutation_delta > mutations_done_time) {
-            show_page()
-            page_is_ready = true
-            chrome.runtime.sendMessage({code: 'page_is_ready'})
-        }
-    }
-}
-
-function in_iframe () {
-    try {
-        return window.self !== window.top;
-    } catch (e) {
-        return true;
-    }
-}
-
-var forceRedraw = function(element){
-
-    if (!element) { return; }
-
-    var n = document.createTextNode(' ');
-    var disp = element.style.display;  // don't worry about previous display style
-
-    element.appendChild(n);
-    element.style.display = 'none';
-
-    setTimeout(function(){
-        element.style.display = disp;
-        n.parentNode.removeChild(n);
-    },20); // you can play with this timeout to make it as short as possible
-}
-
-function show_page() {
-    // This is continuously called because some pages like google search will
-    // change the dom inplace, and the body will pick up the hidepage.css settings.
-    console.log("making page visible!")
-    if (window.document.body) {
-        stop_mutation_timer()
-        window.document.body.style.setProperty("display", "inherit", "important");
-        chrome.runtime.sendMessage({code: 'jitter_browser_size'})
-    }
-}
-
-
-
-
+//------------------------------------------------------------------------------------------------
+//Our dom events listener.
+//------------------------------------------------------------------------------------------------
 
 // Our namespace.
 window.octoplier = {}
@@ -135,7 +131,7 @@ window.octoplier.EventProxy = function (window, document, logger) {
 	// Copied from EventProxy.js in theintern/recorder github project,
 	// and slightly modified. References to port or chrome objects have
 	// been removed.
-	var EVENT_TYPES = 'click dblclick mousedown mousemove mouseup keydown keypress keyup input'.split(' '); 
+	var EVENT_TYPES = 'click dblclick mousedown mousemove mouseup mouseover keydown keypress keyup input'.split(' '); 
 	// submit
 	// mousemove
 	// mouseover mouseout
@@ -160,9 +156,14 @@ window.octoplier.EventProxy = function (window, document, logger) {
 		return this.sendEvent.apply(this, arguments);
 	};
 	
+	var contextMenuEventRelay = function () {
+	    return this.contextMenuEvent.apply(this, arguments);
+	}
+	
 	var sendEventBound = null;
 	var passEventBound = null;
 	var delayEventBound = null;
+	var contextMenuEventBound = null;
 	
 	EventProxy.prototype = {
 		constructor: EventProxy,
@@ -185,11 +186,13 @@ window.octoplier.EventProxy = function (window, document, logger) {
 			sendEventBound = sendEventRelay.bind(self);
 			passEventBound = passEventRelay.bind(self);
 			delayEventBound = delayEventRelay.bind(self);
+			contextMenuEventBound = contextMenuEventRelay.bind(self)
 			
 			this.window.addEventListener('message', passEventBound, true);
 			this.window.addEventListener('beforeunload',delayEventBound, true);
 			this.window.addEventListener('scroll',sendEventBound, true);
 			this.window.addEventListener('submit',sendEventBound, true);
+			this.document.addEventListener('contextmenu', contextMenuEventBound, true);
 			EVENT_TYPES.forEach(function (eventType) {
 				self.document.addEventListener(eventType, sendEventBound, true);
 			});
@@ -203,6 +206,7 @@ window.octoplier.EventProxy = function (window, document, logger) {
 			EVENT_TYPES.forEach(function (eventType) {
 				self.document.removeEventListener(eventType, sendEventBound, true);
 			});
+			this.document.removeEventListener('contextmenu', contextMenuEventBound, true);
 			this.window.removeEventListener('submit',sendEventBound, true);
 			this.window.removeEventListener('scroll',sendEventBound, true);
 			this.window.removeEventListener('beforeunload', delayEventBound, true);
@@ -211,6 +215,7 @@ window.octoplier.EventProxy = function (window, document, logger) {
 			sendEventBound = null
 			passEventBound = null
 			delayEventBound = null
+			contextMenuEventBound = null
 		},
 		
 	    get_css_path: function(el) {
@@ -318,8 +323,25 @@ window.octoplier.EventProxy = function (window, document, logger) {
 		    }
 		    return full_path
 		},
+		
+		contextMenuEvent: function (event) {
+            if (recording && (!page_is_ready)) {
+                event.stopPropagation();
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                return false;
+            }
+		},
 
 		passEvent: function (event) {
+		    
+		    if (recording && (!page_is_ready)) {
+    		    event.stopPropagation();
+    		    event.preventDefault();
+    		    event.stopImmediatePropagation();
+    		    return false;
+		    }
+		    
 		    if (!event.data || event.data.method !== 'recordEvent' || !event.data.detail) {
 		        return;
 		    }
@@ -335,46 +357,11 @@ window.octoplier.EventProxy = function (window, document, logger) {
 
 		    this.send(detail);
 		},
-
-		send: function (detail) {
-		    if (this.window !== this.window.top) {
-		        this.window.parent.postMessage({
-		            method: 'recordEvent',
-		            detail: detail
-		        }, '*');
-		    } else {
-		        var event = detail
-		        var type = event.type
-		        var cmd = ""
-		            if (type == 'goto_url') {
-		                cmd = "goto_url('" + event.url + "')\n"
-		            } else if (type == 'click') {
-		                cmd = "click_on_element('" + event.target +"')\n"
-		            } else if ((type == 'keydown')) {
-		                // Handling enter as a special case.
-		                if (event.keyIdentifier == 'Enter') {
-		                    cmd = "send_key('" + event.target + "', Key.ENTER)\n"
-		                }
-		            } else if (type == 'input') {
-		                // On input we overwrite the entire field.
-		                cmd = "set_text('" + event.target + "','" + event.text + "')\n"
-		            } else if (type == 'mousemove') {
-		                cmd = "mouse_over_element('" + event.target + "', " + event.elementX + ", " + event.elementY + ")\n"
-		            } else if (type == 'scroll') {
-		                cmd = "driver.executeScript('window.scrollBy("+ event.scrollX +","+ event.scrollY +")')\n"
-		            } else {
-		            }
-		        // If the dom event translates to a driver command
-		        if (page_is_ready && cmd.length) {
-		            console.log("sending command: " + cmd)
-		            chrome.runtime.sendMessage({code: "command", command: cmd});
-		        } else {
-		            console.log("not sending event: " + JSON.stringify(event))
-		        }
-		    }
-		},
 		
 		delayEvent: function (event) {
+		    //window.octoplier.event_proxy.disconnect()
+		    page_is_ready = false
+		    
 //			if (event.type === 'beforeunload') {
 //				this.logger.log_error("about to load a new page")
 //				var confirmationMessage = "continue to next page";
@@ -384,6 +371,14 @@ window.octoplier.EventProxy = function (window, document, logger) {
 		},
 		
 		sendEvent: function (event) {
+		    
+            if (recording && (!page_is_ready)) {
+                event.stopPropagation();
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                return false;
+            }
+		    
 			//window.octoplier.logger.log_info("got send event: " + event.type)
 			var target = event.target
 			var rect = target.getBoundingClientRect ? target.getBoundingClientRect() : {};
@@ -409,6 +404,8 @@ window.octoplier.EventProxy = function (window, document, logger) {
 					type: event.type
 				} 
 			
+			console.log("event target: " + data.target)
+			
 			if ((event.type == 'input') || (event.type == 'keydown')) {
 				data.text = target.value
 			}
@@ -419,6 +416,44 @@ window.octoplier.EventProxy = function (window, document, logger) {
 			}
 						
 			this.send(data);
+		},
+		
+		send: function (detail) {
+		    if (this.window !== this.window.top) {
+		        this.window.parent.postMessage({
+		            method: 'recordEvent',
+		            detail: detail
+		        }, '*');
+		    } else {
+		        var event = detail
+		        var type = event.type
+		        var cmd = ""
+		            if (type == 'goto_url') {
+		                cmd = "goto_url('" + event.url + "')\n"
+		            } else if (type == 'click') {
+		                cmd = "click_on_element('" + event.target +"')\n"
+		            } else if ((type == 'keydown')) {
+		                // Handling enter as a special case.
+		                if (event.keyIdentifier == 'Enter') {
+		                    cmd = "send_key('" + event.target + "', Key.ENTER)\n"
+		                }
+		            } else if (type == 'input') {
+		                // On input we overwrite the entire field.
+		                cmd = "set_text('" + event.target + "','" + event.text + "')\n"
+		            } else if (type == 'mousemove') {
+		                //cmd = "mouse_over_element('" + event.target + "', " + event.elementX + ", " + event.elementY + ")\n"
+		            } else if (type == 'scroll') {
+		                cmd = "driver.executeScript('window.scrollBy("+ event.scrollX +","+ event.scrollY +")')\n"
+		            } else {
+		            }
+		        // If the dom event translates to a driver command
+		        if (page_is_ready && cmd.length) {
+		            console.log("sending command: " + cmd)
+		            chrome.runtime.sendMessage({code: "command", command: cmd});
+		        } else {
+		            console.log("not sending event: " + JSON.stringify(event))
+		        }
+		    }
 		},
 		
 		setStrategy: function (value) {
@@ -468,7 +503,13 @@ try {
 				//chrome.runtime.sendMessage({code: "dom_changed"});
 			    console.log("mutation observed!")
 				last_mutation_time = new Date();
-			    start_mutation_timer()
+			    //start_mutation_timer()
+			    //if (mutation_timer == null) {
+			    //    if (!recording) {
+			    //        show_page()
+			    //    } 
+			    //}
+			    // start_mutation_timer()
 		        // mutation.addedNodes.length
 		        // mutation.removedNodes.length
 		    });
@@ -476,7 +517,6 @@ try {
 		
 		//now create our observer and get our target element
 		window.octoplier.observer = new MutationObserver(fnCallback),
-		        elTarget = document.querySelector("#divTarget"),
 		        objConfig = {
 		            childList: true,
 		            subtree : true,

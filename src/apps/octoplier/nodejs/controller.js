@@ -75,30 +75,41 @@ function is_element(o){
 );
 }
 
-//------------------------------------------------------------------------------------------------
-//The controllers main internal state.
-//------------------------------------------------------------------------------------------------
 
-// Command stack hold currently running or recording script.
-var commands = []
-var ControllerMode = {
+//------------------------------------------------------------------------------------------------
+//Our main internal state.
+//------------------------------------------------------------------------------------------------
+var ActionMode = {
         Idle: 0,
         Recording: 1,
         Replaying: 2
 }
-var mode = ControllerMode.Idle
+var mode = ActionMode.Idle
 
-var process_commands = function() {
-    while(commands.length) {
-        var cmd = commands.shift()
+//------------------------------------------------------------------------------------------------
+//The recording state.
+//------------------------------------------------------------------------------------------------
+
+var recorded_cmds = []
+
+//------------------------------------------------------------------------------------------------
+//The replaying state.
+//------------------------------------------------------------------------------------------------
+
+var replay_cmds = []
+
+var process_replay = function() {
+    while(replay_cmds.length) {
+        var cmd = replay_cmds.shift()
         if (cmd == "wait_till_page_is_ready()\n") {
             return
         }
         console.log("processing cmd: " + cmd)
         eval(cmd)
     }
-    if (commands.length == 0) {
-        mode = ControllerMode.Idle
+    if (replay_cmds.length == 0) {
+        mode = ActionMode.Idle
+        close_browser()
     }
 }
 
@@ -156,12 +167,16 @@ var on_message_from_extension = function (data) {
     log_info('message from extension: ' + data );
     var msg = JSON.parse(data)
     if (msg.code == 'page_is_ready') {
-        // Continue replaying the reset of the commands.
-        if (mode == ControllerMode.Replaying) {
-            process_commands()
+        // Continue with the rest of the replay.
+        if (mode == ActionMode.Replaying) {
+            jitter_browser_size()
+            process_replay()
+        } else if (mode == ActionMode.Recording) {
+            jitter_browser_size()
+            //recorded_cmds.push('wait_till_page_is_ready()\n')
         }
     } else if (msg.code == 'command') {
-        commands.push(msg.command)
+        recorded_cmds.push(msg.command)
     } else if (msg.code == 'jitter_browser_size') {
         // Use the webdriver to jitter the browser size.
         jitter_browser_size()
@@ -199,42 +214,57 @@ var on_message_from_app = function (message) {
             close_browser()
             app_socket.send('ok:')
         } else if (code == 'start_recording') {
-            start_recording()
+            if (!extension_socket) {
+                app_socket.send('fail:')
+                return
+            }
+            recorded_cmds = []
+            extension_socket.send(JSON.stringify({code: 'start_recording'}))
+            console.log("starting to record")
+            mode = ActionMode.Recording
             app_socket.send('ok:')
         } else if (code == 'stop_recording') {
-            stop_recording()
-            app_socket.send('ok:')
+            extension_socket.send(JSON.stringify({code: 'stop_recording'}))
+            mode = ActionMode.Idle
+            recorded_cmds.push("send_result()\n")
+            app_socket.send('finished_recording:'+JSON.stringify(recorded_cmds))
+            close_browser()
         } else if (code == 'get_recording') {
-            app_socket.send('recording:'+JSON.stringify(commands))
-        } else if (code == 'set_recording') {
-            commands = JSON.parse(body)
-            app_socket.send('ok:')
+            app_socket.send('recording:'+JSON.stringify(recorded_cmds))
         } else if (code == 'replay_recording') {
-            if (body != "") {
-                console.log("got non-empty recording!")
-                cmds = body //JSON.parse(body) //script.split(/\r?\n/)
-                replay_recording(cmds)
-            } else {
-                console.log("got empty recording!")
-                replay_recording(commands) 
+            try{
+                console.log("replaying recording: " + body)
+                mode = ActionMode.Replaying
+                replay_cmds = JSON.parse(body)
+                open_browser()
+                process_replay()
+                return
+            } catch(e) {
+                log_exception(e)
             }
         } else if (code == 'goto_url') {
             goto_url(body).then(function(){
-                commands.push("goto_url('" + body + "')")
+                if (mode == ActionMode.Recording) {
+                    recorded_cmds.push("goto_url('" + body + "')")
+                }
                 app_socket.send('ok:')
             }, function(error) {
                 app_socket.send('fail:')
             })
         } else if (code == 'back') {
             navigate_back().then(function(){
-                commands.push("navigate_back()")
+                if (mode == ActionMode.Recording) {
+                    recorded_cmds.push("navigate_back()")
+                }
                 app_socket.send('ok:')
             }, function(error) {
                 app_socket.send('fail:')
             })
         } else if (code == 'forward') {
             navigate_forward().then(function(){
-                commands.push("navigate_forward()")
+                if (mode == ActionMode.Recording) {
+                    recorded_cmds.push("navigate_forward()")
+                }
                 app_socket.send('ok:')
             }, function(error) {
                 app_socket.send('fail:')
@@ -299,65 +329,13 @@ var resize_browser = function (width, height) {
 }
 
 var jitter_browser_size = function() {
-    driver.manage().window().getSize(function(s) {
+    driver.manage().window().getSize().then( function(s) {
         driver.manage().window().setSize(s.width+1, s.height+1).then(function() {
-            driver.manage().window().setSize(s.width, s.height);}
-        )
-    });
+            driver.manage().window().setSize(s.width, s.height);
+        })
+    })
 }
 
-var clear_browser_cookies = function(callback) {
-    extension_socket.send(JSON.stringify({code: 'clear_browser_cookies'}))
-}
-
-var start_recording = function () {
-    if (!extension_socket) {
-        app_socket.send('fail:')
-        return
-    }
-    
-    extension_socket.send(JSON.stringify({code: 'start_recording'}))
-    console.log("starting to record")
-    mode = ControllerMode.Recording
-}
-
-var stop_recording = function () {
-    extension_socket.send(JSON.stringify({code: 'stop_recording'}))
-    mode = ControllerMode.Idle
-    commands.push("send_result()\n")
-}
-
-var replay_recording = function (recording) {
-    try{
-        mode = ControllerMode.Replaying
-        
-        commands = recording
-        console.log("replaying commands: " + recording)
-        
-        //if (!driver) {
-            open_browser()
-            clear_browser_cookies()
-            process_commands()
-            return
-        //}
-
-//        driver.getTitle().then(
-//        function (val) {
-//            clear_browser_cookies(process_commands)
-//        }
-//        , function (err) {
-//            log_error("browser is not open: " + err)
-//            open_browser()
-//            clear_browser_cookies()
-//            process_commands()
-//        })
-    } catch(e) {
-        log_exception(e)
-    }
-}
-
-
-	
 //------------------------------------------------------------------------------------------------
 // Browser Actions.
 //------------------------------------------------------------------------------------------------
@@ -366,8 +344,8 @@ var replay_recording = function (recording) {
 // It will try to wait for the xpath
 // element as long as it can.
 
-var trivial_wait_time = 50 //1000
-var critical_wait_time = 5000 //30000
+var trivial_wait_time = 60000 //1000
+var critical_wait_time = 60000 //30000
 
 //Returns a promise which navigates the browser to another url.
 var goto_url = function (url) {
@@ -419,7 +397,9 @@ var get_visible_element = function (xpath, wait_milli) {
     return get_element(xpath, wait_milli).then(
             function (element) {
                 log_info("type of element: " + typeof(element))
-                return driver.wait(until.elementIsVisible(element), wait_milli)
+                return driver.wait(until.elementIsVisible(element), wait_milli).then(
+                        function(element){return element},
+                        function(error){log_info('Warning: element was not visible: ' + xpath); throw error})
             }
     )
 }
@@ -451,7 +431,10 @@ var click_on_element = function (xpath) {
 // Creates a promise chain which will mouseover an element.
 var mouse_over_element = function (xpath, relX, relY) {
     p = get_visible_element(xpath, trivial_wait_time).then(function(element) {
-        return driver.actions().mouseMove(element, {x: relX , y: relY}).perform()
+        return driver.actions().mouseMove(element, {x: relX , y: relY}).perform().then(
+                function() {},
+                function(error){log_info('Warning: could not move_over_element (computedstyle): ' + xpath);throw(error)}
+        )
     })
     terminate_chain(p)
 }
@@ -472,6 +455,16 @@ var send_result = function () {
 var terminate_chain = function(p) {
     p.catch(function(error){
         log_error("Error in chain!")
-        log_exception(error)
+        if (error.stack.indexOf('mouse_over_element') >=0) {
+            log_error('error from mouse_over_element')
+        } else if (error.stack.indexOf('click_on_element') >=0) {
+            log_error('error from click_on_element')
+        } else if (error.stack.indexOf('send_key') >=0) {
+            log_error('error from send_key')
+        } else if (error.stack.indexOf('set_text') >=0) {
+            log_error('error from set_text')
+        } else {
+            log_exception(error)
+        }
     })
 }

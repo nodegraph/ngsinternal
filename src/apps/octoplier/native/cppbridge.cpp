@@ -125,7 +125,7 @@ void CppBridge::stop_recording() {
 }
 
 void CppBridge::replay_last() {
-  replay_recording("");
+  replay_recording(_recording);
 }
 
 void CppBridge::get_recording() {
@@ -175,7 +175,8 @@ void CppBridge::on_text_message_received(const QString & message) {
   } else if (code == "recording") {
     _recording = body;
     process_command();
-  } else if (code == "recording_finished") {
+  } else if (code == "finished_recording") {
+    qDebug() << "finished recording: " + body;
     _recording = body;
   } else {
     _commands.clear();
