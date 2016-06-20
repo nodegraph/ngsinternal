@@ -443,7 +443,7 @@ window.octoplier.EventProxy = function (window, document, logger) {
 		            } else if (type == 'mousemove') {
 		                //cmd = "mouse_over_element('" + event.target + "', " + event.elementX + ", " + event.elementY + ")\n"
 		            } else if (type == 'scroll') {
-		                cmd = "driver.executeScript('window.scrollBy("+ event.scrollX +","+ event.scrollY +")')\n"
+		                cmd = "driver.executeScript('window.scrollTo("+ event.scrollX +","+ event.scrollY +")')\n"
 		            } else {
 		            }
 		        // If the dom event translates to a driver command
