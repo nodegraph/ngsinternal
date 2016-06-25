@@ -268,6 +268,7 @@
 			} else {
 				item.className = itemClassNameDisabled;
 			}
+			
 			if (item.contextMenu.is_header) {
 			    item.className = header_item_class_name;
 			}
@@ -283,8 +284,8 @@
 				}
 
 				item.addEventListener( target.contextMenu.event, function( e ) {
+				    closeContextMenu();
 					this.contextMenu.onSelect( target, this.contextMenu.key, item );
-					closeContextMenu();
 				} );
 			}
 

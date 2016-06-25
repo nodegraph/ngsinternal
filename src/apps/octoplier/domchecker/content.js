@@ -23,7 +23,7 @@ var context_menu = {
         },
         find_similar_vertical : {
             onSelect : function(event) {
-                var elements = get_similar_vertical(event)
+                var elements = get_similar_elements_on_y(event)
                 for (var i=0; i<elements.length; i++) {
                     console.log('similar element['+i+'] ' + get_xpath(elements[i]))
                 }
@@ -500,134 +500,152 @@ function get_text_structure(element) {
     }
 }
 
-function find_odd_spacing(spacing) {
-    var last_diff = spacing[1];
-    for (var i=1; i<spacing.length; i++) {
-        if (spacing[i]-spacing[i-1] != last_diff) {
-            return i
+//Returns true if the element matches the target element according
+//to the given match criteria.
+function elements_match(element, target_element, match_criteria) {
+    var rect = element.getBoundingClientRect()
+    var target_rect = target_element.getBoundingClientRect()
+
+    // Test match.
+    if (match_criteria.match_left && (rect.left != target_rect.left)) {
+        return false
+    }
+    if (match_criteria.match_right && (rect.right != target_rect.right)) {
+        return false
+    }
+
+    if (match_criteria.match_width && (rect.width != target_rect.width)) {
+        return false
+    }
+    if (match_criteria.match_height && (rect.height != target_rect.height)) {
+        return false
+    }
+
+    // Match xpath length.
+    if (match_criteria.match_xpath_length) {
+        xpath = get_xpath(element)
+        target_xpath = get_xpath(target_element)
+        if (xpath.split('/').length != target_xpath.split('/').length) {
+            return false
         }
     }
-    return spacing.length
+
+    // Match font style.
+    if (match_criteria.match_font || match_criteria.match_font_size) {
+        var style = element.currentStyle || window.getComputedStyle(element, false)
+        var target_style = target_element.currentStyle || window.getComputedStyle(target_element, false)
+
+        if (match_criteria.match_font && (style.font != target_style.font)) {
+            return false
+        }
+        if (match_criteria.match_font_size && (style.fontSize != target_style.fontSize)) {
+            return false
+        }
+    }
+    return true
 }
 
-function get_similar_vertical(start_element) {
+// Returns an array starting with the target element and followed by all matching elements.
+// The matching elements are found by scanning vertically from begin_y to end_y.
+function get_matching_elements_on_y(target_element, match_criteria, begin_y, end_y) {
+    // Results.
+    var elements = [target_element]
     
-    if (!start_element) {
-        console.log("no start element")
+    // Determine the y delta.
+    var delta = -1
+    if ((end_y - begin_y) >= 0) {
+        delta = 1
     }
     
-    var page_height = get_page_height()
+    // Determine the x sampling value.
+    var target_rect = target_element.getBoundingClientRect()
+    var target_rect_sample_x = target_rect.left + (Math.min(target_rect.width, target_rect.height) / 2.0)
     
-    // Get properties of the element.
-    var target_rect = start_element.getBoundingClientRect()
-    var target_text = get_text_value(start_element)
-    var target_urls = get_image_values(start_element)
-    
-    // Match settings.
-    var match_left = true;
-    var match_width = false;
-    var match_height = true; // text, images, and video must be of the same height.
-    var match_inter_spacing = true
-    
-    // If we have images or video then match the width also.
-    if (target_urls.length) {
-        match_width = true;
-    }
-    
-    // Scan upwards.
-    var up_elements = [start_element]
-    var up_spacing = [0]
-    var h = target_rect.top - 1
-    while (h>=0) {
-        var element = document.elementFromPoint(target_rect.left, h)
-        h -= 50
+    // Scan vertically.
+    var h = begin_y
+    while(((delta < 0) && (h > end_y)) || ((delta > 0) && (h < end_y))) {
+        var element = document.elementFromPoint(target_rect_sample_x, h)
+        h += delta
+        
+        // Continue if we don't have an element at this point.
         if (!element) {
             continue
         }
         
-        // If we have this element already then continue.
-        if (up_elements.indexOf(element) >= 0) {
+        // Continue if we already have this element.
+        if (elements.indexOf(element) >= 0) {
             continue
         }
         
-        // Get properties.
-        var rect = element.getBoundingClientRect()
-        var text = get_text_value(element)
-        //var urls = get_image_values(element)
+        // Does this element match the target element.
+        if (!elements_match(element, target_element, match_criteria)){
+            continue
+        }
         
-        // Test match.
-        if (match_left && (rect.left != target_rect.left)) {
-            continue
-        }
-        if (match_width && (rect.width != target_rect.width)) {
-            continue
-        }
-        if (match_height && (rect.height != target_rect.height)) {
-            continue
-        }
-        up_elements.push(element)
-        up_spacing.push(rect.bottom-target_rect.bottom)
+        // We have found a matching element.
+        elements.push(element)
+    }
+    return elements
+}
+
+//Returns an array of elements which are similar to the target element 
+//and intersect a vertical line passing through the target element.
+//This array will include the target element, and will not be completely ordered.
+//The array will start with the target element, then the elements above, then 
+//the elements below.
+function get_similar_elements_on_y(target_element) {
+    var page_height = get_page_height()
+
+    // Get properties of the element.
+    var target_rect = target_element.getBoundingClientRect()
+    var target_text = get_text_value(target_element)
+    var target_urls = get_image_values(target_element)
+
+    // The match properties object.
+    var match_criteria = {
+        match_left: true,
+        match_right: false,
+        match_width: false,
+        match_height: false,
+        match_font: false,
+        match_font_size: false,
+        match_xpath_length: true
+    }
+
+    // If we have images or video then match the width also.
+    if (target_urls.length) {
+        match_criteria.match_width = true;
+        match_criteria.match_height = true;
+    } else {
+        match_criteria.match_font = true;
+        match_criteria.match_font_size = true;
     }
     
     // Scan downwards.
-    var down_elements = [start_element]
-    var down_spacing = [0]
-    h = target_rect.bottom + 1
-    while (h < page_height) {
-        
-        console.log('h: ' + h + ", " + page_height)
-        
-        var element = document.elementFromPoint(target_rect.left, h)
-        h += 50
-        if (!element) {
-            continue
-        }
-        
-        // If we have this element already then continue.
-        if (down_elements.indexOf(element) >= 0) {
-            continue
-        }
-        
-        // Get properties.
-        var rect = element.getBoundingClientRect()
-        var text = get_text_value(element)
-        var urls = get_image_values(element)
-        
-        // Test match.
-        if (match_left && (rect.left != target_rect.left)) {
-            continue
-        }
-        if (match_width && (rect.width != target_rect.width)) {
-            continue
-        }
-        if (match_height && (rect.height != target_rect.height)) {
-            continue
-        }
-        down_elements.push(element)
-        down_spacing.push(rect.bottom-target_rect.bottom)
-    }
-    console.log('up down sizes: ' + up_spacing.length + ',' + down_spacing.length)
-    console.log('up_spacing: ' + up_spacing)
-    console.log('down_spacing: ' + down_spacing)
-    // Now check the inter spacing.
-    if (up_spacing.length < 2) {
-        if (down_spacing.length < 2) {
-            return [element]
+    var down_elements = get_matching_elements_on_y(target_element, match_criteria, target_rect.bottom, page_height)
+
+    // Scan upwards.
+    var up_elements = get_matching_elements_on_y(target_element, match_criteria, target_rect.top, 0)
+
+    //console.log('up down sizes: ' + up_elements.length + ',' + down_elements.length)
+
+    // Join up and down elements.
+    if (up_elements.length < 2) {
+        if (down_elements.length < 2) {
+            return [target_element]
         } else {
-            var index = find_odd_spacing(down_spacing)
-            return down_spacing.slice(0,index)
+            return down_elements
         }
     } else {
-        if (down_spacing.length < 2) {
-            var index = find_odd_spacing(up_spacing)
-            return up_spacing.slice(0,index)
+        if (down_elements.length < 2) {
+            return up_elements
         } else {
-            var up_index = find_odd_spacing(up_spacing)
-            var down_index = find_odd_spacing(down_spacing)
-            return up_spacing.splice(0,up_index).concat(down_spacing.splice(1,down_index))
+            down_elements.shift()
+            return up_elements.concat(down_elements)
         }
     }
-    return [start_element]
+    // We will never reach this return statement.
+    return [target_element]
 }
 
 function get_similar_horizontal(page_pos) {
@@ -886,7 +904,7 @@ function get_page_width() {
 
 //Dump the client rect to the console.
 function dump_client_rect(rect) {
-    console.log(rect.left + "," + rect.right + "," + rect.top + "," + rect.bottom)
+    console.log("client rect: " + rect.left + "," + rect.right + "," + rect.top + "," + rect.bottom)
 }
 
 //Returns true if the outer element contains the inner element.
