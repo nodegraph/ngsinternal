@@ -1,141 +1,302 @@
 //------------------------------------------------------------------------------------------------
-//Our Context Menu.
+//Smash Browse Context Menu.
 //------------------------------------------------------------------------------------------------
-var context_menu_context = {
-        type : null,
-        data : null
-}
 
-var context_menu = {
-        initial_elements_group : {
-            is_header : true,
-            label : "<center>Find Elements</center>",
-            title : "These options allow you to find a set of elements based on a given property."
-        },
-        find_by_data : {
-            onSelect : function(event) {console.log('ddd')}
-        },
-        find_by_type : {
-            onSelect : function(event) {console.log('ddd')},
-        },
-        find_by_position : {
-            onSelect : function(event) {console.log('ddd')},
-        },
-        find_similar_vertical : {
-            onSelect : function(event) {
-                var elements = get_similar_elements_on_y(event)
-                for (var i=0; i<elements.length; i++) {
-                    console.log('similar element['+i+'] ' + get_xpath(elements[i]))
-                }
-            },
-        },
-        find_similar_horizontal: {
-            onSelect : function(event) {console.log('ddd')},
-        },
-        whittle_elements_group : {
-            is_header : true,
-            label : "<center>Whittle down Elements</center>",
-            title : "These options allow you to whittle down the set of elements by adding extra contraints."
-        },
-        find_closest : {
-            label: 'Find closest element to this',
-            onSelect: function(event) {console.log('eee')},
-        },
-        find_closest_below : {
-            label: 'Find closest element below this',
-            onSelect: function(event) {console.log('eee')},
-        },
-        find_closest_above : {
-            label: 'Find closest element above this',
-            onSelect: function(event) {console.log('eee')},
-        },
-        find_closest_left : {
-            label: 'Find closest element on the left of this',
-            onSelect: function(event) {console.log('eee')},
-        },
-        find_closest_right : {
-            label: 'Find closest element on the right of this',
-            onSelect: function(event) {console.log('eee')},
-        },
-        element_interaction_group : {
-            is_header : true,
-            label : "<center>Interact with Element</center>",
-            title : "These options allow you to interact with the currently focused element."
-        },
-        click : {
-            label: 'Click',
-            onSelect: function(event) {console.log('aaa')},
-        },
-        type : {
-            label: 'Type',
-            onSelect: function(event) {
-                console.log('bbb'); 
-                window.prompt("sometext","defaultText");
-            },
-        },
-        submit : {
-            label: 'Type enter/submit',
-            onSelect: function(event) {console.log('ccc')},
-        },
-        extract_text: {
-            label: 'Extract text',
-            onSelect: function(event) {console.log('ccc')},
-        },
-        test_group : {
-            is_header : true,
-            label : "<center>Other</center>",
-            title : "These are other options."
-        },
-        close_context_menu: {
-            label: 'Close this context menu',
-            onSelect: function(event) {},
-        },
-};
+//Elements are described by their bounds in page space so that they can be passed back and forth
+//between javascript and c++. In the javascript environment they can be easily converted back to elements.
+//We call these bounds page boxes.
+//page_box == [left, right, top, bottom] == [min_x, max_x, min_y, max_y]
 
-function update_context_menu(event, context_menu) {
-    var element = event.target
-    // Get the text value.
-    var element_data = {
-            text: get_text_value(element),
-            media: get_image_values(element),
-            get_as_string: function() {
-                if (this.text) {
-                    return this.text
-                } else if (this.media) {
-                    return JSON.stringify(this.media)
-                }
-                return ""
+smash_browse_context_menu = {
+        top_menu : null,
+        on_click_bound : null,
+        visible : false,
+        page_event : null,
+        // Overlay settings.
+        overlay_thickness : 0,
+        // The selected elements.
+        selected_page_boxes : [],
+        selected_overlays : [],
+        // The mouse.
+        mouse_overlay : {},
+        initialize : function() {
+            if (this.top_menu) {
+                return
             }
-    }
-    // Get the type.
-    var type = element.tagName.toLowerCase()
-    // Get the rect in view space.
-    var rect = element.getBoundingClientRect()
-    // Get the page in page space
-    var position = [rect.left + window.scrollX, rect.top+window.scrollY]
-    
-    context_menu.find_by_data.label = "<B>By data</B>: <em>" + element_data.get_as_string() + "</em>"
-    context_menu.find_by_type.label = "<B>By type</B>: <em>" + type + "</em>"
-    context_menu.find_by_position.label = "<B>By position</B>: <em>" + position + "</em>"
-    context_menu.find_similar_vertical.label = "<B>By similarity vertically</B>: <em>" + position + "</em>"
-    context_menu.find_similar_horizontal.label = "<B>By similarity horizontally</B>: <em>" + position + "</em>"
-        
-//        context_menu.find_by_data.enabled = true
-//        context_menu.find_similar_vertical.enabled = true
-//        context_menu.find_similar_horizontal.enabled = true
-//        context_menu.find_by_data.enabled = false
-//        context_menu.find_similar_vertical.enabled = false
-//        context_menu.find_similar_horizontal.enabled = false
+            // Create the top level menu element.
+            this.top_menu = document.createElement("menu");
+            this.top_menu.classList.add('menu')
+            document.body.appendChild(this.top_menu)
+            
+            // Bind the click handler to ourself.
+            this.on_click_bound = this.on_click.bind(this)
+            
+            // Create the menu as dom elements.
+            this.create_menu(this.top_menu)
+            
+            // Create our mouse overlays.
+            this.mouse_overlay = this.create_overlay('smart_browse_mouse_overlay')
+        },
+        create_menu : function (top_menu) {
+            // The find menu.
+            this.find_menu = this.add_sub_menu(top_menu, 'Select elements')
+            this.find_by_text = this.add_item(this.find_menu, 'by text')
+            this.find_by_image = this.add_item(this.find_menu, 'by image')
+            this.find_by_type = this.add_item(this.find_menu, 'by type')
+            this.find_by_position = this.add_item(this.find_menu, 'by position')
+            this.find_by_xpath = this.add_item(this.find_menu, 'by xpath')
+
+            // The shift menu.
+            this.shift_menu = this.add_sub_menu(top_menu, 'Shift selected elements')
+            this.shift_down = this.add_item(this.shift_menu, 'down')
+            this.shift_up = this.add_item(this.shift_menu, 'up')
+            this.shift_left = this.add_item(this.shift_menu, 'left')
+            this.shift_right = this.add_item(this.shift_menu, 'right')
+            
+            // The expand menu.
+            this.expand_menu = this.add_sub_menu(top_menu, 'Expand selected to similar elements')
+            this.expand_above = this.add_item(this.expand_menu, 'above us')
+            this.expand_below = this.add_item(this.expand_menu, 'below us')
+            this.expand_above_and_below = this.add_item(this.expand_menu, 'above and below us')
+            this.expand_left = this.add_item(this.expand_menu, 'to the left of us')
+            this.expand_right = this.add_item(this.expand_menu, 'to the right of us')
+            this.expand_left_and_right = this.add_item(this.expand_menu, 'to the left and right of us')
+
+            // The constrain menu.
+            this.constrain_menu = this.add_sub_menu(top_menu, 'Constrain selected to closest elements' )
+            this.constrain_above = this.add_item(this.constrain_menu, 'above another element set')
+            this.constrain_below = this.add_item(this.constrain_menu, 'below another element set')
+            this.constrain_above_and_below = this.add_item(this.constrain_menu, 'above and below another element set')
+            this.constrain_left = this.add_item(this.constrain_menu, 'left of another element set')
+            this.constrain_right = this.add_item(this.constrain_menu, 'right of another element set')
+            this.constrain_left_and_right = this.add_item(this.constrain_menu, 'left and right of another element set')
+            
+            // Act on element.
+            this.perform_menu = this.add_sub_menu(this.top_menu, 'Perform action on element')
+            this.perform_click = this.add_item(this.perform_menu, 'click')
+            this.perform_type = this.add_item(this.perform_menu, 'type text')
+            this.perform_enter = this.add_item(this.perform_menu, 'type enter/submit')
+            this.perform_extract = this.add_item(this.perform_menu, 'extract text')
+            
+            // Spacer.
+            this.spacer = this.add_spacer(this.top_menu)
+            
+            // Cancel.
+            this.cancel = this.add_item(this.top_menu, 'Cancel')
+        },
+        add_item : function(menu, item_text) {
+            var li = document.createElement('li')
+            li.classList.add('menu-item')
+            menu.appendChild(li)
+            
+            var button = document.createElement('button')
+            button.classList.add('menu-btn')
+            button.type = 'button'
+            li.appendChild(button)
+            
+            var span = document.createElement('span')
+            span.classList.add('menu-text')
+            button.appendChild(span)
+            
+            var text = document.createTextNode(item_text)
+            span.appendChild(text)
+            return li
+        },
+        add_sub_menu : function(menu, item_text) {
+            var li = document.createElement('li')
+            li.classList.add('menu-item')
+            li.classList.add('submenu')
+            this.top_menu.appendChild(li)
+            
+            var button = document.createElement('button')
+            button.classList.add('menu-btn')
+            button.type = 'button'
+            li.appendChild(button)
+            
+            var span = document.createElement('span')
+            span.classList.add('menu-text')
+            button.appendChild(span)
+            
+            var text = document.createTextNode(item_text)
+            span.appendChild(text)
+            
+            var menu = document.createElement("menu");
+            menu.classList.add('menu')
+            li.appendChild(menu)
+            return menu
+        },
+        remove_sub_menu : function(menu, sub_menu) {
+            menu.removeChild(sub_menu)
+        },
+        add_spacer : function(menu) {
+            var li = document.createElement('li')
+            li.classList.add('menu-separator')
+            menu.appendChild(li)
+            return li
+        },
+        disable_item : function(item) {
+            item.classList.add('disabled')
+        },
+        enable_item : function(item) {
+            item.classList.remove('disabled')
+        },
+        show : function(x,y) {
+            this.top_menu.style.left = x + 'px'
+            this.top_menu.style.top = y + 'px'
+            this.top_menu.classList.add('show-menu')
+            this.visible = true
+        },
+        hide : function(x,y) {
+            this.top_menu.classList.remove('show-menu')
+            this.visible = false
+        },
+        set_selected_elements(elements) {
+            var page_boxes = []
+            for (var i=0; i<elements.length; i++) {
+                var element = elements[i]
+                var rect = element.getBoundingClientRect()
+                page_boxes.push(get_page_box_from_client_rect(rect))
+            }
+            this.set_selected_page_boxes(page_boxes)
+        },
+        set_selected_page_boxes(page_boxes) {
+            this.destroy_selected_overlays()
+            this.selected_page_boxes = page_boxes
+            this.create_selected_overlays()
+        },
+        on_context_menu: function(page_event) {
+            // Gather information about the page event.
+            this.text_values = get_text_values(page_event.target)
+            this.image_values = get_image_values(page_event.target)
+            this.type = page_event.target.tagName
+            this.position = [page_event.pageX, page_event.pageY]
+            this.rect = page_event.target.getBoundingClientRect()
+            
+            // Show the menu.
+            this.show(page_event.pageX, page_event.pageY)
+            
+            // Listen to clicks to perform the according action and close the menu.
+            document.addEventListener('click', this.on_click_bound, true);
+            
+            page_event.preventDefault();
+            return false
+        },
+        on_click: function(menu_event) {
+            this.hide();
+            var menu_target = menu_event.target
+            if (this.find_by_text.contains(menu_target)) { 
+                var msg = "Find elements with text value, " + this.text_values
+                //var elements = find_elements_by_text(this.text_value)
+                //this.set_selected_elements(elements)
+                console.log(msg)
+            } else if (this.find_by_image.contains(menu_target)) {
+                var msg = "Find elements with image values, " + this.image_values
+                console.log(msg)
+            } else if (this.find_by_type.contains(menu_target)) {
+                var msg = "Find elements with type, " + this.type
+                console.log(msg)
+            } else if (this.find_by_position.contains(menu_target)) {
+                var msg = "Find elements with position, " + this.position
+                console.log(msg)
+            }
+            document.removeEventListener('click', this.on_click_bound, true);
+            
+            // Remove previous overlays.
+            //this.destroy_selected_overlays()
+            
+            // Create current overlays.
+            //this.create_selected_overlays()
+        },
+        on_mouse_over: function(page_event) {
+            var inner_elem = get_visible_inner_element(page_event.pageX, page_event.pageY)
+            var rect = inner_elem.getBoundingClientRect()
+            var page_box = get_page_box_from_client_rect(rect)
+            this.update_overlay(this.mouse_overlay, page_box)
+        },
+        create_overlay: function(class_name) {
+            var left = document.createElement("div")
+            left.classList.add(class_name)
+            left.style.position = "absolute"
+            document.body.appendChild(left)
+                
+            var right = document.createElement("div")
+            right.classList.add(class_name)
+            right.style.position = "absolute"
+            document.body.appendChild(right)
+            
+            var top = document.createElement("div")
+            top.classList.add(class_name)
+            top.style.position = "absolute"
+            document.body.appendChild(top)
+            
+            var bottom = document.createElement("div")
+            bottom.classList.add(class_name)
+            bottom.style.position = "absolute"
+            document.body.appendChild(bottom)
+            
+            return {
+                left: left,
+                right: right,
+                top: top,
+                bottom: bottom
+            }
+        },
+        update_overlay: function(overlay, page_box) {
+            var width = page_box[1] - page_box[0]
+            var height = page_box[3] - page_box[2]
+            var left = overlay.left
+            var right = overlay.right
+            var top = overlay.top
+            var bottom = overlay.bottom
+            var t = this.overlay_thickness
+            
+            left.style.left = (page_box[0]-t)+'px'
+            left.style.top = (page_box[2]-t)+'px'
+            left.style.width = t+'px'
+            left.style.height = (height+2*t)+'px'
+            
+            right.style.left = (page_box[1])+'px'
+            right.style.top = (page_box[2]-t)+'px'
+            right.style.width = t+'px'
+            right.style.height = (height+2*t)+'px'
+            
+            top.style.left = (page_box[0]-t)+'px'
+            top.style.top = (page_box[2]-t)+'px'
+            top.style.width = (width+2*t)+'px'
+            top.style.height = t+'px'
+            
+            bottom.style.left = (page_box[0]-t)+'px'
+            bottom.style.top = page_box[3]+'px'
+            bottom.style.width = (width+2*t)+'px'
+            bottom.style.height = t+'px'
+        },
+        create_selected_overlays: function() {
+            for (var i=0; i<this.selected_page_boxes.length; i++) {
+                var page_box = this.selected_page_boxes[i]
+                var overlay = this.create_overlay('smart_browse_selected_overlay')
+                this.update_overlay(overlay, page_box)
+                // Track the selected overlays.
+                this.selected_overlays.push(overlay)
+            }
+        },
+        destroy_selected_overlays: function() {
+            console.log('num overlay divs: ' + this.selected_overlays.length)
+            for (var i=0; i<this.selected_overlays.length; i++) {
+                var overlay = this.selected_overlays[i]
+                document.body.removeChild(overlay.left)
+                document.body.removeChild(overlay.right)
+                document.body.removeChild(overlay.top)
+                document.body.removeChild(overlay.bottom)
+            }
+            this.selected_overlays.length = 0
+        }
 }
 
 document.addEventListener ('DOMContentLoaded', on_loaded, false);
 function on_loaded () {
     console.log("document is loaded!")
-    window.document.addEventListener("contextmenu", function(event) {
-        update_context_menu(event, context_menu)
-        ContextMenu.display(event, context_menu, { horizontalOffset : 5 } );
-        return false
-    }, true );
+    smash_browse_context_menu.initialize()
+    window.document.addEventListener("contextmenu", smash_browse_context_menu.on_context_menu.bind(smash_browse_context_menu), true)
 }
 
 //------------------------------------------------------------------------------------------------
@@ -147,8 +308,28 @@ var EVENT_TYPES = 'message scroll submit click dblclick mousedown mousemove mous
 
 function block_event(event) {
     if (event.target && event.target.tagName) {
-        if (window.smash_browse_context_menu && window.smash_browse_context_menu.contains(event.target)) {
-            return true
+        if (smash_browse_context_menu.top_menu){
+            if (smash_browse_context_menu.top_menu.contains(event.target)) {
+                return true
+            } else {
+                switch (event.type) {
+                    case 'click':
+                        // Click outside a visible context menu will close it.
+                        if (smash_browse_context_menu.visible) {
+                            smash_browse_context_menu.hide()
+                        } else {
+                            return true
+                        }
+                        break
+                    case 'mousemove' :
+                        //event.target.classList.add('smash_browse_hover')
+                        smash_browse_context_menu.on_mouse_over(event)
+                        break
+                    case 'mouseout' :
+                        //event.target.classList.remove('smash_browse_hover')
+                        break
+                }
+            }
         }
     }
     event.stopPropagation();
@@ -330,26 +511,110 @@ function get_text_value(element) {
             }
         }
     }
+    // Otherwise this may be an anchor with a title attribute.
+    var attrs = element.attributes
+    for (var i=0; i<attrs.length; i++) {
+        if (attrs[i].name.toLowerCase() == 'title') {
+            return attrs[i].value
+        }
+    }
+    // Otherwise we can take the 'href' attribute.
+    for (var i=0; i<attrs.length; i++) {
+        if (attrs[i].name.toLowerCase() == 'href') {
+            return attrs[i].value
+        }
+    }
+    
     // Otherwise we didn't find any text for this element.
     return ""
+}
+
+
+function get_visible_inner_element(page_x, page_y) {
+    // Build xpath to find all elements.
+    var xpath = "//*"
+    var elements = find_elements_by_xpath(xpath)
+    console.log("determining visible inner from num elememnts: " + elements.length)
+    console.log('page pos: ' + page_x + "," + page_y)
+    
+    // Loop over the elements.
+    var smallest_elem = null
+    var smallest_area = null
+    var elem = null
+    var rect = null
+    for (var i=0; i<elements.length; i++) {
+        elem = elements[i]
+        
+        // Make sure the element is visible.
+        if ((elem.offsetWidth == 0) || (elem.offsetHeight == 0)) {
+            continue
+        }
+        
+        // Make sure the element intersects the internal element.
+        if (!element_contains_point(elem, page_x, page_y)) {
+            continue
+        }
+        
+        console.log ('aaaa')
+        if (!smallest_elem) {
+            smallest_elem = elem
+            rect = elem.getBoundingClientRect()
+            smallest_area = rect.width * rect.height
+        } else {
+            rect = elem.getBoundingClientRect()
+            if ((rect.width * rect.height) < smallest_area) {
+                smallest_elem = elem
+                smallest_area = rect.width * rect.height
+            }
+        }
+    }
+    return smallest_elem
+}
+
+function get_text_values(element) {
+    var original_element = element
+    
+    // Find images which overlap the internal rect.
+    var texts = []
+    
+    // Build xpath to find all elements.
+    var xpath = "//*"
+    var elements = find_elements_by_xpath(xpath)
+    console.log("determining text values from num elememnts: " + elements.length)
+    
+    // Loop over the elements.
+    var elem = null
+    for (var i=0; i<elements.length; i++) {
+        elem = elements[i]
+        
+        // Make sure the element is visible.
+        if ((elem.offsetWidth == 0) || (elem.offsetHeight == 0)) {
+            continue
+        }
+        
+        // Make sure the element intersects the internal element.
+        if (!element_intersects(elem, original_element)) {
+            continue
+        }
+        
+        // Loop through children accumulating text node values.
+        for (var c=0; c<elem.childNodes.length; c++) {
+            var child = elem.childNodes[c]
+            if (child.nodeType == Node.TEXT_NODE) {
+                var text = child.nodeValue
+                // Add text if it's not all whitespace.
+                if (!is_all_whitespace(text)) {
+                    texts.push(text)
+                }
+            }
+        }
+    }
+    return texts
 }
 
 // Returns an array of image urls which are all overlapping the given element.
 function get_image_values(element) {
     var original_element = element
-    
-    // Find the first visible element in the parent chain.
-    var internal_element = null
-    var internal_rect = null
-    while (element) {
-        // If visible.
-        if ((element.offsetWidth != 0) || (element.offsetHeight != 0)) {
-            internal_element = element
-            internal_rect = element.getBoundingClientRect()
-            break
-        }
-        element = element.parentNode
-    }
     
     // Find images which overlap the internal rect.
     var images = []
@@ -359,33 +624,34 @@ function get_image_values(element) {
     var elements = find_elements_by_xpath(xpath)
     console.log("determining image values from num elememnts: " + elements.length)
     
-    // Loop over the elements backwards as we want the deepest element of a chain.
+    // Loop over the elements.
+    var elem = null
     for (var i=0; i<elements.length; i++) {
-        var element = elements[i]
+        elem = elements[i]
         
         // Make sure the element is visible.
-        if ((element.offsetWidth == 0) || (element.offsetHeight == 0)) {
+        if ((elem.offsetWidth == 0) || (elem.offsetHeight == 0)) {
             continue
         }
         
-        // Make sure the element contains the internal element.
-        if (!element_contains(element, internal_element)) {
+        // Make sure the element intersects the internal element.
+        if (!element_intersects(elem, original_element)) {
             continue
         }
         
         // Get the tag name.
-        var tag_name = element.tagName.toLowerCase()
+        var tag_name = elem.tagName.toLowerCase()
         
         // Return the src for images and video elements.
         if ((tag_name === 'img') || (tag_name === 'video')) {
-            if (images.indexOf(element.src)<0) {
-                //console.log("element source: " + element.src)
-                images.push(element.src)
+            if (images.indexOf(elem.src)<0) {
+                //console.log("elem source: " + elem.src)
+                images.push(elem.src)
             }
         }
         
         // Otherwise we query the computed style for the background image.
-        var style = element.currentStyle || window.getComputedStyle(element, false)
+        var style = elem.currentStyle || window.getComputedStyle(elem, false)
         if (style) {
             // console.log("ssssstyle: " + JSON.stringify(style))
             if (style.backgroundImage.indexOf('url(') == 0) {
@@ -737,6 +1003,19 @@ function get_image_path(element) {
 //Utilities.
 //------------------------------------------------------------------------------------------------
 
+function find_elements_by_text(text) {
+    var xpath = "//*[count(text()) > 0]"
+    var elements = find_elements_by_xpath(xpath)
+    var results = []
+    for (var i=0; i<elements.length; i++) {
+        var element = elements[i]
+        if (text == get_text_value(element)) {
+            results.push(element)
+        }
+    }
+    return results
+}
+
 //Returns an array of elements which have text nodes.
 //The elements under consideration are the element argument and its children.
 function find_text_elements(element) {
@@ -972,6 +1251,24 @@ function intersects(rect_a, rect_b) {
         return false
     }
     return true
+}
+
+// Returns a bounding box in pages space as an array [min_x, max_x, min_y, max_y]
+function get_page_box_from_client_rect(rect) {
+    return [rect.left + window.scrollX,
+            rect.right + window.scrollX,
+            rect.top + window.scrollY,
+            rect.bottom + window.scrollY]
+}
+
+function element_contains_point(element, page_x, page_y) {
+    var rect = element.getBoundingClientRect()
+    var page_box = get_page_box_from_client_rect(rect)
+    if ((page_x >= page_box[0]) && (page_x <= page_box[1]) && 
+            (page_y >=page_box[2]) && (page_y <= page_box[3])) {
+        return true
+    }
+    return false
 }
 
 

@@ -1,0 +1,22 @@
+.smash_browse_hover {
+  outline: 2px solid black;
+  opacity: 1
+}
+
+.smash_browse_selected {
+  background-color: pink;
+  outline: 2px solid green;
+  opacity: 1
+}
+
+.smart_browse_selected_overlay {
+  outline: 1px solid lime;
+  opacity: 1;
+  z-index: 99999;
+}
+
+.smart_browse_mouse_overlay {
+  outline: 1px solid red;
+  opacity: 1;
+  z-index: 99999;
+}
