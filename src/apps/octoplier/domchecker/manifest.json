@@ -17,9 +17,9 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["contextmenu.js", "utils.js", "content.js"],
+      "js": ["contextmenu.js", "debugutils.js", "domutils.js","content.js"],
       "css": ["smashbrowse.css", "contextmenu.css"],
-      //"all_frames": true,
+      "all_frames": true,
       "run_at": "document_start"
     }
   ],

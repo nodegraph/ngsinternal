@@ -150,6 +150,12 @@ smash_browse_context_menu = {
             this.top_menu.classList.remove('show-menu')
             this.visible = false
         },
+        element_is_part_of_menu : function(element) {
+            if (this.top_menu.contains(element)) {
+                return true
+            }
+            return false
+        },
         set_selected_elements(elements) {
             var page_boxes = []
             for (var i=0; i<elements.length; i++) {
@@ -165,12 +171,19 @@ smash_browse_context_menu = {
             this.create_selected_overlays()
         },
         on_context_menu: function(page_event) {
-            // Gather information about the page event.
-            this.text_values = get_text_values(page_event.target)
-            this.image_values = get_image_values(page_event.target)
-            this.type = page_event.target.tagName
-            this.position = [page_event.pageX, page_event.pageY]
-            this.rect = page_event.target.getBoundingClientRect()
+            //var visible_inner_elem = find_visible_inner_element(page_event.pageX, page_event.pageY)
+//            this.type = visible_inner_elem.tagName
+//            this.position = [page_event.pageX, page_event.pageY]
+//            this.rect = visible_inner_elem.getBoundingClientRect()
+            //this.page_target = visible_inner_elem[0]
+            
+            
+            var image_values = get_image_values2(page_event.pageX, page_event.pageY)
+            console.log('image values222: ' + JSON.stringify(image_values))
+            
+            
+            this.text_element = find_visible_text_element(page_event.pageX, page_event.pageY)[0]
+            this.image_element = find_visible_image_element_at_point(page_event.pageX, page_event.pageY)[0]
             
             // Show the menu.
             this.show(page_event.pageX, page_event.pageY)
@@ -184,14 +197,29 @@ smash_browse_context_menu = {
         on_click: function(menu_event) {
             this.hide();
             var menu_target = menu_event.target
+            console.log('clicked')
+            
             if (this.find_by_text.contains(menu_target)) { 
-                var msg = "Find elements with text value, " + this.text_values
-                //var elements = find_elements_by_text(this.text_value)
-                //this.set_selected_elements(elements)
-                console.log(msg)
+                var text_values = get_text_values(this.text_element)
+                console.log('element xpath: ' + get_xpath(this.text_element))
+                console.log('text values: ' + JSON.stringify(text_values))
+                // Check that we can find it too.
+//                var elements = find_elements_by_text_values(text_values)
+//                console.log('found num elements: ' + elements.length)
+//                for (var i=0; i<elements.length; i++) {
+//                    console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
+//                }
+                
             } else if (this.find_by_image.contains(menu_target)) {
-                var msg = "Find elements with image values, " + this.image_values
-                console.log(msg)
+                var image_values = get_image_values(this.image_element)
+                console.log('element xpath: ' + get_xpath(this.image_element))
+                console.log('image values: ' + JSON.stringify(image_values))
+                // Check that we can find it too.
+//                var elements = find_elements_by_image_values(image_values)
+//                console.log('found num elements: ' + elements.length)
+//                for (var i=0; i<elements.length; i++) {
+//                    console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
+//                }
             } else if (this.find_by_type.contains(menu_target)) {
                 var msg = "Find elements with type, " + this.type
                 console.log(msg)
@@ -208,7 +236,9 @@ smash_browse_context_menu = {
             //this.create_selected_overlays()
         },
         on_mouse_over: function(page_event) {
-            var inner_elem = get_visible_inner_element(page_event.pageX, page_event.pageY)
+            var inner_elem = find_visible_inner_element(page_event.pageX, page_event.pageY)[0]
+            console.log('mouse over: ' + get_xpath(inner_elem))
+            
             var rect = inner_elem.getBoundingClientRect()
             var page_box = get_page_box_from_client_rect(rect)
             this.update_overlay(this.mouse_overlay, page_box)
@@ -395,375 +425,79 @@ function check_event(event) {
     } 
     //perform_text_path_check(event, data)
     //perform_position_check(event, data)
-    perform_image_check(event, data)
+    //perform_image_check(event, data)
 }
 
 function perform_position_check(event, data) {
-    console.log("target xpath: " + data.target)
-    console.log("pageX,pageY: " + event.pageX + "," + event.pageY)
-    var element = document.elementFromPoint(event.pageX-window.scrollX, event.pageY-window.scrollY)
-    var xpath
-    if (element) {
-        xpath = get_xpath(element)
-    }
-    console.log("xpath: " + xpath)
-    var results = find_elements_by_xpath(xpath)
-    console.log("num found: " + results.length)
-    dump_array_of_elements(results)
-    console.log("pass: " + (xpath == data.target) && (results.length == 1))
+//    console.log("target xpath: " + data.target)
+//    console.log("pageX,pageY: " + event.pageX + "," + event.pageY)
+//    var element = document.elementFromPoint(event.pageX-window.scrollX, event.pageY-window.scrollY)
+//    var xpath
+//    if (element) {
+//        xpath = get_xpath(element)
+//    }
+//    console.log("xpath: " + xpath)
+//    var results = find_elements_by_xpath(xpath)
+//    console.log("num found: " + results.length)
+//    dump_array_of_elements(results)
+//    console.log("pass: " + (xpath == data.target) && (results.length == 1))
 }
 
 function perform_image_check(event, data) {
-    //console.log("target xpath: " + data.target)
-    //console.log("pageX,pageY: " + event.pageX + "," + event.pageY)
-    var image_path = get_image_path(event.target)
-    var xpath = get_xpath(event.target)
-    console.log("xpath: " + xpath)
-    console.log("image_path: " + image_path)
-    if (image_path.length) {
-        var elements = find_elements_by_image_path(image_path)
-        var xpath2 = get_xpath(elements[0])
-        console.log("num paths found: " + elements.length)
-        console.log("passed: " + (xpath == xpath2) && (elements.length == 1))
-    } else {
-        console.log("passed: false")
-    }
+//    //console.log("target xpath: " + data.target)
+//    //console.log("pageX,pageY: " + event.pageX + "," + event.pageY)
+//    var image_path = get_image_path(event.target)
+//    var xpath = get_xpath(event.target)
+//    console.log("xpath: " + xpath)
+//    console.log("image_path: " + image_path)
+//    if (image_path.length) {
+//        var elements = find_elements_by_image_path(image_path)
+//        var xpath2 = get_xpath(elements[0])
+//        console.log("num paths found: " + elements.length)
+//        console.log("passed: " + (xpath == xpath2) && (elements.length == 1))
+//    } else {
+//        console.log("passed: false")
+//    }
     
 }
 
 function perform_text_path_check(event, data) {
-    var element = event.target
-    var results = []
-    
-    console.log('*********************************************************')
-    console.log('Element Info:')
-    console.log('*********************************************************')
-    
-    console.log("full xpath: " + data.target)
-    
-    var text_path = get_text_structure(element).text_path
-    var text = get_text_value(element)
-    var xpath = form_text_match_xpath(text_path[text_path.length-1])
-    
-    console.log("text path: " + JSON.stringify(text_path))
-    console.log("xpath: " + xpath)
-    get_similar_text_paths(element, false)
-    
-    var elements =  find_elements_by_xpath(xpath)
-    console.log('-----------------------------------------------------------')
-    console.log("num elements found by xpath: " + elements.length)
-    console.log('-----------------------------------------------------------')
-    for (var i=0; i<elements.length; i++) {
-        console.log("--xpath match[" + i + "] " + get_xpath(elements[i]))
-        console.log("--text path[" + i + "] " + get_text_structure(elements[i]).text_path)
-    }
-    
-    elements = find_elements_by_text_path(text_path)
-    console.log('-----------------------------------------------------------')
-    console.log("num elements found by text path: " + elements.length)
-    console.log('-----------------------------------------------------------')
-    for (var i=0; i<elements.length; i++) {
-        console.log("--match[" + i + "] " + get_xpath(elements[i]))
-    }
-    console.log('-----------------------------------------------------------')
-    console.log("check passes: " + ((elements.length == 1) && (elements[0] == element)))
-    console.log('-----------------------------------------------------------')
-    
-}
-
-//Form an xpath expression which will match any node with a 
-//textnode inside of them whose text matches that given.
-function form_text_match_xpath(text) {
-    // We need to break out single quotes and concat them
-    // to form a proper xpath.
-    var splits = text.split("'")
-    if (splits.length>1) {
-        // Concat the splits with single quotes.
-        text = "concat(";
-        for (var s=0; s<splits.length; s++) {
-            if (s!=0){
-                text += "," + "\"'\"" + ","  // single quote is added here
-            }
-            text += "'" + splits[s] + "'"
-        }
-        text += ")"
-    } else {
-        // The text has no single quotes here.
-        text = "'" + text + "'"
-    }
-    return "//*[text()[string(.) = "+ text +"]]"
-}
-
-
-
-// Gets the text value from an element's immediate textnode child.
-function get_text_value(element) {
-    // Get the element's children.
-    var children = element.childNodes
-    // Loop through them looking for a text node.
-    for (var i=0; i<children.length; i++) {
-        var child = children[i]
-        if (child.nodeType == Node.TEXT_NODE) {
-            var text = child.nodeValue
-            // If the text is not all white space, then we have found our text.
-            if (!is_all_whitespace(text)) {
-                return text
-            }
-        }
-    }
-    // Otherwise this may be an anchor with a title attribute.
-    var attrs = element.attributes
-    for (var i=0; i<attrs.length; i++) {
-        if (attrs[i].name.toLowerCase() == 'title') {
-            return attrs[i].value
-        }
-    }
-    // Otherwise we can take the 'href' attribute.
-    for (var i=0; i<attrs.length; i++) {
-        if (attrs[i].name.toLowerCase() == 'href') {
-            return attrs[i].value
-        }
-    }
-    
-    // Otherwise we didn't find any text for this element.
-    return ""
-}
-
-
-function get_visible_inner_element(page_x, page_y) {
-    // Build xpath to find all elements.
-    var xpath = "//*"
-    var elements = find_elements_by_xpath(xpath)
-    console.log("determining visible inner from num elememnts: " + elements.length)
-    console.log('page pos: ' + page_x + "," + page_y)
-    
-    // Loop over the elements.
-    var smallest_elem = null
-    var smallest_area = null
-    var elem = null
-    var rect = null
-    for (var i=0; i<elements.length; i++) {
-        elem = elements[i]
-        
-        // Make sure the element is visible.
-        if ((elem.offsetWidth == 0) || (elem.offsetHeight == 0)) {
-            continue
-        }
-        
-        // Make sure the element intersects the internal element.
-        if (!element_contains_point(elem, page_x, page_y)) {
-            continue
-        }
-        
-        console.log ('aaaa')
-        if (!smallest_elem) {
-            smallest_elem = elem
-            rect = elem.getBoundingClientRect()
-            smallest_area = rect.width * rect.height
-        } else {
-            rect = elem.getBoundingClientRect()
-            if ((rect.width * rect.height) < smallest_area) {
-                smallest_elem = elem
-                smallest_area = rect.width * rect.height
-            }
-        }
-    }
-    return smallest_elem
-}
-
-function get_text_values(element) {
-    var original_element = element
-    
-    // Find images which overlap the internal rect.
-    var texts = []
-    
-    // Build xpath to find all elements.
-    var xpath = "//*"
-    var elements = find_elements_by_xpath(xpath)
-    console.log("determining text values from num elememnts: " + elements.length)
-    
-    // Loop over the elements.
-    var elem = null
-    for (var i=0; i<elements.length; i++) {
-        elem = elements[i]
-        
-        // Make sure the element is visible.
-        if ((elem.offsetWidth == 0) || (elem.offsetHeight == 0)) {
-            continue
-        }
-        
-        // Make sure the element intersects the internal element.
-        if (!element_intersects(elem, original_element)) {
-            continue
-        }
-        
-        // Loop through children accumulating text node values.
-        for (var c=0; c<elem.childNodes.length; c++) {
-            var child = elem.childNodes[c]
-            if (child.nodeType == Node.TEXT_NODE) {
-                var text = child.nodeValue
-                // Add text if it's not all whitespace.
-                if (!is_all_whitespace(text)) {
-                    texts.push(text)
-                }
-            }
-        }
-    }
-    return texts
-}
-
-// Returns an array of image urls which are all overlapping the given element.
-function get_image_values(element) {
-    var original_element = element
-    
-    // Find images which overlap the internal rect.
-    var images = []
-    
-    // Build xpath to find all elements.
-    var xpath = "//*"
-    var elements = find_elements_by_xpath(xpath)
-    console.log("determining image values from num elememnts: " + elements.length)
-    
-    // Loop over the elements.
-    var elem = null
-    for (var i=0; i<elements.length; i++) {
-        elem = elements[i]
-        
-        // Make sure the element is visible.
-        if ((elem.offsetWidth == 0) || (elem.offsetHeight == 0)) {
-            continue
-        }
-        
-        // Make sure the element intersects the internal element.
-        if (!element_intersects(elem, original_element)) {
-            continue
-        }
-        
-        // Get the tag name.
-        var tag_name = elem.tagName.toLowerCase()
-        
-        // Return the src for images and video elements.
-        if ((tag_name === 'img') || (tag_name === 'video')) {
-            if (images.indexOf(elem.src)<0) {
-                //console.log("elem source: " + elem.src)
-                images.push(elem.src)
-            }
-        }
-        
-        // Otherwise we query the computed style for the background image.
-        var style = elem.currentStyle || window.getComputedStyle(elem, false)
-        if (style) {
-            // console.log("ssssstyle: " + JSON.stringify(style))
-            if (style.backgroundImage.indexOf('url(') == 0) {
-                var background_image = style.backgroundImage.slice(4, -1);
-                if (background_image != "") {
-                    if (images.indexOf(background_image)<0) {
-                        //console.log("background image: " + background_image)
-                        images.push(background_image)
-                    }
-                }
-            }
-        }
-    }
-    return images
-}
-
-function is_text_child(child) {
-    // Skip unwanted elements.
-    var tagName = child.tagName
-    if (tagName) {
-        tagName = tagName.toLowerCase()
-        if ((tagName == 'script') || (tagName == 'noscript') || (tagName == 'style')) {
-            return false
-        }
-    }
-    // Skip comment nodes.
-    if (child.nodeType == Node.COMMENT_NODE) {
-        return false
-    }
-    // Skip elements with empty text.
-    if (get_text_value(child) == '') {
-        return false
-    }
-    // Skip elements which are not visible.
-    if ((child.offsetWidth == 0) || (child.offsetHeight == 0)) {
-        return false
-    }
-    return true
-}
-
-// Recurses to find text embedded in an element which is acting like a label.
-function get_top_left_text_child(element) {
-    var children = find_text_elements(element)
-    // The elements are in document order. Usually this implies visual order as well.
-    // We take the first element we can find meeting our criteria.
-    // The top left child could be the element argument itself.
-    for (var i=0; i<children.length; i++) {
-        var child = children[i]
-        if (is_text_child(child)) {
-            return  child
-            break
-        }
-    }
-    return null
-}
-
-function get_bottom_left_text_child(element) {
-    var children = find_text_elements(element)
-    // The elements are in document order. Usually this implies visual order as well.
-    // We take the last element we can find meeting our criteria.
-    // The bottom left child could be the element argument itself.
-    for (var i=children.length-1; i>=0; i--) {
-        var child = children[i]
-        if (is_text_child(child)) {
-            return child
-            break
-        }
-    }
-    return null
-}
-
-function get_text_siblings(element) {
-    var children = find_text_elements(element)
-    var siblings = []
-    // The elements are in document order. Usually this implies visual order as well.
-    // We take the last element we can find meeting our criteria.
-    // The bottom left child could be the element argument itself.
-    for (var i=children.length-1; i>=0; i--) {
-        var child = children[i]
-        if (is_text_child(child)) {
-            siblings.push(child)
-        }
-    }
-    return siblings
-}
-
-//Returns an array of text which will uniquely identify an element which has a textnode.
-function get_text_structure(element) {
-    // Our text path.
-    var text_path = []
-    var text_path_elements =[]
-    // Our last top left child.
-    var last_top_left_child = null
-    // Start visiting ancestors from the element.
-    while(element) {
-        // Get the top left text inside the element.
-        var top_left_child = get_top_left_text_child(element)
-        if (top_left_child && top_left_child != last_top_left_child) {
-            var text = get_text_value(top_left_child)
-            if (text != '') {
-                text_path.unshift(text)
-                text_path_elements.unshift(element)
-            }
-            last_top_left_child = top_left_child
-        }
-        element = element.parentNode
-    }
-    
-    return {
-        text_path: text_path,
-        text_path_elements: text_path_elements
-    }
+//    var element = event.target
+//    var results = []
+//    
+//    console.log('*********************************************************')
+//    console.log('Element Info:')
+//    console.log('*********************************************************')
+//    
+//    console.log("full xpath: " + data.target)
+//    
+//    var text_path = get_text_structure(element).text_path
+//    var text = get_text_value(element)
+//    var xpath = form_text_match_xpath(text_path[text_path.length-1])
+//    
+//    console.log("text path: " + JSON.stringify(text_path))
+//    console.log("xpath: " + xpath)
+//    get_similar_text_paths(element, false)
+//    
+//    var elements =  find_elements_by_xpath(xpath)
+//    console.log('-----------------------------------------------------------')
+//    console.log("num elements found by xpath: " + elements.length)
+//    console.log('-----------------------------------------------------------')
+//    for (var i=0; i<elements.length; i++) {
+//        console.log("--xpath match[" + i + "] " + get_xpath(elements[i]))
+//        console.log("--text path[" + i + "] " + get_text_structure(elements[i]).text_path)
+//    }
+//    
+//    elements = find_elements_by_text_path(text_path)
+//    console.log('-----------------------------------------------------------')
+//    console.log("num elements found by text path: " + elements.length)
+//    console.log('-----------------------------------------------------------')
+//    for (var i=0; i<elements.length; i++) {
+//        console.log("--match[" + i + "] " + get_xpath(elements[i]))
+//    }
+//    console.log('-----------------------------------------------------------')
+//    console.log("check passes: " + ((elements.length == 1) && (elements[0] == element)))
+//    console.log('-----------------------------------------------------------')
 }
 
 //Returns true if the element matches the target element according
@@ -966,310 +700,13 @@ function get_similar_text_paths(element, horizontal) {
     return [original_element]
 }
 
-//Get the full xpath for an element, anchored at the html document.
-//For simplicity each path element always has a [] index suffix.
-function get_xpath(element) {
-    var path = [];
-    while(element) {
-        if (element.parentNode) {
-            var node_name = element.nodeName;
-            var sibling = element
-            var count = 0;
-            while (sibling) {
-                if (sibling.nodeName == node_name) {
-                    ++count;
-                }
-                sibling = sibling.previousElementSibling
-            }
-            path.unshift(node_name + '[' + count + ']');
-        }
-        element = element.parentNode
-    }
-    return '/'+path.join('/');
-}
 
-// Get image path.
-function get_image_path(element) {
-    var image_path = get_text_structure(element).text_path
-    var urls = get_image_values(element)
-    if (urls.length == 0) {
-        return []
-    }
-    image_path.push(urls)
-    return image_path
-}
 
-//------------------------------------------------------------------------------------------------
-//Utilities.
-//------------------------------------------------------------------------------------------------
 
-function find_elements_by_text(text) {
-    var xpath = "//*[count(text()) > 0]"
-    var elements = find_elements_by_xpath(xpath)
-    var results = []
-    for (var i=0; i<elements.length; i++) {
-        var element = elements[i]
-        if (text == get_text_value(element)) {
-            results.push(element)
-        }
-    }
-    return results
-}
 
-//Returns an array of elements which have text nodes.
-//The elements under consideration are the element argument and its children.
-function find_text_elements(element) {
-    var element_xpath = get_xpath(element)
-    
-    // Build xpath to find all elements with text nodes under the element xpath.
-    var xpath = element_xpath;
-    if (xpath != '/') {
-        xpath += '/'
-    }
-    xpath += "/*[count(text()) > 0]";
-    return find_elements_by_xpath(xpath)
-}
 
-// Returns an array of elements which have background images or is an image or video itself.
-function find_image_elements(text_path, grouping_rect, urls) {
-    var elements = []
-    var xpath = "//*"
-    
-    // Look for elements containing the image url.
-    // We look backwards so that we get the deepest and latest elements first in document order.
-    var children = find_elements_by_xpath(xpath)
-    console.log("num children to look at: " + children.length)
-    for (var i=0; i<children.length; i++) {
-        var child = children[i]
-        
-        // If the child isn't visible skip it.
-        if ((child.offsetWidth == 0) || (child.offsetHeight == 0)) {
-            continue
-        }
-        
-        // If the child doesn't intersect the grouping_rect skip it.
-        if (!intersects(child.getBoundingClientRect(), grouping_rect)) {
-            continue
-        }
-        
-        // Make sure we're getting top most element, when elements are overlapping. (like divs)
-        child = get_top_element(child)
-        if (!child) {
-            continue
-        }
-        
-        // Get the text path of the child.
-        var path = get_text_structure(child).text_path
-        if (!arrays_are_equal(text_path, path)) {
-            continue
-        }
-        
-        // Otherwise try getting the image value.
-        var image_urls = get_image_values(child)
-        
-        // If it matches our url we've found one.
-        if (arrays_are_equal(image_urls,urls) ) {
-            if (elements.indexOf(child) <0) {
-                elements.push(child)
-            }
-        }
-    }
-    return elements
-}
 
-//Returns an array of elements matching the text path.
-function find_elements_by_text_path(text_path) {
-    var text_path_tail = text_path[text_path.length-1]
-    var xpath = form_text_match_xpath(text_path_tail)
-    var xpath_results = find_elements_by_xpath(xpath)
-    var elements = []
-    for (var i=0; i<xpath_results.length; i++) {
-        var element = xpath_results[i]
-        var path = get_text_structure(element).text_path
-        if (arrays_are_equal(path, text_path)) {
-            elements.push(element)
-        }
-    }
-    return elements
-}
 
-function find_elements_by_image_path(image_path) {
-    var text_path = image_path
-    var image_urls = text_path.pop()
-    
-    var image_elements = []
-    var text_elements = find_elements_by_text_path(text_path)
-    
-    console.log("num text elements: " + text_elements.length)
-    
-    
-    for (var e=0; e<text_elements.length; e++) {
-        var text_element = text_elements[e]
-        var obj = get_text_structure(text_element)
-        var grouping_element = obj.text_path_elements[obj.text_path_elements.length-2]
-        image_elements = image_elements.concat(find_image_elements(text_path, grouping_element.getBoundingClientRect(), image_urls))
-    }
-    
-    for (var t=0; t<image_elements.length; t++) {
-        console.log("ppp: " + get_xpath(image_elements[t]))
-        console.log("qqq: " + get_image_path(image_elements[t]))
-    }
-    return image_elements
-}
-
-//Find elements by xpath. 
-//This returns an array of elements.
-function find_elements_by_xpath(xpath) {
-    var set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
-    var elements = []
-    for (var i=0; i<set.snapshotLength; i++) {
-        elements.push(set.snapshotItem(i))
-    }
-    return elements
-}
-
-function get_top_element(element) {
-    // Make sure the element is visible.
-    if ((element.offsetWidth == 0) || (element.offsetHeight == 0)) {
-        console.log('t')
-        return null
-    }
-    
-    var rect = element.getBoundingClientRect()
-    var x = rect.left + 1
-    var y = rect.top + 1
-    return document.elementFromPoint(x, y)
-}
-
-//Dump the xpaths of an array of elements.
-function dump_array_of_elements(elements) {
-  for (var i=0; i<elements.length; i++) {
-      console.log("found: " + get_xpath(elements[i]))
-  }
-}
-
-//Returns true if the text is composed of all whitespace characters.
-function is_all_whitespace(text) {
-    var regex = /^\s+$/;
-    return regex.test(text)
-}
-
-//Returns true if the contents of two arrays of primitives are equal.
-function arrays_are_equal(a1, a2) {
-    if (a1.length != a2.length) {
-        return false
-    }
-    for (var i=0; i<a1.length; i++) {
-        if (a1[i] != a2[i]) {
-            return false
-        }
-    }
-    return true
-}
-
-function get_page_height() {
-    var doc_body = document.body
-    var doc_elem = document.documentElement
-    return Math.max( doc_body.scrollHeight, doc_body.offsetHeight, 
-            doc_elem.clientHeight, doc_elem.scrollHeight, doc_elem.offsetHeight );
-}
-
-function get_page_width() {
-    var doc_body = document.body
-    var doc_elem = document.documentElement
-    return Math.max( doc_body.scrollWidth, doc_body.offsetWidth, 
-            doc_elem.clientWidth, doc_elem.scrollWidth, doc_elem.offsetWidth );
-}
-
-//Dump the client rect to the console.
-function dump_client_rect(rect) {
-    console.log("client rect: " + rect.left + "," + rect.right + "," + rect.top + "," + rect.bottom)
-}
-
-//Returns true if the outer element contains the inner element.
-function element_contains(outer, inner) {
-    //Associate null with zero area element
-    if (outer == null) {
-        return false
-    }
-    if (inner == null) {
-        return true
-    }
-    //Outer and inner must be elements.
-    if (!outer.getBoundingClientRect) {
-        return false
-    }
-    if (!inner.getBoundingClientRect) {
-        return false
-    }
-    //Call out to our helper.
-    var outer_rect = outer.getBoundingClientRect()
-    var inner_rect = inner.getBoundingClientRect()
-    return contains(outer_rect, inner_rect)
-}
-
-// Returns true if the outer rect contains the inner rect.
-function contains(outer, inner) {
-    if (inner.left >= outer.left && 
-            inner.right <= outer.right && 
-            inner.bottom <= outer.bottom && 
-            inner.top >= outer.top) {
-        return true
-    }
-    return false
-}
-
-function element_intersects(outer, inner) {
-    //Associate null with zero area element
-    if (outer == null) {
-        return false
-    }
-    if (inner == null) {
-        return false
-    }
-    //Outer and inner must be elements.
-    if (!outer.getBoundingClientRect) {
-        return false
-    }
-    if (!inner.getBoundingClientRect) {
-        return false
-    }
-    //Call out to our helper.
-    var outer_rect = outer.getBoundingClientRect()
-    var inner_rect = inner.getBoundingClientRect()
-    return intersects(outer_rect, inner_rect)
-}
-		
-function intersects(rect_a, rect_b) {
-    if (rect_a.right < rect_b.left) {
-        return false
-    } else if (rect_a.left > rect_b.right) {
-        return false
-    } else if (rect_a.bottom < rect_b.top) {
-        return false
-    } else if (rect_a.top > rect_b.bottom) {
-        return false
-    }
-    return true
-}
-
-// Returns a bounding box in pages space as an array [min_x, max_x, min_y, max_y]
-function get_page_box_from_client_rect(rect) {
-    return [rect.left + window.scrollX,
-            rect.right + window.scrollX,
-            rect.top + window.scrollY,
-            rect.bottom + window.scrollY]
-}
-
-function element_contains_point(element, page_x, page_y) {
-    var rect = element.getBoundingClientRect()
-    var page_box = get_page_box_from_client_rect(rect)
-    if ((page_x >= page_box[0]) && (page_x <= page_box[1]) && 
-            (page_y >=page_box[2]) && (page_y <= page_box[3])) {
-        return true
-    }
-    return false
-}
 
 
 
