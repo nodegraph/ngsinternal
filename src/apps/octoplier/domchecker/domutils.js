@@ -129,10 +129,8 @@ function page_box_contains(outer, inner) {
             (inner[2] >= outer[2]) &&
             (inner[3] <= outer[3]) 
     ) {
-        //console.log('Found outer, inner: ' + JSON.stringify(outer) + "," + JSON.stringify(inner))
         return true
     }
-    //console.log('NOT found outer, inner: ' + JSON.stringify(outer) + "," + JSON.stringify(inner))
     return false
 }
 
@@ -179,118 +177,28 @@ function form_text_match_xpath(text) {
 //Get the full xpath for an element, anchored at the html document.
 //For simplicity each path element always has a [] index suffix.
 function get_xpath(element) {
-var path = [];
-while(element) {
-    if (element.parentNode) {
-        var node_name = element.nodeName;
-        var sibling = element
-        var count = 0;
-        while (sibling) {
-            if (sibling.nodeName == node_name) {
-                ++count;
-            }
-            sibling = sibling.previousElementSibling
-        }
-        path.unshift(node_name + '[' + count + ']');
-    }
-    element = element.parentNode
-}
-return '/'+path.join('/');
-}
-
-// Returns an array of values extracted from elements overlapping the given element.
-// Makes use of a functor getter to retrieve values.
-function get_visible_values(target_element, getter) {
-    // Build xpath to find all elements.
-    var xpath = "//*"
-    var elements = find_elements_by_xpath(xpath)
-    console.log("determining values from num elememnts: " + elements.length)
-    
-    // Loop over the elements.
-    var element = null
-    for (var i=0; i<elements.length; i++) {
-        element = elements[i]
-        
-        // Make sure the element is visible.
-        if ((element.offsetWidth == 0) || (element.offsetHeight == 0)) {
-            continue
-        }
-        
-        // Skip the element if it's part of the smash browse menu.
-        if (smash_browse_context_menu.element_is_part_of_menu(element)) {
-            continue
-        }
-        
-        // Retrieve values using the getter.
-        getter(element)
-    }
-}
-
-// Functor for get_visible_values.
-// Grabs text from the element and pushes it onto results.
-function text_getter(data, element) {
-    // We want all text inside the original element.
-    // So we make sure that the element is fully inside the original element.
-    if (!element_contains(data.target_element, element)) {
-        return
-    }
-    
-    // Loop through children accumulating text node values.
-    for (var c=0; c<element.childNodes.length; c++) {
-        var child = element.childNodes[c]
-        if (child.nodeType == Node.TEXT_NODE) {
-            var text = child.nodeValue
-            // Add text if it's not all whitespace.
-            if (!is_all_whitespace(text)) {
-                data.results.push(text)
-            }
-        }
-    }
-}
-
-//Functor for get_visible_values.
-//Grabs images from the element and pushes it onto results.
-function image_getter(data, element) {
-    // We want all text inside the original element.
-    // So we make sure that the element is fully inside the original element.
-    if (!element_contains(element, data.target_element)) {
-        return
-    }
-    
-    // Get the tag name.
-    var tag_name = element.tagName.toLowerCase()
-    
-    // Return the src for images and video elements.
-    if ((tag_name === 'img') || (tag_name === 'video')) {
-        if (data.results.indexOf(element.src)<0) {
-            console.log("xpath: " + get_xpath(element))
-            console.log("elem source: " + element.src)
-            data.results.push(element.src)
-        }
-    }
-    
-    // We can't really get unique data for svgs so just return some text.
-    if (tag_name === 'svg') {
-        data.results.push('svg')
-    }
-    
-    // Otherwise we query the computed style for the background image.
-    var style = element.currentStyle || window.getComputedStyle(element, false)
-    if (style) {
-        // console.log("ssssstyle: " + JSON.stringify(style))
-        if (style.backgroundImage.indexOf('url(') == 0) {
-            var background_image = style.backgroundImage.slice(4, -1);
-            if (background_image != "") {
-                if (data.results.indexOf(background_image)<0) {
-                    console.log("xpath: " + get_xpath(element))
-                    console.log("background image: " + background_image)
-                    data.results.push(background_image)
+    var path = [];
+    while(element) {
+        if (element.parentNode) {
+            var node_name = element.nodeName;
+            var sibling = element
+            var count = 0;
+            while (sibling) {
+                if (sibling.nodeName == node_name) {
+                    ++count;
                 }
+                sibling = sibling.previousElementSibling
             }
+            path.unshift(node_name + '[' + count + ']');
         }
+        element = element.parentNode
     }
+    return '/'+path.join('/');
 }
 
+//Retrieves the image value directly on an element in the dom hierarchy.
+//Note that there may multiple images (ie overlapping image) however they
+//will always be returned as one string from this function.
 function get_image_direct(element) {
     // Get the tag name.
     var tag_name = element.tagName.toLowerCase()
@@ -315,9 +223,24 @@ function get_image_direct(element) {
             }
         }
     }
+    return ""
 }
 
-function get_text_direct(data, element) {
+//Retrieves the opacity value directly on an element in the dom hierarchy.
+function get_opacity_direct(element) {
+  // Otherwise we query the computed style for the background image.
+  var style = element.currentStyle || window.getComputedStyle(element, false)
+  if (style) {
+      return style.opacity
+  }
+  return ""
+}
+
+
+//Retrieves the text value directly under an element in the dom hierarchy.
+//Note that there may multiple texts (ie muliple paragraphs) however they
+//will always be returned as one string from this function.
+function get_text_direct(element) {
     var text = ""
     // Loop through children accumulating text node values.
     for (var c=0; c<element.childNodes.length; c++) {
@@ -333,82 +256,94 @@ function get_text_direct(data, element) {
     return text
 }
 
-//Returns an array of text which are all overlapping the given element.
-function get_text_values(element) {
-    var data = {
-            target_element: element,
-            results: []
-    }
-    get_visible_values(element, text_getter.bind(undefined, data))
-    return data.results
-}
-
-//Returns an array of image urls which are all overlapping the given element.
-function get_image_values(element) {
-    var data = {
-            target_element: element,
-            results: []
-    }
-    get_visible_values(element, image_getter.bind(undefined, data))
-    return data.results
-}
-
-function get_image_values2(page_x, page_y) {
+//Returns an array of elements under the given page point.
+//The document.elementsFromPoint seems to skip svg elements,
+//so this function simply code to include svg elements.
+function get_elements_from_point(page_x, page_y) {
+    // Use the document.elementsFromPoint class.
     var elements = document.elementsFromPoint(page_x-window.scrollX, page_y-window.scrollY)
-    console.log("xxx num elements: " + elements.length)
+    console.log('num elements: ' + elements.length)
     
-//    var svgroot = window.document; //document.documentElement;
-//    var myRect = svgroot.createSVGRect();
-//    myRect.x = page_x-window.scrollX;
-//    myRect.y = page_y-window.scrollY;
-//    myRect.width = 1;
-//    myRect.height = 1;
-//    var intersectList = 
-//        svgroot.getIntersectionList(myRect,null);
-//    for (var i=0; i<intersectList.length; i++) {
-//        console.log("intersection["+i+"]: " + get_xpath(intersectList[i]))
-//    }
-    
-    var images = []
+    var opaque_index = -1
     for (var i=0; i<elements.length; i++) {
+        console.log('element['+i+']: opacity' + get_opacity_direct(elements[i]) + ' xpath: ' + get_xpath(elements[i]) )
+    }
+    
+    // Build xpath to find all svg elements.
+    var xpath = "//*[local-name() = 'svg']"
+    var svgs = find_elements_by_xpath(xpath)
+    
+    // Loop over the elements.
+    var svg = null
+    var rect = null
+    for (var i=0; i<svgs.length; i++) {
+        svg = svgs[i]
         
-        console.log('examing: ' + get_xpath(elements[i]))
-        var image = get_image_direct(elements[i])
-        if (!image) {
+        // Make sure the svg is visible.
+        if ((svg.offsetWidth == 0) || (svg.offsetHeight == 0)) {
             continue
         }
-        if (images.indexOf(image) >= 0) {
+        
+        // Make sure the svg contains the page point.
+        if (!element_contains_point(svg, page_x, page_y)) {
             continue
         }
-        images.push(image)
+        
+        // Add the svg to the elements.
+        elements.push(svg)
     }
-    return images
+    return elements
 }
 
-//Returns true if the element has an immediate textnode with text.
-function element_has_direct_text(element) {
-    var data = {
-            target_element: element,
-            results: []
+//Returns the element with the smallest area containing the given page point.
+function get_smallest_element_at_point(page_x, page_y) {
+    var elements = get_elements_from_point(page_x, page_y)
+    var smallest_area = 0
+    var smallest_element = null
+    for (var i=0; i<elements.length; i++) {
+        var element = elements[i]
+        var rect = element.getBoundingClientRect()
+        var area = rect.width * rect.height
+        if (i == 0) {
+            smallest_area = area
+            smallest_element = element
+        } else if (area < smallest_area) {
+            smallest_area = area
+            smallest_element = element
+        }
     }
-    text_getter(data, element)
-    if (data.results.length) {
-        return true
-    }
-    return false
+    return smallest_element
 }
 
-//Returns true if the element is and image or video or a div with a background image.
-function element_has_direct_image(element) {
-    var data = {
-            target_element: element,
-            results: []
+//Returns an array of values obtained by looping through the 
+//elements and retrieving values using the supplied getter.
+function get_visible_values(elements, getter) {
+    var values = []
+    for (var i=0; i<elements.length; i++) {
+        var value = getter(elements[i])
+        if (!value || is_all_whitespace(value)) {
+            continue
+        }
+        if (values.indexOf(value) >= 0) {
+            continue
+        }
+        values.push(value)
     }
-    image_getter(data, element)
-    if (data.results.length) {
-        return true
-    }
-    return false
+    return values
+}
+
+//Returns an array of images values from elements under the given page point.
+function get_image_values_from_point(page_x, page_y) {
+    var elements = get_elements_from_point(page_x, page_y)
+    var values = get_visible_values(elements, get_image_direct)
+    return values
+}
+
+//Returns an array of text values from elements under the given page point.
+function get_text_values_from_point(page_x, page_y) {
+    var elements = get_elements_from_point(page_x, page_y)
+    var values = get_visible_values(elements, get_text_direct)
+    return values
 }
 
 //----------------------------------------------------------------------------------------
@@ -443,13 +378,15 @@ function find_elements_by_xpath(xpath) {
 }
 
 //Returns an array of elements selected by the matcher.
-function find_elements(matcher) {
+function find_elements(getter, target_values) {
     // Build xpath to find all elements.
     var xpath = "//*"
     var elements = find_elements_by_xpath(xpath)
     
     // Loop over the elements.
     var element = null
+    var value = null
+    var candidates = []
     for (var i=0; i<elements.length; i++) {
         element = elements[i]
         
@@ -463,208 +400,90 @@ function find_elements(matcher) {
             continue
         }
         
-        // Check if we have a match.
-        matcher(element)
+        // See if this elements value matches something in target_values
+        value = getter(element)
+        if (target_values.indexOf(value) >= 0) {
+            candidates.push(element)
+        }
     }
-}
-
-function match_smallest_deepest(data, element) {
-    var rect = element.getBoundingClientRect()
-    var area = rect.width * rect.height
-    var xpath_length = get_xpath(element).split('/').length
-    var found = false
     
-    // Have we found a better element.
-    if (!data.smallest_elem) {
-        found = true
-    } else {
-        // We always want the element with the smallest area.
-        if (area < data.smallest_area) {
-            found = true
-        } 
-        // However if there is a tie, then we want the one with the longest xpath.
-        else if (area == data.smallest_area) {
-            if (xpath_length > data.longest_xpath_length) {
-                found = true
+    //console.log('num candidates: ' + candidates.length)
+    
+    // Determines arrays of surrounding elements for each element.
+    var results = []
+    var overlaps = []
+    for (var i=0; i<candidates.length; i++) {
+        overlaps.push([])
+        for (var j=0; j<candidates.length; j++) {
+            if (element_intersects(candidates[j], candidates[i])) {
+                overlaps[i].push(getter(candidates[j]))
             }
         }
     }
     
-    // If we found a better element, update our data structures.
-    if (found) {
-        data.smallest_elem = element
-        data.smallest_area = area
-        data.longest_xpath_length = xpath_length
-        data.results.length = 0
-        data.results.push(element)
-    }
-}
-
-//Used to find the deepest element at the click point.
-function match_element_at_click(data, element) {
-    // Make sure the element intersects the internal element.
-    if (!element_contains_point(element, data.page_x, data.page_y)) {
-        return
-    }
-    match_smallest_deepest(data, element)
-}
-
-//Used to find the deepest image around the element determined from the click point (above).
-function match_smallest_encompassing_image(data, element) {
-    // Make sure the element intersects the internal element.
-    if (!element_contains(element, data.target_element)) {
-        return
-    }
-    // Make sure the element has an image directly.
-    if (!element_has_direct_image(element)) {
-        return
-    }
-//    if (get_image_values(element).length == 0) {
-//        return
+//    console.log('num overlaps: ' + overlaps.length)
+//    for(var i=0; i<overlaps.length; i++) {
+//        console.log('overlaps length['+i+']: ' + overlaps[i].length)
 //    }
-    match_smallest_deepest(data, element)
-}
-
-//Used to find the deepest text around the element determined from the click point (above).
-function match_smallest_encompassing_text(data, element) {
-    // Make sure the element intersects the internal element.
-    if (!element_contains(element, data.target_element)) {
-        return
-    }
-    // Make sure the element has an image directly.
-    if (!element_has_direct_text(element)) {
-        return
-    }
-//    if (get_text_values(element).length == 0) {
-//        return
-//    }
-    match_smallest_deepest(data, element)
-}
-
-//Results is set to have just the one given element if it has the 
-//largest area and shortest xpath we have seen so far.
-function match_image_values(data, element) {
-  // Find the clickable element.
-//  element = get_clickable_element(element)
-//  if (!element) {
-//      return
-//  }
-  
-//  // Find the first encompassing image element.
-//  var results = find_visible_image_element(element)
-//  if (results.length == 0) {
-//      console.log('yyy')
-//      return
-//  }
-//  element = results[0]
-//  if (!element) {
-//      console.log('xxx')
-//  }
-  
-  // Get the elements image values.
-  var values = get_image_values(element)
-  // If it doesn't match the image values we're looking for, skip it.
-  if (!arrays_are_equal(values,data.image_values)) {
-      return
-  }
-  // Get the xpath.
-  var xpath = get_xpath(element)
-  // If a prefix of xpath already exists in results then skip it.
-  // We only want the upper part of paths, when one path is a prefix of another.
-  // We also want the biggest containing element.
-  // Note that we will see prefixes first, because the elements are search in page order.
-  for (var i=0; i<data.results.length; i++) {
-      if (xpath.indexOf(get_xpath(data.results[i])) == 0) {
-          return
-      }
-      if (element_contains(data.results[i], element)) {
-          return
-      }
-  }
-  data.results.push(element)
-}
-
-function match_text_values(data, element) {
-    // Get the text values.
-    var values = get_text_values(element)
-    // If it doesn't matches the text values we're looking for then skip it.
-    if (!arrays_are_equal(values,data.text_values) ) {
-        return
-    }
-    // Get the xpath.
-    var xpath = get_xpath(element)
-    // If a prefix of xpath already exists in results then skip it.
-    // We only want the upper xpaths.
-    // We also want the biggest containing element.
-    // Note that we will see prefixes first, because the elements are search in page order.
-    for (var i=0; i<data.results.length; i++) {
-        if (xpath.indexOf(get_xpath(data.results[i])) == 0) {
-            return
+    
+    // Find the elements which have surrounding elements matching the target_values.
+    var matching = []
+    for (var i=0; i<overlaps.length; i++) {
+        var found = true
+        for (var j=0; j<target_values.length; j++) {
+            if (overlaps[i].indexOf(target_values[j]) < 0) {
+                found = false
+                break
+            }
         }
-        if (element_contains(data.results[i], element)) {
-            return
+        if (found) {
+            matching.push(candidates[i])
         }
     }
-    data.results.push(element)
-}
-
-// Finds the smallest and deepest element at the given position.
-function find_visible_inner_element(page_x, page_y) {
-    var data = {
-            page_x : page_x, 
-            page_y : page_y,
-            results : []
+    
+    // Initialize eliminated to all false.
+    var eliminated = []
+    for (var i=0; i<matching.length; i++) {
+        eliminated.push(false)
     }
-    find_elements(match_element_at_click.bind(undefined, data))
-    return data.results
-}
-
-// Get the visible element.
-function find_visible_image_element(element) {
-    data = {
-        target_element: element,
-        results : []
+    
+    // Coalesce all contained elements together.
+    for (var i=0; i<matching.length; i++) {
+        if (eliminated[i]) {
+            continue
+        }
+        for(var j=0; j<matching.length; j++) {
+            if (j==i) {
+                continue
+            }
+            if (eliminated[j]) {
+                continue
+            }
+            if (element_contains(matching[i], matching[j])) {
+                eliminated[j] = true
+            }
+        }
     }
-    find_elements(match_smallest_encompassing_image.bind(undefined, data))
-    return data.results
-}
-
-function find_visible_image_element_at_point(page_x, page_y) {
-    var results = find_visible_inner_element(page_x, page_y);
-    if (results.length == 0) {
-        return null
+    
+    // Extract the non eliminated elements out.
+    var results = []
+    for (var i=0; i<eliminated.length; i++) {
+        if (!eliminated[i]) {
+            results.push(matching[i])
+        }
     }
-    return find_visible_image_element(results[0])
-}
-
-function find_visible_text_element(page_x, page_y) {
-    // Find the inner most element at the click point.
-    var data = {
-            page_x : page_x, 
-            page_y : page_y,
-            results : []
-    }
-    find_elements(match_element_at_click.bind(undefined, data))
-    return data.results
+    
+    // Phew we're done!
+    return results
 }
 
 //Returns an array of elements which have matching image values.
 function find_elements_by_image_values(image_values) {
-    data = {
-            image_values : image_values,
-            results : []
-    }
-    find_elements(match_image_values.bind(undefined, data))
-    return data.results
+    return find_elements(get_image_direct, image_values)
 }
 
 //Returns an array of elements which have matching text values.
 function find_elements_by_text_values(text_values) {
-    var data = {
-            text_values : text_values,
-            results : []
-    }
-    find_elements(match_text_values.bind(undefined, data))
-    return data.results
+    return find_elements(get_text_direct, text_values)
 }
 

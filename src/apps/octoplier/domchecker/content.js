@@ -171,19 +171,12 @@ smash_browse_context_menu = {
             this.create_selected_overlays()
         },
         on_context_menu: function(page_event) {
-            //var visible_inner_elem = find_visible_inner_element(page_event.pageX, page_event.pageY)
-//            this.type = visible_inner_elem.tagName
-//            this.position = [page_event.pageX, page_event.pageY]
-//            this.rect = visible_inner_elem.getBoundingClientRect()
-            //this.page_target = visible_inner_elem[0]
+            this.page_x = page_event.pageX
+            this.page_y = page_event.pageY
             
-            
-            var image_values = get_image_values2(page_event.pageX, page_event.pageY)
-            console.log('image values222: ' + JSON.stringify(image_values))
-            
-            
-            this.text_element = find_visible_text_element(page_event.pageX, page_event.pageY)[0]
-            this.image_element = find_visible_image_element_at_point(page_event.pageX, page_event.pageY)[0]
+            // Just for debugging.
+            var inner_elem = get_smallest_element_at_point(page_event.pageX, page_event.pageY)
+            console.log('mouse over: ' + get_xpath(inner_elem))
             
             // Show the menu.
             this.show(page_event.pageX, page_event.pageY)
@@ -200,26 +193,26 @@ smash_browse_context_menu = {
             console.log('clicked')
             
             if (this.find_by_text.contains(menu_target)) { 
-                var text_values = get_text_values(this.text_element)
+                var text_values = get_text_values_from_point(this.page_x, this.page_y)
                 console.log('element xpath: ' + get_xpath(this.text_element))
                 console.log('text values: ' + JSON.stringify(text_values))
                 // Check that we can find it too.
-//                var elements = find_elements_by_text_values(text_values)
-//                console.log('found num elements: ' + elements.length)
-//                for (var i=0; i<elements.length; i++) {
-//                    console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
-//                }
+                var elements = find_elements_by_text_values(text_values)
+                console.log('found num elements: ' + elements.length)
+                for (var i=0; i<elements.length; i++) {
+                    console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
+                }
                 
             } else if (this.find_by_image.contains(menu_target)) {
-                var image_values = get_image_values(this.image_element)
+                var image_values = get_image_values_from_point(this.page_x, this.page_y)
                 console.log('element xpath: ' + get_xpath(this.image_element))
                 console.log('image values: ' + JSON.stringify(image_values))
                 // Check that we can find it too.
-//                var elements = find_elements_by_image_values(image_values)
-//                console.log('found num elements: ' + elements.length)
-//                for (var i=0; i<elements.length; i++) {
-//                    console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
-//                }
+                var elements = find_elements_by_image_values(image_values)
+                console.log('found num elements: ' + elements.length)
+                for (var i=0; i<elements.length; i++) {
+                    console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
+                }
             } else if (this.find_by_type.contains(menu_target)) {
                 var msg = "Find elements with type, " + this.type
                 console.log(msg)
@@ -236,8 +229,8 @@ smash_browse_context_menu = {
             //this.create_selected_overlays()
         },
         on_mouse_over: function(page_event) {
-            var inner_elem = find_visible_inner_element(page_event.pageX, page_event.pageY)[0]
-            console.log('mouse over: ' + get_xpath(inner_elem))
+            var inner_elem = get_smallest_element_at_point(page_event.pageX, page_event.pageY)
+            //console.log('mouse over: ' + get_xpath(inner_elem))
             
             var rect = inner_elem.getBoundingClientRect()
             var page_box = get_page_box_from_client_rect(rect)
