@@ -525,8 +525,8 @@ function elements_match(element, target_element, match_criteria) {
 
     // Match font style.
     if (match_criteria.match_font || match_criteria.match_font_size) {
-        var style = element.currentStyle || window.getComputedStyle(element, false)
-        var target_style = target_element.currentStyle || window.getComputedStyle(target_element, false)
+        var style = window.getComputedStyle(element, null)
+        var target_style = window.getComputedStyle(target_element, null)
 
         if (match_criteria.match_font && (style.font != target_style.font)) {
             return false

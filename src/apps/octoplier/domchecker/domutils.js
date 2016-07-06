@@ -151,6 +151,23 @@ function page_box_intersects(a, b) {
 //Element value/info extractors.
 //----------------------------------------------------------------------------------------
 
+function element_is_visible(element) {
+    if ((element.offsetWidth == 0) || (element.offsetHeight == 0)) {
+        return false
+    }
+    // Check the :after pseudo element first.
+    var after_style = window.getComputedStyle(element, ':after'); 
+    if (after_style.visibility == "hidden") {
+        return false
+    }
+    // Now check the actual element.
+    var style = window.getComputedStyle(element, null)
+    if (style.visibility == "hidden") {
+        return false
+    }
+    return true
+}
+
 //Form an xpath expression which will match any node with a 
 //textnode inside of them whose text matches that given.
 function form_text_match_xpath(text) {
@@ -204,41 +221,100 @@ function get_image_direct(element) {
     var tag_name = element.tagName.toLowerCase()
 
     // Return the src for images and video elements.
-    if ((tag_name === 'img') || (tag_name === 'video')) {
+    if ((tag_name === 'img') || (tag_name === 'source')) {
         return element.src
     }
 
-    // We can't really get unique data for svgs so just return some text.
+    // We serialize the svg data, but note that it is shallow and doesn't expand
+    // <use> elements in the svg.
     if (tag_name === 'svg') {
-        return 'svg'
+        var serializer = new XMLSerializer();
+        return serializer.serializeToString(element);
     }
 
-    // Otherwise we query the computed style for the background image.
-    var style = element.currentStyle || window.getComputedStyle(element, false)
-    if (style) {
+    function get_image(style) {
         if (style.backgroundImage.indexOf('url(') == 0) {
             var background_image = style.backgroundImage.slice(4, -1);
             if (background_image != "") {
-                return background_image
+                // Add on the image scaling and offset, as some images are used like packed textures.
+                var scaling = style.backgroundSize
+                var offset = style.backgroundPosition
+                return background_image + "::" + scaling + "::" + offset
             }
         }
     }
-    return ""
+    
+    // Otherwise we query the computed style for the background image.
+    var after_style = window.getComputedStyle(element, ':after'); 
+    var style = window.getComputedStyle(element, null)
+    var result = ""
+    // Check the :after pseudo element first.
+    if (after_style) {
+        result = get_image(after_style)
+    }
+    // If it has no image, then check the actual element.
+    if (!result) {
+        if (style) {
+            result = get_image(style)
+        }
+    }
+    return result
 }
 
 //Retrieves the opacity value directly on an element in the dom hierarchy.
 function get_opacity_direct(element) {
-  // Otherwise we query the computed style for the background image.
-  var style = element.currentStyle || window.getComputedStyle(element, false)
-  if (style) {
+//  // Check the :after pseudo element first.
+//  var after_style = window.getComputedStyle(element, ':after')
+//  if (after_style.opacity) {
+//      return after_style.opacity
+//  }
+  // Check the actual element.
+  var style = window.getComputedStyle(element, null)
+  if (style.opacity) {
       return style.opacity
   }
   return ""
 }
 
+function get_background_color_direct(element) {
+//    // Check the :after pseudo element first.
+//    var after_style = window.getComputedStyle(element, ':after')
+//    if (after_style.backgroundColor) {
+//        return after_style.backgroundColor
+//    }
+    // Check the actual element.
+    var style = window.getComputedStyle(element, null)
+    if (style.backgroundColor) {
+        return style.backgroundColor
+    }
+    return ""
+}
+
+// This is detects the back ground element of web pages and also popup divs.
+// It's heuristic is to detect fully opaque elements.
+// Note this is just a heuristic and may need changes in the future.
+function element_is_back_plate(element) {
+    bg = get_background_color_direct(element)
+    if (bg == 'rgba(0, 0, 0, 0)') {
+        return false
+    }
+    opacity = get_opacity_direct(element)
+    if (opacity != 1) {
+        return false
+    }
+    if (bg.startsWith('rgba(')) {
+        var sub = bg.slice(5,-1)
+        var colors = sub.split(',')
+        if (!colors[3].startsWith('1')) {
+            return false
+        }
+    }
+    return true
+}
+
 
 //Retrieves the text value directly under an element in the dom hierarchy.
-//Note that there may multiple texts (ie muliple paragraphs) however they
+//Note that there may be multiple texts (ie muliple paragraphs) however they
 //will always be returned as one string from this function.
 function get_text_direct(element) {
     var text = ""
@@ -247,8 +323,9 @@ function get_text_direct(element) {
         var child = element.childNodes[c]
         if (child.nodeType == Node.TEXT_NODE) {
             var value = child.nodeValue
+            value = value.trim()
             // Add text if it's not all whitespace.
-            if (!is_all_whitespace(text)) {
+            if (!is_all_whitespace(value)) {
                 text += value
             }
         }
@@ -266,7 +343,16 @@ function get_elements_from_point(page_x, page_y) {
     
     var opaque_index = -1
     for (var i=0; i<elements.length; i++) {
-        console.log('element['+i+']: opacity' + get_opacity_direct(elements[i]) + ' xpath: ' + get_xpath(elements[i]) )
+        console.log('element['+i+']: opacity' + get_opacity_direct(elements[i]) 
+                + ' bg: ' + get_background_color_direct(elements[i]) + ' xpath: ' + get_xpath(elements[i]) )
+    }
+    
+    // Trim it to point where we reach the back plate of the page.
+    for (var i=0; i<elements.length; i++) {
+        if (element_is_back_plate(elements[i])) {
+            elements.length = i+1
+            break
+        }
     }
     
     // Build xpath to find all svg elements.
@@ -279,8 +365,10 @@ function get_elements_from_point(page_x, page_y) {
     for (var i=0; i<svgs.length; i++) {
         svg = svgs[i]
         
+        console.log('svg['+i+']')
+        
         // Make sure the svg is visible.
-        if ((svg.offsetWidth == 0) || (svg.offsetHeight == 0)) {
+        if (!element_is_visible(svg)) {
             continue
         }
         
@@ -290,7 +378,8 @@ function get_elements_from_point(page_x, page_y) {
         }
         
         // Add the svg to the elements.
-        elements.push(svg)
+        console.log('ffffffffffffffffffff found svg['+i+']')
+        elements.unshift(svg)
     }
     return elements
 }
@@ -343,6 +432,11 @@ function get_image_values_from_point(page_x, page_y) {
 function get_text_values_from_point(page_x, page_y) {
     var elements = get_elements_from_point(page_x, page_y)
     var values = get_visible_values(elements, get_text_direct)
+    // Values will contain text from bigger overlapping divs with text.
+    // Unlike images text won't overlap, so we only want the first text.
+    if (values.length > 1) {
+        values.length = 1
+    }
     return values
 }
 
@@ -391,7 +485,7 @@ function find_elements(getter, target_values) {
         element = elements[i]
         
         // Make sure the element is visible.
-        if ((element.offsetWidth == 0) || (element.offsetHeight == 0)) {
+        if (!element_is_visible(element)) {
             continue
         }
         
@@ -447,7 +541,8 @@ function find_elements(getter, target_values) {
         eliminated.push(false)
     }
     
-    // Coalesce all contained elements together.
+    // Coalesce all contained elements together
+    // and find the smallest most internal element
     for (var i=0; i<matching.length; i++) {
         if (eliminated[i]) {
             continue
@@ -459,7 +554,7 @@ function find_elements(getter, target_values) {
             if (eliminated[j]) {
                 continue
             }
-            if (element_contains(matching[i], matching[j])) {
+            if (element_contains(matching[j], matching[i])) {
                 eliminated[j] = true
             }
         }
