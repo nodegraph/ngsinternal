@@ -73,6 +73,47 @@ function get_page_width() {
             doc_elem.clientWidth, doc_elem.scrollWidth, doc_elem.offsetWidth );
 }
 
+function disable_hover() {
+    var hover_regex = /:hover/;
+    for (var i = 0; i < document.styleSheets.length; i++) {
+        var sheet = document.styleSheets[i]
+        var rules = sheet.cssRules
+        // Note the cssRules will be null if the css stylesheet is loaded from another domain (cross domain security).
+        // However is you use "chrome --disable-web-security --user-data-dir", then it will not be null allowing you to access it.
+        if (!rules) {
+            continue;
+        }
+        // Loop over the rules.
+        for (var j = rules.length - 1; j >= 0; j--) {
+            var rule = rules[j];
+            if (rule.type === CSSRule.STYLE_RULE && hover_regex.test(rule.selectorText)) {
+                console.log('deleting rule for ' + rule.selectorText + '+++' + rule.style)
+                sheet.deleteRule(j);
+            }
+        }
+    }
+}
+
+//function disable_hover() {
+//var element = document.getElementById('smash_browse_hover_style');
+//if (!element) {
+//element = document.createElement('style');
+//element.type = 'text/css';
+//element.id = 'smash_browse_hover_style';
+////var style = '*:not(smash_browse_submenu):not(smash_browse_menu_item):hover {pointer-events: none !important;}  *:not(smash_browse_submenu)::after {pointer-events: none !important}';
+//var style = '*:not(smash_browse_submenu):not(smash_browse_menu_item):hover {pointer-events: none !important;}';
+//element.appendChild(document.createTextNode(style));
+//document.getElementsByTagName('head')[0].appendChild(element);
+//}
+//}
+//
+//function enable_hover() {
+//var element = document.getElementById('smash_browse_hover_style');
+//if (!element) {
+//element.remove()
+//}
+//}
+
 //----------------------------------------------------------------------------------------
 //Element geometry tests.
 //----------------------------------------------------------------------------------------
@@ -162,7 +203,7 @@ function element_is_visible(element) {
     }
     // Now check the actual element.
     var style = window.getComputedStyle(element, null)
-    if (style.visibility == "hidden") {
+    if (style.visibility != "visible") {
         return false
     }
     return true
@@ -340,7 +381,6 @@ function get_elements_from_point(page_x, page_y) {
     // Use the document.elementsFromPoint class.
     var elements = document.elementsFromPoint(page_x-window.scrollX, page_y-window.scrollY)
     console.log('num elements: ' + elements.length)
-    
     var opaque_index = -1
     for (var i=0; i<elements.length; i++) {
         console.log('element['+i+']: opacity' + get_opacity_direct(elements[i]) 
@@ -365,8 +405,6 @@ function get_elements_from_point(page_x, page_y) {
     for (var i=0; i<svgs.length; i++) {
         svg = svgs[i]
         
-        console.log('svg['+i+']')
-        
         // Make sure the svg is visible.
         if (!element_is_visible(svg)) {
             continue
@@ -378,7 +416,6 @@ function get_elements_from_point(page_x, page_y) {
         }
         
         // Add the svg to the elements.
-        console.log('ffffffffffffffffffff found svg['+i+']')
         elements.unshift(svg)
     }
     return elements
@@ -402,6 +439,30 @@ function get_smallest_element_at_point(page_x, page_y) {
         }
     }
     return smallest_element
+}
+
+function get_first_text_element_at_point(page_x, page_y) {
+    var elements = get_elements_from_point(page_x, page_y)
+    for (var i=0; i<elements.length; i++) {
+        var element = elements[i]
+        var text = get_text_direct(element)
+        if (text) {
+            return element
+        }
+    }
+    return null
+}
+
+function get_first_image_element_at_point(page_x, page_y) {
+    var elements = get_elements_from_point(page_x, page_y)
+    for (var i=0; i<elements.length; i++) {
+        var element = elements[i]
+        var image = get_image_direct(element)
+        if (image) {
+            return element
+        }
+    }
+    return null
 }
 
 //Returns an array of values obtained by looping through the 

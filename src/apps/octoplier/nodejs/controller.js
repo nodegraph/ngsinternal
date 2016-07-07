@@ -301,6 +301,8 @@ var open_browser = function () {
         //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
         chromeOptions.addArguments("--load-extension=D:/src/ngsinternal/src/apps/octoplier/chrome")
         chromeOptions.addArguments("--ignore-certificate-errors")
+        chromeOptions.addArguments("--disable-web-security")
+        chromeOptions.addArguments("--user-data-dir")
 
         driver = new webdriver.Builder()
         .forBrowser('chrome')//.forBrowser('firefox')

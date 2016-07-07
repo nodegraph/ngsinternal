@@ -9,14 +9,20 @@
   opacity: 1
 }
 
-.smart_browse_selected_overlay {
+.smash_browse_selected_overlay {
   outline: 1px solid lime;
   opacity: 1;
   z-index: 2147483646; /* max 32 bit int 2147483647 */ 
 }
 
-.smart_browse_mouse_overlay {
+.smash_browse_text_box {
   outline: 1px solid red;
+  opacity: 1;
+  z-index: 2147483646; /* max 32 bit int 2147483647 */ 
+}
+
+.smash_browse_image_box {
+  outline: 1px solid blue;
   opacity: 1;
   z-index: 2147483646; /* max 32 bit int 2147483647 */ 
 }

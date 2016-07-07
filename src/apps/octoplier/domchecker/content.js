@@ -25,7 +25,7 @@ smash_browse_context_menu = {
             }
             // Create the top level menu element.
             this.top_menu = document.createElement("menu");
-            this.top_menu.classList.add('menu')
+            this.top_menu.classList.add('smash_browse_menu')
             document.body.appendChild(this.top_menu)
             
             // Bind the click handler to ourself.
@@ -35,7 +35,8 @@ smash_browse_context_menu = {
             this.create_menu(this.top_menu)
             
             // Create our mouse overlays.
-            this.mouse_overlay = this.create_overlay('smart_browse_mouse_overlay')
+            this.text_box_overlay = this.create_box_overlay('smash_browse_text_box')
+            this.image_box_overlay = this.create_box_overlay('smash_browse_image_box')
         },
         create_menu : function (top_menu) {
             // The find menu.
@@ -86,16 +87,16 @@ smash_browse_context_menu = {
         },
         add_item : function(menu, item_text) {
             var li = document.createElement('li')
-            li.classList.add('menu-item')
+            li.classList.add('smash_browse_menu_item')
             menu.appendChild(li)
             
             var button = document.createElement('button')
-            button.classList.add('menu-btn')
+            button.classList.add('smash_browse_menu_button')
             button.type = 'button'
             li.appendChild(button)
             
             var span = document.createElement('span')
-            span.classList.add('menu-text')
+            span.classList.add('smash_browse_menu_text')
             button.appendChild(span)
             
             var text = document.createTextNode(item_text)
@@ -104,24 +105,24 @@ smash_browse_context_menu = {
         },
         add_sub_menu : function(menu, item_text) {
             var li = document.createElement('li')
-            li.classList.add('menu-item')
-            li.classList.add('submenu')
+            li.classList.add('smash_browse_menu_item')
+            li.classList.add('smash_browse_submenu')
             this.top_menu.appendChild(li)
             
             var button = document.createElement('button')
-            button.classList.add('menu-btn')
+            button.classList.add('smash_browse_menu_button')
             button.type = 'button'
             li.appendChild(button)
             
             var span = document.createElement('span')
-            span.classList.add('menu-text')
+            span.classList.add('smash_browse_menu_text')
             button.appendChild(span)
             
             var text = document.createTextNode(item_text)
             span.appendChild(text)
             
             var menu = document.createElement("menu");
-            menu.classList.add('menu')
+            menu.classList.add('smash_browse_menu')
             li.appendChild(menu)
             return menu
         },
@@ -130,24 +131,24 @@ smash_browse_context_menu = {
         },
         add_spacer : function(menu) {
             var li = document.createElement('li')
-            li.classList.add('menu-separator')
+            li.classList.add('smash_browse_menu_separator')
             menu.appendChild(li)
             return li
         },
         disable_item : function(item) {
-            item.classList.add('disabled')
+            item.classList.add('smash_browse_disabled')
         },
         enable_item : function(item) {
-            item.classList.remove('disabled')
+            item.classList.remove('smash_browse_disabled')
         },
         show : function(x,y) {
             this.top_menu.style.left = x + 'px'
             this.top_menu.style.top = y + 'px'
-            this.top_menu.classList.add('show-menu')
+            this.top_menu.classList.add('smash_browse_menu_show')
             this.visible = true
         },
         hide : function(x,y) {
-            this.top_menu.classList.remove('show-menu')
+            this.top_menu.classList.remove('smash_browse_menu_show')
             this.visible = false
         },
         element_is_part_of_menu : function(element) {
@@ -173,10 +174,11 @@ smash_browse_context_menu = {
         on_context_menu: function(page_event) {
             this.page_x = page_event.pageX
             this.page_y = page_event.pageY
+            this.text_element = get_first_text_element_at_point(this.page_x, this.page_y)
+            this.image_element = get_first_image_element_at_point(this.page_x, this.page_y)
             
-            // Just for debugging.
-            var inner_elem = get_smallest_element_at_point(page_event.pageX, page_event.pageY)
-            console.log('mouse over: ' + get_xpath(inner_elem))
+            console.log('mouse over text: ' + get_xpath(this.text_element))
+            console.log('mouse over image: ' + get_xpath(this.image_element))
             
             // Show the menu.
             this.show(page_event.pageX, page_event.pageY)
@@ -229,14 +231,15 @@ smash_browse_context_menu = {
             //this.create_selected_overlays()
         },
         on_mouse_over: function(page_event) {
-            var inner_elem = get_smallest_element_at_point(page_event.pageX, page_event.pageY)
-            //console.log('mouse over: ' + get_xpath(inner_elem))
-            
-            var rect = inner_elem.getBoundingClientRect()
-            var page_box = get_page_box_from_client_rect(rect)
-            this.update_overlay(this.mouse_overlay, page_box)
+            console.log('mouse over')
+            var text_element2 = get_first_text_element_at_point(page_event.pageX, page_event.pageY)
+            var image_element2 = get_first_image_element_at_point(page_event.pageX, page_event.pageY)
+            console.log('text element: ' + get_xpath(text_element2))
+            console.log('image element: ' + get_xpath(image_element2))
+            this.update_text_box_overlay(text_element2)
+            this.update_image_box_overlay(image_element2)
         },
-        create_overlay: function(class_name) {
+        create_box_overlay: function(class_name) {
             var left = document.createElement("div")
             left.classList.add(class_name)
             left.style.position = "absolute"
@@ -293,10 +296,32 @@ smash_browse_context_menu = {
             bottom.style.width = (width+2*t)+'px'
             bottom.style.height = t+'px'
         },
+        update_text_box_overlay: function(element) {
+            if (!element) {
+                var page_box = [-99, -99, -99, -99]
+                this.update_overlay(this.text_box_overlay, page_box)
+            } else {
+                console.log('updating text box')
+                var client_rect = element.getBoundingClientRect()
+                var page_box = get_page_box_from_client_rect(client_rect)
+                this.update_overlay(this.text_box_overlay, page_box)
+            }
+        },
+        update_image_box_overlay: function(element) {
+            if (!element) {
+                var page_box = [-99, -99, -99, -99]
+                this.update_overlay(this.image_box_overlay, page_box)
+            } else {
+                console.log('updating image box')
+                var client_rect = element.getBoundingClientRect()
+                var page_box = get_page_box_from_client_rect(client_rect)
+                this.update_overlay(this.image_box_overlay, page_box)
+            }
+        },
         create_selected_overlays: function() {
             for (var i=0; i<this.selected_page_boxes.length; i++) {
                 var page_box = this.selected_page_boxes[i]
-                var overlay = this.create_overlay('smart_browse_selected_overlay')
+                var overlay = this.create_box_overlay('smash_browse_selected_overlay')
                 this.update_overlay(overlay, page_box)
                 // Track the selected overlays.
                 this.selected_overlays.push(overlay)
@@ -315,11 +340,15 @@ smash_browse_context_menu = {
         }
 }
 
+
+
 document.addEventListener ('DOMContentLoaded', on_loaded, false);
 function on_loaded () {
     console.log("document is loaded!")
     smash_browse_context_menu.initialize()
     window.document.addEventListener("contextmenu", smash_browse_context_menu.on_context_menu.bind(smash_browse_context_menu), true)
+    
+    disable_hover()
 }
 
 //------------------------------------------------------------------------------------------------
@@ -327,7 +356,8 @@ function on_loaded () {
 //------------------------------------------------------------------------------------------------
 
 // Basically everything except the contextmenu event (right click).
-var EVENT_TYPES = 'message scroll submit click dblclick mousedown mousemove mouseup mouseover mouseenter mouseout keydown keypress keyup input'.split(' ');
+var event_types = 'message blur change focus focusin focusout hover scroll submit click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave pointerup pointerdown pointerenter pointerleave pointermove pointerover pointerout keydown keypress keyup input'.split(' ');
+//var event_types = ["deviceorientation", "transitionend", "webkittransitionend", "webkitanimationstart", "webkitanimationiteration", "webkitanimationend", "search", "reset", "waiting", "volumechange", "unload", "timeupdate", "suspend", "submit", "storage", "stalled", "select", "seeking", "seeked", "scroll", "resize", "ratechange", "progress", "popstate", "playing", "play", "pause", "pageshow", "pagehide", "online", "offline", "mousewheel", "mouseup", "mouseover", "mouseout", "mousemove", "mousedown", "message", "loadstart", "loadedmetadata", "loadeddata", "load", "keyup", "keypress", "keydown", "invalid", "input", "hashchange", "focus", "error", "ended", "emptied", "durationchange", "drop", "dragstart", "dragover", "dragleave", "dragenter", "dragend", "drag", "dblclick", "contextmenu", "click", "change", "canplaythrough", "canplay", "blur", "beforeunload", "abort"]
 
 function block_event(event) {
     if (event.target && event.target.tagName) {
@@ -345,7 +375,7 @@ function block_event(event) {
                         }
                         break
                     case 'mousemove' :
-                        //event.target.classList.add('smash_browse_hover')
+                        console.log('got mouse move')
                         smash_browse_context_menu.on_mouse_over(event)
                         break
                     case 'mouseout' :
@@ -362,9 +392,12 @@ function block_event(event) {
 }
 
 function block_events() {
-    EVENT_TYPES.forEach(function (eventType) {
-        window.addEventListener(eventType, block_event, true);
-    });
+    event_types.forEach(function (eventType) {
+        window.addEventListener(eventType, block_event, true)
+    })
+//    for(var i=0; i<event_types.length; i++) {
+//        window.addEventListener(event_types[i], block_event, true)
+//    }
 }
 
 function unblock_events() {

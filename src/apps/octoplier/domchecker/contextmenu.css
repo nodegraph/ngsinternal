@@ -1,4 +1,4 @@
-.menu {
+.smash_browse_menu {
   position: absolute;
   width: 250px;
   padding: 2px;
@@ -17,7 +17,7 @@
   pointer-events: none;
 }
 
-.menu-item {
+.smash_browse_menu_item {
   display: block;
   position: relative;
   margin: 0;
@@ -25,7 +25,7 @@
   white-space: nowrap;
 }
 
-.menu-btn {
+.smash_browse_menu_button {
   background: none;
   line-height: normal;
   overflow: visible;
@@ -44,14 +44,14 @@
   padding: 6px 8px;
   border-radius: 3px;
 }
- .menu-btn::-moz-focus-inner, .menu-btn::-moz-focus-inner {
+ .smash_browse_menu_button::-moz-focus-inner, .smash_browse_menu_button::-moz-focus-inner {
  border: 0;
  padding: 0;
 }
 
-.menu-text { margin-left: 5px; } /* { margin-left: 25px; } */
+.smash_browse_menu_text { margin-left: 5px; } /* { margin-left: 25px; } */
 
-.menu-btn .fa {
+.smash_browse_menu_button .fa {
   position: absolute;
   left: 8px;
   top: 50%;
@@ -59,7 +59,7 @@
   transform: translateY(-50%);
 }
 
-.menu-item:hover > .menu-btn {
+.smash_browse_menu_item:hover > .smash_browse_menu_button {
   color: #fff;
   outline: none;
   background-color: #2E3940;
@@ -68,14 +68,14 @@
   border: 1px solid #2E3940;
 }
 
-.menu-item.disabled {
+.smash_browse_menu_item.smash_browse_disabled {
   opacity: .5;
   pointer-events: none;
 }
 
-.menu-item.disabled .menu-btn { cursor: default; }
+.smash_browse_menu_item.smash_browse_disabled .smash_browse_menu_button { cursor: default; }
 
-.menu-separator {
+.smash_browse_menu_separator {
   display: block;
   margin: 7px 5px;
   height: 1px;
@@ -83,7 +83,7 @@
   background-color: #aaa;
 }
 
-.menu-item.submenu::after {
+.smash_browse_menu_item.smash_browse_submenu::after {
   content: "";
   position: absolute;
   right: 6px;
@@ -94,22 +94,22 @@
   border-left-color: #808080;
 }
 
-.menu-item.submenu:hover::after { border-left-color: #fff; }
+.smash_browse_menu_item.smash_browse_submenu:hover::after { border-left-color: #fff; }
 
-.menu .menu {
+.smash_browse_menu .smash_browse_menu {
   top: 4px;
   left: 99%;
   width: 250px;
 }
 
-.show-menu, .menu-item:hover > .menu {
+.smash_browse_menu_show, .smash_browse_menu_item:hover > .smash_browse_menu {
   opacity: 1;
   -webkit-transform: translate(0, 0) scale(1);
   transform: translate(0, 0) scale(1);
   pointer-events: auto;
 }
 
-.menu-item:hover > .menu {
+.smash_browse_menu_item:hover > .smash_browse_menu {
   -webkit-transition-delay: 0ms; /*100ms;*/
   transition-delay: 0ms; /*300ms;*/
 }
