@@ -303,6 +303,8 @@ var open_browser = function () {
         chromeOptions.addArguments("--ignore-certificate-errors")
         chromeOptions.addArguments("--disable-web-security")
         chromeOptions.addArguments("--user-data-dir")
+        
+        // "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir --app=https://www.google.com
 
         driver = new webdriver.Builder()
         .forBrowser('chrome')//.forBrowser('firefox')

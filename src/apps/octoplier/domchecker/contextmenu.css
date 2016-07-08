@@ -1,3 +1,5 @@
+/* CSS selectors are prefixed with smash_browse to avoid collisions with target web page.*/
+
 .smash_browse_menu {
   position: absolute;
   width: 250px;

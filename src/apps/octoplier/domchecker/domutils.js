@@ -87,32 +87,12 @@ function disable_hover() {
         for (var j = rules.length - 1; j >= 0; j--) {
             var rule = rules[j];
             if (rule.type === CSSRule.STYLE_RULE && hover_regex.test(rule.selectorText)) {
-                console.log('deleting rule for ' + rule.selectorText + '+++' + rule.style)
+                //console.log('deleting rule for ' + rule.selectorText + '+++' + rule.style)
                 sheet.deleteRule(j);
             }
         }
     }
 }
-
-//function disable_hover() {
-//var element = document.getElementById('smash_browse_hover_style');
-//if (!element) {
-//element = document.createElement('style');
-//element.type = 'text/css';
-//element.id = 'smash_browse_hover_style';
-////var style = '*:not(smash_browse_submenu):not(smash_browse_menu_item):hover {pointer-events: none !important;}  *:not(smash_browse_submenu)::after {pointer-events: none !important}';
-//var style = '*:not(smash_browse_submenu):not(smash_browse_menu_item):hover {pointer-events: none !important;}';
-//element.appendChild(document.createTextNode(style));
-//document.getElementsByTagName('head')[0].appendChild(element);
-//}
-//}
-//
-//function enable_hover() {
-//var element = document.getElementById('smash_browse_hover_style');
-//if (!element) {
-//element.remove()
-//}
-//}
 
 //----------------------------------------------------------------------------------------
 //Element geometry tests.
@@ -302,6 +282,10 @@ function get_image_direct(element) {
     return result
 }
 
+function get_tag_name_direct(element) {
+    return element.tagName.toLowerCase()
+}
+
 //Retrieves the opacity value directly on an element in the dom hierarchy.
 function get_opacity_direct(element) {
 //  // Check the :after pseudo element first.
@@ -371,6 +355,13 @@ function get_text_direct(element) {
             }
         }
     }
+    if  (element.tagName.toLowerCase() == 'input') {
+        console.log('found input')
+        var value = element.getAttribute('value')
+        if (!is_all_whitespace(value)) {
+            text += value
+        }
+    }
     return text
 }
 
@@ -380,8 +371,8 @@ function get_text_direct(element) {
 function get_elements_from_point(page_x, page_y) {
     // Use the document.elementsFromPoint class.
     var elements = document.elementsFromPoint(page_x-window.scrollX, page_y-window.scrollY)
-    //console.log('num elements: ' + elements.length)
-//    var opaque_index = -1
+    
+//    console.log('num elements: ' + elements.length)
 //    for (var i=0; i<elements.length; i++) {
 //        console.log('element['+i+']: opacity' + get_opacity_direct(elements[i]) 
 //                + ' bg: ' + get_background_color_direct(elements[i]) + ' xpath: ' + get_xpath(elements[i]) )
@@ -551,7 +542,7 @@ function find_elements(getter, target_values) {
         }
         
         // Skip the element if it's part of the smash browse menu.
-        if (smash_browse_context_menu.element_is_part_of_menu(element)) {
+        if (g_context_menu.element_is_part_of_menu(element)) {
             continue
         }
         
@@ -642,4 +633,10 @@ function find_elements_by_image_values(image_values) {
 function find_elements_by_text_values(text_values) {
     return find_elements(get_text_direct, text_values)
 }
+
+//Returns an array of elements which have the matching tag name.
+function find_elements_by_tag_name(tag_name) {
+    return find_elements(get_tag_name_direct, [tag_name])
+}
+
 
