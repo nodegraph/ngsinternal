@@ -380,12 +380,12 @@ function get_text_direct(element) {
 function get_elements_from_point(page_x, page_y) {
     // Use the document.elementsFromPoint class.
     var elements = document.elementsFromPoint(page_x-window.scrollX, page_y-window.scrollY)
-    console.log('num elements: ' + elements.length)
-    var opaque_index = -1
-    for (var i=0; i<elements.length; i++) {
-        console.log('element['+i+']: opacity' + get_opacity_direct(elements[i]) 
-                + ' bg: ' + get_background_color_direct(elements[i]) + ' xpath: ' + get_xpath(elements[i]) )
-    }
+    //console.log('num elements: ' + elements.length)
+//    var opaque_index = -1
+//    for (var i=0; i<elements.length; i++) {
+//        console.log('element['+i+']: opacity' + get_opacity_direct(elements[i]) 
+//                + ' bg: ' + get_background_color_direct(elements[i]) + ' xpath: ' + get_xpath(elements[i]) )
+//    }
     
     // Trim it to point where we reach the back plate of the page.
     for (var i=0; i<elements.length; i++) {

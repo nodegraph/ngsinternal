@@ -22,7 +22,7 @@
 }
 
 .smash_browse_image_box {
-  outline: 1px solid blue;
+  outline: 2px solid blue;
   opacity: 1;
   z-index: 2147483646; /* max 32 bit int 2147483647 */ 
 }
