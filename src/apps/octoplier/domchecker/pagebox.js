@@ -1,8 +1,9 @@
-
+//This class represents a box in page space, not client rect space.
 var PageBox = function(element=null) {
     this.set_from_element(element)
 }
 
+//Reset the box to the origin (top left) with zero width and height.
 PageBox.prototype.reset = function() {
     this.left = 0
     this.right = 0
@@ -10,6 +11,7 @@ PageBox.prototype.reset = function() {
     this.bottom = 0
 }
 
+//Set the box to match the elements bounds.
 PageBox.prototype.set_from_element = function(element) {
     if (element) {
         var rect = element.getBoundingClientRect()
@@ -19,6 +21,7 @@ PageBox.prototype.set_from_element = function(element) {
     }
 }
 
+//Set the box to match the client rect but in page space.
 PageBox.prototype.set_from_client_rect = function(rect) {
     this.left = rect.left + window.scrollX
     this.right = rect.right + window.scrollX
@@ -26,6 +29,7 @@ PageBox.prototype.set_from_client_rect = function(rect) {
     this.bottom = rect.bottom + window.scrollY
 }
 
+//Returns true if and only if we contain the inner entirely.
 PageBox.prototype.contains = function(inner) {
     if ((inner.left >= this.left) && 
             (inner.right <= this.right) && 
@@ -37,6 +41,7 @@ PageBox.prototype.contains = function(inner) {
     return false
 }
 
+//Returns true if and only if we contain the given page point.
 PageBox.prototype.contains_page_point = function(page_x, page_y) {
     if ((page_x >= this.left) && (page_x <= this.right) && 
             (page_y >=this.top) && (page_y <= this.bottom)) {
@@ -45,6 +50,7 @@ PageBox.prototype.contains_page_point = function(page_x, page_y) {
     return false
 }
 
+//Returns true if and only if we intersect the other page box.
 PageBox.prototype.intersects = function(other) {
     if (this.right < other.left) {
         return false

@@ -28,12 +28,8 @@ ContextMenu.prototype.initialize = function() {
     this.create_menu(this.top_menu)
     
     // Create our mouse overlays.
-    // "#C10020" vivid red
-    g_distinct_colors.request_color("#FF0000")
-    this.text_box_overlay = new Overlay('smash_browse_text_box', "#FF0000", 0, null)
-    // "#00538A" string blue
-    g_distinct_colors.request_color("#0000FF")
-    this.image_box_overlay = new Overlay('smash_browse_image_box', "#0000FF", 1, null)
+    this.text_box_overlay = new Overlay('smash_browse_text_box', g_distinct_colors.text_color, -1, null)
+    this.image_box_overlay = new Overlay('smash_browse_image_box', g_distinct_colors.image_color, -1, null)
 }
 
 ContextMenu.prototype.create_menu = function (top_menu) {

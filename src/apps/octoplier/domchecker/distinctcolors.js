@@ -6,10 +6,47 @@ var DistinctColors = function () {
     var used = []
 }
 
+//Red is reserved for text.
+DistinctColors.prototype.text_color = "#FF0000"
+
+//Blue is reserved for images.
+DistinctColors.prototype.image_color = "#0000FF"
+
 //A set of distinct colors to indicate separate sets.
+DistinctColors.prototype.usable_colors = [
+                                          "#00FF00", // green
+                                          "#FFFF00", // yellow
+                                          "#00FFFF", // turqoise
+                                          "#FF00FF", // purple
+                                          // The following were obtained from stack overflow.
+                                          "#023FA5",
+                                          "#7D87B9",
+                                          "#BEC1D4",
+                                          "#D6BCC0",
+                                          "#BB7784",
+                                          "#FFFFFF",
+                                          "#4A6FE3",
+                                          "#8595E1",
+                                          "#B5BBE3",
+                                          "#E6AFB9",
+                                          "#E07B91",
+                                          "#D33F6A",
+                                          "#11C638",
+                                          "#8DD593",
+                                          "#C6DEC7",
+                                          "#EAD3C6",
+                                          "#F0B98D",
+                                          "#EF9708",
+                                          "#0FCFC0",
+                                          "#9CDED6",
+                                          "#D5EAE7",
+                                          "#F3E1EB",
+                                          "#F6C4E1",
+                                          "#F79CD4" 
+                                          ]
+    
+//Tracks whether a color has been used.
 DistinctColors.prototype.used_colors = {
-        "#FF0000": false, // red
-        "#0000FF": false, // blue
         "#00FF00": false, // green
         "#FFFF00": false, // yellow
         "#00FFFF": false, // turqoise
@@ -42,20 +79,23 @@ DistinctColors.prototype.used_colors = {
 }
 
 DistinctColors.prototype.obtain_color = function() {
-    var count = 0
-    for (var key in this.used_colors) {
-        if (this.used_colors.hasOwnProperty(key)) {
-            if (this.used_colors[key] == false) {
-                this.used_colors[key] = true
-                return {color:key,index:count}
-            }
-            count += 1
+    for (var i=0; i<this.usable_colors.length; i++) {
+        var color = this.usable_colors[i]
+        if (this.used_colors[color] == false) {
+            this.used_colors[color] = true
+            return {color:color,index:i}
         }
     }
     return {}
 }
 
 DistinctColors.prototype.request_color = function(color) {
+    // Make sure the color is one that we track.
+    var index = this.usable_colors.indexOf(color)
+    if (index < 0) {
+        return false
+    }
+    // Make sure it's not currently being used.
     if (this.used_colors[color] == false) {
         this.used_colors[color] = true
         return true
@@ -64,6 +104,12 @@ DistinctColors.prototype.request_color = function(color) {
 }
 
 DistinctColors.prototype.release_color = function(color) {
+    // Make sure the color is one that we track.
+    var index = this.usable_colors.indexOf(color)
+    if (index < 0) {
+        return
+    }
+    // Make sure the color is recorded as not being used.
     this.used_colors[color] = false
 }
 

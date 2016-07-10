@@ -3,12 +3,12 @@ var OverlaySet = function(elements) {
     this.marked = false
     this.overlays = [] // An array of Overlays
     
-    var color_index = g_distinct_colors.obtain_color()
-    var color = color_index.color
-    var enlarge = color_index.index
+    var color_data = g_distinct_colors.obtain_color()
+    this.color = color_data.color
+    this.color_index = color_data.index
     
     for (var i=0; i<elements.length; i++) {
-        var overlay = new Overlay('smash_browse_selected', color, enlarge, elements[i])
+        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, elements[i])
         this.overlays.push(overlay)
     }
 }

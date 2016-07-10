@@ -38,12 +38,18 @@ OverlaySets.prototype.find_set_index = function(page_x, page_y, marked=null) {
 //Mark the first unmarked set under the mouse.
 OverlaySets.prototype.mark = function(page_x, page_y) {
     var set_index = this.find_set_index(page_x, page_y, false)
+    if (set_index < 0) {
+        return
+    }
     this.sets[set_index].mark()
 }
 
 //Unmark the first marked set under the mouse.
 OverlaySets.prototype.unmark = function(page_x, page_y) {
     var set_index = this.find_set_index(page_x, page_y, true)
+    if (set_index < 0) {
+        return
+    }
     this.sets[set_index].unmark()
 }
 

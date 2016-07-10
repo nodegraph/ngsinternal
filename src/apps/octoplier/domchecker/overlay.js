@@ -3,10 +3,11 @@
 // are currently under the mouse as well as what elements have already been
 // selected by the user.
 
-var Overlay = function(class_name, color, enlarge, element=null) {
+var Overlay = function(class_name, color, color_index, element=null) {
     this.marked = false
     this.color = color
-    this.enlarge = enlarge 
+    this.color_index = color_index
+    this.enlarge = 0
     this.page_box = new PageBox(element)
     // Setup.
     this.create_dom_elements(class_name)
@@ -17,6 +18,9 @@ var Overlay = function(class_name, color, enlarge, element=null) {
 // The thickness of the edges of the box overlay.
 Overlay.prototype.thickness = 0
 
+// The length of the nub.
+Overlay.prototype.nub_pushin = 2
+
 //Destroy our dom elements.
 Overlay.prototype.destroy = function() {
     // Release the page box
@@ -26,11 +30,13 @@ Overlay.prototype.destroy = function() {
     document.body.removeChild(this.right)
     document.body.removeChild(this.top)
     document.body.removeChild(this.bottom)
+    document.body.removeChild(this.nub)
     // Set our dom references to null.
     this.left = null
     this.right = null
     this.top = null
     this.bottom = null
+    this.nub = null
 }
 
 Overlay.prototype.move_off_page = function() {
@@ -100,6 +106,17 @@ Overlay.prototype.create_dom_elements = function(class_name) {
     this.bottom.classList.add(class_name)
     this.bottom.style.position = "absolute"
     document.body.appendChild(this.bottom)
+    
+    this.nub = document.createElement("div")
+    this.nub.classList.add(class_name)
+    this.nub.style.position = "absolute"
+    document.body.appendChild(this.nub)
+    
+    this.left.style.outlineColor = this.color
+    this.right.style.outlineColor = this.color
+    this.top.style.outlineColor = this.color
+    this.bottom.style.outlineColor = this.color
+    this.nub.style.outlineColor = this.color
 }
 
 //Updates the dom elements to reflect new position and size.
@@ -131,22 +148,19 @@ Overlay.prototype.update_dom_elements = function() {
     this.bottom.style.top = this.page_box.bottom+this.enlarge+ 'px'
     this.bottom.style.width = (width+2*this.enlarge+2*t)+'px'
     this.bottom.style.height = t+'px'
+    
+    this.nub.style.left = (this.page_box.left-this.enlarge-t + (this.color_index+1)*8)+'px'
+    this.nub.style.top = (this.page_box.top-this.enlarge-t)+'px'
+    this.nub.style.width = t+'px'
+    this.nub.style.height = (height+2*this.enlarge+2*t)+'px'
 }
 
 //Updates the css style of the dom elements to reflect new color.
 Overlay.prototype.update_dom_color = function() {
     if (this.marked) {
-        this.left.style.outline = "5px solid " + this.color
-        this.right.style.outline = "5px solid " + this.color
-        this.top.style.outline = "5px solid " + this.color
-        this.bottom.style.outline = "5px solid " + this.color
-    }
-    else if (this.color) {
-        this.left.style.outline = "2px solid " + this.color
-        this.right.style.outline = "2px solid " + this.color
-        this.top.style.outline = "2px solid " + this.color
-        this.bottom.style.outline = "2px solid " + this.color
-        return
+        this.nub.style.outlineWidth = "4px"
+    } else {
+        this.nub.style.outlineWidth = "2px"
     }
 }
 
