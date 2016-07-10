@@ -3,12 +3,12 @@
 // are currently under the mouse as well as what elements have already been
 // selected by the user.
 
-var Overlay = function(class_name, page_box=null, color=null, enlarge=0) {
+var Overlay = function(class_name, color, enlarge, element=null) {
     this.marked = false
-    this.page_box = page_box
     this.color = color
     this.enlarge = enlarge 
-    
+    this.page_box = new PageBox(element)
+    // Setup.
     this.create_dom_elements(class_name)
     this.update_dom_elements()
     this.update_dom_color()
@@ -26,13 +26,14 @@ Overlay.prototype.destroy = function() {
     document.body.removeChild(this.right)
     document.body.removeChild(this.top)
     document.body.removeChild(this.bottom)
+    // Set our dom references to null.
     this.left = null
     this.right = null
     this.top = null
     this.bottom = null
 }
 
-Overlay.prototype.move_off_page() {
+Overlay.prototype.move_off_page = function() {
     this.page_box.left = -99
     this.page_box.right = -99
     this.page_box.top = -99
@@ -59,7 +60,7 @@ Overlay.prototype.update_page_box_from_element = function(element) {
 
 //Returns true if this overlay contains a page point.
 Overlay.prototype.contains = function(page_x, page_y) {
-    return page_box_contains_point(this.page_box, page_x, page_y)
+    return this.page_box.contains_page_point(page_x, page_y)
 }
 
 //Mark the overlay with visual emphasis.

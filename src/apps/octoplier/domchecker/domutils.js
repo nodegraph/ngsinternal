@@ -110,35 +110,23 @@ function disable_hover() {
 
 //Returns true if the outer element contains the inner element.
 function element_contains(outer, inner) {
-    //Get the rects.
-    var outer_rect = outer.getBoundingClientRect()
-    var inner_rect = inner.getBoundingClientRect()
     //Get the page boxes.
-    var outer_box = new PageBox()
-    outer_box.set_from_client_rect(outer_rect)
-    var inner_box = new PageBox()
-    inner_box.set_from_client_rect(inner_rect)
+    var outer_box = new PageBox(outer)
+    var inner_box = new PageBox(inner)
     //Test.
     return outer_box.contains(inner_box)
 }
 
 function element_intersects(a, b) {
-    //Get the rects.
-    var a_rect = a.getBoundingClientRect()
-    var b_rect = b.getBoundingClientRect()
     //Get the page boxes.
-    var a_box = new PageBox()
-    a_box.set_from_client_rect(a_rect)
-    var b_box = new PageBox()
-    b_box.set_from_client_rect(b_rect)
+    var a_box = new PageBox(a)
+    var b_box = new PageBox(b)
     //Test.
     return a_box.intersects(b_box)
 }
 
 function element_contains_point(element, page_x, page_y) {
-    var rect = element.getBoundingClientRect()
-    var page_box = new PageBox()
-    page_box.set_from_client_rect(rect)
+    var page_box = new PageBox(element)
     return page_box.contains_page_point(page_x, page_y)
 }
         

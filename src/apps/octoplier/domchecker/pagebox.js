@@ -1,9 +1,22 @@
 
-var PageBox = function(left=0, right=0, top=0, bottom=0) {
-    this.left = left
-    this.right = right
-    this.top = top
-    this.bottom = bottom
+var PageBox = function(element=null) {
+    this.set_from_element(element)
+}
+
+PageBox.prototype.reset = function() {
+    this.left = 0
+    this.right = 0
+    this.top = 0
+    this.bottom = 0
+}
+
+PageBox.prototype.set_from_element = function(element) {
+    if (element) {
+        var rect = element.getBoundingClientRect()
+        this.set_from_client_rect(rect)
+    } else {
+        this.reset()
+    }
 }
 
 PageBox.prototype.set_from_client_rect = function(rect) {
@@ -13,7 +26,7 @@ PageBox.prototype.set_from_client_rect = function(rect) {
     this.bottom = rect.bottom + window.scrollY
 }
 
-PageBox.prototype.page_box_contains = function(inner) {
+PageBox.prototype.contains = function(inner) {
     if ((inner.left >= this.left) && 
             (inner.right <= this.right) && 
             (inner.top >= this.top) &&
@@ -24,7 +37,7 @@ PageBox.prototype.page_box_contains = function(inner) {
     return false
 }
 
-PageBox.prototype.contains_page_point = function(page_box, page_x, page_y) {
+PageBox.prototype.contains_page_point = function(page_x, page_y) {
     if ((page_x >= this.left) && (page_x <= this.right) && 
             (page_y >=this.top) && (page_y <= this.bottom)) {
         return true
@@ -32,7 +45,7 @@ PageBox.prototype.contains_page_point = function(page_box, page_x, page_y) {
     return false
 }
 
-PageBox.prototype.page_box_intersects = function(other) {
+PageBox.prototype.intersects = function(other) {
     if (this.right < other.left) {
         return false
     } else if (this.left > other.right) {

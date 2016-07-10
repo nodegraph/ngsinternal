@@ -30,10 +30,10 @@ ContextMenu.prototype.initialize = function() {
     // Create our mouse overlays.
     // "#C10020" vivid red
     g_distinct_colors.request_color("#FF0000")
-    this.text_box_overlay = new Overlay('smash_browse_text_box', null, "#FF0000", 0)
+    this.text_box_overlay = new Overlay('smash_browse_text_box', "#FF0000", 0, null)
     // "#00538A" string blue
     g_distinct_colors.request_color("#0000FF")
-    this.image_box_overlay = new Overlay('smash_browse_image_box', null, "#0000FF", 1)
+    this.image_box_overlay = new Overlay('smash_browse_image_box', "#0000FF", 1, null)
 }
 
 ContextMenu.prototype.create_menu = function (top_menu) {
@@ -239,7 +239,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
         for (var i=0; i<elements.length; i++) {
             console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
         }
-        g_selection_sets.create_set(elements)
+        g_overlay_sets.add_set(new OverlaySet(elements))
     } 
     
     // Find by image.
@@ -253,17 +253,17 @@ ContextMenu.prototype.on_click = function(menu_event) {
         for (var i=0; i<elements.length; i++) {
             console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
         }
-        g_selection_sets.create_set(elements)
+        g_overlay_sets.add_set(new OverlaySet(elements))
     } 
     
     // Mark set.
     else if (this.mark_set.contains(menu_target)) {
-        g_selection_sets.mark(this.page_x, this.page_y)
+        g_overlay_sets.mark(this.page_x, this.page_y)
     } 
     
     // Unmark set.
     else if (this.unmark_set.contains(menu_target)) {
-        g_selection_sets.unmark_all()
+        g_overlay_sets.unmark(this.page_x, this.page_y)
     } 
     
     // Find all images.
@@ -271,7 +271,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
         var elements = find_all_elements_with_images()
         var msg = "Find elements with type img: " + elements.length
         console.log(msg)
-        g_selection_sets.create_set(elements)
+        g_overlay_sets.add_set(new OverlaySet(elements))
     } 
     
     // Find all text.
@@ -279,12 +279,12 @@ ContextMenu.prototype.on_click = function(menu_event) {
         var elements = find_all_elements_with_text()
         var msg = "Find elements with type img: " + elements.length
         console.log(msg)
-        g_selection_sets.create_set(elements)
+        g_overlay_sets.add_set(new OverlaySet(elements))
     } 
     
     // Delete set.
     else if (this.delete_set.contains(menu_target)) {
-        g_selection_sets.destroy_set(this.page_x, this.page_y)
+        g_overlay_sets.destroy_set(this.page_x, this.page_y)
     }
     
     // Find by position.
@@ -312,7 +312,7 @@ ContextMenu.prototype.update_text_box_overlay = function(element) {
     if (!element) {
         this.text_box_overlay.move_off_page()
     } else {
-        this.text_box_overlay.update_page_box_from_element(page_box)
+        this.text_box_overlay.update_page_box_from_element(element)
     }
 }
 
