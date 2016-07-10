@@ -25,6 +25,16 @@ function is_all_whitespace(text) {
     return regex.test(text)
 }
 
+function strip_quotes(text) {
+    if (text.length == 0) {
+        return text
+    }
+    if ((text[0] == '"') && (text[text.length-1] == '"')){
+        return text.slice(1,-1)
+    }
+    return text
+}
+
 //----------------------------------------------------------------------------------------
 //Debugging.
 //----------------------------------------------------------------------------------------
@@ -104,10 +114,12 @@ function element_contains(outer, inner) {
     var outer_rect = outer.getBoundingClientRect()
     var inner_rect = inner.getBoundingClientRect()
     //Get the page boxes.
-    var outer_box = get_page_box_from_client_rect(outer_rect)
-    var inner_box = get_page_box_from_client_rect(inner_rect)
+    var outer_box = new PageBox()
+    outer_box.set_from_client_rect(outer_rect)
+    var inner_box = new PageBox()
+    inner_box.set_from_client_rect(inner_rect)
     //Test.
-    return page_box_contains(outer_box, inner_box)
+    return outer_box.contains(inner_box)
 }
 
 function element_intersects(a, b) {
@@ -115,58 +127,65 @@ function element_intersects(a, b) {
     var a_rect = a.getBoundingClientRect()
     var b_rect = b.getBoundingClientRect()
     //Get the page boxes.
-    var a_box = get_page_box_from_client_rect(a_rect)
-    var b_box = get_page_box_from_client_rect(b_rect)
+    var a_box = new PageBox()
+    a_box.set_from_client_rect(a_rect)
+    var b_box = new PageBox()
+    b_box.set_from_client_rect(b_rect)
     //Test.
-    return page_box_intersects(a_box, b_box)
+    return a_box.intersects(b_box)
 }
 
 function element_contains_point(element, page_x, page_y) {
     var rect = element.getBoundingClientRect()
-    var page_box = get_page_box_from_client_rect(rect)
-    if ((page_x >= page_box[0]) && (page_x <= page_box[1]) && 
-            (page_y >=page_box[2]) && (page_y <= page_box[3])) {
-        return true
-    }
-    return false
+    var page_box = new PageBox()
+    page_box.set_from_client_rect(rect)
+    return page_box.contains_page_point(page_x, page_y)
 }
         
 //----------------------------------------------------------------------------------------
 //Page box geometry tests.
 //----------------------------------------------------------------------------------------
 
-//Returns a bounding box in pages space as an array [min_x, max_x, min_y, max_y]
-function get_page_box_from_client_rect(rect) {
-    return [rect.left + window.scrollX,
-            rect.right + window.scrollX,
-            rect.top + window.scrollY,
-            rect.bottom + window.scrollY]
-}
-
-//Returns true if the outer rect contains the inner rect.
-function page_box_contains(outer, inner) {
-    if ((inner[0] >= outer[0]) && 
-            (inner[1] <= outer[1]) && 
-            (inner[2] >= outer[2]) &&
-            (inner[3] <= outer[3]) 
-    ) {
-        return true
-    }
-    return false
-}
-
-function page_box_intersects(a, b) {
-    if (a[1] < b[0]) {
-        return false
-    } else if (a[0] > b[1]) {
-        return false
-    } else if (a[3] < b[2]) {
-        return false
-    } else if (a[2] > b[3]) {
-        return false
-    }
-    return true
-}
+////Returns a bounding box in pages space as an array [min_x, max_x, min_y, max_y]
+//function get_page_box_from_client_rect(rect) {
+//    return [rect.left + window.scrollX,
+//            rect.right + window.scrollX,
+//            rect.top + window.scrollY,
+//            rect.bottom + window.scrollY]
+//}
+//
+////Returns true if the outer rect contains the inner rect.
+//function page_box_contains(outer, inner) {
+//    if ((inner[0] >= outer[0]) && 
+//            (inner[1] <= outer[1]) && 
+//            (inner[2] >= outer[2]) &&
+//            (inner[3] <= outer[3]) 
+//    ) {
+//        return true
+//    }
+//    return false
+//}
+//
+//function page_box_contains_point(page_box, page_x, page_y) {
+//    if ((page_x >= page_box[0]) && (page_x <= page_box[1]) && 
+//            (page_y >=page_box[2]) && (page_y <= page_box[3])) {
+//        return true
+//    }
+//    return false
+//}
+//
+//function page_box_intersects(a, b) {
+//    if (a[1] < b[0]) {
+//        return false
+//    } else if (a[0] > b[1]) {
+//        return false
+//    } else if (a[3] < b[2]) {
+//        return false
+//    } else if (a[2] > b[3]) {
+//        return false
+//    }
+//    return true
+//}
 
 //----------------------------------------------------------------------------------------
 //Element value/info extractors.
@@ -343,6 +362,7 @@ function element_is_back_plate(element) {
 //will always be returned as one string from this function.
 function get_text_direct(element) {
     var text = ""
+        
     // Loop through children accumulating text node values.
     for (var c=0; c<element.childNodes.length; c++) {
         var child = element.childNodes[c]
@@ -355,12 +375,27 @@ function get_text_direct(element) {
             }
         }
     }
+    
     if  (element.tagName.toLowerCase() == 'input') {
         console.log('found input')
         var value = element.getAttribute('value')
         if (!is_all_whitespace(value)) {
             text += value
         }
+    }
+    
+    var before_style = window.getComputedStyle(element, ':before'); 
+    value = before_style.content
+    value = strip_quotes(value)
+    if (!is_all_whitespace(value)) {
+        text += value
+    }
+    
+    var after_style = window.getComputedStyle(element, ':after'); 
+    value = after_style.content
+    value = strip_quotes(value)
+    if (!is_all_whitespace(value)) {
+        text += value
     }
     return text
 }
@@ -372,11 +407,14 @@ function get_elements_from_point(page_x, page_y) {
     // Use the document.elementsFromPoint class.
     var elements = document.elementsFromPoint(page_x-window.scrollX, page_y-window.scrollY)
     
-//    console.log('num elements: ' + elements.length)
-//    for (var i=0; i<elements.length; i++) {
-//        console.log('element['+i+']: opacity' + get_opacity_direct(elements[i]) 
-//                + ' bg: ' + get_background_color_direct(elements[i]) + ' xpath: ' + get_xpath(elements[i]) )
-//    }
+    // Debug settings.
+    if (false) {
+        console.log('num elements: ' + elements.length)
+        for (var i=0; i<elements.length; i++) {
+            console.log('element['+i+']: opacity' + get_opacity_direct(elements[i]) 
+                    + ' bg: ' + get_background_color_direct(elements[i]) + ' xpath: ' + get_xpath(elements[i]) )
+        }
+    }
     
     // Trim it to point where we reach the back plate of the page.
     for (var i=0; i<elements.length; i++) {
@@ -523,8 +561,7 @@ function find_elements_by_xpath(xpath) {
   return elements
 }
 
-//Returns an array of elements selected by the matcher.
-function find_elements(getter, target_values) {
+function find_elements_by_any_value(getter, target_values) {
     // Build xpath to find all elements.
     var xpath = "//*"
     var elements = find_elements_by_xpath(xpath)
@@ -548,12 +585,22 @@ function find_elements(getter, target_values) {
         
         // See if this elements value matches something in target_values
         value = getter(element)
-        if (target_values.indexOf(value) >= 0) {
+        
+        // If taget_values is an empty array we match any truthful value.
+        if ((target_values.length == 0) && value) {
+            candidates.push(element)
+        } 
+        // Otherwise we match any value in the target_values.
+        else if (target_values.indexOf(value) >= 0) {
             candidates.push(element)
         }
     }
-    
-    //console.log('num candidates: ' + candidates.length)
+    return candidates
+}
+
+//Returns an array of elements selected by the matcher.
+function find_elements_by_values(getter, target_values) {
+    var candidates = find_elements_by_any_value(getter, target_values)
     
     // Determines arrays of surrounding elements for each element.
     var results = []
@@ -566,11 +613,6 @@ function find_elements(getter, target_values) {
             }
         }
     }
-    
-//    console.log('num overlaps: ' + overlaps.length)
-//    for(var i=0; i<overlaps.length; i++) {
-//        console.log('overlaps length['+i+']: ' + overlaps[i].length)
-//    }
     
     // Find the elements which have surrounding elements matching the target_values.
     var matching = []
@@ -626,17 +668,26 @@ function find_elements(getter, target_values) {
 
 //Returns an array of elements which have matching image values.
 function find_elements_by_image_values(image_values) {
-    return find_elements(get_image_direct, image_values)
+    return find_elements_by_values(get_image_direct, image_values)
 }
 
 //Returns an array of elements which have matching text values.
 function find_elements_by_text_values(text_values) {
-    return find_elements(get_text_direct, text_values)
+    return find_elements_by_values(get_text_direct, text_values)
 }
 
 //Returns an array of elements which have the matching tag name.
+//Note when finding images or text you should use other methods
+//as they appear in other ways besides the use of specific tag names like img or h2 etc.
 function find_elements_by_tag_name(tag_name) {
-    return find_elements(get_tag_name_direct, [tag_name])
+    return find_elements_by_values(get_tag_name_direct, [tag_name])
 }
 
+function find_all_elements_with_images() {
+    return find_elements_by_any_value(get_image_direct, [])
+}
+
+function find_all_elements_with_text() {
+    return find_elements_by_any_value(get_text_direct, [])
+}
 

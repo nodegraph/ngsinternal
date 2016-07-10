@@ -1,53 +1,27 @@
-// We use a predefined set of distinct colors.
-// These were obtained from stack overflow.
-// http://stackoverflow.com/questions/470690/how-to-automatically-generate-n-distinct-colors
-
 // This class represents the rectangular overlays that we see overlayed on
 // the target web page. These boxes ares used to represent what elements 
 // are currently under the mouse as well as what elements have already been
 // selected by the user.
 
-var Overlay = function(class_name, page_box) {
+var Overlay = function(class_name, page_box=null, color=null, enlarge=0) {
+    this.marked = false
     this.page_box = page_box
-    this.modify_dom(class_name)
-    this.update_dom()
+    this.color = color
+    this.enlarge = enlarge 
+    
+    this.create_dom_elements(class_name)
+    this.update_dom_elements()
+    this.update_dom_color()
 }
 
+// The thickness of the edges of the box overlay.
 Overlay.prototype.thickness = 0
-Overlay.prototype.colors = [
-                            "#FFB300", // Vivid Yellow
-                            "#803E75", // Strong Purple
-                            "#FF6800", // Vivid Orange
-                            "#A6BDD7", // Very Light Blue
-                            "#C10020", // Vivid Red
-                            "#CEA262", // Grayish Yellow
-                            "#817066", // Medium Gray
 
-                            // The following don't work well for people with defective color vision
-                            "#007D34", // Vivid Green
-                            "#F6768E", // Strong Purplish Pink
-                            "#00538A", // Strong Blue
-                            "#FF7A5C", // Strong Yellowish Pink
-                            "#53377A", // Strong Violet
-                            "#FF8E00", // Vivid Orange Yellow
-                            "#B32851", // Strong Purplish Red
-                            "#F4C800", // Vivid Greenish Yellow
-                            "#7F180D", // Strong Reddish Brown
-                            "#93AA00", // Vivid Yellowish Green
-                            "#593315", // Deep Yellowish Brown
-                            "#F13A13", // Vivid Reddish Orange
-                            "#232C16", // Dark Olive Green
-                            ]
-
-Overlay.prototype.update = function(page_box) {
-    // Keep a reference to the page_box.
-    this.page_box = page_box
-    // Update the dom.
-    this.update_dom()
-}
-
+//Destroy our dom elements.
 Overlay.prototype.destroy = function() {
+    // Release the page box
     this.page_box = null
+    // Destroy the dom elments.
     document.body.removeChild(this.left)
     document.body.removeChild(this.right)
     document.body.removeChild(this.top)
@@ -58,7 +32,54 @@ Overlay.prototype.destroy = function() {
     this.bottom = null
 }
 
-Overlay.prototype.modify_dom = function(class_name) {
+Overlay.prototype.move_off_page() {
+    this.page_box.left = -99
+    this.page_box.right = -99
+    this.page_box.top = -99
+    this.page_box.bottom = -99
+    this.update_dom_elements()
+}
+
+//Update the dimensions of this overlay.
+Overlay.prototype.update_page_box = function(page_box) {
+    // Keep a reference to the page_box.
+    this.page_box = page_box
+    // Update the dom.
+    this.update_dom_elements()
+}
+
+//Update the dimensions of this overlay using an element.
+Overlay.prototype.update_page_box_from_element = function(element) {
+    var client_rect = element.getBoundingClientRect()
+    // Keep a reference to the page_box.
+    this.page_box.set_from_client_rect(client_rect)
+    // Update the dom.
+    this.update_dom_elements()
+}
+
+//Returns true if this overlay contains a page point.
+Overlay.prototype.contains = function(page_x, page_y) {
+    return page_box_contains_point(this.page_box, page_x, page_y)
+}
+
+//Mark the overlay with visual emphasis.
+Overlay.prototype.mark = function() {
+    this.marked = true
+    this.update_dom_color()
+}
+
+//Unmark the overlay from visual emphasis.
+Overlay.prototype.unmark = function() {
+    this.marked = false
+    this.update_dom_color()
+}
+
+// ----------------------------------------------------------------------------------
+// Private methods.
+//----------------------------------------------------------------------------------
+
+//Creates dom elements representing the four edges of the box overlay.
+Overlay.prototype.create_dom_elements = function(class_name) {
     this.left = document.createElement("div")
     this.left.classList.add(class_name)
     this.left.style.position = "absolute"
@@ -80,44 +101,54 @@ Overlay.prototype.modify_dom = function(class_name) {
     document.body.appendChild(this.bottom)
 }
 
-Overlay.prototype.update_dom = function() {
+//Updates the dom elements to reflect new position and size.
+Overlay.prototype.update_dom_elements = function() {
     if (!this.page_box) {
         return
     }
     
-    var width = this.page_box[1] - this.page_box[0]
-    var height = this.page_box[3] - this.page_box[2]
+    var width = this.page_box.right - this.page_box.left
+    var height = this.page_box.bottom - this.page_box.top
     var t = this.thickness
     
-    this.left.style.left = (this.page_box[0]-t)+'px'
-    this.left.style.top = (this.page_box[2]-t)+'px'
+    this.left.style.left = (this.page_box.left-this.enlarge-t)+'px'
+    this.left.style.top = (this.page_box.top-this.enlarge-t)+'px'
     this.left.style.width = t+'px'
-    this.left.style.height = (height+2*t)+'px'
+    this.left.style.height = (height+2*this.enlarge+2*t)+'px'
     
-    this.right.style.left = (this.page_box[1])+'px'
-    this.right.style.top = (this.page_box[2]-t)+'px'
+    this.right.style.left = (this.page_box.right+this.enlarge)+'px'
+    this.right.style.top = (this.page_box.top-this.enlarge-t)+'px'
     this.right.style.width = t+'px'
-    this.right.style.height = (height+2*t)+'px'
+    this.right.style.height = (height+2*this.enlarge+2*t)+'px'
     
-    this.top.style.left = (this.page_box[0]-t)+'px'
-    this.top.style.top = (this.page_box[2]-t)+'px'
-    this.top.style.width = (width+2*t)+'px'
+    this.top.style.left = (this.page_box.left-this.enlarge-t)+'px'
+    this.top.style.top = (this.page_box.top-this.enlarge-t)+'px'
+    this.top.style.width = (width+2*this.enlarge+2*t)+'px'
     this.top.style.height = t+'px'
     
-    this.bottom.style.left = (this.page_box[0]-t)+'px'
-    this.bottom.style.top = this.page_box[3]+'px'
-    this.bottom.style.width = (width+2*t)+'px'
+    this.bottom.style.left = (this.page_box.left-this.enlarge-t)+'px'
+    this.bottom.style.top = this.page_box.bottom+this.enlarge+ 'px'
+    this.bottom.style.width = (width+2*this.enlarge+2*t)+'px'
     this.bottom.style.height = t+'px'
 }
 
-Overlay.prototype.update_color = function(color_index) {
-    if (color_index < 0) {
+//Updates the css style of the dom elements to reflect new color.
+Overlay.prototype.update_dom_color = function() {
+    if (this.marked) {
+        this.left.style.outline = "5px solid " + this.color
+        this.right.style.outline = "5px solid " + this.color
+        this.top.style.outline = "5px solid " + this.color
+        this.bottom.style.outline = "5px solid " + this.color
+    }
+    else if (this.color) {
+        this.left.style.outline = "2px solid " + this.color
+        this.right.style.outline = "2px solid " + this.color
+        this.top.style.outline = "2px solid " + this.color
+        this.bottom.style.outline = "2px solid " + this.color
         return
     }
-    this.left.style.outline = "1px solid " + this.colors[color_index]
-    this.right.style.outline = "1px solid " + this.colors[color_index]
-    this.top.style.outline = "1px solid " + this.colors[color_index]
-    this.bottom.style.outline = "1px solid " + this.colors[color_index]
 }
+
+
 
 
