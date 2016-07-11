@@ -94,7 +94,7 @@ function get_matching_elements_on_y(target_element, match_criteria, begin_y, end
 //The array will start with the target element, then the elements above, then 
 //the elements below.
 function get_similar_elements_on_y(target_element) {
-    var page_height = get_page_height()
+    var page_height = g_page_wrap.get_height()
 
     // Get properties of the element.
     var target_rect = target_element.getBoundingClientRect()

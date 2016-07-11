@@ -3,12 +3,15 @@
 // are currently under the mouse as well as what elements have already been
 // selected by the user.
 
-var Overlay = function(class_name, color, color_index, element=null) {
+var Overlay = function(class_name, color, color_index, elem_wrap=null) {
     this.marked = false
     this.color = color
     this.color_index = color_index
     this.enlarge = 0
-    this.page_box = new PageBox(element)
+    this.page_box = new PageBox()
+    if (elem_wrap) {
+        this.page_box.set_from_client_rect(elem_wrap.get_client_rect())
+    }
     // Setup.
     this.create_dom_elements(class_name)
     this.update_dom_elements()
@@ -56,10 +59,14 @@ Overlay.prototype.update_page_box = function(page_box) {
 }
 
 //Update the dimensions of this overlay using an element.
-Overlay.prototype.update_page_box_from_element = function(element) {
-    var client_rect = element.getBoundingClientRect()
-    // Keep a reference to the page_box.
-    this.page_box.set_from_client_rect(client_rect)
+Overlay.prototype.update_page_box_from_element = function(elem_wrap) {
+    if (!elem_wrap) {
+        this.page_box.reset()
+    } else {
+        var client_rect = elem_wrap.get_client_rect()
+        // Keep a reference to the page_box.
+        this.page_box.set_from_client_rect(client_rect)
+    }
     // Update the dom.
     this.update_dom_elements()
 }

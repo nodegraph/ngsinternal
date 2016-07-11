@@ -43,8 +43,8 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     // The find all menu.
     this.find_all_menu = this.add_sub_menu(top_menu, 'Find all elements by type')
     this.find_all_inputs = this.add_item(this.find_all_menu, 'input')
-    this.find_all_elements_with_text = this.add_item(this.find_all_menu, 'text')
-    this.find_all_elements_with_images = this.add_item(this.find_all_menu, 'image')
+    this.get_elem_wraps_with_text = this.add_item(this.find_all_menu, 'text')
+    this.get_elem_wraps_with_images = this.add_item(this.find_all_menu, 'image')
     
     // Spacer.
     this.add_spacer(top_menu)
@@ -203,11 +203,15 @@ ContextMenu.prototype.element_is_part_of_menu = function(element) {
 ContextMenu.prototype.on_context_menu = function(page_event) {
     this.page_x = page_event.pageX
     this.page_y = page_event.pageY
-    this.text_element = get_first_text_element_at_point(this.page_x, this.page_y)
-    this.image_element = get_first_image_element_at_point(this.page_x, this.page_y)
+    this.text_element = g_page_wrap.get_top_text_elem_wrap_at(this.page_x, this.page_y)
+    this.image_element = g_page_wrap.get_top_image_elem_wrap_at(this.page_x, this.page_y)
     
-    //console.log('mouse over text: ' + get_xpath(this.text_element))
-    //console.log('mouse over image: ' + get_xpath(this.image_element))
+    if (this.text_element) {
+        console.log('mouse over text: ' + this.text_element.get_xpath())
+    }
+    if (this.image_element) {
+        console.log('mouse over image: ' + this.image_element.get_xpath())
+    }
     
     // Show the menu.
     this.show(page_event.pageX, page_event.pageY)
@@ -226,28 +230,28 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Find by text.
     if (this.find_by_text.contains(menu_target)) { 
-        var text_values = get_text_values_from_point(this.page_x, this.page_y)
-        console.log('element xpath: ' + get_xpath(this.text_element))
+        var text_values = g_page_wrap.get_text_values_at(this.page_x, this.page_y)
+        console.log('element xpath: ' + this.text_element.get_xpath())
         console.log('text values: ' + JSON.stringify(text_values))
         // Check that we can find it too.
-        var elements = find_elements_by_text_values(text_values)
+        var elements = g_page_wrap.get_elem_wraps_by_text_values(text_values)
         console.log('found num elements: ' + elements.length)
         for (var i=0; i<elements.length; i++) {
-            console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
+            console.log('xpath ['+i+']: ' + elements[i].get_xpath())
         }
         g_overlay_sets.add_set(new OverlaySet(elements))
     } 
     
     // Find by image.
     else if (this.find_by_image.contains(menu_target)) {
-        var image_values = get_image_values_from_point(this.page_x, this.page_y)
-        console.log('element xpath: ' + get_xpath(this.image_element))
+        var image_values = g_page_wrap.get_image_values_at(this.page_x, this.page_y)
+        console.log('element xpath: ' + this.image_element.get_xpath())
         console.log('image values: ' + JSON.stringify(image_values))
         // Check that we can find it too.
-        var elements = find_elements_by_image_values(image_values)
+        var elements = g_page_wrap.get_elem_wraps_by_image_values(image_values)
         console.log('found num elements: ' + elements.length)
         for (var i=0; i<elements.length; i++) {
-            console.log('xpath ['+i+']: ' + get_xpath(elements[i]))
+            console.log('xpath ['+i+']: ' + elements[i].get_xpath())
         }
         g_overlay_sets.add_set(new OverlaySet(elements))
     } 
@@ -263,16 +267,16 @@ ContextMenu.prototype.on_click = function(menu_event) {
     } 
     
     // Find all images.
-    else if (this.find_all_elements_with_images.contains(menu_target)) {
-        var elements = find_all_elements_with_images()
+    else if (this.get_elem_wraps_with_images.contains(menu_target)) {
+        var elements = g_page_wrap.get_elem_wraps_with_images()
         var msg = "Find elements with type img: " + elements.length
         console.log(msg)
         g_overlay_sets.add_set(new OverlaySet(elements))
     } 
     
     // Find all text.
-    else if (this.find_all_elements_with_text.contains(menu_target)) {
-        var elements = find_all_elements_with_text()
+    else if (this.get_elem_wraps_with_text.contains(menu_target)) {
+        var elements = g_page_wrap.get_elem_wraps_with_text()
         var msg = "Find elements with type img: " + elements.length
         console.log(msg)
         g_overlay_sets.add_set(new OverlaySet(elements))
@@ -298,26 +302,26 @@ ContextMenu.prototype.on_click = function(menu_event) {
 }
 
 ContextMenu.prototype.on_mouse_over = function(page_event) {
-    var text_element2 = get_first_text_element_at_point(page_event.pageX, page_event.pageY)
-    var image_element2 = get_first_image_element_at_point(page_event.pageX, page_event.pageY)
+    var text_element2 = g_page_wrap.get_top_text_elem_wrap_at(page_event.pageX, page_event.pageY)
+    var image_element2 = g_page_wrap.get_top_image_elem_wrap_at(page_event.pageX, page_event.pageY)
+    
+    if (text_element2) {
+        console.log('text element: ' + text_element2.get_xpath())
+    }
+//    if (image_element2) {
+//        console.log('image element: ' + image_element2.get_xpath())
+//    }
+    
     this.update_text_box_overlay(text_element2)
     this.update_image_box_overlay(image_element2)
 }
 
-ContextMenu.prototype.update_text_box_overlay = function(element) {
-    if (!element) {
-        this.text_box_overlay.move_off_page()
-    } else {
-        this.text_box_overlay.update_page_box_from_element(element)
-    }
+ContextMenu.prototype.update_text_box_overlay = function(element_wrapper) {
+    this.text_box_overlay.update_page_box_from_element(element_wrapper)
 }
 
-ContextMenu.prototype.update_image_box_overlay = function(element) {
-    if (!element) {
-        this.image_box_overlay.move_off_page()
-    } else {
-        this.image_box_overlay.update_page_box_from_element(element)
-    }
+ContextMenu.prototype.update_image_box_overlay = function(element_wrapper) {
+    this.image_box_overlay.update_page_box_from_element(element_wrapper)
 }
 
 var g_context_menu = new ContextMenu()
@@ -329,6 +333,6 @@ document.addEventListener ('DOMContentLoaded', on_loaded, false);
 function on_loaded () {
     g_context_menu.initialize()
     window.document.addEventListener("contextmenu", g_context_menu.on_context_menu.bind(g_context_menu), true)
-    disable_hover()
+    g_page_wrap.disable_hover()
 }
 

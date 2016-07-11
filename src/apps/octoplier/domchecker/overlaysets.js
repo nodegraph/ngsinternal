@@ -63,6 +63,9 @@ OverlaySets.prototype.unmark_all = function () {
 //Destroy a set.
 OverlaySets.prototype.destroy_set = function(page_x, page_y) {
     var set_index = this.find_set_index(page_x, page_y, null)
+    if (set_index < 0) {
+        return
+    }
     this.destroy_set_by_index(set_index)
 }
 

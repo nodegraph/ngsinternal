@@ -12,7 +12,6 @@ function block_event(event) {
     // If the event is inside the context menu, let it through.
     if (event.target && event.target.tagName) {
         if (g_context_menu.visible){
-            console.log('node: ' + JSON.stringify(event.target))
             if (g_context_menu.top_menu.contains(event.target)) {
                 return true
             }

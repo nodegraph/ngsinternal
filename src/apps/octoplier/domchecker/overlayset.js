@@ -1,5 +1,5 @@
 
-var OverlaySet = function(elements) {
+var OverlaySet = function(element_wrappers) {
     this.marked = false
     this.overlays = [] // An array of Overlays
     
@@ -7,8 +7,8 @@ var OverlaySet = function(elements) {
     this.color = color_data.color
     this.color_index = color_data.index
     
-    for (var i=0; i<elements.length; i++) {
-        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, elements[i])
+    for (var i=0; i<element_wrappers.length; i++) {
+        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, element_wrappers[i])
         this.overlays.push(overlay)
     }
 }

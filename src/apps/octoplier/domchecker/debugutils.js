@@ -27,3 +27,18 @@ var log_exception = function(e) {
     }
 }
 
+//------------------------------------------------------------------------------------------------
+//Debugging dom.
+//------------------------------------------------------------------------------------------------
+
+//Dump the xpaths of an array of elements.
+function dump_array_of_elements(elements) {
+  for (var i=0; i<elements.length; i++) {
+      console.log("found: " + get_xpath(elements[i]))
+  }
+}
+
+//Dump the client rect to the console.
+function dump_client_rect(rect) {
+    console.log("client rect: " + rect.left + "," + rect.right + "," + rect.top + "," + rect.bottom)
+}

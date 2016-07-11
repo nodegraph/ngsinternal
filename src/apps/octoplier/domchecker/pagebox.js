@@ -1,6 +1,10 @@
 //This class represents a box in page space, not client rect space.
-var PageBox = function(element=null) {
-    this.set_from_element(element)
+var PageBox = function(client_rect) {
+    if (client_rect) {
+        this.set_from_client_rect(client_rect)
+    } else {
+        this.reset()
+    } 
 }
 
 //Reset the box to the origin (top left) with zero width and height.
@@ -12,9 +16,9 @@ PageBox.prototype.reset = function() {
 }
 
 //Set the box to match the elements bounds.
-PageBox.prototype.set_from_element = function(element) {
-    if (element) {
-        var rect = element.getBoundingClientRect()
+PageBox.prototype.set_from_elem_wrap = function(elem_wrap) {
+    if (elem_wrap) {
+        var rect = elem_wrap.get_client_rect()
         this.set_from_client_rect(rect)
     } else {
         this.reset()
