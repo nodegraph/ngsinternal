@@ -45,7 +45,7 @@ ElemWrap.prototype.is_visible = function() {
 }
 
 //----------------------------------------------------------------------------------------
-//Element values.
+//Element properties/values.
 //----------------------------------------------------------------------------------------
 
 //Get the full xpath for an element, anchored at the html document.
@@ -74,7 +74,7 @@ ElemWrap.prototype.get_xpath = function() {
 //Retrieves the image value directly on an element in the dom hierarchy.
 //Note that there may multiple images (ie overlapping image) however they
 //will always be returned as one string from this function.
-ElemWrap.prototype.get_image_direct = function() {
+ElemWrap.prototype.get_image = function() {
     // Get the tag name.
     var tag_name = this.element.tagName.toLowerCase()
 
@@ -90,7 +90,7 @@ ElemWrap.prototype.get_image_direct = function() {
         return serializer.serializeToString(this.element);
     }
 
-    function get_image(style) {
+    function get_image_from_style(style) {
         if (style.backgroundImage.indexOf('url(') == 0) {
             var background_image = style.backgroundImage.slice(4, -1);
             if (background_image != "") {
@@ -108,23 +108,23 @@ ElemWrap.prototype.get_image_direct = function() {
     var result = ""
     // Check the :after pseudo element first.
     if (after_style) {
-        result = get_image(after_style)
+        result = get_image_from_style(after_style)
     }
     // If it has no image, then check the actual element.
     if (!result) {
         if (style) {
-            result = get_image(style)
+            result = get_image_from_style(style)
         }
     }
     return result
 }
 
-ElemWrap.prototype.get_tag_name_direct = function() {
+ElemWrap.prototype.get_tag_name = function() {
     return this.element.tagName.toLowerCase()
 }
 
 //Retrieves the opacity value directly on an element in the dom hierarchy.
-ElemWrap.prototype.get_opacity_direct = function() {
+ElemWrap.prototype.get_opacity = function() {
 //  // Check the :after pseudo element first.
 //  var after_style = window.getComputedStyle(element, ':after')
 //  if (after_style.opacity) {
@@ -138,7 +138,7 @@ ElemWrap.prototype.get_opacity_direct = function() {
   return ""
 }
 
-ElemWrap.prototype.get_background_color_direct = function() {
+ElemWrap.prototype.get_background_color = function() {
 //    // Check the :after pseudo element first.
 //    var after_style = window.getComputedStyle(element, ':after')
 //    if (after_style.backgroundColor) {
@@ -156,11 +156,11 @@ ElemWrap.prototype.get_background_color_direct = function() {
 // It's heuristic is to detect fully opaque elements.
 // Note this is just a heuristic and may need changes in the future.
 ElemWrap.prototype.is_back_plate = function() {
-    bg = this.get_background_color_direct()
+    bg = this.get_background_color()
     if (bg == 'rgba(0, 0, 0, 0)') {
         return false
     }
-    opacity = this.get_opacity_direct()
+    opacity = this.get_opacity()
     if (opacity != 1) {
         return false
     }
@@ -178,7 +178,7 @@ ElemWrap.prototype.is_back_plate = function() {
 //Retrieves the text value directly under an element in the dom hierarchy.
 //Note that there may be multiple texts (ie muliple paragraphs) however they
 //will always be returned as one string from this function.
-ElemWrap.prototype.get_text_direct = function() {
+ElemWrap.prototype.get_text = function() {
     var text = ""
         
     // Loop through children accumulating text node values.

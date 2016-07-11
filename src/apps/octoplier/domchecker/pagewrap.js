@@ -1,6 +1,10 @@
-// The class encapsulate properties of the target web page.
+//The class encapsulate properties of the target web page.
 var PageWrap = function() {
 }
+
+//---------------------------------------------------------------------------------
+//Page Properties.
+//---------------------------------------------------------------------------------
 
 // Returns the page height.
 PageWrap.prototype.get_height = function() {
@@ -40,6 +44,10 @@ PageWrap.prototype.disable_hover = function() {
     }
 }
 
+//---------------------------------------------------------------------------------
+//Xpath Helpers.
+//---------------------------------------------------------------------------------
+
 //Form an xpath expression which will match any node with a 
 //textnode inside of them whose text matches that given.
 PageWrap.prototype.form_text_match_xpath = function(text) {
@@ -62,65 +70,9 @@ if (splits.length>1) {
 return "//*[text()[string(.) = "+ text +"]]"
 }
 
-PageWrap.prototype.get_top_text_elem_wrap_at = function(page_x, page_y) {
-    var wrappers = this.get_visible_elem_wraps_at(page_x, page_y)
-    //console.log("num text wrappers: " + wrappers.length)
-    for (var i=0; i<wrappers.length; i++) {
-        var text = wrappers[i].get_text_direct()
-        if (text) {
-            return wrappers[i]
-        }
-    }
-    return null
-}
-
-PageWrap.prototype.get_top_image_elem_wrap_at = function(page_x, page_y) {
-    var wrappers = this.get_visible_elem_wraps_at(page_x, page_y)
-    //console.log("num images wrappers: " + wrappers.length)
-    for (var i=0; i<wrappers.length; i++) {
-        var image = wrappers[i].get_image_direct()
-        if (image) {
-            return wrappers[i]
-        }
-    }
-    return null
-}
-
-//Returns an array of values obtained by looping through the 
-//elements and retrieving values using the supplied getter.
-PageWrap.prototype.extract_values = function(wrappers, getter) {
-    var values = []
-    for (var i=0; i<wrappers.length; i++) {
-        var value = getter.call(wrappers[i])
-        if (!value || is_all_whitespace(value)) {
-            continue
-        }
-        if (values.indexOf(value) >= 0) {
-            continue
-        }
-        values.push(value)
-    }
-    return values
-}
-
-//Returns an array of images values from elements under the given page point.
-PageWrap.prototype.get_image_values_at = function(page_x, page_y) {
-    var wrappers = this.get_visible_elem_wraps_at(page_x, page_y)
-    var values = this.extract_values(wrappers, ElemWrap.prototype.get_image_direct)
-    return values
-}
-
-//Returns an array of text values from elements under the given page point.
-PageWrap.prototype.get_text_values_at = function(page_x, page_y) {
-    var wrappers = this.get_visible_elem_wraps_at(page_x, page_y)
-    var values = this.extract_values(wrappers, ElemWrap.prototype.get_text_direct)
-    // Values will contain text from bigger overlapping divs with text.
-    // Unlike images text won't overlap, so we only want the first text.
-    if (values.length > 1) {
-        values.length = 1
-    }
-    return values
-}
+//---------------------------------------------------------------------------------
+//Elem Finders.
+//---------------------------------------------------------------------------------
 
 PageWrap.prototype.get_all_elem_wraps_at = function(page_x, page_y) {
     // Use the document.elementsFromPoint class.
@@ -144,8 +96,8 @@ PageWrap.prototype.get_visible_elem_wraps_at = function(page_x, page_y) {
       console.log('num elements: ' + wrappers.length)
       for (var i=0; i<wrappers.length; i++) {
           var wrapper = wrappers[i]
-          console.log('element['+i+']: opacity' + wrapper.get_opacity_direct() 
-                  + ' bg: ' + wrapper.get_background_color_direct() + ' xpath: ' + wrapper.get_xpath() )
+          console.log('element['+i+']: opacity' + wrapper.get_opacity() 
+                  + ' bg: ' + wrapper.get_background_color() + ' xpath: ' + wrapper.get_xpath() )
       }
   }
   
@@ -302,27 +254,95 @@ PageWrap.prototype.get_elem_wraps_by_values = function(getter, target_values) {
 
 //Returns an array of elements which have matching image values.
 PageWrap.prototype.get_elem_wraps_by_image_values = function(image_values) {
-    return this.get_elem_wraps_by_values(ElemWrap.prototype.get_image_direct, image_values)
+    return this.get_elem_wraps_by_values(ElemWrap.prototype.get_image, image_values)
 }
 
 //Returns an array of elements which have matching text values.
 PageWrap.prototype.get_elem_wraps_by_text_values = function(text_values) {
-    return this.get_elem_wraps_by_values(ElemWrap.prototype.get_text_direct, text_values)
+    return this.get_elem_wraps_by_values(ElemWrap.prototype.get_text, text_values)
 }
 
 //Returns an array of elements which have the matching tag name.
 //Note when finding images or text you should use other methods
 //as they appear in other ways besides the use of specific tag names like img or h2 etc.
 PageWrap.prototype.get_elem_wraps_by_tag_name = function(tag_name) {
-    return this.get_elem_wraps_by_values(ElemWrap.prototype.get_tag_name_direct, [tag_name])
+    return this.get_elem_wraps_by_values(ElemWrap.prototype.get_tag_name, [tag_name])
 }
 
+//Returns all elem wraps that contain images.
 PageWrap.prototype.get_elem_wraps_with_images = function() {
-    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.get_image_direct, [])
+    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.get_image, [])
 }
 
+//Returns all elem wraps that contain text.
 PageWrap.prototype.get_elem_wraps_with_text = function() {
-    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.get_text_direct, [])
+    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.get_text, [])
+}
+
+//Returns the top elem wrap with text, according to z-order.
+PageWrap.prototype.get_top_text_elem_wrap_at = function(page_x, page_y) {
+    var wrappers = this.get_visible_elem_wraps_at(page_x, page_y)
+    //console.log("num text wrappers: " + wrappers.length)
+    for (var i=0; i<wrappers.length; i++) {
+        var text = wrappers[i].get_text()
+        if (text) {
+            return wrappers[i]
+        }
+    }
+    return null
+}
+
+//Returns the top elem wrap with an image, according to z-order.
+PageWrap.prototype.get_top_image_elem_wrap_at = function(page_x, page_y) {
+    var wrappers = this.get_visible_elem_wraps_at(page_x, page_y)
+    //console.log("num images wrappers: " + wrappers.length)
+    for (var i=0; i<wrappers.length; i++) {
+        var image = wrappers[i].get_image()
+        if (image) {
+            return wrappers[i]
+        }
+    }
+    return null
+}
+
+//---------------------------------------------------------------------------------
+//Value extraction.
+//---------------------------------------------------------------------------------
+
+//Returns an array of values obtained by looping through the 
+//elements and retrieving values using the supplied getter.
+PageWrap.prototype.extract_values = function(wrappers, getter) {
+    var values = []
+    for (var i=0; i<wrappers.length; i++) {
+        var value = getter.call(wrappers[i])
+        if (!value || is_all_whitespace(value)) {
+            continue
+        }
+        if (values.indexOf(value) >= 0) {
+            continue
+        }
+        values.push(value)
+    }
+    return values
+}
+
+//Returns an array of images values from elements under the given page point.
+PageWrap.prototype.get_image_values_at = function(page_x, page_y) {
+    var wrappers = this.get_visible_elem_wraps_at(page_x, page_y)
+    var values = this.extract_values(wrappers, ElemWrap.prototype.get_image)
+    return values
+}
+
+//Returns an array of text values from elements under the given page point.
+PageWrap.prototype.get_text_values_at = function(page_x, page_y) {
+    var wrappers = this.get_visible_elem_wraps_at(page_x, page_y)
+    var values = this.extract_values(wrappers, ElemWrap.prototype.get_text)
+    // Values will contain text from bigger overlapping divs with text.
+    // Unlike images text won't overlap, so we only want the first text.
+    if (values.length > 1) {
+        values.length = 1
+    }
+    return values
 }
 
 var g_page_wrap = new PageWrap()

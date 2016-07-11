@@ -78,6 +78,7 @@ DistinctColors.prototype.used_colors = {
         "#F79CD4": false 
 }
 
+//Checkout/obtain a color to use.
 DistinctColors.prototype.obtain_color = function() {
     for (var i=0; i<this.usable_colors.length; i++) {
         var color = this.usable_colors[i]
@@ -89,6 +90,7 @@ DistinctColors.prototype.obtain_color = function() {
     return {}
 }
 
+//Request to use a color. Returns true if approved.
 DistinctColors.prototype.request_color = function(color) {
     // Make sure the color is one that we track.
     var index = this.usable_colors.indexOf(color)
@@ -103,6 +105,7 @@ DistinctColors.prototype.request_color = function(color) {
     return false
 }
 
+//Release a color so that it can be used again.
 DistinctColors.prototype.release_color = function(color) {
     // Make sure the color is one that we track.
     var index = this.usable_colors.indexOf(color)
@@ -113,4 +116,5 @@ DistinctColors.prototype.release_color = function(color) {
     this.used_colors[color] = false
 }
 
+// Our global instance.
 var g_distinct_colors = new DistinctColors()
