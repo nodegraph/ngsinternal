@@ -42,26 +42,30 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     
     // The find all menu.
     this.find_all_menu = this.add_sub_menu(top_menu, 'Find all elements by type')
-    this.find_all_inputs = this.add_item(this.find_all_menu, 'input')
-    this.get_elem_wraps_with_text = this.add_item(this.find_all_menu, 'text')
-    this.get_elem_wraps_with_images = this.add_item(this.find_all_menu, 'image')
+    this.get_elem_wraps_with_inputs = this.add_item(this.find_all_menu, 'has an input (text field)')
+    this.get_elem_wraps_with_selects = this.add_item(this.find_all_menu, 'has a select (drop down)')
+    this.get_elem_wraps_with_text = this.add_item(this.find_all_menu, 'has text')
+    this.get_elem_wraps_with_images = this.add_item(this.find_all_menu, 'has an image')
+//    this.get_elem_wraps_with_vertical_scroll_bars = this.add_item(this.find_all_menu, 'vertical scroll bar')
+//    this.get_elem_wraps_with_horizontal_scroll_bars = this.add_item(this.find_all_menu, 'horizontal scroll bar')
+//    this.get_elem_wraps_with_any_scroll_bars = this.add_item(this.find_all_menu, 'any scroll bar')
     
     // Spacer.
     this.add_spacer(top_menu)
 
     // The shift next text menu.
-    this.shift_next_text_menu = this.add_sub_menu(top_menu, 'Shift set elements to next text')
-    this.shift_down_next_text = this.add_item(this.shift_next_text_menu, 'down')
-    this.shift_up_next_text = this.add_item(this.shift_next_text_menu, 'up')
-    this.shift_left_next_text = this.add_item(this.shift_next_text_menu, 'left')
-    this.shift_right_next_text = this.add_item(this.shift_next_text_menu, 'right')
+    this.shift_by_text_menu = this.add_sub_menu(top_menu, 'Shift set elements to next text')
+    this.shift_down_by_text = this.add_item(this.shift_by_text_menu, 'down')
+    this.shift_up_by_text = this.add_item(this.shift_by_text_menu, 'up')
+    this.shift_left_by_text = this.add_item(this.shift_by_text_menu, 'left')
+    this.shift_right_by_text = this.add_item(this.shift_by_text_menu, 'right')
     
     // The shift next image menu.
-    this.shift_next_image_menu = this.add_sub_menu(top_menu, 'Shift set elements to next image')
-    this.shift_down_next_image = this.add_item(this.shift_next_image_menu, 'down')
-    this.shift_up_next_image = this.add_item(this.shift_next_image_menu, 'up')
-    this.shift_left_next_image = this.add_item(this.shift_next_image_menu, 'left')
-    this.shift_right_next_image = this.add_item(this.shift_next_image_menu, 'right')
+    this.shift_by_image_menu = this.add_sub_menu(top_menu, 'Shift set elements to next image')
+    this.shift_down_by_image = this.add_item(this.shift_by_image_menu, 'down')
+    this.shift_up_by_image = this.add_item(this.shift_by_image_menu, 'up')
+    this.shift_left_by_image = this.add_item(this.shift_by_image_menu, 'left')
+    this.shift_right_by_image = this.add_item(this.shift_by_image_menu, 'right')
     
     // Spacer.
     this.add_spacer(top_menu)
@@ -206,13 +210,6 @@ ContextMenu.prototype.on_context_menu = function(page_event) {
     this.text_element = g_page_wrap.get_top_text_elem_wrap_at(this.page_x, this.page_y)
     this.image_element = g_page_wrap.get_top_image_elem_wrap_at(this.page_x, this.page_y)
     
-    if (this.text_element) {
-        console.log('mouse over text: ' + this.text_element.get_xpath())
-    }
-    if (this.image_element) {
-        console.log('mouse over image: ' + this.image_element.get_xpath())
-    }
-    
     // Show the menu.
     this.show(page_event.pageX, page_event.pageY)
     
@@ -227,6 +224,10 @@ ContextMenu.prototype.on_click = function(menu_event) {
     this.hide();
     var menu_target = menu_event.target
     console.log('clicked')
+    
+    // --------------------------------------------------------------
+    // Find elements by using specific values.
+    // --------------------------------------------------------------
     
     // Find by text.
     if (this.find_by_text.contains(menu_target)) { 
@@ -248,13 +249,90 @@ ContextMenu.prototype.on_click = function(menu_event) {
         console.log('element xpath: ' + this.image_element.get_xpath())
         console.log('image values: ' + JSON.stringify(image_values))
         // Check that we can find it too.
-        var elements = g_page_wrap.get_elem_wraps_by_image_values(image_values)
-        console.log('found num elements: ' + elements.length)
-        for (var i=0; i<elements.length; i++) {
-            console.log('xpath ['+i+']: ' + elements[i].get_xpath())
+        var found = g_page_wrap.get_elem_wraps_by_image_values(image_values)
+        console.log('found num found: ' + found.length)
+        for (var i=0; i<found.length; i++) {
+            console.log('xpath ['+i+']: ' + found[i].get_xpath())
         }
-        g_overlay_sets.add_set(new OverlaySet(elements))
+        g_overlay_sets.add_set(new OverlaySet(found))
     } 
+    
+    // Find by position.
+    else if (this.find_by_position.contains(menu_target)) {
+        var pos = {x:this.page_x, y:this.page_y}
+        console.log('pos: ' + JSON.stringify(pos))
+        var top_element = g_page_wrap.get_top_text_or_image_elem_wrap_at(pos.x, pos.y)
+        console.log('top elem: ' + top_element.get_xpath())
+        g_overlay_sets.add_set(new OverlaySet([top_element]))
+    } 
+    
+    // Find by xpath.
+    else if (this.find_by_xpath.contains(menu_target)) {
+        var pos = {x:this.page_x, y:this.page_y}
+        console.log('pos: ' + JSON.stringify(pos))
+        var top_element = g_page_wrap.get_top_text_or_image_elem_wrap_at(pos.x, pos.y)
+        console.log('top elem: ' + top_element.get_xpath())
+        var xpath = top_element.get_xpath()
+        console.log('xpath: ' + xpath)
+        var found = g_page_wrap.get_elem_wraps_by_xpath(xpath)
+        console.log('num found: ' + found.length)
+        for (var i=0; i<found.length; i++) {
+            console.log('xpath ['+i+']: ' + found[i].get_xpath())
+        }
+        g_overlay_sets.add_set(new OverlaySet([top_element]))
+    } 
+    
+    // --------------------------------------------------------------
+    // Find all.
+    // --------------------------------------------------------------
+    
+    // Find all inputs.
+    else if (this.get_elem_wraps_with_inputs.contains(menu_target)) {
+        var elem_wraps = g_page_wrap.get_elem_wraps_with_inputs()
+        var msg = "Find elem wraps with inputs: " + elem_wraps.length
+        console.log(msg)
+        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+    }
+    
+    // Find all inputs.
+    else if (this.get_elem_wraps_with_selects.contains(menu_target)) {
+        var elem_wraps = g_page_wrap.get_elem_wraps_with_selects()
+        var msg = "Find elem wraps with selects: " + elem_wraps.length
+        console.log(msg)
+        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+    }
+    
+    // Find all images.
+    else if (this.get_elem_wraps_with_images.contains(menu_target)) {
+        var elem_wraps = g_page_wrap.get_elem_wraps_with_images()
+        var msg = "Find elem wraps with images: " + elem_wraps.length
+        console.log(msg)
+        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+    } 
+    
+    // Find all text.
+    else if (this.get_elem_wraps_with_text.contains(menu_target)) {
+        var elem_wraps = g_page_wrap.get_elem_wraps_with_text()
+        var msg = "Find elem wraps with text: " + elem_wraps.length
+        console.log(msg)
+        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+    } 
+    
+    // --------------------------------------------------------------
+    // Shift elements.
+    // --------------------------------------------------------------
+    
+    else if (this.shift_up_by_text.contains(menu_target)) {
+        g_overlay_sets.shift_up_by_text(this.page_x, this.page_y)
+    }
+    
+    else if (this.shift_up_by_image.contains(menu_target)) {
+        g_overlay_sets.shift_up_by_image(this.page_x, this.page_y)
+    }
+    
+    // --------------------------------------------------------------
+    // Constrain elements.
+    // --------------------------------------------------------------
     
     // Mark set.
     else if (this.mark_set.contains(menu_target)) {
@@ -266,21 +344,31 @@ ContextMenu.prototype.on_click = function(menu_event) {
         g_overlay_sets.unmark(this.page_x, this.page_y)
     } 
     
-    // Find all images.
-    else if (this.get_elem_wraps_with_images.contains(menu_target)) {
-        var elements = g_page_wrap.get_elem_wraps_with_images()
-        var msg = "Find elements with type img: " + elements.length
-        console.log(msg)
-        g_overlay_sets.add_set(new OverlaySet(elements))
-    } 
+
     
-    // Find all text.
-    else if (this.get_elem_wraps_with_text.contains(menu_target)) {
-        var elements = g_page_wrap.get_elem_wraps_with_text()
-        var msg = "Find elements with type img: " + elements.length
-        console.log(msg)
-        g_overlay_sets.add_set(new OverlaySet(elements))
-    } 
+//    // Find all vertical scroll bars.
+//    else if (this.get_elem_wraps_with_vertical_scroll_bars.contains(menu_target)){
+//        var elem_wraps = g_page_wrap.get_elem_wraps_with_vertical_scroll_bars()
+//        var msg = "Find elem_wraps with v scroll bars: " + elem_wraps.length
+//        console.log(msg)
+//        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+//    }    
+    
+//    // Find all horizontal scroll bars.
+//    else if (this.get_elem_wraps_with_horizontal_scroll_bars.contains(menu_target)){
+//        var elem_wraps = g_page_wrap.get_elem_wraps_with_horizontal_scroll_bars()
+//        var msg = "Find elem_wraps with h scroll bars: " + elem_wraps.length
+//        console.log(msg)
+//        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+//    }    
+    
+//    // Find any scroll bars.
+//    else if (this.get_elem_wraps_with_any_scroll_bars.contains(menu_target)){
+//        var elem_wraps = g_page_wrap.get_elem_wraps_with_any_scroll_bars()
+//        var msg = "Find elem_wraps with any scroll bars: " + elem_wraps.length
+//        console.log(msg)
+//        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+//    }    
     
     // Delete set.
     else if (this.delete_set.contains(menu_target)) {
@@ -289,7 +377,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Find by position.
     else if (this.find_by_position.contains(menu_target)) {
-        var msg = "Find elements with position, " + this.position
+        var msg = "Find elem_wraps with position, " + this.position
         console.log(msg)
     }
     document.removeEventListener('click', this.on_click_bound, true);
@@ -302,33 +390,28 @@ ContextMenu.prototype.on_click = function(menu_event) {
 }
 
 ContextMenu.prototype.on_mouse_over = function(page_event) {
-    var text_element2 = g_page_wrap.get_top_text_elem_wrap_at(page_event.pageX, page_event.pageY)
-    var image_element2 = g_page_wrap.get_top_image_elem_wrap_at(page_event.pageX, page_event.pageY)
-    
-    if (text_element2) {
-        console.log('text element: ' + text_element2.get_xpath())
+    if (!this.text_box_overlay || !this.image_box_overlay) {
+        return
     }
-//    if (image_element2) {
-//        console.log('image element: ' + image_element2.get_xpath())
-//    }
-    
-    this.update_text_box_overlay(text_element2)
-    this.update_image_box_overlay(image_element2)
+    var text_elem_wrap = g_page_wrap.get_top_text_elem_wrap_at(page_event.pageX, page_event.pageY)
+    var image_elem_wrap = g_page_wrap.get_top_image_elem_wrap_at(page_event.pageX, page_event.pageY)
+    this.update_text_box_overlay(text_elem_wrap)
+    this.update_image_box_overlay(image_elem_wrap)
 }
 
-ContextMenu.prototype.update_text_box_overlay = function(element_wrapper) {
-    this.text_box_overlay.update_page_box_from_element(element_wrapper)
+ContextMenu.prototype.update_text_box_overlay = function(elem_wrap) {
+    this.text_box_overlay.update_with_elem_wrap(elem_wrap)
 }
 
-ContextMenu.prototype.update_image_box_overlay = function(element_wrapper) {
-    this.image_box_overlay.update_page_box_from_element(element_wrapper)
+ContextMenu.prototype.update_image_box_overlay = function(elem_wrap) {
+    this.image_box_overlay.update_with_elem_wrap(elem_wrap)
 }
 
 var g_context_menu = new ContextMenu()
 
 // The context menu can only be initialized after the dom is loaded because
 // it needs access to the window.document in order to add the context menu
-// elements to the dom.
+// elem_wraps to the dom.
 document.addEventListener ('DOMContentLoaded', on_loaded, false);
 function on_loaded () {
     g_context_menu.initialize()

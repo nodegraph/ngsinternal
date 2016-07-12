@@ -1,5 +1,5 @@
 
-var OverlaySet = function(element_wrappers) {
+var OverlaySet = function(elem_wraps) {
     this.marked = false
     this.overlays = [] // An array of Overlays
     
@@ -7,9 +7,16 @@ var OverlaySet = function(element_wrappers) {
     this.color = color_data.color
     this.color_index = color_data.index
     
-    for (var i=0; i<element_wrappers.length; i++) {
-        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, element_wrappers[i])
+    for (var i=0; i<elem_wraps.length; i++) {
+        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, elem_wraps[i])
         this.overlays.push(overlay)
+    }
+}
+
+// Update all internal state.
+OverlaySet.prototype.update = function() {
+    for (var i=0; i<this.overlays.length; i++) {
+        this.overlays[i].update()
     }
 }
 
@@ -45,3 +52,16 @@ OverlaySet.prototype.contains_page_point = function(page_x, page_y) {
     }
 }
 
+//Shift up by text.
+OverlaySet.prototype.shift_up_by_text = function() {
+    for (var i=0; i<this.overlays.length; i++) {
+        this.overlays[i].shift_up_by_text()
+    }
+}
+
+//Shift up by image.
+OverlaySet.prototype.shift_up_by_image = function() {
+    for (var i=0; i<this.overlays.length; i++) {
+        this.overlays[i].shift_up_by_image()
+    }
+}

@@ -15,6 +15,14 @@ PageBox.prototype.reset = function() {
     this.bottom = 0
 }
 
+PageBox.prototype.get_mid_x = function() {
+    return (this.left + this.right) / 2.0
+}
+
+PageBox.prototype.get_mid_y = function() {
+    return (this.top + this.bottom) /2.0
+}
+
 //Set the box to match the elements bounds.
 PageBox.prototype.set_from_elem_wrap = function(elem_wrap) {
     if (elem_wrap) {

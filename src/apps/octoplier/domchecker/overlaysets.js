@@ -7,13 +7,20 @@ var OverlaySets = function() {
     this.sets = [] // An array of OverlaySet's.
 }
 
+//Update all internal state.
+OverlaySets.prototype.update = function() {
+    for (var i=0; i<this.sets.length; i++) {
+        this.sets[i].update()
+    }
+}
+
 //Add an overlay set.
 OverlaySets.prototype.add_set = function(set) {
     this.sets.push(set)
 }
 
 //Replace an overlay set at specified index.
-OverlaySets.prototype.update_set = function(set_index, set) {
+OverlaySets.prototype.replace_set = function(set_index, set) {
     this.sets[set_index] = set
 }
 
@@ -67,6 +74,26 @@ OverlaySets.prototype.destroy_set = function(page_x, page_y) {
         return
     }
     this.destroy_set_by_index(set_index)
+}
+
+//Shift up by text.
+OverlaySets.prototype.shift_up_by_text = function(page_x, page_y) {
+    var set_index = this.find_set_index(page_x, page_y, null)
+    if (set_index < 0) {
+        return
+    }
+    this.sets[set_index].shift_up_by_text()
+    this.sets[set_index].update()
+}
+
+//Shift up by image.
+OverlaySets.prototype.shift_up_by_image = function(page_x, page_y) {
+    var set_index = this.find_set_index(page_x, page_y, null)
+    if (set_index < 0) {
+        return
+    }
+    this.sets[set_index].shift_up_by_image()
+    this.sets[set_index].update()
 }
 
 // -------------------------------------------------------------------------

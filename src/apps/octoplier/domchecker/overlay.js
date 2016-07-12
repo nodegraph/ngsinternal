@@ -8,10 +8,7 @@ var Overlay = function(class_name, color, color_index, elem_wrap=null) {
     this.color = color
     this.color_index = color_index
     this.enlarge = 0
-    this.page_box = new PageBox()
-    if (elem_wrap) {
-        this.page_box.set_from_client_rect(elem_wrap.get_client_rect())
-    }
+    this.elem_wrap = elem_wrap // Note the elem wrap is allowed to be null as well.
     // Setup.
     this.create_dom_elements(class_name)
     this.update_dom_elements()
@@ -24,10 +21,19 @@ Overlay.prototype.thickness = 0
 // The length of the nub.
 Overlay.prototype.nub_pushin = 2
 
+// Update all internal state.
+Overlay.prototype.update = function() {
+    if (this.elem_wrap) {
+        this.elem_wrap.update()
+    }
+    this.update_dom_elements()
+    this.update_dom_color()
+}
+
 //Destroy our dom elements.
 Overlay.prototype.destroy = function() {
-    // Release the page box
-    this.page_box = null
+    // Release the elem_wrap
+    this.elem_wrap = null
     // Destroy the dom elments.
     document.body.removeChild(this.left)
     document.body.removeChild(this.right)
@@ -42,38 +48,16 @@ Overlay.prototype.destroy = function() {
     this.nub = null
 }
 
-Overlay.prototype.move_off_page = function() {
-    this.page_box.left = -99
-    this.page_box.right = -99
-    this.page_box.top = -99
-    this.page_box.bottom = -99
-    this.update_dom_elements()
-}
-
-//Update the dimensions of this overlay.
-Overlay.prototype.update_page_box = function(page_box) {
-    // Keep a reference to the page_box.
-    this.page_box = page_box
-    // Update the dom.
-    this.update_dom_elements()
-}
-
 //Update the dimensions of this overlay using an element.
-Overlay.prototype.update_page_box_from_element = function(elem_wrap) {
-    if (!elem_wrap) {
-        this.page_box.reset()
-    } else {
-        var client_rect = elem_wrap.get_client_rect()
-        // Keep a reference to the page_box.
-        this.page_box.set_from_client_rect(client_rect)
-    }
+Overlay.prototype.update_with_elem_wrap = function(elem_wrap) {
+    this.elem_wrap = elem_wrap
     // Update the dom.
     this.update_dom_elements()
 }
 
 //Returns true if this overlay contains a page point.
 Overlay.prototype.contains = function(page_x, page_y) {
-    return this.page_box.contains_page_point(page_x, page_y)
+    return this.elem_wrap.contains_page_point(page_x, page_y)
 }
 
 //Mark the overlay with visual emphasis.
@@ -86,6 +70,16 @@ Overlay.prototype.mark = function() {
 Overlay.prototype.unmark = function() {
     this.marked = false
     this.update_dom_color()
+}
+
+//Shift up by text.
+Overlay.prototype.shift_up_by_text = function() {
+    this.elem_wrap.shift_up_by_text()
+}
+
+//Shift up by image.
+Overlay.prototype.shift_up_by_image = function() {
+    this.elem_wrap.shift_up_by_image()
 }
 
 // ----------------------------------------------------------------------------------
@@ -128,36 +122,62 @@ Overlay.prototype.create_dom_elements = function(class_name) {
 
 //Updates the dom elements to reflect new position and size.
 Overlay.prototype.update_dom_elements = function() {
-    if (!this.page_box) {
+    if (!this.elem_wrap) {
+        this.left.style.left = '0px'
+        this.left.style.top = '0px'
+        this.left.style.width = '0px'
+        this.left.style.height = '0px'
+        
+        this.right.style.left = '0px'
+        this.right.style.top = '0px'
+        this.right.style.width = '0px'
+        this.right.style.height = '0px'
+        
+        this.top.style.left = '0px'
+        this.top.style.top = '0px'
+        this.top.style.width = '0px'
+        this.top.style.height = '0px'
+        
+        this.bottom.style.left = '0px'
+        this.bottom.style.top = '0px'
+        this.bottom.style.width = '0px'
+        this.bottom.style.height = '0px'
+        
+        this.nub.style.left = '0px'
+        this.nub.style.top = '0px'
+        this.nub.style.width = '0px'
+        this.nub.style.height = '0px'
         return
     }
     
-    var width = this.page_box.right - this.page_box.left
-    var height = this.page_box.bottom - this.page_box.top
+    // Otherwise if we have an elem wrap.
+    var page_box = this.elem_wrap.page_box
+    var width = page_box.right - page_box.left
+    var height = page_box.bottom - page_box.top
     var t = this.thickness
     
-    this.left.style.left = (this.page_box.left-this.enlarge-t)+'px'
-    this.left.style.top = (this.page_box.top-this.enlarge-t)+'px'
+    this.left.style.left = (page_box.left-this.enlarge-t)+'px'
+    this.left.style.top = (page_box.top-this.enlarge-t)+'px'
     this.left.style.width = t+'px'
     this.left.style.height = (height+2*this.enlarge+2*t)+'px'
     
-    this.right.style.left = (this.page_box.right+this.enlarge)+'px'
-    this.right.style.top = (this.page_box.top-this.enlarge-t)+'px'
+    this.right.style.left = (page_box.right+this.enlarge)+'px'
+    this.right.style.top = (page_box.top-this.enlarge-t)+'px'
     this.right.style.width = t+'px'
     this.right.style.height = (height+2*this.enlarge+2*t)+'px'
     
-    this.top.style.left = (this.page_box.left-this.enlarge-t)+'px'
-    this.top.style.top = (this.page_box.top-this.enlarge-t)+'px'
+    this.top.style.left = (page_box.left-this.enlarge-t)+'px'
+    this.top.style.top = (page_box.top-this.enlarge-t)+'px'
     this.top.style.width = (width+2*this.enlarge+2*t)+'px'
     this.top.style.height = t+'px'
     
-    this.bottom.style.left = (this.page_box.left-this.enlarge-t)+'px'
-    this.bottom.style.top = this.page_box.bottom+this.enlarge+ 'px'
+    this.bottom.style.left = (page_box.left-this.enlarge-t)+'px'
+    this.bottom.style.top = page_box.bottom+this.enlarge+ 'px'
     this.bottom.style.width = (width+2*this.enlarge+2*t)+'px'
     this.bottom.style.height = t+'px'
     
-    this.nub.style.left = (this.page_box.left-this.enlarge-t + (this.color_index+1)*8)+'px'
-    this.nub.style.top = (this.page_box.top-this.enlarge-t)+'px'
+    this.nub.style.left = (page_box.left-this.enlarge-t + (this.color_index+1)*8)+'px'
+    this.nub.style.top = (page_box.top-this.enlarge-t)+'px'
     this.nub.style.width = t+'px'
     this.nub.style.height = (height+2*this.enlarge+2*t)+'px'
 }
