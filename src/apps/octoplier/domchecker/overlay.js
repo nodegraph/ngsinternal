@@ -72,16 +72,6 @@ Overlay.prototype.unmark = function() {
     this.update_dom_color()
 }
 
-//Shift up by text.
-Overlay.prototype.shift_up_by_text = function() {
-    this.elem_wrap.shift_up_by_text()
-}
-
-//Shift up by image.
-Overlay.prototype.shift_up_by_image = function() {
-    this.elem_wrap.shift_up_by_image()
-}
-
 // ----------------------------------------------------------------------------------
 // Private methods.
 //----------------------------------------------------------------------------------

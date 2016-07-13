@@ -76,23 +76,13 @@ OverlaySets.prototype.destroy_set = function(page_x, page_y) {
     this.destroy_set_by_index(set_index)
 }
 
-//Shift up by text.
-OverlaySets.prototype.shift_up_by_text = function(page_x, page_y) {
+//Shift.
+OverlaySets.prototype.shift = function(page_x, page_y, dir, wrap_type) {
     var set_index = this.find_set_index(page_x, page_y, null)
     if (set_index < 0) {
         return
     }
-    this.sets[set_index].shift_up_by_text()
-    this.sets[set_index].update()
-}
-
-//Shift up by image.
-OverlaySets.prototype.shift_up_by_image = function(page_x, page_y) {
-    var set_index = this.find_set_index(page_x, page_y, null)
-    if (set_index < 0) {
-        return
-    }
-    this.sets[set_index].shift_up_by_image()
+    this.sets[set_index].shift(dir, wrap_type)
     this.sets[set_index].update()
 }
 

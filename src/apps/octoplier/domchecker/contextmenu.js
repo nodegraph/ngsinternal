@@ -53,19 +53,30 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     // Spacer.
     this.add_spacer(top_menu)
 
-    // The shift next text menu.
-    this.shift_by_text_menu = this.add_sub_menu(top_menu, 'Shift set elements to next text')
-    this.shift_down_by_text = this.add_item(this.shift_by_text_menu, 'down')
-    this.shift_up_by_text = this.add_item(this.shift_by_text_menu, 'up')
-    this.shift_left_by_text = this.add_item(this.shift_by_text_menu, 'left')
-    this.shift_right_by_text = this.add_item(this.shift_by_text_menu, 'right')
+    // The shift elements menu.
+    this.shift_to_text_menu = this.add_sub_menu(top_menu, 'Shift set elements to text')
+    this.shift_down_by_text = this.add_item(this.shift_to_text_menu, 'below')
+    this.shift_up_by_text = this.add_item(this.shift_to_text_menu, 'above')
+    this.shift_left_by_text = this.add_item(this.shift_to_text_menu, 'on left')
+    this.shift_right_by_text = this.add_item(this.shift_to_text_menu, 'on right')
     
-    // The shift next image menu.
-    this.shift_by_image_menu = this.add_sub_menu(top_menu, 'Shift set elements to next image')
-    this.shift_down_by_image = this.add_item(this.shift_by_image_menu, 'down')
-    this.shift_up_by_image = this.add_item(this.shift_by_image_menu, 'up')
-    this.shift_left_by_image = this.add_item(this.shift_by_image_menu, 'left')
-    this.shift_right_by_image = this.add_item(this.shift_by_image_menu, 'right')
+    this.shift_to_image_menu = this.add_sub_menu(top_menu, 'Shift set elements to image')
+    this.shift_down_by_image = this.add_item(this.shift_to_image_menu, 'below')
+    this.shift_up_by_image = this.add_item(this.shift_to_image_menu, 'above')
+    this.shift_left_by_image = this.add_item(this.shift_to_image_menu, 'on left')
+    this.shift_right_by_image = this.add_item(this.shift_to_image_menu, 'on right')
+    
+    this.shift_to_input_menu = this.add_sub_menu(top_menu, 'Shift set elements to input')
+    this.shift_down_by_input = this.add_item(this.shift_to_input_menu, 'below')
+    this.shift_up_by_input = this.add_item(this.shift_to_input_menu, 'above')
+    this.shift_left_by_input = this.add_item(this.shift_to_input_menu, 'on left')
+    this.shift_right_by_input = this.add_item(this.shift_to_input_menu, 'on right')
+    
+    this.shift_to_selector_menu = this.add_sub_menu(top_menu, 'Shift set elements to selector')
+    this.shift_down_by_selector = this.add_item(this.shift_to_selector_menu, 'below')
+    this.shift_up_by_selector = this.add_item(this.shift_to_selector_menu, 'above')
+    this.shift_left_by_selector = this.add_item(this.shift_to_selector_menu, 'on left')
+    this.shift_right_by_selector = this.add_item(this.shift_to_selector_menu, 'on right')
     
     // Spacer.
     this.add_spacer(top_menu)
@@ -323,11 +334,35 @@ ContextMenu.prototype.on_click = function(menu_event) {
     // --------------------------------------------------------------
     
     else if (this.shift_up_by_text.contains(menu_target)) {
-        g_overlay_sets.shift_up_by_text(this.page_x, this.page_y)
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.text)
+    }
+    
+    else if (this.shift_down_by_text.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.text)
     }
     
     else if (this.shift_up_by_image.contains(menu_target)) {
-        g_overlay_sets.shift_up_by_image(this.page_x, this.page_y)
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.image)
+    }
+    
+    else if (this.shift_down_by_image.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.image)
+    }
+    
+    else if (this.shift_up_by_input.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.input)
+    }
+    
+    else if (this.shift_down_by_input.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.input)
+    }
+    
+    else if (this.shift_up_by_selector.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.select)
+    }
+    
+    else if (this.shift_down_by_selector.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.select)
     }
     
     // --------------------------------------------------------------

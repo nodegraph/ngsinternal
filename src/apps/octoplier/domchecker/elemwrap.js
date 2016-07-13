@@ -4,6 +4,36 @@ var ElemWrap = function(element) {
     this.page_box = new PageBox(this.get_client_rect())
 }
 
+// Returns an unique opaque pointer for the purposes of identification.
+// When two ElemWraps return the same id, they represent a wrapper around the same dom element.
+ElemWrap.prototype.get_id = function() {
+    return this.element
+}
+
+// Returns true if this and the other ElemWrap represent the same dom element.
+ElemWrap.prototype.equals = function(other) {
+    if (this.get_id() == other.get_id()) {
+        return true
+    }
+    return false
+}
+
+// Wrap type.
+ElemWrap.prototype.wrap_type = {
+        text: 0,
+        image: 1,
+        input: 2,
+        select: 3,
+}
+
+// Direction.
+ElemWrap.prototype.direction = {
+        left: 0,
+        right: 1,
+        up: 2,
+        down: 3,
+}
+
 // Update all internal state.
 ElemWrap.prototype.update = function() {
     this.page_box.set_from_elem_wrap(this)
@@ -18,13 +48,13 @@ ElemWrap.prototype.get_client_rect = function() {
 }
 
 //Returns true if the outer element contains the inner element.
-ElemWrap.prototype.contains = function(wrapper) {
-  var inner_box = new PageBox(wrapper.get_client_rect())
+ElemWrap.prototype.contains = function(elem_wrap) {
+  var inner_box = new PageBox(elem_wrap.get_client_rect())
   return this.page_box.contains(inner_box)
 }
 
-ElemWrap.prototype.intersects = function(wrapper) {
-  var other_box = new PageBox(wrapper.get_client_rect())
+ElemWrap.prototype.intersects = function(elem_wrap) {
+  var other_box = new PageBox(elem_wrap.get_client_rect())
   return this.page_box.intersects(other_box)
 }
 
@@ -80,40 +110,164 @@ return '/'+path.join('/');
 //Element Shifting.
 //----------------------------------------------------------------------------------------
 
-ElemWrap.prototype.shift_up = function(getter) {
-    // We scan along 3 lines above ourself, and take the first hit.
+//Checks to make sure this is nothing on top of us, according to the getter (image,text,input,select).
+ElemWrap.prototype.is_top_along_vertical = function(getter, x) {
+    var delta = 1
+    for (var y=this.page_box.top+delta; y<this.page_box.bottom; y+=delta) {
+        var top = g_page_wrap.get_first_elem_wrap_at(getter, x, y)
+        if (top && !top.equals(this)) {
+            return false
+        }
+    }
+    return true
+}
+
+ElemWrap.prototype.get_next_vertical = function(getter, x, start_y, end_y) {
+    // Determine our y increment.
+    var delta = 1
+    if (start_y > end_y) {
+        delta = -1
+    }
+    // Our speed.
+    var speed = 1
+    // Our candidates
+    var ids_seen = [this.get_id()]
+    // Start loop.
+    var y = start_y
+    while ((delta * y) <= (delta*end_y)) {
+        var elem_wrap = g_page_wrap.get_first_elem_wrap_at(getter, x, y)
+        if (elem_wrap && (ids_seen.indexOf(elem_wrap.get_id())<0)) {
+            ids_seen.push(elem_wrap.get_id())
+            if (elem_wrap.is_top_along_vertical(getter, x)) {
+                return elem_wrap
+            }
+        }
+        // Increment y.
+        y += delta*speed
+    }
+    return null
+}
+
+ElemWrap.prototype.shift_vertical = function(getter, start_y, end_y) {
+    // Todo: refactor this to use an array of samples instead of just 3.
+    //       we want to shift to the element which intersects the most number of sample rays.
+    
+    //  We scan three lines at once along left_x, mid_x and right_x.
     var mid_x = this.page_box.get_mid_x()
     var left_x = (this.page_box.left + mid_x) / 2.0
     var right_x = (this.page_box.right + mid_x) / 2.0
-    var top = this.page_box.top
-
-    // We scan all three lines at once.
-    for (var y=top-1; y>0; y--) {
-        var left = g_page_wrap.get_first_elem_wrap_at(getter, left_x, y)
-        var mid = g_page_wrap.get_first_elem_wrap_at(getter, mid_x, y)
-        var right = g_page_wrap.get_first_elem_wrap_at(getter, right_x, y)
-        if (left && (left.element != this.element)) {
+    // Get the elem wraps.
+    var left = this.get_next_vertical(getter, left_x, start_y, end_y)
+    var mid = this.get_next_vertical(getter, mid_x, start_y, end_y)
+    var right = this.get_next_vertical(getter, right_x, start_y, end_y)
+    
+    if (left)
+    console.log('left: ' + left.get_xpath())
+    if (mid)
+    console.log('mid: ' + mid.get_xpath())
+    if (right)
+    console.log('right: ' + right.get_xpath())
+    
+    // Find the closest to the start_y.
+    if (start_y > end_y) {
+        var bottoms = []
+        if (left) {
+            bottoms.push(left.page_box.bottom)
+        }
+        if (mid) {
+            bottoms.push(mid.page_box.bottom)
+        }
+        if (right) {
+            bottoms.push(right.page_box.bottom)
+        }
+        var max = Math.max(...bottoms)
+        if (left && left.page_box.bottom == max) {
             this.element = left.element
             return true
-        } else if (mid && (mid.element != this.element)) {
+        }
+        if (mid && mid.page_box.bottom == max) {
             this.element = mid.element
             return true
-        } else if (right && (right.element != this.element)) {
+        }
+        if (right && right.page_box.bottom == max) {
             this.element = right.element
             return true
-        } else {
-            continue
+        }
+    } else {
+        var tops = []
+        if (left) {
+            tops.push(left.page_box.top)
+        }
+        if (mid) {
+            tops.push(mid.page_box.top)
+        }
+        if (right) {
+            tops.push(right.page_box.top)
+        }
+        var min = Math.min(...tops)
+        if (left && left.page_box.top == min) {
+            this.element = left.element
+            return true
+        }
+        if (mid && mid.page_box.top == min) {
+            this.element = mid.element
+            return true
+        }
+        if (right && right.page_box.top == min) {
+            this.element = right.element
+            return true
         }
     }
     return false
 }
 
-ElemWrap.prototype.shift_up_by_text = function() {
-    return this.shift_up(ElemWrap.prototype.get_text)
+ElemWrap.prototype.shift_up = function(getter) {
+    var start_y = this.page_box.top
+    var end_y = 0
+    this.shift_vertical(getter, start_y, end_y)
 }
 
-ElemWrap.prototype.shift_up_by_image = function() {
-    return this.shift_up(ElemWrap.prototype.get_image)
+ElemWrap.prototype.shift_down = function(getter) {
+    var start_y = this.page_box.bottom
+    var end_y = g_page_wrap.get_height()
+    this.shift_vertical(getter, start_y, end_y)
+}
+
+ElemWrap.prototype.shift = function(dir, wrap_type) {
+    // Find the proper getter for the type we're shifting to.
+    var getter = null
+    switch(wrap_type) {
+        case this.wrap_type.text:
+            getter = this.get_text
+            break
+        case this.wrap_type.image:
+            getter = this.get_image
+            break
+        case this.wrap_type.input:
+            getter = this.is_input
+            break
+        case this.wrap_type.select:
+            getter = this.is_select
+            break
+    }
+    // Find the proper scanner for the direction we're searching in.
+    var scanner = null
+    switch(dir) {
+        case this.direction.left:
+            scanner = this.shift_left
+            break
+        case this.direction.right: 
+            scanner = this.shift_right
+            break
+        case this.direction.up: 
+            scanner = this.shift_up
+            break
+        case this.direction.down: 
+            scanner = this.shift_down
+            break
+    }
+    // Now call the function.
+    return scanner.call(this, getter)
 }
 
 //----------------------------------------------------------------------------------------
@@ -310,6 +464,15 @@ ElemWrap.prototype.get_text_or_image = function() {
 ElemWrap.prototype.get_tag_name = function() {
     return this.element.tagName.toLowerCase()
 }
+
+ElemWrap.prototype.is_input = function() {
+    return (this.element.tagName.toLowerCase() == 'input')
+}
+
+ElemWrap.prototype.is_select = function() {
+    return (this.element.tagName.toLowerCase() == 'select')
+}
+
 
 //Retrieves the opacity value directly on an element in the dom hierarchy.
 ElemWrap.prototype.get_opacity = function() {

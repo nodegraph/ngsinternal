@@ -52,16 +52,10 @@ OverlaySet.prototype.contains_page_point = function(page_x, page_y) {
     }
 }
 
-//Shift up by text.
-OverlaySet.prototype.shift_up_by_text = function() {
+//Shift.
+OverlaySet.prototype.shift = function(dir, wrap_type) {
     for (var i=0; i<this.overlays.length; i++) {
-        this.overlays[i].shift_up_by_text()
+        this.overlays[i].elem_wrap.shift(dir, wrap_type)
     }
 }
 
-//Shift up by image.
-OverlaySet.prototype.shift_up_by_image = function() {
-    for (var i=0; i<this.overlays.length; i++) {
-        this.overlays[i].shift_up_by_image()
-    }
-}
