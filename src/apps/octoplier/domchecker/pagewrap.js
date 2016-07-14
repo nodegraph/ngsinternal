@@ -6,7 +6,7 @@ var PageWrap = function() {
 //Page Properties.
 //---------------------------------------------------------------------------------
 
-// Returns the page height.
+//Returns the page height.
 PageWrap.prototype.get_height = function() {
     var doc_body = document.body
     var doc_elem = document.documentElement
@@ -14,7 +14,7 @@ PageWrap.prototype.get_height = function() {
             doc_elem.clientHeight, doc_elem.scrollHeight, doc_elem.offsetHeight );
 }
 
-// Returns the page width.
+//Returns the page width.
 PageWrap.prototype.get_width = function() {
     var doc_body = document.body
     var doc_elem = document.documentElement
@@ -22,7 +22,17 @@ PageWrap.prototype.get_width = function() {
             doc_elem.clientWidth, doc_elem.scrollWidth, doc_elem.offsetWidth );
 }
 
-// Disables hover behavior on the page.
+//Returns current bounds.
+PageWrap.prototype.get_bounds = function() {
+    var box = new PageBox()
+    box.left = 0
+    box.top = 0
+    box.right = this.get_width()
+    box.bottom = this.get_height()
+    return box
+}
+
+//Disables hover behavior on the page.
 PageWrap.prototype.disable_hover = function() {
     var hover_regex = /:hover/;
     for (var i = 0; i < document.styleSheets.length; i++) {
@@ -43,6 +53,8 @@ PageWrap.prototype.disable_hover = function() {
         }
     }
 }
+
+
 
 //---------------------------------------------------------------------------------
 //Xpath Helpers.
@@ -80,6 +92,10 @@ PageWrap.prototype.get_all_elem_wraps_at = function(page_x, page_y) {
     // Convert to elem wraps.
     var elem_wraps = []
     for (var i=0; i<elements.length; i++) {
+        // *Important!* We weed out any context menu hits here.
+        if (g_context_menu.element_is_part_of_menu(elements[i])) {
+            continue
+        }
         elem_wraps.push(new ElemWrap(elements[i]))
     }
     return elem_wraps

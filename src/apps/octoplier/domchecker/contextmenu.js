@@ -333,6 +333,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     // Shift elements.
     // --------------------------------------------------------------
     
+    // Text.
     else if (this.shift_up_by_text.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.text)
     }
@@ -341,6 +342,15 @@ ContextMenu.prototype.on_click = function(menu_event) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.text)
     }
     
+    else if (this.shift_left_by_text.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.left, ElemWrap.prototype.wrap_type.text)
+    }
+    
+    else if (this.shift_right_by_text.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.text)
+    }
+    
+    // Image.
     else if (this.shift_up_by_image.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.image)
     }
@@ -349,6 +359,15 @@ ContextMenu.prototype.on_click = function(menu_event) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.image)
     }
     
+    else if (this.shift_left_by_image.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.left, ElemWrap.prototype.wrap_type.image)
+    }
+    
+    else if (this.shift_right_by_image.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.image)
+    }
+    
+    // Input.
     else if (this.shift_up_by_input.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.input)
     }
@@ -357,12 +376,29 @@ ContextMenu.prototype.on_click = function(menu_event) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.input)
     }
     
+    else if (this.shift_left_by_input.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.left, ElemWrap.prototype.wrap_type.input)
+    }
+    
+    else if (this.shift_right_by_input.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.input)
+    }
+    
+    // Select.
     else if (this.shift_up_by_selector.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.select)
     }
     
     else if (this.shift_down_by_selector.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.select)
+    }
+    
+    else if (this.shift_left_by_selector.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.left, ElemWrap.prototype.wrap_type.select)
+    }
+    
+    else if (this.shift_right_by_selector.contains(menu_target)) {
+        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.select)
     }
     
     // --------------------------------------------------------------

@@ -25,6 +25,15 @@ Point.prototype.reset = function(other) {
     this.y = 0
 }
 
+Point.prototype.normalize = function() {
+    var mag = this.get_magnitude()
+    this.divide_elements(mag)
+}
+
+Point.prototype.get_magnitude = function() {
+    return Math.sqrt(this.x*this.x + this.y*this.y)
+}
+
 Point.prototype.increment = function(other) {
     this.x += other.x
     this.y += other.y

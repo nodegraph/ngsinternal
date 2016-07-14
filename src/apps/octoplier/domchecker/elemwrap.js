@@ -130,223 +130,193 @@ return '/'+path.join('/');
 //Element Shifting.
 //----------------------------------------------------------------------------------------
 
-// Returns true is this is the element along a ray over the element.
-// Start must be a starting a point contained within the element.
-// Delta is the increment to advance from the start point.
-ElemWrap.prototype.is_top_along_ray = function(getter, start, delta, min_coverage = 0.8) {
-    var debug_method = true
-    if (debug_method && !this.page_box.contains_point(start.x, start.y)) {
-        console.log("XXXXXXXXXXXXXX: error!")
-        console.log('start: ' + start.x + "," + start.y)
-        console.log('bounds: ' + this.page_box.left + "," + this.page_box.right + "," + this.page_box.bottom + "," + this.page_box.top + ",")
+//Returns true if this element is on top for most of its surface area.
+//This is used to detect elements that the user can interact with, or elements to shift to.
+//- num_samples_xy indicates how fine to sample within the element.
+//- min_coverage indicates how many samples need to hit ourself to register as being topmost.
+ElemWrap.prototype.is_topmost = function(getter, min_coverage = 0.9, num_samples_xy = new Point(5,5)) {
+    if ((this.page_box.get_width() <= 2) && (this.page_box.get_height() <= 2)) {
+        return true
     }
     
-    // Loop start state.
+    //console.log('element bounds: ' + this.page_box.left + ',' + this.page_box.right + ',' + this.page_box.top + ',' + this.page_box.bottom)
+    
+    // Samples a num_samples_xy sized grid that is pushed into the element a bit.
+    // In other words it won't sample exactly along the edges of the element, but a bit inside.
+    // We push in by at least one pixel from each edge along with 1/num_segments of revised width and height.
+    var delta_x = (this.page_box.get_width()-2) / (num_samples_xy.x + 1)
+    var delta_y = (this.page_box.get_height()-2) / (num_samples_xy.y + 1)
+    
+    // Loop over the grid of samples.
     var hit = 0
     var miss = 0
-    var pos = new Point(start)
-    
-    // Loop along positive delta until we're off the element.
-    while (this.page_box.contains_point(pos.x, pos.y)) {
-        var elem_wrap = g_page_wrap.get_first_elem_wrap_at(getter, pos.x, pos.y)
-        if (elem_wrap && elem_wrap.equals(this)) {
-            hit += 1
-        } else {
-            miss +=1
+    for (var i=0; i<num_samples_xy.x; i++) {
+        for (var j=0; j<num_samples_xy.y; j++) {
+            var x = this.page_box.left + 1 + (i+1) * delta_x
+            var y = this.page_box.top + 1 + (j+1) * delta_y
+            var elem_wrap = g_page_wrap.get_first_elem_wrap_at(getter, x, y)
+            if (elem_wrap) {
+                if (elem_wrap.equals(this)) {
+                    hit += 1
+                } else {
+                    miss +=1
+                }
+            }
         }
-        pos.increment(delta)
-    }
-    
-    // Loop along negative delta until we're off the element.
-    pos.assign(start)
-    pos.decrement(delta)
-    while (this.page_box.contains_point(pos.x, pos.y)) {
-        var elem_wrap = g_page_wrap.get_first_elem_wrap_at(getter, pos.x, pos.y)
-        if (elem_wrap && elem_wrap.equals(this)) {
-            hit += 1
-        } else {
-            miss +=1
-        }
-        pos.decrement(delta)
     }
     
     // Check coverage amount.
+    //console.log('coverage: ' + (hit/(hit+miss)) + ' hit: ' + hit + ' miss: ' + miss)
     if (hit / (hit + miss) >= min_coverage) {
         return true
     }
     return false
 }
 
-//Get next element along a line.
-ElemWrap.prototype.scan = function(getter, start, end) {
-    // Determine the delta increment.
-    var delta = end.subtract(start)
-    var max = Math.max(Math.abs(delta.x), Math.abs(delta.y))
-    delta.divide_elements(max)
-    console.log('delta: ' + delta.x + ',' + delta.y)
-    // Our candidates.
+//Scan a line from start in direction ndir, looking for the next element using the specified getter.
+//- start is the start point of the ray
+//- ndir is the normalized direction of the ray
+//- a hit is found when a top element is found. A top element has no other elements on top of it.
+//  so start should general generally start off of any top element you're starting to scan from.
+ElemWrap.prototype.ray_cast = function(getter, start, ndir, scan_speed = 1.0) {
+    // Determine our delta.
+    var delta = new Point(ndir)
+    delta.multiply_elements(scan_speed)
+    
+    // This makes sure the hit is not the same as us.
     var ids_seen = [this.get_id()]
+    
     // Start loop.
+    var page_bounds = g_page_wrap.get_bounds()
     var pos = new Point(start)
-    while ((delta.x < 0 && pos.x > end.x) || (delta.x > 0 && pos.x < end.x) ||
-            (delta.y < 0 && pos.y > end.y) || (delta.y > 0 && pos.y < end.y)) {
-        console.log('+')
+    while (page_bounds.contains_point(pos.x, pos.y)) {
         var elem_wrap = g_page_wrap.get_first_elem_wrap_at(getter, pos.x, pos.y)
-        if (elem_wrap && (ids_seen.indexOf(elem_wrap.get_id())<0)) {
+        // Make sure the hit element is not ourself, and that it doesn't contain us.
+        if (elem_wrap && (ids_seen.indexOf(elem_wrap.get_id())<0) && (!elem_wrap.contains(this)) ) {
             ids_seen.push(elem_wrap.get_id())
-            if (elem_wrap.is_top_along_ray(getter, pos, delta)) {
-                return elem_wrap
+            if (elem_wrap.is_topmost(getter)) {
+                return {ray_hit: elem_wrap, ray_start: start, ray_end: pos}
             }
         }
         // Increment y.
         pos.increment(delta)
     }
-    return null
-}
-
-ElemWrap.prototype.shift_vertical = function(getter, start_y, end_y, num_samples = 11) {
-    // num_samples = num_segments + 1
-    // First sample is on the left edge and the last sample is on the right edge.
-    // We scan vertically along all samples.
-    var width = this.page_box.get_width()
-    var delta = width/(num_samples-1)
-    var elem_wraps = []
-    var elem_wrap_ids = []
-    for (var i=0; i<num_samples; i++) {
-        var x = this.page_box.left + i*delta
-        var start = new Point(x, start_y)
-        var end = new Point(x, end_y)
-        var elem_wrap = this.scan(getter, start, end)
-        if (elem_wrap && (elem_wrap_ids.indexOf(elem_wrap.get_id()) <0) && (elem_wrap.get_horizontal_overlap(this)>0)) {
-            // Sometimes elements will just touch along the left or right edges.
-            // The overlap will check above will skip these. We want to have at least some overlap.
-            elem_wraps.push(elem_wrap)
-            elem_wrap_ids.push(elem_wrap.get_id())
-        }
-    }
-    console.log('num elem wraps: ' + elem_wraps.length)
-    
-    // Find the edge closest to start point.
-    var edges = []
-    var edge = null
-    if (start_y > end_y) {
-        // When searching upwards we're interested in the element's bottom.
-        for (var i=0; i<elem_wraps.length; i++) {
-            edges.push(elem_wraps[i].page_box.bottom)
-        }
-        // We want the lowest one.
-        edge = Math.max(...edges)
-    } else {
-        // When searching downwards we're interested in the element's top.
-        for (var i=0; i<elem_wraps.length; i++) {
-            edges.push(elem_wraps[i].page_box.top)
-        }
-        // We want the highest one.
-        edge = Math.min(...edges)
-    }
-    
-    // Of the elements that are on the edge (within sigma) find the one with most coverage.
-    // Find the candidate with the most coverage.
-    var max_overlap = 0
-    var max_candidate = null
-    var sigma = 1.0
-    for (var i=0; i<edges.length; i++) {
-        if (edges[i]<(edge-sigma) || edges[i] > edge+sigma) {
-            continue
-        }
-        var overlap = elem_wraps[i].get_horizontal_overlap(this)
-        console.log('overlap is ' + overlap)
-        if (overlap > max_overlap) {
-            max_candidate = elem_wraps[i]
-            max_overlap = overlap
-        }
-    }
-    if (max_candidate) {
-        this.element = max_candidate.element
-        console.log('element set to: ' + max_candidate.get_xpath())
-        return true
-    }
-    return false
+    return {ray_hit: null, ray_start: null, ray_end: null}
 }
 
 //Generates samples within this element along a line passing through the middle
-//of this element. Angle is in radians.
-ElemWrap.prototype.generate_starting_samples(angle, num_samples) {
-    // Our center.
-    var mid = new Point(this.page_box.get_mid_x(),this.page_box.get_mid_y())
-    
-    // Find the magnitude of a vector from our center to one of the edges of this element.
-    var mag = 0
-    var c = Math.abs(Math.cos(angle));
-    var s = Math.abs(Math.sin(angle));
-    var width = this.page_box.get_width()
-    var height = this.page_box.get_height()
-    if (width*s <= height*c)
-    {
-        mag= width/2/c;
-    }
-    else
-    {
-        mag= height/2/s;
-    }
-
-    // The dir along which we take samples.
-    var dir = new Point(Math.cos(angle), Math.sin(angle))
-    // Our starting point.
-    var pos = new Point(mid.x - dir.x*mag, mid.y - dir.y*mag)
-    // Our step size.
-    var step_size = mag/(num_samples-1)
-    var step = new Point(dir)
-    step.multiply_elements(step_size)
-    // Now generate the sample.
+//of this element. num_samples_xy is point with the number of x and y samples.
+ElemWrap.prototype.generate_starting_samples = function(ndir, num_samples_xy) {
     var samples = []
-    for (var i=0; i<num_samples; i++) {
-        var p = new Point(pos)
-        samples.push(p)
-        pos.increment(step)
+    if (ndir.y != 0) {
+        // Generate horizontal samples.
+        var delta = new Point(this.page_box.get_width() / (num_samples_xy.x -1), 0)
+        var pos = null
+        if (ndir.y > 0) {
+            // scanning down
+            pos = new Point(this.page_box.left, this.page_box.bottom)
+        } else {
+            // scanning up
+            pos = new Point(this.page_box.left, this.page_box.top)
+        }
+        for (var i=0; i<num_samples_xy.x; i++) {
+            samples.push(new Point(pos))
+            pos.increment(delta)
+        }
     }
+    if (ndir.x != 0) {
+        // Generate vertical samples.
+        var delta = new Point(0, this.page_box.get_height() / (num_samples_xy.y -1))
+        var pos = null
+        if (ndir.x > 0) {
+            // scanning right
+            pos = new Point(this.page_box.right, this.page_box.top)
+        } else {
+            // scanning left
+            pos = new Point(this.page_box.left, this.page_box.top)
+        }
+        for (var i=0; i<num_samples_xy.y; i++) {
+            samples.push(new Point(pos))
+            pos.increment(delta)
+        }
+    }
+    // Note: the corner where the x and y samples meet is duplicated.
+    // This shouldn't cause any real inaccuracies except for a tiny bit of extra work.
     return samples
 }
 
 // This will shift our element to next matching element according to the getter.
 // The samples will be taken along the horizontal or vertical axis of the element,
 // depending on which direction is more orthogonal to the scanning dir = (end - start).
-ElemWrap.prototype.shift = function(getter, start, end, num_samples = 3) {
-    // num_samples = num_segments + 1
-    // First sample is on the left edge and the last sample is on the right edge.
-    // We scan vertically along all samples.
-    var width = this.page_box.get_width()
-    var delta = width/(num_samples-1)
+ElemWrap.prototype.shift_along_dir = function(getter, ndir, num_samples_xy) {
+    // Generate staring samples.
+    var samples = this.generate_starting_samples(ndir, num_samples_xy)
+    //console.log('num samples: ' + samples.length)
+    
+    // Scan from samples.
     var elem_wraps = []
     var elem_wrap_ids = []
-    for (var i=0; i<num_samples; i++) {
-        var x = this.page_box.left + i*delta
-        var start = new Point(x, start_y)
-        var end = new Point(x, end_y)
-        var elem_wrap = this.scan(getter, start, end)
-        if (elem_wrap && (elem_wrap_ids.indexOf(elem_wrap.get_id()) <0) && (elem_wrap.get_horizontal_overlap(this)>0)) {
-            // Sometimes elements will just touch along the left or right edges.
-            // The overlap will check above will skip these. We want to have at least some overlap.
-            elem_wraps.push(elem_wrap)
-            elem_wrap_ids.push(elem_wrap.get_id())
+    var distances = []
+    for (var i=0; i<samples.length; i++) {
+        //console.log('sample['+i+']: '+samples[i].x+','+samples[i].y)
+        var result = this.ray_cast(getter, samples[i], ndir)
+        var elem_wrap = result.ray_hit
+        if (elem_wrap) { //&& (elem_wrap.get_horizontal_overlap(this)>0)
+            // We check to make sure the dist is not zero.
+            // A dist of zero means that the element we're searching from is 
+            // touching or overlapping the element that got hit.
+            var dist = (result.ray_end.subtract(result.ray_start)).get_magnitude()
+            if (dist!=0) {
+                elem_wraps.push(elem_wrap)
+                elem_wrap_ids.push(elem_wrap.get_id())
+                distances.push(dist)
+            }
         }
     }
-    console.log('num elem wraps: ' + elem_wraps.length)
-}
-
-ElemWrap.prototype.shift_up = function(getter) {
-    var start_y = this.page_box.top
-    var end_y = 0
-    this.shift_vertical(getter, start_y, end_y)
-}
-
-ElemWrap.prototype.shift_down = function(getter) {
-    var start_y = this.page_box.bottom
-    var end_y = g_page_wrap.get_height()
-    this.shift_vertical(getter, start_y, end_y)
+    //console.log('num candidates: ' + elem_wraps.length)
+    
+    // Find the minimum distance of the elems.
+    var min_dist = Math.min(...distances)
+    
+    // First find all the ids around this min distance, within sigma.
+    var sigma = 1.0
+    var min_ids = []
+    for (var i=0; i<distances.length; i++) {
+        if (distances[i]<(min_dist-sigma) || distances[i] > min_dist+sigma) {
+            continue
+        }
+        if (min_ids.indexOf(elem_wrap_ids[i])<0) {
+            min_ids.push(elem_wrap_ids[i])
+        }
+    }
+    
+    // Now find the one with the most hits.
+    var max_hits = 0
+    var max_element = null
+    for (var i=0; i<min_ids.length; i++) {
+        var num_hits = 0
+        for (var j=0; j<elem_wrap_ids.length; j++) {
+            if (elem_wrap_ids[j] == min_ids[i]) {
+                num_hits += 1
+            }
+        } 
+        if (num_hits > max_hits) {
+            max_hits = num_hits
+            max_element = min_ids[i]
+        }
+    }
+    if (max_element) {
+        this.element = max_element
+        console.log('element shifted to: ' + this.get_xpath())
+        return true
+    }
+    return false
 }
 
 ElemWrap.prototype.shift = function(dir, wrap_type) {
+    //Number of ray cast string samples to take along the horizontal or vertical axis of this element.
+    var dim_samples = 11
+    
     // Find the proper getter for the type we're shifting to.
     var getter = null
     switch(wrap_type) {
@@ -365,23 +335,20 @@ ElemWrap.prototype.shift = function(dir, wrap_type) {
     }
     
     // Find the proper scanner for the direction we're searching in.
-    var scanner = null
     switch(dir) {
         case this.direction.left:
-            scanner = this.shift_left
+            this.shift_along_dir(getter, new Point(-1,0), new Point(0,dim_samples)) 
             break
         case this.direction.right: 
-            scanner = this.shift_right
+            this.shift_along_dir(getter, new Point(1,0), new Point(0,dim_samples)) 
             break
         case this.direction.up: 
-            scanner = this.shift_up
+            this.shift_along_dir(getter, new Point(0,-1), new Point(dim_samples,0)) 
             break
         case this.direction.down: 
-            scanner = this.shift_down
+            this.shift_along_dir(getter, new Point(0,1), new Point(dim_samples,0)) 
             break
     }
-    // Now call the function.
-    return scanner.call(this, getter)
 }
 
 //----------------------------------------------------------------------------------------
