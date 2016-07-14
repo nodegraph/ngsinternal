@@ -30,7 +30,7 @@ OverlaySets.prototype.find_set_index = function(page_x, page_y, marked=null) {
     // When there are multiple we get the first one which is not already marked.
     for (var i=0; i<this.sets.length; i++) {
         var set = this.sets[i]
-        if (set.contains_page_point(page_x, page_y)) {
+        if (set.contains_point(page_x, page_y)) {
             if (marked === null) {
                 return i
             }

@@ -15,22 +15,20 @@ PageBox.prototype.reset = function() {
     this.bottom = 0
 }
 
+PageBox.prototype.get_width = function() {
+    return this.right - this.left
+}
+
+PageBox.prototype.get_height = function() {
+    return this.bottom - this.top
+}
+
 PageBox.prototype.get_mid_x = function() {
     return (this.left + this.right) / 2.0
 }
 
 PageBox.prototype.get_mid_y = function() {
     return (this.top + this.bottom) /2.0
-}
-
-//Set the box to match the elements bounds.
-PageBox.prototype.set_from_elem_wrap = function(elem_wrap) {
-    if (elem_wrap) {
-        var rect = elem_wrap.get_client_rect()
-        this.set_from_client_rect(rect)
-    } else {
-        this.reset()
-    }
 }
 
 //Set the box to match the client rect but in page space.
@@ -54,9 +52,11 @@ PageBox.prototype.contains = function(inner) {
 }
 
 //Returns true if and only if we contain the given page point.
-PageBox.prototype.contains_page_point = function(page_x, page_y) {
-    if ((page_x >= this.left) && (page_x <= this.right) && 
-            (page_y >=this.top) && (page_y <= this.bottom)) {
+//Due the document.elementsFromPoint() precision on x and y,
+//we need to do a containment test with a sigma of 1.0 by default.
+PageBox.prototype.contains_point = function(page_x, page_y, sigma = 1.0) {
+    if ((page_x >= (this.left-sigma)) && (page_x <= (this.right+sigma)) && 
+            (page_y >=(this.top-sigma)) && (page_y <= (this.bottom+sigma))) {
         return true
     }
     return false

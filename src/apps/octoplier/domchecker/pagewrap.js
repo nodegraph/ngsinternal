@@ -110,6 +110,14 @@ PageWrap.prototype.get_visible_elem_wraps_at = function(page_x, page_y) {
       }
   }
   
+//  // Splice out any invisible elem wraps.
+//  for (var i=0; i<elem_wraps.length; i++) {
+//      if (!elem_wraps[i].is_visible()) {
+//          elem_wraps.splice(i,1)
+//          i -= 1
+//      }
+//  }
+  
   // Build xpath to find all svg elem wraps.
   var xpath = "//*[local-name() = 'svg']"
   var svgs = this.get_elem_wraps_by_xpath(xpath)
@@ -126,7 +134,7 @@ PageWrap.prototype.get_visible_elem_wraps_at = function(page_x, page_y) {
       }
       
       // Make sure the svg contains the page point.
-      if (!svg.contains_page_point(page_x, page_y)) {
+      if (!svg.contains_point(page_x, page_y)) {
           continue
       }
       

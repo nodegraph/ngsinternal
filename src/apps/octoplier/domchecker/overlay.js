@@ -55,9 +55,8 @@ Overlay.prototype.update_with_elem_wrap = function(elem_wrap) {
     this.update_dom_elements()
 }
 
-//Returns true if this overlay contains a page point.
-Overlay.prototype.contains = function(page_x, page_y) {
-    return this.elem_wrap.contains_page_point(page_x, page_y)
+Overlay.prototype.contains_point = function(page_x, page_y) {
+    return this.elem_wrap.contains_point(page_x, page_y)
 }
 
 //Mark the overlay with visual emphasis.
