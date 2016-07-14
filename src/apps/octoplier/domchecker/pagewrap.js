@@ -273,6 +273,14 @@ PageWrap.prototype.get_elem_wraps_by_values = function(getter, target_values) {
         }
     }
     
+    // Weed out any elem wraps which are not top most elements.
+    for (var i=0; i<results.length; i++) {
+        if (!results[i].is_topmost(getter)) {
+            results.splice(i,1)
+            i -= 1
+        }
+    }
+    
     // Phew we're done!
     return results
 }

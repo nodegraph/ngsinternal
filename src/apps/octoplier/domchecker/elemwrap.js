@@ -334,7 +334,7 @@ ElemWrap.prototype.shift = function(dir, wrap_type) {
             break
     }
     
-    // Find the proper scanner for the direction we're searching in.
+    // Scan in one of the 4 directions.
     switch(dir) {
         case this.direction.left:
             this.shift_along_dir(getter, new Point(-1,0), new Point(0,dim_samples)) 
