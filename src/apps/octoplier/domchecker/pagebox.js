@@ -144,3 +144,21 @@ PageBox.prototype.get_beam = function(side) {
     }
     return beam
 }
+
+//Returns a side value.
+PageBox.prototype.get_extreme = function(side) {
+    switch(side) {
+        case ElemWrap.prototype.direction.left:
+            return this.left
+        case ElemWrap.prototype.direction.right:
+            return this.right
+        case ElemWrap.prototype.direction.up:
+            return this.top
+        case ElemWrap.prototype.direction.down:
+            return this.bottom
+        default:
+            console.log("Error: PageBox.get_extreme(side) was given an unknown side argument: " + side)
+    }
+    return null
+}
+

@@ -4,11 +4,15 @@
 // selected by the user.
 
 var Overlay = function(class_name, color, color_index, elem_wrap=null) {
+    //Primary property.
+    this.elem_wrap = elem_wrap // Note the elem wrap is allowed to be null as well.
+    
+    //Other properties.
     this.marked = false
     this.color = color
     this.color_index = color_index
     this.enlarge = 0
-    this.elem_wrap = elem_wrap // Note the elem wrap is allowed to be null as well.
+    
     // Setup.
     this.create_dom_elements(class_name)
     this.update_dom_elements()

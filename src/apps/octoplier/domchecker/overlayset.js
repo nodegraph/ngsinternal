@@ -85,3 +85,78 @@ OverlaySet.prototype.expand = function(side, match_critera) {
         this.overlays.push(overlay)
     }
 }
+
+OverlaySet.prototype.get_beams = function(sides) {
+    var beams = []
+    for (var i=0; i<this.overlays.length; i++) {
+        console.log('+')
+        for (var j=0; j<sides.length; j++) {
+            console.log('*')
+            var beam = this.overlays[i].elem_wrap.page_box.get_beam(sides[j])
+            console.log('beam: ' + beam.get_as_string())
+            beams.push(beam)
+        }
+    }
+    return beams
+}
+
+OverlaySet.prototype.intersect_with_beams = function(beams) {
+    for (var i=0; i<this.overlays.length; i++) {
+        var intersects = false
+        for (var j=0; j<beams.length; j++) {
+            if (beams[j].intersects(this.overlays[i].elem_wrap.page_box)) {
+                intersects = true
+                break
+            }
+        }
+        if (!intersects) {
+            this.overlays[i].destroy()
+            this.overlays.splice(i,1)
+            i -= 1
+        }
+    }
+}
+
+OverlaySet.prototype.shrink_to_extreme = function(side) {
+    var extreme = null
+    var extreme_index = null
+    for (var i=0; i<this.overlays.length; i++) {
+        var overlay = this.overlays[i]
+        var page_box = overlay.elem_wrap.page_box
+        if (i == 0) {
+            // Initialize extreme values.
+            extreme = page_box.get_extreme(side)
+            extreme_index = 0
+        } else {
+            // Update extreme values.
+            var value = page_box.get_extreme(side)
+            if (value_is_more_extreme(value, extreme,side)) {
+                extreme = value
+                extreme_index = i
+            }
+        }
+    }
+    
+    // Create our next overlays array, which contains all the overlays at the extreme value.
+    var next_overlays = []
+    for (var i=0; i<this.overlays.length; i++) {
+        var overlay = this.overlays[i]
+        var page_box = overlay.elem_wrap.page_box
+        var value = page_box.get_extreme(side)
+        if (value == extreme) {
+            // Add to next overlays.
+            next_overlays.push(overlay)
+            // Splice our from current overlays.
+            this.overlays.splice(i,1)
+            i -= 1
+        }
+    }
+    
+    // Destroy all the other overlays.
+    for (var i=0; i<this.overlays.length; i++) {
+        this.overlays[i].destroy()
+    }
+    
+    // Update our overlays array.
+    this.overlays = next_overlays
+}

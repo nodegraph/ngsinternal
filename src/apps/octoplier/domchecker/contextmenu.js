@@ -34,14 +34,14 @@ ContextMenu.prototype.initialize = function() {
 
 ContextMenu.prototype.create_menu = function (top_menu) {
     // The find specific menu.
-    this.find_menu = this.add_sub_menu(top_menu, 'Find elements using info from mouse hover')
+    this.find_menu = this.add_sub_menu(top_menu, 'Create set using info from mouse hover')
     this.find_by_text = this.add_item(this.find_menu, 'text')
     this.find_by_image = this.add_item(this.find_menu, 'image')
     this.find_by_position = this.add_item(this.find_menu, 'position')
     this.find_by_xpath = this.add_item(this.find_menu, 'xpath')
     
     // The find all menu.
-    this.find_all_menu = this.add_sub_menu(top_menu, 'Find all elements by type')
+    this.find_all_menu = this.add_sub_menu(top_menu, 'Create set from elements of type')
     this.get_elem_wraps_with_inputs = this.add_item(this.find_all_menu, 'has an input (text field)')
     this.get_elem_wraps_with_selects = this.add_item(this.find_all_menu, 'has a select (drop down)')
     this.get_elem_wraps_with_text = this.add_item(this.find_all_menu, 'has text')
@@ -92,25 +92,24 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     this.add_spacer(top_menu)
     
     // Mark sets.
-    this.mark_set = this.add_item(this.top_menu, 'Mark set under mouse (LMB)')
-    this.unmark_set = this.add_item(this.top_menu, 'Unmark set under mouse (LMB)')
+    this.mark_set = this.add_item(this.top_menu, 'Mark set under mouse')
+    this.unmark_set = this.add_item(this.top_menu, 'Unmark set under mouse')
     
-    // The constrain menu.
-    this.constrain_menu = this.add_sub_menu(top_menu, 'Constrain set elements to marked set' )
-    this.constrain_above = this.add_item(this.constrain_menu, 'above marked set elements')
-    this.constrain_below = this.add_item(this.constrain_menu, 'below marked set elements')
-    this.constrain_above_and_below = this.add_item(this.constrain_menu, 'above and below marked set elements')
-    this.constrain_left = this.add_item(this.constrain_menu, 'left of marked set elements')
-    this.constrain_right = this.add_item(this.constrain_menu, 'right of marked set elements')
-    this.constrain_left_and_right = this.add_item(this.constrain_menu, 'left and right of makred set elements')
+    // The shrink to marked menu.
+    this.shrink_to_marked_menu = this.add_sub_menu(top_menu, 'Shrink sets w.r.t marked set' )
+    this.shrink_above_marked = this.add_item(this.shrink_to_marked_menu, 'above marked set element')
+    this.shrink_below_marked = this.add_item(this.shrink_to_marked_menu, 'below marked set elements')
+    this.shrink_above_and_below_marked = this.add_item(this.shrink_to_marked_menu, 'above and below marked set elements')
+    this.shrink_left_of_marked = this.add_item(this.shrink_to_marked_menu, 'left of marked set elements')
+    this.shrink_right_of_marked = this.add_item(this.shrink_to_marked_menu, 'right of marked set elements')
+    this.shrink_left_and_right_of_marked = this.add_item(this.shrink_to_marked_menu, 'left and right of marked set elements')
     
-    // Distance constraint menu.
-    this.distance_menu = this.add_sub_menu(top_menu, 'Constrain all elements by distance' )
-    this.distance_closest = this.add_item(this.distance_menu, 'closest elements from each set')
-    this.distance_closest = this.add_item(this.distance_menu, 'topmost element')
-    this.distance_closest = this.add_item(this.distance_menu, 'bottommost element')
-    this.distance_closest = this.add_item(this.distance_menu, 'leftmost element')
-    this.distance_closest = this.add_item(this.distance_menu, 'rightmost element')
+    // The shrink down all sets menu.
+    this.shrink_all_menu = this.add_sub_menu(top_menu, 'Shrink sets to' )
+    this.shrink_all_topmost = this.add_item(this.shrink_all_menu, 'topmost elements')
+    this.shrink_all_bottommost= this.add_item(this.shrink_all_menu, 'bottommost elements')
+    this.shrink_all_leftmost = this.add_item(this.shrink_all_menu, 'leftmost elements')
+    this.shrink_all_rightmost = this.add_item(this.shrink_all_menu, 'rightmost elements')
     
     // Spacer.
     this.spacer = this.add_spacer(this.top_menu)
@@ -293,6 +292,30 @@ ContextMenu.prototype.on_click = function(menu_event) {
         g_overlay_sets.add_set(new OverlaySet([top_element]))
     } 
     
+//  // Find all vertical scroll bars.
+//  else if (this.get_elem_wraps_with_vertical_scroll_bars.contains(menu_target)){
+//      var elem_wraps = g_page_wrap.get_elem_wraps_with_vertical_scroll_bars()
+//      var msg = "Find elem_wraps with v scroll bars: " + elem_wraps.length
+//      console.log(msg)
+//      g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+//  }    
+  
+//  // Find all horizontal scroll bars.
+//  else if (this.get_elem_wraps_with_horizontal_scroll_bars.contains(menu_target)){
+//      var elem_wraps = g_page_wrap.get_elem_wraps_with_horizontal_scroll_bars()
+//      var msg = "Find elem_wraps with h scroll bars: " + elem_wraps.length
+//      console.log(msg)
+//      g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+//  }    
+  
+//  // Find any scroll bars.
+//  else if (this.get_elem_wraps_with_any_scroll_bars.contains(menu_target)){
+//      var elem_wraps = g_page_wrap.get_elem_wraps_with_any_scroll_bars()
+//      var msg = "Find elem_wraps with any scroll bars: " + elem_wraps.length
+//      console.log(msg)
+//      g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+//  }   
+    
     // --------------------------------------------------------------
     // Find all.
     // --------------------------------------------------------------
@@ -400,23 +423,9 @@ ContextMenu.prototype.on_click = function(menu_event) {
     else if (this.shift_right_by_select.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.select)
     }
-    
+        
     // --------------------------------------------------------------
-    // Constrain elements.
-    // --------------------------------------------------------------
-    
-    // Mark set.
-    else if (this.mark_set.contains(menu_target)) {
-        g_overlay_sets.mark(this.page_x, this.page_y)
-    } 
-    
-    // Unmark set.
-    else if (this.unmark_set.contains(menu_target)) {
-        g_overlay_sets.unmark(this.page_x, this.page_y)
-    } 
-    
-    // --------------------------------------------------------------
-    // Expand element sets.
+    // Expand to similar elements.
     // --------------------------------------------------------------
     
     // Expand above.
@@ -438,7 +447,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     // Expand left.
     else if (this.expand_left.contains(menu_target)) {
         match_criteria = new MatchCriteria()
-        match_criteria.match_bottom = true
+        match_criteria.match_top = true
         match_criteria.match_font = true
         match_criteria.match_font_size = true
         g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.left, match_criteria)
@@ -446,46 +455,79 @@ ContextMenu.prototype.on_click = function(menu_event) {
     // Expand right.
     else if (this.expand_right.contains(menu_target)) {
         match_criteria = new MatchCriteria()
-        match_criteria.match_bottom = true
+        match_criteria.match_top = true
         match_criteria.match_font = true
         match_criteria.match_font_size = true
         g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.right, match_criteria)
     }
     
-//    // Find all vertical scroll bars.
-//    else if (this.get_elem_wraps_with_vertical_scroll_bars.contains(menu_target)){
-//        var elem_wraps = g_page_wrap.get_elem_wraps_with_vertical_scroll_bars()
-//        var msg = "Find elem_wraps with v scroll bars: " + elem_wraps.length
-//        console.log(msg)
-//        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
-//    }    
+    // --------------------------------------------------------------
+    // Shrink w.r.t. marked sets.
+    // --------------------------------------------------------------
     
-//    // Find all horizontal scroll bars.
-//    else if (this.get_elem_wraps_with_horizontal_scroll_bars.contains(menu_target)){
-//        var elem_wraps = g_page_wrap.get_elem_wraps_with_horizontal_scroll_bars()
-//        var msg = "Find elem_wraps with h scroll bars: " + elem_wraps.length
-//        console.log(msg)
-//        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
-//    }    
+    // Mark set.
+    else if (this.mark_set.contains(menu_target)) {
+        g_overlay_sets.mark(this.page_x, this.page_y)
+    } 
     
-//    // Find any scroll bars.
-//    else if (this.get_elem_wraps_with_any_scroll_bars.contains(menu_target)){
-//        var elem_wraps = g_page_wrap.get_elem_wraps_with_any_scroll_bars()
-//        var msg = "Find elem_wraps with any scroll bars: " + elem_wraps.length
-//        console.log(msg)
-//        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
-//    }    
+    // Unmark set.
+    else if (this.unmark_set.contains(menu_target)) {
+        g_overlay_sets.unmark(this.page_x, this.page_y)
+    } 
+    
+    else if (this.shrink_above_marked.contains(menu_target)) {
+        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up])
+    }
+    
+    else if (this.shrink_below_marked.contains(menu_target)) {
+        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.down])
+    }
+    
+    else if (this.shrink_above_and_below_marked.contains(menu_target)) {
+        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up, ElemWrap.prototype.direction.down])
+    }
+    
+    else if (this.shrink_left_of_marked.contains(menu_target)) {
+        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.left])
+    }
+    
+    else if (this.shrink_right_of_marked.contains(menu_target)) {
+        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.right])
+    }
+    
+    else if (this.shrink_left_and_right_of_marked.contains(menu_target)) {
+        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.left, ElemWrap.prototype.direction.right])
+    }
+    
+    // --------------------------------------------------------------
+    // Shrink all.
+    // --------------------------------------------------------------
+    
+    else if (this.shrink_all_topmost.contains(menu_target)) {
+        g_overlay_sets.shrink_to_extreme(this.page_x, this.page_y, ElemWrap.prototype.direction.up)
+    }
+    
+    else if (this.shrink_all_bottommost.contains(menu_target)) {
+        g_overlay_sets.shrink_to_extreme(this.page_x, this.page_y, ElemWrap.prototype.direction.down)
+    }
+    
+    else if (this.shrink_all_leftmost.contains(menu_target)) {
+        g_overlay_sets.shrink_to_extreme(this.page_x, this.page_y, ElemWrap.prototype.direction.left)
+    }
+    
+    else if (this.shrink_all_rightmost.contains(menu_target)) {
+        g_overlay_sets.shrink_to_extreme(this.page_x, this.page_y, ElemWrap.prototype.direction.right)
+    }
+    
+    // --------------------------------------------------------------
+    // Other.
+    // --------------------------------------------------------------
     
     // Delete set.
     else if (this.delete_set.contains(menu_target)) {
         g_overlay_sets.destroy_set(this.page_x, this.page_y)
     }
     
-    // Find by position.
-    else if (this.find_by_position.contains(menu_target)) {
-        var msg = "Find elem_wraps with position, " + this.position
-        console.log(msg)
-    }
     document.removeEventListener('click', this.on_click_bound, true);
     
     // Remove previous overlays.

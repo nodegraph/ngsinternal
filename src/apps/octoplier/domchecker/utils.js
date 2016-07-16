@@ -24,6 +24,34 @@ function find_in_array_by_property(array, attr, value) {
     return -1
 }
 
+function value_is_more_extreme(value, extreme, side) {
+    switch(side) {
+        case ElemWrap.prototype.direction.left:
+            if (value < extreme) {
+                return true
+            }
+            break
+        case ElemWrap.prototype.direction.right:
+            if (value > extreme) {
+                return true
+            }
+            break
+        case ElemWrap.prototype.direction.up:
+            if (value < extreme) {
+                return true
+            }
+            break
+        case ElemWrap.prototype.direction.down:
+            if (value > extreme) {
+                return true
+            }
+            break
+        default:
+            console.log("Error: value_is_more_extreme(value, extreme, side) was given an unknown side argument")
+    }
+    return false
+}
+
 //----------------------------------------------------------------------------------------
 //String Processing.
 //----------------------------------------------------------------------------------------
