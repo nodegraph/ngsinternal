@@ -55,40 +55,38 @@ ContextMenu.prototype.create_menu = function (top_menu) {
 
     // The shift elements menu.
     this.shift_to_text_menu = this.add_sub_menu(top_menu, 'Shift set elements to text')
-    this.shift_down_by_text = this.add_item(this.shift_to_text_menu, 'below')
     this.shift_up_by_text = this.add_item(this.shift_to_text_menu, 'above')
+    this.shift_down_by_text = this.add_item(this.shift_to_text_menu, 'below')
     this.shift_left_by_text = this.add_item(this.shift_to_text_menu, 'on left')
     this.shift_right_by_text = this.add_item(this.shift_to_text_menu, 'on right')
     
-    this.shift_to_image_menu = this.add_sub_menu(top_menu, 'Shift set elements to image')
-    this.shift_down_by_image = this.add_item(this.shift_to_image_menu, 'below')
+    this.shift_to_image_menu = this.add_sub_menu(top_menu, 'Shift set elements to images')
     this.shift_up_by_image = this.add_item(this.shift_to_image_menu, 'above')
+    this.shift_down_by_image = this.add_item(this.shift_to_image_menu, 'below')
     this.shift_left_by_image = this.add_item(this.shift_to_image_menu, 'on left')
     this.shift_right_by_image = this.add_item(this.shift_to_image_menu, 'on right')
     
-    this.shift_to_input_menu = this.add_sub_menu(top_menu, 'Shift set elements to input')
-    this.shift_down_by_input = this.add_item(this.shift_to_input_menu, 'below')
+    this.shift_to_input_menu = this.add_sub_menu(top_menu, 'Shift set elements to inputs')
     this.shift_up_by_input = this.add_item(this.shift_to_input_menu, 'above')
+    this.shift_down_by_input = this.add_item(this.shift_to_input_menu, 'below')
     this.shift_left_by_input = this.add_item(this.shift_to_input_menu, 'on left')
     this.shift_right_by_input = this.add_item(this.shift_to_input_menu, 'on right')
-    
-    this.shift_to_selector_menu = this.add_sub_menu(top_menu, 'Shift set elements to selector')
-    this.shift_down_by_selector = this.add_item(this.shift_to_selector_menu, 'below')
-    this.shift_up_by_selector = this.add_item(this.shift_to_selector_menu, 'above')
-    this.shift_left_by_selector = this.add_item(this.shift_to_selector_menu, 'on left')
-    this.shift_right_by_selector = this.add_item(this.shift_to_selector_menu, 'on right')
+
+    this.shift_to_selector_menu = this.add_sub_menu(top_menu, 'Shift set elements to selects')
+    this.shift_up_by_select = this.add_item(this.shift_to_selector_menu, 'above')
+    this.shift_down_by_select = this.add_item(this.shift_to_selector_menu, 'below')
+    this.shift_left_by_select = this.add_item(this.shift_to_selector_menu, 'on left')
+    this.shift_right_by_select = this.add_item(this.shift_to_selector_menu, 'on right')
     
     // Spacer.
     this.add_spacer(top_menu)
         
     // The expand menu.
     this.expand_menu = this.add_sub_menu(top_menu, 'Expand set to similar elements')
-    this.expand_above = this.add_item(this.expand_menu, 'above us')
-    this.expand_below = this.add_item(this.expand_menu, 'below us')
-    this.expand_above_and_below = this.add_item(this.expand_menu, 'above and below us')
-    this.expand_left = this.add_item(this.expand_menu, 'to the left of us')
-    this.expand_right = this.add_item(this.expand_menu, 'to the right of us')
-    this.expand_left_and_right = this.add_item(this.expand_menu, 'to the left and right of us')
+    this.expand_above = this.add_item(this.expand_menu, 'above')
+    this.expand_below = this.add_item(this.expand_menu, 'below')
+    this.expand_left = this.add_item(this.expand_menu, 'on left')
+    this.expand_right = this.add_item(this.expand_menu, 'on right')
     
     // Spacer.
     this.add_spacer(top_menu)
@@ -246,12 +244,14 @@ ContextMenu.prototype.on_click = function(menu_event) {
         console.log('element xpath: ' + this.text_element.get_xpath())
         console.log('text values: ' + JSON.stringify(text_values))
         // Check that we can find it too.
-        var elements = g_page_wrap.get_elem_wraps_by_text_values(text_values)
-        console.log('found num elements: ' + elements.length)
-        for (var i=0; i<elements.length; i++) {
-            console.log('xpath ['+i+']: ' + elements[i].get_xpath())
+        var elem_wraps = g_page_wrap.get_elem_wraps_by_text_values(text_values)
+        console.log('found num elem_wraps: ' + elem_wraps.length)
+        for (var i=0; i<elem_wraps.length; i++) {
+            console.log('xpath ['+i+']: ' + elem_wraps[i].get_xpath())
+            var elem_cache = new ElemCache(elem_wraps[i])
+            console.log('scrolls: ' + elem_cache.scroll_amounts)
         }
-        g_overlay_sets.add_set(new OverlaySet(elements))
+        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
     } 
     
     // Find by image.
@@ -385,19 +385,19 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     // Select.
-    else if (this.shift_up_by_selector.contains(menu_target)) {
+    else if (this.shift_up_by_select.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.select)
     }
     
-    else if (this.shift_down_by_selector.contains(menu_target)) {
+    else if (this.shift_down_by_select.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.select)
     }
     
-    else if (this.shift_left_by_selector.contains(menu_target)) {
+    else if (this.shift_left_by_select.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.left, ElemWrap.prototype.wrap_type.select)
     }
     
-    else if (this.shift_right_by_selector.contains(menu_target)) {
+    else if (this.shift_right_by_select.contains(menu_target)) {
         g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.select)
     }
     
@@ -415,7 +415,42 @@ ContextMenu.prototype.on_click = function(menu_event) {
         g_overlay_sets.unmark(this.page_x, this.page_y)
     } 
     
-
+    // --------------------------------------------------------------
+    // Expand element sets.
+    // --------------------------------------------------------------
+    
+    // Expand above.
+    else if (this.expand_above.contains(menu_target)) {
+        match_criteria = new MatchCriteria()
+        match_criteria.match_left = true
+        match_criteria.match_font = true
+        match_criteria.match_font_size = true
+        g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.up, match_criteria)
+    }
+    // Expand below.
+    else if (this.expand_below.contains(menu_target)) {
+        match_criteria = new MatchCriteria()
+        match_criteria.match_left = true
+        match_criteria.match_font = true
+        match_criteria.match_font_size = true
+        g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.down, match_criteria)
+    }
+    // Expand left.
+    else if (this.expand_left.contains(menu_target)) {
+        match_criteria = new MatchCriteria()
+        match_criteria.match_bottom = true
+        match_criteria.match_font = true
+        match_criteria.match_font_size = true
+        g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.left, match_criteria)
+    }
+    // Expand right.
+    else if (this.expand_right.contains(menu_target)) {
+        match_criteria = new MatchCriteria()
+        match_criteria.match_bottom = true
+        match_criteria.match_font = true
+        match_criteria.match_font_size = true
+        g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.right, match_criteria)
+    }
     
 //    // Find all vertical scroll bars.
 //    else if (this.get_elem_wraps_with_vertical_scroll_bars.contains(menu_target)){

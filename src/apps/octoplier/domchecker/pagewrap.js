@@ -160,21 +160,43 @@ PageWrap.prototype.get_visible_elem_wraps_at = function(page_x, page_y) {
   return elem_wraps
 }
 
-//Returns an array of element_wrappers with the given xpath.
+//Returns an array of elem wraps with the given xpath.
 PageWrap.prototype.get_elem_wraps_by_xpath = function(xpath) {
   var set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
   // Convert to elem wraps.
   var elem_wraps = []
   for (var i=0; i<set.snapshotLength; i++) {
-      elem_wraps.push(new ElemWrap(set.snapshotItem(i)))
+      var element = set.snapshotItem(i)
+      // *Important!* We weed out any context menu hits here.
+      if (g_context_menu.element_is_part_of_menu(element)) {
+          continue
+      }
+      elem_wraps.push(new ElemWrap(element))
   }
   return elem_wraps
 }
 
+//Returns an array of all the elem wraps.
+PageWrap.prototype.get_all_elem_wraps = function() {
+    var xpath = "//*";
+    return this.get_elem_wraps_by_xpath(xpath)
+}
+
+//Returns all elem wraps which intersect with the given box.
+PageWrap.prototype.get_all_elem_wraps_intersecting_page_box = function(page_box) {
+    var intersecting = []
+    var elem_wraps = this.get_all_elem_wraps()
+    for (var i=0; i<elem_wraps.length; i++) {
+        if (page_box.intersects(elem_wraps[i].page_box)) {
+            intersecting.push(elem_wraps[i])
+        }
+    }
+    return intersecting
+}
+
 PageWrap.prototype.get_elem_wraps_by_any_value = function(getter, target_values) {
-    // Build xpath to find all elem wraps.
-    var xpath = "//*"
-    var elem_wraps = this.get_elem_wraps_by_xpath(xpath)
+    // Get all elem wraps.
+    var elem_wraps = this.get_all_elem_wraps()
     
     // Loop over the elem wraps.
     var wrapper = null
@@ -182,7 +204,7 @@ PageWrap.prototype.get_elem_wraps_by_any_value = function(getter, target_values)
     var matches = []
     for (var i=0; i<elem_wraps.length; i++) {
         wrapper = elem_wraps[i]
-        
+                
         // Make sure the wrapper is visible.
         if (!wrapper.is_visible()) {
             continue
@@ -351,17 +373,38 @@ PageWrap.prototype.get_first_elem_wrap_at = function(getter, page_x, page_y) {
 
 //Returns the top elem wrap with text, according to z-order.
 PageWrap.prototype.get_top_text_elem_wrap_at = function(page_x, page_y) {
-    return this.get_first_elem_wrap_at(ElemWrap.prototype.get_text, page_x, page_y)
+    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_text, page_x, page_y)
+    if (!candidate) {
+        return null
+    }
+    if (candidate.is_topmost(ElemWrap.prototype.get_text)) {
+        return candidate
+    }
+    return null
 }
 
 //Returns the top elem wrap with an image, according to z-order.
 PageWrap.prototype.get_top_image_elem_wrap_at = function(page_x, page_y) {
-    return this.get_first_elem_wrap_at(ElemWrap.prototype.get_image, page_x, page_y)
+    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_image, page_x, page_y)
+    if (!candidate) {
+        return null
+    }
+    if (candidate.is_topmost(ElemWrap.prototype.get_image)) {
+        return candidate
+    }
+    return null
 }
 
 // Returns the top elem wrap with either and image or text, according to z-order.
 PageWrap.prototype.get_top_text_or_image_elem_wrap_at = function(page_x, page_y) {
-    return this.get_first_elem_wrap_at(ElemWrap.prototype.get_text_or_image, page_x, page_y)
+    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_text_or_image, page_x, page_y)
+    if (!candidate) {
+        return null
+    }
+    if (candidate.is_topmost(ElemWrap.prototype.get_text_or_image)) {
+        return candidate
+    }
+    return null
 }
 
 //---------------------------------------------------------------------------------

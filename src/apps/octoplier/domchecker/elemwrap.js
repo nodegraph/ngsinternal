@@ -39,6 +39,23 @@ ElemWrap.prototype.update = function() {
     this.page_box.set_from_client_rect(this.get_client_rect())
 }
 
+// Get our wrap type.
+ElemWrap.prototype.get_wrap_type = function() {
+    if (this.get_text()) {
+        return this.wrap_type.text
+    }
+    if (this.get_image()) {
+        return this.wrap_type.image
+    }
+    if (this.is_input()) {
+        return this.wrap_type.input
+    }
+    if (this.is_select()) {
+        return this.wrap_type.select
+    }
+    return -1
+}
+
 //----------------------------------------------------------------------------------------
 //Element geometry.
 //----------------------------------------------------------------------------------------
@@ -173,151 +190,45 @@ ElemWrap.prototype.is_topmost = function(getter, min_coverage = 0.9, num_samples
     return false
 }
 
-//Scan a line from start in direction ndir, looking for the next element using the specified getter.
-//- start is the start point of the ray
-//- ndir is the normalized direction of the ray
-//- a hit is found when a top element is found. A top element has no other elements on top of it.
-//  so start should general generally start off of any top element you're starting to scan from.
-ElemWrap.prototype.ray_cast = function(getter, start, ndir, scan_speed = 1.0) {
-    // Determine our delta.
-    var delta = new Point(ndir)
-    delta.multiply_elements(scan_speed)
+// Returns the next topmost element on one side of us.
+ElemWrap.prototype.get_neighboring_elem_wrap = function(getter, side) {
+    var beam = this.page_box.get_beam(side)
     
-    // This makes sure the hit is not the same as us.
-    var ids_seen = [this.get_id()]
+    // Get all elem wraps intersecting the beam.
+    var elem_wraps = g_page_wrap.get_all_elem_wraps_intersecting_page_box(beam)
     
-    // Start loop.
-    var page_bounds = g_page_wrap.get_bounds()
-    var pos = new Point(start)
-    while (page_bounds.contains_point(pos.x, pos.y)) {
-        var elem_wrap = g_page_wrap.get_first_elem_wrap_at(getter, pos.x, pos.y)
-        // Make sure the hit element is not ourself, and that it doesn't contain us.
-        if (elem_wrap && (ids_seen.indexOf(elem_wrap.get_id())<0) && (!elem_wrap.contains(this)) ) {
-            ids_seen.push(elem_wrap.get_id())
-            if (elem_wrap.is_topmost(getter)) {
-                return {ray_hit: elem_wrap, ray_start: start, ray_end: pos}
-            }
-        }
-        // Increment y.
-        pos.increment(delta)
-    }
-    return {ray_hit: null, ray_start: null, ray_end: null}
-}
-
-//Generates samples within this element along a line passing through the middle
-//of this element. num_samples_xy is point with the number of x and y samples.
-ElemWrap.prototype.generate_starting_samples = function(ndir, num_samples_xy) {
-    var samples = []
-    if (ndir.y != 0) {
-        // Generate horizontal samples.
-        var delta = new Point(this.page_box.get_width() / (num_samples_xy.x -1), 0)
-        var pos = null
-        if (ndir.y > 0) {
-            // scanning down
-            pos = new Point(this.page_box.left, this.page_box.bottom)
-        } else {
-            // scanning up
-            pos = new Point(this.page_box.left, this.page_box.top)
-        }
-        for (var i=0; i<num_samples_xy.x; i++) {
-            samples.push(new Point(pos))
-            pos.increment(delta)
+    // Select out those elem wraps returning any value with getter.
+    var candidates = []
+    for (var i=0; i<elem_wraps.length; i++) {
+        var value = getter.call(elem_wraps[i])
+        if (value) {
+            candidates.push(elem_wraps[i])
         }
     }
-    if (ndir.x != 0) {
-        // Generate vertical samples.
-        var delta = new Point(0, this.page_box.get_height() / (num_samples_xy.y -1))
-        var pos = null
-        if (ndir.x > 0) {
-            // scanning right
-            pos = new Point(this.page_box.right, this.page_box.top)
-        } else {
-            // scanning left
-            pos = new Point(this.page_box.left, this.page_box.top)
-        }
-        for (var i=0; i<num_samples_xy.y; i++) {
-            samples.push(new Point(pos))
-            pos.increment(delta)
-        }
-    }
-    // Note: the corner where the x and y samples meet is duplicated.
-    // This shouldn't cause any real inaccuracies except for a tiny bit of extra work.
-    return samples
-}
-
-// This will shift our element to next matching element according to the getter.
-// The samples will be taken along the horizontal or vertical axis of the element,
-// depending on which direction is more orthogonal to the scanning dir = (end - start).
-ElemWrap.prototype.shift_along_dir = function(getter, ndir, num_samples_xy) {
-    // Generate staring samples.
-    var samples = this.generate_starting_samples(ndir, num_samples_xy)
-    //console.log('num samples: ' + samples.length)
     
-    // Scan from samples.
-    var elem_wraps = []
-    var elem_wrap_ids = []
-    var distances = []
-    for (var i=0; i<samples.length; i++) {
-        //console.log('sample['+i+']: '+samples[i].x+','+samples[i].y)
-        var result = this.ray_cast(getter, samples[i], ndir)
-        var elem_wrap = result.ray_hit
-        if (elem_wrap) { //&& (elem_wrap.get_horizontal_overlap(this)>0)
-            // We check to make sure the dist is not zero.
-            // A dist of zero means that the element we're searching from is 
-            // touching or overlapping the element that got hit.
-            var dist = (result.ray_end.subtract(result.ray_start)).get_magnitude()
-            if (dist!=0) {
-                elem_wraps.push(elem_wrap)
-                elem_wrap_ids.push(elem_wrap.get_id())
-                distances.push(dist)
+    // Find the closest candidate to us.
+    var min_dist = 99999999
+    var min_candidate = null
+    for (var i=0; i<candidates.length; i++) {
+        var dist = candidates[i].page_box.is_oriented_on(side,this.page_box)
+        // A dist greater than zero means it's properly oriented.
+        if (dist > 0) {
+            // Is this closer than any other candidate.
+            if (!min_candidate || dist < min_dist) {
+                // Finally make sure this is a top most element, that the user can actually interact with.
+                if (candidates[i].is_topmost(getter)) {
+                    min_candidate = candidates[i]
+                    min_dist = dist
+                }
             }
         }
     }
-    //console.log('num candidates: ' + elem_wraps.length)
     
-    // Find the minimum distance of the elems.
-    var min_dist = Math.min(...distances)
-    
-    // First find all the ids around this min distance, within sigma.
-    var sigma = 1.0
-    var min_ids = []
-    for (var i=0; i<distances.length; i++) {
-        if (distances[i]<(min_dist-sigma) || distances[i] > min_dist+sigma) {
-            continue
-        }
-        if (min_ids.indexOf(elem_wrap_ids[i])<0) {
-            min_ids.push(elem_wrap_ids[i])
-        }
-    }
-    
-    // Now find the one with the most hits.
-    var max_hits = 0
-    var max_element = null
-    for (var i=0; i<min_ids.length; i++) {
-        var num_hits = 0
-        for (var j=0; j<elem_wrap_ids.length; j++) {
-            if (elem_wrap_ids[j] == min_ids[i]) {
-                num_hits += 1
-            }
-        } 
-        if (num_hits > max_hits) {
-            max_hits = num_hits
-            max_element = min_ids[i]
-        }
-    }
-    if (max_element) {
-        this.element = max_element
-        console.log('element shifted to: ' + this.get_xpath())
-        return true
-    }
-    return false
+    // Return our result.
+    return min_candidate
 }
 
-ElemWrap.prototype.shift = function(dir, wrap_type) {
-    //Number of ray cast string samples to take along the horizontal or vertical axis of this element.
-    var dim_samples = 11
-    
-    // Find the proper getter for the type we're shifting to.
+ElemWrap.prototype.get_getter = function(wrap_type) {
     var getter = null
     switch(wrap_type) {
         case this.wrap_type.text:
@@ -333,27 +244,76 @@ ElemWrap.prototype.shift = function(dir, wrap_type) {
             getter = this.is_select
             break
     }
-    
-    // Scan in one of the 4 directions.
-    switch(dir) {
-        case this.direction.left:
-            this.shift_along_dir(getter, new Point(-1,0), new Point(0,dim_samples)) 
-            break
-        case this.direction.right: 
-            this.shift_along_dir(getter, new Point(1,0), new Point(0,dim_samples)) 
-            break
-        case this.direction.up: 
-            this.shift_along_dir(getter, new Point(0,-1), new Point(dim_samples,0)) 
-            break
-        case this.direction.down: 
-            this.shift_along_dir(getter, new Point(0,1), new Point(dim_samples,0)) 
-            break
+    return getter
+}
+
+ElemWrap.prototype.shift = function(dir, wrap_type) {
+    // Find the proper getter for the type we're shifting to.
+    var getter = this.get_getter(wrap_type)
+    var elem_wrap = this.get_neighboring_elem_wrap(getter, dir)
+    if (elem_wrap) {
+        this.element = elem_wrap.element
+        console.log('element shifted to: ' + this.get_xpath())
     }
 }
+
+
+//Returns the next topmost element on one side of us.
+ElemWrap.prototype.get_similar_neighbors = function(side, match_criteria) {
+    var beam = this.page_box.get_beam(side)
+    
+    // Get all elem wraps intersecting the beam.
+    var elem_wraps = g_page_wrap.get_all_elem_wraps_intersecting_page_box(beam)
+    //console.log('num elem wraps: ' + elem_wraps.length)
+    
+    // Select out those elem wraps returning any value with getter.
+    var getter = this.get_getter(this.get_wrap_type())
+    var candidates = []
+    for (var i=0; i<elem_wraps.length; i++) {
+        var value = getter.call(elem_wraps[i])
+        if (value) {
+            candidates.push(elem_wraps[i])
+        }
+    }
+    //console.log('num candidates: ' + candidates.length)
+    
+    // Find the candidates which match us.
+    var matches = []
+    for (var i=0; i<candidates.length; i++) {
+        if (match_criteria.matches(this, candidates[i])) {
+            matches.push(candidates[i])
+        }
+    }
+    //console.log('num matches: ' + matches.length)
+    
+    // Return our result.
+    return matches
+}
+
 
 //----------------------------------------------------------------------------------------
 //Element Behavioral Properties.
 //----------------------------------------------------------------------------------------
+
+ElemWrap.prototype.get_scroll_amount = function() {
+    return this.element.scrollTop
+}
+
+ElemWrap.prototype.set_scroll_amount = function(amount) {
+    this.element.scrollTop = amount
+}
+
+ElemWrap.prototype.get_scroll_amounts = function() {
+    var bars = this.get_parenting_scroll_bars()
+    console.log("num parenting bars: " + bars.length)
+    var amounts = []
+    for (var i=0; i<bars.length; i++) {
+        var scroll = bars[i].get_scroll_amount()
+        console.log('scroll: ' + scroll)
+        amounts.push(scroll)
+    }
+    return amounts
+}
 
 //Returns true if the element has horizontal scroll bars.
 ElemWrap.prototype.has_horizontal_scroll_bar = function() {
@@ -420,21 +380,24 @@ ElemWrap.prototype.get_parent = function() {
 
 //Returns a parent elem wrap with scrollbars, if one exists.
 //Otherwise returns null.
-ElemWrap.prototype.get_parent_with_scroll_bars = function() {
+ElemWrap.prototype.get_parenting_scroll_bars = function() {
+    var elem_wraps = []
     var parent = this.get_parent()
     while (parent) {
-        // If we hit the top document body, we return that.
-        // We consider it to have scroll bars even if it doesn't.
+        // If we hit the top document.body, we're done because our
+        // overlays divs are children of document.body and they will automatically
+        // scroll with document.body, when the browser's scroll bars on the right
+        // of the browser are used.
         if (parent.element == document.body) {
-            return parent
+            return elem_wraps
         }
         // If we find any scroll bars, we've found it.
         if (parent.has_horizontal_scroll_bar() || (parent.has_vertical_scroll_bar())) {
-            return parent
+            elem_wraps.push(parent)
         }
         parent = parent.get_parent()
     }
-    return parent
+    return elem_wraps
 }
 
 //----------------------------------------------------------------------------------------

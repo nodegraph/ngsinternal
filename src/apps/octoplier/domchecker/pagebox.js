@@ -1,7 +1,14 @@
 //This class represents a box in page space, not client rect space.
-var PageBox = function(client_rect) {
-    if (client_rect) {
-        this.set_from_client_rect(client_rect)
+var PageBox = function(rect = null) {
+    if (rect == null) {
+        this.reset()
+    } else if (Object.getPrototypeOf(rect) === PageBox.prototype) {
+        this.left = rect.left
+        this.right = rect.right
+        this.top = rect.top
+        this.bottom = rect.bottom
+    } else if(Object.getPrototypeOf(rect) === ClientRect.prototype) {
+        this.set_from_client_rect(rect)
     } else {
         this.reset()
     } 
@@ -13,6 +20,15 @@ PageBox.prototype.reset = function() {
     this.right = 0
     this.top = 0
     this.bottom = 0
+}
+
+PageBox.prototype.get_as_string = function() {
+    var msg = this.left + ',' + this.right + ',' + this.top + ',' + this.bottom
+    return msg
+}
+
+PageBox.prototype.get_center = function() {
+    return new Point(this.get_mid_x(), this.get_mid_y())
 }
 
 PageBox.prototype.get_width = function() {
@@ -74,4 +90,57 @@ PageBox.prototype.intersects = function(other) {
         return false
     }
     return true
+}
+
+//Returns true if this page box is on one side of another page box.
+PageBox.prototype.is_oriented_on = function(side, of) {
+    switch(side) {
+        case ElemWrap.prototype.direction.left:
+            if ((this.left < of.left) && (this.right < of.right)) {
+                return of.right - this.right
+            }
+            break
+        case ElemWrap.prototype.direction.right:
+            if ((this.left > of.left) && (this.right > of.right)) {
+                return this.left - of.left
+            }
+            break
+        case ElemWrap.prototype.direction.up:
+            if ((this.top < of.top) && (this.bottom < of.bottom)) {
+                return of.bottom - this.bottom
+            }
+            break
+        case ElemWrap.prototype.direction.down:
+            if ((this.top > of.top) && (this.bottom > of.bottom)) {
+                return this.top - of.top
+            }
+            break
+    }
+    return 0
+}
+
+//Returns a beam to one side of us.
+PageBox.prototype.get_beam = function(side) {
+    var beam = new PageBox(this)
+    switch(side) {
+        case ElemWrap.prototype.direction.left:
+            beam.right = beam.left
+            beam.left = 0
+            break
+        case ElemWrap.prototype.direction.right:
+            beam.left = beam.right
+            beam.right = g_page_wrap.get_width()
+            break
+        case ElemWrap.prototype.direction.up:
+            beam.bottom = beam.top
+            beam.top = 0
+            break
+        case ElemWrap.prototype.direction.down:
+            beam.top = beam.bottom
+            beam.bottom = g_page_wrap.get_height()
+            break
+        default:
+            console.log('Error: get_beam was passed an invalid side argument')
+    }
+    return beam
 }

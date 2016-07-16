@@ -77,12 +77,22 @@ OverlaySets.prototype.destroy_set = function(page_x, page_y) {
 }
 
 //Shift.
-OverlaySets.prototype.shift = function(page_x, page_y, dir, wrap_type) {
+OverlaySets.prototype.shift = function(page_x, page_y, side, wrap_type) {
     var set_index = this.find_set_index(page_x, page_y, null)
     if (set_index < 0) {
         return
     }
-    this.sets[set_index].shift(dir, wrap_type)
+    this.sets[set_index].shift(side, wrap_type)
+    this.sets[set_index].update()
+}
+
+// Expand.
+OverlaySets.prototype.expand = function(page_x, page_y, side, match_criteria) {
+    var set_index = this.find_set_index(page_x, page_y, null)
+    if (set_index < 0) {
+        return
+    }
+    this.sets[set_index].expand(side, match_criteria)
     this.sets[set_index].update()
 }
 

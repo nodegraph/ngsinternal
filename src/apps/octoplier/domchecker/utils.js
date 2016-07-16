@@ -15,6 +15,15 @@ function arrays_are_equal(a1, a2) {
     return true
 }
 
+function find_in_array_by_property(array, attr, value) {
+    for(var i=0; i<array.length; i++) {
+        if(array[i][attr] === value) {
+            return i;
+        }
+    }
+    return -1
+}
+
 //----------------------------------------------------------------------------------------
 //String Processing.
 //----------------------------------------------------------------------------------------
