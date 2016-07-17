@@ -1,6 +1,69 @@
 //The class encapsulate properties of the target web page.
 var PageWrap = function() {
+    //Mutation timer.
+    this.last_mutation_time = null //Time of last dom mutation in this page.
+    var mutation_timer = null
+    this.page_is_ready = false //Page is ready there have been no dom mutations for (mutation_done_interval) seconds.
+    
+    //Mutation Observer.
+    this.mutation_observer = new MutationObserver(this.on_mutation.bind(this))
+    this.mutation_observer_config = {
+        childList: true,
+        subtree : true,
+        attributes: false,
+        characterData : false
+    }
 }
+
+//---------------------------------------------------------------------------------
+//Mutation Observation.
+//---------------------------------------------------------------------------------
+
+PageWrap.prototype.mutation_check_interval = 200 // time interval to check whether we've waited long enough
+PageWrap.prototype.mutation_done_interval = 5000 // minimum time since last mutation, to be considered fully completed and done
+
+PageWrap.prototype.start_mutation_timer = function() {
+    if (this.mutation_timer == null) {
+        this.page_is_ready = false
+        this.last_mutation_time = new Date();
+        this.mutation_timer = setInterval(this.update_mutation_timer.bind(this), this.mutation_check_interval)
+    }
+}
+
+PageWrap.prototype.stop_mutation_timer = function() {
+    clearInterval(this.mutation_timer)
+    this.mutation_timer = null
+}
+
+PageWrap.prototype.update_mutation_timer = function() {
+    console.log('updating mutation timer')
+    var current_time = new Date()
+    var last_mutation_delta = current_time.getTime() - this.last_mutation_time.getTime()
+    if (last_mutation_delta > this.mutation_done_interval) {
+        this.stop_mutation_timer()
+        this.page_is_ready = true
+        console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP page is ready with delta: " + last_mutation_delta)
+        // Only send the page_is_ready from the top frame.
+        if (window == window.top) {
+            chrome.runtime.sendMessage({code: 'page_is_ready'})
+            console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX page is ready with delta: " + last_mutation_delta)
+            
+            // We can now show the context menu.
+            g_context_menu.initialize()
+        }
+    }
+}
+
+PageWrap.prototype.on_mutation = function(mutations) {
+    mutations.forEach(function (mutation) {
+        // mutation.addedNodes.length
+        // mutation.removedNodes.length
+    });
+    console.log("mutation observed!")
+    this.last_mutation_time = new Date();
+} 
+
+
 
 //---------------------------------------------------------------------------------
 //Page Properties.
@@ -447,4 +510,26 @@ PageWrap.prototype.get_text_values_at = function(page_x, page_y) {
     return values
 }
 
+PageWrap.prototype.on_loaded = function() {
+    // Disable hovers.
+    g_page_wrap.disable_hover()
+    
+    // Start mutation to timer, to try and detect when page is fully loaded.
+    console.log("starting mutation observer!")
+    this.start_mutation_timer()
+    
+    // Listen to mutations.
+    this.mutation_observer.observe(window.document, this.mutation_observer_config);
+}
+
+
+//---------------------------------------------------------------------------------
+//Globals.
+//---------------------------------------------------------------------------------
+
 var g_page_wrap = new PageWrap()
+
+//Start listening for mutations on page load.
+document.addEventListener ('DOMContentLoaded', PageWrap.prototype.on_loaded.bind(g_page_wrap), false);
+
+

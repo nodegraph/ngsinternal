@@ -12,8 +12,15 @@ var ContextMenu = function() {
     this.visible = false
 }
 
-ContextMenu.prototype.initialize = function() {
+ContextMenu.prototype.initialized = function() {
     if (this.top_menu) {
+        return true
+    }
+    return false
+}
+
+ContextMenu.prototype.initialize = function() {
+    if (this.initialized()) {
         return
     }
     // Create the top level menu element.
@@ -556,14 +563,4 @@ ContextMenu.prototype.update_image_box_overlay = function(elem_wrap) {
 }
 
 var g_context_menu = new ContextMenu()
-
-// The context menu can only be initialized after the dom is loaded because
-// it needs access to the window.document in order to add the context menu
-// elem_wraps to the dom.
-document.addEventListener ('DOMContentLoaded', on_loaded, false);
-function on_loaded () {
-    g_context_menu.initialize()
-    window.document.addEventListener("contextmenu", g_context_menu.on_context_menu.bind(g_context_menu), true)
-    g_page_wrap.disable_hover()
-}
 

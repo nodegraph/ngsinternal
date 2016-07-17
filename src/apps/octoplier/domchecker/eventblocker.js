@@ -40,7 +40,7 @@ function enableScroll() {
 
 // Basically everything except the contextmenu event (right click).
 //var event_types = 'message blur change focus focusin focusout hover scroll submit click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave pointerup pointerdown pointerenter pointerleave pointermove pointerover pointerout keydown keypress keyup input'.split(' ');
-var event_types = 'message scroll submit wheel click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave pointerup pointerdown pointerenter pointerleave pointermove pointerover pointerout keydown keypress keyup input'.split(' ');
+var event_types = 'message contextmenu scroll submit wheel click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave pointerup pointerdown pointerenter pointerleave pointermove pointerover pointerout keydown keypress keyup input'.split(' ');
 //blur change focus focusin focusout hover message  scroll
 //var event_types = ["deviceorientation", "transitionend", "webkittransitionend", "webkitanimationstart", "webkitanimationiteration", "webkitanimationend", "search", "reset", "waiting", "volumechange", "unload", "timeupdate", "suspend", "submit", "storage", "stalled", "select", "seeking", "seeked", "scroll", "resize", "ratechange", "progress", "popstate", "playing", "play", "pause", "pageshow", "pagehide", "online", "offline", "mousewheel", "mouseup", "mouseover", "mouseout", "mousemove", "mousedown", "message", "loadstart", "loadedmetadata", "loadeddata", "load", "keyup", "keypress", "keydown", "invalid", "input", "hashchange", "focus", "error", "ended", "emptied", "durationchange", "drop", "dragstart", "dragover", "dragleave", "dragenter", "dragend", "drag", "dblclick", "contextmenu", "click", "change", "canplaythrough", "canplay", "blur", "beforeunload", "abort"]
 
@@ -55,12 +55,16 @@ function block_event(event) {
     }
     // Otherwise we selectively let the event through or block it.
     switch (event.type) {
+        case 'contextmenu':
+            if (g_context_menu.initialized()) {
+                g_context_menu.on_context_menu(event)
+            }
+            break
         case 'click':
             // Click outside a visible context menu will close it.
             if (g_context_menu.visible) {
                 g_context_menu.hide()
             } else {
-                return true
             }
             break
         case 'mousemove':

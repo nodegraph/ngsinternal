@@ -384,17 +384,17 @@ ElemWrap.prototype.get_parenting_scroll_bars = function() {
     var elem_wraps = []
     var parent = this.get_parent()
     while (parent) {
-        // If we hit the top document.body, we're done because our
-        // overlays divs are children of document.body and they will automatically
-        // scroll with document.body, when the browser's scroll bars on the right
-        // of the browser are used.
+        // The topmost scrollbar will be the document.body.
+        // We need to record the scroll on the document.body as well.
         if (parent.element == document.body) {
+            elem_wraps.push(parent)
             return elem_wraps
         }
-        // If we find any scroll bars, we've found it.
+        // If we find any scroll bars, add it.
         if (parent.has_horizontal_scroll_bar() || (parent.has_vertical_scroll_bar())) {
             elem_wraps.push(parent)
         }
+        // Check our next parent.
         parent = parent.get_parent()
     }
     return elem_wraps
