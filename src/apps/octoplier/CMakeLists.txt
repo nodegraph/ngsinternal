@@ -10,7 +10,8 @@ set(sources
 	native/treemodel.cpp
 	native/variantmaptreemodel.cpp
 	native/utils.cpp
-	native/cppbridge.cpp
+	native/appcommunication.cpp
+	native/socketmessage.cpp
 )
 
 set(moc_headers
@@ -18,11 +19,12 @@ set(moc_headers
 	native/treemodel.h
 	native/variantmaptreemodel.h
 	native/utils.h
-	native/cppbridge.h
+	native/appcommunication.h
     )
     
 set(headers
 	native/treeitem.h
+	native/socketmessage.h
 )
 
 qt5_wrap_cpp(moc_imps ${moc_headers})

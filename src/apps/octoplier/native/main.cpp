@@ -36,7 +36,7 @@
 #include <gui/quick/nodegraphquickitem.h>
 #include <gui/quick/nodegraphrenderer.h>
 #include <gui/quick/nodegraphquickitemglobals.h>
-#include <native/cppbridge.h>
+#include <native/appcommunication.h>
 #include <gui/quick/fborenderer.h>
 #include <gui/quick/fboworker.h>
 #include <gui/widget/splashscreen.h>
@@ -333,9 +333,9 @@ int main(int argc, char *argv[]) {
     //context->setContextProperty(QStringLiteral("system_properties"),dynamic_cast<QObject*>(ng_root->get_component<SystemSignals>()));
 
     // Create our cpp bridge.
-    CppBridge* cpp_bridge = NULL;
-    cpp_bridge = new_ff CppBridge(&app);
-    context->setContextProperty(QStringLiteral("cpp_bridge"), cpp_bridge);
+    AppCommunication* app_comm = NULL;
+    app_comm = new_ff AppCommunication(&app);
+    context->setContextProperty(QStringLiteral("app_comm"), app_comm);
 
     view.setSource(QUrl(QStringLiteral("qrc:/qml/loader.qml")));
     view.show();
@@ -394,7 +394,7 @@ int main(int argc, char *argv[]) {
 
     delete_ff(scripts);
     delete_ff(utils);
-    delete_ff(cpp_bridge);
+    delete_ff(app_comm);
     delete_ff(tree_model)
 
   }

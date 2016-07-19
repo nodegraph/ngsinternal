@@ -83,7 +83,7 @@ TreeView {
     
     onExpanded: {
         console.log("expanded " + index.row + "," + index.column + ":: " + index.data)
-        cpp_bridge.on_move_root(index.row);
+        app_comm.on_move_root(index.row);
     }
     
     

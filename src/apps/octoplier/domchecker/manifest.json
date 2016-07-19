@@ -1,4 +1,6 @@
 {
+	// "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir --app=https://www.google.com
+
   "manifest_version": 2,
 
   "name": "Dom Checker",
@@ -11,13 +13,13 @@
           },
 
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["browserwrap.js","backgroundcommunication.js"]
   },
 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["debugutils.js", "utils.js", "point.js", "pagebox.js", "matchcriteria.js", "elemwrap.js", "elemcache.js", "pagewrap.js", "overlay.js", "contextmenu.js", "distinctcolors.js","overlayset.js","overlaysets.js", "content.js", "eventblocker.js"],
+      "js": ["debugutils.js", "utils.js", "point.js", "pagebox.js", "socketmessage.js", "contentcommunication.js", "matchcriteria.js", "elemwrap.js", "elemcache.js", "pagewrap.js", "overlay.js", "contextmenu.js", "distinctcolors.js","overlayset.js","overlaysets.js", "eventblocker.js"],
       "css": ["contextmenu.css", "overlay.css"],
       //"all_frames": true,
       "run_at": "document_start"

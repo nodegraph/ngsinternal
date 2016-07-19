@@ -75,17 +75,17 @@ Rectangle {
         // Start recording.
         //web_view.recording = true
 
-        cpp_bridge.start_recording()
+        app_comm.start_recording()
     }
 
     function stop_recording() {
         //web_view.recording = false
-        cpp_bridge.stop_recording()
-        //cpp_bridge.request_recording()
+        app_comm.stop_recording()
+        //app_comm.request_recording()
     }
 
     function replay() {
-        cpp_bridge.replay_last()
+        app_comm.replay_last()
     }
 
     AppWebView {
