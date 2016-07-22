@@ -2,6 +2,9 @@
 //Globals.
 //------------------------------------------------------------------------------------------------
 
+// Note default arguments for function requires ES6.
+// This version of nodejs doesn't seem to have ES6 yet.
+
 // We use strict mode. In strict mode we can't use undeclared variables.
 "use strict";
 
@@ -105,47 +108,44 @@ function create_socket_server(config, message_handler) {
     }
 
     // Create the socket server.
-    var socket_server = new WebSocketServer({server: httx_server});
-    var socket = null
-    socket_server.on('connection', function (wsConnect) {
-        socket = wsConnect
-        socket.on('message', message_handler)
+    var server_info = {}
+    server_info.server = new WebSocketServer({server: httx_server});
+    server_info.socket = null
+    server_info.server.on('connection', function (wsConnect) {
+        server_info.socket = wsConnect
+        server_info.socket.on('message', message_handler)
     })
-    return {socket_server: socket_server, socket: socket}
+    return server_info
 }
 
 
 //------------------------------------------------------------------------------------------------
 // Secure web socket to communicate with chrome extension.
 //------------------------------------------------------------------------------------------------
-var extension_socket_server_config = {
+var extension_server_config = {
         ssl: true,
         port: 8083,
         ssl_key: './key.pem',
         ssl_cert: './cert.pem'
     };
-var result = create_socket_server(extension_socket_server_config, on_message_from_extension)
-var extension_socket_server = result.socket_server
-var extension_socket = result.socket
+var extension_server = create_socket_server(extension_server_config, on_message_from_extension)
 
+//Send an obj as a message to the extension.
 function send_to_extension(obj) {
     var socket_message = new SocketMessage(obj)
-    extension_socket.send(socket_message.get_text())
+    extension_server.socket.send(socket_message.get_text())
 } 
 
 //The extension can send us requests from the smash browse context menu,
 //or it can send us reponses from request originating within the app,
 //which in turn could have been triggered from the smash browse context menu.
 function on_message_from_extension(message) {
+    console.log('nodejs got message from extension: ' + message)
     var msg = new SocketMessage(message)
-    log_info('message from extension: ' + msg.get_text());
     if (msg.is_request()) {
         // We have a request from the extension.
         var request = msg.get_obj()
-        switch(request.request) {
-            case 'dummy':
-                break
-        }
+         send_to_app(message);
     } else {
         // We have a response from the extension.
         // We don't handle any responses ourself. We just relay them to the app.
@@ -154,34 +154,27 @@ function on_message_from_extension(message) {
     }
 }
 
-console.log('-----------------------------------')
-
 //------------------------------------------------------------------------------------------------
 // Regular WebSocket to communicate with app.
 //------------------------------------------------------------------------------------------------
-var app_socket_server_config = {
+var app_server_config = {
         ssl: false,
         port: 8082,
     };
-var result = create_socket_server(app_socket_server_config, on_message_from_app)
-var app_socket_server = result.socket_server
-var app_socket = result.socket
+var app_server = create_socket_server(app_server_config, on_message_from_app)
 
+//Send an obj as a message to the app.
 function send_to_app(obj) {
     var socket_message = new SocketMessage(obj)
-    app_socket.send(socket_message.get_text())
+    app_server.socket.send(socket_message.get_text())
 }
 
-//app_socket_server.on('connection', function connection(ws_arg) {
-//    console.log('bbbbbbbbbbbbbbbbbbbbbbbb')
-//    app_socket = ws_arg
-//    log_info("controller now connected to native app");
-//    app_socket.on('message', on_message_from_app);
-//}); 
-
+//The can send us messages either from c++ or from qml.
+//These requests will be handled by webdriverjs, or the extension scripts in the browser.
+//Requests will always return with a response message containing return values.
 function on_message_from_app(message) {
-    console.log('cccccccccccccccccccccccccc')
     var msg = new SocketMessage(message)
+    console.log('nodejs got message from app: ' + message)
     
     // Make sure the message is a request.
     if (!msg.is_request()) {
@@ -190,40 +183,42 @@ function on_message_from_app(message) {
     
     // Handle the request.
     var request = msg.get_obj()
-    log_info('nodejs received: ' + msg.get_text());
     switch (request.request) {
         case 'open_browser':
-            open_browser()
+            open_browser(request.url)
             send_to_app({response: true})
             break
         case 'close_browser':
             close_browser()
             send_to_app({response: true})
             break
-        case 'goto_url':
-            goto_url(body).then(function() {
+        case 'navigate_to':
+            navigate_to(request.url).then(function() {
                 send_to_app({response: true})
             }, function(error) {
                 send_to_app({response: false})
             })
             break
-        case 'back':
+        case 'navigate_back':
             navigate_back().then(function(){
                 send_to_app({response: true})
             }, function(error) {
                 send_to_app({response: false})
             })
             break
-        case 'forward':
+        case 'navigate_forward':
             navigate_forward().then(function(){
                 send_to_app({response: true})
             }, function(error) {
                 send_to_app({response: false})
             })
             break
-        case 'get_xpath_from_elem_cache':
-            send_to_extension(request)
-            // The extension will return the response.
+        case 'navigate_refresh':
+            navigate_refresh().then(function(){
+                send_to_app({response: true})
+            }, function(error) {
+                send_to_app({response: false})
+            })
             break
         case 'extract_text':
             send_to_extension(request)
@@ -245,6 +240,11 @@ function on_message_from_app(message) {
             mouse_over_element(request.xpath, request.relative_x, request.relative_y)
             // A promise will return the response.
             break;
+        default:
+            // By default we send requests to the extension. 
+            // (It goes through bg script, and then into content script.)
+            send_to_extension(request)
+            break
             
     }
 }
@@ -261,7 +261,7 @@ var By = null
 var until = null
 var flow = null
 
-var open_browser = function () {
+function open_browser(url) {
     try {
         webdriver = require('selenium-webdriver')
         chrome = require('selenium-webdriver/chrome');
@@ -277,6 +277,7 @@ var open_browser = function () {
         chromeOptions.addArguments("--ignore-certificate-errors")
         chromeOptions.addArguments("--disable-web-security")
         chromeOptions.addArguments("--user-data-dir")
+        //chromeOptions.addArguments("--app=file:///"+url)
         
         // "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir --app=https://www.google.com
 
@@ -298,16 +299,38 @@ var open_browser = function () {
     }
 }
 
-var close_browser = function () {
+function close_browser() {
     driver.quit()
 }
 
-var resize_browser = function (width, height) {
-    driver.manage().window().setSize(width, height);
+//Returns a promise which navigates the browser to another url.
+function navigate_to(url) {
+    return driver.navigate().to(url)
 }
 
-var jitter_browser_size = function() {
-    driver.manage().window().getSize().then( function(s) {
+//Returns a promise which navigates the browser forward in the history.
+function navigate_forward() {
+    return driver.navigate().forward();
+}
+
+//Returns a promise which navigates the browser backwards in the history.
+function navigate_back() {
+    return driver.navigate().back();
+}
+
+//Returns a promise which refreshes the browser.
+function navigate_refresh() {
+    return driver.navigate().refresh();
+}
+
+//Returns a promise which resizes the browser.
+function resize_browser(width, height) {
+    return driver.manage().window().setSize(width, height);
+}
+
+//Returns a promise which jitters the browser size.
+function jitter_browser_size() {
+    return driver.manage().window().getSize().then( function(s) {
         driver.manage().window().setSize(s.width+1, s.height+1).then(function() {
             driver.manage().window().setSize(s.width, s.height);
         })
@@ -315,7 +338,7 @@ var jitter_browser_size = function() {
 }
 
 //------------------------------------------------------------------------------------------------
-// Browser Actions.
+// Dom Element Actions.
 //------------------------------------------------------------------------------------------------
 
 // Note the returned promise nevers errors.
@@ -324,21 +347,6 @@ var jitter_browser_size = function() {
 
 var trivial_wait_time = 1000 //1000
 var critical_wait_time = 1000 //30000
-
-//Returns a promise which navigates the browser to another url.
-var goto_url = function (url) {
-    return driver.get(url)
-}
-
-//Returns a promise which navigates the browser forward in the history.
-var navigate_forward = function () {
-    return driver.navigate().forward();
-}
-
-//Returns a promise which navigates the browser backwards in the history.
-var navigate_back = function () {
-    return driver.navigate().back();
-}
 
 //Returns a promise which evaulates to an existing element or is rejected.
 var get_element = function (xpath, wait_milli) {

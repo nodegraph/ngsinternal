@@ -60,7 +60,7 @@ OverlaySet.prototype.shift = function(side, wrap_type) {
 }
 
 //Expand
-OverlaySet.prototype.expand = function(side, match_critera) {
+OverlaySet.prototype.expand = function(side, match_criteria) {
     // Cache the elem_wraps already in this set.
     var existing_elem_wraps = []
     for (var i=0; i<this.overlays.length; i++) {
@@ -113,6 +113,44 @@ OverlaySet.prototype.intersect_with_beams = function(beams) {
             this.overlays[i].destroy()
             this.overlays.splice(i,1)
             i -= 1
+        }
+    }
+}
+
+OverlaySet.prototype.trim_to_side = function(beams, side) {
+    for (var b=0; b<beams.length; b++) {
+        var page_box = beams[b]
+        for (var i=0; i<this.overlays.length; i++) {
+            var overlay = this.overlays[i]
+            var out_of_bounds = false
+            switch(side) {
+                case ElemWrap.prototype.direction.left:
+                    if (overlay.right > page_box.right) {
+                        out_of_bounds = true
+                    }
+                    break
+                case ElemWrap.prototype.direction.right:
+                    if (overlay.left < page_box.left) {
+                        out_of_bounds = true
+                    }
+                    break
+                case ElemWrap.prototype.direction.up:
+                    if (overlay.bottom > page_box.bottom) {
+                        out_of_bounds = true
+                    }
+                    break
+                case ElemWrap.prototype.direction.down:
+                    if (overlay.top < page_box.top) {
+                        out_of_bounds = true
+                    }
+                    break
+            }
+            // Remove an out of bounds overlay.
+            if (out_of_bounds) {
+                this.overlays[i].destroy()
+                this.overlays.splice(i,1)
+                i -= 1
+            }
         }
     }
 }

@@ -9,6 +9,13 @@ SocketMessage::SocketMessage()
       _is_request(false) {
 }
 
+SocketMessage::SocketMessage(const SocketMessage& other):
+  _json_text(other._json_text),
+  _json_doc(other._json_doc),
+  _json_obj(other._json_obj),
+  _is_request(other._is_request){
+}
+
 SocketMessage::SocketMessage(const QString& json_text):
         _json_text(json_text),
         _json_doc(QJsonDocument::fromJson(json_text.toUtf8())),

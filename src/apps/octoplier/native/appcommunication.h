@@ -24,8 +24,10 @@ Q_OBJECT
   // Returns false when it is busy processing a previous command.
   // When false is returned the command will be dropped.
   // You may call the method again to try again.
-  Q_INVOKABLE bool handle_request_from_app(const SocketMessage& sm);
-
+  bool handle_request_from_app(const SocketMessage& sm);
+  Q_INVOKABLE bool handle_request_from_app(const QString& json_text); // Called from qml.
+  Q_INVOKABLE QString get_app_dir();
+  Q_INVOKABLE QString get_smash_browse_url();
 signals:
   // Fired on completion of a command.
   void command_finished(const SocketMessage& sm);

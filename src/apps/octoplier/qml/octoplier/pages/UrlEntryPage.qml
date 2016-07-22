@@ -58,7 +58,10 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    web_browser_page.web_view_alias.url = utils.url_from_input(url_field.text)
+                    console.log('url field: ' + url_field.text)
+                    console.log('url processed: ' + utils.url_from_input(url_field.text))
+                    var request = {request: 'navigate_to', url: utils.url_from_input(url_field.text).toString()}
+                    app_comm.handle_request_from_app(JSON.stringify(request))
                     main_bar.on_switch_to_mode(app_settings.web_browser_mode)
                 }
             }

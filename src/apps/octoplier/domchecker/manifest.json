@@ -19,15 +19,16 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["debugutils.js", "utils.js", "point.js", "pagebox.js", "socketmessage.js", "contentcommunication.js", "matchcriteria.js", "elemwrap.js", "elemcache.js", "pagewrap.js", "overlay.js", "contextmenu.js", "distinctcolors.js","overlayset.js","overlaysets.js", "eventblocker.js"],
-      "css": ["contextmenu.css", "overlay.css"],
-      //"all_frames": true,
+      "js": ["debugutils.js", "utils.js", "point.js", "pagebox.js", "socketmessage.js", "contentcommunication.js", "matchcriteria.js", "elemwrap.js", "elemcache.js", "pagewrap.js", "overlay.js", "contextmenu.js", "popupdialog.js", "distinctcolors.js","overlayset.js","overlaysets.js", "eventblocker.js"],
+      "css": ["contextmenu.css", "overlay.css", "popupdialog.css"],
+      "all_frames": true,
       "run_at": "document_start"
     }
   ],
   
   "web_accessible_resources": [
-    "contextmenu.html"
+    "contextmenu.html",
+    "images/hourglass.gif"
   ],
 
   "permissions": [

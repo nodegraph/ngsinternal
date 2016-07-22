@@ -1,14 +1,19 @@
 //This class represents a box in page space, not client rect space.
-var PageBox = function(rect = null) {
-    if (rect == null) {
+var PageBox = function(arg = null) {
+    if (arg == null) {
         this.reset()
-    } else if (Object.getPrototypeOf(rect) === PageBox.prototype) {
-        this.left = rect.left
-        this.right = rect.right
-        this.top = rect.top
-        this.bottom = rect.bottom
-    } else if(Object.getPrototypeOf(rect) === ClientRect.prototype) {
-        this.set_from_client_rect(rect)
+    } else if (Object.getPrototypeOf(arg) === PageBox.prototype) {
+        this.left = arg.left
+        this.right = arg.right
+        this.top = arg.top
+        this.bottom = arg.bottom
+    } else if (Object.getPrototypeOf(arg) === ClientRect.prototype) {
+        this.set_from_client_rect(arg)
+    } else if (Object.getPrototypeOf(arg) === Array.prototype) {
+        this.left = arg[0]
+        this.right = arg[1]
+        this.top = arg[2]
+        this.bottom = arg[3]
     } else {
         this.reset()
     } 

@@ -33,7 +33,7 @@ var start_recording_called = false
 //Listen for messages from our nodejs controller.
 var on_message_from_controller = function(event) {
     var msg = JSON.parse(event.data);
-    console.log("received message: " + event.data + " parsed: " + msg.code)
+    console.log("bg received message: " + event.data + " parsed: " + msg.code)
 
     switch (msg.code) {
         case 'start_recording':

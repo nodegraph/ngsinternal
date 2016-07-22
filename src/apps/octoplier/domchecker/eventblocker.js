@@ -45,43 +45,48 @@ var event_types = 'message contextmenu scroll submit wheel click dblclick moused
 //var event_types = ["deviceorientation", "transitionend", "webkittransitionend", "webkitanimationstart", "webkitanimationiteration", "webkitanimationend", "search", "reset", "waiting", "volumechange", "unload", "timeupdate", "suspend", "submit", "storage", "stalled", "select", "seeking", "seeked", "scroll", "resize", "ratechange", "progress", "popstate", "playing", "play", "pause", "pageshow", "pagehide", "online", "offline", "mousewheel", "mouseup", "mouseover", "mouseout", "mousemove", "mousedown", "message", "loadstart", "loadedmetadata", "loadeddata", "load", "keyup", "keypress", "keydown", "invalid", "input", "hashchange", "focus", "error", "ended", "emptied", "durationchange", "drop", "dragstart", "dragover", "dragleave", "dragenter", "dragend", "drag", "dblclick", "contextmenu", "click", "change", "canplaythrough", "canplay", "blur", "beforeunload", "abort"]
 
 function block_event(event) {
-    // If the event is inside the context menu, let it through.
-    if (event.target && event.target.tagName) {
-        if (g_context_menu.visible){
-            if (g_context_menu.top_menu.contains(event.target)) {
+    // If the event is inside our context menu or popup dialog, let it through.
+    if (window == window.top) {
+        if (event.target && event.target.tagName) {
+            if (g_context_menu.contains_element(event.target)) {
+                return true
+            }
+            if (g_popup_dialog.contains_element(event.target)) {
                 return true
             }
         }
+
+        // Otherwise we selectively let the event through or block it.
+        switch (event.type) {
+            case 'contextmenu':
+                if (g_context_menu.initialized()) {
+                    g_context_menu.on_context_menu(event)
+                }
+                break
+            case 'click':
+                // Click outside a visible context menu will close it.
+                if (g_context_menu.visible) {
+                    g_context_menu.hide()
+                } else {
+                }
+                break
+            case 'mousemove':
+                g_context_menu.on_mouse_over(event)
+                break
+            case 'mouseout':
+                break
+            case 'scroll':
+                if (event.taget) {
+                    var elem_wrap = new ElemWrap(event.target)
+                    console.log('got scroll target: ' + elem_wrap.get_xpath())
+                }
+                g_overlay_sets.update()
+                return true
+            case 'message':
+                return true
+        }
     }
-    // Otherwise we selectively let the event through or block it.
-    switch (event.type) {
-        case 'contextmenu':
-            if (g_context_menu.initialized()) {
-                g_context_menu.on_context_menu(event)
-            }
-            break
-        case 'click':
-            // Click outside a visible context menu will close it.
-            if (g_context_menu.visible) {
-                g_context_menu.hide()
-            } else {
-            }
-            break
-        case 'mousemove':
-            g_context_menu.on_mouse_over(event)
-            break
-        case 'mouseout':
-            break
-        case 'scroll':
-            if (event.taget) {
-                var elem_wrap = new ElemWrap(event.target)
-                console.log('got scroll target: ' + elem_wrap.get_xpath())
-            }
-            g_overlay_sets.update()
-            return true
-        case 'message':
-            return true
-    }
+    
     // If we get here, then the event will be blocked from further propagation.
     event.stopPropagation();
     event.preventDefault();

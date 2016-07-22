@@ -43,8 +43,7 @@ OverlaySets.prototype.find_set_index = function(page_x, page_y, marked=null) {
 }
 
 //Mark the first unmarked set under the mouse.
-OverlaySets.prototype.mark = function(page_x, page_y) {
-    var set_index = this.find_set_index(page_x, page_y, false)
+OverlaySets.prototype.mark_set = function(set_index) {
     if (set_index < 0) {
         return
     }
@@ -52,8 +51,7 @@ OverlaySets.prototype.mark = function(page_x, page_y) {
 }
 
 //Unmark the first marked set under the mouse.
-OverlaySets.prototype.unmark = function(page_x, page_y) {
-    var set_index = this.find_set_index(page_x, page_y, true)
+OverlaySets.prototype.unmark_set = function(set_index) {
     if (set_index < 0) {
         return
     }
@@ -70,29 +68,24 @@ OverlaySets.prototype.unmark_all = function () {
 //Destroy a set.
 OverlaySets.prototype.destroy_set = function(page_x, page_y) {
     var set_index = this.find_set_index(page_x, page_y, null)
-    if (set_index < 0) {
-        return
-    }
     this.destroy_set_by_index(set_index)
 }
 
 //Shift.
-OverlaySets.prototype.shift = function(page_x, page_y, side, wrap_type) {
-    var set_index = this.find_set_index(page_x, page_y, null)
+OverlaySets.prototype.shift = function(set_index, direction, wrap_type) {
     if (set_index < 0) {
         return
     }
-    this.sets[set_index].shift(side, wrap_type)
+    this.sets[set_index].shift(direction, wrap_type)
     this.sets[set_index].update()
 }
 
 // Expand.
-OverlaySets.prototype.expand = function(page_x, page_y, side, match_criteria) {
-    var set_index = this.find_set_index(page_x, page_y, null)
+OverlaySets.prototype.expand = function(set_index, direction, match_criteria) {
     if (set_index < 0) {
         return
     }
-    this.sets[set_index].expand(side, match_criteria)
+    this.sets[set_index].expand(direction, match_criteria)
     this.sets[set_index].update()
 }
 
@@ -111,11 +104,20 @@ OverlaySets.prototype.get_marked_sets = function() {
 
 // Shrink to marked set.
 //- sides is an array of sides
-OverlaySets.prototype.shrink_to_marked = function(page_x, page_y, sides) {
+OverlaySets.prototype.shrink_to_marked = function(set_index, sides) {
     // Find the marked and unmarked sets.
     var result = this.get_marked_sets()
     var marked = result.marked
-    var unmarked = result.unmarked
+    var unmarked = [set_index]
+    
+    console.log('set index: ' + set_index)
+    console.log('marked sets: ' + marked)
+    
+    // Make sure the set_index is not in the marked set.
+    if (marked.indexOf(set_index) >= 0) {
+        console.log('Error: attempt to shrink a marked set against other marked sets.')
+        return
+    }
     
     // Cumulative list of all the beams on the specified sides of all the marked sets.
     var beams = []
@@ -193,6 +195,10 @@ OverlaySets.prototype.shrink_to_extreme = function(page_x, page_y, side) {
 
 //Destroy a set by index.
 OverlaySets.prototype.destroy_set_by_index = function(set_index) {
+    if (set_index < 0) {
+        return
+    }
+    
     this.sets[set_index].destroy()
     // Splice the destroyed set out.
     this.sets.splice(set_index, 1);

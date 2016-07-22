@@ -1,4 +1,5 @@
 #include <native/appcommunication.h>
+#include <native/utils.h>
 #include <base/memoryallocator/taggednew.h>
 
 #include <cstddef>
@@ -42,7 +43,24 @@ AppCommunication::AppCommunication(QObject *parent)
 AppCommunication::~AppCommunication() {
   handle_request_from_app(SocketMessage("{request: 'close_browser'}"));
   delete_ff(_websocket);
+
+  _process->kill();
   delete_ff(_process);
+}
+
+QString AppCommunication::get_app_dir() {
+  return QCoreApplication::applicationDirPath();
+}
+
+QString AppCommunication::get_smash_browse_url() {
+  QString app_dir = get_app_dir();
+  app_dir += QString("/smashbrowse.html");
+  return app_dir;
+}
+
+bool AppCommunication::handle_request_from_app(const QString& json_text) {
+  SocketMessage sm(json_text);
+  return handle_request_from_app(sm);
 }
 
 bool AppCommunication::handle_request_from_app(const SocketMessage& sm) {
@@ -71,13 +89,20 @@ bool AppCommunication::handle_request_from_app(const SocketMessage& sm) {
 void AppCommunication::on_poll() {
   // Read any output from the nodejs process.
   if (_process) {
-    qDebug() << "NodeJS state: " << _process->state();
+    QDebug debug = qDebug();
+    debug.noquote();
+
+    //debug << "nodejs state: " << _process->state();
 
     QString output(_process->readAllStandardOutput());
-    qDebug() << "out: " << output;
+    if (!output.isEmpty()) {
+      debug << "nodejs out: " << output;
+    }
 
     QString error(_process->readAllStandardError());
-    qDebug() << "err: " << error;
+    if (!error.isEmpty()) {
+      debug << "nodejs err: " << error;
+    }
   }
 
   // Try to get nodejs running and connected.
@@ -123,7 +148,6 @@ void AppCommunication::on_state_changed(QAbstractSocket::SocketState s) {
 }
 
 void AppCommunication::on_text_message_received(const QString & message) {
-  qDebug() << "received message: " << message;
   SocketMessage sm(message);
   const QJsonObject& obj = sm.get_json_obj();
   if (sm.is_request()) {
@@ -194,9 +218,26 @@ bool AppCommunication::nodejs_is_connected() {
 void AppCommunication::handle_request_from_nodejs(const SocketMessage& sm) {
   // Do stuff like create nodes in the node graph, in response to
   // messages from nodejs.
+  qDebug() << "app received request from nodejs: " << sm.get_json_text();
+
+  // Hack to fix up urls coming from the extension.
+  if (sm.get_json_obj().value("request").toString() == "navigate_to") {
+    QJsonObject obj = sm.get_json_obj();
+    QString url = obj["url"].toString();
+    url = Utils::url_from_input(url).toString();
+    obj["url"] = url;
+    SocketMessage adjusted(obj);
+    handle_request_from_app(adjusted);
+  } else {
+    handle_request_from_app(sm);
+  }
+
+  // Request from nodejs get recorded as nodes in the node graph.
+
 }
 
 void AppCommunication::handle_response_from_nodejs(const SocketMessage& sm) {
+  qDebug() << "app received response from nodejs: " << sm.get_json_text();
   _waiting_for_results = false;
   emit command_finished(sm);
 }

@@ -27,22 +27,22 @@ BackgroundCommunication.prototype.connect_to_nodejs = function() {
         this.nodejs_socket.onopen = function (event) {
             this.nodejs_socket.send(JSON.stringify({code: 'bg_comm is connected'})); 
         };
-        this.nodejs_socket.onmessage = this.receive_nodejs_message.bind(this)
+        this.nodejs_socket.onmessage = this.receive_message_from_nodejs.bind(this)
     } catch(e){
         this.nodejs_socket = null
     }
 }
 
 //Send message to nodejs.
-BackgroundCommunication.prototype.send_nodejs_message = function(socket_message) {
+BackgroundCommunication.prototype.send_message_to_nodejs = function(socket_message) {
     this.nodejs_socket.send(JSON.stringify(socket_message));
 }
 
 //Receive messages from nodejs. They will be forward to the content script.
-BackgroundCommunication.prototype.receive_nodejs_message = function(event) {
+BackgroundCommunication.prototype.receive_message_from_nodejs = function(event) {
     var request = JSON.parse(event.data);
-    console.log("received nodejs message: " + event.data + " parsed: " + request.request)
-    this.send_content_message(request)
+    console.log("bg received message from nodejs: " + event.data + " parsed: " + request.request)
+    this.send_message_to_content(request)
 }
 
 //------------------------------------------------------------------------------------------------
@@ -51,16 +51,18 @@ BackgroundCommunication.prototype.receive_nodejs_message = function(event) {
 
 //Setup communication channel with chrome runtime.
 BackgroundCommunication.prototype.connect_to_content = function() {
-    chrome.runtime.onMessage.addListener(this.receive_content_message.bind(this))
+    chrome.runtime.onMessage.addListener(this.receive_message_from_content.bind(this))
 }
 
 //Send a message to the content script.
-BackgroundCommunication.prototype.send_content_message = function(socket_message) {
+BackgroundCommunication.prototype.send_message_to_content = function(socket_message) {
+    console.log("bg sending message to content: " + JSON.stringify(socket_message))
     chrome.tabs.sendMessage(this.content_tab_id, socket_message)
 }
 
 //Receive a message from the content script. We simply forward the message to nodejs.
-BackgroundCommunication.prototype.receive_content_message = function(request, sender, send_response) {
+BackgroundCommunication.prototype.receive_message_from_content = function(request, sender, send_response) {
+    console.log("bg received message from content: " + JSON.stringify(request))
     //The first tab to send us a content message will be the tab that we pay attention to.
     if (!this.content_tab_id) {
         this.content_tab_id = sender.tab.id
@@ -70,7 +72,7 @@ BackgroundCommunication.prototype.receive_content_message = function(request, se
         return
     }
     //Pass the message to nodejs.
-    this.send_nodejs_message(request);
+    this.send_message_to_nodejs(request);
 }
 
 
@@ -78,7 +80,12 @@ BackgroundCommunication.prototype.receive_content_message = function(request, se
 //Globals.
 //------------------------------------------------------------------------------------------------
 
-var g_bg_comm = new BackgroundCommunication()
+var g_bg_comm = null
+
+// We only create on the top window, not in other iframes.
+if (window == window.top) {
+    g_bg_comm = new BackgroundCommunication()
+}
 
 
 

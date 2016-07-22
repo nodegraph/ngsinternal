@@ -20,11 +20,11 @@ set(moc_headers
 	native/variantmaptreemodel.h
 	native/utils.h
 	native/appcommunication.h
+	native/socketmessage.h
     )
     
 set(headers
 	native/treeitem.h
-	native/socketmessage.h
 )
 
 qt5_wrap_cpp(moc_imps ${moc_headers})

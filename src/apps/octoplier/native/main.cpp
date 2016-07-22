@@ -2,6 +2,7 @@
 #include <native/treeitem.h>
 #include <native/variantmaptreemodel.h>
 #include <native/utils.h>
+#include <native/socketmessage.h>
 
 #include <QtWidgets/QApplication>
 #include <QtGui/QGuiApplication>
@@ -185,8 +186,6 @@ int main(int argc, char *argv[]) {
 
 
 
-
-
     // Register a gl type.
     qRegisterMetaType<GLsizei>("GLsizei");
     qRegisterMetaType<size_t>("size_t");
@@ -216,6 +215,8 @@ int main(int argc, char *argv[]) {
     //QGuiApplication app(argc, argv);
     qmlRegisterType<NodeGraphQuickItem>("NodeGraphRendering", 1, 0, "NodeGraphQuickItem");
     qmlRegisterType<NodeGraphRenderer>("NodeGraphTesting", 1, 0, "NodeGraphRenderer");
+
+    qmlRegisterType<SocketMessage>("SocketMessage", 1, 0, "SocketMessage");
 
     //qmlRegisterType<HitInfo>("com.octoplier.api", 1, 0, "HitInfo");
     qmlRegisterUncreatableType<VariantMapTreeModel>("com.octoplier.api", 1, 0, "VariantMapTreeModel", "You cannot create this type from QML.");

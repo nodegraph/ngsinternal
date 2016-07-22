@@ -231,17 +231,17 @@ ElemWrap.prototype.get_neighboring_elem_wrap = function(getter, side) {
 ElemWrap.prototype.get_getter = function(wrap_type) {
     var getter = null
     switch(wrap_type) {
-        case this.wrap_type.text:
-            getter = this.get_text
+        case ElemWrap.prototype.wrap_type.text:
+            getter = ElemWrap.prototype.get_text
             break
-        case this.wrap_type.image:
-            getter = this.get_image
+        case ElemWrap.prototype.wrap_type.image:
+            getter = ElemWrap.prototype.get_image
             break
-        case this.wrap_type.input:
-            getter = this.is_input
+        case ElemWrap.prototype.wrap_type.input:
+            getter = ElemWrap.prototype.is_input
             break
-        case this.wrap_type.select:
-            getter = this.is_select
+        case ElemWrap.prototype.wrap_type.select:
+            getter = ElemWrap.prototype.is_select
             break
     }
     return getter

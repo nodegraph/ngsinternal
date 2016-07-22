@@ -1,3 +1,7 @@
+
+
+
+
 import QtQuick 2.6
 import QtQuick.Controls 1.4
 import QtQuick.Window 2.2
@@ -31,7 +35,6 @@ Rectangle{
 
     property alias stack_view: stack_view
     property alias stack_view_header: stack_view_header
-
 
     // Methods.
     function on_switch_to_mode(mode) {

@@ -40,22 +40,33 @@ ContextMenu.prototype.initialize = function() {
 }
 
 ContextMenu.prototype.create_menu = function (top_menu) {
+    
     // The find specific menu.
-    this.find_menu = this.add_sub_menu(top_menu, 'Create set using info from mouse hover')
-    this.find_by_text = this.add_item(this.find_menu, 'text')
-    this.find_by_image = this.add_item(this.find_menu, 'image')
-    this.find_by_position = this.add_item(this.find_menu, 'position')
-    this.find_by_xpath = this.add_item(this.find_menu, 'xpath')
+    this.navigate_menu = this.add_sub_menu(top_menu, 'Navigate')
+    this.navigate_to_url = this.add_item(this.navigate_menu, 'to url')
+//    this.navigate_back = this.add_item(this.navigate_menu, 'back')
+//    this.navigate_forward = this.add_item(this.navigate_menu, 'forward')
+    this.navigate_refresh = this.add_item(this.navigate_menu, 'refresh')
+    
+    // Spacer.
+    this.add_spacer(top_menu)
+    
+    // The find specific menu.
+    this.create_set_by_matching_menu = this.add_sub_menu(top_menu, 'Create set using info from mouse hover')
+    this.create_set_by_matching_text = this.add_item(this.create_set_by_matching_menu, 'text')
+    this.create_set_by_matching_image = this.add_item(this.create_set_by_matching_menu, 'image')
+//    this.create_set_by_matching_position = this.add_item(this.create_set_by_matching_menu, 'position')
+//    this.create_set_by_matching_xpath = this.add_item(this.create_set_by_matching_menu, 'xpath')
     
     // The find all menu.
-    this.find_all_menu = this.add_sub_menu(top_menu, 'Create set from elements of type')
-    this.get_elem_wraps_with_inputs = this.add_item(this.find_all_menu, 'has an input (text field)')
-    this.get_elem_wraps_with_selects = this.add_item(this.find_all_menu, 'has a select (drop down)')
-    this.get_elem_wraps_with_text = this.add_item(this.find_all_menu, 'has text')
-    this.get_elem_wraps_with_images = this.add_item(this.find_all_menu, 'has an image')
-//    this.get_elem_wraps_with_vertical_scroll_bars = this.add_item(this.find_all_menu, 'vertical scroll bar')
-//    this.get_elem_wraps_with_horizontal_scroll_bars = this.add_item(this.find_all_menu, 'horizontal scroll bar')
-//    this.get_elem_wraps_with_any_scroll_bars = this.add_item(this.find_all_menu, 'any scroll bar')
+    this.create_set_by_type_menu = this.add_sub_menu(top_menu, 'Create set from elements of type')
+    this.create_set_from_inputs = this.add_item(this.create_set_by_type_menu, 'has an input (text field)')
+    this.create_set_from_selects = this.add_item(this.create_set_by_type_menu, 'has a select (drop down)')
+    this.create_set_from_texts = this.add_item(this.create_set_by_type_menu, 'has text')
+    this.create_set_from_images = this.add_item(this.create_set_by_type_menu, 'has an image')
+    
+    // Delete
+    this.delete_set = this.add_item(this.top_menu, 'Delete set under mouse')
     
     // Spacer.
     this.add_spacer(top_menu)
@@ -131,8 +142,7 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     // Spacer.
     this.spacer = this.add_spacer(this.top_menu)
     
-    // Delete
-    this.delete_set = this.add_item(this.top_menu, 'Delete set under mouse')
+
     
     // Cancel.
     this.cancel = this.add_item(this.top_menu, 'Cancel')
@@ -212,7 +222,10 @@ ContextMenu.prototype.hide = function(x,y) {
     this.visible = false
 }
 
-ContextMenu.prototype.element_is_part_of_menu = function(element) {
+ContextMenu.prototype.contains_element = function(element) {
+    if (!this.top_menu) {
+        return false
+    }
     if (this.top_menu.contains(element)) {
         return true
     }
@@ -222,8 +235,6 @@ ContextMenu.prototype.element_is_part_of_menu = function(element) {
 ContextMenu.prototype.on_context_menu = function(page_event) {
     this.page_x = page_event.pageX
     this.page_y = page_event.pageY
-    this.text_element = g_page_wrap.get_top_text_elem_wrap_at(this.page_x, this.page_y)
-    this.image_element = g_page_wrap.get_top_image_elem_wrap_at(this.page_x, this.page_y)
     
     // Show the menu.
     this.show(page_event.pageX, page_event.pageY)
@@ -240,195 +251,284 @@ ContextMenu.prototype.on_click = function(menu_event) {
     var menu_target = menu_event.target
     console.log('clicked')
     
+    if (this.navigate_to_url.contains(menu_target)) { 
+        function goto_url(url) {
+            g_content_comm.send_message_to_bg({request: 'navigate_to', url: url})
+        }
+        g_popup_dialog.open(goto_url)
+    } 
+    
+//    else if (this.navigate_back.contains(menu_target)) { 
+//        g_content_comm.send_message_to_bg({request: 'navigate_back'})
+//    } 
+//    
+//    else if (this.navigate_forward.contains(menu_target)) { 
+//        g_content_comm.send_message_to_bg({request: 'navigate_forward'})
+//    } 
+    
+    else if (this.navigate_refresh.contains(menu_target)) { 
+        g_content_comm.send_message_to_bg({request: 'navigate_refresh'})
+    } 
+    
     // --------------------------------------------------------------
-    // Find elements by using specific values.
+    // Create Set From Match Values.
     // --------------------------------------------------------------
     
-    // Find by text.
-    if (this.find_by_text.contains(menu_target)) { 
+    // Create set from text values.
+    else if (this.create_set_by_matching_text.contains(menu_target)) { 
         var text_values = g_page_wrap.get_text_values_at(this.page_x, this.page_y)
-        console.log('element xpath: ' + this.text_element.get_xpath())
-        console.log('text values: ' + JSON.stringify(text_values))
-        // Check that we can find it too.
-        var elem_wraps = g_page_wrap.get_elem_wraps_by_text_values(text_values)
-        console.log('found num elem_wraps: ' + elem_wraps.length)
-        for (var i=0; i<elem_wraps.length; i++) {
-            console.log('xpath ['+i+']: ' + elem_wraps[i].get_xpath())
-            var elem_cache = new ElemCache(elem_wraps[i])
-            console.log('scrolls: ' + elem_cache.scroll_amounts)
+        var request = {
+            request: 'create_set_from_match_values', 
+            wrap_type: ElemWrap.prototype.wrap_type.text,
+            match_values: text_values
         }
-        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+        g_content_comm.send_message_to_bg(request)
     } 
     
-    // Find by image.
-    else if (this.find_by_image.contains(menu_target)) {
+    // Create set from image values.
+    else if (this.create_set_by_matching_image.contains(menu_target)) {
         var image_values = g_page_wrap.get_image_values_at(this.page_x, this.page_y)
-        console.log('element xpath: ' + this.image_element.get_xpath())
-        console.log('image values: ' + JSON.stringify(image_values))
-        // Check that we can find it too.
-        var found = g_page_wrap.get_elem_wraps_by_image_values(image_values)
-        console.log('found num found: ' + found.length)
-        for (var i=0; i<found.length; i++) {
-            console.log('xpath ['+i+']: ' + found[i].get_xpath())
+        var request = {
+            request: 'create_set_from_match_values', 
+            wrap_type: ElemWrap.prototype.wrap_type.image,
+            match_values: image_values
         }
-        g_overlay_sets.add_set(new OverlaySet(found))
+        g_content_comm.send_message_to_bg(request)
     } 
-    
-    // Find by position.
-    else if (this.find_by_position.contains(menu_target)) {
-        var pos = {x:this.page_x, y:this.page_y}
-        console.log('pos: ' + JSON.stringify(pos))
-        var top_element = g_page_wrap.get_top_text_or_image_elem_wrap_at(pos.x, pos.y)
-        console.log('top elem: ' + top_element.get_xpath())
-        g_overlay_sets.add_set(new OverlaySet([top_element]))
-    } 
-    
-    // Find by xpath.
-    else if (this.find_by_xpath.contains(menu_target)) {
-        var pos = {x:this.page_x, y:this.page_y}
-        console.log('pos: ' + JSON.stringify(pos))
-        var top_element = g_page_wrap.get_top_text_or_image_elem_wrap_at(pos.x, pos.y)
-        console.log('top elem: ' + top_element.get_xpath())
-        var xpath = top_element.get_xpath()
-        console.log('xpath: ' + xpath)
-        var found = g_page_wrap.get_elem_wraps_by_xpath(xpath)
-        console.log('num found: ' + found.length)
-        for (var i=0; i<found.length; i++) {
-            console.log('xpath ['+i+']: ' + found[i].get_xpath())
-        }
-        g_overlay_sets.add_set(new OverlaySet([top_element]))
-    } 
-    
-//  // Find all vertical scroll bars.
-//  else if (this.get_elem_wraps_with_vertical_scroll_bars.contains(menu_target)){
-//      var elem_wraps = g_page_wrap.get_elem_wraps_with_vertical_scroll_bars()
-//      var msg = "Find elem_wraps with v scroll bars: " + elem_wraps.length
-//      console.log(msg)
-//      g_overlay_sets.add_set(new OverlaySet(elem_wraps))
-//  }    
-  
-//  // Find all horizontal scroll bars.
-//  else if (this.get_elem_wraps_with_horizontal_scroll_bars.contains(menu_target)){
-//      var elem_wraps = g_page_wrap.get_elem_wraps_with_horizontal_scroll_bars()
-//      var msg = "Find elem_wraps with h scroll bars: " + elem_wraps.length
-//      console.log(msg)
-//      g_overlay_sets.add_set(new OverlaySet(elem_wraps))
-//  }    
-  
-//  // Find any scroll bars.
-//  else if (this.get_elem_wraps_with_any_scroll_bars.contains(menu_target)){
-//      var elem_wraps = g_page_wrap.get_elem_wraps_with_any_scroll_bars()
-//      var msg = "Find elem_wraps with any scroll bars: " + elem_wraps.length
-//      console.log(msg)
-//      g_overlay_sets.add_set(new OverlaySet(elem_wraps))
-//  }   
     
     // --------------------------------------------------------------
-    // Find all.
+    // Create Set from Type.
     // --------------------------------------------------------------
     
     // Find all inputs.
-    else if (this.get_elem_wraps_with_inputs.contains(menu_target)) {
-        var elem_wraps = g_page_wrap.get_elem_wraps_with_inputs()
-        var msg = "Find elem wraps with inputs: " + elem_wraps.length
-        console.log(msg)
-        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+    else if (this.create_set_from_inputs.contains(menu_target)) {
+        var request = {
+                request: 'create_set_from_wrap_type',
+                wrap_type: ElemWrap.prototype.wrap_type.input
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     
     // Find all inputs.
-    else if (this.get_elem_wraps_with_selects.contains(menu_target)) {
-        var elem_wraps = g_page_wrap.get_elem_wraps_with_selects()
-        var msg = "Find elem wraps with selects: " + elem_wraps.length
-        console.log(msg)
-        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+    else if (this.create_set_from_selects.contains(menu_target)) {
+        var request = {
+                request: 'create_set_from_wrap_type',
+                wrap_type: ElemWrap.prototype.wrap_type.select
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     
     // Find all images.
-    else if (this.get_elem_wraps_with_images.contains(menu_target)) {
-        var elem_wraps = g_page_wrap.get_elem_wraps_with_images()
-        var msg = "Find elem wraps with images: " + elem_wraps.length
-        console.log(msg)
-        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+    else if (this.create_set_from_images.contains(menu_target)) {
+        var request = {
+                request: 'create_set_from_wrap_type',
+                wrap_type: ElemWrap.prototype.wrap_type.image
+        }
+        g_content_comm.send_message_to_bg(request)
     } 
     
     // Find all text.
-    else if (this.get_elem_wraps_with_text.contains(menu_target)) {
-        var elem_wraps = g_page_wrap.get_elem_wraps_with_text()
-        var msg = "Find elem wraps with text: " + elem_wraps.length
-        console.log(msg)
-        g_overlay_sets.add_set(new OverlaySet(elem_wraps))
+    else if (this.create_set_from_texts.contains(menu_target)) {
+        var request = {
+                request: 'create_set_from_wrap_type',
+                wrap_type: ElemWrap.prototype.wrap_type.text
+        }
+        g_content_comm.send_message_to_bg(request)
     } 
     
     // --------------------------------------------------------------
-    // Shift elements.
+    // Delete Set.
+    // --------------------------------------------------------------
+    
+    // Delete set.
+    else if (this.delete_set.contains(menu_target)) {        
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {request: 'delete_set', set_index: set_index}
+        g_content_comm.send_message_to_bg(request)
+    }
+    
+    // --------------------------------------------------------------
+    // Shift Set.
     // --------------------------------------------------------------
     
     // Text.
     else if (this.shift_up_by_text.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.text)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.up,
+            wrap_type: ElemWrap.prototype.wrap_type.text
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_down_by_text.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.text)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.down,
+            wrap_type: ElemWrap.prototype.wrap_type.text
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_left_by_text.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.left, ElemWrap.prototype.wrap_type.text)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.left,
+            wrap_type: ElemWrap.prototype.wrap_type.text
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_right_by_text.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.text)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.right,
+            wrap_type: ElemWrap.prototype.wrap_type.text
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     // Image.
     else if (this.shift_up_by_image.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.image)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.up,
+            wrap_type: ElemWrap.prototype.wrap_type.image
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_down_by_image.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.image)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.down,
+            wrap_type: ElemWrap.prototype.wrap_type.image
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_left_by_image.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.left, ElemWrap.prototype.wrap_type.image)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.left,
+            wrap_type: ElemWrap.prototype.wrap_type.image
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_right_by_image.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.image)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.right,
+            wrap_type: ElemWrap.prototype.wrap_type.image
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     // Input.
     else if (this.shift_up_by_input.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.input)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.up,
+            wrap_type: ElemWrap.prototype.wrap_type.input
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_down_by_input.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.input)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.down,
+            wrap_type: ElemWrap.prototype.wrap_type.input
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_left_by_input.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.left, ElemWrap.prototype.wrap_type.input)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.left,
+            wrap_type: ElemWrap.prototype.wrap_type.input
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_right_by_input.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.input)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.right,
+            wrap_type: ElemWrap.prototype.wrap_type.input
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     // Select.
     else if (this.shift_up_by_select.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.up, ElemWrap.prototype.wrap_type.select)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.up,
+            wrap_type: ElemWrap.prototype.wrap_type.select
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_down_by_select.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.down, ElemWrap.prototype.wrap_type.select)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.down,
+            wrap_type: ElemWrap.prototype.wrap_type.select
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_left_by_select.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.left, ElemWrap.prototype.wrap_type.select)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.left,
+            wrap_type: ElemWrap.prototype.wrap_type.select
+        };
+        g_content_comm.send_message_to_bg(request)
     }
     
     else if (this.shift_right_by_select.contains(menu_target)) {
-        g_overlay_sets.shift(this.page_x, this.page_y, ElemWrap.prototype.direction.right, ElemWrap.prototype.wrap_type.select)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shift_set', 
+            set_index: set_index, 
+            direction: ElemWrap.prototype.direction.right,
+            wrap_type: ElemWrap.prototype.wrap_type.select
+        };
+        g_content_comm.send_message_to_bg(request)
     }
         
     // --------------------------------------------------------------
@@ -437,35 +537,63 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Expand above.
     else if (this.expand_above.contains(menu_target)) {
-        match_criteria = new MatchCriteria()
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var match_criteria = new MatchCriteria()
         match_criteria.match_left = true
         match_criteria.match_font = true
         match_criteria.match_font_size = true
-        g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.up, match_criteria)
+        var request = {
+            request: 'expand_set',
+            set_index: set_index,
+            direction: ElemWrap.prototype.direction.up,
+            match_criteria: match_criteria
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     // Expand below.
     else if (this.expand_below.contains(menu_target)) {
-        match_criteria = new MatchCriteria()
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var match_criteria = new MatchCriteria()
         match_criteria.match_left = true
         match_criteria.match_font = true
         match_criteria.match_font_size = true
-        g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.down, match_criteria)
+        var request = {
+            request: 'expand_set',
+            set_index: set_index,
+            direction: ElemWrap.prototype.direction.down,
+            match_criteria: match_criteria
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     // Expand left.
     else if (this.expand_left.contains(menu_target)) {
-        match_criteria = new MatchCriteria()
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var match_criteria = new MatchCriteria()
         match_criteria.match_top = true
         match_criteria.match_font = true
         match_criteria.match_font_size = true
-        g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.left, match_criteria)
+        var request = {
+            request: 'expand_set',
+            set_index: set_index,
+            direction: ElemWrap.prototype.direction.left,
+            match_criteria: match_criteria
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     // Expand right.
     else if (this.expand_right.contains(menu_target)) {
-        match_criteria = new MatchCriteria()
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var match_criteria = new MatchCriteria()
         match_criteria.match_top = true
         match_criteria.match_font = true
         match_criteria.match_font_size = true
-        g_overlay_sets.expand(this.page_x, this.page_y, ElemWrap.prototype.direction.right, match_criteria)
+        var request = {
+            request: 'expand_set',
+            set_index: set_index,
+            direction: ElemWrap.prototype.direction.right,
+            match_criteria: match_criteria
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     
     // --------------------------------------------------------------
@@ -474,36 +602,94 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Mark set.
     else if (this.mark_set.contains(menu_target)) {
-        g_overlay_sets.mark(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'mark_set',
+            set_index: set_index
+        }
+        g_content_comm.send_message_to_bg(request)
     } 
     
     // Unmark set.
     else if (this.unmark_set.contains(menu_target)) {
-        g_overlay_sets.unmark(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'unmark_set',
+            set_index: set_index
+        }
+        g_content_comm.send_message_to_bg(request)
     } 
     
     else if (this.shrink_above_marked.contains(menu_target)) {
-        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up])
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var request = {
+            request: 'shrink_to_marked',
+            set_index: set_index,
+            directions: [ElemWrap.prototype.direction.up]
+        }
+        g_content_comm.send_message_to_bg(request)
+        
+        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up])
     }
     
     else if (this.shrink_below_marked.contains(menu_target)) {
-        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.down])
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var request = {
+            request: 'shrink_to_marked',
+            set_index: set_index,
+            directions: [ElemWrap.prototype.direction.down]
+        }
+        g_content_comm.send_message_to_bg(request)
+        
+        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.down])
     }
     
     else if (this.shrink_above_and_below_marked.contains(menu_target)) {
-        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up, ElemWrap.prototype.direction.down])
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var request = {
+            request: 'shrink_to_marked',
+            set_index: set_index,
+            directions: [ElemWrap.prototype.direction.up, ElemWrap.prototype.direction.down]
+        }
+        g_content_comm.send_message_to_bg(request)
+        
+        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up, ElemWrap.prototype.direction.down])
     }
     
     else if (this.shrink_left_of_marked.contains(menu_target)) {
-        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.left])
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var request = {
+            request: 'shrink_to_marked',
+            set_index: set_index,
+            directions: [ElemWrap.prototype.direction.left]
+        }
+        g_content_comm.send_message_to_bg(request)
+        
+        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.left])
     }
     
     else if (this.shrink_right_of_marked.contains(menu_target)) {
-        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.right])
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var request = {
+            request: 'shrink_to_marked',
+            set_index: set_index,
+            directions: [ElemWrap.prototype.direction.right]
+        }
+        g_content_comm.send_message_to_bg(request)
+        
+        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.right])
     }
     
     else if (this.shrink_left_and_right_of_marked.contains(menu_target)) {
-        g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.left, ElemWrap.prototype.direction.right])
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var request = {
+            request: 'shrink_to_marked',
+            set_index: set_index,
+            directions: [ElemWrap.prototype.direction.left, ElemWrap.prototype.direction.right]
+        }
+        g_content_comm.send_message_to_bg(request)
+        
+        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.left, ElemWrap.prototype.direction.right])
     }
     
     // --------------------------------------------------------------
@@ -530,10 +716,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     // Other.
     // --------------------------------------------------------------
     
-    // Delete set.
-    else if (this.delete_set.contains(menu_target)) {
-        g_overlay_sets.destroy_set(this.page_x, this.page_y)
-    }
+
     
     document.removeEventListener('click', this.on_click_bound, true);
     
@@ -562,5 +745,11 @@ ContextMenu.prototype.update_image_box_overlay = function(elem_wrap) {
     this.image_box_overlay.update_with_elem_wrap(elem_wrap)
 }
 
-var g_context_menu = new ContextMenu()
+
+var g_context_menu = null
+
+//We only create on the top window, not in other iframes.
+if (window == window.top) {
+    g_context_menu = new ContextMenu()
+}
 

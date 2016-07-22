@@ -10,23 +10,23 @@ ListModel {
         navigator_title: "Browser Actions"
 
         image_url: "qrc:///icons/ic_public_white_48dp.png"
-        title: "Start Recording"
-        description: "Start recording your browser actions."
-        script: "web_browser_page.start_recording(); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
+        title: "Open Indirect Browser"
+        description: "The indirect browser eases node creation."
+        script: 'var smash_browse_url = app_comm.get_smash_browse_url();
+                 var request = {request: "open_browser", url: smash_browse_url};
+                 var json_text = JSON.stringify(request);
+                 app_comm.handle_request_from_app(json_text);
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)'
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_public_white_48dp.png"
-        title: "Stop Recording"
-        description: "Stop recording your browser actions."
-        script: "web_browser_page.stop_recording(); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
-    }
-
-    ListElement {
-        image_url: "qrc:///icons/ic_public_white_48dp.png"
-        title: "Replay Recording"
-        description: "Replay the recorded browser actions."
-        script: "web_browser_page.replay(); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
+        title: "Close Indirect Browser"
+        description: "Closes the indirect browser."
+        script: 'var request = {request: "close_browser"};
+                 var json_text = JSON.stringify(request);
+                 app_comm.handle_request_from_app(json_text);
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)'
     }
 
     ListElement {
@@ -37,55 +37,33 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_public_white_48dp.png"
-        title: "Google"
-        description: "Perform a google search."
-        script: "web_browser_page.web_view_alias.url = utils.url_from_input(\"www.google.com\"); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
-    }
-
-//    ListElement {
-//        image_url: "qrc:///icons/ic_public_white_48dp.png"
-//        title: "Bing"
-//        description: "Perform a bing search."
-//        script: "web_browser_page.web_view_alias.url = utils.url_from_input(\"www.bing.com\")"
-//    }
-
-//    ListElement {
-//        image_url: "qrc:///icons/ic_public_white_48dp.png"
-//        title: "Yahoo"
-//        description: "Perform a yahoo search."
-//        script: "web_browser_page.web_view_alias.url = utils.url_from_input(\"www.yahoo.com\")"
-//    }
-
-    ListElement {
         image_url: "qrc:///icons/ic_arrow_back_white_48dp.png"
         title: "Back"
         description: "Go back to previous page."
-        script: "web_browser_page.web_view_alias.goBack(); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
+        script: 'var request = {request: "navigate_back"};
+                 var json_text = JSON.stringify(request);
+                 app_comm.handle_request_from_app(json_text);
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)'
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_arrow_forward_white_48dp.png"
         title: "Forward"
         description: "Undo the back operation."
-        script: "web_browser_page.web_view_alias.goForward(); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
+        script: 'var request = {request: "navigate_forward"};
+                 var json_text = JSON.stringify(request);
+                 app_comm.handle_request_from_app(json_text);
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)'
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_refresh_white_48dp.png"
         title: "Refresh"
         description: "Refresh the browser."
-        script: "if (web_browser_page.web_view_alias.loading) {
-                    web_browser_page.web_view_alias.stop()
-                }
-                web_browser_page.web_view_alias.reload(); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
-    }
-
-    ListElement {
-        image_url: "qrc:///icons/ic_close_white_48dp.png"
-        title: "Stop"
-        description: "Stop the browser's current loading operation."
-        script: "web_browser_page.web_view_alias.stop(); main_bar.on_switch_to_mode(app_settings.web_browser_mode)"
+        script: 'var request = {request: "navigate_refresh"};
+                 var json_text = JSON.stringify(request);
+                 app_comm.handle_request_from_app(json_text);
+                 main_bar.on_switch_to_mode(app_settings.web_browser_mode)'
     }
 
 }

@@ -36,20 +36,20 @@ PageWrap.prototype.stop_mutation_timer = function() {
 }
 
 PageWrap.prototype.update_mutation_timer = function() {
-    console.log('updating mutation timer')
     var current_time = new Date()
     var last_mutation_delta = current_time.getTime() - this.last_mutation_time.getTime()
     if (last_mutation_delta > this.mutation_done_interval) {
         this.stop_mutation_timer()
         this.page_is_ready = true
-        console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP page is ready with delta: " + last_mutation_delta)
+        console.log("PageWrap: page is now ready with delta: " + last_mutation_delta)
         // Only send the page_is_ready from the top frame.
         if (window == window.top) {
             chrome.runtime.sendMessage({code: 'page_is_ready'})
-            console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX page is ready with delta: " + last_mutation_delta)
+            console.log("PageWrap: sending out page is ready message from the top window.")
             
             // We can now show the context menu.
             g_context_menu.initialize()
+            g_popup_dialog.close_wait_mode()
         }
     }
 }
@@ -59,7 +59,6 @@ PageWrap.prototype.on_mutation = function(mutations) {
         // mutation.addedNodes.length
         // mutation.removedNodes.length
     });
-    console.log("mutation observed!")
     this.last_mutation_time = new Date();
 } 
 
@@ -156,7 +155,10 @@ PageWrap.prototype.get_all_elem_wraps_at = function(page_x, page_y) {
     var elem_wraps = []
     for (var i=0; i<elements.length; i++) {
         // *Important!* We weed out any context menu hits here.
-        if (g_context_menu.element_is_part_of_menu(elements[i])) {
+        if (g_context_menu.contains_element(elements[i])) {
+            continue
+        }
+        if (g_popup_dialog.contains_element(elements[i])) {
             continue
         }
         elem_wraps.push(new ElemWrap(elements[i]))
@@ -231,7 +233,10 @@ PageWrap.prototype.get_elem_wraps_by_xpath = function(xpath) {
   for (var i=0; i<set.snapshotLength; i++) {
       var element = set.snapshotItem(i)
       // *Important!* We weed out any context menu hits here.
-      if (g_context_menu.element_is_part_of_menu(element)) {
+      if (g_context_menu.contains_element(element)) {
+          continue
+      }
+      if (g_popup_dialog.contains_element(element)) {
           continue
       }
       elem_wraps.push(new ElemWrap(element))
@@ -257,7 +262,9 @@ PageWrap.prototype.get_all_elem_wraps_intersecting_page_box = function(page_box)
     return intersecting
 }
 
-PageWrap.prototype.get_elem_wraps_by_any_value = function(getter, target_values) {
+PageWrap.prototype.get_elem_wraps_by_any_value = function(wrap_type, target_values) {
+    var getter = ElemWrap.prototype.get_getter(wrap_type)
+        
     // Get all elem wraps.
     var elem_wraps = this.get_all_elem_wraps()
     
@@ -274,7 +281,10 @@ PageWrap.prototype.get_elem_wraps_by_any_value = function(getter, target_values)
         }
         
         // Skip the elem wrap if it's part of the smash browse menu.
-        if (g_context_menu.element_is_part_of_menu(wrapper.element)) {
+        if (g_context_menu.contains_element(wrapper.element)) {
+            continue
+        }
+        if (g_popup_dialog.contains_element(wrapper.element)) {
             continue
         }
         
@@ -294,9 +304,12 @@ PageWrap.prototype.get_elem_wraps_by_any_value = function(getter, target_values)
 }
 
 //Returns an array of elem wraps selected by the matcher.
-PageWrap.prototype.get_elem_wraps_by_values = function(getter, target_values) {
+PageWrap.prototype.get_elem_wraps_by_values = function(wrap_type, target_values) {
     // Get our initial candiate elem wraps.
-    var candidates = this.get_elem_wraps_by_any_value(getter, target_values)
+    var candidates = this.get_elem_wraps_by_any_value(wrap_type, target_values)
+    
+    // Get our getter.
+    var getter = ElemWrap.prototype.get_getter(wrap_type)
     
     // Determines arrays of surrounding elem wraps for each elem wrap.
     var results = []
@@ -372,54 +385,17 @@ PageWrap.prototype.get_elem_wraps_by_values = function(getter, target_values) {
 
 //Returns an array of elem wraps which have matching image values.
 PageWrap.prototype.get_elem_wraps_by_image_values = function(image_values) {
-    return this.get_elem_wraps_by_values(ElemWrap.prototype.get_image, image_values)
+    return this.get_elem_wraps_by_values(ElemWrap.prototype.wrap_type.image, image_values)
 }
 
 //Returns an array of elem wraps which have matching text values.
 PageWrap.prototype.get_elem_wraps_by_text_values = function(text_values) {
-    return this.get_elem_wraps_by_values(ElemWrap.prototype.get_text, text_values)
+    return this.get_elem_wraps_by_values(ElemWrap.prototype.wrap_type.text, text_values)
 }
 
-//Returns an array of elem wraps which have the matching tag name.
-//Note when finding images or text you should use other methods
-//as they appear in other ways besides the use of specific tag names like img or h2 etc.
-PageWrap.prototype.get_elem_wraps_by_tag_name = function(tag_name) {
-    return this.get_elem_wraps_by_values(ElemWrap.prototype.get_tag_name, [tag_name])
-}
-
-//Returns all elem wraps that contain images.
-PageWrap.prototype.get_elem_wraps_with_images = function() {
-    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.get_image, [])
-}
-
-//Returns all elem wraps that contain text.
-PageWrap.prototype.get_elem_wraps_with_text = function() {
-    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.get_text, [])
-}
-
-//Returns all elem wraps that contain inputs.
-PageWrap.prototype.get_elem_wraps_with_inputs = function() {
-    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.get_tag_name, ['input'])
-}
-
-//Returns all elem wraps that contain drop downs.
-PageWrap.prototype.get_elem_wraps_with_selects = function() {
-    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.get_tag_name, ['select'])
-}
-
-//Returns all elem wraps that have a vertical scroll bars.
-PageWrap.prototype.get_elem_wraps_with_vertical_scroll_bars = function() {
-    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.has_vertical_scroll_bar, [])
-}
-
-//Returns all elem wraps that have a horizontal scroll bars.
-PageWrap.prototype.get_elem_wraps_with_horizontal_scroll_bars = function() {
-    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.has_horizontal_scroll_bar, [])
-}
-
-//Returns all elem wraps that have a any scroll bars.
-PageWrap.prototype.get_elem_wraps_with_any_scroll_bars = function() {
-    return this.get_elem_wraps_by_any_value(ElemWrap.prototype.has_any_scroll_bar, [])
+//Returns all elem wraps for elements of a certain type.
+PageWrap.prototype.get_elem_wraps_from_wrap_type = function(wrap_type) {
+    return this.get_elem_wraps_by_any_value(wrap_type, [])
 }
 
 //Returns first elem wrap for which getter returns a "true-thy" value.
@@ -453,18 +429,6 @@ PageWrap.prototype.get_top_image_elem_wrap_at = function(page_x, page_y) {
         return null
     }
     if (candidate.is_topmost(ElemWrap.prototype.get_image)) {
-        return candidate
-    }
-    return null
-}
-
-// Returns the top elem wrap with either and image or text, according to z-order.
-PageWrap.prototype.get_top_text_or_image_elem_wrap_at = function(page_x, page_y) {
-    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_text_or_image, page_x, page_y)
-    if (!candidate) {
-        return null
-    }
-    if (candidate.is_topmost(ElemWrap.prototype.get_text_or_image)) {
         return candidate
     }
     return null
@@ -514,12 +478,18 @@ PageWrap.prototype.on_loaded = function() {
     // Disable hovers.
     g_page_wrap.disable_hover()
     
-    // Start mutation to timer, to try and detect when page is fully loaded.
-    console.log("starting mutation observer!")
-    this.start_mutation_timer()
-    
-    // Listen to mutations.
-    this.mutation_observer.observe(window.document, this.mutation_observer_config);
+    // We don't allow iframes to initialize.
+    if (window == window.top) {
+        // Start mutation to timer, to try and detect when page is fully loaded.
+        this.start_mutation_timer()
+        
+        // Listen to mutations.
+        this.mutation_observer.observe(window.document, this.mutation_observer_config);
+        
+        // Initialize the popup dialog.
+        g_popup_dialog.initialize()
+        g_popup_dialog.open_wait_mode()
+    }
 }
 
 

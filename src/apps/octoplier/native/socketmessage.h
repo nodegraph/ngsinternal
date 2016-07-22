@@ -3,13 +3,16 @@
 #include <QtCore/QString>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
+#include <QtCore/QObject>
 
 namespace ngs {
 
-class SocketMessage
+class SocketMessage: public QObject
 {
+  Q_OBJECT
 public:
   SocketMessage();
+  SocketMessage(const SocketMessage& other);
   SocketMessage(const QString& json_text);
   SocketMessage(const QJsonObject& json_obj);
   ~SocketMessage();
