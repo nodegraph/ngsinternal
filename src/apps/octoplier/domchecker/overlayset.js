@@ -91,6 +91,9 @@ OverlaySet.prototype.merge = function(other) {
     for (var i=0; i<other.overlays.length; i++) {
         var elem_wrap = other.overlays[i].elem_wrap
         var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, elem_wrap)
+        if (this.marked) {
+            overlay.mark()
+        }
         this.overlays.push(overlay)
     }
 }
