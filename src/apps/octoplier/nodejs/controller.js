@@ -220,26 +220,31 @@ function on_message_from_app(message) {
                 send_to_app({response: false})
             })
             break
-        case 'extract_text':
-            send_to_extension(request)
-            // The extension will return the response.
+        case 'perform_action':
+            if (request.xpath) {
+                // If the xpath has been resolved by the content script,
+                // then we let webdriver perform actions.
+                switch(request.action) {
+                    case 'send_click':
+                        click_on_element(request.xpath)
+                        break
+                    case 'send_text':
+                        send_text(request.xpath, request.text)
+                        break
+                    case 'send_key':
+                        send_key(request.xpath, request.key)
+                        break
+                    case 'get_text':
+                        get_text(request.xpath)
+                        break
+                }
+            } else {
+                // Send request to extension to resolve the xpath,
+                // and to unblock the events in the content script so that
+                // the webdriver actions can take effect on the elements.
+                send_to_extension(request) 
+            }
             break
-        case 'send_key':
-            send_key(request.xpath, request.key)
-            // A promise will return the response.
-            break
-        case 'send_text':
-            send_text(request.xpath, request.text)
-            // A promise will return the response.
-            break
-        case 'click_on_element':
-            click_on_element(request.xpath)
-            // A promise will return the response.
-            break
-        case 'mouse_over_element':
-            mouse_over_element(request.xpath, request.relative_x, request.relative_y)
-            // A promise will return the response.
-            break;
         default:
             // By default we send requests to the extension. 
             // (It goes through bg script, and then into content script.)
@@ -386,15 +391,22 @@ var get_visible_element = function (xpath, wait_milli) {
 
 // Creates promise chain which will type one key into an element.
 var send_key = function(xpath, key) {
-    p = get_visible_element(xpath, critical_wait_time).then(function(element) {
+    var p = get_visible_element(xpath, critical_wait_time).then(function(element) {
         return element.sendKeys(key)
+    })
+    terminate_chain(p)
+}
+
+var get_text = function(xpath) {
+    var p = get_visible_element(xpath, critical_wait_time).then(function(element) {
+        return element.getText()
     })
     terminate_chain(p)
 }
 
 // Creates promise chain which will set text on an element.
 var send_text = function(xpath, text) {
-    p = get_visible_element(xpath, critical_wait_time).then(function(element) {
+    var p = get_visible_element(xpath, critical_wait_time).then(function(element) {
         return element.sendKeys(Key.HOME,Key.chord(Key.SHIFT,Key.END),text)
     })
     terminate_chain(p)
@@ -402,7 +414,8 @@ var send_text = function(xpath, text) {
 
 // Creates a promise chain which will click on an element.
 var click_on_element = function (xpath) {
-    p = get_visible_element(xpath, critical_wait_time).then(function(element) {
+    console.log("clicking on element: " + xpath)
+    var p = get_visible_element(xpath, critical_wait_time).then(function(element) {
         return driver.actions().click(element).perform()
     })
     terminate_chain(p)
@@ -410,7 +423,7 @@ var click_on_element = function (xpath) {
 
 // Creates a promise chain which will mouseover an element.
 var mouse_over_element = function (xpath, relative_x, relative_y) {
-    p = get_visible_element(xpath, trivial_wait_time).then(function(element) {
+    var p = get_visible_element(xpath, trivial_wait_time).then(function(element) {
         return driver.actions().mouseMove(element, {x: relative_x , y: relative_y}).perform().then(
                 function() {},
                 function(error){log_info('Warning: could not move_over_element (computedstyle): ' + xpath);throw(error)}
@@ -434,10 +447,20 @@ var mouse_over_element = function (xpath, relative_x, relative_y) {
 // Helper to terminate promise chains.
 var terminate_chain = function(p) {p.then(
         function() {
+            // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
+            send_to_extension({request: 'block_events'})
             // Send success response to the app.
-            send_to_app({response: true})
+            if (arguments.length == 0) {
+                send_to_app({response: true})
+            } else {
+                // Send the first argument in the response.
+                send_to_app({response: arguments[0]})
+            }
         },
         function(error) {
+            // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
+            send_to_extension({request: 'block_events'})
+            // Output error details.
             log_error("Error in chain!")
             if (error.stack.indexOf('mouse_over_element') >=0) {
                 log_error('error from mouse_over_element')

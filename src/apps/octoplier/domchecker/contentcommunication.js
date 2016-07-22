@@ -71,7 +71,31 @@ ContentCommunication.prototype.receive_message_from_bg = function(request, sende
         case 'shrink_set':
             g_overlay_sets.shrink_to_extreme(request.set_index, request.direction)
             break
+        case 'perform_action':
+            // The perform action request are usually handled by the nodejs controller.
+            // However then can get send to this content script if the xpath in the request
+            // has not been resolved. Once we resolve the xpath from the set_index, we reissue
+            // the request, instead of sending a response. This means that these perform_action
+            // requests will ultimately get sent twice from the app.
             
+            // Add the xpath into the request, and re-issue it.
+            var xpath = g_overlay_sets.get_xpath(request.set_index, request.overlay_index)
+            request.xpath = xpath
+            
+            // We also unblock events to allow a webdriver to perform an action on an element at the above xpath.
+            g_event_blocker.unblock_events()
+            
+            // Send the modified request back to the app.
+            this.send_message_to_bg(request)
+            return 
+        case 'block_events':
+            g_event_blocker.block_events()
+            break
+        case 'get_xpath_from_overlay':
+            var xpath = g_overlay_sets.get_xpath(request.set_index, request.overlay_index)
+            var response = {response: xpath}
+            this.send_message_to_bg(response)
+            return
         case 'get_xpath_from_elem_cache':
             var page_box = new PageBox(request.bounds)
             var elem_cache = new ElemCache(page_box, request.scroll_amounts)
@@ -80,7 +104,7 @@ ContentCommunication.prototype.receive_message_from_bg = function(request, sende
             // Send the result in a response message.
             var response = {response: xpath}
             this.send_message_to_bg(response)
-            break
+            return
     }
     this.send_message_to_bg(new ResponseMessage(true))
 }

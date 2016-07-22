@@ -1,50 +1,78 @@
-// left: 37, up: 38, right: 39, down: 40,
-// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
-var keys = {37: 1, 38: 1, 39: 1, 40: 1};
 
-function preventDefault(e) {
-  e = e || window.event;
-  if (e.preventDefault)
-      e.preventDefault();
-  e.returnValue = false;  
+var EventBlocker = function() {
+    this.events_are_blocked = false
+    this.bound_listener = this.block_event.bind(this)
 }
 
-function preventDefaultForScrollKeys(e) {
-    if (keys[e.keyCode]) {
-        preventDefault(e);
-        return false;
-    }
-}
+//// left: 37, up: 38, right: 39, down: 40,
+//// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
+//var keys = {37: 1, 38: 1, 39: 1, 40: 1};
+//
+//function preventDefault(e) {
+//  e = e || window.event;
+//  if (e.preventDefault)
+//      e.preventDefault();
+//  e.returnValue = false;  
+//}
 
-function disableScroll() {
-  if (window.addEventListener) // older FF
-      window.addEventListener('DOMMouseScroll', preventDefault, false);
-  window.onwheel = preventDefault; // modern standard
-  window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
-  window.ontouchmove  = preventDefault; // mobile
-  document.onkeydown  = preventDefaultForScrollKeys;
-}
+//function preventDefaultForScrollKeys(e) {
+//    if (keys[e.keyCode]) {
+//        preventDefault(e);
+//        return false;
+//    }
+//}
 
-function enableScroll() {
-    if (window.removeEventListener)
-        window.removeEventListener('DOMMouseScroll', preventDefault, false);
-    window.onmousewheel = document.onmousewheel = null; 
-    window.onwheel = null; 
-    window.ontouchmove = null;  
-    document.onkeydown = null;  
-}
+//function disableScroll() {
+//  if (window.addEventListener) // older FF
+//      window.addEventListener('DOMMouseScroll', preventDefault, false);
+//  window.onwheel = preventDefault; // modern standard
+//  window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
+//  window.ontouchmove  = preventDefault; // mobile
+//  document.onkeydown  = preventDefaultForScrollKeys;
+//}
+//
+//function enableScroll() {
+//    if (window.removeEventListener)
+//        window.removeEventListener('DOMMouseScroll', preventDefault, false);
+//    window.onmousewheel = document.onmousewheel = null; 
+//    window.onwheel = null; 
+//    window.ontouchmove = null;  
+//    document.onkeydown = null;  
+//}
 
 //------------------------------------------------------------------------------------------------
 //Event Blocking/Unblocking.
 //------------------------------------------------------------------------------------------------
 
-// Basically everything except the contextmenu event (right click).
-//var event_types = 'message blur change focus focusin focusout hover scroll submit click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave pointerup pointerdown pointerenter pointerleave pointermove pointerover pointerout keydown keypress keyup input'.split(' ');
-var event_types = 'message contextmenu scroll submit wheel click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave pointerup pointerdown pointerenter pointerleave pointermove pointerover pointerout keydown keypress keyup input'.split(' ');
-//blur change focus focusin focusout hover message  scroll
-//var event_types = ["deviceorientation", "transitionend", "webkittransitionend", "webkitanimationstart", "webkitanimationiteration", "webkitanimationend", "search", "reset", "waiting", "volumechange", "unload", "timeupdate", "suspend", "submit", "storage", "stalled", "select", "seeking", "seeked", "scroll", "resize", "ratechange", "progress", "popstate", "playing", "play", "pause", "pageshow", "pagehide", "online", "offline", "mousewheel", "mouseup", "mouseover", "mouseout", "mousemove", "mousedown", "message", "loadstart", "loadedmetadata", "loadeddata", "load", "keyup", "keypress", "keydown", "invalid", "input", "hashchange", "focus", "error", "ended", "emptied", "durationchange", "drop", "dragstart", "dragover", "dragleave", "dragenter", "dragend", "drag", "dblclick", "contextmenu", "click", "change", "canplaythrough", "canplay", "blur", "beforeunload", "abort"]
+// The event that we will block.
+EventBlocker.prototype.event_types = [
+                                      'message',
+                                      'contextmenu', 
+                                      'scroll', 
+                                      'submit', 
+                                      'wheel', 
+                                      'click', 
+                                      'dblclick', 
+                                      'mousedown', 
+                                      'mouseup', 
+                                      'mousemove', 
+                                      'mouseover', 
+                                      'mouseout', 
+                                      'mouseenter', 
+                                      'mouseleave', 
+                                      'pointerup', 
+                                      'pointerdown', 
+                                      'pointerenter', 
+                                      'pointerleave', 
+                                      'pointermove', 
+                                      'pointerover', 
+                                      'pointerout', 
+                                      'keydown', 
+                                      'keypress', 
+                                      'keyup', 
+                                      'input']
 
-function block_event(event) {
+EventBlocker.prototype.block_event = function(event) {
     // If the event is inside our context menu or popup dialog, let it through.
     if (window == window.top) {
         if (event.target && event.target.tagName) {
@@ -94,16 +122,25 @@ function block_event(event) {
     return false;
 }
 
-function block_events() {
-    event_types.forEach(function (eventType) {
-        window.addEventListener(eventType, block_event, true)
-    })
+EventBlocker.prototype.block_events = function() {
+    if (this.events_are_blocked) {
+        return
+    }
+    for (var i=0; i<this.event_types.length; i++) {
+        window.addEventListener(this.event_types[i], this.bound_listener, true)
+    }
+    this.events_are_blocked = true
 }
 
-function unblock_events() {
-    EVENT_TYPES.forEach(function (eventType) {
-        window.removeEventListener(eventType, block_event, true);
-    });
+EventBlocker.prototype.unblock_events = function() {
+    if (!this.events_are_blocked) {
+        return
+    }
+    for (var i=0; i<this.event_types.length; i++) {
+        window.removeEventListener(this.event_types[i], this.bound_listener, true);
+    }
+    this.events_are_blocked = false
 }
 
-block_events()
+var g_event_blocker = new EventBlocker();
+g_event_blocker.block_events()

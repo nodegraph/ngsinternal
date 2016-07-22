@@ -215,6 +215,13 @@ OverlaySets.prototype.shrink_to_extreme = function(set_index, side) {
 //    this.sets = next_sets
 }
 
+OverlaySets.prototype.get_xpath = function(set_index, overlay_index) {
+    if (set_index < 0 || overlay_index < 0) {
+        return
+    }
+    return this.sets[set_index].overlays[overlay_index].elem_wrap.get_xpath()
+}
+
 // -------------------------------------------------------------------------
 // Private methods.
 //-------------------------------------------------------------------------

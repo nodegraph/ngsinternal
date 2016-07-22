@@ -20,7 +20,7 @@ var ElemCache = function(elem_wrap) {
     }
 }
 
-//Positions scroll bars into proper position so that the real dom element lines up
+//Position scroll bars into proper position so that the real dom element lines up
 //with the recorded page box. After this call, action's can be taken on the page box,
 //area of the web page, thereby effectively taking action on the actual element.
 ElemCache.prototype.position_scrolls = function() {

@@ -74,10 +74,10 @@ bool AppCommunication::handle_request_from_app(const SocketMessage& sm) {
     return false;
   }
 
-  // Make sure not waiting for results from a previous command.
-  if (_waiting_for_results) {
-    return false;
-  }
+//  // Make sure not waiting for results from a previous command.
+//  if (_waiting_for_results) {
+//    return false;
+//  }
 
   // Send the request to nodejs.
   _waiting_for_results = true;

@@ -52,7 +52,7 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     this.add_spacer(top_menu)
     
     // The find specific menu.
-    this.create_set_by_matching_menu = this.add_sub_menu(top_menu, 'Create set using info from mouse hover')
+    this.create_set_by_matching_menu = this.add_sub_menu(top_menu, 'Create set from values under mouse')
     this.create_set_by_matching_text = this.add_item(this.create_set_by_matching_menu, 'text')
     this.create_set_by_matching_image = this.add_item(this.create_set_by_matching_menu, 'image')
 //    this.create_set_by_matching_position = this.add_item(this.create_set_by_matching_menu, 'position')
@@ -66,7 +66,7 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     this.create_set_from_images = this.add_item(this.create_set_by_type_menu, 'has an image')
     
     // Delete
-    this.delete_set = this.add_item(this.top_menu, 'Delete set under mouse')
+    this.delete_set = this.add_item(this.top_menu, 'Delete set')
     
     // Spacer.
     this.add_spacer(top_menu)
@@ -136,7 +136,7 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     this.spacer = this.add_spacer(this.top_menu)
     
     // Act on element.
-    this.perform_menu = this.add_sub_menu(this.top_menu, 'Perform action on element')
+    this.perform_menu = this.add_sub_menu(this.top_menu, 'Perform action on set with one element')
     this.perform_click = this.add_item(this.perform_menu, 'click')
     this.perform_type = this.add_item(this.perform_menu, 'type text')
     this.perform_enter = this.add_item(this.perform_menu, 'type enter/submit')
@@ -238,6 +238,20 @@ ContextMenu.prototype.contains_element = function(element) {
 ContextMenu.prototype.on_context_menu = function(page_event) {
     this.page_x = page_event.pageX
     this.page_y = page_event.pageY
+    
+    var text_values = g_page_wrap.get_text_values_at(this.page_x, this.page_y)
+    var image_values = g_page_wrap.get_image_values_at(this.page_x, this.page_y)
+    
+    if (text_values.length == 0) {
+        this.disable_item(this.create_set_by_matching_text)
+    } else {
+        this.enable_item(this.create_set_by_matching_text)
+    }
+    if (image_values.length == 0) {
+        this.disable_item(this.create_set_by_matching_image)
+    } else {
+        this.enable_item(this.create_set_by_matching_image)
+    }
     
     // Show the menu.
     this.show(page_event.pageX, page_event.pageY)
@@ -739,9 +753,61 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     // --------------------------------------------------------------
-    // Other.
+    // Perform action on set with one element.
     // --------------------------------------------------------------
     
+    else if (this.perform_click.contains(menu_target)) {
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'perform_action',
+            set_index: set_index,
+            overlay_index: 0,
+            action: 'send_click'
+        }
+        g_content_comm.send_message_to_bg(request)
+    }
+
+    else if (this.perform_type.contains(menu_target)) {
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'perform_action',
+            set_index: set_index,
+            overlay_index: 0,
+            action: 'send_text',
+            text: 'booya'
+        }
+        
+        function send_message_callback(text) {
+            request.text = text
+            g_content_comm.send_message_to_bg(request)
+        }
+        g_popup_dialog.set_label_text('Enter text to type')
+        g_popup_dialog.open(send_message_callback)
+    }
+
+    else if (this.perform_enter.contains(menu_target)) {
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'perform_action',
+            set_index: set_index,
+            overlay_index: 0,
+            action: 'send_key',
+            key: 'x'
+        }
+        g_content_comm.send_message_to_bg(request)
+    }
+
+    else if (this.perform_extract.contains(menu_target)) {
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'perform_action',
+            set_index: set_index,
+            action: 'get_text',
+            overlay_index: 0,
+            variable_name: 'test'
+        }
+        g_content_comm.send_message_to_bg(request)
+    }
 
     
     document.removeEventListener('click', this.on_click_bound, true);
