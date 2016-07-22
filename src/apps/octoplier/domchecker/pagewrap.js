@@ -19,8 +19,8 @@ var PageWrap = function() {
 //Mutation Observation.
 //---------------------------------------------------------------------------------
 
-PageWrap.prototype.mutation_check_interval = 200 // time interval to check whether we've waited long enough
-PageWrap.prototype.mutation_done_interval = 5000 // minimum time since last mutation, to be considered fully completed and done
+PageWrap.prototype.mutation_check_interval = 100 // time interval to check whether we've waited long enough
+PageWrap.prototype.mutation_done_interval = 1000 // minimum time since last mutation, to be considered fully completed and done
 
 PageWrap.prototype.start_mutation_timer = function() {
     if (this.mutation_timer == null) {
@@ -262,7 +262,7 @@ PageWrap.prototype.get_all_elem_wraps_intersecting_page_box = function(page_box)
     return intersecting
 }
 
-PageWrap.prototype.get_elem_wraps_by_any_value = function(wrap_type, target_values) {
+PageWrap.prototype.get_elem_wraps_by_any_value_with_xray = function(wrap_type, target_values) {
     var getter = ElemWrap.prototype.get_getter(wrap_type)
         
     // Get all elem wraps.
@@ -306,7 +306,7 @@ PageWrap.prototype.get_elem_wraps_by_any_value = function(wrap_type, target_valu
 //Returns an array of elem wraps selected by the matcher.
 PageWrap.prototype.get_elem_wraps_by_values = function(wrap_type, target_values) {
     // Get our initial candiate elem wraps.
-    var candidates = this.get_elem_wraps_by_any_value(wrap_type, target_values)
+    var candidates = this.get_elem_wraps_by_any_value_with_xray(wrap_type, target_values)
     
     // Get our getter.
     var getter = ElemWrap.prototype.get_getter(wrap_type)
@@ -395,7 +395,7 @@ PageWrap.prototype.get_elem_wraps_by_text_values = function(text_values) {
 
 //Returns all elem wraps for elements of a certain type.
 PageWrap.prototype.get_elem_wraps_from_wrap_type = function(wrap_type) {
-    return this.get_elem_wraps_by_any_value(wrap_type, [])
+    return this.get_elem_wraps_by_any_value_with_xray(wrap_type, [])
 }
 
 //Returns first elem wrap for which getter returns a "true-thy" value.

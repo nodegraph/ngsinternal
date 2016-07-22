@@ -102,16 +102,37 @@ OverlaySets.prototype.get_marked_sets = function() {
     return {marked: marked, unmarked: unmarked}
 }
 
+OverlaySets.prototype.merge_marked_sets = function() {
+    var result = this.get_marked_sets()
+    var marked = result.marked
+    if (marked.length < 2) {
+        return
+    }
+    // Merge all the marked sets into the first one.
+    var set = this.sets[marked[0]]
+    for (var i=1; i<marked.length; i++) {
+        var other_set = this.sets[marked[i]]
+        set.merge(other_set)
+        // Mark sets to destroy by adding a property.
+        other_set.cleanup = true
+    }
+    // Destroy all all the sets marked for destruction.
+    for (var i=0; i<this.sets.length; i++) {
+        if (this.sets[i].cleanup) {
+            this.sets[i].destroy()
+            this.sets.splice(i,1)
+            i -= 1
+        }
+    }
+}
+
 // Shrink to marked set.
 //- sides is an array of sides
-OverlaySets.prototype.shrink_to_marked = function(set_index, sides) {
+OverlaySets.prototype.shrink_set_to_marked = function(set_index, sides) {
     // Find the marked and unmarked sets.
     var result = this.get_marked_sets()
     var marked = result.marked
     var unmarked = [set_index]
-    
-    console.log('set index: ' + set_index)
-    console.log('marked sets: ' + marked)
     
     // Make sure the set_index is not in the marked set.
     if (marked.indexOf(set_index) >= 0) {
@@ -141,52 +162,57 @@ OverlaySets.prototype.shrink_to_marked = function(set_index, sides) {
 }
 
 // Shrink all sets.
-OverlaySets.prototype.shrink_to_extreme = function(page_x, page_y, side) {
-    // Shrink down each overlay set.
-    for (var i=0; i<this.sets.length; i++) {
-        this.sets[i].shrink_to_extreme(side)
+OverlaySets.prototype.shrink_to_extreme = function(set_index, side) {
+    if (set_index < 0) {
+        return
     }
+    this.sets[set_index].shrink_to_extreme(side)
     
-    // Now find the most extreme of the shrunken sets.
-    var extreme = null
-    var extreme_index = null
-    for (var i=0; i<this.sets.length; i++) {
-        var set = this.sets[i]
-        var page_box = set.overlays[0].elem_wrap.page_box
-        if (i==0) {
-            extreme = page_box.get_extreme(side)
-            extreme_index = 0
-        } else {
-            var value = page_box.get_extreme(side)
-            if (value_is_more_extreme(value,extreme,side)) {
-                extreme = value
-                extreme_index = i
-            }
-        }
-    }
-    
-    // Create our next sets array, which contains all the sets at the extreme value.
-    var next_sets = []
-    for (var i=0; i<this.sets.length; i++) {
-        var set = this.sets[i]
-        var page_box = set.overlays[0].elem_wrap.page_box
-        var value = page_box.get_extreme(side)
-        if (value == extreme) {
-            // Add to our next sets.
-            next_sets.push(this.sets[i])
-            // Splice out from our current sets
-            this.sets.splice(i,1)
-            i -= 1
-        }
-    }
-    
-    // Destroy all the other sets.
-    for (var i=0; i<this.sets.length; i++) {
-        this.sets[i].destroy()
-    }
-    
-    // Update our sets array.
-    this.sets = next_sets
+//    // Shrink down each overlay set.
+//    for (var i=0; i<this.sets.length; i++) {
+//        this.sets[i].shrink_to_extreme(side)
+//    }
+//    
+//    // Now find the most extreme of the shrunken sets.
+//    var extreme = null
+//    var extreme_index = null
+//    for (var i=0; i<this.sets.length; i++) {
+//        var set = this.sets[i]
+//        var page_box = set.overlays[0].elem_wrap.page_box
+//        if (i==0) {
+//            extreme = page_box.get_extreme(side)
+//            extreme_index = 0
+//        } else {
+//            var value = page_box.get_extreme(side)
+//            if (value_is_more_extreme(value,extreme,side)) {
+//                extreme = value
+//                extreme_index = i
+//            }
+//        }
+//    }
+//    
+//    // Create our next sets array, which contains all the sets at the extreme value.
+//    var next_sets = []
+//    for (var i=0; i<this.sets.length; i++) {
+//        var set = this.sets[i]
+//        var page_box = set.overlays[0].elem_wrap.page_box
+//        var value = page_box.get_extreme(side)
+//        if (value == extreme) {
+//            // Add to our next sets.
+//            next_sets.push(this.sets[i])
+//            // Splice out from our current sets
+//            this.sets.splice(i,1)
+//            i -= 1
+//        }
+//    }
+//    
+//    // Destroy all the other sets.
+//    for (var i=0; i<this.sets.length; i++) {
+//        this.sets[i].destroy()
+//    }
+//    
+//    // Update our sets array.
+//    this.sets = next_sets
 }
 
 // -------------------------------------------------------------------------

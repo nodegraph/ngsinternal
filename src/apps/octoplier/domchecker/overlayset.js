@@ -86,14 +86,20 @@ OverlaySet.prototype.expand = function(side, match_criteria) {
     }
 }
 
+//Merge another sets elements into ourself.
+OverlaySet.prototype.merge = function(other) {
+    for (var i=0; i<other.overlays.length; i++) {
+        var elem_wrap = other.overlays[i].elem_wrap
+        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, elem_wrap)
+        this.overlays.push(overlay)
+    }
+}
+
 OverlaySet.prototype.get_beams = function(sides) {
     var beams = []
     for (var i=0; i<this.overlays.length; i++) {
-        console.log('+')
         for (var j=0; j<sides.length; j++) {
-            console.log('*')
             var beam = this.overlays[i].elem_wrap.page_box.get_beam(sides[j])
-            console.log('beam: ' + beam.get_as_string())
             beams.push(beam)
         }
     }
@@ -117,43 +123,43 @@ OverlaySet.prototype.intersect_with_beams = function(beams) {
     }
 }
 
-OverlaySet.prototype.trim_to_side = function(beams, side) {
-    for (var b=0; b<beams.length; b++) {
-        var page_box = beams[b]
-        for (var i=0; i<this.overlays.length; i++) {
-            var overlay = this.overlays[i]
-            var out_of_bounds = false
-            switch(side) {
-                case ElemWrap.prototype.direction.left:
-                    if (overlay.right > page_box.right) {
-                        out_of_bounds = true
-                    }
-                    break
-                case ElemWrap.prototype.direction.right:
-                    if (overlay.left < page_box.left) {
-                        out_of_bounds = true
-                    }
-                    break
-                case ElemWrap.prototype.direction.up:
-                    if (overlay.bottom > page_box.bottom) {
-                        out_of_bounds = true
-                    }
-                    break
-                case ElemWrap.prototype.direction.down:
-                    if (overlay.top < page_box.top) {
-                        out_of_bounds = true
-                    }
-                    break
-            }
-            // Remove an out of bounds overlay.
-            if (out_of_bounds) {
-                this.overlays[i].destroy()
-                this.overlays.splice(i,1)
-                i -= 1
-            }
-        }
-    }
-}
+//OverlaySet.prototype.trim_to_side = function(beams, side) {
+//    for (var b=0; b<beams.length; b++) {
+//        var page_box = beams[b]
+//        for (var i=0; i<this.overlays.length; i++) {
+//            var overlay = this.overlays[i]
+//            var out_of_bounds = false
+//            switch(side) {
+//                case ElemWrap.prototype.direction.left:
+//                    if (overlay.right > page_box.right) {
+//                        out_of_bounds = true
+//                    }
+//                    break
+//                case ElemWrap.prototype.direction.right:
+//                    if (overlay.left < page_box.left) {
+//                        out_of_bounds = true
+//                    }
+//                    break
+//                case ElemWrap.prototype.direction.up:
+//                    if (overlay.bottom > page_box.bottom) {
+//                        out_of_bounds = true
+//                    }
+//                    break
+//                case ElemWrap.prototype.direction.down:
+//                    if (overlay.top < page_box.top) {
+//                        out_of_bounds = true
+//                    }
+//                    break
+//            }
+//            // Remove an out of bounds overlay.
+//            if (out_of_bounds) {
+//                this.overlays[i].destroy()
+//                this.overlays.splice(i,1)
+//                i -= 1
+//            }
+//        }
+//    }
+//}
 
 OverlaySet.prototype.shrink_to_extreme = function(side) {
     var extreme = null

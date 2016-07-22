@@ -53,7 +53,6 @@ ContentCommunication.prototype.receive_message_from_bg = function(request, sende
             g_overlay_sets.shift(request.set_index, request.direction, request.wrap_type)
             break
         case 'expand_set':
-            console.log('match_criteria is: ' + request.match_criteria)
             var match_criteria = new MatchCriteria(request.match_criteria)
             g_overlay_sets.expand(request.set_index, request.direction, match_criteria)
             break
@@ -63,8 +62,14 @@ ContentCommunication.prototype.receive_message_from_bg = function(request, sende
         case 'unmark_set':
             g_overlay_sets.unmark_set(request.set_index)
             break
-        case 'shrink_to_marked':
-            g_overlay_sets.shrink_to_marked(request.set_index, request.directions)
+        case 'merge_marked_sets':
+            g_overlay_sets.merge_marked_sets()
+            break
+        case 'shrink_set_to_marked':
+            g_overlay_sets.shrink_set_to_marked(request.set_index, request.directions)
+            break
+        case 'shrink_set':
+            g_overlay_sets.shrink_to_extreme(request.set_index, request.direction)
             break
             
         case 'get_xpath_from_elem_cache':

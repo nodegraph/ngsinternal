@@ -110,24 +110,27 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     this.add_spacer(top_menu)
     
     // Mark sets.
-    this.mark_set = this.add_item(this.top_menu, 'Mark set under mouse')
-    this.unmark_set = this.add_item(this.top_menu, 'Unmark set under mouse')
+    this.mark_set = this.add_item(this.top_menu, 'Mark set')
+    this.unmark_set = this.add_item(this.top_menu, 'Unmark set')
+    
+    // Merge marked sets.
+    this.merge_marked_sets = this.add_item(this.top_menu, 'Merge marked sets')
     
     // The shrink to marked menu.
-    this.shrink_to_marked_menu = this.add_sub_menu(top_menu, 'Shrink sets w.r.t marked set' )
-    this.shrink_above_marked = this.add_item(this.shrink_to_marked_menu, 'above marked set element')
-    this.shrink_below_marked = this.add_item(this.shrink_to_marked_menu, 'below marked set elements')
-    this.shrink_above_and_below_marked = this.add_item(this.shrink_to_marked_menu, 'above and below marked set elements')
-    this.shrink_left_of_marked = this.add_item(this.shrink_to_marked_menu, 'left of marked set elements')
-    this.shrink_right_of_marked = this.add_item(this.shrink_to_marked_menu, 'right of marked set elements')
-    this.shrink_left_and_right_of_marked = this.add_item(this.shrink_to_marked_menu, 'left and right of marked set elements')
+    this.shrink_set_to_marked_menu = this.add_sub_menu(top_menu, 'Shrink set w.r.t. marked sets' )
+    this.shrink_set_above_marked = this.add_item(this.shrink_set_to_marked_menu, 'above marked set element')
+    this.shrink_set_below_marked = this.add_item(this.shrink_set_to_marked_menu, 'below marked set elements')
+    this.shrink_set_above_and_below_marked = this.add_item(this.shrink_set_to_marked_menu, 'above and below marked set elements')
+    this.shrink_set_left_of_marked = this.add_item(this.shrink_set_to_marked_menu, 'left of marked set elements')
+    this.shrink_set_right_of_marked = this.add_item(this.shrink_set_to_marked_menu, 'right of marked set elements')
+    this.shrink_set_left_and_right_of_marked = this.add_item(this.shrink_set_to_marked_menu, 'left and right of marked set elements')
     
     // The shrink down all sets menu.
-    this.shrink_all_menu = this.add_sub_menu(top_menu, 'Shrink sets to' )
-    this.shrink_all_topmost = this.add_item(this.shrink_all_menu, 'topmost elements')
-    this.shrink_all_bottommost= this.add_item(this.shrink_all_menu, 'bottommost elements')
-    this.shrink_all_leftmost = this.add_item(this.shrink_all_menu, 'leftmost elements')
-    this.shrink_all_rightmost = this.add_item(this.shrink_all_menu, 'rightmost elements')
+    this.shrink_set_menu = this.add_sub_menu(top_menu, 'Shrink set to' )
+    this.shrink_set_to_topmost = this.add_item(this.shrink_set_menu, 'topmost element')
+    this.shrink_set_to_bottommost= this.add_item(this.shrink_set_menu, 'bottommost element')
+    this.shrink_set_to_leftmost = this.add_item(this.shrink_set_menu, 'leftmost element')
+    this.shrink_set_to_rightmost = this.add_item(this.shrink_set_menu, 'rightmost element')
     
     // Spacer.
     this.spacer = this.add_spacer(this.top_menu)
@@ -249,7 +252,6 @@ ContextMenu.prototype.on_context_menu = function(page_event) {
 ContextMenu.prototype.on_click = function(menu_event) {
     this.hide();
     var menu_target = menu_event.target
-    console.log('clicked')
     
     if (this.navigate_to_url.contains(menu_target)) { 
         function goto_url(url) {
@@ -620,96 +622,120 @@ ContextMenu.prototype.on_click = function(menu_event) {
         g_content_comm.send_message_to_bg(request)
     } 
     
-    else if (this.shrink_above_marked.contains(menu_target)) {
+    // Merge marked sets.
+    else if (this.merge_marked_sets.contains(menu_target)) {
+        var request = {
+                request: 'merge_marked_sets',
+        }
+        g_content_comm.send_message_to_bg(request)
+    }
+    
+    else if (this.shrink_set_above_marked.contains(menu_target)) {
         var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
         var request = {
-            request: 'shrink_to_marked',
+            request: 'shrink_set_to_marked',
             set_index: set_index,
             directions: [ElemWrap.prototype.direction.up]
         }
         g_content_comm.send_message_to_bg(request)
         
-        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up])
+        //g_overlay_sets.shrink_set_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up])
     }
     
-    else if (this.shrink_below_marked.contains(menu_target)) {
+    else if (this.shrink_set_below_marked.contains(menu_target)) {
         var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
         var request = {
-            request: 'shrink_to_marked',
+            request: 'shrink_set_to_marked',
             set_index: set_index,
             directions: [ElemWrap.prototype.direction.down]
         }
         g_content_comm.send_message_to_bg(request)
         
-        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.down])
+        //g_overlay_sets.shrink_set_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.down])
     }
     
-    else if (this.shrink_above_and_below_marked.contains(menu_target)) {
+    else if (this.shrink_set_above_and_below_marked.contains(menu_target)) {
         var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
         var request = {
-            request: 'shrink_to_marked',
+            request: 'shrink_set_to_marked',
             set_index: set_index,
             directions: [ElemWrap.prototype.direction.up, ElemWrap.prototype.direction.down]
         }
         g_content_comm.send_message_to_bg(request)
-        
-        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up, ElemWrap.prototype.direction.down])
     }
     
-    else if (this.shrink_left_of_marked.contains(menu_target)) {
+    else if (this.shrink_set_left_of_marked.contains(menu_target)) {
         var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
         var request = {
-            request: 'shrink_to_marked',
+            request: 'shrink_set_to_marked',
             set_index: set_index,
             directions: [ElemWrap.prototype.direction.left]
         }
         g_content_comm.send_message_to_bg(request)
-        
-        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.left])
     }
     
-    else if (this.shrink_right_of_marked.contains(menu_target)) {
+    else if (this.shrink_set_right_of_marked.contains(menu_target)) {
         var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
         var request = {
-            request: 'shrink_to_marked',
+            request: 'shrink_set_to_marked',
             set_index: set_index,
             directions: [ElemWrap.prototype.direction.right]
         }
         g_content_comm.send_message_to_bg(request)
-        
-        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.right])
     }
     
-    else if (this.shrink_left_and_right_of_marked.contains(menu_target)) {
+    else if (this.shrink_set_left_and_right_of_marked.contains(menu_target)) {
         var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
         var request = {
-            request: 'shrink_to_marked',
+            request: 'shrink_set_to_marked',
             set_index: set_index,
             directions: [ElemWrap.prototype.direction.left, ElemWrap.prototype.direction.right]
         }
         g_content_comm.send_message_to_bg(request)
-        
-        //g_overlay_sets.shrink_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.left, ElemWrap.prototype.direction.right])
     }
     
     // --------------------------------------------------------------
     // Shrink all.
     // --------------------------------------------------------------
     
-    else if (this.shrink_all_topmost.contains(menu_target)) {
-        g_overlay_sets.shrink_to_extreme(this.page_x, this.page_y, ElemWrap.prototype.direction.up)
+    else if (this.shrink_set_to_topmost.contains(menu_target)) {
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shrink_set',
+            set_index: set_index,
+            direction: ElemWrap.prototype.direction.up
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     
-    else if (this.shrink_all_bottommost.contains(menu_target)) {
-        g_overlay_sets.shrink_to_extreme(this.page_x, this.page_y, ElemWrap.prototype.direction.down)
+    else if (this.shrink_set_to_bottommost.contains(menu_target)) {
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shrink_set',
+            set_index: set_index,
+            direction: ElemWrap.prototype.direction.down
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     
-    else if (this.shrink_all_leftmost.contains(menu_target)) {
-        g_overlay_sets.shrink_to_extreme(this.page_x, this.page_y, ElemWrap.prototype.direction.left)
+    else if (this.shrink_set_to_leftmost.contains(menu_target)) {
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shrink_set',
+            set_index: set_index,
+            direction: ElemWrap.prototype.direction.left
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     
-    else if (this.shrink_all_rightmost.contains(menu_target)) {
-        g_overlay_sets.shrink_to_extreme(this.page_x, this.page_y, ElemWrap.prototype.direction.right)
+    else if (this.shrink_set_to_rightmost.contains(menu_target)) {
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'shrink_set',
+            set_index: set_index,
+            direction: ElemWrap.prototype.direction.right
+        }
+        g_content_comm.send_message_to_bg(request)
     }
     
     // --------------------------------------------------------------
