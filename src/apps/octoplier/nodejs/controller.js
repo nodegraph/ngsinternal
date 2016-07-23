@@ -231,11 +231,14 @@ function on_message_from_app(message) {
                     case 'send_text':
                         send_text(request.xpath, request.text)
                         break
-                    case 'send_key':
-                        send_key(request.xpath, request.key)
+                    case 'send_enter':
+                        send_key(request.xpath, Key.RETURN)
                         break
                     case 'get_text':
                         get_text(request.xpath)
+                        break
+                    case 'select_option':
+                        select_option(request.xpath, request.option_text)
                         break
                 }
             } else {
@@ -381,7 +384,6 @@ var get_element = function (xpath, wait_milli) {
 var get_visible_element = function (xpath, wait_milli) {
     return get_element(xpath, wait_milli).then(
             function (element) {
-                log_info("type of element: " + typeof(element))
                 return driver.wait(until.elementIsVisible(element), wait_milli).then(
                         function(element){return element},
                         function(error){log_info('Warning: element was not visible: ' + xpath); throw error})
@@ -432,6 +434,14 @@ var mouse_over_element = function (xpath, relative_x, relative_y) {
     terminate_chain(p)
 }
 
+// Creates a promise which will select an option in a select dropdown.
+var select_option = function(xpath, option_text) {
+    var p = get_visible_element(xpath, critical_wait_time).then(function(element) {
+        return element.findElement(By.xpath('option[normalize-space(text())="' + option_text + '"]')).click()
+    })
+    terminate_chain(p)
+}
+
 //// Creates a promise which will send results back to the native app.
 //var send_result = function () {
 //    p = flow.execute( function() {
@@ -450,11 +460,12 @@ var terminate_chain = function(p) {p.then(
             // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
             send_to_extension({request: 'block_events'})
             // Send success response to the app.
+            console.log('terminating chain success with numargs: ' + arguments.length)
             if (arguments.length == 0) {
                 send_to_app({response: true})
             } else {
                 // Send the first argument in the response.
-                send_to_app({response: arguments[0]})
+                send_to_app({response: true, value: arguments[0]})
             }
         },
         function(error) {

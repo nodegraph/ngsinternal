@@ -76,10 +76,7 @@ EventBlocker.prototype.block_event = function(event) {
     // If the event is inside our context menu or popup dialog, let it through.
     if (window == window.top) {
         if (event.target && event.target.tagName) {
-            if (g_context_menu.contains_element(event.target)) {
-                return true
-            }
-            if (g_popup_dialog.contains_element(event.target)) {
+            if (this.gui_contains_element(event.target)) {
                 return true
             }
         }
@@ -140,6 +137,22 @@ EventBlocker.prototype.unblock_events = function() {
         window.removeEventListener(this.event_types[i], this.bound_listener, true);
     }
     this.events_are_blocked = false
+}
+
+EventBlocker.prototype.gui_contains_element = function(element) {
+    if (g_context_menu.contains_element(element)) {
+        return true
+    }
+    if (g_wait_popup.contains_element(element)) {
+        return true
+    }
+    if (g_text_input_popup.contains_element(element)) {
+        return true
+    }
+    if (g_select_input_popup.contains_element(element)) {
+        return true
+    }
+    return false
 }
 
 var g_event_blocker = new EventBlocker();

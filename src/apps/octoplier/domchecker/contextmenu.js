@@ -139,8 +139,9 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     this.perform_menu = this.add_sub_menu(this.top_menu, 'Perform action on set with one element')
     this.perform_click = this.add_item(this.perform_menu, 'click')
     this.perform_type = this.add_item(this.perform_menu, 'type text')
-    this.perform_enter = this.add_item(this.perform_menu, 'type enter/submit')
+    this.perform_enter = this.add_item(this.perform_menu, 'press enter/submit')
     this.perform_extract = this.add_item(this.perform_menu, 'extract text')
+    this.perform_select_option = this.add_item(this.perform_menu, 'select option')
     
     // Spacer.
     this.spacer = this.add_spacer(this.top_menu)
@@ -271,7 +272,8 @@ ContextMenu.prototype.on_click = function(menu_event) {
         function goto_url(url) {
             g_content_comm.send_message_to_bg({request: 'navigate_to', url: url})
         }
-        g_popup_dialog.open(goto_url)
+        g_text_input_popup.set_label_text("Enter URL")
+        g_text_input_popup.open(goto_url)
     } 
     
 //    else if (this.navigate_back.contains(menu_target)) { 
@@ -781,8 +783,8 @@ ContextMenu.prototype.on_click = function(menu_event) {
             request.text = text
             g_content_comm.send_message_to_bg(request)
         }
-        g_popup_dialog.set_label_text('Enter text to type')
-        g_popup_dialog.open(send_message_callback)
+        g_text_input_popup.set_label_text('Enter text to type')
+        g_text_input_popup.open(send_message_callback)
     }
 
     else if (this.perform_enter.contains(menu_target)) {
@@ -791,7 +793,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
             request: 'perform_action',
             set_index: set_index,
             overlay_index: 0,
-            action: 'send_key',
+            action: 'send_enter',
             key: 'x'
         }
         g_content_comm.send_message_to_bg(request)
@@ -807,6 +809,34 @@ ContextMenu.prototype.on_click = function(menu_event) {
             variable_name: 'test'
         }
         g_content_comm.send_message_to_bg(request)
+    }
+    
+    else if (this.perform_select_option.contains(menu_target)) {
+        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var request = {
+            request: 'perform_action',
+            set_index: set_index,
+            action: 'select_option',
+            overlay_index: 0,
+            option_text: 'hello'
+        }
+        function send_message_callback(text) {
+            request.option_text = text
+            g_content_comm.send_message_to_bg(request)
+        }
+        
+        var set = g_overlay_sets.sets[set_index]
+        var element = set.overlays[0].elem_wrap.element
+        var option_values = []
+        var option_texts = []
+        for (var i=0; i<element.options.length; i++) {
+            option_values.push(element.options[i].value)
+            option_texts.push(element.options[i].text)
+            console.log('option value,text: ' + element.options[i].value + "," + element.options[i].text)
+        }
+        g_select_input_popup.set_label_text('Enter the text of the option to select')
+        g_select_input_popup.set_options(option_values, option_texts)
+        g_select_input_popup.open(send_message_callback)
     }
 
     

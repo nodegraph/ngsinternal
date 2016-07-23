@@ -1,4 +1,4 @@
-#smash_browse_popup_hider.smash_browse_page_overlay:before {
+.smash_browse_popup_hider.smash_browse_page_overlay:before {
 	content: " ";
 	width: 100%;
 	height: 100%;
@@ -11,7 +11,7 @@
 	background: rgba(0, 0, 0, 0.7);
 }
 
-#smash_browse_popup {
+.smash_browse_popup {
 	display: none;
 	/*z-index: 200;*/
 	z-index: 2147483646; /* max 32 bit int 2147483647 */ 
@@ -27,7 +27,7 @@
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-#smash_browse_popup_hider.smash_browse_page_overlay #smash_browse_popup {
+.smash_browse_popup_hider.smash_browse_page_overlay .smash_browse_popup {
 	display: block;
 }
 

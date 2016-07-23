@@ -49,7 +49,7 @@ PageWrap.prototype.update_mutation_timer = function() {
             
             // We can now show the context menu.
             g_context_menu.initialize()
-            g_popup_dialog.close_wait_mode()
+            g_wait_popup.close()
         }
     }
 }
@@ -155,10 +155,7 @@ PageWrap.prototype.get_all_elem_wraps_at = function(page_x, page_y) {
     var elem_wraps = []
     for (var i=0; i<elements.length; i++) {
         // *Important!* We weed out any context menu hits here.
-        if (g_context_menu.contains_element(elements[i])) {
-            continue
-        }
-        if (g_popup_dialog.contains_element(elements[i])) {
+        if (g_event_blocker.gui_contains_element(elements[i])) {
             continue
         }
         elem_wraps.push(new ElemWrap(elements[i]))
@@ -233,10 +230,7 @@ PageWrap.prototype.get_elem_wraps_by_xpath = function(xpath) {
   for (var i=0; i<set.snapshotLength; i++) {
       var element = set.snapshotItem(i)
       // *Important!* We weed out any context menu hits here.
-      if (g_context_menu.contains_element(element)) {
-          continue
-      }
-      if (g_popup_dialog.contains_element(element)) {
+      if (g_event_blocker.gui_contains_element(element)) {
           continue
       }
       elem_wraps.push(new ElemWrap(element))
@@ -281,10 +275,7 @@ PageWrap.prototype.get_elem_wraps_by_any_value_with_xray = function(wrap_type, t
         }
         
         // Skip the elem wrap if it's part of the smash browse menu.
-        if (g_context_menu.contains_element(wrapper.element)) {
-            continue
-        }
-        if (g_popup_dialog.contains_element(wrapper.element)) {
+        if (g_event_blocker.gui_contains_element(wrapper.element)) {
             continue
         }
         
@@ -486,9 +477,13 @@ PageWrap.prototype.on_loaded = function() {
         // Listen to mutations.
         this.mutation_observer.observe(window.document, this.mutation_observer_config);
         
-        // Initialize the popup dialog.
-        g_popup_dialog.initialize()
-        g_popup_dialog.open_wait_mode()
+        // Initialize and open the wait popup.
+        g_wait_popup.initialize()
+        g_wait_popup.open()
+        
+        // Initialize the other popups.
+        g_text_input_popup.initialize()
+        g_select_input_popup.initialize()
     }
 }
 

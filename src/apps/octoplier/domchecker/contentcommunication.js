@@ -90,21 +90,23 @@ ContentCommunication.prototype.receive_message_from_bg = function(request, sende
             return 
         case 'block_events':
             g_event_blocker.block_events()
-            break
-        case 'get_xpath_from_overlay':
-            var xpath = g_overlay_sets.get_xpath(request.set_index, request.overlay_index)
-            var response = {response: xpath}
-            this.send_message_to_bg(response)
+            // No respone message is used for this request, as it procedurally added in to
+            // handle unblocking events before performing webdriver actions, and then blocking events back again.
             return
-        case 'get_xpath_from_elem_cache':
-            var page_box = new PageBox(request.bounds)
-            var elem_cache = new ElemCache(page_box, request.scroll_amounts)
-            var elem_wrap = elem_cache.get_elem_wrap()
-            var xpath = elem_wrap.get_xpath()
-            // Send the result in a response message.
-            var response = {response: xpath}
-            this.send_message_to_bg(response)
-            return
+//        case 'get_xpath_from_overlay':
+//            var xpath = g_overlay_sets.get_xpath(request.set_index, request.overlay_index)
+//            var response = {response: xpath}
+//            this.send_message_to_bg(response)
+//            return
+//        case 'get_xpath_from_elem_cache':
+//            var page_box = new PageBox(request.bounds)
+//            var elem_cache = new ElemCache(page_box, request.scroll_amounts)
+//            var elem_wrap = elem_cache.get_elem_wrap()
+//            var xpath = elem_wrap.get_xpath()
+//            // Send the result in a response message.
+//            var response = {response: xpath}
+//            this.send_message_to_bg(response)
+//            return
     }
     this.send_message_to_bg(new ResponseMessage(true))
 }
