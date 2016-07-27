@@ -26,23 +26,8 @@ var OverlaySet = function(elem_wraps, color=null, marked=false) {
     }
 }
 
-//Serialize to a JSON object.
-OverlaySet.prototype.serializeToJsonObj = function() {
-    var obj = {}
-    obj.color = this.color
-    obj.marked = this.marked
-    obj.overlays = []
-    
-    for (var i=0; i<this.overlays.length; i++) {
-        var overlay = this.overlays[i]
-        obj.overlays.push(overlay.serializeToJsonObj())
-    }
-    return obj
-}
-
 // Update all internal state.
 OverlaySet.prototype.update = function() {
-    console.log('overlay set update with color index: ' + this.color_index)
     for (var i=0; i<this.overlays.length; i++) {
         this.overlays[i].update(this.color, this.color_index, this.marked)
     }

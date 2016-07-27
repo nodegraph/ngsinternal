@@ -64,8 +64,25 @@ ContentCommunication.prototype.receive_from_bg = function(request, sender, send_
             g_overlay_sets.shrink_to_extreme(request.set_index, request.direction)
             break
         case 'perform_action':
+            // We (content script) can handle only the scrolling actions.
+            // When scrolling there may be AJAX requests dynamically loading elements into the scrolled page.
+            // In this case the scroll may not move fully to the requested position.
+            if (request.action == 'scroll_down') {
+                g_overlay_sets.scroll_down(request.set_index, request.overlay_index);
+                break
+            } else if (request.action == 'scroll_up') {
+                g_overlay_sets.scroll_up(request.set_index, request.overlay_index);
+                break
+            } else if (request.action == 'scroll_right') {
+                g_overlay_sets.scroll_right(request.set_index, request.overlay_index);
+                break
+            } else if (request.action == 'scroll_left') {
+                g_overlay_sets.scroll_left(request.set_index, request.overlay_index);
+                break
+            }
+            
             // The perform action request are usually handled by the nodejs controller.
-            // However then can get send to this content script if the xpath in the request
+            // However they can get send to this content script if the xpath in the request
             // has not been resolved. Once we resolve the xpath from the set_index, we reissue
             // the request, instead of sending a response. This means that these perform_action
             // requests will ultimately get sent twice from the app.
@@ -80,26 +97,11 @@ ContentCommunication.prototype.receive_from_bg = function(request, sender, send_
             // Send the modified request back to the app.
             this.send_to_bg(request)
             return 
-        case 'perform_vertical_scroll':
-            g_overlay_sets.perform_vertical_scroll(request.set_index, request.overlay_index, request.fraction)
-            break
         case 'block_events':
             g_event_blocker.block_events()
             // No respone message is used for this request, as it procedurally added in to
             // handle unblocking events before performing webdriver actions, and then blocking events back again.
             return
-        case 'get_overlay_sets':
-            // Serialize g_overlay_sets into a dict like object.
-            var data = g_overlay_sets.serializeToJsonObj()
-            console.log('serialized data: ' + JSON.stringify(data))
-            var response = {response: true, value: data}
-            this.send_to_bg(response)
-            return
-        case 'set_overlay_sets':
-            g_overlay_sets.deserializeFromJsonObj(request.overlays)
-            var response = {response: true}
-            this.send_to_bg(response)
-            break
     }
     this.send_to_bg(new ResponseMessage(true))
 }

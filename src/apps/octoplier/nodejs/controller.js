@@ -265,6 +265,14 @@ function receive_from_app(message) {
                     case 'select_option':
                         select_option(request.xpath, request.option_text)
                         break
+                    case 'scroll_down':
+                    case 'scroll_up':
+                    case 'scroll_right':
+                    case 'scroll_left':
+                        // Scroll actions need to be performed by the extension
+                        // so we pass it through.
+                        send_to_extension(request) 
+                        break
                 }
             } else {
                 // Send request to extension to resolve the xpath,

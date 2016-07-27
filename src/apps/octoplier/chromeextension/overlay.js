@@ -26,11 +26,6 @@ Overlay.prototype.thickness = 0
 // Amount to oversize the box around the dom element.
 Overlay.prototype.enlarge = 0
 
-// Serialize to a JSON object.
-Overlay.prototype.serializeToJsonObj = function() {
-    return this.elem_wrap.serializeToJsonObj()
-}
-
 // Update all internal state.
 Overlay.prototype.update = function(color, color_index, mark) {
     if (this.elem_wrap) {
@@ -167,8 +162,6 @@ Overlay.prototype.update_dom_elements = function(color, color_index) {
     this.marker.style.top = (page_box.top-this.enlarge-t)+'px'
     this.marker.style.width = t+'px'
     this.marker.style.height = (height+2*this.enlarge+2*t)+'px'
-    
-    console.log('finished updating dom elements with color_index: ' + color_index)
 }
 
 //Updates the css style of the dom elements to reflect new color.

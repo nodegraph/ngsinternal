@@ -14,37 +14,6 @@ OverlaySets.prototype.destroy = function() {
     this.sets.length = 0
 }
 
-//Serialize to an array of serialized OveralaySet's.
-OverlaySets.prototype.serializeToJsonObj = function() {
-    var obj = []
-    for (var i=0; i<this.sets.length; i++) {
-        obj.push(this.sets[i].serializeToJsonObj())
-    }
-    return obj
-}
-
-OverlaySets.prototype.deserializeFromJsonObj = function(obj) {
-    this.destroy()
-    
-    console.log('deserializing num sets: ' + obj.length)
-    for (var i=0; i<obj.length; i++) {
-        var overlays = obj[i].overlays
-        var elem_wraps = []
-        for (var j=0; j<overlays.length; j++) {
-            var d = overlays[j]
-            var elem_cache = new ElemCache(new PageBox(d.page_box), d.scroll_amounts, d.wrap_type)
-            var elem_wrap = elem_cache.get_elem_wrap()
-            if (elem_wrap) {
-                elem_wraps.push(elem_wrap)
-            }
-        }
-        console.log('&')
-        var overlay_set = new OverlaySet(elem_wraps, obj[i].color, obj[i].marked)
-        this.sets.push(overlay_set)
-    }
-}
-
-
 //Update all internal state.
 OverlaySets.prototype.update = function() {
     for (var i=0; i<this.sets.length; i++) {
@@ -207,8 +176,24 @@ OverlaySets.prototype.get_xpath = function(set_index, overlay_index) {
     return this.sets[set_index].overlays[overlay_index].elem_wrap.get_xpath()
 }
 
-OverlaySets.prototype.perform_vertical_scroll = function(set_index, overlay_index, fraction) {
-    this.sets[set_index].overlays[overlay_index].elem_wrap.set_vertical_scroll_by_fraction(fraction)
+OverlaySets.prototype.scroll_down = function(set_index, overlay_index) {
+    var scroller = this.sets[set_index].overlays[overlay_index].elem_wrap.get_closest_scroll(true)
+    scroller.scroll_down()
+}
+
+OverlaySets.prototype.scroll_up = function(set_index, overlay_index) {
+    var scroller = this.sets[set_index].overlays[overlay_index].elem_wrap.get_closest_scroll(true)
+    scroller.scroll_up()
+}
+
+OverlaySets.prototype.scroll_right = function(set_index, overlay_index) {
+    var scroller = this.sets[set_index].overlays[overlay_index].elem_wrap.get_closest_scroll(false)
+    scroller.scroll_right()
+}
+
+OverlaySets.prototype.scroll_left = function(set_index, overlay_index) {
+    var scroller = this.sets[set_index].overlays[overlay_index].elem_wrap.get_closest_scroll(false)
+    scroller.scroll_left()
 }
 
 // -------------------------------------------------------------------------

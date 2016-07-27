@@ -31,11 +31,6 @@ ElemWrap.prototype.get_id = function() {
     return this.element
 }
 
-//Serialize to a JSON object.
-ElemWrap.prototype.serializeToJsonObj = function() {
-    return new ElemCache(this)
-}
-
 // Returns true if this and the other ElemWrap represent the same dom element.
 ElemWrap.prototype.equals = function(other) {
     if (this.get_id() == other.get_id()) {
@@ -345,26 +340,6 @@ ElemWrap.prototype.get_similar_neighbors = function(side, match_criteria) {
 //Scroll Bars.
 //----------------------------------------------------------------------------------------
 
-ElemWrap.prototype.get_scroll_amount = function() {
-    return this.element.scrollTop
-}
-
-ElemWrap.prototype.set_scroll_amount = function(amount) {
-    this.element.scrollTop = amount
-}
-
-ElemWrap.prototype.get_scroll_amounts = function() {
-    var bars = this.get_parenting_scroll_bars()
-    console.log("num parenting bars: " + bars.length)
-    var amounts = []
-    for (var i=0; i<bars.length; i++) {
-        var scroll = bars[i].get_scroll_amount()
-        console.log('scroll: ' + scroll)
-        amounts.push(scroll)
-    }
-    return amounts
-}
-
 //Returns true if the element has horizontal scroll bars.
 ElemWrap.prototype.has_horizontal_scroll_bar = function() {
     if (!(this.element.scrollWidth > this.element.clientWidth)) {
@@ -401,47 +376,123 @@ ElemWrap.prototype.has_any_scroll_bar = function() {
 
 //Returns a parent elem wrap with scrollbars, if one exists.
 //Otherwise returns null.
-ElemWrap.prototype.get_parenting_scroll_bars = function() {
-  var elem_wraps = []
-  var parent = this.get_parent()
+ElemWrap.prototype.get_closest_scroll = function(vertical) {
+  var parent = this
   while (parent) {
       // The topmost scrollbar will be the document.body.
       // We need to record the scroll on the document.body as well.
       if (parent.element == document.body) {
-          elem_wraps.push(parent)
-          return elem_wraps
+          return parent
       }
       // If we find any scroll bars, add it.
-      if (parent.has_horizontal_scroll_bar() || (parent.has_vertical_scroll_bar())) {
-          elem_wraps.push(parent)
+      if ( (vertical && parent.has_vertical_scroll_bar()) || 
+              (!vertical && parent.has_horizontal_scroll_bar()) ) {
+          return parent
       }
       // Check our next parent.
       parent = parent.get_parent()
   }
-  return elem_wraps
+  return null
 }
 
-ElemWrap.prototype.set_vertical_scroll_by_fraction = function(fraction) {
-    var elem_wrap = this
-    while (elem_wrap) {
-        if (elem_wrap.has_vertical_scroll_bar()){
-            break
-        }
-        elem_wrap = elem_wrap.get_parent()
-    }
-    var amount = elem_wrap.page_box.get_height()
-    amount = amount * fraction
+ElemWrap.prototype.get_max_down_scroll = function() {
+    // Figure out the current bottom position.
+    // This is the bottom of content that is currently visible in the scroll div.
+    var current_bottom = this.element.scrollTop + this.element.clientHeight
     
-    // We need to scroll gradually as the div with the scroll might be
-    // loading more dom elements dynamically.
-    var delta = amount / 20.0
-    for (var i=1; i<=20; i++) {
-        elem_wrap.set_scroll_amount(amount * i / 20.0)
+    // Determine the maximum amount we can scroll.
+    var max = this.element.scrollHeight - current_bottom
+    if (max < 0) {
+        // In this case we have maxed out.
+        return 0
     }
+    return max
 }
 
-ElemWrap.prototype.set_parenting_horizontal_scroll_amount = function(fraction) {
+ElemWrap.prototype.get_max_up_scroll = function() {
+    return this.element.scrollTop
+}
+
+ElemWrap.prototype.get_max_right_scroll = function() {
+    // Figure out the current bottom position.
+    // This is the bottom of content that is currently visible in the scroll div.
+    var current_right = this.element.scrollLeft + this.element.clientWidth
     
+    // Determine the maximum amount we can scroll.
+    var max = this.element.scrollWidth - current_right
+    if (max < 0) {
+        // In this case we have maxed out.
+        return 0
+    }
+    return max
+}
+
+ElemWrap.prototype.get_max_left_scroll = function() {
+    return this.element.scrollLeft
+}
+
+//Tries to scroll down by one page.
+ElemWrap.prototype.scroll_down = function(down) {
+    // Determine the maximum amount we can scroll.
+    var max_scroll = this.get_max_down_scroll()
+
+    // We try to scroll by one page.
+    var div_height = this.page_box.get_height()
+
+    // Use the minimum scroll.
+    var scroll = Math.min(div_height, max_scroll)
+
+    // Set the scroll amount.
+    this.element.scrollTop += scroll
+    return
+}
+
+//Tries to scroll up by one page.
+ElemWrap.prototype.scroll_up = function() {
+    // Determine the maximum amount we can scroll.
+    var max_scroll = this.get_max_up_scroll()
+
+    // We try to scroll by one page.
+    var div_height = this.page_box.get_height()
+
+    // Use the minimum scroll.
+    var scroll = Math.min(div_height, max_scroll)
+
+    // Set the scroll amount.
+    this.element.scrollTop -= scroll
+    return
+}
+
+//Tries to scroll right by one page.
+ElemWrap.prototype.scroll_right = function(down) {
+    // Determine the maximum amount we can scroll.
+    var max_scroll = this.get_max_right_scroll()
+
+    // We try to scroll by one page.
+    var div_width = this.page_box.get_width()
+
+    // Use the minimum scroll.
+    var scroll = Math.min(div_width, max_scroll)
+
+    // Set the scroll amount.
+    this.element.scrollLeft += scroll
+    return
+}
+
+//Tries to scroll left by one page.
+ElemWrap.prototype.scroll_left = function(down) {
+    // Determine the maximum amount we can scroll.
+    var max_scroll = this.get_max_left_scroll()
+
+    // We try to scroll by one page.
+    var div_width = this.page_box.get_width()
+
+    // Use the minimum scroll.
+    var scroll = Math.min(div_width, max_scroll)
+
+    // Set the scroll amount.
+    this.element.scrollLeft -= scroll
+    return
 }
 
 
