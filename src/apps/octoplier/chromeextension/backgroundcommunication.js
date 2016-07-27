@@ -20,7 +20,7 @@ BackgroundCommunication.prototype.connect_to_nodejs = function() {
     }
     // Otherwise try to connect.
     try {
-        this.nodejs_socket = new WebSocket('wss://localhost:8083');
+        this.nodejs_socket = new WebSocket('wss://localhost:' + g_nodejs_port);
         this.nodejs_socket.onerror=function(error) {
             console.log("nodejs socket error: " + JSON.stringify(error))
         }

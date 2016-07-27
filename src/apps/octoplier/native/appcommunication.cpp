@@ -6,6 +6,7 @@
 #include <cassert>
 
 #include <QtCore/QDebug>
+#include <QtCore/QFile>
 #include <QtGui/QGuiApplication>
 
 
@@ -177,7 +178,7 @@ void AppCommunication::start_nodejs() {
   _process->setProgram(QString("node.exe"));
 
   // Set the working directory.
-  QString folder = qApp->applicationDirPath();
+  QString folder = get_app_dir();
   _process->setWorkingDirectory(folder);
 
   // Set the arguments.
@@ -205,7 +206,25 @@ void AppCommunication::stop_nodejs() {
 }
 
 void AppCommunication::connect_to_nodejs() {
-  _websocket->open(QUrl(QStringLiteral("ws://localhost:8082")));
+  // Nodejs will write out the port number of the app server in a text file in the bin dir.
+  // Build filename for this file.
+  QString app_dir = get_app_dir();
+  QString filename = app_dir + "/appserverport.txt";
+
+  // Open the file.
+  QFile file(filename);
+  if (!file.open(QFile::ReadOnly | QFile::Text)) {
+    return;
+  }
+
+  // Read the file.
+  QTextStream stream(&file);
+  QString port = stream.readAll();
+  QString url("ws://localhost:");
+  url += port;
+
+  // Open the port.
+  _websocket->open(QUrl(url));
 }
 
 bool AppCommunication::nodejs_is_connected() {

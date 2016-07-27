@@ -13,7 +13,7 @@
           },
 
   "background": {
-    "scripts": ["browserwrap.js","backgroundcommunication.js"]
+    "scripts": ["extensionserverport.js", "browserwrap.js","backgroundcommunication.js"]
   },
 
   "content_scripts": [

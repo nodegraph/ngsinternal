@@ -40,24 +40,34 @@ process.on('uncaughtException', function(e) {
     log_exception(e)
 });
 
-var nodejs_dir = process.cwd()
-console.log("nodejs current working dir: " + nodejs_dir)
 
 //------------------------------------------------------------------------------------------------
 //File I/O.
 //------------------------------------------------------------------------------------------------
 
+// This is the bin directory of the app. Nodejs is also placed there.
+var g_nodejs_dir = process.cwd()
+
 function write_to_file(filename, text) {
+    fs.writeFileSync(filename, text, 'utf8');
+}
+
+
+function append_to_file(filename, text) {
     fs.appendFileSync(filename, text)
 } 
 
 function write_to_dump(text) {
-    write_to_file("./dump.txt", test)
+    append_to_file('./dump.txt', test)
 } 
 
 function read_file(filename) {
-    var script = fs.readFileSync(filename, "utf8")
+    var script = fs.readFileSync(filename, 'utf8')
     return script
+}
+
+function delete_file(filename) {
+    fs.unlinkSync(filename);
 }
 
 function delete_dir(path) {
@@ -114,7 +124,7 @@ SocketMessage.prototype.is_response = function() {
 //Socket server creation.
 //------------------------------------------------------------------------------------------------
 
-function create_socket_server(config, message_handler) {
+function create_socket_server(config, message_handler, done) {
     // Dummy handler for http/s requests.
     var dummy_handler = function(req, res) {
         res.writeHead(200);
@@ -123,24 +133,45 @@ function create_socket_server(config, message_handler) {
 
     // Create the http/s server.
     var httx_server = null;
-    if ( config.ssl ) {
+    if (config.ssl) {
         httx_server = HttpsServer.createServer({
-            key: fs.readFileSync( config.ssl_key ),
-            cert: fs.readFileSync( config.ssl_cert )
-        }, dummy_handler ).listen( config.port )
+            key: fs.readFileSync(config.ssl_key),
+            cert: fs.readFileSync(config.ssl_cert)
+        }, dummy_handler)
+        
     } else {
-        httx_server = HttpServer.createServer(dummy_handler).listen( config.port )
+        httx_server = HttpServer.createServer(dummy_handler)
     }
+    
+    // On error.
+    httx_server.once('error', function(error) {
+        if (error.code === 'EADDRINUSE') {
+            // The current config port number is in use.
+            // So we increment it and recurse.
+            config.port += 1
+            create_socket_server(config, message_handler, done)
+        } else {
+            // Call the callback with failed result.
+            done({server: null, socket: null})
+        }
+    });
+    
+    // On success.
+    httx_server.once('listening', function() {
+        // Create the socket server.
+        var server_info = {}
+        server_info.server = new WebSocketServer({server: httx_server});
+        server_info.socket = null
+        server_info.port = config.port
+        server_info.server.on('connection', function (wsConnect) {
+            server_info.socket = wsConnect
+            server_info.socket.on('message', message_handler)
+        })
+        // Now call the callback.
+        done(server_info)
+    });
 
-    // Create the socket server.
-    var server_info = {}
-    server_info.server = new WebSocketServer({server: httx_server});
-    server_info.socket = null
-    server_info.server.on('connection', function (wsConnect) {
-        server_info.socket = wsConnect
-        server_info.socket.on('message', message_handler)
-    })
-    return server_info
+    httx_server.listen(config.port)
 }
 
 
@@ -149,11 +180,23 @@ function create_socket_server(config, message_handler) {
 //------------------------------------------------------------------------------------------------
 var extension_server_config = {
         ssl: true,
-        port: 8083,
+        port: 8093,
         ssl_key: './key.pem',
         ssl_cert: './cert.pem'
     };
-var extension_server = create_socket_server(extension_server_config, receive_from_extension)
+var extension_server = null
+var extension_server_file = Path.join(g_nodejs_dir, '..', 'chromeextension', 'extensionserverport.js')
+
+// Called when the extension server is built.
+function extension_server_built(server) {
+    extension_server = server
+    var text = 'var g_nodejs_port = ' + extension_server.port
+    write_to_file(extension_server_file, text)
+}
+
+//Create the extension server.
+delete_file(extension_server_file)
+create_socket_server(extension_server_config, receive_from_extension, extension_server_built)
 
 //Send an obj as a message to the extension.
 function send_to_extension(obj) {
@@ -184,9 +227,21 @@ function receive_from_extension(message) {
 //------------------------------------------------------------------------------------------------
 var app_server_config = {
         ssl: false,
-        port: 8082,
+        port: 8092,
     };
-var app_server = create_socket_server(app_server_config, receive_from_app)
+var app_server = null
+var app_server_file = Path.join(g_nodejs_dir, 'appserverport.txt')
+
+//Called when the app server is built.
+function app_server_built(server) {
+    app_server = server
+    write_to_file(app_server_file, app_server.port)
+}
+
+//Create the app server.
+delete_file(app_server_file)
+create_socket_server(app_server_config, receive_from_app, app_server_built)
+
 
 //Send an obj as a message to the app.
 function send_to_app(obj) {
@@ -314,7 +369,7 @@ function open_browser(url) {
         until = webdriver.until
         
         // Remove the files in the chrome user data dir.
-        var dir = Path.join(nodejs_dir, "..", "chromeuserdata")
+        var dir = Path.join(g_nodejs_dir, "..", "chromeuserdata")
         delete_dir(dir)
         create_dir(dir)
 
@@ -322,10 +377,10 @@ function open_browser(url) {
         //Win_x64-389148-chrome-win32
         //Win-338428-chrome-win32
         //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
-        chromeOptions.addArguments("--load-extension=" + nodejs_dir + "/../chromeextension")
+        chromeOptions.addArguments("--load-extension=" + g_nodejs_dir + "/../chromeextension")
         chromeOptions.addArguments("--ignore-certificate-errors")
         chromeOptions.addArguments("--disable-web-security")
-        chromeOptions.addArguments("--user-data-dir=" + nodejs_dir + "/../chromeuserdata")
+        chromeOptions.addArguments("--user-data-dir=" + g_nodejs_dir + "/../chromeuserdata")
         //chromeOptions.addArguments("--app=file:///"+url)
         chromeOptions.addArguments("--first-run")
         
