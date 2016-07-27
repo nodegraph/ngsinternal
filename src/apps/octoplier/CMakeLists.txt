@@ -105,6 +105,14 @@ INSTALL(TARGETS octoplier
   COMPONENT apps
 )
 
+# Create a directory for the chrome user data.
+install(DIRECTORY DESTINATION "chromeuserdata")
+
+# Install the chrome extension.
+install(DIRECTORY chromeextension
+		DESTINATION .
+		COMPONENT apps)
+
 # Our nodejs app which controlls webdriver.
 INSTALL(DIRECTORY nodejs/
 		DESTINATION bin

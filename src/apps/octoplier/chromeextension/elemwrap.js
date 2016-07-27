@@ -1,13 +1,39 @@
 // This class wraps the dom element with extra functionality.
 var ElemWrap = function(element) {
     this.element = element
-    this.page_box = new PageBox(this.get_client_rect())
+    
+    // Cached values, which need to be updated when the element changes.
+    this.page_box = new PageBox()
+    
+    // Update.
+    this.update()
+}
+
+//Update all internal state.
+ElemWrap.prototype.update = function() {
+    // Update cached member values.
+    this.wrap_type = this.calculate_wrap_type()
+    this.getter = this.get_getter_from_wrap_type(this.wrap_type)
+    this.page_box.set_from_client_rect(this.get_client_rect())
+}
+
+//Wrap type.
+ElemWrap.prototype.wrap_type = {
+        text: 0,
+        image: 1,
+        input: 2,
+        select: 3,
 }
 
 // Returns an unique opaque pointer for the purposes of identification.
 // When two ElemWraps return the same id, they represent a wrapper around the same dom element.
 ElemWrap.prototype.get_id = function() {
     return this.element
+}
+
+//Serialize to a JSON object.
+ElemWrap.prototype.serializeToJsonObj = function() {
+    return new ElemCache(this)
 }
 
 // Returns true if this and the other ElemWrap represent the same dom element.
@@ -18,14 +44,6 @@ ElemWrap.prototype.equals = function(other) {
     return false
 }
 
-// Wrap type.
-ElemWrap.prototype.wrap_type = {
-        text: 0,
-        image: 1,
-        input: 2,
-        select: 3,
-}
-
 // Direction.
 ElemWrap.prototype.direction = {
         left: 0,
@@ -34,26 +52,48 @@ ElemWrap.prototype.direction = {
         down: 3,
 }
 
-// Update all internal state.
-ElemWrap.prototype.update = function() {
-    this.page_box.set_from_client_rect(this.get_client_rect())
+ElemWrap.prototype.get_wrap_type = function() {
+    return this.wrap_type
 }
 
 // Get our wrap type.
-ElemWrap.prototype.get_wrap_type = function() {
+ElemWrap.prototype.calculate_wrap_type = function() {
     if (this.get_text()) {
-        return this.wrap_type.text
+        return ElemWrap.prototype.wrap_type.text
     }
     if (this.get_image()) {
-        return this.wrap_type.image
+        return ElemWrap.prototype.wrap_type.image
     }
     if (this.is_input()) {
-        return this.wrap_type.input
+        return ElemWrap.prototype.wrap_type.input
     }
     if (this.is_select()) {
-        return this.wrap_type.select
+        return ElemWrap.prototype.wrap_type.select
     }
     return -1
+}
+
+ElemWrap.prototype.get_getter_from_wrap_type = function(wrap_type) {
+    var getter = null
+    switch(wrap_type) {
+        case ElemWrap.prototype.wrap_type.text:
+            getter = ElemWrap.prototype.get_text
+            break
+        case ElemWrap.prototype.wrap_type.image:
+            getter = ElemWrap.prototype.get_image
+            break
+        case ElemWrap.prototype.wrap_type.input:
+            getter = ElemWrap.prototype.is_input
+            break
+        case ElemWrap.prototype.wrap_type.select:
+            getter = ElemWrap.prototype.is_select
+            break
+    }
+    return getter
+}
+
+ElemWrap.prototype.get_getter = function() {
+    return this.getter
 }
 
 //----------------------------------------------------------------------------------------
@@ -147,59 +187,91 @@ return '/'+path.join('/');
 //Element Shifting.
 //----------------------------------------------------------------------------------------
 
-//Returns true if this element is on top for most of its surface area.
-//This is used to detect elements that the user can interact with, or elements to shift to.
-//- num_samples_xy indicates how fine to sample within the element.
-//- min_coverage indicates how many samples need to hit ourself to register as being topmost.
-ElemWrap.prototype.is_topmost = function(getter, min_coverage = 0.9, num_samples_xy = new Point(5,5)) {
-    if ((this.page_box.get_width() <= 2) && (this.page_box.get_height() <= 2)) {
-        return true
-    }
-    
-    //console.log('element bounds: ' + this.page_box.left + ',' + this.page_box.right + ',' + this.page_box.top + ',' + this.page_box.bottom)
-    
-    // Samples a num_samples_xy sized grid that is pushed into the element a bit.
-    // In other words it won't sample exactly along the edges of the element, but a bit inside.
-    // We push in by at least one pixel from each edge along with 1/num_segments of revised width and height.
-    var delta_x = (this.page_box.get_width()-2) / (num_samples_xy.x + 1)
-    var delta_y = (this.page_box.get_height()-2) / (num_samples_xy.y + 1)
-    
-    // Loop over the grid of samples.
-    var hit = 0
-    var miss = 0
-    for (var i=0; i<num_samples_xy.x; i++) {
-        for (var j=0; j<num_samples_xy.y; j++) {
-            var x = this.page_box.left + 1 + (i+1) * delta_x
-            var y = this.page_box.top + 1 + (j+1) * delta_y
-            var elem_wrap = g_page_wrap.get_first_elem_wrap_at(getter, x, y)
-            if (elem_wrap) {
-                if (elem_wrap.equals(this)) {
-                    hit += 1
-                } else {
-                    miss +=1
-                }
-            }
+//Returns true if the elem wrap is considered to be topmost for a given getter/wrap_type.
+//Ideally we would actually work out the real z-indices which seems difficult.
+//So for now we just return true if there are no elements contained within us with
+//the same getter/wrap_types. This would typically happen when you have smaller images or text
+//overlayed on top of a bigger encompassing element.
+ElemWrap.prototype.is_topmost = function() {
+  var inners = g_page_wrap.get_contained_in(elem_wrap.page_box)
+  for (var i=0; i<inners.length; i++) {
+      if (inners[i].get_wrap_type() == this.wrap_type && inners[i].get_id() != this.get_id()) {
+          return false
+      }
+  }
+  return true
+}
+
+ElemWrap.prototype.extract_topmosts = function(elem_wraps) {
+    var interactives = []
+    // Weed out any elem wraps which are not top most elements.
+    for (var i=0; i<elem_wraps.length; i++) {
+        if (g_page_wrap.is_topmost(elem_wraps[i])) {
+            interactives.push(elem_wraps[i])
         }
     }
-    
-    // Check coverage amount.
-    //console.log('coverage: ' + (hit/(hit+miss)) + ' hit: ' + hit + ' miss: ' + miss)
-    if (hit / (hit + miss) >= min_coverage) {
-        return true
-    }
-    return false
+    return interactives
 }
+
+//// NOTE: this only works when the element is not scrolled offscreen.
+////Returns true if this element is on top for most of its surface area, when using the 
+////specified getter. Ex a topmost image may actually have text overlayed over it, as the image
+////getter will be not be able to see the overlayed text.
+////This is used to detect elements that the user can interact with, or elements to shift to.
+////- num_samples_xy indicates how fine to sample within the element.
+////- min_coverage indicates how many samples need to hit ourself to register as being topmost.
+//ElemWrap.prototype.is_topmost = function(getter, min_coverage = 0.9, num_samples_xy = new Point(5,5)) {
+//    if ((this.page_box.get_width() <= 2) && (this.page_box.get_height() <= 2)) {
+//        return true
+//    }
+//    
+//    //console.log('element bounds: ' + this.page_box.left + ',' + this.page_box.right + ',' + this.page_box.top + ',' + this.page_box.bottom)
+//    
+//    // Samples a num_samples_xy sized grid that is pushed into the element a bit.
+//    // In other words it won't sample exactly along the edges of the element, but a bit inside.
+//    // We push in by at least one pixel from each edge along with 1/num_segments of revised width and height.
+//    var delta_x = (this.page_box.get_width()-2) / (num_samples_xy.x + 1)
+//    var delta_y = (this.page_box.get_height()-2) / (num_samples_xy.y + 1)
+//    
+//    // Loop over the grid of samples.
+//    var hit = 0
+//    var miss = 0
+//    for (var i=0; i<num_samples_xy.x; i++) {
+//        for (var j=0; j<num_samples_xy.y; j++) {
+//            var x = this.page_box.left + 1 + (i+1) * delta_x
+//            var y = this.page_box.top + 1 + (j+1) * delta_y
+//            var elem_wrap = g_page_wrap.get_first_elem_wrap_at(getter, x, y)
+//            if (elem_wrap) {
+//                if (elem_wrap.equals(this)) {
+//                    hit += 1
+//                } else {
+//                    miss +=1
+//                }
+//            }
+//        }
+//    }
+//    
+//    // Check coverage amount.
+//    //console.log('coverage: ' + (hit/(hit+miss)) + ' hit: ' + hit + ' miss: ' + miss)
+//    if (hit / (hit + miss) >= min_coverage) {
+//        return true
+//    }
+//    return false
+//}
 
 // Returns the next topmost element on one side of us.
 ElemWrap.prototype.get_neighboring_elem_wrap = function(getter, side) {
     var beam = this.page_box.get_beam(side)
     
     // Get all elem wraps intersecting the beam.
-    var elem_wraps = g_page_wrap.get_all_elem_wraps_intersecting_page_box(beam)
+    var elem_wraps = g_page_wrap.get_intersecting_with(beam)
     
     // Select out those elem wraps returning any value with getter.
     var candidates = []
     for (var i=0; i<elem_wraps.length; i++) {
+        if (elem_wraps[i].get_id() == this.get_id()) {
+            continue
+        }
         var value = getter.call(elem_wraps[i])
         if (value) {
             candidates.push(elem_wraps[i])
@@ -215,11 +287,8 @@ ElemWrap.prototype.get_neighboring_elem_wrap = function(getter, side) {
         if (dist > 0) {
             // Is this closer than any other candidate.
             if (!min_candidate || dist < min_dist) {
-                // Finally make sure this is a top most element, that the user can actually interact with.
-                if (candidates[i].is_topmost(getter)) {
-                    min_candidate = candidates[i]
-                    min_dist = dist
-                }
+                min_candidate = candidates[i]
+                min_dist = dist
             }
         }
     }
@@ -228,28 +297,9 @@ ElemWrap.prototype.get_neighboring_elem_wrap = function(getter, side) {
     return min_candidate
 }
 
-ElemWrap.prototype.get_getter = function(wrap_type) {
-    var getter = null
-    switch(wrap_type) {
-        case ElemWrap.prototype.wrap_type.text:
-            getter = ElemWrap.prototype.get_text
-            break
-        case ElemWrap.prototype.wrap_type.image:
-            getter = ElemWrap.prototype.get_image
-            break
-        case ElemWrap.prototype.wrap_type.input:
-            getter = ElemWrap.prototype.is_input
-            break
-        case ElemWrap.prototype.wrap_type.select:
-            getter = ElemWrap.prototype.is_select
-            break
-    }
-    return getter
-}
-
 ElemWrap.prototype.shift = function(dir, wrap_type) {
     // Find the proper getter for the type we're shifting to.
-    var getter = this.get_getter(wrap_type)
+    var getter = this.get_getter_from_wrap_type(wrap_type)
     var elem_wrap = this.get_neighboring_elem_wrap(getter, dir)
     if (elem_wrap) {
         this.element = elem_wrap.element
@@ -263,11 +313,11 @@ ElemWrap.prototype.get_similar_neighbors = function(side, match_criteria) {
     var beam = this.page_box.get_beam(side)
     
     // Get all elem wraps intersecting the beam.
-    var elem_wraps = g_page_wrap.get_all_elem_wraps_intersecting_page_box(beam)
+    var elem_wraps = g_page_wrap.get_intersecting_with(beam)
     //console.log('num elem wraps: ' + elem_wraps.length)
     
     // Select out those elem wraps returning any value with getter.
-    var getter = this.get_getter(this.get_wrap_type())
+    var getter = this.get_getter_from_wrap_type(this.get_wrap_type())
     var candidates = []
     for (var i=0; i<elem_wraps.length; i++) {
         var value = getter.call(elem_wraps[i])
@@ -292,7 +342,7 @@ ElemWrap.prototype.get_similar_neighbors = function(side, match_criteria) {
 
 
 //----------------------------------------------------------------------------------------
-//Element Behavioral Properties.
+//Scroll Bars.
 //----------------------------------------------------------------------------------------
 
 ElemWrap.prototype.get_scroll_amount = function() {
@@ -349,6 +399,56 @@ ElemWrap.prototype.has_any_scroll_bar = function() {
     return this.has_vertical_scroll_bar() || this.has_horizontal_scroll_bar()
 }
 
+//Returns a parent elem wrap with scrollbars, if one exists.
+//Otherwise returns null.
+ElemWrap.prototype.get_parenting_scroll_bars = function() {
+  var elem_wraps = []
+  var parent = this.get_parent()
+  while (parent) {
+      // The topmost scrollbar will be the document.body.
+      // We need to record the scroll on the document.body as well.
+      if (parent.element == document.body) {
+          elem_wraps.push(parent)
+          return elem_wraps
+      }
+      // If we find any scroll bars, add it.
+      if (parent.has_horizontal_scroll_bar() || (parent.has_vertical_scroll_bar())) {
+          elem_wraps.push(parent)
+      }
+      // Check our next parent.
+      parent = parent.get_parent()
+  }
+  return elem_wraps
+}
+
+ElemWrap.prototype.set_vertical_scroll_by_fraction = function(fraction) {
+    var elem_wrap = this
+    while (elem_wrap) {
+        if (elem_wrap.has_vertical_scroll_bar()){
+            break
+        }
+        elem_wrap = elem_wrap.get_parent()
+    }
+    var amount = elem_wrap.page_box.get_height()
+    amount = amount * fraction
+    
+    // We need to scroll gradually as the div with the scroll might be
+    // loading more dom elements dynamically.
+    var delta = amount / 20.0
+    for (var i=1; i<=20; i++) {
+        elem_wrap.set_scroll_amount(amount * i / 20.0)
+    }
+}
+
+ElemWrap.prototype.set_parenting_horizontal_scroll_amount = function(fraction) {
+    
+}
+
+
+//----------------------------------------------------------------------------------------
+//Element Behavioral Properties.
+//----------------------------------------------------------------------------------------
+
 //This is detects the back ground element of web pages and also popup divs.
 //It's heuristic is to detect fully opaque elements.
 //Note this is just a heuristic and may need changes in the future.
@@ -378,27 +478,7 @@ ElemWrap.prototype.get_parent = function() {
     return new ElemWrap(this.element.parentElement)
 }
 
-//Returns a parent elem wrap with scrollbars, if one exists.
-//Otherwise returns null.
-ElemWrap.prototype.get_parenting_scroll_bars = function() {
-    var elem_wraps = []
-    var parent = this.get_parent()
-    while (parent) {
-        // The topmost scrollbar will be the document.body.
-        // We need to record the scroll on the document.body as well.
-        if (parent.element == document.body) {
-            elem_wraps.push(parent)
-            return elem_wraps
-        }
-        // If we find any scroll bars, add it.
-        if (parent.has_horizontal_scroll_bar() || (parent.has_vertical_scroll_bar())) {
-            elem_wraps.push(parent)
-        }
-        // Check our next parent.
-        parent = parent.get_parent()
-    }
-    return elem_wraps
-}
+
 
 //----------------------------------------------------------------------------------------
 //Element Properties/Values.

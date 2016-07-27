@@ -220,6 +220,15 @@ void AppCommunication::handle_request_from_nodejs(const SocketMessage& sm) {
   // messages from nodejs.
   qDebug() << "app received request from nodejs: " << sm.get_json_text();
 
+  // Handle some info message.
+  if (sm.get_json_obj().value("info").toString() == "page_is_loading") {
+    // page is loading and unable to handle requests
+    return;
+  } else if (sm.get_json_obj().value("info").toString() == "page_is_ready") {
+    // page is ready to handle requests
+    return;
+  }
+
   // Hack to fix up urls coming from the extension.
   if (sm.get_json_obj().value("request").toString() == "navigate_to") {
     QJsonObject obj = sm.get_json_obj();

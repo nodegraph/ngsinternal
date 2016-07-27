@@ -30,18 +30,22 @@ ElemCache.prototype.position_scrolls = function() {
     
     // Get the elements at the center of our page_box.
     var center = this.page_box.get_center()
-    var elem_wraps = g_page_wrap.get_visible_elem_wraps_at(center.x, center.y)
+    var elem_wraps = g_page_wrap.get_visible_overlapping_at(center.x, center.y)
+    
+    console.log('num elem wraps at center of page_box: ' + elem_wraps.length + ' center: ' + center.x + "," + center.y)
     
     // Note this is not fool proof, but should work in most of the cases.
     // We use the first elem_wrap with the right number of scroll bars that we need to set.
-    var scrolls = null
+    var scrolls = [new ElemWrap(document.body)]
     for (var i=0; i<elem_wraps.length; i++) {
-        scrolls = elem_wraps[0].get_scroll_bars()
+        console.log('+')
+        scrolls = elem_wraps[0].get_parenting_scroll_bars()
         if (scrolls.length == this.scroll_amounts.length) {
             break
         }
     }
     
+    // We don't need to 
     for (var i=0; i<scrolls.length; i++) {
         scrolls[i].set_scroll_amount(this.scroll_amounts[i])
     }
@@ -49,7 +53,9 @@ ElemCache.prototype.position_scrolls = function() {
 
 ElemCache.prototype.get_elem_wrap = function() {
     this.position_scrolls()
-    var getter = ElemWrap.prototype.get_getter(this.wrap_type)
-    var elem_wrap = this.get_first_elem_wrap_at(getter, page_x, page_y)
+    var getter = ElemWrap.prototype.get_getter_from_wrap_type(this.wrap_type)
+    var center = this.page_box.get_center()
+    var elem_wrap = g_page_wrap.get_first_elem_wrap_at(getter, center.x, center.y)
+    console.log('converting elem cache to elem wrap: ' + elem_wrap)
     return elem_wrap
 }

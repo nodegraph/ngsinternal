@@ -1,36 +1,57 @@
 
-var OverlaySet = function(elem_wraps) {
-    this.marked = false
+var OverlaySet = function(elem_wraps, color=null, marked=false) {
+    // Our members.
+    this.color = null
+    this.color_index = -1
+    this.marked = marked
     this.overlays = [] // An array of Overlays
     
-    var color_data = g_distinct_colors.obtain_color()
-    this.color = color_data.color
-    this.color_index = color_data.index
+    if (color == null) {
+        var color_data = g_distinct_colors.obtain_color()
+        this.color = color_data.color
+        this.color_index = color_data.index
+    } else {
+        this.color = color
+        this.color_index = g_distinct_colors.request_color(this.color)
+        if (this.color_index < 0) {
+            console.log("Error in OverlaySet: requesting color: " +this.color)
+        }
+    }
     
+    console.log('num elem wraps in set: ' + elem_wraps.length)
     for (var i=0; i<elem_wraps.length; i++) {
-        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, elem_wraps[i])
+        console.log('adding elem: ' + elem_wraps[i].get_xpath())
+        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, this.marked, elem_wraps[i])
         this.overlays.push(overlay)
     }
 }
 
+//Serialize to a JSON object.
+OverlaySet.prototype.serializeToJsonObj = function() {
+    var obj = {}
+    obj.color = this.color
+    obj.marked = this.marked
+    obj.overlays = []
+    
+    for (var i=0; i<this.overlays.length; i++) {
+        var overlay = this.overlays[i]
+        obj.overlays.push(overlay.serializeToJsonObj())
+    }
+    return obj
+}
+
 // Update all internal state.
 OverlaySet.prototype.update = function() {
+    console.log('overlay set update with color index: ' + this.color_index)
     for (var i=0; i<this.overlays.length; i++) {
-        this.overlays[i].update()
+        this.overlays[i].update(this.color, this.color_index, this.marked)
     }
 }
 
-OverlaySet.prototype.mark = function() {
-    this.marked = true
+OverlaySet.prototype.mark = function(mark) {
+    this.marked = mark
     for (var i=0; i<this.overlays.length; i++) {
-        this.overlays[i].mark()
-    }
-}
-
-OverlaySet.prototype.unmark = function() {
-    this.marked = false
-    for (var i=0; i<this.overlays.length; i++) {
-        this.overlays[i].unmark()
+        this.overlays[i].mark(this.marked)
     }
 }
 
@@ -81,7 +102,7 @@ OverlaySet.prototype.expand = function(side, match_criteria) {
     }
     
     for (var i=0; i<similar_elem_wraps.length; i++) {
-        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, similar_elem_wraps[i])
+        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, this.marked, similar_elem_wraps[i])
         this.overlays.push(overlay)
     }
 }
@@ -90,7 +111,7 @@ OverlaySet.prototype.expand = function(side, match_criteria) {
 OverlaySet.prototype.merge = function(other) {
     for (var i=0; i<other.overlays.length; i++) {
         var elem_wrap = other.overlays[i].elem_wrap
-        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, elem_wrap)
+        var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, this.marked, elem_wrap)
         if (this.marked) {
             overlay.mark()
         }
@@ -207,3 +228,5 @@ OverlaySet.prototype.shrink_to_extreme = function(side) {
     // Update our overlays array.
     this.overlays = next_overlays
 }
+
+

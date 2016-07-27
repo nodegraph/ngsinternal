@@ -14,6 +14,11 @@ var PageBox = function(arg = null) {
         this.right = arg[1]
         this.top = arg[2]
         this.bottom = arg[3]
+    } else if (Object.getPrototypeOf(arg) === Object.prototype) {
+        this.left = arg.left
+        this.right = arg.right
+        this.top = arg.top
+        this.bottom = arg.bottom
     } else {
         this.reset()
     } 
@@ -85,13 +90,13 @@ PageBox.prototype.contains_point = function(page_x, page_y, sigma = 1.0) {
 
 //Returns true if and only if we intersect the other page box.
 PageBox.prototype.intersects = function(other) {
-    if (this.right < other.left) {
+    if (this.right <= other.left) {
         return false
-    } else if (this.left > other.right) {
+    } else if (this.left >= other.right) {
         return false
-    } else if (this.bottom < other.top) {
+    } else if (this.bottom <= other.top) {
         return false
-    } else if (this.top > other.bottom) {
+    } else if (this.top >= other.bottom) {
         return false
     }
     return true
@@ -101,22 +106,22 @@ PageBox.prototype.intersects = function(other) {
 PageBox.prototype.is_oriented_on = function(side, of) {
     switch(side) {
         case ElemWrap.prototype.direction.left:
-            if ((this.left < of.left) && (this.right < of.right)) {
+            if (this.right < of.right) {
                 return of.right - this.right
             }
             break
         case ElemWrap.prototype.direction.right:
-            if ((this.left > of.left) && (this.right > of.right)) {
+            if (this.left > of.left) {
                 return this.left - of.left
             }
             break
         case ElemWrap.prototype.direction.up:
-            if ((this.top < of.top) && (this.bottom < of.bottom)) {
+            if (this.bottom < of.bottom) {
                 return of.bottom - this.bottom
             }
             break
         case ElemWrap.prototype.direction.down:
-            if ((this.top > of.top) && (this.bottom > of.bottom)) {
+            if (this.top > of.top) {
                 return this.top - of.top
             }
             break
@@ -129,19 +134,19 @@ PageBox.prototype.get_beam = function(side) {
     var beam = new PageBox(this)
     switch(side) {
         case ElemWrap.prototype.direction.left:
-            beam.right = beam.left
+            //beam.right = beam.left
             beam.left = 0
             break
         case ElemWrap.prototype.direction.right:
-            beam.left = beam.right
+            //beam.left = beam.right
             beam.right = g_page_wrap.get_width()
             break
         case ElemWrap.prototype.direction.up:
-            beam.bottom = beam.top
+            //beam.bottom = beam.top
             beam.top = 0
             break
         case ElemWrap.prototype.direction.down:
-            beam.top = beam.bottom
+            //beam.top = beam.bottom
             beam.bottom = g_page_wrap.get_height()
             break
         default:

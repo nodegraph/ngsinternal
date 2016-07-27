@@ -32,6 +32,9 @@
   ],
 
   "permissions": [
+  	"cookies",
+  	"http://*/*", 
+  	"https://*/*",
   	"<all_urls>",
   	"contextMenus",
     "activeTab",

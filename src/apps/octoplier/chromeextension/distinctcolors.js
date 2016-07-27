@@ -95,14 +95,14 @@ DistinctColors.prototype.request_color = function(color) {
     // Make sure the color is one that we track.
     var index = this.usable_colors.indexOf(color)
     if (index < 0) {
-        return false
+        return -1
     }
     // Make sure it's not currently being used.
     if (this.used_colors[color] == false) {
         this.used_colors[color] = true
-        return true
+        return index
     }
-    return false
+    return -1
 }
 
 //Release a color so that it can be used again.

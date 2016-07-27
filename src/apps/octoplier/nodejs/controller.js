@@ -13,6 +13,7 @@ var WebSocketServer = require('ws').Server
 var fs = require('fs')
 var HttpServer = require('http')
 var HttpsServer = require('https')
+var Path = require('path')
 
 //------------------------------------------------------------------------------------------------
 //Debugging Utils.
@@ -39,6 +40,9 @@ process.on('uncaughtException', function(e) {
     log_exception(e)
 });
 
+var nodejs_dir = process.cwd()
+console.log("nodejs current working dir: " + nodejs_dir)
+
 //------------------------------------------------------------------------------------------------
 //File I/O.
 //------------------------------------------------------------------------------------------------
@@ -56,6 +60,27 @@ function read_file(filename) {
     return script
 }
 
+function delete_dir(path) {
+    if( fs.existsSync(path) ) {
+        fs.readdirSync(path).forEach(function(file) {
+            var full_path = Path.join(path,file)
+            if(fs.statSync(full_path).isDirectory()) {
+                delete_dir(full_path)
+            } else {
+                fs.unlinkSync(full_path);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};
+
+function create_dir(path) {
+    if (!fs.existsSync(path)){
+        fs.mkdirSync(path);
+    }
+}
+
+  
 //------------------------------------------------------------------------------------------------
 //Socket Message.
 //------------------------------------------------------------------------------------------------
@@ -128,7 +153,7 @@ var extension_server_config = {
         ssl_key: './key.pem',
         ssl_cert: './cert.pem'
     };
-var extension_server = create_socket_server(extension_server_config, on_message_from_extension)
+var extension_server = create_socket_server(extension_server_config, receive_from_extension)
 
 //Send an obj as a message to the extension.
 function send_to_extension(obj) {
@@ -139,7 +164,7 @@ function send_to_extension(obj) {
 //The extension can send us requests from the smash browse context menu,
 //or it can send us reponses from request originating within the app,
 //which in turn could have been triggered from the smash browse context menu.
-function on_message_from_extension(message) {
+function receive_from_extension(message) {
     console.log('nodejs got message from extension: ' + message)
     var msg = new SocketMessage(message)
     if (msg.is_request()) {
@@ -161,7 +186,7 @@ var app_server_config = {
         ssl: false,
         port: 8082,
     };
-var app_server = create_socket_server(app_server_config, on_message_from_app)
+var app_server = create_socket_server(app_server_config, receive_from_app)
 
 //Send an obj as a message to the app.
 function send_to_app(obj) {
@@ -172,13 +197,13 @@ function send_to_app(obj) {
 //The can send us messages either from c++ or from qml.
 //These requests will be handled by webdriverjs, or the extension scripts in the browser.
 //Requests will always return with a response message containing return values.
-function on_message_from_app(message) {
+function receive_from_app(message) {
     var msg = new SocketMessage(message)
     console.log('nodejs got message from app: ' + message)
     
     // Make sure the message is a request.
     if (!msg.is_request()) {
-        console.log("Error on_message_from_app received something other than a request.")
+        console.log("Error receive_from_app received something other than a request.")
     }
     
     // Handle the request.
@@ -251,6 +276,7 @@ function on_message_from_app(message) {
         default:
             // By default we send requests to the extension. 
             // (It goes through bg script, and then into content script.)
+            console.log('zzzzzzzzzzzzzzzzzz')
             send_to_extension(request)
             break
             
@@ -269,6 +295,8 @@ var By = null
 var until = null
 var flow = null
 
+
+
 function open_browser(url) {
     try {
         webdriver = require('selenium-webdriver')
@@ -276,16 +304,22 @@ function open_browser(url) {
         By = webdriver.By
         Key = webdriver.Key
         until = webdriver.until
+        
+        // Remove the files in the chrome user data dir.
+        var dir = Path.join(nodejs_dir, "..", "chromeuserdata")
+        delete_dir(dir)
+        create_dir(dir)
 
         var chromeOptions = new chrome.Options()
         //Win_x64-389148-chrome-win32
         //Win-338428-chrome-win32
         //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
-        chromeOptions.addArguments("--load-extension=D:/src/ngsinternal/src/apps/octoplier/chrome")
+        chromeOptions.addArguments("--load-extension=" + nodejs_dir + "/../chromeextension")
         chromeOptions.addArguments("--ignore-certificate-errors")
         chromeOptions.addArguments("--disable-web-security")
-        chromeOptions.addArguments("--user-data-dir")
+        chromeOptions.addArguments("--user-data-dir=" + nodejs_dir + "/../chromeuserdata")
         //chromeOptions.addArguments("--app=file:///"+url)
+        chromeOptions.addArguments("--first-run")
         
         // "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir --app=https://www.google.com
 

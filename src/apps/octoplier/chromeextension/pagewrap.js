@@ -22,19 +22,29 @@ var PageWrap = function() {
 PageWrap.prototype.mutation_check_interval = 100 // time interval to check whether we've waited long enough
 PageWrap.prototype.mutation_done_interval = 1000 // minimum time since last mutation, to be considered fully completed and done
 
+//Returns whether the page is currently loading something.
+//This is typically called before sending a request from the app.
+PageWrap.prototype.is_loading = function() {
+    return !this.page_is_ready
+}
+
+//Creates and starts the mutation timer.
 PageWrap.prototype.start_mutation_timer = function() {
     if (this.mutation_timer == null) {
+        g_content_comm.send_to_bg({info: 'page_is_loading'})
         this.page_is_ready = false
         this.last_mutation_time = new Date();
         this.mutation_timer = setInterval(this.update_mutation_timer.bind(this), this.mutation_check_interval)
     }
 }
 
+//Stops and destroys the mutation timer.
 PageWrap.prototype.stop_mutation_timer = function() {
     clearInterval(this.mutation_timer)
     this.mutation_timer = null
 }
 
+//This function is called every interval.
 PageWrap.prototype.update_mutation_timer = function() {
     var current_time = new Date()
     var last_mutation_delta = current_time.getTime() - this.last_mutation_time.getTime()
@@ -44,7 +54,7 @@ PageWrap.prototype.update_mutation_timer = function() {
         console.log("PageWrap: page is now ready with delta: " + last_mutation_delta)
         // Only send the page_is_ready from the top frame.
         if (window == window.top) {
-            chrome.runtime.sendMessage({code: 'page_is_ready'})
+            g_content_comm.send_to_bg({info: 'page_is_ready'})
             console.log("PageWrap: sending out page is ready message from the top window.")
             
             // We can now show the context menu.
@@ -54,12 +64,23 @@ PageWrap.prototype.update_mutation_timer = function() {
     }
 }
 
+//This function is called on every mutation of the dom.
 PageWrap.prototype.on_mutation = function(mutations) {
     mutations.forEach(function (mutation) {
         // mutation.addedNodes.length
         // mutation.removedNodes.length
     });
-    this.last_mutation_time = new Date();
+    if (mutations.length == 0) {
+        return
+    }
+    
+    if (this.mutation_timer == null) {
+        console.log('starting mutation timer')
+        this.start_mutation_timer()
+        g_wait_popup.open()
+    } else {
+        this.last_mutation_time = new Date();
+    }
 } 
 
 
@@ -145,10 +166,12 @@ return "//*[text()[string(.) = "+ text +"]]"
 }
 
 //---------------------------------------------------------------------------------
-//Elem Finders.
+//Find elem wraps by mouse position.
 //---------------------------------------------------------------------------------
 
-PageWrap.prototype.get_all_elem_wraps_at = function(page_x, page_y) {
+//Returns an array of all elem wraps which overlap at the given mouse point.
+//Note this will miss out on reporting svg elements.
+PageWrap.prototype.get_overlapping_at = function(page_x, page_y) {
     // Use the document.elementsFromPoint class.
     var elements = document.elementsFromPoint(page_x-window.scrollX, page_y-window.scrollY)
     // Convert to elem wraps.
@@ -166,8 +189,8 @@ PageWrap.prototype.get_all_elem_wraps_at = function(page_x, page_y) {
 //Returns the elem wraps in z-order under the given page point, until we become
 //fully opaque. Usually we will hit an opaque background plate.
 //The document.elementsFromPoint seems to skip svg elem wraps, so we add these in manually.
-PageWrap.prototype.get_visible_elem_wraps_at = function(page_x, page_y) {
-  var elem_wraps = this.get_all_elem_wraps_at(page_x, page_y)
+PageWrap.prototype.get_visible_overlapping_at = function(page_x, page_y) {
+  var elem_wraps = this.get_overlapping_at(page_x, page_y)
   
   // Debug settings.
   if (false) {
@@ -198,7 +221,7 @@ PageWrap.prototype.get_visible_elem_wraps_at = function(page_x, page_y) {
   
   // Build xpath to find all svg elem wraps.
   var xpath = "//*[local-name() = 'svg']"
-  var svgs = this.get_elem_wraps_by_xpath(xpath)
+  var svgs = this.get_by_xpath(xpath)
   
   // Loop over the elem wraps.
   var svg = null
@@ -222,8 +245,43 @@ PageWrap.prototype.get_visible_elem_wraps_at = function(page_x, page_y) {
   return elem_wraps
 }
 
+//Returns first elem wrap for which getter returns a "true-thy" value.
+PageWrap.prototype.get_first_elem_wrap_at = function(getter, page_x, page_y) {
+    var elem_wraps = this.get_visible_overlapping_at(page_x, page_y)
+    for (var i=0; i<elem_wraps.length; i++) {
+        var value = getter.call(elem_wraps[i])
+        if (value) {
+            return elem_wraps[i]
+        }
+    }
+    return null
+}
+
+//Returns the top elem wrap with text, according to z-order.
+PageWrap.prototype.get_top_text_elem_wrap_at = function(page_x, page_y) {
+    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_text, page_x, page_y)
+    if (!candidate) {
+        return null
+    }
+    return candidate
+}
+
+//Returns the top elem wrap with an image, according to z-order.
+PageWrap.prototype.get_top_image_elem_wrap_at = function(page_x, page_y) {
+    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_image, page_x, page_y)
+    if (!candidate) {
+        return null
+    }
+    return candidate
+}
+
+//---------------------------------------------------------------------------------
+//Find elem wraps by non mouse values.
+//---------------------------------------------------------------------------------
+
+
 //Returns an array of elem wraps with the given xpath.
-PageWrap.prototype.get_elem_wraps_by_xpath = function(xpath) {
+PageWrap.prototype.get_by_xpath = function(xpath) {
   var set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
   // Convert to elem wraps.
   var elem_wraps = []
@@ -239,15 +297,15 @@ PageWrap.prototype.get_elem_wraps_by_xpath = function(xpath) {
 }
 
 //Returns an array of all the elem wraps.
-PageWrap.prototype.get_all_elem_wraps = function() {
+PageWrap.prototype.get_all = function() {
     var xpath = "//*";
-    return this.get_elem_wraps_by_xpath(xpath)
+    return this.get_by_xpath(xpath)
 }
 
 //Returns all elem wraps which intersect with the given box.
-PageWrap.prototype.get_all_elem_wraps_intersecting_page_box = function(page_box) {
+PageWrap.prototype.get_intersecting_with = function(page_box) {
     var intersecting = []
-    var elem_wraps = this.get_all_elem_wraps()
+    var elem_wraps = this.get_all()
     for (var i=0; i<elem_wraps.length; i++) {
         if (page_box.intersects(elem_wraps[i].page_box)) {
             intersecting.push(elem_wraps[i])
@@ -256,11 +314,24 @@ PageWrap.prototype.get_all_elem_wraps_intersecting_page_box = function(page_box)
     return intersecting
 }
 
-PageWrap.prototype.get_elem_wraps_by_any_value_with_xray = function(wrap_type, target_values) {
-    var getter = ElemWrap.prototype.get_getter(wrap_type)
+//Returns all elem wraps which are contained in the given box.
+PageWrap.prototype.get_contained_in = function(page_box) {
+    var contained = []
+    var elem_wraps = this.get_all()
+    for (var i=0; i<elem_wraps.length; i++) {
+        if (page_box.contains(elem_wraps[i].page_box)) {
+            contained.push(elem_wraps[i])
+        }
+    }
+    return contained
+}
+
+// Returns elem wraps which match any of the target values.
+PageWrap.prototype.get_by_any_value = function(wrap_type, target_values) {
+    var getter = ElemWrap.prototype.get_getter_from_wrap_type(wrap_type)
         
     // Get all elem wraps.
-    var elem_wraps = this.get_all_elem_wraps()
+    var elem_wraps = this.get_all()
     
     // Loop over the elem wraps.
     var wrapper = null
@@ -295,12 +366,12 @@ PageWrap.prototype.get_elem_wraps_by_any_value_with_xray = function(wrap_type, t
 }
 
 //Returns an array of elem wraps selected by the matcher.
-PageWrap.prototype.get_elem_wraps_by_values = function(wrap_type, target_values) {
+PageWrap.prototype.get_by_all_values = function(wrap_type, target_values) {
     // Get our initial candiate elem wraps.
-    var candidates = this.get_elem_wraps_by_any_value_with_xray(wrap_type, target_values)
+    var candidates = this.get_by_any_value(wrap_type, target_values)
     
     // Get our getter.
-    var getter = ElemWrap.prototype.get_getter(wrap_type)
+    var getter = ElemWrap.prototype.get_getter_from_wrap_type(wrap_type)
     
     // Determines arrays of surrounding elem wraps for each elem wrap.
     var results = []
@@ -362,67 +433,8 @@ PageWrap.prototype.get_elem_wraps_by_values = function(wrap_type, target_values)
         }
     }
     
-    // Weed out any elem wraps which are not top most elements.
-    for (var i=0; i<results.length; i++) {
-        if (!results[i].is_topmost(getter)) {
-            results.splice(i,1)
-            i -= 1
-        }
-    }
-    
     // Phew we're done!
     return results
-}
-
-//Returns an array of elem wraps which have matching image values.
-PageWrap.prototype.get_elem_wraps_by_image_values = function(image_values) {
-    return this.get_elem_wraps_by_values(ElemWrap.prototype.wrap_type.image, image_values)
-}
-
-//Returns an array of elem wraps which have matching text values.
-PageWrap.prototype.get_elem_wraps_by_text_values = function(text_values) {
-    return this.get_elem_wraps_by_values(ElemWrap.prototype.wrap_type.text, text_values)
-}
-
-//Returns all elem wraps for elements of a certain type.
-PageWrap.prototype.get_elem_wraps_from_wrap_type = function(wrap_type) {
-    return this.get_elem_wraps_by_any_value_with_xray(wrap_type, [])
-}
-
-//Returns first elem wrap for which getter returns a "true-thy" value.
-PageWrap.prototype.get_first_elem_wrap_at = function(getter, page_x, page_y) {
-    var elem_wraps = this.get_visible_elem_wraps_at(page_x, page_y)
-    for (var i=0; i<elem_wraps.length; i++) {
-        var value = getter.call(elem_wraps[i])
-        if (value) {
-            return elem_wraps[i]
-        }
-    }
-    return null
-}
-
-//Returns the top elem wrap with text, according to z-order.
-PageWrap.prototype.get_top_text_elem_wrap_at = function(page_x, page_y) {
-    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_text, page_x, page_y)
-    if (!candidate) {
-        return null
-    }
-    if (candidate.is_topmost(ElemWrap.prototype.get_text)) {
-        return candidate
-    }
-    return null
-}
-
-//Returns the top elem wrap with an image, according to z-order.
-PageWrap.prototype.get_top_image_elem_wrap_at = function(page_x, page_y) {
-    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_image, page_x, page_y)
-    if (!candidate) {
-        return null
-    }
-    if (candidate.is_topmost(ElemWrap.prototype.get_image)) {
-        return candidate
-    }
-    return null
 }
 
 //---------------------------------------------------------------------------------
@@ -448,14 +460,14 @@ PageWrap.prototype.extract_values = function(elem_wraps, getter) {
 
 //Returns an array of images values from elem wraps under the given page point.
 PageWrap.prototype.get_image_values_at = function(page_x, page_y) {
-    var elem_wraps = this.get_visible_elem_wraps_at(page_x, page_y)
+    var elem_wraps = this.get_visible_overlapping_at(page_x, page_y)
     var values = this.extract_values(elem_wraps, ElemWrap.prototype.get_image)
     return values
 }
 
 //Returns an array of text values from elem wraps under the given page point.
 PageWrap.prototype.get_text_values_at = function(page_x, page_y) {
-    var elem_wraps = this.get_visible_elem_wraps_at(page_x, page_y)
+    var elem_wraps = this.get_visible_overlapping_at(page_x, page_y)
     var values = this.extract_values(elem_wraps, ElemWrap.prototype.get_text)
     // Values will contain text from bigger overlapping divs with text.
     // Unlike images text won't overlap, so we only want the first text.

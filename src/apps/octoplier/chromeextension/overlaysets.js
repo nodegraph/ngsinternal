@@ -7,6 +7,44 @@ var OverlaySets = function() {
     this.sets = [] // An array of OverlaySet's.
 }
 
+OverlaySets.prototype.destroy = function() {
+    for (var i=0; i<this.sets.length; i++) {
+        this.destroy_set_by_index(i)
+    }
+    this.sets.length = 0
+}
+
+//Serialize to an array of serialized OveralaySet's.
+OverlaySets.prototype.serializeToJsonObj = function() {
+    var obj = []
+    for (var i=0; i<this.sets.length; i++) {
+        obj.push(this.sets[i].serializeToJsonObj())
+    }
+    return obj
+}
+
+OverlaySets.prototype.deserializeFromJsonObj = function(obj) {
+    this.destroy()
+    
+    console.log('deserializing num sets: ' + obj.length)
+    for (var i=0; i<obj.length; i++) {
+        var overlays = obj[i].overlays
+        var elem_wraps = []
+        for (var j=0; j<overlays.length; j++) {
+            var d = overlays[j]
+            var elem_cache = new ElemCache(new PageBox(d.page_box), d.scroll_amounts, d.wrap_type)
+            var elem_wrap = elem_cache.get_elem_wrap()
+            if (elem_wrap) {
+                elem_wraps.push(elem_wrap)
+            }
+        }
+        console.log('&')
+        var overlay_set = new OverlaySet(elem_wraps, obj[i].color, obj[i].marked)
+        this.sets.push(overlay_set)
+    }
+}
+
+
 //Update all internal state.
 OverlaySets.prototype.update = function() {
     for (var i=0; i<this.sets.length; i++) {
@@ -43,19 +81,11 @@ OverlaySets.prototype.find_set_index = function(page_x, page_y, marked=null) {
 }
 
 //Mark the first unmarked set under the mouse.
-OverlaySets.prototype.mark_set = function(set_index) {
+OverlaySets.prototype.mark_set = function(set_index, mark) {
     if (set_index < 0) {
         return
     }
-    this.sets[set_index].mark()
-}
-
-//Unmark the first marked set under the mouse.
-OverlaySets.prototype.unmark_set = function(set_index) {
-    if (set_index < 0) {
-        return
-    }
-    this.sets[set_index].unmark()
+    this.sets[set_index].mark(mark)
 }
 
 //Unmark all sets.
@@ -161,65 +191,24 @@ OverlaySets.prototype.shrink_set_to_marked = function(set_index, sides) {
     }
 }
 
-// Shrink all sets.
+// Shrink set to an extreme on a given side.
 OverlaySets.prototype.shrink_to_extreme = function(set_index, side) {
     if (set_index < 0) {
         return
     }
     this.sets[set_index].shrink_to_extreme(side)
-    
-//    // Shrink down each overlay set.
-//    for (var i=0; i<this.sets.length; i++) {
-//        this.sets[i].shrink_to_extreme(side)
-//    }
-//    
-//    // Now find the most extreme of the shrunken sets.
-//    var extreme = null
-//    var extreme_index = null
-//    for (var i=0; i<this.sets.length; i++) {
-//        var set = this.sets[i]
-//        var page_box = set.overlays[0].elem_wrap.page_box
-//        if (i==0) {
-//            extreme = page_box.get_extreme(side)
-//            extreme_index = 0
-//        } else {
-//            var value = page_box.get_extreme(side)
-//            if (value_is_more_extreme(value,extreme,side)) {
-//                extreme = value
-//                extreme_index = i
-//            }
-//        }
-//    }
-//    
-//    // Create our next sets array, which contains all the sets at the extreme value.
-//    var next_sets = []
-//    for (var i=0; i<this.sets.length; i++) {
-//        var set = this.sets[i]
-//        var page_box = set.overlays[0].elem_wrap.page_box
-//        var value = page_box.get_extreme(side)
-//        if (value == extreme) {
-//            // Add to our next sets.
-//            next_sets.push(this.sets[i])
-//            // Splice out from our current sets
-//            this.sets.splice(i,1)
-//            i -= 1
-//        }
-//    }
-//    
-//    // Destroy all the other sets.
-//    for (var i=0; i<this.sets.length; i++) {
-//        this.sets[i].destroy()
-//    }
-//    
-//    // Update our sets array.
-//    this.sets = next_sets
 }
 
+// Get xpath.
 OverlaySets.prototype.get_xpath = function(set_index, overlay_index) {
     if (set_index < 0 || overlay_index < 0) {
         return
     }
     return this.sets[set_index].overlays[overlay_index].elem_wrap.get_xpath()
+}
+
+OverlaySets.prototype.perform_vertical_scroll = function(set_index, overlay_index, fraction) {
+    this.sets[set_index].overlays[overlay_index].elem_wrap.set_vertical_scroll_by_fraction(fraction)
 }
 
 // -------------------------------------------------------------------------

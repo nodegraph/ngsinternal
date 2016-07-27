@@ -8,42 +8,34 @@ var ContentCommunication = function () {
 
 //Setup communication channel with chrome runtime.
 ContentCommunication.prototype.connect_to_bg = function() {
-    chrome.runtime.onMessage.addListener(this.receive_message_from_bg.bind(this))
+    chrome.runtime.onMessage.addListener(this.receive_from_bg.bind(this))
 }
 
 //Send a message to the bg script.
-ContentCommunication.prototype.send_message_to_bg = function(socket_message) {
+ContentCommunication.prototype.send_to_bg = function(socket_message) {
     chrome.runtime.sendMessage(socket_message)
 }
 
 //Receive a message from the bg script.
-ContentCommunication.prototype.receive_message_from_bg = function(request, sender, send_response) {
+ContentCommunication.prototype.receive_from_bg = function(request, sender, send_response) {
     console.log('content script received message from bg: ' + JSON.stringify(request))
     switch(request.request) {
         case 'create_set_from_match_values':
             switch(request.wrap_type) {
                 case ElemWrap.prototype.wrap_type.text:
-                    var elem_wraps = g_page_wrap.get_elem_wraps_by_text_values(request.match_values)
-                    console.log('found num elem_wraps: ' + elem_wraps.length)
-                    for (var i=0; i<elem_wraps.length; i++) {
-                        console.log('xpath ['+i+']: ' + elem_wraps[i].get_xpath())
-                        var elem_cache = new ElemCache(elem_wraps[i])
-                        console.log('scrolls: ' + elem_cache.scroll_amounts)
-                    }
+                    var elem_wraps = g_page_wrap.get_by_all_values(ElemWrap.prototype.wrap_type.text, request.match_values)
                     g_overlay_sets.add_set(new OverlaySet(elem_wraps))
                     break
                 case ElemWrap.prototype.wrap_type.image:
-                    var found = g_page_wrap.get_elem_wraps_by_image_values(request.match_values)
-                    console.log('found num found: ' + found.length)
-                    for (var i=0; i<found.length; i++) {
-                        console.log('xpath ['+i+']: ' + found[i].get_xpath())
-                    }
-                    g_overlay_sets.add_set(new OverlaySet(found))
+                    var elem_wraps = g_page_wrap.get_by_all_values(ElemWrap.prototype.wrap_type.image, request.match_values)
+                    g_overlay_sets.add_set(new OverlaySet(elem_wraps))
                     break
+                default:
+                    console.log("Error: create_set_from_match_values")
             }
             break
         case 'create_set_from_wrap_type':
-            var elem_wraps = g_page_wrap.get_elem_wraps_from_wrap_type(request.wrap_type)
+            var elem_wraps = g_page_wrap.get_by_any_value(request.wrap_type, [])
             g_overlay_sets.add_set(new OverlaySet(elem_wraps))
             break
         case 'delete_set':
@@ -57,10 +49,10 @@ ContentCommunication.prototype.receive_message_from_bg = function(request, sende
             g_overlay_sets.expand(request.set_index, request.direction, match_criteria)
             break
         case 'mark_set':
-            g_overlay_sets.mark_set(request.set_index)
+            g_overlay_sets.mark_set(request.set_index, true)
             break
         case 'unmark_set':
-            g_overlay_sets.unmark_set(request.set_index)
+            g_overlay_sets.mark_set(request.set_index, false)
             break
         case 'merge_marked_sets':
             g_overlay_sets.merge_marked_sets()
@@ -86,29 +78,30 @@ ContentCommunication.prototype.receive_message_from_bg = function(request, sende
             g_event_blocker.unblock_events()
             
             // Send the modified request back to the app.
-            this.send_message_to_bg(request)
+            this.send_to_bg(request)
             return 
+        case 'perform_vertical_scroll':
+            g_overlay_sets.perform_vertical_scroll(request.set_index, request.overlay_index, request.fraction)
+            break
         case 'block_events':
             g_event_blocker.block_events()
             // No respone message is used for this request, as it procedurally added in to
             // handle unblocking events before performing webdriver actions, and then blocking events back again.
             return
-//        case 'get_xpath_from_overlay':
-//            var xpath = g_overlay_sets.get_xpath(request.set_index, request.overlay_index)
-//            var response = {response: xpath}
-//            this.send_message_to_bg(response)
-//            return
-//        case 'get_xpath_from_elem_cache':
-//            var page_box = new PageBox(request.bounds)
-//            var elem_cache = new ElemCache(page_box, request.scroll_amounts)
-//            var elem_wrap = elem_cache.get_elem_wrap()
-//            var xpath = elem_wrap.get_xpath()
-//            // Send the result in a response message.
-//            var response = {response: xpath}
-//            this.send_message_to_bg(response)
-//            return
+        case 'get_overlay_sets':
+            // Serialize g_overlay_sets into a dict like object.
+            var data = g_overlay_sets.serializeToJsonObj()
+            console.log('serialized data: ' + JSON.stringify(data))
+            var response = {response: true, value: data}
+            this.send_to_bg(response)
+            return
+        case 'set_overlay_sets':
+            g_overlay_sets.deserializeFromJsonObj(request.overlays)
+            var response = {response: true}
+            this.send_to_bg(response)
+            break
     }
-    this.send_message_to_bg(new ResponseMessage(true))
+    this.send_to_bg(new ResponseMessage(true))
 }
 
 
