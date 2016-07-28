@@ -2,11 +2,10 @@
 #include <base/utils/path.h>
 
 #include <components/computes/computeglobals.h>
-#include <components/computes/scriptnodecompute.h>
 #include <base/utils/simplesaver.h>
 #include <base/utils/simpleloader.h>
 #include <components/computes/inputcompute.h>
-
+#include <components/computes/scriptnodecompute.h>
 #include <QtCore/QByteArray>
 #include <QtCore/QDataStream>
 

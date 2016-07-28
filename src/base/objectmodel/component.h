@@ -189,7 +189,7 @@ class OBJECTMODEL_EXPORT Component {
 
   // Update the entity hierarchy around us, based on our current state.
   // In order to keep this orthogonal to update_deps, this should try not to update any deps of any components.
-  // However there case where this may be unavoidable.
+  // However there may be cases where this may be unavoidable.
   // Returns the update performed. Components may request destruction as well.
   virtual HierarchyUpdate update_hierarchy() {return kUnchanged;}
 

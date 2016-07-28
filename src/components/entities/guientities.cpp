@@ -35,11 +35,9 @@
 #include <components/computes/outputcompute.h>
 #include <components/computes/outputnodecompute.h>
 #include <components/computes/scriptnodecompute.h>
-
 #include <components/entities/factory.h>
 #include <components/interactions/graphbuilder.h>
 #include <components/interactions/viewcontrols.h>
-
 #include <gui/widget/nodegrapheditor.h>
 
 namespace ngs {

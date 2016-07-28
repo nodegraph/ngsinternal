@@ -113,6 +113,8 @@ void AppCommunication::on_poll() {
   } else if (!nodejs_is_connected()) {
     // Connect to the nodejs process.
     connect_to_nodejs();
+  } else {
+    //check_browser_is_open();
   }
 }
 
@@ -156,6 +158,20 @@ void AppCommunication::on_text_message_received(const QString & message) {
   } else {
     handle_response_from_nodejs(sm);
   }
+}
+
+// -----------------------------------------------------------------
+// Private Methods.
+// -----------------------------------------------------------------
+
+void AppCommunication::open_browser() {
+  QString json_text = "{\"request\": \"open_browser\", \"url\": \"" + get_smash_browse_url() + "\"}";
+  handle_request_from_app(json_text);
+}
+
+void AppCommunication::close_browser() {
+  QString json_text = "{\"request\": \"close_browser\"}";
+  handle_request_from_app(json_text);
 }
 
 // -----------------------------------------------------------------
@@ -232,6 +248,11 @@ bool AppCommunication::nodejs_is_connected() {
     return true;
   }
   return false;
+}
+
+void AppCommunication::check_browser_is_open() {
+  QString json_text = "{\"request\": \"check_browser_is_open\"}";
+  handle_request_from_app(json_text);
 }
 
 void AppCommunication::handle_request_from_nodejs(const SocketMessage& sm) {

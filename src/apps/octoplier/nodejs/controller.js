@@ -264,6 +264,15 @@ function receive_from_app(message) {
     // Handle the request.
     var request = msg.get_obj()
     switch (request.request) {
+        case 'check_browser_is_open':
+            function on_response(open) {
+                console.log('is browser open: ' + open)
+                if (!open) {
+                    open_browser()
+                }
+            }
+            browser_is_open(on_response)
+            break
         case 'open_browser':
             open_browser(request.url)
             send_to_app({response: true})
@@ -350,24 +359,26 @@ function receive_from_app(message) {
 // Browser Control.
 //------------------------------------------------------------------------------------------------
 
-var webdriver = null
-var chrome = null
+var webdriver = require('selenium-webdriver')
+var chrome = require('selenium-webdriver/chrome');
 var driver = null
-var Key = null
-var By = null
-var until = null
+var Key = webdriver.Key
+var By = webdriver.By
+var until = webdriver.until
 var flow = null
 
-
+function browser_is_open(callback) {
+    if (driver) {
+        driver.getTitle().then(
+                function(){callback(true)},
+                function(){callback(false)});
+    } else {
+        callback(false)
+    }
+}
 
 function open_browser(url) {
     try {
-        webdriver = require('selenium-webdriver')
-        chrome = require('selenium-webdriver/chrome');
-        By = webdriver.By
-        Key = webdriver.Key
-        until = webdriver.until
-        
         // Remove the files in the chrome user data dir.
         var dir = Path.join(g_nodejs_dir, "..", "chromeuserdata")
         delete_dir(dir)
@@ -381,8 +392,8 @@ function open_browser(url) {
         chromeOptions.addArguments("--ignore-certificate-errors")
         chromeOptions.addArguments("--disable-web-security")
         chromeOptions.addArguments("--user-data-dir=" + g_nodejs_dir + "/../chromeuserdata")
-        //chromeOptions.addArguments("--app=file:///"+url)
         chromeOptions.addArguments("--first-run")
+        //chromeOptions.addArguments("--app=file:///"+url)
         
         // "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir --app=https://www.google.com
 
@@ -406,6 +417,7 @@ function open_browser(url) {
 
 function close_browser() {
     driver.quit()
+    driver = null
 }
 
 //Returns a promise which navigates the browser to another url.

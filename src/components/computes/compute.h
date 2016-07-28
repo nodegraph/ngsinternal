@@ -66,9 +66,8 @@ class COMPUTES_EXPORT Compute: public Component {
   std::vector<std::string> _output_names;
 
   // Map from output plug names to results.
-  std::unordered_map<std::string, QVariant> _results;
-
-
+  // QVariantMap is a typedef for QMap<QString, QVariant>.
+  QVariantMap _results;
 };
 
 }

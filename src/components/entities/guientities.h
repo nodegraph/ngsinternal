@@ -1,7 +1,6 @@
 #pragma once
 #include <base/objectmodel/entity.h>
 #include <components/entities/entities_export.h>
-#include <components/computes/plugtype.h>
 #include <components/entities/entityids.h>
 
 namespace ngs {

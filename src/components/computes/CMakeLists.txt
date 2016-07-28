@@ -9,7 +9,6 @@ set(sources
     mocknodecompute.cpp
     outputcompute.cpp
     outputnodecompute.cpp
-    plugtype.cpp
     scriptnodecompute.cpp
     )
     
@@ -23,7 +22,6 @@ set(headers
 	mocknodecompute.h
 	outputcompute.h
 	outputnodecompute.h
-	plugtype.h
     scriptnodecompute.h
     )
     

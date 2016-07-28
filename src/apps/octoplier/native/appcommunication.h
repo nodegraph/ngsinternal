@@ -28,6 +28,10 @@ Q_OBJECT
   Q_INVOKABLE bool handle_request_from_app(const QString& json_text); // Called from qml.
   Q_INVOKABLE QString get_app_dir();
   Q_INVOKABLE QString get_smash_browse_url();
+
+  Q_INVOKABLE void open_browser();
+  Q_INVOKABLE void close_browser();
+
 signals:
   // Fired on completion of a command.
   void command_finished(const SocketMessage& sm);
@@ -58,6 +62,9 @@ signals:
   // Nodejs socket connection state.
   void connect_to_nodejs();
   bool nodejs_is_connected();
+
+  // Browser open/close state.
+  void check_browser_is_open();
 
   // Handles requests originating from clicking items in the browser's context menu.
   void handle_request_from_nodejs(const SocketMessage& sm);

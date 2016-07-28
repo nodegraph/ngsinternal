@@ -65,14 +65,14 @@ size_t Compute::get_output_order(const std::string& output_name) const {
 }
 
 const QVariant& Compute::get_result(const std::string& name) const{
-  if (!_results.count(name)) {
+  if (!_results.count(name.c_str())) {
     return _empty_variant;
   }
-  return _results.at(name);
+  return _results[name.c_str()];
 }
 
-void  Compute::set_result(const std::string& name, const QVariant& value) {
-  _results[name] = value;
+void Compute::set_result(const std::string& name, const QVariant& value) {
+  _results.insert(name.c_str(), value);
 }
 
 bool Compute::check_variant_is_bool_and_true(const QVariant& value, const std::string& message) {
