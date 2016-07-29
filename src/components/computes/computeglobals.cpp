@@ -2,5 +2,5 @@
 #include <cstddef>
 
 namespace ngs {
-  QObject* g_node_pool_api = NULL;
+  AppCommunication* g_app_comm = NULL;
 }

@@ -1,10 +1,12 @@
 #pragma once
-#include <native/socketmessage.h>
+#include <components/computes/computes_export.h>
+#include <components/computes/socketmessage.h>
 #include <deque>
 
 #include <QtCore/QProcess>
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
+#include <QtCore/QUrl>
 #include <QtNetwork/QAbstractSocket>
 #include <QtNetwork/QSslError>
 
@@ -13,7 +15,19 @@ class QWebSocket;
 
 namespace ngs {
 
-class AppCommunication : public QObject {
+
+// Workaround: As of Qt 5.4 QtQuick does not expose QUrl::fromUserInput.
+class COMPUTES_EXPORT Utils : public QObject {
+    Q_OBJECT
+public:
+    Utils(QObject* parent = 0) : QObject(parent) { }
+    Q_INVOKABLE static QUrl url_from_input(const QString& input);
+};
+
+
+
+
+class COMPUTES_EXPORT AppCommunication : public QObject {
 Q_OBJECT
  public:
   static const int kPollInterval;

@@ -1,4 +1,5 @@
 #pragma once
+#include <components/computes/computes_export.h>
 
 #include <QtCore/QString>
 #include <QtCore/QJsonDocument>
@@ -7,7 +8,7 @@
 
 namespace ngs {
 
-class SocketMessage: public QObject
+class COMPUTES_EXPORT SocketMessage: public QObject
 {
   Q_OBJECT
 public:

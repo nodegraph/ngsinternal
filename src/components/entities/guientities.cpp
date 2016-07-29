@@ -35,6 +35,8 @@
 #include <components/computes/outputcompute.h>
 #include <components/computes/outputnodecompute.h>
 #include <components/computes/scriptnodecompute.h>
+#include <components/computes/browsercomputes.h>
+
 #include <components/entities/factory.h>
 #include <components/interactions/graphbuilder.h>
 #include <components/interactions/viewcontrols.h>
@@ -112,7 +114,7 @@ void DotNodeEntity::create_internals() {
   // Our components.
   new_ff DotNodeCompute(this);
   // Gui related.
-  new_ff DotNodeShape(this);
+  DotNodeShape* shape = new_ff DotNodeShape(this);
   // Our sub entities.
   {
     Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
@@ -132,7 +134,8 @@ void InputNodeEntity::create_internals() {
   // Our components.
   new_ff InputNodeCompute(this);
   // Gui related.
-  new_ff InputNodeShape(this);
+  NodeShape* shape = new_ff InputNodeShape(this);
+  shape->push_output_name("out");
   // Our sub entities.
   {
     Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
@@ -150,7 +153,8 @@ void OutputNodeEntity::create_internals() {
   // Our components.
   new_ff OutputNodeCompute(this);
   // Gui related.
-  new_ff OutputNodeShape(this);
+  NodeShape* shape = new_ff OutputNodeShape(this);
+  shape->push_input_name("in");
   // Our sub entities.
   {
     Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
@@ -168,7 +172,11 @@ void MockNodeEntity::create_internals() {
   // Our components.
   new_ff MockNodeCompute(this);
   // Gui related.
-  new_ff NodeShape(this);
+  NodeShape* shape = new_ff NodeShape(this);
+  shape->push_input_name("a");
+  shape->push_input_name("b");
+  shape->push_output_name("c");
+  shape->push_output_name("d");
   // Our sub entities.
   {
     Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
@@ -188,11 +196,57 @@ void MockNodeEntity::create_internals() {
   }
 }
 
+void OpenBrowserNodeEntity::create_internals() {
+  // Our components.
+  new_ff OpenBrowserCompute(this);
+  // Gui related.
+  NodeShape* shape = new_ff NodeShape(this);
+  shape->push_input_name("in");
+  shape->push_output_name("out");
+  // Our sub entities.
+  {
+    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
+    inputs->create_internals();
+    InputEntity* in = new_ff InputEntity(inputs, "in");
+    in->create_internals();
+  }
+  {
+    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
+    outputs->create_internals();
+    OutputEntity* out = new_ff OutputEntity(outputs, "out");
+    out->create_internals();
+  }
+}
+
+void CloseBrowserNodeEntity::create_internals() {
+  // Our components.
+  new_ff CloseBrowserCompute(this);
+  // Gui related.
+  NodeShape* shape = new_ff NodeShape(this);
+  shape->push_input_name("in");
+  shape->push_output_name("out");
+  // Our sub entities.
+  {
+    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
+    inputs->create_internals();
+    InputEntity* in = new_ff InputEntity(inputs, "in");
+    in->create_internals();
+  }
+  {
+    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
+    outputs->create_internals();
+    OutputEntity* out = new_ff OutputEntity(outputs, "out");
+    out->create_internals();
+  }
+}
+
 void ComputeNodeEntity::create_internals() {
   // Our components.
   Compute* dc = new_ff ScriptNodeCompute(this);
   // Gui related.
-  new_ff NodeShape(this);
+  NodeShape* shape = new_ff NodeShape(this);
+  shape->push_input_name("in");
+  shape->push_output_name("out");
 
   // Entity is fully build at this point, at least in terms of the non opengl gui components.
   // The data computer allows initializing at this point.
@@ -202,24 +256,14 @@ void ComputeNodeEntity::create_internals() {
   {
     Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
     inputs->create_internals();
-    std::vector<std::string> input_plug_names = dc->get_input_names();
-    size_t count = 0;
-    for (std::string name: input_plug_names) {
-      InputEntity* input = new_ff InputEntity(inputs, name);
-      input->create_internals();
-      ++count;
-    }
+    InputEntity* in = new_ff InputEntity(inputs, "in");
+    in->create_internals();
   }
   {
     Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
     outputs->create_internals();
-    std::vector<std::string> output_plug_names = dc->get_output_names();
-    size_t count = 0;
-    for (std::string name: output_plug_names) {
-      OutputEntity* output = new_ff OutputEntity(outputs, name);
-      output->create_internals();
-      ++count;
-    }
+    OutputEntity* out = new_ff OutputEntity(outputs, "out");
+    out->create_internals();
   }
 }
 

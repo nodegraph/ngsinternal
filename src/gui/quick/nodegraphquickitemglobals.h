@@ -16,5 +16,4 @@ class Entity;
 GUI_EXPORT extern Entity* g_app_root;
 GUI_EXPORT extern QQuickView* g_quick_view;
 GUI_EXPORT extern QQmlEngine* g_qml_engine;
-GUI_EXPORT extern SplashScreen* g_splash_screen;
 }

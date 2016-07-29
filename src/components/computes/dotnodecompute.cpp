@@ -1,5 +1,4 @@
 #include <components/computes/dotnodecompute.h>
-#include <components/computes/dotnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
 
@@ -9,8 +8,6 @@ namespace ngs {
 
 DotNodeCompute::DotNodeCompute(Entity* entity)
     : Compute(entity, kDID()) {
-  _input_names.push_back("in");
-  _output_names.push_back("out");
 }
 
 DotNodeCompute::~DotNodeCompute() {

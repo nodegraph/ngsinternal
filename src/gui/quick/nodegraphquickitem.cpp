@@ -516,6 +516,27 @@ void NodeGraphQuickItem::create_mock_node(bool centered) {
   finish_creating_node(e, centered);
 }
 
+void NodeGraphQuickItem::create_open_browser_node(bool centered) {
+  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "open browser", kOpenBrowserNodeEntity);
+  finish_creating_node(e, centered);
+}
+
+void NodeGraphQuickItem::create_close_browser_node(bool centered) {
+  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "close browser", kCloseBrowserNodeEntity);
+  finish_creating_node(e, centered);
+}
+
+void NodeGraphQuickItem::view_node() {
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_shape->get_path_as_string());
+  if(compute) {
+    compute->propagate_cleanliness();
+  }
+}
+
+void NodeGraphQuickItem::edit_node() {
+
+}
+
 void NodeGraphQuickItem::destroy_selection() {
   _selection->destroy_selection();
   get_app_root()->update_deps_and_hierarchy();

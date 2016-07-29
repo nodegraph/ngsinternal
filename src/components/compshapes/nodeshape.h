@@ -51,8 +51,14 @@ class COMPSHAPES_EXPORT NodeShape: public CompShape {
   virtual const std::vector<CharInstance> * get_char_instances() const {return &_chars;}
 
   // Input and Output Ordering.
+  virtual void push_input_name(const std::string& input_name);
+  virtual void push_output_name(const std::string& output_name);
   virtual size_t get_input_order(const std::string& input_name) const;
   virtual size_t get_output_order(const std::string& output_name) const;
+
+  // Our input and output names.
+  virtual const std::vector<std::string>& get_input_names(){return _input_names;}
+  virtual const std::vector<std::string>& get_output_names(){return _output_names;}
 
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
@@ -72,7 +78,6 @@ class COMPSHAPES_EXPORT NodeShape: public CompShape {
 
   // Our fixed deps.
   Dep<Resources> _resources;
-  Dep<Compute> _node_compute;
 
   // Our position.
   glm::vec2 _pos;
@@ -98,6 +103,10 @@ class COMPSHAPES_EXPORT NodeShape: public CompShape {
   // Our text vertices. These are vertices of the text quads.
   //std::vector<PosTexVertex> _text_vertices;
   std::vector<CharInstance> _chars;
+
+  // Our input output ordering.
+  std::vector<std::string> _input_names;
+  std::vector<std::string> _output_names;
 
 };
 

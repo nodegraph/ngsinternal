@@ -14,8 +14,6 @@ InputCompute::InputCompute(Entity* entity)
     : Compute(entity, kDID()),
       _output(this) {
 	get_dep_loader()->register_dynamic_dep(_output);
-	_input_names.push_back("in");
-	_output_names.push_back("out");
 }
 
 InputCompute::~InputCompute() {

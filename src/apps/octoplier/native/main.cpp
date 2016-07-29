@@ -1,8 +1,7 @@
 #include <native/scripts.h>
 #include <native/treeitem.h>
 #include <native/variantmaptreemodel.h>
-#include <native/utils.h>
-#include <native/socketmessage.h>
+#include <components/computes/socketmessage.h>
 
 #include <QtWidgets/QApplication>
 #include <QtGui/QGuiApplication>
@@ -37,7 +36,7 @@
 #include <gui/quick/nodegraphquickitem.h>
 #include <gui/quick/nodegraphrenderer.h>
 #include <gui/quick/nodegraphquickitemglobals.h>
-#include <native/appcommunication.h>
+#include <components/computes/appcommunication.h>
 #include <gui/quick/fborenderer.h>
 #include <gui/quick/fboworker.h>
 #include <gui/widget/splashscreen.h>
@@ -191,10 +190,6 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<size_t>("size_t");
 
 
-    // Show our splash screen.
-    //g_splash_screen = new_ff SplashScreen();
-    //g_splash_screen->show();
-
 
 //    brush.setColor(QColor(0xFFFFFFFF));
 //    painter.setBrush(brush);
@@ -334,9 +329,8 @@ int main(int argc, char *argv[]) {
     //context->setContextProperty(QStringLiteral("system_properties"),dynamic_cast<QObject*>(ng_root->get_component<SystemSignals>()));
 
     // Create our cpp bridge.
-    AppCommunication* app_comm = NULL;
-    app_comm = new_ff AppCommunication(&app);
-    context->setContextProperty(QStringLiteral("app_comm"), app_comm);
+    g_app_comm = new_ff AppCommunication(&app);
+    context->setContextProperty(QStringLiteral("app_comm"), g_app_comm);
 
     view.setSource(QUrl(QStringLiteral("qrc:/qml/loader.qml")));
     view.show();
@@ -395,7 +389,7 @@ int main(int argc, char *argv[]) {
 
     delete_ff(scripts);
     delete_ff(utils);
-    delete_ff(app_comm);
+    delete_ff(g_app_comm);
     delete_ff(tree_model)
 
   }

@@ -9,18 +9,12 @@ set(sources
 	native/treeitem.cpp
 	native/treemodel.cpp
 	native/variantmaptreemodel.cpp
-	native/utils.cpp
-	native/appcommunication.cpp
-	native/socketmessage.cpp
 )
 
 set(moc_headers
 	native/scripts.h
 	native/treemodel.h
 	native/variantmaptreemodel.h
-	native/utils.h
-	native/appcommunication.h
-	native/socketmessage.h
     )
     
 set(headers
@@ -69,9 +63,6 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	target_link_libraries(octoplier 
 		ngs_gui 
 		ngs_entities
-		Qt5::WebEngine 
-		Qt5::Network
-		Qt5::WebSockets
 		)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(octoplier WIN32 ${sources})

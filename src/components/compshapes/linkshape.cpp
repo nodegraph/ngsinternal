@@ -58,10 +58,10 @@ bool LinkShape::update_deps() {
     // Get the output shape.
     Dep<OutputCompute> output_compute = _input_compute->get_output_compute();
     // This is always non-null as we only connect to the input compute if it's connected.
-	//assert(output_compute);
-	if (!output_compute) {
-		return false;
-	}
+    //assert(output_compute);
+    if (!output_compute) {
+      return false;
+    }
     
     Dep<OutputShape> output_shape(this);
     output_shape = get_dep<OutputShape>(output_compute->our_entity());

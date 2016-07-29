@@ -35,22 +35,18 @@ const glm::vec2 NodeShape::node_border_size = glm::vec2(10.0f, 10.0f);
 NodeShape::NodeShape(Entity* entity)
     : CompShape(entity, kDID()),
       _resources(this),
-      _node_compute(this),
       _being_edited(false),
       _being_viewed(false) {
   get_dep_loader()->register_fixed_dep(_resources, "");
-  get_dep_loader()->register_fixed_dep(_node_compute, ".");
   init(get_num_base_quads());
 }
 
 NodeShape::NodeShape(Entity* entity, size_t did, size_t num_extra_quads)
     : CompShape(entity, did),
       _resources(this),
-      _node_compute(this),
       _being_edited(false),
       _being_viewed(false) {
   get_dep_loader()->register_fixed_dep(_resources, "");
-  get_dep_loader()->register_fixed_dep(_node_compute, ".");
   init(get_num_base_quads() + num_extra_quads);
 }
 
@@ -155,12 +151,30 @@ void NodeShape::update_text() {
   _resources->get_text_limits()->tessellate_to_instances(name, glm::vec2(0,0), 0, anchor, _fg_quad->state, _chars, _text_min, _text_max);
 }
 
+void NodeShape::push_input_name(const std::string& input_name) {
+  _input_names.push_back(input_name);
+}
+
+void NodeShape::push_output_name(const std::string& output_name) {
+  _output_names.push_back(output_name);
+}
+
 size_t NodeShape::get_input_order(const std::string& input_name) const {
-  return _node_compute->get_input_order(input_name);
+  for (size_t i=0; i<_input_names.size(); ++i) {
+    if (_input_names[i] == input_name) {
+      return i;
+    }
+  }
+  return 0;
 }
 
 size_t NodeShape::get_output_order(const std::string& output_name) const {
-  return _node_compute->get_output_order(output_name);
+  for (size_t i=0; i<_output_names.size(); ++i) {
+    if (_output_names[i] == output_name) {
+      return i;
+    }
+  }
+  return 0;
 }
 
 void NodeShape::save(SimpleSaver& saver) const {

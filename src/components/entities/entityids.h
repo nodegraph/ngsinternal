@@ -71,6 +71,8 @@ enum EntityDID {
   // Other Nodes.
   kMockNodeEntity,
   kComputeNodeEntity,
+  kOpenBrowserNodeEntity,
+  kCloseBrowserNodeEntity,
   // Count.
   kNumEntityImplementationIDs,
 };

@@ -67,6 +67,8 @@ enum ComponentDID {
   kScriptNodeCompute,
   kMockNodeCompute,
   kOutputNodeCompute,
+  kOpenBrowserCompute,
+  kCloseBrowserCompute,
   // --
   kFBORenderer,
   kFBOWorker,

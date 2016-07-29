@@ -47,6 +47,8 @@ namespace ngs {
     /* Other Nodes. */\
     case_statement(MockNodeEntity)\
     case_statement(ComputeNodeEntity)\
+    case_statement(OpenBrowserNodeEntity)\
+    case_statement(CloseBrowserNodeEntity)\
     /* Invalids. */\
     case kInvalidEntity:\
     case kNumEntityImplementationIDs:\

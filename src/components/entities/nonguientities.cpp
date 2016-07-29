@@ -127,20 +127,14 @@ void BaseComputeNodeEntity::create_internals() {
   {
     Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
     inputs->create_internals();
-    std::vector<std::string> input_plug_names = dc->get_input_names();
-    for (std::string name: input_plug_names) {
-      Entity* input = new_ff BaseInputEntity(inputs, name);
-      input->create_internals();
-    }
+    Entity* in = new_ff BaseInputEntity(inputs, "in");
+    in->create_internals();
   }
   {
     Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
     outputs->create_internals();
-    std::vector<std::string> output_plug_names = dc->get_output_names();
-    for (std::string name: output_plug_names) {
-      Entity* output = new_ff BaseOutputEntity(outputs, name);
-      output->create_internals();
-    }
+    Entity* out = new_ff BaseOutputEntity(outputs, "out");
+    out->create_internals();
   }
 }
 

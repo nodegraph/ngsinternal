@@ -1,5 +1,7 @@
 
 set(sources
+	appcommunication.cpp
+	socketmessage.cpp
 	compute.cpp
 	computeglobals.cpp
 	dotnodecompute.cpp
@@ -10,7 +12,16 @@ set(sources
     outputcompute.cpp
     outputnodecompute.cpp
     scriptnodecompute.cpp
+    browsercomputes.cpp
     )
+    
+set(moc_headers
+	appcommunication.h
+	socketmessage.h
+    )
+    
+qt5_wrap_cpp(moc_imps ${moc_headers})
+list(APPEND sources ${moc_imps})
     
 set(headers
 	compute.h
@@ -23,6 +34,7 @@ set(headers
 	outputcompute.h
 	outputnodecompute.h
     scriptnodecompute.h
+    browsercomputes.h
     )
     
 add_library(ngs_computes  ${sources} ${headers})
@@ -31,7 +43,12 @@ target_link_libraries(ngs_computes
 	ngs_memoryallocator 
 	ngs_objectmodel 
 	ngs_memoryallocator
-	Qt5::Core)
+	Qt5::Core
+	Qt5::Quick
+	Qt5::WebEngine 
+	Qt5::Network
+	Qt5::WebSockets
+	)
 
 qt5_use_modules(ngs_computes Core)
 

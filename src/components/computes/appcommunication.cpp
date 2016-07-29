@@ -1,5 +1,4 @@
-#include <native/appcommunication.h>
-#include <native/utils.h>
+#include <components/computes/appcommunication.h>
 #include <base/memoryallocator/taggednew.h>
 
 #include <cstddef>
@@ -15,6 +14,17 @@
 #include <QtWebSockets/QWebSocket>
 
 namespace ngs {
+
+QUrl Utils::url_from_input(const QString& input)
+{
+    if (input.isEmpty()) {
+        return QUrl::fromUserInput("about:blank");
+    }
+    const QUrl result = QUrl::fromUserInput(input);
+    return result.isValid() ? result : QUrl::fromUserInput("about:blank");
+}
+
+
 
 const int AppCommunication::kPollInterval = 1000;
 

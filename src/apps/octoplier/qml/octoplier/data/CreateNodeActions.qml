@@ -38,4 +38,19 @@ ListModel {
         description: "Add node which is used for testing."
         script: "node_graph_page.node_graph.create_mock_node(center_new_nodes); menu_stack_page.visible = false"
     }
+
+
+    ListElement {
+        image_url: "qrc:///icons/ic_gesture_white_48dp.png"
+        title: "Open Browser"
+        description: "A node which opens the browser."
+        script: "node_graph_page.node_graph.create_open_browser_node(center_new_nodes); menu_stack_page.visible = false"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_gesture_white_48dp.png"
+        title: "Close Browser"
+        description: "A node which close the browser."
+        script: "node_graph_page.node_graph.create_close_browser_node(center_new_nodes); menu_stack_page.visible = false"
+    }
+
 }

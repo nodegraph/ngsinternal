@@ -51,6 +51,14 @@ Q_OBJECT
   Q_INVOKABLE void create_dot_node(bool centered);
   Q_INVOKABLE void create_mock_node(bool centered);
 
+  // Browser Node Creation.
+  Q_INVOKABLE void create_open_browser_node(bool centered);
+  Q_INVOKABLE void create_close_browser_node(bool centered);
+
+  // View and Edit.
+  Q_INVOKABLE void view_node();
+  Q_INVOKABLE void edit_node();
+
   // Group Navigation.
   Q_INVOKABLE void dive();
   Q_INVOKABLE void surface();

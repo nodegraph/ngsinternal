@@ -33,12 +33,6 @@ class COMPUTES_EXPORT Compute: public Component {
   // Our compute type.
   const char* get_compute_type() {return "";}
 
-  // Our input and output names.
-  virtual const std::vector<std::string>& get_input_names(){return _input_names;}
-  virtual const std::vector<std::string>& get_output_names(){return _output_names;}
-  virtual size_t get_input_order(const std::string& input_name) const;
-  virtual size_t get_output_order(const std::string& output_name) const;
-
   // Our results.
   virtual const QVariant& get_result(const std::string& name) const;
 
@@ -48,7 +42,6 @@ class COMPUTES_EXPORT Compute: public Component {
   static bool check_variant_is_map(const QVariant& value, const std::string& message);
 
  protected:
-  void configure();
   void set_result(const std::string& name, const QVariant& value);
 
   static const QVariant _empty_variant;
@@ -60,10 +53,6 @@ class COMPUTES_EXPORT Compute: public Component {
   // Our dynamic deps. These are gathered and not saved.
   // Map from input plug names to their internal output plugs.
   std::unordered_map<std::string, Dep<InputCompute> > _inputs;
-
-  // Our ordering.
-  std::vector<std::string> _input_names;
-  std::vector<std::string> _output_names;
 
   // Map from output plug names to results.
   // QVariantMap is a typedef for QMap<QString, QVariant>.

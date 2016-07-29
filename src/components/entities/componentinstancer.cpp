@@ -32,7 +32,7 @@
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
-
+#include <components/computes/browsercomputes.h>
 
 
 #include <components/entities/componentinstancer.h>
@@ -76,6 +76,8 @@ namespace ngs {
     case_statement(ScriptNodeCompute)\
     case_statement(MockNodeCompute)\
     case_statement(OutputNodeCompute)\
+    case_statement(OpenBrowserCompute)\
+    case_statement(CloseBrowserCompute)\
     /* Graph Building. */\
     case_statement(GraphBuilder)\
     /* Hierarchy Changes. */\

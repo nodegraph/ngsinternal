@@ -9,8 +9,6 @@ OutputCompute::OutputCompute(Entity* entity)
     : Compute(entity, kDID()),
       _node_compute(this) {
   get_dep_loader()->register_fixed_dep(_node_compute, "../..");
-  _input_names.push_back("in");
-  _output_names.push_back("out");
 }
 
 OutputCompute::~OutputCompute() {

@@ -9,7 +9,6 @@ namespace ngs {
 
 InputNodeCompute::InputNodeCompute(Entity* entity):
     Compute(entity, kDID()){
-  _output_names.push_back("out");
 }
 
 InputNodeCompute::~InputNodeCompute() {

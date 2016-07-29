@@ -41,29 +41,6 @@ void Compute::update_state() {
   // Derived classes now perform their compute.
 }
 
-void Compute::configure() {
-  // Derived classes will likely run some javascript in order to determine
-  // the input and output names.
-}
-
-size_t Compute::get_input_order(const std::string& input_name) const {
-  for (size_t i=0; i<_input_names.size(); ++i) {
-    if (_input_names[i] == input_name) {
-      return i;
-    }
-  }
-  return 0;
-}
-
-size_t Compute::get_output_order(const std::string& output_name) const {
-  for (size_t i=0; i<_output_names.size(); ++i) {
-    if (_output_names[i] == output_name) {
-      return i;
-    }
-  }
-  return 0;
-}
-
 const QVariant& Compute::get_result(const std::string& name) const{
   if (!_results.count(name.c_str())) {
     return _empty_variant;

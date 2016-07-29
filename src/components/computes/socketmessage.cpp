@@ -1,4 +1,4 @@
-#include <native/socketmessage.h>
+#include <components/computes/socketmessage.h>
 
 namespace ngs {
 
