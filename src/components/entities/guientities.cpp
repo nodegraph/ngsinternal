@@ -42,6 +42,29 @@
 #include <components/interactions/viewcontrols.h>
 #include <gui/widget/nodegrapheditor.h>
 
+
+/*
+ * Entity Structure
+ *
+ * Syntax:  Entity : Components in the Entity
+ * Indentation: Indented lines are child entities of the preceding line, otherwise they are siblings.
+ * Dir has no components and acts a namespace
+ *
+ * Group:
+ *   node_a : NodeShape, NodeCompute
+ *     - inputs : dir
+ *       - in_a : InputCompute, InputShape
+ *         - label : InputLabelShape
+ *     - outputs : dir
+ *       - out_b : OutputCompute, OutputShape
+ *         - label : OutputLabelShape
+ *     - links : dir
+ *       - link1 : LinkShape
+ *   inputs : dir
+ *   outputs : dir
+ *   links : dir
+ */
+
 namespace ngs {
 
 void QMLAppEntity::create_internals() {

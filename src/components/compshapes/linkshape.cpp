@@ -26,13 +26,16 @@ const float LinkShape::border_width = 10;
 
 LinkShape::LinkShape(Entity* entity)
     : CompShape(entity, kDID()),
-      _input_compute(this),
+      //_input_compute(this),
       _input_shape(this),
       _output_shape(this),
       _interactive(false),
       _angle(0),
       _full_length(0),
       _body_length(0){
+
+  get_dep_loader()->register_dynamic_dep(_input_shape);
+  get_dep_loader()->register_dynamic_dep(_output_shape);
 
   _quads.resize(2);
   _bg_quad = &_quads[0];
@@ -45,55 +48,16 @@ LinkShape::LinkShape(Entity* entity)
 LinkShape::~LinkShape() {
 }
 
-bool LinkShape::update_deps() {
-  start_method();
-
-  // We can really only update our deps if we have an input compute,
-  // as that tells us what the output compute is as well as the input and output shapes.
-  if (_input_compute) {
-    // Get the input shape.
-    Dep<InputShape> input_shape(this);
-    input_shape = get_dep<InputShape>(_input_compute->our_entity());
-
-    // Get the output shape.
-    Dep<OutputCompute> output_compute = _input_compute->get_output_compute();
-    // This is always non-null as we only connect to the input compute if it's connected.
-    //assert(output_compute);
-    if (!output_compute) {
-      return false;
-    }
-    
-    Dep<OutputShape> output_shape(this);
-    output_shape = get_dep<OutputShape>(output_compute->our_entity());
-
-    // Return false if the dependencies haven't changed.
-    if ((_input_shape == input_shape ) && (_output_shape == output_shape)) {
-      return false;
-    }
-
-    // Otherwise return true.
-    _input_shape = input_shape;
-    _output_shape = output_shape;
-    return true;
-  }
-
-  // Otherwise we're unable to update our deps.
-  return false;
-}
-
 HierarchyUpdate LinkShape::update_hierarchy() {
+  // When interactively dragging the link, we don't allow hierarchy updates.
   if (_interactive) {
     return kUnchanged;
   }
-  // If the input compute has been set but the input and output shapes are null,
-  // then we are a dangling link which needs to be destroyed.
-  if (_input_compute) {
-    update_deps();
-    if ((!_input_shape) || (!_output_shape)) {
-      return kRequestDestruction;
-    } else {
-      return kUnchanged;
-    }
+  // If either the input or output shape is not set then this is a dangling link that needs to be destroyed.
+  if ((!_input_shape) || (!_output_shape)) {
+    return kRequestDestruction;
+  } else {
+    return kUnchanged;
   }
   return kRequestDestruction;
 }
@@ -109,26 +73,12 @@ void LinkShape::update_state() {
   update_state_helper();
 }
 
-// Note it may seem that whenever _input_compute is null we are in
-// in interactive mode. However this is not case.
-// The input compute may get destroyed, and we don't wan't to be considered interactive.
-// Instead we want the update hierarchy to destroy us.
-void LinkShape::make_interactive() {
-  unlink_input_compute();
+void LinkShape::start_moving() {
   _interactive = true;
 }
 
-void LinkShape::link_input_compute(const Dep<InputCompute>& input_compute) {
-  _input_compute = input_compute;
+void LinkShape::finished_moving() {
   _interactive = false;
-}
-
-void LinkShape::unlink_input_compute() {
-  _input_compute.reset();
-}
-
-const Dep<InputCompute>& LinkShape::get_input_compute() const {
-  return _input_compute;
 }
 
 // In interactive mode we can set the input shape.

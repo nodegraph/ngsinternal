@@ -124,7 +124,7 @@ void AppCommunication::on_poll() {
     // Connect to the nodejs process.
     connect_to_nodejs();
   } else {
-    //check_browser_is_open();
+    check_browser_is_open();
   }
 }
 

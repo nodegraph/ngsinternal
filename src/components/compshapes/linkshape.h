@@ -30,16 +30,12 @@ class COMPSHAPES_EXPORT LinkShape: public CompShape {
   virtual ~LinkShape();
 
   // Our state.
-  virtual bool update_deps();
   virtual HierarchyUpdate update_hierarchy();
   virtual void update_state();
 
-  virtual void make_interactive();
-
-  // Our dynamic input compute dep.
-  virtual void link_input_compute(const Dep<InputCompute>& input_compute);
-  virtual void unlink_input_compute();
-  virtual const Dep<InputCompute>& get_input_compute() const;
+//  virtual void make_interactive();
+  virtual void start_moving();
+  virtual void finished_moving();
 
   // In interactive mode we can set the input shape.
   virtual void link_input_shape(const Dep<InputShape>& input_shape);
@@ -84,9 +80,8 @@ class COMPSHAPES_EXPORT LinkShape: public CompShape {
   virtual void select(bool selected);
 
   // Our dynamic deps.
-  Dep<InputCompute> _input_compute; // Not serialized, but gathered.
-  Dep<InputShape> _input_shape; // Not serialized, but gathered.
-  Dep<OutputShape> _output_shape; // Not serialized, but gathered.
+  Dep<InputShape> _input_shape;
+  Dep<OutputShape> _output_shape;
 
   // Our shape instances.
   std::vector<ShapeInstance> _quads;
@@ -109,7 +104,7 @@ class COMPSHAPES_EXPORT LinkShape: public CompShape {
   glm::vec2 _text_min;
   glm::vec2 _text_max;
 
-  // In interactive mode, the update_hierarchy method won't destroy itself if the _input_compute is not linked.
+  // In interactive mode, the update_hierarchy method won't destroy itself if either the input or output shape is not set.
   bool _interactive;
 
   // Cached orientation info.

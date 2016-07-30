@@ -20,7 +20,6 @@ class COMPSHAPES_EXPORT InputLabelShape: public CompShape {
   virtual ~InputLabelShape();
 
   // Our state.
-  virtual HierarchyUpdate update_hierarchy();
   virtual bool update_deps();
   virtual void update_state();
 
@@ -37,8 +36,8 @@ class COMPSHAPES_EXPORT InputLabelShape: public CompShape {
   Dep<Resources> _resources;
   Dep<InputShape> _input_shape;
 
-  // Our dynamic deps. This is not serialized, but gathered.
-  Dep<LinkShape> _link_shape;
+  // Our dynamic deps.
+  Dep<LinkShape> _link_shape; // This is not serialized but gathered.
 
   // Our char instances.
   std::vector<CharInstance> _chars;

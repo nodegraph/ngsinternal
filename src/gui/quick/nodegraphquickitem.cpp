@@ -529,7 +529,10 @@ void NodeGraphQuickItem::create_close_browser_node(bool centered) {
 void NodeGraphQuickItem::view_node() {
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_shape->get_path_as_string());
   if(compute) {
+    qDebug() << "performing compute! \n";
     compute->propagate_cleanliness();
+  }else {
+    qDebug() << "Error: could not find compute to perform. \n";
   }
 }
 

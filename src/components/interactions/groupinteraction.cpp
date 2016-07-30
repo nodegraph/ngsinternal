@@ -38,8 +38,6 @@ GroupInteraction::GroupInteraction(Entity* entity)
       _shape_collective(this),
       _lower_change(this),
       _link_shape(this),
-      _link_input_compute(this),
-      _link_output_compute(this),
       _links_folder(NULL),
       _mouse_is_down(false),
       _state(kNodeSelectionAndDragging),
@@ -119,8 +117,6 @@ void GroupInteraction::revert_to_pre_pressed_selection() {
 
   // Reset our interactive dragging state.
   _link_shape.reset();
-  _link_input_compute.reset();
-  _link_output_compute.reset();
 }
 
 void GroupInteraction::toggle_selection_under_press(const Dep<CompShape>& hit_shape) {
@@ -158,8 +154,8 @@ bool GroupInteraction::has_link(Entity* entity) const {
   return false;
 }
 
-Dep<LinkShape> GroupInteraction::find_link(const Dep<InputCompute>& input_compute) {
-  std::vector<Entity*> dependants = input_compute->get_dependants_by_did(kICompShape, kLinkShape);
+Dep<LinkShape> GroupInteraction::find_link(const Dep<InputShape>& input_shape) {
+  std::vector<Entity*> dependants = input_shape->get_dependants_by_did(kICompShape, kLinkShape);
   assert(dependants.size() <= 1);
   if (dependants.size()>0) {
     return get_dep<LinkShape>(*dependants.begin());
@@ -179,8 +175,6 @@ void GroupInteraction::reset_state() {
 
   // Reset our interactive dragging state.
   _link_shape.reset();
-  _link_input_compute.reset();
-  _link_output_compute.reset();
 
   // Stop the tracking.
   _view_controls.track_ball.stop_tracking();
@@ -301,22 +295,22 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
 
       if ( (_state!=kDraggingLinkHead) && (_state!=kTwoClickOutputToInput) && (_state!=kDraggingLinkTail) && (_state!=kTwoClickInputToOutput) ) {
         // Get the input compute.
-        _link_input_compute = get_dep<InputCompute>(comp_shape_entity);
+        Dep<InputCompute> input_compute = get_dep<InputCompute>(comp_shape_entity);
         Dep<InputShape> input_shape = get_dep<InputShape>(comp_shape_entity);
 
         // Unlink the input compute from its output compute.
-        _link_input_compute->unlink_output_compute();
+        input_compute->unlink_output_compute();
 
         // Unlink the link shapes from its input compute.
-        _link_shape = find_link(_link_input_compute);
+        _link_shape = find_link(input_shape);
         if (_link_shape) {
-          _link_shape->make_interactive();
+          _link_shape->start_moving();
           // Clear the output shape but leave the input shape linked.
           _link_shape->unlink_output_shape();
         } else {
           Entity *e = create_link();
           _link_shape = get_dep<LinkShape>(e);
-          _link_shape->make_interactive();
+          _link_shape->start_moving();
           // Link the output shape.
           _link_shape->link_input_shape(input_shape);
         }
@@ -344,13 +338,12 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
 
       if ( (_state!=kDraggingLinkTail) && (_state!=kTwoClickInputToOutput) && (_state!=kDraggingLinkHead) && (_state!=kTwoClickOutputToInput)) {
         // Get the output compute.
-        _link_output_compute = get_dep<OutputCompute>(comp_shape_entity);
         Dep<OutputShape> output_shape = get_dep<OutputShape>(comp_shape_entity);
 
         // We always create a new link when clicking on output plugs, because output plugs can have multiple links (unlike input links).
         Entity* link = create_link();
         _link_shape = get_dep<LinkShape>(link);
-        _link_shape->make_interactive();
+        _link_shape->start_moving();
         _link_shape->link_output_shape(output_shape);
 
         // Update all deps.
@@ -406,14 +399,13 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
       if (_state == kNodeSelectionAndDragging) {
         _selection->select(comp_shape);
         _link_shape = get_dep<LinkShape>(comp_shape_entity);
-        Dep<InputCompute> input_compute = _link_shape->get_input_compute();
-        _link_output_compute = input_compute->get_output_compute();
+        Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
 
         // Break the link.
         input_compute->unlink_output_compute();
 
         // Put the link in interactive mode.
-        _link_shape->make_interactive();
+        _link_shape->start_moving();
         _link_shape->unlink_input_shape();
 
         // Update all deps.
@@ -434,13 +426,13 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
       if (_state == kNodeSelectionAndDragging) {
         _selection->select(comp_shape);
         _link_shape = get_dep<LinkShape>(comp_shape_entity);
-        _link_input_compute = _link_shape->get_input_compute();
+        Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
 
         // Break the link.
-        _link_input_compute->unlink_output_compute();
+        input_compute->unlink_output_compute();
 
         // Put the link in interactive mode.
-        _link_shape->make_interactive();
+        _link_shape->start_moving();
         _link_shape->unlink_output_shape();
 
         // Update all deps.
@@ -471,8 +463,6 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
 
       // Reset our interactive dragging state.
       _link_shape.reset();
-      _link_input_compute.reset();
-      _link_output_compute.reset();
 
       _state = kNodeSelectionAndDragging;
     }
@@ -571,10 +561,12 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
     if (is_input_param) {
       if ( (_state==kDraggingLinkHead) || (_state==kTwoClickOutputToInput) ) {
         Dep<InputCompute> input_compute = get_dep<InputCompute>(comp_shape_entity);
+        Dep<InputShape> input_shape = get_dep<InputShape>(comp_shape_entity);
+        Dep<OutputCompute> output_compute = get_dep<OutputCompute>(_link_shape->get_output_shape()->our_entity());
 
         // Remove any existing link shapes on this input.
         // There is only one link per input.
-        Dep<LinkShape> old_link_shape = find_link(input_compute);
+        Dep<LinkShape> old_link_shape = find_link(input_shape);
         if (old_link_shape) {
           // Remove any existing compute connection on this input compute.
           input_compute->unlink_output_compute();
@@ -583,13 +575,14 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
         }
 
         // Try to connect the input and output computes.
-        if (!input_compute->link_output_compute(_link_output_compute)) {
+        if (!input_compute->link_output_compute(output_compute)) {
           // Otherwise destroy the link and selection.
           goto clear_selection;
         }
 
-        // Put the link shape into non-interactive mode.
-        _link_shape->link_input_compute(input_compute);
+        // Update the link shape's input shape.
+        _link_shape->link_input_shape(input_shape);
+        _link_shape->finished_moving();
 
         // Update all deps.
         get_app_root()->update_deps_and_hierarchy();
@@ -599,8 +592,6 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
 
         // Reset our interactive dragging state.
         _link_shape.reset();
-        _link_input_compute.reset();
-        _link_output_compute.reset();
 
       } else if (_state==kDraggingLinkTail) {
 
@@ -614,15 +605,18 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
 
       if ( (_state==kDraggingLinkTail) || (_state==kTwoClickInputToOutput) ) {
         Dep<OutputCompute> output_compute = get_dep<OutputCompute>(comp_shape_entity);
+        Dep<OutputShape> output_shape = get_dep<OutputShape>(comp_shape_entity);
+        Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
 
         // Try to connect the input and output computes.
-        if (!_link_input_compute->link_output_compute(output_compute)) {
+        if (!input_compute->link_output_compute(output_compute)) {
           // Otherwise destroy the link and selection.
           goto clear_selection;
         }
 
-        // Put the link shape into non-interactive mode.
-        _link_shape->link_input_compute(_link_input_compute);
+        // Update the link shape's output shape.
+        _link_shape->link_output_shape(output_shape);
+        _link_shape->finished_moving();
 
         // Update all deps.
         get_app_root()->update_deps_and_hierarchy();
@@ -632,8 +626,6 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
 
         // Reset our interactive dragging state.
         _link_shape.reset();
-        _link_input_compute.reset();
-        _link_output_compute.reset();
 
       } else if (_state==kDraggingLinkHead) {
         // Here we've pressed and released the mouse on the same output plug.

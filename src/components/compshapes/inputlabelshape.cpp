@@ -1,6 +1,7 @@
 #include <components/compshapes/inputlabelshape.h>
 #include <components/resources/resources.h>
 #include <components/compshapes/inputshape.h>
+#include <components/compshapes/outputshape.h>
 #include <components/compshapes/linkshape.h>
 
 #include <base/objectmodel/entity.h>
@@ -11,6 +12,7 @@
 
 #include <components/entities/entityids.h>
 #include <components/computes/inputcompute.h>
+#include <components/computes/outputcompute.h>
 
 #include <boost/math/constants/constants.hpp>
 #include <cmath>
@@ -34,61 +36,32 @@ InputLabelShape::InputLabelShape(Entity* entity)
 InputLabelShape::~InputLabelShape() {
 }
 
-HierarchyUpdate InputLabelShape::update_hierarchy() {
-  if (_link_shape) {
-    return kUnchanged;
-  }
-
-  // If the input compute is linked then there should be a LinkShape to visualize us.
-  Dep<InputCompute> input_compute = get_dep<InputCompute>("..");
-  Dep<OutputCompute> output_compute = input_compute->get_output_compute();
-  if (!output_compute) {
-    return kUnchanged;
-  }
-
-  // See if there is a link shape linked to the input compute.
-  std::vector<Entity*> dependants = input_compute->get_dependants_by_did(kICompShape, kLinkShape);
-  assert(dependants.size() <= 1);
-
-  // If there is we don't need to do anything.
-  if (!dependants.empty()) {
-    return kUnchanged;
-  }
-
-  // Make sure we have a links folder.
-  Entity* links_folder = has_entity("../../../../links");
-  if (!links_folder) {
-    return kUnchanged;
-  }
-
-  // Otherwise we create a link shape.
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
-  Entity* link = ei->instance(links_folder, "link", kLinkEntity);
-  link->create_internals();
-  link->initialize_deps();
-  Dep<LinkShape> link_shape = get_dep<LinkShape>(link);
-  link_shape->link_input_compute(input_compute);
-  link_shape->update_deps();
-  return kChanged;
-}
-
 bool InputLabelShape::update_deps() {
   start_method();
-  Dep<LinkShape> link_shape(this);
   std::vector<Entity*> dependants = _input_shape->get_dependants_by_did(kICompShape, kLinkShape);
-  assert(dependants.size() <= 1);
-  if (!dependants.empty()) {
-    link_shape = get_dep<LinkShape>(*dependants.begin());
+  //assert(dependants.size() <= 1);
+
+  // Note there should only be one link, but when dragging the head of the link onto
+  // a connected input there will two links for a moment.
+
+  if (dependants.size() > 0) {
+    Dep<LinkShape> link_shape = get_dep<LinkShape>(dependants[dependants.size()-1]);
+    if (link_shape == _link_shape) {
+      // Return false if the dependencies haven't changed.
+      return false;
+    } else {
+      _link_shape = link_shape;
+      // Return true if the dependencies haven't changed.
+      return true;
+    }
   }
 
-  // Return false if the dependencies haven't changed.
-  if (_link_shape == link_shape) {
-    return false;
+  // Otherwise.
+  if (_link_shape) {
+    _link_shape.reset();
+    return true;
   }
-
-  // Otherwise return true;
-  _link_shape = link_shape;
-  return true;
+  return false;
 }
 
 void InputLabelShape::update_state() {

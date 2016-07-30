@@ -140,7 +140,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   void destroy_link(Entity* entity);
   bool has_link(Entity* entity) const;
 
-  Dep<LinkShape> find_link(const Dep<InputCompute>& input_compute);
+  Dep<LinkShape> find_link(const Dep<InputShape>& input_shape);
 
   ViewControls _view_controls;
 
@@ -151,9 +151,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   Dep<LowerHierarchyChange> _lower_change;
 
   // Interactive dragging state.
-  Dep<LinkShape> _link_shape; // The head of the link we're dragging out.
-  Dep<InputCompute> _link_input_compute;
-  Dep<OutputCompute> _link_output_compute;
+  Dep<LinkShape> _link_shape; // The link that we're dragging out.
 
   // A cached reference to the links folder entity which houses all our links.
   Entity* _links_folder;

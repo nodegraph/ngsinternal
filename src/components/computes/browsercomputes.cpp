@@ -17,9 +17,6 @@ OpenBrowserCompute::~OpenBrowserCompute() {
 }
 
 void OpenBrowserCompute::update_state() {
-
-  assert(false);
-
   Compute::update_state();
 
   g_app_comm->handle_request_from_app("{ \"request\" : \"open_browser\" }");

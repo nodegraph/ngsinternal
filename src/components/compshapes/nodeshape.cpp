@@ -188,6 +188,10 @@ void NodeShape::save(SimpleSaver& saver) const {
   saver.save(_color[1]);
   saver.save(_color[2]);
   saver.save(_color[3]);
+  // Ordered input names.
+  saver.save_vector(_input_names);
+  // Ordered output names.
+  saver.save_vector(_output_names);
 }
 void NodeShape::load(SimpleLoader& loader) {
   start_method();
@@ -200,6 +204,10 @@ void NodeShape::load(SimpleLoader& loader) {
   loader.load(_color[1]);
   loader.load(_color[2]);
   loader.load(_color[3]);
+  // Ordered input names.
+  loader.load_vector(_input_names);
+  // Ordered output names.
+  loader.load_vector(_output_names);
 }
 
 }
