@@ -5,7 +5,7 @@
 
 namespace ngs {
 
-class InputCompute;
+class LinkableShape;
 
 class COMPSHAPES_EXPORT InputShape: public CompShape {
  public:
@@ -29,9 +29,6 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
   // Our state.
   virtual void update_state();
 
-  // Our ordering.
-  virtual size_t get_num_inputs() const;
-
   // Our bounds.
   virtual const Polygon& get_bounds() const;
 
@@ -47,7 +44,7 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
  private:
 
   // Our fixed deps.
-  Dep<CompShape> _node_shape;
+  Dep<LinkableShape> _node_shape;
 
   // Our quad instances.
   std::vector<ShapeInstance> _quads;

@@ -93,6 +93,22 @@ class ENTITIES_EXPORT CloseBrowserNodeEntity : public Entity {
   virtual void create_internals();
 };
 
+class ENTITIES_EXPORT CreateSetFromValuesNodeEntity : public Entity {
+ public:
+  ENTITY_ID(CreateSetFromValuesNodeEntity, "open browser")
+  using Entity::Entity;
+  CreateSetFromValuesNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  virtual void create_internals();
+};
+
+class ENTITIES_EXPORT CreateSetFromTypeNodeEntity : public Entity {
+ public:
+  ENTITY_ID(CreateSetFromTypeNodeEntity, "open browser")
+  using Entity::Entity;
+  CreateSetFromTypeNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  virtual void create_internals();
+};
+
 class ENTITIES_EXPORT InputEntity : public Entity {
  public:
   ENTITY_ID(InputEntity, "input")

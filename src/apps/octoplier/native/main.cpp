@@ -30,6 +30,7 @@
 #include <base/objectmodel/entity.h>
 
 #include <components/computes/computeglobals.h>
+#include <components/computes/inputcompute.h>
 
 #include <components/entities/guientities.h>
 #include <components/interactions/graphbuilder.h>
@@ -212,13 +213,14 @@ int main(int argc, char *argv[]) {
     qmlRegisterType<NodeGraphRenderer>("NodeGraphTesting", 1, 0, "NodeGraphRenderer");
 
     qmlRegisterType<SocketMessage>("SocketMessage", 1, 0, "SocketMessage");
+    qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
 
     //qmlRegisterType<HitInfo>("com.octoplier.api", 1, 0, "HitInfo");
     qmlRegisterUncreatableType<VariantMapTreeModel>("com.octoplier.api", 1, 0, "VariantMapTreeModel", "You cannot create this type from QML.");
     //qmlRegisterUncreatableType<SystemSignals>("com.octoplier.api.systemproperties", 1, 0, "SystemProperties", "You cannot create this type QML.");
 
     // Load the treemodel from disk.
-    QFile file(":/qml/octoplier/data/default.txt");
+    QFile file(":/qml/octoplier/menumodels/default.txt");
     file.open(QIODevice::ReadOnly);
     VariantMapTreeModel* tree_model = new_ff VariantMapTreeModel((QString)file.readAll());
     file.close();
@@ -332,7 +334,7 @@ int main(int argc, char *argv[]) {
     g_app_comm = new_ff AppCommunication(&app);
     context->setContextProperty(QStringLiteral("app_comm"), g_app_comm);
 
-    view.setSource(QUrl(QStringLiteral("qrc:/qml/loader.qml")));
+    view.setSource(QUrl(QStringLiteral("qrc:/qml/octoplier/pages/SplashPage.qml")));
     view.show();
     view.update();
     app.processEvents();
@@ -386,6 +388,9 @@ int main(int argc, char *argv[]) {
     //ng_page->load();
 
     execReturn = app.exec();
+
+    // This allows the app to send out a close browser meesage to nodejs.
+    app.processEvents();
 
     delete_ff(scripts);
     delete_ff(utils);

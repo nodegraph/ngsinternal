@@ -52,6 +52,7 @@ enum ComponentDID {
   kInputLabelShape,
   kInputShape,
   kLinkShape,
+  kLinkableShape,
   kNodeShape,
   kOutputNodeShape,
   kOutputLabelShape,
@@ -69,6 +70,8 @@ enum ComponentDID {
   kOutputNodeCompute,
   kOpenBrowserCompute,
   kCloseBrowserCompute,
+  kCreateSetFromValuesCompute,
+  kCreateSetFromTypeCompute,
   // --
   kFBORenderer,
   kFBOWorker,

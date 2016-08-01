@@ -8,13 +8,14 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
 
-import octoplier.config 1.0
+import octoplier.appconfig 1.0
 import octoplier.menus 1.0
 import octoplier.pages 1.0
-import octoplier.tools 1.0
-import octoplier.data 1.0
+import octoplier.appwidgets 1.0
+import octoplier.menumodels 1.0
 
-
+// MenuPage's are create dynamically and given a MenuModel.
+// They are then pushed on to the menu_stack_page.
 Rectangle {
     id: menu_page
 

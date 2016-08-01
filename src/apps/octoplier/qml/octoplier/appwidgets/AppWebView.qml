@@ -7,7 +7,7 @@ import QtWebView 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
-import octoplier.tools 1.0
+import octoplier.appwidgets 1.0
 
 
 WebView {
@@ -212,7 +212,7 @@ WebView {
 //    Timer {
 //        id: timer
 //        interval: 50
-//        running: web_browser_page.visible
+//        running: false
 //        repeat: true
 //        onTriggered: {
 //            app_settings.try_catch_wrap(function() {
@@ -231,15 +231,15 @@ WebView {
 
     onLoadingChanged: {
         if (loadRequest.status == WebView.LoadStartedStatus) {
-            //message_dialog.show(qsTr("page load has started"))
+            console.log("page load has started")
         } else if (loadRequest.status == WebView.LoadStoppedStatus) {
-            //message_dialog.show(qsTr("page load has stopped"))
+            console.log("page load has stopped")
         } else if (loadRequest.status == WebView.LoadSucceededStatus) {
-            // message_dialog.show(qsTr("page load has succeeded"))
+            console.log("page load has succeeded")
         } else if (loadRequest.status == WebView.LoadFailedStatus) {
-            //message_dialog.show(qsTr("page load has failed"))
+            console.log("page load has failed")
         } else {
-           // message_dialog.show(qsTr("got an unknown load status"))
+            console.log("got an unknown load status")
         }
     }
 }

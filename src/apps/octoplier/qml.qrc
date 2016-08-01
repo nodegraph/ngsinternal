@@ -3,7 +3,7 @@
     
         <!-- Main Window -->
         <file>qml/main.qml</file>
-        <file>qml/loader.qml</file>
+        
         
         <!-- Test Images -->
         <file alias="images/icon.png">../../external/images/icon.png</file>
@@ -18,69 +18,51 @@
         
         <!-- Menus -->
         <file>qml/octoplier/menus/qmldir</file>
-        <file>qml/octoplier/menus/MenuStack.qml</file>
+        <file>qml/octoplier/menus/MenuStackPage.qml</file>
         <file>qml/octoplier/menus/MenuPage.qml</file>
+        <file>qml/octoplier/menus/CreateFilePage.qml</file>
         
-        <!-- Dialogs -->
-        <file>qml/octoplier/dialogs/qmldir</file>
-        <file>qml/octoplier/dialogs/ChooseFileDialog.qml</file>
-        <file>qml/octoplier/dialogs/NodeNameDialog.qml</file>
-        <file>qml/octoplier/dialogs/UrlDialog.qml</file>
-        <file>qml/octoplier/dialogs/MessageDialog.qml</file>
+        <!-- AppWidgets -->
+        <file>qml/octoplier/appwidgets/qmldir</file>
+        <file>qml/octoplier/appwidgets/AppImageButton.qml</file>
+        <file>qml/octoplier/appwidgets/AppTextField.qml</file>
+        <file>qml/octoplier/appwidgets/AppPasswordField.qml</file>
+        <file>qml/octoplier/appwidgets/AppTooltip.qml</file>
+        <file>qml/octoplier/appwidgets/AppMenu.qml</file>
+        <file>qml/octoplier/appwidgets/AppLoader.qml</file>
+        <file>qml/octoplier/appwidgets/AppLabelButton.qml</file>
+        <file>qml/octoplier/appwidgets/AppLabel.qml</file>
+        <file>qml/octoplier/appwidgets/AppWebView.qml</file>
         
-        <!-- Tools -->
-        <file>qml/octoplier/tools/qmldir</file>
-        <file>qml/octoplier/tools/AppImageButton.qml</file>
-        <file>qml/octoplier/tools/AppTextField.qml</file>
-        <file>qml/octoplier/tools/AppPasswordField.qml</file>
-        <file>qml/octoplier/tools/AppTooltip.qml</file>
-        <file>qml/octoplier/tools/AppUnits.qml</file>
-        <file>qml/octoplier/tools/AppMenu.qml</file>
-        <file>qml/octoplier/tools/AppLoader.qml</file>
-        <file>qml/octoplier/tools/AppLabelButton.qml</file>
-        <file>qml/octoplier/tools/AppLabel.qml</file>
-        <file>qml/octoplier/tools/AppWebView.qml</file>
+        <!-- MenuModels -->
+        <file>qml/octoplier/menumodels/qmldir</file>
+        <file>qml/octoplier/menumodels/default.txt</file>
+        <file>qml/octoplier/menumodels/CreateNodeActions.qml</file>
+        <file>qml/octoplier/menumodels/NodeActions.qml</file>
+        <file>qml/octoplier/menumodels/GroupNodeActions.qml</file>
+        <file>qml/octoplier/menumodels/NodeGraphActions.qml</file>
+        <file>qml/octoplier/menumodels/FrameNodeActions.qml</file>
+        <file>qml/octoplier/menumodels/SelectNodeActions.qml</file>
+        <file>qml/octoplier/menumodels/CopyPasteNodeActions.qml</file>
+        <file>qml/octoplier/menumodels/ExplodeCollapseNodeActions.qml</file>
+        <file>qml/octoplier/menumodels/FileActions.qml</file>
         
-        <!-- Data -->
-        <file>qml/octoplier/data/qmldir</file>
-        <file>qml/octoplier/data/default.txt</file>
-        <file>qml/octoplier/data/CreateNodeActions.qml</file>
-        <file>qml/octoplier/data/NodeActions.qml</file>
-        <file>qml/octoplier/data/GroupNodeActions.qml</file>
-        <file>qml/octoplier/data/NodeGraphActions.qml</file>
-        <file>qml/octoplier/data/FrameNodeActions.qml</file>
-        <file>qml/octoplier/data/SelectNodeActions.qml</file>
-        <file>qml/octoplier/data/CopyPasteNodeActions.qml</file>
-        <file>qml/octoplier/data/ExplodeCollapseNodeActions.qml</file>
-        <file>qml/octoplier/data/FileActions.qml</file>
-        <file>qml/octoplier/data/WebBrowserActions.qml</file>
-        
-        <!-- Configuration -->
-        <file>qml/octoplier/config/qmldir</file>
-        <file>qml/octoplier/config/AppSettings.qml</file>
+        <!-- AppConfig -->
+        <file>qml/octoplier/appconfig/qmldir</file>
+        <file>qml/octoplier/appconfig/AppSettings.qml</file>
+        <file>qml/octoplier/appconfig/AppUnits.qml</file>
         
         <!-- Pages -->
         <file>qml/octoplier/pages/qmldir</file>
-        <file>qml/octoplier/pages/WebBrowserPage.qml</file>
-        <file>qml/octoplier/pages/PostsPage.qml</file>
-        <file>qml/octoplier/pages/SettingsPage.qml</file>
-        <file>qml/octoplier/pages/UrlEntryPage.qml</file>
-        <file>qml/octoplier/pages/ViewNodePage.qml</file>
-        <file>qml/octoplier/pages/EditNodePage.qml</file>
-        <file>qml/octoplier/pages/EmptyPage.qml</file>
-        <file>qml/octoplier/pages/NodeGraphPage.qml</file>
-        <file>qml/octoplier/pages/SplashPage.qml</file>
-        <file>qml/octoplier/pages/FilePage.qml</file>
         <file>qml/octoplier/pages/CreatePasswordPage.qml</file>
         <file>qml/octoplier/pages/CheckPasswordPage.qml</file>
-        
-        <!-- SubPages -->
-        <file>qml/octoplier/subpages/qmldir</file>
-        <file>qml/octoplier/subpages/CreateFilePage.qml</file>
-        
-        <!-- APIs -->
-        <file>qml/octoplier/apis/qmldir</file>
-        <file>qml/octoplier/apis/NodePoolAPI.qml</file>
+        <file>qml/octoplier/pages/EditNodePage.qml</file>
+        <file>qml/octoplier/pages/FilePage.qml</file>
+        <file>qml/octoplier/pages/NodeGraphPage.qml</file>
+        <file>qml/octoplier/pages/PostsPage.qml</file>
+        <file>qml/octoplier/pages/SettingsPage.qml</file>
+        <file>qml/octoplier/pages/ViewNodePage.qml</file>
+        <file>qml/octoplier/pages/SplashPage.qml</file>
         
         <!-- JS Compute Nodes -->
         <file>nodes/node.js</file>
@@ -133,9 +115,12 @@
         <file alias="icons/ic_expand_less_white_48dp.png">../../external/icons/ic_expand_less_white_48dp.png</file>
         <file alias="icons/ic_expand_more_black_48dp.png">../../external/icons/ic_expand_more_black_48dp.png</file>
         <file alias="icons/ic_expand_more_white_48dp.png">../../external/icons/ic_expand_more_white_48dp.png</file>
-        <file alias="icons/ic_menu_48px.png">../../external/icons/ic_menu_48px.svg</file>
         <file alias="icons/ic_menu_black_48dp.png">../../external/icons/ic_menu_black_48dp.png</file>
         <file alias="icons/ic_menu_white_48dp.png">../../external/icons/ic_menu_white_48dp.png</file>
+        <file alias="icons/ic_mode_edit_black_48dp.png">../../external/icons/ic_mode_edit_black_48dp.png</file>
+        <file alias="icons/ic_mode_edit_white_48dp.png">../../external/icons/ic_mode_edit_white_48dp.png</file>
+        <file alias="icons/ic_visibility_black_48dp.png">../../external/icons/ic_visibility_black_48dp.png</file>
+        <file alias="icons/ic_visibility_white_48dp.png">../../external/icons/ic_visibility_white_48dp.png</file>
         <file alias="icons/ic_more_horiz_black_48dp.png">../../external/icons/ic_more_horiz_black_48dp.png</file>
         <file alias="icons/ic_more_horiz_white_48dp.png">../../external/icons/ic_more_horiz_white_48dp.png</file>
         <file alias="icons/ic_more_vert_black_48dp.png">../../external/icons/ic_more_vert_black_48dp.png</file>

@@ -6,7 +6,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
-import octoplier.tools 1.0
+import octoplier.appwidgets 1.0
 
 Rectangle {
     id: url_entry_page
@@ -48,7 +48,7 @@ Rectangle {
             text: "www."
             onAccepted: {
                 web_browser_page.web_view_alias.url = utils.url_from_input(url_field.text)
-                main_bar.on_switch_to_mode(app_settings.web_browser_mode)
+                main_bar.on_switch_to_mode(app_settings.node_graph_mode)
             }
         }
         
@@ -62,7 +62,7 @@ Rectangle {
                     console.log('url processed: ' + utils.url_from_input(url_field.text))
                     var request = {request: 'navigate_to', url: utils.url_from_input(url_field.text).toString()}
                     app_comm.handle_request_from_app(JSON.stringify(request))
-                    main_bar.on_switch_to_mode(app_settings.web_browser_mode)
+                    main_bar.on_switch_to_mode(app_settings.node_graph_mode)
                 }
             }
             Rectangle {
@@ -73,7 +73,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    main_bar.on_switch_to_mode(app_settings.web_browser_mode)
+                    main_bar.on_switch_to_mode(app_settings.node_graph_mode)
                 }
             }
             Item {Layout.fillWidth: true}

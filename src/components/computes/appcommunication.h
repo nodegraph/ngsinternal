@@ -43,6 +43,9 @@ Q_OBJECT
   Q_INVOKABLE QString get_app_dir();
   Q_INVOKABLE QString get_smash_browse_url();
 
+  Q_INVOKABLE bool is_polling();
+  Q_INVOKABLE void start_polling();
+  Q_INVOKABLE void stop_polling();
   Q_INVOKABLE void open_browser();
   Q_INVOKABLE void close_browser();
 

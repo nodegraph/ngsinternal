@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
-import octoplier.tools 1.0
+import octoplier.appwidgets 1.0
 
 Label {
     id: app_label

@@ -78,6 +78,8 @@ namespace ngs {
     case_statement(OutputNodeCompute)\
     case_statement(OpenBrowserCompute)\
     case_statement(CloseBrowserCompute)\
+    case_statement(CreateSetFromValuesCompute)\
+    case_statement(CreateSetFromTypeCompute)\
     /* Graph Building. */\
     case_statement(GraphBuilder)\
     /* Hierarchy Changes. */\

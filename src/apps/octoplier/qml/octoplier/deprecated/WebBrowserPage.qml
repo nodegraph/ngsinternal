@@ -7,7 +7,7 @@ import QtWebView 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
-import octoplier.tools 1.0
+import octoplier.appwidgets 1.0
 
 // If there are android specific layout issues in the future you can try the
 // following trick. Use an "if" statement on the plaform type.

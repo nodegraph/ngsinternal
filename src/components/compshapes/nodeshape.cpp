@@ -33,7 +33,7 @@ const std::array<unsigned char, 4> NodeShape::node_fg_color = { 100, 100, 100, 2
 const glm::vec2 NodeShape::node_border_size = glm::vec2(10.0f, 10.0f);
 
 NodeShape::NodeShape(Entity* entity)
-    : CompShape(entity, kDID()),
+    : LinkableShape(entity, kDID()),
       _resources(this),
       _being_edited(false),
       _being_viewed(false) {
@@ -42,7 +42,7 @@ NodeShape::NodeShape(Entity* entity)
 }
 
 NodeShape::NodeShape(Entity* entity, size_t did, size_t num_extra_quads)
-    : CompShape(entity, did),
+    : LinkableShape(entity, did),
       _resources(this),
       _being_edited(false),
       _being_viewed(false) {
@@ -152,16 +152,16 @@ void NodeShape::update_text() {
 }
 
 void NodeShape::push_input_name(const std::string& input_name) {
-  _input_names.push_back(input_name);
+  _linkable_input_names.push_back(input_name);
 }
 
 void NodeShape::push_output_name(const std::string& output_name) {
-  _output_names.push_back(output_name);
+  _linkable_output_names.push_back(output_name);
 }
 
 size_t NodeShape::get_input_order(const std::string& input_name) const {
-  for (size_t i=0; i<_input_names.size(); ++i) {
-    if (_input_names[i] == input_name) {
+  for (size_t i=0; i<_linkable_input_names.size(); ++i) {
+    if (_linkable_input_names[i] == input_name) {
       return i;
     }
   }
@@ -169,12 +169,38 @@ size_t NodeShape::get_input_order(const std::string& input_name) const {
 }
 
 size_t NodeShape::get_output_order(const std::string& output_name) const {
-  for (size_t i=0; i<_output_names.size(); ++i) {
-    if (_output_names[i] == output_name) {
+  for (size_t i=0; i<_linkable_output_names.size(); ++i) {
+    if (_linkable_output_names[i] == output_name) {
       return i;
     }
   }
   return 0;
+}
+
+size_t NodeShape::get_num_linkable_inputs() const {
+  return _linkable_input_names.size();
+}
+
+size_t NodeShape::get_num_linkable_outputs() const {
+  return _linkable_output_names.size();
+}
+
+size_t NodeShape::get_num_input_params() const {
+  return get_num_all_inputs() - get_num_linkable_inputs();
+}
+
+size_t NodeShape::get_num_output_params() const {
+  return get_num_all_outputs() - get_num_linkable_outputs();
+}
+
+size_t NodeShape::get_num_all_inputs() const {
+  start_method();
+  return get_entity("./inputs")->get_children().size();
+}
+
+size_t NodeShape::get_num_all_outputs() const {
+  start_method();
+  return get_entity("./outputs")->get_children().size();
 }
 
 void NodeShape::save(SimpleSaver& saver) const {
@@ -189,9 +215,9 @@ void NodeShape::save(SimpleSaver& saver) const {
   saver.save(_color[2]);
   saver.save(_color[3]);
   // Ordered input names.
-  saver.save_vector(_input_names);
+  saver.save_vector(_linkable_input_names);
   // Ordered output names.
-  saver.save_vector(_output_names);
+  saver.save_vector(_linkable_output_names);
 }
 void NodeShape::load(SimpleLoader& loader) {
   start_method();
@@ -205,9 +231,9 @@ void NodeShape::load(SimpleLoader& loader) {
   loader.load(_color[2]);
   loader.load(_color[3]);
   // Ordered input names.
-  loader.load_vector(_input_names);
+  loader.load_vector(_linkable_input_names);
   // Ordered output names.
-  loader.load_vector(_output_names);
+  loader.load_vector(_linkable_output_names);
 }
 
 }

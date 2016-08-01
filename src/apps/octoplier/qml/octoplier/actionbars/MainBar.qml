@@ -6,7 +6,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
-import octoplier.tools 1.0
+import octoplier.appwidgets 1.0
 
 Rectangle {
     id: main_bar
@@ -39,9 +39,13 @@ Rectangle {
             node_graph_button.lit = true
             action_bar_title.text = "Nodes"
             more_menu_button.visible = true;
-        } else if (m == app_settings.web_browser_mode) {
-            web_browser_button.lit = true
-            action_bar_title.text = "Browser"
+        } else if (m == app_settings.view_node_mode) {
+            view_node_button.lit = true
+            action_bar_title.text = "View Node"
+            more_menu_button.visible = true;
+        } else if (m == app_settings.edit_node_mode) {
+            edit_node_button.lit = true
+            action_bar_title.text = "Edit Node"
             more_menu_button.visible = true;
         } else if (m == app_settings.posts_mode) {
             posts_button.lit = true
@@ -58,7 +62,7 @@ Rectangle {
     function clear_lit_buttons() {
         file_button.lit = false
         node_graph_button.lit = false
-        web_browser_button.lit = false
+        view_node_button.lit = false
         posts_button.lit = false
         settings_button.lit = false
     }
@@ -116,7 +120,7 @@ Rectangle {
         id: node_graph_button
         
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: web_browser_button.left
+        anchors.right: view_node_button.left
         
         image_url: "qrc:///icons/ic_widgets_white_48dp.png"
         tooltip_text: "Nodes"
@@ -126,18 +130,33 @@ Rectangle {
         }
     }
 
-    // Web Browser Mode Button.
+    // View Node Mode Button.
     AppImageButton {
-        id: web_browser_button
+        id: view_node_button
+        
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: edit_node_button.left
+        
+        image_url: "qrc:///icons/ic_visibility_white_48dp.png"
+        tooltip_text: "Browser"
+        
+        onClicked: {
+            on_switch_to_mode(app_settings.view_node_mode)
+        }
+    }
+    
+    // Edit Node Mode Button.
+    AppImageButton {
+        id: edit_node_button
         
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: posts_button.left
         
-        image_url: "qrc:///icons/ic_public_white_48dp.png"
+        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         tooltip_text: "Browser"
         
         onClicked: {
-            on_switch_to_mode(app_settings.web_browser_mode)
+            on_switch_to_mode(app_settings.edit_node_mode)
         }
     }
 

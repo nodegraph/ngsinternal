@@ -11,6 +11,7 @@
 
 #include <boost/math/constants/constants.hpp>
 #include <components/compshapes/inputshape.h>
+#include <components/compshapes/linkableshape.h>
 #include <cmath>
 
 namespace ngs {
@@ -51,7 +52,7 @@ void InputShape::update_state() {
   bounds.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
-  size_t num_plugs = get_num_inputs();
+  size_t num_plugs = _node_shape->get_num_linkable_inputs();
   float min_x(node_min.x);
   float max_x(node_max.x);
   float delta = (max_x - min_x) / (num_plugs + 1);
@@ -88,11 +89,6 @@ void InputShape::update_state() {
     _fg_quad->state &= ~selected_transform_bitmask;
   }
 
-}
-
-size_t InputShape::get_num_inputs() const {
-  start_method();
-  return get_entity("..")->get_children().size();
 }
 
 const Polygon& InputShape::get_bounds() const {

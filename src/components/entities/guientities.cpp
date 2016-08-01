@@ -263,6 +263,57 @@ void CloseBrowserNodeEntity::create_internals() {
   }
 }
 
+void CreateSetFromValuesNodeEntity::create_internals() {
+  // Our components.
+  new_ff CreateSetFromValuesCompute(this);
+  // Gui related.
+  NodeShape* shape = new_ff NodeShape(this);
+  shape->push_input_name("in");
+  shape->push_output_name("out");
+  // Our sub entities.
+  {
+    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
+    inputs->create_internals();
+    InputEntity* in = new_ff InputEntity(inputs, "in");
+    in->create_internals();
+    BaseInputEntity* type = new_ff BaseInputEntity(inputs, "type");
+    type->create_internals();
+    BaseInputEntity* values = new_ff BaseInputEntity(inputs, "values");
+    values->create_internals();
+  }
+  {
+    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
+    outputs->create_internals();
+    OutputEntity* out = new_ff OutputEntity(outputs, "out");
+    out->create_internals();
+  }
+}
+
+void CreateSetFromTypeNodeEntity::create_internals() {
+  // Our components.
+  new_ff CreateSetFromTypeCompute(this);
+  // Gui related.
+  NodeShape* shape = new_ff NodeShape(this);
+  shape->push_input_name("in");
+  shape->push_output_name("out");
+  // Our sub entities.
+  {
+    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
+    inputs->create_internals();
+    InputEntity* in = new_ff InputEntity(inputs, "in");
+    in->create_internals();
+    BaseInputEntity* type = new_ff BaseInputEntity(inputs, "type");
+    type->create_internals();
+  }
+  {
+    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
+    outputs->create_internals();
+    OutputEntity* out = new_ff OutputEntity(outputs, "out");
+    out->create_internals();
+  }
+}
+
+
 void ComputeNodeEntity::create_internals() {
   // Our components.
   Compute* dc = new_ff ScriptNodeCompute(this);

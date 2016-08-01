@@ -1,4 +1,6 @@
 module menus
 
-MenuStack 1.0 MenuStack.qml
+MenuStackPage 1.0 MenuStackPage.qml
 MenuPage 1.0 MenuPage.qml
+
+CreateFilePage 1.0 CreateFilePage.qml

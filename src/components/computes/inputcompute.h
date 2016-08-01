@@ -2,11 +2,14 @@
 #include <components/computes/computes_export.h>
 #include <components/computes/compute.h>
 
+#include <QtCore/QObject>
+
 namespace ngs {
 
 class OutputCompute;
 
-class COMPUTES_EXPORT InputCompute: public Compute {
+class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
+  Q_OBJECT
  public:
 
   COMPONENT_ID(Compute, InputCompute);

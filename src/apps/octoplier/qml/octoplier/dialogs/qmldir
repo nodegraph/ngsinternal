@@ -1,6 +1,0 @@
-module dialogs
-
-ChooseFileDialog 1.0 ChooseFileDialog.qml
-NodeNameDialog 1.0 NodeNameDialog.qml
-UrlDialog 1.0 UrlDialog.qml
-MessageDialog 1.0 MessageDialog.qml

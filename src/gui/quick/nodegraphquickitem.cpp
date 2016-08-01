@@ -526,6 +526,16 @@ void NodeGraphQuickItem::create_close_browser_node(bool centered) {
   finish_creating_node(e, centered);
 }
 
+void NodeGraphQuickItem::create_create_set_from_values_node(bool centered) {
+  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "create set from values", kCreateSetFromValuesNodeEntity);
+  finish_creating_node(e, centered);
+}
+
+void NodeGraphQuickItem::create_create_set_from_type_node(bool centered) {
+  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "create set from type", kCreateSetFromTypeNodeEntity);
+  finish_creating_node(e, centered);
+}
+
 void NodeGraphQuickItem::view_node() {
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_shape->get_path_as_string());
   if(compute) {

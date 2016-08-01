@@ -11,7 +11,8 @@
 namespace ngs {
 
 InputCompute::InputCompute(Entity* entity)
-    : Compute(entity, kDID()),
+    : QObject(),
+      Compute(entity, kDID()),
       _output(this) {
 	get_dep_loader()->register_dynamic_dep(_output);
 }

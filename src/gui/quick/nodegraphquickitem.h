@@ -54,6 +54,8 @@ Q_OBJECT
   // Browser Node Creation.
   Q_INVOKABLE void create_open_browser_node(bool centered);
   Q_INVOKABLE void create_close_browser_node(bool centered);
+  Q_INVOKABLE void create_create_set_from_values_node(bool centered);
+  Q_INVOKABLE void create_create_set_from_type_node(bool centered);
 
   // View and Edit.
   Q_INVOKABLE void view_node();

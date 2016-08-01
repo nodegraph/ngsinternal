@@ -88,13 +88,10 @@ Item{
     
     property int file_mode: 0
     property int node_graph_mode: 1
-    property int web_browser_mode: 2
-    property int posts_mode: 3
-    property int settings_mode: 4
-    
-    property int view_node_mode: 5
-    property int edit_node_mode: 6
-    
+    property int view_node_mode: 2
+    property int edit_node_mode: 3
+    property int posts_mode: 4
+    property int settings_mode: 5
     
     // -------------------------------------------------------------------
     // Layering.
@@ -153,7 +150,6 @@ Item{
     function vibrate() {
         // On android we vibrate.
         if (Qt.platform.os == "android") {
-            //java_bridge.notify("Octoplier Message!","Node graph has yield some data!")
             java_bridge.vibrate(10)
         }
     }

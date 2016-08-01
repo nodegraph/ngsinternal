@@ -1,15 +1,17 @@
 module pages
-EditNodePage 1.0 EditNodePage.qml
-EmptyPage 1.0 EmptyPage.qml
-PostsPage 1.0 PostsPage.qml
-SettingsPage 1.0 SettingsPage.qml
-UrlEntryPage 1.0 UrlEntryPage.qml
-ViewNodePage 1.0 ViewNodePage.qml
-WebBrowserPage 1.0 WebBrowserPage.qml
-NodeGraphPage 1.0 NodeGraphPage.qml
-SplashPage 1.0 SplashPage.qml
-FilePage 1.0 FilePage.qml
+
 CreatePasswordPage 1.0 CreatePasswordPage.qml
 CheckPasswordPage 1.0 CheckPasswordPage.qml
+
+SplashPage 1.0 SplashPage.qml
+
+FilePage 1.0 FilePage.qml
+NodeGraphPage 1.0 NodeGraphPage.qml
+ViewNodePage 1.0 ViewNodePage.qml
+EditNodePage 1.0 EditNodePage.qml
+PostsPage 1.0 PostsPage.qml
+SettingsPage 1.0 SettingsPage.qml
+
+
 
 

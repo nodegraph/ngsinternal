@@ -49,6 +49,8 @@ namespace ngs {
     case_statement(ComputeNodeEntity)\
     case_statement(OpenBrowserNodeEntity)\
     case_statement(CloseBrowserNodeEntity)\
+    case_statement(CreateSetFromValuesNodeEntity)\
+    case_statement(CreateSetFromTypeNodeEntity)\
     /* Invalids. */\
     case kInvalidEntity:\
     case kNumEntityImplementationIDs:\

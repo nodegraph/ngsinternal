@@ -10,37 +10,37 @@ import octoplier.actionbars 1.0
 import octoplier.pages 1.0
 //import octoplier.dialogs 1.0
 import octoplier.menus 1.0
-import octoplier.tools 1.0
-import octoplier.apis 1.0
-import octoplier.config 1.0
-import octoplier.data 1.0
-import octoplier.subpages 1.0
+import octoplier.appwidgets 1.0
+import octoplier.appconfig 1.0
+import octoplier.menumodels 1.0
+
+import InputCompute 1.0
 
 Rectangle {
-
     id: app_window
-    //title: qsTr("octoplier")
-
     anchors.fill: parent
-    //width: (Qt.platform.os == "android") ? Screen.width : 640
-    //height: (Qt.platform.os == "android") ? Screen.height : 480
     visible: true
     color: "blue"
 
     property alias node_graph_page: node_graph_page
 
-//    // Splash Page.
-//    SplashPage {
-//        id: splash_page
-//        visible: true
-//        num_components: app_window.num_components
-//    }
+    function on_closing(close) {
+        console.log('on closing called')
+        if (app_comm.is_polling()) {
+            app_comm.stop_polling()
+            app_comm.close_browser()
+            close.accepted = false
+            close_timer.start()
+        }
+    }
 
-//    style: ApplicationWindowStyle {
-//        background: Rectangle {
-//            color: "#FF03A9F4"
-//        }
-//    }
+    Timer {
+        id: close_timer
+        interval: 100
+        running: false
+        repeat: false
+        onTriggered: quick_view.close()
+    }
 
     // Global App Objects.
 
@@ -60,23 +60,6 @@ Rectangle {
         id: app_tooltip
         z: app_settings.app_tooltip_z
         visible: false
-    }
-
-    NodePoolAPI {
-        id: node_pool_api
-        visible: false
-    }
-
-    // Dialogs.
-    
-    MessageDialog {
-    	id: message_dialog
-        title: "hello"
-        icon: StandardIcon.Critical
-        function show(text) {
-            message_dialog.text = text
-            message_dialog.open()
-        }
     }
 
     // Action Bars.
@@ -100,11 +83,6 @@ Rectangle {
 
     NodeGraphPage {
         id: node_graph_page
-        visible: false
-    }
-
-    WebBrowserPage {
-        id: web_browser_page
         visible: false
     }
 
@@ -133,16 +111,6 @@ Rectangle {
         visible: false
     }
 
-    UrlEntryPage {
-        id: url_entry_page
-        visible: false
-    }
-
-    EmptyPage {
-        id: empty_page
-        visible: false
-    }
-
     CreatePasswordPage {
         id: create_password_page
         visible: false
@@ -153,7 +121,7 @@ Rectangle {
         visible: false
     }
 
-    MenuStack {
+    MenuStackPage {
         id: menu_stack_page
         visible: false
     }
@@ -171,19 +139,18 @@ Rectangle {
 
     function update_dependencies() {
         // Mode change connections.
+        main_bar.switch_to_mode.connect(file_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(web_browser_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(view_node_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(view_node_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(file_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(menu_stack_page.on_switch_to_mode)
 
         // More option connections.
         main_bar.open_more_options.connect(node_graph_page.on_open_more_options)
-        main_bar.open_more_options.connect(web_browser_page.on_open_more_options)
-        main_bar.open_more_options.connect(view_node_page.on_open_more_options)
+//        main_bar.open_more_options.connect(view_node_page.on_open_more_options)
+//        main_bar.open_more_options.connect(edit_node_page.on_open_more_options)
         main_bar.open_more_options.connect(file_page.on_open_more_options)
 
         // Node graph connections.
@@ -207,9 +174,6 @@ Rectangle {
             create_password_page.visible = true
         }
 
-        // Browser.
-        //app_comm.recording_received.connect(web_browser_page.web_view_alias.on_recording_received)
-
         // Other setup.
         //main_bar.on_switch_to_mode(app_settings.node_graph_mode)
         //file_model.load_graph()
@@ -217,6 +181,8 @@ Rectangle {
         //node_graph_page.node_graph.update()
 
         //quick_view.closing.connect(app_window.onClosing)
+
+        quick_view.closing.connect(app_window.on_closing)
     }
 
 //    function onClosing() {
@@ -232,23 +198,5 @@ Rectangle {
 //        }
 //    }
 
-    // Intercept the android back button.
-    // We allow this behavior on desktops also for testing.
-    // On desktops trying to close the app_window will just pop off the browser stack, until it's empty.
-//    onClosing: {
-//        //if (Qt.platform.os == "android") {
-//        if (web_browser_page.visible == true) {
-//            if (web_browser_page.web_view_alias.canGoBack) {
-//                web_browser_page.web_view_alias.goBack()
-//                close.accepted = false
-//            }
-//        }
-//        //}
-
-//        // Cleanup the node pool if we're closing down.
-//        if (close.accepted) {
-//            console.log("Shutting down qml app.")
-//        }
-//    }
 
 }

@@ -9,7 +9,7 @@ import QtQuick.Controls.Private 1.0
 
 
 import octoplier.menus 1.0
-import octoplier.tools 1.0
+import octoplier.appwidgets 1.0
 
 
 ScrollView {

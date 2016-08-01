@@ -1,0 +1,3 @@
+module appconfig
+AppSettings 1.0 AppSettings.qml
+AppUnits 1.0 AppUnits.qml

@@ -73,6 +73,8 @@ enum EntityDID {
   kComputeNodeEntity,
   kOpenBrowserNodeEntity,
   kCloseBrowserNodeEntity,
+  kCreateSetFromValuesNodeEntity,
+  kCreateSetFromTypeNodeEntity,
   // Count.
   kNumEntityImplementationIDs,
 };

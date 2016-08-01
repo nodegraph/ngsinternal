@@ -1,6 +1,7 @@
 import QtQuick 2.6
 
 Rectangle {
+    id: edit_node_page
     
     // Dimensions.
     height: app_settings.page_height

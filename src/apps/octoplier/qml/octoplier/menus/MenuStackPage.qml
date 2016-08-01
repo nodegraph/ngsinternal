@@ -12,12 +12,16 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
 
-import octoplier.config 1.0
+import octoplier.appconfig 1.0
 import octoplier.menus 1.0
-import octoplier.tools 1.0
-import octoplier.data 1.0
-import octoplier.subpages 1.0
+import octoplier.appwidgets 1.0
+import octoplier.menumodels 1.0
 
+
+// The menu_stack_page holds a header and a scrollable StackView.
+// The StackView can hold MenuPages.
+// Each MenuPage can hold a MenuModel.
+// The stack view is filled dynamically at runtime according to the user actions.
 Rectangle{
     id: menu_stack_page
 
@@ -90,18 +94,6 @@ Rectangle{
         stack_view.push(create_file_page)
         stack_view_header.push_header_title("Update File")
         last_mode = app_settings.file_mode
-        visible = true
-    }
-
-    function on_url_entry_page() {
-        if (web_browser_page.web_view_alias.loading) {
-            web_browser_page.web_view_alias.stop()
-        }
-
-        url_entry_page.visible = true
-        stack_view.push(url_entry_page)
-        stack_view_header.push_header_title("Go to URL")
-        last_mode = null
         visible = true
     }
 
@@ -235,7 +227,7 @@ Rectangle{
             }
 
             function push_model_name(model_name) {
-                var url = "qrc:///qml/octoplier/data/" + model_name + ".qml"
+                var url = "qrc:///qml/octoplier/menumodels/" + model_name + ".qml"
                 push_model_url(url)
             }
 

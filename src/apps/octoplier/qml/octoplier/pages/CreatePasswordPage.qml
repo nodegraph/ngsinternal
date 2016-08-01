@@ -6,7 +6,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
-import octoplier.tools 1.0
+import octoplier.appwidgets 1.0
 
 Rectangle {
     id: create_password_page
@@ -87,6 +87,7 @@ Rectangle {
                     // Switch to node graph mode.
                     main_bar.on_switch_to_mode(app_settings.node_graph_mode)
                     Qt.inputMethod.hide()
+                    app_comm.start_polling()
                 }
             }
         }

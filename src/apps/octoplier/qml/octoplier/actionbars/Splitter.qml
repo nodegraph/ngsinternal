@@ -19,6 +19,24 @@ Rectangle {
     x: app_settings.splitter_x
     y: app_settings.splitter_y
     z: app_settings.splitter_z
+    
+    function start() {
+    	progress_timer.start()
+    	our_progress_bar.visible = true
+    }
+    
+    function stop() {
+    	progress_timer.stop()
+    	our_progress_bar.visible = false
+    }
+    
+    Timer {
+        id: progress_timer
+        interval: 10
+        running: false
+        repeat: true
+        onTriggered: if (our_progress_bar.value >= 100) { our_progress_bar.value = 0} else {our_progress_bar.value += 1}
+    }
 
     // URL loading progress overlay.
     // Note that the progress bar won't show anything on ios and winrt platforms.
@@ -28,10 +46,10 @@ Rectangle {
         id: our_progress_bar
         anchors.fill: parent
         z: 1
-        visible: web_browser_page.web_view_alias.loading
+        visible: false
         minimumValue: 0
         maximumValue: 100
-        value: web_browser_page.web_view_alias.loadProgress >= 100 ? 0 : web_browser_page.web_view_alias.loadProgress
+        value: 0
 
         style: ProgressBarStyle {
             background: Rectangle {

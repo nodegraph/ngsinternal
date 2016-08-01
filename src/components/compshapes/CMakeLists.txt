@@ -25,6 +25,7 @@ set(headers
     inputnodeshape.h
     inputshape.h
     linkshape.h
+    linkableshape.h
     nodeshape.h
     nodegraphselection.h
     outputlabelshape.h

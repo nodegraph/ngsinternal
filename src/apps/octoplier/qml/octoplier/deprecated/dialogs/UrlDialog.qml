@@ -12,7 +12,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
 
-import octoplier.tools 1.0
+import octoplier.appwidgets 1.0
 
 Dialog {
     id: url_dialog

@@ -53,4 +53,18 @@ ListModel {
         script: "node_graph_page.node_graph.create_close_browser_node(center_new_nodes); menu_stack_page.visible = false"
     }
 
+    ListElement {
+        image_url: "qrc:///icons/ic_gesture_white_48dp.png"
+        title: "Create Set From Values"
+        description: "A node which creates an element set in the browser by matching text or images."
+        script: "node_graph_page.node_graph.create_create_set_from_values_node(center_new_nodes); menu_stack_page.visible = false"
+    }
+
+    ListElement {
+        image_url: "qrc:///icons/ic_gesture_white_48dp.png"
+        title: "Create Set From Type"
+        description: "A node which creates an element set in the browser by matching the type of the element."
+        script: "node_graph_page.node_graph.create_create_set_from_type_node(center_new_nodes); menu_stack_page.visible = false"
+    }
+
 }

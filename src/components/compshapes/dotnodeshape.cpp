@@ -20,7 +20,7 @@ const float DotNodeShape::radius = 50.0f;
 
 
 DotNodeShape::DotNodeShape(Entity* entity):
-    CompShape(entity, kDID()) {
+    LinkableShape(entity, kDID()) {
   _circles.resize(6);
   _bg_circle = &_circles[0];
   _fg_circle = &_circles[1];
@@ -91,6 +91,20 @@ void DotNodeShape::load(SimpleLoader& loader) {
   CompShape::load(loader);
   loader.load(_pos.x);
   loader.load(_pos.y);
+}
+
+size_t DotNodeShape::get_input_order(const std::string& input_name) const {
+  if (input_name == "in") {
+    return 0;
+  }
+  return -1;
+}
+
+size_t DotNodeShape::get_output_order(const std::string& output_name) const {
+  if (output_name == "out") {
+    return 0;
+  }
+  return -1;
 }
 
 }

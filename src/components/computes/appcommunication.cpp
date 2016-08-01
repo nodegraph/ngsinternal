@@ -44,19 +44,29 @@ AppCommunication::AppCommunication(QObject *parent)
   connect(_websocket, SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_text_message_received(const QString &)));
   connect(_websocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(on_state_changed(QAbstractSocket::SocketState)));
 
-  // Start the poll timer.
+  // Setup the poll timer.
   _poll_timer.setSingleShot(false);
   _poll_timer.setInterval(kPollInterval);
   connect(&_poll_timer,SIGNAL(timeout()),this,SLOT(on_poll()));
-  _poll_timer.start();
 }
 
 AppCommunication::~AppCommunication() {
-  handle_request_from_app(SocketMessage("{request: 'close_browser'}"));
   delete_ff(_websocket);
 
   _process->kill();
   delete_ff(_process);
+}
+
+bool AppCommunication::is_polling() {
+  return _poll_timer.isActive();
+}
+
+void AppCommunication::start_polling() {
+  _poll_timer.start();
+}
+
+void AppCommunication::stop_polling() {
+  _poll_timer.stop();
 }
 
 QString AppCommunication::get_app_dir() {

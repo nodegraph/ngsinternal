@@ -18,6 +18,7 @@ set(sources
 set(moc_headers
 	appcommunication.h
 	socketmessage.h
+	inputcompute.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})
@@ -28,7 +29,6 @@ set(headers
 	computeglobals.h
 	dotnodecompute.h
 	groupnodecompute.h
-	inputcompute.h
 	inputnodecompute.h
 	mocknodecompute.h
 	outputcompute.h

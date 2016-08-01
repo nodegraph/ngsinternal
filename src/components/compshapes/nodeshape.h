@@ -1,6 +1,6 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
-#include <components/compshapes/compshape.h>
+#include <components/compshapes/linkableshape.h>
 #include <base/utils/polygon.h>
 
 
@@ -15,7 +15,7 @@ class Resources;
 class NodeGraphSelection;
 class Compute;
 
-class COMPSHAPES_EXPORT NodeShape: public CompShape {
+class COMPSHAPES_EXPORT NodeShape: public LinkableShape {
  public:
 
   COMPONENT_ID(CompShape, NodeShape);
@@ -56,18 +56,23 @@ class COMPSHAPES_EXPORT NodeShape: public CompShape {
   virtual size_t get_input_order(const std::string& input_name) const;
   virtual size_t get_output_order(const std::string& output_name) const;
 
-  // Our input and output names.
-  virtual const std::vector<std::string>& get_input_names(){return _input_names;}
-  virtual const std::vector<std::string>& get_output_names(){return _output_names;}
+  // Num inputs and outputs.
+  virtual size_t get_num_linkable_inputs() const; // number of inputs with input plugs
+  virtual size_t get_num_linkable_outputs() const; // number of outputs with output plugs
+  virtual size_t get_num_input_params() const; // number of inputs without input plugs
+  virtual size_t get_num_output_params() const; // number of outputs without output plugs
+  virtual size_t get_num_all_inputs() const;
+  virtual size_t get_num_all_outputs() const;
 
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
   virtual void load(SimpleLoader& loader);
 
- protected:
-  std::vector<ShapeInstance> _quads;
   virtual void select(bool selected);
   virtual bool is_selected() const;
+
+ protected:
+  std::vector<ShapeInstance> _quads;
 
   virtual size_t get_num_base_quads() const;
 
@@ -105,8 +110,8 @@ class COMPSHAPES_EXPORT NodeShape: public CompShape {
   std::vector<CharInstance> _chars;
 
   // Our input output ordering.
-  std::vector<std::string> _input_names;
-  std::vector<std::string> _output_names;
+  std::vector<std::string> _linkable_input_names;
+  std::vector<std::string> _linkable_output_names;
 
 };
 
