@@ -9,7 +9,7 @@ import NodeGraphRendering 1.0
 import octoplier.actionbars 1.0
 import octoplier.pages 1.0
 //import octoplier.dialogs 1.0
-import octoplier.menus 1.0
+import octoplier.stackedpages 1.0
 import octoplier.appwidgets 1.0
 import octoplier.appconfig 1.0
 import octoplier.menumodels 1.0
@@ -101,12 +101,12 @@ Rectangle {
         visible: false
     }
 
-    EditNodePage {
+    MenuStackPage {
         id: edit_node_page
         visible: false
     }
 
-    ViewNodePage {
+    MenuStackPage {
         id: view_node_page
         visible: false
     }
@@ -183,6 +183,7 @@ Rectangle {
         //quick_view.closing.connect(app_window.onClosing)
 
         quick_view.closing.connect(app_window.on_closing)
+        //node_graph_page.node_graph.view_node_results.connect(view_node_page.on_view_node)
     }
 
 //    function onClosing() {

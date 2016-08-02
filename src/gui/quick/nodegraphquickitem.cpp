@@ -541,6 +541,7 @@ void NodeGraphQuickItem::view_node() {
   if(compute) {
     qDebug() << "performing compute! \n";
     compute->propagate_cleanliness();
+    emit view_node_results(compute->our_entity()->get_name().c_str(), compute->get_results());
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
   }

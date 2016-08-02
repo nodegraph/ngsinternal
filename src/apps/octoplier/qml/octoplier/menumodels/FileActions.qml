@@ -4,11 +4,11 @@ import QtQuick 2.6
 
 ListModel {
 
+    property var title: "File Actions"
+
     function update(props) {}
 
     ListElement {
-        navigator_title: "File Actions"
-
         image_url: "qrc:///icons/ic_open_in_browser_white_48dp.png"
         title: "Load"
         description: "Load the selected graph file."

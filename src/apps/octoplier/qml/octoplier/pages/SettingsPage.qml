@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
 
-import octoplier.menus 1.0
+import octoplier.stackedpages 1.0
 import octoplier.appwidgets 1.0
 
 

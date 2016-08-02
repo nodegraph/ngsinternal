@@ -4,6 +4,8 @@ import QtQuick 2.6
 
 ListModel {
 
+    property var title: "Node Graph Actions"
+
     function update(props) {
         if (props["links_are_locked"] == true) {
             get(0).image_url= "qrc:///icons/ic_lock_open_white_48dp.png"
@@ -19,8 +21,6 @@ ListModel {
     }
 
     ListElement {
-        navigator_title: "Node Graph Actions"
-
         image_url: "qrc:///icons/ic_settings_white_48dp.png"
         title: "Lock Links"
         description: "Locking links prevents new link creation and deletion."

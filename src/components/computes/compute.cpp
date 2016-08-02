@@ -41,6 +41,10 @@ void Compute::update_state() {
   // Derived classes now perform their compute.
 }
 
+const QVariantMap& Compute::get_results() const {
+  return _results;
+}
+
 const QVariant& Compute::get_result(const std::string& name) const{
   if (!_results.count(name.c_str())) {
     return _empty_variant;

@@ -13,7 +13,11 @@ Rectangle {
     z: app_settings.page_z
     
     // Appearance.
-    color: "red"
+    color: app_settings.menu_stack_bg_color
+
+    // Members.
+    property var inputs: []
+    property var widgets: []
 
     // Methods.
     function on_switch_to_mode(mode) {
@@ -22,6 +26,22 @@ Rectangle {
             menu_stack_page.visible = false
         } else {
             visible = false;
+        }
+    }
+
+    function on_edit_node(inputs) {
+        edit_node_page.inputs = inputs
+
+        for (var i=0; i<inputs.length; i++) {
+            var widget = app_loader.load_component("qrc:///qml/octoplier/appwidgets/AppLabel.qml", edit_node_page, {})
+            edit_node_page.widgets.push(widget)
+        }
+    }
+
+    function test() {
+        for (var i=0; i<3; i++) {
+            var widget = app_loader.load_component("qrc:///qml/octoplier/appwidgets/AppLabel.qml", edit_node_page, {})
+            edit_node_page.widgets.push(widget)
         }
     }
 }

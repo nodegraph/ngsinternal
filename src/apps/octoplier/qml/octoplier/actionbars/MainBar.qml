@@ -63,6 +63,7 @@ Rectangle {
         file_button.lit = false
         node_graph_button.lit = false
         view_node_button.lit = false
+        edit_node_button.lit = false
         posts_button.lit = false
         settings_button.lit = false
     }

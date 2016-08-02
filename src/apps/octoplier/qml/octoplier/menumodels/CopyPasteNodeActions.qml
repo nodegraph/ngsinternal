@@ -4,11 +4,11 @@ import QtQuick 2.6
 
 ListModel {
 
+    property var title: "Copy and Paste"
+
     function update(props) {}
 
     ListElement {
-        navigator_title: "Copy and Paste"
-
         image_url: "qrc:///icons/ic_content_copy_white_48dp.png"
         title: "Copy"
         description: "Copy all the selected nodes."

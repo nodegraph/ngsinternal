@@ -4,11 +4,11 @@ import QtQuick 2.6
 
 ListModel {
 
+    property var title: "Explode and Collapse"
+
     function update(props) {}
 
     ListElement {
-        navigator_title: "Explode and Collapse"
-
         image_url: "qrc:///icons/ic_zoom_out_map_white_48dp.png"
         title: "Explode"
         description: "Explode the selected group node into its contents."

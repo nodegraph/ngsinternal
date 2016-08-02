@@ -4,11 +4,11 @@ import QtQuick 2.6
 
 ListModel {
 
+    property var title: "Create"
+
     function update(props) {}
 
     ListElement {
-        navigator_title: "Create"
-
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
         title: "Group Node"
         description: "A node which groups a number of nodes inside of itself."

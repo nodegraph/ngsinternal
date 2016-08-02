@@ -1,5 +1,10 @@
 module appwidgets
 
+AppDataDelegate 1.0 AppDataDelegate.qml
+AppMenuItemDelegate 1.0 AppMenuItemDelegate.qml
+AppStackViewHeader 1.0 AppStackViewHeader.qml
+AppStackView 1.0 AppStackView.qml
+AppScrollView 1.0 AppScrollView.qml
 
 AppImageButton 1.0 AppImageButton.qml
 AppMenu 1.0 AppMenu.qml

@@ -34,6 +34,7 @@ class COMPUTES_EXPORT Compute: public Component {
   const char* get_compute_type() {return "";}
 
   // Our results.
+  virtual const QVariantMap& get_results() const;
   virtual const QVariant& get_result(const std::string& name) const;
 
   // Helpers.

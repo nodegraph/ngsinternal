@@ -4,11 +4,11 @@ import QtQuick 2.6
 
 ListModel {
 
+    property var title: "Group Node Actions"
+
     function update(props) {}
 
     ListElement {
-        navigator_title: "Group Node Actions"
-
         image_url: "qrc:///icons/ic_arrow_downward_white_48dp.png"
         title: "Dive"
         description: "Dive into the group node."

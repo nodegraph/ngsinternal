@@ -16,14 +16,21 @@
         <file>qml/octoplier/actionbars/CopyPasteBar.qml</file>
         <file>qml/octoplier/actionbars/Splitter.qml</file>
         
-        <!-- Menus -->
-        <file>qml/octoplier/menus/qmldir</file>
-        <file>qml/octoplier/menus/MenuStackPage.qml</file>
-        <file>qml/octoplier/menus/MenuPage.qml</file>
-        <file>qml/octoplier/menus/CreateFilePage.qml</file>
+        <!-- Stacked Pages -->
+        <file>qml/octoplier/stackedpages/qmldir</file>
+        <file>qml/octoplier/stackedpages/MenuStackPage.qml</file>
+        <file>qml/octoplier/stackedpages/MenuPage.qml</file>
+        <file>qml/octoplier/stackedpages/DataPage.qml</file>
+        <file>qml/octoplier/stackedpages/CreateFilePage.qml</file>
         
         <!-- AppWidgets -->
         <file>qml/octoplier/appwidgets/qmldir</file>
+        <file>qml/octoplier/appwidgets/AppDataDelegate.qml</file>
+        <file>qml/octoplier/appwidgets/AppMenuItemDelegate.qml</file>
+        <file>qml/octoplier/appwidgets/AppStackViewHeader.qml</file>
+        <file>qml/octoplier/appwidgets/AppStackView.qml</file>
+        <file>qml/octoplier/appwidgets/AppScrollView.qml</file>
+        
         <file>qml/octoplier/appwidgets/AppImageButton.qml</file>
         <file>qml/octoplier/appwidgets/AppTextField.qml</file>
         <file>qml/octoplier/appwidgets/AppPasswordField.qml</file>

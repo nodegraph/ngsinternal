@@ -43,11 +43,15 @@ Q_OBJECT
   Q_INVOKABLE QString get_app_dir();
   Q_INVOKABLE QString get_smash_browse_url();
 
+  // Polling to keep browser open.
   Q_INVOKABLE bool is_polling();
   Q_INVOKABLE void start_polling();
   Q_INVOKABLE void stop_polling();
+
   Q_INVOKABLE void open_browser();
   Q_INVOKABLE void close_browser();
+
+  //void view_node(const QVariant&);
 
 signals:
   // Fired on completion of a command.

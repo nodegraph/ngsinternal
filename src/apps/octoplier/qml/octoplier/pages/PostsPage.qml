@@ -2,7 +2,7 @@ import QtQuick 2.6
 import NodeGraphTesting 1.0
 
 import octoplier.appconfig 1.0
-import octoplier.menus 1.0
+import octoplier.stackedpages 1.0
 import octoplier.appwidgets 1.0
 import octoplier.menumodels 1.0
 

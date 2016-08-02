@@ -1,6 +1,6 @@
-module menus
+module stackedpages
 
 MenuStackPage 1.0 MenuStackPage.qml
 MenuPage 1.0 MenuPage.qml
-
+DataPage 1.0 DataPage.qml
 CreateFilePage 1.0 CreateFilePage.qml

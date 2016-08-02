@@ -4,10 +4,11 @@ import QtQuick 2.6
 
 ListModel {
 
+    property var title: "Frame"
+
     function update(props) {}
 
     ListElement {
-        navigator_title: "Frame"
         image_url: "qrc:///icons/ic_crop_free_white_48dp.png"
         title: "Frame All Nodes"
         description: "Frame all nodes to fit the screen."

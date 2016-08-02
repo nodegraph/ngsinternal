@@ -4,11 +4,11 @@ import QtQuick 2.6
 
 ListModel {
 
+    property var title: "Select"
+
     function update(props) {}
 
     ListElement {
-        navigator_title: "Select"
-
         image_url: "qrc:///icons/ic_select_all_white_48dp.png"
         title: "Select All"
         description: "Select all nodes in this group."
