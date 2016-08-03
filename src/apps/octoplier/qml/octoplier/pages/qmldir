@@ -7,8 +7,6 @@ SplashPage 1.0 SplashPage.qml
 
 FilePage 1.0 FilePage.qml
 NodeGraphPage 1.0 NodeGraphPage.qml
-ViewNodePage 1.0 ViewNodePage.qml
-EditNodePage 1.0 EditNodePage.qml
 PostsPage 1.0 PostsPage.qml
 SettingsPage 1.0 SettingsPage.qml
 

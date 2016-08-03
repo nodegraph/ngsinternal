@@ -11,8 +11,8 @@ Rectangle {
     id: create_file_page
 
     // Dimensions.
-    height: app_settings.menu_page_height
-    width: app_settings.menu_page_width
+    height: app_settings.page_height
+    width: app_settings.page_width
 
     // Positioning.
     x: 0
@@ -22,13 +22,13 @@ Rectangle {
     // Properties.
     color: app_settings.ng_bg_color
 
+    // This is set when added to the app stack view.
+    property var parent_stack_view
+
+    // Properties.
     property string mode: "create"
     property alias title_field: title_field
     property alias description_field: description_field
-
-    Component.onCompleted: {
-    }
-
 
     ColumnLayout {
         //height: app_settings.menu_page_height
@@ -38,6 +38,7 @@ Rectangle {
         Rectangle {
             height: app_settings.column_layout_spacing
             width: app_settings.menu_page_width
+            color: "transparent"
         }
 
         AppLabel {
@@ -101,6 +102,6 @@ Rectangle {
             Item {Layout.fillWidth: true}
         }
     }
-    }
+}
 
 

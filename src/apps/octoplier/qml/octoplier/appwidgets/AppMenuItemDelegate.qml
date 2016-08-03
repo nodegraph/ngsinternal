@@ -68,7 +68,7 @@ Rectangle {
             menu_item_delegate.ListView.view.currentIndex = index
             if (typeof next_model !== "undefined") {
                 menu_item_delegate.ListView.view.parent_stack_view.push_model_name(next_model);
-            } else if (typeof script != "undefined") {
+            } else if (typeof script !== "undefined") {
                 menu_item_delegate.ListView.view.parent_stack_view.execute_script(script)
             }
         }

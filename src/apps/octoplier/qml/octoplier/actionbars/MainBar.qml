@@ -24,6 +24,9 @@ Rectangle {
     signal switch_to_mode(int mode)
     signal open_more_options()
 
+    // Internal Properties.
+    property var last_mode: app_settings.node_graph_mode
+
     Component.onCompleted: {
     }
     
@@ -57,6 +60,11 @@ Rectangle {
             more_menu_button.visible = false;
         }
         switch_to_mode(m)
+        last_mode = m
+    }
+
+    function switch_to_last_mode(m) {
+        on_switch_to_mode(last_mode)
     }
 
     function clear_lit_buttons() {
@@ -94,7 +102,7 @@ Rectangle {
         anchors.right: file_button.left
         
         image_url: "qrc:///icons/ic_more_vert_white_48dp.png"
-        tooltip_text: "More actions"
+        tooltip_text: "More Options"
         
         onClicked: {
             open_more_options();
@@ -109,7 +117,7 @@ Rectangle {
         anchors.right: node_graph_button.left
 
         image_url: "qrc:///icons/ic_folder_open_white_48dp.png"
-        tooltip_text: "Files"
+        tooltip_text: "Node Graph Files"
 
         onClicked: {
             on_switch_to_mode(app_settings.file_mode)
@@ -124,7 +132,7 @@ Rectangle {
         anchors.right: view_node_button.left
         
         image_url: "qrc:///icons/ic_widgets_white_48dp.png"
-        tooltip_text: "Nodes"
+        tooltip_text: "Node Graph"
         
         onClicked: {
             on_switch_to_mode(app_settings.node_graph_mode)
@@ -139,7 +147,7 @@ Rectangle {
         anchors.right: edit_node_button.left
         
         image_url: "qrc:///icons/ic_looks_3_white_48dp.png"
-        tooltip_text: "Browser"
+        tooltip_text: "View Node Outputs"
         
         onClicked: {
             on_switch_to_mode(app_settings.view_node_mode)
@@ -154,7 +162,7 @@ Rectangle {
         anchors.right: posts_button.left
         
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
-        tooltip_text: "Browser"
+        tooltip_text: "Edit Node Parameters"
         
         onClicked: {
             on_switch_to_mode(app_settings.edit_node_mode)

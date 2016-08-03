@@ -14,7 +14,7 @@ import octoplier.menumodels 1.0
 
 
 Rectangle{
-    id: view_node_stack_page
+    id: data_stack_page
 
     height: app_settings.page_height
     width: app_settings.page_width
@@ -25,30 +25,37 @@ Rectangle{
 
     color: app_settings.menu_stack_bg_color
 
-    property alias stack_view: stack_view
-    property alias stack_view_header: stack_view_header
+    // Settings.
+    property var mode: app_settings.view_node_mode
 
     // Methods.
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.view_node_mode) {
+        if (mode == data_stack_page.mode) {
             visible = true;
         } else {
             visible = false;
         }
     }
 
-    function on_view_node_outputs(node_name, node_outputs) {
+    function on_show_data(node_name, node_data) {
         app_settings.vibrate()
         stack_view.clear_models()
-        stack_view.view_object(node_name + ":outputs", node_outputs)
+        if (mode == app_settings.view_node_mode) {
+            stack_view.view_object("Outputs For: " + node_name, node_data)
+        } else {
+        	stack_view.allow_editing = true // Allow data to be edited.
+            stack_view.view_object("Parameters For: " + node_name, node_data)
+       	}
     }
-
 
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_page: view_node_stack_page
-        allow_stack_page_back_out: false
+        // Dependencies.
+        stack_view: stack_view
+        // Properties.
+        allow_back_to_last_mode: false
+        title_text: (mode == app_settings.view_node_mode) ? "Outputs For: " : "Parameters For: "
     }
 
     // The scroll view.
@@ -58,16 +65,16 @@ Rectangle{
         // The main stack view.
         AppStackView{
             id: stack_view
+
+            // Dependencies.
             stack_view_header: stack_view_header
 
+            // Push next model on the stack.
             function push_model(next_model) {
                 var next_page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/DataPage.qml", app_window, {})
                 next_page.model = next_model
-                next_page.title = next_model.title
-                stack_view.push_page(next_page)
+                stack_view.push_page(next_model.title, next_page)
             }
-
-            // Slots.
 
             // Create a list model.
             function create_model(name) {
@@ -76,7 +83,7 @@ Rectangle{
                     ListModel {
                         property var title: \"" + name + "\";
                     } "
-                return Qt.createQmlObject(script, view_node_stack_page, "view_node_dynamic_content")
+                return Qt.createQmlObject(script, data_stack_page, "view_node_dynamic_content")
             }
             // Display the contents of a dict.
             function view_object(name, obj) {

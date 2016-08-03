@@ -7,7 +7,6 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
-
 import octoplier.appconfig 1.0
 import octoplier.stackedpages 1.0
 import octoplier.pages 1.0
@@ -31,9 +30,7 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_page_bg_color
 
-
     // Our Model.
-    property var title: "hello"
     property var model:  ListModel{}
 
     // Our Dependencies.

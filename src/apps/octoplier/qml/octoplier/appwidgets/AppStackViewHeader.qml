@@ -29,8 +29,11 @@ Rectangle {
     radius: app_settings.menu_stack_header_radius
 
     // Dependencies.
-    property var stack_page
-    property var allow_stack_page_back_out: true // Allows the stack page to hide and go back to previous mode when the back_button is pressed.
+    property var stack_view
+    property var allow_back_to_last_mode: true // Allows the stack page to hide and go back to previous mode when the back_button is pressed.
+    
+    // Settings.
+    property alias title_text: title_text.text
 
     // Internal state.
     property var header_title_stack: []
@@ -56,18 +59,15 @@ Rectangle {
 
         tooltip_text: "Back up"
         image_url: "qrc:///icons/ic_arrow_back_white_48dp.png"
-        visible: allow_stack_page_back_out ? 1 : (stack_view.depth > 1 ? 1 : 0)
+        visible: allow_back_to_last_mode ? 1 : (stack_view.depth > 1 ? 1 : 0)
         onClicked: {
-            if (stack_page.stack_view.depth > 1) {
-                stack_page.stack_view.pop_model()
-            } else if (!allow_stack_page_back_out) {
+            if (stack_view.depth > 1) {
+                stack_view.pop_model()
+            } else if (!allow_back_to_last_mode) {
                 return
             } else {
                 // Backing out of stack page, to previous mode page.
-                stack_page.visible = false
-                if (stack_page.last_mode) {
-                    main_bar.on_switch_to_mode(stack_page.last_mode)
-                }
+                main_bar.switch_to_last_mode()
             }
         }
     }

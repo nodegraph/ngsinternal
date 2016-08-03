@@ -19,7 +19,7 @@
         <!-- Stacked Pages -->
         <file>qml/octoplier/stackedpages/qmldir</file>
         <file>qml/octoplier/stackedpages/MenuStackPage.qml</file>
-        <file>qml/octoplier/stackedpages/ViewNodeStackPage.qml</file>
+        <file>qml/octoplier/stackedpages/DataStackPage.qml</file>
         <file>qml/octoplier/stackedpages/MenuPage.qml</file>
         <file>qml/octoplier/stackedpages/DataPage.qml</file>
         <file>qml/octoplier/stackedpages/CreateFilePage.qml</file>
@@ -64,12 +64,10 @@
         <file>qml/octoplier/pages/qmldir</file>
         <file>qml/octoplier/pages/CreatePasswordPage.qml</file>
         <file>qml/octoplier/pages/CheckPasswordPage.qml</file>
-        <file>qml/octoplier/pages/EditNodePage.qml</file>
         <file>qml/octoplier/pages/FilePage.qml</file>
         <file>qml/octoplier/pages/NodeGraphPage.qml</file>
         <file>qml/octoplier/pages/PostsPage.qml</file>
         <file>qml/octoplier/pages/SettingsPage.qml</file>
-        <file>qml/octoplier/pages/ViewNodePage.qml</file>
         <file>qml/octoplier/pages/SplashPage.qml</file>
         
         <!-- JS Compute Nodes -->
@@ -195,8 +193,6 @@
         <file alias="icons/ic_gesture_white_48dp.png">../../external/icons/ic_gesture_white_48dp.png</file>
         
         <!-- Node Actions -->
-        <file alias="icons/ic_mode_edit_black_48dp.png">../../external/icons/ic_mode_edit_black_48dp.png</file>
-        <file alias="icons/ic_mode_edit_white_48dp.png">../../external/icons/ic_mode_edit_white_48dp.png</file>
         <file alias="icons/ic_settings_system_daydream_black_48dp.png">../../external/icons/ic_settings_system_daydream_black_48dp.png</file>
         <file alias="icons/ic_settings_system_daydream_white_48dp.png">../../external/icons/ic_settings_system_daydream_white_48dp.png</file>
         

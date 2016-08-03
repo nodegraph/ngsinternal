@@ -1,7 +1,7 @@
 module stackedpages
 
 MenuStackPage 1.0 MenuStackPage.qml
-ViewNodeStackPage 1.0 ViewNodeStackPage.qml
+DataStackPage 1.0 DataStackPage.qml
 
 MenuPage 1.0 MenuPage.qml
 DataPage 1.0 DataPage.qml

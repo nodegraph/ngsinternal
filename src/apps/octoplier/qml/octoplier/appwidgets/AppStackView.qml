@@ -22,6 +22,9 @@ StackView {
     // Dependencies.
     property var stack_view_header
 
+    // Properties.
+    property var allow_editing: false
+
     // Implements back key navigation
     focus: true
     Keys.onReleased: if (event.key === Qt.Key_Back && stack_view.depth > 1) {
@@ -52,10 +55,10 @@ StackView {
         }
     }
 
-    function push_page(page) {
+    function push_page(title, page) {
         page.parent_stack_view = stack_view
         push(page)
-        stack_view_header.push_header_title(page.title)
+        stack_view_header.push_header_title(title)
     }
 
     function pop_model() {

@@ -64,18 +64,21 @@ Rectangle {
         }
 
         onDoubleClicked: {
-            console.log("on double clicked!")
             mouse.accepted = true
+            // Set current index.
             data_delegate.ListView.view.currentIndex = index
-           
+            // A lot of functionality is implement on our containing stack view.
+            var stack_view = data_delegate.ListView.view.parent_stack_view
+            // Take action.
             if (typeof child_object_data !== "undefined") {
-                data_delegate.ListView.view.parent_stack_view.view_object(title, child_object_data);
+                stack_view.view_object(title, child_object_data);
             } else if (typeof child_array_data !== "undefined") {
-                console.log("on clicked array: " + Array.isArray(child_array_data))
-                console.log("type of array: " + (typeof child_array_data))
-                data_delegate.ListView.view.parent_stack_view.view_array(title, child_array_data);
+                stack_view.view_array(title, child_array_data);
             } else if (typeof script != "undefined") {
-                data_delegate.ListView.view.parent_stack_view.execute_script(script)
+                stack_view.execute_script(script)
+            } else if (stack_view.allow_editing) {
+                var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", app_window, {})
+                stack_view.push_page(title, page)
             }
         }
     }

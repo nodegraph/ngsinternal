@@ -32,7 +32,6 @@ Rectangle {
     color: app_settings.menu_page_bg_color
 
     // Our Model.
-    property var title: "hello"
     property var model:  ListModel{}
 
     // Our Dependencies.

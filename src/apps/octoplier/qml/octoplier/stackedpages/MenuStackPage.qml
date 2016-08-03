@@ -28,13 +28,11 @@ Rectangle{
     y: app_settings.page_y
     z: app_settings.page_z
 
+    // Appearance.
     color: app_settings.menu_stack_bg_color
 
+    // Properties.
     property bool center_new_nodes: false
-    property var last_mode;
-
-    property alias stack_view: stack_view
-    property alias stack_view_header: stack_view_header
 
     // Methods.
     function on_switch_to_mode(mode) {
@@ -51,7 +49,6 @@ Rectangle{
         center_new_nodes = false
         stack_view.clear_models()
         stack_view.push_model_name("NodeActions")
-        last_mode = app_settings.node_graph_mode
         visible = true
     }
 
@@ -60,7 +57,6 @@ Rectangle{
         center_new_nodes = false
         stack_view.clear_models()
         stack_view.push_model_name("GroupNodeActions")
-        last_mode = app_settings.node_graph_mode
         visible = true
     }
 
@@ -69,34 +65,38 @@ Rectangle{
         center_new_nodes = false
         stack_view.clear_models()
         stack_view.push_model_name("NodeGraphActions")
-        last_mode = app_settings.node_graph_mode
         visible = true
     }
 
     function on_create_file_page() {
-        create_file_page.visible = true
-        create_file_page.mode = "create"
-        stack_view.push(create_file_page)
-        stack_view_header.push_header_title("Create File")
-        last_mode = app_settings.file_mode
+        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", app_window, {})
+        page.visible = true
+        page.mode = "create"
+        stack_view.push_page("Create File", page)
         visible = true
     }
     
     function on_edit_file_page() {
-        create_file_page.visible = true
-        create_file_page.mode = "update"
-        create_file_page.title_field.text = file_page.get_current_title()
-        create_file_page.description_field.text = file_page.get_current_description()
-        stack_view.push(create_file_page)
-        stack_view_header.push_header_title("Update File")
-        last_mode = app_settings.file_mode
+        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", app_window, {})
+        page.visible = true
+        page.mode = "update"
+        page.title_field.text = file_page.get_current_title()
+        page.description_field.text = file_page.get_current_description()
+        stack_view.push_page("Update File", page)
         visible = true
+    }
+
+    function show_options(model_name) {
+        center_new_nodes = true
+        visible = true
+        stack_view.clear()
+        stack_view.push_model_name(model_name)
     }
 
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_page: menu_stack_page
+        stack_view: stack_view
     }
 
 
@@ -112,8 +112,7 @@ Rectangle{
             function push_model(next_model) {
                 var next_page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/MenuPage.qml", app_window, {})
                 next_page.model = next_model
-                next_page.title = next_model.title
-                stack_view.push_page(next_page)
+                stack_view.push_page(next_model.title, next_page)
             }
 
             function push_model_url(url) {
