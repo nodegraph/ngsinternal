@@ -14,7 +14,7 @@ import octoplier.appwidgets 1.0
 import octoplier.menumodels 1.0
 
 Rectangle {
-    id: app_data_delegate
+    id: data_delegate
     width: parent.width
     height: app_settings.list_item_height_large
     border.color: "white"
@@ -64,10 +64,16 @@ Rectangle {
         }
 
         onDoubleClicked: {
+            console.log("on double clicked!")
             mouse.accepted = true
             data_delegate.ListView.view.currentIndex = index
-            if (typeof next_model !== "undefined") {
-                data_delegate.ListView.view.parent_stack_view.push_model_name(next_model);
+           
+            if (typeof child_object_data !== "undefined") {
+                data_delegate.ListView.view.parent_stack_view.view_object(title, child_object_data);
+            } else if (typeof child_array_data !== "undefined") {
+                console.log("on clicked array: " + Array.isArray(child_array_data))
+                console.log("type of array: " + (typeof child_array_data))
+                data_delegate.ListView.view.parent_stack_view.view_array(title, child_array_data);
             } else if (typeof script != "undefined") {
                 data_delegate.ListView.view.parent_stack_view.execute_script(script)
             }

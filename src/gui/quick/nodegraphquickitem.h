@@ -109,7 +109,7 @@ Q_OBJECT
  void group_node_context_menu_requested();
  void node_context_menu_requested();
 
- void view_node_results(const QString& name, const QVariantMap& results);
+ void view_node_outputs(const QString& name, const QVariantMap& results);
  void edit_node_inputs(const QString& name, const QVariantList& inputs);
 
  void mark_progress();

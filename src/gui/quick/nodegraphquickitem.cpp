@@ -541,7 +541,30 @@ void NodeGraphQuickItem::view_node() {
   if(compute) {
     qDebug() << "performing compute! \n";
     compute->propagate_cleanliness();
-    emit view_node_results(compute->our_entity()->get_name().c_str(), compute->get_results());
+
+    QVariantMap submap;
+    submap.insert("xxnumber int", 123);
+    submap.insert("xxstring", "booya man");
+    submap.insert("xxnumber float", 234.545);
+    submap.insert("xxboolean", true);
+    submap.insert("xxboolean2", false);
+
+    QVariantList sublist;
+    sublist.push_back(123);
+    sublist.push_back("hello");
+    sublist.push_back(434.523);
+    sublist.push_back(true);
+    sublist.push_back(false);
+
+    QVariantMap test;
+    test.insert("number int", 123);
+    test.insert("string", "booya man");
+    test.insert("number float", 234.545);
+    test.insert("boolean", true);
+    test.insert("boolean2", false);
+    test.insert("submap", submap);
+    test.insert("subarray", sublist);
+    emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_results());
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
   }

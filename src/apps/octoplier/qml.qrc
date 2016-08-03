@@ -19,6 +19,7 @@
         <!-- Stacked Pages -->
         <file>qml/octoplier/stackedpages/qmldir</file>
         <file>qml/octoplier/stackedpages/MenuStackPage.qml</file>
+        <file>qml/octoplier/stackedpages/ViewNodeStackPage.qml</file>
         <file>qml/octoplier/stackedpages/MenuPage.qml</file>
         <file>qml/octoplier/stackedpages/DataPage.qml</file>
         <file>qml/octoplier/stackedpages/CreateFilePage.qml</file>
@@ -198,6 +199,17 @@
         <file alias="icons/ic_mode_edit_white_48dp.png">../../external/icons/ic_mode_edit_white_48dp.png</file>
         <file alias="icons/ic_settings_system_daydream_black_48dp.png">../../external/icons/ic_settings_system_daydream_black_48dp.png</file>
         <file alias="icons/ic_settings_system_daydream_white_48dp.png">../../external/icons/ic_settings_system_daydream_white_48dp.png</file>
+        
+        <!-- Data View Icons -->
+        <file alias="icons/ic_font_download_black_48dp.png">../../external/icons/ic_font_download_black_48dp.png</file>
+        <file alias="icons/ic_font_download_white_48dp.png">../../external/icons/ic_font_download_white_48dp.png</file>
+        <file alias="icons/ic_looks_one_black_48dp.png">../../external/icons/ic_looks_one_black_48dp.png</file>
+        <file alias="icons/ic_looks_one_white_48dp.png">../../external/icons/ic_looks_one_white_48dp.png</file>
+        <file alias="icons/ic_looks_3_black_48dp.png">../../external/icons/ic_looks_3_black_48dp.png</file>
+        <file alias="icons/ic_looks_3_white_48dp.png">../../external/icons/ic_looks_3_white_48dp.png</file>
+        <file alias="icons/ic_check_box_black_24dp.png">../../external/icons/ic_check_box_black_24dp.png</file>
+        <file alias="icons/ic_check_box_white_24dp.png">../../external/icons/ic_check_box_white_24dp.png</file>
+        
         
     </qresource>
 </RCC>

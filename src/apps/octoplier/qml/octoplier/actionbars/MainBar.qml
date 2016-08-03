@@ -138,7 +138,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: edit_node_button.left
         
-        image_url: "qrc:///icons/ic_visibility_white_48dp.png"
+        image_url: "qrc:///icons/ic_looks_3_white_48dp.png"
         tooltip_text: "Browser"
         
         onClicked: {

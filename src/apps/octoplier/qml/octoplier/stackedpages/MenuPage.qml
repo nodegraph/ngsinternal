@@ -33,7 +33,7 @@ Rectangle {
 
     // Our Model.
     property var title: "hello"
-    property var model:  NodeActions {}
+    property var model:  ListModel{}
 
     // Our Dependencies.
     property var parent_stack_view

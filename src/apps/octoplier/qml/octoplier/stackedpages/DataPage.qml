@@ -33,7 +33,8 @@ Rectangle {
 
 
     // Our Model.
-    property var model:  NodeActions {}
+    property var title: "hello"
+    property var model:  ListModel{}
 
     // Our Dependencies.
     property var parent_stack_view
@@ -53,7 +54,7 @@ Rectangle {
 
         // Our model and delegate.
         model: data_page.model
-        delegate: AppMenuItemDelegate{}
+        delegate: AppDataDelegate{}
         currentIndex: -1
 
         // Appearance.
@@ -62,7 +63,7 @@ Rectangle {
         focus: true
 
         // Our parenting stack page. This should be set when pushed onto the stack view.
-        property var parent_stack_view: menu_page.parent_stack_view
+        property var parent_stack_view: data_page.parent_stack_view
     }
 
 }

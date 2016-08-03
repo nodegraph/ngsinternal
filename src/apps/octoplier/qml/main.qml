@@ -106,7 +106,7 @@ Rectangle {
         visible: false
     }
 
-    MenuStackPage {
+    ViewNodeStackPage {
         id: view_node_page
         visible: false
     }
@@ -183,7 +183,7 @@ Rectangle {
         //quick_view.closing.connect(app_window.onClosing)
 
         quick_view.closing.connect(app_window.on_closing)
-        //node_graph_page.node_graph.view_node_results.connect(view_node_page.on_view_node)
+        node_graph_page.node_graph.view_node_outputs.connect(view_node_page.on_view_node_outputs)
     }
 
 //    function onClosing() {
