@@ -47,7 +47,7 @@ Rectangle{
     function on_node_context_menu() {
         app_settings.vibrate()
         center_new_nodes = false
-        stack_view.clear_models()
+        stack_view.clear_pages()
         stack_view.push_model_name("NodeActions")
         visible = true
     }
@@ -55,7 +55,7 @@ Rectangle{
     function on_group_node_context_menu(){
         app_settings.vibrate()
         center_new_nodes = false
-        stack_view.clear_models()
+        stack_view.clear_pages()
         stack_view.push_model_name("GroupNodeActions")
         visible = true
     }
@@ -63,7 +63,7 @@ Rectangle{
     function on_node_graph_context_menu() {
         app_settings.vibrate()
         center_new_nodes = false
-        stack_view.clear_models()
+        stack_view.clear_pages()
         stack_view.push_model_name("NodeGraphActions")
         visible = true
     }

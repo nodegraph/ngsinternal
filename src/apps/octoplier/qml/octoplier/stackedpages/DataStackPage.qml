@@ -39,7 +39,7 @@ Rectangle{
 
     function on_show_data(node_name, node_data) {
         app_settings.vibrate()
-        stack_view.clear_models()
+        stack_view.clear_pages()
         if (mode == app_settings.view_node_mode) {
             stack_view.view_object("Outputs For: " + node_name, node_data)
         } else {
@@ -110,26 +110,33 @@ Rectangle{
                 if (typeof value === 'string') {
                     element.description = value
                     element.image_url = 'qrc:///icons/ic_font_download_white_48dp.png'
+                    element.our_string_value = value
                 } else if (typeof value === 'boolean') {
                     element.description = value.toString()
                     element.image_url = 'qrc:///icons/ic_check_box_white_24dp.png'
+                    element.our_boolean_value = value
                 }else if (typeof value === 'object') {
+                    element.type = 'object'
                     // can be array or object
                     if (Object.getPrototypeOf(value) === Object.prototype) {
                         element.description = "folder of values"
-                        element.child_object_data = value
                         element.image_url = 'qrc:///icons/ic_folder_white_48dp.png'
+                        element.our_object_value = value
                     } else if (Object.getPrototypeOf(value) === Array.prototype) {
                         element.description = "array of values"
+                        element.image_url = 'qrc:///icons/ic_folder_white_48dp.png'
                         // Qt will try to interpret sub/child arrays/lists as child listmodels.
                         // To get around this we embed the array in an object.
-                        element.child_array_data = {payload: value}
-                        element.image_url = 'qrc:///icons/ic_folder_white_48dp.png'
+                        element.our_array_value = {payload: value}
                     }
-                } else {
+                } else if (typeof value === 'number'){
                     element.description = value.toString()
                     element.image_url = 'qrc:///icons/ic_looks_3_white_48dp.png'
+                    element.our_number_value = value
+                } else {
+                    console.log("Error: DataStackPage encountered unknown type.")
                 }
+
                 return element
             }
         }

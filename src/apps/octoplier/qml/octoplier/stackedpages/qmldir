@@ -1,8 +1,14 @@
 module stackedpages
 
 MenuStackPage 1.0 MenuStackPage.qml
-DataStackPage 1.0 DataStackPage.qml
-
 MenuPage 1.0 MenuPage.qml
+
+DataStackPage 1.0 DataStackPage.qml
 DataPage 1.0 DataPage.qml
+
+
 CreateFilePage 1.0 CreateFilePage.qml
+EditStringPage 1.0 EditStringPage.qml
+EditBooleanPage 1.0 EditBooleanPage.qml
+EditNumberPage 1.0 EditNumberPage.qml
+EditEnumPage 1.0 EditEnumPage.qml

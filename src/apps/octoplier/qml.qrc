@@ -23,6 +23,10 @@
         <file>qml/octoplier/stackedpages/MenuPage.qml</file>
         <file>qml/octoplier/stackedpages/DataPage.qml</file>
         <file>qml/octoplier/stackedpages/CreateFilePage.qml</file>
+        <file>qml/octoplier/stackedpages/EditStringPage.qml</file>
+        <file>qml/octoplier/stackedpages/EditBooleanPage.qml</file>
+        <file>qml/octoplier/stackedpages/EditNumberPage.qml</file>
+        <file>qml/octoplier/stackedpages/EditEnumPage.qml</file>
         
         <!-- AppWidgets -->
         <file>qml/octoplier/appwidgets/qmldir</file>

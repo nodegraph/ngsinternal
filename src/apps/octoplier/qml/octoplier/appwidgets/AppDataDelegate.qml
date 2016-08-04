@@ -67,18 +67,33 @@ Rectangle {
             mouse.accepted = true
             // Set current index.
             data_delegate.ListView.view.currentIndex = index
-            // A lot of functionality is implement on our containing stack view.
+            // Use functionality implemented on our containing stack view.
             var stack_view = data_delegate.ListView.view.parent_stack_view
             // Take action.
-            if (typeof child_object_data !== "undefined") {
-                stack_view.view_object(title, child_object_data);
-            } else if (typeof child_array_data !== "undefined") {
-                stack_view.view_array(title, child_array_data);
-            } else if (typeof script != "undefined") {
-                stack_view.execute_script(script)
+            if (typeof our_object_value !== "undefined") {
+                stack_view.view_object(title, our_object_value);
+            } else if (typeof our_array_value !== "undefined") {
+                stack_view.view_array(title, our_array_value);
+            } else if (typeof our_script != "undefined") {
+                stack_view.execute_script(our_script)
             } else if (stack_view.allow_editing) {
-                var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", app_window, {})
-                stack_view.push_page(title, page)
+                if (typeof our_string_value != "undefined") {
+                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditStringPage.qml", edit_node_page, {})
+                    page.init(our_string_value)
+                    stack_view.push_page(title, page)
+                } else if (typeof our_boolean_value != "undefined") {
+                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditBooleanPage.qml", edit_node_page, {})
+                    page.init(title, our_boolean_value)
+                    stack_view.push_page(title, page)
+                } else if (typeof our_number_value != "undefined") {
+                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditNumberPage.qml", edit_node_page, {})
+                    page.init(title, our_number_value)
+                    stack_view.push_page(title, page)
+                } else if (typeof our_enum_value != "undefined") {
+                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditEnumPage.qml", edit_node_page, {})
+                    page.init(title, our_enum_value)
+                    stack_view.push_page(title, page)
+                }
             }
         }
     }

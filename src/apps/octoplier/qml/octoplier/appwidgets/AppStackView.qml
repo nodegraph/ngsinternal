@@ -61,12 +61,12 @@ StackView {
         stack_view_header.push_header_title(title)
     }
 
-    function pop_model() {
+    function pop_page() {
         pop()
         stack_view_header.pop_header_title()
     }
 
-    function clear_models(){
+    function clear_pages(){
         clear()
         stack_view_header.clear_header_titles()
     }

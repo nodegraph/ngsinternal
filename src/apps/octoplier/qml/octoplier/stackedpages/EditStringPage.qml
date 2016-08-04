@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import octoplier.appwidgets 1.0
 
 Rectangle {
-    id: create_file_page
+    id: edit_string_page
 
     // Dimensions.
     height: app_settings.page_height
@@ -19,16 +19,17 @@ Rectangle {
     y: 0
     z: 0
 
-    // Properties.
+    // Appearance.
     color: app_settings.ng_bg_color
-
     // This is set when added to the app stack view.
     property var parent_stack_view
+    property var value
 
-    // Properties.
-    property string mode: "create"
-    property alias title_field: title_field
-    property alias description_field: description_field
+    // Methods.
+    function init(value) {
+        text_field.text = value
+        edit_string_page.value = value
+    }
 
     ColumnLayout {
         //height: app_settings.menu_page_height
@@ -41,28 +42,11 @@ Rectangle {
             color: "transparent"
         }
 
-        AppLabel {
-            text: "Title"
-        }
-
         // Title Field.
         AppTextField {
-            id: title_field
+            id: text_field
             tool_bar: copy_paste_bar
             text: "untitled"
-            onAccepted: {
-            }
-        }
-
-        AppLabel {
-            text: "Description"
-        }
-
-        // Description Field.
-        AppTextField {
-            id: description_field
-            tool_bar: copy_paste_bar
-            text: "This does something."
             onAccepted: {
             }
         }
@@ -73,15 +57,8 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    if (mode == "create") {
-                        var unique_title = file_model.make_title_unique(title_field.text)
-                        file_model.create_graph(unique_title, description_field.text)
-                        node_graph_page.node_graph.update()
-                        main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-                    } else {
-                        file_page.update_current_graph(title_field.text, description_field.text)
-                        main_bar.on_switch_to_mode(app_settings.file_mode)
-                    }
+                    edit_string_page.value = text_field.text
+                    edit_string_page.parent_stack_view.pop_page()
                 }
             }
             Rectangle {
@@ -92,7 +69,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    parent_stack_view.pop_page()
+                    edit_string_page.parent_stack_view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

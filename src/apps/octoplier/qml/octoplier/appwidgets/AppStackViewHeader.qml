@@ -62,7 +62,7 @@ Rectangle {
         visible: allow_back_to_last_mode ? 1 : (stack_view.depth > 1 ? 1 : 0)
         onClicked: {
             if (stack_view.depth > 1) {
-                stack_view.pop_model()
+                stack_view.pop_page()
             } else if (!allow_back_to_last_mode) {
                 return
             } else {
