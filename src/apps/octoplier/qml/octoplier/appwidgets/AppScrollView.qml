@@ -17,7 +17,7 @@ ScrollView {
 
     // Positioning.
     x: 0
-    y: app_settings.action_bar_height
+    y: 0
     z: 0
 
     // Scrolling Policy.

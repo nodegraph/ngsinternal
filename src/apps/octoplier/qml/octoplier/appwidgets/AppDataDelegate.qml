@@ -20,6 +20,21 @@ Rectangle {
     border.color: "white"
     border.width: app_settings.list_item_border_width
     color: "transparent"
+
+    function get_image_url() {
+        var stack_view = data_delegate.ListView.view.parent_stack_view
+        var path = stack_view.get_title_path(1, depth_index+1)
+        path.push(data_name)
+        return stack_view.get_image_url(path)
+    }
+
+    function get_value_as_string() {
+        var stack_view = data_delegate.ListView.view.parent_stack_view
+        var path = stack_view.get_title_path(1, depth_index+1)
+        path.push(data_name)
+        return stack_view.get_value_as_string(path)
+    }
+
     Row {
         Rectangle {
             height: app_settings.list_item_height_large
@@ -30,14 +45,14 @@ Rectangle {
                 width: parent.height * 2/3
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: image_url
+                source: data_delegate.ListView.view.parent_stack_view ? get_image_url() : ""
             }
         }
 
         Column {
             anchors.verticalCenter: parent.verticalCenter
             Text {
-                text: title
+                text: data_name
                 font.family: "Arial"
                 font.bold: true
                 font.pointSize: app_settings.menu_page_title_point_size
@@ -45,7 +60,7 @@ Rectangle {
                 color: "white"
             }
             Text {
-                text: description
+                text: data_delegate.ListView.view.parent_stack_view ? get_value_as_string() : ""
                 font.family: "Arial"
                 font.pointSize: app_settings.menu_page_description_point_size
                 font.italic: false
@@ -67,33 +82,51 @@ Rectangle {
             mouse.accepted = true
             // Set current index.
             data_delegate.ListView.view.currentIndex = index
+
             // Use functionality implemented on our containing stack view.
             var stack_view = data_delegate.ListView.view.parent_stack_view
-            // Take action.
-            if (typeof our_object_value !== "undefined") {
-                stack_view.view_object(title, our_object_value);
-            } else if (typeof our_array_value !== "undefined") {
-                stack_view.view_array(title, our_array_value);
-            } else if (typeof our_script != "undefined") {
-                stack_view.execute_script(our_script)
-            } else if (stack_view.allow_editing) {
-                if (typeof our_string_value != "undefined") {
+
+            // Get our current value and type.
+            var path = stack_view.get_title_path(1, depth_index+1)
+            path.push(data_name)
+            var value = stack_view.get_value(path)
+            var value_type = stack_view.get_value_type(path)
+
+            // Push a different page depending on the value type.
+            switch(value_type) {
+            case 'string_type':
+                if (stack_view.allow_editing) {
                     var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditStringPage.qml", edit_node_page, {})
-                    page.init(our_string_value)
-                    stack_view.push_page(title, page)
-                } else if (typeof our_boolean_value != "undefined") {
-                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditBooleanPage.qml", edit_node_page, {})
-                    page.init(title, our_boolean_value)
-                    stack_view.push_page(title, page)
-                } else if (typeof our_number_value != "undefined") {
-                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditNumberPage.qml", edit_node_page, {})
-                    page.init(title, our_number_value)
-                    stack_view.push_page(title, page)
-                } else if (typeof our_enum_value != "undefined") {
-                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditEnumPage.qml", edit_node_page, {})
-                    page.init(title, our_enum_value)
-                    stack_view.push_page(title, page)
+                    page.init(value)
+                    page.set_title(data_name)
+                    stack_view.push_page(page)
                 }
+                break
+            case 'boolean_type':
+                if (stack_view.allow_editing) {
+                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditBooleanPage.qml", edit_node_page, {})
+                    page.init(data_name, our_boolean_value)
+                    page.set_title(data_name)
+                    stack_view.push_page(page)
+                }
+                break
+            case 'number_type':
+                if (stack_view.allow_editing) {
+                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditNumberPage.qml", edit_node_page, {})
+                    page.init(data_name, our_number_value)
+                    page.set_title(data_name)
+                    stack_view.push_page(page)
+                }
+                break
+            case 'dictionary_type':
+                stack_view.view_object(data_name, value);
+                break
+            case 'array_type':
+                stack_view.view_array(data_name, value);
+                break
+            default:
+                console.log("Error: AppDataDelegate::onDoubleClicked encountered unknown type: " + value_type)
+                break
             }
         }
     }

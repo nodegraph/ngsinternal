@@ -31,7 +31,23 @@ Rectangle {
         edit_string_page.value = value
     }
 
+    // Our Methods.
+    function set_title(title) {
+        stack_view_header.title_text = title
+    }
+    function get_title() {
+        return stack_view_header.title_text
+    }
+
+    // The stack view header.
+    AppStackViewHeader {
+        id: stack_view_header
+        stack_view: parent_stack_view
+    }
+
     ColumnLayout {
+        y: app_settings.action_bar_height
+
         //height: app_settings.menu_page_height
         width: app_settings.menu_page_width
         spacing: app_settings.column_layout_spacing
@@ -58,6 +74,8 @@ Rectangle {
                 text: "accept"
                 onClicked: {
                     edit_string_page.value = text_field.text
+                    var path = edit_string_page.parent_stack_view.get_title_path(1, edit_string_page.parent_stack_view.depth)
+                    edit_string_page.parent_stack_view.set_value(path, text_field.text)
                     edit_string_page.parent_stack_view.pop_page()
                 }
             }

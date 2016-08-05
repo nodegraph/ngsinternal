@@ -17,13 +17,9 @@ import octoplier.menumodels 1.0
 // The Stack View.
 StackView {
     id: stack_view
+
+    // Geometry.
     anchors.fill: parent
-
-    // Dependencies.
-    property var stack_view_header
-
-    // Properties.
-    property var allow_editing: false
 
     // Implements back key navigation
     focus: true
@@ -31,6 +27,22 @@ StackView {
                          stack_view.pop();
                          event.accepted = true;
                      }
+
+    // Dependencies.
+    property var stack_view_header
+
+    // Properties.
+    property var allow_editing: false
+
+    // Get the current path of the data displayed on the top stack page.
+    function get_title_path(begin_index, end_index) {
+        var path = []
+        for (var i=begin_index; (i<stack_view.depth && i<end_index); i++) {
+            var page = stack_view.get(i)
+            path.push(page.get_title())
+        }
+        return path
+    }
 
     // Delegate.
     delegate: StackViewDelegate {
@@ -55,20 +67,33 @@ StackView {
         }
     }
 
-    function push_page(title, page) {
+    function push_page(page) {
+        // Pages are manually created so they must be manually destroyed on pop.
+        // The "destroyOnPop" doesn this for us.
+        push({item:page, destroyOnPop: true})
         page.parent_stack_view = stack_view
-        push(page)
-        stack_view_header.push_header_title(title)
     }
 
     function pop_page() {
-        pop()
-        stack_view_header.pop_header_title()
+        // Return if we have no pages to pop.
+        if (stack_view.depth <= 0) {
+            return
+        }
+        // Get the top page.
+        var page = stack_view.get(stack_view.depth-1)
+        page.parent_stack_view = null
+        if (page.model) {
+            // The model is manually created, and so must be manually destroyed.
+            page.model.destroy()
+        }
+        var page = stack_view.pop()
     }
 
     function clear_pages(){
-        clear()
-        stack_view_header.clear_header_titles()
+        var count = stack_view.depth;
+        for (var i=0; i<count; i++) {
+            stack_view.pop_page()
+        }
     }
 
     function execute_script(script) {

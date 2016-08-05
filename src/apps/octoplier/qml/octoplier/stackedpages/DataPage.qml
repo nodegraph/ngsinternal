@@ -34,7 +34,22 @@ Rectangle {
     property var model:  ListModel{}
 
     // Our Dependencies.
-    property var parent_stack_view
+    property alias parent_stack_view: list_view.parent_stack_view // This is set when pushed onto the stack view.
+
+    // Our Methods.
+    function set_title(title) {
+        stack_view_header.title_text = title
+    }
+    function get_title() {
+        return stack_view_header.title_text
+    }
+
+    // The stack view header.
+    AppStackViewHeader {
+        id: stack_view_header
+        stack_view: parent_stack_view
+        show_back_button: data_page.parent_stack_view && (data_page.parent_stack_view.depth > 1)
+    }
 
     // Our ListView.
     ListView {
@@ -46,7 +61,7 @@ Rectangle {
 
         // Positioning.
         x: 0
-        y: 0
+        y: app_settings.action_bar_height
         z: 0
 
         // Our model and delegate.
@@ -59,8 +74,8 @@ Rectangle {
         highlightMoveDuration: 0
         focus: true
 
-        // Our parenting stack page. This should be set when pushed onto the stack view.
-        property var parent_stack_view: data_page.parent_stack_view
+        // Our parenting stack view.
+        property var parent_stack_view: null
     }
 
 }

@@ -30,7 +30,20 @@ Rectangle {
     property alias title_field: title_field
     property alias description_field: description_field
 
+    // Our Methods.
+    function set_title(title) {
+        stack_view_header.title_text = title
+    }
+
+    // The stack view header.
+    AppStackViewHeader {
+        id: stack_view_header
+        stack_view: parent_stack_view
+    }
+
     ColumnLayout {
+        y: app_settings.action_bar_height
+
         //height: app_settings.menu_page_height
         width: app_settings.menu_page_width
         spacing: app_settings.column_layout_spacing
@@ -92,7 +105,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    parent_stack_view.pop_page()
+                    create_file_page.parent_stack_view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

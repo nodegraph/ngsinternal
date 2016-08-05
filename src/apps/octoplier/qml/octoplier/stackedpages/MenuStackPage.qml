@@ -69,20 +69,22 @@ Rectangle{
     }
 
     function on_create_file_page() {
-        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", app_window, {})
+        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", menu_stack_page, {})
         page.visible = true
         page.mode = "create"
-        stack_view.push_page("Create File", page)
+        page.set_title("Create File")
+        stack_view.push_page(page)
         visible = true
     }
     
     function on_edit_file_page() {
-        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", app_window, {})
+        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", menu_stack_page, {})
         page.visible = true
         page.mode = "update"
         page.title_field.text = file_page.get_current_title()
         page.description_field.text = file_page.get_current_description()
-        stack_view.push_page("Update File", page)
+        page.set_title("Update File")
+        stack_view.push_page(page)
         visible = true
     }
 
@@ -93,40 +95,28 @@ Rectangle{
         stack_view.push_model_name(model_name)
     }
 
-    // The stack view header.
-    AppStackViewHeader {
-        id: stack_view_header
-        stack_view: stack_view
-    }
+    // The main stack view.
+    AppStackView{
+        id: stack_view
 
+        function push_model(next_model) {
+            var next_page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/MenuPage.qml", app_window, {})
+            next_page.model = next_model
+            next_page.set_title(next_model.title)
+            stack_view.push_page(next_page)
+        }
 
-    // The scroll view.
-    AppScrollView {
-        id: scroll_view
+        function push_model_url(url) {
+            var next_menu_model = app_loader.load_component(url, this, {})
+            var props = {}
+            props["links_are_locked"]=app_window.node_graph_page.node_graph.links_are_locked()
+            next_menu_model.update(props)
+            push_model(next_menu_model)
+        }
 
-        // The main stack view.
-        AppStackView{
-            id: stack_view
-            stack_view_header: stack_view_header
-
-            function push_model(next_model) {
-                var next_page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/MenuPage.qml", app_window, {})
-                next_page.model = next_model
-                stack_view.push_page(next_model.title, next_page)
-            }
-
-            function push_model_url(url) {
-                var next_menu_model = app_loader.load_component(url, this, {})
-                var props = {}
-                props["links_are_locked"]=app_window.node_graph_page.node_graph.links_are_locked()
-                next_menu_model.update(props)
-                push_model(next_menu_model)
-            }
-
-            function push_model_name(model_name) {
-                var url = "qrc:///qml/octoplier/menumodels/" + model_name + ".qml"
-                push_model_url(url)
-            }
+        function push_model_name(model_name) {
+            var url = "qrc:///qml/octoplier/menumodels/" + model_name + ".qml"
+            push_model_url(url)
         }
     }
 }

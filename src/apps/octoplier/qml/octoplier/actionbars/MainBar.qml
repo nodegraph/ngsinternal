@@ -36,23 +36,23 @@ Rectangle {
         clear_lit_buttons()
         if (m == app_settings.file_mode) {
             file_button.lit = true
-            action_bar_title.text = "Files"
+            action_bar_title.text = "Node Files"
             more_menu_button.visible = true;
         } else if (m == app_settings.node_graph_mode) {
             node_graph_button.lit = true
-            action_bar_title.text = "Nodes"
+            action_bar_title.text = "Node Graph"
             more_menu_button.visible = true;
         } else if (m == app_settings.view_node_mode) {
             view_node_button.lit = true
-            action_bar_title.text = "View Node"
+            action_bar_title.text = "Node Outputs"
             more_menu_button.visible = true;
         } else if (m == app_settings.edit_node_mode) {
             edit_node_button.lit = true
-            action_bar_title.text = "Edit Node"
+            action_bar_title.text = "Node Parameters"
             more_menu_button.visible = true;
         } else if (m == app_settings.posts_mode) {
             posts_button.lit = true
-            action_bar_title.text = "Posts"
+            action_bar_title.text = "Node Posts"
             more_menu_button.visible = false;
         } else if (m == app_settings.settings_mode) {
             settings_button.lit = true
@@ -117,7 +117,7 @@ Rectangle {
         anchors.right: node_graph_button.left
 
         image_url: "qrc:///icons/ic_folder_open_white_48dp.png"
-        tooltip_text: "Node Graph Files"
+        tooltip_text: "Node Files"
 
         onClicked: {
             on_switch_to_mode(app_settings.file_mode)
@@ -147,7 +147,7 @@ Rectangle {
         anchors.right: edit_node_button.left
         
         image_url: "qrc:///icons/ic_looks_3_white_48dp.png"
-        tooltip_text: "View Node Outputs"
+        tooltip_text: "Node Outputs"
         
         onClicked: {
             on_switch_to_mode(app_settings.view_node_mode)
@@ -162,7 +162,7 @@ Rectangle {
         anchors.right: posts_button.left
         
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
-        tooltip_text: "Edit Node Parameters"
+        tooltip_text: "Node Parameters"
         
         onClicked: {
             on_switch_to_mode(app_settings.edit_node_mode)
@@ -177,7 +177,7 @@ Rectangle {
         anchors.right: settings_button.left
         
         image_url: "qrc:///icons/ic_whatshot_white_48dp.png"
-        tooltip_text: "Posts"
+        tooltip_text: "Node Posts"
         
         onClicked: {
             on_switch_to_mode(app_settings.posts_mode)
