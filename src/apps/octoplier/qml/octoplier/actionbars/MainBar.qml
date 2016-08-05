@@ -61,6 +61,7 @@ Rectangle {
         }
         switch_to_mode(m)
         last_mode = m
+        menu_stack_page.visible = false
     }
 
     function switch_to_last_mode(m) {

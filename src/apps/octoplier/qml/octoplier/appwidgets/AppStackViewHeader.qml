@@ -15,13 +15,17 @@ import octoplier.menumodels 1.0
 // The Stack View Header displays a title and a back button.
 Rectangle {
     id: stack_view_header
+
+    // Geometry.
     height: app_settings.action_bar_height
     width: app_settings.page_width
 
+    // Positioning.
     x: 0
     y: 0
     z: 0
 
+    // Appearnace.
     color: app_settings.menu_stack_header_bg_color
     border.width: app_settings.menu_stack_header_border_width
     border.color: app_settings.menu_stack_header_border_color
@@ -29,10 +33,10 @@ Rectangle {
 
     // Dependencies.
     property var stack_view
-    property var show_back_button: true
-    
+
     // Settings.
     property alias title_text: title_text.text
+    property var show_back_button: true
 
     AppImageButton {
         id: back_button

@@ -49,6 +49,7 @@ Rectangle{
         center_new_nodes = false
         stack_view.clear_pages()
         stack_view.push_model_name("NodeActions")
+        console.log('stack view depth: ' + stack_view.depth)
         visible = true
     }
 
@@ -91,7 +92,7 @@ Rectangle{
     function show_options(model_name) {
         center_new_nodes = true
         visible = true
-        stack_view.clear()
+        stack_view.clear_pages()
         stack_view.push_model_name(model_name)
     }
 
