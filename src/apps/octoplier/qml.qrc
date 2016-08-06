@@ -38,6 +38,8 @@
         <file>qml/octoplier/appwidgets/AppStackViewHeader.qml</file>
         <file>qml/octoplier/appwidgets/AppStackView.qml</file>
         <file>qml/octoplier/appwidgets/AppScrollView.qml</file>
+        <file>qml/octoplier/appwidgets/AppListPage.qml</file>
+        <file>qml/octoplier/appwidgets/AppStackPage.qml</file>
         
         <file>qml/octoplier/appwidgets/AppImageButton.qml</file>
         <file>qml/octoplier/appwidgets/AppTextField.qml</file>

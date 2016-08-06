@@ -25,14 +25,14 @@ Rectangle {
         var stack_view = data_delegate.ListView.view.parent_stack_view
         var path = stack_view.get_title_path(1, depth_index+1)
         path.push(data_name)
-        return stack_view.get_image_url(path)
+        return stack_view.stack_page.get_image_url(path)
     }
 
     function get_value_as_string() {
         var stack_view = data_delegate.ListView.view.parent_stack_view
         var path = stack_view.get_title_path(1, depth_index+1)
         path.push(data_name)
-        return stack_view.get_value_as_string(path)
+        return stack_view.stack_page.get_value_as_string(path)
     }
 
     Row {
@@ -89,8 +89,8 @@ Rectangle {
             // Get our current value and type.
             var path = stack_view.get_title_path(1, depth_index+1)
             path.push(data_name)
-            var value = stack_view.get_value(path)
-            var value_type = stack_view.get_value_type(path)
+            var value = stack_view.stack_page.get_value(path)
+            var value_type = stack_view.stack_page.get_value_type(path)
 
             // Push a different page depending on the value type.
             switch(value_type) {
@@ -119,10 +119,10 @@ Rectangle {
                 }
                 break
             case 'dictionary_type':
-                stack_view.view_object(data_name, value);
+                stack_view.stack_page.view_object(data_name, value);
                 break
             case 'array_type':
-                stack_view.view_array(data_name, value);
+                stack_view.stack_page.view_array(data_name, value);
                 break
             default:
                 console.log("Error: AppDataDelegate::onDoubleClicked encountered unknown type: " + value_type)

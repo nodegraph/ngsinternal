@@ -67,7 +67,7 @@ Rectangle {
             mouse.accepted = true
             file_delegate.ListView.view.currentIndex = index
             var stack_view = file_delegate.ListView.view.parent_stack_view
-            stack_view.open_file_options()
+            stack_view.stack_page.on_open_file_options()
         }
     }
 }

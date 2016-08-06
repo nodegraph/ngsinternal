@@ -93,7 +93,7 @@ Rectangle {
                     } else {
                         file_stack_page.update_current_graph(title_field.text, description_field.text)
                     }
-                    file_stack_page.reset()
+                    file_stack_page.on_close_file_options()
                 }
             }
             Rectangle {

@@ -7,38 +7,28 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
-
 import octoplier.appconfig 1.0
 import octoplier.stackedpages 1.0
 import octoplier.appwidgets 1.0
 import octoplier.menumodels 1.0
 
-Rectangle{
+AppStackPage{
     id: file_stack_page
-
-    height: app_settings.page_height
-    width: app_settings.page_width
-
-    x: app_settings.page_x
-    y: app_settings.page_y
-    z: app_settings.page_z
-
-    color: app_settings.action_bar_bg_color //app_settings.ng_bg_color
 
     // Internal Properties.
     property var initialized: false
 
-    // Methods.
+    // Framework Methods.
     function on_switch_to_mode(mode) {
         if (mode == app_settings.file_mode) {
             visible = true;
             // Make sure we're initialized.
             init()
             // Reset the stack to only show the list of files.
-            reset()
+            on_close_file_options()
         } else {
             visible = false;
-            reset()
+            on_close_file_options()
         }
     }
 
@@ -60,10 +50,6 @@ Rectangle{
         initialized = true
     }
 
-    function reset() {
-        stack_view.close_file_options()
-    }
-
     // --------------------------------------------------------------------------------------------------------------------
     // Methods which forward to the file page, which is the first page.
     // --------------------------------------------------------------------------------------------------------------------
@@ -74,22 +60,31 @@ Rectangle{
 
     function load_current() {
         get_file_page().load_current()
-        reset()
+        on_close_file_options()
     }
 
     function delete_current() {
         get_file_page().delete_current()
-        reset()
+        on_close_file_options()
     }
 
     function update_current_graph(title, description) {
         get_file_page().update_current_graph(title, description)
-        reset()
+        on_close_file_options()
     }
 
     // --------------------------------------------------------------------------------------------------------------------
-    // Add new pages onto the stack. Usually called by other actions.
+    // Create/Remove Pages. Usually called by other actions.
     // --------------------------------------------------------------------------------------------------------------------
+
+    function on_open_file_options() {
+        stack_view.push_by_names(get_file_page().get_current_title(), "MenuPage", "FileActions")
+    }
+
+    function on_close_file_options() {
+        // Pop everything except the file page.
+        stack_view.pop(get_file_page())
+    }
 
     function on_create_file_page() {
         var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", menu_stack_page, {})
@@ -109,24 +104,6 @@ Rectangle{
         page.set_title("Edit File Info")
         stack_view.push_page(page)
         visible = true
-    }
-
-    // --------------------------------------------------------------------------------------------------------------------
-    // Our internal structure.
-    // --------------------------------------------------------------------------------------------------------------------
-
-    // The main stack view.
-    AppStackView{
-        id: stack_view
-
-        function open_file_options() {
-            stack_view.push_by_names(get_file_page().get_current_title(), "MenuPage", "FileActions")
-        }
-
-        function close_file_options() {
-            // Pop everything except the file page.
-            stack_view.pop(get_file_page())
-        }
     }
 
 }

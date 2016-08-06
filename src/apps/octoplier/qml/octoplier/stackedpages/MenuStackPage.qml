@@ -14,27 +14,13 @@ import octoplier.appwidgets 1.0
 import octoplier.menumodels 1.0
 
 
-// The menu_stack_page holds a header and a scrollable StackView.
-// The StackView can hold MenuPages.
-// Each MenuPage can hold a MenuModel.
-// The stack view is filled dynamically at runtime according to the user actions.
-Rectangle{
+AppStackPage{
     id: menu_stack_page
 
-    height: app_settings.page_height
-    width: app_settings.page_width
-
-    x: app_settings.page_x
-    y: app_settings.page_y
-    z: app_settings.page_z
-
-    // Appearance.
-    color: app_settings.menu_stack_bg_color
-
-    // Properties.
+    // Our Properties.
     property bool center_new_nodes: false
 
-    // Methods.
+    // Framework Methods.
     function on_switch_to_mode(mode) {
         if (mode == app_settings.settings_mode) {
             visible = true;
@@ -43,7 +29,10 @@ Rectangle{
         }
     }
 
-    // Slots.
+    // -------------------------------------------------------------------------------------------
+    // Create/Remove Pages.
+    // -------------------------------------------------------------------------------------------
+
     function on_node_context_menu() {
         app_settings.vibrate()
         center_new_nodes = false
@@ -76,8 +65,4 @@ Rectangle{
         stack_view.push_by_names("Options", "MenuPage", model_name)
     }
 
-    // The main stack view.
-    AppStackView{
-        id: stack_view
-    }
 }

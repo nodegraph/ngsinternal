@@ -75,7 +75,7 @@ Rectangle {
                 onClicked: {
                     edit_string_page.value = text_field.text
                     var path = edit_string_page.parent_stack_view.get_title_path(1, edit_string_page.parent_stack_view.depth)
-                    edit_string_page.parent_stack_view.set_value(path, text_field.text)
+                    edit_string_page.parent_stack_view.stack_page.set_value(path, text_field.text)
                     edit_string_page.parent_stack_view.pop_page()
                 }
             }

@@ -11,6 +11,16 @@ import QtQuick.Controls.Private 1.0
 import octoplier.stackedpages 1.0
 import octoplier.appwidgets 1.0
 
+// todo: the settings page should have the following
+// 1) lock links by default
+// 2) hide password characters
+// 3) time interval to run scripts
+// 4) max number of posts to accumulate
+
+
+// Also it seems we have a bug where there are ghost components in the node graph.
+// This can be noticed when doing a frame all on one or a fest nodes.
+// It looks as though it's framing some ghost item as well.
 
 ScrollView {
     id: page
