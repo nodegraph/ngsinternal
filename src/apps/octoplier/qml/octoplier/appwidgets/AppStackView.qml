@@ -67,6 +67,19 @@ StackView {
         }
     }
 
+    // --------------------------------------------------------------------------------------------------
+    // Script evaluation.
+    // --------------------------------------------------------------------------------------------------
+
+    // Evaluates a script in the context of this stack view.
+    function execute_script(script) {
+        eval(script)
+    }
+
+    // --------------------------------------------------------------------------------------------------
+    // General Page Management.
+    // --------------------------------------------------------------------------------------------------
+
     function push_page(page) {
         // Pages are manually created so they must be manually destroyed on pop.
         // The "destroyOnPop" doesn this for us.
@@ -100,14 +113,54 @@ StackView {
 
     function clear_pages(){
         var count = stack_view.depth;
-        console.log('clearing num pages: ' + count)
         for (var i=0; i<count; i++) {
             stack_view.pop_page()
         }
-        console.log("after clearing stack depth is: " + stack_view.depth)
     }
 
-    function execute_script(script) {
-        eval(script)
+    // --------------------------------------------------------------------------------------------------
+    // Page and Model Creation.
+    // --------------------------------------------------------------------------------------------------
+
+    function create_component(page_url) {
+        var comp = app_loader.load_component(page_url, this, {})
+        return comp
+    }
+
+    function create_page(page_name) {
+        var page_url = "qrc:///qml/octoplier/stackedpages/" + page_name + ".qml"
+        var page = create_component(page_url)
+        return page
+    }
+
+    function create_model(model_name) {
+        var model_url = "qrc:///qml/octoplier/menumodels/" + model_name + ".qml"
+        var model = create_component(model_url)
+
+        // Configure the model.
+        var props = {}
+        props["links_are_locked"] = app_window.node_graph_page.node_graph.links_are_locked()
+        model.update(props)
+        return model
+    }
+
+    function push_by_components(title, page, model) {
+        // Configure the page.
+        page.model = model
+        page.set_title(title)
+
+        // Add the page to the stack view.
+        stack_view.push_page(page)
+    }
+
+    function push_by_names(title, page_name, model_name) {
+        // Create the page.
+        var page = create_page(page_name)
+
+        // Create the model.
+        var model = create_model(model_name)
+
+        // Push the page onto the stack.
+        push_by_components(title, page, model)
     }
 }

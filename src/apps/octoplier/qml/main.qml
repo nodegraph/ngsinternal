@@ -87,8 +87,8 @@ Rectangle {
         visible: false
     }
 
-    FilePage {
-        id: file_page
+    FileStackPage {
+        id: file_stack_page
         visible: false
     }
 
@@ -136,19 +136,13 @@ Rectangle {
 
     function update_dependencies() {
         // Mode change connections.
-        main_bar.switch_to_mode.connect(file_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(file_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(view_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(menu_stack_page.on_switch_to_mode)
-
-        // More option connections.
-        main_bar.open_more_options.connect(node_graph_page.on_open_more_options)
-//        main_bar.open_more_options.connect(view_node_page.on_open_more_options)
-//        main_bar.open_more_options.connect(edit_node_page.on_open_more_options)
-        main_bar.open_more_options.connect(file_page.on_open_more_options)
 
         // Node graph connections.
         node_graph_page.node_graph.node_graph_context_menu_requested.connect(menu_stack_page.on_node_graph_context_menu)

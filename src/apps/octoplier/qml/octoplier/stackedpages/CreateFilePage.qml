@@ -90,11 +90,10 @@ Rectangle {
                         var unique_title = file_model.make_title_unique(title_field.text)
                         file_model.create_graph(unique_title, description_field.text)
                         node_graph_page.node_graph.update()
-                        main_bar.on_switch_to_mode(app_settings.node_graph_mode)
                     } else {
-                        file_page.update_current_graph(title_field.text, description_field.text)
-                        main_bar.on_switch_to_mode(app_settings.file_mode)
+                        file_stack_page.update_current_graph(title_field.text, description_field.text)
                     }
+                    file_stack_page.reset()
                 }
             }
             Rectangle {

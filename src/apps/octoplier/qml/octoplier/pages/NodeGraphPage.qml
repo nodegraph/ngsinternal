@@ -33,11 +33,6 @@ Rectangle {
             visible = false
         }
     }
-    function on_open_more_options() {
-        if (visible) {
-            menu_stack_page.show_options("NodeGraphActions")
-        }
-    }
 
     // The node graph.
     NodeGraphQuickItem {

@@ -48,7 +48,7 @@ Rectangle{
         app_settings.vibrate()
         center_new_nodes = false
         stack_view.clear_pages()
-        stack_view.push_model_name("NodeActions")
+        stack_view.push_by_names("Node Options", "MenuPage", "NodeActions")
         console.log('stack view depth: ' + stack_view.depth)
         visible = true
     }
@@ -57,7 +57,7 @@ Rectangle{
         app_settings.vibrate()
         center_new_nodes = false
         stack_view.clear_pages()
-        stack_view.push_model_name("GroupNodeActions")
+        stack_view.push_by_names("Group Node Options", "MenuPage", "GroupNodeActions")
         visible = true
     }
 
@@ -65,27 +65,7 @@ Rectangle{
         app_settings.vibrate()
         center_new_nodes = false
         stack_view.clear_pages()
-        stack_view.push_model_name("NodeGraphActions")
-        visible = true
-    }
-
-    function on_create_file_page() {
-        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", menu_stack_page, {})
-        page.visible = true
-        page.mode = "create"
-        page.set_title("Create File")
-        stack_view.push_page(page)
-        visible = true
-    }
-    
-    function on_edit_file_page() {
-        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", menu_stack_page, {})
-        page.visible = true
-        page.mode = "update"
-        page.title_field.text = file_page.get_current_title()
-        page.description_field.text = file_page.get_current_description()
-        page.set_title("Update File")
-        stack_view.push_page(page)
+        stack_view.push_by_names("Node Graph Options", "MenuPage", "NodeGraphActions")
         visible = true
     }
 
@@ -93,31 +73,11 @@ Rectangle{
         center_new_nodes = true
         visible = true
         stack_view.clear_pages()
-        stack_view.push_model_name(model_name)
+        stack_view.push_by_names("Options", "MenuPage", model_name)
     }
 
     // The main stack view.
     AppStackView{
         id: stack_view
-
-        function push_model(next_model) {
-            var next_page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/MenuPage.qml", app_window, {})
-            next_page.model = next_model
-            next_page.set_title(next_model.title)
-            stack_view.push_page(next_page)
-        }
-
-        function push_model_url(url) {
-            var next_menu_model = app_loader.load_component(url, this, {})
-            var props = {}
-            props["links_are_locked"]=app_window.node_graph_page.node_graph.links_are_locked()
-            next_menu_model.update(props)
-            push_model(next_menu_model)
-        }
-
-        function push_model_name(model_name) {
-            var url = "qrc:///qml/octoplier/menumodels/" + model_name + ".qml"
-            push_model_url(url)
-        }
     }
 }

@@ -13,9 +13,10 @@ import octoplier.pages 1.0
 import octoplier.appwidgets 1.0
 import octoplier.menumodels 1.0
 
+
 Rectangle {
-    id: menu_item_delegate
-    width: parent.width
+    id: file_delegate
+    width: parent.width;
     height: app_settings.list_item_height_large
     border.color: "white"
     border.width: app_settings.list_item_border_width
@@ -30,7 +31,7 @@ Rectangle {
                 width: parent.height * 2/3
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: image_url
+                source: "qrc:///icons/ic_insert_drive_file_white_48dp.png"
             }
         }
 
@@ -38,8 +39,8 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             Text {
                 text: title
-                font.family: "Arial"
                 font.bold: true
+                font.family: "Arial"
                 font.pointSize: app_settings.menu_page_title_point_size
                 font.italic: false
                 color: "white"
@@ -60,15 +61,13 @@ Rectangle {
         anchors.fill: parent
         onPressed: {
             mouse.accepted = true
-            menu_item_delegate.ListView.view.currentIndex = index
+            file_delegate.ListView.view.currentIndex = index
         }
-
         onDoubleClicked: {
             mouse.accepted = true
-            menu_item_delegate.ListView.view.currentIndex = index
-            if (typeof script !== "undefined") {
-                menu_item_delegate.ListView.view.parent_stack_view.execute_script(script)
-            }
+            file_delegate.ListView.view.currentIndex = index
+            var stack_view = file_delegate.ListView.view.parent_stack_view
+            stack_view.open_file_options()
         }
     }
 }

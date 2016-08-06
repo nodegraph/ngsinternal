@@ -20,8 +20,10 @@
         <file>qml/octoplier/stackedpages/qmldir</file>
         <file>qml/octoplier/stackedpages/MenuStackPage.qml</file>
         <file>qml/octoplier/stackedpages/DataStackPage.qml</file>
+        <file>qml/octoplier/stackedpages/FileStackPage.qml</file>
         <file>qml/octoplier/stackedpages/MenuPage.qml</file>
         <file>qml/octoplier/stackedpages/DataPage.qml</file>
+        <file>qml/octoplier/stackedpages/FilePage.qml</file>
         <file>qml/octoplier/stackedpages/CreateFilePage.qml</file>
         <file>qml/octoplier/stackedpages/EditStringPage.qml</file>
         <file>qml/octoplier/stackedpages/EditBooleanPage.qml</file>
@@ -32,6 +34,7 @@
         <file>qml/octoplier/appwidgets/qmldir</file>
         <file>qml/octoplier/appwidgets/AppDataDelegate.qml</file>
         <file>qml/octoplier/appwidgets/AppMenuItemDelegate.qml</file>
+        <file>qml/octoplier/appwidgets/AppFileDelegate.qml</file>
         <file>qml/octoplier/appwidgets/AppStackViewHeader.qml</file>
         <file>qml/octoplier/appwidgets/AppStackView.qml</file>
         <file>qml/octoplier/appwidgets/AppScrollView.qml</file>
@@ -68,7 +71,6 @@
         <file>qml/octoplier/pages/qmldir</file>
         <file>qml/octoplier/pages/CreatePasswordPage.qml</file>
         <file>qml/octoplier/pages/CheckPasswordPage.qml</file>
-        <file>qml/octoplier/pages/FilePage.qml</file>
         <file>qml/octoplier/pages/NodeGraphPage.qml</file>
         <file>qml/octoplier/pages/PostsPage.qml</file>
         <file>qml/octoplier/pages/SettingsPage.qml</file>

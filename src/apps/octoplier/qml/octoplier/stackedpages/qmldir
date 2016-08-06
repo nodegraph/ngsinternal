@@ -6,6 +6,8 @@ MenuPage 1.0 MenuPage.qml
 DataStackPage 1.0 DataStackPage.qml
 DataPage 1.0 DataPage.qml
 
+FileStackPage 1.0 FileStackPage.qml
+FilePage 1.0 FilePage.qml
 
 CreateFilePage 1.0 CreateFilePage.qml
 EditStringPage 1.0 EditStringPage.qml

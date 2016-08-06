@@ -209,15 +209,13 @@ Rectangle{
 
 
         // Push next model on the stack.
-        function push_model(data_name, next_model) {
-            var next_page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/DataPage.qml", app_window, {})
-            next_page.model = next_model
-            next_page.set_title(data_name)
-            stack_view.push_page(next_page)
+        function push_by_model(data_name, model) {
+            var page = create_page("DataPage")
+            push_by_components(data_name, page, model)
         }
 
         // Create a list model.
-        function create_model() {
+        function create_list_model() {
             var script = "
                     import QtQuick 2.6;
                     ListModel {
@@ -227,22 +225,22 @@ Rectangle{
 
         // Display the contents of a dict.
         function view_object(data_name, obj) {
-            var model = create_model()
+            var model = create_list_model()
             for (var prop in obj) {
                 if (obj.hasOwnProperty(prop)) {
                     model.append({data_name: prop, depth_index: depth})
                 }
             }
-            stack_view.push_model(data_name, model)
+            stack_view.push_by_model(data_name, model)
         }
 
         // Display the contents of an array.
         function view_array(data_name, arr) {
-            var model = create_model()
+            var model = create_list_model()
             for (var i=0; i<arr.length; i++) {
                 model.append({data_name: i.toString(), depth_index: depth})
             }
-            stack_view.push_model(data_name,model)
+            stack_view.push_by_model(data_name, model)
         }
     }
 

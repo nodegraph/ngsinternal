@@ -37,19 +37,19 @@ Rectangle {
         if (m == app_settings.file_mode) {
             file_button.lit = true
             action_bar_title.text = "Node Files"
-            more_menu_button.visible = true;
+            more_menu_button.visible = false;
         } else if (m == app_settings.node_graph_mode) {
             node_graph_button.lit = true
             action_bar_title.text = "Node Graph"
-            more_menu_button.visible = true;
+            more_menu_button.visible = false;
         } else if (m == app_settings.view_node_mode) {
             view_node_button.lit = true
             action_bar_title.text = "Node Outputs"
-            more_menu_button.visible = true;
+            more_menu_button.visible = false;
         } else if (m == app_settings.edit_node_mode) {
             edit_node_button.lit = true
             action_bar_title.text = "Node Parameters"
-            more_menu_button.visible = true;
+            more_menu_button.visible = false;
         } else if (m == app_settings.posts_mode) {
             posts_button.lit = true
             action_bar_title.text = "Node Posts"

@@ -5,7 +5,6 @@ CheckPasswordPage 1.0 CheckPasswordPage.qml
 
 SplashPage 1.0 SplashPage.qml
 
-FilePage 1.0 FilePage.qml
 NodeGraphPage 1.0 NodeGraphPage.qml
 PostsPage 1.0 PostsPage.qml
 SettingsPage 1.0 SettingsPage.qml

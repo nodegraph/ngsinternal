@@ -54,6 +54,7 @@ Rectangle {
     // Our ListView.
     ListView {
         id: list_view
+        clip: true
 
         // Dimensions.
         height: app_settings.menu_page_height
