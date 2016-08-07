@@ -50,7 +50,6 @@ Rectangle {
                 font.pointSize: app_settings.menu_page_description_point_size
                 font.italic: false
                 color: "white"
-                width: app_settings.page_width - app_settings.list_item_height_large - app_settings.action_bar_right_margin
                 wrapMode: Text.WordWrap
             }
         }

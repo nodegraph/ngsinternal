@@ -33,6 +33,9 @@ Item{
     property int action_bar_left_margin:  app_units.dp(10)
     property int action_bar_right_margin: app_units.dp(10)
     
+    property int page_left_margin:  app_units.dp(30)
+    property int page_right_margin: app_units.dp(30)
+    
     property int action_bar_height: app_units.dp(60)
     property int action_bar_width: parent.width
     property int action_bar_x: 0
@@ -103,6 +106,9 @@ Item{
     // -------------------------------------------------------------------
     // Other sub component properties.
     // -------------------------------------------------------------------
+
+    // General UI properties.
+    property color prompt_color: "#FF01579B" // a dark blue color that prompts for user input
     
     // Node Graph.
     // The node graph bg color (3.0f/255.0f, 169.0f/255.0f, 244.0f/255.0f, 1.00).
@@ -128,7 +134,11 @@ Item{
     property int text_field_height: app_units.dp(50)
     property double text_field_border_size: app_units.dp(2)
     property double text_field_radius: app_units.dp(10)
-    property color dark_blue_bg: "#FF01579B"
+
+    // CheckBox Properties.
+    property int check_box_radius: app_units.dp(3)
+    property int check_box_border_width: app_units.dp(3)
+    property int check_box_size: app_units.dp(32)
     
     // Tree View.
     property double tree_view_header_height: app_units.dp(60)

@@ -18,11 +18,6 @@ Button {
     //width: app_settings.image_button_width
     height: app_settings.action_bar_height
 
-    // Anchors.
-    // These are used when the AppImageButton is used inside a non-layout object, like a Rectangle.
-    anchors.leftMargin: app_settings.action_bar_left_margin
-    anchors.rightMargin: app_settings.action_bar_right_margin
-
     // Signals
     signal mouse_pressed()
 

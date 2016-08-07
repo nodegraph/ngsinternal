@@ -20,8 +20,8 @@ AppStackPage{
     property var mode: app_settings.view_node_mode
 
     // Internal Properties.
-    property var node_name
-    property var node_data
+    property var data_values
+    property var data_hints
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
@@ -33,22 +33,50 @@ AppStackPage{
     }
 
     // Main method to show data.
-    function on_show_data(node_name, node_data) {
+    function on_show_data(data_name, data_values) {
         app_settings.vibrate()
         stack_view.clear_pages()
-        data_stack_page.node_name = node_name
-        data_stack_page.node_data = node_data
+        data_stack_page.data_values = data_values
         if (mode != app_settings.view_node_mode) {
             stack_view.allow_editing = true // Allow data to be edited.
         }
-        view_object(data_stack_page.node_name, data_stack_page.node_data)
+        view_object(data_name, data_stack_page.data_values)
     }
 
     // --------------------------------------------------------------------------------------------------
-    // Methods used by our page's list view delegates to query info about the data being displayed.
+    // Hints for Data Display.
     // --------------------------------------------------------------------------------------------------
 
-    // Set the value at the given path in node_data.
+    function get_hints(path) {
+        // The hints hierarchy doesn't have arrays.
+        // Individual hints are represent by single json strings.
+
+        // Drill down into the hints according to the specified path.
+        var hints = data_hints
+        for (var i=0; i<path.length; i++) {
+            var element = path[i]
+            if (hints.hasOwnProperty(element)) {
+                hints = hints[element]
+            } else {
+                // We get here if hints doesn't have the expected element.
+                // This mean we may have a primitive or bad hints.
+                // Either way we return the closest hints we have.
+                break;
+            }
+        }
+
+        // Make sure we have hint string to return.
+        if (typeof hints === 'string') {
+            return hints
+        }
+        return ""
+    }
+
+    // --------------------------------------------------------------------------------------------------
+    // Data Display.
+    // --------------------------------------------------------------------------------------------------
+
+    // Set the value at the given path in data_values.
     function set_value(path, value) {
         // Make sure the path has at least one element.
         if (path.length <=0) {
@@ -56,7 +84,7 @@ AppStackPage{
         }
 
         // Drill down into data according to the specified path.
-        var data = data_stack_page.node_data
+        var data = data_stack_page.data_values
         for (var i=0; i<path.length; i++) {
             // Determine the index.
             var index = null
@@ -86,10 +114,10 @@ AppStackPage{
                 data = data[index]
             }
         }
-        console.log('data: ' + JSON.stringify(data_stack_page.node_data))
+        console.log('data: ' + JSON.stringify(data_stack_page.data_values))
     }
 
-    // Get the value at the given path in node_data.
+    // Get the value at the given path in data_values.
     function get_value(path) {
         // Make sure the path has at least one element.
         if (path.length <=0) {
@@ -98,7 +126,7 @@ AppStackPage{
         }
 
         // Drill down into data according to the specified path.
-        var data = data_stack_page.node_data
+        var data = data_stack_page.data_values
         for (var i=0; i<path.length; i++) {
             if (typeof data === 'object') {
                 if (Object.getPrototypeOf(data) === Array.prototype) {
@@ -118,7 +146,7 @@ AppStackPage{
         return data
     }
 
-    // Get the value type at the given path in node_data.
+    // Get the value type at the given path in data_values.
     function get_value_type(path) {
         var value = get_value(path)
         if (value === null) {
@@ -145,7 +173,7 @@ AppStackPage{
     }
 
 
-    // Get the value as a string at the given path in node_data.
+    // Get the value as a string at the given path in data_values.
     function get_value_as_string(path) {
         var value = get_value(path)
         var value_type = get_value_type(path)
@@ -166,7 +194,7 @@ AppStackPage{
         return "unknown value"
     }
 
-    // Get the icon corresponding to the value type at the given path in node_data.
+    // Get the icon corresponding to the value type at the given path in data_values.
     function get_image_url(path) {
         var value_type = get_value_type(path)
 
@@ -194,9 +222,9 @@ AppStackPage{
 
 
     // Push next model on the stack.
-    function push_by_model(data_name, model) {
+    function push_by_model(title, model) {
         var page = stack_view.create_page("DataPage")
-        stack_view.push_by_components(data_name, page, model)
+        stack_view.push_by_components(title, page, model)
     }
 
     // Create a list model.

@@ -107,6 +107,8 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   // Node Graph Framing.
   // -----------------------------------------------------------------------
 
+  virtual void select(const Dep<CompShape>& shape);
+  virtual void deselect(const Dep<CompShape>& shape);
   virtual void select_all();
   virtual void deselect_all();
   virtual void frame_all();

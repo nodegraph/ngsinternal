@@ -469,16 +469,16 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
 
   } else if (updated_mouse_info.right_button) {
     
-    Entity* comp_shape_entity;
-    if (comp_shape) {
-      comp_shape_entity = comp_shape->our_entity();
-      if (comp_shape_entity->get_did() == kGroupNodeEntity) {
-        //dive(comp_shape_entity);
-      }
-    } else {
-      // If nothing was hit, then we surface up to our parent group.
-      //surface();
-    }
+//    Entity* comp_shape_entity;
+//    if (comp_shape) {
+//      comp_shape_entity = comp_shape->our_entity();
+//      if (comp_shape_entity->get_did() == kGroupNodeEntity) {
+//        //dive(comp_shape_entity);
+//      }
+//    } else {
+//      // If nothing was hit, then we surface up to our parent group.
+//      //surface();
+//    }
   }
 
   return comp_shape;
@@ -741,6 +741,16 @@ const glm::mat4 GroupInteraction::get_mouse_model_view() const {
 
 bool GroupInteraction::is_panning_selection() const {
   return _panning_selection;
+}
+
+void GroupInteraction::select(const Dep<CompShape>& comp_shape) {
+  start_method();
+  _selection->select(comp_shape);
+}
+
+void GroupInteraction::deselect(const Dep<CompShape>& comp_shape) {
+  start_method();
+  _selection->deselect(comp_shape);
 }
 
 void GroupInteraction::select_all() {

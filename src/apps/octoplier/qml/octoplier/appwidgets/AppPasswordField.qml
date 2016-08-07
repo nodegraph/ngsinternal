@@ -29,7 +29,7 @@ TextField {
             height: app_settings.text_field_height
             border.color: "#FFFFFFFF"
             border.width: app_settings.text_field_border_size
-            color: "#FF01579B" //app_settings.action_bar_bg_color
+            color: app_settings.prompt_color
         }
     }
 }

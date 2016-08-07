@@ -99,8 +99,12 @@ Rectangle {
     AppImageButton {
         id: more_menu_button
         
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: file_button.left
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: file_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+        }
         
         image_url: "qrc:///icons/ic_more_vert_white_48dp.png"
         tooltip_text: "More Options"
@@ -114,8 +118,12 @@ Rectangle {
     AppImageButton {
         id: file_button
 
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: node_graph_button.left
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: node_graph_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+      	}
 
         image_url: "qrc:///icons/ic_folder_open_white_48dp.png"
         tooltip_text: "Node Files"
@@ -129,8 +137,12 @@ Rectangle {
     AppImageButton {
         id: node_graph_button
         
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: view_node_button.left
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: view_node_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+        }
         
         image_url: "qrc:///icons/ic_widgets_white_48dp.png"
         tooltip_text: "Node Graph"
@@ -144,8 +156,12 @@ Rectangle {
     AppImageButton {
         id: view_node_button
         
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: edit_node_button.left
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: edit_node_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+      	}
         
         image_url: "qrc:///icons/ic_looks_3_white_48dp.png"
         tooltip_text: "Node Outputs"
@@ -159,8 +175,12 @@ Rectangle {
     AppImageButton {
         id: edit_node_button
         
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: posts_button.left
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: posts_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+    	}
         
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         tooltip_text: "Node Parameters"
@@ -174,8 +194,12 @@ Rectangle {
     AppImageButton {
         id: posts_button
         
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: settings_button.left
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: settings_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+    	}
         
         image_url: "qrc:///icons/ic_whatshot_white_48dp.png"
         tooltip_text: "Node Posts"
@@ -189,8 +213,12 @@ Rectangle {
     AppImageButton {
         id: settings_button
         
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: parent.right
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+    	}
         
         image_url: "qrc:///icons/ic_settings_white_48dp.png"
             tooltip_text: "Settings"

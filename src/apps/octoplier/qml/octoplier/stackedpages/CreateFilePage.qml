@@ -56,6 +56,12 @@ Rectangle {
 
         AppLabel {
             text: "Title"
+            anchors {
+		        left: parent.left
+		        right: parent.right
+                leftMargin: app_settings.page_left_margin
+                rightMargin: app_settings.page_right_margin
+		    }
         }
 
         // Title Field.
@@ -63,12 +69,22 @@ Rectangle {
             id: title_field
             tool_bar: copy_paste_bar
             text: "untitled"
-            onAccepted: {
-            }
+            anchors {
+		        left: parent.left
+		        right: parent.right
+		        leftMargin: app_settings.page_left_margin
+		        rightMargin: app_settings.page_right_margin
+		    }
         }
 
         AppLabel {
             text: "Description"
+            anchors {
+		        left: parent.left
+		        right: parent.right
+                leftMargin: app_settings.page_left_margin
+                rightMargin: app_settings.page_right_margin
+		    }
         }
 
         // Description Field.
@@ -76,8 +92,12 @@ Rectangle {
             id: description_field
             tool_bar: copy_paste_bar
             text: "This does something."
-            onAccepted: {
-            }
+            anchors {
+		        left: parent.left
+		        right: parent.right
+		        leftMargin: app_settings.page_left_margin
+		        rightMargin: app_settings.page_right_margin
+		    }
         }
 
         // Buttons.

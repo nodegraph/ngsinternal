@@ -46,6 +46,8 @@ Rectangle {
         anchors {
             verticalCenter: parent.verticalCenter
             left: parent.left
+            leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
         }
 
         tooltip_text: "Back"
@@ -63,6 +65,8 @@ Rectangle {
         anchors {
             verticalCenter: parent.verticalCenter
             right: cut_button.left
+            leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
         }
         
         tooltip_text: "Select all"
@@ -79,6 +83,8 @@ Rectangle {
         anchors {
             verticalCenter: parent.verticalCenter
             right: copy_button.left
+            leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
         }
         
         tooltip_text: "Cut"
@@ -95,6 +101,8 @@ Rectangle {
         anchors {
             verticalCenter: parent.verticalCenter
             right: paste_button.left
+            leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
         }
     
         tooltip_text: "Copy"
@@ -111,6 +119,8 @@ Rectangle {
         anchors {
             verticalCenter: parent.verticalCenter
             right: parent.right
+            leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
         }
     
         tooltip_text: "Paste"

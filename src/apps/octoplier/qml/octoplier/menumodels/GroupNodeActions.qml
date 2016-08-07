@@ -15,15 +15,6 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_zoom_out_map_white_48dp.png"
-        title: "Explode"
-        description: "Explode the group node."
-        script: "node_graph_page.node_graph.explode_group();
-                 menu_stack_page.visible = false"
-    }
-
-    ListElement {
-        navigator_title: "Group Node Actions"
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "View"
         description: "View the output data from the group node."
@@ -39,4 +30,18 @@ ListModel {
                  menu_stack_page.visible = false"
     }
 
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Select"
+        description: "Select this node"
+        script: "node_graph_page.node_graph.select_last_press();
+                 menu_stack_page.visible = false"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        title: "Deselect"
+        description: "Deselect this node."
+        script: "node_graph_page.node_graph.deselect_last_press();
+                 menu_stack_page.visible = false"
+    }
 }

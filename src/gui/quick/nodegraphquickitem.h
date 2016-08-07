@@ -68,6 +68,8 @@ Q_OBJECT
 
   // Selection.
   Q_INVOKABLE void toggle_selection_under_long_press();
+  Q_INVOKABLE void select_last_press();
+  Q_INVOKABLE void deselect_last_press();
   Q_INVOKABLE void select_all();
   Q_INVOKABLE void deselect_all();
   Q_INVOKABLE void destroy_selection();

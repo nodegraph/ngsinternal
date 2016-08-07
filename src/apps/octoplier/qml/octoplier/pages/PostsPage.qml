@@ -19,7 +19,7 @@ Rectangle {
     z: app_settings.page_z
     
     // Appearance.
-    color: app_settings.ng_bg_color
+    color: app_settings.menu_stack_bg_color
     
     // Methods.
     function on_switch_to_mode(mode) {

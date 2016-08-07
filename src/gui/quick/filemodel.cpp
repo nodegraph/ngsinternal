@@ -21,8 +21,8 @@
 
 namespace ngs {
 
-const QString FileModel::kCryptoFile = "app_init.dat";
-const QString FileModel::kAppFile = "app_data.dat";
+const QString FileModel::kCryptoFile = "app_init.dat"; // Stores info about our encryption.
+const QString FileModel::kAppFile = "app_data.dat"; // Stores the mapping between displayed filename and actual filename.
 const QString FileModel::kAppDir = "app_data";
 
 FileModel::FileModel()

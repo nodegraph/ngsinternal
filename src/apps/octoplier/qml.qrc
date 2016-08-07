@@ -50,6 +50,7 @@
         <file>qml/octoplier/appwidgets/AppLabelButton.qml</file>
         <file>qml/octoplier/appwidgets/AppLabel.qml</file>
         <file>qml/octoplier/appwidgets/AppWebView.qml</file>
+        <file>qml/octoplier/appwidgets/AppCheckBox.qml</file>
         
         <!-- MenuModels -->
         <file>qml/octoplier/menumodels/qmldir</file>

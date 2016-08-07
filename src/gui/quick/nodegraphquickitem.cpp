@@ -634,6 +634,16 @@ void NodeGraphQuickItem::surface_to_root() {
   update();
 }
 
+void NodeGraphQuickItem::select_last_press() {
+  get_current_interaction()->select(_last_pressed_shape);
+  update();
+}
+
+void NodeGraphQuickItem::deselect_last_press() {
+  get_current_interaction()->deselect(_last_pressed_shape);
+  update();
+}
+
 void NodeGraphQuickItem::select_all() {
   get_current_interaction()->select_all();
   update();

@@ -4,6 +4,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
+import Qt.labs.settings 1.0
 
 import NodeGraphRendering 1.0
 import octoplier.actionbars 1.0
@@ -44,6 +45,13 @@ Rectangle {
     }
 
     // Global App Objects.
+
+    Settings {
+        id: settings
+        property bool hide_passwords: true
+        property bool lock_links: false
+        property int max_node_posts: 100
+    }
 
     AppUnits {
         id: app_units

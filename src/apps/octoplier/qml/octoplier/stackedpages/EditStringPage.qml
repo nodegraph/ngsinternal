@@ -63,8 +63,12 @@ Rectangle {
             id: text_field
             tool_bar: copy_paste_bar
             text: "untitled"
-            onAccepted: {
-            }
+            anchors {
+		        left: parent.left
+		        right: parent.right
+		        leftMargin: app_settings.page_left_margin
+		        rightMargin: app_settings.page_right_margin
+		    }
         }
 
         // Buttons.

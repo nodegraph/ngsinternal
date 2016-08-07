@@ -10,13 +10,6 @@ TextField {
 
     // Dimensions.
     height: app_settings.text_field_height
-
-    anchors {
-        left: parent.left
-        right: parent.right
-        leftMargin: app_settings.action_bar_left_margin
-        rightMargin: app_settings.action_bar_right_margin
-    }
     
 //    // Input hints.
 //    inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhSensitiveData | Qt.ImhLowercaseOnly | Qt.ImhUrlCharactersOnly // Qt.ImhMultiLine | Qt.ImhEmailCharactersOnly | Qt.ImhUrlCharactersOnly
@@ -93,7 +86,7 @@ TextField {
             height: app_settings.text_field_height
             border.color: "#FFFFFFFF"
             border.width: app_settings.text_field_border_size
-            color: "#FF01579B" //app_settings.action_bar_bg_color
+            color: app_settings.prompt_color
         }
     }
         

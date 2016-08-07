@@ -40,8 +40,12 @@ Rectangle {
 
     AppImageButton {
         id: back_button
-        anchors.verticalCenter: parent.verticalCenter
-        x: app_settings.action_bar_left_margin
+        anchors {
+        	verticalCenter: parent.verticalCenter
+    	}
+        
+        // Positioning.
+        x: app_settings.page_left_margin
 
         tooltip_text: "Back up"
         image_url: "qrc:///icons/ic_arrow_back_white_48dp.png"

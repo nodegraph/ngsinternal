@@ -13,11 +13,4 @@ Label {
     font.pointSize: app_settings.font_point_size
     font.italic: false
     color: "white"
-
-    anchors {
-        left: parent.left
-        right: parent.right
-        leftMargin: app_settings.action_bar_left_margin
-        rightMargin: app_settings.action_bar_right_margin
-    }
 }

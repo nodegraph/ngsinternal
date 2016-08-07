@@ -20,3 +20,4 @@ AppLoader 1.0 AppLoader.qml
 AppLabelButton 1.0 AppLabelButton.qml
 AppLabel 1.0 AppLabel.qml
 AppWebView 1.0 AppWebView.qml
+AppCheckBox 1.0 AppCheckBox.qml

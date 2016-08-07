@@ -46,9 +46,7 @@ Rectangle {
     }
         
     // Dimensions.
-//    width: app_units.dp(100); 
-//    height: app_units.dp(50)
-    width: text_item.width+app_settings.action_bar_left_margin+app_settings.action_bar_right_margin
+    width: text_item.width + app_settings.action_bar_left_margin + app_settings.action_bar_right_margin
     height: app_settings.action_bar_height
     z: 20
     
@@ -56,14 +54,8 @@ Rectangle {
     visible: false
     
     // Background color.
-    color: app_settings.tooltip_bg_color //"#FFFF80AB" //"#DD7090FF" //"pink"
+    color: app_settings.tooltip_bg_color
         
-//    // By default we anchor the tooltip direct under its target.
-//    anchors {
-//        verticalCenter: tooltip_target.verticalCenter
-//        top: tooltip_target.button
-//    }
-    
     // The text.
     Text {
         id: text_item
