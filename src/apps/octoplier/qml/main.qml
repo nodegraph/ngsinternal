@@ -98,8 +98,8 @@ Rectangle {
         visible: false
     }
 
-    AboutPage {
-        id: info_page
+    SettingsPage {
+        id: settings_page
         visible: false
     }
 
@@ -142,7 +142,7 @@ Rectangle {
         main_bar.switch_to_mode.connect(view_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(info_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(menu_stack_page.on_switch_to_mode)
 
         // Node graph connections.

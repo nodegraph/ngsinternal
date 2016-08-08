@@ -272,6 +272,11 @@ function receive_from_app(message) {
                 }
             }
             browser_is_open(on_response)
+            // No response is sent back to the app. Typically this is called in a polling manner.
+            break
+        case 'resize_browser':
+            resize_browser(request.width, request.height)
+            // No response is sent back to the app. Typically this is called in a polling manner.
             break
         case 'open_browser':
             open_browser(request.url)

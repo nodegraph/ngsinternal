@@ -8,6 +8,8 @@
 
 #include <components/interactions/graphbuilder.h>
 #include <components/entities/entityids.h>
+#include <components/computes/computeglobals.h>
+#include <components/computes/appcommunication.h>
 #include <gui/quick/nodegraphquickitemglobals.h>
 
 #include <cstddef>
@@ -47,17 +49,28 @@ FileModel::FileModel()
   }
 
   // Set our role names.
-  QHash<int, QByteArray> roles;
-  roles[kTitleRole] = "title";
-  roles[kFilenameRole] = "filename";
-  roles[kDescriptionRole] = "description";
-  roles[kAutoRunRole] = "auto_run";
-  roles[kAutoRunIntervalRole] = "auto_run_interval";
-  roles[kHidePasswordsRole] = "hide_passwords";
-  roles[kLockLinksRole] = "lock_links";
-  roles[kMaxNodePostsRole] = "max_node_posts";
+  _roles[kTitleRole] = "title";
+  _roles[kFilenameRole] = "filename";
+  _roles[kDescriptionRole] = "description";
+  _roles[kAutoRunRole] = "auto_run";
+  _roles[kAutoRunIntervalRole] = "auto_run_interval";
+  _roles[kHidePasswordsRole] = "hide_passwords";
+  _roles[kLockLinksRole] = "lock_links";
+  _roles[kMaxNodePostsRole] = "max_node_posts";
+  _roles[kBrowserWidthRole] = "browser_width";
+  _roles[kBrowserHeightRole] = "browser_height";
+  setItemRoleNames(_roles);
 
-  setItemRoleNames(roles);
+  // Set up our default role values.
+  _default_settings["title"] = "untitled";
+  _default_settings["description"] = "An empty graph.";
+  _default_settings["auto_run"] = false;
+  _default_settings["auto_run_interval"] = 60;
+  _default_settings["hide_passwords"] = true;
+  _default_settings["lock_links"] = false;
+  _default_settings["max_node_posts"] = 1000;
+  _default_settings["browser_width"] = 1024;
+  _default_settings["browser_height"] = 1150;
 
   // Sort on titles.
   setSortRole(kTitleRole);
@@ -151,92 +164,70 @@ int FileModel::get_working_row() const {
   return _working_row;
 }
 
-QString FileModel::get_working_title() const {
-  return get_title(_working_row);
-}
-
-QString FileModel::get_title(int row) const {
-  return data(index(row,0), kTitleRole).toString();
-}
-
-QString FileModel::get_description(int row) const {
-  return data(index(row,0), kDescriptionRole).toString();
-}
-
-bool FileModel::get_auto_run(int row) const {
-  return data(index(row,0), kAutoRunRole).toBool();
-}
-
-int FileModel::get_auto_run_interval(int row) const {
-  return data(index(row,0), kAutoRunIntervalRole).toInt();
-}
-
-bool FileModel::get_hide_passwords(int row) const {
-  return data(index(row,0), kHidePasswordsRole).toBool();
-}
-
-bool FileModel::get_lock_links(int row) const {
-  return data(index(row,0), kLockLinksRole).toBool();
-}
-
-int FileModel::get_max_node_posts(int row) const {
-  return data(index(row,0), kMaxNodePostsRole).toInt();
-}
-
-void FileModel::set_title(int row, const QString& title){
-  QString row_title = data(index(row,0),kTitleRole).toString();
-  if (row_title != title) {
-    row_title = make_title_unique(title);
+int FileModel::get_role(const QString& role_name) const {
+  QHash<int, QByteArray>::const_iterator iter;
+  for (iter = _roles.begin(); iter != _roles.end(); ++iter) {
+    if (iter.value() == role_name.toUtf8()) {
+      return iter.key();
+    }
   }
-
-  QStandardItem* it = item(row, 0);
-  it->setData(row_title, kTitleRole);
-  setItem(row,0,it);
-  save_model();
+  assert(false);
+  return -1;
 }
 
-void FileModel::set_description(int row, const QString& description){
-  QStandardItem* it = item(row, 0);
-  it->setData(description, kDescriptionRole);
-  setItem(row,0,it);
-  save_model();
+QVariant FileModel::get_setting(int row, int role) const {
+  return data(index(row,0), role);
 }
 
-void FileModel::set_auto_run(int row, bool auto_run){
-  QStandardItem* it = item(row, 0);
-  it->setData(auto_run, kAutoRunRole);
-  setItem(row,0,it);
-  save_model();
+QVariant FileModel::get_setting(int row, const QString& role_name) const {
+  int role = get_role(role_name);
+  return get_setting(row, role);
 }
 
-void FileModel::set_auto_run_interval(int row, int auto_run_interval){
-  QStandardItem* it = item(row, 0);
-  it->setData(auto_run_interval, kAutoRunIntervalRole);
-  setItem(row,0,it);
-  save_model();
+void FileModel::set_setting(int row, int role, const QVariant& value) {
+  if (role == kTitleRole) {
+    // The title role is treated as an edge case as we need to make sure it's unique.
+    QVariant current_title = data(index(row,0),kTitleRole);
+    QVariant next_title = value;
+    if (next_title != current_title) {
+      next_title = make_title_unique(value.toString());
+    }
+    QStandardItem* it = item(row, 0);
+    it->setData(next_title, kTitleRole);
+    setItem(row,0,it);
+    save_model();
+  } else {
+    QStandardItem* it = item(row, 0);
+    it->setData(value, role);
+    setItem(row,0,it);
+    save_model();
+  }
 }
 
-void FileModel::set_hide_passwords(int row, bool hide_passwords){
-  QStandardItem* it = item(row, 0);
-  it->setData(hide_passwords, kHidePasswordsRole);
-  setItem(row,0,it);
-  save_model();
+void FileModel::set_setting(int row, const QString& role_name, const QVariant& value) {
+  int role = get_role(role_name);
+  return set_setting(row, role, value);
 }
 
-void FileModel::set_lock_links(int row, bool lock_links){
-  QStandardItem* it = item(row, 0);
-  it->setData(lock_links, kLockLinksRole);
-  setItem(row,0,it);
-  save_model();
+QVariant FileModel::get_work_setting(int role) const {
+  int row = get_working_row();
+  return get_setting(row, role);
 }
 
-void FileModel::set_max_node_posts(int row, int max_node_posts){
-  QStandardItem* it = item(row, 0);
-  it->setData(max_node_posts, kMaxNodePostsRole);
-  setItem(row,0,it);
-  save_model();
+QVariant FileModel::get_work_setting(const QString& role_name) const {
+  int row = get_working_row();
+  return get_setting(row, role_name);
 }
 
+void FileModel::set_work_setting(int role, const QVariant& value) {
+  int row = get_working_row();
+  set_setting(row, role, value);
+}
+
+void FileModel::set_work_setting(const QString& role_name, const QVariant& value) {
+  int row = get_working_row();
+  set_setting(row, role_name, value);
+}
 
 QString FileModel::get_prefixed_file(const QString& file) const {
   return _app_dir + "/" + file;
@@ -413,8 +404,10 @@ void FileModel::load_model() {
     loader.load(lock_links);
     int max_node_posts;
     loader.load(max_node_posts);
-
-
+    int browser_width;
+    loader.load(browser_width);
+    int browser_height;
+    loader.load(browser_height);
 
     QStandardItem *item = new_ff QStandardItem();
     QString qtitle(title.c_str());
@@ -426,10 +419,15 @@ void FileModel::load_model() {
     item->setData(hide_passwords, kHidePasswordsRole);
     item->setData(lock_links, kLockLinksRole);
     item->setData(max_node_posts, kMaxNodePostsRole);
+    item->setData(browser_width, kBrowserWidthRole);
+    item->setData(browser_height, kBrowserHeightRole);
     setItem(i, 0, item);
   }
 
   assert(_working_row >= 0);
+
+  // Update app comm.
+  send_browser_size_to_app_comm();
 }
 
 void FileModel::save_model() const {
@@ -454,17 +452,30 @@ void FileModel::save_model() const {
       saver.save(data(index(i,0), kHidePasswordsRole).toBool());
       saver.save(data(index(i,0), kLockLinksRole).toBool());
       saver.save(data(index(i,0), kMaxNodePostsRole).toInt());
+      saver.save(data(index(i,0), kBrowserWidthRole).toInt());
+      saver.save(data(index(i,0), kBrowserHeightRole).toInt());
     }
   }
 
   // Save the data.
   write_file(kAppFile, ss.str(), _use_encryption);
+
+  // Update app comm.
+  send_browser_size_to_app_comm();
+}
+
+void FileModel::send_browser_size_to_app_comm() const {
+  // Hacky. Let AppCommunication know about the new browser size.
+  // This way AppCommunication can enforce the browser size when polling it.
+  int width = get_work_setting(kBrowserWidthRole).toInt();
+  int height = get_work_setting(kBrowserHeightRole).toInt();
+  g_app_comm->set_browser_size(width, height);
 }
 
 void FileModel::load_graph() {
   if (_working_row < 0) {
     // Create the first graph file.
-    QVariantMap info = get_default_info();
+    QVariantMap info;
     info["title"] = "demo";
     info["description"] = "A simple demo.";
     create_graph(info);
@@ -529,19 +540,15 @@ void FileModel::save_graph(int row) {
   write_file(graph_file, ss.str(), _use_encryption);
 }
 
-QVariantMap FileModel::get_default_info() {
-  QVariantMap info;
-  info["title"] = "untitled";
-  info["description"] = "An empty graph.";
-  info["auto_run"] = false;
-  info["auto_run_interval"] = 60;
-  info["hide_passwords"] = true;
-  info["lock_links"] = false;
-  info["max_node_posts"] = 1000;
-  return info;
-}
+// The info argument must contain all required key-value pairs.
+void FileModel::create_graph(const QVariantMap& arg) {
+  // Fill any missing key-value with default values.
+  QVariantMap settings = _default_settings;
+  QVariantMap::const_iterator iter;
+  for (iter = arg.constBegin(); iter != arg.constEnd(); ++iter) {
+    settings[iter.key()] = iter.value();
+  }
 
-void FileModel::create_graph(const QVariantMap& info) {
   // Add a new row.
   setRowCount(rowCount()+1);
   _working_row = rowCount() -1;
@@ -550,19 +557,22 @@ void FileModel::create_graph(const QVariantMap& info) {
   QString filename = make_filename_unique();
 
   // Make sure the title is unique.
-  QString title = info["title"].toString();
+  QString title;
+  title = settings["title"].toString();
   title = make_title_unique(title);
 
   // Build the new item.
   QStandardItem *item = new_ff QStandardItem();
   item->setData(title, kTitleRole);
   item->setData(filename, kFilenameRole);
-  item->setData(info["description"].toString(), kDescriptionRole);
-  item->setData(info["auto_run"], kAutoRunRole);
-  item->setData(info["auto_run_interval"], kAutoRunIntervalRole);
-  item->setData(info["hide_passwords"], kHidePasswordsRole);
-  item->setData(info["lock_links"], kLockLinksRole);
-  item->setData(info["max_node_posts"], kMaxNodePostsRole);
+  item->setData(settings["description"].toString(), kDescriptionRole);
+  item->setData(settings["auto_run"], kAutoRunRole);
+  item->setData(settings["auto_run_interval"], kAutoRunIntervalRole);
+  item->setData(settings["hide_passwords"], kHidePasswordsRole);
+  item->setData(settings["lock_links"], kLockLinksRole);
+  item->setData(settings["max_node_posts"], kMaxNodePostsRole);
+  item->setData(settings["browser_width"], kBrowserWidthRole);
+  item->setData(settings["browser_height"], kBrowserHeightRole);
   setItem(_working_row, 0, item);
 
   // Destroy the existing graph.
@@ -608,15 +618,13 @@ void FileModel::destroy_graph(int row) {
   save_model();
 }
 
-void FileModel::update_graph(int row, const QVariantMap& info) {
-  set_title(row, info["title"].toString());
-  set_description(row, info["description"].toString());
-  set_auto_run(row, info["auto_run"].toBool());
-  set_auto_run_interval(row, info["auto_run_interval"].toInt());
-  set_hide_passwords(row, info["hide_passwords"].toBool());
-  set_lock_links(row, info["lock_links"].toBool());
-  set_max_node_posts(row, info["max_node_posts"].toInt());
-
+// The info argument does not need to contain all key-value pairs.
+// Only those key-value pairs present will be updated.
+void FileModel::update_graph(int row, const QVariantMap& settings) {
+  QVariantMap::const_iterator iter;
+  for (iter = settings.begin(); iter != settings.end(); ++iter) {
+    set_setting(row, iter.key(), iter.value());
+  }
   // Sort the files.
   sort_files();
   save_model();

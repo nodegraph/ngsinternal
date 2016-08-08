@@ -43,7 +43,7 @@ Rectangle {
 
     ColumnLayout {
         // Geometry.
-        height: app_settings.menu_page_height
+        height: app_settings.menu_page_height / 2
         width: app_settings.menu_page_width
 
         // Positioning.
@@ -77,7 +77,7 @@ Rectangle {
             AppTextField {
                 id: title_field
                 tool_bar: copy_paste_bar
-                text: create_file ? file_model.get_default_info()['title'] : file_stack_page.get_file_page().get_current_title()
+                text: create_file ? file_model.get_default_settings().title : file_stack_page.get_file_page().get_current_setting('title') //
                 anchors {
                     left: parent.left
                     right: parent.right
@@ -105,7 +105,7 @@ Rectangle {
             AppTextField {
                 id: description_field
                 tool_bar: copy_paste_bar
-                text: create_file ? file_model.get_default_info()['description'] : file_stack_page.get_file_page().get_current_description()
+                text: create_file ? file_model.get_default_settings().description : file_stack_page.get_file_page().get_current_setting('description') //
                 anchors {
                     left: parent.left
                     right: parent.right
@@ -113,120 +113,7 @@ Rectangle {
             }
         }
 
-        RowLayout {
-            AppLabel {
-                id: hide_passwords_label
-                text: "Hide Passwords"
-                anchors {
-                    left: parent.left
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-            AppCheckBox {
-                id: hide_passwords_check_box
-                checked: create_file ? file_model.get_default_info()['hide_passwords'] : file_stack_page.get_file_page().get_current_hide_passwords()
-                anchors {
-                    left: hide_passwords_label.right
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-        }
 
-        RowLayout {
-            AppLabel {
-                id: lock_links_label
-                text: "Lock Links"
-                anchors {
-                    left: parent.left
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-
-            AppCheckBox {
-                id: lock_links_check_box
-                checked: create_file ? file_model.get_default_info()['lock_links'] : file_stack_page.get_file_page().get_current_lock_links()
-                anchors {
-                    left: lock_links_label.right
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-        }
-
-        RowLayout {
-            AppLabel {
-                id: max_node_posts_label
-                text: "Max Node Posts"
-                anchors {
-                    left: parent.left
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-
-            // Title Field.
-            AppTextField {
-                id: max_node_posts_text_field
-                tool_bar: copy_paste_bar
-                text: create_file ? file_model.get_default_info()['max_node_posts'] : file_stack_page.get_file_page().get_current_max_node_posts()
-                inputMethodHints: Qt.ImhFormattedNumbersOnly
-                anchors {
-                    left: max_node_posts_label.right
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-        }
-
-        RowLayout {
-            AppLabel {
-                id: auto_run_label
-                text: "Auto Run"
-                anchors {
-                    left: parent.left
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-
-            AppCheckBox {
-                id: auto_run_check_box
-                checked: create_file ? file_model.get_default_info()['auto_run'] : file_stack_page.get_file_page().get_current_auto_run()
-                anchors {
-                    left: auto_run_label.right
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-        }
-
-        RowLayout {
-            AppLabel {
-                id: auto_run_interval_label
-                text: "Auto Run Interval (mins)"
-                anchors {
-                    left: parent.left
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-
-            // Title Field.
-            AppTextField {
-                id: auto_run_interval_text_field
-                tool_bar: copy_paste_bar
-                text: create_file ? file_model.get_default_info()['auto_run_interval'] : file_stack_page.get_file_page().get_current_auto_run_interval()
-                inputMethodHints: Qt.ImhFormattedNumbersOnly
-                anchors {
-                    left: auto_run_interval_label.right
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-        }
 
         // Buttons.
         RowLayout {
@@ -238,11 +125,6 @@ Rectangle {
                     var info = {}
                     info.title = title_field.text
                     info.description = description_field.text
-                    info.auto_run = auto_run_check_box.checked
-                    info.auto_run_interval = Number(auto_run_interval_text_field.text)
-                    info.hide_passwords = hide_passwords_check_box.checked
-                    info.lock_links = lock_links_check_box.checked
-                    info.max_node_posts = Number(max_node_posts_text_field.text)
 
                     // Set values.
                     if (create_file == true) {
@@ -265,6 +147,8 @@ Rectangle {
                 text: "cancel"
                 onClicked: {
                     create_file_page.parent_stack_view.pop_page()
+
+                    console.log('default settings: ' + JSON.stringify(file_model.get_default_settings()))
                 }
             }
             Item {Layout.fillWidth: true}

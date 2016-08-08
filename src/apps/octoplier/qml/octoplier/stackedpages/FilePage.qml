@@ -35,46 +35,16 @@ AppListPage {
         return list_view.currentIndex
     }
 
-    function get_current_title() {
-        return file_model.get_title(get_current_index())
-    }
-
-    function get_current_description() {
-        return file_model.get_description(get_current_index())
-    }
-
-    function get_current_auto_run() {
-        return file_model.get_auto_run(get_current_index())
-    }
-
-    function get_current_auto_run_interval() {
-        return file_model.get_auto_run_interval(get_current_index())
-    }
-
-    function get_current_hide_passwords() {
-        return file_model.get_hide_passwords(get_current_index())
-    }
-
-    function get_current_lock_links() {
-        return file_model.get_lock_links(get_current_index())
-    }
-
-    function get_current_max_node_posts() {
-        return file_model.get_max_node_posts(get_current_index())
+    function get_current_setting(setting) {
+        return file_model.get_setting(get_current_index(), setting)
     }
 
     // --------------------------------------------------------------------------------------------
     // Operations on the current file highlighted in the list view.
     // --------------------------------------------------------------------------------------------
 
-    function update_current_graph(file_info) {    
-        file_model.set_title(list_view.currentIndex, file_info.title)
-        file_model.set_description(list_view.currentIndex, file_info.description)
-        file_model.set_auto_run(list_view.currentIndex, file_info.auto_run)
-        file_model.set_auto_run_interval(list_view.currentIndex, file_info.auto_run_interval)
-        file_model.set_hide_passwords(list_view.currentIndex, file_info.hide_passwords)
-        file_model.set_lock_links(list_view.currentIndex, file_info.lock_links)
-        file_model.set_max_node_posts(list_view.currentIndex, file_info.max_node_posts)
+    function update_current_graph(settings) {
+        file_model.update_graph(list_view.currentIndex, settings)
         file_model.sort_files()
     }
 

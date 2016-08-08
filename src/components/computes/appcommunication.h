@@ -15,7 +15,6 @@ class QWebSocket;
 
 namespace ngs {
 
-
 // Workaround: As of Qt 5.4 QtQuick does not expose QUrl::fromUserInput.
 class COMPUTES_EXPORT Utils : public QObject {
     Q_OBJECT
@@ -34,6 +33,8 @@ Q_OBJECT
 
   explicit AppCommunication(QObject *parent = 0);
   virtual ~AppCommunication();
+
+  void set_browser_size(int width, int height) {_browser_width = width; _browser_height = height;}
 
   // Returns false when it is busy processing a previous command.
   // When false is returned the command will be dropped.
@@ -84,8 +85,9 @@ signals:
   void connect_to_nodejs();
   bool nodejs_is_connected();
 
-  // Browser open/close state.
+  // Check browser state.
   void check_browser_is_open();
+  void check_browser_size();
 
   // Handles requests originating from clicking items in the browser's context menu.
   void handle_request_from_nodejs(const SocketMessage& sm);
@@ -104,6 +106,9 @@ signals:
 
   // Poll timer.
   QTimer _poll_timer;
+
+  int _browser_width;
+  int _browser_height;
 };
 
 }

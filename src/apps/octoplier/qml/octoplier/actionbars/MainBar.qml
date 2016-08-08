@@ -25,7 +25,7 @@ Rectangle {
     signal open_more_options()
 
     // Internal Properties.
-    property var last_mode: app_settings.about_mode
+    property var last_mode: app_settings.settings_mode
     property var current_mode: app_settings.node_graph_mode
 
     Component.onCompleted: {
@@ -55,9 +55,9 @@ Rectangle {
             posts_button.lit = true
             action_bar_title.text = "Node Posts"
             more_menu_button.visible = false;
-        } else if (m == app_settings.about_mode) {
-            about_button.lit = true
-            action_bar_title.text = "About"
+        } else if (m == app_settings.settings_mode) {
+            settings_button.lit = true
+            action_bar_title.text = "Node Graph Settings"
             more_menu_button.visible = false;
         }
         switch_to_mode(m)
@@ -79,7 +79,7 @@ Rectangle {
         view_node_button.lit = false
         edit_node_button.lit = false
         posts_button.lit = false
-        about_button.lit = false
+        settings_button.lit = false
     }
 
     // Background Setup.
@@ -201,7 +201,7 @@ Rectangle {
         
         anchors {
         	verticalCenter: parent.verticalCenter
-        	right: about_button.left
+        	right: settings_button.left
         	leftMargin: app_settings.action_bar_left_margin
     		rightMargin: app_settings.action_bar_right_margin
     	}
@@ -216,7 +216,7 @@ Rectangle {
 
     // Settings Mode Button.
     AppImageButton {
-        id: about_button
+        id: settings_button
         
         anchors {
         	verticalCenter: parent.verticalCenter
@@ -225,11 +225,11 @@ Rectangle {
     		rightMargin: app_settings.action_bar_right_margin
     	}
         
-        image_url: "qrc:///icons/ic_info_outline_white_48dp.png"
-            tooltip_text: "About"
+        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+            tooltip_text: "Node Graph Settings"
         
         onClicked: {
-            on_switch_to_mode(app_settings.about_mode)
+            on_switch_to_mode(app_settings.settings_mode)
         }
     }
 }

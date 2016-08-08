@@ -35,6 +35,8 @@
         <file>qml/octoplier/appwidgets/AppDataDelegate.qml</file>
         <file>qml/octoplier/appwidgets/AppMenuItemDelegate.qml</file>
         <file>qml/octoplier/appwidgets/AppFileDelegate.qml</file>
+        <file>qml/octoplier/appwidgets/AppPostDelegate.qml</file>
+        
         <file>qml/octoplier/appwidgets/AppStackViewHeader.qml</file>
         <file>qml/octoplier/appwidgets/AppStackView.qml</file>
         <file>qml/octoplier/appwidgets/AppScrollView.qml</file>
@@ -77,6 +79,7 @@
         <file>qml/octoplier/pages/NodeGraphPage.qml</file>
         <file>qml/octoplier/pages/PostsPage.qml</file>
         <file>qml/octoplier/pages/AboutPage.qml</file>
+        <file>qml/octoplier/pages/SettingsPage.qml</file>
         <file>qml/octoplier/pages/SplashPage.qml</file>
         
         <!-- JS Compute Nodes -->

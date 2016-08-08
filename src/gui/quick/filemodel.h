@@ -29,6 +29,8 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
     kHidePasswordsRole, // Bool: Whether to hide passwords.
     kLockLinksRole, // Bool: Whether to lock links.
     kMaxNodePostsRole, // Int: Maximum number of node posts. Overflow is destroyed.
+    kBrowserWidthRole, // Int: Fixed width of indirect browser.
+    kBrowserHeightRole, // Int: Fixed height of indirect browser.
   };
 
   FileModel();
@@ -51,7 +53,7 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   Q_INVOKABLE void load_graph(int row);
   Q_INVOKABLE void save_graph(int row);
 
-  Q_INVOKABLE QVariantMap get_default_info();
+  Q_INVOKABLE QVariantMap get_default_settings() {return _default_settings;}
   Q_INVOKABLE void create_graph(const QVariantMap& info);
   Q_INVOKABLE void destroy_graph(int row);
   Q_INVOKABLE void update_graph(int row, const QVariantMap& info);
@@ -61,28 +63,26 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   // the currently selected item in the gui. This is not always the same
   // as the working row.
   Q_INVOKABLE int get_working_row() const;
-  Q_INVOKABLE QString get_working_title() const;
 
   // Title generators.
   Q_INVOKABLE QString make_title_unique(const QString& title) const;
 
   // Getters.
-  Q_INVOKABLE QString get_title(int row) const;
-  Q_INVOKABLE QString get_description(int row) const;
-  Q_INVOKABLE bool get_auto_run(int row) const;
-  Q_INVOKABLE int get_auto_run_interval(int row) const;
-  Q_INVOKABLE bool get_hide_passwords(int row) const;
-  Q_INVOKABLE bool get_lock_links(int row) const;
-  Q_INVOKABLE int get_max_node_posts(int row) const;
+  Q_INVOKABLE int get_role(const QString& role_name) const;
+  Q_INVOKABLE QVariant get_setting(int row, int role) const;
+  Q_INVOKABLE QVariant get_setting(int row, const QString& role_name) const;
 
   // Setters.
-  Q_INVOKABLE void set_title(int row, const QString& title);
-  Q_INVOKABLE void set_description(int row, const QString& description);
-  Q_INVOKABLE void set_auto_run(int row, bool auto_run);
-  Q_INVOKABLE void set_auto_run_interval(int row, int auto_run_interval);
-  Q_INVOKABLE void set_hide_passwords(int row, bool hide_passwords);
-  Q_INVOKABLE void set_lock_links(int row, bool lock_links);
-  Q_INVOKABLE void set_max_node_posts(int row, int max_node_posts);
+  Q_INVOKABLE void set_setting(int row, int role, const QVariant& value);
+  Q_INVOKABLE void set_setting(int row, const QString& role_name, const QVariant& value);
+
+  // Working Row Getters.
+  Q_INVOKABLE QVariant get_work_setting(int role) const;
+  Q_INVOKABLE QVariant get_work_setting(const QString& role_name) const;
+
+  // Working Row Setters.
+  Q_INVOKABLE void set_work_setting(int role, const QVariant& value);
+  Q_INVOKABLE void set_work_setting(const QString& role_name, const QVariant& value);
 
   // Sort rows.
   Q_INVOKABLE void sort_files();
@@ -111,6 +111,7 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   // Model.
   void save_model() const;
   int find_index(const QString& title) const;
+  void send_browser_size_to_app_comm() const;
 
   // Our Dependencies.
   Dep<GraphBuilder> _graph_builder;
@@ -125,6 +126,12 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   std::string _salt;
   std::string _hashed_password;
   std::string _key;
+
+  // Our roles.
+  QHash<int, QByteArray> _roles;
+
+  // Default File Settings.
+  QVariantMap _default_settings;
 
 };
 

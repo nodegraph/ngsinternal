@@ -22,7 +22,7 @@ AppStackPage{
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.about_mode) {
+        if (mode == app_settings.settings_mode) {
             visible = true;
         } else {
             visible = false;

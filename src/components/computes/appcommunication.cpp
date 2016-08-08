@@ -33,7 +33,9 @@ AppCommunication::AppCommunication(QObject *parent)
       _process(NULL),
       _websocket(NULL),
       _use_external_process(false),
-      _waiting_for_results(false){
+      _waiting_for_results(false),
+      _browser_width(1024),
+      _browser_height(1024){
 
   // Setup the websocket.
   _websocket  = new_ff QWebSocket();
@@ -135,6 +137,7 @@ void AppCommunication::on_poll() {
     connect_to_nodejs();
   } else {
     check_browser_is_open();
+    check_browser_size();
   }
 }
 
@@ -272,6 +275,11 @@ bool AppCommunication::nodejs_is_connected() {
 
 void AppCommunication::check_browser_is_open() {
   QString json_text = "{\"request\": \"check_browser_is_open\"}";
+  handle_request_from_app(json_text);
+}
+
+void AppCommunication::check_browser_size() {
+  QString json_text = "{\"request\": \"resize_browser\", \"width\": " + QString::number(_browser_width)+ ", \"height\": " + QString::number(_browser_height) + "}";
   handle_request_from_app(json_text);
 }
 

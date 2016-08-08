@@ -58,7 +58,7 @@ AppStackPage{
 
 	// Push file options page onto the stack.
     function on_open_file_options() {
-        stack_view.push_by_names(get_file_page().get_current_title(), "MenuPage", "FileActions")
+        stack_view.push_by_names(get_file_page().get_current_setting('title'), "MenuPage", "FileActions")
     }
 
 	// Pop the file options off the stack.
@@ -82,8 +82,8 @@ AppStackPage{
         var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", menu_stack_page, {})
         page.visible = true
         page.create_file = false
-        page.title_field.text = get_file_page().get_current_title()
-        page.description_field.text = get_file_page().get_current_description()
+        page.title_field.text = get_file_page().get_current_setting('title')
+        page.description_field.text = get_file_page().get_current_setting('description')
         page.set_title("Edit File Info")
         stack_view.push_page(page)
         visible = true

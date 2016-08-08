@@ -7,6 +7,7 @@ TextField {
     
     // Dependencies.
     property var tool_bar
+    property bool use_tool_bar: false
 
     // Dimensions.
     height: app_settings.text_field_height
@@ -25,7 +26,7 @@ TextField {
     font.pointSize: app_settings.font_point_size
     
     onSelectionStartChanged: {
-        if (activeFocus) {
+        if (use_tool_bar && activeFocus) {
             forceActiveFocus()
             tool_bar.text_editor = text_field
             tool_bar.visible = true
@@ -33,7 +34,7 @@ TextField {
     }
     
     onSelectionEndChanged: {
-        if (activeFocus) {
+        if (use_tool_bar && activeFocus) {
             forceActiveFocus()
             tool_bar.text_editor = text_field
             tool_bar.visible = true
@@ -41,7 +42,7 @@ TextField {
     }
         
     onSelectedTextChanged: {
-        if (activeFocus) {
+        if (use_tool_bar && activeFocus) {
             forceActiveFocus()
             tool_bar.text_editor = text_field
             tool_bar.visible = true
@@ -49,7 +50,7 @@ TextField {
     }
         
     onActiveFocusChanged: {
-        if (activeFocus) {
+        if (use_tool_bar && activeFocus) {
             forceActiveFocus()
             tool_bar.text_editor = text_field
             tool_bar.visible = true
@@ -57,12 +58,14 @@ TextField {
     }
         
     onAccepted: {
-        tool_bar.visible = false
-        tool_bar.text_editor = null
+        if (use_tool_bar) {
+            tool_bar.visible = false
+            tool_bar.text_editor = null
+        }
     }
         
     onVisibleChanged: {
-        if (!parent.visible) {
+        if (use_tool_bar && !parent.visible) {
             if (tool_bar.text_editor == text_field) {
                 tool_bar.visible = false
                 tool_bar.text_editor = null
