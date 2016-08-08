@@ -11,6 +11,8 @@
 #include <components/computes/computeglobals.h>
 #include <components/computes/appcommunication.h>
 #include <gui/quick/nodegraphquickitemglobals.h>
+#include <gui/quick/nodegraphquickitem.h>
+
 
 #include <cstddef>
 #include <sstream>
@@ -20,6 +22,10 @@
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
+#include <QtQml/QtQml>
+#include <QtQml/QQmlEngine>
+#include <QtQuick/QQuickView>
+#include <QQmlApplicationEngine>
 
 namespace ngs {
 
@@ -427,7 +433,7 @@ void FileModel::load_model() {
   assert(_working_row >= 0);
 
   // Update app comm.
-  send_browser_size_to_app_comm();
+  propagate_changes_throughout_app();
 }
 
 void FileModel::save_model() const {
@@ -461,15 +467,34 @@ void FileModel::save_model() const {
   write_file(kAppFile, ss.str(), _use_encryption);
 
   // Update app comm.
-  send_browser_size_to_app_comm();
+  propagate_changes_throughout_app();
 }
 
-void FileModel::send_browser_size_to_app_comm() const {
-  // Hacky. Let AppCommunication know about the new browser size.
+void FileModel::propagate_changes_throughout_app() const {
+  // Let AppCommunication know about the new browser size.
   // This way AppCommunication can enforce the browser size when polling it.
   int width = get_work_setting(kBrowserWidthRole).toInt();
   int height = get_work_setting(kBrowserHeightRole).toInt();
   g_app_comm->set_browser_size(width, height);
+
+  // Find the NodeGraphQuickItem.
+  QQuickItem* root_item = g_quick_view->rootObject();
+  NodeGraphQuickItem* ng_item = root_item->findChild<NodeGraphQuickItem*>("node_graph_object", Qt::FindChildrenRecursively);
+  assert(ng_item);
+
+  // Update the link locking.
+  ng_item->lock_links(get_work_setting(kLockLinksRole).toBool());
+
+  // Find the AppSettings.
+  QQuickItem* app_settings_item = root_item->findChild<QQuickItem*>("app_settings_object", Qt::FindChildrenRecursively);
+  assert(app_settings_item);
+
+  // Update the password hiding.
+  app_settings_item->setProperty("hide_passwords", get_work_setting(kHidePasswordsRole).toBool());
+
+  // Update the max node posts.
+  app_settings_item->setProperty("max_node_posts", get_work_setting(kMaxNodePostsRole).toInt());
+
 }
 
 void FileModel::load_graph() {

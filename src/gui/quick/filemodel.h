@@ -53,7 +53,7 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   Q_INVOKABLE void load_graph(int row);
   Q_INVOKABLE void save_graph(int row);
 
-  Q_INVOKABLE QVariantMap get_default_settings() {return _default_settings;}
+  Q_INVOKABLE QVariantMap get_default_settings() {return _default_settings;} // This has to be returned by value, otherwise QML gets 'undefined'.
   Q_INVOKABLE void create_graph(const QVariantMap& info);
   Q_INVOKABLE void destroy_graph(int row);
   Q_INVOKABLE void update_graph(int row, const QVariantMap& info);
@@ -111,7 +111,7 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   // Model.
   void save_model() const;
   int find_index(const QString& title) const;
-  void send_browser_size_to_app_comm() const;
+  void propagate_changes_throughout_app() const;
 
   // Our Dependencies.
   Dep<GraphBuilder> _graph_builder;

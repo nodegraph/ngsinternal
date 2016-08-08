@@ -9,6 +9,7 @@ import QtQuick.Controls.Private 1.0
 
 Item{
     id: app_settings
+    objectName: "app_settings_object"
     visible: false
 
     function try_catch_wrap(f) {
@@ -21,6 +22,9 @@ Item{
             }
         }
     }
+
+    property bool hide_passwords: true
+    property int max_node_posts: 1000
     
     // -------------------------------------------------------------------
     // The 3 main sections of our gui.

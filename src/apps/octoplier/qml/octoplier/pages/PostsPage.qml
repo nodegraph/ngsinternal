@@ -1,30 +1,3 @@
-//import QtQuick 2.6
-//import NodeGraphTesting 1.0
-
-//import octoplier.appconfig 1.0
-//import octoplier.stackedpages 1.0
-//import octoplier.appwidgets 1.0
-//import octoplier.menumodels 1.0
-
-//Rectangle {
-//    id: posts_page
-
-//    // Dimensions.
-//    height: app_settings.page_height
-//    width: app_settings.page_width
-    
-//    // Positioning.
-//    x: app_settings.page_x
-//    y: app_settings.page_y
-//    z: app_settings.page_z
-    
-//    // Appearance.
-//    color: app_settings.menu_stack_bg_color
-    
-
-//}
-
-
 import QtQuick 2.6
 import QtQuick.Controls 1.4
 import QtQuick.Window 2.2
@@ -39,6 +12,8 @@ import octoplier.stackedpages 1.0
 import octoplier.pages 1.0
 import octoplier.appwidgets 1.0
 import octoplier.menumodels 1.0
+
+// The max node posts is specified in app_settings.max_node_posts.
 
 AppListPage {
     id: posts_page
