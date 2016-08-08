@@ -21,7 +21,7 @@ Rectangle {
     z: 10
 
     // Properties.
-    color: app_settings.ng_bg_color
+    color: app_settings.menu_stack_bg_color
 
     ColumnLayout {
         height: app_settings.screen_height

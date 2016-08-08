@@ -10,7 +10,8 @@ ListModel {
         image_url: "qrc:///icons/ic_open_in_browser_white_48dp.png"
         title: "Load"
         description: "Load the selected graph file."
-        script: "file_stack_page.load_current()"
+        script: "file_stack_page.get_file_page().load_current();
+        	     file_stack_page.on_close_file_options();"
     }
 
     ListElement {
@@ -23,15 +24,16 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_insert_drive_file_white_48dp.png"
         title: "Edit"
-        description: "Edit the name or description of selected graph file."
+        description: "Edit the settings on the selected file."
         script: "file_stack_page.on_edit_file_page()"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
         title: "Delete"
-        description: "Delete the selected graph file."
-        script: "file_stack_page.delete_current()"
+        description: "Delete the selected file."
+        script: "file_stack_page.get_file_page().delete_current();
+        		 file_stack_page.on_close_file_options()"
     }
 
 }

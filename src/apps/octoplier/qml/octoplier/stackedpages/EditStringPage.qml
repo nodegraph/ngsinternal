@@ -20,7 +20,8 @@ Rectangle {
     z: 0
 
     // Appearance.
-    color: app_settings.ng_bg_color
+    color: app_settings.menu_stack_bg_color
+    
     // This is set when added to the app stack view.
     property var parent_stack_view
     property var value

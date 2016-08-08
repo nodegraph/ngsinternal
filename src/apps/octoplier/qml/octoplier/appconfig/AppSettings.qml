@@ -94,7 +94,7 @@ Item{
     property int view_node_mode: 2
     property int edit_node_mode: 3
     property int posts_mode: 4
-    property int settings_mode: 5
+    property int about_mode: 5
     
     // -------------------------------------------------------------------
     // Layering.

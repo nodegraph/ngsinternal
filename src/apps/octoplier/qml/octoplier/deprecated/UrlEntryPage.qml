@@ -21,7 +21,7 @@ Rectangle {
     z: 0
     
     // Properties.
-    color: app_settings.ng_bg_color
+    color: app_settings.menu_stack_bg_color
 
     property alias url_field: url_field
 

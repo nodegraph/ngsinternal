@@ -5,7 +5,8 @@ Rectangle {
     anchors.fill: parent
     visible: true
 
-    color: "#FF03A9F4"
+    // This is hard coded because the AppSettings has not been loaded yet.
+    color: "#FF0288D1" // a darker blue than the node graph blue
 
     // Logo.
     Image {

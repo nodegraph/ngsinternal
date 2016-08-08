@@ -104,7 +104,7 @@ TreeView {
         headerDelegate: Rectangle {
             height: 0
 //            height: app_settings.tree_view_header_height
-//            color: app_settings.ng_bg_color
+//            color: app_settings.menu_stack_bg_color
 //            Text {
 //                id: textItem
 //                anchors.fill: parent

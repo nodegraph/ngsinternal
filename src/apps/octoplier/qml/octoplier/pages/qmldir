@@ -7,7 +7,7 @@ SplashPage 1.0 SplashPage.qml
 
 NodeGraphPage 1.0 NodeGraphPage.qml
 PostsPage 1.0 PostsPage.qml
-SettingsPage 1.0 SettingsPage.qml
+AboutPage 1.0 AboutPage.qml
 
 
 

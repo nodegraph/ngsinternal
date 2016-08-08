@@ -18,7 +18,7 @@ Rectangle {
     // Aliases to our internal objects.
     property alias web_view_alias: web_view;
 
-    color: app_settings.ng_bg_color // "#FF01579B" //app_settings.action_bar_bg_color // app_settings.ng_bg_color
+    color: app_settings.menu_stack_bg_color // "#FF01579B" //app_settings.action_bar_bg_color // app_settings.menu_stack_bg_color
 
     // Dimensions.
     height: app_settings.page_height

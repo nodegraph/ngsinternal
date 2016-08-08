@@ -76,7 +76,7 @@
         <file>qml/octoplier/pages/CheckPasswordPage.qml</file>
         <file>qml/octoplier/pages/NodeGraphPage.qml</file>
         <file>qml/octoplier/pages/PostsPage.qml</file>
-        <file>qml/octoplier/pages/SettingsPage.qml</file>
+        <file>qml/octoplier/pages/AboutPage.qml</file>
         <file>qml/octoplier/pages/SplashPage.qml</file>
         
         <!-- JS Compute Nodes -->
@@ -152,6 +152,8 @@
         <file alias="icons/ic_widgets_white_48dp.png">../../external/icons/ic_widgets_white_48dp.png</file>
         <file alias="icons/ic_folder_open_black_48dp.png">../../external/icons/ic_folder_open_black_48dp.png</file>
         <file alias="icons/ic_folder_open_white_48dp.png">../../external/icons/ic_folder_open_white_48dp.png</file>
+        <file alias="icons/ic_info_outline_black_48dp.png">../../external/icons/ic_info_outline_black_48dp.png</file>
+        <file alias="icons/ic_info_outline_white_48dp.png">../../external/icons/ic_info_outline_white_48dp.png</file>
          
         <!-- File Menu Icons. -->
         <file alias="icons/ic_delete_forever_black_48dp.png">../../external/icons/ic_delete_forever_black_48dp.png</file>

@@ -50,55 +50,38 @@ AppStackPage{
         initialized = true
     }
 
-    // --------------------------------------------------------------------------------------------------------------------
-    // Methods which forward to the file page, which is the first page.
-    // --------------------------------------------------------------------------------------------------------------------
 
+	// The file page is always at the bottom of the stack.
     function get_file_page() {
         return stack_view.get(0)
     }
 
-    function load_current() {
-        get_file_page().load_current()
-        on_close_file_options()
-    }
-
-    function delete_current() {
-        get_file_page().delete_current()
-        on_close_file_options()
-    }
-
-    function update_current_graph(title, description) {
-        get_file_page().update_current_graph(title, description)
-        on_close_file_options()
-    }
-
-    // --------------------------------------------------------------------------------------------------------------------
-    // Create/Remove Pages. Usually called by other actions.
-    // --------------------------------------------------------------------------------------------------------------------
-
+	// Push file options page onto the stack.
     function on_open_file_options() {
         stack_view.push_by_names(get_file_page().get_current_title(), "MenuPage", "FileActions")
     }
 
+	// Pop the file options off the stack.
     function on_close_file_options() {
         // Pop everything except the file page.
         stack_view.pop(get_file_page())
     }
 
+	// Push the create file page onto the stack.
     function on_create_file_page() {
         var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", menu_stack_page, {})
         page.visible = true
-        page.mode = "create"
+        page.create_file = true
         page.set_title("Create File")
         stack_view.push_page(page)
         visible = true
     }
 
+	// Push the edit file page onto the stack.
     function on_edit_file_page() {
         var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", menu_stack_page, {})
         page.visible = true
-        page.mode = "update"
+        page.create_file = false
         page.title_field.text = get_file_page().get_current_title()
         page.description_field.text = get_file_page().get_current_description()
         page.set_title("Edit File Info")

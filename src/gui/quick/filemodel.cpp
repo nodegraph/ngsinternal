@@ -48,13 +48,19 @@ FileModel::FileModel()
 
   // Set our role names.
   QHash<int, QByteArray> roles;
-  roles[Qt::UserRole] = "title";
+  roles[kTitleRole] = "title";
   roles[kFilenameRole] = "filename";
   roles[kDescriptionRole] = "description";
+  roles[kAutoRunRole] = "auto_run";
+  roles[kAutoRunIntervalRole] = "auto_run_interval";
+  roles[kHidePasswordsRole] = "hide_passwords";
+  roles[kLockLinksRole] = "lock_links";
+  roles[kMaxNodePostsRole] = "max_node_posts";
+
   setItemRoleNames(roles);
 
   // Sort on titles.
-  setSortRole(Qt::UserRole);
+  setSortRole(kTitleRole);
   sort(0,Qt::AscendingOrder);
 
   // Connect signals.
@@ -126,7 +132,7 @@ bool FileModel::check_password(const QString& password) {
 
 
 void FileModel::sort_files() {
-  QString title = data(index(_working_row,0), Qt::UserRole).toString();
+  QString title = data(index(_working_row,0), kTitleRole).toString();
   sort(0,Qt::AscendingOrder);
   _working_row = find_index(title);
   assert(_working_row>=0);
@@ -134,7 +140,7 @@ void FileModel::sort_files() {
 
 int FileModel::find_index(const QString& title) const {
   for (int i=0; i<rowCount(); ++i) {
-    if (title == data(index(i,0), Qt::UserRole).toString()) {
+    if (title == data(index(i,0), kTitleRole).toString()) {
       return i;
     }
   }
@@ -150,12 +156,87 @@ QString FileModel::get_working_title() const {
 }
 
 QString FileModel::get_title(int row) const {
-  return data(index(row,0), Qt::UserRole).toString();
+  return data(index(row,0), kTitleRole).toString();
 }
 
 QString FileModel::get_description(int row) const {
   return data(index(row,0), kDescriptionRole).toString();
 }
+
+bool FileModel::get_auto_run(int row) const {
+  return data(index(row,0), kAutoRunRole).toBool();
+}
+
+int FileModel::get_auto_run_interval(int row) const {
+  return data(index(row,0), kAutoRunIntervalRole).toInt();
+}
+
+bool FileModel::get_hide_passwords(int row) const {
+  return data(index(row,0), kHidePasswordsRole).toBool();
+}
+
+bool FileModel::get_lock_links(int row) const {
+  return data(index(row,0), kLockLinksRole).toBool();
+}
+
+int FileModel::get_max_node_posts(int row) const {
+  return data(index(row,0), kMaxNodePostsRole).toInt();
+}
+
+void FileModel::set_title(int row, const QString& title){
+  QString row_title = data(index(row,0),kTitleRole).toString();
+  if (row_title != title) {
+    row_title = make_title_unique(title);
+  }
+
+  QStandardItem* it = item(row, 0);
+  it->setData(row_title, kTitleRole);
+  setItem(row,0,it);
+  save_model();
+}
+
+void FileModel::set_description(int row, const QString& description){
+  QStandardItem* it = item(row, 0);
+  it->setData(description, kDescriptionRole);
+  setItem(row,0,it);
+  save_model();
+}
+
+void FileModel::set_auto_run(int row, bool auto_run){
+  QStandardItem* it = item(row, 0);
+  it->setData(auto_run, kAutoRunRole);
+  setItem(row,0,it);
+  save_model();
+}
+
+void FileModel::set_auto_run_interval(int row, int auto_run_interval){
+  QStandardItem* it = item(row, 0);
+  it->setData(auto_run_interval, kAutoRunIntervalRole);
+  setItem(row,0,it);
+  save_model();
+}
+
+void FileModel::set_hide_passwords(int row, bool hide_passwords){
+  QStandardItem* it = item(row, 0);
+  it->setData(hide_passwords, kHidePasswordsRole);
+  setItem(row,0,it);
+  save_model();
+}
+
+void FileModel::set_lock_links(int row, bool lock_links){
+  QStandardItem* it = item(row, 0);
+  it->setData(lock_links, kLockLinksRole);
+  setItem(row,0,it);
+  save_model();
+}
+
+void FileModel::set_max_node_posts(int row, int max_node_posts){
+  QStandardItem* it = item(row, 0);
+  it->setData(max_node_posts, kMaxNodePostsRole);
+  setItem(row,0,it);
+  save_model();
+}
+
 
 QString FileModel::get_prefixed_file(const QString& file) const {
   return _app_dir + "/" + file;
@@ -230,7 +311,7 @@ void FileModel::destroy_file(const QString& filename) const {
 
 bool FileModel::title_exists(const QString& title) const {
   for (int i=0; i<rowCount(); ++i) {
-    if (title == data(index(i,0), Qt::UserRole).toString()) {
+    if (title == data(index(i,0), kTitleRole).toString()) {
       return true;
     }
   }
@@ -322,13 +403,29 @@ void FileModel::load_model() {
     loader.load(filename);
     std::string description;
     loader.load(description);
+    bool auto_run;
+    loader.load(auto_run);
+    int auto_run_interval;
+    loader.load(auto_run_interval);
+    bool hide_passwords;
+    loader.load(hide_passwords);
+    bool lock_links;
+    loader.load(lock_links);
+    int max_node_posts;
+    loader.load(max_node_posts);
+
+
 
     QStandardItem *item = new_ff QStandardItem();
     QString qtitle(title.c_str());
-    item->setData(qtitle, Qt::UserRole);
+    item->setData(qtitle, kTitleRole);
     item->setData(filename.c_str(), kFilenameRole);
     item->setData(description.c_str(), kDescriptionRole);
-    setItem(i, 0, item);
+    item->setData(auto_run, kAutoRunRole);
+    item->setData(auto_run_interval, kAutoRunIntervalRole);
+    item->setData(hide_passwords, kHidePasswordsRole);
+    item->setData(lock_links, kLockLinksRole);
+    item->setData(max_node_posts, kMaxNodePostsRole);
     setItem(i, 0, item);
   }
 
@@ -349,9 +446,14 @@ void FileModel::save_model() const {
     saver.save(row_count);
 
     for (size_t i=0; i<row_count; ++i) {
-      saver.save(data(index(i,0), Qt::UserRole).toString().toStdString());
+      saver.save(data(index(i,0), kTitleRole).toString().toStdString());
       saver.save(data(index(i,0), kFilenameRole).toString().toStdString());
       saver.save(data(index(i,0), kDescriptionRole).toString().toStdString());
+      saver.save(data(index(i,0), kAutoRunRole).toBool());
+      saver.save(data(index(i,0), kAutoRunIntervalRole).toInt());
+      saver.save(data(index(i,0), kHidePasswordsRole).toBool());
+      saver.save(data(index(i,0), kLockLinksRole).toBool());
+      saver.save(data(index(i,0), kMaxNodePostsRole).toInt());
     }
   }
 
@@ -362,7 +464,10 @@ void FileModel::save_model() const {
 void FileModel::load_graph() {
   if (_working_row < 0) {
     // Create the first graph file.
-    create_graph("demo", "A simple demo.");
+    QVariantMap info = get_default_info();
+    info["title"] = "demo";
+    info["description"] = "A simple demo.";
+    create_graph(info);
     // Build the default graph.
     _graph_builder->build_test_graph();
     get_app_root()->initialize_deps();
@@ -424,20 +529,43 @@ void FileModel::save_graph(int row) {
   write_file(graph_file, ss.str(), _use_encryption);
 }
 
-void FileModel::create_graph(const QString& title, const QString& description) {
+QVariantMap FileModel::get_default_info() {
+  QVariantMap info;
+  info["title"] = "untitled";
+  info["description"] = "An empty graph.";
+  info["auto_run"] = false;
+  info["auto_run_interval"] = 60;
+  info["hide_passwords"] = true;
+  info["lock_links"] = false;
+  info["max_node_posts"] = 1000;
+  return info;
+}
+
+void FileModel::create_graph(const QVariantMap& info) {
   // Add a new row.
   setRowCount(rowCount()+1);
   _working_row = rowCount() -1;
 
-  // Create a new item.
+  // Create a unique filename.
   QString filename = make_filename_unique();
+
+  // Make sure the title is unique.
+  QString title = info["title"].toString();
+  title = make_title_unique(title);
+
+  // Build the new item.
   QStandardItem *item = new_ff QStandardItem();
-  item->setData(title, Qt::UserRole);
+  item->setData(title, kTitleRole);
   item->setData(filename, kFilenameRole);
-  item->setData(description, kDescriptionRole);
+  item->setData(info["description"].toString(), kDescriptionRole);
+  item->setData(info["auto_run"], kAutoRunRole);
+  item->setData(info["auto_run_interval"], kAutoRunIntervalRole);
+  item->setData(info["hide_passwords"], kHidePasswordsRole);
+  item->setData(info["lock_links"], kLockLinksRole);
+  item->setData(info["max_node_posts"], kMaxNodePostsRole);
   setItem(_working_row, 0, item);
 
-  // Build the existing graph.
+  // Destroy the existing graph.
   std::unordered_set<size_t> dids;
   dids.insert(kBaseNamespaceEntity);
   get_root_group()->destroy_all_children_except(dids);
@@ -464,7 +592,7 @@ void FileModel::destroy_graph(int row) {
   }
 
   // Get the current title.
-  QString title = data(index(_working_row,0), Qt::UserRole).toString();
+  QString title = data(index(_working_row,0), kTitleRole).toString();
 
   // Get the filename at row.
   QString filename = data(index(row,0), kFilenameRole).toString();
@@ -480,16 +608,14 @@ void FileModel::destroy_graph(int row) {
   save_model();
 }
 
-void FileModel::update_graph(int row, const QString& title, const QString& description) {
-  QString row_title = data(index(row,0),Qt::UserRole).toString();
-  if (row_title != title) {
-    row_title = make_title_unique(title);
-  }
-
-  QStandardItem* it = item(row, 0);
-  it->setData(row_title, Qt::UserRole);
-  it->setData(description, kDescriptionRole);
-  setItem(row,0,it);
+void FileModel::update_graph(int row, const QVariantMap& info) {
+  set_title(row, info["title"].toString());
+  set_description(row, info["description"].toString());
+  set_auto_run(row, info["auto_run"].toBool());
+  set_auto_run_interval(row, info["auto_run_interval"].toInt());
+  set_hide_passwords(row, info["hide_passwords"].toBool());
+  set_lock_links(row, info["lock_links"].toBool());
+  set_max_node_posts(row, info["max_node_posts"].toInt());
 
   // Sort the files.
   sort_files();
