@@ -186,11 +186,15 @@ void CompShapeCollective::get_aa_bounds(const std::unordered_set<Entity*>& entit
 }
 
 void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, glm::vec2& min, glm::vec2& max) {
+
+  std::cerr << "the number of compshapes is: " << comp_shapes.size() << "\n";
+
+  min=glm::vec2(0,0);
+  max=glm::vec2(0,0);
+
   // This is a static method so there's no need for the start_method() call.
   // If we have no nodes or links, then our bounds is empty.
   if (comp_shapes.empty()) {
-    min=glm::vec2(0,0);
-    max=glm::vec2(0,0);
     return;
   }
 
@@ -202,24 +206,27 @@ void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, g
     glm::vec2 low;
     glm::vec2 high;
     c->get_bounds().get_aa_bounds(low,high);
+    std::cerr << "low,high: " << c->get_did() << "," << low << "," << high << "\n";
 
-    if (first) {
-      // If this is the first one, we initialize min and max with it.
-      min = low;
-      max = high;
-      first = false;
-    } else {
-      if (low.x < min.x) {
-        min.x = low.x;
-      }
-      if (low.y < min.y) {
-        min.y = low.y;
-      }
-      if (high.x > max.x) {
-        max.x = high.x;
-      }
-      if (high.y > max.y) {
-        max.y = high.y;
+    if (low != high) {
+      if (first) {
+        // If this is the first one, we initialize min and max with it.
+        min = low;
+        max = high;
+        first = false;
+      } else {
+        if (low.x < min.x) {
+          min.x = low.x;
+        }
+        if (low.y < min.y) {
+          min.y = low.y;
+        }
+        if (high.x > max.x) {
+          max.x = high.x;
+        }
+        if (high.y > max.y) {
+          max.y = high.y;
+        }
       }
     }
   }

@@ -112,6 +112,11 @@ void GroupNodeEntity::create_internals() {
   new_ff CompShapeCollective(this);
   new_ff GroupNodeShape(this);
 
+  // Create our internal namespace entities.
+  create_namespaces();
+}
+
+void GroupNodeEntity::create_namespaces() {
   // Our sub entities.
   {
     Entity* links = new_ff BaseNamespaceEntity(this, "links");

@@ -43,6 +43,7 @@ class ENTITIES_EXPORT GroupNodeEntity : public Entity {
   using Entity::Entity;
   GroupNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
+  virtual void create_namespaces();
 };
 
 class ENTITIES_EXPORT DotNodeEntity : public Entity {

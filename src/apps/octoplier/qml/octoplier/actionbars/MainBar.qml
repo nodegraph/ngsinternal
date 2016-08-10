@@ -72,6 +72,10 @@ Rectangle {
     function switch_to_last_mode(m) {
         on_switch_to_mode(last_mode)
     }
+    
+    function switch_to_current_mode(m) {
+        on_switch_to_mode(current_mode)
+    }
 
     function clear_lit_buttons() {
         file_button.lit = false

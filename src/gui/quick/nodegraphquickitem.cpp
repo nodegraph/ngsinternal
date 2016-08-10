@@ -669,6 +669,7 @@ void NodeGraphQuickItem::frame_all() {
 }
 
 void NodeGraphQuickItem::frame_selected() {
+  _canvas->clean();
   get_current_interaction()->frame_selected(_selection->get_selected());
   update();
 }

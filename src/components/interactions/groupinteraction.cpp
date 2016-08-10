@@ -785,6 +785,7 @@ void GroupInteraction::frame_all() {
   glm::vec2 min;
   glm::vec2 max;
   _shape_collective->get_aa_bounds(min,max);
+  std::cerr << "frame min, max: " << min << "," << max << "\n";
   _view_controls.frame(min, max);
 }
 

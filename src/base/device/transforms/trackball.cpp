@@ -123,7 +123,7 @@ void TrackBall::frame(float view_width, float view_height, const glm::vec2& min_
   _model_view = glm::mat4();
   _model_view[0][0] = 1.0f/max_scale;
   _model_view[1][1] = 1.0f/max_scale;
-  _model_view[2][2] = 1.0f/max_scale;
+  _model_view[2][2] = 1;
 
   _model_view[3][0] = -translation.x/max_scale;
   _model_view[3][1] = -translation.y/max_scale;

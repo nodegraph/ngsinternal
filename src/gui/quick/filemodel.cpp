@@ -8,6 +8,7 @@
 
 #include <components/interactions/graphbuilder.h>
 #include <components/entities/entityids.h>
+#include <components/entities/guientities.h>
 #include <components/computes/computeglobals.h>
 #include <components/computes/appcommunication.h>
 #include <gui/quick/nodegraphquickitemglobals.h>
@@ -601,9 +602,12 @@ void FileModel::create_graph(const QVariantMap& arg) {
   setItem(_working_row, 0, item);
 
   // Destroy the existing graph.
-  std::unordered_set<size_t> dids;
-  dids.insert(kBaseNamespaceEntity);
-  get_root_group()->destroy_all_children_except(dids);
+//  std::unordered_set<size_t> dids;
+//  dids.insert(kBaseNamespaceEntity);
+//  get_root_group()->destroy_all_children_except(dids);
+
+  get_root_group()->destroy_all_children();
+  static_cast<GroupNodeEntity*>(get_root_group())->create_namespaces();
 
   // Now sort everyting.
   sort_files();
