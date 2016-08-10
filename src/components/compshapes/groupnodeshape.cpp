@@ -30,14 +30,14 @@ struct {
 } CompShapeCompare;
 
 GroupNodeShape::GroupNodeShape(Entity* entity)
-    : NodeShape(entity, kDID(), 2),
+    : NodeShape(entity, kDID()),
       _factory(this),
       _lower_change(this) {
   get_dep_loader()->register_fixed_dep(_factory, "");
   get_dep_loader()->register_fixed_dep(_lower_change, ".");
 
-  _bg_quad = &_quads[get_num_base_quads()+0];
-  _fg_quad = &_quads[get_num_base_quads()+1];
+  _marker_bg.state = 0;
+  _marker_fg.state = 0;
 }
 
 GroupNodeShape::~GroupNodeShape() {
@@ -47,30 +47,34 @@ void GroupNodeShape::update_state() {
   NodeShape::update_state();
 
   const Polygon& bounds = get_bounds();
-  glm::vec2 center = 0.5f * (bounds.vertices[0] + bounds.vertices[3]) - glm::vec2(indicator_offset, 0);
-  glm::vec2 pos = center - 0.5f * indicator_size;
+  glm::vec2 target_center = 0.5f * (bounds.vertices[0] + bounds.vertices[3]) - glm::vec2(indicator_offset, 0);
+  glm::vec2 translate = target_center - glm::vec2(0, sqrt(2.0f)*indicator_size.x/2.0f);
 
   // Update our bg quad.
-  _bg_quad->set_scale(indicator_size);
-  _bg_quad->set_rotate(indicator_rotation);
-  _bg_quad->set_translate(pos, indicator_bg_depth);
-  _bg_quad->set_color(indicator_bg_color);
+  _marker_bg.set_scale(indicator_size);
+  _marker_bg.set_rotate(indicator_rotation);
+  _marker_bg.set_translate(translate, indicator_bg_depth);
+  _marker_bg.set_color(indicator_bg_color);
   if (is_selected()) {
-    _bg_quad->state |= selected_transform_bitmask;
+    _marker_bg.state |= selected_transform_bitmask;
   } else {
-    _bg_quad->state &= ~selected_transform_bitmask;
+    _marker_bg.state &= ~selected_transform_bitmask;
   }
 
-  // Update our fg qued.
-  _fg_quad->set_scale(indicator_size -  2.0f*indicator_border_size);
-  _fg_quad->set_rotate(indicator_rotation);
-  _fg_quad->set_translate(pos + glm::vec2(0, sqrt(2.0f)*indicator_border_size.y), indicator_fg_depth);
-  _fg_quad->set_color(indicator_fg_color);
+  // Update our fg quad.
+  _marker_fg.set_scale(indicator_size -  2.0f*indicator_border_size);
+  _marker_fg.set_rotate(indicator_rotation);
+  _marker_fg.set_translate(translate + glm::vec2(0, sqrt(2.0f)*indicator_border_size.y), indicator_fg_depth);
+  _marker_fg.set_color(indicator_fg_color);
   if (is_selected()) {
-    _fg_quad->state |= selected_transform_bitmask;
+    _marker_fg.state |= selected_transform_bitmask;
   } else {
-    _fg_quad->state &= ~selected_transform_bitmask;
+    _marker_fg.state &= ~selected_transform_bitmask;
   }
+
+  // Append our marker shapes onto the quads_cache.
+  _quads_cache.insert(_quads_cache.end(), _marker_bg);
+  _quads_cache.insert(_quads_cache.end(), _marker_fg);
 }
 
 HierarchyUpdate GroupNodeShape::update_hierarchy() {

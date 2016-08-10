@@ -743,6 +743,16 @@ bool GroupInteraction::is_panning_selection() const {
   return _panning_selection;
 }
 
+void GroupInteraction::edit(const Dep<CompShape>& comp_shape) {
+  start_method();
+  _selection->set_edit_node(comp_shape);
+}
+
+void GroupInteraction::view(const Dep<CompShape>& comp_shape) {
+  start_method();
+  _selection->set_view_node(comp_shape);
+}
+
 void GroupInteraction::select(const Dep<CompShape>& comp_shape) {
   start_method();
   _selection->select(comp_shape);

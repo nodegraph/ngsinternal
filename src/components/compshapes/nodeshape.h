@@ -27,12 +27,16 @@ class COMPSHAPES_EXPORT NodeShape: public LinkableShape {
   static const float button_fg_depth;
   static const std::array<unsigned char, 4> node_bg_color;
   static const std::array<unsigned char, 4> node_fg_color;
+  static const std::array<unsigned char,4> edit_bg_color;
+  static const std::array<unsigned char,4> edit_fg_color;
+  static const std::array<unsigned char,4> view_bg_color;
+  static const std::array<unsigned char,4> view_fg_color;
 
   // Node Geometry.
   static const glm::vec2 node_border_size;
 
   NodeShape(Entity* entity);
-  NodeShape(Entity* entity, size_t did, size_t num_extra_quads);
+  NodeShape(Entity* entity, size_t did);
   virtual ~NodeShape();
 
   // Our state.
@@ -47,8 +51,9 @@ class COMPSHAPES_EXPORT NodeShape: public LinkableShape {
   virtual HitRegion hit_test(const glm::vec2& point) const;
 
   // Our shape instancing.
-  virtual const std::vector<ShapeInstance>* get_quad_instances() const {return &_quads;}
-  virtual const std::vector<CharInstance> * get_char_instances() const {return &_chars;}
+  virtual const std::vector<ShapeInstance>* get_quad_instances() const {return &_quads_cache;}
+  virtual const std::vector<CharInstance> * get_char_instances() const {return &_chars_cache;}
+  virtual const std::vector<ShapeInstance>* get_tri_instances() const {return &_tris_cache;}
 
   // Input and Output Ordering.
   virtual void push_input_name(const std::string& input_name);
@@ -68,18 +73,33 @@ class COMPSHAPES_EXPORT NodeShape: public LinkableShape {
   virtual void save(SimpleSaver& saver) const;
   virtual void load(SimpleLoader& loader);
 
+  // Selection.
   virtual void select(bool selected);
   virtual bool is_selected() const;
 
- protected:
-  std::vector<ShapeInstance> _quads;
+  // Edit State.
+  virtual void edit(bool on);
+  virtual bool is_being_edited() const;
 
-  virtual size_t get_num_base_quads() const;
+  // View State.
+  virtual void view(bool on);
+  virtual bool is_being_viewed() const;
+
+ protected:
+  std::vector<ShapeInstance> _tris_cache; // This is a cache of our quads.
+  std::vector<ShapeInstance> _quads_cache; // This is a cache of our quads.
+  std::vector<CharInstance> _chars_cache; // This is a cache of our quads.
 
  private:
   void init(size_t num_quads);
 
+  void update_node_quads();
+  void update_edit_view_quads();
+  void update_quads_cache();
+
   void update_text();
+  void update_edit_view_text();
+  void update_chars_cache();
 
   // Our fixed deps.
   Dep<Resources> _resources;
@@ -94,10 +114,6 @@ class COMPSHAPES_EXPORT NodeShape: public LinkableShape {
   bool _being_edited;
   bool _being_viewed;
 
-  // Our quad instances.
-  ShapeInstance* _bg_quad;
-  ShapeInstance* _fg_quad;
-
   // Our quad bounds.
   Polygon _bg_bounds;
 
@@ -105,9 +121,18 @@ class COMPSHAPES_EXPORT NodeShape: public LinkableShape {
   glm::vec2 _text_min;
   glm::vec2 _text_max;
 
-  // Our text vertices. These are vertices of the text quads.
-  //std::vector<PosTexVertex> _text_vertices;
-  std::vector<CharInstance> _chars;
+  // Our quad instances.
+  ShapeInstance _node_quad_bg;
+  ShapeInstance _node_quad_fg;
+  ShapeInstance _edit_quad_bg;
+  ShapeInstance _edit_quad_fg;
+  ShapeInstance _view_quad_bg;
+  ShapeInstance _view_quad_fg;
+
+  // Our char instances.
+  std::vector<CharInstance> _node_name_chars;
+  std::vector<CharInstance> _edit_chars; // This just holds an 'E'.
+  std::vector<CharInstance> _view_chars; // This just holds an 'V'.
 
   // Our input output ordering.
   std::vector<std::string> _linkable_input_names;

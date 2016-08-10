@@ -30,64 +30,106 @@ const float NodeShape::button_fg_depth = 13.0f;
 const std::array<unsigned char, 4> NodeShape::node_bg_color = { 64, 64, 64, 255 };
 const std::array<unsigned char, 4> NodeShape::node_fg_color = { 100, 100, 100, 255 };
 
+const std::array<unsigned char,4> NodeShape::edit_bg_color = { 255, 255, 255, 255 };
+const std::array<unsigned char,4> NodeShape::edit_fg_color = { 100, 221, 23, 255};
+const std::array<unsigned char,4> NodeShape::view_bg_color = { 255, 255, 255, 255 };
+const std::array<unsigned char,4> NodeShape::view_fg_color = { 224, 64, 251, 255 };
+
 const glm::vec2 NodeShape::node_border_size = glm::vec2(10.0f, 10.0f);
 
 NodeShape::NodeShape(Entity* entity)
     : LinkableShape(entity, kDID()),
       _resources(this),
+      _color(node_bg_color),
       _being_edited(false),
       _being_viewed(false) {
   get_dep_loader()->register_fixed_dep(_resources, "");
-  init(get_num_base_quads());
+
+  _node_quad_bg.state = 0;
+  _node_quad_fg.state = 0;
+  _edit_quad_bg.state = 0;
+  _edit_quad_fg.state = 0;
+  _view_quad_bg.state = 0;
+  _view_quad_fg.state = 0;
 }
 
-NodeShape::NodeShape(Entity* entity, size_t did, size_t num_extra_quads)
+NodeShape::NodeShape(Entity* entity, size_t did)
     : LinkableShape(entity, did),
       _resources(this),
+      _color(node_bg_color),
       _being_edited(false),
       _being_viewed(false) {
   get_dep_loader()->register_fixed_dep(_resources, "");
-  init(get_num_base_quads() + num_extra_quads);
+
+  _node_quad_bg.state = 0;
+  _node_quad_fg.state = 0;
+  _edit_quad_bg.state = 0;
+  _edit_quad_fg.state = 0;
+  _view_quad_bg.state = 0;
+  _view_quad_fg.state = 0;
 }
 
 NodeShape::~NodeShape() {
 }
 
-size_t NodeShape::get_num_base_quads() const {
-  return 2;
-}
-
-void NodeShape::init(size_t num_quads) {
-  _quads.resize(num_quads);
-  _bg_quad = &_quads[0];
-  _fg_quad = &_quads[1];
-
-  _color = node_bg_color;
-}
-
 void NodeShape::select(bool selected) {
+
+  std::cerr << "node shape select: " << selected << "\n";
+
   start_method();
   if (selected) {
-    _bg_quad->state |= (selected_transform_bitmask|selected_color_bitmask);
-    _fg_quad->state |= selected_transform_bitmask;
+    _node_quad_bg.state |= (selected_transform_bitmask|selected_color_bitmask);
+    _node_quad_fg.state |= selected_transform_bitmask;
+    _edit_quad_bg.state |= selected_transform_bitmask;
+    _edit_quad_fg.state |= selected_transform_bitmask;
+    _view_quad_bg.state |= selected_transform_bitmask;
+    _view_quad_fg.state |= selected_transform_bitmask;
   } else {
-    _bg_quad->state &= ~(selected_transform_bitmask|selected_color_bitmask);
-    _fg_quad->state &= ~selected_transform_bitmask;
+    _node_quad_bg.state &= ~(selected_transform_bitmask|selected_color_bitmask);
+    _node_quad_fg.state &= ~selected_transform_bitmask;
+    _edit_quad_bg.state &= ~selected_transform_bitmask;
+    _edit_quad_fg.state &= ~selected_transform_bitmask;
+    _view_quad_bg.state &= ~selected_transform_bitmask;
+    _view_quad_fg.state &= ~selected_transform_bitmask;
   }
 
   // Update the current chars to the selected state.
   // We use the bg quad's state as the canonical state.
-  for (CharInstance& ci: _chars) {
-    ci.set_state(_fg_quad->state);
+  for (CharInstance& ci: _node_name_chars) {
+    ci.set_state(_node_quad_fg.state);
+  }
+  for (CharInstance& ci: _edit_chars) {
+    ci.set_state(_node_quad_fg.state);
+  }
+  for (CharInstance& ci: _view_chars) {
+    ci.set_state(_node_quad_fg.state);
   }
 }
 
 bool NodeShape::is_selected() const {
   start_method();
-  if (_bg_quad->state & selected_transform_bitmask) {
+  if (_node_quad_bg.state & selected_transform_bitmask) {
     return true;
   }
   return false;
+}
+
+void NodeShape::edit(bool on) {
+  start_method();
+  _being_edited = on;
+}
+bool NodeShape::is_being_edited() const {
+  start_method();
+  return _being_edited;
+}
+
+void NodeShape::view(bool on) {
+  start_method();
+  _being_viewed = on;
+}
+bool NodeShape::is_being_viewed() const {
+  start_method();
+  return _being_viewed;
 }
 
 void NodeShape::set_pos(const glm::vec2& pos) {
@@ -114,9 +156,25 @@ HitRegion NodeShape::hit_test(const glm::vec2& point) const {
 }
 
 void NodeShape::update_state() {
-  // Update our text.
+  // Update our chars.
   update_text();
 
+  // Update our quads.
+  update_node_quads();
+  update_edit_view_quads();
+
+  // The edit and view text position relies on the edit and view quads.
+  update_edit_view_text();
+
+  // Update our accumulation caches.
+  update_chars_cache();
+  update_quads_cache();
+
+  // We have no triangles.
+  _tris_cache.clear();
+}
+
+void NodeShape::update_node_quads() {
   // Bg Quad.
   glm::vec2 text_dim = _text_max - _text_min;
   glm::vec2 bg_min = _pos-glm::vec2(70,40);
@@ -134,21 +192,107 @@ void NodeShape::update_state() {
   }
 
   // Node.
-  _bg_quad->set_scale(bg_dim);
-  _bg_quad->set_translate(bg_min, node_bg_depth);
-  _bg_quad->set_color(node_bg_color);
+  _node_quad_bg.set_scale(bg_dim);
+  _node_quad_bg.set_rotate(0);
+  _node_quad_bg.set_translate(bg_min, node_bg_depth);
+  _node_quad_bg.set_color(node_bg_color);
 
-  _fg_quad->set_scale(bg_dim - 2.0f * node_border_size);
-  _fg_quad->set_translate(bg_min + node_border_size, node_fg_depth);
-  _fg_quad->set_color(node_fg_color);
+  _node_quad_fg.set_scale(bg_dim - 2.0f * node_border_size);
+  _node_quad_fg.set_rotate(0);
+  _node_quad_fg.set_translate(bg_min + node_border_size, node_fg_depth);
+  _node_quad_fg.set_color(node_fg_color);
+}
 
+void NodeShape::update_edit_view_quads() {
+
+  glm::vec2 text_dim = _text_max - _text_min;
+  glm::vec2 start = _pos + glm::vec2(text_dim.x + 80, -40);
+
+  if (_being_edited) {
+    glm::vec2 size(150, 150);
+    _edit_quad_bg.set_scale(size);
+    _edit_quad_bg.set_rotate(0);
+    _edit_quad_bg.set_translate(start, node_bg_depth);
+    _edit_quad_bg.set_color(edit_bg_color);
+
+    _edit_quad_fg.set_scale(size - 2.0f * node_border_size);
+    _edit_quad_fg.set_rotate(0);
+    _edit_quad_fg.set_translate(start + node_border_size, node_fg_depth);
+    _edit_quad_fg.set_color(edit_fg_color);
+
+    // Update the start pos.
+    start.x += 160;
+  }
+
+  if (_being_viewed) {
+    glm::vec2 size(150, 150);
+    _view_quad_bg.set_scale(size);
+    _view_quad_bg.set_rotate(0);
+    _view_quad_bg.set_translate(start, node_bg_depth);
+    _view_quad_bg.set_color(view_bg_color);
+
+    _view_quad_fg.set_scale(size - 2.0f * node_border_size);
+    _view_quad_fg.set_rotate(0);
+    _view_quad_fg.set_translate(start + node_border_size, node_fg_depth);
+    _view_quad_fg.set_color(view_fg_color);
+  }
+
+}
+
+void NodeShape::update_quads_cache() {
+  size_t size = 6; // Potentially overallocate for speed. 2 each for node, edit and view visuals.
+  _quads_cache.clear();
+  _quads_cache.reserve(size);
+
+  _quads_cache.insert(_quads_cache.end(), _node_quad_bg);
+  _quads_cache.insert(_quads_cache.end(), _node_quad_fg);
+  if (_being_edited) {
+    _quads_cache.insert(_quads_cache.end(), _edit_quad_bg);
+    _quads_cache.insert(_quads_cache.end(), _edit_quad_fg);
+  }
+  if (_being_viewed) {
+    _quads_cache.insert(_quads_cache.end(), _view_quad_bg);
+    _quads_cache.insert(_quads_cache.end(), _view_quad_fg);
+  }
 }
 
 void NodeShape::update_text() {
   start_method();
   const std::string& name = our_entity()->get_name();
   const glm::vec2 &anchor = _pos;
-  _resources->get_text_limits()->tessellate_to_instances(name, glm::vec2(0,0), 0, anchor, _fg_quad->state, _chars, _text_min, _text_max);
+  _resources->get_text_limits()->tessellate_to_instances(name, glm::vec2(0,0), 0, anchor, _node_quad_fg.state, _node_name_chars, _text_min, _text_max);
+}
+
+void NodeShape::update_edit_view_text() {
+  start_method();
+  glm::vec2 extra_chars_min;
+  glm::vec2 extra_chars_max;
+  glm::vec2 text_dim = _text_max - _text_min;
+
+  if (_being_edited) {
+    glm::vec2 pos(_edit_quad_bg.translate[0], _edit_quad_bg.translate[1]);
+    pos += glm::vec2(40, 40);
+    _resources->get_text_limits()->tessellate_to_instances("E", glm::vec2(0,0), 0, pos, _node_quad_fg.state, _edit_chars, extra_chars_min, extra_chars_max);
+  }
+  if (_being_viewed) {
+    glm::vec2 pos(_view_quad_bg.translate[0], _view_quad_bg.translate[1]);
+    pos += glm::vec2(40, 40);
+    _resources->get_text_limits()->tessellate_to_instances("V", glm::vec2(0,0), 0, pos, _node_quad_fg.state, _view_chars, extra_chars_min, extra_chars_max);
+  }
+}
+
+void NodeShape::update_chars_cache() {
+  size_t size = _node_name_chars.size() + _edit_chars.size(); _view_chars.size();
+  _chars_cache.clear();
+  _chars_cache.reserve(size);
+
+  _chars_cache.insert(_chars_cache.end(), _node_name_chars.begin(), _node_name_chars.end());
+  if (_being_edited) {
+    _chars_cache.insert(_chars_cache.end(), _edit_chars.begin(), _edit_chars.end());
+  }
+  if (_being_viewed) {
+    _chars_cache.insert(_chars_cache.end(), _view_chars.begin(), _view_chars.end());
+  }
 }
 
 void NodeShape::push_input_name(const std::string& input_name) {

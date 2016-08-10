@@ -50,8 +50,8 @@ class COMPSHAPES_EXPORT GroupNodeShape: public NodeShape {
   Dep<LowerHierarchyChange> _lower_change;
 
   // Our indicator is simply a square rotated 45 degrees.
-  ShapeInstance* _bg_quad;
-  ShapeInstance* _fg_quad;
+  ShapeInstance _marker_bg;
+  ShapeInstance _marker_fg;
 
   std::unordered_map<std::string, size_t> _input_order;
   std::unordered_map<std::string, size_t> _output_order;

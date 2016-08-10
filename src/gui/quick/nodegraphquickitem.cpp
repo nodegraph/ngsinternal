@@ -565,6 +565,10 @@ void NodeGraphQuickItem::view_node() {
     test.insert("submap", submap);
     test.insert("subarray", sublist);
     emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_results());
+
+    // Update our node graph selection object which also tracks and edit and view nodes.
+    get_current_interaction()->view(_last_pressed_shape);
+    update();
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
   }
@@ -599,6 +603,10 @@ void NodeGraphQuickItem::edit_node() {
     test.insert("submap", submap);
     test.insert("subarray", sublist);
     emit edit_node_params(compute->our_entity()->get_name().c_str(), test);
+
+    // Update our node graph selection object which also tracks and edit and view nodes.
+    get_current_interaction()->edit(_last_pressed_shape);
+    update();
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
   }

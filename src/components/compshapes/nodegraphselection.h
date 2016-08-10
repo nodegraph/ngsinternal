@@ -64,6 +64,7 @@ class COMPSHAPES_EXPORT NodeGraphSelection: public Component {
   // Our edit and view nodes.
   Dep<CompShape> _edit_node;
   Dep<CompShape> _view_node;
+
   // The current selection.
   DepUSet<CompShape> _selected;
 

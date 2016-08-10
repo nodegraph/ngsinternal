@@ -65,6 +65,7 @@ INSTALL(FILES
 			"${QT5_DIR}/bin/Qt5WebEngineCore.dll"
 			"${QT5_DIR}/bin/Qt5WebChanneld.dll"
 			"${QT5_DIR}/bin/Qt5Multimediad.dll"
+			"${QT5_DIR}/bin/Qt5WebSocketsd.dll"
 			
 			 # The QtWebEngineProcess is a release binary so we need these also.
 			"${QT5_DIR}/bin/Qt5Core.dll"
@@ -77,6 +78,8 @@ INSTALL(FILES
 			"${QT5_DIR}/bin/Qt5WebEngine.dll"
 			"${QT5_DIR}/bin/Qt5WebEngineCore.dll"
 			"${QT5_DIR}/bin/Qt5WebChannel.dll"
+			
+			"${QT5_DIR}/bin/libGLESv2d.dll"
 			
 		DESTINATION bin
 		COMPONENT thirdparty
@@ -94,6 +97,9 @@ INSTALL(FILES
 			"${QT5_DIR}/bin/Qt5WebEngineCore.dll"
 			"${QT5_DIR}/bin/Qt5WebChannel.dll"
 			"${QT5_DIR}/bin/Qt5Multimedia.dll"
+			
+			"${QT5_DIR}/bin/libGLESv2.dll"
+			
 		DESTINATION bin
 		COMPONENT thirdparty
 		CONFIGURATIONS Release)

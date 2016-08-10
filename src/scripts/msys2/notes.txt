@@ -1,15 +1,30 @@
-In your msys2 .bashrc file, simply source the setup_env.sh script in this directory.
-This script will read the $ARCH env variable to bring up an appropriate environment.
+In the windows environment you'll need to set up 2 environment variables:
+1) SRC_ROOT  --> D:\src
+2) PLATFORM_ROOT --> D:\installs
 
+--------------------------------------------------------------------------------------------
+In your msys2 .bashrc file, simply source the setup_env.sh script in this directory.
+This script will read the $ARCH and $ARCH_BITS env vars from the windows
+command env to bring up an appropriate environment in msys2.
+
+For example in:
+D:\installs\windows\msys2\home\raindrop\.bashrc
+Add the following line:
+source /d/src/ngsinternal/src/scripts/msys2/setup_env.sh
+
+--------------------------------------------------------------------------------------------
+Note this is where the $ARCH and $ARCH_BITS get set inside the desktop shortcuts.
 You will like want to create a desktop shortcuts similar to the following:
 
-%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINDOWS"
-%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINRT"
-%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_ANDROID"
+%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" %ARCH_WINDOWS x64"
+%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" %ARCH_WINRT x64"
+%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" %ARCH_ANDROID x86"
 
-Note that these shortcuts are setting the $ARCH env variable for setup_env.sh to read.
+Note that these shortcuts are setting the $ARCH and $ARCH_BITS env variable for setup_env.sh to read.
 
 -------------------------------------------------------------------------------------------
+
+The following no longers seems to be required!
 
 In the msys2 install, especially after updating with pacman, you'll need to uncomment the
 following from the installed msys2_shell.bat file. Otherwise the msys2 shell won't pick
