@@ -16,8 +16,8 @@ class COMPSHAPES_EXPORT OutputNodeShape: public NodeShape {
   static const glm::vec2 indicator_size;
   static const glm::vec2 indicator_border_size;
 
-  static const std::array<unsigned char,4> indicator_bg_color;
-  static const std::array<unsigned char,4> indicator_fg_color;
+  static const std::array<unsigned char,4> marker_bg_color;
+  static const std::array<unsigned char,4> marker_fg_color;
 
   OutputNodeShape(Entity* entity);
   virtual ~OutputNodeShape();
@@ -28,8 +28,8 @@ class COMPSHAPES_EXPORT OutputNodeShape: public NodeShape {
  private:
 
   // Our indicator is simply an extra quad to the left of the node.
-  ShapeInstance* _bg_quad;
-  ShapeInstance* _fg_quad;
+  ShapeInstance _marker_bg;
+  ShapeInstance _marker_fg;
 };
 
 

@@ -25,15 +25,11 @@ class COMPSHAPES_EXPORT InputNodeShape: public NodeShape {
   // Our state.
   virtual void update_state();
 
-  // Our shape instances.
-  virtual const std::vector<ShapeInstance>* get_tri_instances() const;
-
  private:
 
   // Our indicator is simply a triangle to the left of the node.
-  std::vector<ShapeInstance> _tris;
-  ShapeInstance* _bg_tri;
-  ShapeInstance* _fg_tri;
+  ShapeInstance _marker_bg;
+  ShapeInstance _marker_fg;
 };
 
 
