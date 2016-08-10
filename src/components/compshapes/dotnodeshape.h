@@ -33,9 +33,6 @@ class COMPSHAPES_EXPORT DotNodeShape: public LinkableShape {
   // Hit testing.
   virtual const Polygon& get_bounds() const;
 
-  // Our instances.
-  virtual const std::vector<ShapeInstance> * get_circle_instances() const {return &_circles;}
-
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
   virtual void load(SimpleLoader& loader);
@@ -52,17 +49,18 @@ class COMPSHAPES_EXPORT DotNodeShape: public LinkableShape {
   virtual size_t get_num_all_inputs() const {return 1;} // number of all inputs
   virtual size_t get_num_all_outputs() const {return 1;} // number of all outputs
 
+ protected:
+  virtual void update_circles_cache();
+
  private:
   virtual void select(bool selected);
-  virtual bool is_selected() const;
 
   // Our position.
   glm::vec2 _pos;
 
   // Our shape instances.
-  std::vector<ShapeInstance> _circles;
-  ShapeInstance* _bg_circle;
-  ShapeInstance* _fg_circle;
+  ShapeInstance _bg_circle;
+  ShapeInstance _fg_circle;
 
   // Our bounds.
   Polygon _bounds;

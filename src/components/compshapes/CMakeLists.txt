@@ -8,6 +8,7 @@ set(sources
     inputnodeshape.cpp
     inputshape.cpp
     linkshape.cpp
+    linkableshape.cpp
     nodegraphselection.cpp
     nodeshape.cpp
     outputlabelshape.cpp

@@ -21,9 +21,8 @@ const float DotNodeShape::radius = 50.0f;
 
 DotNodeShape::DotNodeShape(Entity* entity):
     LinkableShape(entity, kDID()) {
-  _circles.resize(6);
-  _bg_circle = &_circles[0];
-  _fg_circle = &_circles[1];
+  _bg_circle.state = 0;
+  _fg_circle.state = 0;
 }
 
 DotNodeShape::~DotNodeShape() {
@@ -37,13 +36,25 @@ void DotNodeShape::update_state() {
   }
 
   // Node.
-  _bg_circle->set_scale(radius,radius);
-  _bg_circle->set_translate(_pos, bg_depth);
-  _bg_circle->set_color(bg_color);
+  _bg_circle.set_scale(radius,radius);
+  _bg_circle.set_translate(_pos, bg_depth);
+  _bg_circle.set_color(bg_color);
 
-  _fg_circle->set_scale(radius-border_width, radius-border_width);
-  _fg_circle->set_translate(_pos, fg_depth);
-  _fg_circle->set_color(fg_color);
+  _fg_circle.set_scale(radius-border_width, radius-border_width);
+  _fg_circle.set_translate(_pos, fg_depth);
+  _fg_circle.set_color(fg_color);
+
+  // Update edit and view quads.
+  glm::vec2 start(_pos.x + radius + 30, _pos.y - 75);
+  update_edit_view_quads(start);
+
+  // The edit and view text position relies on the edit and view quads.
+  update_edit_view_text();
+
+  // Update our accumulation caches.
+  update_chars_cache();
+  update_quads_cache();
+  update_circles_cache();
 }
 
 void DotNodeShape::set_pos(const glm::vec2& anchor) {
@@ -63,21 +74,14 @@ const Polygon& DotNodeShape::get_bounds() const {
 
 void DotNodeShape::select(bool selected) {
   start_method();
+  LinkableShape::select(selected);
   if (selected) {
-    _bg_circle->state |= (selected_transform_bitmask|selected_color_bitmask);
-    _fg_circle->state |= selected_transform_bitmask;
+    _bg_circle.state |= (selected_transform_bitmask|selected_color_bitmask);
+    _fg_circle.state |= selected_transform_bitmask;
   } else {
-    _bg_circle->state &= ~(selected_transform_bitmask|selected_color_bitmask);
-    _fg_circle->state &= ~selected_transform_bitmask;
+    _bg_circle.state &= ~(selected_transform_bitmask|selected_color_bitmask);
+    _fg_circle.state &= ~selected_transform_bitmask;
   }
-}
-
-bool DotNodeShape::is_selected() const {
-  start_method();
-  if (_bg_circle->state & selected_transform_bitmask) {
-    return true;
-  }
-  return false;
 }
 
 void DotNodeShape::save(SimpleSaver& saver) const {
@@ -105,6 +109,12 @@ size_t DotNodeShape::get_output_order(const std::string& output_name) const {
     return 0;
   }
   return -1;
+}
+
+void DotNodeShape::update_circles_cache() {
+  LinkableShape::update_circles_cache();
+  _circles_cache.insert(_circles_cache.end(), _bg_circle);
+  _circles_cache.insert(_circles_cache.end(), _fg_circle);
 }
 
 }
