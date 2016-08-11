@@ -182,9 +182,12 @@ void NodeGraphSelection::destroy_selection() {
     // connections as well.
     if (cs->get_did() == kLinkShape) {
       Dep<LinkShape> link_shape(cs, true);
-      Dep<InputCompute> input_compute = get_dep<InputCompute>(link_shape->get_input_shape()->our_entity());
-      // Unlink components.
-      input_compute->unlink_output_compute();
+      const Dep<InputShape>& input_shape = link_shape->get_input_shape();
+      if (input_shape) {
+        Dep<InputCompute> input_compute = get_dep<InputCompute>(input_shape->our_entity());
+        // Unlink components.
+        input_compute->unlink_output_compute();
+      }
       // Destroy entities. This automatically disconnect many components.
       delete2_ff(link_shape->our_entity());
     } else {
