@@ -32,6 +32,7 @@ Rectangle {
     // Settings.
     property alias show_back_button: stack_view_header.show_back_button
     property alias model: list_view.model
+    property alias model_is_dynamic: list_view.model_is_dynamic
     property alias delegate: list_view.delegate
 
     // Our internal objects.
@@ -70,7 +71,9 @@ Rectangle {
         z: 0
 
         // Our model and delegate.
-        model: ListModel{}
+        model: ListModel {}
+        property bool model_is_dynamic: false
+        
         delegate: AppMenuItemDelegate{}
         currentIndex: -1
 

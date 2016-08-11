@@ -96,25 +96,49 @@ StackView {
         console.log('popping page')
         // Get the top page.
         var page = stack_view.get(stack_view.depth-1)
+        console.log('111')
         // Stops any further get_value and get_value_as_string evaluations.
         page.parent_stack_view = null
+        console.log('222')
+
+        var model = null
         // The model in the page is manually created, and so must be manually destroyed.
-        if (page.model) {
-            page.model.destroy()
+        if (page.model_is_dynamic) {
+            console.log('333')
+            console.log('333 - bbb')
+            console.log('333 - ccc')
+            console.log(new Error().stack);
+            model = page.model
+            //page.model.destroy()
+            console.log('444')
+            console.log('444 - bbbb')
         }
+        console.log('222-bbb')
         // Finally we pop it.
         if (stack_view.depth == 1) {
+            console.log('555')
             // Note that pop won't pop when there is only one item left. Hence we need to call clear.
             stack_view.clear()
+            console.log('666')
         } else {
+            console.log('777')
             stack_view.pop()
+            console.log('888')
+        }
+
+        if (model) {
+            console.log('999')
+            console.log('999 -bbbb')
+            console.log('999 -cccc')
+            model.destroy();
+            console.log('919191')
         }
     }
 
     function clear_pages(){
         var count = stack_view.depth;
         for (var i=0; i<count; i++) {
-            stack_view.pop_page()
+            pop_page()
         }
     }
 
@@ -144,9 +168,11 @@ StackView {
         return model
     }
 
+    // Assumes the model and page are dynamically created.
     function push_by_components(title, page, model) {
         // Configure the page.
         page.model = model
+        page.model_is_dynamic = true
         page.set_title(title)
 
         // Add the page to the stack view.

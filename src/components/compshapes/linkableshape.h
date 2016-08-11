@@ -3,7 +3,6 @@
 #include <components/compshapes/compshape.h>
 #include <base/utils/polygon.h>
 
-
 namespace ngs {
 
 class Resources;

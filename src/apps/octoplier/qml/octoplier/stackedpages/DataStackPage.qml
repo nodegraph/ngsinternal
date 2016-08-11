@@ -34,13 +34,13 @@ AppStackPage{
 
     // Main method to show data.
     function on_show_data(data_name, data_values) {
-        app_settings.vibrate()
-        stack_view.clear_pages()
-        data_stack_page.data_values = data_values
-        if (mode != app_settings.view_node_mode) {
-            stack_view.allow_editing = true // Allow data to be edited.
-        }
-        view_object(data_name, data_stack_page.data_values)
+//        app_settings.vibrate()
+//        stack_view.clear_pages()
+//        data_stack_page.data_values = data_values
+//        if (mode != app_settings.view_node_mode) {
+//            stack_view.allow_editing = true // Allow data to be edited.
+//        }
+//        view_object(data_name, data_stack_page.data_values)
     }
 
     // --------------------------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ AppStackPage{
     function get_value_type(path) {
         var value = get_value(path)
         if (value === null) {
-            return "unknown_type 111"
+            return "unknown_type"
         }else if (typeof value === 'string') {
             // String.
             return 'string_type'
@@ -169,7 +169,7 @@ AppStackPage{
                 return "array_type"
             }
         }
-        return "unknown_type 222"
+        return "unknown_type"
     }
 
 

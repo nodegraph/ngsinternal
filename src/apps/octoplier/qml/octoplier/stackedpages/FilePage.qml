@@ -19,6 +19,7 @@ AppListPage {
     // Setttings.
     show_back_button: file_page.parent_stack_view && (file_page.parent_stack_view.depth > 1)
     model: file_model
+    model_is_dynamic: false
     delegate: AppFileDelegate{}
 
     // Our File Methods.
