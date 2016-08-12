@@ -39,9 +39,9 @@ INSTALL(
 
 # Qt debug libraries.
 INSTALL(FILES 
-			"${QT5_DIR}/bin/icudt54.dll"
-			"${QT5_DIR}/bin/icuin54.dll"
-			"${QT5_DIR}/bin/icuuc54.dll"
+			#"${QT5_DIR}/bin/icudt54.dll"
+			#"${QT5_DIR}/bin/icuin54.dll"
+			#"${QT5_DIR}/bin/icuuc54.dll"
 			#"${QT5_DIR}/bin/QtWebEngineProcess.exe"
 			#"${QT5_DIR}/plugins/qtwebengine/ffmpegsumo.dll"
 		DESTINATION bin

@@ -39,8 +39,7 @@ endif()
 # Qt Directory.
 # ---------------------------------------------------------
 
-#set(QT5_DIR "D:/installs/android/Qt5.5.1/5.5/android_armv7")
-set(QT5_DIR "D:/installs/android/Qt5.6.0/5.6/android_armv7")
+set(QT5_DIR "D:/installs/android/Qt5.7.0/5.7/android_armv7")
 
 # ---------------------------------------------------------
 # Our directories.

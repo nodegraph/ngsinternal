@@ -166,6 +166,7 @@ Dep<LinkShape> GroupInteraction::find_link(const Dep<InputShape>& input_shape) {
 void GroupInteraction::reset_state() {
   // Reset our finite state machine
   if (_link_shape) {
+    _selection->deselect(_link_shape);
     delete2_ff(_link_shape->our_entity());
   }
 

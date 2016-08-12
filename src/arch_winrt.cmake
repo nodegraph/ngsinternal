@@ -21,10 +21,10 @@ add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 # --------------------------------------------------------
 if (${ARCH_BITS} STREQUAL "x64")
     message("aaaaaaaaaaaaaaa x64")
-	set(QT5_DIR "D:/installs/winrt/Qt5.6.0/5.6/winrt_x64_msvc2015")
+	set(QT5_DIR "D:/installs/winrt/Qt5.7.0/5.7/winrt_x64_msvc2015")
 else()
     message("bbbbbbbbbbbbbb x86")
-	set(QT5_DIR "D:/installs/winrt/Qt5.6.0/5.6/winrt_x86_msvc2015")
+	set(QT5_DIR "D:/installs/winrt/Qt5.7.0/5.7/winrt_x86_msvc2015")
 endif()
 
 # ---------------------------------------------------------

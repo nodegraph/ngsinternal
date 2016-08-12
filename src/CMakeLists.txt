@@ -174,7 +174,7 @@ endif ()
 
 # The offline installer of Qt has some rpath issue.
 # You may need to type this into a shell to fix it.
-# install_name_tool -add_rpath <install_loc>/Qt5.6.0/5.6/clang_64/lib <intall_loc>/Qt5.6.0/5.6/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
+# install_name_tool -add_rpath <install_loc>/Qt5.7.0/5.7/clang_64/lib <intall_loc>/Qt5.7.0/5.7/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
 
 
 #get_target_property(QtCore_location Qt5::Core LOCATION)

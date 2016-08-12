@@ -206,7 +206,6 @@ void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, g
     glm::vec2 low;
     glm::vec2 high;
     c->get_bounds().get_aa_bounds(low,high);
-    std::cerr << "low,high: " << c->get_did() << "," << low << "," << high << "\n";
 
     if (low != high) {
       if (first) {

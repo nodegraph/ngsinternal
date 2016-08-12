@@ -19,9 +19,9 @@ add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 # ---------------------------------------------------------
 
 if (${ARCH_SIM} STREQUAL "device")
-	set(QT5_DIR "/Users/raindrop/installs/iosandroid/Qt5.6.0/5.6/ios")
+	set(QT5_DIR "/Users/raindrop/installs/iosandroid/Qt5.7.0/5.7/ios")
 elseif (${ARCH_SIM} STREQUAL "simulator")
-	set(QT5_DIR "/Users/raindrop/installs/iosandroid/Qt5.6.0/5.6/clang_64")
+	set(QT5_DIR "/Users/raindrop/installs/iosandroid/Qt5.7.0/5.7/clang_64")
 endif()
 
 # ---------------------------------------------------------
@@ -54,7 +54,7 @@ set(CMAKE_C_FLAGS_RELEASE   "-O3 -fvisibility=hidden -fPIC"              ) # CAC
 
 # The offline installer of Qt has some rpath issue in macos.
 # You may need to type this into a shell to fix it.
-# install_name_tool -add_rpath <install_loc>/Qt5.6.0/5.6/clang_64/lib <intall_loc>/Qt5.6.0/5.6/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
+# install_name_tool -add_rpath <install_loc>/Qt5.7.0/5.7/clang_64/lib <intall_loc>/Qt5.7.0/5.7/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
 
 # Setup up our cpp flags.
 include_directories("${FREETYPE_DIR}/${IOS_SDK_ARCH}/include")

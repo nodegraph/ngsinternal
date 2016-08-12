@@ -18,10 +18,10 @@
         
         <!-- Stacked Pages -->
         <file>qml/octoplier/stackedpages/qmldir</file>
-        <file>qml/octoplier/stackedpages/MenuStackPage.qml</file>
+        <file>qml/octoplier/stackedpages/NodeActionStackPage.qml</file>
         <file>qml/octoplier/stackedpages/DataStackPage.qml</file>
         <file>qml/octoplier/stackedpages/FileStackPage.qml</file>
-        <file>qml/octoplier/stackedpages/MenuPage.qml</file>
+        <file>qml/octoplier/stackedpages/NodeActionPage.qml</file>
         <file>qml/octoplier/stackedpages/DataPage.qml</file>
         <file>qml/octoplier/stackedpages/FilePage.qml</file>
         <file>qml/octoplier/stackedpages/CreateFilePage.qml</file>

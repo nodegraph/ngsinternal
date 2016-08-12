@@ -165,6 +165,9 @@ void NodeGraphSelection::clear_selection() {
 
 void NodeGraphSelection::destroy_selection() {
   for(const Dep<CompShape>& cs: _selected) {
+    if (!cs) {
+      continue;
+    }
 
     // Deselect it.
     cs->select(false);

@@ -18,7 +18,7 @@ add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 # Qt Directory.
 # ---------------------------------------------------------
 
-set(QT5_DIR "/Users/raindrop/installs/macos/Qt5.6.0/5.6/clang_64")
+set(QT5_DIR "/Users/raindrop/installs/macos/Qt5.7.0/5.7/clang_64")
 
 # ---------------------------------------------------------
 # Custom Directories. 
@@ -51,7 +51,7 @@ add_definitions("-DGLEW_MX")
 
 # The offline installer of Qt has some rpath issues in macos.
 # You may need to type this into a shell to fix it.
-# install_name_tool -add_rpath <install_loc>/Qt5.6.0/5.6/clang_64/lib <intall_loc>/Qt5.6.0/5.6/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
+# install_name_tool -add_rpath <install_loc>/Qt5.7.0/5.7/clang_64/lib <intall_loc>/Qt5.7.0/5.7/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
 
 # Setup up our cpp flags.
 include_directories("${FREETYPE_DIR}/include")

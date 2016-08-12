@@ -8,7 +8,6 @@
 #include <QtCore/QFile>
 #include <QtGui/QGuiApplication>
 
-
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonValue>
 #include <QtWebSockets/QWebSocket>

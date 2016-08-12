@@ -125,8 +125,8 @@ Rectangle {
         visible: false
     }
 
-    MenuStackPage {
-        id: menu_stack_page
+    NodeActionStackPage {
+        id: node_action_stack_page
         visible: false
     }
 
@@ -143,12 +143,12 @@ Rectangle {
         main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(menu_stack_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(node_action_stack_page.on_switch_to_mode)
 
         // Node graph connections.
-        node_graph_page.node_graph.node_graph_context_menu_requested.connect(menu_stack_page.on_node_graph_context_menu)
-        node_graph_page.node_graph.node_context_menu_requested.connect(menu_stack_page.on_node_context_menu)
-        node_graph_page.node_graph.group_node_context_menu_requested.connect(menu_stack_page.on_group_node_context_menu)
+        node_graph_page.node_graph.node_graph_context_menu_requested.connect(node_action_stack_page.on_node_graph_context_menu)
+        node_graph_page.node_graph.node_context_menu_requested.connect(node_action_stack_page.on_node_context_menu)
+        node_graph_page.node_graph.group_node_context_menu_requested.connect(node_action_stack_page.on_group_node_context_menu)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.

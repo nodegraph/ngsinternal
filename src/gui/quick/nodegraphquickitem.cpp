@@ -424,6 +424,9 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
 //}
 
 void NodeGraphQuickItem::popup_context_menu() {
+  // Make sure the interaction is not in the middle of an action like dragging a link.
+  get_current_interaction()->reset_state();
+
   // Revert to selection, before this node was pressed.
   // Pressing on unselected nodes, clears the selection and selects this one node.
   // Long presses reverses that selection change, so that user can decide what to do.
@@ -537,6 +540,11 @@ void NodeGraphQuickItem::create_create_set_from_type_node(bool centered) {
 }
 
 void NodeGraphQuickItem::view_node() {
+  // Return if don't have a last pressed shape.
+  if (!_last_pressed_shape) {
+    return;
+  }
+
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_shape->get_path_as_string());
   if(compute) {
     qDebug() << "performing compute! \n";
@@ -575,6 +583,11 @@ void NodeGraphQuickItem::view_node() {
 }
 
 void NodeGraphQuickItem::edit_node() {
+  // Return if don't have a last pressed shape.
+  if (!_last_pressed_shape) {
+    return;
+  }
+
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_shape->get_path_as_string());
   if(compute) {
     qDebug() << "performing compute! \n";

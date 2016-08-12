@@ -11,7 +11,7 @@ ListModel {
         title: "Dive"
         description: "Dive into the group node."
         script: "node_graph_page.node_graph.dive();
-                 menu_stack_page.visible = false"
+                 main_bar.switch_to_current_mode();"
     }
 
     ListElement {
@@ -19,7 +19,7 @@ ListModel {
         title: "View"
         description: "View the output data from the group node."
         script: "node_graph_page.node_graph.view_node();
-                 menu_stack_page.visible = false"
+                 main_bar.switch_to_current_mode();"
     }
 
     ListElement {
@@ -27,7 +27,7 @@ ListModel {
         title: "Edit"
         description: "Edit the parameters of the group node"
         script: "node_graph_page.node_graph.edit_node();
-                 menu_stack_page.visible = false"
+                 main_bar.switch_to_current_mode();"
     }
 
     ListElement {
@@ -35,13 +35,13 @@ ListModel {
         title: "Select"
         description: "Select this node"
         script: "node_graph_page.node_graph.select_last_press();
-                 menu_stack_page.visible = false"
+                 main_bar.switch_to_current_mode();"
     }
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "Deselect"
         description: "Deselect this node."
         script: "node_graph_page.node_graph.deselect_last_press();
-                 menu_stack_page.visible = false"
+                 main_bar.switch_to_current_mode();"
     }
 }

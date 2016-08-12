@@ -21,12 +21,12 @@ StackView {
     // Geometry.
     anchors.fill: parent
 
-    // Implements back key navigation
-    focus: true
-    Keys.onReleased: if (event.key === Qt.Key_Back && stack_view.depth > 1) {
-                         stack_view.pop();
-                         event.accepted = true;
-                     }
+//    // Implements back key navigation
+//    focus: true
+//    Keys.onReleased: if (event.key === Qt.Key_Back && stack_view.depth > 1) {
+//                         stack_view.pop();
+//                         event.accepted = true;
+//                     }
 
     // Dependencies.
     property var stack_view_header
@@ -81,57 +81,52 @@ StackView {
     // --------------------------------------------------------------------------------------------------
 
     function push_page(page) {
-        // Pages are manually created so they must be manually destroyed on pop.
-        // The "destroyOnPop" doesn this for us.
-        push({item:page, destroyOnPop: true})
+        // We don't use the "destroyOnPop' setting.
+        // We destroy our pages manually in pop_page, for better control.
+        push(page)
         page.parent_stack_view = stack_view
     }
 
     function pop_page() {
         // Return if we have no pages to pop.
         if (stack_view.depth <= 0) {
-            console.log("stack_view was empty!")
             return
         }
-        console.log('popping page')
-        // Get the top page.
-        var page = stack_view.get(stack_view.depth-1)
-        console.log('111')
-        // Stops any further get_value and get_value_as_string evaluations.
-        page.parent_stack_view = null
-        console.log('222')
 
-        var model = null
-        // The model in the page is manually created, and so must be manually destroyed.
-        if (page.model_is_dynamic) {
-            console.log('333')
-            console.log('333 - bbb')
-            console.log('333 - ccc')
-            console.log(new Error().stack);
-            model = page.model
-            //page.model.destroy()
-            console.log('444')
-            console.log('444 - bbbb')
-        }
-        console.log('222-bbb')
-        // Finally we pop it.
-        if (stack_view.depth == 1) {
-            console.log('555')
-            // Note that pop won't pop when there is only one item left. Hence we need to call clear.
-            stack_view.clear()
-            console.log('666')
-        } else {
-            console.log('777')
-            stack_view.pop()
-            console.log('888')
-        }
+        try {
+            // Get the top page.
+            var page = stack_view.get(stack_view.depth-1)
 
-        if (model) {
-            console.log('999')
-            console.log('999 -bbbb')
-            console.log('999 -cccc')
-            model.destroy();
-            console.log('919191')
+            // Stops any further get_value and get_value_as_string evaluations.
+            page.parent_stack_view = null
+
+            // The model in the page is manually created, and so must be manually destroyed as well.
+            var model = null
+            if (page.model_is_dynamic) {
+                model = page.model
+            }
+
+            // Pop the page off the stack.
+            if (stack_view.depth == 1) {
+                // Note that pop won't pop when there is only one item left. Hence we need to call clear.
+                stack_view.clear()
+            } else {
+                stack_view.pop()
+            }
+
+            // Make sure that all the animations have completed.
+            // Otherwise we will get seg faults after destroying the page.
+            stack_view.completeTransition()
+
+            // Destroy the page.
+            page.destroy();
+
+            // Destroy the model.
+            if (model) {
+                model.destroy();
+            }
+        } catch (e) {
+            console.error("AppStackView::pop_page exception: ", e.message, " stack: ", e.stack);
         }
     }
 
@@ -147,7 +142,7 @@ StackView {
     // --------------------------------------------------------------------------------------------------
 
     function create_component(page_url) {
-        var comp = app_loader.load_component(page_url, this, {})
+        var comp = app_loader.load_component(page_url, null, {})
         return comp
     }
 

@@ -66,7 +66,10 @@ Rectangle {
             last_mode = current_mode
             current_mode = m
         }
-        menu_stack_page.visible = false
+
+        // Make sure the node actions aren't showing.
+        node_action_stack_page.stack_view.clear_pages()
+        node_action_stack_page.visible = false
     }
 
     function switch_to_last_mode(m) {

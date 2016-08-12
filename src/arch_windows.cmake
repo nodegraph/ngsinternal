@@ -18,7 +18,7 @@ add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 # ---------------------------------------------------------
 
 #set(QT5_DIR "C:/Qt/Qt5.5.1/5.5/msvc2013_64")
-set(QT5_DIR "D:/installs/windows/Qt5.6.0/5.6/msvc2015_64")
+set(QT5_DIR "D:/installs/windows/Qt5.7.0/5.7/msvc2015_64")
 
 # ---------------------------------------------------------
 # Custom Directories.
