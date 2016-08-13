@@ -20,7 +20,7 @@ class FBOWorker;
 class GroupInteraction;
 class ShapeCanvas;
 class NodeGraphSelection;
-class CompShape;
+class LinkableShape;
 class BaseFactory;
 class BaseEntityInstancer;
 
@@ -167,7 +167,7 @@ Q_OBJECT
 
   // Info about our last press, used when handling long presses.
   MouseInfo _last_press;
-  Dep<CompShape> _last_pressed_shape;
+  Dep<LinkableShape> _last_pressed_node;
 
   // Pinch Zoom.
   glm::vec2 _original_pinch_center;

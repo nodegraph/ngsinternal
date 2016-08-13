@@ -14,6 +14,7 @@ set(sources
     outputlabelshape.cpp
     outputnodeshape.cpp
     outputshape.cpp
+    selectableshape.cpp
     )
     
 set(headers
@@ -32,6 +33,7 @@ set(headers
     outputlabelshape.h
 	outputnodeshape.h
     outputshape.h
+    selectableshape.h
     )
     
 add_library(ngs_compshapes  ${sources} ${headers})

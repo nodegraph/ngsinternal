@@ -32,9 +32,6 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
   // Our bounds.
   virtual const Polygon& get_bounds() const;
 
-  // Our selected state.
-  virtual bool is_selected() const;
-
   // Our shape instances.
   virtual const std::vector<ShapeInstance>* get_quad_instances() const;
 

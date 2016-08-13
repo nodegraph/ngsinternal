@@ -1,6 +1,6 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
-#include <components/compshapes/compshape.h>
+#include <components/compshapes/selectableshape.h>
 #include <base/utils/polygon.h>
 
 namespace ngs {
@@ -9,7 +9,7 @@ class InputCompute;
 class InputShape;
 class OutputShape;
 
-class COMPSHAPES_EXPORT LinkShape: public CompShape {
+class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
  public:
 
   COMPONENT_ID(CompShape, LinkShape);
@@ -60,7 +60,7 @@ class COMPSHAPES_EXPORT LinkShape: public CompShape {
   virtual const glm::vec2& get_tail_position() const;
 
   // Our selected state.
-  virtual bool is_selected() const;
+  virtual void select(bool selected);
 
   // Returns the angle formed with our tail at the origin.
   // The return value is in the range from -pi to +pi.
@@ -77,7 +77,7 @@ class COMPSHAPES_EXPORT LinkShape: public CompShape {
  private:
   virtual void update_positioning_helper(const glm::vec2& head_pos, const glm::vec2& tail_pos);
   virtual void update_state_helper();
-  virtual void select(bool selected);
+
 
   // Our dynamic deps.
   Dep<InputShape> _input_shape;

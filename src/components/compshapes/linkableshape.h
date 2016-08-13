@@ -1,6 +1,6 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
-#include <components/compshapes/compshape.h>
+#include <components/compshapes/selectableshape.h>
 #include <base/utils/polygon.h>
 
 namespace ngs {
@@ -9,9 +9,9 @@ class Resources;
 class NodeGraphSelection;
 class Compute;
 
-class COMPSHAPES_EXPORT LinkableShape: public CompShape {
+class COMPSHAPES_EXPORT LinkableShape: public SelectableShape {
  public:
-  COMPONENT_ID(CompShape, LinkableShape);
+  COMPONENT_ID(CompShape, InvalidComponent);
 
   static const float marker_bg_depth;
   static const float marker_fg_depth;
@@ -25,6 +25,9 @@ class COMPSHAPES_EXPORT LinkableShape: public CompShape {
 
   LinkableShape(Entity* entity, size_t did);
   virtual ~LinkableShape();
+
+  // Our sub interfaces.
+  virtual bool is_linkable() {return true;}
 
   // Our state.
   virtual void update_state();
@@ -49,7 +52,6 @@ class COMPSHAPES_EXPORT LinkableShape: public CompShape {
 
   // Selection.
   virtual void select(bool selected);
-  virtual bool is_selected() const;
 
   // Edit State.
   virtual void edit(bool on);

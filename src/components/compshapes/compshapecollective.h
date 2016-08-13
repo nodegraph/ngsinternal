@@ -16,6 +16,7 @@
 namespace ngs {
 
 class CompShape;
+class Polygon;
 
 class LowerHierarchyChange;
 class DotNode;
@@ -43,7 +44,10 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
   // Axis Aligned Bounds.
   void get_aa_bounds(glm::vec2& min, glm::vec2& max) const; // bounds for all nodes and links in the group.
   void get_aa_bounds(const std::unordered_set<Entity*>& entities, glm::vec2& min, glm::vec2& max);
+
+  static void coalesce_bounds(const std::vector<Polygon>& bounds, glm::vec2& min, glm::vec2& max);
   static void get_aa_bounds(const DepUSet<CompShape>& shapes, glm::vec2& min, glm::vec2& max);
+  static void get_aa_bounds(const DepUSet<LinkableShape>& shapes, glm::vec2& min, glm::vec2& max);
 
  protected:
 

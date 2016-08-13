@@ -18,7 +18,7 @@ const std::array<unsigned char,4> LinkableShape::view_fg_color = { 224, 64, 251,
 
 
 LinkableShape::LinkableShape(Entity* entity, size_t did)
-    : CompShape(entity, did),
+    : SelectableShape(entity, did),
       _resources(this),
       _shared_state(0),
       _being_edited(false),
@@ -36,6 +36,8 @@ LinkableShape::~LinkableShape() {
 
 void LinkableShape::select(bool selected) {
   start_method();
+  SelectableShape::select(selected);
+
   if (selected) {
     _shared_state |= selected_transform_bitmask;
   } else {
@@ -54,14 +56,6 @@ void LinkableShape::select(bool selected) {
   for (CharInstance& ci: _view_chars) {
     ci.set_state(_shared_state);
   }
-}
-
-bool LinkableShape::is_selected() const {
-  start_method();
-  if (_shared_state & selected_transform_bitmask) {
-    return true;
-  }
-  return false;
 }
 
 void LinkableShape::edit(bool on) {

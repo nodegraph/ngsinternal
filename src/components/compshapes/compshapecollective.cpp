@@ -185,27 +185,16 @@ void CompShapeCollective::get_aa_bounds(const std::unordered_set<Entity*>& entit
   get_aa_bounds(comp_shapes, min, max);
 }
 
-void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, glm::vec2& min, glm::vec2& max) {
-
-  std::cerr << "the number of compshapes is: " << comp_shapes.size() << "\n";
-
+void CompShapeCollective::coalesce_bounds(const std::vector<Polygon>& bounds, glm::vec2& min, glm::vec2& max) {
   min=glm::vec2(0,0);
   max=glm::vec2(0,0);
 
-  // This is a static method so there's no need for the start_method() call.
-  // If we have no nodes or links, then our bounds is empty.
-  if (comp_shapes.empty()) {
-    return;
-  }
-
   bool first = true;
-
-  // Otherwise loop through the entites.
-  for(Dep<CompShape> c: comp_shapes){
+  for (size_t i=0; i<bounds.size(); ++i) {
     // Handle the nodes.
     glm::vec2 low;
     glm::vec2 high;
-    c->get_bounds().get_aa_bounds(low,high);
+    bounds[i].get_aa_bounds(low,high);
 
     if (low != high) {
       if (first) {
@@ -231,7 +220,21 @@ void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, g
   }
 }
 
+void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, glm::vec2& min, glm::vec2& max) {
+  std::vector<Polygon> bounds;
+  for(Dep<CompShape> c: comp_shapes){
+    bounds.push_back(c->get_bounds());
+  }
+  coalesce_bounds(bounds, min, max);
+}
 
+void CompShapeCollective::get_aa_bounds(const DepUSet<LinkableShape>& comp_shapes, glm::vec2& min, glm::vec2& max) {
+  std::vector<Polygon> bounds;
+  for(Dep<LinkableShape> c: comp_shapes){
+    bounds.push_back(c->get_bounds());
+  }
+  coalesce_bounds(bounds, min, max);
+}
 
 }
 

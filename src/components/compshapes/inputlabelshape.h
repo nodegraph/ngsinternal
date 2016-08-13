@@ -23,9 +23,6 @@ class COMPSHAPES_EXPORT InputLabelShape: public CompShape {
   virtual bool update_deps();
   virtual void update_state();
 
-  // Our selected state.
-  virtual bool is_selected() const;
-
   // Our shape instances.
   virtual const std::vector<CharInstance> * get_char_instances() const;
 

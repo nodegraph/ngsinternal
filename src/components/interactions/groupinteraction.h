@@ -23,6 +23,7 @@
 namespace ngs {
 
 class CompShape;
+class LinkableShape;
 class MouseInfo;
 class WheelInfo;
 
@@ -64,7 +65,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   // -----------------------------------------------------------------------
 
   // Mouse Presses.
-  virtual Dep<CompShape> pressed(const MouseInfo& mouse_info);
+  virtual Dep<LinkableShape> pressed(const MouseInfo& mouse_info);
   virtual void accumulate_select(const MouseInfo& a, const MouseInfo& b);
   virtual void reset_state();
   virtual bool bg_hit(const MouseInfo& info);
@@ -84,9 +85,8 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   virtual void finalize_pinch_zoom();
 
   // Long press.
-  virtual const Dep<CompShape>& get_current_hit_shape() const;
   virtual void revert_to_pre_pressed_selection();
-  virtual void toggle_selection_under_press(const Dep<CompShape>& hit_shape);
+  virtual void toggle_selection_under_press(const Dep<LinkableShape>& hit_shape);
 
   // -----------------------------------------------------------------------
   // Query current interaction state.
@@ -107,27 +107,27 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   // Node Graph Framing.
   // -----------------------------------------------------------------------
 
-  virtual void edit(const Dep<CompShape>& shape);
-  virtual void view(const Dep<CompShape>& shape);
+  virtual void edit(const Dep<LinkableShape>& shape);
+  virtual void view(const Dep<LinkableShape>& shape);
 
   // -----------------------------------------------------------------------
   // Node Graph Framing.
   // -----------------------------------------------------------------------
 
-  virtual void select(const Dep<CompShape>& shape);
-  virtual void deselect(const Dep<CompShape>& shape);
+  virtual void select(const Dep<LinkableShape>& shape);
+  virtual void deselect(const Dep<LinkableShape>& shape);
   virtual void select_all();
   virtual void deselect_all();
   virtual void frame_all();
-  virtual void frame_selected(const DepUSet<CompShape>& selected);
-  virtual void centralize(const Dep<CompShape>& node);
+  virtual void frame_selected(const DepUSet<LinkableShape>& selected);
+  virtual void centralize(const Dep<LinkableShape>& node);
   virtual glm::vec2 get_center_in_object_space() const;
 
   // Collapse/Expand Selection.
   void collapse_selected();
   void explode_selected();
-  void collapse(const DepUSet<CompShape>& selected);
-  void explode(const Dep<CompShape>& group);
+  void collapse(const DepUSet<LinkableShape>& selected);
+  void explode(const Dep<LinkableShape>& group);
 
   void resize_gl(GLsizei width, GLsizei height);
   const ViewportParams& get_viewport_params() const;
@@ -169,11 +169,10 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   glm::vec2 _mouse_down_pos;
   glm::vec2 _mouse_up_pos;
 
-  DepUnorderedMap<CompShape, glm::vec2> _mouse_down_node_positions;
-  //std::unordered_map<Dep<CompShape>,glm::vec2> _mouse_down_node_positions; // Position of nodes at mouse down.
+  DepUnorderedMap<LinkableShape, glm::vec2> _mouse_down_node_positions;
 
   // Nodes that were previously selected, before any changes to selection on mouse down.
-  DepUSet<CompShape> _preselection;
+  DepUSet<LinkableShape> _preselection;
 
   // These are our interaction states.
   // Note that we don't have one for panning and zooming, as that's available in all states by just using the middle mouse button.
@@ -203,7 +202,6 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   bool _mouse_is_down;
 
   // Hit info.
-  Dep<CompShape> _hit_shape;
   HitRegion _hit_region;
   MouseInfo _hit_mouse_info;
 

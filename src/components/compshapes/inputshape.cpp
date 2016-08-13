@@ -69,6 +69,9 @@ void InputShape::update_state() {
   verts[2] = verts[1] + glm::vec2(0, plug_size.y);
   verts[3] = verts[2] + glm::vec2(-plug_size.x, 0);
 
+  // Update our pannable state.
+  set_pannable(_node_shape->is_selected());
+
   // Update our bg quad.
   _bg_quad->set_scale(plug_size);
   _bg_quad->set_translate(verts[0], bg_depth);
@@ -94,13 +97,6 @@ void InputShape::update_state() {
 const Polygon& InputShape::get_bounds() const {
   start_method();
   return _bounds;
-}
-
-bool InputShape::is_selected() const {
-  if (_bg_quad->state & selected_transform_bitmask) {
-    return true;
-  }
-  return false;
 }
 
 const std::vector<ShapeInstance>* InputShape::get_quad_instances() const {

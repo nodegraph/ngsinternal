@@ -11,6 +11,7 @@ set(sources
     )
     
 set(headers
+	interfaceptr.h
 	basefactory.h
 	component.h
 	deplink.h

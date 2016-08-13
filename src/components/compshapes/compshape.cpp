@@ -4,7 +4,8 @@
 namespace ngs {
 
 CompShape::CompShape(Entity* entity, size_t did)
-    : Component(entity, kIID(), did) {
+    : Component(entity, kIID(), did),
+      _pannable(false){
 }
 
 CompShape::~CompShape(){
@@ -18,6 +19,14 @@ const glm::vec2& CompShape::get_pos() const {
   start_method();
   static const glm::vec2 dummy;
   return dummy;
+}
+
+void CompShape::set_pannable(bool pannable) {
+  _pannable = pannable;
+}
+
+bool CompShape::is_pannable() {
+  return _pannable;
 }
 
 const Polygon& CompShape::get_bounds() const {

@@ -68,8 +68,11 @@ void InputLabelShape::update_state() {
   // Get the input shape's origin.
   const glm::vec2 &origin = _input_shape->get_origin();
 
+  // Update our pannable state.
+  set_pannable(_input_shape->is_pannable());
+
   // Update our state.
-  if (_input_shape->is_selected()) {
+  if (_input_shape->is_pannable()) {
     _state |= selected_transform_bitmask;
   } else {
     _state &= ~selected_transform_bitmask;
@@ -111,13 +114,6 @@ void InputLabelShape::update_state() {
       }
     }
   }
-}
-
-bool InputLabelShape::is_selected() const {
-  if (_state & selected_transform_bitmask) {
-    return true;
-  }
-  return false;
 }
 
 const std::vector<CharInstance> * InputLabelShape::get_char_instances() const {

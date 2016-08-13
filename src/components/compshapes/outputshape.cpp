@@ -1,5 +1,6 @@
 #include <components/computes/outputcompute.h>
 #include <components/resources/resources.h>
+#include <components/compshapes/linkableshape.h>
 
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/deploader.h>
@@ -65,6 +66,9 @@ void OutputShape::update_state() {
   verts[1] = verts[0] + glm::vec2(-plug_size.x/2.0f, plug_size.y);
   verts[2] = verts[1] + glm::vec2(plug_size.x, 0);
 
+  // Update our pannable state.
+    set_pannable(_node_shape->is_selected());
+
   // Update our bg triangle.
   _bg_tri->set_scale(plug_size);
   _bg_tri->set_rotate(0);
@@ -98,13 +102,6 @@ size_t OutputShape::get_num_outputs() const {
 const Polygon& OutputShape::get_bounds() const {
   start_method();
   return _bounds;
-}
-
-bool OutputShape::is_selected() const {
-  if (_bg_tri->state & selected_transform_bitmask) {
-    return true;
-  }
-  return false;
 }
 
 const std::vector<ShapeInstance>* OutputShape::get_tri_instances() const {

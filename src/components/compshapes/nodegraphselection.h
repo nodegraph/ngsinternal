@@ -9,7 +9,7 @@
 namespace ngs {
 
 class Entity;
-class CompShape;
+class LinkableShape;
 
 class COMPSHAPES_EXPORT NodeGraphSelection: public Component {
  public:
@@ -23,32 +23,31 @@ class COMPSHAPES_EXPORT NodeGraphSelection: public Component {
   virtual void update_state();
 
   // Edit node.
-  void set_edit_node(const Dep<CompShape>& node);
-  const Dep<CompShape>& get_edit_node() const;
+  void set_edit_node(const Dep<LinkableShape>& node);
+  const Dep<LinkableShape>& get_edit_node() const;
   void clear_edit_node();
 
   // View node.
-  void set_view_node(const Dep<CompShape>& node);
-  const Dep<CompShape>& get_view_node() const;
+  void set_view_node(const Dep<LinkableShape>& node);
+  const Dep<LinkableShape>& get_view_node() const;
   void clear_view_node();
 
   // The selection is global throughout the system.
-  void select(const Dep<CompShape>& e);
-  void deselect(const Dep<CompShape>& e);
+  void select(const Dep<LinkableShape>& e);
+  void deselect(const Dep<LinkableShape>& e);
 
-  void select(const DepUSet<CompShape>& set);
-  void deselect(const DepUSet<CompShape>& set);
+  void select(const DepUSet<LinkableShape>& set);
+  void deselect(const DepUSet<LinkableShape>& set);
 
-  bool is_selected(const Dep<CompShape>& cs) const;
-  void toggle_selected(const Dep<CompShape>& cs);
+  bool is_selected(const Dep<LinkableShape>& cs) const;
+  void toggle_selected(const Dep<LinkableShape>& cs);
 
-  const DepUSet<CompShape>& get_selected() const;
+  const DepUSet<LinkableShape>& get_selected() const;
   void clear_selection();
   void destroy_selection();
 
   // Clear all references to nodes.
   void clear_all();
-  void clear_selected_links();
 
   // Copy and Paste.
   virtual void copy();
@@ -62,11 +61,11 @@ class COMPSHAPES_EXPORT NodeGraphSelection: public Component {
 
   // Our dynamic deps. These are not serialized.
   // Our edit and view nodes.
-  Dep<CompShape> _edit_node;
-  Dep<CompShape> _view_node;
+  Dep<LinkableShape> _edit_node;
+  Dep<LinkableShape> _view_node;
 
   // The current selection.
-  DepUSet<CompShape> _selected;
+  DepUSet<LinkableShape> _selected;
 
   // Our copied nodes.
   std::string _raw_copy;

@@ -25,7 +25,7 @@ const float LinkShape::text_tail_offset = 5.0f;
 const float LinkShape::border_width = 10;
 
 LinkShape::LinkShape(Entity* entity)
-    : CompShape(entity, kDID()),
+    : SelectableShape(entity, kDID()),
       //_input_compute(this),
       _input_shape(this),
       _output_shape(this),
@@ -75,10 +75,12 @@ void LinkShape::update_state() {
 
 void LinkShape::start_moving() {
   _interactive = true;
+  select(true);
 }
 
 void LinkShape::finished_moving() {
   _interactive = false;
+  select(false);
 }
 
 // In interactive mode we can set the input shape.
@@ -179,7 +181,12 @@ void LinkShape::update_state_helper() {
   if ((!_input_shape) || (!_output_shape)) {
     return;
   }
-  if (_input_shape->is_selected() && _output_shape->is_selected()) {
+
+  // Update our pannable state.
+  bool pannable = _input_shape->is_pannable() && _output_shape->is_pannable();
+  set_pannable(pannable);
+
+  if (pannable) {
     _bg_quad->state |= (selected_transform_bitmask);
     _fg_quad->state |= selected_transform_bitmask;
     _bg_tri->state |= (selected_transform_bitmask);
@@ -223,6 +230,7 @@ HitRegion LinkShape::hit_test(const glm::vec2& point) const {
 
 void LinkShape::select(bool selected) {
   start_method();
+  SelectableShape::select(selected);
   if (selected) {
     _bg_quad->state |= (selected_transform_bitmask|selected_color_bitmask);
     _fg_quad->state |= selected_transform_bitmask;
@@ -234,14 +242,6 @@ void LinkShape::select(bool selected) {
     _bg_tri->state &= ~(selected_transform_bitmask|selected_color_bitmask);
     _fg_tri->state &= ~selected_transform_bitmask;
   }
-}
-
-bool LinkShape::is_selected() const {
-  start_method();
-  if (_bg_quad->state & selected_transform_bitmask) {
-    return true;
-  }
-  return false;
 }
 
 void LinkShape::set_head_pos(const glm::vec2& pos) {

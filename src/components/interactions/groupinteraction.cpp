@@ -10,6 +10,7 @@
 #include <base/device/transforms/viewparams.h>
 #include <base/device/transforms/wheelinfo.h>
 
+#include <components/compshapes/linkableshape.h>
 #include <components/compshapes/compshapecollective.h>
 #include <components/compshapes/linkshape.h>
 #include <components/compshapes/inputlabelshape.h>
@@ -41,7 +42,6 @@ GroupInteraction::GroupInteraction(Entity* entity)
       _links_folder(NULL),
       _mouse_is_down(false),
       _state(kNodeSelectionAndDragging),
-      _hit_shape(this),
       _hit_region(kMissed),
       _panning_selection(false) {
   get_dep_loader()->register_fixed_dep(_factory, "");
@@ -59,24 +59,6 @@ void GroupInteraction::initialize_fixed_deps() {
 }
 
 void GroupInteraction::update_state() {
-//  if (dep_is_dirty(_lower_change)) {
-//    std::vector<Entity*> entities_to_destroy;
-//    // Our update is simply just finding unused links and destroying them.
-//    for (auto &iter: _links_folder->get_children()) {
-//      Dep<LinkShape> link_shape = get_dep<LinkShape>(iter.second);
-//      if (link_shape == _link_shape) {
-//        continue;
-//      }
-//      if (link_shape->get_input_compute()) {
-//        continue;
-//      }
-//      entities_to_destroy.push_back(link_shape->our_entity());
-//    }
-//    // Now destory the link shapes.
-//    for (Entity* e: entities_to_destroy) {
-//      delete_ff(e);
-//    }
-//  }
 }
 
 glm::vec2 GroupInteraction::get_drag_delta() const {
@@ -85,11 +67,6 @@ glm::vec2 GroupInteraction::get_drag_delta() const {
   _view_controls.update_coord_spaces_with_last_model_view(current_info);
   // Compute the delta vector.
   return (const glm::vec2&) current_info.object_space_pos.xy() - _mouse_down_pos;
-}
-
-const Dep<CompShape>& GroupInteraction::get_current_hit_shape() const {
-  start_method();
-  return _hit_shape;
 }
 
 void GroupInteraction::revert_to_pre_pressed_selection() {
@@ -104,7 +81,7 @@ void GroupInteraction::revert_to_pre_pressed_selection() {
   _selection->clear_selection();
   _mouse_down_node_positions.clear();
   // Restore the selection which existed previous to any mouse down changes.
-  for (const Dep<CompShape>& s : _preselection) {
+  for (const Dep<LinkableShape>& s : _preselection) {
     _selection->select(s);
   }
 
@@ -119,7 +96,7 @@ void GroupInteraction::revert_to_pre_pressed_selection() {
   _link_shape.reset();
 }
 
-void GroupInteraction::toggle_selection_under_press(const Dep<CompShape>& hit_shape) {
+void GroupInteraction::toggle_selection_under_press(const Dep<LinkableShape>& hit_shape) {
   start_method();
   // Flip the selection.
   if (_selection->is_selected(hit_shape)) {
@@ -127,7 +104,6 @@ void GroupInteraction::toggle_selection_under_press(const Dep<CompShape>& hit_sh
     _mouse_down_node_positions.erase(hit_shape);
   } else {
     _selection->select(hit_shape);
-    _selection->clear_selected_links();
     _mouse_down_node_positions[hit_shape] = hit_shape->get_pos();
   }
 }
@@ -166,7 +142,6 @@ Dep<LinkShape> GroupInteraction::find_link(const Dep<InputShape>& input_shape) {
 void GroupInteraction::reset_state() {
   // Reset our finite state machine
   if (_link_shape) {
-    _selection->deselect(_link_shape);
     delete2_ff(_link_shape->our_entity());
   }
 
@@ -207,7 +182,7 @@ bool GroupInteraction::node_hit(const MouseInfo& info) {
   if ( (cs->our_entity()->get_did() == kInputEntity) ||
       (cs->our_entity()->get_did() == kOutputEntity) ){
     return false;
-  } else if (cs->our_entity()->has<Compute>()) {
+  } else if (cs->is_linkable()) {
     return true;
   }
   return false;
@@ -224,14 +199,17 @@ void GroupInteraction::accumulate_select(const MouseInfo& a, const MouseInfo& b)
   Dep<CompShape> cs_a = _shape_collective->hit_test(ua.object_space_pos.xy(), region);
   Dep<CompShape> cs_b = _shape_collective->hit_test(ub.object_space_pos.xy(), region);
 
-  if (cs_a) {
-    _selection->toggle_selected(cs_a);
-  } else if (cs_b) {
-    _selection->toggle_selected(cs_b);
+
+  if (cs_a->is_linkable()) {
+    Dep<LinkableShape> ls = get_dep<LinkableShape>(cs_a->our_entity());
+    _selection->toggle_selected(ls);
+  } else if (cs_b->is_linkable()) {
+    Dep<LinkableShape> ls = get_dep<LinkableShape>(cs_b->our_entity());
+    _selection->toggle_selected(ls);
   }
 }
 
-Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
+Dep<LinkableShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
   start_method();
   // Record the selection state, before anything changes.
   _preselection = _selection->get_selected();
@@ -281,7 +259,7 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         is_input_param = true;
       } else if (comp_shape_entity->get_did() == kOutputEntity) {
         is_output_param = true;
-      } else if (comp_shape_entity->has<Compute, CompShape>()) {
+      } else if (comp_shape->is_linkable()) {
         is_node = true;
       } else if (comp_shape->get_did() == LinkShape::kDID()) {
         if (region == kLinkHead) {
@@ -330,9 +308,6 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         // Clear any existing selections.
         _selection->clear_selection();
         _mouse_down_node_positions.clear();
-
-        // Select the link
-        _selection->select(_link_shape);
       }
 
     } else if (is_output_param) {
@@ -361,30 +336,27 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         // Clear any existing selections.
         _selection->clear_selection();
         _mouse_down_node_positions.clear();
-
-        // Select the tail.
-        _selection->select(_link_shape);
       }
 
     } else if (is_node) {
       // Otherwise if we have any node that is selected.
 
       if (_state==kNodeSelectionAndDragging) {
-
+        Dep<LinkableShape> node_shape = get_dep<LinkableShape>(comp_shape->our_entity());
         // If the node is not already selected, then make it the sole selection.
-        if (!_selection->is_selected(comp_shape)) {
+        if (!_selection->is_selected(node_shape)) {
           // Clear out the current selection.
           _selection->clear_selection();
           _mouse_down_node_positions.clear();
 
           // Add this to the selection.
-          _selection->select(comp_shape);
-          _mouse_down_node_positions[comp_shape] = comp_shape->get_pos();
+          _selection->select(node_shape);
+          _mouse_down_node_positions[node_shape] = comp_shape->get_pos();
         }
 
         // Record all selected node positions.
-        const DepUSet<CompShape>& selected = _selection->get_selected();
-        for(const Dep<CompShape>& d: selected) {
+        const DepUSet<LinkableShape>& selected = _selection->get_selected();
+        for(const Dep<LinkableShape>& d: selected) {
           _mouse_down_node_positions[d] = d->get_pos();
         }
       }
@@ -398,7 +370,6 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
       }
     } else if (is_link_head) {
       if (_state == kNodeSelectionAndDragging) {
-        _selection->select(comp_shape);
         _link_shape = get_dep<LinkShape>(comp_shape_entity);
         Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
 
@@ -418,14 +389,10 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         // Clear any existing selections.
         _selection->clear_selection();
         _mouse_down_node_positions.clear();
-
-        // Select the link
-        _selection->select(_link_shape);
       }
 
     } else if (is_link_tail) {
       if (_state == kNodeSelectionAndDragging) {
-        _selection->select(comp_shape);
         _link_shape = get_dep<LinkShape>(comp_shape_entity);
         Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
 
@@ -445,9 +412,6 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         // Clear any existing selections.
         _selection->clear_selection();
         _mouse_down_node_positions.clear();
-
-        // Select the link
-        _selection->select(_link_shape);
       }
 
     } else {
@@ -458,7 +422,6 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
 
       // Reset our finite state machine
       if (_link_shape) {
-        _selection->deselect(_link_shape);
         delete2_ff(_link_shape->our_entity());
       }
 
@@ -482,7 +445,10 @@ Dep<CompShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
 //    }
   }
 
-  return comp_shape;
+  if (comp_shape && comp_shape->is_linkable()) {
+    return get_dep<LinkableShape>(comp_shape->our_entity());
+  }
+  return Dep<LinkableShape>(NULL);
 }
 
 void GroupInteraction::released(const MouseInfo& mouse_info) {
@@ -519,8 +485,8 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
       glm::vec2 delta = get_drag_delta();
 
       // Adjust all the selcted nodes with this delta.
-      const DepUSet<CompShape>& selected = _selection->get_selected();
-      for(const Dep<CompShape>& cs: selected) {
+      const DepUSet<LinkableShape>& selected = _selection->get_selected();
+      for(const Dep<LinkableShape>& cs: selected) {
         cs->set_pos(_mouse_down_node_positions[cs]+delta);
       }
       // Stop the track ball tracking mode.
@@ -548,7 +514,7 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
         is_input_param = true;
       } else if (comp_shape_entity->get_did() == kOutputEntity) {
         is_output_param = true;
-      } else if (comp_shape_entity->has<Compute, CompShape>()) {
+      } else if (comp_shape->is_linkable()) {
         is_node = true;
       } else if (comp_shape->get_did() == LinkShape::kDID()) {
         if (region == kLinkHead) {
@@ -744,22 +710,22 @@ bool GroupInteraction::is_panning_selection() const {
   return _panning_selection;
 }
 
-void GroupInteraction::edit(const Dep<CompShape>& comp_shape) {
+void GroupInteraction::edit(const Dep<LinkableShape>& comp_shape) {
   start_method();
   _selection->set_edit_node(comp_shape);
 }
 
-void GroupInteraction::view(const Dep<CompShape>& comp_shape) {
+void GroupInteraction::view(const Dep<LinkableShape>& comp_shape) {
   start_method();
   _selection->set_view_node(comp_shape);
 }
 
-void GroupInteraction::select(const Dep<CompShape>& comp_shape) {
+void GroupInteraction::select(const Dep<LinkableShape>& comp_shape) {
   start_method();
   _selection->select(comp_shape);
 }
 
-void GroupInteraction::deselect(const Dep<CompShape>& comp_shape) {
+void GroupInteraction::deselect(const Dep<LinkableShape>& comp_shape) {
   start_method();
   _selection->deselect(comp_shape);
 }
@@ -767,11 +733,13 @@ void GroupInteraction::deselect(const Dep<CompShape>& comp_shape) {
 void GroupInteraction::select_all() {
   start_method();
   Entity* group_node = get_entity(".");
-  DepUSet<CompShape> set;
+  DepUSet<LinkableShape> set;
   for (const auto &iter: group_node->get_children()) {
     Entity* child = iter.second;
-    if (child->has<Compute, CompShape>()) {
-      set.insert(get_dep<CompShape>(child));
+    Dep<CompShape> comp_shape = get_dep<CompShape>(child);
+    if (comp_shape && comp_shape->is_linkable()) {
+      Dep<LinkableShape> ls = get_dep<LinkableShape>(child);
+      set.insert(ls);
     }
   }
   _selection->select(set);
@@ -790,7 +758,7 @@ void GroupInteraction::frame_all() {
   _view_controls.frame(min, max);
 }
 
-void GroupInteraction::frame_selected(const DepUSet<CompShape>& selected) {
+void GroupInteraction::frame_selected(const DepUSet<LinkableShape>& selected) {
   start_method();
   if (selected.empty()) {
     return;
@@ -801,7 +769,7 @@ void GroupInteraction::frame_selected(const DepUSet<CompShape>& selected) {
   _view_controls.frame(min, max);
 }
 
-void GroupInteraction::centralize(const Dep<CompShape>& node) {
+void GroupInteraction::centralize(const Dep<LinkableShape>& node) {
   glm::vec2 center = _view_controls.get_center_in_object_space();
   node->set_pos(center);
 }
@@ -812,20 +780,20 @@ glm::vec2 GroupInteraction::get_center_in_object_space() const {
 
 void GroupInteraction::collapse_selected() {
   start_method();
-  const DepUSet<CompShape>& selected = _selection->get_selected();
+  const DepUSet<LinkableShape>& selected = _selection->get_selected();
   collapse(selected);
 }
 
 void GroupInteraction::explode_selected() {
   start_method();
-  const DepUSet<CompShape>& selected = _selection->get_selected();
+  const DepUSet<LinkableShape>& selected = _selection->get_selected();
   if (selected.empty()) {
     return;
   }
   explode(*selected.begin());
 }
 
-void GroupInteraction::collapse(const DepUSet<CompShape>& selected) {
+void GroupInteraction::collapse(const DepUSet<LinkableShape>& selected) {
   start_method();
   if (selected.empty()) {
     return;
@@ -856,7 +824,7 @@ void GroupInteraction::collapse(const DepUSet<CompShape>& selected) {
   collapsed_node->create_internals();
 
   // Position it at the center of the collapsed nodes.
-  Dep<CompShape> collapsed_node_cs = get_dep<CompShape>(collapsed_node);
+  Dep<LinkableShape> collapsed_node_cs = get_dep<LinkableShape>(collapsed_node);
   collapsed_node_cs->set_pos(collapse_center);
 
   // Paste the nodes into the group node.
@@ -866,13 +834,11 @@ void GroupInteraction::collapse(const DepUSet<CompShape>& selected) {
   // This will center the nodes at (0,0).
   {
     for (auto &iter: collapsed_node->get_children()) {
-      if (iter.second->has<CompShape,Compute>()) {
-        Dep<CompShape> cs = get_dep<CompShape>(iter.second);
-        if (cs) {
-          glm::vec2 pos = cs->get_pos();
-          pos -= collapse_center;
-          cs->set_pos(pos);
-        }
+      Dep<CompShape> cs = get_dep<CompShape>(iter.second);
+      if (cs && cs->is_linkable()) {
+        glm::vec2 pos = cs->get_pos();
+        pos -= collapse_center;
+        cs->set_pos(pos);
       }
     }
   }
@@ -890,7 +856,7 @@ void GroupInteraction::collapse(const DepUSet<CompShape>& selected) {
   _selection->select(collapsed_node_cs);
 }
 
-void GroupInteraction::explode(const Dep<CompShape>& cs) {
+void GroupInteraction::explode(const Dep<LinkableShape>& cs) {
   start_method();
   // Determine the exploding center.
   glm::vec2 min, max;
@@ -901,11 +867,12 @@ void GroupInteraction::explode(const Dep<CompShape>& cs) {
 
   // Select all the nodes in the group, this includes the input and output nodes.
   std::unordered_set<Entity*> nodes;
-  DepUSet<CompShape> shapes;
+  DepUSet<LinkableShape> shapes;
   for (auto &iter: cs_entity->get_children()) {
-    if (iter.second->has<CompShape,Compute>()) {
+    Dep<CompShape> cs = get_dep<CompShape>(iter.second);
+    if (cs && cs->is_linkable()) {
       nodes.insert(iter.second);
-      shapes.insert(get_dep<CompShape>(iter.second));
+      shapes.insert(get_dep<LinkableShape>(iter.second));
     }
   }
 
@@ -941,7 +908,7 @@ void GroupInteraction::explode(const Dep<CompShape>& cs) {
   // Select the exploded contents.
   _selection->clear_selection();
   for (Entity* p : pasted) {
-    Dep<CompShape> cs = get_dep<CompShape>(p);
+    Dep<LinkableShape> cs = get_dep<LinkableShape>(p);
     _selection->select(cs);
   }
 
@@ -996,7 +963,7 @@ Entity* GroupInteraction::create_node(size_t did) {
   glm::mat4 PM = _view_controls.lens.get_projection() * _view_controls.track_ball.get_model_view();
   glm::vec4 position = glm::inverse(PM) * center;
 
-  Dep<CompShape> cs = get_dep<CompShape>(node);
+  Dep<LinkableShape> cs = get_dep<LinkableShape>(node);
   cs->set_pos(position.xy());
 
   // Select the newly created node.

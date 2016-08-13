@@ -29,6 +29,7 @@
 
 #include <components/compshapes/compshape.h>
 #include <components/compshapes/compshapecollective.h>
+#include <components/compshapes/linkableshape.h>
 
 #include <gui/quick/nodegraphquickitem.h>
 #include <gui/quick/nodegraphquickitemglobals.h>
@@ -78,7 +79,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(QQuickItem *parent)
       _canvas(this),
       _factory(this),
       _file_model(this),
-      _last_pressed_shape(this),
+      _last_pressed_node(this),
       _link_locked(false) {
 
   get_dep_loader()->register_fixed_dep(_fbo_worker, "");
@@ -260,7 +261,7 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
     // or the background is pressed.
     if (get_current_interaction()->node_hit(_last_press) ||
         get_current_interaction()->bg_hit(_last_press)) {
-      _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+      _last_pressed_node = get_current_interaction()->pressed(_last_press);
     }
   } else {
     if (_last_press.middle_button) {
@@ -268,11 +269,11 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
       get_current_interaction()->accumulate_select(_last_press, _last_press);
     } else if (_last_press.right_button) {
       // Simulate a long press touch.
-      _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+      _last_pressed_node = get_current_interaction()->pressed(_last_press);
       _long_press_timer.stop();
       popup_context_menu();
     } else {
-      _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+      _last_pressed_node = get_current_interaction()->pressed(_last_press);
     }
   }
   update();
@@ -332,10 +333,10 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
             // or the background is pressed.
             if (get_current_interaction()->node_hit(_last_press) ||
                 get_current_interaction()->bg_hit(_last_press)) {
-              _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+              _last_pressed_node = get_current_interaction()->pressed(_last_press);
             }
           } else {
-            _last_pressed_shape = get_current_interaction()->pressed(_last_press);
+            _last_pressed_node = get_current_interaction()->pressed(_last_press);
           }
           update();
         } else if (state&Qt::TouchPointReleased) {
@@ -438,16 +439,19 @@ void NodeGraphQuickItem::popup_context_menu() {
   // Depending on the entity type that the long press is over, we emit
   // signals to request different types of context menus.
   {
-    if (_last_pressed_shape) {
-      Entity* e = _last_pressed_shape->our_entity();
+    if (_last_pressed_node) {
+      Entity* e = _last_pressed_node->our_entity();
       size_t did = e->get_did();
       // Send out context menu request signals.
       if (did == kGroupNodeEntity) {
         // Show the group context menu.
         emit group_node_context_menu_requested();
       } else if (e->has<Compute>()) {
+        Dep<CompShape> cs = get_dep<CompShape>(e);
         // Show the node context menu.
-        emit node_context_menu_requested();
+        if (cs->is_linkable()) {
+          emit node_context_menu_requested();
+        }
       }
     } else {
       // Show the node graph context menu.
@@ -472,14 +476,17 @@ const Dep<GroupInteraction>& NodeGraphQuickItem::get_current_interaction() {
 }
 
 void NodeGraphQuickItem::toggle_selection_under_long_press() {
-  get_current_interaction()->toggle_selection_under_press(_last_pressed_shape);
+  if (!_last_pressed_node) {
+    return;
+  }
+  get_current_interaction()->toggle_selection_under_press(_last_pressed_node);
   update();
 }
 
 void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
   e->create_internals();
   e->initialize_deps();
-  Dep<CompShape> cs = get_dep<CompShape>(e);
+  Dep<LinkableShape> cs = get_dep<LinkableShape>(e);
   if (centered) {
     get_current_interaction()->centralize(cs);
   } else {
@@ -541,11 +548,11 @@ void NodeGraphQuickItem::create_create_set_from_type_node(bool centered) {
 
 void NodeGraphQuickItem::view_node() {
   // Return if don't have a last pressed shape.
-  if (!_last_pressed_shape) {
+  if (!_last_pressed_node) {
     return;
   }
 
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_shape->get_path_as_string());
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
     qDebug() << "performing compute! \n";
     compute->propagate_cleanliness();
@@ -575,7 +582,7 @@ void NodeGraphQuickItem::view_node() {
     emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_results());
 
     // Update our node graph selection object which also tracks and edit and view nodes.
-    get_current_interaction()->view(_last_pressed_shape);
+    get_current_interaction()->view(_last_pressed_node);
     update();
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
@@ -584,11 +591,11 @@ void NodeGraphQuickItem::view_node() {
 
 void NodeGraphQuickItem::edit_node() {
   // Return if don't have a last pressed shape.
-  if (!_last_pressed_shape) {
+  if (!_last_pressed_node) {
     return;
   }
 
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_shape->get_path_as_string());
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
     qDebug() << "performing compute! \n";
     compute->propagate_cleanliness();
@@ -618,7 +625,7 @@ void NodeGraphQuickItem::edit_node() {
     emit edit_node_params(compute->our_entity()->get_name().c_str(), test);
 
     // Update our node graph selection object which also tracks and edit and view nodes.
-    get_current_interaction()->edit(_last_pressed_shape);
+    get_current_interaction()->edit(_last_pressed_node);
     update();
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
@@ -636,7 +643,7 @@ void NodeGraphQuickItem::destroy_selection() {
 void NodeGraphQuickItem::dive() {
   // When switching groups we clear the selection.
   // We don't allow inter-group selections.
-  _canvas->dive(_last_pressed_shape->our_entity());
+  _canvas->dive(_last_pressed_node->our_entity());
   _selection->clear_selection();
   frame_all();
   update();
@@ -656,12 +663,12 @@ void NodeGraphQuickItem::surface_to_root() {
 }
 
 void NodeGraphQuickItem::select_last_press() {
-  get_current_interaction()->select(_last_pressed_shape);
+  get_current_interaction()->select(_last_pressed_node);
   update();
 }
 
 void NodeGraphQuickItem::deselect_last_press() {
-  get_current_interaction()->deselect(_last_pressed_shape);
+  get_current_interaction()->deselect(_last_pressed_node);
   update();
 }
 
@@ -712,58 +719,58 @@ void NodeGraphQuickItem::cut() {
 }
 
 void NodeGraphQuickItem::paste(bool centered) {
-  const Dep<GroupInteraction>& interaction = get_current_interaction();
-  Entity* group = interaction->our_entity();
-  _selection->paste(group);
-
-  // At this point the pasting is complete, but we now need to perform adjustments
-  // like centering it and selecting the pasted nodes.
-
-  // Clear the current selection.
-  _selection->clear_selection();
-
-  // Determine our paste_center.
-  glm::vec2 paste_center;
-  if (centered) {
-    paste_center = interaction->get_center_in_object_space();
-  } else {
-    paste_center = _last_press.object_space_pos.xy();
-  }
-
-  // Get the bounds of the newly created nodes.
-  const std::unordered_set<Entity*>& pasted = group->get_last_pasted();
-
-  // Gather all the pasted comp shapes.
-  DepUSet<CompShape> comp_shapes;
-  for (Entity* e : pasted) {
-    Dep<CompShape> cs = get_dep<CompShape>(e);
-    if (cs) {
-      comp_shapes.insert(cs);
-      cs->clean(); // we need them clean as we'll be using their bounds.
-    }
-  }
-
-  // Get the center of the pasted nodes..
-  glm::vec2 min;
-  glm::vec2 max;
-  CompShapeCollective::get_aa_bounds(comp_shapes, min, max);
-  glm::vec2 node_center = 0.5f * (min + max);
-
-  // Get the delta between the node center and the paste center..
-  glm::vec2 delta = paste_center - node_center;
-
-  // Move center of the pasted nodes to the paste center.
-  for (const Dep<CompShape> &node : comp_shapes) {
-    node->set_pos(node->get_pos() + delta);
-  }
-
-  // Selected the newly pasted nodes.
-  for (const Dep<CompShape> &node : comp_shapes) {
-    _selection->select(node);
-  }
-  // Save the node graph changes.
-  save();
-  update();
+//  const Dep<GroupInteraction>& interaction = get_current_interaction();
+//  Entity* group = interaction->our_entity();
+//  _selection->paste(group);
+//
+//  // At this point the pasting is complete, but we now need to perform adjustments
+//  // like centering it and selecting the pasted nodes.
+//
+//  // Clear the current selection.
+//  _selection->clear_selection();
+//
+//  // Determine our paste_center.
+//  glm::vec2 paste_center;
+//  if (centered) {
+//    paste_center = interaction->get_center_in_object_space();
+//  } else {
+//    paste_center = _last_press.object_space_pos.xy();
+//  }
+//
+//  // Get the bounds of the newly created nodes.
+//  const std::unordered_set<Entity*>& pasted = group->get_last_pasted();
+//
+//  // Gather all the pasted comp shapes.
+//  DepUSet<CompShape> comp_shapes;
+//  for (Entity* e : pasted) {
+//    Dep<CompShape> cs = get_dep<CompShape>(e);
+//    if (cs) {
+//      comp_shapes.insert(cs);
+//      cs->clean(); // we need them clean as we'll be using their bounds.
+//    }
+//  }
+//
+//  // Get the center of the pasted nodes..
+//  glm::vec2 min;
+//  glm::vec2 max;
+//  CompShapeCollective::get_aa_bounds(comp_shapes, min, max);
+//  glm::vec2 node_center = 0.5f * (min + max);
+//
+//  // Get the delta between the node center and the paste center..
+//  glm::vec2 delta = paste_center - node_center;
+//
+//  // Move center of the pasted nodes to the paste center.
+//  for (const Dep<CompShape> &node : comp_shapes) {
+//    node->set_pos(node->get_pos() + delta);
+//  }
+//
+//  // Selected the newly pasted nodes.
+//  for (const Dep<CompShape> &node : comp_shapes) {
+//    _selection->select(node);
+//  }
+//  // Save the node graph changes.
+//  save();
+//  update();
 }
 
 void NodeGraphQuickItem::collapse_to_group() {

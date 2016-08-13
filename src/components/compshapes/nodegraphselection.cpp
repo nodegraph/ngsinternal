@@ -6,7 +6,7 @@
 #include <components/interactions/canvas.h>
 
 #include <base/utils/path.h>
-#include <components/compshapes/compshape.h>
+#include <components/compshapes/linkableshape.h>
 
 #include <base/utils/permit.h>
 
@@ -43,7 +43,7 @@ void NodeGraphSelection::update_state() {
     _view_node.reset();
   }
 
-  DepUSet<CompShape>::iterator iter = _selected.begin();
+  DepUSet<LinkableShape>::iterator iter = _selected.begin();
   while(iter != _selected.end()) {
     if (!*iter) {
       iter = _selected.erase(iter);
@@ -53,7 +53,7 @@ void NodeGraphSelection::update_state() {
   }
 }
 
-void NodeGraphSelection::set_edit_node(const Dep<CompShape>& node) {
+void NodeGraphSelection::set_edit_node(const Dep<LinkableShape>& node) {
   start_method();
   if (_edit_node) {
     _edit_node->edit(false);
@@ -62,7 +62,7 @@ void NodeGraphSelection::set_edit_node(const Dep<CompShape>& node) {
   _edit_node = node;
 }
 
-void NodeGraphSelection::set_view_node(const Dep<CompShape>& node) {
+void NodeGraphSelection::set_view_node(const Dep<LinkableShape>& node) {
   start_method();
   if (_view_node) {
     _view_node->view(false);
@@ -71,12 +71,12 @@ void NodeGraphSelection::set_view_node(const Dep<CompShape>& node) {
   _view_node = node;
 }
 
-const Dep<CompShape>& NodeGraphSelection::get_edit_node() const {
+const Dep<LinkableShape>& NodeGraphSelection::get_edit_node() const {
   start_method();
   return _edit_node;
 }
 
-const Dep<CompShape>& NodeGraphSelection::get_view_node() const {
+const Dep<LinkableShape>& NodeGraphSelection::get_view_node() const {
   start_method();
   return _view_node;
 }
@@ -97,19 +97,19 @@ void NodeGraphSelection::clear_view_node() {
   _view_node.reset();
 }
 
-void NodeGraphSelection::select(const Dep<CompShape>& e) {
+void NodeGraphSelection::select(const Dep<LinkableShape>& e) {
   start_method();
   if (!e) {
     return;
   }
   // Make ourself be a dependant on the dependency.
-  Dep<CompShape> dep(this);
+  Dep<LinkableShape> dep(this);
   dep = e;
   dep->select(true);
   _selected.insert(dep);
 }
 
-void NodeGraphSelection::deselect(const Dep<CompShape>& e) {
+void NodeGraphSelection::deselect(const Dep<LinkableShape>& e) {
   start_method();
   if (e) {
     e->select(false);
@@ -117,28 +117,28 @@ void NodeGraphSelection::deselect(const Dep<CompShape>& e) {
   _selected.erase(e);
 }
 
-void NodeGraphSelection::select(const DepUSet<CompShape>& set) {
+void NodeGraphSelection::select(const DepUSet<LinkableShape>& set) {
   start_method();
-  for (const Dep<CompShape>& cs : set) {
+  for (const Dep<LinkableShape>& cs : set) {
     select(cs);
   }
 }
 
-void NodeGraphSelection::deselect(const DepUSet<CompShape>& set) {
+void NodeGraphSelection::deselect(const DepUSet<LinkableShape>& set) {
   start_method();
-  for (const Dep<CompShape>& cs: set) {
+  for (const Dep<LinkableShape>& cs: set) {
     deselect(cs);
   }
 }
 
-bool NodeGraphSelection::is_selected(const Dep<CompShape>& e) const{
+bool NodeGraphSelection::is_selected(const Dep<LinkableShape>& e) const{
   start_method();
   if (_selected.count(e)) {
     return true;
   }
   return false;
 }
-void NodeGraphSelection::toggle_selected(const Dep<CompShape>& e) {
+void NodeGraphSelection::toggle_selected(const Dep<LinkableShape>& e) {
   start_method();
   if (is_selected(e)) {
     deselect(e);
@@ -147,7 +147,7 @@ void NodeGraphSelection::toggle_selected(const Dep<CompShape>& e) {
   }
 }
 
-const DepUSet<CompShape>& NodeGraphSelection::get_selected() const{
+const DepUSet<LinkableShape>& NodeGraphSelection::get_selected() const{
   return _selected;
 }
 
@@ -155,7 +155,7 @@ void NodeGraphSelection::clear_selection() {
   start_method();
   // We don't call the deselect() method which erase elements one by one as it's slow.
   // We clear everything at once.
-  for (const Dep<CompShape>& d: _selected) {
+  for (const Dep<LinkableShape>& d: _selected) {
     if (d) {
       d->select(false);
     }
@@ -164,7 +164,7 @@ void NodeGraphSelection::clear_selection() {
 }
 
 void NodeGraphSelection::destroy_selection() {
-  for(const Dep<CompShape>& cs: _selected) {
+  for(const Dep<LinkableShape>& cs: _selected) {
     if (!cs) {
       continue;
     }
@@ -181,21 +181,23 @@ void NodeGraphSelection::destroy_selection() {
       clear_view_node();
     }
 
-    // If we have a selected link shape we want to destroy all the associated
-    // connections as well.
-    if (cs->get_did() == kLinkShape) {
-      Dep<LinkShape> link_shape(cs, true);
-      const Dep<InputShape>& input_shape = link_shape->get_input_shape();
-      if (input_shape) {
-        Dep<InputCompute> input_compute = get_dep<InputCompute>(input_shape->our_entity());
-        // Unlink components.
-        input_compute->unlink_output_compute();
-      }
-      // Destroy entities. This automatically disconnect many components.
-      delete2_ff(link_shape->our_entity());
-    } else {
-      delete2_ff(cs->our_entity());
-    }
+//    // If we have a selected link shape we want to destroy all the associated
+//    // connections as well.
+//    if (cs->get_did() == kLinkShape) {
+//      Dep<LinkShape> link_shape(cs, true);
+//      const Dep<InputShape>& input_shape = link_shape->get_input_shape();
+//      if (input_shape) {
+//        Dep<InputCompute> input_compute = get_dep<InputCompute>(input_shape->our_entity());
+//        // Unlink components.
+//        input_compute->unlink_output_compute();
+//      }
+//      // Destroy entities. This automatically disconnect many components.
+//      delete2_ff(link_shape->our_entity());
+//    } else {
+//      delete2_ff(cs->our_entity());
+//    }
+
+    delete2_ff(cs->our_entity());
   }
   _selected.clear();
 }
@@ -207,20 +209,11 @@ void NodeGraphSelection::clear_all() {
   clear_view_node();
 }
 
-void NodeGraphSelection::clear_selected_links() {
-  DepUSet<CompShape> copy = _selected;
-  for (const auto &s: copy) {
-    if (s->get_did() == kLinkShape) {
-      deselect(s);
-    }
-  }
-}
-
 void NodeGraphSelection::copy() {
   if (_selected.empty()) {
     return;
   }
-  Dep<CompShape> cs = *_selected.begin();
+  Dep<LinkableShape> cs = *_selected.begin();
   Entity* node = cs->our_entity();
   Entity* group = node->get_parent();
 

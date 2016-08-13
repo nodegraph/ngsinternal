@@ -254,9 +254,9 @@ void ShapeCanvas::dive(Entity* selected) {
 
 void ShapeCanvas::dive() {
   start_method();
-  const DepUSet<CompShape>& selected = _ng_state->get_selected();
+  const DepUSet<LinkableShape>& selected = _ng_state->get_selected();
   // Dive into the first selected group.
-  for (const Dep<CompShape> &cs: selected) {
+  for (const Dep<LinkableShape> &cs: selected) {
     if (cs->get_did() == kGroupNodeShape) {
       dive(cs->our_entity());
     }

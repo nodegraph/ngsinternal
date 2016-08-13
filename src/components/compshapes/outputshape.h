@@ -5,7 +5,7 @@
 
 namespace ngs {
 
-class OutputCompute;
+class LinkableShape;
 
 class COMPSHAPES_EXPORT OutputShape: public CompShape {
  public:
@@ -35,9 +35,6 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
   // Our bounds.
   virtual const Polygon& get_bounds() const;
 
-  // Our selected state.
-  virtual bool is_selected() const;
-
   // Our shape instances.
   virtual const std::vector<ShapeInstance>* get_tri_instances() const;
 
@@ -47,7 +44,7 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
  private:
 
   // Our fixed deps.
-  Dep<CompShape> _node_shape;
+  Dep<LinkableShape> _node_shape;
 
   // Our tri instances.
   std::vector<ShapeInstance> _tris;
