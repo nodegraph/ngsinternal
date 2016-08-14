@@ -46,25 +46,27 @@ StackView {
 
     // Delegate.
     delegate: StackViewDelegate {
-        function transitionFinished(properties)
-        {
-            properties.exitItem.opacity = 1
-        }
+        // We keep the delegate empty of transition because this helps with
+        // the stack view seg faulting in Qt5Qmld.dll when popping items off the stack.
+//        function transitionFinished(properties)
+//        {
+//            properties.exitItem.opacity = 1
+//        }
 
-        pushTransition: StackViewTransition {
-            PropertyAnimation {
-                target: enterItem
-                property: "opacity"
-                from: 0
-                to: 1
-            }
-            PropertyAnimation {
-                target: exitItem
-                property: "opacity"
-                from: 1
-                to: 0
-            }
-        }
+//        pushTransition: StackViewTransition {
+//            PropertyAnimation {
+//                target: enterItem
+//                property: "opacity"
+//                from: 0
+//                to: 1
+//            }
+//            PropertyAnimation {
+//                target: exitItem
+//                property: "opacity"
+//                from: 1
+//                to: 0
+//            }
+//        }
     }
 
     // --------------------------------------------------------------------------------------------------
@@ -98,12 +100,14 @@ StackView {
             var page = stack_view.get(stack_view.depth-1)
 
             // Stops any further get_value and get_value_as_string evaluations.
-            page.parent_stack_view = null
+            //page.parent_stack_view = null
 
             // The model in the page is manually created, and so must be manually destroyed as well.
             var model = null
             if (page.model_is_dynamic) {
+                console.log("aaa")
                 model = page.model
+                console.log("bbb")
             }
 
             // Pop the page off the stack.
@@ -142,7 +146,9 @@ StackView {
     // --------------------------------------------------------------------------------------------------
 
     function create_component(page_url) {
-        var comp = app_loader.load_component(page_url, null, {})
+        // We need to have a valid parent like stack_view, this prevents the
+        // page from being destroyed, and lets us control when it gets destroyed.
+        var comp = app_loader.load_component(page_url, stack_view, {})
         return comp
     }
 

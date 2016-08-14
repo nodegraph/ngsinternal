@@ -29,13 +29,12 @@
 
 #include <components/compshapes/compshape.h>
 #include <components/compshapes/compshapecollective.h>
-#include <components/compshapes/linkableshape.h>
-
 #include <gui/quick/nodegraphquickitem.h>
 #include <gui/quick/nodegraphquickitemglobals.h>
 
 #include <base/objectmodel/basefactory.h>
-#include <components/compshapes/nodegraphselection.h>
+#include <components/compshapes/nodeselection.h>
+#include <components/compshapes/nodeshape.h>
 #include <components/interactions/viewcontrols.h>
 
 #include <QtQuick/QQuickWindow>
@@ -486,7 +485,7 @@ void NodeGraphQuickItem::toggle_selection_under_long_press() {
 void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
   e->create_internals();
   e->initialize_deps();
-  Dep<LinkableShape> cs = get_dep<LinkableShape>(e);
+  Dep<NodeShape> cs = get_dep<NodeShape>(e);
   if (centered) {
     get_current_interaction()->centralize(cs);
   } else {

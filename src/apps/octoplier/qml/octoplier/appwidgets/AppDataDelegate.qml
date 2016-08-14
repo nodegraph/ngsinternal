@@ -95,7 +95,7 @@ Rectangle {
             switch(value_type) {
             case 'string_type':
                 if (stack_view.allow_editing) {
-                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditStringPage.qml", null, {})
+                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditStringPage.qml", edit_node_page, {})
                     page.init(value)
                     page.set_title(data_name)
                     stack_view.push_page(page)
@@ -103,7 +103,7 @@ Rectangle {
                 break
             case 'boolean_type':
                 if (stack_view.allow_editing) {
-                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditBooleanPage.qml", null, {})
+                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditBooleanPage.qml", edit_node_page, {})
                     page.init(data_name, our_boolean_value)
                     page.set_title(data_name)
                     stack_view.push_page(page)
@@ -111,7 +111,7 @@ Rectangle {
                 break
             case 'number_type':
                 if (stack_view.allow_editing) {
-                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditNumberPage.qml", null, {})
+                    var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/EditNumberPage.qml", edit_node_page, {})
                     page.init(data_name, our_number_value)
                     page.set_title(data_name)
                     stack_view.push_page(page)

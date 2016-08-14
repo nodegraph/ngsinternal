@@ -8,9 +8,9 @@ set(sources
     inputnodeshape.cpp
     inputshape.cpp
     linkshape.cpp
-    linkableshape.cpp
-    nodegraphselection.cpp
     nodeshape.cpp
+    nodeselection.cpp
+    rectnodeshape.cpp
     outputlabelshape.cpp
     outputnodeshape.cpp
     outputshape.cpp
@@ -27,9 +27,9 @@ set(headers
     inputnodeshape.h
     inputshape.h
     linkshape.h
-    linkableshape.h
     nodeshape.h
-    nodegraphselection.h
+    rectnodeshape.h
+    nodeselection.h
     outputlabelshape.h
 	outputnodeshape.h
     outputshape.h

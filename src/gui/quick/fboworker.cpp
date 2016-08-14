@@ -3,7 +3,7 @@
 #include <base/device/devicedebug.h>
 #include <base/glewhelper/glewhelper.h>
 #include <base/objectmodel/entity.h>
-#include <components/compshapes/nodegraphselection.h>
+#include <components/compshapes/nodeselection.h>
 #include <components/interactions/shapecanvas.h>
 #include <gui/quick/fboworker.h>
 #include <gui/quick/fborenderer.h>

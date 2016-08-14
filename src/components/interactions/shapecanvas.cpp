@@ -21,7 +21,7 @@
 #include <components/compshapes/compshapecollective.h>
 
 #include <components/compshapes/inputnodeshape.h>
-#include <components/compshapes/nodegraphselection.h>
+#include <components/compshapes/nodeselection.h>
 #include <components/compshapes/outputnodeshape.h>
 #include <components/entities/entityids.h>
 #include <components/entities/componentids.h>
@@ -254,9 +254,9 @@ void ShapeCanvas::dive(Entity* selected) {
 
 void ShapeCanvas::dive() {
   start_method();
-  const DepUSet<LinkableShape>& selected = _ng_state->get_selected();
+  const DepUSet<NodeShape>& selected = _ng_state->get_selected();
   // Dive into the first selected group.
-  for (const Dep<LinkableShape> &cs: selected) {
+  for (const Dep<NodeShape> &cs: selected) {
     if (cs->get_did() == kGroupNodeShape) {
       dive(cs->our_entity());
     }

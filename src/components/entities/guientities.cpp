@@ -13,7 +13,6 @@
 
 #include <components/resources/resources.h>
 
-#include <components/compshapes/nodeshape.h>
 #include <components/compshapes/compshapecollective.h>
 #include <components/compshapes/dotnodeshape.h>
 #include <components/compshapes/inputlabelshape.h>
@@ -22,9 +21,10 @@
 #include <components/compshapes/linkshape.h>
 #include <components/compshapes/outputlabelshape.h>
 #include <components/compshapes/outputnodeshape.h>
-#include <components/compshapes/nodegraphselection.h>
 #include <components/compshapes/outputshape.h>
 #include <components/compshapes/groupnodeshape.h>
+#include <components/compshapes/nodeselection.h>
+#include <components/compshapes/rectnodeshape.h>
 
 #include <components/computes/compute.h>
 #include <components/computes/dotnodecompute.h>
@@ -51,7 +51,7 @@
  * Dir has no components and acts a namespace
  *
  * Group:
- *   node_a : NodeShape, NodeCompute
+ *   node_a : RectNodeShape, NodeCompute
  *     - inputs : dir
  *       - in_a : InputCompute, InputShape
  *         - label : InputLabelShape
@@ -73,7 +73,7 @@ void QMLAppEntity::create_internals() {
   // Gui related.
   new_ff GraphBuilder(this);
   new_ff Resources(this);
-  new_ff NodeGraphSelection(this);
+  new_ff NodeSelection(this);
   new_ff ShapeCanvas(this);
   // Qt related. // Needs to be manually created due to dependency issues.
   //new_ff FBORenderer(this);
@@ -87,7 +87,7 @@ void QtAppEntity::create_internals() {
   // Gui related.
   new_ff GraphBuilder(this);
   new_ff Resources(this);
-  new_ff NodeGraphSelection(this);
+  new_ff NodeSelection(this);
   new_ff ShapeCanvas(this);
   // Qt related.
   //new_ff NodeGraphEditor(this); // This needs to be manually created because it needs a valid Qt object to be it's parent, in order to render properly.
@@ -99,7 +99,7 @@ void AppEntity::create_internals() {
   // Gui related.
   new_ff GraphBuilder(this);
   new_ff Resources(this);
-  new_ff NodeGraphSelection(this);
+  new_ff NodeSelection(this);
   new_ff ShapeCanvas(this);
 }
 
@@ -162,7 +162,7 @@ void InputNodeEntity::create_internals() {
   // Our components.
   new_ff InputNodeCompute(this);
   // Gui related.
-  NodeShape* shape = new_ff InputNodeShape(this);
+  RectNodeShape* shape = new_ff InputNodeShape(this);
   shape->push_output_name("out");
   // Our sub entities.
   {
@@ -181,7 +181,7 @@ void OutputNodeEntity::create_internals() {
   // Our components.
   new_ff OutputNodeCompute(this);
   // Gui related.
-  NodeShape* shape = new_ff OutputNodeShape(this);
+  RectNodeShape* shape = new_ff OutputNodeShape(this);
   shape->push_input_name("in");
   // Our sub entities.
   {
@@ -200,7 +200,7 @@ void MockNodeEntity::create_internals() {
   // Our components.
   new_ff MockNodeCompute(this);
   // Gui related.
-  NodeShape* shape = new_ff NodeShape(this);
+  RectNodeShape* shape = new_ff RectNodeShape(this);
   shape->push_input_name("a");
   shape->push_input_name("b");
   shape->push_output_name("c");
@@ -228,7 +228,7 @@ void OpenBrowserNodeEntity::create_internals() {
   // Our components.
   new_ff OpenBrowserCompute(this);
   // Gui related.
-  NodeShape* shape = new_ff NodeShape(this);
+  RectNodeShape* shape = new_ff RectNodeShape(this);
   shape->push_input_name("in");
   shape->push_output_name("out");
   // Our sub entities.
@@ -250,7 +250,7 @@ void CloseBrowserNodeEntity::create_internals() {
   // Our components.
   new_ff CloseBrowserCompute(this);
   // Gui related.
-  NodeShape* shape = new_ff NodeShape(this);
+  RectNodeShape* shape = new_ff RectNodeShape(this);
   shape->push_input_name("in");
   shape->push_output_name("out");
   // Our sub entities.
@@ -272,7 +272,7 @@ void CreateSetFromValuesNodeEntity::create_internals() {
   // Our components.
   new_ff CreateSetFromValuesCompute(this);
   // Gui related.
-  NodeShape* shape = new_ff NodeShape(this);
+  RectNodeShape* shape = new_ff RectNodeShape(this);
   shape->push_input_name("in");
   shape->push_output_name("out");
   // Our sub entities.
@@ -298,7 +298,7 @@ void CreateSetFromTypeNodeEntity::create_internals() {
   // Our components.
   new_ff CreateSetFromTypeCompute(this);
   // Gui related.
-  NodeShape* shape = new_ff NodeShape(this);
+  RectNodeShape* shape = new_ff RectNodeShape(this);
   shape->push_input_name("in");
   shape->push_output_name("out");
   // Our sub entities.
@@ -323,7 +323,7 @@ void ComputeNodeEntity::create_internals() {
   // Our components.
   Compute* dc = new_ff ScriptNodeCompute(this);
   // Gui related.
-  NodeShape* shape = new_ff NodeShape(this);
+  RectNodeShape* shape = new_ff RectNodeShape(this);
   shape->push_input_name("in");
   shape->push_output_name("out");
 

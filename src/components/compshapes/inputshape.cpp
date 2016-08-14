@@ -11,7 +11,7 @@
 
 #include <boost/math/constants/constants.hpp>
 #include <components/compshapes/inputshape.h>
-#include <components/compshapes/linkableshape.h>
+#include <components/compshapes/nodeshape.h>
 #include <cmath>
 
 namespace ngs {

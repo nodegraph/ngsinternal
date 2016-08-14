@@ -1,5 +1,6 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
+#include <components/entities/componentids.h>
 #include <components/compshapes/hittypes.h>
 #include <base/device/geometry/instancevertexattribute.h>
 #include <base/device/geometry/objectvertexattribute.h>
@@ -16,6 +17,7 @@
 namespace ngs {
 
 class CompShape;
+class NodeShape;
 class Polygon;
 
 class LowerHierarchyChange;
@@ -47,7 +49,7 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
 
   static void coalesce_bounds(const std::vector<Polygon>& bounds, glm::vec2& min, glm::vec2& max);
   static void get_aa_bounds(const DepUSet<CompShape>& shapes, glm::vec2& min, glm::vec2& max);
-  static void get_aa_bounds(const DepUSet<LinkableShape>& shapes, glm::vec2& min, glm::vec2& max);
+  static void get_aa_bounds(const DepUSet<NodeShape>& shapes, glm::vec2& min, glm::vec2& max);
 
  protected:
 

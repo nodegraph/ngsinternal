@@ -30,7 +30,7 @@ struct {
 } CompShapeCompare;
 
 GroupNodeShape::GroupNodeShape(Entity* entity)
-    : NodeShape(entity, kDID()),
+    : RectNodeShape(entity, kDID()),
       _factory(this),
       _lower_change(this) {
   get_dep_loader()->register_fixed_dep(_factory, "");
@@ -44,7 +44,7 @@ GroupNodeShape::~GroupNodeShape() {
 }
 
 void GroupNodeShape::update_state() {
-  NodeShape::update_state();
+  RectNodeShape::update_state();
 
   const Polygon& bounds = get_bounds();
   glm::vec2 target_center = 0.5f * (bounds.vertices[0] + bounds.vertices[3]) - glm::vec2(indicator_offset, 0);

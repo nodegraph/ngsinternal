@@ -11,7 +11,7 @@ namespace ngs {
 
 class Polygon;
 class SelectableShape;
-class LinkableShape;
+class NodeShape;
 
 // CompShapes are composites of other primitive shape instances.
 // The shape instance include things like triangles, squares and letters.

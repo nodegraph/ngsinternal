@@ -5,7 +5,7 @@
 
 namespace ngs {
 
-class LinkableShape;
+class NodeShape;
 
 class COMPSHAPES_EXPORT OutputShape: public CompShape {
  public:
@@ -44,7 +44,7 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
  private:
 
   // Our fixed deps.
-  Dep<LinkableShape> _node_shape;
+  Dep<NodeShape> _node_shape;
 
   // Our tri instances.
   std::vector<ShapeInstance> _tris;

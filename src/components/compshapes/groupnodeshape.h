@@ -1,6 +1,6 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
-#include <components/compshapes/nodeshape.h>
+#include <components/compshapes/rectnodeshape.h>
 
 namespace ngs {
 
@@ -8,7 +8,7 @@ class BaseFactory;
 class LowerHierarchyChange;
 class GroupInteraction;
 
-class COMPSHAPES_EXPORT GroupNodeShape: public NodeShape {
+class COMPSHAPES_EXPORT GroupNodeShape: public RectNodeShape {
  public:
 
   COMPONENT_ID(CompShape, GroupNodeShape);

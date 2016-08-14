@@ -1,7 +1,5 @@
 #include <components/computes/outputcompute.h>
 #include <components/resources/resources.h>
-#include <components/compshapes/linkableshape.h>
-
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/deploader.h>
 #include <base/device/geometry/textlimits.h>
@@ -11,6 +9,7 @@
 
 #include <cassert>
 #include <boost/math/constants/constants.hpp>
+#include <components/compshapes/nodeshape.h>
 #include <components/compshapes/outputshape.h>
 
 namespace ngs {

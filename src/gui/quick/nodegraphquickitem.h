@@ -19,8 +19,8 @@ namespace ngs {
 class FBOWorker;
 class GroupInteraction;
 class ShapeCanvas;
-class NodeGraphSelection;
-class LinkableShape;
+class NodeSelection;
+class NodeShape;
 class BaseFactory;
 class BaseEntityInstancer;
 
@@ -154,7 +154,7 @@ Q_OBJECT
 
   // Our fixed deps.
   Dep<FBOWorker> _fbo_worker;
-  Dep<NodeGraphSelection> _selection;
+  Dep<NodeSelection> _selection;
   Dep<ShapeCanvas> _canvas;
   Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;
@@ -167,7 +167,7 @@ Q_OBJECT
 
   // Info about our last press, used when handling long presses.
   MouseInfo _last_press;
-  Dep<LinkableShape> _last_pressed_node;
+  Dep<NodeShape> _last_pressed_node;
 
   // Pinch Zoom.
   glm::vec2 _original_pinch_center;

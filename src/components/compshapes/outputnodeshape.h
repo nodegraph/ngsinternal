@@ -1,10 +1,10 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
-#include <components/compshapes/nodeshape.h>
+#include <components/compshapes/rectnodeshape.h>
 
 namespace ngs {
 
-class COMPSHAPES_EXPORT OutputNodeShape: public NodeShape {
+class COMPSHAPES_EXPORT OutputNodeShape: public RectNodeShape {
  public:
 
   COMPONENT_ID(CompShape, OutputNodeShape);

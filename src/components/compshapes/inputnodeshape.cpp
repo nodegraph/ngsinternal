@@ -13,7 +13,7 @@ const std::array<unsigned char,4> InputNodeShape::indicator_bg_color = { 255, 25
 const std::array<unsigned char,4> InputNodeShape::indicator_fg_color = { 255, 128, 171, 255 };
 
 InputNodeShape::InputNodeShape(Entity* entity)
-    : NodeShape(entity, kDID()) {
+    : RectNodeShape(entity, kDID()) {
   _marker_bg.state = 0;
   _marker_fg.state = 0;
 }
@@ -22,7 +22,7 @@ InputNodeShape::~InputNodeShape() {
 }
 
 void InputNodeShape::update_state() {
-  NodeShape::update_state();
+  RectNodeShape::update_state();
 
   const Polygon& bounds = get_bounds();
   glm::vec2 center = 0.5f * (bounds.vertices[0] + bounds.vertices[3]) - glm::vec2(indicator_offset, 0);

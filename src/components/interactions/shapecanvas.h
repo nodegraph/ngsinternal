@@ -4,7 +4,7 @@
 #include <components/resources/resources.h>
 #include <base/device/transforms/glmhelper.h>
 #include <base/device/program/defaultuniforminfo.h>
-#include <components/compshapes/nodegraphselection.h>
+#include <components/compshapes/nodeselection.h>
 #include <map>
 #include <set>
 #include <vector>
@@ -68,7 +68,7 @@ class INTERACTIONS_EXPORT ShapeCanvas: public Component {
   // Our fixed deps.
   Dep<BaseFactory> _factory;
   Dep<Resources> _resources;
-  Dep<NodeGraphSelection> _ng_state;
+  Dep<NodeSelection> _ng_state;
 
   // Our dynamic deps. These are not serialized.
   Dep<GroupInteraction> _current_interaction;

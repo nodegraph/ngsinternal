@@ -3,7 +3,7 @@
 
 #include <components/compshapes/dotnodeshape.h>
 #include <components/compshapes/inputnodeshape.h>
-#include <components/compshapes/nodeshape.h>
+#include <components/compshapes/rectnodeshape.h>
 #include <components/compshapes/outputnodeshape.h>
 #include <components/compshapes/compshapecollective.h>
 #include <components/interactions/canvas.h>
@@ -17,10 +17,10 @@
 
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/linkshape.h>
-#include <components/compshapes/nodegraphselection.h>
 #include <components/compshapes/outputshape.h>
 #include <components/compshapes/groupnodeshape.h>
 #include <components/compshapes/inputlabelshape.h>
+#include <components/compshapes/nodeselection.h>
 #include <components/compshapes/outputlabelshape.h>
 
 #include <components/computes/compute.h>
@@ -61,7 +61,7 @@ namespace ngs {
     case_statement(InputLabelShape)\
     case_statement(InputShape)\
     case_statement(LinkShape)\
-    case_statement(NodeShape)\
+    case_statement(RectNodeShape)\
     case_statement(OutputNodeShape)\
     case_statement(OutputLabelShape)\
     case_statement(OutputShape)\
@@ -88,7 +88,7 @@ namespace ngs {
     /* Interactions. */\
     case_statement(GroupInteraction)\
     /* App Level. */\
-    case_statement(NodeGraphSelection)\
+    case_statement(NodeSelection)\
     case_statement(Resources)\
     case_statement(ShapeCanvas)\
     /* Invalid and Components which must be manually created. */\

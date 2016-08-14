@@ -20,7 +20,7 @@ const float DotNodeShape::radius = 50.0f;
 
 
 DotNodeShape::DotNodeShape(Entity* entity):
-    LinkableShape(entity, kDID()) {
+    NodeShape(entity, kDID()) {
   _bg_circle.state = 0;
   _fg_circle.state = 0;
 }
@@ -74,7 +74,7 @@ const Polygon& DotNodeShape::get_bounds() const {
 
 void DotNodeShape::select(bool selected) {
   start_method();
-  LinkableShape::select(selected);
+  NodeShape::select(selected);
   if (selected) {
     _bg_circle.state |= (selected_transform_bitmask|selected_color_bitmask);
     _fg_circle.state |= selected_transform_bitmask;
@@ -112,7 +112,7 @@ size_t DotNodeShape::get_output_order(const std::string& output_name) const {
 }
 
 void DotNodeShape::update_circles_cache() {
-  LinkableShape::update_circles_cache();
+  NodeShape::update_circles_cache();
   _circles_cache.insert(_circles_cache.end(), _bg_circle);
   _circles_cache.insert(_circles_cache.end(), _fg_circle);
 }

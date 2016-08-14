@@ -23,7 +23,7 @@ class Resources;
 class Entity;
 class ShapeCanvas;
 class Interaction;
-class NodeGraphSelection;
+class NodeSelection;
 
 // The FBOWorker depebds on the FBORenderer.
 // Together they run on a separate thread to render images to a texture.

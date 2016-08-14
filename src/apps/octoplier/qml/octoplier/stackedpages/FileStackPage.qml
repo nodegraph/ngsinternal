@@ -43,7 +43,7 @@ AppStackPage{
         }
         // The first page is our list of files.
         // Subsequent pages will be options for the selected file.
-        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/FilePage.qml", null, {})
+        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/FilePage.qml", file_stack_page, {})
         page.visible = true
         page.set_title("All Files")
         stack_view.push_page(page)
@@ -69,7 +69,7 @@ AppStackPage{
 
 	// Push the create file page onto the stack.
     function on_create_file_page() {
-        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", null, {})
+        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", file_stack_page, {})
         page.visible = true
         page.create_file = true
         page.set_title("Create File")
@@ -79,7 +79,7 @@ AppStackPage{
 
 	// Push the edit file page onto the stack.
     function on_edit_file_page() {
-        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", null, {})
+        var page = app_loader.load_component("qrc:///qml/octoplier/stackedpages/CreateFilePage.qml", file_stack_page, {})
         page.visible = true
         page.create_file = false
         page.title_field.text = get_file_page().get_current_setting('title')

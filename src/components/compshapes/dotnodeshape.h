@@ -1,12 +1,12 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
-#include <components/compshapes/linkableshape.h>
 #include <base/utils/polygon.h>
+#include <components/compshapes/nodeshape.h>
 
 namespace ngs {
 
 
-class COMPSHAPES_EXPORT DotNodeShape: public LinkableShape {
+class COMPSHAPES_EXPORT DotNodeShape: public NodeShape {
  public:
 
   COMPONENT_ID(CompShape, DotNodeShape);
