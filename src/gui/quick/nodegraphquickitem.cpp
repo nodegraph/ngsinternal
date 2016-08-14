@@ -718,58 +718,58 @@ void NodeGraphQuickItem::cut() {
 }
 
 void NodeGraphQuickItem::paste(bool centered) {
-//  const Dep<GroupInteraction>& interaction = get_current_interaction();
-//  Entity* group = interaction->our_entity();
-//  _selection->paste(group);
-//
-//  // At this point the pasting is complete, but we now need to perform adjustments
-//  // like centering it and selecting the pasted nodes.
-//
-//  // Clear the current selection.
-//  _selection->clear_selection();
-//
-//  // Determine our paste_center.
-//  glm::vec2 paste_center;
-//  if (centered) {
-//    paste_center = interaction->get_center_in_object_space();
-//  } else {
-//    paste_center = _last_press.object_space_pos.xy();
-//  }
-//
-//  // Get the bounds of the newly created nodes.
-//  const std::unordered_set<Entity*>& pasted = group->get_last_pasted();
-//
-//  // Gather all the pasted comp shapes.
-//  DepUSet<CompShape> comp_shapes;
-//  for (Entity* e : pasted) {
-//    Dep<CompShape> cs = get_dep<CompShape>(e);
-//    if (cs) {
-//      comp_shapes.insert(cs);
-//      cs->clean(); // we need them clean as we'll be using their bounds.
-//    }
-//  }
-//
-//  // Get the center of the pasted nodes..
-//  glm::vec2 min;
-//  glm::vec2 max;
-//  CompShapeCollective::get_aa_bounds(comp_shapes, min, max);
-//  glm::vec2 node_center = 0.5f * (min + max);
-//
-//  // Get the delta between the node center and the paste center..
-//  glm::vec2 delta = paste_center - node_center;
-//
-//  // Move center of the pasted nodes to the paste center.
-//  for (const Dep<CompShape> &node : comp_shapes) {
-//    node->set_pos(node->get_pos() + delta);
-//  }
-//
-//  // Selected the newly pasted nodes.
-//  for (const Dep<CompShape> &node : comp_shapes) {
-//    _selection->select(node);
-//  }
-//  // Save the node graph changes.
-//  save();
-//  update();
+  const Dep<GroupInteraction>& interaction = get_current_interaction();
+  Entity* group = interaction->our_entity();
+  _selection->paste(group);
+
+  // At this point the pasting is complete, but we now need to perform adjustments
+  // like centering it and selecting the pasted nodes.
+
+  // Clear the current selection.
+  _selection->clear_selection();
+
+  // Determine our paste_center.
+  glm::vec2 paste_center;
+  if (centered) {
+    paste_center = interaction->get_center_in_object_space();
+  } else {
+    paste_center = _last_press.object_space_pos.xy();
+  }
+
+  // Get the bounds of the newly created nodes.
+  const std::unordered_set<Entity*>& pasted = group->get_last_pasted();
+
+  // Gather all the pasted comp shapes.
+  DepUSet<NodeShape> node_shapes;
+  for (Entity* e : pasted) {
+    Dep<NodeShape> ns = get_dep<NodeShape>(e);
+    if (ns) {
+      node_shapes.insert(ns);
+      ns->clean(); // we need them clean as we'll be using their bounds.
+    }
+  }
+
+  // Get the center of the pasted nodes..
+  glm::vec2 min;
+  glm::vec2 max;
+  CompShapeCollective::get_aa_bounds(node_shapes, min, max);
+  glm::vec2 node_center = 0.5f * (min + max);
+
+  // Get the delta between the node center and the paste center..
+  glm::vec2 delta = paste_center - node_center;
+
+  // Move center of the pasted nodes to the paste center.
+  for (const Dep<NodeShape> &node : node_shapes) {
+    node->set_pos(node->get_pos() + delta);
+  }
+
+  // Selected the newly pasted nodes.
+  for (const Dep<NodeShape> &node : node_shapes) {
+    _selection->select(node);
+  }
+  // Save the node graph changes.
+  save();
+  update();
 }
 
 void NodeGraphQuickItem::collapse_to_group() {

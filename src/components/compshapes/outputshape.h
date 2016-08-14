@@ -41,6 +41,8 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
   // The center of our shape. Used by dependants for alignment.
   const glm::vec2& get_origin() const;
 
+  const Dep<NodeShape>& get_node_shape() {return _node_shape;}
+
  private:
 
   // Our fixed deps.

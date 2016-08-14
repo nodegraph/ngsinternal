@@ -531,15 +531,15 @@ void Entity::destroy_entity(const Path& path) const {
 }
 
 
-std::string Entity::copy_to_string(std::unordered_set<Entity*>& selected) const{
-  if (selected.empty()) {
+std::string Entity::copy_to_string(std::unordered_set<Entity*>& children) const{
+  if (children.empty()) {
     return "";
   }
 
   std::stringstream ss;
   SimpleSaver saver(ss);
 
-  copy(saver,selected);
+  copy(saver,children);
   return ss.str();
 }
 
@@ -559,18 +559,17 @@ void Entity::clear_last_pasted() {
   _last_pasted.clear();
 }
 
-// Save all the nodes.
-// Note the nodes and interface dots share the same namespace.
-void Entity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& selection) const {
-  if (selection.empty()) {
+// Saves out only the specified children of this entity.
+void Entity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const {
+  if (children.empty()) {
     return;
   }
   // Save the number of entities.
-  size_t num_nodes = selection.size();
+  size_t num_nodes = children.size();
   saver.save(num_nodes);
 
   // Save the entities.
-  for (Entity* e : selection) {
+  for (Entity* e : children) {
     e->save(saver);
   }
 }
@@ -592,22 +591,42 @@ void Entity::paste_without_merging(SimpleLoader& loader) {
 
   // Record the set of entities that we've pasted.
   std::unordered_set<Entity*> entities_loaded;
+  std::unordered_set<Entity*> links_loaded;
 
   // Move and rename entities back into this entity.
   const NameToChildMap copy = folder->get_children();
   for (auto &iter: copy) {
-    // Skip the links, inputs and outputs in the folder entity.
-    // We rely on update_hierarchy to create them for us.
-    if ((iter.first == "links") || (iter.first == "inputs") || (iter.first == "outputs") ){
+    // Here we have a slight creeping of specialized logic, for the
+    // GroupNodeEntity's links, inputs, and outputs folders.
+    // Skip the inputs and outputs folders.
+    // We rely on GroupNodeShape::update_hierarchy to create them for us.
+    if ((iter.first == "inputs") || (iter.first == "outputs") ){
       continue;
     }
-    Entity* child = iter.second;
-    take_child(child);
-    entities_loaded.insert(child);
+    // For the links folder we paste_with_out_merging the contents of the folder.
+    else if (iter.first == "links") {
+      Entity* src_links_folder = iter.second;
+      Entity* target_links_folder = get_child("links");
+      const NameToChildMap src_links = src_links_folder->get_children();
+      for (auto &iter2: src_links) {
+        Entity* child = iter2.second;
+        target_links_folder->take_child(child);
+        links_loaded.insert(child);
+      }
+    }
+    // Otherwise we move over the child.
+    else {
+      Entity* child = iter.second;
+      take_child(child);
+      entities_loaded.insert(child);
+    }
   }
 
   // Bake the current dep paths.
   for (Entity* e: entities_loaded) {
+    e->bake_paths();
+  }
+  for (Entity* e: links_loaded) {
     e->bake_paths();
   }
 

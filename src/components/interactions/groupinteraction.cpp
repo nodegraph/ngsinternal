@@ -130,14 +130,14 @@ bool GroupInteraction::has_link(Entity* entity) const {
   return false;
 }
 
-Dep<LinkShape> GroupInteraction::find_link(const Dep<InputShape>& input_shape) {
-  std::vector<Entity*> dependants = input_shape->get_dependants_by_did(kICompShape, kLinkShape);
-  assert(dependants.size() <= 1);
-  if (dependants.size()>0) {
-    return get_dep<LinkShape>(*dependants.begin());
-  }
-  return Dep<LinkShape>(NULL);
-}
+//Dep<LinkShape> GroupInteraction::find_link(const Dep<InputShape>& input_shape) {
+//  std::vector<Entity*> dependants = input_shape->get_dependants_by_did(kICompShape, kLinkShape);
+//  assert(dependants.size() <= 1);
+//  if (dependants.size()>0) {
+//    return get_dep<LinkShape>(*dependants.begin());
+//  }
+//  return Dep<LinkShape>(NULL);
+//}
 
 void GroupInteraction::reset_state() {
   // Reset our finite state machine
@@ -281,7 +281,7 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         input_compute->unlink_output_compute();
 
         // Unlink the link shapes from its input compute.
-        _link_shape = find_link(input_shape);
+        _link_shape = input_shape->find_link();
         if (_link_shape) {
           _link_shape->start_moving();
           // Clear the output shape but leave the input shape linked.
@@ -533,7 +533,7 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
 
         // Remove any existing link shapes on this input.
         // There is only one link per input.
-        Dep<LinkShape> old_link_shape = find_link(input_shape);
+        Dep<LinkShape> old_link_shape = input_shape->find_link();
         if (old_link_shape) {
           // Remove any existing compute connection on this input compute.
           input_compute->unlink_output_compute();

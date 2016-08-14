@@ -44,6 +44,7 @@ class ENTITIES_EXPORT GroupNodeEntity : public Entity {
   GroupNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
   virtual void create_namespaces();
+  virtual void copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const;
 };
 
 class ENTITIES_EXPORT DotNodeEntity : public Entity {

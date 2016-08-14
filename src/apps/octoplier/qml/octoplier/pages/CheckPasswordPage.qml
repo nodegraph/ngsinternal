@@ -59,6 +59,9 @@ Rectangle {
                     file_model.load_model()
                     file_model.load_graph()
                     node_graph_page.node_graph.update()
+                    // Frame everything.
+                    node_graph_page.node_graph.frame_all()
+                    node_graph_page.node_graph.update()
                     // Hide this page and erase password from page.
                     check_password_page.visible = false
                     password.text = ""

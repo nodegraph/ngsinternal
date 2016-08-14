@@ -132,6 +132,64 @@ void GroupNodeEntity::create_namespaces() {
   }
 }
 
+void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const {
+    if (children.empty()) {
+      return;
+    }
+
+    // Find the relevant links to save.
+    std::unordered_set<Entity*> links_to_save;
+    Entity* links_folder = get_child("links");
+    if (links_folder) {
+      const NameToChildMap &links = links_folder->get_children();
+      NameToChildMap::const_iterator iter;
+      for (iter = links.begin(); iter != links.end(); ++iter) {
+        LinkShape* link_shape = static_cast<LinkShape*>(iter->second->get(LinkShape::kIID()));
+        assert(link_shape);
+
+        const Dep<InputShape>& input_shape = link_shape->get_input_shape();
+        const Dep<NodeShape>& input_node_shape = input_shape->get_node_shape();
+        Entity* input_node_entity = input_node_shape->our_entity();
+        assert(input_node_entity);
+
+        const Dep<OutputShape>& output_shape = link_shape->get_output_shape();
+        const Dep<NodeShape>& output_node_shape = output_shape->get_node_shape();
+        Entity* output_node_entity = output_node_shape->our_entity();
+        assert(output_node_entity);
+
+        if (children.count(input_node_entity) && children.count(output_node_entity)) {
+          links_to_save.insert(iter->second);
+        }
+      }
+    }
+
+    // Save the number of entities.
+    size_t num_nodes = children.size();
+    if (links_to_save.size()) {
+      // +1 for the links folder.
+      num_nodes += 1;
+    }
+    saver.save(num_nodes);
+
+    // Save the entities.
+    for (Entity* e : children) {
+      e->save(saver);
+    }
+
+    // Save the links folder.
+    if (links_to_save.size()) {
+      // Save out info about the folder.
+      links_folder->pre_save(saver);
+      links_folder->save_components(saver);
+      // Save out the contents of the folder.
+      size_t num_links = links_to_save.size();
+      saver.save(num_links);
+      for (Entity* e: links_to_save) {
+        e->save(saver);
+      }
+    }
+}
+
 void LinkEntity::create_internals() {
   // Our components.
   // Gui related.

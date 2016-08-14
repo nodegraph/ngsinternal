@@ -161,11 +161,6 @@ StackView {
     function create_model(model_name) {
         var model_url = "qrc:///qml/octoplier/menumodels/" + model_name + ".qml"
         var model = create_component(model_url)
-
-        // Configure the model.
-        var props = {}
-        props["links_are_locked"] = app_window.node_graph_page.node_graph.links_are_locked()
-        model.update(props)
         return model
     }
 

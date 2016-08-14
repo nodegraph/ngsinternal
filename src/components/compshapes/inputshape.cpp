@@ -12,6 +12,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/nodeshape.h>
+#include <components/compshapes/linkshape.h>
 #include <cmath>
 
 namespace ngs {
@@ -107,6 +108,15 @@ const std::vector<ShapeInstance>* InputShape::get_quad_instances() const {
 const glm::vec2& InputShape::get_origin() const {
   start_method();
   return _origin;
+}
+
+Dep<LinkShape> InputShape::find_link() {
+  std::vector<Entity*> dependants = get_dependants_by_did(kICompShape, kLinkShape);
+  assert(dependants.size() <= 1);
+  if (dependants.size()>0) {
+    return get_dep<LinkShape>(*dependants.begin());
+  }
+  return Dep<LinkShape>(NULL);
 }
 
 }

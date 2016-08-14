@@ -212,8 +212,9 @@ void NodeSelection::copy() {
   if (_selected.empty()) {
     return;
   }
-  Dep<NodeShape> cs = *_selected.begin();
-  Entity* node = cs->our_entity();
+  // Determine the group entity.
+  Dep<NodeShape> ns = *_selected.begin();
+  Entity* node = ns->our_entity();
   Entity* group = node->get_parent();
 
   // Convert the comp shapes to their entities.
@@ -222,6 +223,7 @@ void NodeSelection::copy() {
     selected_entities.insert(s->our_entity());
   }
 
+  // Serialize the selected to a string.
   _raw_copy = group->copy_to_string(selected_entities);
 }
 

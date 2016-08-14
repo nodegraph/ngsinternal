@@ -149,7 +149,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   void destroy_link(Entity* entity);
   bool has_link(Entity* entity) const;
 
-  Dep<LinkShape> find_link(const Dep<InputShape>& input_shape);
+  //Dep<LinkShape> find_link(const Dep<InputShape>& input_shape);
 
   ViewControls _view_controls;
 

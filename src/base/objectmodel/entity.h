@@ -109,8 +109,6 @@ class OBJECTMODEL_EXPORT Entity {
   void rename_child(const std::string& prev_name, const std::string& next_name);
   const NameToChildMap& get_children() const;
 
-
-
   // Our children's names.
   bool has_child_name(const std::string& name) const;
   void make_child_name_unique(std::string& name) const;
@@ -246,9 +244,10 @@ class OBJECTMODEL_EXPORT Entity {
   // ---------------------------------------------------------------------
 
   // Copy a selection of entities.
-  void copy(SimpleSaver& saver, const std::unordered_set<Entity*>& selection) const;
+  virtual void copy(SimpleSaver& saver, const std::unordered_set<Entity*>& selection) const;
 
-  void paste_without_merging(SimpleLoader& loader);
+  // Paste.
+  virtual void paste_without_merging(SimpleLoader& loader);
   void paste_with_merging(SimpleLoader& loader);
 
   // Any name collisions will result in updating the existing node,
@@ -284,6 +283,8 @@ class OBJECTMODEL_EXPORT Entity {
 
   // This is the only method that can call our "get<>" method.
   friend DepLinkPtr Component::get_dep(Entity*, size_t);
+
+  friend class GroupNodeEntity;
 };
 
 

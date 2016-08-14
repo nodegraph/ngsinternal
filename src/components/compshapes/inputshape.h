@@ -6,6 +6,7 @@
 namespace ngs {
 
 class NodeShape;
+class LinkShape;
 
 class COMPSHAPES_EXPORT InputShape: public CompShape {
  public:
@@ -37,6 +38,11 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
 
   // The center of our shape. Used by dependants for alignment.
   const glm::vec2& get_origin() const;
+
+  // Find our link. Note we don't have dependency on the link, as the link depends on us and it would create a dependency cycle.
+  Dep<LinkShape> find_link();
+
+  const Dep<NodeShape>& get_node_shape() const {return _node_shape;}
 
  private:
 
