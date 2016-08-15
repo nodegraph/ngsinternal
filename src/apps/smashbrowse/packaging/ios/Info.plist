@@ -7,21 +7,21 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleGetInfoString</key>
-	<string>testqml</string>
+	<string>smashbrowse</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>com.smashbrowse.testqml</string>
+	<string>com.smashbrowse.app</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLongVersionString</key>
-	<string>testqml version 0.0.0.1</string>
+	<string>smashbrowse version 0.0.0.1</string>
 	<key>CFBundleName</key>
-	<string>testqml</string>
+	<string>smashbrowse</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>testqml</string>
+	<string>smashbrowse</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -138,5 +138,10 @@
         <string>{320, 480}</string>
     </dict>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
+	</dict>
 </dict>
 </plist>

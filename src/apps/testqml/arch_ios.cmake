@@ -2,7 +2,7 @@
 	
 	# CMake variables which will populate the Info.plist file for the bundle.
 	#set_target_properties(testqml PROPERTIESMACOSX_BUNDLE_INFO_STRING "testqml")
-	#set_target_properties(testqml PROPERTIESMACOSX_BUNDLE_GUI_IDENTIFIER "com.octoplier.testqml")
+	#set_target_properties(testqml PROPERTIESMACOSX_BUNDLE_GUI_IDENTIFIER "com.smashbrowse.testqml")
 	#set_target_properties(testqml PROPERTIESMACOSX_BUNDLE_LONG_VERSION_STRING "testqml Version 0.0.0.1")
 	#set_target_properties(testqml PROPERTIESMACOSX_BUNDLE_BUNDLE_NAME testqml)
 	#set_target_properties(testqml PROPERTIESMACOSX_BUNDLE_SHORT_VERSION_STRING testqml)

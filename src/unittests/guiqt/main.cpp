@@ -23,6 +23,9 @@ int main(int argc, char *argv[]) {
     // Create our app.
     QApplication app(argc, argv);
 
+    QApplication::setApplicationName("SmashBrowse");
+    QApplication::setOrganizationDomain("smashbrowse.com");
+
 #if (GLES_MAJOR_VERSION <= 3)
   // This sets up the app to use opengl es.
   QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);

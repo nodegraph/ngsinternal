@@ -1,18 +1,21 @@
 <?xml version='1.0' encoding='utf-8'?>
-<manifest package="com.smashbrowse.testqml" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" android:installLocation="auto">
-    <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="test qml">
+<manifest package="com.smashbrowse.app" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" android:installLocation="auto">
+    <application android:icon="@mipmap/octopus_blue" android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="smashbrowse">
         <!-- android:theme="@style/AppTheme" -->
         <!-- android:theme="@android:style/Theme.NoTitleBar.Fullscreen" -->
-        <activity android:name="org.qtproject.qt5.android.bindings.QtActivity"
+        <!-- android:windowSoftInputMode="stateVisible|adjustResize" -->
+        <activity android:name="com.smashbrowse.app.JavaBridgeImp"
+        		  android:theme="@style/AppTheme"
         		  android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation"
-                  android:label="test qml"
+                  android:label="smashbrowse"
                   android:screenOrientation="unspecified"
+                  
                   android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <meta-data android:name="android.app.lib_name" android:value="testqml"/>
+            <meta-data android:name="android.app.lib_name" android:value="smashbrowse"/>
             <meta-data android:name="android.app.qt_sources_resource_id" android:resource="@array/qt_sources"/>
             <meta-data android:name="android.app.repository" android:value="default"/>
             <meta-data android:name="android.app.qt_libs_resource_id" android:resource="@array/qt_libs"/>
@@ -44,7 +47,9 @@
                           application still try to draw after
                           "applicationStateChanged(Qt::ApplicationSuspended)"
                           signal is sent! -->
+            <!--
             <meta-data android:name="android.app.background_running" android:value="false"/>
+            -->
             <!-- Background running -->
         </activity>
     </application>
@@ -56,6 +61,7 @@
         <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
     <uses-permission android:name="android.permission.VIBRATE"/>
 
 

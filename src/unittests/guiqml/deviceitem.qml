@@ -13,7 +13,7 @@ import SceneGraphRendering 1.0
 
 Rectangle {
     anchors.fill: parent
-    //title: qsTr("octoplier")
+    //title: qsTr("smashbrowse")
     //width: 640
     //height: 480
     visible: true

@@ -1,4 +1,4 @@
-# Make our main install_octoplier output dir.
+# Make our main install_smashbrowse output dir.
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/install_testqml)
 
 
@@ -44,7 +44,7 @@ add_custom_target (unregister_testqml
 add_custom_command (
 	OUTPUT pack_testqml_cmd
 	COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_testqml/bin /p ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx /o /v
-    COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_octoplier/bin /p ${CMAKE_BINARY_DIR}/install_octoplier/octoplier.appx /o /v
+    COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_smashbrowse/bin /p ${CMAKE_BINARY_DIR}/install_smashbrowse/smashbrowse.appx /o /v
 	COMMAND signtool sign /fd sha256 /f ${PLATFORM_ROOT}/srcdeps/publishing/winrt/MyKey.pfx /p ${PASSWORD} ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx
 	)
 	

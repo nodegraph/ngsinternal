@@ -1,0 +1,11 @@
+{
+  "name": "com.smashbrowse.controller",
+  "description": "controller",
+  "path": "D:\\dev\\windows\\debug\\install\\bin\\controller.bat",
+  //"path": "D:\\dev\\windows\\debug\\install\\bin\\node.exe",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://jlhjnlknnedeohlmmolhgmclnjfemfdh/",
+    "chrome-extension://lhafigigndhacelgagpodjadgmihkjal/"
+  ]
+}
