@@ -17,7 +17,7 @@ Compute::~Compute() {
 }
 
 void Compute::update_state() {
-  if (dep_is_dirty(_lower_change)) {
+//  if (dep_is_dirty(_lower_change)) {
     // Clear our old inputs.
     _inputs.clear();
 
@@ -28,14 +28,14 @@ void Compute::update_state() {
       for (auto &iter: children) {
         Dep<InputCompute> dep = get_dep<InputCompute>(iter.second);
         if (dep) {
-          _inputs.insert({iter.first,dep});
+          _inputs.insert({iter.first, dep});
+          // Because we just added a new connection in our cleaning state method,
+          // we need to make sure that it is clean.
+          dep->clean();
         }
-        // Because we just added a new connection in our cleaning state method,
-        // we need to make sure that it is clean.
-        dep->clean();
       }
     }
-  }
+//  }
 
   // We are now connected to our input values.
   // Derived classes now perform their compute.
