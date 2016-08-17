@@ -37,7 +37,7 @@ Rectangle {
         color: "white"
 
         y: parent.height * 7/10
-        text: "Beta Version 1.17316"
+        text: "Version 1.17316"
         anchors {
             horizontalCenter:  parent.horizontalCenter
         }

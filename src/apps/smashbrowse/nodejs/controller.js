@@ -266,7 +266,7 @@ function receive_from_app(message) {
     var request = msg.get_obj()
     switch (request.request) {
     	case 'check_license':
-    		check_license(request.license)
+    		check_license(request.edition, request.license)
     		break
         case 'check_browser_is_open':
             function on_response(open) {
@@ -368,10 +368,16 @@ function receive_from_app(message) {
 //License Verification.
 //------------------------------------------------------------------------------------------------
 
-function check_license(license) {
+function check_license(edition, license) {
+	var product_id 
+	if (edition == "pro") {
+		product_id = "tgctL"
+	} else {
+		product_id = "QbCCX"
+	}
 	request({
 		url: 'https://api.gumroad.com/v2/licenses/verify',
-		qs: {product_permalink: "zHvFc", license_key: license},
+		qs: {product_permalink: product_id, license_key: license},
 		method: 'POST'
 	}, function(error, response, body) {
 		if(error) {

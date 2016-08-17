@@ -28,6 +28,7 @@ Rectangle {
         create_password_page.visible = false
 
         // Show the license page.
+        license_page.update_fields()
         license_page.visible = true
         app_comm.nodejs_connected.disconnect(on_nodejs_connected)
 

@@ -18,20 +18,21 @@ Rectangle {
     width: app_settings.page_width
     
     // Positioning.
-    x: app_settings.page_x
-    y: app_settings.page_y
-    z: app_settings.page_z
+    x: 0
+    y: 0
+    z: 0
 
     // Appearance.
     color: app_settings.menu_stack_bg_color
+
+    property var parent_stack_view //  This is set when pushed onto the stack view.
     
-    // Methods.
-    function on_switch_to_mode(mode) {
-    	if (mode == app_settings.settings_mode) {
-            visible = true;
-        } else {
-        	visible = false;
-        }
+    // The stack view header.
+    AppStackViewHeader {
+        id: stack_view_header
+        title_text: "Feature Unavailable"
+        show_back_button: true
+        stack_view: parent_stack_view
     }
 
     // Logo.
@@ -49,8 +50,8 @@ Rectangle {
     }
 
     AppLabel {
-        y: app_settings.page_height * 6/10
-        text: "Smash Browse"
+        y: app_settings.page_height * 6.5/10
+        text: "The Lite edition permits a maximum of 10 nodes,"
         anchors {
             horizontalCenter:  parent.horizontalCenter
         }
@@ -58,7 +59,15 @@ Rectangle {
 
     AppLabel {
         y: app_settings.page_height * 7/10
-        text: "Beta Version 1.17316"
+        text: "and disables group node related features."
+        anchors {
+            horizontalCenter:  parent.horizontalCenter
+        }
+    }
+
+    AppLabel {
+        y: app_settings.page_height * 8/10
+        text: "The Pro edition enables all features."
         anchors {
             horizontalCenter:  parent.horizontalCenter
         }

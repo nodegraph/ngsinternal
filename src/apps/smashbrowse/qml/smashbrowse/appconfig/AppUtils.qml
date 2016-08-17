@@ -36,7 +36,7 @@ QtObject {
     }
 
     // Public.
-    function check_license(license, success_callback, failure_callback) {
+    function check_license(edition, license, success_callback, failure_callback) {
         // Connect to callback.
         app_comm.command_finished.connect(__on_license_validity)
 
@@ -45,7 +45,7 @@ QtObject {
         invalid_license_callback = failure_callback
 
         // Get nodejs to check the license for us.
-        var request = {request: "check_license", license: license};
+        var request = {request: "check_license", edition: edition, license: license};
         var json_text = JSON.stringify(request);
         app_comm.handle_request_from_app(json_text)
     }

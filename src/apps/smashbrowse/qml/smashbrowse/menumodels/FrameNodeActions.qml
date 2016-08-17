@@ -4,6 +4,9 @@ import QtQuick 2.6
 
 ListModel {
 
+    function update(props) {
+    }
+
     ListElement {
         image_url: "qrc:///icons/ic_crop_free_white_48dp.png"
         title: "Frame All Nodes"

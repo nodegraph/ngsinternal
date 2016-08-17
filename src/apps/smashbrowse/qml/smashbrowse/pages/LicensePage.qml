@@ -25,10 +25,23 @@ Rectangle {
 
     // Internal data.
     property string license_cache: ""
+    property string edition_cache: ""
+
+    function update_fields() {
+        // Since this page is built before the file_model is ready, we need to set the fields manually.
+        license_text_field.text = file_model.get_license()
+        if (file_model.get_edition() == "pro") {
+            pro_edition_button.checked = true
+            lite_edition_button.checked = false
+        } else {
+            pro_edition_button.checked = false
+            lite_edition_button.checked = true
+        }
+    }
 
     function on_valid_license() {
         // Record the license.
-        file_model.set_license(license_cache)
+        file_model.set_license(edition_cache, license_cache)
         file_model.save_crypto()
         // Hide this page.
         check_license_page.visible = false
@@ -77,6 +90,28 @@ Rectangle {
             text: ""
         }
 
+        RowLayout {
+                anchors.horizontalCenter: parent.horizontalCenter
+                ExclusiveGroup { id: edition_group }
+                AppRadioButton {
+                	id: pro_edition_button
+                    text: "Pro"
+                    checked: true
+                    exclusiveGroup: edition_group
+                }
+                Rectangle {
+                    height: app_settings.check_box_size
+                    width: 2 * app_settings.check_box_size
+                    color: 'transparent'
+                }
+                AppRadioButton {
+                	id: lite_edition_button
+                    text: "Lite"
+                    checked: false
+                    exclusiveGroup: edition_group
+                }
+            }
+
         // Continue button.
         AppLabelButton {
             id: continue_button
@@ -84,7 +119,12 @@ Rectangle {
             text: "continue"
             onClicked: {
                 license_cache = license_text_field.text
-                app_utils.check_license(license_text_field.text, on_valid_license, on_invalid_license)
+                if (pro_edition_button.checked) {
+                	edition_cache = "pro"
+                } else {
+                	edition_cache = "lite"
+                }
+                app_utils.check_license(edition_cache, license_cache, on_valid_license, on_invalid_license)
             }
         }
 

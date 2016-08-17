@@ -4,6 +4,9 @@ import QtQuick 2.6
 
 ListModel {
 
+    function update(props) {
+    }
+
     ListElement {
         image_url: "qrc:///icons/ic_open_in_browser_white_48dp.png"
         title: "Load"

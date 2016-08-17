@@ -4,6 +4,21 @@ import QtQuick 2.6
 
 ListModel {
 
+    function update(props) {
+        var script = "var page = app_loader.load_component('qrc:///qml/smashbrowse/pages/LimitPage.qml', node_action_stack_page, {})
+                      stack_view.push_page(page);"
+
+        if (props.edition == "lite") {
+            get(0).script = script
+        }
+
+        if (props.node_limit_reached) {
+            for (var i=0; i<count; i++) {
+                get(i).script = script
+            }
+        }
+    }
+
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
         title: "Group Node"

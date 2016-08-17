@@ -4,6 +4,20 @@ import QtQuick 2.6
 
 ListModel {
 
+    function update(props) {
+        var script = "var page = app_loader.load_component('qrc:///qml/smashbrowse/pages/LimitPage.qml', node_action_stack_page, {})
+                      stack_view.push_page(page);"
+
+        if (props.edition == "lite") {
+            get(5).script = script
+            get(6).script = script
+        }
+
+        if (props.node_limit_reached) {
+            get(1).script = script
+        }
+    }
+
     ListElement {
         image_url: "qrc:///icons/ic_arrow_upward_white_48dp.png"
         title: "Surface"

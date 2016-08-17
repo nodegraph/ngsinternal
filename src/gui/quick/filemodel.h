@@ -39,8 +39,9 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   virtual void initialize_fixed_deps();
 
   // App license.
+  Q_INVOKABLE QString get_edition() const;
   Q_INVOKABLE QString get_license() const;
-  Q_INVOKABLE void set_license(const QString& license);
+  Q_INVOKABLE void set_license(const QString& edition, const QString& license);
 
   // Password Setup.
   Q_INVOKABLE void create_crypto(const QString& chosen_password);
@@ -133,6 +134,7 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   std::string _key;
 
   // License Key for Application Usage.
+  std::string _edition; // The edition of the app: currently "pro" or "lite"
   std::string _license;
 
   // Our roles.

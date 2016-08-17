@@ -98,11 +98,16 @@ void FileModel::on_item_changed(QStandardItem* item) {
   save_model();
 }
 
+QString FileModel::get_edition() const {
+  return _edition.c_str();
+}
+
 QString FileModel::get_license() const {
   return _license.c_str();
 }
 
-void FileModel::set_license(const QString& license) {
+void FileModel::set_license(const QString& edition, const QString& license) {
+  _edition = edition.toStdString();
   _license = license.toStdString();
 }
 
@@ -124,6 +129,7 @@ void FileModel::save_crypto() const{
     saver.save(_nonce);
     saver.save(_salt);
     saver.save(_hashed_password);
+    saver.save(_edition);
     saver.save(_license);
     write_file(kCryptoFile, ss.str());
   }
@@ -150,6 +156,7 @@ void FileModel::load_crypto() {
   loader.load(_nonce);
   loader.load(_salt);
   loader.load(_hashed_password);
+  loader.load(_edition);
   loader.load(_license);
 }
 

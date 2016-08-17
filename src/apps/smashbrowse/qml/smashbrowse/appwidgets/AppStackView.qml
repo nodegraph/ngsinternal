@@ -166,6 +166,11 @@ StackView {
 
     // Assumes the model and page are dynamically created.
     function push_by_components(title, page, model) {
+        // Update the model.
+        var props={}
+        props.edition = file_model.get_edition()
+        props.node_limit_reached = (props.edition != "pro") && (node_graph_page.node_graph.get_num_nodes() >= 10)
+        model.update(props)
         // Configure the page.
         page.model = model
         page.model_is_dynamic = true

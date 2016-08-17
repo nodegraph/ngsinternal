@@ -470,7 +470,7 @@ void NodeGraphQuickItem::on_long_press() {
   }
 }
 
-const Dep<GroupInteraction>& NodeGraphQuickItem::get_current_interaction() {
+const Dep<GroupInteraction>& NodeGraphQuickItem::get_current_interaction() const {
   return _canvas->get_current_interaction();
 }
 
@@ -480,6 +480,11 @@ void NodeGraphQuickItem::toggle_selection_under_long_press() {
   }
   get_current_interaction()->toggle_selection_under_press(_last_pressed_node);
   update();
+}
+
+size_t NodeGraphQuickItem::get_num_nodes() const {
+  // 3 is for the group node entities namespace folders (inputs, outputs, links).
+  return get_current_interaction()->our_entity()->get_children().size() -3;
 }
 
 void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {

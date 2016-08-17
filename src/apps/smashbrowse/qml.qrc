@@ -53,6 +53,7 @@
         <file>qml/smashbrowse/appwidgets/AppLabel.qml</file>
         <file>qml/smashbrowse/appwidgets/AppWebView.qml</file>
         <file>qml/smashbrowse/appwidgets/AppCheckBox.qml</file>
+        <file>qml/smashbrowse/appwidgets/AppRadioButton.qml</file>
         
         <!-- MenuModels -->
         <file>qml/smashbrowse/menumodels/qmldir</file>
@@ -80,7 +81,7 @@
         <file>qml/smashbrowse/pages/CheckPasswordPage.qml</file>
         <file>qml/smashbrowse/pages/NodeGraphPage.qml</file>
         <file>qml/smashbrowse/pages/PostsPage.qml</file>
-        <file>qml/smashbrowse/pages/AboutPage.qml</file>
+        <file>qml/smashbrowse/pages/LimitPage.qml</file>
         <file>qml/smashbrowse/pages/SettingsPage.qml</file>
         <file>qml/smashbrowse/pages/SplashPage.qml</file>
         

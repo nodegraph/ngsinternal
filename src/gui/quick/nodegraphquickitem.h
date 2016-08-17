@@ -44,6 +44,8 @@ Q_OBJECT
 
   virtual void initialize_fixed_deps();
 
+  Q_INVOKABLE size_t get_num_nodes() const;
+
   // Node Creation.
   Q_INVOKABLE void create_group_node(bool centered);
   Q_INVOKABLE void create_input_node(bool centered);
@@ -150,7 +152,7 @@ Q_OBJECT
   void finish_creating_node(Entity* e, bool centered);
 
 
-  const Dep<GroupInteraction>& get_current_interaction();
+  const Dep<GroupInteraction>& get_current_interaction() const;
 
   // Our fixed deps.
   Dep<FBOWorker> _fbo_worker;

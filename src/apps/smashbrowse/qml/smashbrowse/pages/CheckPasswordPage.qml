@@ -25,22 +25,27 @@ Rectangle {
 
     function on_nodejs_connected() {
         console.log('checking password: ' + file_model.get_license())
-        app_utils.check_license(file_model.get_license(), on_valid_license, on_invalid_license)
+        app_utils.check_license(file_model.get_edition(), file_model.get_license(), on_valid_license, on_invalid_license)
     }
 
     function on_valid_license() {
         // Hide this page.
         check_password_page.visible = false
 
-        // Switch to node graph mode.
-        main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-        app_comm.show_browser()
+        if (!upgrade_license_check_box.checked) {
+            // Switch to node graph mode.
+            main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+            app_comm.show_browser()
 
-        // Erase the password from this page.
-        password_field.text = ""
+            // Erase the password from this page.
+            password_field.text = ""
 
-        // Load the last graph.
-        app_utils.load_last_graph()
+            // Load the last graph.
+            app_utils.load_last_graph()
+        } else {
+            license_page.update_fields()
+            license_page.visible = true
+        }
     }
 
     function on_invalid_license() {
@@ -77,6 +82,26 @@ Rectangle {
         AppPasswordField {
             id: password_field
             anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        RowLayout {
+            anchors.horizontalCenter: parent.horizontalCenter
+            AppLabel {
+                id: upgrade_license_label
+                text: "upgrade license? "
+                anchors {
+                    leftMargin: app_settings.page_left_margin
+                    rightMargin: app_settings.page_right_margin
+                }
+            }
+            AppCheckBox {
+                id: upgrade_license_check_box
+                checked: false
+                anchors {
+                    leftMargin: app_settings.page_left_margin
+                    rightMargin: app_settings.page_right_margin
+                }
+            }
         }
 
         // Continue button.
