@@ -85,30 +85,6 @@ if version >= 700
   " set comments-=://
   autocmd FileType c,cpp set comments-=://
 
-
-  ab xxinter2 #pragma once
-// Inter package headers.
-#include "Types/NamespaceMacros.h"
-#include Header_Types_File(OgTypes.h)
-  ab xxinter // Inter package headers.
-  ab xxintra // Intra package headers.
-  ab xxclassdef Start__Namespace
-
-class _
-{
-public:
-
-private:
-
-};
-
-End__Namespace
-  ab xxclassimp Start__Namespace
-
-
-
-End__Namespace
-
 endif
 
 au BufRead,BufNewFile *.chtml set filetype=chtml

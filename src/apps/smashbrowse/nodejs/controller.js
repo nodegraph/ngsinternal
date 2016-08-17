@@ -14,6 +14,7 @@ var fs = require('fs')
 var HttpServer = require('http')
 var HttpsServer = require('https')
 var Path = require('path')
+var request = require('request');
 
 //------------------------------------------------------------------------------------------------
 //Debugging Utils.
@@ -264,6 +265,9 @@ function receive_from_app(message) {
     // Handle the request.
     var request = msg.get_obj()
     switch (request.request) {
+    	case 'check_license':
+    		check_license(request.license)
+    		break
         case 'check_browser_is_open':
             function on_response(open) {
                 console.log('is browser open: ' + open)
@@ -358,6 +362,30 @@ function receive_from_app(message) {
             break
             
     }
+}
+
+//------------------------------------------------------------------------------------------------
+//License Verification.
+//------------------------------------------------------------------------------------------------
+
+function check_license(license) {
+	request({
+		url: 'https://api.gumroad.com/v2/licenses/verify',
+		qs: {product_permalink: "zHvFc", license_key: license},
+		method: 'POST'
+	}, function(error, response, body) {
+		if(error) {
+			send_to_app({response: false, value: "invalid_license"})
+		} else {
+			console.log(response.statusCode, body);
+			var obj = JSON.parse(body)
+			if ((obj.success == true) && (obj.purchase.refunded == false) && (obj.purchase.chargebacked == false)) {
+				send_to_app({response: true, value: "valid_license"})
+			} else {
+				send_to_app({response: false, value: "invalid_license"})
+			}
+		}
+	});
 }
 
 //------------------------------------------------------------------------------------------------

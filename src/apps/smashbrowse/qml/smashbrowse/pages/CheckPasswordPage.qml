@@ -23,6 +23,37 @@ Rectangle {
     // Properties.
     color: app_settings.menu_stack_bg_color
 
+    function on_nodejs_connected() {
+        console.log('checking password: ' + file_model.get_license())
+        app_utils.check_license(file_model.get_license(), on_valid_license, on_invalid_license)
+    }
+
+    function on_valid_license() {
+        // Hide this page.
+        check_password_page.visible = false
+
+        // Switch to node graph mode.
+        main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+        app_comm.show_browser()
+
+        // Erase the password from this page.
+        password_field.text = ""
+
+        // Load the last graph.
+        app_utils.load_last_graph()
+    }
+
+    function on_invalid_license() {
+        // Hide this page.
+        check_password_page.visible = false
+
+        // Show the license page.
+        license_page.visible = true
+
+        // Erase the password from this page.
+        password_field.text = ""
+    }
+
     ColumnLayout {
         height: app_settings.screen_height
         width: app_settings.screen_width
@@ -44,7 +75,7 @@ Rectangle {
 
         // Password field.
         AppPasswordField {
-            id: password
+            id: password_field
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -54,31 +85,17 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "continue"
             onClicked: {
-                if (file_model.check_password(password.text)) {
-                    // Load the last node graph.
-                    file_model.load_model()
-                    file_model.load_graph()
-                    node_graph_page.node_graph.update()
-                    // Frame everything.
-                    node_graph_page.node_graph.frame_all()
-                    node_graph_page.node_graph.update()
-                    // Hide this page and erase password from page.
-                    check_password_page.visible = false
-                    password.text = ""
-                    // Switch to node graph mode.
-                    main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-                    Qt.inputMethod.hide()
-                    app_comm.start_polling()
+                if (file_model.check_password(password_field.text)) {
+                    app_utils.connect_to_nodejs(on_nodejs_connected)
                 } else {
-                    status.text = "password is incorrect"
+                    status_label.text = "password is incorrect"
                 }
             }
-
         }
 
         // Shows status of password processing.
         Label {
-            id: status
+            id: status_label
             anchors.horizontalCenter: parent.horizontalCenter
             text: ""
             font.pointSize: app_settings.font_point_size
@@ -97,7 +114,7 @@ Rectangle {
 
         // Hook up our signals.
         Component.onCompleted: {
-            continue_button.mouse_pressed.connect(status.on_mouse_pressed)
+            continue_button.mouse_pressed.connect(status_label.on_mouse_pressed)
         }
     }
 }

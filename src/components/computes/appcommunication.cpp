@@ -12,6 +12,8 @@
 #include <QtCore/QJsonValue>
 #include <QtWebSockets/QWebSocket>
 
+#include <iostream>
+
 namespace ngs {
 
 QUrl Utils::url_from_input(const QString& input)
@@ -33,6 +35,7 @@ AppCommunication::AppCommunication(QObject *parent)
       _websocket(NULL),
       _use_external_process(false),
       _waiting_for_results(false),
+      _show_browser(false),
       _browser_width(1024),
       _browser_height(1024){
 
@@ -54,8 +57,10 @@ AppCommunication::AppCommunication(QObject *parent)
 AppCommunication::~AppCommunication() {
   delete_ff(_websocket);
 
-  _process->kill();
-  delete_ff(_process);
+  if (_process) {
+    _process->kill();
+    delete_ff(_process);
+  }
 }
 
 bool AppCommunication::is_polling() {
@@ -134,7 +139,7 @@ void AppCommunication::on_poll() {
   } else if (!nodejs_is_connected()) {
     // Connect to the nodejs process.
     connect_to_nodejs();
-  } else {
+  } else if (_show_browser) {
     check_browser_is_open();
     check_browser_size();
   }
@@ -150,6 +155,7 @@ void AppCommunication::on_nodejs_error(QProcess::ProcessError error) {
 
 void AppCommunication::on_connected() {
   qDebug() << "nodejs is now connected";
+  emit nodejs_connected();
 }
 
 void AppCommunication::on_disconnected() {
@@ -201,6 +207,10 @@ void AppCommunication::close_browser() {
 // -----------------------------------------------------------------
 
 void AppCommunication::start_nodejs() {
+  if (nodejs_is_running()) {
+    return;
+  }
+
   if (_use_external_process) {
     return;
   }
@@ -315,7 +325,7 @@ void AppCommunication::handle_request_from_nodejs(const SocketMessage& sm) {
 void AppCommunication::handle_response_from_nodejs(const SocketMessage& sm) {
   qDebug() << "app received response from nodejs: " << sm.get_json_text();
   _waiting_for_results = false;
-  emit command_finished(sm);
+  emit command_finished(sm.get_json_text());
 }
 
 }

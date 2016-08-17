@@ -1,0 +1,117 @@
+import QtQuick 2.6
+import QtQuick.Controls 1.4
+import QtQuick.Window 2.2
+import QtQuick.Dialogs 1.2
+
+import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.4
+
+import smashbrowse.appwidgets 1.0
+
+Rectangle {
+    id: check_license_page
+
+    // Dimensions.
+    height: app_settings.screen_height
+    width: app_settings.screen_width
+
+    // Positioning.
+    x: 0
+    y: 0
+    z: 10
+
+    // Properties.
+    color: app_settings.menu_stack_bg_color
+
+    // Internal data.
+    property string license_cache: ""
+
+    function on_valid_license() {
+        // Record the license.
+        file_model.set_license(license_cache)
+        file_model.save_crypto()
+        // Hide this page.
+        check_license_page.visible = false
+        // Erase passwords from page.
+        license_text_field.text = ""
+        license_cache = ""
+        // Switch to node graph mode.
+        main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+        app_comm.show_browser()
+        // Load the last graph.
+        app_utils.load_last_graph()
+    }
+
+    function on_invalid_license() {
+        status_label.text = "license is invalid"
+    }
+
+    ColumnLayout {
+        height: app_settings.screen_height
+        width: app_settings.screen_width
+        spacing: app_settings.column_layout_spacing * 2
+
+        // Filler.
+        Item {Layout.fillHeight: true}
+
+        // License lablel.
+        Label {
+            id: app_label
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "License Key"
+            font.pointSize: app_settings.large_font_point_size
+            font.bold: false
+            font.italic: false
+            color: "white"
+        }
+
+        // License field.
+        AppTextField {
+            id: license_text_field
+            anchors {
+                left: parent.left
+                right: parent.right
+                leftMargin: app_settings.page_left_margin
+                rightMargin: app_settings.page_right_margin
+            }
+            text: ""
+        }
+
+        // Continue button.
+        AppLabelButton {
+            id: continue_button
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "continue"
+            onClicked: {
+                license_cache = license_text_field.text
+                app_utils.check_license(license_text_field.text, on_valid_license, on_invalid_license)
+            }
+        }
+
+        // Shows status of license processing.
+        Label {
+            id: status_label
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: ""
+            font.pointSize: app_settings.font_point_size
+            font.bold: false
+            font.italic: false
+            color: "yellow"
+
+            function on_mouse_pressed() {
+                text = "processing ..."
+                update()
+            }
+        }
+
+        // Filler.
+        Item {Layout.fillHeight: true}
+
+        // Hook up our signals.
+        Component.onCompleted: {
+            continue_button.mouse_pressed.connect(status_label.on_mouse_pressed)
+        }
+    }
+}
+
+

@@ -1,5 +1,6 @@
 module pages
 
+LicensePage 1.0 LicensePage.qml
 CreatePasswordPage 1.0 CreatePasswordPage.qml
 CheckPasswordPage 1.0 CheckPasswordPage.qml
 

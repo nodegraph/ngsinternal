@@ -38,8 +38,13 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
 
   virtual void initialize_fixed_deps();
 
+  // App license.
+  Q_INVOKABLE QString get_license() const;
+  Q_INVOKABLE void set_license(const QString& license);
+
   // Password Setup.
   Q_INVOKABLE void create_crypto(const QString& chosen_password);
+  Q_INVOKABLE void save_crypto() const;
   Q_INVOKABLE bool crypto_exists() const;
   Q_INVOKABLE void load_crypto();
   Q_INVOKABLE bool check_password(const QString& password);
@@ -126,6 +131,9 @@ class GUI_EXPORT FileModel: public QStandardItemModel, public Component {
   std::string _salt;
   std::string _hashed_password;
   std::string _key;
+
+  // License Key for Application Usage.
+  std::string _license;
 
   // Our roles.
   QHash<int, QByteArray> _roles;

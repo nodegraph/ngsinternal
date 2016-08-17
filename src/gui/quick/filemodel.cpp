@@ -98,6 +98,14 @@ void FileModel::on_item_changed(QStandardItem* item) {
   save_model();
 }
 
+QString FileModel::get_license() const {
+  return _license.c_str();
+}
+
+void FileModel::set_license(const QString& license) {
+  _license = license.toStdString();
+}
+
 void FileModel::create_crypto(const QString& chosen_password) {
   assert(_nonce.empty());
   assert(_key.empty());
@@ -106,7 +114,9 @@ void FileModel::create_crypto(const QString& chosen_password) {
   _salt = Crypto::generate_salt();
   _hashed_password = Crypto::generate_hashed_password(chosen_password.toStdString());
   _key = Crypto::generate_private_key(chosen_password.toStdString(), _salt); // The key is never saved.
+}
 
+void FileModel::save_crypto() const{
   // Save out the crypto config.
   {
     std::stringstream ss;
@@ -114,6 +124,7 @@ void FileModel::create_crypto(const QString& chosen_password) {
     saver.save(_nonce);
     saver.save(_salt);
     saver.save(_hashed_password);
+    saver.save(_license);
     write_file(kCryptoFile, ss.str());
   }
 }
@@ -139,6 +150,7 @@ void FileModel::load_crypto() {
   loader.load(_nonce);
   loader.load(_salt);
   loader.load(_hashed_password);
+  loader.load(_license);
 }
 
 bool FileModel::check_password(const QString& password) {
@@ -251,9 +263,8 @@ std::string FileModel::decrypt_data(const std::string& encrypted_data) const {
 
 void FileModel::write_file(const QString& filename, const std::string& data, bool encrypt) const {
   QString full_name = get_prefixed_file(filename);
-  std::cerr << "saving to file: " << full_name.toStdString() << "\n";
-
   //std::cerr << "saving to file: " << full_name.toStdString() << "\n";
+
   QFile file(full_name);
   file.open(QIODevice::WriteOnly);
 
@@ -277,7 +288,7 @@ void FileModel::write_file(const QString& filename, const std::string& data, boo
 
 QByteArray FileModel::load_file(const QString& filename, bool decrypt) const {
   QString full_name = get_prefixed_file(filename);
-  std::cerr << "loading from file: " << full_name.toStdString() << "\n";
+  //std::cerr << "loading from file: " << full_name.toStdString() << "\n";
 
   // If this file doesn't exist there is nothing to load.
   if (!QFileInfo::exists(full_name)) {

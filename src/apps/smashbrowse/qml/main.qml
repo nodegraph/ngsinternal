@@ -54,6 +54,10 @@ Rectangle {
         id: app_settings
     }
 
+    AppUtils {
+        id: app_utils
+    }
+
     AppLoader {
         id: app_loader
     }
@@ -122,6 +126,11 @@ Rectangle {
 
     CheckPasswordPage {
         id: check_password_page
+        visible: false
+    }
+
+    LicensePage {
+        id: license_page
         visible: false
     }
 

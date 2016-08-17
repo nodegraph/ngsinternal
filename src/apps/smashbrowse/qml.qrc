@@ -71,9 +71,11 @@
         <file>qml/smashbrowse/appconfig/qmldir</file>
         <file>qml/smashbrowse/appconfig/AppSettings.qml</file>
         <file>qml/smashbrowse/appconfig/AppUnits.qml</file>
+        <file>qml/smashbrowse/appconfig/AppUtils.qml</file>
         
         <!-- Pages -->
         <file>qml/smashbrowse/pages/qmldir</file>
+        <file>qml/smashbrowse/pages/LicensePage.qml</file>
         <file>qml/smashbrowse/pages/CreatePasswordPage.qml</file>
         <file>qml/smashbrowse/pages/CheckPasswordPage.qml</file>
         <file>qml/smashbrowse/pages/NodeGraphPage.qml</file>

@@ -48,15 +48,20 @@ Q_OBJECT
   Q_INVOKABLE bool is_polling();
   Q_INVOKABLE void start_polling();
   Q_INVOKABLE void stop_polling();
+  Q_INVOKABLE bool nodejs_is_running();
 
+  // Show or hide browser as part of polling.
+  Q_INVOKABLE void show_browser() {_show_browser = true;}
+  Q_INVOKABLE void hide_browser() {_show_browser = false;}
+
+  // Open or close browser outside of polling.
   Q_INVOKABLE void open_browser();
   Q_INVOKABLE void close_browser();
 
-  //void view_node(const QVariant&);
-
 signals:
   // Fired on completion of a command.
-  void command_finished(const SocketMessage& sm);
+  void command_finished(const QString& msg);
+  void nodejs_connected();
 
  private slots:
   // Slots for our timer.
@@ -74,11 +79,10 @@ signals:
   void on_state_changed(QAbstractSocket::SocketState);
   void on_text_message_received(const QString & message);
 
-
  private:
   // Nodejs process.
   void start_nodejs();
-  bool nodejs_is_running();
+
   void stop_nodejs();
 
   // Nodejs socket connection state.
@@ -107,6 +111,8 @@ signals:
   // Poll timer.
   QTimer _poll_timer;
 
+  // Browser.
+  bool _show_browser;
   int _browser_width;
   int _browser_height;
 };

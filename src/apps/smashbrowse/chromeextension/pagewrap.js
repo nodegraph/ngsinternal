@@ -134,7 +134,11 @@ PageWrap.prototype.disable_hover = function() {
                 sheet.deleteRule(j);
             }
         }
-    }
+    }	
+//	var style = document.createElement('style');
+//	style.type = 'text/css';
+//	style.innerHTML = '*:hover {all:initial!important;}'
+//	document.getElementsByTagName('head')[0].appendChild(style);
 }
 
 

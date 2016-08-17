@@ -102,9 +102,9 @@ std::string Crypto::decrypt(const std::string& cipher_text, const std::string& k
   // Allocate space for the original message.
   std::string decrypted;
 
-  std::cerr << "cipher text size: " << cipher_text.size() <<"\n";
-  std::cerr << "key: " << key.size() <<"\n";
-  std::cerr << "nonce: " << nonce.size() <<"\n";
+  //std::cerr << "cipher text size: " << cipher_text.size() <<"\n";
+  //std::cerr << "key: " << key.size() <<"\n";
+  //std::cerr << "nonce: " << nonce.size() <<"\n";
 
   decrypted.resize(cipher_text.size() - crypto_secretbox_MACBYTES);
   if (crypto_secretbox_open_easy((unsigned char*)&decrypted[0],

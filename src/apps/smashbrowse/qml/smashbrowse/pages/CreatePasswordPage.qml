@@ -23,6 +23,19 @@ Rectangle {
     // Properties.
     color: app_settings.menu_stack_bg_color
 
+    function on_nodejs_connected() {
+        // Hide this page.
+        create_password_page.visible = false
+
+        // Show the license page.
+        license_page.visible = true
+        app_comm.nodejs_connected.disconnect(on_nodejs_connected)
+
+        // Erase passwords from page.
+        password_1.text = ""
+        password_2.text = ""
+    }
+
     ColumnLayout {
         height: app_settings.screen_height
         width: app_settings.screen_width
@@ -74,20 +87,12 @@ Rectangle {
                 } else if ((password_1.length == 0) || (password_2.length == 0)) {
                     status.text = "passwords cannot be empty"
                 } else {
-                    // setup the crypto
+                    // Setup the crypto.
                     file_model.create_crypto(password_1.text)
-                    // load a default node graph
-                    file_model.load_model()
-                    file_model.load_graph()
-                    node_graph_page.node_graph.update()
-                    // Hide this page and erase passwords from page.
-                    create_password_page.visible = false
-                    password_1.text = ""
-                    password_2.text = ""
-                    // Switch to node graph mode.
-                    main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-                    Qt.inputMethod.hide()
-                    app_comm.start_polling()
+                    file_model.save_crypto();
+
+                    // Connect to nodejs.
+                    app_utils.connect_to_nodejs(on_nodejs_connected)
                 }
             }
         }
