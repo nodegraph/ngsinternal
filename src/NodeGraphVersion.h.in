@@ -1,4 +1,0 @@
-#define NODEGRAPH_VERSION_MAJOR @openshapes_version_major@
-#define NODEGRAPH_VERSION_MINOR @openshapes_version_minor@
-#define NODEGRAPH_VERSION_PATCH @openshapes_version_patch@
-

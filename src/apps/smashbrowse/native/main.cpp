@@ -25,6 +25,7 @@
 #include <QtQuick/QQuickWindow>
 #include <QtGui/QPainter>
 
+#include <ngsversion.h>
 #include <base/memoryallocator/taggednew.h>
 #include <base/memoryallocator/bootstrap.h>
 #include <base/objectmodel/entity.h>
@@ -338,6 +339,7 @@ int main(int argc, char *argv[]) {
     context->setContextProperty(QStringLiteral("app_comm"), g_app_comm);
 
     view.setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/pages/SplashPage.qml")));
+    view.rootObject()->setProperty("ngs_version", NGS_VERSION);
     view.show();
     view.update();
     app.processEvents();

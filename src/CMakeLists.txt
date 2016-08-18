@@ -21,9 +21,11 @@ function (install_headers headers dest)
 endfunction()
 
 # The version number.
-set(nodegraph_version_major 0)
-set(nodegraph_version_minor 0)
-set(nodegraph_version_patch 2)
+set(ngs_version_major 1)
+set(ngs_version_minor 13)
+set(ngs_version_patch 517)
+set(ngs_version_tweak 89)
+set(ngs_version ${ngs_version_major}.${ngs_version_minor}.${ngs_version_patch}.${ngs_version_tweak})
 
 # Our supported archictectures.
 set(karch_linux 0)
@@ -124,8 +126,8 @@ endif ()
 
 # Create the node graph version header file.
 configure_file (
-    "${PROJECT_SOURCE_DIR}/NodeGraphVersion.h.in"
-    "${PROJECT_BINARY_DIR}/NodeGraphVersion.h"
+    "${PROJECT_SOURCE_DIR}/ngsversion.h.in"
+    "${PROJECT_BINARY_DIR}/ngsversion.h"
   )
   
 # Find qt library.

@@ -44,6 +44,7 @@ Q_OBJECT
 
   virtual void initialize_fixed_deps();
 
+  Q_INVOKABLE QString get_ngs_version() const;
   Q_INVOKABLE size_t get_num_nodes() const;
 
   // Node Creation.

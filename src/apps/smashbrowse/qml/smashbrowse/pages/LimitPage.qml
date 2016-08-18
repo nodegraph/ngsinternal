@@ -35,6 +35,15 @@ Rectangle {
         stack_view: parent_stack_view
     }
 
+    AppLabel {
+        y: app_settings.page_height * 2/10
+        text: "Smash Browse Lite " + node_graph_page.node_graph.get_ngs_version()
+        anchors {
+            horizontalCenter:  parent.horizontalCenter
+        }
+    }
+
+
     // Logo.
     Image {
         id: about_image
@@ -51,7 +60,7 @@ Rectangle {
 
     AppLabel {
         y: app_settings.page_height * 6.5/10
-        text: "The Lite edition permits a maximum of 10 nodes,"
+        text: "Your edition permits a maximum of 10 nodes,"
         anchors {
             horizontalCenter:  parent.horizontalCenter
         }
@@ -64,14 +73,5 @@ Rectangle {
             horizontalCenter:  parent.horizontalCenter
         }
     }
-
-    AppLabel {
-        y: app_settings.page_height * 8/10
-        text: "The Pro edition enables all features."
-        anchors {
-            horizontalCenter:  parent.horizontalCenter
-        }
-    }
-
 
 }

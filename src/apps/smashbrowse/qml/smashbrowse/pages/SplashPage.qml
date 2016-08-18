@@ -9,6 +9,8 @@ Rectangle {
     // This is hard coded because the AppSettings has not been loaded yet.
     color: "#FF0288D1" // a darker blue than the node graph blue
 
+    property string ngs_version: ""
+
     // Logo.
     Image {
         id: splash_image
@@ -37,7 +39,7 @@ Rectangle {
         color: "white"
 
         y: parent.height * 7/10
-        text: "Version 1.17316"
+        text: "Version " + ngs_version
         anchors {
             horizontalCenter:  parent.horizontalCenter
         }

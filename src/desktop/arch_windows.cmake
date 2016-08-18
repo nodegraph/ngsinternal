@@ -21,21 +21,80 @@ add_custom_target (install_desktop
    DEPENDS install_desktop_cmd
 )
 
+# -----------------------------------------------------
+# Qt Plugins.
+# -----------------------------------------------------
+
 INSTALL(
-  DIRECTORY ${QT5_DIR}/plugins/platforms
+  DIRECTORY 
+      "${QT5_DIR}/plugins/platforms"
+      "${QT5_DIR}/plugins/qmltooling"
+      "${QT5_DIR}/plugins/bearer"
+      "${QT5_DIR}/plugins/iconengines"
+      "${QT5_DIR}/plugins/imageformats"
+      "${QT5_DIR}/plugins/platforminputcontexts"
   DESTINATION bin
   COMPONENT thirdparty
 )
+
+# -----------------------------------------------------
+# QML Libraries.
+# -----------------------------------------------------
+
 INSTALL(
-  DIRECTORY ${QT5_DIR}/qml/QtQuick
+  DIRECTORY 
+      "${QT5_DIR}/qml/Qt"
+      "${QT5_DIR}/qml/QtGraphicalEffects"
+      "${QT5_DIR}/qml/QtQml"
+      "${QT5_DIR}/qml/QtQuick"
+      "${QT5_DIR}/qml/QtQuick.2"
+      "${QT5_DIR}/qml/QtWebView"
   DESTINATION bin
   COMPONENT thirdparty
 )
+
+# -----------------------------------------------------
+# NodeJS libraries.
+# -----------------------------------------------------
+
 INSTALL(
-  DIRECTORY ${QT5_DIR}/qml/QtQuick.2
+    DIRECTORY 
+         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/node_modules"
+         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/nodejs/"
+    DESTINATION bin
+    COMPONENT thirdparty
+    CONFIGURATIONS Debug Release
+)
+
+INSTALL(
+    FILES "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.21/chromedriver.exe"
+    DESTINATION bin
+    COMPONENT thirdparty
+    CONFIGURATIONS Debug Release
+)
+
+# -----------------------------------------------------
+# OpenGL Libraries.
+# -----------------------------------------------------
+INSTALL(
+  FILES "${QT5_DIR}/bin/libEGLd.dll"
+        "${QT5_DIR}/bin/libGLESv2d.dll"
   DESTINATION bin
   COMPONENT thirdparty
+  CONFIGURATIONS Debug 
 )
+
+INSTALL(
+  FILES "${QT5_DIR}/bin/libEGL.dll"
+        "${QT5_DIR}/bin/libGLESv2.dll"
+  DESTINATION bin
+  COMPONENT thirdparty
+  CONFIGURATIONS Release
+)
+
+# -----------------------------------------------------
+# Other Libraries.
+# -----------------------------------------------------
 
 # Qt debug libraries.
 INSTALL(FILES 
@@ -165,8 +224,8 @@ if(WIN32)
     # On Windows generate MSI packages
     set(CPACK_GENERATOR "WIX")
     
-    set(CPACK_PACKAGE_NAME "node_graph_debug")
-    set(CPACK_PACKAGE_VERSION "0.0.0.7")
+    set(CPACK_PACKAGE_NAME "SmashBrowse")
+    set(CPACK_PACKAGE_VERSION ${ngs_version})
 
     set(CPACK_WIX_TEMPLATE "${PROJECT_SOURCE_DIR}/desktop/wix.template.in")
     set(CPACK_WIX_UPGRADE_GUID A5BE780A-779E-49CF-8D0D-E6413224710E)
@@ -175,7 +234,8 @@ if(WIN32)
     set(CPACK_WIX_UI_BANNER  ${PROJECT_SOURCE_DIR}/desktop/installer_banner_493x58.png)
     set(CPACK_WIX_UI_DIALOG  ${PROJECT_SOURCE_DIR}/desktop/installer_bg_493x312.png)
     
-    #set(CPACK_WIX_PROGRAM_MENU_FOLDER "node graph")
+    #set(CPACK_PACKAGE_EXECUTABLES "smashbrowse.exe")
+    #set(CPACK_WIX_PROGRAM_MENU_FOLDER "SmashBrowse")
 
 elseif(APPLE)
     # APPLE is also UNIX, so must check for APPLE before UNIX
@@ -185,18 +245,18 @@ elseif(UNIX)
     #Find out what architecture are we running on and set the package architecture 
 endif()
 
-set(CPACK_COMPONENT_THIRDPARTY_DISPLAY_NAME "Basic unit tests to confirm various things are working as expected.")
-set(CPACK_COMPONENT_BASE_DISPLAY_NAME "Base libraries which everything depends on.")
-set(CPACK_COMPONENT_COMPONENTS_DISPLAY_NAME "Components used by all apps.")
-set(CPACK_COMPONENT_GUI_DISPLAY_NAME "Gui components used by graphical apps.")
-set(CPACK_COMPONENT_UNITTESTS_DISPLAY_NAME "Basic unit tests to confirm various things are working as expected.")
-set(CPACK_COMPONENT_APPS_DISPLAY_NAME "Apps that were build on the node graph framework.")
+set(CPACK_COMPONENT_THIRDPARTY_DISPLAY_NAME "Third party libraries. (Required)")
+set(CPACK_COMPONENT_BASE_DISPLAY_NAME "Base libraries. (Required)")
+set(CPACK_COMPONENT_COMPONENTS_DISPLAY_NAME "Non Gui Components. (Required)")
+set(CPACK_COMPONENT_GUI_DISPLAY_NAME "Gui components. (Required)")
+set(CPACK_COMPONENT_UNITTESTS_DISPLAY_NAME "Basic unit tests. (Optional)")
+set(CPACK_COMPONENT_APPS_DISPLAY_NAME "Apps. (Required)")
 
-set(CPACK_COMPONENT_THIRDPARTY_REQUIRED true)
+set(CPACK_COMPONENT_THIRDPARTY_REQUIRED false)
 set(CPACK_COMPONENT_BASE_REQUIRED true)
 set(CPACK_COMPONENT_COMPONENTS_REQUIRED true)
 set(CPACK_COMPONENT_GUI_REQUIRED true)
-set(CPACK_COMPONENT_UNITTESTS_REQUIRED true)
+set(CPACK_COMPONENT_UNITTESTS_REQUIRED false)
 set(CPACK_COMPONENT_APPS_REQUIRED true)
 
 include(CPack)

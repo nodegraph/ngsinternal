@@ -146,7 +146,7 @@ void AppCommunication::on_poll() {
 }
 
 void AppCommunication::on_nodejs_started() {
-  qDebug() << "process has started";
+  //qDebug() << "process has started";
 }
 
 void AppCommunication::on_nodejs_error(QProcess::ProcessError error) {
@@ -154,12 +154,12 @@ void AppCommunication::on_nodejs_error(QProcess::ProcessError error) {
 }
 
 void AppCommunication::on_connected() {
-  qDebug() << "nodejs is now connected";
+  //qDebug() << "nodejs is now connected";
   emit nodejs_connected();
 }
 
 void AppCommunication::on_disconnected() {
-  qDebug() << "nodejs is now disconnected";
+  //qDebug() << "nodejs is now disconnected";
 }
 
 void AppCommunication::on_error(QAbstractSocket::SocketError error) {
@@ -175,7 +175,7 @@ void AppCommunication::on_ssl_error(const QList<QSslError>& errors) {
 }
 
 void AppCommunication::on_state_changed(QAbstractSocket::SocketState s) {
-  qDebug() << "state changed: " << s;
+  //qDebug() << "state changed: " << s;
 }
 
 void AppCommunication::on_text_message_received(const QString & message) {
@@ -234,7 +234,7 @@ void AppCommunication::start_nodejs() {
   _process->setArguments(list);
   _process->start();
 
-  qDebug() << "starting process again!";
+  //qDebug() << "starting process again!";
 }
 
 bool AppCommunication::nodejs_is_running() {

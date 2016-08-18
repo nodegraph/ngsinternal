@@ -1,6 +1,7 @@
 //#include <base/device/deviceheadersgl.h>
 #include <base/memoryallocator/taggednew.h>
 #include <base/glewhelper/glewhelper.h>
+#include <ngsversion.h>
 
 #include <components/entities/entityids.h>
 #include <components/computes/compute.h>
@@ -480,6 +481,10 @@ void NodeGraphQuickItem::toggle_selection_under_long_press() {
   }
   get_current_interaction()->toggle_selection_under_press(_last_pressed_node);
   update();
+}
+
+QString NodeGraphQuickItem::get_ngs_version() const {
+  return NGS_VERSION;
 }
 
 size_t NodeGraphQuickItem::get_num_nodes() const {

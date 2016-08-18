@@ -18,11 +18,11 @@
             <Merge Id="VCReleaseRuntime" 
                 Language="0" 
                 DiskId="1"                                                    
-                SourceFile="$(env.ProgramFiles(x86))\Common Files\Merge Modules\Microsoft_VC120_CRT_x64.msm" />
+                SourceFile="$(env.ProgramFiles(x86))\Common Files\Merge Modules\Microsoft_VC140_CRT_x64.msm" />
             <Merge Id="VCDebugRuntime" 
                 Language="0" 
                 DiskId="1"                                                    
-                SourceFile="$(env.ProgramFiles(x86))\Common Files\Merge Modules\Microsoft_VC120_DebugCRT_x64.msm" />
+                SourceFile="$(env.ProgramFiles(x86))\Common Files\Merge Modules\Microsoft_VC140_DebugCRT_x64.msm" />
         </DirectoryRef>
         
         <Feature Id="VCReleaseFeature" 

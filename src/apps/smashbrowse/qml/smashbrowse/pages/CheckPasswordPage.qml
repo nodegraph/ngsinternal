@@ -24,7 +24,6 @@ Rectangle {
     color: app_settings.menu_stack_bg_color
 
     function on_nodejs_connected() {
-        console.log('checking password: ' + file_model.get_license())
         app_utils.check_license(file_model.get_edition(), file_model.get_license(), on_valid_license, on_invalid_license)
     }
 

@@ -97,7 +97,9 @@ INSTALL(TARGETS smashbrowse
 )
 
 # Create a directory for the chrome user data.
-install(DIRECTORY DESTINATION "chromeuserdata")
+install(DIRECTORY 
+        DESTINATION "chromeuserdata"
+        COMPONENT apps)
 
 # Install the chrome extension.
 install(DIRECTORY chromeextension

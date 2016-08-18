@@ -270,7 +270,6 @@ function receive_from_app(message) {
     		break
         case 'check_browser_is_open':
             function on_response(open) {
-                console.log('is browser open: ' + open)
                 if (!open) {
                     open_browser()
                 }
@@ -383,7 +382,7 @@ function check_license(edition, license) {
 		if(error) {
 			send_to_app({response: false, value: "invalid_license"})
 		} else {
-			console.log(response.statusCode, body);
+			//console.log(response.statusCode, body);
 			var obj = JSON.parse(body)
 			if ((obj.success == true) && (obj.purchase.refunded == false) && (obj.purchase.chargebacked == false)) {
 				send_to_app({response: true, value: "valid_license"})

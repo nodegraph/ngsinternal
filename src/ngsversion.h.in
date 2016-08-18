@@ -1,0 +1,6 @@
+#define NGS_VERSION_MAJOR @ngs_version_major@
+#define NGS_VERSION_MINOR @ngs_version_minor@
+#define NGS_VERSION_PATCH @ngs_version_patch@
+#define NGS_VERSION_TWEAK @ngs_version_tweak@
+
+#define NGS_VERSION "@ngs_version_major@.@ngs_version_minor@.@ngs_version_patch@.@ngs_version_tweak@"
