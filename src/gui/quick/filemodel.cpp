@@ -43,7 +43,7 @@ FileModel::FileModel()
   get_dep_loader()->register_fixed_dep(_graph_builder, "");
 
   // Make sure the data dir exists.
-  QString data_dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+  QString data_dir = AppCommunication::get_user_data_dir();
   if (!QDir(data_dir).exists()) {
     QDir().mkpath(data_dir);
   }

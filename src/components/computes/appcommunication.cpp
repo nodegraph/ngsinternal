@@ -7,6 +7,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtGui/QGuiApplication>
+#include <QtCore/QStandardPaths>
 
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonValue>
@@ -28,6 +29,16 @@ QUrl Utils::url_from_input(const QString& input)
 
 
 const int AppCommunication::kPollInterval = 1000;
+
+
+QString AppCommunication::get_app_bin_dir() {
+  return QCoreApplication::applicationDirPath();
+}
+
+QString AppCommunication::get_user_data_dir() {
+  return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+}
+
 
 AppCommunication::AppCommunication(QObject *parent)
     : QObject(parent),
@@ -75,12 +86,8 @@ void AppCommunication::stop_polling() {
   _poll_timer.stop();
 }
 
-QString AppCommunication::get_app_dir() {
-  return QCoreApplication::applicationDirPath();
-}
-
 QString AppCommunication::get_smash_browse_url() {
-  QString app_dir = get_app_dir();
+  QString app_dir = get_app_bin_dir();
   app_dir += QString("/smashbrowse.html");
   return app_dir;
 }
@@ -226,15 +233,16 @@ void AppCommunication::start_nodejs() {
   _process->setProgram(QString("node.exe"));
 
   // Set the working directory.
-  QString folder = get_app_dir();
+  QString folder = get_app_bin_dir();
   _process->setWorkingDirectory(folder);
 
   // Set the arguments.
   QStringList list("controller.js");
+  list.append(get_user_data_dir());
   _process->setArguments(list);
   _process->start();
 
-  //qDebug() << "starting process again!";
+  qDebug() << "starting process again!";
 }
 
 bool AppCommunication::nodejs_is_running() {
@@ -256,8 +264,7 @@ void AppCommunication::stop_nodejs() {
 void AppCommunication::connect_to_nodejs() {
   // Nodejs will write out the port number of the app server in a text file in the bin dir.
   // Build filename for this file.
-  QString app_dir = get_app_dir();
-  QString filename = app_dir + "/appserverport.txt";
+  QString filename = get_user_data_dir() + "/nodejs/appserverport.txt";
 
   // Open the file.
   QFile file(filename);

@@ -33,17 +33,6 @@ add_custom_target (install_desktop
 #  COMPONENT thirdparty
 #)
 
-# Qt debug libraries.
-#INSTALL(FILES 
-#			"${QT5_DIR}/bin/icudt54.dll"
-#			"${QT5_DIR}/bin/icuin54.dll"
-#			"${QT5_DIR}/bin/icuuc54.dll"
-#			#"${QT5_DIR}/bin/QtWebEngineProcess.exe"
-#			#"${QT5_DIR}/plugins/qtwebengine/ffmpegsumo.dll"
-#		DESTINATION bin
-#		COMPONENT thirdparty
-#		CONFIGURATIONS Debug Release)
-		
 # ------------------------------------------------------------------
 # windeployqt misses some libs on windows release
 # ------------------------------------------------------------------
@@ -72,31 +61,6 @@ add_custom_target (install_desktop
 #		COMPONENT thirdparty
 #		CONFIGURATIONS Release)
 		
-# QtWebEngine
-#INSTALL(FILES 
-#			#"${QT5_DIR}/plugins/qtwebengine/ffmpegsumo.dll"
-#		DESTINATION qtwebengine
-#		COMPONENT thirdparty
-#		CONFIGURATIONS Debug Release)
-		
-#INSTALL(FILES 
-#			"${QT5_DIR}/bin/Qt5WebEngined.dll"
-#			"${QT5_DIR}/bin/Qt5WebEngineCored.dll"
-#			"${QT5_DIR}/bin/Qt5WebChanneld.dll"
-#			"${QT5_DIR}/bin/Qt5Positioningd.dll"
-#		DESTINATION bin
-#		COMPONENT thirdparty
-#		CONFIGURATIONS Debug)
-		
-#INSTALL(FILES 
-#			"${QT5_DIR}/bin/Qt5WebEngine.dll"
-#			"${QT5_DIR}/bin/Qt5WebEngineCore.dll"
-#			"${QT5_DIR}/bin/Qt5WebChannel.dll"
-#			"${QT5_DIR}/bin/Qt5Positioning.dll"
-#		DESTINATION bin
-#		COMPONENT thirdparty
-#		CONFIGURATIONS Release)
-
 # ------------------------------------------------------------------
 # GLEW	
 # ------------------------------------------------------------------

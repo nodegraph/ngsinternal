@@ -24,14 +24,6 @@ INSTALL(FILES
 		CONFIGURATIONS Debug Release)
 		
 		
-INSTALL(FILES 
-			"${QT5_DIR}/lib/libQt5WebView.so"
-			"${QT5_DIR}/lib/libQt5WebChannel.so"
-			"${QT5_DIR}/lib/libQt5Positioning.so"
-		DESTINATION lib
-		COMPONENT thirdparty
-		CONFIGURATIONS Debug Release)
-		
 # Setup android deployment.
 find_program(ANDROID_DEPLOY_QT NAMES androiddeployqt)
 if (ANDROID_DEPLOY_QT)

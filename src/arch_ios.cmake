@@ -52,10 +52,6 @@ set(CMAKE_C_FLAGS_DEBUG   "-O0 -g -fvisibility=hidden -fPIC"              ) # CA
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fvisibility=hidden -fPIC -std=gnu++11 ") # CACHE STRING " options." FORCE)
 set(CMAKE_C_FLAGS_RELEASE   "-O3 -fvisibility=hidden -fPIC"              ) # CACHE STRING "Debug options." FORCE)
 
-# The offline installer of Qt has some rpath issue in macos.
-# You may need to type this into a shell to fix it.
-# install_name_tool -add_rpath <install_loc>/Qt5.7.0/5.7/clang_64/lib <intall_loc>/Qt5.7.0/5.7/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
-
 # Setup up our cpp flags.
 include_directories("${FREETYPE_DIR}/${IOS_SDK_ARCH}/include")
 include_directories("${GLM_DIR}")

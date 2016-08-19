@@ -48,6 +48,23 @@ process.on('uncaughtException', function(e) {
 
 // This is the bin directory of the app. Nodejs is also placed there.
 var g_nodejs_dir = process.cwd()
+var g_user_data_dir = process.argv[2]  // This will be fed on the command line as node.exe controller.js c:/.../some_dir
+
+// Make sure the nodejs dir exists in the user data dir.
+var dir = Path.join(g_user_data_dir, "nodejs")
+if (!file_exists(dir)) {
+	create_dir(dir)
+}
+
+function file_exists(path) {
+	try {
+		fs.accessSync(path, fs.F_OK);
+		return true
+	} catch(e) {
+        return false
+    }
+	return false
+}
 
 function write_to_file(filename, text) {
     fs.writeFileSync(filename, text, 'utf8');
@@ -186,7 +203,7 @@ var extension_server_config = {
         ssl_cert: './cert.pem'
     };
 var extension_server = null
-var extension_server_file = Path.join(g_nodejs_dir, '..', 'chromeextension', 'extensionserverport.js')
+var extension_server_file = Path.join(g_user_data_dir, 'chromeextension', 'extensionserverport.js')
 
 // Called when the extension server is built.
 function extension_server_built(server) {
@@ -196,7 +213,9 @@ function extension_server_built(server) {
 }
 
 //Create the extension server.
-delete_file(extension_server_file)
+if (file_exists(extension_server_file)) {
+	delete_file(extension_server_file)
+}
 create_socket_server(extension_server_config, receive_from_extension, extension_server_built)
 
 //Send an obj as a message to the extension.
@@ -231,7 +250,7 @@ var app_server_config = {
         port: 8092,
     };
 var app_server = null
-var app_server_file = Path.join(g_nodejs_dir, 'appserverport.txt')
+var app_server_file = Path.join(g_user_data_dir, 'nodejs','appserverport.txt')
 
 //Called when the app server is built.
 function app_server_built(server) {
@@ -240,7 +259,9 @@ function app_server_built(server) {
 }
 
 //Create the app server.
-delete_file(app_server_file)
+if (file_exists(app_server_file)) {
+	delete_file(app_server_file)
+}
 create_socket_server(app_server_config, receive_from_app, app_server_built)
 
 
@@ -418,18 +439,20 @@ function browser_is_open(callback) {
 function open_browser(url) {
     try {
         // Remove the files in the chrome user data dir.
-        var dir = Path.join(g_nodejs_dir, "..", "chromeuserdata")
-        delete_dir(dir)
+        var dir = Path.join(g_user_data_dir, "chromeuserdata")
+        if (file_exists(dir)) {
+        	delete_dir(dir)
+    	}
         create_dir(dir)
 
         var chromeOptions = new chrome.Options()
         //Win_x64-389148-chrome-win32
         //Win-338428-chrome-win32
         //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
-        chromeOptions.addArguments("--load-extension=" + g_nodejs_dir + "/../chromeextension")
+        chromeOptions.addArguments("--load-extension=" + g_user_data_dir + "/chromeextension")
         chromeOptions.addArguments("--ignore-certificate-errors")
         chromeOptions.addArguments("--disable-web-security")
-        chromeOptions.addArguments("--user-data-dir=" + g_nodejs_dir + "/../chromeuserdata")
+        chromeOptions.addArguments("--user-data-dir=" + g_user_data_dir + "/chromeuserdata")
         chromeOptions.addArguments("--first-run")
         //chromeOptions.addArguments("--app=file:///"+url)
         

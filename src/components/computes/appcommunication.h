@@ -31,6 +31,9 @@ Q_OBJECT
  public:
   static const int kPollInterval;
 
+  static QString get_app_bin_dir();
+  static QString get_user_data_dir();
+
   explicit AppCommunication(QObject *parent = 0);
   virtual ~AppCommunication();
 
@@ -41,7 +44,6 @@ Q_OBJECT
   // You may call the method again to try again.
   bool handle_request_from_app(const SocketMessage& sm);
   Q_INVOKABLE bool handle_request_from_app(const QString& json_text); // Called from qml.
-  Q_INVOKABLE QString get_app_dir();
   Q_INVOKABLE QString get_smash_browse_url();
 
   // Polling to keep browser open.

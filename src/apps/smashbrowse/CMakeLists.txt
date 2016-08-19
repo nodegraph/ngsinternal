@@ -25,20 +25,16 @@ qt5_wrap_cpp(moc_imps ${moc_headers})
 list(APPEND sources ${moc_imps})
 
 if (${ARCH} STREQUAL ARCH_LINUX)
-	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(smashbrowse ${sources})
 	target_link_libraries(smashbrowse 
 		ngs_gui 
 		ngs_entities
-		Qt5::WebEngine 
 		)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
-	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(smashbrowse MACOSX_BUNDLE ${sources})
 	target_link_libraries(smashbrowse 
 		ngs_gui 
 		ngs_entities
-		Qt5::WebEngine 
 		)
 elseif (${ARCH} STREQUAL ARCH_IOS)
 	file (GLOB icon_images ${CMAKE_CURRENT_SOURCE_DIR}/packaging/ios/icons/*.png)
@@ -53,12 +49,10 @@ elseif (${ARCH} STREQUAL ARCH_IOS)
 	target_link_libraries(smashbrowse 
 		ngs_gui 
 		ngs_entities
-		Qt5::WebView
 		Qt5::Quick
 		${ios_libs}
 		)
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
-	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(smashbrowse ${sources})
 	target_link_libraries(smashbrowse 
 		ngs_gui 
@@ -69,7 +63,6 @@ elseif (${ARCH} STREQUAL ARCH_WINRT)
 	target_link_libraries(smashbrowse 
 		ngs_gui 
 		ngs_entities 
-		Qt5::WebView
 		)
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
     list(APPEND sources 
@@ -82,7 +75,6 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
 	target_link_libraries(smashbrowse 
 		ngs_gui 
 		ngs_entities
-		Qt5WebView
 		Qt5::Network
 		Qt5AndroidExtras )
 endif ()
@@ -95,11 +87,6 @@ INSTALL(TARGETS smashbrowse
   BUNDLE DESTINATION .
   COMPONENT apps
 )
-
-# Create a directory for the chrome user data.
-install(DIRECTORY 
-        DESTINATION "chromeuserdata"
-        COMPONENT apps)
 
 # Install the chrome extension.
 install(DIRECTORY chromeextension

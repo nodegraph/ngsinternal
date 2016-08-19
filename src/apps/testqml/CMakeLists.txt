@@ -17,14 +17,12 @@ qt5_wrap_cpp(moc_imps ${moc_headers})
 list(APPEND sources ${moc_imps})
 
 if (${ARCH} STREQUAL ARCH_LINUX)
-	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(testqml ${sources})
 	target_link_libraries(testqml 
 		Qt5::Widgets
 		Qt5::Qml 
 		)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
-	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(testqml MACOSX_BUNDLE ${sources})
 	target_link_libraries(testqml 
 		Qt5::Widgets
@@ -48,7 +46,6 @@ elseif (${ARCH} STREQUAL ARCH_IOS)
 		${ios_libs}
 		)
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
-	add_definitions("-DQT_WEBVIEW_WEBENGINE_BACKEND")
 	add_executable(testqml ${sources})
 	target_link_libraries(testqml
 		Qt5::Widgets

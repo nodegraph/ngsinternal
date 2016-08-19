@@ -6,6 +6,7 @@
 #include <QtWidgets/QApplication>
 #include <QtGui/QGuiApplication>
 //#include <QtQml/QQmlApplicationEngine>
+#include <QtCore/QDebug>
 
 #include <QtCore/QDebug>
 
@@ -23,6 +24,7 @@
 
 
 #include <QtQuick/QQuickWindow>
+#include <QtQuick/QQuickView>
 #include <QtGui/QPainter>
 
 #include <ngsversion.h>
@@ -50,19 +52,6 @@
 #include <cassert>
 #include <iostream>
 
-
-#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
-#include <QtWebEngine/QtWebEngine>
-#else
-#include <QtWebView/QtWebView>
-#endif
-
-//int main(int argc, char *argv[]) {
-//  qDebug() << "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\n";
-//  // Create our application. Note that QGUIApplication has no dependency on widgets.
-//  QApplication app(argc, argv);
-//  return app.exec();
-//}
 
 #if ARCH == ARCH_IOS
   #include <QtPlugin>
@@ -109,6 +98,31 @@
 
 #endif
 
+
+
+static void copy_dir(const QDir &src, const QDir &target) {
+    // Make sure the target dir exists.
+    target.mkpath(".");
+
+    // Loop through the source dir.
+    QFileInfoList infos = src.entryInfoList(QDir::Dirs | QDir::Files |  QDir::NoDot | QDir::NoDotDot | QDir::Hidden | QDir::System);
+
+    foreach (const QFileInfo &info, infos){
+      if (info.isDir()) {
+        // We have a sub directory.
+        QDir sub_src(src.filePath(info.filePath()));
+        QDir sub_tgt(target.filePath(info.fileName()));
+        copy_dir(sub_src, sub_tgt);
+      } else {
+        // We have a file.
+        QFile src_file(info.filePath());
+        QString tgt_file(target.filePath(info.fileName()));
+        src_file.copy(tgt_file);
+      }
+    }
+}
+
+
 int main(int argc, char *argv[]) {
 
 //  QSurfaceFormat format;
@@ -149,11 +163,13 @@ int main(int argc, char *argv[]) {
 #endif
 #endif
 
-#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
-    QtWebEngine::initialize();
-#else
-    QtWebView::initialize();
-#endif
+
+  // Copy the chromeextension over to the user data dir, so that we can change some files.
+  {
+    QDir ext_src(AppCommunication::get_app_bin_dir() + "/../chromeextension");
+    QDir ext_tgt(AppCommunication::get_user_data_dir() + "/chromeextension");
+    copy_dir(ext_src, ext_tgt);
+  }
 
 //    QSurfaceFormat fmt;
 //

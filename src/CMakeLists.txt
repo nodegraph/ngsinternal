@@ -143,10 +143,6 @@ find_package(Qt5WebChannel)
 find_package(Qt5WebSockets)
 find_package(Qt5Network)
 
-if ((${ARCH} STREQUAL "ARCH_LINUX") OR (${ARCH} STREQUAL "ARCH_WINDOWS") OR (${ARCH} STREQUAL "ARCH_MACOS"))
-	find_package(Qt5WebEngine)
-endif()
-
 if (${ARCH} STREQUAL "ARCH_ANDROID")
 	find_package(Qt5AndroidExtras)
 elseif (${ARCH} STREQUAL "ARCH_IOS")
@@ -173,11 +169,6 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
     #add_definitions("-DQT_QML_DEBUG")
 elseif ("${CMAKE_BUILD_TYPE}" STREQUAL Release)
 endif ()
-
-# The offline installer of Qt has some rpath issue.
-# You may need to type this into a shell to fix it.
-# install_name_tool -add_rpath <install_loc>/Qt5.7.0/5.7/clang_64/lib <intall_loc>/Qt5.7.0/5.7/clang_64/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
-
 
 #get_target_property(QtCore_location Qt5::Core LOCATION)
 #message("the qt core location is: ${QtCore_location}")

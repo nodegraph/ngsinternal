@@ -1,0 +1,14 @@
+;!@Install@!UTF-8!
+Title="Smash Browse Installer"
+BeginPrompt="Choose a directory to install to. The default is recommended.\n\n1) You need Administrator privileges to install to certain locations\nlike C:\Program Files or C:\Program Files (x86). In this case\nsimply right click this installer and choose \"Run as administrator\".\n\n2) A shortcut will be created in the Start menu and on the Desktop.\n\n3) To uninstall, simply delete the install directory and shortcuts."
+CancelPrompt="Do you want to cancel the extraction?"
+ExtractDialogText="Please, wait..."
+ExtractPathText="Please, enter the path to install to:"
+ExtractTitle="Extracting..."
+GUIFlags="8+32+64+256+4096"
+GUIMode="1"
+InstallPath="C:\\SmashBrowse_X.X.X.X"
+OverwriteMode="2"
+Shortcut="Du,{%%T\\bin\\smashbrowse.exe},{},{},{Smash Browse},{Smash Browse}"
+Shortcut="Pu,{%%T\\bin\\smashbrowse.exe},{},{},{Smash Browse},{Smash Browse}"
+;!@InstallEnd@!

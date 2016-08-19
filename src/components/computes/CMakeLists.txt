@@ -45,7 +45,6 @@ target_link_libraries(ngs_computes
 	ngs_memoryallocator
 	Qt5::Core
 	Qt5::Quick
-	Qt5::WebEngine 
 	Qt5::Network
 	Qt5::WebSockets
 	)

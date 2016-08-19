@@ -27,10 +27,6 @@
 #include <gui/quick/fboworker.h>
 #include <gui/quick/nodegraphquickitem.h>
 
-#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
-#include <QtWebEngine/QtWebEngine>
-#endif
-
 #include <QtWebView/QtWebView>
 
 // System.
@@ -84,13 +80,6 @@ int main(int argc, char **argv)
     g_app_root->update_deps_and_hierarchy();
 
     QApplication app(argc, argv);
-
-#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
-    QtWebEngine::initialize();
-#else
-    QtWebView::initialize();
-#endif
-
 
     //QGuiApplication app(argc, argv);
     qmlRegisterType<NodeGraphQuickItem>("SceneGraphRendering", 1, 0, "NodeGraphQuickItem");
