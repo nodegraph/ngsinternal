@@ -170,26 +170,39 @@ add_custom_target (pack_desktop
 # Desktop Packaging
 # ------------------------------------------------------------------
 
+# To build the msi installer for debug binaries, type the following in the msys2 shell.
+# cpack -G WIX -c Debug
 
 if(WIN32)
     # On Windows generate MSI packages
     set(CPACK_GENERATOR "WIX")
     
-    #set(CPACK_PACKAGE_NAME "SmashBrowse")
-    #set(CPACK_PACKAGE_VERSION ${ngs_version})
-    set(CPACK_PACKAGE_NAME "s")
-    set(CPACK_PACKAGE_VERSION 1.0.0.0)
+    set(CPACK_PACKAGE_NAME "Smash Browse")
+    set(CPACK_PACKAGE_VERSION ${ngs_version})
     set(CPACK_PACKAGE_VENDOR "Node Graph Software")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Smash Browse")
 
     set(CPACK_WIX_TEMPLATE "${PROJECT_SOURCE_DIR}/desktop/wix.template.in")
     set(CPACK_WIX_UPGRADE_GUID A5BE780A-779E-49CF-8D0D-E6413224710E)
-    set(CPACK_WIX_PRODUCT_ICON ${PROJECT_SOURCE_DIR}/desktop/Paomedia-Small-N-Flat-Layers.ico)
+    set(CPACK_WIX_PRODUCT_ICON ${PROJECT_SOURCE_DIR}/external/images/octopus_blue.ico)
     set(CPACK_WIX_LICENSE_RTF ${PROJECT_SOURCE_DIR}/desktop/eula.rtf)
     set(CPACK_WIX_UI_BANNER  ${PROJECT_SOURCE_DIR}/desktop/installer_banner_493x58.png)
     set(CPACK_WIX_UI_DIALOG  ${PROJECT_SOURCE_DIR}/desktop/installer_bg_493x312.png)
     
-    #set(CPACK_PACKAGE_EXECUTABLES "smashbrowse.exe")
-    #set(CPACK_WIX_PROGRAM_MENU_FOLDER "SmashBrowse")
+    set(CPACK_WIX_UNINSTALL "1")
+    
+    #set(CPACK_PACKAGE_EXECUTABLES "bin/smashbrowse" "Smash Browse" ${CPACK_PACKAGE_EXECUTABLES})
+    #set(CPACK_CREATE_DESKTOP_LINKS "smashbrowse" ${CPACK_CREATE_DESKTOP_LINKS})
+    
+    
+    set(CPACK_WIX_PROGRAM_MENU_FOLDER "Smash Browse")
+    
+    set_property(INSTALL "bin/smashbrowse.exe"
+        PROPERTY CPACK_DESKTOP_SHORTCUTS "Smash Browse"
+    )
+    set_property(INSTALL "bin/smashbrowse.exe"
+        PROPERTY CPACK_START_MENU_SHORTCUTS "Smash Browse"
+    )
 
 elseif(APPLE)
     # APPLE is also UNIX, so must check for APPLE before UNIX
@@ -199,18 +212,21 @@ elseif(UNIX)
     #Find out what architecture are we running on and set the package architecture 
 endif()
 
-set(CPACK_COMPONENT_THIRDPARTY_DISPLAY_NAME "Third party libraries. (Required)")
+set(CPACK_COMPONENT_THIRDPARTY_DISPLAY_NAME "Other libraries. (Required)")
 set(CPACK_COMPONENT_BASE_DISPLAY_NAME "Base libraries. (Required)")
 set(CPACK_COMPONENT_COMPONENTS_DISPLAY_NAME "Non Gui Components. (Required)")
 set(CPACK_COMPONENT_GUI_DISPLAY_NAME "Gui components. (Required)")
-set(CPACK_COMPONENT_UNITTESTS_DISPLAY_NAME "Basic unit tests. (Optional)")
+#set(CPACK_COMPONENT_UNITTESTS_DISPLAY_NAME "Basic unit tests. (Optional)")
 set(CPACK_COMPONENT_APPS_DISPLAY_NAME "Apps. (Required)")
 
 set(CPACK_COMPONENT_THIRDPARTY_REQUIRED true)
 set(CPACK_COMPONENT_BASE_REQUIRED true)
 set(CPACK_COMPONENT_COMPONENTS_REQUIRED true)
 set(CPACK_COMPONENT_GUI_REQUIRED true)
-set(CPACK_COMPONENT_UNITTESTS_REQUIRED true)
+#set(CPACK_COMPONENT_UNITTESTS_REQUIRED false)
 set(CPACK_COMPONENT_APPS_REQUIRED true)
+
+#set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+set(CPACK_COMPONENTS_ALL thirdparty base components gui apps)
 
 include(CPack)

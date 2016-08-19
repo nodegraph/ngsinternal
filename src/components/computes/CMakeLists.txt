@@ -54,8 +54,8 @@ qt5_use_modules(ngs_computes Core)
 # Install.
 INSTALL(TARGETS ngs_computes
   RUNTIME DESTINATION bin
+  COMPONENT components
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  COMPONENT components
 )
 

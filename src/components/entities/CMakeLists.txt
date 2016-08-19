@@ -31,8 +31,8 @@ target_link_libraries(
 # Install.
 INSTALL(TARGETS ngs_entities
   RUNTIME DESTINATION bin
+  COMPONENT components
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  COMPONENT components
 )
 

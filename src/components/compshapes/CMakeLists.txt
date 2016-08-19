@@ -48,7 +48,7 @@ target_link_libraries(ngs_compshapes
 # Install.
 INSTALL(TARGETS ngs_compshapes
   RUNTIME DESTINATION bin
+  COMPONENT components
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  COMPONENT components
 )

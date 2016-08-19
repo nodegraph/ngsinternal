@@ -63,7 +63,7 @@ target_link_libraries(ngs_gui
 # Install.
 INSTALL(TARGETS ngs_gui
   RUNTIME DESTINATION bin
+  COMPONENT gui
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  COMPONENT gui
 )

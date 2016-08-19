@@ -24,7 +24,7 @@ endfunction()
 set(ngs_version_major 1)
 set(ngs_version_minor 13)
 set(ngs_version_patch 517)
-set(ngs_version_tweak 89)
+set(ngs_version_tweak 91)
 set(ngs_version ${ngs_version_major}.${ngs_version_minor}.${ngs_version_patch}.${ngs_version_tweak})
 
 # Our supported archictectures.

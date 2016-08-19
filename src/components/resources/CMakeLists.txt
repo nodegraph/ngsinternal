@@ -21,9 +21,9 @@ target_link_libraries(ngs_resources
 
 INSTALL(TARGETS ngs_resources
   RUNTIME DESTINATION bin
+  COMPONENT components
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   PUBLIC_HEADER DESTINATION include/components/resources
-  COMPONENT components
 )
 

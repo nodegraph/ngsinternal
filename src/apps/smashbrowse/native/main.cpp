@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
     // Create our application. Note that QGUIApplication has no dependency on widgets.
     QGuiApplication app(argc, argv);
 
-    QApplication::setApplicationName("SmashBrowse");
+    QApplication::setApplicationName("smashbrowse"); // This affects the user's data dir resolution.
     QApplication::setOrganizationDomain("smashbrowse.com");
 
     QSurfaceFormat format;
@@ -256,6 +256,11 @@ int main(int argc, char *argv[]) {
 
     QQuickView view;
     g_quick_view = &view;
+
+    QIcon icon(":images/octopus_blue.png");
+    g_quick_view->setIcon(icon);
+    g_quick_view->setTitle("Smash Browse");
+
 #if ARCH == ARCH_WINDOWS
     view.setWidth(800);
     view.setHeight(1024);

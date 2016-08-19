@@ -21,10 +21,10 @@ endif()
 # Install.
 INSTALL(TARGETS testutils
   RUNTIME DESTINATION bin
+  COMPONENT unittests
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   BUNDLE DESTINATION .
-  COMPONENT unittests
   )
 
 

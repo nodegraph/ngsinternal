@@ -48,9 +48,9 @@ endif()
 # Install.
 INSTALL(TARGETS ngs_memoryallocator
   RUNTIME DESTINATION bin
+  COMPONENT base
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   BUNDLE DESTINATION .
-  COMPONENT base
 )
 

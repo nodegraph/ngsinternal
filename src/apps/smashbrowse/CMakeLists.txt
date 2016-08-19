@@ -53,7 +53,8 @@ elseif (${ARCH} STREQUAL ARCH_IOS)
 		${ios_libs}
 		)
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
-	add_executable(smashbrowse ${sources})
+    list(APPEND sources packaging/windows/smashbrowse.rc)
+	add_executable(smashbrowse WIN32 ${sources})
 	target_link_libraries(smashbrowse 
 		ngs_gui 
 		ngs_entities
@@ -82,10 +83,11 @@ endif ()
 # Install.
 INSTALL(TARGETS smashbrowse
   RUNTIME DESTINATION bin
+  COMPONENT apps
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   BUNDLE DESTINATION .
-  COMPONENT apps
+  
 )
 
 # Install the chrome extension.

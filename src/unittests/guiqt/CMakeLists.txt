@@ -31,10 +31,10 @@ target_link_libraries(testguiqt
 
 INSTALL(TARGETS testguiqt
   RUNTIME DESTINATION bin
+  COMPONENT unittests
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   BUNDLE DESTINATION .
-  COMPONENT unitttests
 )
 
 

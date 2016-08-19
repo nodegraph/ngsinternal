@@ -27,8 +27,8 @@ target_link_libraries(ngs_interactions
 # Install.
 INSTALL(TARGETS ngs_interactions
   RUNTIME DESTINATION bin
+  COMPONENT components
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  COMPONENT components
 )
 

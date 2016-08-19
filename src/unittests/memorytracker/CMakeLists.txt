@@ -20,8 +20,8 @@ target_link_libraries(testmemorytracker
 # Install.
 INSTALL(TARGETS testmemorytracker
   RUNTIME DESTINATION bin
+  COMPONENT unittests
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   BUNDLE DESTINATION .
-  COMPONENT unittests
 )

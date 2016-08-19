@@ -33,7 +33,8 @@ endif ()
 # Install.
 INSTALL(TARGETS ngs_half
   RUNTIME DESTINATION bin
+  COMPONENT thirdparty
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  COMPONENT base
+  
 )
