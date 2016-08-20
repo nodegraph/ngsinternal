@@ -213,21 +213,47 @@ elseif(UNIX)
     #Find out what architecture are we running on and set the package architecture 
 endif()
 
-set(CPACK_COMPONENT_THIRDPARTY_DISPLAY_NAME "Other libraries. (Required)")
-set(CPACK_COMPONENT_BASE_DISPLAY_NAME "Base libraries. (Required)")
-set(CPACK_COMPONENT_COMPONENTS_DISPLAY_NAME "Non Gui Components. (Required)")
-set(CPACK_COMPONENT_GUI_DISPLAY_NAME "Gui components. (Required)")
-#set(CPACK_COMPONENT_UNITTESTS_DISPLAY_NAME "Basic unit tests. (Optional)")
-set(CPACK_COMPONENT_APPS_DISPLAY_NAME "Apps. (Required)")
 
-set(CPACK_COMPONENT_THIRDPARTY_REQUIRED true)
-set(CPACK_COMPONENT_BASE_REQUIRED true)
-set(CPACK_COMPONENT_COMPONENTS_REQUIRED true)
-set(CPACK_COMPONENT_GUI_REQUIRED true)
+#set(CPACK_COMPONENT_THIRDPARTY_DISPLAY_NAME "Other libraries. (Required)")
+#set(CPACK_COMPONENT_BASE_DISPLAY_NAME "Base libraries. (Required)")
+#set(CPACK_COMPONENT_COMPONENTS_DISPLAY_NAME "Non Gui Components. (Required)")
+#set(CPACK_COMPONENT_GUI_DISPLAY_NAME "Gui components. (Required)")
+#set(CPACK_COMPONENT_UNITTESTS_DISPLAY_NAME "Basic unit tests. (Optional)")
+#set(CPACK_COMPONENT_APPS_DISPLAY_NAME "Apps. (Required)")
+
+#set(CPACK_COMPONENT_THIRDPARTY_REQUIRED true)
+#set(CPACK_COMPONENT_BASE_REQUIRED true)
+#set(CPACK_COMPONENT_COMPONENTS_REQUIRED true)
+#set(CPACK_COMPONENT_GUI_REQUIRED true)
 #set(CPACK_COMPONENT_UNITTESTS_REQUIRED false)
-set(CPACK_COMPONENT_APPS_REQUIRED true)
+#set(CPACK_COMPONENT_APPS_REQUIRED true)
 
 #set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 set(CPACK_COMPONENTS_ALL thirdparty base components gui apps)
 
 include(CPack)
+
+cpack_add_component(thirdparty
+                    DISPLAY_NAME "Third party libraries."
+                    HIDDEN REQUIRED)
+                    
+cpack_add_component(base
+                    DISPLAY_NAME "Base libraries."
+                    HIDDEN REQUIRED)
+                    
+cpack_add_component(components
+                    DISPLAY_NAME "Non GUI components."
+                    HIDDEN REQUIRED)
+                    
+cpack_add_component(gui
+                    DISPLAY_NAME "GUI components."
+                    HIDDEN REQUIRED)
+                    
+cpack_add_component(unittests
+                    DISPLAY_NAME "Unit tests."
+                    HIDDEN REQUIRED)
+                    
+cpack_add_component(apps
+                    DISPLAY_NAME "Application binaries."
+                    DESCRIPTION "These are the main app binaries."
+                    HIDDEN REQUIRED)
