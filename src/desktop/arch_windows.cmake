@@ -16,14 +16,16 @@
 # Qt Plugins.
 # ------------------------------------------------------------------
 
+# Note each of these directories hold debug, release and .pdb files which gets quite big.
+# If you need these plugins, you should selectively install the specific dlls you need.
 INSTALL(
   DIRECTORY 
-      "${QT5_DIR}/plugins/platforms"
-      "${QT5_DIR}/plugins/qmltooling"
-      "${QT5_DIR}/plugins/bearer"
-      "${QT5_DIR}/plugins/iconengines"
-      "${QT5_DIR}/plugins/imageformats"
-      "${QT5_DIR}/plugins/platforminputcontexts"
+      #"${QT5_DIR}/plugins/platforms"
+      #"${QT5_DIR}/plugins/qmltooling"
+      #"${QT5_DIR}/plugins/bearer"
+      #"${QT5_DIR}/plugins/iconengines"
+      #"${QT5_DIR}/plugins/imageformats"
+      #"${QT5_DIR}/plugins/platforminputcontexts"
   DESTINATION bin
   COMPONENT thirdparty
 )
@@ -31,15 +33,16 @@ INSTALL(
 # ------------------------------------------------------------------
 # QML Libraries.
 # ------------------------------------------------------------------
-
+# Note each of these directories hold debug, release and .pdb files which gets quite big.
+# If you need these plugins, you should selectively install the specific dlls you need.
 INSTALL(
   DIRECTORY 
-      "${QT5_DIR}/qml/Qt"
-      "${QT5_DIR}/qml/QtGraphicalEffects"
-      "${QT5_DIR}/qml/QtQml"
-      "${QT5_DIR}/qml/QtQuick"
-      "${QT5_DIR}/qml/QtQuick.2"
-      "${QT5_DIR}/qml/QtWebView"
+      #"${QT5_DIR}/qml/Qt"
+      #"${QT5_DIR}/qml/QtGraphicalEffects"
+      #"${QT5_DIR}/qml/QtQml"
+      #"${QT5_DIR}/qml/QtQuick"
+      #"${QT5_DIR}/qml/QtQuick.2"
+      #"${QT5_DIR}/qml/QtWebView"
   DESTINATION bin
   COMPONENT thirdparty
 )
@@ -97,7 +100,6 @@ INSTALL(FILES
 			"${QT5_DIR}/bin/Qt5Quickd.dll"
 			"${QT5_DIR}/bin/Qt5Qmld.dll"
 			"${QT5_DIR}/bin/Qt5Networkd.dll"
-			#"${QT5_DIR}/bin/Qt5Multimediad.dll"
 			"${QT5_DIR}/bin/Qt5WebSocketsd.dll"			
 		DESTINATION bin
 		COMPONENT thirdparty
@@ -110,7 +112,6 @@ INSTALL(FILES
 			"${QT5_DIR}/bin/Qt5Quick.dll"
 			"${QT5_DIR}/bin/Qt5Qml.dll"
 			"${QT5_DIR}/bin/Qt5Network.dll"
-			#"${QT5_DIR}/bin/Qt5Multimedia.dll"
 			"${QT5_DIR}/bin/Qt5WebSockets.dll"			
 		DESTINATION bin
 		COMPONENT thirdparty

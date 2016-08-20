@@ -49,7 +49,7 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_executable(testqml ${sources})
 	target_link_libraries(testqml
 		Qt5::Widgets
-		Qt5::Qml 
+		Qt5::Qml
 		)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(testqml WIN32 ${sources})
@@ -71,7 +71,7 @@ endif ()
 # Install.
 INSTALL(TARGETS testqml
   RUNTIME DESTINATION bin
-  COMPONENT apps
+  COMPONENT unittests
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   BUNDLE DESTINATION .

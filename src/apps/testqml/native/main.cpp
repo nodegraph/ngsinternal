@@ -67,7 +67,8 @@
 int main(int argc, char *argv[]) {
   QGuiApplication app(argc, argv);
   QQmlApplicationEngine engine;
-  engine.setImportPathList(QStringList());
+  engine.addImportPath("qrc:/qml");
+  engine.addImportPath("qrc:/");
 
 #if ARCH == ARCH_IOS
   // Register QML types.
@@ -110,9 +111,8 @@ int main(int argc, char *argv[]) {
 #endif
 
 
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-    engine.setImportPathList(QStringList());
 
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     return app.exec();
 }
 
