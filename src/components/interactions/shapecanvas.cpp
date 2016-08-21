@@ -23,8 +23,8 @@
 #include <components/compshapes/inputnodeshape.h>
 #include <components/compshapes/nodeselection.h>
 #include <components/compshapes/outputnodeshape.h>
-#include <components/entities/entityids.h>
-#include <components/entities/componentids.h>
+#include <entities/entityids.h>
+#include <entities/componentids.h>
 #include <components/interactions/viewcontrols.h>
 #include <freetype-gl/texture-atlas.h>
 
@@ -66,6 +66,9 @@ void ShapeCanvas::initialize_fixed_deps() {
 
 void ShapeCanvas::update_state() {
   // Note the open gl context must be bound/active for this update.
+  if (!_quad_pipeline) {
+    return;
+  }
 
   // If the current group interaction is dirty, then load data from it.
   if (_current_interaction && dep_is_dirty(_current_interaction)) {

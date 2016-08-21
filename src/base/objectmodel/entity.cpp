@@ -10,7 +10,7 @@
 #include <base/utils/simpleloader.h>
 
 #include <boost/lexical_cast.hpp>
-#include <components/entities/factory.h>
+#include <entities/factory.h>
 
 namespace ngs {
 

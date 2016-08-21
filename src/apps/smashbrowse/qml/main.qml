@@ -6,7 +6,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 //import Qt.labs.settings 1.0
 
-import NodeGraphRendering 1.0
+//import NodeGraphRendering 1.0
 import smashbrowse.actionbars 1.0
 import smashbrowse.pages 1.0
 import smashbrowse.stackedpages 1.0
@@ -26,10 +26,15 @@ Rectangle {
 
     // Clean up routine.
     function on_closing(close) {
-        console.log('on closing called')
         if (app_comm.is_polling()) {
+            // Make sure the polling is stopped.
             app_comm.stop_polling()
-            app_comm.close_browser()
+            close.accepted = false
+            close_timer.start()
+        } else if (app_comm.nodejs_is_connected()) {
+            // Make nodejs shut itself down.
+            // It will close the browser as part of its shutdown.
+            app_comm.handle_request_from_app('{"request": "shutdown"}')
             close.accepted = false
             close_timer.start()
         }
@@ -145,6 +150,8 @@ Rectangle {
     }
 
     function update_dependencies() {
+        node_graph_page.node_graph = node_graph_item
+
         // Mode change connections.
         main_bar.switch_to_mode.connect(file_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)

@@ -1,0 +1,53 @@
+
+set(quick_src
+    eventtoinfo.cpp
+	nodegraphrenderer.cpp
+	nodegraphquickitemglobals.cpp
+	nodegraphquickitem.cpp
+	fborenderer.cpp
+	fboworker.cpp
+	texturedisplaynode.cpp
+    )
+   
+set(quick_headers
+    eventtoinfo.h
+    nodegraphquickitemglobals.h    
+    fborenderer.h
+)
+    
+set(moc_quick
+	nodegraphrenderer.h
+	nodegraphquickitem.h
+    fboworker.h
+    texturedisplaynode.h
+    )
+    
+qt5_wrap_cpp(quick_imps ${moc_quick})
+list(APPEND quick_src ${quick_imps})
+    
+add_library(ngs_quick  ${quick_src})
+generate_export_header(ngs_quick EXPORT_MACRO_NAME QUICK_EXPORT EXPORT_FILE_NAME quick_export.h)
+target_link_libraries(ngs_quick ngs_memoryallocator)
+ 
+target_link_libraries(ngs_quick 
+	ngs_objectmodel
+	ngs_device
+	ngs_interactions
+	ngs_glewhelper
+	ngs_comms
+	Qt5::OpenGL
+    Qt5::Core
+	Qt5::Quick
+	Qt5::Network
+	Qt5::WebSockets
+	libeay32
+	ssleay32
+) 
+ 
+# Install.
+INSTALL(TARGETS ngs_quick
+  RUNTIME DESTINATION bin
+  COMPONENT gui
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)

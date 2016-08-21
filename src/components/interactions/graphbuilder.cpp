@@ -2,10 +2,10 @@
 #include <base/objectmodel/deploader.h>
 
 // For building test graphs.
-#include <components/entities/guientities.h>
-#include <components/entities/nonguientities.h>
+#include <entities/guientities.h>
+#include <entities/nonguientities.h>
 #include <components/compshapes/compshape.h>
-#include <components/entities/factory.h>
+#include <entities/factory.h>
 #include <boost/lexical_cast.hpp>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>

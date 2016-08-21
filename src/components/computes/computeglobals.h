@@ -4,8 +4,8 @@
 
 
 namespace ngs {
-class AppCommunication;
+class AppComm;
 
-COMPUTES_EXPORT extern AppCommunication* g_app_comm;
+COMPUTES_EXPORT extern AppComm* g_app_comm;
 
 }

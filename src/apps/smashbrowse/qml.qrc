@@ -51,13 +51,11 @@
         <file>qml/smashbrowse/appwidgets/AppLoader.qml</file>
         <file>qml/smashbrowse/appwidgets/AppLabelButton.qml</file>
         <file>qml/smashbrowse/appwidgets/AppLabel.qml</file>
-        <file>qml/smashbrowse/appwidgets/AppWebView.qml</file>
         <file>qml/smashbrowse/appwidgets/AppCheckBox.qml</file>
         <file>qml/smashbrowse/appwidgets/AppRadioButton.qml</file>
         
         <!-- MenuModels -->
         <file>qml/smashbrowse/menumodels/qmldir</file>
-        <file>qml/smashbrowse/menumodels/default.txt</file>
         <file>qml/smashbrowse/menumodels/CreateNodeActions.qml</file>
         <file>qml/smashbrowse/menumodels/NodeActions.qml</file>
         <file>qml/smashbrowse/menumodels/GroupNodeActions.qml</file>

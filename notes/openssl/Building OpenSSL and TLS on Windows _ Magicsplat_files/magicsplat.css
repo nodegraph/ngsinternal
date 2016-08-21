@@ -1,0 +1,22 @@
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+.footer {
+    border-top: #ccc solid thin;
+    font-size: smaller;
+}
+
+.not-used-navbar {
+    background-image: url(images/magicsplat.png);
+    background-position: top right;
+    background-repeat: no-repeat;
+}
+
+.page_info {
+    font-size: smaller;
+}

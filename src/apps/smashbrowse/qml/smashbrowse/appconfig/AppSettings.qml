@@ -23,8 +23,8 @@ Item{
         }
     }
 
-    property bool hide_passwords: true
-    property int max_node_posts: 1000
+    property bool hide_passwords: file_model.hide_passwords
+    property int max_node_posts: file_model.max_node_posts
     
     // -------------------------------------------------------------------
     // The 3 main sections of our gui.

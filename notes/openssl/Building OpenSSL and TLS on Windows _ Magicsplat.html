@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://www.magicsplat.com/blog/building-openssl-tls/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+      <meta name="description" content="Describes the build procedure for building OpenSSL and the Tcl TLS extension">
+    
+
+    
+      <link rel="canonical" href="http://www.magicsplat.com/blog/building-openssl-tls/">
+    
+    
+    
+    
+      <link rel="icon" href="http://www.magicsplat.com/favicon.ico">
+    
+    
+      <link rel="home" type="application/rss+xml" href="http://www.magicsplat.com/blog/rss.xml">
+    
+    
+    <title>Building OpenSSL and TLS on Windows | Magicsplat</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="./Building OpenSSL and TLS on Windows _ Magicsplat_files/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="./Building OpenSSL and TLS on Windows _ Magicsplat_files/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- Custom stylesheets, if any -->
+    
+      <link href="./Building OpenSSL and TLS on Windows _ Magicsplat_files/magicsplat.css" rel="stylesheet">
+    
+    
+  <script type="text/javascript" async="" src="./Building OpenSSL and TLS on Windows _ Magicsplat_files/analytics.js"></script><script type="text/javascript" async="" src="./Building OpenSSL and TLS on Windows _ Magicsplat_files/embed.js"></script></head>
+
+  <body>
+    
+<!-- Google Tag Manager -->
+<noscript>&lt;iframe src="//www.googletagmanager.com/ns.html?id=GTM-PNBD6P"
+height="0" width="0" style="display:none;visibility:hidden"&gt;&lt;/iframe&gt;</noscript>
+<script async="" src="./Building OpenSSL and TLS on Windows _ Magicsplat_files/gtm.js"></script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PNBD6P');</script>
+<!-- End Google Tag Manager -->
+        
+    <div class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="http://www.magicsplat.com/"><img src="./Building OpenSSL and TLS on Windows _ Magicsplat_files/magicsplat.png"></a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+          
+            <li><a href="http://www.magicsplat.com/software">Software</a></li>
+          
+            <li><a href="http://www.magicsplat.com/blog/">Blog</a></li>
+          
+            <li><a href="http://www.magicsplat.com/book">Book</a></li>
+          
+            <li><a href="http://www.magicsplat.com/articles">Articles</a></li>
+          
+            <li><a href="http://www.magicsplat.com/contact">Contact</a></li>
+          
+          </ul>
+        
+          <ul class="nav navbar-nav navbar-right">
+            <li><a rel="home" type="application/rss+xml" href="http://www.magicsplat.com/blog/rss.xml">RSS</a></li>
+          </ul>
+        
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+
+    <div class="container">
+      <div class="row">
+        
+          
+          <section class="col-sm-9">
+            
+
+    
+        
+        <header>
+            <h1 class="page-title">Building OpenSSL and TLS on Windows</h1><div class="page-info">Published <time datetime="2015-03-01" class="date">2015-03-01</time>, updated <time datetime="2015-03-01" class="modified">2015-03-01</time></div>
+        </header>
+        <p>Building the Tcl TLS extension on Unix/Linux is straightforward
+because OpenSSL libraries are already present and installed. It's a
+different matter on Windows where you need to build OpenSSL yourself.
+This short article describes the process.</p>
+
+<!-- more -->
+
+<p>The actual steps required to build OpenSSL and Tcl TLS are very few
+as you will see below; that is, once you know what to do and more
+important, what <em>not</em> to do. To get there though took me the better
+part of an evening, so I'm writing it down. No, not for you, dear reader,
+but for myself for when I next need to do a build.</p>
+
+<h2>Prerequisites</h2>
+
+<p>These instructions are for building using the Microsoft toolchain, not
+Cygwin or MinGW. I use Visual C++ 6.0 for my 32-bit builds and the
+compiler from the February 2003 platform SDK for 64-bit builds. Why
+such ancient compilers?  Well, because I'm kind of ancient
+myself. Also using older compilers has a major advantage - you do not
+need to redistribute the C runtime libraries with your extension
+because the runtimes for those compilers are already present on all
+Windows systems.</p>
+
+<p>In addition to the compiler, you need to have two additional tools
+installed:</p>
+
+<ul>
+<li><p>A suitable Perl interpreter where <em>suitable</em> means an interpreter
+  that will not barf on the Windows OpenSSL build scripts. In particular,
+  do <em>not</em> assume, as I did, that I already have Msys installed so I can
+  just use the Perl that comes with that. I landed up using the
+  <a href="http://www.activestate.com/">ActiveState</a> Perl distribution. And try
+  not to be a bonehead, as I was, and stick the installation directory
+  later in the PATH than the Msys Perl if you have one.</p>
+
+</li>
+<li><p>The <a href="http://www.nasm.us/">NASM</a> open source assembler.
+  This is actually optional but you will need it if you are following
+  my steps. Using the assembler allows OpenSSL to be built with
+  some performance optimized x86 assembler crypto routines.</p>
+
+</li></ul>
+
+<h2>Building OpenSSL</h2>
+
+<p>Download the <a href="http://openssl.org/">OpenSSL</a> source distribution.
+The latest version at the time of writing
+was 1.0.2 which is what I used for my build.</p>
+
+<p>Every time you do an OpenSSL build, do it by extracting the distribution
+into a <em>new</em> empty directory and working there. Do <em>not</em> rebuild
+from an existing source directory unless you are absolutely sure that
+target platform options are <em>exactly</em> the same.</p>
+
+<p>First start a new DOS shell configured for the 32-bit Visual C++
+compiler, either from the Windows Program Menu or running the
+appropriate <code>vcvars32.bat</code>.</p>
+
+<p>Then cd to the OpenSSL source directory and start off by configuring
+OpenSSL for a 32-bit Windows build using Visual C++.
+Note all steps below are done from the toplevel OpenSSL source directory.
+In our demonstration, we have extracted to the <code>openssl-src</code> directory.</p>
+
+<pre><code>cd openssl-src
+perl Configure VC-WIN32 --prefix=c:\temp\openssl\x86
+</code></pre>
+
+<p>The <code>--prefix</code> option specifies where OpenSSL will be installed. Any
+directory will do <em>as long as you do not specify the same directory
+for the 64-bit build later</em>.</p>
+
+<p>Next we have to build the Visual C++ makefiles based on the
+build configuration in the <code>ms</code> directory.</p>
+
+<pre><code>ms\do_nasm
+</code></pre>
+
+<p>Once the makefile are built, invoke nmake to compile and link</p>
+
+<pre><code>nmake -f ms\nt.mak
+</code></pre>
+
+<p>In the above <code>nmake</code> commands, we have chosen to run the <code>ms\nt.mak</code>
+makefile because we wanted static libraries to link to our Tcl TLS
+extension. We could have run <code>ms\ntdll.mak</code> instead to build shared DLL
+versions of the library. However, I built the static version
+because I prefer the Tcl TLS extension to
+be one single binary for easy of distribution, inclusion in a TclKit
+or StarPack.</p>
+
+<p>Once the build is completed, verify it by running the test suite.
+Change to the <code>out32</code> subdirectory before running the test suite (
+or <code>out32dll</code> subdirectory if you did the shared DLL build).</p>
+
+<pre><code>cd out32
+..\ms\test
+</code></pre>
+
+<p>You should see a <code>passed all tests</code> message at the end of the run.</p>
+
+<p>The final step is to package and install the OpenSSL binaries.</p>
+
+<pre><code>cd ..
+nmake -f ms\nt.mak install
+</code></pre>
+
+<p>Again, specify <code>ntdll.mak</code> if you build the shared DLL version.
+If all goes well, you should now have a complete OpenSSL distribution
+in the directory you specified through the <code>--prefix</code> option.</p>
+
+<p>The lazy reader might, as lazy people are wont to do, look to avoid
+all that work by downloading existing Windows binaries instead.
+There are good reasons I prefer to build from source. First,
+I prefer using the static OpenSSL libraries for reasons I mentioned
+above. Second, pre-built binaries do not allow control of build options
+such as ciphers. Third, and perhaps most important, when you need
+to update OpenSSL to fix newly discovered vulnerabilities, you are
+at the mercy of someone else to build an updated binary.</p>
+
+<h2>Building the TLS extension</h2>
+
+<p>Now that OpenSSL is built, we can move on to building the TLS extension.
+The Tcl TLS extension sources can be downloaded from
+<a href="http://sf.net/p/tls">SourceForge</a>. Extract it into its own directory
+and change to the <code>win</code> subdirectory beneath it.</p>
+
+<p>You <em>may</em> need to edit <code>makefile.vc</code> to change the OpenSSL library
+names from <code>ssleay32s.lib</code> and <code>libeay32s.lib</code> to <code>ssleay32.lib</code> and
+<code>libeay32.lib</code> respectively. Then run <code>nmake</code> to build and install
+the extension as follows:</p>
+
+<pre><code>nmake -f makefile.vc OPENSSL=c:\temp\openssl\x86 TCLDIR=c:\src\twapi\tcl-tk\85 INSTALLDIR=c:\tcl\863\x86
+nmake -f makefile.vc install OPENSSL=c:\temp\openssl\x86 TCLDIR=c:\src\twapi\tcl-tk\85 INSTALLDIR=c:\tcl\863\x86
+</code></pre>
+
+<p>The TLS extension makefile follows the standard format for Tcl extensions
+so the above command should need no explaining. The only unusual thing
+is the need to set <code>OPENSSL</code> to point to the location of the OpenSSL
+distribution we just built (matching the <code>--prefix</code> option passed
+to the OpenSSL build).</p>
+
+<h2>Building 64-bit versions</h2>
+
+<p>Building the 64 bit versions follows the same pattern except for
+slightly different commands so we only summarize here.</p>
+
+<p>To repeat a previous warning, do <em>not</em> build the 64-bit OpenSSL version
+from the same directory that the 32-bit version was built from. Not
+even if you do a <code>make clean</code>.</p>
+
+<p>Start a new DOS command shell to make sure no environment settings
+are left over from the 32-bit build. Run the appropriate <code>vcvars32.bat</code>
+for your 64-bit Visual C++ compiler to set up its environment. Then
+change to the newly extracted directory and run the following commands:</p>
+
+<pre><code>perl Configure VC-WIN64A --prefix=c:\temp\openssl\x64
+ms\do_win64a
+</code></pre>
+
+<p>Note the platform is now <code>VC-WIN64A</code> and we are using <code>ms\do_win64a</code>
+instead of <code>ms\do_nasm</code>. Also ensure the directory passed to
+<code>--prefix</code> is different from that for the 32-bit builds.</p>
+
+<p>The remaining commands are identical to those for the 32-bit builds.</p>
+
+<pre><code>nmake -f ms\nt.mak
+cd out32
+..\ms\test
+cd ..
+nmake -f ms\nt.mak install
+</code></pre>
+
+<p>The steps for building the 64-bit TLS extension is the same as before
+except that you need to make sure you pass the paths appropriate
+for 64-bits. For example, <code>OPENSSL</code> should point to
+<code>c:\temp\openssl\x64</code>.</p>
+
+<h2>Testing</h2>
+
+<p>To verify the built TLS extension, cd to the tests diectory in
+the TLS source distribution and run the following command:</p>
+
+<pre><code>tclsh all.tcl
+</code></pre>
+
+<p>You may see two test failures related to ciphers. This is because
+the test depends on enumerating the number of ciphers built into
+OpenSSL and can change depending on both the OpenSSL version and
+build options.</p>
+
+<h2>Non-default build options</h2>
+
+<p>You may notice the built extension is fairly large, around 1 MB.
+This is at least in part because the default OpenSSL build probably
+includes a whole bunch of ciphers that are not required for the
+TLS extension. You can exclude these by specifying options
+to the <code>perl Configure</code> command. However, I have not looked into
+which ciphers are actually required.</p>
+
+<h2>And so where are the binaries?</h2>
+
+<p>I am unsure what export restrictions there are on distributing
+crypto software, both in the US and my country of residence.
+And I can't be bothered to find out. Thus I have not made binaries
+available. Also, what's that saying about teaching a man to fish... :-)</p>
+
+<p>Happy Tcl'ing!</p>
+        <nav class="container-fluid tags">Tagged: <ul><li class="tag"><a href="http://www.magicsplat.com/blog/tags/tcl/">Tcl</a></li> <li class="tag"><a href="http://www.magicsplat.com/blog/tags/tls/">tls</a></li> <li class="tag"><a href="http://www.magicsplat.com/blog/tags/openssl/">openssl</a></li></ul></nav><!-- tags -->
+        
+    
+
+
+            
+          </section>
+          <div class="col-sm-3 well content">
+            
+            <nav class="sidebar-links"><h3>Posts</h3><ul><li><a href="http://www.magicsplat.com/blog/promise-error-handling/">Exception handling in promises</a></li><li><a href="http://www.magicsplat.com/blog/promises-by-example/">Promises by example</a></li><li><a href="http://www.magicsplat.com/blog/promises/">Making promises in Tcl</a></li><li><a href="http://www.magicsplat.com/blog/representation/">Exploring Tcl internals from script - Part I</a></li><li><a href="http://www.magicsplat.com/blog/tdbc-article/">Introduction to Tcl Database Connectivity</a></li><li><a href="http://www.magicsplat.com/blog/hotkeys-on-demand/">Hotkeys on Demand</a></li><li><a href="http://www.magicsplat.com/blog/playing-god/">Playing God on Windows</a></li><li><a href="http://www.magicsplat.com/blog/how-do-i-exec-thee/">How do I exec thee? Let me count the ways...</a></li><li><a href="http://www.magicsplat.com/blog/building-openssl-tls/">Building OpenSSL and TLS on Windows</a></li><li><a href="http://www.magicsplat.com/blog/automating-vmware-with-vix/">Automating VMware with VIX</a></li></ul></nav><!-- sidebar-links -->
+            <nav class="tag-cloud"><h3>Tags</h3><ul><li><a href="http://www.magicsplat.com/blog/tags/tdbc/">TDBC</a></li><li><a href="http://www.magicsplat.com/blog/tags/tcl/">Tcl</a></li><li><a href="http://www.magicsplat.com/blog/tags/exec/">exec</a></li><li><a href="http://www.magicsplat.com/blog/tags/openssl/">openssl</a></li><li><a href="http://www.magicsplat.com/blog/tags/processes/">processes</a></li><li><a href="http://www.magicsplat.com/blog/tags/promises/">promises</a></li><li><a href="http://www.magicsplat.com/blog/tags/test-automation/">test automation</a></li><li><a href="http://www.magicsplat.com/blog/tags/tls/">tls</a></li><li><a href="http://www.magicsplat.com/blog/tags/tutorial/">tutorial</a></li><li><a href="http://www.magicsplat.com/blog/tags/twapi/">twapi</a></li><li><a href="http://www.magicsplat.com/blog/tags/virtual-machines/">virtual machines</a></li><li><a href="http://www.magicsplat.com/blog/tags/windows/">windows</a></li></ul></nav><!-- tag-cloud -->
+          </div>
+         
+        <div>
+
+        </div>
+      </div>
+
+
+      <div class="comments">
+        <div id="disqus_thread"><iframe id="dsq-app2" name="dsq-app2" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./Building OpenSSL and TLS on Windows _ Magicsplat_files/saved_resource.html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 584px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+        <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'magicsplat'; // required: replace example with your forum shortname
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the &lt;a href="http://disqus.com/?ref_noscript"&gt;comments powered by Disqus.&lt;/a&gt;</noscript>
+        
+    </div>
+
+
+      <footer class="footer">
+        <div class="powered-by"><small>Powered by <a href="https://github.com/tclssg/tclssg">Tclssg</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small></div>
+      </footer>
+
+    </div><!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./Building OpenSSL and TLS on Windows _ Magicsplat_files/jquery.min.js"></script>
+    <script src="./Building OpenSSL and TLS on Windows _ Magicsplat_files/bootstrap.min.js"></script>
+    
+
+</body></html>

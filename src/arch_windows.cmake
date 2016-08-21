@@ -29,7 +29,7 @@ set(GLEW_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glew-1.13.0")
 set(GLM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/glm-0.9.5.4")
 set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/freetype-gl")
 set(LIBSODIUM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/libsodium-1.0.10")
-set(OPENSSL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/openssl-1.0.2h-vs2015")
+set(OPENSSL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/vs2015/openssl-1.0.2h_x64_${build_type}")
 
 # ---------------------------------------------------------
 # Our build setup for windows.
@@ -80,7 +80,7 @@ link_directories("${QT5_DIR}/lib")
 link_directories("${FREETYPE_DIR}/lib/win64")
 link_directories("${FREETYPE_GL_DIR}/lib/win64")
 link_directories("${LIBSODIUM_DIR}/x64/${CMAKE_BUILD_TYPE}/v140/dynamic")
-link_directories("${OPENSSL_DIR}/lib64")
+link_directories("${OPENSSL_DIR}/lib")
 
 if (${gles_use_angle} STREQUAL "0")
 	link_directories("${GLEW_DIR}/lib/Debug MX/x64")

@@ -17,10 +17,18 @@ class DEVICE_EXPORT ViewportParams {
     width(pwidth),
     height(pheight)
   {}
+  bool is_empty() const{
+    if ((width == 0) && (height == 0)) {
+      return true;
+    }
+    return false;
+  }
+
   int x;
   int y;
   int width;
   int height;
+
 };
 
 class DEVICE_EXPORT PerspectiveParams {

@@ -77,6 +77,8 @@ set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/install" CACHE PATH "Choose the 
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
+
+# The build_type variable is just an all lowercase version of CMAKE_BUILD_TYPE.
 if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
     add_definitions("-DBUILD_TYPE=${kdebug}")
     set(build_type "debug")
@@ -192,6 +194,8 @@ add_subdirectory(apps)
 add_subdirectory(external)
 add_subdirectory(base)
 add_subdirectory(components)
+add_subdirectory(guicomponents)
+add_subdirectory(entities)
 add_subdirectory(gui)
 add_subdirectory(unittests)
 

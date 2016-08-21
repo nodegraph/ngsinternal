@@ -10,7 +10,7 @@
 
 #include <base/device/geometry/textlimits.h>
 
-#include <components/entities/entityids.h>
+#include <entities/entityids.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
 

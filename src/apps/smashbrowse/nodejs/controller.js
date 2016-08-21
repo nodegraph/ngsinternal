@@ -289,6 +289,10 @@ function receive_from_app(message) {
     	case 'check_license':
     		check_license(request.edition, request.license)
     		break
+    	case 'shutdown': {
+    		close_browser().then(function(){process.exit(-1)})
+    		break;
+    	}
         case 'check_browser_is_open':
             function on_response(open) {
                 if (!open) {
@@ -477,8 +481,8 @@ function open_browser(url) {
 }
 
 function close_browser() {
-    driver.quit()
-    driver = null
+    return driver.quit()
+    //driver = null
 }
 
 //Returns a promise which navigates the browser to another url.

@@ -10,22 +10,19 @@
 #include <components/compshapes/compshapecollective.h>
 #include <components/interactions/groupinteraction.h>
 #include <components/compshapes/compshapecollective.h>
-#include <components/entities/guientities.h>
+#include <entities/guientities.h>
 #include <components/interactions/graphbuilder.h>
-#include <gui/quick/nodegraphquickitem.h>
-#include <gui/quick/nodegraphquickitemglobals.h>
-
-// Qt.
+#include <guicomponents/quick/fborenderer.h>
+#include <guicomponents/quick/fboworker.h>
+#include <guicomponents/quick/nodegraphquickitem.h>
+#include <guicomponents/quick/nodegraphquickitem.h>
+#include <guicomponents/quick/nodegraphquickitemglobals.h>
 #include <QtCore/QThread>
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QApplication>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 #include <QtQuick/QQuickView>
-
-#include <gui/quick/fborenderer.h>
-#include <gui/quick/fboworker.h>
-#include <gui/quick/nodegraphquickitem.h>
 
 #include <QtWebView/QtWebView>
 
@@ -72,8 +69,8 @@ int main(int argc, char **argv)
 #endif
 
     // App the FBOWorker and FBORender components to the app root.
-    new_ff FBORenderer(g_app_root);
-    new_ff FBOWorker(g_app_root);
+    //new_ff FBORenderer(g_app_root);
+    //new_ff FBOWorker(g_app_root);
 
     // Link up our default dependencies.
     g_app_root->initialize_deps();
@@ -82,7 +79,7 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
 
     //QGuiApplication app(argc, argv);
-    qmlRegisterType<NodeGraphQuickItem>("SceneGraphRendering", 1, 0, "NodeGraphQuickItem");
+//    qmlRegisterType<NodeGraphQuickItem>("SceneGraphRendering", 1, 0, "NodeGraphQuickItem");
 
 //    // Create our qml engine.
 //    QQmlApplicationEngine engine;

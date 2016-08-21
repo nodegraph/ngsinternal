@@ -1,7 +1,7 @@
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/basefactory.h>
 #include <base/objectmodel/deploader.h>
-#include <components/entities/entityids.h>
+#include <entities/entityids.h>
 #include <base/objectmodel/lowerhierarchychange.h>
 
 #include <components/computes/groupnodecompute.h>

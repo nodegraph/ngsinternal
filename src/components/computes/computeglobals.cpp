@@ -2,5 +2,5 @@
 #include <cstddef>
 
 namespace ngs {
-  AppCommunication* g_app_comm = NULL;
+  AppComm* g_app_comm = NULL;
 }

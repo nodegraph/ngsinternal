@@ -1,7 +1,7 @@
 #include <base/glewhelper/glewhelper.h>
 #include <base/objectmodel/basefactory.h>
 #include <gui/widget/nodegrapheditor.h>
-#include <components/entities/guientities.h>
+#include <entities/guientities.h>
 #include <base/memoryallocator/taggednew.h>
 #include <base/memoryallocator/bootstrap.h>
 #include <components/interactions/graphbuilder.h>

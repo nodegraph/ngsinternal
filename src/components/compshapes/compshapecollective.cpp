@@ -4,7 +4,7 @@
 #include <base/objectmodel/lowerhierarchychange.h>
 #include <base/utils/permit.h>
 
-#include <components/entities/entityids.h>
+#include <entities/entityids.h>
 
 #include <components/compshapes/compshape.h>
 #include <components/compshapes/compshapecollective.h>

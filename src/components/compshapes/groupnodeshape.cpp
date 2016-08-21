@@ -2,7 +2,7 @@
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/lowerhierarchychange.h>
 #include <base/objectmodel/basefactory.h>
-#include <components/entities/entityids.h>
+#include <entities/entityids.h>
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/outputshape.h>
 

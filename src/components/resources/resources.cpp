@@ -12,8 +12,8 @@
 
 #include <base/utils/fileutil.h>
 #include <base/memoryallocator/taggednew.h>
-#include <components/entities/componentinstancer.h>
-#include <components/entities/entityinstancer.h>
+#include <entities/componentinstancer.h>
+#include <entities/entityinstancer.h>
 
 //#include <unistd.h>
 #include <limits.h>

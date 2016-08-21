@@ -2,7 +2,7 @@
 //#include <components/interactions/interactions_export.h>
 //#include <base/device/transforms/glmhelper.h>
 //#include <base/objectmodel/component.h>
-//#include <components/entities/componentids.h>
+//#include <entities/componentids.h>
 //#include <map>
 //#include <set>
 //#include <vector>

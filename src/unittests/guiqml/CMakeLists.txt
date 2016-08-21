@@ -19,6 +19,7 @@ elseif (${ARCH} STREQUAL ARCH_IOS)
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	add_executable(testguiqml main.cpp ${resources})
 	target_link_libraries(testguiqml 
+	    ngs_quick
 		Qt5::Qml)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
 	add_executable(testguiqml main.cpp ${resources})

@@ -87,7 +87,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             AppLabel {
                 id: upgrade_license_label
-                text: "upgrade license? "
+                text: "upgrade license "
                 anchors {
                     leftMargin: app_settings.page_left_margin
                     rightMargin: app_settings.page_right_margin

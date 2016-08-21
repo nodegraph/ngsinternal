@@ -3,7 +3,7 @@
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
 
-#include <components/entities/nonguientities.h>
+#include <entities/nonguientities.h>
 
 #include <base/memoryallocator/taggednew.h>
 #include <components/computes/inputcompute.h>

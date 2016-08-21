@@ -1,7 +1,7 @@
 #pragma once
 #include <components/interactions/interactions_export.h>
 #include <base/objectmodel/component.h>
-#include <components/entities/componentids.h>
+#include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
 #include <base/device/devicebasictypesgl.h>
 

@@ -16,7 +16,7 @@
 #include <components/compshapes/nodeselection.h>
 #include <components/compshapes/nodeshape.h>
 #include <components/computes/compute.h>
-#include <components/entities/entityids.h>
+#include <entities/entityids.h>
 #include <components/computes/inputcompute.h>
 #include <sstream>
 #include <unordered_map>

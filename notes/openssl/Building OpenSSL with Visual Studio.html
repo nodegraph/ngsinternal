@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<!-- saved from url=(0085)http://p-nand-q.com/programming/windows/building_openssl_with_visual_studio_2013.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="./Building OpenSSL with Visual Studio_files/css" rel="stylesheet" type="text/css">
+    <link href="./Building OpenSSL with Visual Studio_files/css(1)" rel="stylesheet" type="text/css">
+    <link href="./Building OpenSSL with Visual Studio_files/css(2)" rel="stylesheet" type="text/css">
+    <title>Building OpenSSL with Visual Studio</title>
+    <link href="./Building OpenSSL with Visual Studio_files/bootstrap.css" rel="stylesheet">
+    <link href="./Building OpenSSL with Visual Studio_files/my.css" rel="stylesheet">
+    <link href="./Building OpenSSL with Visual Studio_files/mono-blue.css" rel="stylesheet">
+    <script src="./Building OpenSSL with Visual Studio_files/ie-emulation-modes-warning.js"></script>  
+<!--[if lte IE 9]>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"></script>
+<![endif]-->     
+</head>
+<body>
+<div class="container">
+<nav class="navbar navbar-default" role="navigation">
+
+<div class="container-fluid">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<a class="navbar-brand" href="http://p-nand-q.com/index.html">p-nand-q.com</a>
+</div>
+
+<div id="navbar" class="navbar-collapse collapse">
+<ul class="nav navbar-nav">
+
+
+<li class="dropdown">
+<a href="http://p-nand-q.com/programming/windows/building_openssl_with_visual_studio_2013.html#" class="dropdown-toggle" data-toggle="dropdown">C++ <span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Articles</li>
+<li><a href="http://p-nand-q.com/programming/cplusplus/stl/index.html"><b>A Series on understanding STL headers</b></a></li>
+<li><a href="http://p-nand-q.com/programming/cplusplus/using_member_functions_with_c_function_pointers.html"><b>C++ Member Functions with C Function Pointers</b></a></li>
+<li><a href="http://p-nand-q.com/programming/cplusplus/registering_global_objects.html"><b>Registering global objects</b></a></li>
+<li class="divider"></li>
+<li class="dropdown-header">Obfuscation exercises</li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/cpp/index.html"><b>Calculating PI to an arbitrary number of digits</b> and</a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/cpp/quicksort.html"><b>Elegant, well-documented Quicksort variant</b>...</a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/cpp/quicksort.html"><b>Yet another obfuscation FAQ</b></a></li>
+<li class="divider"></li>
+<li><a href="http://p-nand-q.com/programming/cplusplus/index.html"><b>More...</b></a></li>
+</ul>
+</li>             
+
+<li class="dropdown">
+<a href="http://p-nand-q.com/programming/windows/building_openssl_with_visual_studio_2013.html#" class="dropdown-toggle" data-toggle="dropdown">Python <span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">General</li>
+<li><a href="http://p-nand-q.com/python/algorithms/index.html"><b>Algorithms</b> and</a></li>
+<li><a href="http://p-nand-q.com/python/data-types/index.html"><b>Data Structures</b>...</a></li>
+<li class="divider"></li>
+<li class="dropdown-header">Articles</li>
+<li><a href="http://p-nand-q.com/python/lambda.html"><b>Stupid Lambda Tricks</b></a></li>
+<li class="divider"></li>
+<li class="dropdown-header">Obfuscation exercises</li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/python/index.html"><b>Calculating PI to an arbitrary number of digits</b> and</a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/python/quicksort.html"><b>Lambdaizing Python Code</b></a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/python/more.html"><b>Obfuscated Python</b></a></li>
+<li class="divider"></li>
+<li><a href="http://p-nand-q.com/python/index.html"><b>More...</b></a></li>
+</ul>
+</li>
+
+<li class="dropdown">
+<a href="http://p-nand-q.com/programming/windows/building_openssl_with_visual_studio_2013.html#" class="dropdown-toggle" data-toggle="dropdown">Programming <span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Java</li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/java/computed_gotos_howto.html"><b>Computed GOTOs - HOWTO</b></a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/java/index.html"><b>Calculating PI to an arbitrary number of digits</b></a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/java/quicksort.html"><b>Quicksort</b></a></li>
+<li class="divider"></li>
+<li class="dropdown-header">Objective-C</li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/objective-c/index.html"><b>Calculating PI to an arbitrary number of digits</b></a></li>
+<li class="divider"></li>
+<li class="dropdown-header">Windows</li>
+<li><a href="http://p-nand-q.com/programming/windows/git/index.html"><b>GIT</b> for Subversion users</a></li>
+<li><a href="http://p-nand-q.com/programming/windows/wix/index.html"><b>WIX</b> for the impatient</a></li>
+<li><a href="http://p-nand-q.com/programming/windows/writingw8apps.html">Writing <b>Apps for Windows 8</b></a></li>
+<li><a href="http://p-nand-q.com/programming/windows/open_source_project_builds.html">Build instructions for <b>Open Source Projects with Visual Studio</b></a></li>
+<li class="divider"></li>
+<li><a href="http://p-nand-q.com/programming/index.html"><b>More...</b></a></li>
+</ul>
+</li>       
+
+<li class="dropdown">
+<a href="http://p-nand-q.com/programming/windows/building_openssl_with_visual_studio_2013.html#" class="dropdown-toggle" data-toggle="dropdown">Languages <span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Programming Languages that I have written</li>
+<li><a href="http://p-nand-q.com/programming/languages/java2k/index.html"><b>Java2K</b> is the only truly stochastic programming language in the world</a></li>
+<li><a href="http://p-nand-q.com/programming/languages/sorted/index.html"><b>Sorted!</b>, winner of the <em>Award for Esoteric Language of the Year 2000</em>, is good, clean fun</a></li>
+<li><a href="http://p-nand-q.com/programming/languages/smith/index.html"><b>SMITH#</b> is to SMITH, what C# is to C</a></li>
+<li><a href="http://p-nand-q.com/programming/languages/justif.html"><b>JUSTIF &amp; RECURSION</b> is an experiment in language minimalism</a></li>
+<li><a href="http://p-nand-q.com/programming/languages/i/index.html"><b><em>i</em>®™</b> is inspired by my reading of Microsofts' Code Complete 2</a></li>
+<li><a href="http://p-nand-q.com/programming/languages/TMMLPTEALPAITAFNFAL.html"><b>TMMLPTEALPAITAFNFAL</b> is job-security embodied in a programming language</a></li>
+<li><a href="http://p-nand-q.com/programming/languages/gplz/index.html"><b>THE GREAT PYTHON LANGUAGE ZOO</b> is a facility in which <del>animals</del> languages are confined within enclosures</a></li>
+<li class="divider"></li>
+<li><a href="http://p-nand-q.com/programming/languages/index.html"><b>More...</b></a></li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="http://p-nand-q.com/programming/windows/building_openssl_with_visual_studio_2013.html#" class="dropdown-toggle" data-toggle="dropdown">Humor <span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Obfuscation is for the whole family</li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/c-sharp/index.html"><b>Calculating Pi to an arbitrary number of digits</b></a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/c-sharp/quicksort.html"><b>Best practices for Quicksort implementations</b></a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/cpp/more.html"><b>Obfuscating C/C++</b> - a FAQ</a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/python/more.html"><b>Obfuscating Python</b> - what good is a language that you cannot obfuscate?</a></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/java/computed_gotos_howto.html"><b>Computed GOTOs in Java</b> - adding missing language features</a></li>
+<li class="divider"></li>
+<li><a href="http://p-nand-q.com/programming/obfuscation/index.html"><b>More...</b></a></li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="http://p-nand-q.com/programming/windows/building_openssl_with_visual_studio_2013.html#" class="dropdown-toggle" data-toggle="dropdown">Tools <span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Windows System Administration</li>
+<li><a href="http://p-nand-q.com/download/regdiff.html"><b>regdiff</b> can diff/merge registry files</a></li>
+<li><a href="http://p-nand-q.com/download/pserv_cpl/index.html"><b>pserv.cpl</b> can control services, devices and lots of other things</a></li>
+<li><a href="http://p-nand-q.com/download/rfstool/index.html"><b>rfstool</b> can access Linux ReiserFS partitions from Windows</a></li>
+<li><a href="http://p-nand-q.com/download/gkalk/index.html"><b>gkalk</b> is a free-form calculator</a></li>
+<li><a href="http://p-nand-q.com/download/gtools/index.html"><b>gtools</b> is a collection of various tools in one installer</a></li>
+<li class="divider"></li>
+<li class="dropdown-header">Web-Protocol Related Tools</li>
+<li><a href="http://p-nand-q.com/download/shicks/index.html"><b>shicks</b> is a mail server for Windows and Linux</a></li>
+<li><a href="http://p-nand-q.com/download/pop3filter/index.html"><b>pop3filter</b> is a mail proxy to filter spam</a></li>
+<li><a href="http://p-nand-q.com/download/eftepede.html"><b>eftepede</b> is a FTP server that doesn't suck</a></li>
+<li class="divider"></li>
+<li><a href="http://p-nand-q.com/download/index.html"><b>More...</b></a></li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="http://p-nand-q.com/programming/windows/building_openssl_with_visual_studio_2013.html#" class="dropdown-toggle" data-toggle="dropdown">Misc <span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Stuff that really didn't fit in anywhere else</li>
+<li><a href="http://p-nand-q.com/music/index.html"><b>Music</b></a></li>
+<li><a href="http://p-nand-q.com/business/index.html"><b>Business</b></a></li>
+<li><a href="http://kiva.org/"><b>Doing Good</b></a></li>
+<li class="divider"></li>
+<li><a href="http://p-nand-q.com/about/index.html"><b>Impressum</b></a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</nav>
+<div class="main">
+<h1>Building OpenSSL with Visual Studio</h1>
+
+<p><b>New:</b></p>
+<ul class="dash">
+    <li>Now supports both the 1.0.1 and 1.0.2 branch</li>
+    <li>Now supports Visual Studio 2010, 2013 and 2015</li>
+    <li>Now supports both static and dynamic libraries</li>
+</ul>
+
+<h2>Downloads</h2>
+<p>I provide downloads for Visual Studio 2010 and 2015. I had to remove my 2013 installation due to space constraints, but the build files are still there so you can do it, too.</p>
+<table class="table table-striped table-hover">
+<thead>
+    <tr>
+        <th>Version</th>
+        <th>Visual Studio 2010</th>
+        <th>Visual Studio 2015</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>OpenSSL 1.0.2d</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-32bit-release-dll-vs2010.7z">32-Bit Release DLL</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-32bit-release-dll-vs2015.7z">32-Bit Release DLL</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-32bit-debug-dll-vs2010.7z">32-Bit Debug DLL</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-32bit-debug-dll-vs2015.7z">32-Bit Debug DLL</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-32bit-release-static-vs2010.7z">32-Bit Release Static Library</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-32bit-release-static-vs2015.7z">32-Bit Release Static Library</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-32bit-debug-static-vs2010.7z">32-Bit Debug Static Library</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-32bit-debug-static-vs2015.7z">32-Bit Debug Static Library</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-64bit-release-dll-vs2010.7z">64-Bit Release DLL</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-64bit-release-dll-vs2015.7z">64-Bit Release DLL</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-64bit-debug-dll-vs2010.7z">64-Bit Debug DLL</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-64bit-debug-dll-vs2015.7z">64-Bit Debug DLL</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-64bit-release-static-vs2010.7z">64-Bit Release Static Library</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-64bit-release-static-vs2015.7z">64-Bit Release Static Library</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-64bit-debug-static-vs2010.7z">64-Bit Debug Static Library</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.2d-64bit-debug-static-vs2015.7z">64-Bit Debug Static Library</a></td>
+    </tr>
+    <tr>
+        <td>OpenSSL 1.0.1p</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-32bit-release-dll-vs2010.7z">32-Bit Release DLL</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-32bit-release-dll-vs2015.7z">32-Bit Release DLL</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-32bit-debug-dll-vs2010.7z">32-Bit Debug DLL</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-32bit-debug-dll-vs2015.7z">32-Bit Debug DLL</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-32bit-release-static-vs2010.7z">32-Bit Release Static Library</a></td>
+        <td>32-Bit Release Static Library [broken]</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-32bit-debug-static-vs2010.7z">32-Bit Debug Static Library</a></td>
+        <td>32-Bit Debug Static Library  [broken]</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-64bit-release-dll-vs2010.7z">64-Bit Release DLL</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-64bit-release-dll-vs2015.7z">64-Bit Release DLL</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-64bit-debug-dll-vs2010.7z">64-Bit Debug DLL</a></td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-64bit-debug-dll-vs2015.7z">64-Bit Debug DLL</a></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-64bit-release-static-vs2010.7z">64-Bit Release Static Library</a></td>
+        <td>64-Bit Release Static Library [broken]</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><a href="http://p-nand-q.com/programming/windows/openssl-1.0.1p-64bit-debug-static-vs2010.7z">64-Bit Debug Static Library</a></td>
+        <td>64-Bit Debug Static Library [broken]</td>
+    </tr>
+</tbody></table>
+
+<h2>Building OpenSSL automatically</h2>
+<p>Because the process of building OpenSSL is time consuming and error prone, I wrote a couple of batch scripts that simplify the process significantly.
+You can <a href="http://p-nand-q.com/programming/windows/build_openssl.zip">download them here</a>. Inside, you will find three batch files:</p>
+<ul class="dash">
+    <li><code>rebuild_openssl_vs2010.cmd</code> for use with Visual Studio 2010</li>
+    <li><code>rebuild_openssl_vs2013.cmd</code> for use with Visual Studio 2013</li>
+    <li><code>rebuild_openssl_vs2015.cmd</code> for use with Visual Studio 2015</li>
+</ul>
+
+<h3>Prerequisites</h3>
+<ul>
+    <li>The script assumes you are on Windows.</li>
+    <li>The script assumes you have Visual Studio 2010, 2013 or 2015 installed in all the usual places. Important: If you have a different installation folder, your mileage may vary</li>
+    <li>The script assumes you have downloaded an OpenSSL tarball, like <a href="http://openssl.org/source/openssl-1.0.1p.tar.gz">this one</a>.</li>
+    <li>The script assumes you have <a href="http://python.org/">Python (2.7 or 3.x)</a> installed and on your PATH</li>
+    <li>The script assumes you have <a href="http://www.7-zip.org/">7-zip</a> installed (doesn't need to be on your PATH)</li>
+    <li>Choose the script you want to use and edit it. For example, let's take a look at the top of <code>rebuild_openssl_vs2015.cmd</code>:
+<div class="highlight"><pre>T:
+<span class="nb">set </span><span class="nv">OPENSSL_VERSION</span><span class="o">=</span>1.0.1p
+<span class="nb">set </span><span class="nv">SEVENZIP</span><span class="o">=</span><span class="s2">"C:\Program Files\7-Zip\7z.exe"</span>
+<span class="nb">set </span><span class="nv">VS2015</span><span class="o">=</span><span class="s2">"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\vcvars32.bat"</span>
+<span class="nb">set </span><span class="nv">VS2015_AMD64</span><span class="o">=</span><span class="s2">"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat"</span>
+</pre></div>
+
+    so it is pretty easy to see: you must enter the OpenSSL version manually, the rest should have sensible defaults...</li>
+    <li><b>Note:</b> The script uses the <tt>SUBST</tt> T:\ drive for building OpenSSL.</li>
+</ul>
+
+<h3>Building the OpenSSL binaries</h3>
+<ul>
+    <li>Place the tar.gz file (not the unpacked .tar) in the root of T:\</li>
+    <li>Double-click on one of the <tt>rebuild_openssl-vs*.cmd</tt>.</li>
+</ul>
+<p>That's it, it will do all the hard work for you and present nicely packaged binaries. Great fun!</p>
+
+<h2>Building OpenSSL manually</h2>
+
+<p>OK, so you don't trust me. Right. Well, here is how you can do it manually.... 
+<b>Note:</b> This article wouldn't have been possible without the invaluable help of <a href="http://developer.covenanteyes.com/building-openssl-for-visual-studio/" target="_blank">this article</a>.
+However, it was obviously not built on a Windows 8 machine, and it didn't include any binaries.
+So this article follows the same basic structure, but it has some important differences:</p>
+
+<ul class="dash">
+    <li>The instructions default to <em>the DLL build</em><br>
+    Why? because that is the one used by Python. And because I was rebuilding Python, I was rebuilding OpenSSL in the first place. So there.</li>
+    <li>Debug build uses .PDBs</li>
+</ul>
+
+<h3>Prerequisites</h3>
+
+<ul class="dash">
+    <li>You need Visual Studio 2010, 2013 or 2015.</li>
+    <li>You need to install Perl. I used <a href="http://www.activestate.com/activeperl/downloads" target="_blank">ActivePerl 5.16.3 for Windows (x86)</a>.</li>
+    <li>You need the OpenSSL sourcecode. In the following, both the 1.0.1 and 1.0.2 branches are supported.</li>
+    <li>Unzip the sourcecode.</li>
+    <li>Create <em>two different copies of the sourcecode</em>. I am going to follow the conventions of <a href="http://developer.covenanteyes.com/building-openssl-for-visual-studio/" target="_blank">the original article</a> and create <code>T:\openssl-src-32</code> and <code>T:\openssl-src-64</code>.</li>
+    <li>You need a development prompt. This varies based on your compiler:
+        <ul class="dash">
+            <li><b>Visual Studio 2010, 32-bit:</b> Open <code>Visual Studio Command Prompt (2010)</code></li>
+            <li><b>Visual Studio 2010, 64-bit:</b> Open <code>Visual Studio x64 Win64 Command Prompt (2010)</code></li>
+            <li><b>Visual Studio 2013, 32-bit:</b> Open <code>CMD.EXE</code> and run <code>C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\vcvars32.bat</code></li>
+            <li><b>Visual Studio 2013, 64-bit:</b> Open <code>CMD.EXE</code> and run <code>C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64\vcvars64.bat</code></li>
+            <li><b>Visual Studio 2015, 32-bit:</b> Open <code>CMD.EXE</code> and run <code>C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\vcvars32.bat</code></li>
+            <li><b>Visual Studio 2015, 64-bit:</b> Open <code>CMD.EXE</code> and run <code>C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat</code></li>
+        </ul>
+</li></ul>
+
+<h2>Building the 32-bit Release DLL</h2>
+<ul class="dash">
+    <li>Change to the source directory, for example <code>T:\openssl-src-32</code></li>
+    <li>Run <code>perl Configure VC-WIN32 --prefix=T:\Build-OpenSSL-VC32-Release-DLL</code>. This will make <code>T:\Build-OpenSSL-VC32-Release-DLL</code> your output directory; it should be fairly obvious how you can change that.</li>
+    <li>Run <code>ms\do_ms</code></li>
+    <li><b>If you are on the 1.0.2 branch, you must do the following:</b> Run <code>ms\do_nasm</code>.<br>This step is <b>not</b> necessary if you are on 1.0.1</li>
+    <li>Run <code>nmake -f ms\ntdll.mak</code>
+    </li><li>Run <code>nmake -f ms\ntdll.mak install</code>
+</li></ul>
+
+<h2>Building the 32-bit Debug DLL</h2>
+<ul class="dash">
+    <li>Change to the source directory, for example <code>T:\openssl-src-32</code></li>
+    <li>Run <code>perl Configure debug-VC-WIN32 --prefix=T:\Build-OpenSSL-VC32-Debug-DLL</code>
+    </li><li>Run <code>ms\do_ms</code>
+    </li><li><b>If you are on the 1.0.2 branch, you must do the following:</b> Run <code>ms\do_nasm</code>.<br>This step is <b>not</b> necessary if you are on 1.0.1</li>
+    <li>Run <code>nmake -f ms\ntdll.mak</code>
+    </li><li>Run <code>nmake -f ms\ntdll.mak install</code>
+</li></ul>
+
+<h2>Building the 32-bit Release Static Library</h2>
+<ul class="dash">
+    <li>Change to the source directory, for example <code>T:\openssl-src-32</code></li>
+    <li>Run <code>perl Configure VC-WIN32 --prefix=T:\Build-OpenSSL-VC32-Release-DLL</code>. This will make <code>T:\Build-OpenSSL-VC32-Release-DLL</code> your output directory; it should be fairly obvious how you can change that.</li>
+    <li>Run <code>ms\do_ms</code></li>
+    <li><b>If you are on the 1.0.2 branch, you must do the following:</b> Run <code>ms\do_nasm</code>.<br>This step is <b>not</b> necessary if you are on 1.0.1</li>
+    <li>Run <code>nmake -f ms\nt.mak</code>
+    </li><li>Run <code>nmake -f ms\nt.mak install</code>
+</li></ul>
+
+<h2>Building the 32-bit Debug Static Library</h2>
+<ul class="dash">
+    <li>Change to the source directory, for example <code>T:\openssl-src-32</code></li>
+    <li>Run <code>perl Configure debug-VC-WIN32 --prefix=T:\Build-OpenSSL-VC32-Debug-DLL</code>
+    </li><li>Run <code>ms\do_ms</code>
+    </li><li><b>If you are on the 1.0.2 branch, you must do the following:</b> Run <code>ms\do_nasm</code>.<br>This step is <b>not</b> necessary if you are on 1.0.1</li>
+    <li>Run <code>nmake -f ms\nt.mak</code>
+    </li><li>Run <code>nmake -f ms\nt.mak install</code>
+</li></ul>
+
+
+<h2>Building the 64-bit Release DLL</h2>
+<ul class="dash">
+    <li>Change to the source directory, for example <code>T:\openssl-src-64</code></li>
+    <li>Run <code>perl Configure VC-WIN64A --prefix=T:\Build-OpenSSL-VC64-Release-DLL</code>. This will make <code>T:\Build-OpenSSL-VC64-Release-DLL</code> your output directory; it should be fairly obvious how you can change that.</li>
+    <li>Run <code>ms\do_win64a</code></li>
+    <li>Run <code>nmake -f ms\ntdll.mak</code>
+    </li><li>Run <code>nmake -f ms\ntdll.mak install</code>
+</li></ul>
+
+<h2>Building the 64-bit Debug DLL</h2>
+<ul class="dash">
+    <li>Change to the source directory, for example <code>T:\openssl-src-64</code></li>
+    <li>Run <code>perl Configure debug-VC-WIN64A --prefix=T:\Build-OpenSSL-VC64-Debug-DLL</code>
+    </li><li>Run <code>ms\do_win64a</code>
+    </li><li>Run <code>nmake -f ms\ntdll.mak</code>
+    </li><li>Run <code>nmake -f ms\ntdll.mak install</code>
+</li></ul>
+
+<h2>Building the 64-bit Release Static Library</h2>
+<ul class="dash">
+    <li>Change to the source directory, for example <code>T:\openssl-src-32</code></li>
+    <li>Run <code>perl Configure VC-WIN64A --prefix=T:\Build-OpenSSL-VC64-Release-Static</code>. This will make <code>T:\Build-OpenSSL-VC64-Release-Static</code> your output directory; it should be fairly obvious how you can change that.</li>
+    <li>Run <code>ms\do_win64a</code></li>
+    <li>Run <code>nmake -f ms\nt.mak</code>
+    </li><li>Run <code>nmake -f ms\nt.mak install</code>
+</li></ul>
+
+<h2>Building the 64-bit Debug Static Library</h2>
+<ul class="dash">
+    <li>Change to the source directory, for example <code>T:\openssl-src-64</code></li>
+    <li>Run <code>perl Configure debug-VC-WIN64A --prefix=T:\Build-OpenSSL-VC64-Debug-DLL</code>
+    </li><li>Run <code>ms\do_win64a</code>
+    </li><li>Run <code>nmake -f ms\nt.mak</code>
+    </li><li>Run <code>nmake -f ms\nt.mak install</code>
+</li></ul>
+
+<h2>FAQ</h2>
+<h3>Why did I need to create two different copies of the sourcecode</h3>
+<p>Because the OpenSSL build scripts will use the folder <code>outdll32</code> for <em>both the 32-bit and the 64-bit output</em>, so there is no easy way to distinguish both builds.</p>
+
+
+<hr>
+<p>GK, December 12, 2015</p>
+<p>Note: Special thanks to <a href="mailto:cpservicespb@gmail.com">Alex</a> (see <a href="https://github.com/CpServiceSpb/OpenSSLOcsp">https://github.com/CpServiceSpb/OpenSSLOcsp</a>) for pointing out some mistakes in the documentation of the 64-bit build. Should be fine now.</p>
+
+
+</div>
+<div id="footer">
+<p></p><center><small>
+Built with <a href="http://getbootstrap.com/">Bootstrap</a> |
+<a href="http://validator.w3.org/check?uri=referer">Valid HTML5</a> |
+<a href="http://jigsaw.w3.org/css-validator/check/referer">Valid CSS3</a> |
+<a href="http://p-nand-q.com/about/index.html">Impressum</a> | 
+<a href="http://www.kiva.org/">Donations</a><br>
+Copyright © 2000...∞ by Gerson Kurz. Generated on 06.12.2015 20:58:26.</small></center><p></p>
+</div>
+</div>
+<script src="./Building OpenSSL with Visual Studio_files/jquery.min.js"></script>
+<script src="./Building OpenSSL with Visual Studio_files/bootstrap.min.js"></script>
+<script src="./Building OpenSSL with Visual Studio_files/ie10-viewport-bug-workaround.js"></script>
+<script> 
+var $buoop = {c:2}; 
+function $buo_f(){ 
+ var e = document.createElement("script"); 
+ e.src = "//browser-update.org/update.min.js"; 
+ document.body.appendChild(e);
+};
+try {document.addEventListener("DOMContentLoaded", $buo_f,false)}
+catch(e){window.attachEvent("onload", $buo_f)}
+</script> 
+
+
+<script src="./Building OpenSSL with Visual Studio_files/update.min.js"></script></body></html>

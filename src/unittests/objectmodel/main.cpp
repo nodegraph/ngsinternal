@@ -1,7 +1,7 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/memoryallocator/bootstrap.h>
 
-#include <components/entities/nonguientities.h>
+#include <entities/nonguientities.h>
 #include <unittests/objectmodel/testdeps.h>
 
 #include <iostream>

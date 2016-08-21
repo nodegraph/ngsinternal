@@ -5,20 +5,12 @@ include_directories("${PROJECT_SOURCE_DIR}/apps/smashbrowse")
 set(sources
 	${resources}
 	native/main.cpp
-	native/scripts.cpp
-	native/treeitem.cpp
-	native/treemodel.cpp
-	native/variantmaptreemodel.cpp
 )
 
 set(moc_headers
-	native/scripts.h
-	native/treemodel.h
-	native/variantmaptreemodel.h
     )
     
 set(headers
-	native/treeitem.h
 )
 
 qt5_wrap_cpp(moc_imps ${moc_headers})
@@ -54,13 +46,24 @@ elseif (${ARCH} STREQUAL ARCH_IOS)
 		)
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
     list(APPEND sources packaging/windows/smashbrowse.rc)
-	add_executable(smashbrowse WIN32 ${sources})
+    # WIN32 makes the console go away, when running app.
+    # When running app directly from the console there will be no output too.
+    if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	    add_executable(smashbrowse ${sources})
+	else()
+	    add_executable(smashbrowse WIN32 ${sources}) 
+	endif()
 	target_link_libraries(smashbrowse 
 		ngs_gui 
 		ngs_entities
+		ngs_quick
 		)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
-	add_executable(smashbrowse WIN32 ${sources})
+   if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	    add_executable(smashbrowse ${sources})
+	else()
+	    add_executable(smashbrowse WIN32 ${sources}) 
+	endif()
 	target_link_libraries(smashbrowse 
 		ngs_gui 
 		ngs_entities 

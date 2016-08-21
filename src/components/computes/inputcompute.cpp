@@ -1,10 +1,10 @@
-#include <components/entities/entityids.h>
+#include <entities/entityids.h>
 
 #include <base/objectmodel/deploader.h>
 
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
-#include <components/entities/componentids.h>
+#include <entities/componentids.h>
 
 #include <components/compshapes/linkshape.h>
 

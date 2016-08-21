@@ -1,6 +1,6 @@
 #pragma once
 #include <base/objectmodel/component.h>
-#include <components/entities/componentids.h>
+#include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
 
 namespace ngs {
