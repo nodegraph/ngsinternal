@@ -21,6 +21,7 @@ class NodeSelection;
 class NodeShape;
 class BaseFactory;
 class BaseEntityInstancer;
+class LicenseChecker;
 
 
 class QUICK_EXPORT NodeGraphQuickItem : public QQuickItem, public Component
@@ -162,6 +163,7 @@ Q_OBJECT
   Dep<ShapeCanvas> _canvas;
   Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;
+  Dep<LicenseChecker> _license_checker;
 
   // Cached helper.
   BaseEntityInstancer* _entity_instancer;

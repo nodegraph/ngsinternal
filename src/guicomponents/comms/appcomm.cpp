@@ -95,7 +95,7 @@ void AppComm::stop_polling() {
 
 QString AppComm::get_smash_browse_url() {
   QString app_dir = get_app_bin_dir();
-  app_dir += QString("/smashbrowse.html");
+  app_dir += QString("/../html/smashbrowse.html");
   return app_dir;
 }
 
@@ -282,7 +282,7 @@ void AppComm::connect_to_nodejs() {
   // Read the file.
   QTextStream stream(&file);
   QString port = stream.readAll();
-  QString url("ws://localhost:");
+  QString url("wss://localhost:");
   url += port;
 
   // Open the port.

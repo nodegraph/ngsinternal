@@ -246,8 +246,12 @@ function receive_from_extension(message) {
 // Regular WebSocket to communicate with app.
 //------------------------------------------------------------------------------------------------
 var app_server_config = {
-        ssl: false,
+        //ssl: false,
+        //port: 8092,
+        ssl: true,
         port: 8092,
+        ssl_key: './key.pem',
+        ssl_cert: './cert.pem'
     };
 var app_server = null
 var app_server_file = Path.join(g_user_data_dir, 'nodejs','appserverport.txt')

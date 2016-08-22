@@ -52,7 +52,8 @@ function check_license(edition, license) {
 LicenseChecker::LicenseChecker(Entity *parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
-      _network_manager(new_ff QNetworkAccessManager(this)){
+      _network_manager(new_ff QNetworkAccessManager(this)),
+      _license_is_valid(false){
   assert(QSslSocket::supportsSsl());
   connect(_network_manager, SIGNAL(finished(QNetworkReply*)), SLOT(on_reply_from_web(QNetworkReply*)));
 
@@ -124,6 +125,9 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
   }
 
   //std::cerr << "license check success: " << reply->readAll().toStdString() << "\n";
+
+  // Cache the valid license state.
+  _license_is_valid = true;
   emit license_checked(true);
 }
 

@@ -20,7 +20,8 @@ Q_OBJECT
   virtual ~LicenseChecker();
 
   // Trigger the license check cycle of method calls/callbacks.
-  Q_INVOKABLE void check_license(const QString& edition, const QString& license);
+  Q_INVOKABLE virtual void check_license(const QString& edition, const QString& license);
+  Q_INVOKABLE virtual bool license_is_valid() {return _license_is_valid;}
 
  signals:
   void license_checked(bool); // emitted when we determine we have a valid license.
@@ -30,6 +31,7 @@ Q_OBJECT
 
  private:
   QNetworkAccessManager *_network_manager;
+  bool _license_is_valid;
 };
 
 }

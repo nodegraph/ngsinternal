@@ -103,6 +103,11 @@ INSTALL(DIRECTORY nodejs/
 		DESTINATION bin
 		COMPONENT apps)
 
+# Install the html files.
+INSTALL(DIRECTORY html
+		DESTINATION .
+		COMPONENT apps)
+
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	
 elseif (${ARCH} MATCHES "ARCH_ANDROID")

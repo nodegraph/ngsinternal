@@ -30,11 +30,15 @@
 #include <components/compshapes/nodeselection.h>
 #include <components/compshapes/nodeshape.h>
 #include <components/interactions/viewcontrols.h>
+
+#include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/quick/eventtoinfo.h>
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/quick/texturedisplaynode.h>
+
+
 #include <QtQuick/QQuickWindow>
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
@@ -80,6 +84,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
       _canvas(this),
       _factory(this),
       _file_model(this),
+      _license_checker(this),
       _last_pressed_node(this),
       _link_locked(false) {
 
@@ -88,6 +93,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
   get_dep_loader()->register_fixed_dep(_canvas, "");
   get_dep_loader()->register_fixed_dep(_factory, "");
   get_dep_loader()->register_fixed_dep(_file_model, "");
+  get_dep_loader()->register_fixed_dep(_license_checker, "");
 
   _device_pixel_ratio = static_cast<GLsizei>(QGuiApplication::primaryScreen()->devicePixelRatio());
 
@@ -243,6 +249,9 @@ void NodeGraphQuickItem::focusOutEvent(QFocusEvent * event) {
 
 // Mouse overrides.
 void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
+  if (!_license_checker->license_is_valid()) {
+    return;
+  }
   clean();
 
   std::cerr << "received double click event\n";
@@ -251,6 +260,9 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
 }
 
 void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
   clean();
 
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
@@ -259,6 +271,9 @@ void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
 }
 
 void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
   clean();
 
   MouseInfo info = get_hover_info(event);
@@ -267,6 +282,9 @@ void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
 }
 
 void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
   clean();
 
   _long_press_timer.start();
@@ -297,6 +315,9 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
 }
 
 void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
   clean();
 
   // Stop the long press timer if
@@ -314,6 +335,9 @@ void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
 }
 
 void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
   clean();
 
   WheelInfo info = get_wheel_info(event);
@@ -323,6 +347,9 @@ void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
 
 // Key overrides.
 void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
   clean();
 
   KeyInfo info = get_key_info_qt(event);
@@ -330,6 +357,9 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
 }
 
 void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
   clean();
 
   KeyInfo info = get_key_info_qt(event);
@@ -337,6 +367,9 @@ void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
 }
 
 void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
   clean();
 
   switch (event->type()) {
@@ -719,13 +752,20 @@ void NodeGraphQuickItem::deselect_all() {
 }
 
 void NodeGraphQuickItem::frame_all() {
-  _canvas->clean();
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
+  clean();
+
   get_current_interaction()->frame_all();
   update();
 }
 
 void NodeGraphQuickItem::frame_selected() {
-  _canvas->clean();
+  if (!_license_checker->license_is_valid()) {
+      return;
+    }
+  clean();
   get_current_interaction()->frame_selected(_selection->get_selected());
   update();
 }
