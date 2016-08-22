@@ -9,6 +9,7 @@ class FileModel;
 class AppComm;
 class LicenseChecker;
 class NodeGraphQuickItem;
+class GraphBuilder;
 
 class ENTITIES_EXPORT QMLAppEntity : public Entity {
  public:
@@ -20,6 +21,7 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   AppComm* get_app_comm();
   LicenseChecker* get_license_checker();
   NodeGraphQuickItem* get_node_graph_quick_item();
+  GraphBuilder* get_graph_builder();
 };
 
 class ENTITIES_EXPORT QtAppEntity : public Entity {

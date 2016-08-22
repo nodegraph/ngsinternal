@@ -108,6 +108,10 @@ NodeGraphQuickItem* QMLAppEntity::get_node_graph_quick_item() {
   return get<NodeGraphQuickItem>();
 }
 
+GraphBuilder* QMLAppEntity::get_graph_builder() {
+  return get<GraphBuilder>();
+}
+
 void QtAppEntity::create_internals() {
   // Our components.
   new_ff Factory(this);

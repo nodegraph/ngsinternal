@@ -259,7 +259,7 @@ int main(int argc, char *argv[]) {
     root_group->create_internals();
 
     // Register gl types.
-    //qRegisterMetaType<GLsizei>("GLsizei");
+    qRegisterMetaType<GLsizei>("GLsizei");
     qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
 
     // Register our types.
@@ -297,6 +297,7 @@ int main(int argc, char *argv[]) {
 
     // Embed the node graph quick item into the node graph page.
     QQuickItem* node_graph_page = view.rootObject()->findChild<QQuickItem*>("node_graph_page", Qt::FindChildrenRecursively);
+    assert(node_graph_page);
     node_graph->setParentItem(node_graph_page);
     node_graph->setWidth(node_graph_page->width());
     node_graph->setHeight(node_graph_page->height());

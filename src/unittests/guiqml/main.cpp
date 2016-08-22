@@ -9,6 +9,7 @@
 #include <base/utils/fileutil.h>
 #include <components/compshapes/compshapecollective.h>
 #include <components/interactions/groupinteraction.h>
+#include <components/interactions/graphbuilder.h>
 #include <components/compshapes/compshapecollective.h>
 #include <entities/guientities.h>
 #include <components/interactions/graphbuilder.h>
@@ -39,16 +40,7 @@ int main(int argc, char **argv)
   // Startup the memory tracker.
   bootstrap_memory_tracker();
   {
-    // Register a gl type.
-    qRegisterMetaType<GLsizei>("GLsizei");
 
-    // Build the app root.
-    g_app_root = new_ff QMLAppEntity(NULL, "app");
-    g_app_root->create_internals();
-
-    // Build the root group.
-    Entity* root_group = new_ff GroupNodeEntity(g_app_root, "root");
-    root_group->create_internals();
 
     QSurfaceFormat format;
 #if ARCH == ARCH_MACOS
@@ -68,40 +60,45 @@ int main(int argc, char **argv)
 #endif
 #endif
 
-    // App the FBOWorker and FBORender components to the app root.
-    //new_ff FBORenderer(g_app_root);
-    //new_ff FBOWorker(g_app_root);
-
-    // Link up our default dependencies.
-    g_app_root->initialize_deps();
-    g_app_root->update_deps_and_hierarchy();
-
     QApplication app(argc, argv);
 
-    //QGuiApplication app(argc, argv);
-//    qmlRegisterType<NodeGraphQuickItem>("SceneGraphRendering", 1, 0, "NodeGraphQuickItem");
+    // Register a gl type.
+    qRegisterMetaType<GLsizei>("GLsizei");
 
-//    // Create our qml engine.
-//    QQmlApplicationEngine engine;
-//    QQmlContext *context = engine.rootContext();
-//
-//    // Load our qml doc.
-//    engine.load(QUrl(QStringLiteral("qrc:/deviceitem.qml")));
-//
-//    // Get the top level qml objects.
-//    QList<QObject *> root_objects = engine.rootObjects();
-//    qDebug() << "number of root objects is: " << root_objects.size();
-//    QQuickWindow* window = static_cast<QQuickWindow *> (engine.rootObjects().first());
+    // Build the app root.
+    g_app_root = new_ff QMLAppEntity(NULL, "app");
+    g_app_root->create_internals();
+
+    // Build the root group.
+    Entity* root_group = new_ff GroupNodeEntity(g_app_root, "root");
+    root_group->create_internals();
 
     QQuickView view;
     g_quick_view = &view;
-
+    view.show();
+    view.update();
     view.setWidth(640);
     view.setHeight(480);
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     view.setFormat(format);
+
+    // Embed the node graph quick item into the node graph page.
+    NodeGraphQuickItem* node_graph = static_cast<QMLAppEntity*>(g_app_root)->get_node_graph_quick_item();
+    QQmlContext* context = view.engine()->rootContext();
+    context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
+
     view.setSource(QUrl(QStringLiteral("qrc:/deviceitem.qml")));
-    view.show();
+
+    QQuickItem* page = view.rootObject();
+    assert(page);
+    node_graph->setParentItem(page);
+    node_graph->setWidth(640);
+    node_graph->setHeight(480);
+
+    // Build a test graph.
+    g_app_root->initialize_deps();
+    g_app_root->update_deps_and_hierarchy();
+    static_cast<QMLAppEntity*>(g_app_root)->get_graph_builder()->build_test_graph();
 
     execReturn = app.exec();
   }
