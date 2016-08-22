@@ -3,6 +3,7 @@
     
         <!-- Main Window -->
         <file>qml/main.qml</file>
+        <file>qml/finished.qml</file>
         
         
         <!-- Test Images -->

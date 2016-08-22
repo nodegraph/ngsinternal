@@ -1,12 +1,14 @@
 #pragma once
 #include <guicomponents/computes/guicomputes_export.h>
-#include <components/computes/compute.h>
 
+#include <components/computes/compute.h>
+#include <base/objectmodel/dep.h>
 
 namespace ngs {
 
 class Entity;
 class InputCompute;
+class AppComm;
 
 //--------------------------------------------------------------------------------
 
@@ -17,6 +19,8 @@ class GUICOMPUTES_EXPORT OpenBrowserCompute: public Compute {
   virtual ~OpenBrowserCompute();
   // Our state.
   virtual void update_state();
+ private:
+  Dep<AppComm> _app_comm;
 };
 
 //--------------------------------------------------------------------------------
@@ -28,6 +32,8 @@ class GUICOMPUTES_EXPORT CloseBrowserCompute: public Compute {
   virtual ~CloseBrowserCompute();
   // Our state.
   virtual void update_state();
+ private:
+  Dep<AppComm> _app_comm;
 };
 
 //--------------------------------------------------------------------------------
@@ -39,6 +45,8 @@ class GUICOMPUTES_EXPORT CreateSetFromValuesCompute: public Compute {
   virtual ~CreateSetFromValuesCompute();
   // Our state.
   virtual void update_state();
+ private:
+  Dep<AppComm> _app_comm;
 };
 
 class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public Compute {
@@ -48,6 +56,8 @@ class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public Compute {
   virtual ~CreateSetFromTypeCompute();
   // Our state.
   virtual void update_state();
+ private:
+  Dep<AppComm> _app_comm;
 };
 
 }

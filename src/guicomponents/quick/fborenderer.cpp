@@ -24,7 +24,6 @@
 #include <components/interactions/shapecanvas.h>
 #include <components/interactions/groupinteraction.h>
 #include <guicomponents/quick/fborenderer.h>
-#include <guicomponents/quick/nodegraphquickitemglobals.h>
 #include <QtCore/QDebug>
 
 namespace ngs {
@@ -38,10 +37,13 @@ FBORenderer::FBORenderer(Entity* entity)
       _display_fbo(NULL),
       _display_texture(NULL),
       _ng_canvas(this) {
-  get_dep_loader()->register_fixed_dep(_ng_canvas, ".");
+  get_dep_loader()->register_fixed_dep(_ng_canvas, "");
 }
 
 FBORenderer::~FBORenderer() {
+  delete_ff(_render_rbo);
+  delete_ff(_render_fbo);
+  delete_ff(_render_texture);
 }
 
 void FBORenderer::update_state() {

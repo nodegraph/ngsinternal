@@ -12,12 +12,15 @@
 #include <components/interactions/graphbuilder.h>
 #include <components/compshapes/compshapecollective.h>
 #include <entities/guientities.h>
+
 #include <components/interactions/graphbuilder.h>
+
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
-#include <guicomponents/quick/nodegraphquickitemglobals.h>
+#include <guicomponents/quick/nodegraphview.h>
+
 #include <QtCore/QThread>
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QApplication>
@@ -36,6 +39,7 @@ int main(int argc, char **argv)
   using namespace ngs;
 
   int execReturn = 0;
+
 
   // Startup the memory tracker.
   bootstrap_memory_tracker();
@@ -66,45 +70,54 @@ int main(int argc, char **argv)
     qRegisterMetaType<GLsizei>("GLsizei");
 
     // Build the app root.
-    g_app_root = new_ff QMLAppEntity(NULL, "app");
-    g_app_root->create_internals();
+    QMLAppEntity *app_root = new_ff QMLAppEntity(NULL, "app");
+    app_root->create_internals();
 
     // Build the root group.
-    Entity* root_group = new_ff GroupNodeEntity(g_app_root, "root");
+    Entity* root_group = new_ff GroupNodeEntity(app_root, "root");
     root_group->create_internals();
 
-    QQuickView view;
-    g_quick_view = &view;
-    view.show();
-    view.update();
-    view.setWidth(640);
-    view.setHeight(480);
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-    view.setFormat(format);
+    // Get the NodeGraphView (QQuickView).
+    NodeGraphView* view = app_root->get_node_graph_view();
+    app_root->init_view(format);
+
+//    view.show();
+//    view.update();
+//    view.setWidth(640);
+//    view.setHeight(480);
+//    view.setResizeMode(QQuickView::SizeRootObjectToView);
+//    view.setFormat(format);
+
+//    // Embed the node graph quick item into the node graph page.
+//    NodeGraphQuickItem* node_graph = app_root->get_node_graph_quick_item();
+//    QQmlContext* context = view.engine()->rootContext();
+//    context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
+
+    app_root->expose_to_qml();
+
+    view->setSource(QUrl(QStringLiteral("qrc:/deviceitem.qml")));
+    view->show();
+    view->update();
 
     // Embed the node graph quick item into the node graph page.
-    NodeGraphQuickItem* node_graph = static_cast<QMLAppEntity*>(g_app_root)->get_node_graph_quick_item();
-    QQmlContext* context = view.engine()->rootContext();
-    context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
+    app_root->embed_node_graph();
 
-    view.setSource(QUrl(QStringLiteral("qrc:/deviceitem.qml")));
-
-    QQuickItem* page = view.rootObject();
-    assert(page);
-    node_graph->setParentItem(page);
-    node_graph->setWidth(640);
-    node_graph->setHeight(480);
+//    QQuickItem* page = view.rootObject();
+//    assert(page);
+//    node_graph->setParentItem(page);
+//    node_graph->setWidth(640);
+//    node_graph->setHeight(480);
 
     // Build a test graph.
-    g_app_root->initialize_deps();
-    g_app_root->update_deps_and_hierarchy();
-    static_cast<QMLAppEntity*>(g_app_root)->get_graph_builder()->build_test_graph();
+    app_root->initialize_deps();
+    app_root->update_deps_and_hierarchy();
+    app_root->get_graph_builder()->build_test_graph();
 
     execReturn = app.exec();
-  }
 
-  // Cleanup.
-  delete_ff(g_app_root);
+    // Cleanup.
+    delete_ff(app_root);
+  }
 
   // Shutdown.
   shutdown_memory_tracker();

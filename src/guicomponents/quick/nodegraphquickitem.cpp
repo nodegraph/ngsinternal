@@ -34,7 +34,6 @@
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
-#include <guicomponents/quick/nodegraphquickitemglobals.h>
 #include <guicomponents/quick/texturedisplaynode.h>
 #include <QtQuick/QQuickWindow>
 #include <QtCore/QStandardPaths>
@@ -63,10 +62,14 @@ const int NodeGraphQuickItem::kMinimumIdleLength = 1000; // 1 second in milli se
 class CleanUpGL : public QRunnable
 {
 public:
+  CleanUpGL(Entity* app_root):
+    _app_root(app_root){}
   void run () {
-    std::cerr << "CleanUpGL is running !!!!!!!!!!!!!!!!!!!!\n";
-    g_app_root->uninitialize_gl();
+    std::cerr << "Cleaning up opengl resources.\n";
+    _app_root->uninitialize_gl();
   }
+private:
+  Entity* _app_root;
 };
 
 NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
@@ -105,6 +108,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
 }
 
 NodeGraphQuickItem::~NodeGraphQuickItem() {
+  setParentItem(NULL);
 }
 
 void NodeGraphQuickItem::initialize_fixed_deps() {
@@ -129,15 +133,13 @@ void NodeGraphQuickItem::update_state() {
 // This gets called from the scene graph render thread.
 void NodeGraphQuickItem::cleanup() {
   qDebug() <<  "node graph quick item doing cleanup \n";
-
-  g_app_root->uninitialize_gl();
-  g_app_root->uninitialize_deps();
-
+  get_app_root()->uninitialize_gl();
+  get_app_root()->uninitialize_deps();
   finish_glew();
 }
 
 void NodeGraphQuickItem::releaseResources() {
-  window()->scheduleRenderJob(new CleanUpGL(), QQuickWindow::BeforeSynchronizingStage);
+  window()->scheduleRenderJob(new CleanUpGL(get_app_root()), QQuickWindow::BeforeSynchronizingStage);
 }
 
 void NodeGraphQuickItem::handle_window_changed(QQuickWindow *win) {
@@ -184,9 +186,9 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
       gpu();
     }
 
-    g_app_root->initialize_deps();
-    g_app_root->update_deps_and_hierarchy();
-    g_app_root->initialize_gl();
+    get_app_root()->initialize_deps();
+    get_app_root()->update_deps_and_hierarchy();
+    get_app_root()->initialize_gl();
 
     // Set the initial size.
     get_current_interaction()->resize_gl(_device_pixel_ratio*width(), _device_pixel_ratio*height());

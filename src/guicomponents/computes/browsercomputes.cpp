@@ -1,4 +1,3 @@
-#include <components/computes/computeglobals.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
 
@@ -11,7 +10,9 @@ namespace ngs {
 //--------------------------------------------------------------------------------
 
 OpenBrowserCompute::OpenBrowserCompute(Entity* entity)
-    : Compute(entity, kDID()) {
+    : Compute(entity, kDID()),
+      _app_comm(this) {
+  get_dep_loader()->register_fixed_dep(_app_comm, "");
 }
 
 OpenBrowserCompute::~OpenBrowserCompute() {
@@ -20,7 +21,7 @@ OpenBrowserCompute::~OpenBrowserCompute() {
 void OpenBrowserCompute::update_state() {
   Compute::update_state();
 
-  g_app_comm->handle_request_from_app("{ \"request\" : \"open_browser\" }");
+  _app_comm->handle_request_from_app("{ \"request\" : \"open_browser\" }");
 
   // Pass the inputs through.
   const QVariant &value = _inputs.at("in")->get_result("out");
@@ -30,7 +31,9 @@ void OpenBrowserCompute::update_state() {
 //--------------------------------------------------------------------------------
 
 CloseBrowserCompute::CloseBrowserCompute(Entity* entity)
-    : Compute(entity, kDID()) {
+    : Compute(entity, kDID()),
+      _app_comm(this) {
+  get_dep_loader()->register_fixed_dep(_app_comm, "");
 }
 
 CloseBrowserCompute::~CloseBrowserCompute() {
@@ -39,7 +42,7 @@ CloseBrowserCompute::~CloseBrowserCompute() {
 void CloseBrowserCompute::update_state() {
   Compute::update_state();
 
-  g_app_comm->handle_request_from_app("{ \"request\" : \"close_browser\" }");
+  _app_comm->handle_request_from_app("{ \"request\" : \"close_browser\" }");
 
   // Pass the inputs through, but wipe out the browser cookies.
   // Todo: wipe out the browser cookies.
@@ -50,7 +53,9 @@ void CloseBrowserCompute::update_state() {
 //--------------------------------------------------------------------------------
 
 CreateSetFromValuesCompute::CreateSetFromValuesCompute(Entity* entity)
-    : Compute(entity, kDID()) {
+    : Compute(entity, kDID()),
+      _app_comm(this) {
+  get_dep_loader()->register_fixed_dep(_app_comm, "");
 }
 
 CreateSetFromValuesCompute::~CreateSetFromValuesCompute() {
@@ -69,7 +74,7 @@ void CreateSetFromValuesCompute::update_state() {
          \"wrap_type\": \"" + type.toString().toStdString() + "\", \
          \"match_values\": \"" + values.toString().toStdString() + "\" \
        }";
-  g_app_comm->handle_request_from_app(request.c_str());
+  _app_comm->handle_request_from_app(request.c_str());
 
   // Pass the inputs through, but wipe out the browser cookies.
   // Todo: wipe out the browser cookies.
@@ -80,7 +85,9 @@ void CreateSetFromValuesCompute::update_state() {
 //--------------------------------------------------------------------------------
 
 CreateSetFromTypeCompute::CreateSetFromTypeCompute(Entity* entity)
-    : Compute(entity, kDID()) {
+    : Compute(entity, kDID()),
+      _app_comm(this) {
+  get_dep_loader()->register_fixed_dep(_app_comm, "");
 }
 
 CreateSetFromTypeCompute::~CreateSetFromTypeCompute() {
@@ -89,7 +96,7 @@ CreateSetFromTypeCompute::~CreateSetFromTypeCompute() {
 void CreateSetFromTypeCompute::update_state() {
   Compute::update_state();
 
-  g_app_comm->handle_request_from_app("{ \"request\" : \"close_browser\" }");
+  _app_comm->handle_request_from_app("{ \"request\" : \"close_browser\" }");
 
   // Pass the inputs through, but wipe out the browser cookies.
   // Todo: wipe out the browser cookies.

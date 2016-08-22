@@ -19,7 +19,7 @@ Q_OBJECT
  public:
   COMPONENT_ID(NodeGraphRenderer, NodeGraphRenderer)
 
-  NodeGraphRenderer();
+  NodeGraphRenderer(Entity* parent);
   virtual ~NodeGraphRenderer();
 
   // Testing.

@@ -2,7 +2,6 @@
 #include <components/interactions/graphbuilder.h>
 
 #include <base/objectmodel/deploader.h>
-#include <guicomponents/quick/nodegraphquickitemglobals.h>
 #include <guicomponents/quick/nodegraphrenderer.h>
 #include <guicomponents/quick/nodegraphrenderer.h>
 #include <QtGui/QOpenGLFramebufferObject>
@@ -37,9 +36,9 @@ private:
 
 
 
-NodeGraphRenderer::NodeGraphRenderer()
-    : Component(g_app_root, kIID(), kDID()),
-      QQuickFramebufferObject(),
+NodeGraphRenderer::NodeGraphRenderer(Entity* parent)
+    : QQuickFramebufferObject(),
+      Component(parent, kIID(), kDID()),
       _canvas(this),
       _graph_builder(this){
   get_dep_loader()->register_fixed_dep(_canvas, "");
@@ -77,14 +76,6 @@ NodeGraphRenderer::Renderer *NodeGraphRenderer::createRenderer() const
 }
 
 void NodeGraphRenderer::render() {
-//  int test;
-//  std::cin >> test;
-  std::cerr << "NodeGraphRenderer::render called\n";
-  if (!g_quick_view) {
-    std::cerr << "but g quick window was not set\n";
-    return;
-  }
-
   if (!_canvas) {
     std::cerr << "but canvas was not set\n";
     return;
@@ -92,9 +83,9 @@ void NodeGraphRenderer::render() {
   if (!_canvas->is_initialized_gl()) {
     std::cerr << "initializing the app in the gl context \n";
 
-    g_app_root->initialize_deps();
-    g_app_root->update_deps_and_hierarchy();
-    g_app_root->initialize_gl();
+    get_app_root()->initialize_deps();
+    get_app_root()->update_deps_and_hierarchy();
+    get_app_root()->initialize_gl();
 
     std::cerr << "now building the test graph \n";
     _graph_builder->build_test_graph();

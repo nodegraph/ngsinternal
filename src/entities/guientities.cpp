@@ -48,7 +48,13 @@
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
+#include <guicomponents/quick/nodegraphview.h>
 
+#include <QtGui/QGuiApplication>
+#include <QtQml/QtQml>
+#include <QtQml/QQmlEngine>
+#include <QtQuick/QQuickItem>
+#include <QtGui/QScreen>
 
 /*
  * Entity Structure
@@ -86,10 +92,91 @@ void QMLAppEntity::create_internals() {
   new_ff FBORenderer(this);
   new_ff FBOWorker(this);
   new_ff NodeGraphQuickItem(this);
+  new_ff NodeGraphView(this);
   // Qt Releated Components.
   new_ff FileModel(this);
   new_ff AppComm(this);
   new_ff LicenseChecker(this);
+}
+
+void QMLAppEntity::init_view(QSurfaceFormat& format) {
+  NodeGraphView* view = get_node_graph_view();
+
+  // Set the view size.
+#if ARCH == ARCH_WINDOWS
+  view->setWidth(800);
+  view->setHeight(1024);
+  view->setMaximumWidth(800);
+  view->setMaximumHeight(1024);
+  view->setMinimumWidth(800);
+  view->setMinimumHeight(1024);
+#else
+  setWidth(QGuiApplication::primaryScreen()->size().width() );
+  setHeight(QGuiApplication::primaryScreen()->size().height() );
+#endif
+
+  view->setResizeMode(QQuickView::SizeRootObjectToView);
+  view->setFormat(format);
+  view->setColor(QColor(3,169,244,255));
+  view->update();
+
+  view->engine()->addImportPath("qrc:/qml");
+  view->engine()->addImportPath("qrc:/");
+
+  // Register gl types.
+  qRegisterMetaType<GLsizei>("GLsizei");
+  qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
+
+  // Register our types.
+  qmlRegisterType<SocketMessage>("SocketMessage", 1, 0, "SocketMessage");
+  qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
+
+}
+
+void QMLAppEntity::expose_to_qml() {
+  // Grab some components without using Deps.
+  FileModel* file_model = get_file_model();
+  NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
+  AppComm* app_comm = get_app_comm();
+  NodeGraphView* view = get_node_graph_view();
+
+  // Inject them into the qml context.
+  QQmlContext* context = view->engine()->rootContext();
+  context->setContextProperty(QStringLiteral("file_model"), file_model);
+  context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
+  context->setContextProperty(QStringLiteral("app_comm"), app_comm);
+
+  // Expose other useful objects to qml.
+  context->setContextProperty("pdpi", QGuiApplication::primaryScreen()->physicalDotsPerInch());
+  context->setContextProperty("dpr", QGuiApplication::primaryScreen()->devicePixelRatio());
+  context->setContextProperty(QStringLiteral("quick_view"), view);
+
+#if (ARCH == ARCH_ANDROID)
+    // Create our java bridge.
+    JavaBridge *java_bridge = new_ff JavaBridge(&app);
+    context->setContextProperty(QLatin1String("java_bridge"), java_bridge);
+#endif
+}
+
+void QMLAppEntity::embed_node_graph() {
+  NodeGraphView* view = get_node_graph_view();
+  NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
+
+  // Embed the node graph quick item into the node graph page.
+  QQuickItem* node_graph_page = view->rootObject()->findChild<QQuickItem*>("node_graph_page", Qt::FindChildrenRecursively);
+  if (!node_graph_page) {
+    // For our unit tests the root object is the node graph page.
+    node_graph_page = view->rootObject();
+    // Also the width() and height() keep coming back as zero.
+    // So we hard code this for unit tests for now.
+    node_graph->setWidth(1024);
+    node_graph->setHeight(1024);
+  } else {
+    node_graph->setWidth(node_graph_page->width());
+    node_graph->setHeight(node_graph_page->height());
+  }
+  node_graph->setParentItem(node_graph_page);
+
 }
 
 FileModel* QMLAppEntity::get_file_model() {
@@ -110,6 +197,10 @@ NodeGraphQuickItem* QMLAppEntity::get_node_graph_quick_item() {
 
 GraphBuilder* QMLAppEntity::get_graph_builder() {
   return get<GraphBuilder>();
+}
+
+NodeGraphView* QMLAppEntity::get_node_graph_view() {
+  return get<NodeGraphView>();
 }
 
 void QtAppEntity::create_internals() {

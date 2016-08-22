@@ -1,7 +1,6 @@
 
 set(sources
 	compute.cpp
-	computeglobals.cpp
 	dotnodecompute.cpp
 	groupnodecompute.cpp
 	inputcompute.cpp
@@ -20,7 +19,6 @@ list(APPEND sources ${moc_imps})
     
 set(headers
 	compute.h
-	computeglobals.h
 	dotnodecompute.h
 	groupnodecompute.h
 	inputnodecompute.h

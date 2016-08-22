@@ -2,16 +2,15 @@
 set(quick_src
     eventtoinfo.cpp
 	nodegraphrenderer.cpp
-	nodegraphquickitemglobals.cpp
 	nodegraphquickitem.cpp
 	fborenderer.cpp
 	fboworker.cpp
 	texturedisplaynode.cpp
+	nodegraphview.cpp
     )
    
 set(quick_headers
     eventtoinfo.h
-    nodegraphquickitemglobals.h    
     fborenderer.h
 )
     
@@ -20,6 +19,7 @@ set(moc_quick
 	nodegraphquickitem.h
     fboworker.h
     texturedisplaynode.h
+    nodegraphview.h
     )
     
 qt5_wrap_cpp(quick_imps ${moc_quick})

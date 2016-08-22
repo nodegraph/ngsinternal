@@ -26,7 +26,6 @@
 #include <base/memoryallocator/bootstrap.h>
 #include <base/objectmodel/entity.h>
 
-#include <components/computes/computeglobals.h>
 #include <components/computes/inputcompute.h>
 
 #include <entities/guientities.h>
@@ -37,8 +36,8 @@
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
-#include <guicomponents/quick/nodegraphquickitemglobals.h>
 #include <guicomponents/quick/nodegraphrenderer.h>
+#include <guicomponents/quick/nodegraphview.h>
 
 #if (ARCH == ARCH_ANDROID)
 #include <native/javabridge.h>
@@ -125,12 +124,6 @@ int main(int argc, char *argv[]) {
   // Startup the memory tracker.
   bootstrap_memory_tracker();
   {
-
-    // Create our application. Note that QGUIApplication has no dependency on widgets.
-    QGuiApplication app(argc, argv);
-    QApplication::setApplicationName("smashbrowse"); // This affects the user's data dir resolution.
-    QApplication::setOrganizationDomain("smashbrowse.com");
-
     // Screen stats.
     //qDebug() << "physical dots per inch: " << QGuiApplication::primaryScreen()->physicalDotsPerInch();
     //qDebug() << "device pixel ratio: " << QGuiApplication::primaryScreen()->devicePixelRatio();
@@ -158,43 +151,18 @@ int main(int argc, char *argv[]) {
 #endif
 #endif
 
+
+    // Create our application. Note that QGUIApplication has no dependency on widgets.
+    QGuiApplication app(argc, argv);
+    QApplication::setApplicationName("smashbrowse"); // This affects the user's data dir resolution.
+    QApplication::setOrganizationDomain("smashbrowse.com");
+
     // Copy the chromeextension over to the user data dir, so that we can change some files.
     {
       QDir ext_src(AppComm::get_app_bin_dir() + "/../chromeextension");
       QDir ext_tgt(AppComm::get_user_data_dir() + "/chromeextension");
       copy_dir(ext_src, ext_tgt);
     }
-
-    // Using the QQmlApplicationEngine would of allowed us to declare a ApplicationWindow on the QML side.
-    // This would have been nicer but, it doesn't allow us to set the opengl context and version settings.
-    // Hence we use a QQuickView as the ApplicationWindow and then load QML components into that.
-    QQuickView view;
-    g_quick_view = &view;
-
-    // Set the app icon.
-    QIcon icon(":images/octopus_blue.png");
-    g_quick_view->setIcon(icon);
-    g_quick_view->setTitle("Smash Browse");
-
-    // Set the view size.
-#if ARCH == ARCH_WINDOWS
-    view.setWidth(800);
-    view.setHeight(1024);
-    view.setMaximumWidth(800);
-    view.setMaximumHeight(1024);
-    view.setMinimumWidth(800);
-    view.setMinimumHeight(1024);
-#else
-    view.setWidth(QGuiApplication::primaryScreen()->size().width() );
-    view.setHeight(QGuiApplication::primaryScreen()->size().height() );
-#endif
-
-
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-    view.setFormat(format);
-    view.setColor(QColor(3,169,244,255));
-    view.update();
-
 
 #if ARCH == ARCH_IOS
   // Register QML types.
@@ -244,70 +212,40 @@ int main(int argc, char *argv[]) {
 
 #endif
 
-
-    g_qml_engine = view.engine();
-    g_qml_engine->addImportPath("qrc:/qml");
-    g_qml_engine->addImportPath("qrc:/");
-    QQmlContext* context = g_qml_engine->rootContext();
-
     // Create the app root.
-    g_app_root = new_ff QMLAppEntity(NULL, "app");
-    g_app_root->create_internals();
+    QMLAppEntity* app_root = new_ff QMLAppEntity(NULL, "app");
+    app_root->create_internals();
 
     // Build the root group.
-    Entity* root_group = new_ff GroupNodeEntity(g_app_root, "root");
+    Entity* root_group = new_ff GroupNodeEntity(app_root, "root");
     root_group->create_internals();
 
-    // Register gl types.
-    qRegisterMetaType<GLsizei>("GLsizei");
-    qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
-
-    // Register our types.
-    qmlRegisterType<SocketMessage>("SocketMessage", 1, 0, "SocketMessage");
-    qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
-
-    // Expose some app level components to QML.
-    FileModel* file_model = static_cast<QMLAppEntity*>(g_app_root)->get_file_model();
-    NodeGraphQuickItem* node_graph = static_cast<QMLAppEntity*>(g_app_root)->get_node_graph_quick_item();
-    g_app_comm = static_cast<QMLAppEntity*>(g_app_root)->get_app_comm();
-
-    context->setContextProperty(QStringLiteral("file_model"), file_model);
-    context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
-    context->setContextProperty(QStringLiteral("app_comm"), g_app_comm);
-
-    // Expose other useful objects to qml.
-    context->setContextProperty("pdpi", QGuiApplication::primaryScreen()->physicalDotsPerInch());
-    context->setContextProperty("dpr", QGuiApplication::primaryScreen()->devicePixelRatio());
-    context->setContextProperty(QStringLiteral("quick_view"), g_quick_view);
-#if (ARCH == ARCH_ANDROID)
-    // Create our java bridge.
-    JavaBridge *java_bridge = new_ff JavaBridge(&app);
-    context->setContextProperty(QLatin1String("java_bridge"), java_bridge);
-#endif
+    // Get the NodeGraphView (QQuickView).
+    NodeGraphView* view = app_root->get_node_graph_view();
+    app_root->init_view(format);
 
     // Show our splash page, while loading the real qml app.
-    view.setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/pages/SplashPage.qml")));
-    view.rootObject()->setProperty("ngs_version", NGS_VERSION);
-    view.show();
-    view.update();
+    view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/pages/SplashPage.qml")));
+    view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+    view->show();
+    view->update();
     app.processEvents();
 
+    // Expose some object to qml before loading our main app.
+    app_root->expose_to_qml();
+
     // Show our main app.
-    view.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    view->setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     // Embed the node graph quick item into the node graph page.
-    QQuickItem* node_graph_page = view.rootObject()->findChild<QQuickItem*>("node_graph_page", Qt::FindChildrenRecursively);
-    assert(node_graph_page);
-    node_graph->setParentItem(node_graph_page);
-    node_graph->setWidth(node_graph_page->width());
-    node_graph->setHeight(node_graph_page->height());
+    app_root->embed_node_graph();
 
     // Run the Qt loop.
     execReturn = app.exec();
-  }
 
-  // Cleanup.
-  delete_ff(g_app_root);
+    // Cleanup.
+    delete_ff(app_root);
+  }
 
   // Shutdown.
   shutdown_memory_tracker();

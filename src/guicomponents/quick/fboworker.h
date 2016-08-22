@@ -24,6 +24,7 @@ class Entity;
 class ShapeCanvas;
 class Interaction;
 class NodeSelection;
+class NodeGraphView;
 
 // The FBOWorker depebds on the FBORenderer.
 // Together they run on a separate thread to render images to a texture.
@@ -59,6 +60,7 @@ Q_SIGNALS:
  private:
   // Our fixed deps.
   Dep<FBORenderer> _renderer;
+  Dep<NodeGraphView> _ng_view;
 
   // Our qt texture wrappers. We own these.
   QSGTexture* _render_texture_wrapper;

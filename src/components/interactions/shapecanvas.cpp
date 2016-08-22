@@ -50,8 +50,8 @@ ShapeCanvas::ShapeCanvas(Entity* entity)
 }
 
 ShapeCanvas::~ShapeCanvas() {
-  assert(!_quad_pipeline);
-  assert(!_text_pipeline);
+  delete_ff(_text_pipeline);
+  delete_ff(_quad_pipeline);
 }
 
 void ShapeCanvas::initialize_fixed_deps() {

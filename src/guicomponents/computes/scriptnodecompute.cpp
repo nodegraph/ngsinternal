@@ -1,12 +1,10 @@
 #include <base/objectmodel/entity.h>
 #include <base/utils/path.h>
 
-#include <components/computes/computeglobals.h>
 #include <base/utils/simplesaver.h>
 #include <base/utils/simpleloader.h>
 #include <components/computes/inputcompute.h>
 #include <guicomponents/computes/scriptnodecompute.h>
-#include <guicomponents/quick/nodegraphquickitemglobals.h>
 
 //#include <QtCore/QByteArray>
 //#include <QtCore/QDataStream>

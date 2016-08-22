@@ -7,8 +7,8 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
 Rectangle {
-    id: test_qml_page
-    objectName: "test_qml_page"
+    id: node_graph_page
+    objectName: "node_graph_page"
     anchors.fill: parent
     visible: true
 }

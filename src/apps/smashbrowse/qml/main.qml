@@ -38,6 +38,7 @@ Rectangle {
             close.accepted = false
             close_timer.start()
         }
+        node_graph_item.parent = null
     }
 
     // Timer that delays closing/exit a bit so we can clean up.

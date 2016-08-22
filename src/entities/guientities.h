@@ -3,6 +3,8 @@
 #include <entities/entities_export.h>
 #include <entities/entityids.h>
 
+class QSurfaceFormat;
+
 namespace ngs {
 
 class FileModel;
@@ -10,6 +12,7 @@ class AppComm;
 class LicenseChecker;
 class NodeGraphQuickItem;
 class GraphBuilder;
+class NodeGraphView;
 
 class ENTITIES_EXPORT QMLAppEntity : public Entity {
  public:
@@ -17,11 +20,17 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   using Entity::Entity; // not supported on msvc 2013
   QMLAppEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
+
+  void init_view(QSurfaceFormat& format);
+  void expose_to_qml();
+  void embed_node_graph();
+
   FileModel* get_file_model();
   AppComm* get_app_comm();
   LicenseChecker* get_license_checker();
   NodeGraphQuickItem* get_node_graph_quick_item();
   GraphBuilder* get_graph_builder();
+  NodeGraphView* get_node_graph_view();
 };
 
 class ENTITIES_EXPORT QtAppEntity : public Entity {

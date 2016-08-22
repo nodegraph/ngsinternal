@@ -13,6 +13,8 @@ class SimpleLoader;
 
 // This represents a path in the entity hierarchy.
 // Relative paths must must have a first element that is "." or "..".
+// Absolute paths don't have ".", ".." or "/" as the first element.
+
 // Absolute paths can be made into relative paths.
 // However relative paths cannot be made into relative paths,
 // as it requires an entity hierarchy in which to do so.

@@ -8,8 +8,9 @@
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
-#include <guicomponents/quick/nodegraphquickitemglobals.h>
 #include <guicomponents/quick/texturedisplaynode.h>
+#include <guicomponents/quick/nodegraphview.h>
+
 #include <QtQuick/QQuickView>
 #include <QtQuick/QSGTexture>
 
@@ -22,10 +23,12 @@ namespace ngs {
 FBOWorker::FBOWorker(Entity* entity)
     : Component(entity, kIID(), kDID()),
       _renderer(this),
+      _ng_view(this),
       _display_texture_wrapper(NULL),
       _render_texture_wrapper(NULL) {
   qRegisterMetaType<QSGTexture*>();
-  get_dep_loader()->register_fixed_dep(_renderer, ".");
+  get_dep_loader()->register_fixed_dep(_renderer, "");
+  get_dep_loader()->register_fixed_dep(_ng_view, "");
 }
 
 FBOWorker::~FBOWorker() {
@@ -41,8 +44,8 @@ void FBOWorker::initialize_gl() {
   // The size doesn't need to be accurate.
   QSize size(1500, 1500);
 
-  _display_texture_wrapper = g_quick_view->createTextureFromId(_renderer->get_display_texture_name(), size);
-  _render_texture_wrapper = g_quick_view->createTextureFromId(_renderer->get_render_texture_name(), size);
+  _display_texture_wrapper = _ng_view->create_texture_from_id(_renderer->get_display_texture_name(), size);
+  _render_texture_wrapper = _ng_view->create_texture_from_id(_renderer->get_render_texture_name(), size);
 
   _display_texture_wrapper->setHorizontalWrapMode(QSGTexture::Repeat);
   _display_texture_wrapper->setVerticalWrapMode(QSGTexture::Repeat);

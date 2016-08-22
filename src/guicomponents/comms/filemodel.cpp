@@ -6,12 +6,10 @@
 #include <base/utils/crypto.h>
 
 #include <components/interactions/graphbuilder.h>
-#include <components/computes/computeglobals.h>
 
 #include <guicomponents/comms/appcomm.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
-#include <guicomponents/quick/nodegraphquickitemglobals.h>
 
 #include <entities/entityids.h>
 #include <entities/guientities.h>
@@ -709,21 +707,6 @@ void FileModel::update_graph(int row, const QVariantMap& settings) {
   // Sort the files.
   sort_files();
   save_model();
-}
-
-void FileModel::update_qml() const{
-//  // We manually update the AppSettings QML object.
-//  // If we setup the FileModel properties properly the AppSettings QML object
-//  // could update automatically through property bindings.
-//  QQuickItem* root_item = g_quick_view->rootObject();
-//  QQuickItem* app_settings_item = root_item->findChild<QQuickItem*>("app_settings_object", Qt::FindChildrenRecursively);
-//  assert(app_settings_item);
-//
-//  // Update the password hiding.
-//  app_settings_item->setProperty("hide_passwords", get_work_setting(FileModel::kHidePasswordsRole).toBool());
-//
-//  // Update the max node posts.
-//  app_settings_item->setProperty("max_node_posts", get_work_setting(FileModel::kMaxNodePostsRole).toInt());
 }
 
 }

@@ -55,7 +55,7 @@ AppComm::AppComm(Entity* parent)
       _waiting_for_results(false),
       _show_browser(false){
 
-  get_dep_loader()->register_fixed_dep(_file_model, ".");
+  get_dep_loader()->register_fixed_dep(_file_model, "");
 
   // Setup the websocket.
   _websocket  = new_ff QWebSocket();
