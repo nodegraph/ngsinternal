@@ -3,8 +3,6 @@
     
         <!-- Main Window -->
         <file>qml/main.qml</file>
-        <file>qml/finished.qml</file>
-        
         
         <!-- Test Images -->
         <file alias="images/octopus_blue.ico">../../external/images/octopus_blue.ico</file>

@@ -22,7 +22,7 @@ ListModel {
         image_url: "qrc:///icons/ic_arrow_upward_white_48dp.png"
         title: "Surface"
         description: "Surface out of the current group."
-        script: "node_graph_page.node_graph.surface();
+        script: "node_graph_item.surface();
                  main_bar.switch_to_current_mode();"
     }
 
@@ -37,7 +37,7 @@ ListModel {
         image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
         title: "Delete"
         description: "Delete the selected nodes."
-        script: "node_graph_page.node_graph.destroy_selection();
+        script: "node_graph_item.destroy_selection();
                  main_bar.switch_to_current_mode();"
     }
 

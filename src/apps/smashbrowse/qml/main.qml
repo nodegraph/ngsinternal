@@ -151,8 +151,6 @@ Rectangle {
     }
 
     function update_dependencies() {
-        node_graph_page.node_graph = node_graph_item
-
         // Mode change connections.
         main_bar.switch_to_mode.connect(file_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
@@ -163,9 +161,9 @@ Rectangle {
         main_bar.switch_to_mode.connect(node_action_stack_page.on_switch_to_mode)
 
         // Node graph connections.
-        node_graph_page.node_graph.node_graph_context_menu_requested.connect(node_action_stack_page.on_node_graph_context_menu)
-        node_graph_page.node_graph.node_context_menu_requested.connect(node_action_stack_page.on_node_context_menu)
-        node_graph_page.node_graph.group_node_context_menu_requested.connect(node_action_stack_page.on_group_node_context_menu)
+        node_graph_item.node_graph_context_menu_requested.connect(node_action_stack_page.on_node_graph_context_menu)
+        node_graph_item.node_context_menu_requested.connect(node_action_stack_page.on_node_context_menu)
+        node_graph_item.group_node_context_menu_requested.connect(node_action_stack_page.on_group_node_context_menu)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.
@@ -183,8 +181,8 @@ Rectangle {
         quick_view.closing.connect(app_window.on_closing)
 
         // Node viewing and editing.
-        node_graph_page.node_graph.view_node_outputs.connect(view_node_page.on_show_data)
-        node_graph_page.node_graph.edit_node_params.connect(edit_node_page.on_show_data)
+        node_graph_item.view_node_outputs.connect(view_node_page.on_show_data)
+        node_graph_item.edit_node_params.connect(edit_node_page.on_show_data)
     }
 
 //    // Prevent the android hardware back from closing the app.

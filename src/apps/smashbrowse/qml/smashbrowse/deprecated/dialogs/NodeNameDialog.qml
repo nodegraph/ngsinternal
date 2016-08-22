@@ -38,7 +38,7 @@ Dialog {
             rightMargin: app_settings.action_bar_right_margin
         }
         onAccepted: {
-            node_graph_page.node_graph.create_node(entity_id, node_name_field.text);
+            node_graph_item.create_node(entity_id, node_name_field.text);
         }
     }
 }

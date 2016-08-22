@@ -39,7 +39,11 @@ Rectangle {
         }
     }
 
-    function on_valid_license() {
+    function on_license_checked(valid) {
+    	if (!valid) {
+    		status_label.text = "license is invalid"
+    		return
+    	}
         // Record the license.
         file_model.set_license(edition_cache, license_cache)
         file_model.save_crypto()
@@ -53,10 +57,6 @@ Rectangle {
         app_comm.show_browser()
         // Load the last graph.
         app_utils.load_last_graph()
-    }
-
-    function on_invalid_license() {
-        status_label.text = "license is invalid"
     }
 
     ColumnLayout {
@@ -124,7 +124,7 @@ Rectangle {
                 } else {
                 	edition_cache = "lite"
                 }
-                app_utils.check_license(edition_cache, license_cache, on_valid_license, on_invalid_license)
+                app_utils.check_license(edition_cache, license_cache, on_license_checked)
             }
         }
 

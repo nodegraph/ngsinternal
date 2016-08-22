@@ -169,7 +169,7 @@ StackView {
         // Update the model.
         var props={}
         props.edition = file_model.get_edition()
-        props.node_limit_reached = (props.edition != "pro") && (node_graph_page.node_graph.get_num_nodes() >= 10)
+        props.node_limit_reached = (props.edition != "pro") && (node_graph_item.get_num_nodes() >= 10)
         model.update(props)
         // Configure the page.
         page.model = model

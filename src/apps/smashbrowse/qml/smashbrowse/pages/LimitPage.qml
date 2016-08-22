@@ -37,7 +37,7 @@ Rectangle {
 
     AppLabel {
         y: app_settings.page_height * 2/10
-        text: "Smash Browse Lite " + node_graph_page.node_graph.get_ngs_version()
+        text: "Smash Browse Lite " + node_graph_item.get_ngs_version()
         anchors {
             horizontalCenter:  parent.horizontalCenter
         }

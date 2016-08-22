@@ -17,10 +17,8 @@ Rectangle {
     y: app_settings.page_y
     z: app_settings.page_z
 
-    //anchors.fill: parent
-
     // Appearance.
-    color: "green"
+    color: app_settings.ng_bg_color
     opacity: 1
 
     // Signals.
@@ -35,14 +33,5 @@ Rectangle {
             visible = false
         }
     }
-
-//    // The node graph.
-//    NodeGraphQuickItem {
-//        id: our_node_graph
-//        objectName: "node_graph_object"
-//        anchors.fill: node_graph_page
-//        //anchors.margins: 0
-//        //opacity: 0.5
-//    }
 }
 

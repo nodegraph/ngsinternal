@@ -50,10 +50,10 @@ AppListPage {
     }
 
     function load_current() {
-        node_graph_page.node_graph.surface_to_root()
+        node_graph_item.surface_to_root()
         file_model.load_graph(list_view.currentIndex)
-        node_graph_page.node_graph.frame_all()
-        node_graph_page.node_graph.update()
+        node_graph_item.frame_all()
+        node_graph_item.update()
         main_bar.on_switch_to_mode(app_settings.node_graph_mode)
     }
 
@@ -62,7 +62,7 @@ AppListPage {
             return
         }
         file_model.destroy_graph(list_view.currentIndex)
-        node_graph_page.node_graph.update()
+        node_graph_item.update()
         main_bar.on_switch_to_mode(app_settings.node_graph_mode)
     }
 }

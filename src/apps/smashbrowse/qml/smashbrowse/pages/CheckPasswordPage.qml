@@ -24,10 +24,25 @@ Rectangle {
     color: app_settings.menu_stack_bg_color
 
     function on_nodejs_connected() {
-        app_utils.check_license(file_model.get_edition(), file_model.get_license(), on_valid_license, on_invalid_license)
+        app_utils.check_license(file_model.get_edition(), file_model.get_license(), on_license_checked)
     }
 
-    function on_valid_license() {
+    function on_license_checked(valid) {
+    	// Invalid License.
+    	if (!valid) {
+    	    // Hide this page.
+	        check_password_page.visible = false
+	
+	        // Show the license page.
+	        license_page.visible = true
+	
+	        // Erase the password from this page.
+	        password_field.text = ""
+    		return
+    	}
+    	
+    	// Valid License.
+    	
         // Hide this page.
         check_password_page.visible = false
 
@@ -45,17 +60,6 @@ Rectangle {
             license_page.update_fields()
             license_page.visible = true
         }
-    }
-
-    function on_invalid_license() {
-        // Hide this page.
-        check_password_page.visible = false
-
-        // Show the license page.
-        license_page.visible = true
-
-        // Erase the password from this page.
-        password_field.text = ""
     }
 
     ColumnLayout {

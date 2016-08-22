@@ -23,11 +23,10 @@ Q_OBJECT
   Q_INVOKABLE void check_license(const QString& edition, const QString& license);
 
  signals:
-  void valid_license(); // emitted when we determine we have a valid license.
-  void invalid_license(); // emitted when we determine we have an invalid license.
+  void license_checked(bool); // emitted when we determine we have a valid license.
 
  private slots:
-  void on_web_reply(QNetworkReply* reply);
+  void on_reply_from_web(QNetworkReply* reply);
 
  private:
   QNetworkAccessManager *_network_manager;

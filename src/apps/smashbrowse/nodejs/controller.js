@@ -286,9 +286,6 @@ function receive_from_app(message) {
     // Handle the request.
     var request = msg.get_obj()
     switch (request.request) {
-    	case 'check_license':
-    		check_license(request.edition, request.license)
-    		break
     	case 'shutdown': {
     		close_browser().then(function(){process.exit(-1)})
     		break;
@@ -386,36 +383,6 @@ function receive_from_app(message) {
             break
             
     }
-}
-
-//------------------------------------------------------------------------------------------------
-//License Verification.
-//------------------------------------------------------------------------------------------------
-
-function check_license(edition, license) {
-	var product_id 
-	if (edition == "pro") {
-		product_id = "tgctL"
-	} else {
-		product_id = "QbCCX"
-	}
-	request({
-		url: 'https://api.gumroad.com/v2/licenses/verify',
-		qs: {product_permalink: product_id, license_key: license},
-		method: 'POST'
-	}, function(error, response, body) {
-		if(error) {
-			send_to_app({response: false, value: "invalid_license"})
-		} else {
-			//console.log(response.statusCode, body);
-			var obj = JSON.parse(body)
-			if ((obj.success == true) && (obj.purchase.refunded == false) && (obj.purchase.chargebacked == false)) {
-				send_to_app({response: true, value: "valid_license"})
-			} else {
-				send_to_app({response: false, value: "invalid_license"})
-			}
-		}
-	});
 }
 
 //------------------------------------------------------------------------------------------------

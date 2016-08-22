@@ -139,12 +139,14 @@ void QMLAppEntity::expose_to_qml() {
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
   AppComm* app_comm = get_app_comm();
   NodeGraphView* view = get_node_graph_view();
+  LicenseChecker* license_checker = get_license_checker();
 
   // Inject them into the qml context.
   QQmlContext* context = view->engine()->rootContext();
   context->setContextProperty(QStringLiteral("file_model"), file_model);
   context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
   context->setContextProperty(QStringLiteral("app_comm"), app_comm);
+  context->setContextProperty(QStringLiteral("license_checker"), license_checker);
 
   // Expose other useful objects to qml.
   context->setContextProperty("pdpi", QGuiApplication::primaryScreen()->physicalDotsPerInch());

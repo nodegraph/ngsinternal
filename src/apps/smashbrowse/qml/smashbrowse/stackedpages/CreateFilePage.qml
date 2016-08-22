@@ -129,7 +129,7 @@ Rectangle {
                     // Set values.
                     if (create_file == true) {
                         file_model.create_graph(info)
-                        node_graph_page.node_graph.update()
+                        node_graph_item.update()
                     } else {
                         file_stack_page.get_file_page().update_current_graph(info)
                     }
