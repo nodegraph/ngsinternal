@@ -5,6 +5,8 @@
 #include <base/utils/bits.h>
 #include <base/utils/crypto.h>
 
+#include <ngsversion.h>
+
 #include <components/interactions/graphbuilder.h>
 
 #include <guicomponents/comms/appcomm.h>
@@ -579,6 +581,17 @@ void FileModel::load_graph(int row) {
   Bits* bits = create_bits_from_raw(contents.data(),contents.size());
   SimpleLoader loader(bits);
 
+  // Load the version number.
+  size_t major;
+  size_t minor;
+  size_t patch;
+  size_t tweak;
+  loader.load(major);
+  loader.load(minor);
+  loader.load(patch);
+  loader.load(tweak);
+  //std::cerr << "version number is: " << major << "." << minor << "." << patch << "." << tweak << "\n";
+
   // Load off some pre data.
   size_t derived_id;
   loader.load(derived_id);
@@ -605,6 +618,16 @@ void FileModel::save_graph(int row) {
   std::stringstream ss;
   {
     SimpleSaver saver(ss);
+    // Save the version number.
+    size_t major = NGS_VERSION_MAJOR;
+    size_t minor = NGS_VERSION_MINOR;
+    size_t patch = NGS_VERSION_PATCH;
+    size_t tweak = NGS_VERSION_TWEAK;
+
+    saver.save(major);
+    saver.save(minor);
+    saver.save(patch);
+    saver.save(tweak);
     this->get_root_group()->save(saver);
   }
 
