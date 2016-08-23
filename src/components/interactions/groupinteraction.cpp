@@ -281,8 +281,9 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         input_compute->unlink_output_compute();
 
         // Unlink the link shapes from its input compute.
-        _link_shape = input_shape->find_link();
-        if (_link_shape) {
+        Entity* link_entity = input_shape->find_link_entity();
+        if (link_entity) {
+          _link_shape = get_dep<LinkShape>(link_entity);
           _link_shape->start_moving();
           // Clear the output shape but leave the input shape linked.
           _link_shape->unlink_output_shape();
@@ -533,8 +534,9 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
 
         // Remove any existing link shapes on this input.
         // There is only one link per input.
-        Dep<LinkShape> old_link_shape = input_shape->find_link();
-        if (old_link_shape) {
+        Entity* old_link_entity = input_shape->find_link_entity();
+        if (old_link_entity) {
+          Dep<LinkShape> old_link_shape = get_dep<LinkShape>(old_link_entity);
           // Remove any existing compute connection on this input compute.
           input_compute->unlink_output_compute();
           // Destroy the link.

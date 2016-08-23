@@ -40,7 +40,7 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
   const glm::vec2& get_origin() const;
 
   // Find our link. Note we don't have dependency on the link, as the link depends on us and it would create a dependency cycle.
-  Dep<LinkShape> find_link();
+  Entity* find_link_entity();
 
   const Dep<NodeShape>& get_node_shape() const {return _node_shape;}
 
