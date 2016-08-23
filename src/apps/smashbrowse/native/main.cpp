@@ -159,9 +159,15 @@ int main(int argc, char *argv[]) {
 
     // Copy the chromeextension over to the user data dir, so that we can change some files.
     {
-      QDir ext_src(AppComm::get_app_bin_dir() + "/../chromeextension");
-      QDir ext_tgt(AppComm::get_user_data_dir() + "/chromeextension");
-      copy_dir(ext_src, ext_tgt);
+      //QDir ext_src(AppComm::get_app_bin_dir() + "/../chromeextension");
+      //QDir ext_tgt(AppComm::get_user_data_dir() + "/chromeextension");
+      //copy_dir(ext_src, ext_tgt);
+
+      QString user_dir = AppComm::get_user_data_dir();
+      QDir src_dir(":/chromeextension/");
+      QDir dest_dir(user_dir+"/chromeextension/");
+      copy_dir(src_dir, dest_dir);
+
     }
 
 #if ARCH == ARCH_IOS
@@ -242,6 +248,11 @@ int main(int argc, char *argv[]) {
 
     // Run the Qt loop.
     execReturn = app.exec();
+
+    // Remove the chrome extension files from the user data dir, for a weak attempt to hide them.
+    // Note there are other directories in there that we don't care about like (nodejs, and chromeuserdata).
+    QDir dir(AppComm::get_user_data_dir()+"/chromeextension/");
+    dir.removeRecursively();
 
     // Cleanup.
     delete_ff(app_root);

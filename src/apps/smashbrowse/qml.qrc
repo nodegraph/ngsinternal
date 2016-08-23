@@ -1,6 +1,35 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource prefix="/">
     
+    	<!-- ChromeExtension -->
+    	<file>chromeextension/images/hourglass.gif</file>
+    	<file>chromeextension/images/octopus_blue_128.png</file>
+    	<file>chromeextension/images/octopus_blue_16.png</file>
+    	<file>chromeextension/images/octopus_blue_48.png</file>
+    	
+		<file>chromeextension/backgroundcommunication.js</file>
+		<file>chromeextension/browserwrap.js</file>
+		<file>chromeextension/contentcommunication.js</file>
+		<file>chromeextension/contextmenu.css</file>
+		<file>chromeextension/contextmenu.js</file>
+		<file>chromeextension/debugutils.js</file>
+		<file>chromeextension/distinctcolors.js</file>
+		<file>chromeextension/elemwrap.js</file>
+		<file>chromeextension/eventblocker.js</file>
+		<file>chromeextension/manifest.json</file>
+		<file>chromeextension/matchcriteria.js</file>
+		<file>chromeextension/overlay.css</file>
+		<file>chromeextension/overlay.js</file>
+		<file>chromeextension/overlayset.js</file>
+		<file>chromeextension/overlaysets.js</file>
+		<file>chromeextension/pagebox.js</file>
+		<file>chromeextension/pagewrap.js</file>
+		<file>chromeextension/point.js</file>
+		<file>chromeextension/popupdialog.css</file>
+		<file>chromeextension/popupdialog.js</file>
+		<file>chromeextension/socketmessage.js</file>
+		<file>chromeextension/utils.js</file>
+    
         <!-- Main Window -->
         <file>qml/main.qml</file>
         
