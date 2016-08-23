@@ -159,15 +159,13 @@ int main(int argc, char *argv[]) {
 
     // Copy the chromeextension over to the user data dir, so that we can change some files.
     {
-      //QDir ext_src(AppComm::get_app_bin_dir() + "/../chromeextension");
-      //QDir ext_tgt(AppComm::get_user_data_dir() + "/chromeextension");
-      //copy_dir(ext_src, ext_tgt);
+      // Remove the extension dir if present.
+      QDir dest_dir(AppComm::get_user_data_dir()+"/chromeextension/");
+      dest_dir.removeRecursively();
 
-      QString user_dir = AppComm::get_user_data_dir();
+      // Now copy the chromeextension from our qt resources.
       QDir src_dir(":/chromeextension/");
-      QDir dest_dir(user_dir+"/chromeextension/");
       copy_dir(src_dir, dest_dir);
-
     }
 
 #if ARCH == ARCH_IOS
