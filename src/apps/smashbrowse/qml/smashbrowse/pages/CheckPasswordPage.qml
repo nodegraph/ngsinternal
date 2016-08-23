@@ -84,6 +84,9 @@ Rectangle {
         // Password field.
         AppPasswordField {
             id: password_field
+            // Normally echoMode is bound to app_settings.hide_passwords, but it's not setup yet
+            // becuase the filemodel hasn't loaded the graph yet.
+            echoMode: TextInput.Password
             anchors.horizontalCenter: parent.horizontalCenter
         }
 

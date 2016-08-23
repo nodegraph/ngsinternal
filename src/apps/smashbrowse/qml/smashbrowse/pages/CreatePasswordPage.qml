@@ -58,6 +58,9 @@ Rectangle {
         // First password entry.
         AppPasswordField {
             id: password_1
+            // Normally echoMode is bound to app_settings.hide_passwords, but it's not setup yet
+            // becuase the filemodel hasn't loaded the graph yet.
+            echoMode: TextInput.Password
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -74,6 +77,9 @@ Rectangle {
         // Second password entry.
         AppPasswordField {
             id: password_2
+            // Normally echoMode is bound to app_settings.hide_passwords, but it's not setup yet
+            // becuase the filemodel hasn't loaded the graph yet.
+            echoMode: TextInput.Password
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
