@@ -73,6 +73,14 @@ BackgroundCommunication.prototype.receive_from_nodejs = function(event) {
             }
             g_browser_wrap.set_all_cookies(cookies, done_set_all_cookies)
             break
+        case 'get_zoom':
+            function done_get_zoom(zoom) {
+        		console.log('zoom is: '+ zoom)
+	            var response = {response: true, value: zoom}
+	            g_bg_comm.send_to_nodejs(response)
+	        }
+            chrome.tabs.getZoom(g_bg_comm.content_tab_id, done_get_zoom);
+        	break
         default:
             this.send_to_content(request)
             break

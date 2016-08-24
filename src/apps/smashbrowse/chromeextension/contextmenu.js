@@ -44,6 +44,7 @@ ContextMenu.prototype.create_menu = function (top_menu) {
     this.test2 = this.add_item(this.top_menu, 'TEST get all cookies')
     this.test3 = this.add_item(this.top_menu, 'TEST clear all cookies')
     this.test4 = this.add_item(this.top_menu, 'TEST set all cookies')
+    this.test5 = this.add_item(this.top_menu, 'TEST update overlays')
     
     // The find specific menu.
     this.navigate_menu = this.add_sub_menu(top_menu, 'Navigate')
@@ -298,6 +299,15 @@ ContextMenu.prototype.on_click = function(menu_event) {
         }
         g_content_comm.send_to_bg(request)
     }
+    
+    else if (this.test5.contains(menu_target)) {
+		g_overlay_sets.update()
+		
+		var request = {
+                request: 'get_zoom'
+        }
+        g_content_comm.send_to_bg(request)
+	}
     
 //    else if (this.navigate_back.contains(menu_target)) { 
 //        g_content_comm.send_to_bg({request: 'navigate_back'})
