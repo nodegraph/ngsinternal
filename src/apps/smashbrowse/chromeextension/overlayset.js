@@ -18,9 +18,9 @@ var OverlaySet = function(elem_wraps, color=null, marked=false) {
         }
     }
     
-    console.log('num elem wraps in set: ' + elem_wraps.length)
+    //console.log('num elem wraps in set: ' + elem_wraps.length)
     for (var i=0; i<elem_wraps.length; i++) {
-        console.log('adding elem: ' + elem_wraps[i].get_xpath())
+        //console.log('adding elem: ' + elem_wraps[i].get_xpath())
         var overlay = new Overlay('smash_browse_selected', this.color, this.color_index, this.marked, elem_wraps[i])
         this.overlays.push(overlay)
     }

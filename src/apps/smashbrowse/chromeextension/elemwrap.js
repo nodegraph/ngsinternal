@@ -14,7 +14,7 @@ ElemWrap.prototype.update = function() {
     // Update cached member values.
     this.wrap_type = this.calculate_wrap_type()
     this.getter = this.get_getter_from_wrap_type(this.wrap_type)
-    this.page_box.set_from_client_rect(this.get_client_rect())
+    this.page_box = new PageBox(this.calculate_page_box())
 }
 
 //Wrap type.
@@ -95,19 +95,62 @@ ElemWrap.prototype.get_getter = function() {
 //Element geometry.
 //----------------------------------------------------------------------------------------
 
-ElemWrap.prototype.get_client_rect = function() {
-    return this.element.getBoundingClientRect()
+// This function hasn't been fully tested.
+// It is intended to get all the parenting frames of an element.
+// However our chrome extension is currently designed to do nothing in subframes.
+// It only serves to block the regular context menu's you would see in the browser.
+function get_frames(element) {
+	console.log('-----')
+	var local_document = element.ownerDocument
+	console.log('local_document: ' + JSON.stringify(local_document))
+    var local_window = local_document.defaultView
+    
+    var local_parent_window = local_window.parent
+    var local_parent_document = local_parent_window.document
+    
+    var frames= local_parent_document.getElementsByTagName('iframe');
+	console.log('num iframe candidates: ' + frames.length)
+	
+	var i = 0
+	var found = false
+    for (i=0; i<frames.length; i++) {
+        try {
+            var doc = frames[i].contentDocument
+            console.log('...' + JSON.stringify(doc))
+            
+            if (doc === local_document) {
+            	found = true
+                break
+            }
+        } catch(e) {}
+    }
+	if (found) {
+		return get_frames(frames[i]).concat(frames[i])
+	}
+	return []
+}
+
+ElemWrap.prototype.calculate_page_box = function() {
+	var elem_rect = this.element.getBoundingClientRect()
+	var origin_rect = g_context_menu.origin_div.getBoundingClientRect()
+	var origin_x = origin_rect.left
+	var origin_y = origin_rect.top
+	var box = {
+		left: (elem_rect.left - origin_x),
+		right: (elem_rect.right - origin_x),
+		top: (elem_rect.top - origin_y),
+		bottom: (elem_rect.bottom - origin_y)
+	};
+	return box
 }
 
 //Returns true if the outer element contains the inner element.
 ElemWrap.prototype.contains = function(elem_wrap) {
-  var inner_box = new PageBox(elem_wrap.get_client_rect())
-  return this.page_box.contains(inner_box)
+  return this.page_box.contains(elem_wrap.page_box)
 }
 
 ElemWrap.prototype.intersects = function(elem_wrap) {
-  var other_box = new PageBox(elem_wrap.get_client_rect())
-  return this.page_box.intersects(other_box)
+  return this.page_box.intersects(elem_wrap.page_box)
 }
 
 //Note this containment test uses a sigma of 1.0.

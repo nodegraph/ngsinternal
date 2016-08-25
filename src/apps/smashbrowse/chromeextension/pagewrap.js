@@ -51,11 +51,11 @@ PageWrap.prototype.update_mutation_timer = function() {
     if (last_mutation_delta > this.mutation_done_interval) {
         this.stop_mutation_timer()
         this.page_is_ready = true
-        console.log("PageWrap: page is now ready with delta: " + last_mutation_delta)
+        //console.log("PageWrap: page is now ready with delta: " + last_mutation_delta)
         // Only send the page_is_ready from the top frame.
         if (window == window.top) {
             g_content_comm.send_to_bg({info: 'page_is_ready'})
-            console.log("PageWrap: sending out page is ready message from the top window.")
+            //console.log("PageWrap: sending out page is ready message from the top window.")
             
             // We can now show the context menu.
             g_context_menu.initialize()
@@ -75,7 +75,7 @@ PageWrap.prototype.on_mutation = function(mutations) {
     }
     
     if (this.mutation_timer == null) {
-        console.log('starting mutation timer')
+        //console.log('starting mutation timer')
         this.start_mutation_timer()
         g_wait_popup.open()
     } else {
@@ -141,6 +141,41 @@ PageWrap.prototype.disable_hover = function() {
 //	document.getElementsByTagName('head')[0].appendChild(style);
 }
 
+//Removes "zoom: resets" from all rules. 
+//In Chrome, styles with "zoom: reset;" causes getBoundingClientRect() to return incorrect shifted values.
+PageWrap.prototype.remove_zoom_property = function(rules) {
+	if (!rules) {
+		return
+	}
+	for (var j = 0; j < rules.length; j++) {
+		var rule = rules[j];
+		if (rule.type == CSSRule.MEDIA_RULE) {
+			// This rule acts like a grouping rule, so we recurse.
+			this.remove_zoom_property(rule.cssRules)
+		} else if (rule.type == CSSRule.STYLE_RULE) {
+			// This is the normal leaf rule type.
+			// We convert any "zoom: reset;" properties into "zoom: 1;"
+			if (rule.style) {
+				if (rule.style.zoom == "reset") {
+					rule.style.zoom = 1
+				}
+			}
+		}
+	}
+}
+
+//Disables "zoom: reset;" in all styles. 
+//In Chrome, styles with "zoom: reset;" causes getBoundingClientRect() to return incorrect shifted values.
+PageWrap.prototype.disable_zoom = function() {
+    var zoom_regex = /zoom:\s*reset/;
+    for (var i = 0; i < document.styleSheets.length; i++) {
+        var sheet = document.styleSheets[i]
+        // Note the cssRules will be null if the css stylesheet is loaded from another domain (cross domain security).
+        // However is you use "chrome --disable-web-security --user-data-dir", then it will not be null allowing you to access it.
+        this.remove_zoom_property(sheet.cssRules)
+    }	
+}
+
 
 
 //---------------------------------------------------------------------------------
@@ -177,7 +212,17 @@ return "//*[text()[string(.) = "+ text +"]]"
 //Note this will miss out on reporting svg elements.
 PageWrap.prototype.get_overlapping_at = function(page_x, page_y) {
     // Use the document.elementsFromPoint class.
-    var elements = document.elementsFromPoint(page_x-window.scrollX, page_y-window.scrollY)
+	var origin_rect = g_context_menu.origin_div.getBoundingClientRect()
+	var origin_x = origin_rect.left
+	var origin_y = origin_rect.top
+	var elements = document.elementsFromPoint(page_x-window.scrollX, page_y-window.scrollY)
+	
+	// The following would be logical and symmectrical, however it doesn't work.
+	// When we determine the page_box for an element we subtract the (origin_x, origin_y) point.
+	// However when we want to perform elementsFromPoint adding this origin point skews the found elements
+	// to closely neighboring elements.
+	//var elements = document.elementsFromPoint(page_x+origin_x, page_y+origin_y)
+	
     // Convert to elem wraps.
     var elem_wraps = []
     for (var i=0; i<elements.length; i++) {
@@ -483,7 +528,8 @@ PageWrap.prototype.get_text_values_at = function(page_x, page_y) {
 
 PageWrap.prototype.on_loaded = function() {
     // Disable hovers.
-    g_page_wrap.disable_hover()
+    this.disable_hover()
+    this.disable_zoom()
     
     // We don't allow iframes to initialize.
     if (window == window.top) {

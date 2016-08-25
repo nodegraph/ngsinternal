@@ -66,8 +66,6 @@ WaitPopup.prototype.constructor = WaitPopup;
 
 
 WaitPopup.prototype.initialize = function() {
-    console.log('pppppppppppppppppppppppp')
-    
     BasePopup.prototype.initialize.call(this)
     
     // Fill the popup's contents with a static wait message with a spinning hourglass.

@@ -156,6 +156,7 @@ void AppComm::on_poll() {
   } else if (_show_browser) {
     check_browser_is_open();
     check_browser_size();
+    _show_browser = false;
   }
 }
 

@@ -76,13 +76,13 @@ function strip_quotes(text) {
 //Element Transforms.
 //----------------------------------------------------------------------------------------
 
-function get_clickable_element(element) {
-    // Calculate a click point somewhat inside the element.
-    var rect = element.getBoundingClientRect()
-    var offset = Math.min(rect.width, rect.height)/2.0
-    var x = rect.left + offset
-    var y = rect.top + offset
-    // Get the element at that click point.
-    return document.elementFromPoint(x, y)
-}
+//function get_clickable_element(element) {
+//    // Calculate a click point somewhat inside the element.
+//    var rect = element.getBoundingClientRect()
+//    var offset = Math.min(rect.width, rect.height)/2.0
+//    var x = rect.left + offset
+//    var y = rect.top + offset
+//    // Get the element at that click point.
+//    return document.elementFromPoint(x, y)
+//}
 

@@ -7,7 +7,12 @@
 //between javascript and c++. In the javascript environment they can be easily converted back to elements.
 
 var ContextMenu = function() {
-    this.top_menu = null
+	// A dummy div to track the origin. 
+	// This allows us to work around the chrome bug where window.scrollX/Y returns incorrect values. 
+	// <div id="smash_browse_origin" style="position: absolute; left: 0px; top: 0px; width: 1px; height: 1px; visibility: hidden"></div>
+	this.origin_div = null 
+    
+	this.top_menu = null
     this.on_click_bound = null
     this.visible = false
 }
@@ -23,8 +28,18 @@ ContextMenu.prototype.initialize = function() {
     if (this.initialized()) {
         return
     }
+    this.origin_div = document.createElement("div")
+    //this.origin_div.style = "position: absolute; visibility: hidden"
+    this.origin_div.style.left = 0 + 'px'
+    this.origin_div.style.top = 0 + 'px'
+    this.origin_div.style.width = 1 + 'px'
+    this.origin_div.style.height = 1 + 'px'
+    this.origin_div.style.position = "absolute"
+    this.origin_div.visible = true
+    document.body.appendChild(this.origin_div)
+    
     // Create the top level menu element.
-    this.top_menu = document.createElement("menu");
+    this.top_menu = document.createElement("menu")
     this.top_menu.classList.add('smash_browse_menu')
     document.body.appendChild(this.top_menu)
     

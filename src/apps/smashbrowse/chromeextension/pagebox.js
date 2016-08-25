@@ -7,8 +7,6 @@ var PageBox = function(arg = null) {
         this.right = arg.right
         this.top = arg.top
         this.bottom = arg.bottom
-    } else if (Object.getPrototypeOf(arg) === ClientRect.prototype) {
-        this.set_from_client_rect(arg)
     } else if (Object.getPrototypeOf(arg) === Array.prototype) {
         this.left = arg[0]
         this.right = arg[1]
@@ -55,14 +53,6 @@ PageBox.prototype.get_mid_x = function() {
 
 PageBox.prototype.get_mid_y = function() {
     return (this.top + this.bottom) /2.0
-}
-
-//Set the box to match the client rect but in page space.
-PageBox.prototype.set_from_client_rect = function(rect) {
-    this.left = rect.left + window.scrollX
-    this.right = rect.right + window.scrollX
-    this.top = rect.top + window.scrollY
-    this.bottom = rect.bottom + window.scrollY
 }
 
 //Returns true if and only if we contain the inner entirely.
