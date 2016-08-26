@@ -1,9 +1,9 @@
 //This class represents a box in page space, not client rect space.
-var PageBox = function(arg = null) {
+var Box = function(arg = null) {
     if (arg == null) {
         this.reset()
-    } else if (Object.getPrototypeOf(arg) === PageBox.prototype) {
-    	// Initializing from another PageBox.
+    } else if (Object.getPrototypeOf(arg) === Box.prototype) {
+    	// Initializing from another Box.
         this.left = arg.left
         this.right = arg.right
         this.top = arg.top
@@ -32,40 +32,40 @@ var PageBox = function(arg = null) {
 }
 
 //Reset the box to the origin (top left) with zero width and height.
-PageBox.prototype.reset = function() {
+Box.prototype.reset = function() {
     this.left = 0
     this.right = 0
     this.top = 0
     this.bottom = 0
 }
 
-PageBox.prototype.get_as_string = function() {
+Box.prototype.get_as_string = function() {
     var msg = this.left + ',' + this.right + ',' + this.top + ',' + this.bottom
     return msg
 }
 
-PageBox.prototype.get_center = function() {
+Box.prototype.get_center = function() {
     return new Point(this.get_mid_x(), this.get_mid_y())
 }
 
-PageBox.prototype.get_width = function() {
+Box.prototype.get_width = function() {
     return this.right - this.left
 }
 
-PageBox.prototype.get_height = function() {
+Box.prototype.get_height = function() {
     return this.bottom - this.top
 }
 
-PageBox.prototype.get_mid_x = function() {
+Box.prototype.get_mid_x = function() {
     return (this.left + this.right) / 2.0
 }
 
-PageBox.prototype.get_mid_y = function() {
+Box.prototype.get_mid_y = function() {
     return (this.top + this.bottom) /2.0
 }
 
 //Assumes we are in page space and converts to client space.
-PageBox.prototype.to_client_space = function() {
+Box.prototype.to_client_space = function() {
 	this.left -= window.scrollX
 	this.right -= window.scrollX
 	this.top -= window.scrollY
@@ -73,7 +73,7 @@ PageBox.prototype.to_client_space = function() {
 }
 
 // Assumes we are in client space and convert to page space.
-PageBox.prototype.to_page_space = function() {
+Box.prototype.to_page_space = function() {
 	this.left += window.scrollX
 	this.right += window.scrollX
 	this.top += window.scrollY
@@ -81,7 +81,7 @@ PageBox.prototype.to_page_space = function() {
 }
 
 //Returns true if and only if we contain the inner entirely.
-PageBox.prototype.contains = function(inner) {
+Box.prototype.contains = function(inner) {
     if ((inner.left >= this.left) && 
             (inner.right <= this.right) && 
             (inner.top >= this.top) &&
@@ -95,7 +95,7 @@ PageBox.prototype.contains = function(inner) {
 //Returns true if and only if we contain the given page point.
 //Due the document.elementsFromPoint() precision on x and y,
 //we need to do a containment test with a sigma of 1.0 by default.
-PageBox.prototype.contains_point = function(page_pos, sigma = 1.0) {
+Box.prototype.contains_point = function(page_pos, sigma = 1.0) {
     if ((page_pos.x >= (this.left-sigma)) && (page_pos.x <= (this.right+sigma)) && 
             (page_pos.y >=(this.top-sigma)) && (page_pos.y <= (this.bottom+sigma))) {
         return true
@@ -104,7 +104,7 @@ PageBox.prototype.contains_point = function(page_pos, sigma = 1.0) {
 }
 
 //Returns true if and only if we intersect the other page box.
-PageBox.prototype.intersects = function(other) {
+Box.prototype.intersects = function(other) {
     if (this.right <= other.left) {
         return false
     } else if (this.left >= other.right) {
@@ -118,7 +118,7 @@ PageBox.prototype.intersects = function(other) {
 }
 
 //Returns true if this page box is on one side of another page box.
-PageBox.prototype.is_oriented_on = function(side, of) {
+Box.prototype.is_oriented_on = function(side, of) {
     switch(side) {
         case ElemWrap.prototype.direction.left:
             if (this.right < of.right) {
@@ -145,8 +145,8 @@ PageBox.prototype.is_oriented_on = function(side, of) {
 }
 
 //Returns a beam to one side of us.
-PageBox.prototype.get_beam = function(side) {
-    var beam = new PageBox(this)
+Box.prototype.get_beam = function(side) {
+    var beam = new Box(this)
     switch(side) {
         case ElemWrap.prototype.direction.left:
             //beam.right = beam.left
@@ -171,7 +171,7 @@ PageBox.prototype.get_beam = function(side) {
 }
 
 //Returns a side value.
-PageBox.prototype.get_extreme = function(side) {
+Box.prototype.get_extreme = function(side) {
     switch(side) {
         case ElemWrap.prototype.direction.left:
             return this.left
@@ -182,7 +182,7 @@ PageBox.prototype.get_extreme = function(side) {
         case ElemWrap.prototype.direction.down:
             return this.bottom
         default:
-            console.log("Error: PageBox.get_extreme(side) was given an unknown side argument: " + side)
+            console.log("Error: Box.get_extreme(side) was given an unknown side argument: " + side)
     }
     return null
 }

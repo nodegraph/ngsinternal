@@ -107,7 +107,7 @@ PageWrap.prototype.get_width = function() {
 
 //Returns current bounds.
 PageWrap.prototype.get_bounds = function() {
-    var box = new PageBox()
+    var box = new Box()
     box.left = 0
     box.top = 0
     box.right = this.get_width()

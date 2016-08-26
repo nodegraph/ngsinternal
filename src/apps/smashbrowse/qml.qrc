@@ -22,7 +22,7 @@
 		<file>chromeextension/overlay.js</file>
 		<file>chromeextension/overlayset.js</file>
 		<file>chromeextension/overlaysets.js</file>
-		<file>chromeextension/pagebox.js</file>
+		<file>chromeextension/box.js</file>
 		<file>chromeextension/pagewrap.js</file>
 		<file>chromeextension/point.js</file>
 		<file>chromeextension/popupdialog.css</file>

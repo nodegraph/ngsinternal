@@ -3,7 +3,7 @@ var ElemWrap = function(element) {
     this.element = element
     
     // Cached values, which need to be updated when the element changes.
-    this.page_box = new PageBox()
+    this.page_box = new Box()
     
     // Update.
     this.update()
@@ -14,7 +14,7 @@ ElemWrap.prototype.update = function() {
     // Update cached member values.
     this.wrap_type = this.calculate_wrap_type()
     this.getter = this.get_getter_from_wrap_type(this.wrap_type)
-    this.page_box = new PageBox(this.calculate_page_box())
+    this.page_box = new Box(this.calculate_page_box())
 }
 
 //Wrap type.
@@ -132,7 +132,7 @@ function get_frames(element) {
 
 ElemWrap.prototype.calculate_page_box = function() {
 	var elem_rect = this.element.getBoundingClientRect()
-	var box = new PageBox(elem_rect)
+	var box = new Box(elem_rect)
 	box.to_page_space()
     return box
 }
