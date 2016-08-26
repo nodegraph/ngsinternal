@@ -132,16 +132,9 @@ function get_frames(element) {
 
 ElemWrap.prototype.calculate_page_box = function() {
 	var elem_rect = this.element.getBoundingClientRect()
-	var origin_rect = g_context_menu.origin_div.getBoundingClientRect()
-	var origin_x = origin_rect.left
-	var origin_y = origin_rect.top
-	var box = {
-		left: (elem_rect.left - origin_x),
-		right: (elem_rect.right - origin_x),
-		top: (elem_rect.top - origin_y),
-		bottom: (elem_rect.bottom - origin_y)
-	};
-	return box
+	var box = new PageBox(elem_rect)
+	box.to_page_space()
+    return box
 }
 
 //Returns true if the outer element contains the inner element.
@@ -154,8 +147,8 @@ ElemWrap.prototype.intersects = function(elem_wrap) {
 }
 
 //Note this containment test uses a sigma of 1.0.
-ElemWrap.prototype.contains_point = function(page_x, page_y) {
-  return this.page_box.contains_point(page_x, page_y)
+ElemWrap.prototype.contains_point = function(page_pos) {
+  return this.page_box.contains_point(page_pos)
 }
 
 ElemWrap.prototype.get_horizontal_overlap = function(elem_wrap) {

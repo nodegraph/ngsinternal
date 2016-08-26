@@ -3,16 +3,25 @@ var PageBox = function(arg = null) {
     if (arg == null) {
         this.reset()
     } else if (Object.getPrototypeOf(arg) === PageBox.prototype) {
+    	// Initializing from another PageBox.
+        this.left = arg.left
+        this.right = arg.right
+        this.top = arg.top
+        this.bottom = arg.bottom
+    } else if (Object.getPrototypeOf(arg) === ClientRect.prototype) {
+    	// When initializing from a client rect, the box is kept in client space.
         this.left = arg.left
         this.right = arg.right
         this.top = arg.top
         this.bottom = arg.bottom
     } else if (Object.getPrototypeOf(arg) === Array.prototype) {
+    	// Initializing from an array.
         this.left = arg[0]
         this.right = arg[1]
         this.top = arg[2]
         this.bottom = arg[3]
     } else if (Object.getPrototypeOf(arg) === Object.prototype) {
+    	// Initializing from an object.
         this.left = arg.left
         this.right = arg.right
         this.top = arg.top
@@ -55,6 +64,22 @@ PageBox.prototype.get_mid_y = function() {
     return (this.top + this.bottom) /2.0
 }
 
+//Assumes we are in page space and converts to client space.
+PageBox.prototype.to_client_space = function() {
+	this.left -= window.scrollX
+	this.right -= window.scrollX
+	this.top -= window.scrollY
+	this.top -= windows.scrollY
+}
+
+// Assumes we are in client space and convert to page space.
+PageBox.prototype.to_page_space = function() {
+	this.left += window.scrollX
+	this.right += window.scrollX
+	this.top += window.scrollY
+	this.bottom += window.scrollY
+}
+
 //Returns true if and only if we contain the inner entirely.
 PageBox.prototype.contains = function(inner) {
     if ((inner.left >= this.left) && 
@@ -70,9 +95,9 @@ PageBox.prototype.contains = function(inner) {
 //Returns true if and only if we contain the given page point.
 //Due the document.elementsFromPoint() precision on x and y,
 //we need to do a containment test with a sigma of 1.0 by default.
-PageBox.prototype.contains_point = function(page_x, page_y, sigma = 1.0) {
-    if ((page_x >= (this.left-sigma)) && (page_x <= (this.right+sigma)) && 
-            (page_y >=(this.top-sigma)) && (page_y <= (this.bottom+sigma))) {
+PageBox.prototype.contains_point = function(page_pos, sigma = 1.0) {
+    if ((page_pos.x >= (this.left-sigma)) && (page_pos.x <= (this.right+sigma)) && 
+            (page_pos.y >=(this.top-sigma)) && (page_pos.y <= (this.bottom+sigma))) {
         return true
     }
     return false

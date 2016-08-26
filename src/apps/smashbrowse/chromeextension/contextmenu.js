@@ -7,11 +7,6 @@
 //between javascript and c++. In the javascript environment they can be easily converted back to elements.
 
 var ContextMenu = function() {
-	// A dummy div to track the origin. 
-	// This allows us to work around the chrome bug where window.scrollX/Y returns incorrect values. 
-	// <div id="smash_browse_origin" style="position: absolute; left: 0px; top: 0px; width: 1px; height: 1px; visibility: hidden"></div>
-	this.origin_div = null 
-    
 	this.top_menu = null
     this.on_click_bound = null
     this.visible = false
@@ -28,15 +23,6 @@ ContextMenu.prototype.initialize = function() {
     if (this.initialized()) {
         return
     }
-    this.origin_div = document.createElement("div")
-    //this.origin_div.style = "position: absolute; visibility: hidden"
-    this.origin_div.style.left = 0 + 'px'
-    this.origin_div.style.top = 0 + 'px'
-    this.origin_div.style.width = 1 + 'px'
-    this.origin_div.style.height = 1 + 'px'
-    this.origin_div.style.position = "absolute"
-    this.origin_div.visible = true
-    document.body.appendChild(this.origin_div)
     
     // Create the top level menu element.
     this.top_menu = document.createElement("menu")
@@ -236,9 +222,9 @@ ContextMenu.prototype.enable_item = function(item) {
     item.classList.remove('smash_browse_disabled')
 }
 
-ContextMenu.prototype.show = function(x,y) {
-    this.top_menu.style.left = x + 'px'
-    this.top_menu.style.top = y + 'px'
+ContextMenu.prototype.show = function(point) {
+    this.top_menu.style.left = point.x + 'px'
+    this.top_menu.style.top = point.y + 'px'
     this.top_menu.classList.add('smash_browse_menu_show')
     this.visible = true
 }
@@ -259,11 +245,10 @@ ContextMenu.prototype.contains_element = function(element) {
 }
 
 ContextMenu.prototype.on_context_menu = function(page_event) {
-    this.page_x = page_event.pageX
-    this.page_y = page_event.pageY
-    
-    var text_values = g_page_wrap.get_text_values_at(this.page_x, this.page_y)
-    var image_values = g_page_wrap.get_image_values_at(this.page_x, this.page_y)
+	this.page_pos = new Point(page_event.pageX, page_event.pageY)
+	
+    var text_values = g_page_wrap.get_text_values_at(this.page_pos)
+    var image_values = g_page_wrap.get_image_values_at(this.page_pos)
     
     if (text_values.length == 0) {
         this.disable_item(this.create_set_by_matching_text)
@@ -277,7 +262,7 @@ ContextMenu.prototype.on_context_menu = function(page_event) {
     }
     
     // Show the menu.
-    this.show(page_event.pageX, page_event.pageY)
+    this.show(this.page_pos)
     
     // Listen to clicks to perform the according action and close the menu.
     document.addEventListener('click', this.on_click_bound, true);
@@ -342,7 +327,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Create set from text values.
     else if (this.create_set_by_matching_text.contains(menu_target)) { 
-        var text_values = g_page_wrap.get_text_values_at(this.page_x, this.page_y)
+        var text_values = g_page_wrap.get_text_values_at(this.page_pos)
         var request = {
             request: 'create_set_from_match_values', 
             wrap_type: ElemWrap.prototype.wrap_type.text,
@@ -353,7 +338,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Create set from image values.
     else if (this.create_set_by_matching_image.contains(menu_target)) {
-        var image_values = g_page_wrap.get_image_values_at(this.page_x, this.page_y)
+        var image_values = g_page_wrap.get_image_values_at(this.page_pos)
         var request = {
             request: 'create_set_from_match_values', 
             wrap_type: ElemWrap.prototype.wrap_type.image,
@@ -408,7 +393,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Delete set.
     else if (this.delete_set.contains(menu_target)) {        
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {request: 'delete_set', set_index: set_index}
         g_content_comm.send_to_bg(request)
     }
@@ -419,7 +404,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Text.
     else if (this.shift_up_by_text.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -430,7 +415,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_down_by_text.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -441,7 +426,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_left_by_text.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -452,7 +437,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_right_by_text.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -464,7 +449,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Image.
     else if (this.shift_up_by_image.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -475,7 +460,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_down_by_image.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -486,7 +471,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_left_by_image.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -497,7 +482,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_right_by_image.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -509,7 +494,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Input.
     else if (this.shift_up_by_input.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -520,7 +505,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_down_by_input.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -531,7 +516,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_left_by_input.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -542,7 +527,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_right_by_input.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -554,7 +539,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Select.
     else if (this.shift_up_by_select.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -565,7 +550,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_down_by_select.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -576,7 +561,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_left_by_select.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -587,7 +572,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shift_right_by_select.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shift_set', 
             set_index: set_index, 
@@ -603,7 +588,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Expand above.
     else if (this.expand_above.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var match_criteria = new MatchCriteria()
         match_criteria.match_left = true
         match_criteria.match_font = true
@@ -618,7 +603,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     // Expand below.
     else if (this.expand_below.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var match_criteria = new MatchCriteria()
         match_criteria.match_left = true
         match_criteria.match_font = true
@@ -633,7 +618,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     // Expand left.
     else if (this.expand_left.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var match_criteria = new MatchCriteria()
         match_criteria.match_top = true
         match_criteria.match_font = true
@@ -648,7 +633,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     // Expand right.
     else if (this.expand_right.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var match_criteria = new MatchCriteria()
         match_criteria.match_top = true
         match_criteria.match_font = true
@@ -668,7 +653,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Mark set.
     else if (this.mark_set.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'mark_set',
             set_index: set_index
@@ -678,7 +663,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     
     // Unmark set.
     else if (this.unmark_set.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'unmark_set',
             set_index: set_index
@@ -695,31 +680,27 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shrink_set_above_marked.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos, false)
         var request = {
             request: 'shrink_set_to_marked',
             set_index: set_index,
             directions: [ElemWrap.prototype.direction.up]
         }
         g_content_comm.send_to_bg(request)
-        
-        //g_overlay_sets.shrink_set_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.up])
     }
     
     else if (this.shrink_set_below_marked.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos, false)
         var request = {
             request: 'shrink_set_to_marked',
             set_index: set_index,
             directions: [ElemWrap.prototype.direction.down]
         }
         g_content_comm.send_to_bg(request)
-        
-        //g_overlay_sets.shrink_set_to_marked(this.page_x, this.page_y, [ElemWrap.prototype.direction.down])
     }
     
     else if (this.shrink_set_above_and_below_marked.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos, false)
         var request = {
             request: 'shrink_set_to_marked',
             set_index: set_index,
@@ -729,7 +710,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shrink_set_left_of_marked.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos, false)
         var request = {
             request: 'shrink_set_to_marked',
             set_index: set_index,
@@ -739,7 +720,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shrink_set_right_of_marked.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos, false)
         var request = {
             request: 'shrink_set_to_marked',
             set_index: set_index,
@@ -749,7 +730,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shrink_set_left_and_right_of_marked.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y, false)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos, false)
         var request = {
             request: 'shrink_set_to_marked',
             set_index: set_index,
@@ -763,7 +744,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     // --------------------------------------------------------------
     
     else if (this.shrink_set_to_topmost.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shrink_set',
             set_index: set_index,
@@ -773,7 +754,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shrink_set_to_bottommost.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shrink_set',
             set_index: set_index,
@@ -783,7 +764,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shrink_set_to_leftmost.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shrink_set',
             set_index: set_index,
@@ -793,7 +774,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.shrink_set_to_rightmost.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         var request = {
             request: 'shrink_set',
             set_index: set_index,
@@ -807,7 +788,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     // --------------------------------------------------------------
     
     else if (this.perform_click.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         if (set_index >= 0) {
             var request = {
                     request: 'perform_action',
@@ -820,7 +801,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
 
     else if (this.perform_type.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         if (set_index >= 0) {
             var request = {
                     request: 'perform_action',
@@ -840,7 +821,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
 
     else if (this.perform_enter.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         if (set_index >= 0) {
             var request = {
                     request: 'perform_action',
@@ -854,7 +835,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
 
     else if (this.perform_extract.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         if (set_index >= 0) {
             var request = {
                     request: 'perform_action',
@@ -868,7 +849,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.perform_select_option.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         if (set_index >= 0) {
             var request = {
                     request: 'perform_action',
@@ -898,7 +879,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.perform_scroll_down.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         if (set_index >= 0) {
             var request = {
                     request: 'perform_action',
@@ -911,7 +892,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.perform_scroll_up.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         if (set_index >= 0) {
             var request = {
                     request: 'perform_action',
@@ -924,7 +905,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.perform_scroll_right.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         if (set_index >= 0) {
             var request = {
                     request: 'perform_action',
@@ -937,7 +918,7 @@ ContextMenu.prototype.on_click = function(menu_event) {
     }
     
     else if (this.perform_scroll_left.contains(menu_target)) {
-        var set_index = g_overlay_sets.find_set_index(this.page_x, this.page_y)
+        var set_index = g_overlay_sets.find_set_index(this.page_pos)
         if (set_index >= 0) {
             var request = {
                     request: 'perform_action',
@@ -956,8 +937,10 @@ ContextMenu.prototype.on_mouse_over = function(page_event) {
     if (!this.text_box_overlay || !this.image_box_overlay) {
         return
     }
-    var text_elem_wrap = g_page_wrap.get_top_text_elem_wrap_at(page_event.pageX, page_event.pageY)
-    var image_elem_wrap = g_page_wrap.get_top_image_elem_wrap_at(page_event.pageX, page_event.pageY)
+    var point = new Point(page_event.pageX, page_event.pageY)
+    
+    var text_elem_wrap = g_page_wrap.get_top_text_elem_wrap_at(point)
+    var image_elem_wrap = g_page_wrap.get_top_image_elem_wrap_at(point)
     this.update_text_box_overlay(text_elem_wrap)
     this.update_image_box_overlay(image_elem_wrap)
 }

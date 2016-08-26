@@ -52,8 +52,8 @@ Overlay.prototype.destroy = function() {
     this.marker = null
 }
 
-Overlay.prototype.contains_point = function(page_x, page_y) {
-    return this.elem_wrap.contains_point(page_x, page_y)
+Overlay.prototype.contains_point = function(page_pos) {
+    return this.elem_wrap.contains_point(page_pos)
 }
 
 // ----------------------------------------------------------------------------------

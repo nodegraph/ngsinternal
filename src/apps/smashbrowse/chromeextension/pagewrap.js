@@ -141,8 +141,14 @@ PageWrap.prototype.disable_hover = function() {
 //	document.getElementsByTagName('head')[0].appendChild(style);
 }
 
-//Removes "zoom: resets" from all rules. 
-//In Chrome, styles with "zoom: reset;" causes getBoundingClientRect() to return incorrect shifted values.
+//Removes all zoom settings from css rules, by setting them all to 1.
+//The css zoom is not supported by all browsers and so should be safe to remove.
+//In Chrome:
+//1) styles with "zoom: reset;" causes getBoundingClientRect() to return incorrect shifted values.
+//2) also we see that getBoundingClientRect()'s coordinate space becomes different from the space
+//   used by ElementsFromPoint. There is no obvious way to efficiently figure out the scaling 
+//   from the DOM API. Without using some kind of minimization like probing with ElementsFromPoint
+//   until we hit a know element.
 PageWrap.prototype.remove_zoom_property = function(rules) {
 	if (!rules) {
 		return
@@ -154,11 +160,8 @@ PageWrap.prototype.remove_zoom_property = function(rules) {
 			this.remove_zoom_property(rule.cssRules)
 		} else if (rule.type == CSSRule.STYLE_RULE) {
 			// This is the normal leaf rule type.
-			// We convert any "zoom: reset;" properties into "zoom: 1;"
 			if (rule.style) {
-				if (rule.style.zoom == "reset") {
-					rule.style.zoom = 1
-				}
+				rule.style.zoom = 1
 			}
 		}
 	}
@@ -210,18 +213,10 @@ return "//*[text()[string(.) = "+ text +"]]"
 
 //Returns an array of all elem wraps which overlap at the given mouse point.
 //Note this will miss out on reporting svg elements.
-PageWrap.prototype.get_overlapping_at = function(page_x, page_y) {
-    // Use the document.elementsFromPoint class.
-	var origin_rect = g_context_menu.origin_div.getBoundingClientRect()
-	var origin_x = origin_rect.left
-	var origin_y = origin_rect.top
-	var elements = document.elementsFromPoint(page_x-window.scrollX, page_y-window.scrollY)
-	
-	// The following would be logical and symmectrical, however it doesn't work.
-	// When we determine the page_box for an element we subtract the (origin_x, origin_y) point.
-	// However when we want to perform elementsFromPoint adding this origin point skews the found elements
-	// to closely neighboring elements.
-	//var elements = document.elementsFromPoint(page_x+origin_x, page_y+origin_y)
+PageWrap.prototype.get_overlapping_at = function(page_pos) {
+	var client_pos = new Point(page_pos)
+	client_pos.to_client_space()
+	var elements = document.elementsFromPoint(client_pos.x, client_pos.y)
 	
     // Convert to elem wraps.
     var elem_wraps = []
@@ -238,8 +233,8 @@ PageWrap.prototype.get_overlapping_at = function(page_x, page_y) {
 //Returns the elem wraps in z-order under the given page point, until we become
 //fully opaque. Usually we will hit an opaque background plate.
 //The document.elementsFromPoint seems to skip svg elem wraps, so we add these in manually.
-PageWrap.prototype.get_visible_overlapping_at = function(page_x, page_y) {
-  var elem_wraps = this.get_overlapping_at(page_x, page_y)
+PageWrap.prototype.get_visible_overlapping_at = function(page_pos) {
+  var elem_wraps = this.get_overlapping_at(page_pos)
   
   // Debug settings.
   if (false) {
@@ -284,7 +279,7 @@ PageWrap.prototype.get_visible_overlapping_at = function(page_x, page_y) {
       }
       
       // Make sure the svg contains the page point.
-      if (!svg.contains_point(page_x, page_y)) {
+      if (!svg.contains_point(page_pos)) {
           continue
       }
       
@@ -295,8 +290,8 @@ PageWrap.prototype.get_visible_overlapping_at = function(page_x, page_y) {
 }
 
 //Returns first elem wrap for which getter returns a "true-thy" value.
-PageWrap.prototype.get_first_elem_wrap_at = function(getter, page_x, page_y) {
-    var elem_wraps = this.get_visible_overlapping_at(page_x, page_y)
+PageWrap.prototype.get_first_elem_wrap_at = function(getter, page_pos) {
+    var elem_wraps = this.get_visible_overlapping_at(page_pos)
     for (var i=0; i<elem_wraps.length; i++) {
         var value = getter.call(elem_wraps[i])
         if (value) {
@@ -307,8 +302,8 @@ PageWrap.prototype.get_first_elem_wrap_at = function(getter, page_x, page_y) {
 }
 
 //Returns the top elem wrap with text, according to z-order.
-PageWrap.prototype.get_top_text_elem_wrap_at = function(page_x, page_y) {
-    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_text, page_x, page_y)
+PageWrap.prototype.get_top_text_elem_wrap_at = function(page_pos) {
+    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_text, page_pos)
     if (!candidate) {
         return null
     }
@@ -316,8 +311,8 @@ PageWrap.prototype.get_top_text_elem_wrap_at = function(page_x, page_y) {
 }
 
 //Returns the top elem wrap with an image, according to z-order.
-PageWrap.prototype.get_top_image_elem_wrap_at = function(page_x, page_y) {
-    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_image, page_x, page_y)
+PageWrap.prototype.get_top_image_elem_wrap_at = function(page_pos) {
+    var candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_image, page_pos)
     if (!candidate) {
         return null
     }
@@ -508,15 +503,15 @@ PageWrap.prototype.extract_values = function(elem_wraps, getter) {
 }
 
 //Returns an array of images values from elem wraps under the given page point.
-PageWrap.prototype.get_image_values_at = function(page_x, page_y) {
-    var elem_wraps = this.get_visible_overlapping_at(page_x, page_y)
+PageWrap.prototype.get_image_values_at = function(page_pos) {
+    var elem_wraps = this.get_visible_overlapping_at(page_pos)
     var values = this.extract_values(elem_wraps, ElemWrap.prototype.get_image)
     return values
 }
 
 //Returns an array of text values from elem wraps under the given page point.
-PageWrap.prototype.get_text_values_at = function(page_x, page_y) {
-    var elem_wraps = this.get_visible_overlapping_at(page_x, page_y)
+PageWrap.prototype.get_text_values_at = function(page_pos) {
+    var elem_wraps = this.get_visible_overlapping_at(page_pos)
     var values = this.extract_values(elem_wraps, ElemWrap.prototype.get_text)
     // Values will contain text from bigger overlapping divs with text.
     // Unlike images text won't overlap, so we only want the first text.

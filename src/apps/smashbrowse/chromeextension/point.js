@@ -15,6 +15,18 @@ var Point = function() {
     }
 }
 
+// Assumes we are in page space and converts to client space.
+Point.prototype.to_client_space = function() {
+	this.x -= window.scrollX
+	this.y -= window.scrollY
+}
+
+// Assumes we are in client space and convert to page space.
+Point.prototype.to_page_space = function() {
+	this.x += window.scrollX
+	this.y += window.scrollY
+}
+
 Point.prototype.assign = function(other) {
     this.x = other.x
     this.y = other.y

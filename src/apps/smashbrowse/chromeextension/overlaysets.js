@@ -33,11 +33,11 @@ OverlaySets.prototype.replace_set = function(set_index, set) {
 
 //Finds the first set index under the mouse matching the marked state.
 //If marked is null, then the marked state will not be considered.
-OverlaySets.prototype.find_set_index = function(page_x, page_y, marked=null) {
+OverlaySets.prototype.find_set_index = function(page_pos, marked=null) {
     // When there are multiple we get the first one which is not already marked.
     for (var i=0; i<this.sets.length; i++) {
         var set = this.sets[i]
-        if (set.contains_point(page_x, page_y)) {
+        if (set.contains_point(page_pos)) {
             if (marked === null) {
                 return i
             }
@@ -65,8 +65,8 @@ OverlaySets.prototype.unmark_all = function () {
 }
 
 //Destroy a set.
-OverlaySets.prototype.destroy_set = function(page_x, page_y) {
-    var set_index = this.find_set_index(page_x, page_y, null)
+OverlaySets.prototype.destroy_set = function(page_pos) {
+    var set_index = this.find_set_index(page_pos, null)
     this.destroy_set_by_index(set_index)
 }
 

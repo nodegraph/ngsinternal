@@ -50,9 +50,9 @@ OverlaySet.prototype.destroy = function() {
 }
 
 //Finds the set index under the mouse position.
-OverlaySet.prototype.contains_point = function(page_x, page_y) {
+OverlaySet.prototype.contains_point = function(page_pos) {
     for (var i=0; i<this.overlays.length; i++) {
-        if (this.overlays[i].contains_point(page_x, page_y)) {
+        if (this.overlays[i].contains_point(page_pos)) {
             return true
         }
     }
