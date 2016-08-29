@@ -28,11 +28,11 @@ BasePopup.prototype.open = function() {
 };
 
 BasePopup.prototype.position_popup = function(popup) {
-    // Determine our height.
-    var overflow = popup.offsetHeight - g_page_wrap.get_height();
-    if(overflow > 0) {
-        popup.style.maxHeight = (parseInt(window.getComputedStyle(popup).height) - overflow) + "px";
-    }
+//    // Determine our height.
+//    var overflow = popup.offsetHeight - g_page_wrap.get_height();
+//    if(overflow > 0) {
+//        popup.style.maxHeight = (parseInt(window.getComputedStyle(popup).height) - overflow) + "px";
+//    }
     // Determine our margins.
     popup.style.marginTop = (-popup.offsetHeight)/2 + "px";
     popup.style.marginLeft = (-popup.offsetWidth)/2 + "px";

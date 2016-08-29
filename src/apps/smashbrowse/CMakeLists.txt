@@ -103,6 +103,18 @@ INSTALL(DIRECTORY html
 		DESTINATION .
 		COMPONENT apps)
 
+# Typescript files.
+add_custom_command(
+    OUTPUT test.js
+    COMMAND tsc
+    ARGS --project typescript/chromeextension --outDir ${CMAKE_CURRENT_BINARY_DIR}/chromeextension
+    DEPENDS 
+        typescript/chromeextension/point.ts
+        typescript/chromeextension/box.ts
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+add_custom_target(install_chromeextension ALL DEPENDS test.js)
+
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	
 elseif (${ARCH} MATCHES "ARCH_ANDROID")

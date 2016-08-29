@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+    	"target": "ES6",
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": false,
+        "sourceMap": true
+    },
+    
+    "files": [
+         "utils.ts",
+         "distinctcolors.ts",
+         "point.ts",
+         "box.ts",
+         "overlay.ts",
+         "overlayset.ts",
+         "overlaysets.ts",
+         "matchcriteria.ts",
+         "browserwrap.ts",
+         "bgcomm.ts",
+         "pagewrap.ts",
+         "elemwrap.ts",
+         "contentcomm.ts",
+         "popupdialog.ts",
+         "eventblocker.ts",
+         "contextmenu.ts",
+         "main.ts"
+    ]
+}
