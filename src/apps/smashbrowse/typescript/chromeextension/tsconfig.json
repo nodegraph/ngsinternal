@@ -19,12 +19,18 @@
          "matchcriteria.ts",
          "browserwrap.ts",
          "bgcomm.ts",
+         "bgcommhandler.ts",
+         "mutationmonitor.ts",
          "pagewrap.ts",
+         "guicollection.ts",
          "elemwrap.ts",
          "contentcomm.ts",
+         "contentcommhandler.ts",
          "popupdialog.ts",
          "eventblocker.ts",
          "contextmenu.ts",
-         "main.ts"
+         "contextmenuhandler.ts",
+         "contentmain.ts",
+         "bgmain.ts"
     ]
 }

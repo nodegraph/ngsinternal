@@ -104,16 +104,80 @@ INSTALL(DIRECTORY html
 		COMPONENT apps)
 
 # Typescript files.
-add_custom_command(
-    OUTPUT test.js
-    COMMAND tsc
-    ARGS --project typescript/chromeextension --outDir ${CMAKE_CURRENT_BINARY_DIR}/chromeextension
-    DEPENDS 
-        typescript/chromeextension/point.ts
+set(chromeextension_src
+        typescript/chromeextension/bgcomm.ts
+        typescript/chromeextension/bgcommhandler.ts
         typescript/chromeextension/box.ts
+        typescript/chromeextension/browserwrap.ts
+        typescript/chromeextension/contentcomm.ts
+        typescript/chromeextension/contentcommhandler.ts
+        typescript/chromeextension/contextmenu.ts
+        typescript/chromeextension/contextmenuhandler.ts
+        typescript/chromeextension/distinctcolors.ts
+        typescript/chromeextension/elemwrap.ts
+        typescript/chromeextension/eventblocker.ts
+        typescript/chromeextension/matchcriteria.ts
+        typescript/chromeextension/overlay.ts
+        typescript/chromeextension/overlayset.ts
+        typescript/chromeextension/overlaysets.ts
+        typescript/chromeextension/mutationmonitor.ts
+        typescript/chromeextension/pagewrap.ts
+        typescript/chromeextension/guicollection.ts
+        typescript/chromeextension/point.ts
+        typescript/chromeextension/popupdialog.ts
+        typescript/chromeextension/utils.ts
+        typescript/chromeextension/contentmain.ts
+        typescript/chromeextension/bgmain.ts
+)
+set(chromeextension_compiled
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgcomm.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgcommhandler.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/box.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/browserwrap.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contentcomm.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contentcommhandler.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contextmenu.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contextmenuhandler.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/distinctcolors.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/elemwrap.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/eventblocker.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/matchcriteria.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/overlay.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/overlayset.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/overlaysets.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/mutationmonitor.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/pagewrap.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/guicollection.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/point.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/popupdialog.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/utils.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contentmain.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgmain.js
+)
+add_custom_command(
+    OUTPUT ${chromeextension_compiled}
+    COMMAND tsc
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/chromeextension --outDir ${CMAKE_CURRENT_BINARY_DIR}/chromeextension
+    DEPENDS ${chromeextension_src}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-add_custom_target(install_chromeextension ALL DEPENDS test.js)
+add_custom_target(install_chromeextension ALL DEPENDS ${chromeextension_compiled})
+
+# Install the compiled chrome extension plus the css files.
+INSTALL(FILES 
+            ${chromeextension_compiled}
+            typescript/chromeextension/css/contextmenu.css
+            typescript/chromeextension/css/overlay.css
+            typescript/chromeextension/css/popupdialog.css
+            typescript/chromeextension/manifest.json
+		DESTINATION bin/chromeextension
+		COMPONENT apps)
+		
+# Install chrome extension images.
+INSTALL(DIRECTORY typescript/chromeextension/images
+    DESTINATION bin/chromeextension
+COMPONENT apps)
+
 
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	

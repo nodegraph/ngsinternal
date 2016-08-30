@@ -1,16 +1,18 @@
 
 class EventBlocker {
     // Our Dependencies.
-    context_menu: ContextMenu
+    gui_collection: GUICollection // This is like our owning parent.
     
     // Our Members.
     events_are_blocked: boolean
     bound_listener: EventListener
     
-    constructor(context_menu: ContextMenu) {
+    constructor(gc: GUICollection) {
         this.events_are_blocked = false
         this.bound_listener = this.block_event.bind(this)
-        this.context_menu = context_menu
+
+        this.gui_collection = gc
+        this.block_events()
     }
 
     // The events that we will block.
@@ -44,8 +46,8 @@ class EventBlocker {
     block_event(event: UIEvent): boolean {
         // If the event is inside our context menu or popup dialog, let it through.
         if (window == window.top) {
-            if (event.target) { // event.target.tagName
-                if (this.context_menu.contains_element(<HTMLElement>event.target)) {
+            if (event.target && (event.target instanceof HTMLElement)) { // event.target.tagName
+                if (this.gui_collection.contains_element(<HTMLElement>event.target)) {
                     return true
                 }
             }
@@ -53,19 +55,14 @@ class EventBlocker {
             // Otherwise we selectively let the event through or block it.
             switch (event.type) {
                 case 'contextmenu':
-                    if (this.context_menu.initialized()) {
-                        this.context_menu.on_context_menu(<MouseEvent>event)
-                    }
+                    this.gui_collection.on_context_menu(<MouseEvent>event)
                     break
                 case 'click':
                     // Click outside a visible context menu will close it.
-                    if (this.context_menu.visible) {
-                        this.context_menu.hide()
-                    } else {
-                    }
+                    this.gui_collection.hide_context_menu()
                     break
                 case 'mousemove':
-                    this.context_menu.on_mouse_over(<MouseEvent>event)
+                    this.gui_collection.on_mouse_over(<MouseEvent>event)
                     break
                 case 'mouseout':
                     break

@@ -7,6 +7,7 @@ declare var g_nodejs_port: number
 // 2) this background script and the content script
 class BgComm {
     // Our dependencies.
+    private handler: BgCommHandler
 
     // Our members.
     private nodejs_socket: WebSocket // socket to communicate with the nodejs app
@@ -54,23 +55,15 @@ class BgComm {
         this.nodejs_socket.send(JSON.stringify(socket_message));
     }
 
-    register_nodejs_message_receiver(request_code: string, callback: (message: any)=>void) {
-        this.nodejs_receivers[request_code] = callback
+    register_nodejs_request_handler(handler: BgCommHandler) {
+        this.handler = handler
     }
 
     //Receive messages from nodejs. They will be forward to the content script.
     receive_from_nodejs(event: MessageEvent) {
         let request = JSON.parse(event.data);
         console.log("bg received message from nodejs: " + event.data + " parsed: " + request.request)
-
-        // We intercept certain requests before it gets to the content script,
-        // because content scripts can't use the chrome.* APIs except for parts of chrome.extension for message passing.
-        if (this.nodejs_receivers.hasOwnProperty(request.request)) {
-            this.nodejs_receivers[request.request](request)
-        } else {
-            // Forward it to the content.
-            this.send_to_content(request)
-        }
+        bg_comm_handler.handle_nodejs_request(request)
     }
 
     //------------------------------------------------------------------------------------------------

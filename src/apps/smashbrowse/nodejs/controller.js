@@ -203,7 +203,7 @@ var extension_server_config = {
         ssl_cert: './cert.pem'
     };
 var extension_server = null
-var extension_server_file = Path.join(g_user_data_dir, 'chromeextension', 'extensionserverport.js')
+var extension_server_file = Path.join(g_nodejs_dir, 'chromeextension', 'extensionserverport.js') // g_user_data_dir
 
 // Called when the extension server is built.
 function extension_server_built(server) {
@@ -424,7 +424,7 @@ function open_browser(url) {
         //Win_x64-389148-chrome-win32
         //Win-338428-chrome-win32
         //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
-        chromeOptions.addArguments("--load-extension=" + g_user_data_dir + "/chromeextension")
+        chromeOptions.addArguments("--load-extension=" + g_nodejs_dir + "/chromeextension")
         chromeOptions.addArguments("--ignore-certificate-errors")
         chromeOptions.addArguments("--disable-web-security")
         chromeOptions.addArguments("--user-data-dir=" + g_user_data_dir + "/chromeuserdata")

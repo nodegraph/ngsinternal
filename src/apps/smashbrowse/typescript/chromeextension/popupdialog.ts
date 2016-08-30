@@ -4,6 +4,7 @@
 
 class BasePopup {
     // Our Dependencies
+    initialized: boolean // whehter we've been initialized'
 
     // Our Members.
     popup_hider: HTMLDivElement
@@ -13,6 +14,7 @@ class BasePopup {
     constructor() {
         // Our Dependencies.
         
+        this.initialized = false
         // Our dom elements.
         this.popup_hider = null // This is the topmost element.
         this.popup = null
@@ -27,9 +29,16 @@ class BasePopup {
         this.popup = document.createElement('div')
         this.popup.classList.add('smash_browse_popup')
         this.popup_hider.appendChild(this.popup)
+
+        this.initialized = true
     }
 
     open(): void {
+        if (!this.initialized) {
+            this.initialize()
+            this.initialized = true
+        }
+
         // Change style to dim the background.
         this.popup_hider.classList.add("smash_browse_page_overlay");
 
@@ -93,12 +102,14 @@ class InputPopup extends BasePopup {
     label: HTMLParagraphElement
     input_div: HTMLDivElement
     button_group: HTMLParagraphElement
+
     // Button Elements.
     ok: HTMLInputElement 
     cancel: HTMLInputElement 
+
     // Result Callback.
     callback: (result: string) => void
-    
+
     constructor() {
         // Call base constructor.
         super()

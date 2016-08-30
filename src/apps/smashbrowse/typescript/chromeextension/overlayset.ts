@@ -107,7 +107,7 @@ class OverlaySet {
         for (let i = 0; i < this.overlays.length; i++) {
             for (let j = 0; j < sides.length; j++) {
                 let ew: ElemWrap = this.overlays[i].elem_wrap
-                let beam: Box = ew.page_box.get_beam(sides[j], page_wrap.get_bounds())
+                let beam: Box = ew.page_box.get_beam(sides[j], PageWrap.get_bounds())
                 beams.push(beam)
             }
         }

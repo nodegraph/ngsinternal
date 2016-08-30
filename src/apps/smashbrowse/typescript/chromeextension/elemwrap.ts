@@ -198,7 +198,7 @@ class ElemWrap {
 
     // Returns the next topmost element on one side of us.
     get_neighboring_elem_wrap(getter: ()=>string, side: Direction, page_wrap: PageWrap): ElemWrap {
-        let beam = this.page_box.get_beam(side, page_wrap.get_bounds())
+        let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
 
         // Get all elem wraps intersecting the beam.
         let elem_wraps: ElemWrap[] = page_wrap.get_intersecting_with(beam)
@@ -247,7 +247,7 @@ class ElemWrap {
 
     //Returns the next topmost element on one side of us.
     get_similar_neighbors(side: Direction, match_criteria: MatchCriteria, page_wrap: PageWrap): ElemWrap[] {
-        let beam = this.page_box.get_beam(side, page_wrap.get_bounds())
+        let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
 
         // Get all elem wraps intersecting the beam.
         let elem_wraps = page_wrap.get_intersecting_with(beam)

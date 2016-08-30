@@ -1,62 +1,13 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\chrome\chrome.d.ts"/>
 
-// This class represents the browser.
+// This class holds browser related utility methods.
 class BrowserWrap {
-    // Dependencies.
-    bg_comm: BgComm
+    // Our Dependencies.
+    
+    // Our Methods.
 
-    constructor(bg_comm: BgComm) {
-        this.bg_comm = bg_comm
-
-        // We handle certain messages from nodejs.
-        this.bg_comm.register_nodejs_message_receiver('clear_all_cookies',this.on_clear_all_cookies.bind(this))
-        this.bg_comm.register_nodejs_message_receiver('get_all_cookies',this.on_get_all_cookies.bind(this))
-        this.bg_comm.register_nodejs_message_receiver('set_all_cookies',this.on_set_all_cookies.bind(this))
-        this.bg_comm.register_nodejs_message_receiver('get_zoom',this.on_get_zoom.bind(this))
+    constructor() {
     }
-
-    on_clear_all_cookies(request: any) {
-        function done_clear_all_cookies() {
-            let response = { response: true }
-            this.bg_comm.send_to_nodejs(response)
-        }
-        this.clear_all_cookies(done_clear_all_cookies)
-    }
-
-    on_get_all_cookies(request: any) {
-        function done_get_all_cookies(cookies: chrome.cookies.Cookie[]) {
-            let response = { response: true, value: cookies }
-            this.bg_comm.send_to_nodejs(response)
-        }
-        this.get_all_cookies(done_get_all_cookies);
-    }
-
-    on_set_all_cookies(request: any) {
-        let cookies = request.cookies
-        let count = 0
-        function done_set_all_cookies() {
-            count += 1
-            console.log('count is: ' + count)
-            if (count == cookies.length) {
-                let response = { response: true }
-                this.bg_comm.send_to_nodejs(response)
-            }
-        }
-        this.set_all_cookies(cookies, done_set_all_cookies)
-    }
-
-    on_get_zoom(request: any) {
-        function done_get_zoom(zoom: number) {
-            console.log('zoom is: ' + zoom)
-            let response = { response: true, value: zoom }
-            this.send_to_nodejs(response)
-        }
-        this.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom);
-    }
-
-    // --------------------------------------------------------------------------------------------------------
-    // Lower Level Methods.
-    // --------------------------------------------------------------------------------------------------------
 
     clear_browser_cache(callback: () => void) {
         chrome.browsingData.remove({

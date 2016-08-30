@@ -2,6 +2,8 @@
     <qresource prefix="/">
     
     	<!-- ChromeExtension -->
+    	
+    	<!-- 
     	<file>chromeextension/images/hourglass.gif</file>
     	<file>chromeextension/images/octopus_blue_128.png</file>
     	<file>chromeextension/images/octopus_blue_16.png</file>
@@ -29,6 +31,7 @@
 		<file>chromeextension/popupdialog.js</file>
 		<file>chromeextension/socketmessage.js</file>
 		<file>chromeextension/utils.js</file>
+		-->
     
         <!-- Main Window -->
         <file>qml/main.qml</file>
