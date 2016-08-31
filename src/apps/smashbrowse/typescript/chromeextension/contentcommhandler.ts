@@ -7,6 +7,7 @@ class ContentCommHandler {
 
     constructor(cc: ContentComm, gc: GUICollection) {
         this.content_comm = cc
+        this.content_comm.register_bg_request_handler(this)
         this.gui_collection = gc
     }
 

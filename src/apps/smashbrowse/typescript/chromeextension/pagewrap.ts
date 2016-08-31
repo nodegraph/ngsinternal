@@ -41,6 +41,34 @@ class PageWrap {
         return box
     }
 
+    // Get our parenting iframes.
+    static get_frame_path() {
+
+    }
+
+    static get_frames(win: Window) {
+        let path: number[] = [] 
+        while (win.parent != win) {
+            var iframes = win.parent.document.getElementsByTagName('iframe');
+            console.log('num iframes, frames: ' + iframes.length + "," + frames.length)
+            let found = false
+            for (let i = 0; i < iframes.length; i++) {
+                console.log('checking: ' + i)
+                if (iframes[i].contentWindow == win) {
+                    path.unshift(i)
+                    found = true
+                    break;
+                }
+            }
+            if (!found) {
+                console.error('Error did not find parenting iframe')
+            }
+            console.log('iframe index: ' + path[0])
+            win = win.parent
+        }
+        return path
+    }
+
     //---------------------------------------------------------------------------------
     // Xpath Helpers.
     //---------------------------------------------------------------------------------
@@ -79,7 +107,6 @@ class PageWrap {
         // declare Document.msElementsFromPoint(x: number, y: number){} // The DefinitelyTyped libraries seem to be missing this call.
         let hack: any = document
         let nodes: NodeList = hack.elementsFromPoint(client_pos.x, client_pos.y)
-        console.log('num elements under point: ' + nodes.length)
 
         // Convert to elem wraps.
         let elem_wraps: ElemWrap[] = []
@@ -88,7 +115,7 @@ class PageWrap {
                 continue
             }
             let element = <HTMLElement>(nodes[i])
-            // *Important!* We weed out any context menu hits here.
+            // We skip any elements that are a part of our own smash browse gui elements.
             if (this.gui_collection.contains_element(element)) {
                 continue
             }
@@ -122,17 +149,17 @@ class PageWrap {
             }
         }
 
-        //  // Splice out any invisible elem wraps.
-        //  for (let i=0; i<elem_wraps.length; i++) {
-        //      if (!elem_wraps[i].is_visible()) {
-        //          elem_wraps.splice(i,1)
-      //          i -= 1
-        //      }
-        //  }
-  
+        // Splice out any invisible elem wraps.
+        for (let i = 0; i < elem_wraps.length; i++) {
+            if (!elem_wraps[i].is_visible()) {
+                elem_wraps.splice(i, 1)
+                i -= 1
+            }
+        }
+
         // Build xpath to find all svg elem wraps.
         let xpath = "//*[local-name() = 'svg']"
-        let svgs: ElemWrap[] = this.get_by_xpath(xpath)
+        let svgs: ElemWrap[] = this.get_visible_by_xpath(xpath)
 
         // Loop over the elem wraps.
         let svg: ElemWrap = null
@@ -161,6 +188,7 @@ class PageWrap {
         for (let i = 0; i < elem_wraps.length; i++) {
             let value = getter.call(elem_wraps[i])
             if (value) {
+                console.log("found first element with value:-->" + value + "<--")
                 return elem_wraps[i]
             }
         }
@@ -191,7 +219,8 @@ class PageWrap {
 
 
     // Returns an array of elem wraps with the given xpath.
-    get_by_xpath(xpath: string): ElemWrap[] {
+    // Note that even in visible elements will be returned.
+    get_visible_by_xpath(xpath: string): ElemWrap[] {
         let set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
         // Convert to elem wraps.
         let elem_wraps: ElemWrap[] = []
@@ -200,26 +229,34 @@ class PageWrap {
             if (!(item instanceof HTMLElement)){
                 continue
             }
+            // Cast to an HTMLElement.
             let element = <HTMLElement>(item)
-            // *Important!* We weed out any context menu hits here.
+            // We skip any elements that are a part of our own smash browse gui elements.
             if (this.gui_collection.contains_element(element)) {
                 continue
             }
-            elem_wraps.push(new ElemWrap(element))
+            // Create the elem wrap.
+            let ew = new ElemWrap(element)
+            // Drop it if it's not visible.
+            if (!ew.is_visible()) {
+                continue
+            }
+            // Otherwise we collect it.
+            elem_wraps.push(ew)
         }
         return elem_wraps
     }
 
     // Returns an array of all the elem wraps.
-    get_all(): ElemWrap[] {
+    get_all_visible(): ElemWrap[] {
         let xpath = "//*";
-        return this.get_by_xpath(xpath)
+        return this.get_visible_by_xpath(xpath)
     }
 
     // Returns all elem wraps which intersect with the given box.
     get_intersecting_with(page_box: Box): ElemWrap[] {
         let intersecting: ElemWrap[] = []
-        let elem_wraps = this.get_all()
+        let elem_wraps = this.get_all_visible()
         for (let i = 0; i < elem_wraps.length; i++) {
             if (page_box.intersects(elem_wraps[i].page_box)) {
                 intersecting.push(elem_wraps[i])
@@ -231,7 +268,7 @@ class PageWrap {
     // Returns all elem wraps which are contained in the given box.
     get_contained_in(page_box: Box): ElemWrap[] {
         let contained: ElemWrap[] = []
-        let elem_wraps = this.get_all()
+        let elem_wraps = this.get_all_visible()
         for (let i = 0; i < elem_wraps.length; i++) {
             if (page_box.contains(elem_wraps[i].page_box)) {
                 contained.push(elem_wraps[i])
@@ -245,7 +282,7 @@ class PageWrap {
         let getter = ElemWrap.prototype.get_getter_from_wrap_type(wrap_type)
 
         // Get all elem wraps.
-        let elem_wraps = this.get_all()
+        let elem_wraps = this.get_all_visible()
 
         // Loop over the elem wraps.
         let wrapper: ElemWrap = null
@@ -381,6 +418,12 @@ class PageWrap {
     // Returns an array of text values from elem wraps under the given page point.
     get_text_values_at(page_pos: Point): string[] {
         let elem_wraps = this.get_visible_overlapping_at(page_pos)
+
+        // Debugging
+        if (elem_wraps.length) {
+            console.log('elem frame path: ' + elem_wraps[0].get_frames())
+        }
+
         let values = PageWrap.extract_values(elem_wraps, ElemWrap.prototype.get_text)
         // Values will contain text from bigger overlapping divs with text.
         // Unlike images text won't overlap, so we only want the first text.

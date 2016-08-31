@@ -45,7 +45,7 @@ class EventBlocker {
 
     block_event(event: UIEvent): boolean {
         // If the event is inside our context menu or popup dialog, let it through.
-        if (window == window.top) {
+        //if (window == window.top) {
             if (event.target && (event.target instanceof HTMLElement)) { // event.target.tagName
                 if (this.gui_collection.contains_element(<HTMLElement>event.target)) {
                     return true
@@ -76,7 +76,7 @@ class EventBlocker {
                 case 'message':
                     return true
             }
-        }
+        //}
 
         // If we get here, then the event will be blocked from further propagation.
         event.stopPropagation();

@@ -14,7 +14,7 @@ let context_menu_handler: ContextMenuHandler = null
 let event_blocker: EventBlocker = null
 
 // We only create on the top window, not in other iframes.
-if (window == window.top) {
+//if (window == window.top) {
     // Popups.
     gui_collection = new GUICollection()
     event_blocker = gui_collection.event_blocker // expose inner event blocker, to keep global variable up to date.
@@ -30,8 +30,8 @@ if (window == window.top) {
     // Context menu handling.
     context_menu_handler = new ContextMenuHandler(content_comm, gui_collection)
     gui_collection.context_menu.set_handler(context_menu_handler)
-} else {
-    // If we are in an IFrame, then we only create the event blocker which will block everything.
-    event_blocker = new EventBlocker(gui_collection) // gui_collection is null here
-}
+// } else {
+//     // If we are in an IFrame, then we only create the event blocker which will route events to the top window.
+//     event_blocker = new EventBlocker(gui_collection) // gui_collection is null here
+// }
 

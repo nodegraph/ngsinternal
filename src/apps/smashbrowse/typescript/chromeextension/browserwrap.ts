@@ -50,7 +50,7 @@ class BrowserWrap {
     set_all_cookies(cookies: chrome.cookies.Cookie[], callback: (cookie?: chrome.cookies.Cookie) => void) {
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i]
-            let obj: chrome.cookies.SetDetails
+            let obj: chrome.cookies.SetDetails = {url: ""}
             let url: string = ""
             if (cookie.secure) {
                 url = "https://"

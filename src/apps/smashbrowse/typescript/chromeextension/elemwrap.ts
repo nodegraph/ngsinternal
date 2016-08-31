@@ -81,26 +81,28 @@ class ElemWrap {
     }
 
     get_getter_from_wrap_type(wrap_type: WrapType): ()=>string {
-        let getter: ()=>string = null
+        // Note this returns functions that are not bound to this.
+        // This means that these functions can be called by many instances.
         switch (wrap_type) {
             case WrapType.text:
-                getter = this.get_text.bind(this)
-                break
+                return this.get_text
             case WrapType.image:
-                getter = this.get_image.bind(this)
-                break
+                return this.get_image
             case WrapType.input:
-                getter = this.is_input.bind(this)
-                break
+                return this.is_input
             case WrapType.select:
-                getter = this.is_select.bind(this)
-                break
+                return this.is_select
         }
-        return getter
+        return null
     }
 
-    get_getter() {
+    get_getter(): ()=>string {
         return this.getter
+    }
+
+    get_frame_index_path(): number[] {
+        let local_window: Window = this.element.ownerDocument.defaultView
+        return PageWrap.get_frame_index_path(local_window)
     }
 
     //----------------------------------------------------------------------------------------
@@ -152,9 +154,15 @@ class ElemWrap {
             return false
         }
 
+        // Check the :before pseudo element first.
+        let before_style = window.getComputedStyle(this.element, ':after');
+        if (before_style.visibility == "hidden" || (before_style.display == 'none')) {
+            return false
+        }
+
         // Check the :after pseudo element first.
         let after_style = window.getComputedStyle(this.element, ':after');
-        if (after_style.visibility == "hidden") {
+        if (after_style.visibility == "hidden" || (after_style.display == 'none')) {
             return false
         }
         // Now check the actual element.
@@ -211,6 +219,7 @@ class ElemWrap {
             }
             let value = getter.call(elem_wraps[i])
             if (value) {
+                console.log('found element with value:-->' + value + "<--")
                 candidates.push(elem_wraps[i])
             }
         }
@@ -231,6 +240,7 @@ class ElemWrap {
         }
 
         // Return our result.
+        console.log('min candidate: ' + getter.call(min_candidate))
         return min_candidate
     }
 
@@ -254,7 +264,7 @@ class ElemWrap {
         //console.log('num elem wraps: ' + elem_wraps.length)
 
         // Select out those elem wraps returning any value with getter.
-        let getter: ()=>string = this.get_getter_from_wrap_type(this.get_wrap_type())
+        let getter: ()=>string = this.get_getter()
         let candidates: ElemWrap[] = []
         for (let i = 0; i < elem_wraps.length; i++) {
             let value = getter.call(elem_wraps[i])
@@ -534,7 +544,14 @@ class ElemWrap {
         // Loop through children accumulating text node values.
         for (let c = 0; c < this.element.childNodes.length; c++) {
             let child = this.element.childNodes[c]
-            if (child.nodeType == Node.TEXT_NODE) {
+            if (child.nodeType == Node.TEXT_NODE ) {
+                if (child instanceof Attr) {
+                    let attr: Attr = <Attr>(child)
+                    console.log('text nodes attr name is: ' + attr.name)
+                    if (attr.name.toLowerCase() == 'href') {
+                        continue
+                    }
+                }
                 let value = child.nodeValue
                 value = value.trim()
                 // Add text if it's not all whitespace.

@@ -71,23 +71,56 @@ class MutationMonitor {
             this.page_is_ready = true
             console.log("MutationMonitor: page is now ready with delta: " + last_mutation_delta)
             // Only send the page_is_ready from the top frame.
-            if (window == window.top) {
+            //if (window == window.top) {
                 this.content_comm.send_to_bg({ info: 'page_is_ready' })
                 console.log("MutationMonitor: sending out page is ready message from the top window.")  
                 // We can now show the context menu.
                 this.gui_collection.initialize()
                 this.gui_collection.wait_popup.close()
-            }
+            //}
         }
     }
 
     // This function is called on every mutation of the dom.
     on_mutation(mutations: MutationRecord[], observer: MutationObserver): void {
-        mutations.forEach(function(mutation) {
+        // We want to ignore mutations due to streaming of media.
+        // On cnet video pages it seems to continually send newly added textnodes as the mutation.
+        // So we just ignore those here. 
+        let ignore: boolean = true
+        for (let m = 0; m < mutations.length; m++) {
+            let mutation = mutations[m]
+            if (mutation.type == "childList") {
+                for (var n = 0; n < mutation.addedNodes.length; n++) {
+                    let node_name = mutation.addedNodes[n].nodeName.toLowerCase()
+                    if (node_name != '#text') {
+                        ignore = false
+                        break
+                    }
+                }
+            }
+            if (!ignore) {
+                break
+            }
+        }
+        if (ignore) {
+            return
+        }
+            // mutations.forEach(function(mutation: MutationRecord) {
+            // console.log("got mutation: " + mutation.type)
+            // if (mutation.type == "childList") {
+            //     for (var i = 0; i < mutation.addedNodes.length; i++) {
+            //         console.log('add node name: ' + mutation.addedNodes[i].nodeName)
+            //         if (mutation.addedNodes[i].nodeName.toLowerCase() == '#text') {
+            //             console.log('ignoring mutation!')
+            //             return
+            //         }
+            //     }
+            // }
             // mutation.addedNodes.length
             // mutation.removedNodes.length
-        });
+            // });
         if (mutations.length == 0) {
+            console.log('ignoring mutation2!')
             return
         }
 
@@ -179,7 +212,7 @@ class MutationMonitor {
         this.disable_zoom()
 
         // We don't allow iframes to initialize.
-        if (window == window.top) {
+        //if (window == window.top) {
             // Start mutation to timer, to try and detect when page is fully loaded.
             this.start_mutation_timer()
 
@@ -188,7 +221,7 @@ class MutationMonitor {
 
             // Initialize and open the wait popup.
             this.gui_collection.wait_popup.open()
-        }
+        //}
     }
 }
 

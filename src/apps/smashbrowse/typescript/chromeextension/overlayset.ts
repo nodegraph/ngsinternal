@@ -15,7 +15,7 @@ class OverlaySet {
         let color_data = this.distinct_colors.obtain_color()
         this.color = color_data.color
         this.color_index = color_data.index
-        this.overlays.length = 0
+        this.overlays = []
         this.cleanup = false
         //console.log('num elem wraps in set: ' + elem_wraps.length)
         for (let i = 0; i < elem_wraps.length; i++) {

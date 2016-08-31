@@ -405,9 +405,7 @@ class ContextMenu {
     }
 
     on_mouse_over(text_elem_wrap: ElemWrap, image_elem_wrap: ElemWrap): void {
-        console.log("context menu got mouse over: ")
         if (!this.text_box_overlay || !this.image_box_overlay) {
-            console.log("context menu not initialized")
             return
         }
         this.update_text_box_overlay(text_elem_wrap)

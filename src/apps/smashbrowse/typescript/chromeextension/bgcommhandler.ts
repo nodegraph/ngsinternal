@@ -7,8 +7,9 @@ class BgCommHandler {
     // Our Members.
 
     // Constructor.
-    constructor(bg_comm: BgComm, browser_wrap: BrowserWrap) {
-        this.bg_comm = bg_comm
+    constructor(bc: BgComm, bw: BrowserWrap) {
+        this.bg_comm = bc
+        this.browser_wrap = bw
     }
 
     handle_nodejs_request(request: any) {
@@ -45,7 +46,7 @@ class BgCommHandler {
                 function done_get_zoom(zoom: number) {
                     console.log('zoom is: ' + zoom)
                     let response = { response: true, value: zoom }
-                    this.send_to_nodejs(response)
+                    this.bg_comm.send_to_nodejs(response)
                 }
                 this.browser_wrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom.bind(this));
             default:
