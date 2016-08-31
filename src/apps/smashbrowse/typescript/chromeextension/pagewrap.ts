@@ -41,12 +41,9 @@ class PageWrap {
         return box
     }
 
-    // Get our parenting iframes.
-    static get_frame_path() {
-
-    }
-
-    static get_frames(win: Window) {
+    // Get our iframe path as indexes.
+    // An empty iframe path means we are in the top window.
+    static get_frame_index_path(win: Window) {
         let path: number[] = [] 
         while (win.parent != win) {
             var iframes = win.parent.document.getElementsByTagName('iframe');
@@ -421,7 +418,7 @@ class PageWrap {
 
         // Debugging
         if (elem_wraps.length) {
-            console.log('elem frame path: ' + elem_wraps[0].get_frames())
+            console.log('elem frame path: ' + elem_wraps[0].get_frame_index_path())
         }
 
         let values = PageWrap.extract_values(elem_wraps, ElemWrap.prototype.get_text)
