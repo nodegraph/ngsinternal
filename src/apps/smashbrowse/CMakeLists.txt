@@ -94,45 +94,66 @@ INSTALL(TARGETS smashbrowse
 )
 
 # Our nodejs app which controlls webdriver.
-INSTALL(DIRECTORY nodejs/
-		DESTINATION bin
-		COMPONENT apps)
+#INSTALL(DIRECTORY nodejs/
+#		DESTINATION bin
+#		COMPONENT apps)
 
 # Install the html files.
 INSTALL(DIRECTORY html
 		DESTINATION .
 		COMPONENT apps)
 
-# Typescript files.
-set(chromeextension_src
-        typescript/chromeextension/bgcomm.ts
-        typescript/chromeextension/bgcommhandler.ts
-        typescript/chromeextension/box.ts
-        typescript/chromeextension/browserwrap.ts
-        typescript/chromeextension/contentcomm.ts
-        typescript/chromeextension/contentcommhandler.ts
-        typescript/chromeextension/contextmenu.ts
-        typescript/chromeextension/contextmenuhandler.ts
-        typescript/chromeextension/distinctcolors.ts
-        typescript/chromeextension/elemwrap.ts
-        typescript/chromeextension/eventblocker.ts
-        typescript/chromeextension/matchcriteria.ts
-        typescript/chromeextension/overlay.ts
-        typescript/chromeextension/overlayset.ts
-        typescript/chromeextension/overlaysets.ts
-        typescript/chromeextension/mutationmonitor.ts
-        typescript/chromeextension/pagewrap.ts
-        typescript/chromeextension/guicollection.ts
-        typescript/chromeextension/point.ts
-        typescript/chromeextension/popupdialog.ts
-        typescript/chromeextension/utils.ts
-        typescript/chromeextension/contentmain.ts
-        typescript/chromeextension/bgmain.ts
+# Our nodejs controller files.
+set(controller_src
+    typescript/controller/debugutils.ts
+    typescript/controller/fswrap.ts
+    typescript/controller/socketmessage.ts
+    typescript/controller/webdriverwrap.ts
+    typescript/controller/controller.ts
 )
-set(chromeextension_compiled
+set(controller_compiled
+    ${CMAKE_CURRENT_BINARY_DIR}/controller/debugutils.js
+    ${CMAKE_CURRENT_BINARY_DIR}/controller/fswrap.js
+    ${CMAKE_CURRENT_BINARY_DIR}/controller/socketmessage.js
+    ${CMAKE_CURRENT_BINARY_DIR}/controller/webdriverwrap.js
+    ${CMAKE_CURRENT_BINARY_DIR}/controller/controller.js
+)
+
+# Our chrome extension files.
+set(background_src
+        typescript/chromeextension/background/browserwrap.ts
+        typescript/chromeextension/background/bgcomm.ts
+        typescript/chromeextension/background/bgcommhandler.ts
+        typescript/chromeextension/background/bgmain.ts
+)
+set(content_src
+        typescript/chromeextension/content/box.ts
+        typescript/chromeextension/content/contentcomm.ts
+        typescript/chromeextension/content/contentcommhandler.ts
+        typescript/chromeextension/content/contextmenu.ts
+        typescript/chromeextension/content/contextmenuhandler.ts
+        typescript/chromeextension/content/distinctcolors.ts
+        typescript/chromeextension/content/elemwrap.ts
+        typescript/chromeextension/content/eventblocker.ts
+        typescript/chromeextension/content/matchcriteria.ts
+        typescript/chromeextension/content/overlay.ts
+        typescript/chromeextension/content/overlayset.ts
+        typescript/chromeextension/content/overlaysets.ts
+        typescript/chromeextension/content/mutationmonitor.ts
+        typescript/chromeextension/content/pagewrap.ts
+        typescript/chromeextension/content/guicollection.ts
+        typescript/chromeextension/content/point.ts
+        typescript/chromeextension/content/popupdialog.ts
+        typescript/chromeextension/content/utils.ts
+        typescript/chromeextension/content/contentmain.ts
+)
+set(background_compiled
         ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgcomm.js
         ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgcommhandler.js
         ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/box.js
+        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgmain.js
+)
+set(content_compiled
         ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/browserwrap.js
         ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contentcomm.js
         ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contentcommhandler.js
@@ -152,20 +173,24 @@ set(chromeextension_compiled
         ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/popupdialog.js
         ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/utils.js
         ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contentmain.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgmain.js
 )
 add_custom_command(
-    OUTPUT ${chromeextension_compiled}
+    OUTPUT ${content_compiled} ${background_compiled} ${controller_compiled}
     COMMAND tsc
-    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/chromeextension --outDir ${CMAKE_CURRENT_BINARY_DIR}/chromeextension
-    DEPENDS ${chromeextension_src}
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/chromeextension/background --outDir ${CMAKE_CURRENT_BINARY_DIR}/chromeextension
+    COMMAND tsc
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/chromeextension/content --outDir ${CMAKE_CURRENT_BINARY_DIR}/chromeextension
+    COMMAND tsc
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/controller --outDir ${CMAKE_CURRENT_BINARY_DIR}/controller
+    DEPENDS ${background_src} ${content_src} ${controller_src}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-add_custom_target(install_chromeextension ALL DEPENDS ${chromeextension_compiled})
+add_custom_target(install_typescript ALL DEPENDS ${content_compiled} ${background_compiled} ${controller_compiled})
 
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 
-            ${chromeextension_compiled}
+            ${background_compiled}
+            ${content_compiled}
             typescript/chromeextension/css/contextmenu.css
             typescript/chromeextension/css/overlay.css
             typescript/chromeextension/css/popupdialog.css
@@ -177,6 +202,14 @@ INSTALL(FILES
 INSTALL(DIRECTORY typescript/chromeextension/images
     DESTINATION bin/chromeextension
 COMPONENT apps)
+
+# Install the nodejs controller app.
+INSTALL(FILES 
+            ${controller_compiled}
+            typescript/controller/cert.pem
+            typescript/controller/key.pem
+		DESTINATION bin
+		COMPONENT apps)
 
 
 if (${ARCH} MATCHES "ARCH_WINRT")

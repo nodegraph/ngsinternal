@@ -41,13 +41,22 @@ class PageWrap {
         return box
     }
 
+    // Get frame index path as string.
+    static get_frame_index_path_as_string(win: Window) {
+        let ipath = this.get_frame_index_path(win)
+        let spath: string = "/"
+        for (let i = 0; i < ipath.length; i++) {
+            spath += ipath[i].toString()
+        }
+        return spath
+    }
+
     // Get our iframe path as indexes.
     // An empty iframe path means we are in the top window.
     static get_frame_index_path(win: Window) {
         let path: number[] = [] 
         while (win.parent != win) {
             var iframes = win.parent.document.getElementsByTagName('iframe');
-            console.log('num iframes, frames: ' + iframes.length + "," + frames.length)
             let found = false
             for (let i = 0; i < iframes.length; i++) {
                 console.log('checking: ' + i)

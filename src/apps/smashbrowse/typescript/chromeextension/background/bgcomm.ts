@@ -23,6 +23,11 @@ class BgComm {
         this.connect_timer = setInterval(this.connect_to_nodejs.bind(this), 1000) // continually try to connect to nodejs
         this.content_tab_id = null
         this.connect_to_content()
+
+        // Make sure the web socket is closed before we navigate away from this window/frame.
+        window.onbeforeunload = function () {
+            this.nodejs_socket.close()
+        }
     }
 
     //------------------------------------------------------------------------------------------------

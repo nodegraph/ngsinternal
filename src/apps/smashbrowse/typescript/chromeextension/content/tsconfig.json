@@ -17,9 +17,6 @@
          "overlayset.ts",
          "overlaysets.ts",
          "matchcriteria.ts",
-         "browserwrap.ts",
-         "bgcomm.ts",
-         "bgcommhandler.ts",
          "mutationmonitor.ts",
          "pagewrap.ts",
          "guicollection.ts",
@@ -30,7 +27,6 @@
          "eventblocker.ts",
          "contextmenu.ts",
          "contextmenuhandler.ts",
-         "contentmain.ts",
-         "bgmain.ts"
-    ]
+         "contentmain.ts"
+   	]
 }
