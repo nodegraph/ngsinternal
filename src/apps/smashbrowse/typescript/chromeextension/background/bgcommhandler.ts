@@ -13,10 +13,11 @@ class BgCommHandler {
     }
 
     handle_nodejs_request(request: any) {
+        console.log('handling request from nodejs: ' + JSON.stringify(request))
         // We intercept certain requests before it gets to the content script,
         // because content scripts can't use the chrome.* APIs except for parts of chrome.extension for message passing.
         switch (request.request) {
-            case 'clear_all_cookies': 
+            case 'clear_all_cookies':
                 function done_clear_all_cookies() {
                     let response = { response: true }
                     this.bg_comm.send_to_nodejs(response)

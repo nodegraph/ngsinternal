@@ -7,6 +7,9 @@ let FSWrap = FSWrapModule.FSWrap
 
 import ControllerModule = require('./controller')
 
+import DebugUtilsModule = require('./debugutils')
+let log_exception = DebugUtilsModule.log_exception
+
 let driver: webdriver.WebDriver = null
 export let Key = webdriver.Key
 let By = webdriver.By

@@ -27,6 +27,9 @@ let FSWrap = FSWrapModule.FSWrap
 import WebDriverWrapModule = require('./webdriverwrap')
 let WebDriverWrap = WebDriverWrapModule.WebDriverWrap
 
+import SocketMessageModule = require('./socketmessage')
+let SocketMessage = SocketMessageModule.SocketMessage
+
 // Secure web socket to communicate with chrome extension.
 let extension_server: ChromeSocketServer = null
 
@@ -50,6 +53,7 @@ class BaseConnection {
     constructor() {
     }
     send_message(msg: string) :void {
+        this.socket.send(msg)
     }
     receive_message(msg: string): void {
     }
@@ -57,17 +61,11 @@ class BaseConnection {
 
 class ChromeConnection extends BaseConnection{
     receive_message(s: string): void {
+        // Messages from chrome get passed straight to the app.
         console.log('nodejs got message from extension: ' + s)
         let msg = new SocketMessage()
         msg.set_from_string(s)
-        if (msg.is_request()) {
-            // We have a request from the extension.
-            send_to_app(s);
-        } else {
-            // We have a response from the extension.
-            // We don't handle any responses ourself. We just relay them to the app.
-            send_to_app(msg.get_obj())
-        }
+        send_to_app(msg.get_obj())
     }
 }
 
@@ -224,6 +222,7 @@ class BaseSocketServer{
 
         // Once the https server reports an error, we try to create the https server on a different port.
         this.https_server.once('error', function (error: Error) {
+            console.log('start_build got error!!!')
             if (error.name === 'EADDRINUSE') {
                 console.log("XXXXX the port is in use already!")
                 // The current config port number is in use.
@@ -260,7 +259,8 @@ class BaseSocketServer{
     send_message_to_all_sockets(obj: any) {
         let socket_message = new SocketMessage()
         socket_message.set_from_obj(obj)
-        let sockets = extension_server.sockets
+        let sockets = this.sockets
+        console.log('num sockets is: ' + sockets.length + " on port: " + this.port)
         for (let i = 0; i<sockets.length; i++) {
             sockets[i].send_message(socket_message.get_text())
         }
@@ -271,6 +271,7 @@ class ChromeSocketServer extends BaseSocketServer {
     static extension_server_file = Path.join(FSWrap.g_nodejs_dir, 'chromeextension', 'extensionserverport.js') // g_user_data_dir
 
     build() {
+        this.port = 8093
         this.start_build(ChromeConnection)
     }
 
@@ -284,6 +285,7 @@ class AppSocketServer extends BaseSocketServer {
     static app_server_file = Path.join(FSWrap.g_user_data_dir, 'nodejs','appserverport.txt')
 
     build() {
+        this.port = 8094
         this.start_build(AppConnection)
     }
 
@@ -301,18 +303,18 @@ extension_server.build()
 app_server = new AppSocketServer()
 app_server.build()
 
-//Send an obj as a message to the app.
+// Send an obj as a message to the app.
 export function send_to_app(obj: any) {
-    var socket_message = new SocketMessage()
-    socket_message.set_from_obj(obj)
-    app_server.send_message_to_all_sockets(socket_message.get_text())
+    var sm = new SocketMessage()
+    sm.set_from_obj(obj)
+    app_server.send_message_to_all_sockets(sm.get_obj())
 }
 
-//Send an obj as a message to the extension.
+// Send an obj as a message to the extension.
 export function send_to_extension(obj: any) {
-    var socket_message = new SocketMessage()
-    socket_message.set_from_obj(obj)
-    extension_server.send_message_to_all_sockets(socket_message.get_text())
+    var sm = new SocketMessage()
+    sm.set_from_obj(obj)
+    extension_server.send_message_to_all_sockets(sm.get_obj())
 } 
 
 

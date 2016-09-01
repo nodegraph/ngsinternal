@@ -6,6 +6,6 @@ process.on('uncaughtException', function(e: Error) {
 });
 
 // Helper to print exceptions.
-function log_exception(e: Error): void {
+export function log_exception(e: Error): void {
     console.error("caught exception: " + e.message + " stack: " + e.stack)
 }

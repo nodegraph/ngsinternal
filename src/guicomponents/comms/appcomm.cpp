@@ -196,6 +196,8 @@ void AppComm::on_state_changed(QAbstractSocket::SocketState s) {
 void AppComm::on_text_message_received(const QString & message) {
   SocketMessage sm(message);
   const QJsonObject& obj = sm.get_json_obj();
+  std::cerr << "app is handling message from nodejs: " << sm.get_json_text().toStdString() << "\n";
+  std::cerr << "the message is a request: " << sm.is_request() << "\n";
   if (sm.is_request()) {
     handle_request_from_nodejs(sm);
   } else {

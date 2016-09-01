@@ -1,4 +1,5 @@
 #include <guicomponents/comms/socketmessage.h>
+#include <iostream>
 
 namespace ngs {
 
@@ -22,6 +23,15 @@ SocketMessage::SocketMessage(const QString& json_text):
         _json_obj(_json_doc.object()),
         _is_request(false)
 {
+  {
+    std::cerr << "dumping keys values for: " << json_text.toStdString() << "\n";
+    QStringList keys = _json_obj.keys();
+    for (int i=0; i<keys.size(); i++) {
+      std::cerr << keys[i].toStdString() << " to: " << _json_obj.value(keys[i]).toString().toStdString() << "\n";
+    }
+  }
+
+
   const QJsonObject::iterator iter = _json_obj.find("request");
   if (iter != _json_obj.end()) {
     _is_request = true;
@@ -35,6 +45,11 @@ SocketMessage::SocketMessage(const QJsonObject& json_obj)
   _json_doc.setObject(_json_obj);
   QByteArray bytes = _json_doc.toJson(QJsonDocument::Compact);
   _json_text = QString(bytes);
+
+  const QJsonObject::iterator iter = _json_obj.find("request");
+  if (iter != _json_obj.end()) {
+    _is_request = true;
+  }
 }
 
 SocketMessage::~SocketMessage() {
