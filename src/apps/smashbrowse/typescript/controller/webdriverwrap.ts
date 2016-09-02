@@ -5,10 +5,14 @@ import Path = require('path')
 import FSWrapModule = require('./fswrap')
 let FSWrap = FSWrapModule.FSWrap
 
+import SMM = require('./socketmessage')
+
 import ControllerModule = require('./controller')
 
 import DebugUtilsModule = require('./debugutils')
 let log_exception = DebugUtilsModule.log_exception
+
+
 
 let driver: webdriver.WebDriver = null
 export let Key = webdriver.Key
@@ -221,19 +225,21 @@ static terminate_chain<T>(p: webdriver.promise.Promise<T>) {
     p.then(
         function () {
             // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
-            ControllerModule.send_to_extension({ request: 'block_events' })
+            let req = new SMM.RequestMessage(SMM.RequestType.kBlockEvents)
+            ControllerModule.send_message_to_extension(req)
             // Send success response to the app.
             console.log('terminating chain success with numargs: ' + arguments.length)
             if (arguments.length == 0) {
-                ControllerModule.send_to_app({ response: true })
+                ControllerModule.send_message_to_app(new SMM.ResponseMessage(true))
             } else {
                 // Send the first argument in the response.
-                ControllerModule.send_to_app({ response: true, value: arguments[0] })
+                ControllerModule.send_message_to_app(new SMM.ResponseMessage(true, arguments[0]))
             }
         },
         function (error) {
             // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
-            ControllerModule.send_to_extension({ request: 'block_events' })
+            let req = new SMM.RequestMessage(SMM.RequestType.kBlockEvents)
+            ControllerModule.send_message_to_extension(req)
             // Output error details.
             console.error("Error in chain!")
             if (error.stack.indexOf('mouse_over_element') >= 0) {
@@ -248,7 +254,7 @@ static terminate_chain<T>(p: webdriver.promise.Promise<T>) {
                 log_exception(error)
             }
             // Send failure reponse to the app.
-            ControllerModule.send_to_app({ response: false })
+            ControllerModule.send_message_to_app(new SMM.ResponseMessage(false))
         })
 }
 

@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
     	"target": "ES6",
-        "module": "commonjs",
+        "module": "none",
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": false,
@@ -12,6 +12,7 @@
          "browserwrap.ts",
          "bgcomm.ts",
          "bgcommhandler.ts",
-         "bgmain.ts"
+         "bgmain.ts",
+         "socketmessage.ts"
     ]
 }

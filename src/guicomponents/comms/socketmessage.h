@@ -5,30 +5,67 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QObject>
+#include <QtCore/QVariant>
 
 namespace ngs {
 
-class COMMS_EXPORT SocketMessage: public QObject
-{
+// Note these enums have to be kept in sync with the typescript file, socketmessage.ts.
+enum RequestType {
+    kUnknownRequest,
+    // Browser Requests.
+    kBlockEvents,
+    kShutdown,
+    kCheckBrowserIsOpen,
+    kResizeBrowser,
+    kOpenBrowser,
+    kCloseBrowser,
+    kNavigateTo,
+    kNavigateBack,
+    kNavigateForward,
+    kNavigateRefresh,
+    kPerformAction,
+};
+
+enum ActionType {
+    kSendClick,
+    kSendText,
+    kSendEnter,
+    kGetText,
+    kSelectOption,
+    kScrollDown,
+    kScrollUp,
+    kScrollRight,
+    kScrollLeft
+};
+
+class COMMS_EXPORT Message: public QObject, public QJsonObject {
   Q_OBJECT
-public:
-  SocketMessage();
-  SocketMessage(const SocketMessage& other);
-  SocketMessage(const QString& json_text);
-  SocketMessage(const QJsonObject& json_obj);
-  ~SocketMessage();
+ public:
 
-  bool is_request() const {return _is_request;}
-  const QString& get_json_text() const {return _json_text;}
-  const QJsonObject& get_json_obj() const {return _json_obj;}
+  static const char* kRequest;
+  static const char* kArgs;
+  static const char* kXPath;
 
+  static const char* kSuccess;
+  static const char* kValue;
 
-private:
-  QString _json_text; // The string which parses into a json document.
-  QJsonDocument _json_doc; // The json document object.
-  QJsonObject _json_obj; // The json object with all the key value pairs.
+  static const char* kURL;
+  static const char* kWidth;
+  static const char* kHeight;
 
-  bool _is_request; // The socket message can only be a request or a response.
+  Message();
+  Message(const QString& json); // Initialize from a json string.
+  Message(RequestType rt, const QJsonObject& args = QJsonObject(), const QString& xpath = ""); // Initializes a request message.
+  Message(bool success, const QJsonValue& value = QJsonValue()); // Initializes a response message.
+  Message(const Message& other);
+  virtual ~Message();
+
+  virtual QString to_string() const;
+  virtual bool is_request() const;
+
+ private:
+  void merge_request_object(const QJsonObject& obj);
+  void merge_response_object(const QJsonObject& obj);
 };
 
 }

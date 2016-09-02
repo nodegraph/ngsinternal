@@ -48,7 +48,7 @@ Q_OBJECT
   // Returns false when it is busy processing a previous command.
   // When false is returned the command will be dropped.
   // You may call the method again to try again.
-  bool handle_request_from_app(const SocketMessage& sm);
+  bool handle_request_from_app(const Message& sm);
   Q_INVOKABLE bool handle_request_from_app(const QString& json_text); // Called from qml.
   Q_INVOKABLE QString get_smash_browse_url();
 
@@ -107,10 +107,10 @@ signals:
   void check_browser_size();
 
   // Handles requests originating from clicking items in the browser's context menu.
-  void handle_request_from_nodejs(const SocketMessage& sm);
+  void handle_request_from_nodejs(const Message& sm);
 
   // Handles responses from the browser's content script, after completing actions/tasks.
-  void handle_response_from_nodejs(const SocketMessage& sm);
+  void handle_response_from_nodejs(const Message& sm);
 
   //Our nodejs process.
   bool _use_external_process;
@@ -118,7 +118,7 @@ signals:
   QWebSocket* _websocket;
 
   //Command execution state.
-  SocketMessage _current_cmd;
+  //SocketMessage _current_cmd;
   bool _waiting_for_results;
 
   // Poll timer.

@@ -128,7 +128,7 @@ void QMLAppEntity::init_view(QSurfaceFormat& format) {
   qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
 
   // Register our types.
-  qmlRegisterType<SocketMessage>("SocketMessage", 1, 0, "SocketMessage");
+  qmlRegisterType<Message>("Message", 1, 0, "Message");
   qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
 
 }

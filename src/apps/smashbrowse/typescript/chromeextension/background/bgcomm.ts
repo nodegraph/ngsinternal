@@ -1,11 +1,14 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\chrome\chrome.d.ts"/>
 
+import {BaseMessage, RequestMessage, ResponseMessage} from "./socketmessage"
+import {BgCommHandler} from "./bgcommhandler"
+
 declare var g_nodejs_port: number
 
 //Class which handles communication between:
 // 1) this background script and nodejs
 // 2) this background script and the content script
-class BgComm {
+export class BgComm {
     // Our dependencies.
     private handler: BgCommHandler
 
@@ -13,7 +16,6 @@ class BgComm {
     private nodejs_socket: WebSocket // socket to communicate with the nodejs app
     private connect_timer: number
     private content_tab_id: number
-    private nodejs_receivers: {[request_type: string]: (message: any)=>void}
 
     constructor() {
         // Our dependencies.
@@ -56,8 +58,8 @@ class BgComm {
     }
 
     //Send message to nodejs.
-    send_to_nodejs(socket_message: any): void {
-        this.nodejs_socket.send(JSON.stringify(socket_message));
+    send_to_nodejs(msg: BaseMessage): void {
+        this.nodejs_socket.send(JSON.stringify(msg));
     }
 
     register_nodejs_request_handler(handler: BgCommHandler) {
@@ -68,7 +70,7 @@ class BgComm {
     receive_from_nodejs(event: MessageEvent) {
         let request = JSON.parse(event.data);
         console.log("bg received message from nodejs: " + event.data + " parsed: " + request.request)
-        bg_comm_handler.handle_nodejs_request(request)
+        this.handler.handle_nodejs_request(request)
     }
 
     //------------------------------------------------------------------------------------------------
@@ -81,14 +83,14 @@ class BgComm {
     }
 
     // Send a message to the content script.
-    send_to_content(socket_message: any): void {
-        console.log("bg sending message to content: " + JSON.stringify(socket_message))
-        chrome.tabs.sendMessage(this.content_tab_id, socket_message)
+    send_to_content(msg: BaseMessage): void {
+        console.log("bg sending message to content: " + JSON.stringify(msg))
+        chrome.tabs.sendMessage(this.content_tab_id, msg)
     }
 
     // Receive a message from the content script. We simply forward the message to nodejs.
-    receive_from_content(request: any, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
-        console.log("bg received message from content: " + JSON.stringify(request))
+    receive_from_content(msg: BaseMessage, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
+        console.log("bg received message from content: " + JSON.stringify(msg))
         // The first tab to send us a content message will be the tab that we pay attention to.
         if (!this.content_tab_id) {
             this.content_tab_id = sender.tab.id
@@ -98,7 +100,7 @@ class BgComm {
             return
         }
         // Pass the message to nodejs.
-        this.send_to_nodejs(request);
+        this.send_to_nodejs(msg);
     }
 
     get_tab_id() {

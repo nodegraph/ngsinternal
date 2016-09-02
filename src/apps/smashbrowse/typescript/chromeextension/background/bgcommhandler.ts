@@ -1,5 +1,7 @@
+import {BgComm} from "./bgcomm"
+import {BaseMessage, RequestMessage, ResponseMessage, RequestType} from "./socketmessage"
 
-class BgCommHandler {
+export class BgCommHandler {
     // Our Dependencies.
     bg_comm: BgComm
     browser_wrap: BrowserWrap
@@ -12,41 +14,41 @@ class BgCommHandler {
         this.browser_wrap = bw
     }
 
-    handle_nodejs_request(request: any) {
+    handle_nodejs_request(request: RequestMessage) {
         console.log('handling request from nodejs: ' + JSON.stringify(request))
         // We intercept certain requests before it gets to the content script,
         // because content scripts can't use the chrome.* APIs except for parts of chrome.extension for message passing.
         switch (request.request) {
-            case 'clear_all_cookies':
+            case RequestType.kClearAllCookies:
                 function done_clear_all_cookies() {
-                    let response = { response: true }
+                    let response = new ResponseMessage(true)
                     this.bg_comm.send_to_nodejs(response)
                 }
                 this.browser_wrap.clear_all_cookies(done_clear_all_cookies.bind(this))
                 break
-            case 'get_all_cookies':
+            case RequestType.kGetAllCookies:
                 function done_get_all_cookies(cookies: chrome.cookies.Cookie[]) {
-                    let response = { response: true, value: cookies }
+                    let response = new ResponseMessage(true, cookies)
                     this.bg_comm.send_to_nodejs(response)
                 }
                 this.browser_wrap.get_all_cookies(done_get_all_cookies.bind(this));
                 break
-            case 'set_all_cookies':
-                let cookies = request.cookies
+            case RequestType.kSetAllCookies:
+                let cookies = request.args.cookies
                 let count = 0
                 function done_set_all_cookies() {
                     count += 1
                     console.log('count is: ' + count)
                     if (count == cookies.length) {
-                        let response = { response: true }
+                        let response = new ResponseMessage(true)
                         this.bg_comm.send_to_nodejs(response)
                     }
                 }
                 this.browser_wrap.set_all_cookies(cookies, done_set_all_cookies.bind(this))
-            case 'get_zoom':
+            case RequestType.kGetZoom:
                 function done_get_zoom(zoom: number) {
                     console.log('zoom is: ' + zoom)
-                    let response = { response: true, value: zoom }
+                    let response = new ResponseMessage(true, zoom)
                     this.bg_comm.send_to_nodejs(response)
                 }
                 this.browser_wrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom.bind(this));

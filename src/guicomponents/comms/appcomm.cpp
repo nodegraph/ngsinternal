@@ -99,12 +99,12 @@ QString AppComm::get_smash_browse_url() {
   return app_dir;
 }
 
-bool AppComm::handle_request_from_app(const QString& json_text) {
-  SocketMessage sm(json_text);
-  return handle_request_from_app(sm);
+bool AppComm::handle_request_from_app(const QString& json) {
+  Message msg(json);
+  return handle_request_from_app(msg);
 }
 
-bool AppComm::handle_request_from_app(const SocketMessage& sm) {
+bool AppComm::handle_request_from_app(const Message& msg) {
   // Make sure nodejs is running.
   if (!nodejs_is_running()) {
     return false;
@@ -122,7 +122,7 @@ bool AppComm::handle_request_from_app(const SocketMessage& sm) {
 
   // Send the request to nodejs.
   _waiting_for_results = true;
-  size_t num_bytes = _websocket->sendTextMessage(sm.get_json_text());
+  size_t num_bytes = _websocket->sendTextMessage(msg.to_string());
   assert(num_bytes);
   return true;
 }
@@ -194,14 +194,13 @@ void AppComm::on_state_changed(QAbstractSocket::SocketState s) {
 }
 
 void AppComm::on_text_message_received(const QString & message) {
-  SocketMessage sm(message);
-  const QJsonObject& obj = sm.get_json_obj();
-  std::cerr << "app is handling message from nodejs: " << sm.get_json_text().toStdString() << "\n";
-  std::cerr << "the message is a request: " << sm.is_request() << "\n";
-  if (sm.is_request()) {
-    handle_request_from_nodejs(sm);
+  Message msg(message);
+  std::cerr << "app is handling message from nodejs: " << msg.to_string().toStdString() << "\n";
+  std::cerr << "the message is a request: " << msg.is_request() << "\n";
+  if (msg.is_request()) {
+    handle_request_from_nodejs(msg);
   } else {
-    handle_response_from_nodejs(sm);
+    handle_response_from_nodejs(msg);
   }
 }
 
@@ -210,13 +209,15 @@ void AppComm::on_text_message_received(const QString & message) {
 // -----------------------------------------------------------------
 
 void AppComm::open_browser() {
-  QString json_text = "{\"request\": \"open_browser\", \"url\": \"" + get_smash_browse_url() + "\"}";
-  handle_request_from_app(json_text);
+  Message msg(RequestType::kOpenBrowser);
+  msg[Message::kArgs] = QJsonObject();
+  msg[Message::kArgs].toObject()[Message::kURL] = get_smash_browse_url();
+  handle_request_from_app(msg);
 }
 
 void AppComm::close_browser() {
-  QString json_text = "{\"request\": \"close_browser\"}";
-  handle_request_from_app(json_text);
+  Message msg(RequestType::kCloseBrowser);
+  handle_request_from_app(msg);
 }
 
 // -----------------------------------------------------------------
@@ -300,39 +301,51 @@ bool AppComm::nodejs_is_connected() {
 }
 
 void AppComm::check_browser_is_open() {
-  QString json_text = "{\"request\": \"check_browser_is_open\"}";
-  handle_request_from_app(json_text);
+  Message msg(RequestType::kCheckBrowserIsOpen);
+  handle_request_from_app(msg);
 }
 
 void AppComm::check_browser_size() {
+  Message msg(RequestType::kResizeBrowser);
+
   int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
   int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
-  QString json_text = "{\"request\": \"resize_browser\", \"width\": " + QString::number(width)+ ", \"height\": " + QString::number(height) + "}";
-  handle_request_from_app(json_text);
+
+  msg[Message::kArgs] = QJsonObject();
+  msg[Message::kArgs].toObject()[Message::kWidth] = width;
+  msg[Message::kArgs].toObject()[Message::kHeight] = width;
+
+  handle_request_from_app(msg);
 }
 
-void AppComm::handle_request_from_nodejs(const SocketMessage& sm) {
+void AppComm::handle_request_from_nodejs(const Message& sm) {
   // Do stuff like create nodes in the node graph, in response to
   // messages from nodejs.
-  qDebug() << "app received request from nodejs: " << sm.get_json_text();
+  qDebug() << "app received request from nodejs: " << sm.to_string();
 
-  // Handle some info message.
-  if (sm.get_json_obj().value("info").toString() == "page_is_loading") {
-    // page is loading and unable to handle requests
-    return;
-  } else if (sm.get_json_obj().value("info").toString() == "page_is_ready") {
-    // page is ready to handle requests
-    return;
-  }
+//  // Handle some info message.
+//  if (sm.value("info").toString() == "page_is_loading") {
+//    // page is loading and unable to handle requests
+//    return;
+//  } else if (sm.value("info").toString() == "page_is_ready") {
+//    // page is ready to handle requests
+//    return;
+//  }
 
   // Hack to fix up urls coming from the extension.
-  if (sm.get_json_obj().value("request").toString() == "navigate_to") {
-    QJsonObject obj = sm.get_json_obj();
-    QString url = obj["url"].toString();
+  if (sm.value(Message::kRequest) == RequestType::kNavigateTo) {
+    // Extract the url from the message.
+    QString url = sm[Message::kArgs].toObject()[Message::kURL].toString();
+
+    // Fix the url.
     url = Utils::url_from_input(url).toString();
-    obj["url"] = url;
-    SocketMessage adjusted(obj);
-    handle_request_from_app(adjusted);
+
+    // Create a new Request.
+    Message updated(sm);
+    updated[Message::kArgs].toObject()[Message::kURL] = url;
+
+    // Send it off to the app.
+    handle_request_from_app(updated);
   } else {
     handle_request_from_app(sm);
   }
@@ -341,10 +354,10 @@ void AppComm::handle_request_from_nodejs(const SocketMessage& sm) {
 
 }
 
-void AppComm::handle_response_from_nodejs(const SocketMessage& sm) {
-  qDebug() << "app received response from nodejs: " << sm.get_json_text();
+void AppComm::handle_response_from_nodejs(const Message& msg) {
+  qDebug() << "app received response from nodejs: " << msg.to_string();
   _waiting_for_results = false;
-  emit command_finished(sm.get_json_text());
+  emit command_finished(msg.to_string());
 }
 
 }

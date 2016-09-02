@@ -3,56 +3,86 @@
 
 namespace ngs {
 
-SocketMessage::SocketMessage()
-    : _json_text(""),
-      _json_doc(),
-      _json_obj(),
-      _is_request(false) {
+const char* Message::kRequest = "request";
+const char* Message::kArgs = "args";
+const char* Message::kXPath = "xpath";
+
+const char* Message::kSuccess = "success";
+const char* Message::kValue = "value";
+
+const char* Message::kURL = "url";
+const char* Message::kWidth = "width";
+const char* Message::kHeight = "height";
+
+Message::Message()
+    : QJsonObject() {
 }
 
-SocketMessage::SocketMessage(const SocketMessage& other):
-  _json_text(other._json_text),
-  _json_doc(other._json_doc),
-  _json_obj(other._json_obj),
-  _is_request(other._is_request){
-}
-
-SocketMessage::SocketMessage(const QString& json_text):
-        _json_text(json_text),
-        _json_doc(QJsonDocument::fromJson(json_text.toUtf8())),
-        _json_obj(_json_doc.object()),
-        _is_request(false)
-{
-  {
-    std::cerr << "dumping keys values for: " << json_text.toStdString() << "\n";
-    QStringList keys = _json_obj.keys();
-    for (int i=0; i<keys.size(); i++) {
-      std::cerr << keys[i].toStdString() << " to: " << _json_obj.value(keys[i]).toString().toStdString() << "\n";
-    }
-  }
-
-
-  const QJsonObject::iterator iter = _json_obj.find("request");
-  if (iter != _json_obj.end()) {
-    _is_request = true;
+Message::Message(const QString& json) {
+  QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+  QJsonObject obj = doc.object();
+  if (obj.keys().contains(Message::kRequest)) {
+    merge_request_object(obj);
+  } else {
+    merge_response_object(obj);
   }
 }
 
-SocketMessage::SocketMessage(const QJsonObject& json_obj)
-    : _json_doc(),
-      _json_obj(json_obj),
-      _is_request(false) {
-  _json_doc.setObject(_json_obj);
-  QByteArray bytes = _json_doc.toJson(QJsonDocument::Compact);
-  _json_text = QString(bytes);
+Message::Message(RequestType rt, const QJsonObject& args, const QString& xpath) {
+  operator[](Message::kRequest) = rt;
+  operator[](Message::kArgs) = args;
+  operator[](Message::kXPath) = xpath;
+}
 
-  const QJsonObject::iterator iter = _json_obj.find("request");
-  if (iter != _json_obj.end()) {
-    _is_request = true;
+Message::Message(bool success, const QJsonValue& value) {
+  operator[](Message::kSuccess) = success;
+  operator[](Message::kValue) = value;
+}
+
+Message::Message(const Message& other) {
+  if (other.keys().contains(Message::kRequest)) {
+    merge_request_object(other);
+  } else {
+    merge_response_object(other);
   }
 }
 
-SocketMessage::~SocketMessage() {
+Message::~Message() {
+}
+
+void Message::merge_request_object(const QJsonObject& obj) {
+  if (obj.keys().contains(Message::kRequest)) {
+    operator[](Message::kRequest) = obj[Message::kRequest];
+  }
+  if (obj.keys().contains(Message::kArgs)) {
+    operator[](Message::kArgs) = obj[Message::kArgs];
+  }
+  if (obj.keys().contains(Message::kXPath)) {
+    operator[](Message::kXPath) = obj[Message::kXPath];
+  }
+}
+
+void Message::merge_response_object(const QJsonObject& obj) {
+  if (obj.keys().contains(Message::kSuccess)) {
+    operator[](Message::kSuccess) = obj[Message::kSuccess];
+  }
+  if (obj.keys().contains(Message::kValue)) {
+    operator[](Message::kValue) = obj[Message::kValue];
+  }
+}
+
+QString Message::to_string() const {
+  QJsonDocument doc;
+  doc.setObject(*this);
+  QByteArray bytes = doc.toJson(QJsonDocument::Compact);
+  return QString(bytes);
+}
+
+bool Message::is_request() const {
+  if (keys().contains(Message::kRequest)) {
+    return true;
+  }
+  return false;
 }
 
 }

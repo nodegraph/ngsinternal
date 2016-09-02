@@ -1,69 +1,105 @@
+// Note this file is symlinked into chromeextension/background and chromeextension/content.
+// The real file lives in controller.
 
 export const enum RequestType {
+    kUnknownRequest,
+    // Chrome BG Requests.
+    kClearAllCookies,
+    kGetAllCookies,
+    kSetAllCookies,
+    kGetZoom,
+    // Browser Requests.
     kShutdown,
-    check_browser_is_open
+    kCheckBrowserIsOpen,
+    kResizeBrowser,
+    kOpenBrowser,
+    kCloseBrowser,
+    // Web Page Requests.
+    kBlockEvents,
+    kNavigateTo,
+    kNavigateBack,
+    kNavigateForward,
+    kNavigateRefresh,
+    kPerformAction,
+}
+
+export const enum ActionType {
+    kSendClick,
+    kSendText,
+    kSendEnter,
+    kGetText,
+    kSelectOption,
+    kScrollDown,
+    kScrollUp,
+    kScrollRight,
+    kScrollLeft
 }
 
 export class BaseMessage {
+    construtor() { }
     static create_from_string(s: string): BaseMessage {
         let obj = JSON.parse(s)
+        let msg: BaseMessage
+
+        // Now we create the right message and copy properties from obj.
+        // Note that in ES6, we can use Object.assign.
         if (obj.hasOwnProperty('request')) {
-            return <RequestMessage>obj
+            let req = new RequestMessage(RequestType.kUnknownRequest)
+            if (obj.hasOwnProperty('request')) {
+                req.request = obj.request
+            }
+            if (obj.hasOwnProperty('args')) {
+                req.args = obj.args
+            }
+            if (obj.hasOwnProperty('xpath')) {
+                req.xpath = obj.xpath
+            }
+            return req
         } else {
-            return <ResponseMessage>obj
+            let resp = new ResponseMessage()
+            if (obj.hasOwnProperty('success')) {
+                resp.success = obj.success
+            }
+            if (obj.hasOwnProperty('value')) {
+                resp.value = obj.value
+            }
+            return resp
         }
     }
 
     to_string(): string {
         return JSON.stringify(this)
     }
+
+    is_request(): boolean {
+        return false
+    }
 }
 
 export class RequestMessage extends BaseMessage{
     request: RequestType
-    args: any[]
+    xpath: string
+    args: any // a key value dict of arguments
+    constructor(request: RequestType, args: any = {}, xpath: string = "") {
+        super()
+        this.request = request
+        this.args = args
+        this.xpath = xpath
+    }
+    is_request(): boolean {
+        return true
+    }
 }
 
 export class ResponseMessage extends BaseMessage{
     success: boolean
     value: any
-}
-
-
-
-export class SocketMessage {
-    text: string
-    obj: any
-    constructor() {
-        this.text = ""
-        this.obj = null
+    constructor(success: boolean = false, value: any = 0) {
+        super()
+        this.success = success
+        this.value = value
     }
-    set_from_string(s: string) {
-        console.log("SocketMessage setting from string: " + s)
-        this.text = s
-        this.obj = JSON.parse(this.text)
-        console.log('check stringified: ' + JSON.stringify(this.obj))
-    }
-    set_from_obj(o: any) {
-        this.text = JSON.stringify(o)
-        this.obj = o
-        console.log('Socketmessage setting from obj stringified: ' + this.text)
-        console.log('check stringified: ' + JSON.stringify(this.obj))
-    }
-
-    get_obj() {
-        return this.obj
-    }
-
-    get_text() {
-        return this.text
-    }
-
-    is_request() {
-        return this.obj.hasOwnProperty('request')
-    }
-
-    is_response() {
-        return !this.is_request()
+    is_request(): boolean {
+        return false
     }
 }

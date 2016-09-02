@@ -27,8 +27,10 @@ let FSWrap = FSWrapModule.FSWrap
 import WebDriverWrapModule = require('./webdriverwrap')
 let WebDriverWrap = WebDriverWrapModule.WebDriverWrap
 
-import SocketMessageModule = require('./socketmessage')
-let SocketMessage = SocketMessageModule.SocketMessage
+// import SocketMessageModule = require('./socketmessage')
+// let SocketMessage = SocketMessageModule.SocketMessage
+
+import SM = require('./socketmessage')
 
 // Secure web socket to communicate with chrome extension.
 let extension_server: ChromeSocketServer = null
@@ -60,12 +62,10 @@ class BaseConnection {
 }
 
 class ChromeConnection extends BaseConnection{
-    receive_message(s: string): void {
+    receive_message(json: string): void {
         // Messages from chrome get passed straight to the app.
-        console.log('nodejs got message from extension: ' + s)
-        let msg = new SocketMessage()
-        msg.set_from_string(s)
-        send_to_app(msg.get_obj())
+        console.log('nodejs got message from extension: ' + json)
+        send_to_app(json)
     }
 }
 
@@ -73,24 +73,23 @@ class AppConnection extends BaseConnection {
     //The can send us messages either from c++ or from qml.
     //These requests will be handled by webdriverjs, or the extension scripts in the browser.
     //Requests will always return with a response message containing return values.
-    receive_message(message: string): void {
-        let msg = new SocketMessage()
-        msg.set_from_string(message)
-        console.log('nodejs got message from app: ' + message)
+    receive_message(json: string): void {
+        let bm = SM.BaseMessage.create_from_string(json)
+        console.log('nodejs got message from app: ' + bm.to_string())
 
         // Make sure the message is a request.
-        if (!msg.is_request()) {
+        if (!bm.is_request()) {
             console.log("Error receive_from_app received something other than a request.")
         }
+        let rm = <SM.RequestMessage>bm
 
         // Handle the request.
-        let request = msg.get_obj()
-        switch (request.request) {
-            case 'shutdown': {
+        switch (rm.request) {
+            case SM.RequestType.kShutdown: {
                 WebDriverWrap.close_browser().then(function () { process.exit(-1) })
                 break;
             }
-            case 'check_browser_is_open':
+            case SM.RequestType.kCheckBrowserIsOpen:
                 function on_response(open: boolean) {
                     if (!open) {
                         WebDriverWrap.open_browser()
@@ -99,87 +98,87 @@ class AppConnection extends BaseConnection {
                 WebDriverWrap.browser_is_open(on_response)
                 // No response is sent back to the app. Typically this is called in a polling manner.
                 break
-            case 'resize_browser':
-                WebDriverWrap.resize_browser(request.width, request.height)
+            case SM.RequestType.kResizeBrowser:
+                WebDriverWrap.resize_browser(rm.args.width, rm.args.height)
                 // No response is sent back to the app. Typically this is called in a polling manner.
                 break
-            case 'open_browser':
+            case SM.RequestType.kOpenBrowser:
                 WebDriverWrap.open_browser()
-                send_to_app({ response: true })
+                send_message_to_app(new SM.ResponseMessage(true))
                 break
-            case 'close_browser':
+            case SM.RequestType.kCloseBrowser:
                 WebDriverWrap.close_browser()
-                send_to_app({ response: true })
+                send_message_to_app(new SM.ResponseMessage(true))
                 break
-            case 'navigate_to':
-                WebDriverWrap.navigate_to(request.url).then(function () {
-                    send_to_app({ response: true })
+            case SM.RequestType.kNavigateTo:
+                WebDriverWrap.navigate_to(rm.args.url).then(function () {
+                    send_message_to_app(new SM.ResponseMessage(true))
                 }, function (error) {
-                    send_to_app({ response: false })
+                    send_message_to_app(new SM.ResponseMessage(false))
                 })
                 break
-            case 'navigate_back':
+            case SM.RequestType.kNavigateBack:
                 WebDriverWrap.navigate_back().then(function () {
-                    send_to_app({ response: true })
+                    send_message_to_app(new SM.ResponseMessage(true))
                 }, function (error) {
-                    send_to_app({ response: false })
+                    send_message_to_app(new SM.ResponseMessage(false))
                 })
                 break
-            case 'navigate_forward':
+            case SM.RequestType.kNavigateForward:
                 WebDriverWrap.navigate_forward().then(function () {
-                    send_to_app({ response: true })
+                    send_message_to_app(new SM.ResponseMessage(true))
                 }, function (error) {
-                    send_to_app({ response: false })
+                    send_message_to_app(new SM.ResponseMessage(false))
                 })
                 break
-            case 'navigate_refresh':
+            case SM.RequestType.kNavigateRefresh:
                 WebDriverWrap.navigate_refresh().then(function () {
-                    send_to_app({ response: true })
+                    send_message_to_app(new SM.ResponseMessage(true))
                 }, function (error) {
-                    send_to_app({ response: false })
+                    send_message_to_app(new SM.ResponseMessage(false))
                 })
                 break
-            case 'perform_action':
-                if (request.xpath) {
+            case SM.RequestType.kPerformAction:
+                if (rm.xpath) {
                     // If the xpath has been resolved by the content script,
                     // then we let webdriver perform actions.
-                    switch (request.action) {
-                        case 'send_click':
-                            WebDriverWrap.click_on_element(request.xpath)
+                    switch (rm.args.action) {
+                        case SM.ActionType.kSendClick:
+                            WebDriverWrap.click_on_element(rm.xpath)
                             break
-                        case 'send_text':
-                            WebDriverWrap.send_text(request.xpath, request.text)
+                        case SM.ActionType.kSendText:
+                            WebDriverWrap.send_text(rm.xpath, rm.args.text)
                             break
-                        case 'send_enter':
-                            WebDriverWrap.send_key(request.xpath, WebDriverWrapModule.Key.RETURN)
+                        case SM.ActionType.kSendEnter:
+                            WebDriverWrap.send_key(rm.xpath, WebDriverWrapModule.Key.RETURN)
                             break
-                        case 'get_text':
-                            WebDriverWrap.get_text(request.xpath)
+                        case SM.ActionType.kGetText:
+                            WebDriverWrap.get_text(rm.xpath)
                             break
-                        case 'select_option':
-                            WebDriverWrap.select_option(request.xpath, request.option_text)
+                        case SM.ActionType.kSelectOption:
+                            WebDriverWrap.select_option(rm.xpath, rm.args.option_text)
                             break
-                        case 'scroll_down':
-                        case 'scroll_up':
-                        case 'scroll_right':
-                        case 'scroll_left':
+                        case SM.ActionType.kScrollDown:
+                        case SM.ActionType.kScrollUp:
+                        case SM.ActionType.kScrollRight:
+                        case SM.ActionType.kScrollLeft:
                             // Scroll actions need to be performed by the extension
                             // so we pass it through.
-                            send_to_extension(request)
+                            send_to_extension(json)
                             break
                     }
                 } else {
                     // Send request to extension to resolve the xpath,
                     // and to unblock the events in the content script so that
                     // the webdriver actions can take effect on the elements.
-                    send_to_extension(request)
+                    send_to_extension(json)
                 }
                 break
             default:
                 // By default we send requests to the extension. 
                 // (It goes through bg script, and then into content script.)
                 console.log('zzzzzzzzzzzzzzzzzz')
-                send_to_extension(request)
+                send_to_extension(json)
                 break
 
         }
@@ -256,13 +255,11 @@ class BaseSocketServer{
     // These should be overridden in derived classes.
     build() {}
     on_built(success: boolean) {}
-    send_message_to_all_sockets(obj: any) {
-        let socket_message = new SocketMessage()
-        socket_message.set_from_obj(obj)
+    send_message_to_all_sockets(json: string) {
         let sockets = this.sockets
         console.log('num sockets is: ' + sockets.length + " on port: " + this.port)
         for (let i = 0; i<sockets.length; i++) {
-            sockets[i].send_message(socket_message.get_text())
+            sockets[i].send_message(json)
         }
     }
 }
@@ -304,17 +301,21 @@ app_server = new AppSocketServer()
 app_server.build()
 
 // Send an obj as a message to the app.
-export function send_to_app(obj: any) {
-    var sm = new SocketMessage()
-    sm.set_from_obj(obj)
-    app_server.send_message_to_all_sockets(sm.get_obj())
+export function send_to_app(json: string) {
+    app_server.send_message_to_all_sockets(json)
+}
+
+export function send_message_to_app(msg: SM.BaseMessage) {
+    app_server.send_message_to_all_sockets(msg.to_string())
 }
 
 // Send an obj as a message to the extension.
-export function send_to_extension(obj: any) {
-    var sm = new SocketMessage()
-    sm.set_from_obj(obj)
-    extension_server.send_message_to_all_sockets(sm.get_obj())
+export function send_to_extension(json: string) {
+    extension_server.send_message_to_all_sockets(json)
+} 
+
+export function send_message_to_extension(msg: SM.BaseMessage) {
+    extension_server.send_message_to_all_sockets(msg.to_string())
 } 
 
 
