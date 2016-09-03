@@ -2,7 +2,7 @@
 //Base Popup.
 //-------------------------------------------------------------------------------------
 
-class BasePopup {
+export class BasePopup {
     // Our Dependencies
     initialized: boolean // whehter we've been initialized'
 
@@ -74,7 +74,7 @@ class BasePopup {
 //Wait Popup.
 //-------------------------------------------------------------------------------------
 
-class WaitPopup extends BasePopup {
+export class WaitPopup extends BasePopup {
     constructor() {
         super()
     }
@@ -96,7 +96,7 @@ class WaitPopup extends BasePopup {
 //Input Popup.
 //--------------------------------------------------------------------------
 
-class InputPopup extends BasePopup {
+export class InputPopup extends BasePopup {
     // Layout Elements.
     center: HTMLBlockElement
     label: HTMLParagraphElement
@@ -203,7 +203,7 @@ class InputPopup extends BasePopup {
 //Select Input Popup.
 //-------------------------------------------------------------------------------------
 
-class SelectInputPopup extends InputPopup {
+export class SelectInputPopup extends InputPopup {
     // The HTMLSelectElement which prompts user for input.
     input: HTMLSelectElement
     constructor() {
@@ -245,7 +245,7 @@ class SelectInputPopup extends InputPopup {
 //Text Input Popup.
 //-------------------------------------------------------------------------------------
 
-class TextInputPopup extends InputPopup {
+export class TextInputPopup extends InputPopup {
     // The HTMLInputElement which prompts user for input.
     input: HTMLInputElement
     constructor() {

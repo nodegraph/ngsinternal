@@ -13,33 +13,35 @@
           },
 
   "background": {
-    "scripts": ["extensionserverport.js", "browserwrap.js","bgcomm.js", "bgcommhandler.js", "bgmain.js"]
+      "scripts": ["background.js"]
+    //"scripts": ["extensionserverport.js", "browserwrap.js","bgcomm.js", "bgcommhandler.js", "bgmain.js"]
   },
 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["utils.js", 
-      		 "point.js", 
-      		 "box.js", 
-      		 "contentcomm.js", 
-      		 "contentcommhandler.js", 
-      		 "matchcriteria.js",
+      "js": ["content.js"],
+      // "js": ["utils.js", 
+      // 		 "point.js", 
+      // 		 "box.js", 
+      // 		 "contentcomm.js", 
+      // 		 "contentcommhandler.js", 
+      // 		 "matchcriteria.js",
       		  
-      		 "elemwrap.js", 
-      		 "pagewrap.js", 
-      		 "popupdialog.js", 
-      		 "distinctcolors.js",
-      		 "overlay.js",  
-      		 "overlayset.js",
-      		 "overlaysets.js", 
-      		 "eventblocker.js", 
-      		 "guicollection.js", 
+      // 		 "elemwrap.js", 
+      // 		 "pagewrap.js", 
+      // 		 "popupdialog.js", 
+      // 		 "distinctcolors.js",
+      // 		 "overlay.js",  
+      // 		 "overlayset.js",
+      // 		 "overlaysets.js", 
+      // 		 "eventblocker.js", 
+      // 		 "guicollection.js", 
       		 
-      		 "mutationmonitor.js",
-      		 "contextmenu.js", 
-      		 "contextmenuhandler.js",
-      		 "contentmain.js"],
+      // 		 "mutationmonitor.js",
+      // 		 "contextmenu.js", 
+      // 		 "contextmenuhandler.js",
+      // 		 "contentmain.js"],
       "css": ["contextmenu.css", "overlay.css", "popupdialog.css"],
       "all_frames": true,
       "run_at": "document_start"

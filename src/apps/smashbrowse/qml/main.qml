@@ -34,7 +34,11 @@ Rectangle {
         } else if (app_comm.nodejs_is_connected()) {
             // Make nodejs shut itself down.
             // It will close the browser as part of its shutdown.
-            app_comm.handle_request_from_app('{"request": "shutdown"}')
+            var msg = new Message(Message.kShutdown)
+            app_comm.handle_request_from_app(msg)
+            
+            //app_comm.handle_request_from_app('{"request": "shutdown"}')
+            
             close.accepted = false
             close_timer.start()
         }

@@ -105,28 +105,32 @@ INSTALL(DIRECTORY html
 
 # Our nodejs controller files.
 set(controller_src
+    typescript/controller/tsconfig.json
     typescript/controller/debugutils.ts
     typescript/controller/fswrap.ts
     typescript/controller/socketmessage.ts
     typescript/controller/webdriverwrap.ts
-    typescript/controller/controller.ts
+    typescript/controller/commrelay.ts
 )
 set(controller_compiled
-    ${CMAKE_CURRENT_BINARY_DIR}/controller/debugutils.js
-    ${CMAKE_CURRENT_BINARY_DIR}/controller/fswrap.js
-    ${CMAKE_CURRENT_BINARY_DIR}/controller/socketmessage.js
-    ${CMAKE_CURRENT_BINARY_DIR}/controller/webdriverwrap.js
-    ${CMAKE_CURRENT_BINARY_DIR}/controller/controller.js
+    ${CMAKE_CURRENT_BINARY_DIR}/typescript/controller/controller.js
+    #${CMAKE_CURRENT_BINARY_DIR}/typescript/controller/debugutils.js
+    #${CMAKE_CURRENT_BINARY_DIR}/typescript/controller/fswrap.js
+    #${CMAKE_CURRENT_BINARY_DIR}/typescript/controller/socketmessage.js
+    #${CMAKE_CURRENT_BINARY_DIR}/typescript/controller/webdriverwrap.js
+    #${CMAKE_CURRENT_BINARY_DIR}/typescript/controller/commrelay.js
 )
 
 # Our chrome extension files.
 set(background_src
+        typescript/chromeextension/background/tsconfig.json
         typescript/chromeextension/background/browserwrap.ts
         typescript/chromeextension/background/bgcomm.ts
         typescript/chromeextension/background/bgcommhandler.ts
         typescript/chromeextension/background/bgmain.ts
 )
 set(content_src
+        typescript/chromeextension/content/tsconfig.json
         typescript/chromeextension/content/box.ts
         typescript/chromeextension/content/contentcomm.ts
         typescript/chromeextension/content/contentcommhandler.ts
@@ -148,40 +152,47 @@ set(content_src
         typescript/chromeextension/content/contentmain.ts
 )
 set(background_compiled
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgcomm.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgcommhandler.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/box.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/bgmain.js
+        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/background/background.js
+
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/background/browserwrap.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/background/bgcomm.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/background/bgcommhandler.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/background/bgmain.js
 )
 set(content_compiled
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/browserwrap.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contentcomm.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contentcommhandler.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contextmenu.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contextmenuhandler.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/distinctcolors.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/elemwrap.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/eventblocker.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/matchcriteria.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/overlay.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/overlayset.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/overlaysets.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/mutationmonitor.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/pagewrap.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/guicollection.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/point.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/popupdialog.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/utils.js
-        ${CMAKE_CURRENT_BINARY_DIR}/chromeextension/contentmain.js
+        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/content.js
+        
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/box.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/contentcomm.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/contentcommhandler.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/contextmenu.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/contextmenuhandler.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/distinctcolors.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/elemwrap.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/eventblocker.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/matchcriteria.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/overlay.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/overlayset.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/overlaysets.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/mutationmonitor.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/pagewrap.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/guicollection.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/point.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/popupdialog.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/utils.js
+#        ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/contentmain.js
 )
 add_custom_command(
     OUTPUT ${content_compiled} ${background_compiled} ${controller_compiled}
     COMMAND tsc
-    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/chromeextension/background --outDir ${CMAKE_CURRENT_BINARY_DIR}/chromeextension
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/chromeextension/background --outDir ${CMAKE_CURRENT_BINARY_DIR}/typescript
+        --outFile ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/background/background.js
     COMMAND tsc
-    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/chromeextension/content --outDir ${CMAKE_CURRENT_BINARY_DIR}/chromeextension
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/chromeextension/content --outDir ${CMAKE_CURRENT_BINARY_DIR}/typescript
+        --outFile ${CMAKE_CURRENT_BINARY_DIR}/typescript/chromeextension/content/content.js
     COMMAND tsc
-    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/controller --outDir ${CMAKE_CURRENT_BINARY_DIR}/controller
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/typescript/controller --outDir ${CMAKE_CURRENT_BINARY_DIR}/typescript/controller
+        --outFile ${CMAKE_CURRENT_BINARY_DIR}/typescript/controller/controller.js
     DEPENDS ${background_src} ${content_src} ${controller_src}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -195,6 +206,9 @@ INSTALL(FILES
             typescript/chromeextension/css/overlay.css
             typescript/chromeextension/css/popupdialog.css
             typescript/chromeextension/manifest.json
+            typescript/chromeextension/background/bgbootstrap.js
+            typescript/chromeextension/content/contentbootstrap.js
+            typescript/chromeextension/require.js
 		DESTINATION bin/chromeextension
 		COMPONENT apps)
 		
@@ -208,6 +222,7 @@ INSTALL(FILES
             ${controller_compiled}
             typescript/controller/cert.pem
             typescript/controller/key.pem
+            typescript/controller/controllerbootstrap.js
 		DESTINATION bin
 		COMPONENT apps)
 

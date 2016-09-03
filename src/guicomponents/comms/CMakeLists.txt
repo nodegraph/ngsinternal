@@ -1,7 +1,7 @@
 
 set(sources
     filemodel.cpp
-    socketmessage.cpp
+    message.cpp
     appcomm.cpp
     licensechecker.cpp
     )
@@ -11,7 +11,7 @@ set(headers
     
 set(moc_headers
     filemodel.h
-    socketmessage.h
+    message.h
     appcomm.h
     licensechecker.h
     )

@@ -63,7 +63,7 @@ AppComm::AppComm(Entity* parent)
   connect(_websocket, SIGNAL(disconnected()), this, SLOT(on_disconnected()));
   connect(_websocket, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(on_ssl_error(const QList<QSslError>&)));
   connect(_websocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(on_error(QAbstractSocket::SocketError)));
-  connect(_websocket, SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_text_message_received(const QString &)));
+  connect(_websocket, SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_json_received(const QString &)));
   connect(_websocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(on_state_changed(QAbstractSocket::SocketState)));
 
   // Setup the poll timer.
@@ -100,11 +100,6 @@ QString AppComm::get_smash_browse_url() {
 }
 
 bool AppComm::handle_request_from_app(const QString& json) {
-  Message msg(json);
-  return handle_request_from_app(msg);
-}
-
-bool AppComm::handle_request_from_app(const Message& msg) {
   // Make sure nodejs is running.
   if (!nodejs_is_running()) {
     return false;
@@ -122,9 +117,13 @@ bool AppComm::handle_request_from_app(const Message& msg) {
 
   // Send the request to nodejs.
   _waiting_for_results = true;
-  size_t num_bytes = _websocket->sendTextMessage(msg.to_string());
+  size_t num_bytes = _websocket->sendTextMessage(json);
   assert(num_bytes);
   return true;
+}
+
+bool AppComm::handle_request_from_app(const Message& msg) {
+  return handle_request_from_app(msg.to_string());
 }
 
 void AppComm::on_poll() {
@@ -193,8 +192,8 @@ void AppComm::on_state_changed(QAbstractSocket::SocketState s) {
   //qDebug() << "state changed: " << s;
 }
 
-void AppComm::on_text_message_received(const QString & message) {
-  Message msg(message);
+void AppComm::on_json_received(const QString & json) {
+  Message msg(json);
   std::cerr << "app is handling message from nodejs: " << msg.to_string().toStdString() << "\n";
   std::cerr << "the message is a request: " << msg.is_request() << "\n";
   if (msg.is_request()) {
@@ -332,7 +331,7 @@ void AppComm::handle_request_from_nodejs(const Message& sm) {
 //    return;
 //  }
 
-  // Hack to fix up urls coming from the extension.
+  // Hack to pretty up urls coming from the extension.
   if (sm.value(Message::kRequest) == RequestType::kNavigateTo) {
     // Extract the url from the message.
     QString url = sm[Message::kArgs].toObject()[Message::kURL].toString();
@@ -357,7 +356,7 @@ void AppComm::handle_request_from_nodejs(const Message& sm) {
 void AppComm::handle_response_from_nodejs(const Message& msg) {
   qDebug() << "app received response from nodejs: " << msg.to_string();
   _waiting_for_results = false;
-  emit command_finished(msg.to_string());
+  emit command_finished(msg);
 }
 
 }

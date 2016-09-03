@@ -1,5 +1,6 @@
+import {GUICollection} from "./guicollection"
 
-class EventBlocker {
+export class EventBlocker {
     // Our Dependencies.
     gui_collection: GUICollection // This is like our owning parent.
     

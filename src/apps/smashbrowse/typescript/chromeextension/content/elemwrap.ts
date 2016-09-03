@@ -1,22 +1,19 @@
+import {PageWrap} from "./pagewrap"
+import {Box, Direction} from "./box"
+import {Point} from "./point"
+import {MatchCriteria} from "./matchcriteria"
+import {Utils} from "./utils"
+
 //Wrap type.
-const enum WrapType {
+export const enum WrapType {
     text,
     image,
     input,
     select
 }
 
-// Direction.
-const enum Direction {
-    left,
-    right,
-    up,
-    down
-}
-
-
 // This class wraps the dom element with extra functionality.
-class ElemWrap {
+export class ElemWrap {
     // Our dependencies.
     
     // Our members.
@@ -555,7 +552,7 @@ class ElemWrap {
                 let value = child.nodeValue
                 value = value.trim()
                 // Add text if it's not all whitespace.
-                if (!is_all_whitespace(value)) {
+                if (!Utils.is_all_whitespace(value)) {
                     text += value
                 }
             }
@@ -563,22 +560,22 @@ class ElemWrap {
 
         if (this.element.tagName.toLowerCase() == 'input') {
             let value = this.element.getAttribute('value')
-            if (!is_all_whitespace(value)) {
+            if (!Utils.is_all_whitespace(value)) {
                 text += value
             }
         }
 
         let before_style = window.getComputedStyle(this.element, ':before');
         let value: string = before_style.content
-        value = strip_quotes(value)
-        if (!is_all_whitespace(value)) {
+        value = Utils.strip_quotes(value)
+        if (!Utils.is_all_whitespace(value)) {
             text += value
         }
 
         let after_style = window.getComputedStyle(this.element, ':after');
         value = after_style.content
-        value = strip_quotes(value)
-        if (!is_all_whitespace(value)) {
+        value = Utils.strip_quotes(value)
+        if (!Utils.is_all_whitespace(value)) {
             text += value
         }
         return text

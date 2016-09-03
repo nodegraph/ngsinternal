@@ -1,6 +1,6 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\chrome\chrome.d.ts"/>
 
-import {BaseMessage, RequestMessage, ResponseMessage} from "./socketmessage"
+import {BaseMessage, RequestMessage, ResponseMessage} from "../../controller/socketmessage"
 import {BgCommHandler} from "./bgcommhandler"
 
 declare var g_nodejs_port: number

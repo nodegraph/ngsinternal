@@ -27,6 +27,9 @@ let FSWrap = FSWrapModule.FSWrap
 import WebDriverWrapModule = require('./webdriverwrap')
 let WebDriverWrap = WebDriverWrapModule.WebDriverWrap
 
+import DebugUtilsModule = require('./debugutils')
+let DebugUtils = DebugUtilsModule.DebugUtils
+
 // import SocketMessageModule = require('./socketmessage')
 // let SocketMessage = SocketMessageModule.SocketMessage
 
@@ -45,6 +48,9 @@ let app_server: AppSocketServer = null
         FSWrap.create_dir(dir)
     }
 }
+
+// Make sure we catch any uncaught exceptions.
+DebugUtils.catch_uncaught_exceptions()
 
 //------------------------------------------------------------------------------------------------
 //Socket server creation.
@@ -78,7 +84,7 @@ class AppConnection extends BaseConnection {
         console.log('nodejs got message from app: ' + bm.to_string())
 
         // Make sure the message is a request.
-        if (!bm.is_request()) {
+        if (bm.get_msg_type() == SM.MessageType.kResponseMessage || bm.get_msg_type() == SM.MessageType.kInfoMessage) {
             console.log("Error receive_from_app received something other than a request.")
         }
         let rm = <SM.RequestMessage>bm
@@ -273,6 +279,7 @@ class ChromeSocketServer extends BaseSocketServer {
     }
 
     on_built(success: boolean) {
+        console.log('ChromeSocketServer built!')
         let text = 'var g_nodejs_port = ' + this.port
         FSWrap.write_to_file(ChromeSocketServer.extension_server_file, text)
     }
@@ -287,6 +294,7 @@ class AppSocketServer extends BaseSocketServer {
     }
 
     on_built(success: boolean) {
+        console.log('AppSocketServer built!')
         FSWrap.write_to_file(AppSocketServer.app_server_file, this.port.toString())
     }
 }

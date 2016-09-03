@@ -124,6 +124,9 @@ void QMLAppEntity::init_view(QSurfaceFormat& format) {
   view->engine()->addImportPath("qrc:/");
 
   // Register gl types.
+  qRegisterMetaType<RequestType>("RequestType");
+  qRegisterMetaType<ActionType>("ActionType");
+
   qRegisterMetaType<GLsizei>("GLsizei");
   qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
 

@@ -4,7 +4,7 @@ import Path = require('path')
 export class FSWrap {
     // This is the bin directory of the app. Nodejs is also placed there.
     static g_nodejs_dir = process.cwd()
-    static g_user_data_dir = process.argv[2]  // This will be fed on the command line as node.exe controller.js c:/.../some_dir
+    static g_user_data_dir = process.argv[2]  // This will be fed on the command line as node.exe bootstrap.js c:/.../some_dir
 
 
     static file_exists(path: string): boolean {
@@ -16,7 +16,7 @@ export class FSWrap {
         }
     }
 
-    static read_from_file(filename: string): string  {
+    static read_from_file(filename: string): string {
         return fs.readFileSync(filename, 'utf8')
     }
 
@@ -43,7 +43,7 @@ export class FSWrap {
 
     static delete_dir(path: string): void {
         if (fs.existsSync(path)) {
-            fs.readdirSync(path).forEach(function (file) {
+            fs.readdirSync(path).forEach(function(file) {
                 let full_path = Path.join(path, file)
                 if (fs.statSync(full_path).isDirectory()) {
                     FSWrap.delete_dir(full_path)

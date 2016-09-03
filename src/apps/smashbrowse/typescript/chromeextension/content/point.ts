@@ -1,10 +1,10 @@
 //This interface represents the data shape for a point.
-interface PointInterface {
+export interface PointInterface {
     x: number
     y: number
 }
 
-class Point {
+export class Point {
     x: number
     y: number
     constructor(point: PointInterface) {

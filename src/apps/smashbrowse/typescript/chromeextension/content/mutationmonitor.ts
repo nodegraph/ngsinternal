@@ -1,6 +1,9 @@
+import {ContentComm} from "./contentcomm"
+import {InfoMessage, InfoType} from "../../controller/socketmessage"
+import {GUICollection} from "./guicollection"
 
 // The class encapsulates the properties of a web page.
-class MutationMonitor {
+export class MutationMonitor {
     // Static Members.
     static mutation_check_interval = 100 // time interval to check whether we've waited long enough
     static mutation_done_interval = 1000 // minimum time since last mutation, to be considered fully completed and done
@@ -49,7 +52,7 @@ class MutationMonitor {
     // Creates and starts the mutation timer.
     start_mutation_timer(): void {
         if (this.mutation_timer == null) {
-            this.content_comm.send_to_bg({ info: 'page_is_loading' })
+            this.content_comm.send_to_bg(new InfoMessage(InfoType.kPageIsLoading))
             this.page_is_ready = false
             this.last_mutation_time = new Date();
             this.mutation_timer = setInterval(this.update_mutation_timer.bind(this), MutationMonitor.mutation_check_interval)
@@ -72,7 +75,7 @@ class MutationMonitor {
             console.log("MutationMonitor: page is now ready with delta: " + last_mutation_delta)
             // Only send the page_is_ready from the top frame.
             //if (window == window.top) {
-                this.content_comm.send_to_bg({ info: 'page_is_ready' })
+                this.content_comm.send_to_bg(new InfoMessage(InfoType.kPageIsReady))
                 console.log("MutationMonitor: sending out page is ready message from the top window.")  
                 // We can now show the context menu.
                 this.gui_collection.initialize()

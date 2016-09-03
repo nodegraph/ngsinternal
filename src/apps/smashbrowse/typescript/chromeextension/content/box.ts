@@ -1,6 +1,15 @@
+import {Point} from "./point"
+
+// Direction.
+export const enum Direction {
+    left,
+    right,
+    up,
+    down
+}
 
 //This interface represents the data shape for box.
-interface BoxInterface {
+export interface BoxInterface {
     left: number
     right: number
     top: number
@@ -8,7 +17,7 @@ interface BoxInterface {
 }
 
 //This class represents a box.
-class Box {
+export class Box {
     left: number
     right: number
     top: number
@@ -181,10 +190,13 @@ class Box {
 
 
 
-    
 
-    
+    
 
-    
+
+    
+
+
+    
 
 

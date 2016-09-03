@@ -1,18 +1,17 @@
 {
     "compilerOptions": {
-    	"target": "ES6",
+        "target": "ES6",
         "module": "none",
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": false,
         "sourceMap": true
     },
-    
     "files": [
-         "browserwrap.ts",
-         "bgcomm.ts",
-         "bgcommhandler.ts",
-         "bgmain.ts",
-         "socketmessage.ts"
+        "../../controller/socketmessage.ts",
+        "browserwrap.ts",
+        "bgcomm.ts",
+        "bgcommhandler.ts",
+        "bgmain.ts"
     ]
 }

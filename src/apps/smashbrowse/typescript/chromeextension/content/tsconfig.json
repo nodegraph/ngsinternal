@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
     	"target": "ES6",
-        "module": "commonjs",
+        "module": "none",
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": false,
@@ -9,6 +9,7 @@
     },
     
     "files": [
+        "../../controller/socketmessage.ts",
          "utils.ts",
          "distinctcolors.ts",
          "point.ts",

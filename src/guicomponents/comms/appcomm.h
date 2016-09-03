@@ -3,8 +3,8 @@
 #include <base/objectmodel/component.h>
 #include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
+#include <guicomponents/comms/message.h>
 
-#include <guicomponents/comms/socketmessage.h>
 #include <deque>
 
 #include <QtCore/QProcess>
@@ -48,8 +48,8 @@ Q_OBJECT
   // Returns false when it is busy processing a previous command.
   // When false is returned the command will be dropped.
   // You may call the method again to try again.
-  bool handle_request_from_app(const Message& sm);
-  Q_INVOKABLE bool handle_request_from_app(const QString& json_text); // Called from qml.
+  Q_INVOKABLE bool handle_request_from_app(const Message& sm);
+  Q_INVOKABLE bool handle_request_from_app(const QString& json); // Called from qml.
   Q_INVOKABLE QString get_smash_browse_url();
 
   // Polling to keep browser open and of the right size.
@@ -71,7 +71,7 @@ Q_OBJECT
 
 signals:
   // Fired on completion of a command.
-  void command_finished(const QString& msg);
+  void command_finished(const Message& msg);
   void nodejs_connected();
 
  private slots:
@@ -88,7 +88,7 @@ signals:
   void on_error(QAbstractSocket::SocketError error);
   void on_ssl_error(const QList<QSslError>& errors);
   void on_state_changed(QAbstractSocket::SocketState);
-  void on_text_message_received(const QString & message);
+  void on_json_received(const QString & json);
 
  private:
 

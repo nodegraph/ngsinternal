@@ -1,6 +1,11 @@
+import {GUICollection} from "./guicollection"
+import {Box, Direction} from "./box"
+import {ElemWrap, WrapType} from "./elemwrap"
+import {Point} from "./point"
+import {Utils} from "./utils"
 
 // The class encapsulates the properties of a web page.
-class PageWrap {
+export class PageWrap {
     // Our Dependencies.
     gui_collection: GUICollection // This is like our owning parent.
     
@@ -403,7 +408,7 @@ class PageWrap {
         let values: string[] = []
         for (let i = 0; i < elem_wraps.length; i++) {
             let value = getter.call(elem_wraps[i])
-            if (!value || is_all_whitespace(value)) {
+            if (!value || Utils.is_all_whitespace(value)) {
                 continue
             }
             if (values.indexOf(value) >= 0) {

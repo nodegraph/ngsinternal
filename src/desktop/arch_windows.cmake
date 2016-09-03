@@ -66,7 +66,7 @@ INSTALL(
 
 INSTALL(
     DIRECTORY 
-         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/nodejs/node_modules"
+         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/nodejs2/node_modules"
     DESTINATION bin
     COMPONENT thirdparty
     CONFIGURATIONS Debug Release
@@ -74,7 +74,7 @@ INSTALL(
 
 INSTALL(
     FILES 
-        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/nodejs/node.exe"
+        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/nodejs2/node.exe"
         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.21/chromedriver.exe"
     DESTINATION bin
     COMPONENT thirdparty

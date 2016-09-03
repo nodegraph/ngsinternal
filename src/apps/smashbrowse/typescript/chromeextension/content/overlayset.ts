@@ -1,4 +1,12 @@
-class OverlaySet {
+import {Box, Direction} from "./box"
+import {ElemWrap, WrapType} from "./elemwrap"
+import {PageWrap} from "./pagewrap"
+import {MatchCriteria} from "./matchcriteria"
+import {Overlay} from "./overlay"
+import {Point} from "./point"
+import {Utils} from "./utils"
+
+export class OverlaySet {
     distinct_colors: DistinctColors
     color: string
     color_index: number
@@ -65,6 +73,15 @@ class OverlaySet {
         }
     }
 
+    static find_element(elem_wraps: ElemWrap[], element: HTMLElement): number {
+        for(var i=0; i<elem_wraps.length; i++) {
+            if(elem_wraps[i].element === element) {
+                return i;
+            }
+        }
+        return -1
+    }
+
     //Expand
     expand(side: Direction, match_criteria: MatchCriteria, page_wrap: PageWrap): void {
         // Cache the elem_wraps already in this set.
@@ -79,8 +96,8 @@ class OverlaySet {
             let neighbors = this.overlays[i].elem_wrap.get_similar_neighbors(side, match_criteria, page_wrap)
             for (let j = 0; j < neighbors.length; j++) {
                 // If the neighbor isn't already in the existing set or the similar set, then add it.
-                if ((find_in_array_by_property(similar_elem_wraps, 'element', neighbors[j].element) < 0) &&
-                    (find_in_array_by_property(existing_elem_wraps, 'element', neighbors[j].element) < 0)) {
+                if ((OverlaySet.find_element(similar_elem_wraps, neighbors[j].element) < 0) &&
+                    (OverlaySet.find_element(existing_elem_wraps, neighbors[j].element) < 0)) {
                     similar_elem_wraps.push(neighbors[j])
                 }
             }
@@ -144,7 +161,7 @@ class OverlaySet {
             } else {
                 // Update extreme values.
                 let value = page_box.get_extreme(side)
-                if (value_is_more_extreme(value, extreme, side)) {
+                if (Utils.value_is_more_extreme(value, extreme, side)) {
                     extreme = value
                     extreme_index = i
                 }

@@ -1,4 +1,4 @@
-#include <guicomponents/comms/socketmessage.h>
+#include <guicomponents/comms/message.h>
 #include <iostream>
 
 namespace ngs {
@@ -9,6 +9,8 @@ const char* Message::kXPath = "xpath";
 
 const char* Message::kSuccess = "success";
 const char* Message::kValue = "value";
+
+const char* Message::kInfo = "into";
 
 const char* Message::kURL = "url";
 const char* Message::kWidth = "width";
@@ -23,6 +25,8 @@ Message::Message(const QString& json) {
   QJsonObject obj = doc.object();
   if (obj.keys().contains(Message::kRequest)) {
     merge_request_object(obj);
+  } if (obj.keys().contains(Message::kInfo)) {
+    merge_info_object(obj);
   } else {
     merge_response_object(obj);
   }
@@ -59,6 +63,12 @@ void Message::merge_request_object(const QJsonObject& obj) {
   }
   if (obj.keys().contains(Message::kXPath)) {
     operator[](Message::kXPath) = obj[Message::kXPath];
+  }
+}
+
+void Message::merge_info_object(const QJsonObject& obj) {
+  if (obj.keys().contains(Message::kInfo)) {
+    operator[](Message::kInfo) = obj[Message::kInfo];
   }
 }
 

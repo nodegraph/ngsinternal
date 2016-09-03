@@ -1,4 +1,18 @@
-class MatchCriteria {
+import {ElemWrap} from "./elemwrap"
+
+
+export interface MatchCriteriaInterface {
+    // Border matching.
+    match_left: boolean
+    match_right: boolean
+    match_top: boolean
+    match_bottom: boolean
+    // Font matching.
+    match_font: boolean
+    match_font_size: boolean
+}
+
+export class MatchCriteria {
     // Border matching.
     match_left: boolean
     match_right: boolean
@@ -8,7 +22,7 @@ class MatchCriteria {
     match_font: boolean
     match_font_size: boolean
     
-    constructor(obj: any = {
+    constructor(obj: MatchCriteriaInterface = {
         match_left: false,
         match_right: false,
         match_top: false,
