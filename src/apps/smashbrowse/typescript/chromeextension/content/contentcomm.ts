@@ -1,11 +1,11 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\chrome\chrome.d.ts"/>
 
-import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, MessageType} from "../../controller/socketmessage" 
-import {ContentCommHandler} from "./contentcommhandler"
+//import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, MessageType} from "../../controller/socketmessage" 
+//import {ContentCommHandler} from "./contentcommhandler"
 
 //Class which handles communication between:
 //1) this content script and the background script.
-export class ContentComm {
+class ContentComm {
     // Our dependencies.
     private handler: ContentCommHandler
 

@@ -1,8 +1,8 @@
-import {BgComm} from "./bgcomm"
-import {BaseMessage, RequestMessage, ResponseMessage, RequestType} from "../../controller/socketmessage"
-import {BrowserWrap} from "./browserwrap"
+//import {BgComm} from "./bgcomm"
+//import {BaseMessage, RequestMessage, ResponseMessage, RequestType} from "../../controller/socketmessage"
+//import {BrowserWrap} from "./browserwrap"
 
-export class BgCommHandler {
+class BgCommHandler {
     // Our Dependencies.
     bg_comm: BgComm
     browser_wrap: BrowserWrap

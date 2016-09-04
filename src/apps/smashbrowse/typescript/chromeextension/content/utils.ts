@@ -1,6 +1,6 @@
-import {Box, Direction} from "./box"
+//import {Box, Direction} from "./box"
 
-export class Utils {
+class Utils {
 
     //----------------------------------------------------------------------------------------
     //Arrays.

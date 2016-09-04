@@ -1,12 +1,12 @@
-import {ElemWrap} from "./elemwrap"
-import {Point} from "./point"
+//import {ElemWrap} from "./elemwrap"
+//import {Point} from "./point"
 
 // This class represents the rectangular overlays that we see overlayed on
 // the target web page. These boxes ares used to represent what elements 
 // are currently under the mouse as well as what elements have already been
 // selected by the user.
 
-export class Overlay {
+class Overlay {
     // The thickness of the edges of the box overlay.
     static thickness = 0
     // Amount to oversize the box around the dom element.

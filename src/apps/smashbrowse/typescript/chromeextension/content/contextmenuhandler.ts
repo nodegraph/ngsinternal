@@ -1,13 +1,13 @@
-import {ContentComm} from "./contentcomm"
-import {RequestMessage, ResponseMessage, RequestType, ActionType} from "../../controller/socketmessage"
-import {ContextMenu} from "./contextmenu"
-import {GUICollection} from "./GUICollection"
-import {PageWrap} from "./pagewrap"
-import {ElemWrap, WrapType} from "./elemwrap"
-import {Box, Direction} from "./box"
-import {OverlaySets} from "./overlaysets"
-import {TextInputPopup, SelectInputPopup} from "./popupdialog"
-import {MatchCriteria} from "./matchcriteria"
+//import {ContentComm} from "./contentcomm"
+//import {RequestMessage, ResponseMessage, RequestType, ActionType} from "../../controller/socketmessage"
+//import {ContextMenu} from "./contextmenu"
+//import {GUICollection} from "./GUICollection"
+//import {PageWrap} from "./pagewrap"
+//import {ElemWrap, WrapType} from "./elemwrap"
+//import {Box, Direction} from "./box"
+//import {OverlaySets} from "./overlaysets"
+//import {TextInputPopup, SelectInputPopup} from "./popupdialog"
+//import {MatchCriteria} from "./matchcriteria"
 
 //------------------------------------------------------------------------------------------------
 //Smash Browse Context Menu.
@@ -17,7 +17,7 @@ import {MatchCriteria} from "./matchcriteria"
 //2) Elements are described by their bounds in page space so that they can be passed back and forth
 //between javascript and c++. In the javascript environment they can be easily converted back to elements.
 
-export class ContextMenuHandler {
+class ContextMenuHandler {
     // Our Dependencies.
     content_comm: ContentComm
 

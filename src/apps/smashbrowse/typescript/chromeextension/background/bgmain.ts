@@ -1,6 +1,6 @@
-import {BgComm} from "./bgcomm"
-import {BgCommHandler} from "./bgcommhandler"
-import {BrowserWrap} from "./browserwrap"
+//import {BgComm} from "./bgcomm"
+//import {BgCommHandler} from "./bgcommhandler"
+//import {BrowserWrap} from "./browserwrap"
 
 // Communication between backgrond and nodejs.
 let browser_wrap: BrowserWrap = null

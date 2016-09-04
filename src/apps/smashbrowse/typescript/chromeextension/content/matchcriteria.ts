@@ -1,7 +1,7 @@
-import {ElemWrap} from "./elemwrap"
+//import {ElemWrap} from "./elemwrap"
 
 
-export interface MatchCriteriaInterface {
+interface MatchCriteriaInterface {
     // Border matching.
     match_left: boolean
     match_right: boolean
@@ -12,7 +12,7 @@ export interface MatchCriteriaInterface {
     match_font_size: boolean
 }
 
-export class MatchCriteria {
+class MatchCriteria {
     // Border matching.
     match_left: boolean
     match_right: boolean

@@ -1,14 +1,14 @@
 {
     "compilerOptions": {
         "target": "ES6",
-        "module": "none",
+        "module": "commonjs",
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": false,
         "sourceMap": true
     },
     "files": [
-        "../../controller/socketmessage.ts",
+        "socketmessage.ts",
         "browserwrap.ts",
         "bgcomm.ts",
         "bgcommhandler.ts",

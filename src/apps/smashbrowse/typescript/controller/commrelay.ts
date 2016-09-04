@@ -2,7 +2,7 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\ws\ws.d.ts"/>
 /// <reference path="D:\dev\windows\DefinitelyTyped\request\request.d.ts"/>
 /// <reference path="D:\dev\windows\DefinitelyTyped\selenium-webdriver\selenium-webdriver.d.ts"/>
-
+/// <reference path="fswrap.ts"/>
 
 //------------------------------------------------------------------------------------------------
 //Globals.
@@ -19,21 +19,13 @@ import ws = require('ws')
 import HttpServer = require('http')
 import HttpsServer = require('https')
 import request = require('request');
-import Path = require('path')
+import Path3 = require('path')
 
-import FSWrapModule = require('./fswrap')
-let FSWrap = FSWrapModule.FSWrap
+import {FSWrap} from './fswrap'
+import WDM = require('./webdriverwrap')
+import DUM = require('./debugutils')
+import SMM2 = require('./socketmessage')
 
-import WebDriverWrapModule = require('./webdriverwrap')
-let WebDriverWrap = WebDriverWrapModule.WebDriverWrap
-
-import DebugUtilsModule = require('./debugutils')
-let DebugUtils = DebugUtilsModule.DebugUtils
-
-// import SocketMessageModule = require('./socketmessage')
-// let SocketMessage = SocketMessageModule.SocketMessage
-
-import SM = require('./socketmessage')
 
 // Secure web socket to communicate with chrome extension.
 let extension_server: ChromeSocketServer = null
@@ -43,14 +35,14 @@ let app_server: AppSocketServer = null
 
 // Make sure the nodejs dir exists in the user data dir.
 {
-    let dir = Path.join(FSWrap.g_user_data_dir, "nodejs")
+    let dir = Path3.join(FSWrap.g_user_data_dir, "nodejs")
     if (!FSWrap.file_exists(dir)) {
         FSWrap.create_dir(dir)
     }
 }
 
 // Make sure we catch any uncaught exceptions.
-DebugUtils.catch_uncaught_exceptions()
+DUM.DebugUtils.catch_uncaught_exceptions()
 
 //------------------------------------------------------------------------------------------------
 //Socket server creation.
@@ -80,94 +72,94 @@ class AppConnection extends BaseConnection {
     //These requests will be handled by webdriverjs, or the extension scripts in the browser.
     //Requests will always return with a response message containing return values.
     receive_message(json: string): void {
-        let bm = SM.BaseMessage.create_from_string(json)
+        let bm = SMM2.BaseMessage.create_from_string(json)
         console.log('nodejs got message from app: ' + bm.to_string())
 
         // Make sure the message is a request.
-        if (bm.get_msg_type() == SM.MessageType.kResponseMessage || bm.get_msg_type() == SM.MessageType.kInfoMessage) {
+        if (bm.get_msg_type() == SMM2.MessageType.kResponseMessage || bm.get_msg_type() == SMM2.MessageType.kInfoMessage) {
             console.log("Error receive_from_app received something other than a request.")
         }
-        let rm = <SM.RequestMessage>bm
+        let rm = <SMM2.RequestMessage>bm
 
         // Handle the request.
         switch (rm.request) {
-            case SM.RequestType.kShutdown: {
-                WebDriverWrap.close_browser().then(function () { process.exit(-1) })
+            case SMM2.RequestType.kShutdown: {
+                WDM.WebDriverWrap.close_browser().then(function () { process.exit(-1) })
                 break;
             }
-            case SM.RequestType.kCheckBrowserIsOpen:
+            case SMM2.RequestType.kCheckBrowserIsOpen:
                 function on_response(open: boolean) {
                     if (!open) {
-                        WebDriverWrap.open_browser()
+                        WDM.WebDriverWrap.open_browser()
                     }
                 }
-                WebDriverWrap.browser_is_open(on_response)
+                WDM.WebDriverWrap.browser_is_open(on_response)
                 // No response is sent back to the app. Typically this is called in a polling manner.
                 break
-            case SM.RequestType.kResizeBrowser:
-                WebDriverWrap.resize_browser(rm.args.width, rm.args.height)
+            case SMM2.RequestType.kResizeBrowser:
+                WDM.WebDriverWrap.resize_browser(rm.args.width, rm.args.height)
                 // No response is sent back to the app. Typically this is called in a polling manner.
                 break
-            case SM.RequestType.kOpenBrowser:
-                WebDriverWrap.open_browser()
-                send_message_to_app(new SM.ResponseMessage(true))
+            case SMM2.RequestType.kOpenBrowser:
+                WDM.WebDriverWrap.open_browser()
+                send_message_to_app(new SMM2.ResponseMessage(true))
                 break
-            case SM.RequestType.kCloseBrowser:
-                WebDriverWrap.close_browser()
-                send_message_to_app(new SM.ResponseMessage(true))
+            case SMM2.RequestType.kCloseBrowser:
+                WDM.WebDriverWrap.close_browser()
+                send_message_to_app(new SMM2.ResponseMessage(true))
                 break
-            case SM.RequestType.kNavigateTo:
-                WebDriverWrap.navigate_to(rm.args.url).then(function () {
-                    send_message_to_app(new SM.ResponseMessage(true))
+            case SMM2.RequestType.kNavigateTo:
+                WDM.WebDriverWrap.navigate_to(rm.args.url).then(function () {
+                    send_message_to_app(new SMM2.ResponseMessage(true))
                 }, function (error) {
-                    send_message_to_app(new SM.ResponseMessage(false))
+                    send_message_to_app(new SMM2.ResponseMessage(false))
                 })
                 break
-            case SM.RequestType.kNavigateBack:
-                WebDriverWrap.navigate_back().then(function () {
-                    send_message_to_app(new SM.ResponseMessage(true))
+            case SMM2.RequestType.kNavigateBack:
+                WDM.WebDriverWrap.navigate_back().then(function () {
+                    send_message_to_app(new SMM2.ResponseMessage(true))
                 }, function (error) {
-                    send_message_to_app(new SM.ResponseMessage(false))
+                    send_message_to_app(new SMM2.ResponseMessage(false))
                 })
                 break
-            case SM.RequestType.kNavigateForward:
-                WebDriverWrap.navigate_forward().then(function () {
-                    send_message_to_app(new SM.ResponseMessage(true))
+            case SMM2.RequestType.kNavigateForward:
+                WDM.WebDriverWrap.navigate_forward().then(function () {
+                    send_message_to_app(new SMM2.ResponseMessage(true))
                 }, function (error) {
-                    send_message_to_app(new SM.ResponseMessage(false))
+                    send_message_to_app(new SMM2.ResponseMessage(false))
                 })
                 break
-            case SM.RequestType.kNavigateRefresh:
-                WebDriverWrap.navigate_refresh().then(function () {
-                    send_message_to_app(new SM.ResponseMessage(true))
+            case SMM2.RequestType.kNavigateRefresh:
+                WDM.WebDriverWrap.navigate_refresh().then(function () {
+                    send_message_to_app(new SMM2.ResponseMessage(true))
                 }, function (error) {
-                    send_message_to_app(new SM.ResponseMessage(false))
+                    send_message_to_app(new SMM2.ResponseMessage(false))
                 })
                 break
-            case SM.RequestType.kPerformAction:
+            case SMM2.RequestType.kPerformAction:
                 if (rm.xpath) {
                     // If the xpath has been resolved by the content script,
                     // then we let webdriver perform actions.
                     switch (rm.args.action) {
-                        case SM.ActionType.kSendClick:
-                            WebDriverWrap.click_on_element(rm.xpath)
+                        case SMM2.ActionType.kSendClick:
+                            WDM.WebDriverWrap.click_on_element(rm.xpath)
                             break
-                        case SM.ActionType.kSendText:
-                            WebDriverWrap.send_text(rm.xpath, rm.args.text)
+                        case SMM2.ActionType.kSendText:
+                            WDM.WebDriverWrap.send_text(rm.xpath, rm.args.text)
                             break
-                        case SM.ActionType.kSendEnter:
-                            WebDriverWrap.send_key(rm.xpath, WebDriverWrapModule.Key.RETURN)
+                        case SMM2.ActionType.kSendEnter:
+                            WDM.WebDriverWrap.send_key(rm.xpath, WDM.Key.RETURN)
                             break
-                        case SM.ActionType.kGetText:
-                            WebDriverWrap.get_text(rm.xpath)
+                        case SMM2.ActionType.kGetText:
+                            WDM.WebDriverWrap.get_text(rm.xpath)
                             break
-                        case SM.ActionType.kSelectOption:
-                            WebDriverWrap.select_option(rm.xpath, rm.args.option_text)
+                        case SMM2.ActionType.kSelectOption:
+                            WDM.WebDriverWrap.select_option(rm.xpath, rm.args.option_text)
                             break
-                        case SM.ActionType.kScrollDown:
-                        case SM.ActionType.kScrollUp:
-                        case SM.ActionType.kScrollRight:
-                        case SM.ActionType.kScrollLeft:
+                        case SMM2.ActionType.kScrollDown:
+                        case SMM2.ActionType.kScrollUp:
+                        case SMM2.ActionType.kScrollRight:
+                        case SMM2.ActionType.kScrollLeft:
                             // Scroll actions need to be performed by the extension
                             // so we pass it through.
                             send_to_extension(json)
@@ -226,9 +218,9 @@ class BaseSocketServer{
         }, dummy_handler)
 
         // Once the https server reports an error, we try to create the https server on a different port.
-        this.https_server.once('error', function (error: Error) {
+        this.https_server.once('error', function (error: NodeJS.ErrnoException) {
             console.log('start_build got error!!!')
-            if (error.name === 'EADDRINUSE') {
+            if (error.code === 'EADDRINUSE') {
                 console.log("XXXXX the port is in use already!")
                 // The current config port number is in use.
                 // So we increment it and recurse.
@@ -236,7 +228,7 @@ class BaseSocketServer{
                 this.build(ConnConstructor)
             } else {
                 // Call the callback with failed result.
-                this.on_built(false)
+                this.on_build_failed()
             }
         }.bind(this));
 
@@ -252,7 +244,7 @@ class BaseSocketServer{
                 this.sockets.push(conn)
             }.bind(this))
             // Now call the callback.
-            this.on_built(true)
+            this.on_built()
         }.bind(this));
 
         this.https_server.listen(this.port)
@@ -260,7 +252,10 @@ class BaseSocketServer{
 
     // These should be overridden in derived classes.
     build() {}
-    on_built(success: boolean) {}
+    on_built() {}
+    on_build_failed() {
+        console.error("SocketServer failed to build.")
+    }
     send_message_to_all_sockets(json: string) {
         let sockets = this.sockets
         console.log('num sockets is: ' + sockets.length + " on port: " + this.port)
@@ -271,30 +266,34 @@ class BaseSocketServer{
 }
 
 class ChromeSocketServer extends BaseSocketServer {
-    static extension_server_file = Path.join(FSWrap.g_nodejs_dir, 'chromeextension', 'extensionserverport.js') // g_user_data_dir
-
-    build() {
+    static extension_server_file = Path3.join(FSWrap.g_nodejs_dir, 'chromeextension', 'extensionserverport.js') // g_user_data_dir
+    constructor() {
+        super()
         this.port = 8093
+    }
+    build() {
         this.start_build(ChromeConnection)
     }
 
-    on_built(success: boolean) {
-        console.log('ChromeSocketServer built!')
+    on_built() {
+        console.log('ChromeSocketServer built on port: ' + this.port)
         let text = 'var g_nodejs_port = ' + this.port
         FSWrap.write_to_file(ChromeSocketServer.extension_server_file, text)
     }
 }
 
 class AppSocketServer extends BaseSocketServer {
-    static app_server_file = Path.join(FSWrap.g_user_data_dir, 'nodejs','appserverport.txt')
-
-    build() {
+    static app_server_file = Path3.join(FSWrap.g_user_data_dir, 'nodejs','appserverport.txt')
+    constructor() {
+        super()
         this.port = 8094
+    }
+    build() {
         this.start_build(AppConnection)
     }
 
-    on_built(success: boolean) {
-        console.log('AppSocketServer built!')
+    on_built() {
+        console.log('AppSocketServer built on port: ' + this.port)
         FSWrap.write_to_file(AppSocketServer.app_server_file, this.port.toString())
     }
 }
@@ -313,7 +312,7 @@ export function send_to_app(json: string) {
     app_server.send_message_to_all_sockets(json)
 }
 
-export function send_message_to_app(msg: SM.BaseMessage) {
+export function send_message_to_app(msg: SMM2.BaseMessage) {
     app_server.send_message_to_all_sockets(msg.to_string())
 }
 
@@ -322,9 +321,7 @@ export function send_to_extension(json: string) {
     extension_server.send_message_to_all_sockets(json)
 } 
 
-export function send_message_to_extension(msg: SM.BaseMessage) {
+export function send_message_to_extension(msg: SMM2.BaseMessage) {
     extension_server.send_message_to_all_sockets(msg.to_string())
 } 
-
-
 

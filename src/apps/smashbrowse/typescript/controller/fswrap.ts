@@ -1,7 +1,10 @@
 import fs = require('fs')
 import Path = require('path')
 
+
+
 export class FSWrap {
+
     // This is the bin directory of the app. Nodejs is also placed there.
     static g_nodejs_dir = process.cwd()
     static g_user_data_dir = process.argv[2]  // This will be fed on the command line as node.exe bootstrap.js c:/.../some_dir
@@ -62,3 +65,5 @@ export class FSWrap {
     }
 
 }
+
+

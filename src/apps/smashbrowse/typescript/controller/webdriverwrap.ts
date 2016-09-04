@@ -1,16 +1,11 @@
 import webdriver = require('selenium-webdriver')
-import chrome = require('selenium-webdriver/chrome');
-import Path = require('path')
+import chrome2 = require('selenium-webdriver/chrome');
+import Path2 = require('path')
 
-import FSWrapModule = require('./fswrap')
-let FSWrap = FSWrapModule.FSWrap
-
+import {FSWrap} from './fswrap'
 import SMM = require('./socketmessage')
-
-import CommRelayModule = require('./commrelay')
-
-import DebugUtilsModule = require('./debugutils')
-let DebugUtils = DebugUtilsModule.DebugUtils
+import CRM = require('./commrelay')
+import DUM2 = require('./debugutils')
 
 
 let driver: webdriver.WebDriver = null
@@ -34,13 +29,13 @@ export class WebDriverWrap {
     static open_browser(): void {
         try {
             // Remove the files in the chrome user data dir.
-            let dir = Path.join(FSWrap.g_user_data_dir, "chromeuserdata")
+            let dir = Path2.join(FSWrap.g_user_data_dir, "chromeuserdata")
             if (FSWrap.file_exists(dir)) {
                 FSWrap.delete_dir(dir)
             }
             FSWrap.create_dir(dir)
 
-            let chromeOptions = new chrome.Options()
+            let chromeOptions = new chrome2.Options()
             //Win_x64-389148-chrome-win32
             //Win-338428-chrome-win32
             //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
@@ -67,7 +62,7 @@ export class WebDriverWrap {
                 console.error('Unhandled error: ' + e);
             });
         } catch (e) {
-            DebugUtils.log_exception(e)
+            DUM2.DebugUtils.log_exception(e)
         }
     }
 
@@ -225,20 +220,20 @@ static terminate_chain<T>(p: webdriver.promise.Promise<T>) {
         function () {
             // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
             let req = new SMM.RequestMessage(SMM.RequestType.kBlockEvents)
-            CommRelayModule.send_message_to_extension(req)
+            CRM.send_message_to_extension(req)
             // Send success response to the app.
             console.log('terminating chain success with numargs: ' + arguments.length)
             if (arguments.length == 0) {
-                CommRelayModule.send_message_to_app(new SMM.ResponseMessage(true))
+                CRM.send_message_to_app(new SMM.ResponseMessage(true))
             } else {
                 // Send the first argument in the response.
-                CommRelayModule.send_message_to_app(new SMM.ResponseMessage(true, arguments[0]))
+                CRM.send_message_to_app(new SMM.ResponseMessage(true, arguments[0]))
             }
         },
         function (error) {
             // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
             let req = new SMM.RequestMessage(SMM.RequestType.kBlockEvents)
-            CommRelayModule.send_message_to_extension(req)
+            CRM.send_message_to_extension(req)
             // Output error details.
             console.error("Error in chain!")
             if (error.stack.indexOf('mouse_over_element') >= 0) {
@@ -250,10 +245,10 @@ static terminate_chain<T>(p: webdriver.promise.Promise<T>) {
             } else if (error.stack.indexOf('send_text') >= 0) {
                 console.error('error from send_text')
             } else {
-                DebugUtils.log_exception(error)
+                DUM2.DebugUtils.log_exception(error)
             }
             // Send failure reponse to the app.
-            CommRelayModule.send_message_to_app(new SMM.ResponseMessage(false))
+            CRM.send_message_to_app(new SMM.ResponseMessage(false))
         })
 }
 

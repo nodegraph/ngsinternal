@@ -1,14 +1,14 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\chrome\chrome.d.ts"/>
 
-import {BaseMessage, RequestMessage, ResponseMessage} from "../../controller/socketmessage"
-import {BgCommHandler} from "./bgcommhandler"
+//import {BaseMessage, RequestMessage, ResponseMessage} from "../../controller/socketmessage"
+//import {BgCommHandler} from "./bgcommhandler"
 
 declare var g_nodejs_port: number
 
 //Class which handles communication between:
 // 1) this background script and nodejs
 // 2) this background script and the content script
-export class BgComm {
+class BgComm {
     // Our dependencies.
     private handler: BgCommHandler
 

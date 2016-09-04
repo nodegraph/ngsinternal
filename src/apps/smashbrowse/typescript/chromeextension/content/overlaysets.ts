@@ -1,20 +1,20 @@
-import {OverlaySet} from "./overlayset"
-import {Box, Direction} from "./box"
-import {ElemWrap, WrapType} from "./elemwrap"
-import {PageWrap} from "./pagewrap"
-import {MatchCriteria} from "./matchcriteria"
-import {Point} from "./point"
+//import {OverlaySet} from "./overlayset"
+//import {Box, Direction} from "./box"
+//import {ElemWrap, WrapType} from "./elemwrap"
+//import {PageWrap} from "./pagewrap"
+//import {MatchCriteria} from "./matchcriteria"
+//import {Point} from "./point"
 
 // This class represents the collection of overlay sets being manipulated and constrained
 // in the target web page.
 // There is currently one global instance of this named g_overlay_sets.
 
-export interface MarkedSetInfo {
+interface MarkedSetInfo {
     marked: number[] 
     unmarked: number[]
 }
 
-export class OverlaySets {
+class OverlaySets {
     //Our data is just an array of overlay set's.
     sets: OverlaySet[]
     

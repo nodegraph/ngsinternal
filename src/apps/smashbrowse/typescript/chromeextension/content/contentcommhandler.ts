@@ -1,10 +1,10 @@
-import {ContentComm} from "./contentcomm"
-import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, RequestType, ActionType} from "../../controller/socketmessage"
-import {GUICollection} from "./guicollection"
-import {ElemWrap, WrapType} from "./elemwrap"
-import {MatchCriteria} from "./matchcriteria"
+//import {ContentComm} from "./contentcomm"
+//import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, RequestType, ActionType} from "../../controller/socketmessage"
+//import {GUICollection} from "./guicollection"
+//import {ElemWrap, WrapType} from "./elemwrap"
+//import {MatchCriteria} from "./matchcriteria"
 
-export class ContentCommHandler {
+class ContentCommHandler {
     // Our Dependencies.
     content_comm: ContentComm
     gui_collection: GUICollection

@@ -1,7 +1,7 @@
-import {ContextMenuHandler} from "./contextmenuhandler"
-import {ElemWrap} from "./elemwrap"
-import {Overlay} from "./overlay"
-import {Point} from "./point"
+//import {ContextMenuHandler} from "./contextmenuhandler"
+//import {ElemWrap} from "./elemwrap"
+//import {Overlay} from "./overlay"
+//import {Point} from "./point"
 
 //------------------------------------------------------------------------------------------------
 //Smash Browse Context Menu.
@@ -11,7 +11,7 @@ import {Point} from "./point"
 //2) Elements are described by their bounds in page space so that they can be passed back and forth
 //between javascript and c++. In the javascript environment they can be easily converted back to elements.
 
-export class ContextMenu {
+class ContextMenu {
     // Our Dependencies.
     handler: ContextMenuHandler
     

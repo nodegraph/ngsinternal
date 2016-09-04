@@ -1,12 +1,12 @@
-import {Box, Direction} from "./box"
-import {ElemWrap, WrapType} from "./elemwrap"
-import {PageWrap} from "./pagewrap"
-import {MatchCriteria} from "./matchcriteria"
-import {Overlay} from "./overlay"
-import {Point} from "./point"
-import {Utils} from "./utils"
+//import {Box, Direction} from "./box"
+//import {ElemWrap, WrapType} from "./elemwrap"
+//import {PageWrap} from "./pagewrap"
+//import {MatchCriteria} from "./matchcriteria"
+//import {Overlay} from "./overlay"
+//import {Point} from "./point"
+//import {Utils} from "./utils"
 
-export class OverlaySet {
+class OverlaySet {
     distinct_colors: DistinctColors
     color: string
     color_index: number

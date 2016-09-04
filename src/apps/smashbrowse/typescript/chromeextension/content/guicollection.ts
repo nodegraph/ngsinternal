@@ -1,13 +1,13 @@
-import {ContextMenu} from "./contextmenu"
-import {EventBlocker} from "./eventblocker"
-import {PageWrap} from "./pagewrap"
-import {ElemWrap} from "./elemwrap"
-import {WaitPopup, TextInputPopup, SelectInputPopup} from "./popupdialog"
-import {OverlaySets} from "./overlaysets"
-import {OverlaySet} from "./overlayset"
-import {Point} from "./point"
+//import {ContextMenu} from "./contextmenu"
+//import {EventBlocker} from "./eventblocker"
+//import {PageWrap} from "./pagewrap"
+//import {ElemWrap} from "./elemwrap"
+//import {WaitPopup, TextInputPopup, SelectInputPopup} from "./popupdialog"
+//import {OverlaySets} from "./overlaysets"
+//import {OverlaySet} from "./overlayset"
+//import {Point} from "./point"
 
-export class GUICollection {
+class GUICollection {
 
     event_blocker: EventBlocker
 

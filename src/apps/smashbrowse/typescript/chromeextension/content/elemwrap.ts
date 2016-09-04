@@ -1,11 +1,11 @@
-import {PageWrap} from "./pagewrap"
-import {Box, Direction} from "./box"
-import {Point} from "./point"
-import {MatchCriteria} from "./matchcriteria"
-import {Utils} from "./utils"
+//import {PageWrap} from "./pagewrap"
+//import {Box, Direction} from "./box"
+//import {Point} from "./point"
+//import {MatchCriteria} from "./matchcriteria"
+//import {Utils} from "./utils"
 
 //Wrap type.
-export const enum WrapType {
+const enum WrapType {
     text,
     image,
     input,
@@ -13,7 +13,7 @@ export const enum WrapType {
 }
 
 // This class wraps the dom element with extra functionality.
-export class ElemWrap {
+class ElemWrap {
     // Our dependencies.
     
     // Our members.

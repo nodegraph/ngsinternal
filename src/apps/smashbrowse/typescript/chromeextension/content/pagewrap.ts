@@ -1,11 +1,11 @@
-import {GUICollection} from "./guicollection"
-import {Box, Direction} from "./box"
-import {ElemWrap, WrapType} from "./elemwrap"
-import {Point} from "./point"
-import {Utils} from "./utils"
+//import {GUICollection} from "./guicollection"
+//import {Box, Direction} from "./box"
+//import {ElemWrap, WrapType} from "./elemwrap"
+//import {Point} from "./point"
+//import {Utils} from "./utils"
 
 // The class encapsulates the properties of a web page.
-export class PageWrap {
+class PageWrap {
     // Our Dependencies.
     gui_collection: GUICollection // This is like our owning parent.
     

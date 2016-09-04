@@ -1,9 +1,9 @@
-import {ContentComm} from "./contentcomm"
-import {InfoMessage, InfoType} from "../../controller/socketmessage"
-import {GUICollection} from "./guicollection"
+//import {ContentComm} from "./contentcomm"
+//import {InfoMessage, InfoType} from "../../controller/socketmessage"
+//import {GUICollection} from "./guicollection"
 
 // The class encapsulates the properties of a web page.
-export class MutationMonitor {
+class MutationMonitor {
     // Static Members.
     static mutation_check_interval = 100 // time interval to check whether we've waited long enough
     static mutation_done_interval = 1000 // minimum time since last mutation, to be considered fully completed and done
