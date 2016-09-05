@@ -1,4 +1,5 @@
 set(cnt_ts
+        socketmessage.ts
         box.ts
         contentcomm.ts
         contentcommhandler.ts
@@ -30,7 +31,7 @@ string(REGEX REPLACE "(\\.ts)" ".js" cnt_js "${cnt_js}")
 set(cnt_js_merged ${CMAKE_CURRENT_BINARY_DIR}/content.js)
 
 # The merged and minified result.
-set(cnt_js_min ${CMAKE_CURRENT_BINARY_DIR}/content.min.js)
+set(cnt_js_min ${CMAKE_CURRENT_BINARY_DIR}/cnt.js)
 
 add_custom_command(
     OUTPUT ${cnt_js} ${cnt_js_merged} ${cnt_js_min}
@@ -40,11 +41,11 @@ add_custom_command(
         
     COMMAND java
     ARGS -jar D:/installs/windows/closure_compiler/closure-compiler-v20160822.jar 
-        #--compilation_level WHITESPACE_ONLY
-        --compilation_level SIMPLE_OPTIMIZATIONS 
-        #--compilation_level ADVANCED_OPTIMIZATIONS
-        --js ${cnt_js}
-        --js_output_file ${cnt_js_min}
+         #--compilation_level WHITESPACE_ONLY
+         --compilation_level SIMPLE_OPTIMIZATIONS 
+         #--compilation_level ADVANCED_OPTIMIZATIONS
+         --js ${cnt_js}
+         --js_output_file ${cnt_js_min}
         
     DEPENDS ${cnt_ts} tsconfig.json
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -54,6 +55,5 @@ add_custom_target(chrome_ext_content ALL DEPENDS ${cnt_js} ${cnt_js_merged} ${cn
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 
             ${cnt_js_min}
-            contentbootstrap.js
 		DESTINATION bin/chromeextension
 		COMPONENT apps)

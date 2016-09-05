@@ -13,14 +13,14 @@
           },
 
   "background": {
-      "scripts": ["background.js"]
+      "scripts": ["extensionserverport.js", "bg.js"]
     //"scripts": ["extensionserverport.js", "browserwrap.js","bgcomm.js", "bgcommhandler.js", "bgmain.js"]
   },
 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["cnt.js"],
       // "js": ["utils.js", 
       // 		 "point.js", 
       // 		 "box.js", 

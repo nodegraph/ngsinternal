@@ -12,6 +12,6 @@
         "fswrap.ts",
         "socketmessage.ts",
         "webdriverwrap.ts",
-        "commrelay.ts"
+        "commhub.ts"
     ]
 }

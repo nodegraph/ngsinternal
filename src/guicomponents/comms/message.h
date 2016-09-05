@@ -84,6 +84,8 @@ class COMMS_EXPORT Message: public QObject, public QJsonObject {
 
   static const char* kInfo;
 
+  static const char* kMessageType;
+
   static const char* kURL;
   static const char* kWidth;
   static const char* kHeight;
@@ -96,7 +98,7 @@ class COMMS_EXPORT Message: public QObject, public QJsonObject {
   virtual ~Message();
 
   virtual QString to_string() const;
-  virtual bool is_request() const;
+  virtual MessageType get_msg_type() const;
 
  private:
   void merge_request_object(const QJsonObject& obj);

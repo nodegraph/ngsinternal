@@ -1,8 +1,6 @@
 import fs = require('fs')
 import Path = require('path')
 
-
-
 export class FSWrap {
 
     // This is the bin directory of the app. Nodejs is also placed there.

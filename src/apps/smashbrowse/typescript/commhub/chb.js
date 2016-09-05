@@ -9,7 +9,7 @@ requirejs.config({
     nodeRequire: require
 });
 
-requirejs(['controller.min','commrelay'],
-function (commrelay) {
+requirejs(['ch','commhub'],
+function (commhub) {
 });
 

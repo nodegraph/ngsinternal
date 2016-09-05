@@ -117,6 +117,7 @@ bool AppComm::handle_request_from_app(const QString& json) {
 
   // Send the request to nodejs.
   _waiting_for_results = true;
+  std::cerr << "AppComm sending message: " << json.toStdString() << "\n";
   size_t num_bytes = _websocket->sendTextMessage(json);
   assert(num_bytes);
   return true;
@@ -177,14 +178,18 @@ void AppComm::on_disconnected() {
 }
 
 void AppComm::on_error(QAbstractSocket::SocketError error) {
-  qDebug() << "Error: " << error;
-  if (error == QAbstractSocket::RemoteHostClosedError) {
+  if (error == QAbstractSocket::SocketError::SslHandshakeFailedError) {
+    // We expect this error because we're using a local ssl server.
+    return;
+  } else if (error == QAbstractSocket::RemoteHostClosedError) {
   }
-  qDebug() << "Error websocket error string: " << _websocket->errorString();
+
+  qDebug() << "AppComm Error: " << error;
+  qDebug() << "WebSocket error string: " << _websocket->errorString();
 }
 
 void AppComm::on_ssl_error(const QList<QSslError>& errors) {
-  qDebug() << "SSLError: " << errors;
+  //qDebug() << "SSLError: " << errors;
   _websocket->ignoreSslErrors(errors);
 }
 
@@ -195,11 +200,16 @@ void AppComm::on_state_changed(QAbstractSocket::SocketState s) {
 void AppComm::on_json_received(const QString & json) {
   Message msg(json);
   std::cerr << "app is handling message from nodejs: " << msg.to_string().toStdString() << "\n";
-  std::cerr << "the message is a request: " << msg.is_request() << "\n";
-  if (msg.is_request()) {
+
+  MessageType type = msg.get_msg_type();
+  if (type == MessageType::kRequestMessage) {
     handle_request_from_nodejs(msg);
-  } else {
+  } else if (type == MessageType::kResponseMessage) {
     handle_response_from_nodejs(msg);
+  } else if (type == MessageType::kInfoMessage) {
+    std::cerr << "Got info message: " + msg.to_string().toStdString() << "\n";
+  } else {
+    std::cerr << "Error: Got message of unknown type!\n";
   }
 }
 
@@ -209,8 +219,11 @@ void AppComm::on_json_received(const QString & json) {
 
 void AppComm::open_browser() {
   Message msg(RequestType::kOpenBrowser);
-  msg[Message::kArgs] = QJsonObject();
-  msg[Message::kArgs].toObject()[Message::kURL] = get_smash_browse_url();
+
+  QJsonObject args;
+  args[Message::kURL] = get_smash_browse_url();
+
+  msg[Message::kArgs] = args;
   handle_request_from_app(msg);
 }
 
@@ -247,7 +260,7 @@ void AppComm::start_nodejs() {
   _process->setWorkingDirectory(folder);
 
   // Set the arguments.
-  QStringList list("controller.js");
+  QStringList list("chb.js");
   list.append(get_user_data_dir());
   _process->setArguments(list);
   _process->start();
@@ -310,10 +323,11 @@ void AppComm::check_browser_size() {
   int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
   int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
 
-  msg[Message::kArgs] = QJsonObject();
-  msg[Message::kArgs].toObject()[Message::kWidth] = width;
-  msg[Message::kArgs].toObject()[Message::kHeight] = width;
+  QJsonObject args;
+  args[Message::kWidth] = width;
+  args[Message::kHeight] = height;
 
+  msg[Message::kArgs] = args;
   handle_request_from_app(msg);
 }
 

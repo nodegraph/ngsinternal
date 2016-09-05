@@ -1,4 +1,5 @@
 set(bg_ts
+    socketmessage.ts
     browserwrap.ts
     bgcomm.ts
     bgcommhandler.ts
@@ -15,22 +16,22 @@ string(REGEX REPLACE "(\\.ts)" ".js" bg_js "${bg_js}")
 set(bg_js_merged ${CMAKE_CURRENT_BINARY_DIR}/background.js)
 
 # The merged and minified result.
-set(bg_js_min ${CMAKE_CURRENT_BINARY_DIR}/background.min.js)
+set(bg_js_min ${CMAKE_CURRENT_BINARY_DIR}/bg.js)
 
 add_custom_command(
     OUTPUT ${bg_js} ${bg_js_merged} ${bg_js_min}
-    #
+    
     COMMAND tsc
     ARGS --project ${CMAKE_CURRENT_SOURCE_DIR} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${bg_js_merged}
-    #
+    
     COMMAND java
     ARGS -jar D:/installs/windows/closure_compiler/closure-compiler-v20160822.jar 
-        #--compilation_level WHITESPACE_ONLY
-        --compilation_level SIMPLE_OPTIMIZATIONS 
-        #--compilation_level ADVANCED_OPTIMIZATIONS
-        --js ${bg_js}
-        --js_output_file ${bg_js_min}
-    # 
+         #--compilation_level WHITESPACE_ONLY
+         --compilation_level SIMPLE_OPTIMIZATIONS 
+         #--compilation_level ADVANCED_OPTIMIZATIONS
+         --js ${bg_js}
+         --js_output_file ${bg_js_min}
+    
     DEPENDS ${bg_ts} tsconfig.json
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -39,6 +40,5 @@ add_custom_target(chrome_ext_bg ALL DEPENDS ${bg_js} ${bg_js_merged} ${bg_js_min
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 
             ${bg_js_min}
-            bgbootstrap.js
 		DESTINATION bin/chromeextension
 		COMPONENT apps)

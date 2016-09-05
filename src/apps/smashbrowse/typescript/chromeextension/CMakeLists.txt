@@ -7,7 +7,6 @@ INSTALL(FILES
             css/overlay.css
             css/popupdialog.css
             manifest.json
-            require.js
         DESTINATION bin/chromeextension
         COMPONENT apps)
         

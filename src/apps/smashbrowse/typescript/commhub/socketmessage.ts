@@ -1,5 +1,5 @@
 // Note this file is symlinked into chromeextension/background and chromeextension/content.
-// The real file lives in controller.
+// The real file lives in commhub.
 
 
 export const enum RequestType {
@@ -68,7 +68,7 @@ export class BaseMessage {
 
     construtor() {
         this.msg_type = MessageType.kUnformedMessage
-     }
+    }
 
     static create_from_string(s: string): BaseMessage {
         let obj = JSON.parse(s)

@@ -1,5 +1,5 @@
 // Note this file is symlinked into chromeextension/background and chromeextension/content.
-// The real file lives in controller.
+// The real file lives in commhub.
 
 
 const enum RequestType {
@@ -68,12 +68,15 @@ class BaseMessage {
 
     construtor() {
         this.msg_type = MessageType.kUnformedMessage
-     }
+    }
 
     static create_from_string(s: string): BaseMessage {
         let obj = JSON.parse(s)
-        let msg: BaseMessage
+        return BaseMessage.create_from_obj(obj)
+    }
 
+    static create_from_obj(obj: any): BaseMessage {        
+        let msg: BaseMessage
         // Now we create the right message and copy properties from obj.
         // Note that in ES6, we can use Object.assign.
         if (obj.hasOwnProperty('request')) {

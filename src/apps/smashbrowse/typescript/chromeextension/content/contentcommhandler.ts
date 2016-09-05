@@ -91,7 +91,7 @@ class ContentCommHandler {
                     break
                 }
 
-                // The perform action request are usually handled by the nodejs controller.
+                // The perform action request are usually handled by the nodejs commhub.
                 // However they can get send to this content script if the xpath in the request
                 // has not been resolved. Once we resolve the xpath from the set_index, we reissue
                 // the request, instead of sending a response. This means that these perform_action

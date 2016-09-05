@@ -44,15 +44,17 @@ class BgComm {
         }
         // Otherwise try to connect.
         try {
-            this.nodejs_socket = new WebSocket('wss://localhost:' + g_nodejs_port);
+            this.nodejs_socket = new WebSocket('wss://localhost:' + g_nodejs_port)
             this.nodejs_socket.onerror = function(error: ErrorEvent) {
                 console.log("nodejs socket error: " + JSON.stringify(error))
             }
             this.nodejs_socket.onopen = function(event: Event) {
-                this.nodejs_socket.send(JSON.stringify({ code: 'bg_comm is connected' }));
+                this.nodejs_socket.send(JSON.stringify({ code: 'bg_comm is connected' }))
             };
             this.nodejs_socket.onmessage = this.receive_from_nodejs.bind(this)
         } catch (e) {
+            console.log("trying to connect to port error: " + JSON.stringify(e))
+            
             this.nodejs_socket = null
         }
     }
@@ -68,9 +70,14 @@ class BgComm {
 
     //Receive messages from nodejs. They will be forward to the content script.
     receive_from_nodejs(event: MessageEvent) {
-        let request = JSON.parse(event.data);
-        console.log("bg received message from nodejs: " + event.data + " parsed: " + request.request)
-        this.handler.handle_nodejs_request(request)
+        let msg = BaseMessage.create_from_string(event.data);
+        //let request = JSON.parse(event.data);
+        console.log("bg received message from nodejs: " + event.data)
+        if (msg.get_msg_type() != MessageType.kRequestMessage) {
+            console.error('bgcomm was expecting a request message')
+            return
+        }
+        this.handler.handle_nodejs_request(<RequestMessage>msg)
     }
 
     //------------------------------------------------------------------------------------------------

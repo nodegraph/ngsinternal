@@ -10,7 +10,9 @@ const char* Message::kXPath = "xpath";
 const char* Message::kSuccess = "success";
 const char* Message::kValue = "value";
 
-const char* Message::kInfo = "into";
+const char* Message::kInfo = "info";
+
+const char* Message::kMessageType = "msg_type";
 
 const char* Message::kURL = "url";
 const char* Message::kWidth = "width";
@@ -23,6 +25,9 @@ Message::Message()
 Message::Message(const QString& json) {
   QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
   QJsonObject obj = doc.object();
+
+  operator[](Message::kMessageType) = obj[Message::kMessageType];
+
   if (obj.keys().contains(Message::kRequest)) {
     merge_request_object(obj);
   } if (obj.keys().contains(Message::kInfo)) {
@@ -88,11 +93,15 @@ QString Message::to_string() const {
   return QString(bytes);
 }
 
-bool Message::is_request() const {
-  if (keys().contains(Message::kRequest)) {
-    return true;
-  }
-  return false;
+MessageType Message::get_msg_type() const {
+  return static_cast<MessageType>(operator[](Message::kMessageType).toInt());
+
+//  if (keys().contains(Message::kRequest)) {
+//    return MessageType::kRequestMessage;
+//  } else if (keys().contains(Message::kInfo)) {
+//    return MessageType::kInfoMessage;
+//  }
+//  return MessageType::kResponseMessage;
 }
 
 }

@@ -1,3 +1,3 @@
 add_subdirectory(chromeextension)
-add_subdirectory(controller)
+add_subdirectory(commhub)
 

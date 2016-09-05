@@ -29,7 +29,9 @@ class ContentComm {
     }
 
     //Receive a message from the bg script.
-    receive_from_bg(msg: BaseMessage, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
+    receive_from_bg(obj: any, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
+        // The base message will get flattened out into a regular dict obj, during the transfer from the bgcomm.
+        let msg = BaseMessage.create_from_obj(obj)
         switch (msg.get_msg_type()) {
             case MessageType.kRequestMessage:
                 this.handler.handle_bg_request(<RequestMessage>msg)
