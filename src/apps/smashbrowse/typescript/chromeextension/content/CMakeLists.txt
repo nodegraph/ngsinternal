@@ -1,5 +1,4 @@
 set(cnt_ts
-        socketmessage.ts
         box.ts
         contentcomm.ts
         contentcommhandler.ts
@@ -20,6 +19,7 @@ set(cnt_ts
         utils.ts
         contentmain.ts
 )
+
 
 # Form cnt_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" cnt_js "${cnt_ts}")
@@ -44,10 +44,10 @@ add_custom_command(
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS
-         --js ${cnt_js}
+         --js ${msg_js_lib} ${cnt_js} 
          --js_output_file ${cnt_js_min}
         
-    DEPENDS ${cnt_ts} tsconfig.json
+    DEPENDS ${cnt_ts} tsconfig.json ${msg_js_lib}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 add_custom_target(chrome_ext_content ALL DEPENDS ${cnt_js} ${cnt_js_merged} ${cnt_js_min})

@@ -1,6 +1,3 @@
-//import {ContentComm} from "./contentcomm"
-//import {InfoMessage, InfoType} from "../../controller/socketmessage"
-//import {GUICollection} from "./guicollection"
 
 // The class encapsulates the properties of a web page.
 class MutationMonitor {
@@ -72,11 +69,11 @@ class MutationMonitor {
         if (last_mutation_delta > MutationMonitor.mutation_done_interval) {
             this.stop_mutation_timer()
             this.page_is_ready = true
-            console.log("MutationMonitor: page is now ready with delta: " + last_mutation_delta)
+            //console.log("MutationMonitor: page is now ready with delta: " + last_mutation_delta)
             // Only send the page_is_ready from the top frame.
             //if (window == window.top) {
                 this.content_comm.send_to_bg(new InfoMessage(InfoType.kPageIsReady))
-                console.log("MutationMonitor: sending out page is ready message from the top window.")  
+                //console.log("MutationMonitor: sending out page is ready message from the top window.")  
                 // We can now show the context menu.
                 this.gui_collection.initialize()
                 this.gui_collection.wait_popup.close()

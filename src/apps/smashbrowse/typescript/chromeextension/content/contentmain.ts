@@ -1,9 +1,3 @@
-//import {ContentComm} from "./contentcomm"
-//import {ContentCommHandler} from "./contentcommhandler"
-//import {MutationMonitor} from "./mutationmonitor"
-//import {ContextMenuHandler} from "./contextmenuhandler"
-//import {GUICollection} from "./guicollection"
-//import {EventBlocker} from "./eventblocker"
 
 // GUI related.
 let gui_collection: GUICollection = null

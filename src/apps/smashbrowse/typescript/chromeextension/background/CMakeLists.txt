@@ -1,5 +1,4 @@
 set(bg_ts
-    socketmessage.ts
     browserwrap.ts
     bgcomm.ts
     bgcommhandler.ts
@@ -29,10 +28,10 @@ add_custom_command(
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS
-         --js ${bg_js}
+         --js ${msg_js_lib} ${bg_js} 
          --js_output_file ${bg_js_min}
     
-    DEPENDS ${bg_ts} tsconfig.json
+    DEPENDS ${bg_ts} tsconfig.json ${msg_js_lib}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 add_custom_target(chrome_ext_bg ALL DEPENDS ${bg_js} ${bg_js_merged} ${bg_js_min})

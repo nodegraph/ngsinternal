@@ -1,8 +1,9 @@
+
+
 // Note this file is symlinked into chromeextension/background and chromeextension/content.
 // The real file lives in commhub.
 
-
-export const enum RequestType {
+const enum RequestType {
     kUnknownRequest,
     
     // Chrome BG Requests.
@@ -39,7 +40,7 @@ export const enum RequestType {
     kShrinkSet
 }
 
-export const enum ActionType {
+const enum ActionType {
     kSendClick,
     kSendText,
     kSendEnter,
@@ -51,19 +52,19 @@ export const enum ActionType {
     kScrollLeft
 }
 
-export const enum InfoType {
+const enum InfoType {
     kPageIsLoading,
     kPageIsReady,
 }
 
-export const enum MessageType {
+const enum MessageType {
     kUnformedMessage,
     kRequestMessage,
     kResponseMessage,
     kInfoMessage
 }
 
-export class BaseMessage {
+class BaseMessage {
     msg_type: MessageType
 
     construtor() {
@@ -72,6 +73,10 @@ export class BaseMessage {
 
     static create_from_string(s: string): BaseMessage {
         let obj = JSON.parse(s)
+        return BaseMessage.create_from_obj(obj)
+    }
+
+    static create_from_obj(obj: any): BaseMessage {
         let msg: BaseMessage
 
         // Now we create the right message and copy properties from obj.
@@ -112,7 +117,7 @@ export class BaseMessage {
     }
 }
 
-export class RequestMessage extends BaseMessage {
+class RequestMessage extends BaseMessage {
     request: RequestType
     xpath: string
     args: any // a key value dict of arguments
@@ -125,7 +130,7 @@ export class RequestMessage extends BaseMessage {
     }
 }
 
-export class ResponseMessage extends BaseMessage {
+class ResponseMessage extends BaseMessage {
     success: boolean
     value: any
     constructor(success: boolean, value: any = 0) {
@@ -136,7 +141,7 @@ export class ResponseMessage extends BaseMessage {
     }
 }
 
-export class InfoMessage extends BaseMessage {
+class InfoMessage extends BaseMessage {
     info: InfoType
     constructor(info: InfoType) {
         super()

@@ -1,9 +1,3 @@
-//import {OverlaySet} from "./overlayset"
-//import {Box, Direction} from "./box"
-//import {ElemWrap, WrapType} from "./elemwrap"
-//import {PageWrap} from "./pagewrap"
-//import {MatchCriteria} from "./matchcriteria"
-//import {Point} from "./point"
 
 // This class represents the collection of overlay sets being manipulated and constrained
 // in the target web page.
@@ -25,6 +19,7 @@ class OverlaySets {
     destroy(): void {
         for (let i = 0; i < this.sets.length; i++) {
             this.destroy_set_by_index(i)
+            i -= 1
         }
         this.sets.length = 0
     }
@@ -133,8 +128,7 @@ class OverlaySets {
         // Destroy all all the sets marked for destruction.
         for (let i = 0; i < this.sets.length; i++) {
             if (this.sets[i].cleanup) {
-                this.sets[i].destroy()
-                this.sets.splice(i, 1)
+                this.destroy_set_by_index(i)
                 i -= 1
             }
         }
@@ -217,7 +211,7 @@ class OverlaySets {
 
     //Destroy a set by index.
     destroy_set_by_index(set_index: number): void {
-        if (set_index < 0) {
+        if (set_index < 0 || set_index >= this.sets.length) {
             return
         }
 

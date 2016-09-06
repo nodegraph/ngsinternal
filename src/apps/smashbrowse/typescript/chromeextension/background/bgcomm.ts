@@ -1,7 +1,5 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\chrome\chrome.d.ts"/>
-
-//import {BaseMessage, RequestMessage, ResponseMessage} from "../../controller/socketmessage"
-//import {BgCommHandler} from "./bgcommhandler"
+/// <reference path="..\..\message\message.d.ts"/>
 
 declare var g_nodejs_port: number
 
@@ -27,7 +25,7 @@ class BgComm {
         this.connect_to_content()
 
         // Make sure the web socket is closed before we navigate away from this window/frame.
-        window.onbeforeunload = function () {
+        window.onbeforeunload = function() {
             this.nodejs_socket.close()
         }
     }
@@ -37,7 +35,7 @@ class BgComm {
     //------------------------------------------------------------------------------------------------
 
     //Setup communication channel to nodejs.
-    connect_to_nodejs() : void {
+    connect_to_nodejs(): void {
         // If we're already connected, just return.
         if (this.nodejs_socket && (this.nodejs_socket.readyState == WebSocket.OPEN)) {
             return
@@ -46,21 +44,24 @@ class BgComm {
         try {
             this.nodejs_socket = new WebSocket('wss://localhost:' + g_nodejs_port)
             this.nodejs_socket.onerror = function(error: ErrorEvent) {
-                console.log("nodejs socket error: " + JSON.stringify(error))
-            }
+                console.error("nodejs socket error: " + JSON.stringify(error))
+            }.bind(this)
             this.nodejs_socket.onopen = function(event: Event) {
                 this.nodejs_socket.send(JSON.stringify({ code: 'bg_comm is connected' }))
-            };
+            }.bind(this);
             this.nodejs_socket.onmessage = this.receive_from_nodejs.bind(this)
         } catch (e) {
-            console.log("trying to connect to port error: " + JSON.stringify(e))
-            
+            console.error("Error: trying to connect to port error: " + JSON.stringify(e))
             this.nodejs_socket = null
         }
     }
 
     //Send message to nodejs.
     send_to_nodejs(msg: BaseMessage): void {
+        // If we're not connected to nodejs yet, then just return.
+        if (!this.nodejs_socket) {
+            return
+        }
         this.nodejs_socket.send(JSON.stringify(msg));
     }
 
@@ -72,7 +73,7 @@ class BgComm {
     receive_from_nodejs(event: MessageEvent) {
         let msg = BaseMessage.create_from_string(event.data);
         //let request = JSON.parse(event.data);
-        console.log("bg received message from nodejs: " + event.data)
+        //console.log("bg received message from nodejs: " + event.data)
         if (msg.get_msg_type() != MessageType.kRequestMessage) {
             console.error('bgcomm was expecting a request message')
             return
@@ -91,13 +92,13 @@ class BgComm {
 
     // Send a message to the content script.
     send_to_content(msg: BaseMessage): void {
-        console.log("bg sending message to content: " + JSON.stringify(msg))
+        //console.log("bg sending message to content: " + JSON.stringify(msg))
         chrome.tabs.sendMessage(this.content_tab_id, msg)
     }
 
     // Receive a message from the content script. We simply forward the message to nodejs.
     receive_from_content(msg: BaseMessage, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
-        console.log("bg received message from content: " + JSON.stringify(msg))
+        //console.log("bg received message from content: " + JSON.stringify(msg))
         // The first tab to send us a content message will be the tab that we pay attention to.
         if (!this.content_tab_id) {
             this.content_tab_id = sender.tab.id

@@ -1,24 +1,32 @@
 import webdriver = require('selenium-webdriver')
-import chrome2 = require('selenium-webdriver/chrome');
-import Path2 = require('path')
+import chrome = require('selenium-webdriver/chrome');
+import Path = require('path')
 
 import {FSWrap} from './fswrap'
-import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, RequestType, MessageType, ActionType} from './socketmessage'
+//import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, RequestType, MessageType, ActionType} from './socketmessage'
 import {send_msg_to_app, send_msg_to_ext} from './commhub'
 import {DebugUtils} from './debugutils'
 
 
-let driver: webdriver.WebDriver = null
+
 export let Key = webdriver.Key
 let By = webdriver.By
-let until = webdriver.until
-let flow: webdriver.promise.ControlFlow = null
+let Until = webdriver.until
+
 
 export class WebDriverWrap {
 
-    static browser_is_open(callback: (result: boolean) => void) {
-        if (driver) {
-            driver.getTitle().then(
+    driver: webdriver.WebDriver = null
+    flow: webdriver.promise.ControlFlow = null
+
+    constructor() {
+        this.driver = null
+        this.flow = null
+    }
+
+    browser_is_open(callback: (result: boolean) => void) {
+        if (this.driver) {
+            this.driver.getTitle().then(
                 function() { callback(true) },
                 function() { callback(false) });
         } else {
@@ -26,9 +34,9 @@ export class WebDriverWrap {
         }
     }
 
-    static open_browser(): void {
+    open_browser(): void {
         try {
-            let chromeOptions = new chrome2.Options()
+            let chromeOptions = new chrome.Options()
             //Win_x64-389148-chrome-win32
             //Win-338428-chrome-win32
             //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
@@ -41,15 +49,15 @@ export class WebDriverWrap {
 
             // "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir --app=https://www.google.com
 
-            driver = new webdriver.Builder()
+            this.driver = new webdriver.Builder()
                 .forBrowser('chrome')//.forBrowser('firefox')
                 .setChromeOptions(chromeOptions)
                 .build();
 
-            flow = webdriver.promise.controlFlow()
+            this.flow = webdriver.promise.controlFlow()
 
             // Set default settings.
-            driver.manage().timeouts().pageLoadTimeout(60000);
+            this.driver.manage().timeouts().pageLoadTimeout(60000);
 
             webdriver.promise.controlFlow().on('uncaughtException', function(e: Error) {
                 console.error('Unhandled error: ' + e);
@@ -59,43 +67,49 @@ export class WebDriverWrap {
         }
     }
 
-    static close_browser(): webdriver.promise.Promise<void> {
-        return driver.quit()
-        //driver = null
+    close_browser(): webdriver.promise.Promise<void> {
+        return this.driver.quit()
     }
 
     //Returns a promise which navigates the browser to another url.
-    static navigate_to(url: string): webdriver.promise.Promise<void> {
-        return driver.navigate().to(url)
+    navigate_to(url: string): webdriver.promise.Promise<void> {
+        return this.driver.navigate().to(url)
     }
 
     //Returns a promise which navigates the browser forward in the history.
-    static navigate_forward(): webdriver.promise.Promise<void> {
-        return driver.navigate().forward();
+    navigate_forward(): webdriver.promise.Promise<void> {
+        return this.driver.navigate().forward();
     }
 
     //Returns a promise which navigates the browser backwards in the history.
-    static navigate_back(): webdriver.promise.Promise<void> {
-        return driver.navigate().back();
+    navigate_back(): webdriver.promise.Promise<void> {
+        return this.driver.navigate().back();
     }
 
     //Returns a promise which refreshes the browser.
-    static navigate_refresh(): webdriver.promise.Promise<void> {
-        return driver.navigate().refresh();
+    navigate_refresh(): webdriver.promise.Promise<void> {
+        return this.driver.navigate().refresh();
     }
 
     //Returns a promise which resizes the browser.
-    static resize_browser(width: number, height: number): webdriver.promise.Promise<void> {
-        return driver.manage().window().setSize(width, height);
+    resize_browser(width: number, height: number): webdriver.promise.Promise<void> {
+        return this.driver.manage().window().setSize(width, height);
     }
 
     //Returns a promise which jitters the browser size.
-    static jitter_browser_size(): webdriver.promise.Promise<void> {
-        return driver.manage().window().getSize().then(function(s) {
-            driver.manage().window().setSize(s.width + 1, s.height + 1).then(function() {
-                driver.manage().window().setSize(s.width, s.height);
-            })
-        })
+    jitter_browser_size(): webdriver.promise.Promise<{}> {
+        let our_driver = <webdriver.WebDriver>this.driver
+        return our_driver.manage().window().getSize().then(
+            function (s: webdriver.ISize) {
+                let our_driver = <webdriver.WebDriver>this.driver
+                our_driver.manage().window().setSize(s.width + 1, s.height + 1).then(
+                    function () {
+                        let our_driver = <webdriver.WebDriver>this.driver
+                        our_driver.manage().window().setSize(s.width, s.height);
+                    }.bind(this)
+                )
+            }.bind(this)
+        )
     }
 
     //------------------------------------------------------------------------------------------------
@@ -109,103 +123,88 @@ export class WebDriverWrap {
     static trivial_wait_time = 1000 //1000
     static critical_wait_time = 1000 //30000
 
-    //Returns a promise which evaulates to an existing element or is rejected.
-    static get_element(xpath: string, wait_milli: number): webdriver.promise.Promise<{}> {
-        return flow.execute(function() {
-            let d = webdriver.promise.defer();
-            // Wait for element to be present.
-            driver.wait(function() { return driver.isElementPresent(By.xpath(xpath)); }, wait_milli)
-            // Then retrieve the actual element.
-                .then(function(found) {
-                    if (found) {
-                        driver.findElement(By.xpath(xpath)).then(
-                            function(element) {
-                                d.fulfill(element)
-                            })
-                    } else {
-                        d.reject(null)
-                    }
-                }, function(error) {
-                    console.info('Warning: could not find: ' + xpath)
-                    throw error
-                })
-            return d.promise
-        })
-    }
 
+    //Returns a promise which evaulates to an existing element or is rejected.
+    get_element(xpath: string, wait_milli: number): webdriver.promise.Promise<webdriver.WebElement> {
+        return this.driver.findElement(By.xpath(xpath))
+    }
+        
     //Returns a promise which evaulates to a visible element.
-    static get_visible_element(xpath: string, wait_milli: number): webdriver.promise.Promise<{}> {
-        return WebDriverWrap.get_element(xpath, wait_milli).then(
-            function(element: webdriver.WebElement) {
-                return driver.wait(until.elementIsVisible(element), wait_milli).then(
-                    function(element) { return element },
-                    function(error) { console.info('Warning: element was not visible: ' + xpath); throw error })
-            }
-            )
+    get_visible_element(xpath: string, wait_milli: number): webdriver.promise.Promise<{}> {
+        return this.get_element(xpath, wait_milli).then(
+            function (element: webdriver.WebElement) {
+                let our_driver = <webdriver.WebDriver>this.driver
+                return our_driver.wait(Until.elementIsVisible(element), wait_milli).then(
+                    function (element) { return element },
+                    function (error) { console.info('Warning: element was not visible: ' + xpath); throw error })
+            }.bind(this)
+        )
     }
 
     // Creates promise chain which will type one key into an element.
-    static send_key(xpath: string, key: string): void {
-        let p = WebDriverWrap.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(function(element: webdriver.WebElement) {
-            return element.sendKeys(key)
-        })
+    send_key(xpath: string, key: string): void {
+        let p = this.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(
+            function (element: webdriver.WebElement) {
+                return element.sendKeys(key)
+            }.bind(this)
+        )
         WebDriverWrap.terminate_chain(p)
     }
 
-    static get_text(xpath: string) {
-        let p = WebDriverWrap.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(function(element: webdriver.WebElement) {
-            return element.getText()
-        })
+    get_text(xpath: string) {
+        let p = this.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(
+            function (element: webdriver.WebElement) {
+                return element.getText()
+            }.bind(this)
+        )
         WebDriverWrap.terminate_chain(p)
     }
 
     // Creates promise chain which will set text on an element.
-    static send_text(xpath: string, text: string) {
-        let p = WebDriverWrap.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(function(element: webdriver.WebElement) {
-            return element.sendKeys(Key.HOME, Key.chord(Key.SHIFT, Key.END), text)
-        })
+    send_text(xpath: string, text: string) {
+        let p = this.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(
+            function (element: webdriver.WebElement) {
+                return element.sendKeys(Key.HOME, Key.chord(Key.SHIFT, Key.END), text)
+            }.bind(this)
+        )
         WebDriverWrap.terminate_chain(p)
     }
 
     // Creates a promise chain which will click on an element.
-    static click_on_element(xpath: string) {
+    click_on_element(xpath: string) {
         console.log("clicking on element: " + xpath)
-        let p = WebDriverWrap.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(function(element: webdriver.WebElement) {
-            return driver.actions().click(element).perform()
-        })
+        let p = this.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(
+            function (element: webdriver.WebElement) {
+                let our_driver = <webdriver.WebDriver>this.driver
+                return our_driver.actions().click(element).perform()
+            }.bind(this)
+        )
         WebDriverWrap.terminate_chain(p)
     }
 
     // Creates a promise chain which will mouseover an element.
-    static mouse_over_element(xpath: string, relative_x: number, relative_y: number) {
-        let p = WebDriverWrap.get_visible_element(xpath, WebDriverWrap.trivial_wait_time).then(function(element: webdriver.WebElement) {
-            return driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).perform().then(
-                function() { },
-                function(error) { console.info('Warning: could not move_over_element (computedstyle): ' + xpath); throw (error) }
+    mouse_over_element(xpath: string, relative_x: number, relative_y: number) {
+        let p = this.get_visible_element(xpath, WebDriverWrap.trivial_wait_time).then(
+            function (element: webdriver.WebElement) {
+                let our_driver = <webdriver.WebDriver>this.driver
+                return our_driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).perform().then(
+                    function () { },
+                    function (error) { console.info('Warning: could not move_over_element (computedstyle): ' + xpath); throw (error) }
                 )
-        })
+            }.bind(this)
+        )
         WebDriverWrap.terminate_chain(p)
     }
 
     // Creates a promise which will select an option in a select dropdown.
-    static select_option(xpath: string, option_text: string) {
-        let p = WebDriverWrap.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(function(element: webdriver.WebElement) {
-            return element.findElement(By.xpath('option[normalize-space(text())="' + option_text + '"]')).click()
-        })
+    select_option(xpath: string, option_text: string) {
+        let p = this.get_visible_element(xpath, WebDriverWrap.critical_wait_time).then(
+            function (element: webdriver.WebElement) {
+                return element.findElement(By.xpath('option[normalize-space(text())="' + option_text + '"]')).click()
+            }.bind(this)
+        )
         WebDriverWrap.terminate_chain(p)
     }
-
-    //// Creates a promise which will send results back to the native app.
-    //let send_result = function () {
-    //    p = flow.execute( function() {
-    //        let result = {test: 'replace this with real value'} // This should be changed to the real result when ready.
-    //        let d = webdriver.promise.defer();
-    //        app_socket.send('ok: ' + JSON.stringify(result))
-    //        d.fulfill(result)
-    //        return d.promise
-    //    })
-    //    terminate_chain(p)
-    //}
 
     // Helper to terminate promise chains.
     static terminate_chain<T>(p: webdriver.promise.Promise<T>) {
@@ -240,6 +239,9 @@ export class WebDriverWrap {
                 } else {
                     DebugUtils.log_exception(error)
                 }
+
+                console.error('exception: ' + error.message + ' stack: ' + error.stack)
+
                 // Send failure reponse to the app.
                 send_msg_to_app(new ResponseMessage(false))
             })

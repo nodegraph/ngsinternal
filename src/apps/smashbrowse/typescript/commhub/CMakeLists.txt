@@ -2,7 +2,6 @@
 set(ch_ts
     debugutils.ts
     fswrap.ts
-    socketmessage.ts
     webdriverwrap.ts
     commhub.ts
 )
@@ -29,6 +28,9 @@ add_custom_command(
     ARGS --project ${CMAKE_CURRENT_SOURCE_DIR} 
          --outDir ${CMAKE_CURRENT_BINARY_DIR}
          --outFile ${ch_js_merged}
+         
+    #COMMAND echo
+    #ARGS "building with ${msg_js_lib} ${ch_js_merged} require.js"
     
     COMMAND java
     ARGS -jar D:/installs/windows/closure_compiler/closure-compiler-v20160822.jar 
@@ -36,10 +38,10 @@ add_custom_command(
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS
          --create_source_map ${ch_js_min_map}
-         --js ${ch_js_merged} require.js
+         --js ${msg_js_lib} ${ch_js_merged}
          --js_output_file ${ch_js_min}
          
-    DEPENDS ${ch_ts} tsconfig.json
+    DEPENDS ${ch_ts} tsconfig.json msg_js ${msg_js_lib}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 add_custom_target(commhub ALL DEPENDS ${ch_js} ${ch_js_merged} ${ch_js_min})

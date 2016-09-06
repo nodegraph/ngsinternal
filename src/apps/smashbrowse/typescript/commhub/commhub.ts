@@ -2,7 +2,7 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\ws\ws.d.ts"/>
 /// <reference path="D:\dev\windows\DefinitelyTyped\request\request.d.ts"/>
 /// <reference path="D:\dev\windows\DefinitelyTyped\selenium-webdriver\selenium-webdriver.d.ts"/>
-/// <reference path="fswrap.ts"/>
+/// <reference path="..\message\message.d.ts"/>
 
 //------------------------------------------------------------------------------------------------
 //Globals.
@@ -25,7 +25,8 @@ import Path = require('path')
 import {FSWrap} from './fswrap'
 import {WebDriverWrap, Key} from './webdriverwrap'
 import {DebugUtils} from './debugutils'
-import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, RequestType, MessageType, ActionType} from './socketmessage'
+
+//import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, RequestType, MessageType, ActionType} from './socketmessage'
 
 // Secure web socket to communicate with chrome extension.
 let ext_server: ChromeSocketServer = null
@@ -62,15 +63,15 @@ class BaseConnection {
         }
         return false
     }
-    send_json(msg: string) :void {
+    send_json(msg: string): void {
         this.socket.send(msg)
     }
     receive_json(msg: string): void {
     }
 }
 
-class ChromeConnection extends BaseConnection{
-    constructor() {
+class ChromeConnection extends BaseConnection {
+    constructor(public webdriver_wrap: WebDriverWrap) {
         super()
     }
     receive_json(json: string): void {
@@ -81,8 +82,9 @@ class ChromeConnection extends BaseConnection{
 }
 
 class AppConnection extends BaseConnection {
-    constructor() {
+    constructor(public webdriver_wrap: WebDriverWrap) {
         super()
+        console.log('AppConnection driver wrap is: ' + this.webdriver_wrap)
     }
     //The can send us messages either from c++ or from qml.
     //These requests will be handled by webdriverjs, or the extension scripts in the browser.
@@ -100,66 +102,68 @@ class AppConnection extends BaseConnection {
         // Handle the request.
         switch (req.request) {
             case RequestType.kShutdown: {
-                WebDriverWrap.close_browser().then(function () { process.exit(-1) })
+                this.webdriver_wrap.close_browser().then(function() { process.exit(-1) })
                 break;
             }
             case RequestType.kCheckBrowserIsOpen:
                 function on_response(open: boolean) {
                     if (!open) {
-                        WebDriverWrap.open_browser()
+                        this.webdriver_wrap.open_browser()
                     }
                 }
-                WebDriverWrap.browser_is_open(on_response)
+                this.webdriver_wrap.browser_is_open(on_response.bind(this))
                 // No response is sent back to the app. Typically this is called in a polling manner.
                 break
             case RequestType.kResizeBrowser:
-                WebDriverWrap.resize_browser(req.args.width, req.args.height)
+                this.webdriver_wrap.resize_browser(req.args.width, req.args.height)
                 // No response is sent back to the app. Typically this is called in a polling manner.
                 break
             case RequestType.kOpenBrowser:
-                try{
+                try {
                     //Remove the files in the chrome user data dir.
-                    let dir = Path.join(FSWrap.g_user_data_dir, "chromeuserdata")
-                    if (FSWrap.file_exists(dir)) {
-                        FSWrap.delete_dir(dir)
+                    {
+                        let dir = Path.join(FSWrap.g_user_data_dir, "chromeuserdata")
+                        if (FSWrap.file_exists(dir)) {
+                            FSWrap.delete_dir(dir)
+                        }
+                        FSWrap.create_dir(dir)
                     }
-                    FSWrap.create_dir(dir)
                     // Open the browser.
-                    WebDriverWrap.open_browser()
+                    this.webdriver_wrap.open_browser()
                     send_msg_to_app(new ResponseMessage(true))
-                } catch(e) {
+                } catch (e) {
                     send_msg_to_app(new ResponseMessage(false, e))
                 }
                 break
             case RequestType.kCloseBrowser:
-                WebDriverWrap.close_browser()
+                this.webdriver_wrap.close_browser()
                 send_msg_to_app(new ResponseMessage(true))
                 break
             case RequestType.kNavigateTo:
-                WebDriverWrap.navigate_to(req.args.url).then(function () {
+                this.webdriver_wrap.navigate_to(req.args.url).then(function() {
                     send_msg_to_app(new ResponseMessage(true))
-                }, function (error) {
+                }, function(error) {
                     send_msg_to_app(new ResponseMessage(false, error))
                 })
                 break
             case RequestType.kNavigateBack:
-                WebDriverWrap.navigate_back().then(function () {
+                this.webdriver_wrap.navigate_back().then(function() {
                     send_msg_to_app(new ResponseMessage(true))
-                }, function (error) {
+                }, function(error) {
                     send_msg_to_app(new ResponseMessage(false, error))
                 })
                 break
             case RequestType.kNavigateForward:
-                WebDriverWrap.navigate_forward().then(function () {
+                this.webdriver_wrap.navigate_forward().then(function() {
                     send_msg_to_app(new ResponseMessage(true))
-                }, function (error) {
+                }, function(error) {
                     send_msg_to_app(new ResponseMessage(false, error))
                 })
                 break
             case RequestType.kNavigateRefresh:
-                WebDriverWrap.navigate_refresh().then(function () {
+                this.webdriver_wrap.navigate_refresh().then(function() {
                     send_msg_to_app(new ResponseMessage(true))
-                }, function (error) {
+                }, function(error) {
                     send_msg_to_app(new ResponseMessage(false, error))
                 })
                 break
@@ -169,19 +173,19 @@ class AppConnection extends BaseConnection {
                     // then we let webdriver perform actions.
                     switch (req.args.action) {
                         case ActionType.kSendClick:
-                            WebDriverWrap.click_on_element(req.xpath)
+                            this.webdriver_wrap.click_on_element(req.xpath)
                             break
                         case ActionType.kSendText:
-                            WebDriverWrap.send_text(req.xpath, req.args.text)
+                            this.webdriver_wrap.send_text(req.xpath, req.args.text)
                             break
                         case ActionType.kSendEnter:
-                            WebDriverWrap.send_key(req.xpath, Key.RETURN)
+                            this.webdriver_wrap.send_key(req.xpath, Key.RETURN)
                             break
                         case ActionType.kGetText:
-                            WebDriverWrap.get_text(req.xpath)
+                            this.webdriver_wrap.get_text(req.xpath)
                             break
                         case ActionType.kSelectOption:
-                            WebDriverWrap.select_option(req.xpath, req.args.option_text)
+                            this.webdriver_wrap.select_option(req.xpath, req.args.option_text)
                             break
                         case ActionType.kScrollDown:
                         case ActionType.kScrollUp:
@@ -202,21 +206,19 @@ class AppConnection extends BaseConnection {
             default:
                 // By default we send requests to the extension. 
                 // (It goes through bg script, and then into content script.)
-                console.log('zzzzzzzzzzzzzzzzzz')
                 send_json_to_ext(json)
                 break
-
         }
     }
 }
 
-class BaseSocketServer{
+class BaseSocketServer {
     // This can easily be upgraded to handle non ssl http as well.
     // let http_server: HttpServer.Server
     // http_server = HttpServer.createServer(dummy_handler)
 
     static ssl = true
-    static ssl_key =  './key.pem'
+    static ssl_key = './key.pem'
     static ssl_cert = './cert.pem'
 
     protected port: number
@@ -224,45 +226,45 @@ class BaseSocketServer{
     private server: ws.Server
     private connections: BaseConnection[]
 
-    constructor() {
+    constructor(public webdriver_wrap: WebDriverWrap) {
         this.port = 8093
         this.https_server = null
         this.server = null
         this.connections = []
     }
 
-    protected on_https_server_error( error: NodeJS.ErrnoException): void {
-            console.log('start_build got error!!!')
-            if (error.code === 'EADDRINUSE') {
-                console.log("XXXXX the port is in use already!")
-                // The current config port number is in use.
-                // So we increment it and recurse.
-                this.port += 1
-                this.build()
-            } else {
-                // Call the callback with failed result.
-                this.on_build_failed()
-            }
+    protected on_https_server_error(error: NodeJS.ErrnoException): void {
+        console.log('start_build got error!!!')
+        if (error.code === 'EADDRINUSE') {
+            console.log("XXXXX the port is in use already!")
+            // The current config port number is in use.
+            // So we increment it and recurse.
+            this.port += 1
+            this.build()
+        } else {
+            // Call the callback with failed result.
+            this.on_build_failed()
         }
+    }
 
-    protected on_https_server_listening<C extends BaseConnection>(ConnConstructor: { new (): C; }): void {
-            // Create the socket server.
-            // The following options variable should have type ws.IServerOptions but DefinitelyTyped seems to have a bug with internal server type.
-            let options: any = { server: this.https_server}
-            this.server = new ws.Server(options)
-            this.server.on('connection', function (socket: ws) {
-                let conn: C = new ConnConstructor();
-                conn.socket = socket
-                socket.on('message', conn.receive_json.bind(conn))
-                this.connections.push(conn)
-            }.bind(this))
-            // Now call the callback.
-            this.on_built()
-        }
+    protected on_https_server_listening<C extends BaseConnection>(ConnConstructor: { new (wdw: WebDriverWrap): C; }): void {
+        // Create the socket server.
+        // The following options variable should have type ws.IServerOptions but DefinitelyTyped seems to have a bug with internal server type.
+        let options: any = { server: this.https_server }
+        this.server = new ws.Server(options)
+        this.server.on('connection', function(socket: ws) {
+            let conn: C = new ConnConstructor(this.webdriver_wrap);
+            conn.socket = socket
+            socket.on('message', conn.receive_json.bind(conn))
+            this.connections.push(conn)
+        }.bind(this))
+        // Now call the callback.
+        this.on_built()
+    }
 
-    protected start_build<C extends BaseConnection>(ConnConstructor: { new (): C; }) {
+    protected start_build<C extends BaseConnection>(ConnConstructor: { new (wdw: WebDriverWrap): C; }) {
         // Dummy handler for http/s requests.
-        let dummy_handler = function (req: Http.IncomingMessage, res: Http.ServerResponse) {
+        let dummy_handler = function(req: Http.IncomingMessage, res: Http.ServerResponse) {
             res.writeHead(200);
             res.end("Http/s server with websockets is running!\n")
         }.bind(this);
@@ -283,15 +285,15 @@ class BaseSocketServer{
     }
 
     // These should be overridden in derived classes.
-    build() {}
-    on_built() {}
+    build() { }
+    on_built() { }
     on_build_failed() {
         console.error("SocketServer failed to build.")
     }
     clean_invalid_connections() {
         let conns = this.connections
         console.log('cleaning num connections ' + conns.length + " on port: " + this.port)
-        for (let i = 0; i<conns.length; i++) {
+        for (let i = 0; i < conns.length; i++) {
             console.log('checking index: ' + i)
             if (!conns[i].is_alive()) {
                 console.log('removing socket:' + i)
@@ -307,7 +309,7 @@ class BaseSocketServer{
         // Now send out the json string.
         let conns = this.connections //this.server.clients
         console.log('sending message to num connections: ' + conns.length + " on port: " + this.port)
-        for (let i = 0; i<conns.length; i++) {
+        for (let i = 0; i < conns.length; i++) {
             if (conns[i].is_alive()) {
                 conns[i].send_json(json)
             }
@@ -317,8 +319,8 @@ class BaseSocketServer{
 
 class ChromeSocketServer extends BaseSocketServer {
     static extension_server_file = Path.join(FSWrap.g_nodejs_dir, 'chromeextension', 'extensionserverport.js') // g_user_data_dir
-    constructor() {
-        super()
+    constructor(public webdriver_wrap: WebDriverWrap) {
+        super(webdriver_wrap)
         this.port = 8093
     }
     build() {
@@ -333,9 +335,9 @@ class ChromeSocketServer extends BaseSocketServer {
 }
 
 class AppSocketServer extends BaseSocketServer {
-    static app_server_file = Path.join(FSWrap.g_user_data_dir, 'nodejs','appserverport.txt')
-    constructor() {
-        super()
+    static app_server_file = Path.join(FSWrap.g_user_data_dir, 'nodejs', 'appserverport.txt')
+    constructor(public webdriver_wrap: WebDriverWrap) {
+        super(webdriver_wrap)
         this.port = 8094
     }
     build() {
@@ -348,13 +350,15 @@ class AppSocketServer extends BaseSocketServer {
     }
 }
 
+// Our webdriver wrapper.
+let webdriver_wrap: WebDriverWrap = new WebDriverWrap()
 
 // Secure web socket to communicate with chrome extension.
-ext_server = new ChromeSocketServer()
+ext_server = new ChromeSocketServer(webdriver_wrap)
 ext_server.build()
 
 // Regular WebSocket to communicate with app.
-app_server = new AppSocketServer()
+app_server = new AppSocketServer(webdriver_wrap)
 app_server.build()
 
 // Send an obj as a message to the app.
@@ -369,7 +373,7 @@ export function send_msg_to_app(msg: BaseMessage) {
 // Send an obj as a message to the extension.
 export function send_json_to_ext(json: string) {
     ext_server.send_json_to_all_connections(json)
-} 
+}
 
 export function send_msg_to_ext(msg: BaseMessage) {
     ext_server.send_json_to_all_connections(msg.to_string())

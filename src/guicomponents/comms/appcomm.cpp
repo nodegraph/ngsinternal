@@ -355,7 +355,9 @@ void AppComm::handle_request_from_nodejs(const Message& sm) {
 
     // Create a new Request.
     Message updated(sm);
-    updated[Message::kArgs].toObject()[Message::kURL] = url;
+    QJsonObject args = sm[Message::kArgs].toObject();
+    args[Message::kURL] = url;
+    updated[Message::kArgs] = args;
 
     // Send it off to the app.
     handle_request_from_app(updated);

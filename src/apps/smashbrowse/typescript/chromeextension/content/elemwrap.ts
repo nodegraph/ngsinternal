@@ -1,8 +1,3 @@
-//import {PageWrap} from "./pagewrap"
-//import {Box, Direction} from "./box"
-//import {Point} from "./point"
-//import {MatchCriteria} from "./matchcriteria"
-//import {Utils} from "./utils"
 
 //Wrap type.
 const enum WrapType {

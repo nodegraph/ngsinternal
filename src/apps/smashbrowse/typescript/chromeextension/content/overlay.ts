@@ -1,5 +1,3 @@
-//import {ElemWrap} from "./elemwrap"
-//import {Point} from "./point"
 
 // This class represents the rectangular overlays that we see overlayed on
 // the target web page. These boxes ares used to represent what elements 

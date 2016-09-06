@@ -1,4 +1,3 @@
-//import {GUICollection} from "./guicollection"
 
 class EventBlocker {
     // Our Dependencies.

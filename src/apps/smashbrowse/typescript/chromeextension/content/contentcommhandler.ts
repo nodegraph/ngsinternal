@@ -1,8 +1,3 @@
-//import {ContentComm} from "./contentcomm"
-//import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, RequestType, ActionType} from "../../controller/socketmessage"
-//import {GUICollection} from "./guicollection"
-//import {ElemWrap, WrapType} from "./elemwrap"
-//import {MatchCriteria} from "./matchcriteria"
 
 class ContentCommHandler {
     // Our Dependencies.
@@ -26,7 +21,7 @@ class ContentCommHandler {
     }
 
     handle_bg_request(request: RequestMessage) {
-        console.log('content script received message from bg: ' + JSON.stringify(request))
+        //console.log('content script received message from bg: ' + JSON.stringify(request))
         switch (request.request) {
             case RequestType.kCreateSetFromMatchValues:
                 switch (request.args.wrap_type) {
@@ -41,7 +36,7 @@ class ContentCommHandler {
                     }
                         break
                     default:
-                        console.log("Error: create_set_from_match_values")
+                        console.error("Error: create_set_from_match_values")
                 }
                 break
             case RequestType.kCreateSetFromWrapType:

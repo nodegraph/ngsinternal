@@ -1,5 +1,3 @@
-//import {ElemWrap} from "./elemwrap"
-
 
 interface MatchCriteriaInterface {
     // Border matching.

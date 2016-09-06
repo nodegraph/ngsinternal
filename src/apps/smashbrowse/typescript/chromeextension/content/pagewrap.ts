@@ -1,8 +1,3 @@
-//import {GUICollection} from "./guicollection"
-//import {Box, Direction} from "./box"
-//import {ElemWrap, WrapType} from "./elemwrap"
-//import {Point} from "./point"
-//import {Utils} from "./utils"
 
 // The class encapsulates the properties of a web page.
 class PageWrap {
@@ -199,7 +194,6 @@ class PageWrap {
         for (let i = 0; i < elem_wraps.length; i++) {
             let value = getter.call(elem_wraps[i])
             if (value) {
-                console.log("found first element with value:-->" + value + "<--")
                 return elem_wraps[i]
             }
         }

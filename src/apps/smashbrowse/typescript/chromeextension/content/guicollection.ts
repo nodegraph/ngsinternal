@@ -1,11 +1,3 @@
-//import {ContextMenu} from "./contextmenu"
-//import {EventBlocker} from "./eventblocker"
-//import {PageWrap} from "./pagewrap"
-//import {ElemWrap} from "./elemwrap"
-//import {WaitPopup, TextInputPopup, SelectInputPopup} from "./popupdialog"
-//import {OverlaySets} from "./overlaysets"
-//import {OverlaySet} from "./overlayset"
-//import {Point} from "./point"
 
 class GUICollection {
 

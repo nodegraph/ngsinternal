@@ -1,10 +1,3 @@
-//import {Box, Direction} from "./box"
-//import {ElemWrap, WrapType} from "./elemwrap"
-//import {PageWrap} from "./pagewrap"
-//import {MatchCriteria} from "./matchcriteria"
-//import {Overlay} from "./overlay"
-//import {Point} from "./point"
-//import {Utils} from "./utils"
 
 class OverlaySet {
     distinct_colors: DistinctColors

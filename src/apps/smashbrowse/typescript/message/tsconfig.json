@@ -8,9 +8,6 @@
         "sourceMap": true
     },
     "files": [
-        "browserwrap.ts",
-        "bgcomm.ts",
-        "bgcommhandler.ts",
-        "bgmain.ts"
+        "message.ts"
     ]
 }

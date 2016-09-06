@@ -38,17 +38,23 @@ Message::Message(const QString& json) {
 }
 
 Message::Message(RequestType rt, const QJsonObject& args, const QString& xpath) {
+  operator[](Message::kMessageType) = MessageType::kRequestMessage;
+
   operator[](Message::kRequest) = rt;
   operator[](Message::kArgs) = args;
   operator[](Message::kXPath) = xpath;
 }
 
 Message::Message(bool success, const QJsonValue& value) {
+  operator[](Message::kMessageType) = MessageType::kResponseMessage;
+
   operator[](Message::kSuccess) = success;
   operator[](Message::kValue) = value;
 }
 
 Message::Message(const Message& other) {
+  operator[](Message::kMessageType) = other[Message::kMessageType];
+
   if (other.keys().contains(Message::kRequest)) {
     merge_request_object(other);
   } else {

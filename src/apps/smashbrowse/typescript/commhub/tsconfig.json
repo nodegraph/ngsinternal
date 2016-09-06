@@ -10,7 +10,6 @@
     "files": [
         "debugutils.ts",
         "fswrap.ts",
-        "socketmessage.ts",
         "webdriverwrap.ts",
         "commhub.ts"
     ]
