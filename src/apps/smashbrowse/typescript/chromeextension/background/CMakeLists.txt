@@ -1,12 +1,5 @@
-# Note the following files should match those specified in tsconfig.json.
-set(bg_ts
-    browserwrap.ts
-    bgcomm.ts
-    bgcommhandler.ts
-    bgmain.ts
-)
-# Check these files match those specified in tsconfig.json.
-check_ts_config("${bg_ts}")
+# Extract the ts files from tsconfig.json.
+get_tsconfig_files(bg_ts)
 
 # Form bg_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" bg_js "${bg_ts}")

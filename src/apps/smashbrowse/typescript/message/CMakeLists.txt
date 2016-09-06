@@ -1,8 +1,5 @@
-set(msg_ts
-    message.ts
-)
-# Check these files match those specified in tsconfig.json.
-check_ts_config("${msg_ts}")
+# Extract the ts files from tsconfig.json.
+get_tsconfig_files(msg_ts)
 
 # Form msg_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" msg_js "${msg_ts}")

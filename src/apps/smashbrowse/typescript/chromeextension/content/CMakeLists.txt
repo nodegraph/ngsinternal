@@ -1,27 +1,5 @@
-# Note the following files should match those specified in tsconfig.json.
-set(cnt_ts
-        box.ts
-        contentcomm.ts
-        contentcommhandler.ts
-        contextmenu.ts
-        contextmenuhandler.ts
-        distinctcolors.ts
-        elemwrap.ts
-        eventblocker.ts
-        matchcriteria.ts
-        overlay.ts
-        overlayset.ts
-        overlaysets.ts
-        mutationmonitor.ts
-        pagewrap.ts
-        guicollection.ts
-        point.ts
-        popupdialog.ts
-        utils.ts
-        contentmain.ts
-)
-# Check these files match those specified in tsconfig.json.
-check_ts_config("${cnt_ts}")
+# Extract the ts files from tsconfig.json.
+get_tsconfig_files(cnt_ts)
 
 # Form cnt_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" cnt_js "${cnt_ts}")

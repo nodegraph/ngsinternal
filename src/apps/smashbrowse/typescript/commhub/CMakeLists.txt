@@ -1,12 +1,5 @@
-# Note the following files should match those specified in tsconfig.json.
-set(ch_ts
-    debugutils.ts
-    fswrap.ts
-    webdriverwrap.ts
-    commhub.ts
-)
-# Check these files match those specified in tsconfig.json.
-check_ts_config("${ch_ts}")
+# Extract the ts files from tsconfig.json.
+get_tsconfig_files(ch_ts)
 
 # Form ch_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" ch_js "${ch_ts}")
@@ -55,7 +48,6 @@ INSTALL(FILES
             cert.pem # certs for https server
             key.pem # certs for https server
             chb.js # commhub bootstrap file
-            require.js # the requirejs library
 		DESTINATION bin
 		COMPONENT apps)
 		

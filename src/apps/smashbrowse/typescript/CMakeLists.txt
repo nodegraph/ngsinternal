@@ -1,6 +1,6 @@
-# Function used to check that the files in tsconfig.json match
-# those specified in cmake. Used by CMakeLists in our sub dirs.
-function(check_ts_config cmake_ts_files)
+# Function used to grab the ts files from tsconfig.json.
+# Note having the files in tsconfig.json allows Visual Studio Code to parse typescript properly.
+function(get_tsconfig_files ts_files)
     # Read tsconfig file.
     set(tsconfig_file "${CMAKE_CURRENT_SOURCE_DIR}/tsconfig.json")
     file(STRINGS ${tsconfig_file} lines REGEX "(\".*\")")
@@ -14,13 +14,11 @@ function(check_ts_config cmake_ts_files)
           list(REMOVE_ITEM tsconfig_files "files")
       endif()
     endforeach()
-    #message("the tsconfig file are: ${tsconfig_files}")
-    #message("the cmake ts files are: ${cmake_ts_files}")
-    if ("${tsconfig_files}" STREQUAL "${cmake_ts_files}") 
-        #message(STATUS "tscconfig.json and cmake match verified")
-    else()
-        message(FATAL_ERROR "The files specified in tsconfig.json and cmake don't match. ${cmake_ts_files}")
-    endif()
+    #message("tsconfig_files: ${tsconfig_files}")
+    
+    # Copy the tsconfig files into the return value argument.
+    # Note that ${ts_files} will be empty in this scope, but not in our calling parent scope.
+    SET(${ts_files} ${tsconfig_files} PARENT_SCOPE)
 endfunction()
 
 
