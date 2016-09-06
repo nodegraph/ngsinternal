@@ -3,8 +3,7 @@ import chrome = require('selenium-webdriver/chrome');
 import Path = require('path')
 
 import {FSWrap} from './fswrap'
-//import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, RequestType, MessageType, ActionType} from './socketmessage'
-import {send_msg_to_app, send_msg_to_ext} from './commhub'
+import {send_msg_to_app, send_msg_to_ext, get_app_server_port, get_ext_server_port} from './commhub'
 import {DebugUtils} from './debugutils'
 
 
@@ -19,9 +18,12 @@ export class WebDriverWrap {
     driver: webdriver.WebDriver = null
     flow: webdriver.promise.ControlFlow = null
 
-    constructor() {
+    fswrap: FSWrap
+
+    constructor(fswrap: FSWrap) {
         this.driver = null
         this.flow = null
+        this.fswrap = fswrap
     }
 
     browser_is_open(callback: (result: boolean) => void) {
@@ -34,16 +36,22 @@ export class WebDriverWrap {
         }
     }
 
-    open_browser(): void {
+    open_browser(): boolean {
         try {
             let chromeOptions = new chrome.Options()
             //Win_x64-389148-chrome-win32
             //Win-338428-chrome-win32
             //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
-            chromeOptions.addArguments("--load-extension=" + FSWrap.g_nodejs_dir + "/chromeextension")
+
+            //let url = "file://"+FSWrap.get_bin_dir() + '/../html/smashbrowse.html?' + get_app_server_port()
+            //url = url.replace(/\\/g,"/")
+
+            let url = "https://www.google.com/?" + get_ext_server_port()
+            chromeOptions.addArguments(url)
+            chromeOptions.addArguments("--load-extension=" + FSWrap.get_chrome_ext_dir())
             chromeOptions.addArguments("--ignore-certificate-errors")
             chromeOptions.addArguments("--disable-web-security")
-            chromeOptions.addArguments("--user-data-dir=" + FSWrap.g_user_data_dir + "/chromeuserdata")
+            chromeOptions.addArguments("--user-data-dir=" + this.fswrap.get_chrome_user_data_dir())
             chromeOptions.addArguments("--first-run")
             //chromeOptions.addArguments("--app=file:///"+url)
 
@@ -62,8 +70,11 @@ export class WebDriverWrap {
             webdriver.promise.controlFlow().on('uncaughtException', function(e: Error) {
                 console.error('Unhandled error: ' + e);
             });
+
+            return true
         } catch (e) {
             DebugUtils.log_exception(e)
+            return false
         }
     }
 

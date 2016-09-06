@@ -1,8 +1,6 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\chrome\chrome.d.ts"/>
 /// <reference path="..\..\message\message.d.ts"/>
 
-declare var g_nodejs_port: number
-
 //Class which handles communication between:
 // 1) this background script and nodejs
 // 2) this background script and the content script
@@ -12,21 +10,69 @@ class BgComm {
 
     // Our members.
     private nodejs_socket: WebSocket // socket to communicate with the nodejs app
+    private nodejs_port: number
+
     private connect_timer: number
     private content_tab_id: number
+
+    bound_on_tab_created: any
+    bound_on_tab_updated: any
 
     constructor() {
         // Our dependencies.
         
-        // Our data.
+        // Our nodejs data.
         this.nodejs_socket = null
+        this.nodejs_port = -1
+
+        // Our timer data.
         this.connect_timer = setInterval(this.connect_to_nodejs.bind(this), 1000) // continually try to connect to nodejs
         this.content_tab_id = null
         this.connect_to_content()
 
+        // Hack to retrieve the nodejs port.
+        // The very first opened tab's url will have the port number embedded into the url.
+        this.bound_on_tab_created = this.on_tab_created.bind(this)
+        chrome.tabs.onCreated.addListener(this.bound_on_tab_created)
+
+        this.bound_on_tab_updated = this.on_tab_updated.bind(this)
+        chrome.tabs.onUpdated.addListener(this.bound_on_tab_updated)
+
         // Make sure the web socket is closed before we navigate away from this window/frame.
         window.onbeforeunload = function() {
             this.nodejs_socket.close()
+        }
+    }
+
+    on_tab_created(tab: chrome.tabs.Tab) {
+        if (tab.id != this.content_tab_id) {
+            return
+        }
+        this.extract_port_from_tab(tab)
+        chrome.tabs.onCreated.removeListener(this.bound_on_tab_created)
+    }
+
+    on_tab_updated(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {
+        if (tab.id != this.content_tab_id) {
+            return
+        }
+        this.extract_port_from_tab(tab)
+        chrome.tabs.onUpdated.removeListener(this.bound_on_tab_updated)
+    }
+
+    extract_port_from_tab(tab: chrome.tabs.Tab) {
+        let url = tab.url
+        if (!url) {
+            return false
+        }
+
+        let index = url.indexOf('?')
+        if (index != -1) {
+            this.nodejs_port = Number(url.substring(index+1))
+            return true
+        } else {
+            console.error("Error: no port number present")
+            return false
         }
     }
 
@@ -36,13 +82,17 @@ class BgComm {
 
     //Setup communication channel to nodejs.
     connect_to_nodejs(): void {
+        // Return if we haven't received our nodejs port number yet.
+        if (this.nodejs_port == -1) {
+            return
+        }
         // If we're already connected, just return.
         if (this.nodejs_socket && (this.nodejs_socket.readyState == WebSocket.OPEN)) {
             return
         }
         // Otherwise try to connect.
         try {
-            this.nodejs_socket = new WebSocket('wss://localhost:' + g_nodejs_port)
+            this.nodejs_socket = new WebSocket('wss://localhost:' + this.nodejs_port)
             this.nodejs_socket.onerror = function(error: ErrorEvent) {
                 console.error("nodejs socket error: " + JSON.stringify(error))
             }.bind(this)

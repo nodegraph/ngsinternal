@@ -53,7 +53,8 @@ AppComm::AppComm(Entity* parent)
       _websocket(NULL),
       _use_external_process(false),
       _waiting_for_results(false),
-      _show_browser(false){
+      _show_browser(false),
+      _nodejs_port_regex("port:(\\d+)"){
 
   get_dep_loader()->register_fixed_dep(_file_model, "");
 
@@ -134,8 +135,19 @@ void AppComm::on_poll() {
     debug.noquote();
 
     //debug << "nodejs state: " << _process->state();
-
     QString output(_process->readAllStandardOutput());
+
+    // Look for the nodejs port number.
+    if (_nodejs_port.isEmpty()) {
+      int pos = _nodejs_port_regex.indexIn(output);
+      std::cerr << "pppos is: " << pos << "\n";
+      if (pos >= 0) {
+        QStringList list = _nodejs_port_regex.capturedTexts();
+        assert(list.size() == 2);
+        _nodejs_port = list[1];
+        std::cerr << "found nodejs port: " << _nodejs_port.toStdString() << "\n";
+      }
+    }
     if (!output.isEmpty()) {
       debug << "nodejs out: " << output;
     }
@@ -285,21 +297,13 @@ void AppComm::stop_nodejs() {
 }
 
 void AppComm::connect_to_nodejs() {
-  // Nodejs will write out the port number of the app server in a text file in the bin dir.
-  // Build filename for this file.
-  QString filename = get_user_data_dir() + "/nodejs/appserverport.txt";
-
-  // Open the file.
-  QFile file(filename);
-  if (!file.open(QFile::ReadOnly | QFile::Text)) {
+  if (_nodejs_port.isEmpty()) {
     return;
   }
 
-  // Read the file.
-  QTextStream stream(&file);
-  QString port = stream.readAll();
+  // Form the websocket server's url using the port number.
   QString url("wss://localhost:");
-  url += port;
+  url += _nodejs_port;
 
   // Open the port.
   _websocket->open(QUrl(url));

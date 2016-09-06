@@ -126,6 +126,10 @@ signals:
 
   // Browser.
   bool _show_browser;
+
+  // The nodejs server's port number for us, the app.
+  QString _nodejs_port;
+  QRegExp _nodejs_port_regex;
 };
 
 }

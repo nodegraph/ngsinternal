@@ -151,22 +151,10 @@ int main(int argc, char *argv[]) {
 #endif
 #endif
 
-
     // Create our application. Note that QGUIApplication has no dependency on widgets.
     QGuiApplication app(argc, argv);
     QApplication::setApplicationName("smashbrowse"); // This affects the user's data dir resolution.
     QApplication::setOrganizationDomain("smashbrowse.com");
-
-    // Copy the chromeextension over to the user data dir, so that we can change some files.
-    {
-      // Remove the extension dir if present.
-      QDir dest_dir(AppComm::get_user_data_dir()+"/chromeextension/");
-      dest_dir.removeRecursively();
-
-      // Now copy the chromeextension from our qt resources.
-      QDir src_dir(":/chromeextension/");
-      copy_dir(src_dir, dest_dir);
-    }
 
 #if ARCH == ARCH_IOS
   // Register QML types.
@@ -246,11 +234,6 @@ int main(int argc, char *argv[]) {
 
     // Run the Qt loop.
     execReturn = app.exec();
-
-    // Remove the chrome extension files from the user data dir, for a weak attempt to hide them.
-    // Note there are other directories in there that we don't care about like (nodejs, and chromeuserdata).
-    QDir dir(AppComm::get_user_data_dir()+"/chromeextension/");
-    dir.removeRecursively();
 
     // Cleanup.
     delete_ff(app_root);

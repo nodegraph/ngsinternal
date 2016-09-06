@@ -82,12 +82,6 @@
         <file>qml/smashbrowse/pages/SettingsPage.qml</file>
         <file>qml/smashbrowse/pages/SplashPage.qml</file>
         
-        <!-- JS Compute Nodes -->
-        <file>nodes/node.js</file>
-        <file>nodes/nodepool.js</file>
-        <file>nodes/nodes.js</file>
-        <file>nodes/noopnode.js</file>
-        
         <!-- Tree View Icons. -->
         <file alias="icons/ic_add_circle_outline_black_48dp.png">../../external/icons/ic_add_circle_outline_black_48dp.png</file>
         

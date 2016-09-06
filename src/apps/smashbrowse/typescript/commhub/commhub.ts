@@ -26,21 +26,11 @@ import {FSWrap} from './fswrap'
 import {WebDriverWrap, Key} from './webdriverwrap'
 import {DebugUtils} from './debugutils'
 
-//import {BaseMessage, RequestMessage, ResponseMessage, InfoMessage, RequestType, MessageType, ActionType} from './socketmessage'
-
 // Secure web socket to communicate with chrome extension.
 let ext_server: ChromeSocketServer = null
 
 // Regular WebSocket to communicate with app.
 let app_server: AppSocketServer = null
-
-// Make sure the nodejs dir exists in the user data dir.
-{
-    let dir = Path.join(FSWrap.g_user_data_dir, "nodejs")
-    if (!FSWrap.file_exists(dir)) {
-        FSWrap.create_dir(dir)
-    }
-}
 
 // Make sure we catch any uncaught exceptions.
 DebugUtils.catch_uncaught_exceptions()
@@ -109,6 +99,8 @@ class AppConnection extends BaseConnection {
                 function on_response(open: boolean) {
                     if (!open) {
                         this.webdriver_wrap.open_browser()
+                        let url = "https://www.google.com/?" + get_ext_server_port()
+                        this.webdriver_wrap.navigate_to(url)
                     }
                 }
                 this.webdriver_wrap.browser_is_open(on_response.bind(this))
@@ -119,20 +111,10 @@ class AppConnection extends BaseConnection {
                 // No response is sent back to the app. Typically this is called in a polling manner.
                 break
             case RequestType.kOpenBrowser:
-                try {
-                    //Remove the files in the chrome user data dir.
-                    {
-                        let dir = Path.join(FSWrap.g_user_data_dir, "chromeuserdata")
-                        if (FSWrap.file_exists(dir)) {
-                            FSWrap.delete_dir(dir)
-                        }
-                        FSWrap.create_dir(dir)
-                    }
-                    // Open the browser.
-                    this.webdriver_wrap.open_browser()
+                if (this.webdriver_wrap.open_browser()) {
                     send_msg_to_app(new ResponseMessage(true))
-                } catch (e) {
-                    send_msg_to_app(new ResponseMessage(false, e))
+                } else {
+                    send_msg_to_app(new ResponseMessage(false))
                 }
                 break
             case RequestType.kCloseBrowser:
@@ -221,7 +203,7 @@ class BaseSocketServer {
     static ssl_key = './key.pem'
     static ssl_cert = './cert.pem'
 
-    protected port: number
+    public port: number
     private https_server: Https.Server
     private server: ws.Server
     private connections: BaseConnection[]
@@ -318,7 +300,6 @@ class BaseSocketServer {
 }
 
 class ChromeSocketServer extends BaseSocketServer {
-    static extension_server_file = Path.join(FSWrap.g_nodejs_dir, 'chromeextension', 'extensionserverport.js') // g_user_data_dir
     constructor(public webdriver_wrap: WebDriverWrap) {
         super(webdriver_wrap)
         this.port = 8093
@@ -328,14 +309,13 @@ class ChromeSocketServer extends BaseSocketServer {
     }
 
     on_built() {
-        console.log('ChromeSocketServer built on port: ' + this.port)
-        let text = 'var g_nodejs_port = ' + this.port
-        FSWrap.write_to_file(ChromeSocketServer.extension_server_file, text)
+        // console.log('ChromeSocketServer built on port: ' + this.port)
+        // let text = 'var g_nodejs_port = ' + this.port
+        // FSWrap.write_to_file(ChromeSocketServer.extension_server_file, text)
     }
 }
 
 class AppSocketServer extends BaseSocketServer {
-    static app_server_file = Path.join(FSWrap.g_user_data_dir, 'nodejs', 'appserverport.txt')
     constructor(public webdriver_wrap: WebDriverWrap) {
         super(webdriver_wrap)
         this.port = 8094
@@ -345,13 +325,16 @@ class AppSocketServer extends BaseSocketServer {
     }
 
     on_built() {
-        console.log('AppSocketServer built on port: ' + this.port)
-        FSWrap.write_to_file(AppSocketServer.app_server_file, this.port.toString())
+        console.log('port:' + this.port)
+        // FSWrap.write_to_file(AppSocketServer.app_server_file, this.port.toString())
     }
 }
 
+// Our FSWrap.
+let fswrap: FSWrap = new FSWrap()
+
 // Our webdriver wrapper.
-let webdriver_wrap: WebDriverWrap = new WebDriverWrap()
+let webdriver_wrap: WebDriverWrap = new WebDriverWrap(fswrap)
 
 // Secure web socket to communicate with chrome extension.
 ext_server = new ChromeSocketServer(webdriver_wrap)
@@ -360,6 +343,14 @@ ext_server.build()
 // Regular WebSocket to communicate with app.
 app_server = new AppSocketServer(webdriver_wrap)
 app_server.build()
+
+export function get_app_server_port() {
+    return app_server.port
+}
+
+export function get_ext_server_port() {
+    return ext_server.port
+}
 
 // Send an obj as a message to the app.
 export function send_json_to_app(json: string) {

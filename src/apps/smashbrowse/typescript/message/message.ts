@@ -1,8 +1,5 @@
 
 
-// Note this file is symlinked into chromeextension/background and chromeextension/content.
-// The real file lives in commhub.
-
 const enum RequestType {
     kUnknownRequest,
     
