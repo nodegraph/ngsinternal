@@ -1,9 +1,12 @@
+# Note the following files should match those specified in tsconfig.json.
 set(bg_ts
     browserwrap.ts
     bgcomm.ts
     bgcommhandler.ts
     bgmain.ts
 )
+# Check these files match those specified in tsconfig.json.
+check_ts_config("${bg_ts}")
 
 # Form bg_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" bg_js "${bg_ts}")
@@ -17,6 +20,7 @@ set(bg_js_merged ${CMAKE_CURRENT_BINARY_DIR}/background.js)
 # The merged and minified result.
 set(bg_js_min ${CMAKE_CURRENT_BINARY_DIR}/bg.js)
 
+# Custom build command.
 add_custom_command(
     OUTPUT ${bg_js} ${bg_js_merged} ${bg_js_min}
     
@@ -41,3 +45,5 @@ INSTALL(FILES
             ${bg_js_min}
 		DESTINATION bin/chromeextension
 		COMPONENT apps)
+		
+		

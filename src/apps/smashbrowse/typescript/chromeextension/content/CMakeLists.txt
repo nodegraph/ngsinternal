@@ -1,3 +1,4 @@
+# Note the following files should match those specified in tsconfig.json.
 set(cnt_ts
         box.ts
         contentcomm.ts
@@ -19,7 +20,8 @@ set(cnt_ts
         utils.ts
         contentmain.ts
 )
-
+# Check these files match those specified in tsconfig.json.
+check_ts_config("${cnt_ts}")
 
 # Form cnt_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" cnt_js "${cnt_ts}")
@@ -33,6 +35,7 @@ set(cnt_js_merged ${CMAKE_CURRENT_BINARY_DIR}/content.js)
 # The merged and minified result.
 set(cnt_js_min ${CMAKE_CURRENT_BINARY_DIR}/cnt.js)
 
+# Custom build command.
 add_custom_command(
     OUTPUT ${cnt_js} ${cnt_js_merged} ${cnt_js_min}
     

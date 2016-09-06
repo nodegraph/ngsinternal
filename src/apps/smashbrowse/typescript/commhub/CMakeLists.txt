@@ -1,10 +1,12 @@
-# Our commhub files.
+# Note the following files should match those specified in tsconfig.json.
 set(ch_ts
     debugutils.ts
     fswrap.ts
     webdriverwrap.ts
     commhub.ts
 )
+# Check these files match those specified in tsconfig.json.
+check_ts_config("${ch_ts}")
 
 # Form ch_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" ch_js "${ch_ts}")
@@ -21,6 +23,7 @@ set(ch_js_min ${CMAKE_CURRENT_BINARY_DIR}/ch.js)
 # The source map.
 set(ch_js_min_map ${CMAKE_CURRENT_BINARY_DIR}/ch_map.js)
 
+# Custom build command.
 add_custom_command(
     OUTPUT ${ch_js} ${ch_js_merged} ${ch_js_min}
     

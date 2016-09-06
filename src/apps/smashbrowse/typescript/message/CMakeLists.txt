@@ -1,6 +1,8 @@
 set(msg_ts
     message.ts
 )
+# Check these files match those specified in tsconfig.json.
+check_ts_config("${msg_ts}")
 
 # Form msg_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" msg_js "${msg_ts}")
@@ -18,6 +20,7 @@ set(msg_js_min ${CMAKE_CURRENT_BINARY_DIR}/m.js)
 # Make msg_js_merged available to other dirs besides the message dir.
 set(msg_js_lib ${CMAKE_CURRENT_BINARY_DIR}/message.js PARENT_SCOPE)
 
+# Custom build command.
 add_custom_command(
     OUTPUT ${msg_js} ${msg_js_merged} ${msg_js_min}
     
