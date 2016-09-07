@@ -13,25 +13,21 @@ let context_menu_handler: ContextMenuHandler = null
 // If we're not the top window (ie: an IFrame), then we just block all events.
 let event_blocker: EventBlocker = null
 
-// We only create on the top window, not in other iframes.
-//if (window == window.top) {
-    // Popups.
-    gui_collection = new GUICollection()
-    event_blocker = gui_collection.event_blocker // expose inner event blocker, to keep global variable up to date.
+// Popups.
+gui_collection = new GUICollection()
+event_blocker = gui_collection.event_blocker // expose inner event blocker, to keep global variable up to date.
 
-    // Setup content comms.
-    content_comm = new ContentComm()
-    content_comm_handler = new ContentCommHandler(content_comm, gui_collection)
+// Setup content comms.
+content_comm = new ContentComm()
+content_comm_handler = new ContentCommHandler(content_comm, gui_collection)
 
-    mutation_monitor = new MutationMonitor(content_comm, gui_collection)
-    // Start listening for mutations on page load.
-    document.addEventListener('DOMContentLoaded', mutation_monitor.on_loaded.bind(mutation_monitor), false);
+mutation_monitor = new MutationMonitor(content_comm, gui_collection)
+// Start listening for mutations on page load.
+document.addEventListener('DOMContentLoaded', mutation_monitor.on_loaded.bind(mutation_monitor), false);
 
-    // Context menu handling.
-    context_menu_handler = new ContextMenuHandler(content_comm, gui_collection)
-    gui_collection.context_menu.set_handler(context_menu_handler)
-// } else {
-//     // If we are in an IFrame, then we only create the event blocker which will route events to the top window.
-//     event_blocker = new EventBlocker(gui_collection) // gui_collection is null here
-// }
+// Context menu handling.
+context_menu_handler = new ContextMenuHandler(content_comm, gui_collection)
+gui_collection.context_menu.set_handler(context_menu_handler)
+
+console.log("create a new instance of content script!")
 

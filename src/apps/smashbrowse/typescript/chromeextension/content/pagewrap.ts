@@ -42,10 +42,15 @@ class PageWrap {
     }
 
     // Get frame index path as string.
-    static get_frame_index_path_as_string(win: Window) {
-        let ipath = this.get_frame_index_path(win)
-        let spath: string = "/"
+    // Note that there is no leading '/'. 
+    // This helps when splitting the string, as there won't be empty elements.
+    static get_iframe_index_path_as_string(win: Window) {
+        let ipath = this.get_iframe_index_path(win)
+        let spath: string = ''
         for (let i = 0; i < ipath.length; i++) {
+            if (i!=0) {
+                spath += '/'
+            }
             spath += ipath[i].toString()
         }
         return spath
@@ -53,7 +58,7 @@ class PageWrap {
 
     // Get our iframe path as indexes.
     // An empty iframe path means we are in the top window.
-    static get_frame_index_path(win: Window) {
+    static get_iframe_index_path(win: Window) {
         let path: number[] = [] 
         while (win.parent != win) {
             var iframes = win.parent.document.getElementsByTagName('iframe');

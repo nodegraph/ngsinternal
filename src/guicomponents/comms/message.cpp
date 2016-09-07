@@ -12,6 +12,7 @@ const char* Message::kValue = "value";
 
 const char* Message::kInfo = "info";
 
+const char* Message::kIFrame = "msg_type";
 const char* Message::kMessageType = "msg_type";
 
 const char* Message::kURL = "url";
@@ -26,6 +27,7 @@ Message::Message(const QString& json) {
   QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
   QJsonObject obj = doc.object();
 
+  operator[](Message::kMessageType) = obj[Message::kIFrame];
   operator[](Message::kMessageType) = obj[Message::kMessageType];
 
   if (obj.keys().contains(Message::kRequest)) {
@@ -37,7 +39,8 @@ Message::Message(const QString& json) {
   }
 }
 
-Message::Message(RequestType rt, const QJsonObject& args, const QString& xpath) {
+Message::Message(const QString& iframe, RequestType rt, const QJsonObject& args, const QString& xpath) {
+  operator[](Message::kIFrame) = iframe;
   operator[](Message::kMessageType) = MessageType::kRequestMessage;
 
   operator[](Message::kRequest) = rt;
@@ -45,7 +48,8 @@ Message::Message(RequestType rt, const QJsonObject& args, const QString& xpath) 
   operator[](Message::kXPath) = xpath;
 }
 
-Message::Message(bool success, const QJsonValue& value) {
+Message::Message(const QString& iframe, bool success, const QJsonValue& value) {
+  operator[](Message::kIFrame) = iframe;
   operator[](Message::kMessageType) = MessageType::kResponseMessage;
 
   operator[](Message::kSuccess) = success;
@@ -53,12 +57,22 @@ Message::Message(bool success, const QJsonValue& value) {
 }
 
 Message::Message(const Message& other) {
+  operator[](Message::kIFrame) = other[Message::kIFrame];
   operator[](Message::kMessageType) = other[Message::kMessageType];
 
-  if (other.keys().contains(Message::kRequest)) {
-    merge_request_object(other);
-  } else {
-    merge_response_object(other);
+  MessageType type = operator[](Message::kMessageType);
+  switch (type) {
+    case MessageType::kRequestMessage:
+      merge_request_object(other);
+      break;
+    case MessageType::kResponseMessage:
+      merge_response_object(other);
+      break;
+    case MessageType::kInfoMessage:
+      merge_info_object(other);
+      break;
+    default:
+      break;
   }
 }
 

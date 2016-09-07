@@ -84,6 +84,7 @@ class COMMS_EXPORT Message: public QObject, public QJsonObject {
 
   static const char* kInfo;
 
+  static const char* kIFrame;
   static const char* kMessageType;
 
   static const char* kURL;
@@ -92,8 +93,8 @@ class COMMS_EXPORT Message: public QObject, public QJsonObject {
 
   Message();
   Message(const QString& json); // Initialize from a json string.
-  Message(RequestType rt, const QJsonObject& args = QJsonObject(), const QString& xpath = ""); // Initializes a request message.
-  Message(bool success, const QJsonValue& value = QJsonValue()); // Initializes a response message.
+  Message(const QString& iframe, RequestType rt, const QJsonObject& args = QJsonObject(), const QString& xpath = ""); // Initializes a request message.
+  Message(const QString& iframe, bool success, const QJsonValue& value = QJsonValue()); // Initializes a response message.
   Message(const Message& other);
   virtual ~Message();
 

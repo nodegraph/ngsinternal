@@ -41,8 +41,12 @@ DebugUtils.catch_uncaught_exceptions()
 
 class BaseConnection {
     socket: ws
-    constructor() {
+    iframe: string
+    webdriverwrap: WebDriverWrap
+    constructor(webdriverwrap: WebDriverWrap) {
+        this.webdriverwrap = webdriverwrap
         this.socket = null
+        this.iframe = ''
     }
     test(): boolean {
         return true
@@ -53,28 +57,32 @@ class BaseConnection {
         }
         return false
     }
-    send_json(msg: string): void {
-        this.socket.send(msg)
+    send_json(json: string): void {
+        this.socket.send(json)
     }
-    receive_json(msg: string): void {
+    receive_json(json: string): void {
     }
 }
 
 class ChromeConnection extends BaseConnection {
-    constructor(public webdriver_wrap: WebDriverWrap) {
-        super()
+    constructor(webdriverwrap: WebDriverWrap) {
+        super(webdriverwrap)
     }
     receive_json(json: string): void {
-        // Messages from chrome get passed straight to the app.
+        // Extract the frame from the msg.
         console.log('nodejs got message from extension: ' + json)
-        send_json_to_app(json)
+        let msg = BaseMessage.create_from_string(json)
+        this.iframe = msg.iframe
+
+        // Messages from chrome get passed straight to the app.
+        send_msg_to_app(msg)
     }
 }
 
 class AppConnection extends BaseConnection {
-    constructor(public webdriver_wrap: WebDriverWrap) {
-        super()
-        console.log('AppConnection driver wrap is: ' + this.webdriver_wrap)
+    constructor(webdriverwrap: WebDriverWrap) {
+        super(webdriverwrap)
+        console.log('AppConnection driver wrap is: ' + this.webdriverwrap)
     }
     //The can send us messages either from c++ or from qml.
     //These requests will be handled by webdriverjs, or the extension scripts in the browser.
@@ -82,6 +90,10 @@ class AppConnection extends BaseConnection {
     receive_json(json: string): void {
         let msg = BaseMessage.create_from_string(json)
         console.log('nodejs got message from app: ' + msg.to_string())
+
+        // Extract the frame from the msg.
+        console.log('nodejs got message from extension: ' + json)
+        this.iframe = msg.iframe
 
         // Make sure the message is a request.
         if (msg.get_msg_type() == MessageType.kResponseMessage || msg.get_msg_type() == MessageType.kInfoMessage) {
@@ -92,61 +104,71 @@ class AppConnection extends BaseConnection {
         // Handle the request.
         switch (req.request) {
             case RequestType.kShutdown: {
-                this.webdriver_wrap.close_browser().then(function() { process.exit(-1) })
+                this.webdriverwrap.close_browser().then(function() { process.exit(-1) })
                 break;
             }
             case RequestType.kCheckBrowserIsOpen:
                 function on_response(open: boolean) {
                     if (!open) {
-                        this.webdriver_wrap.open_browser()
+                        this.webdriverwrap.open_browser()
                         let url = "https://www.google.com/?" + get_ext_server_port()
-                        this.webdriver_wrap.navigate_to(url)
+                        this.webdriverwrap.navigate_to(url)
                     }
                 }
-                this.webdriver_wrap.browser_is_open(on_response.bind(this))
+                this.webdriverwrap.browser_is_open(on_response.bind(this))
                 // No response is sent back to the app. Typically this is called in a polling manner.
                 break
             case RequestType.kResizeBrowser:
-                this.webdriver_wrap.resize_browser(req.args.width, req.args.height)
+                this.webdriverwrap.resize_browser(req.args.width, req.args.height)
                 // No response is sent back to the app. Typically this is called in a polling manner.
                 break
             case RequestType.kOpenBrowser:
-                if (this.webdriver_wrap.open_browser()) {
-                    send_msg_to_app(new ResponseMessage(true))
+                if (this.webdriverwrap.open_browser()) {
+                    send_msg_to_app(new ResponseMessage(req.iframe, true))
                 } else {
-                    send_msg_to_app(new ResponseMessage(false))
+                    send_msg_to_app(new ResponseMessage(req.iframe, false))
                 }
                 break
             case RequestType.kCloseBrowser:
-                this.webdriver_wrap.close_browser()
-                send_msg_to_app(new ResponseMessage(true))
+                this.webdriverwrap.close_browser()
+                send_msg_to_app(new ResponseMessage(req.iframe, true))
                 break
             case RequestType.kNavigateTo:
-                this.webdriver_wrap.navigate_to(req.args.url).then(function() {
-                    send_msg_to_app(new ResponseMessage(true))
+                this.webdriverwrap.navigate_to(req.args.url).then(function() {
+                    // Reset the webdriverwrap's iframe to the top document.
+                    this.webdriverwrap.iframe = ""
+                    send_msg_to_app(new ResponseMessage(req.iframe, true))
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage(false, error))
+                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
                 })
                 break
             case RequestType.kNavigateBack:
-                this.webdriver_wrap.navigate_back().then(function() {
-                    send_msg_to_app(new ResponseMessage(true))
+                this.webdriverwrap.navigate_back().then(function() {
+                    send_msg_to_app(new ResponseMessage(req.iframe, true))
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage(false, error))
+                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
                 })
                 break
             case RequestType.kNavigateForward:
-                this.webdriver_wrap.navigate_forward().then(function() {
-                    send_msg_to_app(new ResponseMessage(true))
+                this.webdriverwrap.navigate_forward().then(function() {
+                    send_msg_to_app(new ResponseMessage(req.iframe, true))
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage(false, error))
+                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
                 })
                 break
             case RequestType.kNavigateRefresh:
-                this.webdriver_wrap.navigate_refresh().then(function() {
-                    send_msg_to_app(new ResponseMessage(true))
+                this.webdriverwrap.navigate_refresh().then(function() {
+                    send_msg_to_app(new ResponseMessage(req.iframe, true))
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage(false, error))
+                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
+                })
+                break
+            case RequestType.kSwitchIFrame:
+                this.webdriverwrap.switch_to_iframe(req.iframe).then(function() {
+                    this.webdriverwrap.iframe = req.iframe
+                    send_msg_to_app(new ResponseMessage(req.iframe, true))
+                }, function(error) {
+                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
                 })
                 break
             case RequestType.kPerformAction:
@@ -155,19 +177,22 @@ class AppConnection extends BaseConnection {
                     // then we let webdriver perform actions.
                     switch (req.args.action) {
                         case ActionType.kSendClick:
-                            this.webdriver_wrap.click_on_element(req.xpath)
+                            this.webdriverwrap.click_on_element(req.xpath)
+                            break
+                        case ActionType.kMouseOver:
+                            this.webdriverwrap.mouse_over_element(req.xpath, req.args.x, req.args.y)
                             break
                         case ActionType.kSendText:
-                            this.webdriver_wrap.send_text(req.xpath, req.args.text)
+                            this.webdriverwrap.send_text(req.xpath, req.args.text)
                             break
                         case ActionType.kSendEnter:
-                            this.webdriver_wrap.send_key(req.xpath, Key.RETURN)
+                            this.webdriverwrap.send_key(req.xpath, Key.RETURN)
                             break
                         case ActionType.kGetText:
-                            this.webdriver_wrap.get_text(req.xpath)
+                            this.webdriverwrap.get_text(req.xpath)
                             break
                         case ActionType.kSelectOption:
-                            this.webdriver_wrap.select_option(req.xpath, req.args.option_text)
+                            this.webdriverwrap.select_option(req.xpath, req.args.option_text)
                             break
                         case ActionType.kScrollDown:
                         case ActionType.kScrollUp:
@@ -175,20 +200,20 @@ class AppConnection extends BaseConnection {
                         case ActionType.kScrollLeft:
                             // Scroll actions need to be performed by the extension
                             // so we pass it through.
-                            send_json_to_ext(json)
+                            send_msg_to_ext(req)
                             break
                     }
                 } else {
                     // Send request to extension to resolve the xpath,
                     // and to unblock the events in the content script so that
                     // the webdriver actions can take effect on the elements.
-                    send_json_to_ext(json)
+                    send_msg_to_ext(req)
                 }
                 break
             default:
                 // By default we send requests to the extension. 
                 // (It goes through bg script, and then into content script.)
-                send_json_to_ext(json)
+                send_msg_to_ext(req)
                 break
         }
     }
@@ -208,7 +233,10 @@ class BaseSocketServer {
     private server: ws.Server
     private connections: BaseConnection[]
 
-    constructor(public webdriver_wrap: WebDriverWrap) {
+    webdriverwrap: WebDriverWrap
+
+    constructor(webdriverwrap: WebDriverWrap) {
+        this.webdriverwrap = webdriverwrap
         this.port = 8093
         this.https_server = null
         this.server = null
@@ -235,7 +263,7 @@ class BaseSocketServer {
         let options: any = { server: this.https_server }
         this.server = new ws.Server(options)
         this.server.on('connection', function(socket: ws) {
-            let conn: C = new ConnConstructor(this.webdriver_wrap);
+            let conn: C = new ConnConstructor(this.webdriverwrap);
             conn.socket = socket
             socket.on('message', conn.receive_json.bind(conn))
             this.connections.push(conn)
@@ -284,24 +312,33 @@ class BaseSocketServer {
             }
         }
     }
-    send_json_to_all_connections(json: string) {
+    send_msg(msg: BaseMessage) {
         // Clean any invalid connections.
         this.clean_invalid_connections()
 
-        // Now send out the json string.
-        let conns = this.connections //this.server.clients
-        console.log('sending message to num connections: ' + conns.length + " on port: " + this.port)
+        // Grab the iframe.
+        let iframe = msg.iframe
+        console.log('trying to find conn for: -->' + iframe + '<--')
+
+        // Send the msg through a connection which matches the iframe.
+        let conns = this.connections
         for (let i = 0; i < conns.length; i++) {
-            if (conns[i].is_alive()) {
-                conns[i].send_json(json)
+            let conn = conns[i]
+            console.log('conn iframe[' + i + ']: -->' + conn.iframe + '<--')
+            if (conn.is_alive()) { // && conn.iframe == iframe
+                conn.send_json(msg.to_string())
+                return
             }
         }
+
+        // If we get here, we didn't a find a matching connection.
+        console.error('Error: No connection with matching iframe found during attempt to send message.')
     }
 }
 
 class ChromeSocketServer extends BaseSocketServer {
-    constructor(public webdriver_wrap: WebDriverWrap) {
-        super(webdriver_wrap)
+    constructor(public webdriverwrap: WebDriverWrap) {
+        super(webdriverwrap)
         this.port = 8093
     }
     build() {
@@ -316,8 +353,8 @@ class ChromeSocketServer extends BaseSocketServer {
 }
 
 class AppSocketServer extends BaseSocketServer {
-    constructor(public webdriver_wrap: WebDriverWrap) {
-        super(webdriver_wrap)
+    constructor(public webdriverwrap: WebDriverWrap) {
+        super(webdriverwrap)
         this.port = 8094
     }
     build() {
@@ -334,14 +371,14 @@ class AppSocketServer extends BaseSocketServer {
 let fswrap: FSWrap = new FSWrap()
 
 // Our webdriver wrapper.
-let webdriver_wrap: WebDriverWrap = new WebDriverWrap(fswrap)
+let webdriverwrap: WebDriverWrap = new WebDriverWrap(fswrap)
 
 // Secure web socket to communicate with chrome extension.
-ext_server = new ChromeSocketServer(webdriver_wrap)
+ext_server = new ChromeSocketServer(webdriverwrap)
 ext_server.build()
 
 // Regular WebSocket to communicate with app.
-app_server = new AppSocketServer(webdriver_wrap)
+app_server = new AppSocketServer(webdriverwrap)
 app_server.build()
 
 export function get_app_server_port() {
@@ -352,21 +389,11 @@ export function get_ext_server_port() {
     return ext_server.port
 }
 
-// Send an obj as a message to the app.
-export function send_json_to_app(json: string) {
-    app_server.send_json_to_all_connections(json)
-}
-
 export function send_msg_to_app(msg: BaseMessage) {
-    app_server.send_json_to_all_connections(msg.to_string())
-}
-
-// Send an obj as a message to the extension.
-export function send_json_to_ext(json: string) {
-    ext_server.send_json_to_all_connections(json)
+    app_server.send_msg(msg)
 }
 
 export function send_msg_to_ext(msg: BaseMessage) {
-    ext_server.send_json_to_all_connections(msg.to_string())
+    ext_server.send_msg(msg)
 } 
 

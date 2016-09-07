@@ -94,7 +94,7 @@ class ElemWrap {
 
     get_frame_index_path(): number[] {
         let local_window: Window = this.element.ownerDocument.defaultView
-        return PageWrap.get_frame_index_path(local_window)
+        return PageWrap.get_iframe_index_path(local_window)
     }
 
     //----------------------------------------------------------------------------------------

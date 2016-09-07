@@ -97,7 +97,7 @@ class BgComm {
                 console.error("nodejs socket error: " + JSON.stringify(error))
             }.bind(this)
             this.nodejs_socket.onopen = function(event: Event) {
-                this.nodejs_socket.send(JSON.stringify({ code: 'bg_comm is connected' }))
+                this.send_to_nodejs(new InfoMessage(this.iframe, InfoType.kBgIsConnected))
             }.bind(this);
             this.nodejs_socket.onmessage = this.receive_from_nodejs.bind(this)
         } catch (e) {

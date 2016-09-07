@@ -4,10 +4,10 @@ let browser_wrap: BrowserWrap = null
 let bg_comm: BgComm = null
 let bg_comm_handler: BgCommHandler = null
 
-//if (window == window.top) {
-    // Setup bg comms.
-    browser_wrap = new BrowserWrap()
-    bg_comm = new BgComm()
-    bg_comm_handler = new BgCommHandler(bg_comm, browser_wrap)
-    bg_comm.register_nodejs_request_handler(bg_comm_handler)
-//}
+
+browser_wrap = new BrowserWrap()
+bg_comm = new BgComm()
+bg_comm_handler = new BgCommHandler(bg_comm, browser_wrap)
+bg_comm.register_nodejs_request_handler(bg_comm_handler)
+
+console.log("create a new bgcomm!")

@@ -15,11 +15,16 @@ class MutationMonitor {
     mutation_observer: MutationObserver
     mutation_observer_config: MutationObserverInit
     page_is_ready: boolean
+
+    // Our iframe path as a string.
+    iframe: string
     
     // Constructor.
     constructor(cc: ContentComm, gc: GUICollection) {
         this.content_comm = cc
         this.gui_collection = gc
+
+        this.iframe = PageWrap.get_iframe_index_path_as_string(window)
 
         // Mutation timer.
         this.last_mutation_time = null // Time of last dom mutation in this page.
@@ -49,7 +54,7 @@ class MutationMonitor {
     // Creates and starts the mutation timer.
     start_mutation_timer(): void {
         if (this.mutation_timer == null) {
-            this.content_comm.send_to_bg(new InfoMessage(InfoType.kPageIsLoading))
+            this.content_comm.send_to_bg(new InfoMessage(this.iframe, InfoType.kPageIsLoading))
             this.page_is_ready = false
             this.last_mutation_time = new Date();
             this.mutation_timer = setInterval(this.update_mutation_timer.bind(this), MutationMonitor.mutation_check_interval)
@@ -72,7 +77,7 @@ class MutationMonitor {
             //console.log("MutationMonitor: page is now ready with delta: " + last_mutation_delta)
             // Only send the page_is_ready from the top frame.
             //if (window == window.top) {
-                this.content_comm.send_to_bg(new InfoMessage(InfoType.kPageIsReady))
+                this.content_comm.send_to_bg(new InfoMessage(this.iframe, InfoType.kPageIsReady))
                 //console.log("MutationMonitor: sending out page is ready message from the top window.")  
                 // We can now show the context menu.
                 this.gui_collection.initialize()
@@ -211,17 +216,14 @@ class MutationMonitor {
         this.disable_hover()
         this.disable_zoom()
 
-        // We don't allow iframes to initialize.
-        //if (window == window.top) {
-            // Start mutation to timer, to try and detect when page is fully loaded.
-            this.start_mutation_timer()
+        // Start mutation to timer, to try and detect when page is fully loaded.
+        this.start_mutation_timer()
 
-            // Listen to mutations.
-            this.mutation_observer.observe(window.document, this.mutation_observer_config);
+        // Listen to mutations.
+        this.mutation_observer.observe(window.document, this.mutation_observer_config);
 
-            // Initialize and open the wait popup.
-            this.gui_collection.wait_popup.open()
-        //}
+        // Initialize and open the wait popup.
+        this.gui_collection.wait_popup.open()
     }
 }
 

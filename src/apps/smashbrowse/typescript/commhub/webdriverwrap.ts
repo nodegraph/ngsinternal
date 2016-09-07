@@ -15,15 +15,16 @@ let Until = webdriver.until
 
 export class WebDriverWrap {
 
-    driver: webdriver.WebDriver = null
-    flow: webdriver.promise.ControlFlow = null
-
+    driver: webdriver.WebDriver
+    flow: webdriver.promise.ControlFlow 
     fswrap: FSWrap
+    iframe: string // the current iframe path as a string
 
     constructor(fswrap: FSWrap) {
         this.driver = null
         this.flow = null
         this.fswrap = fswrap
+        this.iframe = "" // The top level window/frame as an empty iframe path.
     }
 
     browser_is_open(callback: (result: boolean) => void) {
@@ -102,6 +103,16 @@ export class WebDriverWrap {
         return this.driver.navigate().refresh();
     }
 
+    switch_to_iframe(iframe: string): webdriver.promise.Promise<void> {
+        this.driver.switchTo().defaultContent()
+        let splits = this.iframe.split('/')
+        let last_promise: webdriver.promise.Promise<void> = null
+        for (let i=0; i<splits.length; i++) {
+            last_promise = this.driver.switchTo().frame(splits[i])
+        }
+        return last_promise
+    }
+
     //Returns a promise which resizes the browser.
     resize_browser(width: number, height: number): webdriver.promise.Promise<void> {
         return this.driver.manage().window().setSize(width, height);
@@ -159,7 +170,7 @@ export class WebDriverWrap {
                 return element.sendKeys(key)
             }.bind(this)
         )
-        WebDriverWrap.terminate_chain(p)
+        this.terminate_chain(p)
     }
 
     get_text(xpath: string) {
@@ -168,7 +179,7 @@ export class WebDriverWrap {
                 return element.getText()
             }.bind(this)
         )
-        WebDriverWrap.terminate_chain(p)
+        this.terminate_chain(p)
     }
 
     // Creates promise chain which will set text on an element.
@@ -178,7 +189,7 @@ export class WebDriverWrap {
                 return element.sendKeys(Key.HOME, Key.chord(Key.SHIFT, Key.END), text)
             }.bind(this)
         )
-        WebDriverWrap.terminate_chain(p)
+        this.terminate_chain(p)
     }
 
     // Creates a promise chain which will click on an element.
@@ -190,7 +201,7 @@ export class WebDriverWrap {
                 return our_driver.actions().click(element).perform()
             }.bind(this)
         )
-        WebDriverWrap.terminate_chain(p)
+        this.terminate_chain(p)
     }
 
     // Creates a promise chain which will mouseover an element.
@@ -204,7 +215,7 @@ export class WebDriverWrap {
                 )
             }.bind(this)
         )
-        WebDriverWrap.terminate_chain(p)
+        this.terminate_chain(p)
     }
 
     // Creates a promise which will select an option in a select dropdown.
@@ -214,28 +225,28 @@ export class WebDriverWrap {
                 return element.findElement(By.xpath('option[normalize-space(text())="' + option_text + '"]')).click()
             }.bind(this)
         )
-        WebDriverWrap.terminate_chain(p)
+        this.terminate_chain(p)
     }
 
     // Helper to terminate promise chains.
-    static terminate_chain<T>(p: webdriver.promise.Promise<T>) {
+    terminate_chain<T>(p: webdriver.promise.Promise<T>) {
         p.then(
             function() {
                 // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
-                let req = new RequestMessage(RequestType.kBlockEvents)
+                let req = new RequestMessage(this.iframe, RequestType.kBlockEvents)
                 send_msg_to_ext(req)
                 // Send success response to the app.
                 console.log('terminating chain success with numargs: ' + arguments.length)
                 if (arguments.length == 0) {
-                    send_msg_to_app(new ResponseMessage(true))
+                    send_msg_to_app(new ResponseMessage(this.iframe, true))
                 } else {
                     // Send the first argument in the response.
-                    send_msg_to_app(new ResponseMessage(true, arguments[0]))
+                    send_msg_to_app(new ResponseMessage(this.iframe, true, arguments[0]))
                 }
             },
             function(error) {
                 // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
-                let req = new RequestMessage(RequestType.kBlockEvents)
+                let req = new RequestMessage(this.iframe, RequestType.kBlockEvents)
                 send_msg_to_ext(req)
                 // Output error details.
                 console.error("Error in chain!")
@@ -254,7 +265,7 @@ export class WebDriverWrap {
                 console.error('exception: ' + error.message + ' stack: ' + error.stack)
 
                 // Send failure reponse to the app.
-                send_msg_to_app(new ResponseMessage(false))
+                send_msg_to_app(new ResponseMessage(this.iframe, false))
             })
     }
 

@@ -5,11 +5,13 @@ class ContentCommHandler {
     gui_collection: GUICollection
 
     // Our Members.
+    iframe: string // our iframe path as a string
 
     constructor(cc: ContentComm, gc: GUICollection) {
         this.content_comm = cc
         this.content_comm.register_bg_request_handler(this)
         this.gui_collection = gc
+        this.iframe = PageWrap.get_iframe_index_path_as_string(window)
     }
 
     handle_bg_response(resp: ResponseMessage) {
@@ -108,7 +110,7 @@ class ContentCommHandler {
                 // handle unblocking events before performing webdriver actions, and then blocking events back again.
                 return
         }
-        this.content_comm.send_to_bg(new ResponseMessage(true))
+        this.content_comm.send_to_bg(new ResponseMessage(this.iframe, true))
     }
 
 }
