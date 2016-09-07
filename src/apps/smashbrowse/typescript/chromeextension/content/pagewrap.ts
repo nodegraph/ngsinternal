@@ -48,7 +48,7 @@ class PageWrap {
         let ipath = this.get_iframe_index_path(win)
         let spath: string = ''
         for (let i = 0; i < ipath.length; i++) {
-            if (i!=0) {
+            if (i != 0) {
                 spath += '/'
             }
             spath += ipath[i].toString()
@@ -59,12 +59,11 @@ class PageWrap {
     // Get our iframe path as indexes.
     // An empty iframe path means we are in the top window.
     static get_iframe_index_path(win: Window) {
-        let path: number[] = [] 
+        let path: number[] = []
         while (win.parent != win) {
             var iframes = win.parent.document.getElementsByTagName('iframe');
             let found = false
             for (let i = 0; i < iframes.length; i++) {
-                console.log('checking: ' + i)
                 if (iframes[i].contentWindow == win) {
                     path.unshift(i)
                     found = true
@@ -74,7 +73,6 @@ class PageWrap {
             if (!found) {
                 console.error('Error did not find parenting iframe')
             }
-            console.log('iframe index: ' + path[0])
             win = win.parent
         }
         return path
@@ -142,14 +140,14 @@ class PageWrap {
         let elem_wraps = this.get_overlapping_at(page_pos)
 
         // Debug settings.
-//        if (false) {
-//            console.log('num elem wraps: ' + elem_wraps.length)
-//            for (let i = 0; i < elem_wraps.length; i++) {
-//                let wrapper = elem_wraps[i]
-//                console.log('elem wrap[' + i + ']: opacity' + wrapper.get_opacity()
-//                    + ' bg: ' + wrapper.get_background_color() + ' xpath: ' + wrapper.get_xpath())
-//            }
-//        }
+        //        if (false) {
+        //            console.log('num elem wraps: ' + elem_wraps.length)
+        //            for (let i = 0; i < elem_wraps.length; i++) {
+        //                let wrapper = elem_wraps[i]
+        //                console.log('elem wrap[' + i + ']: opacity' + wrapper.get_opacity()
+        //                    + ' bg: ' + wrapper.get_background_color() + ' xpath: ' + wrapper.get_xpath())
+        //            }
+        //        }
 
         // Trim it to point where we reach the back plate of the page.
         for (let i = 0; i < elem_wraps.length; i++) {
@@ -194,7 +192,7 @@ class PageWrap {
     }
 
     // Returns first elem wrap for which getter returns a "true-thy" value.
-    get_first_elem_wrap_at(getter: ()=>string, page_pos: Point) {
+    get_first_elem_wrap_at(getter: () => string, page_pos: Point) {
         let elem_wraps = this.get_visible_overlapping_at(page_pos)
         for (let i = 0; i < elem_wraps.length; i++) {
             let value = getter.call(elem_wraps[i])
@@ -236,7 +234,7 @@ class PageWrap {
         let elem_wraps: ElemWrap[] = []
         for (let i = 0; i < set.snapshotLength; i++) {
             let item = set.snapshotItem(i)
-            if (!(item instanceof HTMLElement)){
+            if (!(item instanceof HTMLElement)) {
                 continue
             }
             // Cast to an HTMLElement.
@@ -332,7 +330,7 @@ class PageWrap {
         let candidates: ElemWrap[] = this.get_by_any_value(wrap_type, target_values)
 
         // Get our getter.
-        let getter: ()=>string = ElemWrap.prototype.get_getter_from_wrap_type(wrap_type)
+        let getter: () => string = ElemWrap.prototype.get_getter_from_wrap_type(wrap_type)
 
         // Determines arrays of surrounding elem wraps for each elem wrap.
         let overlaps: string[][] = []
@@ -403,7 +401,7 @@ class PageWrap {
 
     // Returns an array of values obtained by looping through the 
     // elem wraps and retrieving values using the supplied getter.
-    static extract_values(elem_wraps: ElemWrap[], getter: ()=>string): string[] {
+    static extract_values(elem_wraps: ElemWrap[], getter: () => string): string[] {
         let values: string[] = []
         for (let i = 0; i < elem_wraps.length; i++) {
             let value = getter.call(elem_wraps[i])

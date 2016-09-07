@@ -51,7 +51,6 @@ AppComm::AppComm(Entity* parent)
       _file_model(this),
       _process(NULL),
       _websocket(NULL),
-      _use_external_process(false),
       _waiting_for_results(false),
       _show_browser(false),
       _nodejs_port_regex("port:(\\d+)"){
@@ -118,7 +117,6 @@ bool AppComm::handle_request_from_app(const QString& json) {
 
   // Send the request to nodejs.
   _waiting_for_results = true;
-  std::cerr << "AppComm sending message: " << json.toStdString() << "\n";
   size_t num_bytes = _websocket->sendTextMessage(json);
   assert(num_bytes);
   return true;
@@ -140,21 +138,26 @@ void AppComm::on_poll() {
     // Look for the nodejs port number.
     if (_nodejs_port.isEmpty()) {
       int pos = _nodejs_port_regex.indexIn(output);
-      std::cerr << "pppos is: " << pos << "\n";
       if (pos >= 0) {
         QStringList list = _nodejs_port_regex.capturedTexts();
         assert(list.size() == 2);
         _nodejs_port = list[1];
-        std::cerr << "found nodejs port: " << _nodejs_port.toStdString() << "\n";
       }
     }
+
+    // Dump any std output from the process.
     if (!output.isEmpty()) {
-      debug << "nodejs out: " << output;
+      debug << "------------------nodejs out--------------------\n";
+      debug << output;
+      debug << "------------------------------------------------\n";
     }
 
+    // Dump any std errors from the process.
     QString error(_process->readAllStandardError());
     if (!error.isEmpty()) {
-      debug << "nodejs err: " << error;
+      debug << "------------------nodejs err--------------------\n";
+      debug << error;
+      debug << "------------------------------------------------\n";
     }
   }
 
@@ -211,7 +214,7 @@ void AppComm::on_state_changed(QAbstractSocket::SocketState s) {
 
 void AppComm::on_json_received(const QString & json) {
   Message msg(json);
-  std::cerr << "app is handling message from nodejs: " << msg.to_string().toStdString() << "\n";
+  qDebug() << "hub[" << msg[Message::kIFrame].toString() << "] --> app: " << msg.to_string();
 
   MessageType type = msg.get_msg_type();
   if (type == MessageType::kRequestMessage) {
@@ -219,7 +222,7 @@ void AppComm::on_json_received(const QString & json) {
   } else if (type == MessageType::kResponseMessage) {
     handle_response_from_nodejs(msg);
   } else if (type == MessageType::kInfoMessage) {
-    std::cerr << "Got info message: " + msg.to_string().toStdString() << "\n";
+    handle_info_from_nodejs(msg);
   } else {
     std::cerr << "Error: Got message of unknown type!\n";
   }
@@ -230,7 +233,7 @@ void AppComm::on_json_received(const QString & json) {
 // -----------------------------------------------------------------
 
 void AppComm::open_browser() {
-  Message msg(RequestType::kOpenBrowser);
+  Message msg(_iframe, RequestType::kOpenBrowser);
 
   QJsonObject args;
   args[Message::kURL] = get_smash_browse_url();
@@ -240,7 +243,7 @@ void AppComm::open_browser() {
 }
 
 void AppComm::close_browser() {
-  Message msg(RequestType::kCloseBrowser);
+  Message msg(_iframe, RequestType::kCloseBrowser);
   handle_request_from_app(msg);
 }
 
@@ -253,9 +256,6 @@ void AppComm::start_nodejs() {
     return;
   }
 
-  if (_use_external_process) {
-    return;
-  }
   // Create a process.
   delete_ff(_process);
   _process = new_ff QProcess(this);
@@ -281,9 +281,6 @@ void AppComm::start_nodejs() {
 }
 
 bool AppComm::nodejs_is_running() {
-  if (_use_external_process) {
-    return true;
-  }
   if (_process) {
     if (_process->state() == QProcess::Running) {
       return true;
@@ -317,12 +314,12 @@ bool AppComm::nodejs_is_connected() {
 }
 
 void AppComm::check_browser_is_open() {
-  Message msg(RequestType::kCheckBrowserIsOpen);
+  Message msg(_iframe, RequestType::kCheckBrowserIsOpen);
   handle_request_from_app(msg);
 }
 
 void AppComm::check_browser_size() {
-  Message msg(RequestType::kResizeBrowser);
+  Message msg(_iframe, RequestType::kResizeBrowser);
 
   int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
   int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
@@ -377,6 +374,10 @@ void AppComm::handle_response_from_nodejs(const Message& msg) {
   qDebug() << "app received response from nodejs: " << msg.to_string();
   _waiting_for_results = false;
   emit command_finished(msg);
+}
+
+void AppComm::handle_info_from_nodejs(const Message& msg) {
+
 }
 
 }

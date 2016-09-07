@@ -12,7 +12,7 @@ const char* Message::kValue = "value";
 
 const char* Message::kInfo = "info";
 
-const char* Message::kIFrame = "msg_type";
+const char* Message::kIFrame = "iframe";
 const char* Message::kMessageType = "msg_type";
 
 const char* Message::kURL = "url";
@@ -27,7 +27,7 @@ Message::Message(const QString& json) {
   QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
   QJsonObject obj = doc.object();
 
-  operator[](Message::kMessageType) = obj[Message::kIFrame];
+  operator[](Message::kIFrame) = obj[Message::kIFrame];
   operator[](Message::kMessageType) = obj[Message::kMessageType];
 
   if (obj.keys().contains(Message::kRequest)) {
@@ -60,7 +60,7 @@ Message::Message(const Message& other) {
   operator[](Message::kIFrame) = other[Message::kIFrame];
   operator[](Message::kMessageType) = other[Message::kMessageType];
 
-  MessageType type = operator[](Message::kMessageType);
+  MessageType type = static_cast<MessageType>(operator[](Message::kMessageType).toInt());
   switch (type) {
     case MessageType::kRequestMessage:
       merge_request_object(other);

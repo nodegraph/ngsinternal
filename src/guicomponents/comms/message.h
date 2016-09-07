@@ -49,6 +49,7 @@ enum RequestType {
 
 enum ActionType {
   kSendClick,
+  kMouseOver,
   kSendText,
   kSendEnter,
   kGetText,
@@ -62,6 +63,7 @@ enum ActionType {
 enum InfoType {
     kPageIsLoading,
     kPageIsReady,
+    kBgIsConnected
 };
 
 enum MessageType {

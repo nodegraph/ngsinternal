@@ -70,9 +70,9 @@ class ChromeConnection extends BaseConnection {
     }
     receive_json(json: string): void {
         // Extract the frame from the msg.
-        console.log('nodejs got message from extension: ' + json)
         let msg = BaseMessage.create_from_string(json)
         this.iframe = msg.iframe
+        console.log('frame[' + this.iframe + '] --> commhub: ' + json)
 
         // Messages from chrome get passed straight to the app.
         send_msg_to_app(msg)
@@ -82,22 +82,20 @@ class ChromeConnection extends BaseConnection {
 class AppConnection extends BaseConnection {
     constructor(webdriverwrap: WebDriverWrap) {
         super(webdriverwrap)
-        console.log('AppConnection driver wrap is: ' + this.webdriverwrap)
     }
     //The can send us messages either from c++ or from qml.
     //These requests will be handled by webdriverjs, or the extension scripts in the browser.
     //Requests will always return with a response message containing return values.
     receive_json(json: string): void {
         let msg = BaseMessage.create_from_string(json)
-        console.log('nodejs got message from app: ' + msg.to_string())
 
         // Extract the frame from the msg.
-        console.log('nodejs got message from extension: ' + json)
         this.iframe = msg.iframe
+        console.log('app[' + this.iframe + '] --> commhub: ' + json)
 
         // Make sure the message is a request.
         if (msg.get_msg_type() == MessageType.kResponseMessage || msg.get_msg_type() == MessageType.kInfoMessage) {
-            console.log("Error receive_from_app received something other than a request.")
+            console.error("Error: AppConnection currently always expects a request.")
         }
         let req = <RequestMessage>msg
 
@@ -244,9 +242,7 @@ class BaseSocketServer {
     }
 
     protected on_https_server_error(error: NodeJS.ErrnoException): void {
-        console.log('start_build got error!!!')
         if (error.code === 'EADDRINUSE') {
-            console.log("XXXXX the port is in use already!")
             // The current config port number is in use.
             // So we increment it and recurse.
             this.port += 1
@@ -276,7 +272,7 @@ class BaseSocketServer {
         // Dummy handler for http/s requests.
         let dummy_handler = function(req: Http.IncomingMessage, res: Http.ServerResponse) {
             res.writeHead(200);
-            res.end("Http/s server with websockets is running!\n")
+            res.end("Https server is running.\n")
         }.bind(this);
 
         // Create the http/s server.
@@ -298,15 +294,12 @@ class BaseSocketServer {
     build() { }
     on_built() { }
     on_build_failed() {
-        console.error("SocketServer failed to build.")
+        console.error("Error: SocketServer failed to build.")
     }
     clean_invalid_connections() {
         let conns = this.connections
-        console.log('cleaning num connections ' + conns.length + " on port: " + this.port)
         for (let i = 0; i < conns.length; i++) {
-            console.log('checking index: ' + i)
             if (!conns[i].is_alive()) {
-                console.log('removing socket:' + i)
                 conns.splice(i, 1)
                 i--
             }
@@ -318,21 +311,21 @@ class BaseSocketServer {
 
         // Grab the iframe.
         let iframe = msg.iframe
-        console.log('trying to find conn for: -->' + iframe + '<--')
 
         // Send the msg through a connection which matches the iframe.
+        let sent = false
         let conns = this.connections
         for (let i = 0; i < conns.length; i++) {
             let conn = conns[i]
-            console.log('conn iframe[' + i + ']: -->' + conn.iframe + '<--')
             if (conn.is_alive()) { // && conn.iframe == iframe
                 conn.send_json(msg.to_string())
-                return
+                sent = true
             }
         }
 
-        // If we get here, we didn't a find a matching connection.
-        console.error('Error: No connection with matching iframe found during attempt to send message.')
+        if (!sent) {
+            console.error('Error: BaseSocketServer could not find a connection to send a message.')
+        }
     }
 }
 
@@ -346,9 +339,6 @@ class ChromeSocketServer extends BaseSocketServer {
     }
 
     on_built() {
-        // console.log('ChromeSocketServer built on port: ' + this.port)
-        // let text = 'var g_nodejs_port = ' + this.port
-        // FSWrap.write_to_file(ChromeSocketServer.extension_server_file, text)
     }
 }
 
@@ -362,8 +352,8 @@ class AppSocketServer extends BaseSocketServer {
     }
 
     on_built() {
+        // This std output is read by the app, so that the app can open a socket to this port.
         console.log('port:' + this.port)
-        // FSWrap.write_to_file(AppSocketServer.app_server_file, this.port.toString())
     }
 }
 

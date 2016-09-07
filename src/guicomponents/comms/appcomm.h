@@ -111,14 +111,13 @@ signals:
 
   // Handles responses from the browser's content script, after completing actions/tasks.
   void handle_response_from_nodejs(const Message& sm);
+  void handle_info_from_nodejs(const Message& msg);
 
   //Our nodejs process.
-  bool _use_external_process;
   QProcess* _process;
   QWebSocket* _websocket;
 
   //Command execution state.
-  //SocketMessage _current_cmd;
   bool _waiting_for_results;
 
   // Poll timer.
@@ -130,6 +129,8 @@ signals:
   // The nodejs server's port number for us, the app.
   QString _nodejs_port;
   QRegExp _nodejs_port_regex;
+
+  QString _iframe;
 };
 
 }
