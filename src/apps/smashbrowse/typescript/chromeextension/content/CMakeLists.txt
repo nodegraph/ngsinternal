@@ -1,5 +1,7 @@
 # Extract the ts files from tsconfig.json.
+# Note that for cmake to pick up changes in tsconfig.json you need to touch this file.
 get_tsconfig_files(cnt_ts)
+message("content files are: ${cnt_ts}")
 
 # Form cnt_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" cnt_js "${cnt_ts}")

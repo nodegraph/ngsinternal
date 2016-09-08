@@ -123,16 +123,23 @@ void QMLAppEntity::init_view(QSurfaceFormat& format) {
   view->engine()->addImportPath("qrc:/qml");
   view->engine()->addImportPath("qrc:/");
 
-  // Register gl types.
-  qRegisterMetaType<RequestType>("RequestType");
-  qRegisterMetaType<ActionType>("ActionType");
-
-  qRegisterMetaType<GLsizei>("GLsizei");
-  qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
-
-  // Register our types.
-  qmlRegisterType<Message>("Message", 1, 0, "Message");
-  qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
+//  // Register gl types.
+//  qRegisterMetaType<GLsizei>("GLsizei");
+//
+//  // Register std types.
+//  qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
+//
+//  // Register our message types.
+//  //qRegisterMetaType<Message::RequestType>("RequestType");
+//  //qRegisterMetaType<Message::ActionType>("ActionType");
+//  qmlRegisterType<ngs::Message>("Message", 1, 0, "Message");
+////  qRegisterMetaType<Message::RequestType>("Message::RequestType");
+////  qRegisterMetaType<Message::ActionType>("Message::DayOfWeek");
+////  qRegisterMetaType<Message::RequestType>("Message::RequestType");
+////  qRegisterMetaType<Message::ActionType>("Message::DayOfWeek");
+//
+//  // Register other types.
+//  qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
 
 }
 
@@ -143,6 +150,29 @@ void QMLAppEntity::expose_to_qml() {
   AppComm* app_comm = get_app_comm();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
+
+  // Register gl types.
+  qRegisterMetaType<GLsizei>("GLsizei");
+  // Register std types.
+  qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
+  // Register our message types.
+  //qmlRegisterType<Message>("Message", 1, 0, "Message");
+  //qmlRegisterUncreatableType<Message>("Message", 1, 0, "Message", "Not creatable from QML.");
+
+  //qRegisterMetaType<Message>();
+  //qRegisterMetaType<Message>();
+
+  qmlRegisterUncreatableType<Message>("Message", 1, 0, "Message", "It cannot be instantiated.");
+  //qmlRegisterUncreatableType<Message::RequestType>("Message.ActionType", 1, 0, "Message.ActionType", "It cannot be instantiated.");
+  //qmlRegisterUncreatableType<Message::RequestType>("Message.InfoType", 1, 0, "Message.InfoType", "It cannot be instantiated.");
+  //qmlRegisterUncreatableType<Message::RequestType>("Message.MessageType", 1, 0, "Message.MessageType", "It cannot be instantiated.");
+
+//  qRegisterMetaType<Message::RequestType>("Message.RequestType");
+//  qRegisterMetaType<Message::ActionType>("Message.ActionType");
+//  qRegisterMetaType<Message::InfoType>("Message::InfoType");
+//  qRegisterMetaType<Message::MessageType>("Message::MessageType");
+  // Register other types.
+  qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
 
   // Inject them into the qml context.
   QQmlContext* context = view->engine()->rootContext();

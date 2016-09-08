@@ -99,6 +99,22 @@ QString AppComm::get_smash_browse_url() {
   return app_dir;
 }
 
+//QVariantMap AppComm::build_message(const QString& json){
+//  return Message(json);
+//}
+
+QVariantMap AppComm::build_message(const QString& iframe, Message::RequestType rt, const QJsonObject& args, const QString& xpath) {
+  return Message(iframe, rt, args, xpath);
+}
+
+//QVariantMap AppComm::build_message(const QString& iframe, bool success, const QJsonValue& value){
+//  return Message(iframe, success, value);
+//}
+//
+//QVariantMap AppComm::build_message(const Message& other){
+//  return Message(other);
+//}
+
 bool AppComm::handle_request_from_app(const QString& json) {
   // Make sure nodejs is running.
   if (!nodejs_is_running()) {
@@ -124,6 +140,14 @@ bool AppComm::handle_request_from_app(const QString& json) {
 
 bool AppComm::handle_request_from_app(const Message& msg) {
   return handle_request_from_app(msg.to_string());
+}
+
+bool AppComm::handle_request_from_app(const QVariantMap& map) {
+  //const Message& msg = reinterpret_cast<const Message&>(map);
+  //return handle_request_from_app(msg);
+
+  Message msg(map);
+  return handle_request_from_app(msg);
 }
 
 void AppComm::on_poll() {
@@ -216,12 +240,12 @@ void AppComm::on_json_received(const QString & json) {
   Message msg(json);
   qDebug() << "hub[" << msg[Message::kIFrame].toString() << "] --> app: " << msg.to_string();
 
-  MessageType type = msg.get_msg_type();
-  if (type == MessageType::kRequestMessage) {
+  Message::MessageType type = msg.get_msg_type();
+  if (type == Message::MessageType::KRequestMessage) {
     handle_request_from_nodejs(msg);
-  } else if (type == MessageType::kResponseMessage) {
+  } else if (type == Message::MessageType::KResponseMessage) {
     handle_response_from_nodejs(msg);
-  } else if (type == MessageType::kInfoMessage) {
+  } else if (type == Message::MessageType::KInfoMessage) {
     handle_info_from_nodejs(msg);
   } else {
     std::cerr << "Error: Got message of unknown type!\n";
@@ -233,7 +257,7 @@ void AppComm::on_json_received(const QString & json) {
 // -----------------------------------------------------------------
 
 void AppComm::open_browser() {
-  Message msg(_iframe, RequestType::kOpenBrowser);
+  Message msg(_iframe, Message::RequestType::KOpenBrowser);
 
   QJsonObject args;
   args[Message::kURL] = get_smash_browse_url();
@@ -243,7 +267,7 @@ void AppComm::open_browser() {
 }
 
 void AppComm::close_browser() {
-  Message msg(_iframe, RequestType::kCloseBrowser);
+  Message msg(_iframe, Message::RequestType::KCloseBrowser);
   handle_request_from_app(msg);
 }
 
@@ -314,12 +338,12 @@ bool AppComm::nodejs_is_connected() {
 }
 
 void AppComm::check_browser_is_open() {
-  Message msg(_iframe, RequestType::kCheckBrowserIsOpen);
+  Message msg(_iframe, Message::RequestType::KCheckBrowserIsOpen);
   handle_request_from_app(msg);
 }
 
 void AppComm::check_browser_size() {
-  Message msg(_iframe, RequestType::kResizeBrowser);
+  Message msg(_iframe, Message::RequestType::KResizeBrowser);
 
   int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
   int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
@@ -333,35 +357,27 @@ void AppComm::check_browser_size() {
 }
 
 void AppComm::handle_request_from_nodejs(const Message& sm) {
-  // Do stuff like create nodes in the node graph, in response to
-  // messages from nodejs.
-  qDebug() << "app received request from nodejs: " << sm.to_string();
 
-//  // Handle some info message.
-//  if (sm.value("info").toString() == "page_is_loading") {
-//    // page is loading and unable to handle requests
-//    return;
-//  } else if (sm.value("info").toString() == "page_is_ready") {
-//    // page is ready to handle requests
-//    return;
-//  }
+  Message::RequestType type = static_cast<Message::RequestType>(sm.value(Message::kRequest).toInt());
 
-  // Hack to pretty up urls coming from the extension.
-  if (sm.value(Message::kRequest) == RequestType::kNavigateTo) {
+  if (type == Message::RequestType::KNavigateTo) {
+    // Hack to pretty up urls coming from the extension.
     // Extract the url from the message.
-    QString url = sm[Message::kArgs].toObject()[Message::kURL].toString();
-
+    QString url = sm[Message::kArgs].toMap()[Message::kURL].toString();
     // Fix the url.
     url = Utils::url_from_input(url).toString();
 
     // Create a new Request.
     Message updated(sm);
-    QJsonObject args = sm[Message::kArgs].toObject();
+    QVariantMap args = sm[Message::kArgs].toMap();
     args[Message::kURL] = url;
     updated[Message::kArgs] = args;
 
     // Send it off to the app.
     handle_request_from_app(updated);
+  } else if (type == Message::RequestType::KShowAppMenu) {
+    qDebug() << "emitting show menu from native side\n";
+    emit show_web_action_menu(sm);
   } else {
     handle_request_from_app(sm);
   }

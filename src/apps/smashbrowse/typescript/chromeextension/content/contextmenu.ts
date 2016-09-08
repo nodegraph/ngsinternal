@@ -17,6 +17,7 @@ class ContextMenu {
     visible: boolean
     text_box_overlay: Overlay
     image_box_overlay: Overlay
+    click_cross_overlay: CrossOverlay
     page_pos: Point
     
     // Menu Elements.
@@ -121,7 +122,6 @@ class ContextMenu {
     
     
     constructor() {
-        
         // Dependencies.
         
         
@@ -165,6 +165,7 @@ class ContextMenu {
         // Create our mouse overlays.
         this.text_box_overlay = new Overlay('smash_browse_text_box', DistinctColors.text_color, -1, false, null)
         this.image_box_overlay = new Overlay('smash_browse_image_box', DistinctColors.image_color, -1, false, null)
+        this.click_cross_overlay = new CrossOverlay('smash_browse_text_box', DistinctColors.text_color, -1)
     }
 
     create_menu(top_menu: HTMLMenuElement): void {
@@ -377,26 +378,31 @@ class ContextMenu {
     
     on_context_menu(page_event: MouseEvent, text_values: string[], image_values: string[]): boolean {
         this.page_pos = new Point({x: page_event.pageX, y: page_event.pageY})
-
-        if (text_values.length == 0) {
-            this.disable_item(this.create_set_by_matching_text)
-        } else {
-            this.enable_item(this.create_set_by_matching_text)
-        }
-        if (image_values.length == 0) {
-            this.disable_item(this.create_set_by_matching_image)
-        } else {
-            this.enable_item(this.create_set_by_matching_image)
-        }
-
-        // Show the menu.
-        this.show(this.page_pos)
-
-        // Listen to clicks to perform the according action and close the menu.
-        document.addEventListener('click', this.on_click_bound, true);
+        this.update_click_box_overlay(this.page_pos)
+        this.handler.show_app_menu(this.page_pos, text_values, image_values)
 
         page_event.preventDefault();
         return false
+
+        // if (text_values.length == 0) {
+        //     this.disable_item(this.create_set_by_matching_text)
+        // } else {
+        //     this.enable_item(this.create_set_by_matching_text)
+        // }
+        // if (image_values.length == 0) {
+        //     this.disable_item(this.create_set_by_matching_image)
+        // } else {
+        //     this.enable_item(this.create_set_by_matching_image)
+        // }
+
+        // // Show the menu.
+        // this.show(this.page_pos)
+
+        // // Listen to clicks to perform the according action and close the menu.
+        // document.addEventListener('click', this.on_click_bound, true);
+
+        // page_event.preventDefault();
+        // return false
     }
 
     on_click(menu_event: MouseEvent): void {
@@ -421,6 +427,10 @@ class ContextMenu {
     update_image_box_overlay(elem_wrap: ElemWrap): void {
         this.image_box_overlay.elem_wrap = elem_wrap
         this.image_box_overlay.update(DistinctColors.image_color, -1)
+    }
+
+    update_click_box_overlay(pos: Point): void {
+        this.click_cross_overlay.update_dom_elements(pos)
     }
 
 }

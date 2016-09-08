@@ -18,6 +18,7 @@
         "elemwrap.ts",
         "eventblocker.ts",
         "matchcriteria.ts",
+        "crossoverlay.ts",
         "overlay.ts",
         "overlayset.ts",
         "overlaysets.ts",

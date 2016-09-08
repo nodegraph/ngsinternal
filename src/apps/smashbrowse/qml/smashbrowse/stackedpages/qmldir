@@ -9,6 +9,9 @@ DataPage 1.0 DataPage.qml
 FileStackPage 1.0 FileStackPage.qml
 FilePage 1.0 FilePage.qml
 
+WebActionStackPage 1.0 WebActionStackPage.qml
+WebActionPage 1.0 WebActionPage.qml
+
 CreateFilePage 1.0 CreateFilePage.qml
 EditStringPage 1.0 EditStringPage.qml
 EditBooleanPage 1.0 EditBooleanPage.qml

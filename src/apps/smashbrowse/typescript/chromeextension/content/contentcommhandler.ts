@@ -25,6 +25,9 @@ class ContentCommHandler {
     handle_bg_request(request: RequestMessage) {
         //console.log('content script received message from bg: ' + JSON.stringify(request))
         switch (request.request) {
+            case RequestType.kUpdateOveralys:
+                this.gui_collection.overlay_sets.update()
+                break
             case RequestType.kCreateSetFromMatchValues:
                 switch (request.args.wrap_type) {
                     case WrapType.text: {

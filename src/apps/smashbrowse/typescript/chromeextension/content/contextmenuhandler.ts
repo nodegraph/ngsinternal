@@ -32,6 +32,11 @@ class ContextMenuHandler {
         this.iframe = PageWrap.get_iframe_index_path_as_string(window)
     }
 
+    show_app_menu(click_pos: Point, text_values: string[], image_values: string[]): void {
+        let req = new RequestMessage(this.iframe, RequestType.kShowAppMenu, {pos: click_pos, text_values: text_values, image_values: image_values})
+        this.content_comm.send_to_bg(req)
+    }
+
     handle_menu_click(menu_event: MouseEvent): void {
         if (!(menu_event.target instanceof Node)) {
             return

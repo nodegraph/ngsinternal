@@ -1,6 +1,7 @@
 
 declare const enum RequestType {
     kUnknownRequest,
+    kShowAppMenu,
     
     // Chrome BG Requests.
     kClearAllCookies,
@@ -25,6 +26,7 @@ declare const enum RequestType {
     
     // Page Content Set Requests.
     kPerformAction,
+    kUpdateOveralys,
     kCreateSetFromMatchValues,
     kCreateSetFromWrapType,
     kDeleteSet,

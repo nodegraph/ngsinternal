@@ -87,6 +87,7 @@ class AppConnection extends BaseConnection {
     //These requests will be handled by webdriverjs, or the extension scripts in the browser.
     //Requests will always return with a response message containing return values.
     receive_json(json: string): void {
+        console.log('xxxx: '+ json)
         let msg = BaseMessage.create_from_string(json)
 
         // Extract the frame from the msg.

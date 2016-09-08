@@ -20,55 +20,56 @@ const char* Message::kWidth = "width";
 const char* Message::kHeight = "height";
 
 Message::Message()
-    : QJsonObject() {
+    : QVariantMap() {
 }
 
 Message::Message(const QString& json) {
   QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
   QJsonObject obj = doc.object();
+  QVariantMap map = obj.toVariantMap();
 
-  operator[](Message::kIFrame) = obj[Message::kIFrame];
-  operator[](Message::kMessageType) = obj[Message::kMessageType];
+  operator[](Message::kIFrame) = map[Message::kIFrame];
+  operator[](Message::kMessageType) = map[Message::kMessageType];
 
   if (obj.keys().contains(Message::kRequest)) {
-    merge_request_object(obj);
+    merge_request_object(map);
   } if (obj.keys().contains(Message::kInfo)) {
-    merge_info_object(obj);
+    merge_info_object(map);
   } else {
-    merge_response_object(obj);
+    merge_response_object(map);
   }
 }
 
 Message::Message(const QString& iframe, RequestType rt, const QJsonObject& args, const QString& xpath) {
   operator[](Message::kIFrame) = iframe;
-  operator[](Message::kMessageType) = MessageType::kRequestMessage;
+  operator[](Message::kMessageType) = static_cast<int>(Message::MessageType::KRequestMessage);
 
-  operator[](Message::kRequest) = rt;
+  operator[](Message::kRequest) = static_cast<int>(rt);
   operator[](Message::kArgs) = args;
   operator[](Message::kXPath) = xpath;
 }
 
 Message::Message(const QString& iframe, bool success, const QJsonValue& value) {
   operator[](Message::kIFrame) = iframe;
-  operator[](Message::kMessageType) = MessageType::kResponseMessage;
+  operator[](Message::kMessageType) = static_cast<int>(Message::MessageType::KResponseMessage);
 
   operator[](Message::kSuccess) = success;
   operator[](Message::kValue) = value;
 }
 
-Message::Message(const Message& other) {
+Message::Message(const QVariantMap& other) {
   operator[](Message::kIFrame) = other[Message::kIFrame];
   operator[](Message::kMessageType) = other[Message::kMessageType];
 
   MessageType type = static_cast<MessageType>(operator[](Message::kMessageType).toInt());
   switch (type) {
-    case MessageType::kRequestMessage:
+    case MessageType::KRequestMessage:
       merge_request_object(other);
       break;
-    case MessageType::kResponseMessage:
+    case MessageType::KResponseMessage:
       merge_response_object(other);
       break;
-    case MessageType::kInfoMessage:
+    case MessageType::KInfoMessage:
       merge_info_object(other);
       break;
     default:
@@ -79,7 +80,7 @@ Message::Message(const Message& other) {
 Message::~Message() {
 }
 
-void Message::merge_request_object(const QJsonObject& obj) {
+void Message::merge_request_object(const QVariantMap& obj) {
   if (obj.keys().contains(Message::kRequest)) {
     operator[](Message::kRequest) = obj[Message::kRequest];
   }
@@ -91,13 +92,13 @@ void Message::merge_request_object(const QJsonObject& obj) {
   }
 }
 
-void Message::merge_info_object(const QJsonObject& obj) {
+void Message::merge_info_object(const QVariantMap& obj) {
   if (obj.keys().contains(Message::kInfo)) {
     operator[](Message::kInfo) = obj[Message::kInfo];
   }
 }
 
-void Message::merge_response_object(const QJsonObject& obj) {
+void Message::merge_response_object(const QVariantMap& obj) {
   if (obj.keys().contains(Message::kSuccess)) {
     operator[](Message::kSuccess) = obj[Message::kSuccess];
   }
@@ -108,20 +109,14 @@ void Message::merge_response_object(const QJsonObject& obj) {
 
 QString Message::to_string() const {
   QJsonDocument doc;
-  doc.setObject(*this);
+  QJsonObject obj = QJsonObject::fromVariantMap(*this);
+  doc.setObject(obj);
   QByteArray bytes = doc.toJson(QJsonDocument::Compact);
   return QString(bytes);
 }
 
-MessageType Message::get_msg_type() const {
-  return static_cast<MessageType>(operator[](Message::kMessageType).toInt());
-
-//  if (keys().contains(Message::kRequest)) {
-//    return MessageType::kRequestMessage;
-//  } else if (keys().contains(Message::kInfo)) {
-//    return MessageType::kInfoMessage;
-//  }
-//  return MessageType::kResponseMessage;
+Message::MessageType Message::get_msg_type() const {
+  return static_cast<Message::MessageType>(operator[](Message::kMessageType).toInt());
 }
 
 }

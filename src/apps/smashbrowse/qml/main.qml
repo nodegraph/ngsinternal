@@ -149,6 +149,11 @@ Rectangle {
         visible: false
     }
 
+    WebActionStackPage {
+        id: web_action_stack_page
+        visible: false
+    }
+
     // Stuff to do when this component is completed.
     Component.onCompleted: {
         update_dependencies()
@@ -163,11 +168,15 @@ Rectangle {
         main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(node_action_stack_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(web_action_stack_page.on_switch_to_mode)
 
         // Node graph connections.
         node_graph_item.node_graph_context_menu_requested.connect(node_action_stack_page.on_node_graph_context_menu)
         node_graph_item.node_context_menu_requested.connect(node_action_stack_page.on_node_context_menu)
         node_graph_item.group_node_context_menu_requested.connect(node_action_stack_page.on_group_node_context_menu)
+
+        // Web actions mode.
+        app_comm.show_web_action_menu.connect(web_action_stack_page.on_show_web_action_menu)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.
@@ -187,6 +196,8 @@ Rectangle {
         // Node viewing and editing.
         node_graph_item.view_node_outputs.connect(view_node_page.on_show_data)
         node_graph_item.edit_node_params.connect(edit_node_page.on_show_data)
+        
+
     }
 
 //    // Prevent the android hardware back from closing the app.

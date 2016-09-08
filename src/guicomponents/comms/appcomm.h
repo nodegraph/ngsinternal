@@ -45,11 +45,17 @@ Q_OBJECT
   explicit AppComm(Entity* parent);
   virtual ~AppComm();
 
+  //Q_INVOKABLE QVariantMap build_message(const QString& json); // Initialize from a json string.
+  Q_INVOKABLE QVariantMap build_message(const QString& iframe, Message::RequestType rt, const QJsonObject& args = QJsonObject(), const QString& xpath = ""); // Initializes a request message.
+  //Q_INVOKABLE QVariantMap build_message(const QString& iframe, bool success, const QJsonValue& value = QJsonValue()); // Initializes a response message.
+  //Q_INVOKABLE QVariantMap build_message(const Message& other);
+
   // Returns false when it is busy processing a previous command.
   // When false is returned the command will be dropped.
   // You may call the method again to try again.
-  Q_INVOKABLE bool handle_request_from_app(const Message& sm);
-  Q_INVOKABLE bool handle_request_from_app(const QString& json); // Called from qml.
+  bool handle_request_from_app(const Message& sm);
+  bool handle_request_from_app(const QString& json);
+  Q_INVOKABLE bool handle_request_from_app(const QVariantMap& map);
   Q_INVOKABLE QString get_smash_browse_url();
 
   // Polling to keep browser open and of the right size.
@@ -71,8 +77,9 @@ Q_OBJECT
 
 signals:
   // Fired on completion of a command.
-  void command_finished(const Message& msg);
+  void command_finished(const QVariantMap& msg);
   void nodejs_connected();
+  void show_web_action_menu(const QVariantMap& msg);
 
  private slots:
   // Slots for our timer.

@@ -9,73 +9,81 @@
 
 namespace ngs {
 
-// Note these enums have to be kept in sync with the typescript file, socketmessage.ts.
-enum RequestType {
-    kUnknownRequest,
+class COMMS_EXPORT Message: public QVariantMap {
+  Q_GADGET
+ public:
+
+  // Note in order for the enums to be visible in Qt they have to start with a capital letter.
+  // Note these enums have to be kept in sync with the typescript file, socketmessage.ts.
+  enum class RequestType {
+    KUnknownRequest,
+    KShowAppMenu,
 
     // Chrome BG Requests.
-    kClearAllCookies,
-    kGetAllCookies,
-    kSetAllCookies,
-    kGetZoom,
+    KClearAllCookies,
+    KGetAllCookies,
+    KSetAllCookies,
+    KGetZoom,
 
     // Browser Requests.
-    kShutdown,
-    kCheckBrowserIsOpen,
-    kResizeBrowser,
-    kOpenBrowser,
-    kCloseBrowser,
+    KShutdown,
+    KCheckBrowserIsOpen,
+    KResizeBrowser,
+    KOpenBrowser,
+    KCloseBrowser,
 
     // Web Page Requests.
-    kBlockEvents,
-    kNavigateTo,
-    kNavigateBack,
-    kNavigateForward,
-    kNavigateRefresh,
+    KBlockEvents,
+    KNavigateTo,
+    KNavigateBack,
+    KNavigateForward,
+    KNavigateRefresh,
 
     // Page Content Set Requests.
-    kPerformAction,
-    kCreateSetFromMatchValues,
-    kCreateSetFromWrapType,
-    kDeleteSet,
-    kShiftSet,
-    kExpandSet,
-    kMarkSet,
-    kUnmarkSet,
-    kMergeMarkedSets,
-    kShrinkSetToMarked,
-    kShrinkSet
-};
+    KPerformAction,
+    KUpdateOveralys,
+    KCreateSetFromMatchValues,
+    KCreateSetFromWrapType,
+    KDeleteSet,
+    KShiftSet,
+    KExpandSet,
+    KMarkSet,
+    KUnmarkSet,
+    KMergeMarkedSets,
+    KShrinkSetToMarked,
+    KShrinkSet
+  };
+  Q_ENUM(RequestType);
 
-enum ActionType {
-  kSendClick,
-  kMouseOver,
-  kSendText,
-  kSendEnter,
-  kGetText,
-  kSelectOption,
-  kScrollDown,
-  kScrollUp,
-  kScrollRight,
-  kScrollLeft
-};
+  enum class ActionType {
+    KSendClick,
+    KMouseOver,
+    KSendText,
+    KSendEnter,
+    KGetText,
+    KSelectOption,
+    KScrollDown,
+    KScrollUp,
+    KScrollRight,
+    KScrollLeft
+  };
+  Q_ENUM(ActionType);
 
-enum InfoType {
-    kPageIsLoading,
-    kPageIsReady,
-    kBgIsConnected
-};
+  enum class InfoType {
+    KPageIsLoading,
+    KPageIsReady,
+    KBgIsConnected
+  };
+  Q_ENUM(InfoType);
 
-enum MessageType {
-    kUnformedMessage,
-    kRequestMessage,
-    kResponseMessage,
-    kInfoMessage
-};
+  enum class MessageType {
+    KUnformedMessage,
+    KRequestMessage,
+    KResponseMessage,
+    KInfoMessage
+  };
+  Q_ENUM(MessageType);
 
-class COMMS_EXPORT Message: public QObject, public QJsonObject {
-  Q_OBJECT
- public:
 
   static const char* kRequest;
   static const char* kArgs;
@@ -97,16 +105,20 @@ class COMMS_EXPORT Message: public QObject, public QJsonObject {
   Message(const QString& json); // Initialize from a json string.
   Message(const QString& iframe, RequestType rt, const QJsonObject& args = QJsonObject(), const QString& xpath = ""); // Initializes a request message.
   Message(const QString& iframe, bool success, const QJsonValue& value = QJsonValue()); // Initializes a response message.
-  Message(const Message& other);
+  Message(const QVariantMap& other);
   virtual ~Message();
+
+  Message& operator =(const Message& other) {*this = other; return *this;}
 
   virtual QString to_string() const;
   virtual MessageType get_msg_type() const;
 
  private:
-  void merge_request_object(const QJsonObject& obj);
-  void merge_response_object(const QJsonObject& obj);
-  void merge_info_object(const QJsonObject& obj);
+  void merge_request_object(const QVariantMap& obj);
+  void merge_response_object(const QVariantMap& obj);
+  void merge_info_object(const QVariantMap& obj);
 };
+
+Q_DECLARE_METATYPE(Message)
 
 }
