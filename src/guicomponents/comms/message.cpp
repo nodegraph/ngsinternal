@@ -1,5 +1,6 @@
 #include <guicomponents/comms/message.h>
 #include <iostream>
+#include <cassert>
 
 namespace ngs {
 
@@ -19,6 +20,25 @@ const char* Message::kURL = "url";
 const char* Message::kWidth = "width";
 const char* Message::kHeight = "height";
 
+const char* Message::kWrapType = "wrap_type";
+const char* Message::kMatchValues = "match_values";
+
+const char* Message::kTextValues = "text_values";
+const char* Message::kImageValues = "image_values";
+
+const char* Message::kSetIndex = "set_index";
+
+const char* Message::kDirection = "direction";
+const char* Message::kDirections = "directions";
+
+const char* Message::kMatchCriteria = "match_criteria";
+const char* Message::kMatchLeft = "match_left";
+const char* Message::kMatchRight = "match_right";
+const char* Message::kMatchTop = "match_top";
+const char* Message::kMatchBottom = "match_bottom";
+const char* Message::kMatchFont = "match_font";
+const char* Message::kMatchFontSize = "match_font_size";
+
 Message::Message()
     : QVariantMap() {
 }
@@ -26,85 +46,87 @@ Message::Message()
 Message::Message(const QString& json) {
   QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
   QJsonObject obj = doc.object();
-  QVariantMap map = obj.toVariantMap();
-
-  operator[](Message::kIFrame) = map[Message::kIFrame];
-  operator[](Message::kMessageType) = map[Message::kMessageType];
-
-  if (obj.keys().contains(Message::kRequest)) {
-    merge_request_object(map);
-  } if (obj.keys().contains(Message::kInfo)) {
-    merge_info_object(map);
-  } else {
-    merge_response_object(map);
-  }
+  *this = obj.toVariantMap();
+  assert(check_contents());
 }
 
-Message::Message(const QString& iframe, RequestType rt, const QJsonObject& args, const QString& xpath) {
+Message::Message(const QString& iframe, RequestType rt, const QVariantMap& args, const QString& xpath) {
   operator[](Message::kIFrame) = iframe;
-  operator[](Message::kMessageType) = static_cast<int>(Message::MessageType::KRequestMessage);
+  operator[](Message::kMessageType) = static_cast<int>(MessageType::kRequestMessage);
 
   operator[](Message::kRequest) = static_cast<int>(rt);
   operator[](Message::kArgs) = args;
   operator[](Message::kXPath) = xpath;
+
+  assert(check_contents());
 }
 
-Message::Message(const QString& iframe, bool success, const QJsonValue& value) {
+Message::Message(const QString& iframe, bool success, const QVariant& value) {
   operator[](Message::kIFrame) = iframe;
-  operator[](Message::kMessageType) = static_cast<int>(Message::MessageType::KResponseMessage);
+  operator[](Message::kMessageType) = static_cast<int>(MessageType::kResponseMessage);
 
   operator[](Message::kSuccess) = success;
   operator[](Message::kValue) = value;
+
+  assert(check_contents());
+}
+
+Message::Message(const QString& iframe, InfoType it) {
+  operator[](Message::kIFrame) = iframe;
+  operator[](Message::kMessageType) = static_cast<int>(MessageType::kResponseMessage);
+
+  operator[](Message::kInfo) = static_cast<int>(it);
+
+  assert(check_contents());
 }
 
 Message::Message(const QVariantMap& other) {
-  operator[](Message::kIFrame) = other[Message::kIFrame];
-  operator[](Message::kMessageType) = other[Message::kMessageType];
-
-  MessageType type = static_cast<MessageType>(operator[](Message::kMessageType).toInt());
-  switch (type) {
-    case MessageType::KRequestMessage:
-      merge_request_object(other);
-      break;
-    case MessageType::KResponseMessage:
-      merge_response_object(other);
-      break;
-    case MessageType::KInfoMessage:
-      merge_info_object(other);
-      break;
-    default:
-      break;
-  }
+  QVariantMap* me = this;
+  *me = other;
+  assert(check_contents());
 }
 
 Message::~Message() {
 }
 
-void Message::merge_request_object(const QVariantMap& obj) {
-  if (obj.keys().contains(Message::kRequest)) {
-    operator[](Message::kRequest) = obj[Message::kRequest];
+bool Message::check_contents() {
+  if (!keys().contains(Message::kIFrame)) {
+    return false;
   }
-  if (obj.keys().contains(Message::kArgs)) {
-    operator[](Message::kArgs) = obj[Message::kArgs];
+  if (!keys().contains(Message::kMessageType)) {
+    return false;
   }
-  if (obj.keys().contains(Message::kXPath)) {
-    operator[](Message::kXPath) = obj[Message::kXPath];
-  }
-}
 
-void Message::merge_info_object(const QVariantMap& obj) {
-  if (obj.keys().contains(Message::kInfo)) {
-    operator[](Message::kInfo) = obj[Message::kInfo];
+  MessageType msg_type = static_cast<MessageType>(operator[](Message::kMessageType).toInt());
+  switch(msg_type) {
+    case MessageType::kUnformedMessage:
+      break;
+    case MessageType::kRequestMessage:
+      if (!keys().contains(Message::kRequest)) {
+        return false;
+      }
+      if (!keys().contains(Message::kArgs)) {
+        return false;
+      }
+      if (!keys().contains(Message::kXPath)) {
+        return false;
+      }
+      break;
+    case MessageType::kResponseMessage:
+      if (!keys().contains(Message::kSuccess)) {
+        return false;
+      }
+      if (!keys().contains(Message::kValue)) {
+        return false;
+      }
+      break;
+    case MessageType::kInfoMessage:
+      if (!keys().contains(Message::kInfo)) {
+        return false;
+      }
+      break;
   }
-}
-
-void Message::merge_response_object(const QVariantMap& obj) {
-  if (obj.keys().contains(Message::kSuccess)) {
-    operator[](Message::kSuccess) = obj[Message::kSuccess];
-  }
-  if (obj.keys().contains(Message::kValue)) {
-    operator[](Message::kValue) = obj[Message::kValue];
-  }
+  return true;
 }
 
 QString Message::to_string() const {
@@ -115,8 +137,8 @@ QString Message::to_string() const {
   return QString(bytes);
 }
 
-Message::MessageType Message::get_msg_type() const {
-  return static_cast<Message::MessageType>(operator[](Message::kMessageType).toInt());
+MessageType Message::get_msg_type() const {
+  return static_cast<MessageType>(operator[](Message::kMessageType).toInt());
 }
 
 }

@@ -105,9 +105,7 @@ StackView {
             // The model in the page is manually created, and so must be manually destroyed as well.
             var model = null
             if (page.model_is_dynamic) {
-                console.log("aaa")
                 model = page.model
-                console.log("bbb")
             }
 
             // Pop the page off the stack.

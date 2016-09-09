@@ -45,10 +45,12 @@ Q_OBJECT
   explicit AppComm(Entity* parent);
   virtual ~AppComm();
 
-  //Q_INVOKABLE QVariantMap build_message(const QString& json); // Initialize from a json string.
-  Q_INVOKABLE QVariantMap build_message(const QString& iframe, Message::RequestType rt, const QJsonObject& args = QJsonObject(), const QString& xpath = ""); // Initializes a request message.
-  //Q_INVOKABLE QVariantMap build_message(const QString& iframe, bool success, const QJsonValue& value = QJsonValue()); // Initializes a response message.
-  //Q_INVOKABLE QVariantMap build_message(const Message& other);
+  Q_INVOKABLE QVariantMap build_msg_from_json(const QString& json); // Initialize from a json string.
+  Q_INVOKABLE QVariantMap build_copied_msg(const Message& other);
+
+  Q_INVOKABLE QVariantMap build_request_msg(const QString& iframe, RequestType rt, const QVariantMap& args = QVariantMap(), const QString& xpath = "");
+  Q_INVOKABLE QVariantMap build_response_msg(const QString& iframe, bool success, const QVariant& value = QVariant());
+  Q_INVOKABLE QVariantMap build_info_msg(const QString& iframe, InfoType it);
 
   // Returns false when it is busy processing a previous command.
   // When false is returned the command will be dropped.
@@ -74,6 +76,77 @@ Q_OBJECT
   // Open or close browser outside of polling.
   Q_INVOKABLE void open_browser();
   Q_INVOKABLE void close_browser();
+
+  // ---------------------------------------------------------------------------------
+  // Web Actions.
+  // ---------------------------------------------------------------------------------
+
+  // Test features.
+  Q_INVOKABLE void get_all_cookies();
+  Q_INVOKABLE void clear_all_cookies();
+  Q_INVOKABLE void set_all_cookies();
+  Q_INVOKABLE void update_overlays();
+
+
+  Q_INVOKABLE void navigate_to(const QString& url);
+  Q_INVOKABLE void navigate_refresh();
+
+  Q_INVOKABLE void create_set_by_matching_text();
+  Q_INVOKABLE void create_set_by_matching_images();
+
+  Q_INVOKABLE void create_set_of_inputs();
+  Q_INVOKABLE void create_set_of_selects();
+  Q_INVOKABLE void create_set_of_images();
+  Q_INVOKABLE void create_set_of_text();
+
+  Q_INVOKABLE void delete_set();
+
+  Q_INVOKABLE void shift_set(WrapType wrap_type, Direction dir);
+
+  Q_INVOKABLE void shift_to_text_above();
+  Q_INVOKABLE void shift_to_text_below();
+  Q_INVOKABLE void shift_to_text_on_left();
+  Q_INVOKABLE void shift_to_text_on_right();
+
+  Q_INVOKABLE void shift_to_images_above();
+  Q_INVOKABLE void shift_to_images_below();
+  Q_INVOKABLE void shift_to_images_on_left();
+  Q_INVOKABLE void shift_to_images_on_right();
+
+  Q_INVOKABLE void shift_to_inputs_above();
+  Q_INVOKABLE void shift_to_inputs_below();
+  Q_INVOKABLE void shift_to_inputs_on_left();
+  Q_INVOKABLE void shift_to_inputs_on_right();
+
+  Q_INVOKABLE void shift_to_selects_above();
+  Q_INVOKABLE void shift_to_selects_below();
+  Q_INVOKABLE void shift_to_selects_on_left();
+  Q_INVOKABLE void shift_to_selects_on_right();
+
+  Q_INVOKABLE void expand(Direction dir, const QVariantMap& match_criteria);
+  Q_INVOKABLE void expand_above();
+  Q_INVOKABLE void expand_below();
+  Q_INVOKABLE void expand_left();
+  Q_INVOKABLE void expand_right();
+
+  Q_INVOKABLE void mark_set();
+  Q_INVOKABLE void unmark_set();
+  Q_INVOKABLE void merge_sets();
+
+  Q_INVOKABLE void shrink_set_to_side(Direction dir);
+  Q_INVOKABLE void shrink_set_to_topmost();
+  Q_INVOKABLE void shrink_set_to_bottommost();
+  Q_INVOKABLE void shrink_set_to_leftmost();
+  Q_INVOKABLE void shrink_set_to_rightmost();
+
+  Q_INVOKABLE void shrink_against_marked(const QVariantList& dirs);
+  Q_INVOKABLE void shrink_above_of_marked();
+  Q_INVOKABLE void shrink_below_of_marked();
+  Q_INVOKABLE void shrink_above_and_below_of_marked();
+  Q_INVOKABLE void shrink_left_of_marked();
+  Q_INVOKABLE void shrink_right_of_marked();
+  Q_INVOKABLE void shrink_left_and_right_of_marked();
+
 
 signals:
   // Fired on completion of a command.
@@ -137,7 +210,12 @@ signals:
   QString _nodejs_port;
   QRegExp _nodejs_port_regex;
 
+  // Our current iframe. This should actually come from data flowing through graph.
   QString _iframe;
+
+  // Our last show menu message.
+  Message _show_menu_msg;
+
 };
 
 }

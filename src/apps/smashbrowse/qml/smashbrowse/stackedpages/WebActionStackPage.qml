@@ -13,14 +13,10 @@ import smashbrowse.stackedpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.menumodels 1.0
 
-import Message 1.0
-
 
 
 AppStackPage{
     id: web_action_stack_page
-
-    property var msg: null
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
@@ -36,36 +32,21 @@ AppStackPage{
     // -------------------------------------------------------------------------------------------
 
     function on_show_web_action_menu(msg) {
-        web_action_stack_page.msg = msg
-        console.log("got msg: " + JSON.stringify(msg))
-
+        console.log("aml got msg: " + JSON.stringify(msg))
         app_settings.vibrate()
         stack_view.clear_pages()
         stack_view.push_by_names("Web Actions", "WebActionPage", "WebActions")
         visible = true
     }
 
-    function get_all_cookies() {
-        console.log('get all cookies: ' + Message.KGetAllCookies)
-        console.log('clear all cookies: ' + Message.KClearAllCookies)
-
-        var req = app_comm.build_message(msg.iframe, Message.KGetAllCookies)
-        app_comm.handle_request_from_app(req)
-    }
-
-    function clear_all_cookies() {
-        var req = app_comm.build_message(msg.iframe, Message.KClearAllCookies)
-        app_comm.handle_request_from_app(req);
-    }
-
-    function set_all_cookies() {
-        var req = app_comm.build_message(msg.iframe, Message.KSetAllCookies)
-        app_comm.handle_request_from_app(req);
-    }
-
-    function update_overlays() {
-        var req = app_comm.build_message(msg.iframe, Message.KUpdateOverlays)
-        app_comm.handle_request_from_app(req);
+    // Push the edit file page onto the stack.
+    function on_url_entry() {
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EnterURLPage.qml", web_action_stack_page, {})
+        page.visible = true
+        page.init("www.")
+        page.set_title("Enter URL")
+        stack_view.push_page(page)
+        visible = true
     }
 
 }

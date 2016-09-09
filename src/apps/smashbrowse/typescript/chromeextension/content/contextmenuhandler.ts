@@ -33,7 +33,8 @@ class ContextMenuHandler {
     }
 
     show_app_menu(click_pos: Point, text_values: string[], image_values: string[]): void {
-        let req = new RequestMessage(this.iframe, RequestType.kShowAppMenu, {pos: click_pos, text_values: text_values, image_values: image_values})
+        let set_index = this.overlay_sets.find_set_index(click_pos)
+        let req = new RequestMessage(this.iframe, RequestType.kShowAppMenu, {pos: click_pos, text_values: text_values, image_values: image_values, set_index: set_index})
         this.content_comm.send_to_bg(req)
     }
 

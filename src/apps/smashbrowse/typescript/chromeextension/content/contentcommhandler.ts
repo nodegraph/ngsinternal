@@ -23,7 +23,7 @@ class ContentCommHandler {
     }
 
     handle_bg_request(request: RequestMessage) {
-        //console.log('content script received message from bg: ' + JSON.stringify(request))
+        console.log('content script received message from bg: ' + JSON.stringify(request))
         switch (request.request) {
             case RequestType.kUpdateOveralys:
                 this.gui_collection.overlay_sets.update()
@@ -33,11 +33,15 @@ class ContentCommHandler {
                     case WrapType.text: {
                         let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.text, request.args.match_values)
                         this.gui_collection.add_overlay_set(elem_wraps)
+                        this.gui_collection.overlay_sets.update()
+                        console.log('overlay set added for text')
                     }
                         break
                     case WrapType.image: {
                         let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, request.args.match_values)
                         this.gui_collection.add_overlay_set(elem_wraps)
+                        this.gui_collection.overlay_sets.update()
+                        console.log('overlay set added for image')
                     }
                         break
                     default:

@@ -9,81 +9,90 @@
 
 namespace ngs {
 
+// Note in order for the enums to be visible in Qt they have to start with a capital letter.
+// Note these enums have to be kept in sync with the typescript file, socketmessage.ts.
+enum RequestType {
+  kUnknownRequest,
+  kShowAppMenu,
+
+  // Chrome BG Requests.
+  kClearAllCookies,
+  kGetAllCookies,
+  kSetAllCookies,
+  kGetZoom,
+
+  // Browser Requests.
+  kShutdown,
+  kCheckBrowserIsOpen,
+  kResizeBrowser,
+  kOpenBrowser,
+  kCloseBrowser,
+
+  // Web Page Requests.
+  kBlockEvents,
+  kNavigateTo,
+  kNavigateBack,
+  kNavigateForward,
+  kNavigateRefresh,
+  kSwitchIFrame,
+
+  // Page Content Set Requests.
+  kPerformAction,
+  kUpdateOveralys,
+  kCreateSetFromMatchValues,
+  kCreateSetFromWrapType,
+  kDeleteSet,
+  kShiftSet,
+  kExpandSet,
+  kMarkSet,
+  kUnmarkSet,
+  kMergeMarkedSets,
+  kShrinkSetToMarked,
+  kShrinkSet
+};
+
+enum ActionType {
+  kSendClick,
+  kMouseOver,
+  kSendText,
+  kSendEnter,
+  kGetText,
+  kSelectOption,
+  kScrollDown,
+  kScrollUp,
+  kScrollRight,
+  kScrollLeft
+};
+
+enum InfoType {
+  kPageIsLoading,
+  kPageIsReady,
+  kBgIsConnected
+};
+
+enum MessageType {
+  kUnformedMessage,
+  kRequestMessage,
+  kResponseMessage,
+  kInfoMessage
+};
+
+enum WrapType {
+    text,
+    image,
+    input,
+    select
+};
+
+enum Direction {
+    left,
+    right,
+    up,
+    down
+};
+
 class COMMS_EXPORT Message: public QVariantMap {
-  Q_GADGET
  public:
-
-  // Note in order for the enums to be visible in Qt they have to start with a capital letter.
-  // Note these enums have to be kept in sync with the typescript file, socketmessage.ts.
-  enum class RequestType {
-    KUnknownRequest,
-    KShowAppMenu,
-
-    // Chrome BG Requests.
-    KClearAllCookies,
-    KGetAllCookies,
-    KSetAllCookies,
-    KGetZoom,
-
-    // Browser Requests.
-    KShutdown,
-    KCheckBrowserIsOpen,
-    KResizeBrowser,
-    KOpenBrowser,
-    KCloseBrowser,
-
-    // Web Page Requests.
-    KBlockEvents,
-    KNavigateTo,
-    KNavigateBack,
-    KNavigateForward,
-    KNavigateRefresh,
-
-    // Page Content Set Requests.
-    KPerformAction,
-    KUpdateOveralys,
-    KCreateSetFromMatchValues,
-    KCreateSetFromWrapType,
-    KDeleteSet,
-    KShiftSet,
-    KExpandSet,
-    KMarkSet,
-    KUnmarkSet,
-    KMergeMarkedSets,
-    KShrinkSetToMarked,
-    KShrinkSet
-  };
-  Q_ENUM(RequestType);
-
-  enum class ActionType {
-    KSendClick,
-    KMouseOver,
-    KSendText,
-    KSendEnter,
-    KGetText,
-    KSelectOption,
-    KScrollDown,
-    KScrollUp,
-    KScrollRight,
-    KScrollLeft
-  };
-  Q_ENUM(ActionType);
-
-  enum class InfoType {
-    KPageIsLoading,
-    KPageIsReady,
-    KBgIsConnected
-  };
-  Q_ENUM(InfoType);
-
-  enum class MessageType {
-    KUnformedMessage,
-    KRequestMessage,
-    KResponseMessage,
-    KInfoMessage
-  };
-  Q_ENUM(MessageType);
-
 
   static const char* kRequest;
   static const char* kArgs;
@@ -101,24 +110,46 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kWidth;
   static const char* kHeight;
 
+  static const char* kWrapType;
+  static const char* kMatchValues;
+
+  static const char* kTextValues;
+  static const char* kImageValues;
+
+  static const char* kSetIndex;
+
+  static const char* kDirection;
+  static const char* kDirections;
+
+  static const char* kMatchCriteria;
+
+  static const char* kMatchLeft;
+  static const char* kMatchRight;
+  static const char* kMatchTop;
+  static const char* kMatchBottom;
+
+  static const char* kMatchFont;
+  static const char* kMatchFontSize;
+
   Message();
   Message(const QString& json); // Initialize from a json string.
-  Message(const QString& iframe, RequestType rt, const QJsonObject& args = QJsonObject(), const QString& xpath = ""); // Initializes a request message.
-  Message(const QString& iframe, bool success, const QJsonValue& value = QJsonValue()); // Initializes a response message.
   Message(const QVariantMap& other);
-  virtual ~Message();
 
-  Message& operator =(const Message& other) {*this = other; return *this;}
+  // Initializes a request message.
+  Message(const QString& iframe, RequestType rt, const QVariantMap& args = QVariantMap(), const QString& xpath = "");
+  // Initializes a response message.
+  Message(const QString& iframe, bool success, const QVariant& value = QVariant());
+  // Initializes an info message.
+  Message(const QString& iframe, InfoType it);
+
+  virtual ~Message();
 
   virtual QString to_string() const;
   virtual MessageType get_msg_type() const;
 
  private:
-  void merge_request_object(const QVariantMap& obj);
-  void merge_response_object(const QVariantMap& obj);
-  void merge_info_object(const QVariantMap& obj);
+  bool check_contents();
 };
 
-Q_DECLARE_METATYPE(Message)
-
 }
+

@@ -10,3 +10,15 @@ ExplodeCollapseNodeActions 1.0 ExplodeCollapseNodeActions.qml
 FileActions 1.0 FileActions.qml
 WebActions 1.0 WebActions.qml
 WebActionsTest 1.0 WebActionsTest.qml
+WebActionsNavigate 1.0 WebActionsNavigate.qml
+WebActionsCreateSetByMatchingValues 1.0 WebActionsCreateSetByMatchingValues.qml
+WebActionsCreateSetFromWrapType 1.0 WebActionsCreateSetFromWrapType.qml
+WebActionsShift 1.0 WebActionsShift.qml
+WebActionsShiftToText 1.0 WebActionsShiftToText.qml
+WebActionsShiftToImages 1.0 WebActionsShiftToImages.qml
+WebActionsShiftToInputs 1.0 WebActionsShiftToInputs.qml
+WebActionsShiftToSelects 1.0 WebActionsShiftToSelects.qml
+WebActionsExpand 1.0 WebActionsExpand.qml
+WebActionsMark 1.0 WebActionsMark.qml
+WebActionsShrink 1.0 WebActionsShrink.qml
+WebActionsShrinkAgainstMarked 1.0 WebActionsShrinkAgainstMarked.qml

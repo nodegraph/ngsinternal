@@ -21,7 +21,7 @@ OpenBrowserCompute::~OpenBrowserCompute() {
 void OpenBrowserCompute::update_state() {
   Compute::update_state();
 
-  Message msg("",Message::RequestType::KOpenBrowser);
+  Message msg("",RequestType::kOpenBrowser);
   _app_comm->handle_request_from_app(msg);
 
   // Pass the inputs through.
@@ -43,7 +43,7 @@ CloseBrowserCompute::~CloseBrowserCompute() {
 void CloseBrowserCompute::update_state() {
   Compute::update_state();
 
-  Message msg("",Message::RequestType::KCloseBrowser);
+  Message msg("",RequestType::kCloseBrowser);
   _app_comm->handle_request_from_app(msg);
 
   // Pass the inputs through, but wipe out the browser cookies.

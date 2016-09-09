@@ -122,25 +122,6 @@ void QMLAppEntity::init_view(QSurfaceFormat& format) {
 
   view->engine()->addImportPath("qrc:/qml");
   view->engine()->addImportPath("qrc:/");
-
-//  // Register gl types.
-//  qRegisterMetaType<GLsizei>("GLsizei");
-//
-//  // Register std types.
-//  qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
-//
-//  // Register our message types.
-//  //qRegisterMetaType<Message::RequestType>("RequestType");
-//  //qRegisterMetaType<Message::ActionType>("ActionType");
-//  qmlRegisterType<ngs::Message>("Message", 1, 0, "Message");
-////  qRegisterMetaType<Message::RequestType>("Message::RequestType");
-////  qRegisterMetaType<Message::ActionType>("Message::DayOfWeek");
-////  qRegisterMetaType<Message::RequestType>("Message::RequestType");
-////  qRegisterMetaType<Message::ActionType>("Message::DayOfWeek");
-//
-//  // Register other types.
-//  qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
-
 }
 
 void QMLAppEntity::expose_to_qml() {
@@ -153,24 +134,10 @@ void QMLAppEntity::expose_to_qml() {
 
   // Register gl types.
   qRegisterMetaType<GLsizei>("GLsizei");
+
   // Register std types.
   qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
-  // Register our message types.
-  //qmlRegisterType<Message>("Message", 1, 0, "Message");
-  //qmlRegisterUncreatableType<Message>("Message", 1, 0, "Message", "Not creatable from QML.");
 
-  //qRegisterMetaType<Message>();
-  //qRegisterMetaType<Message>();
-
-  qmlRegisterUncreatableType<Message>("Message", 1, 0, "Message", "It cannot be instantiated.");
-  //qmlRegisterUncreatableType<Message::RequestType>("Message.ActionType", 1, 0, "Message.ActionType", "It cannot be instantiated.");
-  //qmlRegisterUncreatableType<Message::RequestType>("Message.InfoType", 1, 0, "Message.InfoType", "It cannot be instantiated.");
-  //qmlRegisterUncreatableType<Message::RequestType>("Message.MessageType", 1, 0, "Message.MessageType", "It cannot be instantiated.");
-
-//  qRegisterMetaType<Message::RequestType>("Message.RequestType");
-//  qRegisterMetaType<Message::ActionType>("Message.ActionType");
-//  qRegisterMetaType<Message::InfoType>("Message::InfoType");
-//  qRegisterMetaType<Message::MessageType>("Message::MessageType");
   // Register other types.
   qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
 
@@ -185,6 +152,23 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty("pdpi", QGuiApplication::primaryScreen()->physicalDotsPerInch());
   context->setContextProperty("dpr", QGuiApplication::primaryScreen()->devicePixelRatio());
   context->setContextProperty(QStringLiteral("quick_view"), view);
+
+  // Expose Message constants to qml.
+  context->setContextProperty(QStringLiteral("kRequest"), Message::kRequest);
+  context->setContextProperty(QStringLiteral("kArgs"), Message::kArgs);
+  context->setContextProperty(QStringLiteral("kXPath"), Message::kXPath);
+  context->setContextProperty(QStringLiteral("kSuccess"), Message::kSuccess);
+  context->setContextProperty(QStringLiteral("kValue"), Message::kValue);
+  context->setContextProperty(QStringLiteral("kInfo"), Message::kInfo);
+  context->setContextProperty(QStringLiteral("kIFrame"), Message::kIFrame);
+  context->setContextProperty(QStringLiteral("kMessageType"), Message::kMessageType);
+  context->setContextProperty(QStringLiteral("kURL"), Message::kURL);
+  context->setContextProperty(QStringLiteral("kWidth"), Message::kWidth);
+  context->setContextProperty(QStringLiteral("kHeight"), Message::kHeight);
+
+  // Expose Message types to qml.
+
+
 
 #if (ARCH == ARCH_ANDROID)
     // Create our java bridge.

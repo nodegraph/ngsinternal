@@ -30,6 +30,7 @@
         <file>qml/smashbrowse/stackedpages/EditEnumPage.qml</file>
         <file>qml/smashbrowse/stackedpages/WebActionPage.qml</file>
         <file>qml/smashbrowse/stackedpages/WebActionStackPage.qml</file>
+        <file>qml/smashbrowse/stackedpages/EnterURLPage.qml</file>
         
         <!-- AppWidgets -->
         <file>qml/smashbrowse/appwidgets/qmldir</file>
@@ -68,6 +69,18 @@
         <file>qml/smashbrowse/menumodels/FileActions.qml</file>
         <file>qml/smashbrowse/menumodels/WebActions.qml</file>
         <file>qml/smashbrowse/menumodels/WebActionsTest.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsNavigate.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsCreateSetByMatchingValues.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsCreateSetFromWrapType.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsShift.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsShiftToText.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsShiftToImages.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsShiftToInputs.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsShiftToSelects.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsExpand.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsMark.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsShrink.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsShrinkAgainstMarked.qml</file>
         
         <!-- AppConfig -->
         <file>qml/smashbrowse/appconfig/qmldir</file>
