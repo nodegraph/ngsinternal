@@ -3,7 +3,7 @@ class GUICollection {
 
     event_blocker: EventBlocker
 
-    context_menu: ContextMenu
+    context_menu: PageOverlays
 
     wait_popup: WaitPopup
     text_input_popup: TextInputPopup
@@ -28,7 +28,7 @@ class GUICollection {
         this.page_wrap = new PageWrap(this)
 
         // Our context menu.
-        this.context_menu = new ContextMenu()
+        this.context_menu = new PageOverlays()
 
         // Our event blocker.
         this.event_blocker = new EventBlocker(this)
@@ -51,9 +51,6 @@ class GUICollection {
 
     
     contains_element(element: Node): boolean {
-        if (this.context_menu.contains_element(element)) {
-            return true
-        }
         if (this.wait_popup.contains_element(element)) {
             return true
         }
@@ -71,12 +68,6 @@ class GUICollection {
         this.overlay_sets.add_set(os)
     }
 
-    hide_context_menu(): void {
-        if (this.context_menu.visible) {
-            this.context_menu.hide()
-        }
-    }
-
     on_context_menu(e: MouseEvent): boolean {
         if (!this.context_menu.initialized()) {
             return
@@ -85,10 +76,6 @@ class GUICollection {
         let text_values = this.page_wrap.get_text_values_at(p)
         let image_values = this.page_wrap.get_image_values_at(p)
         return this.context_menu.on_context_menu(e, text_values, image_values)
-    }
-
-    on_click(e: MouseEvent): void {
-        this.context_menu.on_click(e)
     }
 
     on_mouse_over(e: MouseEvent): void {

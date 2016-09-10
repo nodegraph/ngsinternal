@@ -16,6 +16,7 @@ class BgCommHandler {
         console.log('handling request from nodejs: ' + JSON.stringify(request))
         // We intercept certain requests before it gets to the content script,
         // because content scripts can't use the chrome.* APIs except for parts of chrome.extension for message passing.
+        // Note that we resuse the iframe from the request.
         switch (request.request) {
             case RequestType.kClearAllCookies:
                 function done_clear_all_cookies() {

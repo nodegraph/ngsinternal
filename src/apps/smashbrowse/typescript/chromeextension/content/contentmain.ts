@@ -8,7 +8,7 @@ let content_comm: ContentComm = null
 let content_comm_handler: ContentCommHandler = null
 
 // Context menu handling.
-let context_menu_handler: ContextMenuHandler = null
+let context_menu_handler: PageOverlaysHandler = null
 
 // If we're not the top window (ie: an IFrame), then we just block all events.
 let event_blocker: EventBlocker = null
@@ -26,7 +26,7 @@ mutation_monitor = new MutationMonitor(content_comm, gui_collection)
 document.addEventListener('DOMContentLoaded', mutation_monitor.on_loaded.bind(mutation_monitor), false);
 
 // Context menu handling.
-context_menu_handler = new ContextMenuHandler(content_comm, gui_collection)
+context_menu_handler = new PageOverlaysHandler(content_comm, gui_collection)
 gui_collection.context_menu.set_handler(context_menu_handler)
 
 console.log("create a new instance of content script!")

@@ -59,7 +59,6 @@ class EventBlocker {
                     break
                 case 'click':
                     // Click outside a visible context menu will close it.
-                    this.gui_collection.hide_context_menu()
                     break
                 case 'mousemove':
                     this.gui_collection.on_mouse_over(<MouseEvent>event)

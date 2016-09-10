@@ -153,23 +153,6 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty("dpr", QGuiApplication::primaryScreen()->devicePixelRatio());
   context->setContextProperty(QStringLiteral("quick_view"), view);
 
-  // Expose Message constants to qml.
-  context->setContextProperty(QStringLiteral("kRequest"), Message::kRequest);
-  context->setContextProperty(QStringLiteral("kArgs"), Message::kArgs);
-  context->setContextProperty(QStringLiteral("kXPath"), Message::kXPath);
-  context->setContextProperty(QStringLiteral("kSuccess"), Message::kSuccess);
-  context->setContextProperty(QStringLiteral("kValue"), Message::kValue);
-  context->setContextProperty(QStringLiteral("kInfo"), Message::kInfo);
-  context->setContextProperty(QStringLiteral("kIFrame"), Message::kIFrame);
-  context->setContextProperty(QStringLiteral("kMessageType"), Message::kMessageType);
-  context->setContextProperty(QStringLiteral("kURL"), Message::kURL);
-  context->setContextProperty(QStringLiteral("kWidth"), Message::kWidth);
-  context->setContextProperty(QStringLiteral("kHeight"), Message::kHeight);
-
-  // Expose Message types to qml.
-
-
-
 #if (ARCH == ARCH_ANDROID)
     // Create our java bridge.
     JavaBridge *java_bridge = new_ff JavaBridge(&app);
