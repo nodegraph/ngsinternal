@@ -121,6 +121,8 @@ int main(int argc, char *argv[]) {
   using namespace ngs;
   int execReturn = 0;
 
+
+
   // Startup the memory tracker.
   bootstrap_memory_tracker();
   {
@@ -155,6 +157,15 @@ int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     QApplication::setApplicationName("smashbrowse"); // This affects the user's data dir resolution.
     QApplication::setOrganizationDomain("smashbrowse.com");
+
+    // Check to make sure that there are no other instance running.
+    bool first_instance = true;
+    QSharedMemory sharedMemory;
+    sharedMemory.setKey("SmashBrowse");
+    if (sharedMemory.create(1) == false) {
+      std::cerr << "Error: Smash Browse is already running.\n";
+      first_instance = false;
+    }
 
 #if ARCH == ARCH_IOS
   // Register QML types.
@@ -216,21 +227,29 @@ int main(int argc, char *argv[]) {
     NodeGraphView* view = app_root->get_node_graph_view();
     app_root->init_view(format);
 
-    // Show our splash page, while loading the real qml app.
-    view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/pages/SplashPage.qml")));
-    view->rootObject()->setProperty("ngs_version", NGS_VERSION);
-    view->show();
-    view->update();
-    app.processEvents();
+    if (first_instance) {
+      // Show our splash page, while loading the real qml app.
+      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/pages/SplashPage.qml")));
+      view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+      view->show();
+      view->update();
+      app.processEvents();
 
-    // Expose some object to qml before loading our main app.
-    app_root->expose_to_qml();
+      // Expose some object to qml before loading our main app.
+      app_root->expose_to_qml();
 
-    // Show our main app.
-    view->setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+      // Show our main app.
+      view->setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
-    // Embed the node graph quick item into the node graph page.
-    app_root->embed_node_graph();
+      // Embed the node graph quick item into the node graph page.
+      app_root->embed_node_graph();
+    } else {
+      // Show page with warning about multiple instances.
+      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/pages/AlreadyRunningPage.qml")));
+      view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+      view->show();
+      view->update();
+    }
 
     // Run the Qt loop.
     execReturn = app.exec();

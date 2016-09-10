@@ -21,6 +21,7 @@ Rectangle {
         source: "qrc:///images/octopus_white.png"
     }
 
+    // Smash Browse Label.
     Label {
         font.pointSize: 25
         font.italic: false
@@ -33,6 +34,7 @@ Rectangle {
         }
     }
 
+    // Version Label.
     Label {
         font.pointSize: 25
         font.italic: false

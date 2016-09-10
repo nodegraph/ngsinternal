@@ -100,6 +100,7 @@
         <file>qml/smashbrowse/pages/PostsPage.qml</file>
         <file>qml/smashbrowse/pages/LimitPage.qml</file>
         <file>qml/smashbrowse/pages/SettingsPage.qml</file>
+        <file>qml/smashbrowse/pages/AlreadyRunningPage.qml</file>
         <file>qml/smashbrowse/pages/SplashPage.qml</file>
         
         <!-- Tree View Icons. -->
