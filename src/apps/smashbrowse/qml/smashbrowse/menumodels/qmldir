@@ -11,8 +11,8 @@ FileActions 1.0 FileActions.qml
 WebActions 1.0 WebActions.qml
 WebActionsTest 1.0 WebActionsTest.qml
 WebActionsNavigate 1.0 WebActionsNavigate.qml
-WebActionsCreateSetByMatchingValues 1.0 WebActionsCreateSetByMatchingValues.qml
-WebActionsCreateSetFromWrapType 1.0 WebActionsCreateSetFromWrapType.qml
+WebActionsCreateByMatchingValues 1.0 WebActionsCreateByMatchingValues.qml
+WebActionsCreateFromWrapType 1.0 WebActionsCreateFromWrapType.qml
 WebActionsShift 1.0 WebActionsShift.qml
 WebActionsShiftToText 1.0 WebActionsShiftToText.qml
 WebActionsShiftToImages 1.0 WebActionsShiftToImages.qml
@@ -22,3 +22,5 @@ WebActionsExpand 1.0 WebActionsExpand.qml
 WebActionsMark 1.0 WebActionsMark.qml
 WebActionsShrink 1.0 WebActionsShrink.qml
 WebActionsShrinkAgainstMarked 1.0 WebActionsShrinkAgainstMarked.qml
+WebActionsPerformAction 1.0 WebActionsPerformAction.qml
+WebActionsPerformScroll 1.0 WebActionsPerformScroll.qml

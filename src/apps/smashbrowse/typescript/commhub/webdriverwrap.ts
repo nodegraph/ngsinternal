@@ -243,8 +243,8 @@ export class WebDriverWrap {
                     // Send the first argument in the response.
                     send_msg_to_app(new ResponseMessage(this.iframe, true, arguments[0]))
                 }
-            },
-            function(error) {
+            }.bind(this),
+            function(error: any) {
                 // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
                 let req = new RequestMessage(this.iframe, RequestType.kBlockEvents)
                 send_msg_to_ext(req)
@@ -266,7 +266,7 @@ export class WebDriverWrap {
 
                 // Send failure reponse to the app.
                 send_msg_to_app(new ResponseMessage(this.iframe, false))
-            })
+            }.bind(this))
     }
 
 }

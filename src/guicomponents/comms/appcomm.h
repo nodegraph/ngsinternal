@@ -87,6 +87,10 @@ Q_OBJECT
   Q_INVOKABLE void set_all_cookies();
   Q_INVOKABLE void update_overlays();
 
+  // Helpers
+  Q_INVOKABLE int get_set_index();
+  Q_INVOKABLE int get_overlay_index();
+  Q_INVOKABLE QStringList get_option_texts();
 
   Q_INVOKABLE void navigate_to(const QString& url);
   Q_INVOKABLE void navigate_refresh();
@@ -146,6 +150,21 @@ Q_OBJECT
   Q_INVOKABLE void shrink_left_of_marked();
   Q_INVOKABLE void shrink_right_of_marked();
   Q_INVOKABLE void shrink_left_and_right_of_marked();
+
+  Q_INVOKABLE void perform_action(ActionType action);
+  Q_INVOKABLE void perform_action(const QVariantMap& args);
+  Q_INVOKABLE void perform_click();
+  Q_INVOKABLE void type_text(const QString& text);
+  Q_INVOKABLE void type_enter();
+  Q_INVOKABLE void extract_text();
+  Q_INVOKABLE void select_from_dropdown(const QString& option_text);
+
+  Q_INVOKABLE void scroll_down();
+  Q_INVOKABLE void scroll_up();
+  Q_INVOKABLE void scroll_right();
+  Q_INVOKABLE void scroll_left();
+
+
 
 
 signals:
@@ -212,6 +231,7 @@ signals:
 
   // Our current iframe. This should actually come from data flowing through graph.
   QString _iframe;
+  QString _extracted_text;
 
   // Our last show menu message.
   Message _show_menu_msg;

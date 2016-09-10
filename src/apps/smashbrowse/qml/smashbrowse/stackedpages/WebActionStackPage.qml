@@ -39,12 +39,33 @@ AppStackPage{
         visible = true
     }
 
-    // Push the edit file page onto the stack.
     function on_url_entry() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EnterURLPage.qml", web_action_stack_page, {})
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EnterStringPage.qml", web_action_stack_page, {})
         page.visible = true
         page.init("www.")
         page.set_title("Enter URL")
+        page.callback = app_comm.navigate_to.bind(app_comm)
+        stack_view.push_page(page)
+        visible = true
+    }
+
+    function on_type_text() {
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EnterStringPage.qml", web_action_stack_page, {})
+        page.visible = true
+        page.init("")
+        page.set_title("Type Text")
+        page.callback = app_comm.type_text.bind(app_comm)
+        stack_view.push_page(page)
+        visible = true
+    }
+
+    function on_select_from_dropdown() {
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/SelectDropdownPage.qml", web_action_stack_page, {})
+        page.visible = true
+        page.init("")
+        page.set_title("Select from Dropdown")
+        page.callback = app_comm.select_from_dropdown.bind(app_comm)
+        page.set_option_texts(app_comm.get_option_texts())
         stack_view.push_page(page)
         visible = true
     }

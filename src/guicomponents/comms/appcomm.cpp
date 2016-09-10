@@ -243,8 +243,8 @@ void AppComm::on_state_changed(QAbstractSocket::SocketState s) {
 }
 
 void AppComm::on_json_received(const QString & json) {
+  qDebug() << "hub --> app: " << json;
   Message msg(json);
-  qDebug() << "hub[" << msg[Message::kIFrame].toString() << "] --> app: " << msg.to_string();
 
   MessageType type = msg.get_msg_type();
   if (type == MessageType::kRequestMessage) {
@@ -299,6 +299,16 @@ void AppComm::update_overlays() {
   QString iframe = _show_menu_msg[Message::kIFrame].toString();
   Message msg(iframe, RequestType::kUpdateOveralys);
   handle_request_from_app(msg);
+}
+
+int AppComm::get_set_index() {
+  return _show_menu_msg[Message::kArgs].toMap()[Message::kSetIndex].toInt();
+}
+int AppComm::get_overlay_index() {
+  return _show_menu_msg[Message::kArgs].toMap()[Message::kOverlayIndex].toInt();
+}
+QStringList AppComm::get_option_texts() {
+  return _show_menu_msg[Message::kArgs].toMap()[Message::kOptionTexts].toStringList();
 }
 
 void AppComm::navigate_to(const QString& url) {
@@ -383,8 +393,12 @@ void AppComm::create_set_of_text() {
 }
 
 void AppComm::delete_set() {
+  if (get_set_index()<0) {
+    return;
+  }
+
   QVariantMap args;
-  args[Message::kSetIndex] = _show_menu_msg[Message::kArgs].toMap()[Message::kSetIndex];
+  args[Message::kSetIndex] = get_set_index();
 
   Message req(_iframe, RequestType::kDeleteSet);
   req[Message::kArgs] = args;
@@ -393,8 +407,12 @@ void AppComm::delete_set() {
 }
 
 void AppComm::shift_set(WrapType wrap_type, Direction dir) {
+  if (get_set_index()<0) {
+      return;
+    }
+
   QVariantMap args;
-  args[Message::kSetIndex] = _show_menu_msg[Message::kArgs].toMap()[Message::kSetIndex];
+  args[Message::kSetIndex] = get_set_index();
   args[Message::kDirection] = dir;
   args[Message::kWrapType] = wrap_type;
 
@@ -457,8 +475,12 @@ void AppComm::shift_to_selects_on_right() {
 }
 
 void AppComm::expand(Direction dir, const QVariantMap& match_criteria) {
+  if (get_set_index()<0) {
+      return;
+    }
+
   QVariantMap args;
-  args[Message::kSetIndex] = _show_menu_msg[Message::kArgs].toMap()[Message::kSetIndex];
+  args[Message::kSetIndex] = get_set_index();
   args[Message::kDirection] = dir;
   args[Message::kMatchCriteria] = match_criteria;
 
@@ -512,16 +534,24 @@ void AppComm::expand_right() {
 }
 
 void AppComm::mark_set() {
+  if (get_set_index()<0) {
+      return;
+    }
+
   QVariantMap args;
-  args[Message::kSetIndex] = _show_menu_msg[Message::kArgs].toMap()[Message::kSetIndex];
+  args[Message::kSetIndex] = get_set_index();
 
   Message req(_iframe, RequestType::kMarkSet);
   req[Message::kArgs] = args;
   handle_request_from_app(req);
 }
 void AppComm::unmark_set() {
+  if (get_set_index()<0) {
+      return;
+    }
+
   QVariantMap args;
-  args[Message::kSetIndex] = _show_menu_msg[Message::kArgs].toMap()[Message::kSetIndex];
+  args[Message::kSetIndex] = get_set_index();
 
   Message req(_iframe, RequestType::kUnmarkSet);
   req[Message::kArgs] = args;
@@ -533,8 +563,12 @@ void AppComm::merge_sets() {
 }
 
 void AppComm::shrink_set_to_side(Direction dir) {
+  if (get_set_index()<0) {
+      return;
+    }
+
   QVariantMap args;
-  args[Message::kSetIndex] = _show_menu_msg[Message::kArgs].toMap()[Message::kSetIndex];
+  args[Message::kSetIndex] = get_set_index();
   args[Message::kDirection] = dir;
 
   Message req(_iframe, RequestType::kShrinkSet);
@@ -556,8 +590,12 @@ void AppComm::shrink_set_to_rightmost() {
 }
 
 void AppComm::shrink_against_marked(const QVariantList& dirs) {
+  if (get_set_index()<0) {
+      return;
+    }
+
   QVariantMap args;
-  args[Message::kSetIndex] = _show_menu_msg[Message::kArgs].toMap()[Message::kSetIndex];
+  args[Message::kSetIndex] = get_set_index();
   args[Message::kDirections] = dirs;
 
   Message req(_iframe, RequestType::kShrinkSetToMarked);
@@ -597,7 +635,72 @@ void AppComm::shrink_left_and_right_of_marked() {
   shrink_against_marked(dirs);
 }
 
+void AppComm::perform_action(ActionType action) {
+  if (get_set_index()<0) {
+      return;
+    }
 
+  QVariantMap args;
+  args[Message::kSetIndex] = get_set_index();
+  args[Message::kOverlayIndex] = 0;
+  args[Message::kAction] = action;
+
+  Message req(_iframe, RequestType::kPerformAction);
+  req[Message::kArgs] = args;
+  handle_request_from_app(req);
+}
+void AppComm::perform_action(const QVariantMap& args) {
+  Message req(_iframe, RequestType::kPerformAction);
+  req[Message::kArgs] = args;
+  handle_request_from_app(req);
+}
+void AppComm::perform_click() {
+  perform_action(ActionType::kSendClick);
+}
+void AppComm::type_text(const QString& text) {
+  if (get_set_index()<0) {
+      return;
+    }
+
+  QVariantMap args;
+  args[Message::kSetIndex] = get_set_index();
+  args[Message::kOverlayIndex] = 0;
+  args[Message::kAction] = ActionType::kSendText;
+  args[Message::kText] = text;
+  perform_action(args);
+}
+void AppComm::type_enter() {
+  perform_action(ActionType::kSendEnter);
+}
+void AppComm::extract_text() {
+  perform_action(ActionType::kGetText);
+}
+void AppComm::select_from_dropdown(const QString& option_text) {
+  if (get_set_index()<0) {
+      return;
+    }
+
+  QVariantMap args;
+  args[Message::kSetIndex] = get_set_index();
+  args[Message::kOverlayIndex] = 0;
+  args[Message::kAction] = ActionType::kSelectOption;
+  args[Message::kOptionText] = option_text;
+  perform_action(args);
+}
+
+
+void AppComm::scroll_down() {
+  perform_action(ActionType::kScrollDown);
+}
+void AppComm::scroll_up() {
+  perform_action(ActionType::kScrollUp);
+}
+void AppComm::scroll_right() {
+  perform_action(ActionType::kScrollRight);
+}
+void AppComm::scroll_left() {
+  perform_action(ActionType::kScrollLeft);
+}
 
 // -----------------------------------------------------------------
 // Private Methods.

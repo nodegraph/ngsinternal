@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import smashbrowse.appwidgets 1.0
 
 Rectangle {
-    id: enter_url_page
+    id: enter_string_page
 
     // Dimensions.
     height: app_settings.page_height
@@ -26,10 +26,13 @@ Rectangle {
     property var parent_stack_view
     property var value
 
+    // Callback will be called with the entered text.
+    property var callback
+
     // Methods.
     function init(value) {
         text_field.text = value
-        enter_url_page.value = value
+        enter_string_page.value = value
     }
 
     // Our Methods.
@@ -59,7 +62,7 @@ Rectangle {
             color: "transparent"
         }
 
-        // Title Field.
+        // Text Field.
         AppTextField {
             id: text_field
             tool_bar: copy_paste_bar
@@ -78,9 +81,9 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    enter_url_page.value = text_field.text
-                    app_comm.navigate_to(text_field.text)
-                    enter_url_page.parent_stack_view.pop_page()
+                    enter_string_page.value = text_field.text
+                    enter_string_page.callback(text_field.text)
+                    enter_string_page.parent_stack_view.pop_page()
                     main_bar.switch_to_current_mode()
                 }
             }
@@ -92,7 +95,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    enter_url_page.parent_stack_view.pop_page()
+                    enter_string_page.parent_stack_view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

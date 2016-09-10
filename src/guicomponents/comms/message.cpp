@@ -27,6 +27,10 @@ const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";
 
 const char* Message::kSetIndex = "set_index";
+const char* Message::kOverlayIndex = "overlay_index";
+const char* Message::kAction = "action";
+const char* Message::kText = "text";
+const char* Message::kOptionText = "option_text";
 
 const char* Message::kDirection = "direction";
 const char* Message::kDirections = "directions";
@@ -38,6 +42,10 @@ const char* Message::kMatchTop = "match_top";
 const char* Message::kMatchBottom = "match_bottom";
 const char* Message::kMatchFont = "match_font";
 const char* Message::kMatchFontSize = "match_font_size";
+
+// Selection Dropdowns.
+const char* Message::kOptionTexts = "option_texts";
+const char* Message::kOptionValues = "option_values";
 
 Message::Message()
     : QVariantMap() {

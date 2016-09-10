@@ -59,6 +59,16 @@ class OverlaySet {
         return false
     }
 
+    find_overlay_index(page_pos: Point): number {
+        for (let i = 0; i < this.overlays.length; i++) {
+            let overlay = this.overlays[i]
+            if (overlay.contains_point(page_pos)) {
+                    return i
+            }
+        }
+        return -1
+    }
+
     //Shift.
     shift(side: Direction, wrap_type: WrapType, page_wrap: PageWrap): void {
         for (let i = 0; i < this.overlays.length; i++) {

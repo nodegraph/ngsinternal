@@ -20,7 +20,7 @@ class ContextMenuHandler {
 
     // Our Iframe path as a string.
     iframe: string
-        
+
     constructor(cc: ContentComm, gc: GUICollection) {
         // Dependencies.
         this.content_comm = cc
@@ -33,8 +33,42 @@ class ContextMenuHandler {
     }
 
     show_app_menu(click_pos: Point, text_values: string[], image_values: string[]): void {
+        // Determine the set index at the click point.
         let set_index = this.overlay_sets.find_set_index(click_pos)
-        let req = new RequestMessage(this.iframe, RequestType.kShowAppMenu, {pos: click_pos, text_values: text_values, image_values: image_values, set_index: set_index})
+        let overlay_index = -1
+        if (set_index >= 0) {
+            let oset = this.overlay_sets.sets[set_index]
+            overlay_index = oset.find_overlay_index(click_pos)
+        }
+
+        // If we're a select element, grab the option values and texts.'
+        let option_values: string[] = []
+        let option_texts: string[] = []
+        if (set_index >= 0) {
+            let oset = this.overlay_sets.sets[set_index]
+            let element = oset.overlays[0].elem_wrap.element
+            if (element instanceof HTMLSelectElement) {
+                let select: HTMLSelectElement = <HTMLSelectElement>element
+                for (let i = 0; i < element.options.length; i++) {
+                    let option = <HTMLOptionElement>(element.options[i])
+                    option_values.push(option.value)
+                    option_texts.push(option.text)
+                    console.log('option value,text: ' + option.value + "," + option.text)
+                }
+            }
+        }
+
+        let req = new RequestMessage(this.iframe, RequestType.kShowAppMenu,
+            {
+                pos: click_pos,
+                text_values: text_values,
+                image_values: image_values,
+                set_index: set_index,
+                overlay_index: overlay_index,
+                option_values: option_values,
+                option_texts: option_texts
+            })
+
         this.content_comm.send_to_bg(req)
     }
 
@@ -48,7 +82,7 @@ class ContextMenuHandler {
         if (this.context_menu.navigate_to_url.contains(menu_target)) {
             function goto_url(url: string) {
                 let req = new RequestMessage(this.iframe, RequestType.kNavigateTo)
-                req.args = {url: url}
+                req.args = { url: url }
                 this.content_comm.send_to_bg(req)
             }
             this.text_input_popup.set_label_text("Enter URL")
@@ -614,7 +648,6 @@ class ContextMenuHandler {
                     set_index: set_index,
                     overlay_index: 0,
                     action: ActionType.kGetText,
-                    letiable_name: 'test'
                 }
                 this.content_comm.send_to_bg(req)
             }
@@ -635,8 +668,8 @@ class ContextMenuHandler {
                     this.content_comm.send_to_bg(req)
                 }
 
-                let os = this.overlay_sets.sets[set_index]
-                let element: HTMLSelectElement = <HTMLSelectElement>os.overlays[0].elem_wrap.element
+                let oset = this.overlay_sets.sets[set_index]
+                let element: HTMLSelectElement = <HTMLSelectElement>oset.overlays[0].elem_wrap.element
                 let option_values: string[] = []
                 let option_texts: string[] = []
                 for (let i = 0; i < element.options.length; i++) {

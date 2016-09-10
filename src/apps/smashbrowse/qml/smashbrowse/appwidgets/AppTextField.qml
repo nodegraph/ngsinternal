@@ -19,6 +19,9 @@ TextField {
     inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase
     echoMode: TextInput.Normal
 
+    // Center the text.
+    horizontalAlignment: TextInput.AlignHCenter
+    verticalAlignment: TextInput.AlignVCenter
 
     // Text.
     text: "hello"

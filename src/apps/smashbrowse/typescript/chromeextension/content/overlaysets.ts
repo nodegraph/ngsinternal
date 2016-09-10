@@ -46,12 +46,12 @@ class OverlaySets {
     find_set_index(page_pos: Point, marked: boolean | Object = null): number {
         // When there are multiple we get the first one which is not already marked.
         for (let i = 0; i < this.sets.length; i++) {
-            let os = this.sets[i]
-            if (os.contains_point(page_pos)) {
+            let oset = this.sets[i]
+            if (oset.contains_point(page_pos)) {
                 if (marked === null) {
                     return i
                 }
-                if (os.marked === marked) {
+                if (oset.marked === marked) {
                     return i
                 }
             }

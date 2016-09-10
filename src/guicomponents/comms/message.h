@@ -117,6 +117,10 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kImageValues;
 
   static const char* kSetIndex;
+  static const char* kOverlayIndex;
+  static const char* kAction;
+  static const char* kText;
+  static const char* kOptionText;
 
   static const char* kDirection;
   static const char* kDirections;
@@ -130,6 +134,9 @@ class COMMS_EXPORT Message: public QVariantMap {
 
   static const char* kMatchFont;
   static const char* kMatchFontSize;
+
+  static const char* kOptionTexts;
+  static const char* kOptionValues;
 
   Message();
   Message(const QString& json); // Initialize from a json string.

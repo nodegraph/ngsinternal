@@ -326,113 +326,58 @@ class ElemWrap {
             // The topmost scrollbar will be the document.body.
             // We need to record the scroll on the document.body as well.
             if (parent.element == document.body) {
+                console.log('found closest scroll1: ' + parent)
                 return parent
             }
             // If we find any scroll bars, add it.
             if ((vertical && parent.has_vertical_scroll_bar()) ||
                 (!vertical && parent.has_horizontal_scroll_bar())) {
+                console.log('found closest scroll2: ' + parent)
                 return parent
             }
             // Check our next parent.
             parent = parent.get_parent()
         }
+        console.log('error did no find closest scroll: ' + parent)
         return null
     }
 
-    get_max_down_scroll(): number {
-        // Figure out the current bottom position.
-        // This is the bottom of content that is currently visible in the scroll div.
-        let current_bottom = this.element.scrollTop + this.element.clientHeight
-
-        // Determine the maximum amount we can scroll.
-        let max = this.element.scrollHeight - current_bottom
-        if (max < 0) {
-            // In this case we have maxed out.
-            return 0
+    get_vertical_scroll_amount(): number {
+        // We try to scroll by one page.
+        let amount = this.element.clientHeight
+        if (this.element == document.body) {
+            amount = window.innerHeight
         }
-        return max
+        return amount
     }
 
-    get_max_up_scroll(): number {
-        return this.element.scrollTop
-    }
-
-    get_max_right_scroll(): number {
-        // Figure out the current bottom position.
-        // This is the bottom of content that is currently visible in the scroll div.
-        let current_right = this.element.scrollLeft + this.element.clientWidth
-
-        // Determine the maximum amount we can scroll.
-        let max = this.element.scrollWidth - current_right
-        if (max < 0) {
-            // In this case we have maxed out.
-            return 0
+    get_horizontal_scroll_amount(): number {
+        // We try to scroll by one page.
+        let amount = this.element.clientWidth
+        if (this.element == document.body) {
+            amount = window.innerWidth
         }
-        return max
+        return amount
     }
 
-    get_max_left_scroll(): number {
-        return this.element.scrollLeft
-    }
-
-    //Tries to scroll down by one page.
+    // Tries to scroll down by one page.
     scroll_down(): void {
-        // Determine the maximum amount we can scroll.
-        let max_scroll = this.get_max_down_scroll()
-
-        // We try to scroll by one page.
-        let div_height = this.page_box.get_height()
-
-        // Use the minimum scroll.
-        let scroll = Math.min(div_height, max_scroll)
-
-        // Set the scroll amount.
-        this.element.scrollTop += scroll
+        this.element.scrollTop += this.get_vertical_scroll_amount()
     }
 
-    //Tries to scroll up by one page.
+    // Tries to scroll up by one page.
     scroll_up(): void {
-        // Determine the maximum amount we can scroll.
-        let max_scroll = this.get_max_up_scroll()
-
-        // We try to scroll by one page.
-        let div_height = this.page_box.get_height()
-
-        // Use the minimum scroll.
-        let scroll = Math.min(div_height, max_scroll)
-
-        // Set the scroll amount.
-        this.element.scrollTop -= scroll
+        this.element.scrollTop -= this.get_vertical_scroll_amount()
     }
 
-    //Tries to scroll right by one page.
+    // Tries to scroll right by one page.
     scroll_right(): void {
-        // Determine the maximum amount we can scroll.
-        let max_scroll = this.get_max_right_scroll()
-
-        // We try to scroll by one page.
-        let div_width = this.page_box.get_width()
-
-        // Use the minimum scroll.
-        let scroll = Math.min(div_width, max_scroll)
-
-        // Set the scroll amount.
-        this.element.scrollLeft += scroll
+        this.element.scrollLeft += this.get_horizontal_scroll_amount()
     }
 
-    //Tries to scroll left by one page.
+    // Tries to scroll left by one page.
     scroll_left(): void {
-        // Determine the maximum amount we can scroll.
-        let max_scroll = this.get_max_left_scroll()
-
-        // We try to scroll by one page.
-        let div_width = this.page_box.get_width()
-
-        // Use the minimum scroll.
-        let scroll = Math.min(div_width, max_scroll)
-
-        // Set the scroll amount.
-        this.element.scrollLeft -= scroll
+        this.element.scrollLeft -= this.get_horizontal_scroll_amount()
     }
 
 

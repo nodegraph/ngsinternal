@@ -18,4 +18,5 @@ EditBooleanPage 1.0 EditBooleanPage.qml
 EditNumberPage 1.0 EditNumberPage.qml
 EditEnumPage 1.0 EditEnumPage.qml
 
-EnterURLPage 1.0 EnterURLPage.qml
+EnterStringPage 1.0 EnterStringPage.qml
+SelectDropdownPage 1.0 SelectDropdownPage.qml

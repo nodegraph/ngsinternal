@@ -24,15 +24,15 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "Create Set From Values..."
-        description: "Create set from values under crosshairs."
-        script: "push_by_names('Create Set', 'WebActionPage', 'WebActionsCreateSetByMatchingValues')"
+        description: "Create set from values under crosshair."
+        script: "push_by_names('Create Set', 'WebActionPage', 'WebActionsCreateByMatchingValues')"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "Create Set From Types..."
         description: "Create set from element types."
-        script: "push_by_names('Create Set', 'WebActionPage', 'WebActionsCreateSetFromWrapType')"
+        script: "push_by_names('Create Set', 'WebActionPage', 'WebActionsCreateFromWrapType')"
     }
 
     ListElement {
@@ -73,8 +73,15 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "Delete Set"
-        description: "Delete set under crosshairs."
+        description: "Delete set under crosshair."
         script: "app_comm.delete_set()"
+    }
+
+    ListElement {
+        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        title: "Perform Action"
+        description: "Perform action on element under crosshair."
+        script: "push_by_names('Perform Action', 'WebActionPage', 'WebActionsPerformAction')"
     }
 
 }
