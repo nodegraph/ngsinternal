@@ -5,6 +5,7 @@ class PageWrap {
     gui_collection: GUICollection // This is like our owning parent.
     
     // Our Members.
+    static iframe = PageWrap.get_iframe_index_path_as_string(window)
     
     // Constructor.
     constructor(gc: GUICollection) {

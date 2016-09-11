@@ -138,16 +138,18 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kOptionTexts;
   static const char* kOptionValues;
 
+  static const char* kAppIFramePath;
+
   Message();
-  Message(const QString& json); // Initialize from a json string.
+  Message(const QString& json); // Initialize from a json string typcially coming from another process outside the native app.
   Message(const QVariantMap& other);
 
   // Initializes a request message.
-  Message(const QString& iframe, RequestType rt, const QVariantMap& args = QVariantMap(), const QString& xpath = "");
+  Message(RequestType rt, const QVariantMap& args = QVariantMap(), const QString& xpath = "");
   // Initializes a response message.
-  Message(const QString& iframe, bool success, const QVariant& value = QVariant());
+  Message(bool success, const QVariant& value = QVariant());
   // Initializes an info message.
-  Message(const QString& iframe, InfoType it);
+  Message(InfoType it);
 
   virtual ~Message();
 

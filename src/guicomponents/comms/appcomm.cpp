@@ -107,16 +107,16 @@ QVariantMap AppComm::build_copied_msg(const Message& other){
   return Message(other);
 }
 
-QVariantMap AppComm::build_request_msg(const QString& iframe, RequestType rt, const QVariantMap& args, const QString& xpath) {
-  return Message(iframe, rt, args, xpath);
+QVariantMap AppComm::build_request_msg(RequestType rt, const QVariantMap& args, const QString& xpath) {
+  return Message(rt, args, xpath);
 }
 
-QVariantMap AppComm::build_response_msg(const QString& iframe, bool success, const QVariant& value){
-  return Message(iframe, success, value);
+QVariantMap AppComm::build_response_msg(bool success, const QVariant& value){
+  return Message(success, value);
 }
 
-QVariantMap AppComm::build_info_msg(const QString& iframe, InfoType it){
-  return Message(iframe, it);
+QVariantMap AppComm::build_info_msg(InfoType it){
+  return Message(it);
 }
 
 
@@ -263,7 +263,7 @@ void AppComm::on_json_received(const QString & json) {
 // -----------------------------------------------------------------
 
 void AppComm::open_browser() {
-  Message msg(_iframe, RequestType::kOpenBrowser);
+  Message msg(RequestType::kOpenBrowser);
 
   QJsonObject args;
   args[Message::kURL] = get_smash_browse_url();
@@ -273,31 +273,27 @@ void AppComm::open_browser() {
 }
 
 void AppComm::close_browser() {
-  Message msg(_iframe, RequestType::kCloseBrowser);
+  Message msg(RequestType::kCloseBrowser);
   handle_request_from_app(msg);
 }
 
 void AppComm::get_all_cookies() {
-  QString iframe = _show_menu_msg[Message::kIFrame].toString();
-  Message msg(iframe, RequestType::kGetAllCookies);
+  Message msg(RequestType::kGetAllCookies);
   handle_request_from_app(msg);
 }
 
 void AppComm::clear_all_cookies() {
-  QString iframe = _show_menu_msg[Message::kIFrame].toString();
-  Message msg(iframe, RequestType::kClearAllCookies);
+  Message msg(RequestType::kClearAllCookies);
   handle_request_from_app(msg);
 }
 
 void AppComm::set_all_cookies() {
-  QString iframe = _show_menu_msg[Message::kIFrame].toString();
-  Message msg(iframe, RequestType::kSetAllCookies);
+  Message msg(RequestType::kSetAllCookies);
   handle_request_from_app(msg);
 }
 
 void AppComm::update_overlays() {
-  QString iframe = _show_menu_msg[Message::kIFrame].toString();
-  Message msg(iframe, RequestType::kUpdateOveralys);
+  Message msg(RequestType::kUpdateOveralys);
   handle_request_from_app(msg);
 }
 
@@ -320,13 +316,13 @@ void AppComm::navigate_to(const QString& url) {
   args[Message::kURL] = decorated_url;
 
   // Send the message.
-  Message msg("", RequestType::kNavigateTo, args);
+  Message msg(RequestType::kNavigateTo, args);
   handle_request_from_app(msg);
 }
 
 void AppComm::navigate_refresh() {
   // Send the message.
-  Message msg("", RequestType::kNavigateRefresh);
+  Message msg(RequestType::kNavigateRefresh);
   handle_request_from_app(msg);
 }
 
@@ -335,7 +331,7 @@ void AppComm::create_set_by_matching_text() {
   args[Message::kWrapType] = WrapType::text;
   args[Message::kMatchValues] = _show_menu_msg[Message::kArgs].toMap()[Message::kTextValues];
 
-  Message req(_iframe, RequestType::kCreateSetFromMatchValues);
+  Message req(RequestType::kCreateSetFromMatchValues);
   req[Message::kArgs] = args;
 
   handle_request_from_app(req);
@@ -346,7 +342,7 @@ void AppComm::create_set_by_matching_images() {
   args[Message::kWrapType] = WrapType::image;
   args[Message::kMatchValues] = _show_menu_msg[Message::kArgs].toMap()[Message::kImageValues];
 
-  Message req(_iframe, RequestType::kCreateSetFromMatchValues);
+  Message req(RequestType::kCreateSetFromMatchValues);
   req[Message::kArgs] = args;
 
   handle_request_from_app(req);
@@ -356,7 +352,7 @@ void AppComm::create_set_of_inputs() {
   QVariantMap args;
   args[Message::kWrapType] = WrapType::input;
 
-  Message req(_iframe, RequestType::kCreateSetFromWrapType);
+  Message req(RequestType::kCreateSetFromWrapType);
   req[Message::kArgs] = args;
 
   handle_request_from_app(req);
@@ -366,7 +362,7 @@ void AppComm::create_set_of_selects() {
   QVariantMap args;
   args[Message::kWrapType] = WrapType::select;
 
-  Message req(_iframe, RequestType::kCreateSetFromWrapType);
+  Message req(RequestType::kCreateSetFromWrapType);
   req[Message::kArgs] = args;
 
   handle_request_from_app(req);
@@ -376,7 +372,7 @@ void AppComm::create_set_of_images() {
   QVariantMap args;
   args[Message::kWrapType] = WrapType::image;
 
-  Message req(_iframe, RequestType::kCreateSetFromWrapType);
+  Message req(RequestType::kCreateSetFromWrapType);
   req[Message::kArgs] = args;
 
   handle_request_from_app(req);
@@ -386,7 +382,7 @@ void AppComm::create_set_of_text() {
   QVariantMap args;
   args[Message::kWrapType] = WrapType::text;
 
-  Message req(_iframe, RequestType::kCreateSetFromWrapType);
+  Message req(RequestType::kCreateSetFromWrapType);
   req[Message::kArgs] = args;
 
   handle_request_from_app(req);
@@ -400,7 +396,7 @@ void AppComm::delete_set() {
   QVariantMap args;
   args[Message::kSetIndex] = get_set_index();
 
-  Message req(_iframe, RequestType::kDeleteSet);
+  Message req(RequestType::kDeleteSet);
   req[Message::kArgs] = args;
 
   handle_request_from_app(req);
@@ -416,7 +412,7 @@ void AppComm::shift_set(WrapType wrap_type, Direction dir) {
   args[Message::kDirection] = dir;
   args[Message::kWrapType] = wrap_type;
 
-  Message req(_iframe, RequestType::kShiftSet);
+  Message req(RequestType::kShiftSet);
   req[Message::kArgs] = args;
 
   handle_request_from_app(req);
@@ -484,7 +480,7 @@ void AppComm::expand(Direction dir, const QVariantMap& match_criteria) {
   args[Message::kDirection] = dir;
   args[Message::kMatchCriteria] = match_criteria;
 
-  Message req(_iframe, RequestType::kExpandSet);
+  Message req(RequestType::kExpandSet);
   req[Message::kArgs] = args;
   handle_request_from_app(req);
 }
@@ -541,7 +537,7 @@ void AppComm::mark_set() {
   QVariantMap args;
   args[Message::kSetIndex] = get_set_index();
 
-  Message req(_iframe, RequestType::kMarkSet);
+  Message req(RequestType::kMarkSet);
   req[Message::kArgs] = args;
   handle_request_from_app(req);
 }
@@ -553,12 +549,12 @@ void AppComm::unmark_set() {
   QVariantMap args;
   args[Message::kSetIndex] = get_set_index();
 
-  Message req(_iframe, RequestType::kUnmarkSet);
+  Message req(RequestType::kUnmarkSet);
   req[Message::kArgs] = args;
   handle_request_from_app(req);
 }
 void AppComm::merge_sets() {
-  Message req(_iframe, RequestType::kMergeMarkedSets);
+  Message req(RequestType::kMergeMarkedSets);
   handle_request_from_app(req);
 }
 
@@ -571,7 +567,7 @@ void AppComm::shrink_set_to_side(Direction dir) {
   args[Message::kSetIndex] = get_set_index();
   args[Message::kDirection] = dir;
 
-  Message req(_iframe, RequestType::kShrinkSet);
+  Message req(RequestType::kShrinkSet);
   req[Message::kArgs] = args;
   handle_request_from_app(req);
 }
@@ -598,7 +594,7 @@ void AppComm::shrink_against_marked(const QVariantList& dirs) {
   args[Message::kSetIndex] = get_set_index();
   args[Message::kDirections] = dirs;
 
-  Message req(_iframe, RequestType::kShrinkSetToMarked);
+  Message req(RequestType::kShrinkSetToMarked);
   req[Message::kArgs] = args;
   handle_request_from_app(req);
 }
@@ -645,12 +641,12 @@ void AppComm::perform_action(ActionType action) {
   args[Message::kOverlayIndex] = 0;
   args[Message::kAction] = action;
 
-  Message req(_iframe, RequestType::kPerformAction);
+  Message req(RequestType::kPerformAction);
   req[Message::kArgs] = args;
   handle_request_from_app(req);
 }
 void AppComm::perform_action(const QVariantMap& args) {
-  Message req(_iframe, RequestType::kPerformAction);
+  Message req(RequestType::kPerformAction);
   req[Message::kArgs] = args;
   handle_request_from_app(req);
 }
@@ -769,12 +765,12 @@ bool AppComm::nodejs_is_connected() {
 }
 
 void AppComm::check_browser_is_open() {
-  Message msg(_iframe, RequestType::kCheckBrowserIsOpen);
+  Message msg(RequestType::kCheckBrowserIsOpen);
   handle_request_from_app(msg);
 }
 
 void AppComm::check_browser_size() {
-  Message msg(_iframe, RequestType::kResizeBrowser);
+  Message msg(RequestType::kResizeBrowser);
 
   int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
   int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();

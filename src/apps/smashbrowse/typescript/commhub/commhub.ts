@@ -41,12 +41,10 @@ DebugUtils.catch_uncaught_exceptions()
 
 class BaseConnection {
     socket: ws
-    iframe: string
     webdriverwrap: WebDriverWrap
     constructor(webdriverwrap: WebDriverWrap) {
         this.webdriverwrap = webdriverwrap
         this.socket = null
-        this.iframe = ''
     }
     test(): boolean {
         return true
@@ -71,8 +69,7 @@ class ChromeConnection extends BaseConnection {
     receive_json(json: string): void {
         // Extract the frame from the msg.
         let msg = BaseMessage.create_from_string(json)
-        this.iframe = msg.iframe
-        console.log('frame[' + this.iframe + '] --> commhub: ' + json)
+        console.log('frame[' + msg.iframe + '] --> commhub: ' + json)
 
         // Messages from chrome get passed straight to the app.
         send_msg_to_app(msg)
@@ -87,11 +84,15 @@ class AppConnection extends BaseConnection {
     //These requests will be handled by webdriverjs, or the extension scripts in the browser.
     //Requests will always return with a response message containing return values.
     receive_json(json: string): void {
+        console.log('app --> commhub: ' + json)
+
+        // Build the message.
         let msg = BaseMessage.create_from_string(json)
 
-        // Extract the frame from the msg.
-        this.iframe = msg.iframe
-        console.log('app[' + this.iframe + '] --> commhub: ' + json)
+        // The msg.frame should always be -1 here.
+        if (msg.iframe != '-1') {
+            console.error('nodejs expects msg.iframe from app to be -1')
+        }
 
         // Make sure the message is a request.
         if (msg.get_msg_type() == MessageType.kResponseMessage || msg.get_msg_type() == MessageType.kInfoMessage) {
@@ -122,52 +123,50 @@ class AppConnection extends BaseConnection {
                 break
             case RequestType.kOpenBrowser:
                 if (this.webdriverwrap.open_browser()) {
-                    send_msg_to_app(new ResponseMessage(req.iframe, true))
+                    send_msg_to_app(new ResponseMessage('-1', true))
                 } else {
-                    send_msg_to_app(new ResponseMessage(req.iframe, false))
+                    send_msg_to_app(new ResponseMessage('-1', false))
                 }
                 break
             case RequestType.kCloseBrowser:
                 this.webdriverwrap.close_browser()
-                send_msg_to_app(new ResponseMessage(req.iframe, true))
+                send_msg_to_app(new ResponseMessage('-1', true))
                 break
             case RequestType.kNavigateTo:
-                console.log("xxxx navigating to: " + JSON.stringify(req))
                 this.webdriverwrap.navigate_to(req.args.url).then(function() {
-                    // Reset the webdriverwrap's iframe to the top document.
-                    this.webdriverwrap.iframe = ""
-                    send_msg_to_app(new ResponseMessage(req.iframe, true))
+                    send_msg_to_app(new ResponseMessage('-1', true))
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
+                    send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break
             case RequestType.kNavigateBack:
                 this.webdriverwrap.navigate_back().then(function() {
-                    send_msg_to_app(new ResponseMessage(req.iframe, true))
+                    send_msg_to_app(new ResponseMessage('-1', true))
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
+                    send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break
             case RequestType.kNavigateForward:
                 this.webdriverwrap.navigate_forward().then(function() {
-                    send_msg_to_app(new ResponseMessage(req.iframe, true))
+                    send_msg_to_app(new ResponseMessage('-1', true))
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
+                    send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break
             case RequestType.kNavigateRefresh:
                 this.webdriverwrap.navigate_refresh().then(function() {
-                    send_msg_to_app(new ResponseMessage(req.iframe, true))
+                    send_msg_to_app(new ResponseMessage('-1', true))
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
+                    send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break
             case RequestType.kSwitchIFrame:
-                this.webdriverwrap.switch_to_iframe(req.iframe).then(function() {
-                    this.webdriverwrap.iframe = req.iframe
-                    send_msg_to_app(new ResponseMessage(req.iframe, true))
+                this.webdriverwrap.switch_to_iframe(req.args.iframe).then(function() {
+                    // We need to leg the ext's bgcomm know about this switch as it tracks iframes.
+                    // The bgcomm will send a response back.
+                    send_msg_to_ext(req)
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage(req.iframe, false, error))
+                    send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break
             case RequestType.kPerformAction:
@@ -175,32 +174,38 @@ class AppConnection extends BaseConnection {
                     // If the xpath has been resolved by the content script,
                     // then we let webdriver perform actions.
                     switch (req.args.action) {
-                        case ActionType.kSendClick:
-                            this.webdriverwrap.click_on_element(req.xpath)
-                            break
-                        case ActionType.kMouseOver:
-                            this.webdriverwrap.mouse_over_element(req.xpath, req.args.x, req.args.y)
-                            break
-                        case ActionType.kSendText:
-                            this.webdriverwrap.send_text(req.xpath, req.args.text)
-                            break
-                        case ActionType.kSendEnter:
-                            this.webdriverwrap.send_key(req.xpath, Key.RETURN)
-                            break
-                        case ActionType.kGetText:
-                            this.webdriverwrap.get_text(req.xpath)
-                            break
-                        case ActionType.kSelectOption:
-                            this.webdriverwrap.select_option(req.xpath, req.args.option_text)
-                            break
+                        case ActionType.kSendClick: {
+                            let p = this.webdriverwrap.click_on_element(req.xpath)
+                            WebDriverWrap.terminate_chain(p)
+                        } break
+                        case ActionType.kMouseOver: {
+                            let p = this.webdriverwrap.mouse_over_element(req.xpath, req.args.x, req.args.y)
+                            WebDriverWrap.terminate_chain(p)
+                        } break
+                        case ActionType.kSendText: {
+                            let p = this.webdriverwrap.send_text(req.xpath, req.args.text)
+                            WebDriverWrap.terminate_chain(p)
+                        } break
+                        case ActionType.kSendEnter: {
+                            let p = this.webdriverwrap.send_key(req.xpath, Key.RETURN)
+                            WebDriverWrap.terminate_chain(p)
+                        } break
+                        case ActionType.kGetText: {
+                            let p = this.webdriverwrap.get_text(req.xpath)
+                            WebDriverWrap.terminate_chain(p)
+                        } break
+                        case ActionType.kSelectOption: {
+                            let p = this.webdriverwrap.select_option(req.xpath, req.args.option_text)
+                            WebDriverWrap.terminate_chain(p)
+                        } break
                         case ActionType.kScrollDown:
                         case ActionType.kScrollUp:
                         case ActionType.kScrollRight:
-                        case ActionType.kScrollLeft:
+                        case ActionType.kScrollLeft: {
                             // Scroll actions need to be performed by the extension
                             // so we pass it through.
                             send_msg_to_ext(req)
-                            break
+                        } break
                     }
                 } else {
                     // Send request to extension to resolve the xpath,
@@ -310,15 +315,12 @@ class BaseSocketServer {
         // Clean any invalid connections.
         this.clean_invalid_connections()
 
-        // Grab the iframe.
-        let iframe = msg.iframe
-
-        // Send the msg through a connection which matches the iframe.
+        // Send the msg through all connections which are alive.
         let sent = false
         let conns = this.connections
         for (let i = 0; i < conns.length; i++) {
             let conn = conns[i]
-            if (conn.is_alive()) { // && conn.iframe == iframe
+            if (conn.is_alive()) {
                 conn.send_json(msg.to_string())
                 sent = true
             }

@@ -48,9 +48,9 @@ Q_OBJECT
   Q_INVOKABLE QVariantMap build_msg_from_json(const QString& json); // Initialize from a json string.
   Q_INVOKABLE QVariantMap build_copied_msg(const Message& other);
 
-  Q_INVOKABLE QVariantMap build_request_msg(const QString& iframe, RequestType rt, const QVariantMap& args = QVariantMap(), const QString& xpath = "");
-  Q_INVOKABLE QVariantMap build_response_msg(const QString& iframe, bool success, const QVariant& value = QVariant());
-  Q_INVOKABLE QVariantMap build_info_msg(const QString& iframe, InfoType it);
+  Q_INVOKABLE QVariantMap build_request_msg(RequestType rt, const QVariantMap& args = QVariantMap(), const QString& xpath = "");
+  Q_INVOKABLE QVariantMap build_response_msg(bool success, const QVariant& value = QVariant());
+  Q_INVOKABLE QVariantMap build_info_msg(InfoType it);
 
   // Returns false when it is busy processing a previous command.
   // When false is returned the command will be dropped.
@@ -230,7 +230,6 @@ signals:
   QRegExp _nodejs_port_regex;
 
   // Our current iframe. This should actually come from data flowing through graph.
-  QString _iframe;
   QString _extracted_text;
 
   // Our last show menu message.

@@ -7,12 +7,10 @@ class ContentComm {
     private handler: ContentCommHandler
 
     // Our data.
-    iframe: string
 
     // Constructor.
     constructor () {
         this.connect_to_bg()
-        this.iframe = PageWrap.get_iframe_index_path_as_string(window)
     }
 
     // Setup communication channel with chrome runtime.
@@ -34,8 +32,8 @@ class ContentComm {
         // The base message will get flattened out into a regular dict obj, during the transfer from the bgcomm.
         let msg = BaseMessage.create_from_obj(obj)
 
-        // Ignore the message if it doesn't match our iframe.'
-        if (msg.iframe != this.iframe) {
+        // Ignore the message if it doesn't match our iframe.
+        if (msg.iframe != PageWrap.iframe) {
             return
         }
 

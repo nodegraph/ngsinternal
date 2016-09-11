@@ -12,9 +12,14 @@ class BgComm {
     private nodejs_socket: WebSocket // socket to communicate with the nodejs app
     private nodejs_port: number
 
+    // Timer to attempt connections.
     private connect_timer: number
-    private content_tab_id: number
 
+    // Our internal state.
+    private content_tab_id: number // This is set by the first message received from any tab.
+    private iframe: string // This is the current iframe, that the webdriver is acting upon.
+
+    // Listeners to extract the the nodejs's chrome extension server port number.
     bound_on_tab_created: any
     bound_on_tab_updated: any
 
@@ -27,8 +32,11 @@ class BgComm {
 
         // Our timer data.
         this.connect_timer = setInterval(this.connect_to_nodejs.bind(this), 1000) // continually try to connect to nodejs
-        this.content_tab_id = null
         this.connect_to_content()
+
+        // Our state.
+        this.content_tab_id = null
+        this.iframe = ""
 
         // Hack to retrieve the nodejs port.
         // The very first opened tab's url will have the port number embedded into the url.
@@ -42,6 +50,14 @@ class BgComm {
         window.onbeforeunload = function() {
             this.nodejs_socket.close()
         }
+    }
+
+    set_iframe(iframe: string): void {
+        this.iframe = iframe
+    }
+
+    get_iframe(): string {
+        return this.iframe
     }
 
     on_tab_created(tab: chrome.tabs.Tab) {

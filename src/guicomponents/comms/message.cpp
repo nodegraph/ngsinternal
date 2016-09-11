@@ -47,6 +47,8 @@ const char* Message::kMatchFontSize = "match_font_size";
 const char* Message::kOptionTexts = "option_texts";
 const char* Message::kOptionValues = "option_values";
 
+const char* Message::kAppIFramePath = "-1";
+
 Message::Message()
     : QVariantMap() {
 }
@@ -58,8 +60,8 @@ Message::Message(const QString& json) {
   assert(check_contents());
 }
 
-Message::Message(const QString& iframe, RequestType rt, const QVariantMap& args, const QString& xpath) {
-  operator[](Message::kIFrame) = iframe;
+Message::Message(RequestType rt, const QVariantMap& args, const QString& xpath) {
+  operator[](Message::kIFrame) = Message::kAppIFramePath;
   operator[](Message::kMessageType) = static_cast<int>(MessageType::kRequestMessage);
 
   operator[](Message::kRequest) = static_cast<int>(rt);
@@ -69,8 +71,8 @@ Message::Message(const QString& iframe, RequestType rt, const QVariantMap& args,
   assert(check_contents());
 }
 
-Message::Message(const QString& iframe, bool success, const QVariant& value) {
-  operator[](Message::kIFrame) = iframe;
+Message::Message(bool success, const QVariant& value) {
+  operator[](Message::kIFrame) = Message::kAppIFramePath;
   operator[](Message::kMessageType) = static_cast<int>(MessageType::kResponseMessage);
 
   operator[](Message::kSuccess) = success;
@@ -79,8 +81,8 @@ Message::Message(const QString& iframe, bool success, const QVariant& value) {
   assert(check_contents());
 }
 
-Message::Message(const QString& iframe, InfoType it) {
-  operator[](Message::kIFrame) = iframe;
+Message::Message(InfoType it) {
+  operator[](Message::kIFrame) = Message::kAppIFramePath;
   operator[](Message::kMessageType) = static_cast<int>(MessageType::kResponseMessage);
 
   operator[](Message::kInfo) = static_cast<int>(it);

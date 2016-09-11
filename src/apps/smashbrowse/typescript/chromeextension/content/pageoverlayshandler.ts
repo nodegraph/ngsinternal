@@ -12,14 +12,10 @@ class PageOverlaysHandler {
     content_comm: ContentComm
     overlay_sets: OverlaySets
 
-    // Our Iframe path as a string.
-    iframe: string
-
     constructor(cc: ContentComm, gc: GUICollection) {
         // Dependencies.
         this.content_comm = cc
         this.overlay_sets = gc.overlay_sets
-        this.iframe = PageWrap.get_iframe_index_path_as_string(window)
     }
 
     show_app_menu(click_pos: Point, text_values: string[], image_values: string[]): void {
@@ -48,7 +44,7 @@ class PageOverlaysHandler {
             }
         }
 
-        let req = new RequestMessage(this.iframe, RequestType.kShowAppMenu,
+        let req = new RequestMessage(PageWrap.iframe, RequestType.kShowAppMenu,
             {
                 pos: click_pos,
                 text_values: text_values,
