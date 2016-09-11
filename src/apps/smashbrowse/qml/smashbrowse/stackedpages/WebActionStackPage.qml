@@ -31,11 +31,17 @@ AppStackPage{
     // Create/Remove Pages.
     // -------------------------------------------------------------------------------------------
 
-    function on_show_web_action_menu(msg) {
-        console.log("aml got msg: " + JSON.stringify(msg))
+    function on_show_web_action_menu() {
         app_settings.vibrate()
         stack_view.clear_pages()
         stack_view.push_by_names("Web Actions", "WebActionPage", "WebActions")
+        visible = true
+    }
+
+    function on_show_iframe_menu() {
+        app_settings.vibrate()
+        stack_view.clear_pages()
+        stack_view.push_by_names("IFrame Switch", "WebActionPage", "IFrameActions")
         visible = true
     }
 

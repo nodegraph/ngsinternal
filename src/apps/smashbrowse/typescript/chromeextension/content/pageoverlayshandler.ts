@@ -44,7 +44,7 @@ class PageOverlaysHandler {
             }
         }
 
-        let req = new RequestMessage(PageWrap.iframe, RequestType.kShowAppMenu,
+        let req = new RequestMessage(PageWrap.iframe, RequestType.kShowWebActionMenu,
             {
                 pos: click_pos,
                 text_values: text_values,

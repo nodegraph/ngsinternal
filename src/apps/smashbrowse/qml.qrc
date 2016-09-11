@@ -67,6 +67,7 @@
         <file>qml/smashbrowse/menumodels/SelectNodeActions.qml</file>
         <file>qml/smashbrowse/menumodels/CopyPasteNodeActions.qml</file>
         <file>qml/smashbrowse/menumodels/ExplodeCollapseNodeActions.qml</file>
+        <file>qml/smashbrowse/menumodels/IFrameActions.qml</file>
         <file>qml/smashbrowse/menumodels/FileActions.qml</file>
         <file>qml/smashbrowse/menumodels/WebActions.qml</file>
         <file>qml/smashbrowse/menumodels/WebActionsTest.qml</file>

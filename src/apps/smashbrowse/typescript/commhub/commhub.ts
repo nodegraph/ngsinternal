@@ -164,8 +164,10 @@ class AppConnection extends BaseConnection {
                 this.webdriverwrap.switch_to_iframe(req.args.iframe).then(function() {
                     // We need to leg the ext's bgcomm know about this switch as it tracks iframes.
                     // The bgcomm will send a response back.
+                    console.log('comm hub set iframe to ' + req.args.iframe)
                     send_msg_to_ext(req)
                 }, function(error) {
+                    console.log('comm hub failed to set iframe to ' + req.args.iframe)
                     send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break

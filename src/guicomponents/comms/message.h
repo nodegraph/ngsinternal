@@ -13,7 +13,7 @@ namespace ngs {
 // Note these enums have to be kept in sync with the typescript file, socketmessage.ts.
 enum RequestType {
   kUnknownRequest,
-  kShowAppMenu,
+  kShowWebActionMenu,
 
   // Chrome BG Requests.
   kClearAllCookies,
@@ -104,6 +104,7 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kInfo;
 
   static const char* kIFrame;
+  static const char* kPrevIFrame; // Sent by show web action request it's iframe doesn't match the current iframe.
   static const char* kMessageType;
 
   static const char* kURL;

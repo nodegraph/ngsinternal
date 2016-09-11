@@ -173,6 +173,16 @@ class BgComm {
         if (this.content_tab_id != sender.tab.id) {
             return
         }
+
+        // If the current iframe doesn't match we note this in the 
+        if (msg.msg_type == MessageType.kRequestMessage) {
+            let req = <RequestMessage>msg
+            if(req.request == RequestType.kShowWebActionMenu && req.iframe != this.iframe) {
+                req.args.prev_iframe = this.iframe
+            }
+
+        }
+
         // Pass the message to nodejs.
         this.send_to_nodejs(msg);
     }

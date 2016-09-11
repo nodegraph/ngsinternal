@@ -107,12 +107,13 @@ export class WebDriverWrap {
         let splits = iframe.split('/')
         let last_promise: webdriver.promise.Promise<void> = null
         for (let i=0; i<splits.length; i++) {
+            let frame_index = Number(splits[i])
             // If there is a negative number then our promise is to just switch to the top frame.
-            if (Number(splits[i]) < 0) {
+            if (frame_index < 0) {
                 last_promise = this.driver.switchTo().defaultContent()
                 return last_promise
             }
-            last_promise = this.driver.switchTo().frame(splits[i])
+            last_promise = this.driver.switchTo().frame(frame_index)
         }
         return last_promise
     }

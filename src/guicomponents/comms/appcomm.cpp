@@ -298,13 +298,13 @@ void AppComm::update_overlays() {
 }
 
 int AppComm::get_set_index() {
-  return _show_menu_msg[Message::kArgs].toMap()[Message::kSetIndex].toInt();
+  return _menu_msg[Message::kArgs].toMap()[Message::kSetIndex].toInt();
 }
 int AppComm::get_overlay_index() {
-  return _show_menu_msg[Message::kArgs].toMap()[Message::kOverlayIndex].toInt();
+  return _menu_msg[Message::kArgs].toMap()[Message::kOverlayIndex].toInt();
 }
 QStringList AppComm::get_option_texts() {
-  return _show_menu_msg[Message::kArgs].toMap()[Message::kOptionTexts].toStringList();
+  return _menu_msg[Message::kArgs].toMap()[Message::kOptionTexts].toStringList();
 }
 
 void AppComm::navigate_to(const QString& url) {
@@ -320,6 +320,16 @@ void AppComm::navigate_to(const QString& url) {
   handle_request_from_app(msg);
 }
 
+void AppComm::switch_to_iframe() {
+  QString iframe = _menu_msg[Message::kIFrame].toString();
+  QVariantMap args;
+  args[Message::kIFrame] = iframe;
+
+  // Send the message.
+  Message msg(RequestType::kSwitchIFrame, args);
+  handle_request_from_app(msg);
+}
+
 void AppComm::navigate_refresh() {
   // Send the message.
   Message msg(RequestType::kNavigateRefresh);
@@ -329,7 +339,7 @@ void AppComm::navigate_refresh() {
 void AppComm::create_set_by_matching_text() {
   QVariantMap args;
   args[Message::kWrapType] = WrapType::text;
-  args[Message::kMatchValues] = _show_menu_msg[Message::kArgs].toMap()[Message::kTextValues];
+  args[Message::kMatchValues] = _menu_msg[Message::kArgs].toMap()[Message::kTextValues];
 
   Message req(RequestType::kCreateSetFromMatchValues);
   req[Message::kArgs] = args;
@@ -340,7 +350,7 @@ void AppComm::create_set_by_matching_text() {
 void AppComm::create_set_by_matching_images() {
   QVariantMap args;
   args[Message::kWrapType] = WrapType::image;
-  args[Message::kMatchValues] = _show_menu_msg[Message::kArgs].toMap()[Message::kImageValues];
+  args[Message::kMatchValues] = _menu_msg[Message::kArgs].toMap()[Message::kImageValues];
 
   Message req(RequestType::kCreateSetFromMatchValues);
   req[Message::kArgs] = args;
@@ -787,10 +797,16 @@ void AppComm::handle_request_from_nodejs(const Message& sm) {
 
   RequestType type = static_cast<RequestType>(sm.value(Message::kRequest).toInt());
 
-  if (type == RequestType::kShowAppMenu) {
+  if (type == RequestType::kShowWebActionMenu) {
     qDebug() << "emitting show menu from native side\n";
-    _show_menu_msg = sm;
-    emit show_web_action_menu(sm);
+    _menu_msg = sm;
+
+    if (sm.value(Message::kArgs).toMap().count(Message::kPrevIFrame)) {
+      QString prev_iframe = sm.value(Message::kArgs).toMap().value(Message::kPrevIFrame).toString();
+      emit show_iframe_menu();
+    } else {
+      emit show_web_action_menu();
+    }
   } else {
     handle_request_from_app(sm);
   }

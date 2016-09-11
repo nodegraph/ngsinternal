@@ -177,6 +177,7 @@ Rectangle {
 
         // Web actions mode.
         app_comm.show_web_action_menu.connect(web_action_stack_page.on_show_web_action_menu)
+        app_comm.show_iframe_menu.connect(web_action_stack_page.on_show_iframe_menu)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.

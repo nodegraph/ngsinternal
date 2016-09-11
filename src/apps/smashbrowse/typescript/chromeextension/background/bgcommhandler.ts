@@ -63,6 +63,7 @@ class BgCommHandler {
                 this.browser_wrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom.bind(this));
             } break
             case RequestType.kSwitchIFrame: {
+                console.log('bgcomm setting iframe to ' + req.args.iframe)
                 this.bg_comm.set_iframe(req.args.iframe)
                 // Send response to nodejs.
                 let response = new ResponseMessage("-1", true)

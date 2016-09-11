@@ -14,6 +14,7 @@ const char* Message::kValue = "value";
 const char* Message::kInfo = "info";
 
 const char* Message::kIFrame = "iframe";
+const char* Message::kPrevIFrame = "prev_iframe";
 const char* Message::kMessageType = "msg_type";
 
 const char* Message::kURL = "url";

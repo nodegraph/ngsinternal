@@ -94,6 +94,7 @@ Q_OBJECT
 
   Q_INVOKABLE void navigate_to(const QString& url);
   Q_INVOKABLE void navigate_refresh();
+  Q_INVOKABLE void switch_to_iframe();
 
   Q_INVOKABLE void create_set_by_matching_text();
   Q_INVOKABLE void create_set_by_matching_images();
@@ -171,7 +172,8 @@ signals:
   // Fired on completion of a command.
   void command_finished(const QVariantMap& msg);
   void nodejs_connected();
-  void show_web_action_menu(const QVariantMap& msg);
+  void show_web_action_menu();
+  void show_iframe_menu();
 
  private slots:
   // Slots for our timer.
@@ -233,7 +235,7 @@ signals:
   QString _extracted_text;
 
   // Our last show menu message.
-  Message _show_menu_msg;
+  Message _menu_msg;
 
 };
 
