@@ -155,6 +155,7 @@ Q_OBJECT
   Q_INVOKABLE void perform_action(ActionType action);
   Q_INVOKABLE void perform_action(const QVariantMap& args);
   Q_INVOKABLE void perform_click();
+  Q_INVOKABLE void perform_mouse_over();
   Q_INVOKABLE void type_text(const QString& text);
   Q_INVOKABLE void type_enter();
   Q_INVOKABLE void extract_text();

@@ -663,10 +663,13 @@ void AppComm::perform_action(const QVariantMap& args) {
 void AppComm::perform_click() {
   perform_action(ActionType::kSendClick);
 }
+void AppComm::perform_mouse_over() {
+  perform_action(ActionType::kMouseOver);
+}
 void AppComm::type_text(const QString& text) {
-  if (get_set_index()<0) {
-      return;
-    }
+  if (get_set_index() < 0) {
+    return;
+  }
 
   QVariantMap args;
   args[Message::kSetIndex] = get_set_index();
