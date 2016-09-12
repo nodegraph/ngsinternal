@@ -664,7 +664,17 @@ void AppComm::perform_click() {
   perform_action(ActionType::kSendClick);
 }
 void AppComm::perform_mouse_over() {
-  perform_action(ActionType::kMouseOver);
+  if (get_set_index() < 0) {
+    return;
+  }
+
+  QVariantMap args;
+  args[Message::kSetIndex] = get_set_index();
+  args[Message::kOverlayIndex] = 0;
+  args[Message::kAction] = ActionType::kMouseOver;
+  args[Message::kRelClickPos] = _menu_msg[Message::kArgs].toMap()[Message::kRelClickPos];
+
+  perform_action(args);
 }
 void AppComm::type_text(const QString& text) {
   if (get_set_index() < 0) {

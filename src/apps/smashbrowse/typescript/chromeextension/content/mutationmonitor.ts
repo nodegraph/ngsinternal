@@ -151,9 +151,18 @@ class MutationMonitor {
             // Loop over the rules.
             for (let j = rules.length - 1; j >= 0; j--) {
                 let rule = rules[j];
-                if (rule.type === CSSRule.STYLE_RULE && hover_regex.test((<CSSStyleRule>rule).selectorText)) {
-                    //console.log('deleting rule for ' + rule.selectorText + '+++' + rule.style)
-                    css_sheet.deleteRule(j);
+                if (rule.type == CSSRule.MEDIA_RULE) {
+                    // This rule acts like a grouping rule, so we recurse.
+                    this.remove_hover_rules(<CSSMediaRule>rule)
+                } else if (rule.type === CSSRule.STYLE_RULE) {
+                    let style_rule = <CSSStyleRule>rule
+                    if (hover_regex.test(style_rule.selectorText.toLowerCase())) {
+                        //console.log('deleting rule for ' + rule.selectorText + '+++' + rule.style)
+                        let st = style_rule.selectorText.toLowerCase()
+                        st = st.replace(/:hover/g, "")
+                        style_rule.selectorText = st
+                        //css_sheet.deleteRule(j);
+                    }
                 }
             }
         }
@@ -161,6 +170,32 @@ class MutationMonitor {
         //  style.type = 'text/css';
         //  style.innerHTML = '*:hover {all:initial!important;}'
         //  document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    remove_hover_rules(media_rule: CSSMediaRule): void {
+        if (!media_rule) {
+            return
+        }
+        let rules = media_rule.cssRules
+        let hover_regex = /:hover/;
+        for (let j = rules.length-1; j >= 0; j--) {
+            let rule = rules[j];
+            if (rule.type == CSSRule.MEDIA_RULE) {
+                // This rule acts like a grouping rule, so we recurse.
+                this.remove_hover_rules(<CSSMediaRule>rule)
+            } else if (rule.type === CSSRule.STYLE_RULE) {
+                let style_rule = <CSSStyleRule>rule
+                if (hover_regex.test(style_rule.selectorText.toLowerCase())) {
+                    //console.log('deleting rule for ' + rule.selectorText + '+++' + rule.style)
+                    let st = style_rule.selectorText.toLowerCase()
+                    st = st.replace(/:hover/g, "")
+                    style_rule.selectorText = st
+                    //css_sheet.deleteRule(j);
+                }
+                //console.log('deleting rule for ' + rule.selectorText + '+++' + rule.style)
+                //media_rule.deleteRule(j);
+            }
+        }
     }
 
     // Removes all zoom settings from css rules, by setting them all to 1.
@@ -193,7 +228,7 @@ class MutationMonitor {
     // Disables "zoom: reset;" in all styles. 
     // In Chrome, styles with "zoom: reset;" causes getBoundingClientRect() to return incorrect shifted values.
     disable_zoom() {
-        let zoom_regex = /zoom:\s*reset/;
+        //let zoom_regex = /zoom:\s*reset/;
         for (let i = 0; i < document.styleSheets.length; i++) {
             let sheet = document.styleSheets[i]
             // Note the cssRules will be null if the css stylesheet is loaded from another domain (cross domain security).
@@ -206,10 +241,18 @@ class MutationMonitor {
         }
     }
 
+    add_video_controls() {
+        let videos = this.gui_collection.page_wrap.get_videos()
+        for (let v = 0; v<videos.length; v++) {
+            videos[v].element.setAttribute("controls", "controls")
+        }
+    }
+
     on_loaded() {
         // Disable hovers.
         this.disable_hover()
         this.disable_zoom()
+        this.add_video_controls()
 
         // Start mutation to timer, to try and detect when page is fully loaded.
         this.start_mutation_timer()

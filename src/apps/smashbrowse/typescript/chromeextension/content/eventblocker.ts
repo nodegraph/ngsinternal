@@ -44,38 +44,36 @@ class EventBlocker {
         'input']
 
     block_event(event: UIEvent): boolean {
-        // If the event is inside our context menu or popup dialog, let it through.
-        //if (window == window.top) {
-            if (event.target && (event.target instanceof HTMLElement)) { // event.target.tagName
-                if (this.gui_collection.contains_element(<HTMLElement>event.target)) {
-                    return true
-                }
+        
+        if (event.target && (event.target instanceof Element)) { // event.target.tagName
+            if (this.gui_collection.contains_element(<Element>event.target)) {
+                return true
             }
+        }
 
-            // Otherwise we selectively let the event through or block it.
-            switch (event.type) {
-                case 'contextmenu':
-                    this.gui_collection.on_context_menu(<MouseEvent>event)
-                    break
-                case 'click':
-                    // Click outside a visible context menu will close it.
-                    break
-                case 'mousemove':
-                    this.gui_collection.on_mouse_over(<MouseEvent>event)
-                    break
-                case 'mouseout':
-                    break
-                case 'scroll':
-                    //if (event.target) {
-                    //    var elem_wrap = new ElemWrap(event.target)
-                    //    console.log('got scroll target: ' + elem_wrap.get_xpath())
-                    //}
-                    //g_overlay_sets.update()
-                    return true
-                case 'message':
-                    return true
-            }
-        //}
+        // Otherwise we selectively let the event through or block it.
+        switch (event.type) {
+            case 'contextmenu':
+                this.gui_collection.on_context_menu(<MouseEvent>event)
+                break
+            case 'click':
+                // Click outside a visible context menu will close it.
+                break
+            case 'mousemove':
+                this.gui_collection.on_mouse_over(<MouseEvent>event)
+                break
+            case 'mouseout':
+                break
+            case 'scroll':
+                //if (event.target) {
+                //    var elem_wrap = new ElemWrap(event.target)
+                //    console.log('got scroll target: ' + elem_wrap.get_xpath())
+                //}
+                //g_overlay_sets.update()
+                return true
+            case 'message':
+                return true
+        }
 
         // If we get here, then the event will be blocked from further propagation.
         event.stopPropagation();

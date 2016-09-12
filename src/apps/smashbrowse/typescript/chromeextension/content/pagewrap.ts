@@ -121,10 +121,10 @@ class PageWrap {
         // Convert to elem wraps.
         let elem_wraps: ElemWrap[] = []
         for (let i = 0; i < nodes.length; i++) {
-            if (!(nodes[i] instanceof HTMLElement)) {
+            if (!(nodes[i] instanceof Element)) {
                 continue
             }
-            let element = <HTMLElement>(nodes[i])
+            let element = <Element>(nodes[i])
             // We skip any elements that are a part of our own smash browse gui elements.
             if (this.gui_collection.contains_element(element)) {
                 continue
@@ -168,8 +168,9 @@ class PageWrap {
         }
 
         // Build xpath to find all svg elem wraps.
-        let xpath = "//*[local-name() = 'svg']"
-        let svgs: ElemWrap[] = this.get_visible_by_xpath(xpath)
+        let svgs: ElemWrap[] = this.get_svgs() //this.get_visible_by_xpath(xpath)
+
+        console.log('number of svgs is: ' + svgs.length)
 
         // Loop over the elem wraps.
         let svg: ElemWrap = null
@@ -226,20 +227,74 @@ class PageWrap {
     //Find elem wraps by non mouse values.
     //---------------------------------------------------------------------------------
 
+    get_svgs(): ElemWrap[] {
+        let xpath = "//*[local-name() = 'svg']"
+        let set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+        console.log('num raw elements for: ' + xpath + " is " + set.snapshotLength)
+        // Convert to elem wraps.
+        let elem_wraps: ElemWrap[] = []
+        for (let i = 0; i < set.snapshotLength; i++) {
+            let item = set.snapshotItem(i)
+            // We skip any elements that are a part of our own smash browse gui elements.
+            if (this.gui_collection.contains_element(item)) {
+                continue
+            }
+            if (!(item instanceof SVGElement)) {
+                continue
+            }
+            // Create the elem wrap.
+            let ew = new ElemWrap(<SVGElement>item)
+            // Drop it if it's not visible.
+            if (!ew.is_visible()) {
+                continue
+            }
+            // Otherwise we collect it.
+            elem_wraps.push(ew)
+        }
+        return elem_wraps
+    }
+
+    get_videos(): ElemWrap[] {
+        let xpath = "//*[local-name() = 'video']"
+        let set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+        console.log('num raw video elements for: ' + xpath + " is " + set.snapshotLength)
+        // Convert to elem wraps.
+        let elem_wraps: ElemWrap[] = []
+        for (let i = 0; i < set.snapshotLength; i++) {
+            let item = set.snapshotItem(i)
+            // We skip any elements that are a part of our own smash browse gui elements.
+            if (this.gui_collection.contains_element(item)) {
+                continue
+            }
+            if (!(item instanceof HTMLVideoElement)) {
+                continue
+            }
+            // Create the elem wrap.
+            let ew = new ElemWrap(<HTMLVideoElement>item)
+            // Drop it if it's not visible.
+            if (!ew.is_visible()) {
+                continue
+            }
+            // Otherwise we collect it.
+            elem_wraps.push(ew)
+        }
+        return elem_wraps
+    }
 
     // Returns an array of elem wraps with the given xpath.
     // Note that even in visible elements will be returned.
     get_visible_by_xpath(xpath: string): ElemWrap[] {
         let set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+        console.log('num raw elements for: ' + xpath + " is " + set.snapshotLength)
         // Convert to elem wraps.
         let elem_wraps: ElemWrap[] = []
         for (let i = 0; i < set.snapshotLength; i++) {
             let item = set.snapshotItem(i)
-            if (!(item instanceof HTMLElement)) {
+            if (!(item instanceof Element)) {
                 continue
             }
-            // Cast to an HTMLElement.
-            let element = <HTMLElement>(item)
+            // Cast to an Element.
+            let element = <Element>(item)
             // We skip any elements that are a part of our own smash browse gui elements.
             if (this.gui_collection.contains_element(element)) {
                 continue
@@ -343,6 +398,7 @@ class PageWrap {
                 }
             }
         }
+        console.log('overlaps: ' + overlaps)
 
         // Find the elem wraps which have surrounding elem wraps matching the target_values.
         let matching: ElemWrap[] = []
@@ -358,6 +414,7 @@ class PageWrap {
                 matching.push(candidates[i])
             }
         }
+        console.log('matching: ' + matching)
 
         // Initialize eliminated to all false.
         let eliminated: boolean[] = []
@@ -383,6 +440,7 @@ class PageWrap {
                 }
             }
         }
+        console.log('eliminated: ' + eliminated)
 
         // Extract the non eliminated elem wraps out.
         let results: ElemWrap[] = []
@@ -391,6 +449,7 @@ class PageWrap {
                 results.push(matching[i])
             }
         }
+        console.log('results: ' + results)
 
         // Phew we're done!
         return results
@@ -418,16 +477,13 @@ class PageWrap {
     }
 
     // Returns an array of images values from elem wraps under the given page point.
-    get_image_values_at(page_pos: Point): string[] {
-        let elem_wraps = this.get_visible_overlapping_at(page_pos)
+    static get_image_values_at(elem_wraps: ElemWrap[], page_pos: Point): string[] {
         let values = PageWrap.extract_values(elem_wraps, ElemWrap.prototype.get_image)
         return values
     }
 
     // Returns an array of text values from elem wraps under the given page point.
-    get_text_values_at(page_pos: Point): string[] {
-        let elem_wraps = this.get_visible_overlapping_at(page_pos)
-
+    static get_text_values_at(elem_wraps: ElemWrap[], page_pos: Point): string[] {
         // Debugging
         if (elem_wraps.length) {
             console.log('elem frame path: ' + elem_wraps[0].get_frame_index_path())

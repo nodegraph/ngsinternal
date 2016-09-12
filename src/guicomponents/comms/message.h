@@ -139,6 +139,9 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kOptionTexts;
   static const char* kOptionValues;
 
+  static const char* kClickPos;
+  static const char* kRelClickPos;
+
   static const char* kAppIFramePath;
 
   Message();

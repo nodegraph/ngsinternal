@@ -12,13 +12,13 @@ class ElemWrap {
     // Our dependencies.
     
     // Our members.
-    element: HTMLElement // The actual dom element.
+    element: Element // The actual dom element.
     page_box: Box // Our bounds in page space.
     wrap_type: WrapType // Our wrapping type.
     getter: () => string // Gets the value of our wrapping type.
     
     // Constructor.
-    constructor(element: HTMLElement) {
+    constructor(element: Element) {
         // Our Dependencies.
         
         // Our Members.
@@ -39,7 +39,7 @@ class ElemWrap {
 
     // Returns an unique opaque pointer for the purposes of identification.
     // When two ElemWraps return the same id, they represent a wrapper around the same dom element.
-    get_id(): HTMLElement {
+    get_id(): Element {
         return this.element
     }
 
@@ -98,7 +98,7 @@ class ElemWrap {
     }
 
     //----------------------------------------------------------------------------------------
-    //HTMLElement geometry.
+    //Element geometry.
     //----------------------------------------------------------------------------------------
 
 
@@ -136,8 +136,11 @@ class ElemWrap {
     }
 
     is_visible(): boolean {
-        if ((this.element.offsetWidth == 0) || (this.element.offsetHeight == 0)) {
-            return false
+        if (this.element instanceof HTMLElement) {
+            let he = <HTMLElement>this.element
+            if ((he.offsetWidth == 0) || (he.offsetHeight == 0)) {
+                return false
+            }
         }
         if (this.page_box.get_width() == 0) {
             return false
@@ -166,14 +169,14 @@ class ElemWrap {
     }
 
     //----------------------------------------------------------------------------------------
-    //HTMLElement Identification. (This is usually only valid during one browsing session.)
+    //Element Identification. (This is usually only valid during one browsing session.)
     //----------------------------------------------------------------------------------------
 
     //Get the full xpath for an element, anchored at the html document.
     //For simplicity each path element always has a [] index suffix.
     get_xpath(): string {
         let path: string[] = [];
-        let element: HTMLElement = this.element
+        let element: Element = this.element
         while (element) {
             if (element.parentNode) {
                 let node_name: string = element.nodeName;
@@ -185,15 +188,18 @@ class ElemWrap {
                     }
                     sibling = sibling.previousElementSibling
                 }
-                path.unshift(node_name + '[' + count + ']');
+                if (node_name == 'svg') {
+                    node_name = "*[local-name() = 'svg']"
+                }
+                path.unshift(node_name + '[' + count + ']')
             }
-            element = <HTMLElement>element.parentNode
+            element = <Element>element.parentNode
         }
         return '/' + path.join('/');
     }
 
     //----------------------------------------------------------------------------------------
-    //HTMLElement Shifting.
+    // Element Shifting.
     //----------------------------------------------------------------------------------------
 
     // Returns the next topmost element on one side of us.
@@ -382,7 +388,7 @@ class ElemWrap {
 
 
     //----------------------------------------------------------------------------------------
-    //HTMLElement Behavioral Properties.
+    // Element Behavioral Properties.
     //----------------------------------------------------------------------------------------
 
     //This is detects the back ground element of web pages and also popup divs.
@@ -417,7 +423,7 @@ class ElemWrap {
 
 
     //----------------------------------------------------------------------------------------
-    //HTMLElement Properties/Values.
+    // Element Properties/Values.
     //----------------------------------------------------------------------------------------
 
     //Retrieves the image value directly on an element in the dom hierarchy.
@@ -430,6 +436,10 @@ class ElemWrap {
         // Return the src for images and video elements.
         if (tag_name === 'img') {
             return (<HTMLImageElement>this.element).src
+        }
+
+        if (tag_name === 'video') {
+            return (<HTMLVideoElement>this.element).src
         }
         
         if (tag_name === 'source') {

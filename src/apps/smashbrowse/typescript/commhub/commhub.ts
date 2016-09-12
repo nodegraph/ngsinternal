@@ -134,37 +134,39 @@ class AppConnection extends BaseConnection {
                 break
             case RequestType.kNavigateTo:
                 this.webdriverwrap.navigate_to(req.args.url).then(function() {
-                    send_msg_to_app(new ResponseMessage('-1', true))
+                    let req2 = new RequestMessage("",RequestType.kSwitchIFrame, {iframe: ''})
+                    send_msg_to_ext(req2)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break
             case RequestType.kNavigateBack:
                 this.webdriverwrap.navigate_back().then(function() {
-                    send_msg_to_app(new ResponseMessage('-1', true))
+                    let req2 = new RequestMessage("",RequestType.kSwitchIFrame, {iframe: ''})
+                    send_msg_to_ext(req2)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break
             case RequestType.kNavigateForward:
                 this.webdriverwrap.navigate_forward().then(function() {
-                    send_msg_to_app(new ResponseMessage('-1', true))
+                    let req2 = new RequestMessage("",RequestType.kSwitchIFrame, {iframe: ''})
+                    send_msg_to_ext(req2)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break
             case RequestType.kNavigateRefresh:
                 this.webdriverwrap.navigate_refresh().then(function() {
-                    send_msg_to_app(new ResponseMessage('-1', true))
+                    let req2 = new RequestMessage("",RequestType.kSwitchIFrame, {iframe: ''})
+                    send_msg_to_ext(req2)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage('-1', false, error))
                 })
                 break
             case RequestType.kSwitchIFrame:
                 this.webdriverwrap.switch_to_iframe(req.args.iframe).then(function() {
-                    // We need to leg the ext's bgcomm know about this switch as it tracks iframes.
-                    // The bgcomm will send a response back.
-                    console.log('comm hub set iframe to ' + req.args.iframe)
+                    // Update the chrome extension.
                     send_msg_to_ext(req)
                 }, function(error) {
                     console.log('comm hub failed to set iframe to ' + req.args.iframe)
@@ -181,7 +183,7 @@ class AppConnection extends BaseConnection {
                             WebDriverWrap.terminate_chain(p)
                         } break
                         case ActionType.kMouseOver: {
-                            let p = this.webdriverwrap.mouse_over_element(req.xpath, req.args.x, req.args.y)
+                            let p = this.webdriverwrap.mouse_over_element(req.xpath, req.args.rel_click_pos.x, req.args.rel_click_pos.y)
                             WebDriverWrap.terminate_chain(p)
                         } break
                         case ActionType.kSendText: {

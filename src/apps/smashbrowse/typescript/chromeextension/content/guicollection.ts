@@ -73,9 +73,15 @@ class GUICollection {
             return
         }
         let p = new Point({x: e.pageX, y: e.pageY})
-        let text_values = this.page_wrap.get_text_values_at(p)
-        let image_values = this.page_wrap.get_image_values_at(p)
-        return this.context_menu.on_context_menu(e, text_values, image_values)
+        let elem_wraps = this.page_wrap.get_visible_overlapping_at(p)
+        let text_values = PageWrap.get_text_values_at(elem_wraps,p)
+        let image_values = PageWrap.get_image_values_at(elem_wraps,p)
+        let rel_click_pos = new Point({x: 0, y: 0})
+        if (elem_wraps.length>0) {
+            rel_click_pos = elem_wraps[0].page_box.get_relative_point(p)
+        }
+
+        return this.context_menu.on_context_menu(e, rel_click_pos, text_values, image_values)
     }
 
     on_mouse_over(e: MouseEvent): void {

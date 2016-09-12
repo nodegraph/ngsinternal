@@ -76,7 +76,7 @@ class OverlaySet {
         }
     }
 
-    static find_element(elem_wraps: ElemWrap[], element: HTMLElement): number {
+    static find_element(elem_wraps: ElemWrap[], element: Element): number {
         for(var i=0; i<elem_wraps.length; i++) {
             if(elem_wraps[i].element === element) {
                 return i;

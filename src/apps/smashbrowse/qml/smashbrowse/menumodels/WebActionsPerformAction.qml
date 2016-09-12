@@ -40,12 +40,12 @@ ListModel {
         script: "web_action_stack_page.on_select_from_dropdown()"
     }
 
-//    ListElement {
-//        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-//        title: "Hover the Mouse"
-//        description: "Hover the mouse over the crosshair."
-//        script: "app_comm.perform_mouse_over()"
-//    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        title: "Hover the Mouse"
+        description: "Hover the mouse over the crosshair."
+        script: "app_comm.perform_mouse_over()"
+    }
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"

@@ -48,6 +48,9 @@ const char* Message::kMatchFontSize = "match_font_size";
 const char* Message::kOptionTexts = "option_texts";
 const char* Message::kOptionValues = "option_values";
 
+const char* Message::kClickPos = "click_po";
+const char* Message::kRelClickPos = "rel_click_pos";
+
 const char* Message::kAppIFramePath = "-1";
 
 Message::Message()

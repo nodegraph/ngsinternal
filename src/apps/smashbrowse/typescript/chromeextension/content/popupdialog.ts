@@ -163,7 +163,7 @@ class InputPopup extends BasePopup {
     }
 
     // Note in the inner_html the input element must have an id of "smash_browse_popup_input".
-    set_input_element(element: HTMLElement): void {
+    set_input_element(element: Element): void {
         this.input_div.appendChild(element)
     }
 

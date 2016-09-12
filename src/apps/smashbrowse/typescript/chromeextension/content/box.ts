@@ -61,6 +61,13 @@ class Box {
         return (this.top + this.bottom) / 2.0
     }
 
+    get_relative_point(p: Point): Point {
+        let rel = new Point({x: 0, y: 0})
+        rel.x = p.x - this.left
+        rel.y = p.y - this.top
+        return rel
+    }
+
     //Assumes we are in page space and converts to client space.
     to_client_space(): void {
         this.left -= window.scrollX

@@ -18,7 +18,7 @@ class PageOverlaysHandler {
         this.overlay_sets = gc.overlay_sets
     }
 
-    show_app_menu(click_pos: Point, text_values: string[], image_values: string[]): void {
+    show_app_menu(click_pos: Point, rel_click_pos: Point, text_values: string[], image_values: string[]): void {
         // Determine the set index at the click point.
         let set_index = this.overlay_sets.find_set_index(click_pos)
         let overlay_index = -1
@@ -46,13 +46,17 @@ class PageOverlaysHandler {
 
         let req = new RequestMessage(PageWrap.iframe, RequestType.kShowWebActionMenu,
             {
-                pos: click_pos,
+                // Click pos.
+                click_pos: click_pos,
+                rel_click_pos: rel_click_pos,
+                // Text and image values under click.
                 text_values: text_values,
                 image_values: image_values,
+                // Existing set element under click.
                 set_index: set_index,
                 overlay_index: overlay_index,
-                option_values: option_values,
-                option_texts: option_texts
+                // Select/Dropdown option texts.
+                option_texts: option_texts,
             })
 
         this.content_comm.send_to_bg(req)
