@@ -187,11 +187,11 @@ export class WebDriverWrap {
     }
 
     // Creates a promise chain which will click on an element.
-    click_on_element(xpath: string): webdriver.promise.Promise<{}> {
+    click_on_element(xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<{}> {
         return this.get_visible_element(xpath).then(
             function (element: webdriver.WebElement) {
                 let our_driver = <webdriver.WebDriver>this.driver
-                return our_driver.actions().click(element).perform()
+                return our_driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).click().perform()    //.click(element).perform()
             }.bind(this)
         )
     }

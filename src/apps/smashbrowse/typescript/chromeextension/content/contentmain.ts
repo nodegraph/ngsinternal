@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', mutation_monitor.on_loaded.bind(mu
 
 // Context menu handling.
 context_menu_handler = new PageOverlaysHandler(content_comm, gui_collection)
-gui_collection.context_menu.set_handler(context_menu_handler)
+gui_collection.page_overlays.set_handler(context_menu_handler)
 
 console.log("create a new instance of content script!")
 

@@ -49,8 +49,8 @@ const char* Message::kOptionTexts = "option_texts";
 const char* Message::kOptionValues = "option_values";
 
 const char* Message::kClickPos = "click_po";
-const char* Message::kRelClickPos = "rel_click_pos";
-
+const char* Message::kNearestRelClickPos = "nearest_rel_click_pos";
+const char* Message::kOverlayRelClickPos = "overlay_rel_click_pos";
 const char* Message::kAppIFramePath = "-1";
 
 Message::Message()

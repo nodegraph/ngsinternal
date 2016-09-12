@@ -648,7 +648,7 @@ void AppComm::perform_action(ActionType action) {
 
   QVariantMap args;
   args[Message::kSetIndex] = get_set_index();
-  args[Message::kOverlayIndex] = 0;
+  args[Message::kOverlayIndex] = get_overlay_index();
   args[Message::kAction] = action;
 
   Message req(RequestType::kPerformAction);
@@ -661,7 +661,17 @@ void AppComm::perform_action(const QVariantMap& args) {
   handle_request_from_app(req);
 }
 void AppComm::perform_click() {
-  perform_action(ActionType::kSendClick);
+  if (get_set_index() < 0) {
+    return;
+  }
+
+  QVariantMap args;
+  args[Message::kSetIndex] = get_set_index();
+  args[Message::kOverlayIndex] = get_overlay_index();
+  args[Message::kAction] = ActionType::kSendClick;
+  args[Message::kOverlayRelClickPos] = _menu_msg[Message::kArgs].toMap()[Message::kOverlayRelClickPos];
+
+  perform_action(args);
 }
 void AppComm::perform_mouse_over() {
   if (get_set_index() < 0) {
@@ -670,9 +680,9 @@ void AppComm::perform_mouse_over() {
 
   QVariantMap args;
   args[Message::kSetIndex] = get_set_index();
-  args[Message::kOverlayIndex] = 0;
+  args[Message::kOverlayIndex] = get_overlay_index();
   args[Message::kAction] = ActionType::kMouseOver;
-  args[Message::kRelClickPos] = _menu_msg[Message::kArgs].toMap()[Message::kRelClickPos];
+  args[Message::kOverlayRelClickPos] = _menu_msg[Message::kArgs].toMap()[Message::kOverlayRelClickPos];
 
   perform_action(args);
 }
@@ -683,7 +693,7 @@ void AppComm::type_text(const QString& text) {
 
   QVariantMap args;
   args[Message::kSetIndex] = get_set_index();
-  args[Message::kOverlayIndex] = 0;
+  args[Message::kOverlayIndex] = get_overlay_index();
   args[Message::kAction] = ActionType::kSendText;
   args[Message::kText] = text;
   perform_action(args);
@@ -701,7 +711,7 @@ void AppComm::select_from_dropdown(const QString& option_text) {
 
   QVariantMap args;
   args[Message::kSetIndex] = get_set_index();
-  args[Message::kOverlayIndex] = 0;
+  args[Message::kOverlayIndex] = get_overlay_index();
   args[Message::kAction] = ActionType::kSelectOption;
   args[Message::kOptionText] = option_text;
   perform_action(args);

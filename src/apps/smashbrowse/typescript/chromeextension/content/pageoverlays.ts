@@ -53,10 +53,10 @@ class PageOverlays {
         this.click_cross_overlay = new CrossOverlay('smash_browse_text_box', DistinctColors.text_color, -1)
     }
 
-    on_context_menu(page_event: MouseEvent, rel_click_pos: Point, text_values: string[], image_values: string[]): boolean {
+    on_context_menu(page_event: MouseEvent, nearest_rel_click_pos: Point, text_values: string[], image_values: string[]): boolean {
         this.page_pos = new Point({x: page_event.pageX, y: page_event.pageY})
         this.update_click_box_overlay(this.page_pos)
-        this.handler.show_app_menu(this.page_pos, rel_click_pos, text_values, image_values)
+        this.handler.show_app_menu(this.page_pos, nearest_rel_click_pos, text_values, image_values)
 
         page_event.preventDefault();
         return false

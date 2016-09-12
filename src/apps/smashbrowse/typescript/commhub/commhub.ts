@@ -179,11 +179,11 @@ class AppConnection extends BaseConnection {
                     // then we let webdriver perform actions.
                     switch (req.args.action) {
                         case ActionType.kSendClick: {
-                            let p = this.webdriverwrap.click_on_element(req.xpath)
+                            let p = this.webdriverwrap.click_on_element(req.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                             WebDriverWrap.terminate_chain(p)
                         } break
                         case ActionType.kMouseOver: {
-                            let p = this.webdriverwrap.mouse_over_element(req.xpath, req.args.rel_click_pos.x, req.args.rel_click_pos.y)
+                            let p = this.webdriverwrap.mouse_over_element(req.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                             WebDriverWrap.terminate_chain(p)
                         } break
                         case ActionType.kSendText: {

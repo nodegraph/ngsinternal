@@ -140,7 +140,8 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kOptionValues;
 
   static const char* kClickPos;
-  static const char* kRelClickPos;
+  static const char* kNearestRelClickPos;
+  static const char* kOverlayRelClickPos;
 
   static const char* kAppIFramePath;
 

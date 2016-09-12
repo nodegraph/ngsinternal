@@ -72,7 +72,7 @@ class ElemWrap {
         return -1
     }
 
-    get_getter_from_wrap_type(wrap_type: WrapType): ()=>string {
+    get_getter_from_wrap_type(wrap_type: WrapType): () => string {
         // Note this returns functions that are not bound to this.
         // This means that these functions can be called by many instances.
         switch (wrap_type) {
@@ -88,7 +88,7 @@ class ElemWrap {
         return null
     }
 
-    get_getter(): ()=>string {
+    get_getter(): () => string {
         return this.getter
     }
 
@@ -150,7 +150,7 @@ class ElemWrap {
         }
 
         // Check the :before pseudo element first.
-        let before_style = window.getComputedStyle(this.element, ':after');
+        let before_style = window.getComputedStyle(this.element, ':before');
         if (before_style.visibility == "hidden" || (before_style.display == 'none')) {
             return false
         }
@@ -203,7 +203,7 @@ class ElemWrap {
     //----------------------------------------------------------------------------------------
 
     // Returns the next topmost element on one side of us.
-    get_neighboring_elem_wrap(getter: ()=>string, side: Direction, page_wrap: PageWrap): ElemWrap {
+    get_neighboring_elem_wrap(getter: () => string, side: Direction, page_wrap: PageWrap): ElemWrap {
         let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
 
         // Get all elem wraps intersecting the beam.
@@ -244,7 +244,7 @@ class ElemWrap {
 
     shift(dir: Direction, wrap_type: WrapType, page_wrap: PageWrap): void {
         // Find the proper getter for the type we're shifting to.
-        let getter: ()=>string = this.get_getter_from_wrap_type(wrap_type)
+        let getter: () => string = this.get_getter_from_wrap_type(wrap_type)
         let elem_wrap: ElemWrap = this.get_neighboring_elem_wrap(getter, dir, page_wrap)
         if (elem_wrap) {
             this.element = elem_wrap.element
@@ -262,7 +262,7 @@ class ElemWrap {
         //console.log('num elem wraps: ' + elem_wraps.length)
 
         // Select out those elem wraps returning any value with getter.
-        let getter: ()=>string = this.get_getter()
+        let getter: () => string = this.get_getter()
         let candidates: ElemWrap[] = []
         for (let i = 0; i < elem_wraps.length; i++) {
             let value = getter.call(elem_wraps[i])
@@ -441,7 +441,7 @@ class ElemWrap {
         if (tag_name === 'video') {
             return (<HTMLVideoElement>this.element).src
         }
-        
+
         if (tag_name === 'source') {
             return (<HTMLSourceElement>this.element).src
         }
@@ -491,7 +491,7 @@ class ElemWrap {
         // Loop through children accumulating text node values.
         for (let c = 0; c < this.element.childNodes.length; c++) {
             let child = this.element.childNodes[c]
-            if (child.nodeType == Node.TEXT_NODE ) {
+            if (child.nodeType == Node.TEXT_NODE) {
                 if (child instanceof Attr) {
                     let attr: Attr = <Attr>(child)
                     console.log('text nodes attr name is: ' + attr.name)
@@ -555,7 +555,7 @@ class ElemWrap {
 
     is_select(): string {
         if (this.element.tagName.toLowerCase() == 'select') {
-            return 'select'    
+            return 'select'
         }
         return ''
     }
