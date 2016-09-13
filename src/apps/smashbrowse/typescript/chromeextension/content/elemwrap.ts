@@ -248,7 +248,6 @@ class ElemWrap {
         let elem_wrap: ElemWrap = this.get_neighboring_elem_wrap(getter, dir, page_wrap)
         if (elem_wrap) {
             this.element = elem_wrap.element
-            console.log('element shifted to: ' + this.get_xpath())
         }
     }
 

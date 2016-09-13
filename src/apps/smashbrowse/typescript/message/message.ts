@@ -41,7 +41,6 @@ const enum RequestType {
 
     // Info Request.
     kGetCrosshairInfo,
-    kGetOverlayXPath,
 }
 
 const enum ActionType {
@@ -101,9 +100,6 @@ class BaseMessage {
                 if (obj.hasOwnProperty('args')) {
                     req.args = obj.args
                 }
-                if (obj.hasOwnProperty('xpath')) {
-                    req.xpath = obj.xpath
-                }
                 return req
             }
             case MessageType.kResponseMessage: {
@@ -141,14 +137,12 @@ class BaseMessage {
 
 class RequestMessage extends BaseMessage {
     request: RequestType
-    xpath: string
     args: any // a key value dict of arguments
-    constructor(id: Number, iframe: string, request: RequestType, args: any = {}, xpath: string = "") {
+    constructor(id: Number, iframe: string, request: RequestType, args: any = {}) {
         super(id, iframe)
         this.msg_type = MessageType.kRequestMessage
         this.request = request
         this.args = args
-        this.xpath = xpath
     }
 }
 

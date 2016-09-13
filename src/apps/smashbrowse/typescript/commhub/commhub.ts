@@ -118,7 +118,6 @@ class AppConnection extends BaseConnection {
                         send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
                     }
                 }
-                console.log('got check browser is open')
                 this.webdriverwrap.browser_is_open(on_response.bind(this))
                 break
             case RequestType.kResizeBrowser:
@@ -175,55 +174,44 @@ class AppConnection extends BaseConnection {
                     // Update the chrome extension.
                     send_msg_to_ext(req)
                 }, function(error) {
-                    console.log('comm hub failed to set iframe to ' + req.args.iframe)
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
                 break
             case RequestType.kPerformAction:
-                //if (req.xpath) {
-                    // If the xpath has been resolved by the content script,
-                    // then we let webdriver perform actions.
-                    switch (req.args.action) {
-                        case ActionType.kSendClick: {
-                            let p = this.webdriverwrap.click_on_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
-                            WebDriverWrap.terminate_chain(p, req.id)
-                        } break
-                        case ActionType.kMouseOver: {
-                            let p = this.webdriverwrap.mouse_over_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
-                            WebDriverWrap.terminate_chain(p, req.id)
-                        } break
-                        case ActionType.kSendText: {
-                            let p = this.webdriverwrap.send_text(req.args.xpath, req.args.text)
-                            WebDriverWrap.terminate_chain(p, req.id)
-                        } break
-                        case ActionType.kSendEnter: {
-                            let p = this.webdriverwrap.send_key(req.args.xpath, Key.RETURN)
-                            WebDriverWrap.terminate_chain(p, req.id)
-                        } break
-                        case ActionType.kGetText: {
-                            let p = this.webdriverwrap.get_text(req.args.xpath)
-                            WebDriverWrap.terminate_chain(p, req.id)
-                        } break
-                        case ActionType.kSelectOption: {
-                            let p = this.webdriverwrap.select_option(req.args.xpath, req.args.option_text)
-                            WebDriverWrap.terminate_chain(p, req.id)
-                        } break
-                        case ActionType.kScrollDown:
-                        case ActionType.kScrollUp:
-                        case ActionType.kScrollRight:
-                        case ActionType.kScrollLeft: {
-                            // Scroll actions need to be performed by the extension
-                            // so we pass it through.
-                            send_msg_to_ext(req)
-                        } break
-                    }
-                //} 
-                // else {
-                //     // Send request to extension to resolve the xpath,
-                //     // and to unblock the events in the content script so that
-                //     // the webdriver actions can take effect on the elements.
-                //     send_msg_to_ext(req)
-                // }
+                switch (req.args.action) {
+                    case ActionType.kSendClick: {
+                        let p = this.webdriverwrap.click_on_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
+                        WebDriverWrap.terminate_chain(p, req.id)
+                    } break
+                    case ActionType.kMouseOver: {
+                        let p = this.webdriverwrap.mouse_over_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
+                        WebDriverWrap.terminate_chain(p, req.id)
+                    } break
+                    case ActionType.kSendText: {
+                        let p = this.webdriverwrap.send_text(req.args.xpath, req.args.text)
+                        WebDriverWrap.terminate_chain(p, req.id)
+                    } break
+                    case ActionType.kSendEnter: {
+                        let p = this.webdriverwrap.send_key(req.args.xpath, Key.RETURN)
+                        WebDriverWrap.terminate_chain(p, req.id)
+                    } break
+                    case ActionType.kGetText: {
+                        let p = this.webdriverwrap.get_text(req.args.xpath)
+                        WebDriverWrap.terminate_chain(p, req.id)
+                    } break
+                    case ActionType.kSelectOption: {
+                        let p = this.webdriverwrap.select_option(req.args.xpath, req.args.option_text)
+                        WebDriverWrap.terminate_chain(p, req.id)
+                    } break
+                    case ActionType.kScrollDown:
+                    case ActionType.kScrollUp:
+                    case ActionType.kScrollRight:
+                    case ActionType.kScrollLeft: {
+                        // Scroll actions need to be performed by the extension
+                        // so we pass it through.
+                        send_msg_to_ext(req)
+                    } break
+                }
                 break
             default:
                 // By default we send requests to the extension. 

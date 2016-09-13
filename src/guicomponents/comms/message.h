@@ -52,7 +52,6 @@ enum RequestType {
 
   // Info Request.
   kGetCrosshairInfo,
-  kGetOverlayXPath,
 };
 
 enum ActionType {
@@ -156,7 +155,7 @@ class COMMS_EXPORT Message: public QVariantMap {
   Message(const QVariantMap& other);
 
   // Initializes a request message.
-  Message(RequestType rt, const QVariantMap& args = QVariantMap(), const QString& xpath = "");
+  Message(RequestType rt, const QVariantMap& args = QVariantMap());
   // Initializes a response message.
   Message(bool success, const QVariant& value = QVariant());
   // Initializes an info message.

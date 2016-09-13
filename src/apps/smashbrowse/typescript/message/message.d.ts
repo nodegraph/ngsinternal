@@ -40,7 +40,6 @@ declare const enum RequestType {
 
     // Info Request.
     kGetCrosshairInfo,
-    kGetOverlayXPath,
 }
 
 declare const enum ActionType {
@@ -84,9 +83,8 @@ declare class BaseMessage {
 
 declare class RequestMessage extends BaseMessage {
     request: RequestType
-    xpath: string
     args: any // a key value dict of arguments
-    constructor(id: Number, iframe: string, request: RequestType, args?: any, xpath?: string)
+    constructor(id: Number, iframe: string, request: RequestType, args?: any)
 }
 
 declare class ResponseMessage extends BaseMessage {

@@ -66,14 +66,13 @@ Message::Message(const QString& json) {
   assert(check_contents());
 }
 
-Message::Message(RequestType rt, const QVariantMap& args, const QString& xpath) {
+Message::Message(RequestType rt, const QVariantMap& args) {
   operator[](Message::kID) = -1;
   operator[](Message::kIFrame) = Message::kAppIFramePath;
   operator[](Message::kMessageType) = static_cast<int>(MessageType::kRequestMessage);
 
   operator[](Message::kRequest) = static_cast<int>(rt);
   operator[](Message::kArgs) = args;
-  operator[](Message::kXPath) = xpath;
 
   assert(check_contents());
 }
@@ -134,10 +133,6 @@ bool Message::check_contents() {
       }
       if (!keys().contains(Message::kArgs)) {
         std::cerr << "Error: request message is missing args.\n";
-        return false;
-      }
-      if (!keys().contains(Message::kXPath)) {
-        std::cerr << "Error: request message is missing xpath.\n";
         return false;
       }
       break;

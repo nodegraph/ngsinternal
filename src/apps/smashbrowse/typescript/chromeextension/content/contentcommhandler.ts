@@ -88,11 +88,6 @@ class ContentCommHandler {
                 this.gui_collection.overlay_sets.shrink_to_extreme(req.args.set_index, req.args.direction)
                 this.content_comm.send_to_bg(success_msg)
             } break
-            case RequestType.kGetOverlayXPath: {
-                let xpath = this.gui_collection.overlay_sets.get_xpath(req.args.set_index, req.args.overlay_index)
-                let resp = new ResponseMessage(req.id, PageWrap.iframe, true, {xpath: xpath})
-                this.content_comm.send_to_bg(resp)
-            } break
             case RequestType.kBlockEvents: {
                 this.gui_collection.event_blocker.block_events()
                 this.content_comm.send_to_bg(success_msg)
@@ -119,25 +114,6 @@ class ContentCommHandler {
                     break
                 }
                 this.content_comm.send_to_bg(success_msg)
-                
-
-                // // The perform action request are usually handled by the nodejs commhub.
-                // // However they can get send to this content script if the xpath in the request
-                // // has not been resolved. Once we resolve the xpath from the set_index, we reissue
-                // // the request, instead of sending a response. This means that these perform_action
-                // // requests will ultimately get sent te app.
-            
-                // // Add the xpath into the request, and re-issue it.
-                // let xpath = this.gui_collection.overlay_sets.get_xpath(request.args.set_index, request.args.overlay_index)
-                // request.xpath = xpath
-
-                // // We also unblock events to allow a webdriver to perform an action on an element at the above xpath.
-                // this.gui_collection.event_blocker.unblock_events()
-
-                // // Send the modified request back to the app.
-                // this.content_comm.send_to_bg(request)
-                // return
-
             } break
             case RequestType.kGetCrosshairInfo: {
                 let info = this.gui_collection.get_crosshair_info(req.args.click_pos)
