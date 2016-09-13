@@ -22,7 +22,7 @@ QtObject {
         // Cache callback.
         nodejs_connected_callback = callback
         // Start polling.
-        app_comm.start_polling()
+        app_worker.start_polling()
     }
 
     // Private.

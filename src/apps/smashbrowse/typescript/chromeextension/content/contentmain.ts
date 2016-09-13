@@ -14,7 +14,7 @@ let context_menu_handler: PageOverlaysHandler = null
 let event_blocker: EventBlocker = null
 
 // Popups.
-gui_collection = new GUICollection()
+gui_collection = new GUICollection(content_comm)
 event_blocker = gui_collection.event_blocker // expose inner event blocker, to keep global variable up to date.
 
 // Setup content comms.

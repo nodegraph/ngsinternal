@@ -219,25 +219,25 @@ export class WebDriverWrap {
     }
 
     // Helper to terminate promise chains.
-    static terminate_chain<T>(p: webdriver.promise.Promise<T>) {
+    static terminate_chain<T>(p: webdriver.promise.Promise<T>, id: Number) {
         p.then(
             function() {
                 // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
-                let req = new RequestMessage('-1', RequestType.kBlockEvents)
-                send_msg_to_ext(req)
+                //let req = new RequestMessage(-1, '-1', RequestType.kBlockEvents)
+                //send_msg_to_ext(req)
                 // Send success response to the app.
                 console.log('terminating chain success with numargs: ' + arguments.length)
                 if (arguments.length == 0) {
-                    send_msg_to_app(new ResponseMessage('-1', true))
+                    send_msg_to_app(new ResponseMessage(id, '-1', true))
                 } else {
                     // Send the first argument in the response.
-                    send_msg_to_app(new ResponseMessage('-1', true, arguments[0]))
+                    send_msg_to_app(new ResponseMessage(id, '-1', true, arguments[0]))
                 }
             }.bind(this),
             function(error: any) {
                 // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
-                let req = new RequestMessage('-1', RequestType.kBlockEvents)
-                send_msg_to_ext(req)
+                //let req = new RequestMessage(-1, '-1', RequestType.kBlockEvents)
+                //send_msg_to_ext(req)
                 // Output error details.
                 console.error("Error in chain!")
                 if (error.stack.indexOf('mouse_over_element') >= 0) {
@@ -255,7 +255,7 @@ export class WebDriverWrap {
                 console.error('exception: ' + error.message + ' stack: ' + error.stack)
 
                 // Send failure reponse to the app.
-                send_msg_to_app(new ResponseMessage('-1', false))
+                send_msg_to_app(new ResponseMessage(id, '-1', false))
             }.bind(this))
     }
 

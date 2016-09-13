@@ -32,6 +32,7 @@ enum ComponentIID {
   kINodeGraphView,
   kIFileModel,
   kIAppComm,
+  kIAppWorker,
   kILicenseChecker,
   kILinkGroup,
   kINodeSelection,
@@ -90,6 +91,7 @@ enum ComponentDID {
   kNodeGraphView,
   kFileModel,
   kAppComm,
+  kAppWorker,
   kLicenseChecker,
   // --
   kNodeSelection,

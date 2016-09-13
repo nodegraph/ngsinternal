@@ -9,7 +9,7 @@
 
 #include <components/interactions/graphbuilder.h>
 
-#include <guicomponents/comms/appcomm.h>
+#include <guicomponents/comms/appworker.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 
@@ -44,7 +44,7 @@ FileModel::FileModel(Entity* app_root)
   get_dep_loader()->register_fixed_dep(_graph_builder, "");
 
   // Make sure the data dir exists.
-  QString data_dir = AppComm::get_user_data_dir();
+  QString data_dir = AppWorker::get_user_data_dir();
   if (!QDir(data_dir).exists()) {
     QDir().mkpath(data_dir);
   }

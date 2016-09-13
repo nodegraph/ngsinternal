@@ -2,7 +2,6 @@
 
 const enum RequestType {
     kUnknownRequest,
-    kShowWebActionMenu,
 
     // Chrome BG Requests.
     kClearAllCookies,
@@ -19,6 +18,7 @@ const enum RequestType {
 
     // Web Page Requests.
     kBlockEvents,
+    kUnblockEvents,
     kNavigateTo,
     kNavigateBack,
     kNavigateForward,
@@ -37,7 +37,11 @@ const enum RequestType {
     kUnmarkSet,
     kMergeMarkedSets,
     kShrinkSetToMarked,
-    kShrinkSet
+    kShrinkSet,
+
+    // Info Request.
+    kGetCrosshairInfo,
+    kGetOverlayXPath,
 }
 
 const enum ActionType {
@@ -57,6 +61,7 @@ const enum InfoType {
     kPageIsLoading,
     kPageIsReady,
     kBgIsConnected,
+    kShowWebActionMenu
 }
 
 const enum MessageType {
@@ -68,10 +73,12 @@ const enum MessageType {
 
 class BaseMessage {
     msg_type: MessageType
+    id: Number // RequestMessage and ResponseMessage id should match. (-1 means we don't care/track about it.)
     iframe: string // The iframe identified by a path of indices. eg /1/0/3/2
 
-    constructor(iframe: string) {
+    constructor(id: Number, iframe: string) {
         this.msg_type = MessageType.kUnformedMessage
+        this.id = id
         this.iframe = iframe
     }
 
@@ -84,9 +91,10 @@ class BaseMessage {
         // Now we create the right message and copy properties from obj.
         // Note that in ES6, we can use Object.assign.
         let iframe: string = obj.iframe
+        let id: Number = obj.id
         switch (obj.msg_type) {
             case MessageType.kRequestMessage:
-                let req = new RequestMessage(iframe, RequestType.kUnknownRequest)
+                let req = new RequestMessage(id, iframe, RequestType.kUnknownRequest)
                 if (obj.hasOwnProperty('request')) {
                     req.request = obj.request
                 }
@@ -98,7 +106,7 @@ class BaseMessage {
                 }
                 return req
             case MessageType.kResponseMessage:
-                let resp = new ResponseMessage(iframe, false)
+                let resp = new ResponseMessage(id, iframe, false)
                 if (obj.hasOwnProperty('success')) {
                     resp.success = obj.success
                 }
@@ -107,7 +115,7 @@ class BaseMessage {
                 }
                 return resp
             case MessageType.kInfoMessage:
-                let info = new InfoMessage(iframe, <InfoType>obj.info)
+                let info = new InfoMessage(id, iframe, <InfoType>obj.info)
                 return info
             default:
                 console.error('Error: Attempt to create message from obj without a message type: ' + JSON.stringify(obj))
@@ -128,8 +136,8 @@ class RequestMessage extends BaseMessage {
     request: RequestType
     xpath: string
     args: any // a key value dict of arguments
-    constructor(iframe: string, request: RequestType, args: any = {}, xpath: string = "") {
-        super(iframe)
+    constructor(id: Number, iframe: string, request: RequestType, args: any = {}, xpath: string = "") {
+        super(id, iframe)
         this.msg_type = MessageType.kRequestMessage
         this.request = request
         this.args = args
@@ -140,8 +148,8 @@ class RequestMessage extends BaseMessage {
 class ResponseMessage extends BaseMessage {
     success: boolean
     value: any
-    constructor(iframe: string, success: boolean, value: any = 0) {
-        super(iframe)
+    constructor(id: Number, iframe: string, success: boolean, value: any = 0) {
+        super(id, iframe)
         this.msg_type = MessageType.kResponseMessage
         this.success = success
         this.value = value
@@ -150,10 +158,12 @@ class ResponseMessage extends BaseMessage {
 
 class InfoMessage extends BaseMessage {
     info: InfoType
-    constructor(iframe: string, info: InfoType) {
-        super(iframe)
+    value: any
+    constructor(id: Number, iframe: string, info: InfoType, value: any = 0) {
+        super(id, iframe)
         this.msg_type = MessageType.kInfoMessage
         this.info = info
+        this.value = value
     }
 }
 

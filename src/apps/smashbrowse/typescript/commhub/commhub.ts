@@ -123,45 +123,45 @@ class AppConnection extends BaseConnection {
                 break
             case RequestType.kOpenBrowser:
                 if (this.webdriverwrap.open_browser()) {
-                    send_msg_to_app(new ResponseMessage('-1', true))
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
                 } else {
-                    send_msg_to_app(new ResponseMessage('-1', false))
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false))
                 }
                 break
             case RequestType.kCloseBrowser:
                 this.webdriverwrap.close_browser()
-                send_msg_to_app(new ResponseMessage('-1', true))
+                send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
                 break
             case RequestType.kNavigateTo:
                 this.webdriverwrap.navigate_to(req.args.url).then(function() {
-                    let req2 = new RequestMessage("",RequestType.kSwitchIFrame, {iframe: ''})
-                    send_msg_to_ext(req2)
+                    let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
+                    send_msg_to_ext(relay_req)
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage('-1', false, error))
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
                 break
             case RequestType.kNavigateBack:
                 this.webdriverwrap.navigate_back().then(function() {
-                    let req2 = new RequestMessage("",RequestType.kSwitchIFrame, {iframe: ''})
-                    send_msg_to_ext(req2)
+                    let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
+                    send_msg_to_ext(relay_req)
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage('-1', false, error))
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
                 break
             case RequestType.kNavigateForward:
                 this.webdriverwrap.navigate_forward().then(function() {
-                    let req2 = new RequestMessage("",RequestType.kSwitchIFrame, {iframe: ''})
-                    send_msg_to_ext(req2)
+                    let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
+                    send_msg_to_ext(relay_req)
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage('-1', false, error))
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
                 break
             case RequestType.kNavigateRefresh:
                 this.webdriverwrap.navigate_refresh().then(function() {
-                    let req2 = new RequestMessage("",RequestType.kSwitchIFrame, {iframe: ''})
-                    send_msg_to_ext(req2)
+                    let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
+                    send_msg_to_ext(relay_req)
                 }, function(error) {
-                    send_msg_to_app(new ResponseMessage('-1', false, error))
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
                 break
             case RequestType.kSwitchIFrame:
@@ -170,7 +170,7 @@ class AppConnection extends BaseConnection {
                     send_msg_to_ext(req)
                 }, function(error) {
                     console.log('comm hub failed to set iframe to ' + req.args.iframe)
-                    send_msg_to_app(new ResponseMessage('-1', false, error))
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
                 break
             case RequestType.kPerformAction:
@@ -180,27 +180,27 @@ class AppConnection extends BaseConnection {
                     switch (req.args.action) {
                         case ActionType.kSendClick: {
                             let p = this.webdriverwrap.click_on_element(req.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
-                            WebDriverWrap.terminate_chain(p)
+                            WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kMouseOver: {
                             let p = this.webdriverwrap.mouse_over_element(req.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
-                            WebDriverWrap.terminate_chain(p)
+                            WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kSendText: {
                             let p = this.webdriverwrap.send_text(req.xpath, req.args.text)
-                            WebDriverWrap.terminate_chain(p)
+                            WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kSendEnter: {
                             let p = this.webdriverwrap.send_key(req.xpath, Key.RETURN)
-                            WebDriverWrap.terminate_chain(p)
+                            WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kGetText: {
                             let p = this.webdriverwrap.get_text(req.xpath)
-                            WebDriverWrap.terminate_chain(p)
+                            WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kSelectOption: {
                             let p = this.webdriverwrap.select_option(req.xpath, req.args.option_text)
-                            WebDriverWrap.terminate_chain(p)
+                            WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kScrollDown:
                         case ActionType.kScrollUp:

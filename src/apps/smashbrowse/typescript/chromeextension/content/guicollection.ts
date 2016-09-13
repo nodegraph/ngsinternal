@@ -2,8 +2,9 @@
 class GUICollection {
 
     event_blocker: EventBlocker
-
+    content_comm: ContentComm
     page_overlays: PageOverlays
+    
 
     wait_popup: WaitPopup
     text_input_popup: TextInputPopup
@@ -14,7 +15,9 @@ class GUICollection {
     distinct_colors: DistinctColors
     overlay_sets: OverlaySets
 
-    constructor() {
+    constructor(content_comm: ContentComm) {
+        this.content_comm = content_comm
+
         // Our popups.
         this.wait_popup = new WaitPopup()
         this.text_input_popup = new TextInputPopup()
@@ -72,22 +75,84 @@ class GUICollection {
         if (!this.page_overlays.initialized()) {
             return
         }
-        let p = new Point({x: e.pageX, y: e.pageY})
-        let elem_wraps = this.page_wrap.get_visible_overlapping_at(p)
-        let text_values = PageWrap.get_text_values_at(elem_wraps,p)
-        let image_values = PageWrap.get_image_values_at(elem_wraps,p)
-        let nearest_rel_click_pos = new Point({x: 0, y: 0})
-        if (elem_wraps.length>0) {
-            nearest_rel_click_pos = elem_wraps[0].page_box.get_relative_point(p)
-        }
+        let click_pos = new Point({x: e.pageX, y: e.pageY})
 
-        return this.page_overlays.on_context_menu(e, nearest_rel_click_pos, text_values, image_values)
+        // Update the click box overly.
+        this.page_overlays.update_crosshair(click_pos)
+
+        // Send the request to the app.
+        let req = new InfoMessage(0, PageWrap.iframe, InfoType.kShowWebActionMenu,
+            {
+                click_pos: click_pos,
+            })
+        this.content_comm.send_to_bg(req)
+
+        // Prevent default behavior of the event.
+        e.preventDefault();
+        return false
     }
 
     on_mouse_over(e: MouseEvent): void {
         let point = new Point({x: e.pageX, y: e.pageY})
         let text_elem_wrap = this.page_wrap.get_top_text_elem_wrap_at(point)
         let image_elem_wrap = this.page_wrap.get_top_image_elem_wrap_at(point)
-        this.page_overlays.on_mouse_over(text_elem_wrap, image_elem_wrap)
+        this.page_overlays.update_overlays(text_elem_wrap, image_elem_wrap)
     }
+
+    get_crosshair_info(click_pos: Point): any {
+        // Get the text and image values.
+        let elem_wraps = this.page_wrap.get_visible_overlapping_at(click_pos)
+        let text_values = PageWrap.get_text_values_at(elem_wraps,click_pos)
+        let image_values = PageWrap.get_image_values_at(elem_wraps,click_pos)
+
+        // Get the nearest click pos.
+        let nearest_rel_click_pos = new Point({x: 0, y: 0})
+        if (elem_wraps.length>0) {
+            nearest_rel_click_pos = elem_wraps[0].page_box.get_relative_point(click_pos)
+        }
+
+        // Determine the set index at the click point and relative click pos to this.
+        let set_index = this.overlay_sets.find_set_index(click_pos)
+        let overlay_index = -1
+        let overlay_rel_click_pos: Point = new Point({ x: 1, y: 1 })
+        if (set_index >= 0) {
+            let oset = this.overlay_sets.sets[set_index]
+            overlay_index = oset.find_overlay_index(click_pos)
+            overlay_rel_click_pos = oset.overlays[overlay_index].elem_wrap.page_box.get_relative_point(click_pos)
+        }
+
+        // If we're a select element, grab the option values and texts.
+        let option_values: string[] = []
+        let option_texts: string[] = []
+        if (set_index >= 0) {
+            let oset = this.overlay_sets.sets[set_index]
+            let element = oset.overlays[0].elem_wrap.element
+            if (element instanceof HTMLSelectElement) {
+                let select: HTMLSelectElement = <HTMLSelectElement>element
+                for (let i = 0; i < element.options.length; i++) {
+                    let option = <HTMLOptionElement>(element.options[i])
+                    option_values.push(option.value)
+                    option_texts.push(option.text)
+                    console.log('option value,text: ' + option.value + "," + option.text)
+                }
+            }
+        }
+
+        let args = {
+            // Click pos.
+            click_pos: click_pos,
+            nearest_rel_click_pos: nearest_rel_click_pos,
+            overlay_rel_click_pos: overlay_rel_click_pos,
+            // Text and image values under click.
+            text_values: text_values,
+            image_values: image_values,
+            // Existing set element under click.
+            set_index: set_index,
+            overlay_index: overlay_index,
+            // Select/Dropdown option texts.
+            option_texts: option_texts,
+        }
+        return args
+    }
+
 }

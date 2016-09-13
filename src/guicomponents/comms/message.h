@@ -13,7 +13,6 @@ namespace ngs {
 // Note these enums have to be kept in sync with the typescript file, socketmessage.ts.
 enum RequestType {
   kUnknownRequest,
-  kShowWebActionMenu,
 
   // Chrome BG Requests.
   kClearAllCookies,
@@ -30,6 +29,7 @@ enum RequestType {
 
   // Web Page Requests.
   kBlockEvents,
+  kUnblockEvents,
   kNavigateTo,
   kNavigateBack,
   kNavigateForward,
@@ -48,7 +48,11 @@ enum RequestType {
   kUnmarkSet,
   kMergeMarkedSets,
   kShrinkSetToMarked,
-  kShrinkSet
+  kShrinkSet,
+
+  // Info Request.
+  kGetCrosshairInfo,
+  kGetOverlayXPath,
 };
 
 enum ActionType {
@@ -67,7 +71,8 @@ enum ActionType {
 enum InfoType {
   kPageIsLoading,
   kPageIsReady,
-  kBgIsConnected
+  kBgIsConnected,
+  kShowWebActionMenu
 };
 
 enum MessageType {
@@ -144,6 +149,7 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kOverlayRelClickPos;
 
   static const char* kAppIFramePath;
+  static const char* kID;
 
   Message();
   Message(const QString& json); // Initialize from a json string typcially coming from another process outside the native app.

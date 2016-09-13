@@ -26,19 +26,15 @@ Rectangle {
 
     // Clean up routine.
     function on_closing(close) {
-        if (app_comm.is_polling()) {
+        if (app_worker.is_polling()) {
             // Make sure the polling is stopped.
-            app_comm.stop_polling()
+            app_worker.stop_polling()
             close.accepted = false
             close_timer.start()
         } else if (app_comm.nodejs_is_connected()) {
             // Make nodejs shut itself down.
             // It will close the browser as part of its shutdown.
-            var msg = new Message(Message.kShutdown)
-            app_comm.handle_request_from_app(msg)
-            
-            //app_comm.handle_request_from_app('{"request": "shutdown"}')
-            
+            app_worker.shutdown()
             close.accepted = false
             close_timer.start()
         }
@@ -176,8 +172,8 @@ Rectangle {
         node_graph_item.group_node_context_menu_requested.connect(node_action_stack_page.on_group_node_context_menu)
 
         // Web actions mode.
-        app_comm.show_web_action_menu.connect(web_action_stack_page.on_show_web_action_menu)
-        app_comm.show_iframe_menu.connect(web_action_stack_page.on_show_iframe_menu)
+        app_worker.show_web_action_menu.connect(web_action_stack_page.on_show_web_action_menu)
+        app_worker.show_iframe_menu.connect(web_action_stack_page.on_show_iframe_menu)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.

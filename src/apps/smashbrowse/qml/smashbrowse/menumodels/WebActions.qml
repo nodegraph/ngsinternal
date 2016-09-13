@@ -74,7 +74,7 @@ ListModel {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "Delete Set"
         description: "Delete set under crosshair."
-        script: "app_comm.delete_set()"
+        script: "app_worker.delete_set()"
     }
 
     ListElement {

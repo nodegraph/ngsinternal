@@ -49,7 +49,7 @@ Rectangle {
         if (!upgrade_license_check_box.checked) {
             // Switch to node graph mode.
             main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-            app_comm.show_browser()
+            app_worker.show_browser()
 
             // Erase the password from this page.
             password_field.text = ""

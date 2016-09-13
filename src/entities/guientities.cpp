@@ -41,6 +41,7 @@
 #include <gui/widget/nodegrapheditor.h>
 
 #include <guicomponents/comms/appcomm.h>
+#include <guicomponents/comms/appworker.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/browsercomputes.h>
@@ -96,6 +97,7 @@ void QMLAppEntity::create_internals() {
   // Qt Releated Components.
   new_ff FileModel(this);
   new_ff AppComm(this);
+  new_ff AppWorker(this);
   new_ff LicenseChecker(this);
 }
 
@@ -129,6 +131,7 @@ void QMLAppEntity::expose_to_qml() {
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
   AppComm* app_comm = get_app_comm();
+  AppWorker* app_worker = get_app_worker();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
 
@@ -146,6 +149,7 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("file_model"), file_model);
   context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
   context->setContextProperty(QStringLiteral("app_comm"), app_comm);
+  context->setContextProperty(QStringLiteral("app_worker"), app_worker);
   context->setContextProperty(QStringLiteral("license_checker"), license_checker);
 
   // Expose other useful objects to qml.
@@ -187,6 +191,10 @@ FileModel* QMLAppEntity::get_file_model() {
 
 AppComm* QMLAppEntity::get_app_comm() {
   return get<AppComm>();
+}
+
+AppWorker* QMLAppEntity::get_app_worker() {
+  return get<AppWorker>();
 }
 
 LicenseChecker* QMLAppEntity::get_license_checker() {

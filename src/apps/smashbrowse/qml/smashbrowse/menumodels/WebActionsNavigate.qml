@@ -18,7 +18,7 @@ ListModel {
         image_url: "qrc:///icons/ic_select_all_white_48dp.png"
         title: "Refresh"
         description: "Refresh web page."
-        script: "app_comm.navigate_refresh();
+        script: "app_worker.navigate_refresh();
                  main_bar.switch_to_current_mode();"
     }
 

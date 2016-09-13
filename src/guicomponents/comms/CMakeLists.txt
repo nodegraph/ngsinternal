@@ -3,6 +3,7 @@ set(sources
     filemodel.cpp
     message.cpp
     appcomm.cpp
+    appworker.cpp
     licensechecker.cpp
     )
    
@@ -13,6 +14,7 @@ set(moc_headers
     filemodel.h
     message.h
     appcomm.h
+    appworker.h
     licensechecker.h
     )
     

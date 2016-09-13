@@ -26,7 +26,7 @@ class BgCommHandler {
             case RequestType.kClearAllCookies: {
                 function done_clear_all_cookies() {
                     // Send response to nodejs.
-                    let response = new ResponseMessage("-1", true)
+                    let response = new ResponseMessage(req.id, "-1", true)
                     this.bg_comm.send_to_nodejs(response)
                 }
                 this.browser_wrap.clear_all_cookies(done_clear_all_cookies.bind(this))
@@ -34,7 +34,7 @@ class BgCommHandler {
             case RequestType.kGetAllCookies: {
                 function done_get_all_cookies(cookies: chrome.cookies.Cookie[]) {
                     // Send response to nodejs.
-                    let response = new ResponseMessage("-1", true, cookies)
+                    let response = new ResponseMessage(req.id, "-1", true, cookies)
                     this.bg_comm.send_to_nodejs(response)
                 }
                 this.browser_wrap.get_all_cookies(done_get_all_cookies.bind(this));
@@ -47,7 +47,7 @@ class BgCommHandler {
                     console.log('count is: ' + count)
                     if (count == cookies.length) {
                         // Send response to nodejs.
-                        let response = new ResponseMessage("-1", true)
+                        let response = new ResponseMessage(req.id, "-1", true)
                         this.bg_comm.send_to_nodejs(response)
                     }
                 }
@@ -57,7 +57,7 @@ class BgCommHandler {
                 function done_get_zoom(zoom: number) {
                     // Send response to nodejs.
                     console.log('zoom is: ' + zoom)
-                    let response = new ResponseMessage("-1", true, zoom)
+                    let response = new ResponseMessage(req.id, "-1", true, zoom)
                     this.bg_comm.send_to_nodejs(response)
                 }
                 this.browser_wrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom.bind(this));
@@ -66,7 +66,7 @@ class BgCommHandler {
                 console.log('bgcomm setting iframe to ' + req.args.iframe)
                 this.bg_comm.set_iframe(req.args.iframe)
                 // Send response to nodejs.
-                let response = new ResponseMessage("-1", true)
+                let response = new ResponseMessage(req.id, "-1", true)
                 this.bg_comm.send_to_nodejs(response)
             } break
             default:

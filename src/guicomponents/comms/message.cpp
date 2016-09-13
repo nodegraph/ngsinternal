@@ -53,6 +53,8 @@ const char* Message::kNearestRelClickPos = "nearest_rel_click_pos";
 const char* Message::kOverlayRelClickPos = "overlay_rel_click_pos";
 const char* Message::kAppIFramePath = "-1";
 
+const char* Message::kID = "id";
+
 Message::Message()
     : QVariantMap() {
 }

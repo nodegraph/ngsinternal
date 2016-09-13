@@ -53,16 +53,15 @@ class PageOverlays {
         this.click_cross_overlay = new CrossOverlay('smash_browse_text_box', DistinctColors.text_color, -1)
     }
 
-    on_context_menu(page_event: MouseEvent, nearest_rel_click_pos: Point, text_values: string[], image_values: string[]): boolean {
-        this.page_pos = new Point({x: page_event.pageX, y: page_event.pageY})
-        this.update_click_box_overlay(this.page_pos)
-        this.handler.show_app_menu(this.page_pos, nearest_rel_click_pos, text_values, image_values)
+    // on_context_menu(page_event: MouseEvent, nearest_rel_click_pos: Point, text_values: string[], image_values: string[]): boolean {
+    //     this.page_pos = new Point({x: page_event.pageX, y: page_event.pageY})
+    //     this.update_click_box_overlay(this.page_pos)
 
-        page_event.preventDefault();
-        return false
-    }
+    //     page_event.preventDefault();
+    //     return false
+    // }
 
-    on_mouse_over(text_elem_wrap: ElemWrap, image_elem_wrap: ElemWrap): void {
+    update_overlays(text_elem_wrap: ElemWrap, image_elem_wrap: ElemWrap): void {
         if (!this.text_box_overlay || !this.image_box_overlay) {
             return
         }
@@ -80,7 +79,7 @@ class PageOverlays {
         this.image_box_overlay.update(DistinctColors.image_color, -1)
     }
 
-    private update_click_box_overlay(pos: Point): void {
+    update_crosshair(pos: Point): void {
         this.click_cross_overlay.update_dom_elements(pos)
     }
 

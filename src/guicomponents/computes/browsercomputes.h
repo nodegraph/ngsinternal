@@ -8,7 +8,7 @@ namespace ngs {
 
 class Entity;
 class InputCompute;
-class AppComm;
+class AppWorker;
 
 //--------------------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ class GUICOMPUTES_EXPORT OpenBrowserCompute: public Compute {
   // Our state.
   virtual void update_state();
  private:
-  Dep<AppComm> _app_comm;
+  Dep<AppWorker> _app_worker;
 };
 
 //--------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ class GUICOMPUTES_EXPORT CloseBrowserCompute: public Compute {
   // Our state.
   virtual void update_state();
  private:
-  Dep<AppComm> _app_comm;
+  Dep<AppWorker> _app_worker;
 };
 
 //--------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ class GUICOMPUTES_EXPORT CreateSetFromValuesCompute: public Compute {
   // Our state.
   virtual void update_state();
  private:
-  Dep<AppComm> _app_comm;
+  Dep<AppWorker> _app_worker;
 };
 
 class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public Compute {
@@ -57,7 +57,7 @@ class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public Compute {
   // Our state.
   virtual void update_state();
  private:
-  Dep<AppComm> _app_comm;
+  Dep<AppWorker> _app_worker;
 };
 
 }

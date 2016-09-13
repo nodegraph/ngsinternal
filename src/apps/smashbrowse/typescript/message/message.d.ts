@@ -18,6 +18,7 @@ declare const enum RequestType {
 
     // Web Page Requests.
     kBlockEvents,
+    kUnblockEvents,
     kNavigateTo,
     kNavigateBack,
     kNavigateForward,
@@ -36,7 +37,11 @@ declare const enum RequestType {
     kUnmarkSet,
     kMergeMarkedSets,
     kShrinkSetToMarked,
-    kShrinkSet
+    kShrinkSet,
+
+    // Info Request.
+    kGetCrosshairInfo,
+    kGetOverlayXPath,
 }
 
 declare const enum ActionType {
@@ -56,6 +61,7 @@ declare const enum InfoType {
     kPageIsLoading,
     kPageIsReady,
     kBgIsConnected,
+    kShowWebActionMenu
 }
 
 declare const enum MessageType {
@@ -67,8 +73,9 @@ declare const enum MessageType {
 
 declare class BaseMessage {
     msg_type: MessageType
+    id: number
     iframe: string
-    constructor(iframe: string)
+    constructor(id: Number, iframe: string)
     static create_from_string(s: string): BaseMessage
     static create_from_obj(obj: any): BaseMessage
 
@@ -80,16 +87,17 @@ declare class RequestMessage extends BaseMessage {
     request: RequestType
     xpath: string
     args: any // a key value dict of arguments
-    constructor(iframe: string, request: RequestType, args?: any, xpath?: string)
+    constructor(id: Number, iframe: string, request: RequestType, args?: any, xpath?: string)
 }
 
 declare class ResponseMessage extends BaseMessage {
     success: boolean
     value: any
-    constructor(iframe: string, success: boolean, value?: any)
+    constructor(id: Number, iframe: string, success: boolean, value?: any)
 }
 
 declare class InfoMessage extends BaseMessage {
     info: InfoType
-    constructor(iframe: string, info: InfoType)
+    value: any
+    constructor(id: Number, iframe: string, info: InfoType, value?: any)
 }
