@@ -20,7 +20,6 @@ class BgComm {
     private iframe: string // This is the current iframe, that the webdriver is acting upon.
 
     // Listeners to extract the the nodejs's chrome extension server port number.
-    bound_on_tab_created: any
     bound_on_tab_updated: any
 
     constructor() {
@@ -30,8 +29,7 @@ class BgComm {
         this.nodejs_socket = null
         this.nodejs_port = -1
 
-        // Our timer data.
-        this.connect_timer = setInterval(this.connect_to_nodejs.bind(this), 1000) // continually try to connect to nodejs
+        // Connect to the content scripts.
         this.connect_to_content()
 
         // Our state.
@@ -40,9 +38,6 @@ class BgComm {
 
         // Hack to retrieve the nodejs port.
         // The very first opened tab's url will have the port number embedded into the url.
-        this.bound_on_tab_created = this.on_tab_created.bind(this)
-        chrome.tabs.onCreated.addListener(this.bound_on_tab_created)
-
         this.bound_on_tab_updated = this.on_tab_updated.bind(this)
         chrome.tabs.onUpdated.addListener(this.bound_on_tab_updated)
 
@@ -60,35 +55,27 @@ class BgComm {
         return this.iframe
     }
 
-    on_tab_created(tab: chrome.tabs.Tab) {
-        if (tab.id != this.content_tab_id) {
-            return
-        }
-        this.extract_port_from_tab(tab)
-        chrome.tabs.onCreated.removeListener(this.bound_on_tab_created)
+    on_tab_updated(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {
+        this.initialize_from_tab(tab)
     }
 
-    on_tab_updated(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {
-        if (tab.id != this.content_tab_id) {
+    initialize_from_tab(tab: chrome.tabs.Tab) {
+        if (!tab.url) {
             return
         }
-        this.extract_port_from_tab(tab)
+        this.content_tab_id = tab.id
+        this.nodejs_port = BgComm.extract_port_from_url(tab.url) 
+        this.connect_to_nodejs()
         chrome.tabs.onUpdated.removeListener(this.bound_on_tab_updated)
     }
 
-    extract_port_from_tab(tab: chrome.tabs.Tab) {
-        let url = tab.url
-        if (!url) {
-            return false
-        }
-
+    static extract_port_from_url(url: string): number {
         let index = url.indexOf('?')
         if (index != -1) {
-            this.nodejs_port = Number(url.substring(index+1))
-            return true
+            return Number(url.substring(index+1))
         } else {
             console.error("Error: no port number present")
-            return false
+            return -1
         }
     }
 
@@ -127,6 +114,7 @@ class BgComm {
     send_to_nodejs(msg: BaseMessage): void {
         // If we're not connected to nodejs yet, then just return.
         if (!this.nodejs_socket) {
+            console.log('nodejs socket is not connected')
             return
         }
         this.nodejs_socket.send(JSON.stringify(msg));
@@ -165,7 +153,7 @@ class BgComm {
 
     // Receive a message from the content script. We simply forward the message to nodejs.
     receive_from_content(msg: BaseMessage, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
-        //console.log("bg received message from content: " + JSON.stringify(msg))
+        console.log("bg received message from content: " + JSON.stringify(msg))
         // The first tab to send us a content message will be the tab that we pay attention to.
         if (!this.content_tab_id) {
             this.content_tab_id = sender.tab.id
@@ -176,15 +164,16 @@ class BgComm {
         }
 
         // If the current iframe doesn't match we note this in the 
-        if (msg.msg_type == MessageType.kRequestMessage) {
-            let req = <RequestMessage>msg
-            if(req.request == RequestType.kShowWebActionMenu && req.iframe != this.iframe) {
-                req.args.prev_iframe = this.iframe
+        if (msg.msg_type == MessageType.kInfoMessage) {
+            let req = <InfoMessage>msg
+            if(req.info == InfoType.kShowWebActionMenu && req.iframe != this.iframe) {
+                req.value.prev_iframe = this.iframe
             }
 
         }
 
         // Pass the message to nodejs.
+        console.log("sending to nodejs: " + JSON.stringify(msg))
         this.send_to_nodejs(msg);
     }
 

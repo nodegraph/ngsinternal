@@ -72,20 +72,20 @@ class GUICollection {
     }
 
     on_context_menu(e: MouseEvent): boolean {
+        console.log('111')
         if (!this.page_overlays.initialized()) {
+            console.log('222')
             return
         }
+        console.log('333')
         let click_pos = new Point({x: e.pageX, y: e.pageY})
 
         // Update the click box overly.
         this.page_overlays.update_crosshair(click_pos)
 
         // Send the request to the app.
-        let req = new InfoMessage(0, PageWrap.iframe, InfoType.kShowWebActionMenu,
-            {
-                click_pos: click_pos,
-            })
-        this.content_comm.send_to_bg(req)
+        let im = new InfoMessage(0, PageWrap.iframe, InfoType.kShowWebActionMenu, {click_pos: click_pos})
+        this.content_comm.send_to_bg(im)
 
         // Prevent default behavior of the event.
         e.preventDefault();
@@ -121,6 +121,9 @@ class GUICollection {
             overlay_rel_click_pos = oset.overlays[overlay_index].elem_wrap.page_box.get_relative_point(click_pos)
         }
 
+        // Determine the xpath of the overlay element.
+        let xpath = this.overlay_sets.get_xpath(set_index, overlay_index)
+
         // If we're a select element, grab the option values and texts.
         let option_values: string[] = []
         let option_texts: string[] = []
@@ -143,6 +146,8 @@ class GUICollection {
             click_pos: click_pos,
             nearest_rel_click_pos: nearest_rel_click_pos,
             overlay_rel_click_pos: overlay_rel_click_pos,
+            // The xpath.
+            xpath: xpath,
             // Text and image values under click.
             text_values: text_values,
             image_values: image_values,

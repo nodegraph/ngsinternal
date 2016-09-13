@@ -160,7 +160,7 @@ class COMMS_EXPORT Message: public QVariantMap {
   // Initializes a response message.
   Message(bool success, const QVariant& value = QVariant());
   // Initializes an info message.
-  Message(InfoType it);
+  Message(InfoType it, const QVariant& value = QVariant());
 
   virtual ~Message();
 

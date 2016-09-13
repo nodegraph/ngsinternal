@@ -48,7 +48,7 @@ const char* Message::kMatchFontSize = "match_font_size";
 const char* Message::kOptionTexts = "option_texts";
 const char* Message::kOptionValues = "option_values";
 
-const char* Message::kClickPos = "click_po";
+const char* Message::kClickPos = "click_pos";
 const char* Message::kNearestRelClickPos = "nearest_rel_click_pos";
 const char* Message::kOverlayRelClickPos = "overlay_rel_click_pos";
 const char* Message::kAppIFramePath = "-1";
@@ -67,6 +67,7 @@ Message::Message(const QString& json) {
 }
 
 Message::Message(RequestType rt, const QVariantMap& args, const QString& xpath) {
+  operator[](Message::kID) = -1;
   operator[](Message::kIFrame) = Message::kAppIFramePath;
   operator[](Message::kMessageType) = static_cast<int>(MessageType::kRequestMessage);
 
@@ -78,6 +79,7 @@ Message::Message(RequestType rt, const QVariantMap& args, const QString& xpath) 
 }
 
 Message::Message(bool success, const QVariant& value) {
+  operator[](Message::kID) = -1;
   operator[](Message::kIFrame) = Message::kAppIFramePath;
   operator[](Message::kMessageType) = static_cast<int>(MessageType::kResponseMessage);
 
@@ -87,11 +89,13 @@ Message::Message(bool success, const QVariant& value) {
   assert(check_contents());
 }
 
-Message::Message(InfoType it) {
+Message::Message(InfoType it, const QVariant& value) {
+  operator[](Message::kID) = -1;
   operator[](Message::kIFrame) = Message::kAppIFramePath;
   operator[](Message::kMessageType) = static_cast<int>(MessageType::kResponseMessage);
 
   operator[](Message::kInfo) = static_cast<int>(it);
+  operator[](Message::kValue) = value;
 
   assert(check_contents());
 }
@@ -106,10 +110,16 @@ Message::~Message() {
 }
 
 bool Message::check_contents() {
+  if (!keys().contains(Message::kID)) {
+    std::cerr << "Error: message is missing id.\n";
+    return false;
+  }
   if (!keys().contains(Message::kIFrame)) {
+    std::cerr << "Error: message is missing iframe.\n";
     return false;
   }
   if (!keys().contains(Message::kMessageType)) {
+    std::cerr << "Error: message is missing msg_type.\n";
     return false;
   }
 
@@ -119,25 +129,31 @@ bool Message::check_contents() {
       break;
     case MessageType::kRequestMessage:
       if (!keys().contains(Message::kRequest)) {
+        std::cerr << "Error: request message is missing request.\n";
         return false;
       }
       if (!keys().contains(Message::kArgs)) {
+        std::cerr << "Error: request message is missing args.\n";
         return false;
       }
       if (!keys().contains(Message::kXPath)) {
+        std::cerr << "Error: request message is missing xpath.\n";
         return false;
       }
       break;
     case MessageType::kResponseMessage:
       if (!keys().contains(Message::kSuccess)) {
+        std::cerr << "Error: response message is missing success.\n";
         return false;
       }
       if (!keys().contains(Message::kValue)) {
+        std::cerr << "Error: response message is missing value.\n";
         return false;
       }
       break;
     case MessageType::kInfoMessage:
       if (!keys().contains(Message::kInfo)) {
+        std::cerr << "Error: info message is missing info.\n";
         return false;
       }
       break;

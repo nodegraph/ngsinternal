@@ -110,16 +110,22 @@ class AppConnection extends BaseConnection {
                 function on_response(open: boolean) {
                     if (!open) {
                         this.webdriverwrap.open_browser()
+                        // Now convert this request to navigate to a default url with a port number.
                         let url = "https://www.google.com/?" + get_ext_server_port()
-                        this.webdriverwrap.navigate_to(url)
+                        let relay = new RequestMessage(msg.id, '-1', RequestType.kNavigateTo, {url: url})
+                        this.receive_json(relay.to_string())
+                    } else {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
                     }
                 }
+                console.log('got check browser is open')
                 this.webdriverwrap.browser_is_open(on_response.bind(this))
-                // No response is sent back to the app. Typically this is called in a polling manner.
                 break
             case RequestType.kResizeBrowser:
-                this.webdriverwrap.resize_browser(req.args.width, req.args.height)
-                // No response is sent back to the app. Typically this is called in a polling manner.
+                this.webdriverwrap.resize_browser(req.args.width, req.args.height).then(
+                    function(){send_msg_to_app(new ResponseMessage(msg.id, '-1', true))},
+                    function(){send_msg_to_app(new ResponseMessage(msg.id, '-1', false))}
+                )
                 break
             case RequestType.kOpenBrowser:
                 if (this.webdriverwrap.open_browser()) {
@@ -134,7 +140,7 @@ class AppConnection extends BaseConnection {
                 break
             case RequestType.kNavigateTo:
                 this.webdriverwrap.navigate_to(req.args.url).then(function() {
-                    let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
+                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, {iframe: ''})
                     send_msg_to_ext(relay_req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
@@ -174,32 +180,32 @@ class AppConnection extends BaseConnection {
                 })
                 break
             case RequestType.kPerformAction:
-                if (req.xpath) {
+                //if (req.xpath) {
                     // If the xpath has been resolved by the content script,
                     // then we let webdriver perform actions.
                     switch (req.args.action) {
                         case ActionType.kSendClick: {
-                            let p = this.webdriverwrap.click_on_element(req.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
+                            let p = this.webdriverwrap.click_on_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                             WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kMouseOver: {
-                            let p = this.webdriverwrap.mouse_over_element(req.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
+                            let p = this.webdriverwrap.mouse_over_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                             WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kSendText: {
-                            let p = this.webdriverwrap.send_text(req.xpath, req.args.text)
+                            let p = this.webdriverwrap.send_text(req.args.xpath, req.args.text)
                             WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kSendEnter: {
-                            let p = this.webdriverwrap.send_key(req.xpath, Key.RETURN)
+                            let p = this.webdriverwrap.send_key(req.args.xpath, Key.RETURN)
                             WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kGetText: {
-                            let p = this.webdriverwrap.get_text(req.xpath)
+                            let p = this.webdriverwrap.get_text(req.args.xpath)
                             WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kSelectOption: {
-                            let p = this.webdriverwrap.select_option(req.xpath, req.args.option_text)
+                            let p = this.webdriverwrap.select_option(req.args.xpath, req.args.option_text)
                             WebDriverWrap.terminate_chain(p, req.id)
                         } break
                         case ActionType.kScrollDown:
@@ -211,12 +217,13 @@ class AppConnection extends BaseConnection {
                             send_msg_to_ext(req)
                         } break
                     }
-                } else {
-                    // Send request to extension to resolve the xpath,
-                    // and to unblock the events in the content script so that
-                    // the webdriver actions can take effect on the elements.
-                    send_msg_to_ext(req)
-                }
+                //} 
+                // else {
+                //     // Send request to extension to resolve the xpath,
+                //     // and to unblock the events in the content script so that
+                //     // the webdriver actions can take effect on the elements.
+                //     send_msg_to_ext(req)
+                // }
                 break
             default:
                 // By default we send requests to the extension. 
@@ -325,6 +332,9 @@ class BaseSocketServer {
         for (let i = 0; i < conns.length; i++) {
             let conn = conns[i]
             if (conn.is_alive()) {
+                if (msg.to_string() == '{}') {
+                    console.error("error sending empty message")
+                }
                 conn.send_json(msg.to_string())
                 sent = true
             }

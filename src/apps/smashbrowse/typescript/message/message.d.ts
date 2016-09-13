@@ -1,7 +1,6 @@
 
 declare const enum RequestType {
     kUnknownRequest,
-    kShowWebActionMenu,
     
     // Chrome BG Requests.
     kClearAllCookies,

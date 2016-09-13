@@ -19,6 +19,8 @@ namespace ngs {
 class AppComm;
 class FileModel;
 
+// Helper which wraps the input url with things like http://.
+// Webdriver needs proper urls to navigate.
 QUrl get_proper_url(const QString& input);
 
 // This class communicates with the nodejs process.
@@ -31,7 +33,9 @@ Q_OBJECT
 
   explicit AppWorker(Entity* parent);
   virtual ~AppWorker();
-  virtual void update_state();
+
+  // Our state.
+  virtual void initialize_fixed_deps();
 
   static QString get_app_bin_dir();
   static QString get_user_data_dir();
@@ -42,10 +46,12 @@ Q_OBJECT
   Q_INVOKABLE bool is_polling();
   Q_INVOKABLE void start_polling();
   Q_INVOKABLE void stop_polling();
+  Q_INVOKABLE void make_browser_visible() {_show_browser = true;}
 
   // ---------------------------------------------------------------------------------
   // Browser Actions.
   // ---------------------------------------------------------------------------------
+
 
   Q_INVOKABLE void open_browser();
   Q_INVOKABLE void close_browser();
@@ -151,7 +157,7 @@ signals:
   void show_iframe_menu();
 
  private slots:
-  void on_json_received(const QString & json);
+  void on_text_received(const QString & text);
   void on_poll();
 
  private:
@@ -161,7 +167,7 @@ signals:
   void send_msg(Message& msg);  // msg is not const because it gets tagged with an id.
 
   // Task Management.
-  void queue_task(const AppTask& task);
+  void queue_task(AppTask task);
 
   // Tasks. Our members which get bound into tasks.
   void send_msg_task(Message msg);
@@ -179,7 +185,6 @@ signals:
   void perform_action_task(ActionType action, QVariantMap extra_args);
 
   // Handle messages.
-  void handle_request_from_nodejs(const Message& sm);
   void handle_response_from_nodejs(const Message& sm);
   void handle_info_from_nodejs(const Message& msg);
 
@@ -191,13 +196,17 @@ signals:
   QTimer _poll_timer;
   bool _show_browser;
 
+  // Whether we're connected for receiving text messages from the socket.
+  bool _connected;
+
   // State to bring up the web actions menu, and handle menu activations.
   QString _iframe;
   QVariantMap _click_pos;
 
   // Simple Request-Response Pair Tracking.
   bool _waiting_for_results;
-  int _msg_id;  // Used for debugging to ensure the request and response match.
+  int _next_msg_id;  // This is one more than the max msg id issued out.
+  int _expected_msg_id; // This is the next msg id we're expecting from a response message.
   Message _last_resp;  // Our last response. This can be used by handlers in our queue.
   std::deque<AppTask> _queue;
 };

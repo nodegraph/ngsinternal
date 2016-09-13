@@ -41,7 +41,8 @@ AppWorker::AppWorker(Entity* parent)
       _file_model(this),
       _show_browser(true),
       _waiting_for_results(false),
-      _msg_id(0){
+      _next_msg_id(0),
+      _connected(false){
   get_dep_loader()->register_fixed_dep(_app_comm, "");
   get_dep_loader()->register_fixed_dep(_file_model, "");
 
@@ -53,9 +54,14 @@ AppWorker::AppWorker(Entity* parent)
 
 AppWorker::~AppWorker() {
 }
+void AppWorker::initialize_fixed_deps() {
+  std::cerr << "AppWorker initialize_fixed_deps state\n";
+  Component::initialize_fixed_deps();
 
-void AppWorker::update_state() {
-  connect(_app_comm->get_web_socket(), SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_json_received(const QString &)));
+  if (!_connected) {
+    connect(_app_comm->get_web_socket(), SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_text_received(const QString &)));
+    _connected = true;
+  }
 }
 
 QString AppWorker::get_app_bin_dir() {
@@ -100,10 +106,12 @@ void AppWorker::send_msg(Message& msg) {
 
 void AppWorker::send_msg_task(Message msg) {
   // Tag the request with an id. We expect a response with the same id.
-  msg[Message::kID] = _msg_id;
+  msg[Message::kID] = _next_msg_id;
+
+  std::cerr << "app --> comhub: " << msg.to_string().toStdString() << "\n";
 
   // Increment the counter. Note we're ok with this overflowing and looping around.
-  _msg_id += 1;
+  _next_msg_id += 1;
 
   // Send the request to nodejs.
   _waiting_for_results = true;
@@ -111,8 +119,9 @@ void AppWorker::send_msg_task(Message msg) {
   assert(num_bytes);
 }
 
-void AppWorker::queue_task(const AppTask& task) {
+void AppWorker::queue_task(AppTask task) {
   _queue.push_back(task);
+  std::cerr << "the queue size is: " << _queue.size() << "\n";
 
   // Check to see if we can run the next worker.
   bool ok_to_run = true;
@@ -141,24 +150,42 @@ void AppWorker::queue_task(const AppTask& task) {
 
   // Run the worker if we're all clear to run.
   if (ok_to_run) {
+	  std::cerr << "running task.\n";
     _queue[0]();
   }
 }
 
-void AppWorker::on_json_received(const QString & json) {
-  qDebug() << "hub --> app: " << json;
-  Message msg(json);
+void AppWorker::on_text_received(const QString & text) {
 
-  MessageType type = msg.get_msg_type();
-  if (type == MessageType::kRequestMessage) {
-    handle_request_from_nodejs(msg);
-  } else if (type == MessageType::kResponseMessage) {
-    handle_response_from_nodejs(msg);
-  } else if (type == MessageType::kInfoMessage) {
-    handle_info_from_nodejs(msg);
-  } else {
-    std::cerr << "Error: Got message of unknown type!\n";
-  }
+  std::cerr << "app_worker got text: " << text.toStdString() << "\n";
+
+//  // Multiple message may arrive concatenated in the json string, so we split them.
+//  QRegExp regex("(\\{[^\\{\\}]*\\})");
+//  QStringList splits;
+//  int pos = 0;
+//  while ((pos = regex.indexIn(text, pos)) != -1) {
+//      splits << regex.cap(1);
+//      pos += regex.matchedLength();
+//  }
+
+  // Loop over each message string.
+  //for (int i=0; i<splits.size(); ++i) {
+    //std::cerr << "hub --> app-" << i << ": " << splits[i].toStdString() << "\n";
+    //Message msg(splits[i]);
+    Message msg(text);
+    MessageType type = msg.get_msg_type();
+    if (type == MessageType::kRequestMessage) {
+      // We shouldn't be getting request message from nodejs.
+      std::cerr << "Error: App should not be receiving request messages.\n";
+      assert(false);
+    } else if (type == MessageType::kResponseMessage) {
+      handle_response_from_nodejs(msg);
+    } else if (type == MessageType::kInfoMessage) {
+      handle_info_from_nodejs(msg);
+    } else {
+      std::cerr << "Error: Got message of unknown type!\n";
+    }
+  //}
 }
 
 // -----------------------------------------------------------------
@@ -172,17 +199,21 @@ void AppWorker::open_browser() {
   args[Message::kURL] = get_smash_browse_url();
 
   msg[Message::kArgs] = args;
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 void AppWorker::close_browser() {
   Message msg(RequestType::kCloseBrowser);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
+}
+
+void test() {
+  std::cerr << "running test func!\n";
 }
 
 void AppWorker::check_browser_is_open() {
   Message msg(RequestType::kCheckBrowserIsOpen);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 void AppWorker::check_browser_size() {
@@ -196,12 +227,12 @@ void AppWorker::check_browser_size() {
   args[Message::kHeight] = height;
 
   msg[Message::kArgs] = args;
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 void AppWorker::shutdown() {
   Message msg(RequestType::kShutdown);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 // -----------------------------------------------------------------
@@ -210,22 +241,22 @@ void AppWorker::shutdown() {
 
 void AppWorker::get_all_cookies() {
   Message msg(RequestType::kGetAllCookies);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 void AppWorker::clear_all_cookies() {
   Message msg(RequestType::kClearAllCookies);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 void AppWorker::set_all_cookies() {
   Message msg(RequestType::kSetAllCookies);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 void AppWorker::update_overlays() {
   Message msg(RequestType::kUpdateOveralys);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 //int AppWorker::get_set_index() {
@@ -252,7 +283,7 @@ void AppWorker::navigate_to(const QString& url) {
 
   // Send the message.
   Message msg(RequestType::kNavigateTo, args);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 void AppWorker::switch_to_iframe() {
@@ -260,13 +291,13 @@ void AppWorker::switch_to_iframe() {
   args[Message::kIFrame] = _iframe;
 
   Message msg(RequestType::kSwitchIFrame, args);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 void AppWorker::navigate_refresh() {
   // Send the message.
   Message msg(RequestType::kNavigateRefresh);
-  queue_task(std::bind(&AppWorker::send_msg, this, msg));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
 }
 
 // -----------------------------------------------------------------
@@ -294,7 +325,7 @@ void AppWorker::create_set_of_inputs() {
   Message req(RequestType::kCreateSetFromWrapType);
   req[Message::kArgs] = args;
 
-  queue_task(std::bind(&AppWorker::send_msg, this, req));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, req));
 }
 
 void AppWorker::create_set_of_selects() {
@@ -304,7 +335,7 @@ void AppWorker::create_set_of_selects() {
   Message req(RequestType::kCreateSetFromWrapType);
   req[Message::kArgs] = args;
 
-  queue_task(std::bind(&AppWorker::send_msg, this, req));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, req));
 }
 
 void AppWorker::create_set_of_images() {
@@ -314,7 +345,7 @@ void AppWorker::create_set_of_images() {
   Message req(RequestType::kCreateSetFromWrapType);
   req[Message::kArgs] = args;
 
-  queue_task(std::bind(&AppWorker::send_msg, this, req));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, req));
 }
 
 void AppWorker::create_set_of_text() {
@@ -324,7 +355,7 @@ void AppWorker::create_set_of_text() {
   Message req(RequestType::kCreateSetFromWrapType);
   req[Message::kArgs] = args;
 
-  queue_task(std::bind(&AppWorker::send_msg, this, req));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, req));
 }
 
 // -----------------------------------------------------------------
@@ -476,7 +507,7 @@ void AppWorker::unmark_set() {
 
 void AppWorker::merge_sets() {
   Message req(RequestType::kMergeMarkedSets);
-  queue_task(std::bind(&AppWorker::send_msg, this, req));
+  queue_task(std::bind(&AppWorker::send_msg_task, this, req));
 }
 
 // -----------------------------------------------------------------
@@ -545,12 +576,12 @@ void AppWorker::shrink_left_and_right_of_marked() {
 
 void AppWorker::block_events() {
   Message req(RequestType::kBlockEvents);
-  queue_task(std::bind(&AppWorker::send_msg,this,req));
+  queue_task(std::bind(&AppWorker::send_msg_task,this,req));
 }
 
 void AppWorker::unblock_events() {
   Message req(RequestType::kUnblockEvents);
-  queue_task(std::bind(&AppWorker::send_msg,this,req));
+  queue_task(std::bind(&AppWorker::send_msg_task,this,req));
 }
 
 // -----------------------------------------------------------------
@@ -650,33 +681,33 @@ void AppWorker::get_crosshair_info_task() {
   QVariantMap args;
   args[Message::kClickPos] = _click_pos;
   Message req(RequestType::kGetCrosshairInfo,args);
-  send_msg(req);
+  send_msg_task(req);
 }
 
 void AppWorker::create_set_by_matching_text_task() {
   QVariantMap args;
   args[Message::kWrapType] = WrapType::text;
-  args[Message::kMatchValues] = _last_resp[Message::kArgs].toMap()[Message::kTextValues];
+  args[Message::kMatchValues] = _last_resp[Message::kValue].toMap()[Message::kTextValues];
 
   Message req(RequestType::kCreateSetFromMatchValues);
   req[Message::kArgs] = args;
 
-  send_msg(req);
+  send_msg_task(req);
 }
 
 void AppWorker::create_set_by_matching_images_task() {
   QVariantMap args;
   args[Message::kWrapType] = WrapType::image;
-  args[Message::kMatchValues] = _last_resp[Message::kArgs].toMap()[Message::kImageValues];
+  args[Message::kMatchValues] = _last_resp[Message::kValue].toMap()[Message::kImageValues];
 
   Message req(RequestType::kCreateSetFromMatchValues);
   req[Message::kArgs] = args;
 
-  send_msg(req);
+  send_msg_task(req);
 }
 
 void AppWorker::delete_set_task() {
-  int set_index = _last_resp[Message::kArgs].toMap()[Message::kSetIndex].toInt();
+  int set_index = _last_resp[Message::kValue].toMap()[Message::kSetIndex].toInt();
   if (set_index<0) {
     return;
   }
@@ -687,12 +718,12 @@ void AppWorker::delete_set_task() {
   Message req(RequestType::kDeleteSet);
   req[Message::kArgs] = args;
 
-  send_msg(req);
+  send_msg_task(req);
 }
 
 template <WrapType WRAP_TYPE, Direction DIR>
 void AppWorker::shift_set_task() {
-  int set_index = _last_resp[Message::kArgs].toMap()[Message::kSetIndex].toInt();
+  int set_index = _last_resp[Message::kValue].toMap()[Message::kSetIndex].toInt();
   if (set_index<0) {
       return;
     }
@@ -705,11 +736,11 @@ void AppWorker::shift_set_task() {
   Message req(RequestType::kShiftSet);
   req[Message::kArgs] = args;
 
-  send_msg(req);
+  send_msg_task(req);
 }
 
 void AppWorker::expand_task(Direction dir, const QVariantMap& match_criteria) {
-  int set_index = _last_resp[Message::kArgs].toMap()[Message::kSetIndex].toInt();
+  int set_index = _last_resp[Message::kValue].toMap()[Message::kSetIndex].toInt();
   if (set_index<0) {
       return;
     }
@@ -721,11 +752,11 @@ void AppWorker::expand_task(Direction dir, const QVariantMap& match_criteria) {
 
   Message req(RequestType::kExpandSet);
   req[Message::kArgs] = args;
-  send_msg(req);
+  send_msg_task(req);
 }
 
 void AppWorker::mark_set_task() {
-  int set_index = _last_resp[Message::kArgs].toMap()[Message::kSetIndex].toInt();
+  int set_index = _last_resp[Message::kValue].toMap()[Message::kSetIndex].toInt();
   if (set_index<0) {
       return;
     }
@@ -735,11 +766,11 @@ void AppWorker::mark_set_task() {
 
   Message req(RequestType::kMarkSet);
   req[Message::kArgs] = args;
-  send_msg(req);
+  send_msg_task(req);
 }
 
 void AppWorker::unmark_set_task() {
-  int set_index = _last_resp[Message::kArgs].toMap()[Message::kSetIndex].toInt();
+  int set_index = _last_resp[Message::kValue].toMap()[Message::kSetIndex].toInt();
   if (set_index<0) {
       return;
     }
@@ -749,11 +780,11 @@ void AppWorker::unmark_set_task() {
 
   Message req(RequestType::kUnmarkSet);
   req[Message::kArgs] = args;
-  send_msg(req);
+  send_msg_task(req);
 }
 
 void AppWorker::shrink_set_to_side_task(Direction dir) {
-  int set_index = _last_resp[Message::kArgs].toMap()[Message::kSetIndex].toInt();
+  int set_index = _last_resp[Message::kValue].toMap()[Message::kSetIndex].toInt();
   if (set_index<0) {
       return;
     }
@@ -764,11 +795,11 @@ void AppWorker::shrink_set_to_side_task(Direction dir) {
 
   Message req(RequestType::kShrinkSet);
   req[Message::kArgs] = args;
-  send_msg(req);
+  send_msg_task(req);
 }
 
 void AppWorker::shrink_against_marked_task(QVariantList dirs) {
-  int set_index = _last_resp[Message::kArgs].toMap()[Message::kSetIndex].toInt();
+  int set_index = _last_resp[Message::kValue].toMap()[Message::kSetIndex].toInt();
   if (set_index<0) {
       return;
     }
@@ -779,19 +810,22 @@ void AppWorker::shrink_against_marked_task(QVariantList dirs) {
 
   Message req(RequestType::kShrinkSetToMarked);
   req[Message::kArgs] = args;
-  send_msg(req);
+  send_msg_task(req);
 }
 
 void AppWorker::perform_action_task(ActionType action, QVariantMap extra_args) {
-  int set_index = _last_resp[Message::kArgs].toMap()[Message::kSetIndex].toInt();
-  int overlay_index = _last_resp[Message::kArgs].toMap()[Message::kOverlayIndex].toInt();
-  if (set_index<0) {
-      return;
-    }
+  int set_index = _last_resp[Message::kValue].toMap()[Message::kSetIndex].toInt();
+  if (set_index < 0) {
+    return;
+  }
+
+  int overlay_index = _last_resp[Message::kValue].toMap()[Message::kOverlayIndex].toInt();
+  QString xpath = _last_resp[Message::kValue].toMap()[Message::kXPath].toString();
 
   QVariantMap args;
   args[Message::kSetIndex] = set_index;
   args[Message::kOverlayIndex] = overlay_index;
+  args[Message::kXPath] = xpath;
   args[Message::kAction] = action;
 
   // Merge the extra args.
@@ -800,42 +834,45 @@ void AppWorker::perform_action_task(ActionType action, QVariantMap extra_args) {
     args[iter.key()] = iter.value();
   }
   if (action == kSendClick || kMouseOver) {
-    args[Message::kOverlayRelClickPos] = _last_resp[Message::kArgs].toMap()[Message::kOverlayRelClickPos];
+    args[Message::kOverlayRelClickPos] = _last_resp[Message::kValue].toMap()[Message::kOverlayRelClickPos];
   }
 
   Message req(RequestType::kPerformAction);
   req[Message::kArgs] = args;
-  send_msg(req);
+  send_msg_task(req);
 }
 
 // -----------------------------------------------------------------
 // Handle Messages.
 // -----------------------------------------------------------------
 
-void AppWorker::handle_request_from_nodejs(const Message& sm) {
-  RequestType type = static_cast<RequestType>(sm.value(Message::kRequest).toInt());
-  send_map(sm);
-}
-
 void AppWorker::handle_response_from_nodejs(const Message& msg) {
-  // Unblock the scheduler.
-  _waiting_for_results = false;
-
   // Get the response id. This is supposed to match with the request id.
   int resp_id = msg[Message::kID].toInt();
 
   // Determine the request id.
-  int req_id = _msg_id -1;
+  int req_id = _next_msg_id -1;
 
   // Check the ids.
   if (resp_id != req_id) {
     std::cerr << "Error: response id: " << resp_id << " did not match request id: " << req_id << "\n";
-    return;
+  } else {
+    std::cerr << "Success: response id: " << resp_id << " matches request id: " << req_id << "\n";
   }
+
+  assert(resp_id == req_id);
+
+  // Unblock the scheduler.
+  _waiting_for_results = false;
+
+  // Update the last message.
+  _last_resp = msg;
 
   // Otherwise we got the expected response id.
   // Pop the queue.
-  _queue.pop_front();
+  if (_queue.size()) {
+    _queue.pop_front();
+  }
 
   // Call the next handler.
   if (_queue.size()) {
@@ -844,8 +881,11 @@ void AppWorker::handle_response_from_nodejs(const Message& msg) {
 }
 
 void AppWorker::handle_info_from_nodejs(const Message& msg) {
+  std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
   if (msg[Message::kInfo] == InfoType::kShowWebActionMenu) {
-    _click_pos = msg[Message::kArgs].toMap()[Message::kClickPos].toMap();
+    _click_pos = msg[Message::kValue].toMap()[Message::kClickPos].toMap();
+    std::cerr << "got click x,y: " << _click_pos["x"].toInt() << ", " << _click_pos["y"].toInt() << "\n";
+
     _iframe = msg[Message::kIFrame].toString();
     if (msg[Message::kArgs].toMap().count(Message::kPrevIFrame)) {
       QString prev_iframe = msg[Message::kArgs].toMap().value(Message::kPrevIFrame).toString();
@@ -861,6 +901,7 @@ void AppWorker::handle_info_from_nodejs(const Message& msg) {
 void AppWorker::on_poll() {
   if (_app_comm->check_connection()) {
     if (_show_browser) {
+      std::cerr << "polling open browser!\n";
       check_browser_is_open();
       check_browser_size();
       // Debugging. - this makes the browser only come up once.

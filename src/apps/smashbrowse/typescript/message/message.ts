@@ -93,7 +93,7 @@ class BaseMessage {
         let iframe: string = obj.iframe
         let id: Number = obj.id
         switch (obj.msg_type) {
-            case MessageType.kRequestMessage:
+            case MessageType.kRequestMessage: {
                 let req = new RequestMessage(id, iframe, RequestType.kUnknownRequest)
                 if (obj.hasOwnProperty('request')) {
                     req.request = obj.request
@@ -105,7 +105,8 @@ class BaseMessage {
                     req.xpath = obj.xpath
                 }
                 return req
-            case MessageType.kResponseMessage:
+            }
+            case MessageType.kResponseMessage: {
                 let resp = new ResponseMessage(id, iframe, false)
                 if (obj.hasOwnProperty('success')) {
                     resp.success = obj.success
@@ -114,12 +115,18 @@ class BaseMessage {
                     resp.value = obj.value
                 }
                 return resp
-            case MessageType.kInfoMessage:
+            }
+            case MessageType.kInfoMessage: {
                 let info = new InfoMessage(id, iframe, <InfoType>obj.info)
+                if (obj.hasOwnProperty('value')) {
+                    info.value = obj.value
+                }
                 return info
-            default:
+            }
+            default: {
                 console.error('Error: Attempt to create message from obj without a message type: ' + JSON.stringify(obj))
                 return null
+            }
         }
     }
 
