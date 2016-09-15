@@ -80,22 +80,22 @@ export class WebDriverWrap {
         return this.driver.quit()
     }
 
-    //Returns a promise which navigates the browser to another url.
+    // Returns a promise which navigates the browser to another url.
     navigate_to(url: string): webdriver.promise.Promise<void> {
         return this.driver.navigate().to(url)
     }
 
-    //Returns a promise which navigates the browser forward in the history.
+    // Returns a promise which navigates the browser forward in the history.
     navigate_forward(): webdriver.promise.Promise<void> {
         return this.driver.navigate().forward();
     }
 
-    //Returns a promise which navigates the browser backwards in the history.
+    // Returns a promise which navigates the browser backwards in the history.
     navigate_back(): webdriver.promise.Promise<void> {
         return this.driver.navigate().back();
     }
 
-    //Returns a promise which refreshes the browser.
+    // Returns a promise which refreshes the browser.
     navigate_refresh(): webdriver.promise.Promise<void> {
         return this.driver.navigate().refresh();
     }
@@ -103,27 +103,71 @@ export class WebDriverWrap {
     // Negative numbers in the iframe string path will make the path equivalent to an empty path.
     // Empty paths switch the iframe to the top iframe.
     switch_to_iframe(iframe: string): webdriver.promise.Promise<void> {
-        this.driver.switchTo().defaultContent()
-        let splits = iframe.split('/')
+        console.log('switching to iframe: ' + iframe)
+
+        // Switch to the top frame.
         let last_promise: webdriver.promise.Promise<void> = null
+        last_promise = this.driver.switchTo().defaultContent()
+
+        // Loop through each sub frame.
+        let splits = iframe.split('/')
         for (let i=0; i<splits.length; i++) {
+
+            // Note when empty strings are split on '/', you get an array with one element which is an empty string.
+            if (splits[i] === '') {
+                continue
+            }
+
+            // Get the frame index as a number.
             let frame_index = Number(splits[i])
-            // If there is a negative number then our promise is to just switch to the top frame.
+
+            // Stop going deeper if get a negative index.
             if (frame_index < 0) {
-                last_promise = this.driver.switchTo().defaultContent()
+                console.log('switching found -1 so going to default content')
                 return last_promise
             }
-            last_promise = this.driver.switchTo().frame(frame_index)
+
+            console.log('switching to frame: ' + frame_index)
+            
+            // Debug dump of the current iframe after switching.
+            last_promise = this.driver.executeScript('return self.name').then(function (name: string){console.log('current frame name is: ' + name)})
+
+            // Debug dump of the number of iframes.
+            this.driver.findElements(By.tagName('iframe')).then(
+                function(iframes: webdriver.WebElement[]){
+                    console.log('num iframes: ' + iframes.length)
+                }.bind(this))
+
+            // Debug dump of the number of frames.
+            this.driver.findElements(By.tagName('frame')).then(
+                function (iframes: webdriver.WebElement[]) {
+                    console.log('num frames: ' + iframes.length)
+                }.bind(this)) 
+            
+            // We switch to the frame by using it's WebElement instead of by its index.
+            // For example as follows: this.driver.switchTo().frame(frame_index)
+            // This is because otherwise it doesn't match up with the iframe index produced in PageWrap.get_iframe_path().
+            this.driver.findElements(By.tagName('iframe')).then(
+                function (iframes: webdriver.WebElement[]) {
+                    console.log('switching to index: ' + frame_index)
+                    let target_locator: any = this.driver.switchTo()
+                    target_locator.frame(iframes[frame_index]);
+                }.bind(this)) 
+
+
+            // Debug dump of the name of the iframe after switching.
+            last_promise = this.driver.executeScript('return self.frameElement.className + "--" + self.name + " w--" + self.frameElement.clientWidth + " h--" + self.frameElement.clientHeight')
+            .then(function (name: string){console.log('frame class--name is: ' + name)})
         }
         return last_promise
     }
 
-    //Returns a promise which resizes the browser.
+    // Returns a promise which resizes the browser.
     resize_browser(width: number, height: number): webdriver.promise.Promise<void> {
         return this.driver.manage().window().setSize(width, height);
     }
 
-    //Returns a promise which jitters the browser size.
+    // Returns a promise which jitters the browser size.
     jitter_browser_size(): webdriver.promise.Promise<{}> {
         let our_driver = <webdriver.WebDriver>this.driver
         return our_driver.manage().window().getSize().then(
@@ -143,12 +187,12 @@ export class WebDriverWrap {
     // Dom Element Actions.
     //------------------------------------------------------------------------------------------------
 
-    //Returns a promise which evaulates to an existing element or is rejected.
+    // Returns a promise which evaulates to an existing element or is rejected.
     get_element(xpath: string): webdriver.promise.Promise<webdriver.WebElement> {
         return this.driver.findElement(By.xpath(xpath))
     }
         
-    //Returns a promise which evaulates to a visible element.
+    // Returns a promise which evaulates to a visible element.
     get_visible_element(xpath: string): webdriver.promise.Promise<{}> {
         return this.get_element(xpath).then(
             function (element: webdriver.WebElement) {

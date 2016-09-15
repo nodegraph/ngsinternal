@@ -33,6 +33,13 @@ ListModel {
         script: "push_by_names('Shift To DropDowns', 'WebActionPage', 'WebActionsShiftToSelects')"
     }
 
+    ListElement {
+        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        title: "To IFrames"
+        description: "Shift to iframe elements."
+        script: "push_by_names('Shift To IFrames', 'WebActionPage', 'WebActionsShiftToIFrames')"
+    }
+
 }
 
 

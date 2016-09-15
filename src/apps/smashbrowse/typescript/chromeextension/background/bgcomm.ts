@@ -41,10 +41,15 @@ class BgComm {
         this.bound_on_tab_updated = this.on_tab_updated.bind(this)
         chrome.tabs.onUpdated.addListener(this.bound_on_tab_updated)
 
-        // Make sure the web socket is closed before we navigate away from this window/frame.
-        window.onbeforeunload = function() {
-            this.nodejs_socket.close()
-        }
+        // Seems like the nodejs connect is lost frequently so we poll it.
+        this.connect_timer = setInterval(this.connect_to_nodejs.bind(this), 500)
+
+        // The background script is persistent once the browser is up.
+        // So we shouldn't be closing the nodejs_socket until the browser closes down.
+
+        // window.onbeforeunload = function() {
+        //     this.nodejs_socket.close()
+        // }
     }
 
     set_iframe(iframe: string): void {
@@ -64,7 +69,7 @@ class BgComm {
             return
         }
         this.content_tab_id = tab.id
-        this.nodejs_port = BgComm.extract_port_from_url(tab.url) 
+        this.nodejs_port = BgComm.extract_port_from_url(tab.url)
         this.connect_to_nodejs()
         chrome.tabs.onUpdated.removeListener(this.bound_on_tab_updated)
     }
@@ -72,7 +77,7 @@ class BgComm {
     static extract_port_from_url(url: string): number {
         let index = url.indexOf('?')
         if (index != -1) {
-            return Number(url.substring(index+1))
+            return Number(url.substring(index + 1))
         } else {
             console.error("Error: no port number present")
             return -1
@@ -83,7 +88,7 @@ class BgComm {
     // Communication between background and nodej.
     //------------------------------------------------------------------------------------------------
 
-    //Setup communication channel to nodejs.
+    // Setup communication channel to nodejs.
     connect_to_nodejs(): void {
         // Return if we haven't received our nodejs port number yet.
         if (this.nodejs_port == -1) {
@@ -110,11 +115,12 @@ class BgComm {
         }
     }
 
-    //Send message to nodejs.
+    // Send message to nodejs.
     send_to_nodejs(msg: BaseMessage): void {
         // If we're not connected to nodejs yet, then just return.
-        if (!this.nodejs_socket) {
+        if (!this.nodejs_socket || (this.nodejs_socket.readyState != WebSocket.OPEN)) {
             console.log('nodejs socket is not connected')
+            console.log('unable to send: ' + msg.to_string())
             return
         }
         this.nodejs_socket.send(JSON.stringify(msg));
@@ -124,7 +130,7 @@ class BgComm {
         this.handler = handler
     }
 
-    //Receive messages from nodejs. They will be forward to the content script.
+    // Receive messages from nodejs. They will be forward to the content script.
     receive_from_nodejs(event: MessageEvent) {
         let msg = BaseMessage.create_from_string(event.data);
         //let request = JSON.parse(event.data);
@@ -153,7 +159,7 @@ class BgComm {
 
     // Receive a message from the content script. We simply forward the message to nodejs.
     receive_from_content(msg: BaseMessage, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
-        console.log("bg received message from content: " + JSON.stringify(msg))
+        console.log("bg received from frameid: " + sender.frameId + " : " + JSON.stringify(msg))
         // The first tab to send us a content message will be the tab that we pay attention to.
         if (!this.content_tab_id) {
             this.content_tab_id = sender.tab.id
@@ -166,7 +172,8 @@ class BgComm {
         // If the current iframe doesn't match we note this in the 
         if (msg.msg_type == MessageType.kInfoMessage) {
             let req = <InfoMessage>msg
-            if(req.info == InfoType.kShowWebActionMenu && req.iframe != this.iframe) {
+            if (req.info == InfoType.kShowWebActionMenu && req.iframe != this.iframe) {
+                console.log('message is from a different iframe')
                 req.value.prev_iframe = this.iframe
             }
 

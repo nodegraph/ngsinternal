@@ -45,6 +45,8 @@ declare const enum RequestType {
 declare const enum ActionType {
     kSendClick,
     kMouseOver,
+    kStartMouseHover,
+    kStopMouseHover,
     kSendText,
     kSendEnter,
     kGetText,

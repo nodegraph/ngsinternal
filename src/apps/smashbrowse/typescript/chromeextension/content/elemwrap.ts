@@ -4,7 +4,8 @@ const enum WrapType {
     text,
     image,
     input,
-    select
+    select,
+    iframe
 }
 
 // This class wraps the dom element with extra functionality.
@@ -57,6 +58,9 @@ class ElemWrap {
 
     // Get our wrap type.
     calculate_wrap_type(): WrapType {
+        if (this.is_iframe()) {
+            return WrapType.iframe
+        }
         if (this.get_text()) {
             return WrapType.text
         }
@@ -84,6 +88,8 @@ class ElemWrap {
                 return this.is_input
             case WrapType.select:
                 return this.is_select
+            case WrapType.iframe:
+                return this.is_iframe
         }
         return null
     }
@@ -555,6 +561,13 @@ class ElemWrap {
     is_select(): string {
         if (this.element.tagName.toLowerCase() == 'select') {
             return 'select'
+        }
+        return ''
+    }
+
+    is_iframe(): string {
+        if (this.element.tagName.toLowerCase() == 'iframe') {
+            return 'iframe'
         }
         return ''
     }

@@ -4,9 +4,6 @@ class PageWrap {
     // Our Dependencies.
     gui_collection: GUICollection // This is like our owning parent.
     
-    // Our Members.
-    static iframe = PageWrap.get_iframe_index_path_as_string(window)
-    
     // Constructor.
     constructor(gc: GUICollection) {
         this.gui_collection = gc
@@ -54,19 +51,22 @@ class PageWrap {
             }
             spath += ipath[i].toString()
         }
+        console.log('ipath,spath: ' + ipath + " , " + spath)
         return spath
     }
 
-    // Get our iframe path as indexes.
+    // Get our iframe path as zero-based indexes.
     // An empty iframe path means we are in the top window.
     static get_iframe_index_path(win: Window) {
         let path: number[] = []
+        let totals: number[] = [] // debugging
         while (win.parent != win) {
             var iframes = win.parent.document.getElementsByTagName('iframe');
             let found = false
-            for (let i = 0; i < iframes.length; i++) {
-                if (iframes[i].contentWindow == win) {
+            for (let i = iframes.length-1; i>=0; i--) {
+                if (iframes[i].contentWindow === win) {
                     path.unshift(i)
+                    totals.unshift(iframes.length)
                     found = true
                     break;
                 }
@@ -77,6 +77,8 @@ class PageWrap {
             win = win.parent
         }
         return path
+        //path.push(-2)
+        //return path.concat(totals)
     }
 
     //---------------------------------------------------------------------------------

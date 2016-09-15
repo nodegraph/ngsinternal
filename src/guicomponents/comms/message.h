@@ -57,6 +57,8 @@ enum RequestType {
 enum ActionType {
   kSendClick,
   kMouseOver,
+  kStartMouseHover,
+  kStopMouseHover,
   kSendText,
   kSendEnter,
   kGetText,
@@ -85,7 +87,8 @@ enum WrapType {
     text,
     image,
     input,
-    select
+    select,
+    iframe
 };
 
 enum Direction {

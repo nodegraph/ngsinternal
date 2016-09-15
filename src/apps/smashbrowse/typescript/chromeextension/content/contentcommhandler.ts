@@ -23,7 +23,7 @@ class ContentCommHandler {
 
     handle_bg_request(req: RequestMessage) {
         console.log('content script received message from bg: ' + JSON.stringify(req))
-        let success_msg = new ResponseMessage(req.id, PageWrap.iframe, true)
+        let success_msg = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), true)
         switch (req.request) {
             case RequestType.kUpdateOveralys: {
                 this.gui_collection.overlay_sets.update()
@@ -36,17 +36,16 @@ class ContentCommHandler {
                         this.gui_collection.add_overlay_set(elem_wraps)
                         this.gui_collection.overlay_sets.update()
                         console.log('overlay set added for text')
-                    }
-                        break
+                    } break
                     case WrapType.image: {
                         let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, req.args.match_values)
                         this.gui_collection.add_overlay_set(elem_wraps)
                         this.gui_collection.overlay_sets.update()
                         console.log('overlay set added for image')
-                    }
-                        break
-                    default:
+                    } break
+                    default: {
                         console.error("Error: create_set_from_match_values")
+                    }
                 }
                 this.content_comm.send_to_bg(success_msg)
             } break
@@ -102,22 +101,18 @@ class ContentCommHandler {
                 // In this case the scroll may not move fully to the requested position.
                 if (req.args.action == ActionType.kScrollDown) {
                     this.gui_collection.overlay_sets.scroll_down(req.args.set_index, req.args.overlay_index);
-                    break
                 } else if (req.args.action == ActionType.kScrollUp) {
                     this.gui_collection.overlay_sets.scroll_up(req.args.set_index, req.args.overlay_index);
-                    break
                 } else if (req.args.action == ActionType.kScrollRight) {
                     this.gui_collection.overlay_sets.scroll_right(req.args.set_index, req.args.overlay_index);
-                    break
                 } else if (req.args.action == ActionType.kScrollLeft) {
                     this.gui_collection.overlay_sets.scroll_left(req.args.set_index, req.args.overlay_index);
-                    break
                 }
                 this.content_comm.send_to_bg(success_msg)
             } break
             case RequestType.kGetCrosshairInfo: {
                 let info = this.gui_collection.get_crosshair_info(req.args.click_pos)
-                let resp = new ResponseMessage(req.id, PageWrap.iframe, true, info)
+                let resp = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), true, info)
                 this.content_comm.send_to_bg(resp)
             } break
 

@@ -75,7 +75,7 @@ INSTALL(
 INSTALL(
     FILES 
         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/nodejs2/node.exe"
-        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.23/chromedriver.exe"
+        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.24/chromedriver.exe"
     DESTINATION bin
     COMPONENT thirdparty
     CONFIGURATIONS Debug Release
@@ -161,7 +161,7 @@ add_custom_command (
   # extra nodejs modules
   COMMAND ${CMAKE_COMMAND} -E copy_directory "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/node_modules" ${CMAKE_BINARY_DIR}/install/bin/node_modules
   # chromedriver
-  COMMAND ${CMAKE_COMMAND} -E copy "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.23/chromedriver.exe" ${CMAKE_BINARY_DIR}/install/bin
+  COMMAND ${CMAKE_COMMAND} -E copy "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.24/chromedriver.exe" ${CMAKE_BINARY_DIR}/install/bin
 )
 
 add_custom_target (install_desktop

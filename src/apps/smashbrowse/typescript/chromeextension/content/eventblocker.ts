@@ -65,8 +65,12 @@ class EventBlocker {
             case 'mouseout':
                 break
             case 'scroll':
-                this.gui_collection.overlay_sets.update()
-                break
+                //if (event.target) {
+                //    var elem_wrap = new ElemWrap(event.target)
+                //    console.log('got scroll target: ' + elem_wrap.get_xpath())
+                //}
+                //g_overlay_sets.update()
+                return true
             case 'message':
                 return true
         }

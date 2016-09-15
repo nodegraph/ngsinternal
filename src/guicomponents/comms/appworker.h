@@ -111,6 +111,11 @@ Q_OBJECT
   Q_INVOKABLE void shift_to_selects_on_left();
   Q_INVOKABLE void shift_to_selects_on_right();
 
+  Q_INVOKABLE void shift_to_iframes_above();
+  Q_INVOKABLE void shift_to_iframes_below();
+  Q_INVOKABLE void shift_to_iframes_on_left();
+  Q_INVOKABLE void shift_to_iframes_on_right();
+
   // Expand sets.
   Q_INVOKABLE void expand_above();
   Q_INVOKABLE void expand_below();
@@ -141,8 +146,10 @@ Q_OBJECT
   Q_INVOKABLE void unblock_events();
 
   // Perform web actions.
-  Q_INVOKABLE void perform_click();
-  Q_INVOKABLE void perform_mouse_over();
+  Q_INVOKABLE void click();
+  Q_INVOKABLE void mouse_over();
+  Q_INVOKABLE void start_mouse_hover();
+  Q_INVOKABLE void stop_mouse_hover();
   Q_INVOKABLE void type_text(const QString& text);
   Q_INVOKABLE void type_enter();
   Q_INVOKABLE void extract_text();
@@ -167,7 +174,7 @@ signals:
   void send_msg(Message& msg);  // msg is not const because it gets tagged with an id.
 
   // Task Management.
-  void queue_task(AppTask task);
+  void queue_task(AppTask task, const std::string& about);
 
   // Tasks. Our members which get bound into tasks.
   void send_msg_task(Message msg);
@@ -185,6 +192,7 @@ signals:
   void perform_action_task(ActionType action, QVariantMap extra_args);
 
   // Handle messages.
+  void run_next_task();
   void handle_response_from_nodejs(const Message& sm);
   void handle_info_from_nodejs(const Message& msg);
 

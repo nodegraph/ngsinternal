@@ -79,6 +79,7 @@
         <file>qml/smashbrowse/menumodels/WebActionsShiftToImages.qml</file>
         <file>qml/smashbrowse/menumodels/WebActionsShiftToInputs.qml</file>
         <file>qml/smashbrowse/menumodels/WebActionsShiftToSelects.qml</file>
+        <file>qml/smashbrowse/menumodels/WebActionsShiftToIFrames.qml</file>
         <file>qml/smashbrowse/menumodels/WebActionsExpand.qml</file>
         <file>qml/smashbrowse/menumodels/WebActionsMark.qml</file>
         <file>qml/smashbrowse/menumodels/WebActionsShrink.qml</file>

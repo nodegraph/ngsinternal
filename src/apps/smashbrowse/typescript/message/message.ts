@@ -46,6 +46,8 @@ const enum RequestType {
 const enum ActionType {
     kSendClick,
     kMouseOver,
+    kStartMouseHover,
+    kStopMouseHover,
     kSendText,
     kSendEnter,
     kGetText,

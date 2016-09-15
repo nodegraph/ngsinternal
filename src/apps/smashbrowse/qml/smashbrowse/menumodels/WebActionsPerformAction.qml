@@ -9,7 +9,7 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Click"
         description: "Click on an element."
-        script: "app_worker.perform_click()"
+        script: "app_worker.click()"
     }
 
     ListElement {
@@ -44,7 +44,19 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Hover the Mouse"
         description: "Hover the mouse over the crosshair."
-        script: "app_worker.perform_mouse_over()"
+        script: "app_worker.mouse_over()"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        title: "Start Hovering the Mouse"
+        description: "Starts hovering the mouse over the crosshair."
+        script: "app_worker.start_mouse_hover()"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        title: "Stop Hovering the Mouse"
+        description: "Stops hovering the mouse over the crosshair."
+        script: "app_worker.stop_mouse_hover()"
     }
 
     ListElement {

@@ -33,7 +33,7 @@ class ContentComm {
         let msg = BaseMessage.create_from_obj(obj)
 
         // Ignore the message if it doesn't match our iframe.
-        if (msg.iframe != PageWrap.iframe) {
+        if (msg.iframe != PageWrap.get_iframe_index_path_as_string(window)) {
             return
         }
 

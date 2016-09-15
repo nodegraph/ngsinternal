@@ -72,19 +72,16 @@ class GUICollection {
     }
 
     on_context_menu(e: MouseEvent): boolean {
-        console.log('111')
         if (!this.page_overlays.initialized()) {
-            console.log('222')
             return
         }
-        console.log('333')
         let click_pos = new Point({x: e.pageX, y: e.pageY})
 
         // Update the click box overly.
         this.page_overlays.update_crosshair(click_pos)
 
         // Send the request to the app.
-        let im = new InfoMessage(0, PageWrap.iframe, InfoType.kShowWebActionMenu, {click_pos: click_pos})
+        let im = new InfoMessage(0, PageWrap.get_iframe_index_path_as_string(window), InfoType.kShowWebActionMenu, {click_pos: click_pos})
         this.content_comm.send_to_bg(im)
 
         // Prevent default behavior of the event.

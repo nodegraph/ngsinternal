@@ -2,7 +2,7 @@
 
 class PageOverlays {
     // Our Dependencies.
-    handler: PageOverlaysHandler
+    
     
     // Our Members.
 
@@ -25,10 +25,6 @@ class PageOverlays {
         this.text_box_overlay = null
         this.image_box_overlay = null
         this.click_cross_overlay = null
-    }
-
-    set_handler(handler: PageOverlaysHandler) {
-        this.handler = handler
     }
 
     get_page_pos(): Point {

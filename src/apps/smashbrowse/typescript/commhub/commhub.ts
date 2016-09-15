@@ -77,12 +77,37 @@ class ChromeConnection extends BaseConnection {
 }
 
 class AppConnection extends BaseConnection {
+    timer: number
+    pulse_args: any
     constructor(webdriverwrap: WebDriverWrap) {
         super(webdriverwrap)
+        this.timer = null
+        this.pulse_args = {}
     }
-    //The can send us messages either from c++ or from qml.
-    //These requests will be handled by webdriverjs, or the extension scripts in the browser.
-    //Requests will always return with a response message containing return values.
+
+    // Creates and starts the mutation timer.
+    start_pulse(args: any): void {
+        if (this.timer == null) {
+            this.timer = setInterval(this.pulse.bind(this), 500)
+        }
+        this.pulse_args = args
+    }
+
+    // Stops and destroys the mutation timer.
+    stop_pulse(): void {
+        clearInterval(this.timer)
+        this.timer = null
+    }
+
+    pulse(): void {
+        console.log('pulse hovering: ' + this.pulse_args.xpath + ", " + this.pulse_args.overlay_rel_click_pos.x + "," + this.pulse_args.overlay_rel_click_pos.y)
+        let p = this.webdriverwrap.click_on_element(this.pulse_args.xpath, this.pulse_args.overlay_rel_click_pos.x, this.pulse_args.overlay_rel_click_pos.y)
+        p.then(function(){console.log('pulse hover success!')},function(){console.log('pulse hover fail')})
+    }
+
+    // The can send us messages either from c++ or from qml.
+    // These requests will be handled by webdriverjs, or the extension scripts in the browser.
+    // Requests will always return with a response message containing return values.
     receive_json(json: string): void {
         console.log('app --> commhub: ' + json)
 
@@ -106,78 +131,78 @@ class AppConnection extends BaseConnection {
                 this.webdriverwrap.close_browser().then(function() { process.exit(-1) })
                 break;
             }
-            case RequestType.kCheckBrowserIsOpen:
+            case RequestType.kCheckBrowserIsOpen: {
                 function on_response(open: boolean) {
                     if (!open) {
                         this.webdriverwrap.open_browser()
                         // Now convert this request to navigate to a default url with a port number.
                         let url = "https://www.google.com/?" + get_ext_server_port()
-                        let relay = new RequestMessage(msg.id, '-1', RequestType.kNavigateTo, {url: url})
+                        let relay = new RequestMessage(msg.id, '-1', RequestType.kNavigateTo, { url: url })
                         this.receive_json(relay.to_string())
                     } else {
                         send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
                     }
                 }
                 this.webdriverwrap.browser_is_open(on_response.bind(this))
-                break
-            case RequestType.kResizeBrowser:
+            } break
+            case RequestType.kResizeBrowser: {
                 this.webdriverwrap.resize_browser(req.args.width, req.args.height).then(
                     function(){send_msg_to_app(new ResponseMessage(msg.id, '-1', true))},
                     function(){send_msg_to_app(new ResponseMessage(msg.id, '-1', false))}
                 )
-                break
-            case RequestType.kOpenBrowser:
+            } break
+            case RequestType.kOpenBrowser: {
                 if (this.webdriverwrap.open_browser()) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
                 } else {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false))
                 }
-                break
-            case RequestType.kCloseBrowser:
+            } break
+            case RequestType.kCloseBrowser: {
                 this.webdriverwrap.close_browser()
                 send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
-                break
-            case RequestType.kNavigateTo:
+            } break
+            case RequestType.kNavigateTo: {
                 this.webdriverwrap.navigate_to(req.args.url).then(function() {
                     let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, {iframe: ''})
                     send_msg_to_ext(relay_req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
-                break
-            case RequestType.kNavigateBack:
+            } break
+            case RequestType.kNavigateBack: {
                 this.webdriverwrap.navigate_back().then(function() {
                     let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
                     send_msg_to_ext(relay_req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
-                break
-            case RequestType.kNavigateForward:
+            } break
+            case RequestType.kNavigateForward: {
                 this.webdriverwrap.navigate_forward().then(function() {
                     let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
                     send_msg_to_ext(relay_req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
-                break
-            case RequestType.kNavigateRefresh:
+            } break
+            case RequestType.kNavigateRefresh: {
                 this.webdriverwrap.navigate_refresh().then(function() {
                     let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
                     send_msg_to_ext(relay_req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
-                break
-            case RequestType.kSwitchIFrame:
+            } break
+            case RequestType.kSwitchIFrame: {
                 this.webdriverwrap.switch_to_iframe(req.args.iframe).then(function() {
                     // Update the chrome extension.
                     send_msg_to_ext(req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
-                break
-            case RequestType.kPerformAction:
+            } break
+            case RequestType.kPerformAction: {
                 switch (req.args.action) {
                     case ActionType.kSendClick: {
                         let p = this.webdriverwrap.click_on_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
@@ -186,6 +211,14 @@ class AppConnection extends BaseConnection {
                     case ActionType.kMouseOver: {
                         let p = this.webdriverwrap.mouse_over_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                         WebDriverWrap.terminate_chain(p, req.id)
+                    } break
+                    case ActionType.kStartMouseHover: {
+                        this.start_pulse(req.args)
+                        send_msg_to_app(new ResponseMessage(req.id, '-1', true))
+                    } break
+                    case ActionType.kStopMouseHover: {
+                        this.stop_pulse()
+                        send_msg_to_app(new ResponseMessage(req.id, '-1', true))
                     } break
                     case ActionType.kSendText: {
                         let p = this.webdriverwrap.send_text(req.args.xpath, req.args.text)
@@ -212,12 +245,12 @@ class AppConnection extends BaseConnection {
                         send_msg_to_ext(req)
                     } break
                 }
-                break
-            default:
+            } break
+            default: {
                 // By default we send requests to the extension. 
                 // (It goes through bg script, and then into content script.)
                 send_msg_to_ext(req)
-                break
+            } break
         }
     }
 }
@@ -313,6 +346,11 @@ class BaseSocketServer {
     send_msg(msg: BaseMessage) {
         // Clean any invalid connections.
         this.clean_invalid_connections()
+
+
+        if (this.connections.length != 1) {
+            console.error('Error: socket server was expection just one connection')
+        }
 
         // Send the msg through all connections which are alive.
         let sent = false

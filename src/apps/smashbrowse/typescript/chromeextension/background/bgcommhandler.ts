@@ -66,13 +66,14 @@ class BgCommHandler {
                 console.log('bgcomm setting iframe to ' + req.args.iframe)
                 this.bg_comm.set_iframe(req.args.iframe)
                 // Send response to nodejs.
-                let response = new ResponseMessage(req.id, "-1", true)
+                let response = new ResponseMessage(req.id, "-99", true)
                 this.bg_comm.send_to_nodejs(response)
             } break
-            default:
+            default: {
                 // Forward it to the right iframe in the content.
                 req.iframe = this.bg_comm.get_iframe()
                 this.bg_comm.send_to_content(req)
+            } break
         }
 
     }

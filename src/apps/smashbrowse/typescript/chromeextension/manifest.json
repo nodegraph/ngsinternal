@@ -22,7 +22,8 @@
       "js": ["cnt.js"],
       "css": ["contextmenu.css", "overlay.css", "popupdialog.css"],
       "all_frames": true,
-      "run_at": "document_start"
+      "run_at": "document_start",
+      "match_about_blank": true
     }
   ],
   
