@@ -194,14 +194,19 @@ export class WebDriverWrap {
         
     // Returns a promise which evaulates to a visible element.
     get_visible_element(xpath: string): webdriver.promise.Promise<{}> {
-        return this.get_element(xpath).then(
-            function (element: webdriver.WebElement) {
-                let our_driver = <webdriver.WebDriver>this.driver
-                return our_driver.wait(Until.elementIsVisible(element), 1000).then(
-                    function (element) { return element },
-                    function (error) { console.info('Warning: element was not visible: ' + xpath); throw error })
-            }.bind(this)
-        )
+        return this.get_element(xpath)
+        // We skip checking the visibility of the element because it allows us to
+        // click through elements. This is very helpful when clicking video player controls
+        // on web pages like cnet.
+        
+        // .then(
+        //     function (element: webdriver.WebElement) {
+        //         let our_driver = <webdriver.WebDriver>this.driver
+        //         return our_driver.wait(Until.elementIsVisible(element), 1000).then(
+        //             function (element) { return element },
+        //             function (error) { console.info('Warning: element was not visible: ' + xpath); throw error })
+        //     }.bind(this)
+        // )
     }
 
     // Creates promise chain which will type one key into an element.
@@ -266,9 +271,6 @@ export class WebDriverWrap {
     static terminate_chain<T>(p: webdriver.promise.Promise<T>, id: Number) {
         p.then(
             function() {
-                // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
-                //let req = new RequestMessage(-1, '-1', RequestType.kBlockEvents)
-                //send_msg_to_ext(req)
                 // Send success response to the app.
                 console.log('terminating chain success with numargs: ' + arguments.length)
                 if (arguments.length == 0) {
@@ -279,9 +281,6 @@ export class WebDriverWrap {
                 }
             }.bind(this),
             function(error: any) {
-                // Make sure the events are blocked. They may be unblocked to allow webdriver actions to take effect.
-                //let req = new RequestMessage(-1, '-1', RequestType.kBlockEvents)
-                //send_msg_to_ext(req)
                 // Output error details.
                 console.error("Error in chain!")
                 if (error.stack.indexOf('mouse_over_element') >= 0) {

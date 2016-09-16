@@ -40,9 +40,10 @@ class BgComm {
         // The very first opened tab's url will have the port number embedded into the url.
         this.bound_on_tab_updated = this.on_tab_updated.bind(this)
         chrome.tabs.onUpdated.addListener(this.bound_on_tab_updated)
+        chrome.tabs.onCreated.addListener(this.on_tab_created.bind(this))
 
         // Seems like the nodejs connect is lost frequently so we poll it.
-        this.connect_timer = setInterval(this.connect_to_nodejs.bind(this), 500)
+        // this.connect_timer = setInterval(this.connect_to_nodejs.bind(this), 500)
 
         // The background script is persistent once the browser is up.
         // So we shouldn't be closing the nodejs_socket until the browser closes down.
@@ -58,6 +59,16 @@ class BgComm {
 
     get_iframe(): string {
         return this.iframe
+    }
+
+    on_tab_created(tab: chrome.tabs.Tab) {
+        if (this.content_tab_id == null) {
+            return
+        }
+        // Close any external tabs that get opened outside our tab being controlled by webdriver.
+        if (this.content_tab_id != tab.id) {
+            chrome.tabs.remove(tab.id)
+        }
     }
 
     on_tab_updated(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {
