@@ -41,7 +41,7 @@ AppWorker::AppWorker(Entity* parent)
       _file_model(this),
       _show_browser(true),
       _hovering(false),
-      _jitter(5),
+      _jitter(1),
       _waiting_for_results(false),
       _next_msg_id(0),
       _connected(false){
