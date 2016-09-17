@@ -8,12 +8,6 @@
 //Globals.
 //------------------------------------------------------------------------------------------------
 
-// Note default arguments for function requires ES6.
-// This version of nodejs doesn't seem to have ES6 yet.
-
-// We use strict mode. In strict mode we can't use undeclared variables.
-//"use strict";
-
 // Our imports.
 import ws = require('ws') // Note although similar to WebSocket (es6), ws is the nodejs type that we want to use not WebSocket.
 import Http = require('http')
@@ -104,7 +98,7 @@ class AppConnection extends BaseConnection {
         // Handle the request.
         switch (req.request) {
             case RequestType.kShutdown: {
-                this.webdriverwrap.close_browser().then(function() { process.exit(-1) })
+                this.webdriverwrap.close_browser().then(() => { process.exit(-1) })
                 break;
             }
             case RequestType.kCheckBrowserIsOpen: {
@@ -144,42 +138,42 @@ class AppConnection extends BaseConnection {
                 }
             } break
             case RequestType.kNavigateTo: {
-                this.webdriverwrap.navigate_to(req.args.url).then(function() {
+                this.webdriverwrap.navigate_to(req.args.url).then(() => {
                     let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
-                }, function(error) {
+                }, (error) => {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
             } break
             case RequestType.kNavigateBack: {
-                this.webdriverwrap.navigate_back().then(function() {
+                this.webdriverwrap.navigate_back().then(() => {
                     let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
-                }, function(error) {
+                }, (error) => {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
             } break
             case RequestType.kNavigateForward: {
-                this.webdriverwrap.navigate_forward().then(function() {
+                this.webdriverwrap.navigate_forward().then(() => {
                     let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
-                }, function(error) {
+                }, (error) => {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
             } break
             case RequestType.kNavigateRefresh: {
-                this.webdriverwrap.navigate_refresh().then(function() {
+                this.webdriverwrap.navigate_refresh().then(() => {
                     let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
-                }, function(error) {
+                }, (error) => {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
             } break
             case RequestType.kSwitchIFrame: {
-                this.webdriverwrap.switch_to_iframe(req.args.iframe).then(function() {
+                this.webdriverwrap.switch_to_iframe(req.args.iframe).then(() => {
                     // Update the chrome extension.
                     send_msg_to_ext(req)
-                }, function(error) {
+                }, (error) => {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
             } break
