@@ -28,6 +28,7 @@
         <file>qml/smashbrowse/stackedpages/EditBooleanPage.qml</file>
         <file>qml/smashbrowse/stackedpages/EditNumberPage.qml</file>
         <file>qml/smashbrowse/stackedpages/EditEnumPage.qml</file>
+        <file>qml/smashbrowse/stackedpages/WebActionBusyPage.qml</file>
         <file>qml/smashbrowse/stackedpages/WebActionPage.qml</file>
         <file>qml/smashbrowse/stackedpages/WebActionStackPage.qml</file>
         <file>qml/smashbrowse/stackedpages/EnterStringPage.qml</file>

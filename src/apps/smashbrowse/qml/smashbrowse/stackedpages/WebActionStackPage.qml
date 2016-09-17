@@ -76,4 +76,11 @@ AppStackPage{
         visible = true
     }
 
+    function on_busy() {
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/WebActionBusyPage.qml", edit_node_page, {})
+        page.visible = true
+        page.set_title("Busy")
+        stack_view.push_page(page)
+    }
+
 }

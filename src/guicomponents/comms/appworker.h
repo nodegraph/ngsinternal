@@ -49,7 +49,7 @@ Q_OBJECT
   Q_INVOKABLE void make_browser_visible() {_show_browser = true;}
 
   // Task queue info.
-  Q_INVOKABLE bool task_queue_is_empty() {return _queue.empty();}
+  Q_INVOKABLE bool is_busy() {return !_queue.empty();}
 
   // ---------------------------------------------------------------------------------
   // Browser Actions.
@@ -165,6 +165,7 @@ Q_OBJECT
 signals:
   void show_web_action_menu();
   void show_iframe_menu();
+  void web_action_ignored();
 
  private slots:
   void on_text_received(const QString & text);

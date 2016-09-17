@@ -49,4 +49,11 @@ ListModel {
         script: "app_worker.close_browser()"
     }
 
+    ListElement {
+        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        title: "test busy"
+        description: "Close the browser."
+        script: "web_action_stack_page.on_busy()"
+    }
+
 }
