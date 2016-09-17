@@ -25,25 +25,25 @@ class BgCommHandler {
 
         switch (req.request) {
             case RequestType.kClearAllCookies: {
-                function done_clear_all_cookies() {
+                let done_clear_all_cookies = () => {
                     // Send response to nodejs.
                     let response = new ResponseMessage(req.id, "-1", true)
                     this.bg_comm.send_to_nodejs(response)
                 }
-                BrowserWrap.clear_all_cookies(done_clear_all_cookies.bind(this))
+                BrowserWrap.clear_all_cookies(done_clear_all_cookies)
             } break
             case RequestType.kGetAllCookies: {
-                function done_get_all_cookies(cookies: chrome.cookies.Cookie[]) {
+                let done_get_all_cookies = (cookies: chrome.cookies.Cookie[]) => {
                     // Send response to nodejs.
                     let response = new ResponseMessage(req.id, "-1", true, cookies)
                     this.bg_comm.send_to_nodejs(response)
                 }
-                BrowserWrap.get_all_cookies(done_get_all_cookies.bind(this));
+                BrowserWrap.get_all_cookies(done_get_all_cookies);
             } break
             case RequestType.kSetAllCookies: {
                 let cookies = req.args.cookies
                 let count = 0
-                function done_set_all_cookies() {
+                let done_set_all_cookies = () => {
                     count += 1
                     if (count == cookies.length) {
                         // Send response to nodejs.
@@ -51,15 +51,15 @@ class BgCommHandler {
                         this.bg_comm.send_to_nodejs(response)
                     }
                 }
-                BrowserWrap.set_all_cookies(cookies, done_set_all_cookies.bind(this))
+                BrowserWrap.set_all_cookies(cookies, done_set_all_cookies)
             } break
             case RequestType.kGetZoom: {
-                function done_get_zoom(zoom: number) {
+                let done_get_zoom = (zoom: number) => {
                     // Send response to nodejs.
                     let response = new ResponseMessage(req.id, "-1", true, zoom)
                     this.bg_comm.send_to_nodejs(response)
                 }
-                BrowserWrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom.bind(this));
+                BrowserWrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom);
             } break
             case RequestType.kSwitchIFrame: {
                 this.bg_comm.set_iframe(req.args.iframe)

@@ -46,16 +46,16 @@ class BaseConnection {
         this.webdriverwrap = webdriverwrap
         this.socket = null
     }
-    is_alive(): boolean {
+    is_alive = (): boolean => {
         if (this.socket && this.socket.readyState === 1) {
             return true
         }
         return false
     }
-    send_json(json: string): void {
+    send_json = (json: string): void => {
         this.socket.send(json)
     }
-    receive_json(json: string): void {
+    receive_json = (json: string): void => {
     }
 }
 
@@ -63,7 +63,8 @@ class ChromeConnection extends BaseConnection {
     constructor(webdriverwrap: WebDriverWrap) {
         super(webdriverwrap)
     }
-    receive_json(json: string): void {
+
+    receive_json = (json: string): void => {
         // Extract the frame from the msg.
         let msg = BaseMessage.create_from_string(json)
         console.log('frame[' + msg.iframe + '] --> commhub: ' + json)
@@ -83,7 +84,7 @@ class AppConnection extends BaseConnection {
     // The can send us messages either from c++ or from qml.
     // These requests will be handled by webdriverjs, or the extension scripts in the browser.
     // Requests will always return with a response message containing return values.
-    receive_json(json: string): void {
+    receive_json = (json: string): void => {
         console.log('app --> commhub: ' + json)
 
         // Build the message.
@@ -107,7 +108,7 @@ class AppConnection extends BaseConnection {
                 break;
             }
             case RequestType.kCheckBrowserIsOpen: {
-                function on_response(open: boolean) {
+                let on_response = (open: boolean) => {
                     if (!open) {
                         this.webdriverwrap.open_browser()
                         // Now convert this request to navigate to a default url with a port number.
@@ -118,12 +119,12 @@ class AppConnection extends BaseConnection {
                         send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
                     }
                 }
-                this.webdriverwrap.browser_is_open(on_response.bind(this))
+                this.webdriverwrap.browser_is_open(on_response)
             } break
             case RequestType.kResizeBrowser: {
                 this.webdriverwrap.resize_browser(req.args.width, req.args.height).then(
-                    function() { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
-                    function() { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) }
+                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
+                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) }
                     )
             } break
             case RequestType.kOpenBrowser: {
@@ -246,7 +247,7 @@ class BaseSocketServer {
         this.connections = []
     }
 
-    protected on_https_server_error(error: NodeJS.ErrnoException): void {
+    protected on_https_server_error = (error: NodeJS.ErrnoException): void => {
         if (error.code === 'EADDRINUSE') {
             // The current config port number is in use.
             // So we increment it and recurse.
@@ -258,27 +259,28 @@ class BaseSocketServer {
         }
     }
 
-    protected on_https_server_listening<C extends BaseConnection>(ConnConstructor: { new (wdw: WebDriverWrap): C; }): void {
+    protected on_https_server_listening = <C extends BaseConnection>(ConnConstructor: { new (wdw: WebDriverWrap): C; }): void =>{
         // Create the socket server.
         // The following options variable should have type ws.IServerOptions but DefinitelyTyped seems to have a bug with internal server type.
         let options: any = { server: this.https_server }
         this.server = new ws.Server(options)
-        this.server.on('connection', function(socket: ws) {
+        let on_connection = (socket: ws) => {
             let conn: C = new ConnConstructor(this.webdriverwrap);
             conn.socket = socket
-            socket.on('message', conn.receive_json.bind(conn))
+            socket.on('message', conn.receive_json)
             this.connections.push(conn)
-        }.bind(this))
+        }
+        this.server.on('connection', on_connection)
         // Now call the callback.
         this.on_built()
     }
 
-    protected start_build<C extends BaseConnection>(ConnConstructor: { new (wdw: WebDriverWrap): C; }) {
+    protected start_build = <C extends BaseConnection>(ConnConstructor: { new (wdw: WebDriverWrap): C; }) => {
         // Dummy handler for http/s requests.
-        let dummy_handler = function(req: Http.IncomingMessage, res: Http.ServerResponse) {
+        let dummy_handler = (req: Http.IncomingMessage, res: Http.ServerResponse) => {
             res.writeHead(200);
             res.end("Https server is running.\n")
-        }.bind(this);
+        }
 
         // Create the http/s server.
         this.https_server = Https.createServer({
@@ -287,21 +289,21 @@ class BaseSocketServer {
         }, dummy_handler)
 
         // Once the https server reports an error, we try to create the https server on a different port.
-        this.https_server.once('error', this.on_https_server_error.bind(this));
+        this.https_server.once('error', this.on_https_server_error)
 
         // Once the https server is listening, we try to create the WebSocket server.
-        this.https_server.once('listening', this.on_https_server_listening.bind(this, ConnConstructor));
+        this.https_server.once('listening', (): void => { this.on_https_server_listening(ConnConstructor) })
 
         this.https_server.listen(this.port)
     }
 
     // These should be overridden in derived classes.
-    build() { }
-    on_built() { }
-    on_build_failed() {
+    build = () => { }
+    on_built = () => { }
+    on_build_failed = () => {
         console.error("Error: SocketServer failed to build.")
     }
-    clean_invalid_connections() {
+    clean_invalid_connections = () => {
         let conns = this.connections
         for (let i = 0; i < conns.length; i++) {
             if (!conns[i].is_alive()) {
@@ -310,7 +312,7 @@ class BaseSocketServer {
             }
         }
     }
-    send_msg(msg: BaseMessage) {
+    send_msg = (msg: BaseMessage) => {
         // Clean any invalid connections.
         this.clean_invalid_connections()
 
@@ -341,11 +343,11 @@ class ChromeSocketServer extends BaseSocketServer {
         super(webdriverwrap)
         this.port = 8093
     }
-    build() {
+    build = () => {
         this.start_build(ChromeConnection)
     }
 
-    on_built() {
+    on_built = () => {
     }
 }
 
@@ -354,11 +356,11 @@ class AppSocketServer extends BaseSocketServer {
         super(webdriverwrap)
         this.port = 8094
     }
-    build() {
+    build = () => {
         this.start_build(AppConnection)
     }
 
-    on_built() {
+    on_built = () => {
         // This std output is read by the app, so that the app can open a socket to this port.
         console.log('port:' + this.port)
     }

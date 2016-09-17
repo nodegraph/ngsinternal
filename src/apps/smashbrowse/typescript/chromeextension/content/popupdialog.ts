@@ -158,8 +158,8 @@ class InputPopup extends BasePopup {
         this.button_group.appendChild(this.cancel)
 
         // Hook up listeners.
-        this.ok.addEventListener("click", this.on_ok.bind(this), false)
-        this.cancel.addEventListener("click", this.on_cancel.bind(this), false)
+        this.ok.addEventListener("click", this.on_ok, false)
+        this.cancel.addEventListener("click", this.on_cancel, false)
     }
 
     // Note in the inner_html the input element must have an id of "smash_browse_popup_input".
@@ -184,7 +184,7 @@ class InputPopup extends BasePopup {
         return ""
     }
 
-    on_ok(): void {
+    on_ok = (): void => {
         this.close()
         // Call the callback.
         if (this.callback) {
@@ -192,7 +192,7 @@ class InputPopup extends BasePopup {
         }
     };
 
-    on_cancel(): void {
+    on_cancel = (): void => {
         this.close()
     };
 }

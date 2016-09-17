@@ -5,12 +5,9 @@ class EventBlocker {
     
     // Our Members.
     events_are_blocked: boolean
-    bound_listener: EventListener
     
     constructor(gc: GUICollection) {
         this.events_are_blocked = false
-        this.bound_listener = this.block_event.bind(this)
-
         this.gui_collection = gc
         this.block_events()
     }
@@ -43,7 +40,7 @@ class EventBlocker {
         'keyup',
         'input']
 
-    block_event(event: UIEvent): boolean {
+    block_event = (event: UIEvent): boolean => {
         
         if (event.target && (event.target instanceof Element)) { // event.target.tagName
             if (this.gui_collection.contains_element(<Element>event.target)) {
@@ -82,22 +79,22 @@ class EventBlocker {
         return false;
     }
 
-    block_events(): void {
+    block_events = (): void => {
         if (this.events_are_blocked) {
             return
         }
         for (var i = 0; i < EventBlocker.event_types.length; i++) {
-            window.addEventListener(EventBlocker.event_types[i], this.bound_listener, true)
+            window.addEventListener(EventBlocker.event_types[i], this.block_event, true)
         }
         this.events_are_blocked = true
     }
 
-    unblock_events(): void {
+    unblock_events = (): void => {
         if (!this.events_are_blocked) {
             return
         }
         for (var i = 0; i < EventBlocker.event_types.length; i++) {
-            window.removeEventListener(EventBlocker.event_types[i], this.bound_listener, true);
+            window.removeEventListener(EventBlocker.event_types[i], this.block_event, true);
         }
         this.events_are_blocked = false
     }

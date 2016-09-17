@@ -27,7 +27,7 @@ class MutationMonitor {
         this.page_is_ready = false // Page is ready when there have been no dom mutations for (mutation_done_interval) seconds.
 
         // Mutation Observer.
-        this.mutation_observer = new MutationObserver(this.on_mutation.bind(this))
+        this.mutation_observer = new MutationObserver(this.on_mutation)
         this.mutation_observer_config = {
             childList: true,
             subtree: true,
@@ -42,21 +42,21 @@ class MutationMonitor {
 
     // Returns whether the page is currently loading something.
     // This is typically called before sending a request from the app.
-    is_loading(): boolean {
+    is_loading = (): boolean => {
         return !this.page_is_ready
     }
 
     // Creates and starts the mutation timer.
-    start_mutation_timer(): void {
+    start_mutation_timer = (): void => {
         if (this.mutation_timer == null) {
             this.page_is_ready = false
             this.last_mutation_time = new Date();
-            this.mutation_timer = setInterval(this.update_mutation_timer.bind(this), MutationMonitor.mutation_check_interval)
+            this.mutation_timer = setInterval(this.update_mutation_timer, MutationMonitor.mutation_check_interval)
         }
     }
 
     // Stops and destroys the mutation timer.
-    stop_mutation_timer(): void {
+    stop_mutation_timer = (): void => {
         clearInterval(this.mutation_timer)
         this.mutation_timer = null
 
@@ -65,7 +65,7 @@ class MutationMonitor {
     }
 
     // This function is called every interval.
-    update_mutation_timer(): void {
+    update_mutation_timer = (): void => {
         let current_time = new Date()
         let last_mutation_delta = current_time.getTime() - this.last_mutation_time.getTime()
         if (last_mutation_delta > MutationMonitor.mutation_done_interval) {
@@ -78,7 +78,7 @@ class MutationMonitor {
     }
 
     // This function is called on every mutation of the dom.
-    on_mutation(mutations: MutationRecord[], observer: MutationObserver): void {
+    on_mutation = (mutations: MutationRecord[], observer: MutationObserver): void => {
         // We want to ignore mutations due to streaming of media.
         // On cnet video pages it seems to continually send newly added textnodes as the mutation.
         // So we just ignore those here. 
@@ -130,7 +130,7 @@ class MutationMonitor {
     }
 
     // Disables hover behavior on the page.
-    disable_hover() {
+    disable_hover = () => {
         let hover_regex = /:hover/;
         for (let i = 0; i < document.styleSheets.length; i++) {
             let sheet: StyleSheet = document.styleSheets[i]
@@ -168,7 +168,7 @@ class MutationMonitor {
         //  document.getElementsByTagName('head')[0].appendChild(style);
     }
 
-    remove_hover_rules(media_rule: CSSMediaRule): void {
+    remove_hover_rules = (media_rule: CSSMediaRule): void => {
         if (!media_rule) {
             return
         }
@@ -200,7 +200,7 @@ class MutationMonitor {
     //    used by ElementsFromPoint. There is no obvious way to efficiently figure out the scaling 
     //    from the DOM API. Without using some kind of minimization like probing with ElementsFromPoint
     //    until we hit a know element.
-    adjust_zoom_property(rules: CSSRuleList): void {
+    adjust_zoom_property = (rules: CSSRuleList): void =>{
         if (!rules) {
             return
         }
@@ -221,7 +221,7 @@ class MutationMonitor {
 
     // Disables "zoom: reset;" in all styles. 
     // In Chrome, styles with "zoom: reset;" causes getBoundingClientRect() to return incorrect shifted values.
-    disable_zoom() {
+    disable_zoom = () => {
         //let zoom_regex = /zoom:\s*reset/;
         for (let i = 0; i < document.styleSheets.length; i++) {
             let sheet = document.styleSheets[i]
@@ -235,14 +235,14 @@ class MutationMonitor {
         }
     }
 
-    add_video_controls() {
+    add_video_controls = () => {
         let videos = this.gui_collection.page_wrap.get_videos()
         for (let v = 0; v<videos.length; v++) {
             videos[v].element.setAttribute("controls", "controls")
         }
     }
 
-    adjust_display_property(rules: CSSRuleList): void {
+    adjust_display_property = (rules: CSSRuleList): void => {
         if (!rules) {
             return
         }
@@ -261,7 +261,7 @@ class MutationMonitor {
         }
     }
 
-    show_hidden() {
+    show_hidden = () => {
         for (let i = 0; i < document.styleSheets.length; i++) {
             let sheet = document.styleSheets[i]
             // Note the cssRules will be null if the css stylesheet is loaded from another domain (cross domain security).
@@ -274,14 +274,14 @@ class MutationMonitor {
         }
     }
 
-    adjust_page() {
+    adjust_page = () => {
         //this.disable_hover()
         this.disable_zoom()
         //this.add_video_controls()
         //this.show_hidden()
     }
 
-    on_loaded() {
+    on_loaded = () => {
         this.adjust_page()
 
         // Start mutation to timer, to try and detect when page is fully loaded.
