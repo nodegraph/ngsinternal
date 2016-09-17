@@ -63,6 +63,7 @@ Q_OBJECT
 
   // Helpers to shutdown app.
   Q_INVOKABLE void shutdown();
+  Q_INVOKABLE void reset();
 
   // ---------------------------------------------------------------------------------
   // Web Actions. These calls will put information into the _last_resp member.
@@ -223,6 +224,7 @@ signals:
   // State for hovering.
   bool _hovering;
   QVariantMap _hover_args;
+  static const int kJitterSize;
   int _jitter;
 
   // Simple Request-Response Pair Tracking.

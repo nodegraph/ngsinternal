@@ -56,4 +56,11 @@ ListModel {
         script: "web_action_stack_page.on_busy()"
     }
 
+    ListElement {
+        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        title: "Reset Browser"
+        description: "Reset and Restart the Browser."
+        script: "app_worker.reset()"
+    }
+
 }

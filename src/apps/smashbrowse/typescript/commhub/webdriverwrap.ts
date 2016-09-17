@@ -77,10 +77,12 @@ export class WebDriverWrap {
     }
 
     close_browser(): webdriver.promise.Promise<void> {
-        let self = this
-        function cleanup():void {
-            self.driver = null; 
-            self.flow = null;
+        if (!this.driver) {
+            return webdriver.promise.fullyResolved<void>(1)
+        }
+        let cleanup = ():void => {
+            this.driver = null; 
+            this.flow = null;
         }
         return this.driver.quit().then(cleanup)
     }

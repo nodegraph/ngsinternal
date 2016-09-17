@@ -41,12 +41,10 @@ AppComm::AppComm(Entity* parent)
 }
 
 AppComm::~AppComm() {
-  delete_ff(_websocket);
+  disconnect_from_nodejs();
+  stop_process();
 
-  if (_process) {
-    _process->kill();
-    delete_ff(_process);
-  }
+  delete_ff(_websocket);
 }
 
 QWebSocket* AppComm::get_web_socket() {
@@ -91,7 +89,7 @@ bool AppComm::check_connection() {
   // Try to get nodejs running and connected.
   if (!nodejs_is_running()) {
     // Start the nodejs process.
-    start_nodejs();
+    start_process();
     return false;
   } else if (!nodejs_is_connected()) {
     // Connect to the nodejs process.
@@ -142,7 +140,7 @@ void AppComm::on_state_changed(QAbstractSocket::SocketState s) {
 // Private Methods.
 // -----------------------------------------------------------------
 
-void AppComm::start_nodejs() {
+void AppComm::start_process() {
   if (nodejs_is_running()) {
     return;
   }
@@ -171,6 +169,13 @@ void AppComm::start_nodejs() {
   qDebug() << "starting process again!";
 }
 
+void AppComm::stop_process() {
+  if (_process) {
+    _process->kill();
+    delete_ff(_process);
+  }
+}
+
 bool AppComm::nodejs_is_running() {
   if (_process) {
     if (_process->state() == QProcess::Running) {
@@ -180,8 +185,8 @@ bool AppComm::nodejs_is_running() {
   return false;
 }
 
-void AppComm::stop_nodejs() {
-  delete_ff(_process);
+void AppComm::disconnect_from_nodejs() {
+  _websocket->close();
 }
 
 void AppComm::connect_to_nodejs() {

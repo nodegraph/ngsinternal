@@ -135,8 +135,13 @@ class AppConnection extends BaseConnection {
                 }
             } break
             case RequestType.kCloseBrowser: {
-                this.webdriverwrap.close_browser()
-                send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                if (!this.webdriverwrap) {
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                } else {
+                    this.webdriverwrap.close_browser().then(
+                        () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
+                        () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) })
+                }
             } break
             case RequestType.kNavigateTo: {
                 this.webdriverwrap.navigate_to(req.args.url).then(function() {

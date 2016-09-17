@@ -25,6 +25,7 @@
 namespace ngs {
 
 const int AppWorker::kPollInterval = 1000;
+const int AppWorker::kJitterSize = 1;
 
 QUrl get_proper_url(const QString& input) {
   if (input.isEmpty()) {
@@ -41,7 +42,7 @@ AppWorker::AppWorker(Entity* parent)
       _file_model(this),
       _show_browser(true),
       _hovering(false),
-      _jitter(1),
+      _jitter(kJitterSize),
       _waiting_for_results(false),
       _next_msg_id(0),
       _connected(false){
@@ -103,6 +104,7 @@ void AppWorker::reset_state() {
     // State for hovering.
     _hovering = false;
     _hover_args.clear();
+    _jitter = kJitterSize;
 }
 
 void AppWorker::send_json(const QString& json) {
@@ -250,6 +252,13 @@ void AppWorker::shutdown() {
   //queue_task(std::bind(&AppWorker::send_msg_task, this, msg));
   // We force the shutdown task to run right away.
   send_msg_task(msg);
+  _app_comm->destroy_connection();
+}
+
+void AppWorker::reset() {
+  reset_state();
+  close_browser();
+  check_browser_is_open();
 }
 
 // -----------------------------------------------------------------

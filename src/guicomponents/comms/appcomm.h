@@ -26,6 +26,7 @@ Q_OBJECT
 
   QWebSocket* get_web_socket();
   bool check_connection();
+  void destroy_connection() {disconnect_from_nodejs();}
 
   // Nodejs process.
   Q_INVOKABLE bool nodejs_is_connected();
@@ -50,11 +51,12 @@ signals:
   // Our fixed dependencies.
 
   // Nodejs process.
-  void start_nodejs();
-  void stop_nodejs();
+  void start_process();
+  void stop_process();
 
   // Nodejs socket connection state.
   void connect_to_nodejs();
+  void disconnect_from_nodejs();
 
   //Our nodejs process.
   QProcess* _process;
