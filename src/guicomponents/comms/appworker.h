@@ -48,6 +48,9 @@ Q_OBJECT
   Q_INVOKABLE void stop_polling();
   Q_INVOKABLE void make_browser_visible() {_show_browser = true;}
 
+  // Task queue info.
+  Q_INVOKABLE bool task_queue_is_empty() {return _queue.empty();}
+
   // ---------------------------------------------------------------------------------
   // Browser Actions.
   // ---------------------------------------------------------------------------------

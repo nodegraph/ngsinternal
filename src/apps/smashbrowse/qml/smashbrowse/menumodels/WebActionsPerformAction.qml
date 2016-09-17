@@ -68,13 +68,3 @@ ListModel {
 
 
 }
-
-//this.perform_click = this.add_item(this.perform_menu, 'click')
-//this.perform_type = this.add_item(this.perform_menu, 'type text')
-//this.perform_enter = this.add_item(this.perform_menu, 'press enter/submit')
-//this.perform_extract = this.add_item(this.perform_menu, 'extract text')
-//this.perform_select_option = this.add_item(this.perform_menu, 'select option')
-//this.perform_scroll_down = this.add_item(this.perform_menu, 'scroll down')
-//this.perform_scroll_up = this.add_item(this.perform_menu, 'scroll up')
-//this.perform_scroll_right = this.add_item(this.perform_menu, 'scroll right')
-//this.perform_scroll_left = this.add_item(this.perform_menu, 'scroll left')
