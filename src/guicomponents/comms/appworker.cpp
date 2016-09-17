@@ -41,7 +41,7 @@ AppWorker::AppWorker(Entity* parent)
       _file_model(this),
       _show_browser(true),
       _hovering(false),
-      _jitter(1),
+      _jitter(5),
       _waiting_for_results(false),
       _next_msg_id(0),
       _connected(false){
@@ -876,12 +876,15 @@ void AppWorker::hover_task() {
   // Jitter the hover position back and forth by one.
   int x = _hover_args[Message::kOverlayRelClickPos].toMap()["x"].toInt();
   int y = _hover_args[Message::kOverlayRelClickPos].toMap()["y"].toInt();
-  x+=_jitter;
-  y+=_jitter;
+  x += _jitter;
+  y += _jitter;
+  _jitter *= -1;
 
   // Lock in the jitter.
-  _hover_args[Message::kOverlayRelClickPos].toMap()["x"] = x;
-  _hover_args[Message::kOverlayRelClickPos].toMap()["y"] = y;
+  QVariantMap pos;
+  pos["x"] = x;
+  pos["y"] = y;
+  _hover_args[Message::kOverlayRelClickPos] = pos;
 
   // Queue the tasks.
   unblock_events();

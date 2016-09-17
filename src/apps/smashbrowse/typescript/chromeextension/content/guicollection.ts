@@ -102,6 +102,7 @@ class GUICollection {
         let text_values = PageWrap.get_text_values_at(elem_wraps, click_pos)
         let image_values = PageWrap.get_image_values_at(elem_wraps, click_pos)
 
+        // This is currently not getting used. But is useful for debugging.
         // Get the click pos relative to the topmost/innermost/nearest element in the stack of elements
         // under the click point. Note that this element may not be in an overlay set yet. 
         let nearest_rel_click_pos = new Point({ x: 0, y: 0 })
