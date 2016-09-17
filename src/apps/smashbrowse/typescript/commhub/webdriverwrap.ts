@@ -139,25 +139,25 @@ export class WebDriverWrap {
 
             // Debug dump of the number of iframes.
             this.driver.findElements(By.tagName('iframe')).then(
-                function(iframes: webdriver.WebElement[]){
+                (iframes: webdriver.WebElement[]) => {
                     console.log('num iframes: ' + iframes.length)
-                }.bind(this))
+                })
 
             // Debug dump of the number of frames.
             this.driver.findElements(By.tagName('frame')).then(
-                function (iframes: webdriver.WebElement[]) {
+                (iframes: webdriver.WebElement[]) => {
                     console.log('num frames: ' + iframes.length)
-                }.bind(this)) 
+                })
             
             // We switch to the frame by using it's WebElement instead of by its index.
             // For example as follows: this.driver.switchTo().frame(frame_index)
             // This is because otherwise it doesn't match up with the iframe index produced in PageWrap.get_iframe_path().
             this.driver.findElements(By.tagName('iframe')).then(
-                function (iframes: webdriver.WebElement[]) {
+                (iframes: webdriver.WebElement[]) => {
                     console.log('switching to index: ' + frame_index)
                     let target_locator: any = this.driver.switchTo()
                     target_locator.frame(iframes[frame_index]);
-                }.bind(this)) 
+                }) 
 
 
             // Debug dump of the name of the iframe after switching.
@@ -173,18 +173,15 @@ export class WebDriverWrap {
     }
 
     // Returns a promise which jitters the browser size.
-    jitter_browser_size(): webdriver.promise.Promise<{}> {
-        let our_driver = <webdriver.WebDriver>this.driver
-        return our_driver.manage().window().getSize().then(
-            function (s: webdriver.ISize) {
-                let our_driver = <webdriver.WebDriver>this.driver
-                our_driver.manage().window().setSize(s.width + 1, s.height + 1).then(
-                    function () {
-                        let our_driver = <webdriver.WebDriver>this.driver
-                        our_driver.manage().window().setSize(s.width, s.height);
-                    }.bind(this)
+    jitter_browser_size(): webdriver.promise.Promise<void> {
+        return this.driver.manage().window().getSize().then(
+            (s: webdriver.ISize) => {
+                this.driver.manage().window().setSize(s.width + 1, s.height + 1).then(
+                    () => {
+                        this.driver.manage().window().setSize(s.width, s.height);
+                    }
                 )
-            }.bind(this)
+            }
         )
     }
 
@@ -198,94 +195,88 @@ export class WebDriverWrap {
     }
         
     // Returns a promise which evaulates to a visible element.
-    get_visible_element(xpath: string): webdriver.promise.Promise<{}> {
+    // Usually we skip checking the visibility of the element because it allows us to
+    // click through elements. This is very helpful when clicking video player controls
+    // on web pages like cnet.
+    get_visible_element(xpath: string): webdriver.promise.Promise<webdriver.WebElement> {
         return this.get_element(xpath)
-        // We skip checking the visibility of the element because it allows us to
-        // click through elements. This is very helpful when clicking video player controls
-        // on web pages like cnet.
-        
-        // .then(
-        //     function (element: webdriver.WebElement) {
-        //         let our_driver = <webdriver.WebDriver>this.driver
-        //         return our_driver.wait(Until.elementIsVisible(element), 1000).then(
-        //             function (element) { return element },
-        //             function (error) { console.info('Warning: element was not visible: ' + xpath); throw error })
-        //     }.bind(this)
-        // )
+            .then((element: webdriver.WebElement) => {
+                return this.driver.wait(Until.elementIsVisible(element), 1000).then(
+                    (found) => { return element },
+                    (error) => { console.info('Warning: element was not visible: ' + xpath); throw error })
+            })
     }
 
     // Creates promise chain which will type one key into an element.
-    send_key(xpath: string, key: string): webdriver.promise.Promise<{}> {
-        return this.get_visible_element(xpath).then(
-            function (element: webdriver.WebElement) {
+    send_key(xpath: string, key: string): webdriver.promise.Promise<void> {
+        return this.get_element(xpath).then(
+            (element: webdriver.WebElement) => {
                 return element.sendKeys(key)
-            }.bind(this)
+            }
         )
     }
 
-    get_text(xpath: string): webdriver.promise.Promise<{}> {
-        return this.get_visible_element(xpath).then(
-            function (element: webdriver.WebElement) {
+    get_text(xpath: string): webdriver.promise.Promise<string> {
+        return this.get_element(xpath).then(
+            (element: webdriver.WebElement) => {
                 return element.getText()
-            }.bind(this)
+            }
         )
     }
 
     // Creates promise chain which will set text on an element.
-    send_text(xpath: string, text: string): webdriver.promise.Promise<{}> {
-        return this.get_visible_element(xpath).then(
-            function (element: webdriver.WebElement) {
+    send_text(xpath: string, text: string): webdriver.promise.Promise<void> {
+        return this.get_element(xpath).then(
+            (element: webdriver.WebElement) => {
                 return element.sendKeys(Key.HOME, Key.chord(Key.SHIFT, Key.END), text)
-            }.bind(this)
+            }
         )
     }
 
     // Creates a promise chain which will click on an element.
-    click_on_element(xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<{}> {
-        return this.get_visible_element(xpath).then(
-            function (element: webdriver.WebElement) {
-                let our_driver = <webdriver.WebDriver>this.driver
-                return our_driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).click().perform()    //.click(element).perform()
-            }.bind(this)
+    click_on_element(xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<void> {
+        return this.get_element(xpath).then(
+            (element: webdriver.WebElement) => {
+                return this.driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).click().perform()
+            }
         )
     }
 
     // Creates a promise chain which will mouseover an element.
-    mouse_over_element(xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<{}> {
-        return this.get_visible_element(xpath).then(
-            function (element: webdriver.WebElement) {
-                let our_driver = <webdriver.WebDriver>this.driver
-                return our_driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).perform().then(
-                    function () {console.log('info: moved mouse to: ' + relative_x + "," + relative_y + " over: " + xpath) },
-                    function (error) { console.info('Warning: could not move_over_element (computedstyle): ' + xpath); throw (error) }
+    mouse_over_element(xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<void> {
+        return this.get_element(xpath).then(
+            (element: webdriver.WebElement) => {
+                return this.driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).perform().then(
+                    () => {console.log('info: moved mouse to: ' + relative_x + "," + relative_y + " over: " + xpath) },
+                    (error) => { console.info('Warning: could not move_over_element (computedstyle): ' + xpath); throw (error) }
                 )
-            }.bind(this)
+            }
         )
     }
 
     // Creates a promise which will select an option in a select dropdown.
-    select_option(xpath: string, option_text: string): webdriver.promise.Promise<{}> {
-        return this.get_visible_element(xpath).then(
-            function (element: webdriver.WebElement) {
+    select_option(xpath: string, option_text: string): webdriver.promise.Promise<void> {
+        return this.get_element(xpath).then(
+            (element: webdriver.WebElement) => {
                 return element.findElement(By.xpath('option[normalize-space(text())="' + option_text + '"]')).click()
-            }.bind(this)
+            }
         )
     }
 
     // Helper to terminate promise chains.
     static terminate_chain<T>(p: webdriver.promise.Promise<T>, id: Number) {
         p.then(
-            function() {
+            () => {
                 // Send success response to the app.
                 console.log('terminating chain success with numargs: ' + arguments.length)
                 if (arguments.length == 0) {
                     send_msg_to_app(new ResponseMessage(id, '-1', true))
                 } else {
                     // Send the first argument in the response.
-                    send_msg_to_app(new ResponseMessage(id, '-1', true, arguments[0]))
+                    send_msg_to_app(new ResponseMessage(id, '-1', true))
                 }
-            }.bind(this),
-            function(error: any) {
+            },
+            (error: any) => {
                 // Output error details.
                 console.error("Error in chain!")
                 if (error.stack.indexOf('mouse_over_element') >= 0) {
@@ -304,7 +295,7 @@ export class WebDriverWrap {
 
                 // Send failure reponse to the app.
                 send_msg_to_app(new ResponseMessage(id, '-1', false))
-            }.bind(this))
+            })
     }
 
 }
