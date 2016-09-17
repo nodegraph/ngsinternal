@@ -30,21 +30,22 @@ class ContentCommHandler {
                 this.content_comm.send_to_bg(success_msg)
             } break
             case RequestType.kCreateSetFromMatchValues: {
-                switch (req.args.wrap_type) {
-                    case WrapType.text: {
-                        let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.text, req.args.match_values)
-                        this.gui_collection.add_overlay_set(elem_wraps)
-                        this.gui_collection.overlay_sets.update()
-                        console.log('overlay set added for text')
-                    } break
-                    case WrapType.image: {
-                        let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, req.args.match_values)
-                        this.gui_collection.add_overlay_set(elem_wraps)
-                        this.gui_collection.overlay_sets.update()
-                        console.log('overlay set added for image')
-                    } break
-                    default: {
-                        console.error("Error: create_set_from_match_values")
+                if (req.args.match_values.length) {
+                    switch (req.args.wrap_type) {
+                        case WrapType.text: {
+                            let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.text, req.args.match_values)
+                            this.gui_collection.add_overlay_set(elem_wraps)
+                            this.gui_collection.overlay_sets.update()
+                        } break
+                        case WrapType.image: {
+                            let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, req.args.match_values)
+                            this.gui_collection.add_overlay_set(elem_wraps)
+                            this.gui_collection.overlay_sets.update()
+                            console.log('overlay set added for image')
+                        } break
+                        default: {
+                            console.error("Error: create_set_from_match_values")
+                        }
                     }
                 }
                 this.content_comm.send_to_bg(success_msg)
