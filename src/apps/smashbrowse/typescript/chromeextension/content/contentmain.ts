@@ -24,5 +24,3 @@ mutation_monitor = new MutationMonitor(content_comm, gui_collection)
 // Start listening for mutations on page load.
 document.addEventListener('DOMContentLoaded', mutation_monitor.on_loaded.bind(mutation_monitor), false);
 
-console.log("create a new instance of content script!")
-

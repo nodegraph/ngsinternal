@@ -40,6 +40,8 @@ AppWorker::AppWorker(Entity* parent)
       _app_comm(this),
       _file_model(this),
       _show_browser(true),
+      _hovering(false),
+      _jitter(1),
       _waiting_for_results(false),
       _next_msg_id(0),
       _connected(false){
@@ -88,6 +90,19 @@ void AppWorker::start_polling() {
 
 void AppWorker::stop_polling() {
   _poll_timer.stop();
+}
+
+void AppWorker::reset_state() {
+    // State for message queuing.
+    _waiting_for_results = false;
+    _next_msg_id = 0;
+    _expected_msg_id = -1;
+    _last_resp = Message();
+    _queue.clear();
+
+    // State for hovering.
+    _hovering = false;
+    _hover_args.clear();
 }
 
 void AppWorker::send_json(const QString& json) {
@@ -624,20 +639,14 @@ void AppWorker::mouse_over() {
   block_events();
 }
 void AppWorker::start_mouse_hover() {
-  QVariantMap extra_args;
-
   unblock_events();
   queue_task(std::bind(&AppWorker::get_crosshair_info_task,this), "start_mouse_hover1");
-  queue_task(std::bind(&AppWorker::perform_action_task,this, ActionType::kStartMouseHover, extra_args), "start_mouse_hover2");
+  queue_task(std::bind(&AppWorker::start_hover_task,this), "start_mouse_hover2");
+  //queue_task(std::bind(&AppWorker::hover_task,this), "start_mouse_hover3");
   block_events();
 }
 void AppWorker::stop_mouse_hover() {
-  QVariantMap extra_args;
-
-  unblock_events();
-  queue_task(std::bind(&AppWorker::get_crosshair_info_task,this), "stop_mouse_hover1");
-  queue_task(std::bind(&AppWorker::perform_action_task,this, ActionType::kStopMouseHover, extra_args), "stop_mouse_hover2");
-  block_events();
+  _hovering = false;
 }
 void AppWorker::type_text(const QString& text) {
   QVariantMap extra_args;
@@ -855,6 +864,42 @@ void AppWorker::shrink_against_marked_task(QVariantList dirs) {
   send_msg_task(req);
 }
 
+void AppWorker::start_hover_task() {
+  std::cerr << "start hover task running\n";
+  _hover_args = _last_resp[Message::kValue].toMap();
+  _hovering = true;
+  std::cerr << "running next task\n";
+  run_next_task();
+}
+
+void AppWorker::hover_task() {
+  // Jitter the hover position back and forth by one.
+  int x = _hover_args[Message::kOverlayRelClickPos].toMap()["x"].toInt();
+  int y = _hover_args[Message::kOverlayRelClickPos].toMap()["y"].toInt();
+  x+=_jitter;
+  y+=_jitter;
+
+  // Lock in the jitter.
+  _hover_args[Message::kOverlayRelClickPos].toMap()["x"] = x;
+  _hover_args[Message::kOverlayRelClickPos].toMap()["y"] = y;
+
+  // Queue the tasks.
+  unblock_events();
+  queue_task(std::bind(&AppWorker::perform_action_task,this, ActionType::kMouseOver, _hover_args), "hover_task");
+  queue_task(std::bind(&AppWorker::post_hover_task, this), "post_hover_task");
+  block_events();
+}
+
+void AppWorker::post_hover_task() {
+  // Stop hovering if the last hover fails.
+  // This happens if the element we're hovering over disappears or webdriver switches to another iframe.
+  bool success = _last_resp[Message::kSuccess].toBool();
+  if (!success) {
+    _hovering = false;
+  }
+  run_next_task();
+}
+
 void AppWorker::perform_action_task(ActionType action, QVariantMap extra_args) {
   int set_index = _last_resp[Message::kValue].toMap()[Message::kSetIndex].toInt();
   if (set_index < 0) {
@@ -871,14 +916,17 @@ void AppWorker::perform_action_task(ActionType action, QVariantMap extra_args) {
   args[Message::kXPath] = xpath;
   args[Message::kAction] = action;
 
-  // Merge the extra args.
+  // Get other settings from the last response.
+  if (action == kSendClick || action == kMouseOver) {
+    args[Message::kOverlayRelClickPos] = _last_resp[Message::kValue].toMap()[Message::kOverlayRelClickPos];
+  }
+
+  // Merge the extra args. Note these actually override the above key value pairs.
   QVariantMap::iterator iter;
   for (iter = extra_args.begin(); iter != extra_args.end(); ++iter) {
     args[iter.key()] = iter.value();
   }
-  if (action == kSendClick || action == kMouseOver || action == kStartMouseHover) {
-    args[Message::kOverlayRelClickPos] = _last_resp[Message::kValue].toMap()[Message::kOverlayRelClickPos];
-  }
+
 
   Message req(RequestType::kPerformAction);
   req[Message::kArgs] = args;
@@ -961,6 +1009,11 @@ void AppWorker::on_poll() {
       check_browser_size();
       // Debugging. - this makes the browser only come up once.
       _show_browser = false;
+    }
+  }
+  if (_hovering) {
+    if (_queue.empty()) {
+      hover_task();
     }
   }
 }

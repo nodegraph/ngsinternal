@@ -51,7 +51,6 @@ class PageWrap {
             }
             spath += ipath[i].toString()
         }
-        console.log('ipath,spath: ' + ipath + " , " + spath)
         return spath
     }
 

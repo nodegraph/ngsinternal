@@ -9,7 +9,7 @@ class BrowserWrap {
     constructor() {
     }
 
-    clear_browser_cache(callback: () => void) {
+    static clear_browser_cache(callback: () => void) {
         chrome.browsingData.remove({
             "since": 1
         }, {
@@ -29,25 +29,25 @@ class BrowserWrap {
     }
 
     // Callback receives no arguments.
-    clear_all_cookies(callback: () => void) {
+    static clear_all_cookies(callback: () => void) {
         chrome.browsingData.removeCookies({
             "since": 1
         }, callback);
     }
 
     // Callback receives an array of cookies.
-    get_all_cookies(callback: (cookies: chrome.cookies.Cookie[]) => void) {
+    static get_all_cookies(callback: (cookies: chrome.cookies.Cookie[]) => void) {
         chrome.cookies.getAll({}, callback);
     }
 
     // Callback receives the zoom as a number.
-    get_zoom(tab_id: number, callback: (zoom: number)=>void) {
+    static get_zoom(tab_id: number, callback: (zoom: number)=>void) {
         chrome.tabs.getZoom(tab_id, callback);
     }
 
     // Callback receives zero arguments and is called after each
     // individual cookies is set.
-    set_all_cookies(cookies: chrome.cookies.Cookie[], callback: (cookie?: chrome.cookies.Cookie) => void) {
+    static set_all_cookies(cookies: chrome.cookies.Cookie[], callback: (cookie?: chrome.cookies.Cookie) => void) {
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i]
             let obj: chrome.cookies.SetDetails = {url: ""}
@@ -76,7 +76,7 @@ class BrowserWrap {
         }
     }
 
-    close_other_tabs(tab_id: number) {
+    static close_other_tabs(tab_id: number) {
         chrome.tabs.query({}, function(tabs: chrome.tabs.Tab[]) {
             for (let i = 0; i < tabs.length; i++) {
                 if (tabs[i].id != tab_id) {

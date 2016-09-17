@@ -49,14 +49,6 @@ class PageOverlays {
         this.click_cross_overlay = new CrossOverlay('smash_browse_text_box', DistinctColors.text_color, -1)
     }
 
-    // on_context_menu(page_event: MouseEvent, nearest_rel_click_pos: Point, text_values: string[], image_values: string[]): boolean {
-    //     this.page_pos = new Point({x: page_event.pageX, y: page_event.pageY})
-    //     this.update_click_box_overlay(this.page_pos)
-
-    //     page_event.preventDefault();
-    //     return false
-    // }
-
     update_overlays(text_elem_wrap: ElemWrap, image_elem_wrap: ElemWrap): void {
         if (!this.text_box_overlay || !this.image_box_overlay) {
             return

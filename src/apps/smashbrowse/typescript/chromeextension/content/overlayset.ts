@@ -1,4 +1,9 @@
 
+interface IndexArea {
+    index: number, // the overlay index of interest
+    area: number // the area of the overlay index of interest
+}
+
 class OverlaySet {
     distinct_colors: DistinctColors
     color: string
@@ -49,27 +54,33 @@ class OverlaySet {
         }
     }
 
-    //Finds the set index under the mouse position.
-    contains_point(page_pos: Point): boolean {
-        for (let i = 0; i < this.overlays.length; i++) {
-            if (this.overlays[i].contains_point(page_pos)) {
-                return true
-            }
-        }
-        return false
-    }
-
-    find_overlay_index(page_pos: Point): number {
+    // Find the overly with smallest area which contains the point.
+    // Note this is also used to check whether we contain a point.
+    // Returns {-1,-1} if we don't contain the point.
+    find_overlay_index(page_pos: Point): IndexArea {
+        let min_area: number = -1
+        let min_index: number = -1
         for (let i = 0; i < this.overlays.length; i++) {
             let overlay = this.overlays[i]
+
             if (overlay.contains_point(page_pos)) {
-                    return i
+                // Initialize variables if they haven't been set yet.
+                if (min_area < 0 || min_index < 0) {
+                    min_area = overlay.elem_wrap.page_box.get_area()
+                    min_index = i
+                } else {
+                    let area = overlay.elem_wrap.page_box.get_area()
+                    if (area < min_area) {
+                        min_area = area
+                        min_index = i
+                    }
+                }
             }
         }
-        return -1
+        return {index: min_index, area: min_area}
     }
 
-    //Shift.
+    // Shift.
     shift(side: Direction, wrap_type: WrapType, page_wrap: PageWrap): void {
         for (let i = 0; i < this.overlays.length; i++) {
             this.overlays[i].elem_wrap.shift(side, wrap_type, page_wrap)
@@ -85,7 +96,7 @@ class OverlaySet {
         return -1
     }
 
-    //Expand
+    // Expand
     expand(side: Direction, match_criteria: MatchCriteria, page_wrap: PageWrap): void {
         // Cache the elem_wraps already in this set.
         let existing_elem_wraps: ElemWrap[] = []
@@ -112,7 +123,7 @@ class OverlaySet {
         }
     }
 
-    //Merge another sets elements into ourself.
+    // Merge another sets elements into ourself.
     merge(other: OverlaySet): void {
         for (let i = 0; i < other.overlays.length; i++) {
             let elem_wrap = other.overlays[i].elem_wrap

@@ -35,4 +35,18 @@ ListModel {
         script: "app_worker.update_overlays()"
     }
 
+    ListElement {
+        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        title: "open browser"
+        description: "Open the browser."
+        script: "app_worker.check_browser_is_open()"
+    }
+
+    ListElement {
+        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        title: "close browser"
+        description: "Close the browser."
+        script: "app_worker.close_browser()"
+    }
+
 }

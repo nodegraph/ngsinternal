@@ -46,9 +46,6 @@ class BaseConnection {
         this.webdriverwrap = webdriverwrap
         this.socket = null
     }
-    test(): boolean {
-        return true
-    }
     is_alive(): boolean {
         if (this.socket && this.socket.readyState === 1) {
             return true
@@ -78,31 +75,9 @@ class ChromeConnection extends BaseConnection {
 
 class AppConnection extends BaseConnection {
     timer: number
-    pulse_args: any
     constructor(webdriverwrap: WebDriverWrap) {
         super(webdriverwrap)
         this.timer = null
-        this.pulse_args = {}
-    }
-
-    // Creates and starts the mutation timer.
-    start_pulse(args: any): void {
-        if (this.timer == null) {
-            this.timer = setInterval(this.pulse.bind(this), 500)
-        }
-        this.pulse_args = args
-    }
-
-    // Stops and destroys the mutation timer.
-    stop_pulse(): void {
-        clearInterval(this.timer)
-        this.timer = null
-    }
-
-    pulse(): void {
-        console.log('pulse hovering: ' + this.pulse_args.xpath + ", " + this.pulse_args.overlay_rel_click_pos.x + "," + this.pulse_args.overlay_rel_click_pos.y)
-        let p = this.webdriverwrap.click_on_element(this.pulse_args.xpath, this.pulse_args.overlay_rel_click_pos.x, this.pulse_args.overlay_rel_click_pos.y)
-        p.then(function(){console.log('pulse hover success!')},function(){console.log('pulse hover fail')})
     }
 
     // The can send us messages either from c++ or from qml.
@@ -147,9 +122,9 @@ class AppConnection extends BaseConnection {
             } break
             case RequestType.kResizeBrowser: {
                 this.webdriverwrap.resize_browser(req.args.width, req.args.height).then(
-                    function(){send_msg_to_app(new ResponseMessage(msg.id, '-1', true))},
-                    function(){send_msg_to_app(new ResponseMessage(msg.id, '-1', false))}
-                )
+                    function() { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
+                    function() { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) }
+                    )
             } break
             case RequestType.kOpenBrowser: {
                 if (this.webdriverwrap.open_browser()) {
@@ -164,7 +139,7 @@ class AppConnection extends BaseConnection {
             } break
             case RequestType.kNavigateTo: {
                 this.webdriverwrap.navigate_to(req.args.url).then(function() {
-                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, {iframe: ''})
+                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
@@ -172,7 +147,7 @@ class AppConnection extends BaseConnection {
             } break
             case RequestType.kNavigateBack: {
                 this.webdriverwrap.navigate_back().then(function() {
-                    let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
+                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
@@ -180,7 +155,7 @@ class AppConnection extends BaseConnection {
             } break
             case RequestType.kNavigateForward: {
                 this.webdriverwrap.navigate_forward().then(function() {
-                    let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
+                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
@@ -188,7 +163,7 @@ class AppConnection extends BaseConnection {
             } break
             case RequestType.kNavigateRefresh: {
                 this.webdriverwrap.navigate_refresh().then(function() {
-                    let relay_req = new RequestMessage(msg.id, "-1",RequestType.kSwitchIFrame, {iframe: ''})
+                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
                 }, function(error) {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
@@ -211,14 +186,6 @@ class AppConnection extends BaseConnection {
                     case ActionType.kMouseOver: {
                         let p = this.webdriverwrap.mouse_over_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                         WebDriverWrap.terminate_chain(p, req.id)
-                    } break
-                    case ActionType.kStartMouseHover: {
-                        this.start_pulse(req.args)
-                        send_msg_to_app(new ResponseMessage(req.id, '-1', true))
-                    } break
-                    case ActionType.kStopMouseHover: {
-                        this.stop_pulse()
-                        send_msg_to_app(new ResponseMessage(req.id, '-1', true))
                     } break
                     case ActionType.kSendText: {
                         let p = this.webdriverwrap.send_text(req.args.xpath, req.args.text)
@@ -349,7 +316,7 @@ class BaseSocketServer {
 
 
         if (this.connections.length != 1) {
-            console.error('Error: socket server was expection just one connection')
+            console.error('Error: base socket server was expecting just one connection')
         }
 
         // Send the msg through all connections which are alive.
@@ -358,16 +325,13 @@ class BaseSocketServer {
         for (let i = 0; i < conns.length; i++) {
             let conn = conns[i]
             if (conn.is_alive()) {
-                if (msg.to_string() == '{}') {
-                    console.error("error sending empty message")
-                }
                 conn.send_json(msg.to_string())
                 sent = true
             }
         }
 
         if (!sent) {
-            console.error('Error: BaseSocketServer could not find a connection to send a message.')
+            console.error('Error: base socket server could not find a connection to send a message.')
         }
     }
 }

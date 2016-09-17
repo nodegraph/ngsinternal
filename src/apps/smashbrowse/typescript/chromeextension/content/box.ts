@@ -41,6 +41,10 @@ class Box {
         return this.left + ',' + this.right + ',' + this.top + ',' + this.bottom
     }
 
+    get_area(): number {
+        return this.get_width() * this.get_height()
+    }
+
     get_center(): Point {
         return new Point({ x: this.get_mid_x(), y: this.get_mid_y() })
     }

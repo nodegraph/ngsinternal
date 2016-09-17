@@ -168,6 +168,8 @@ signals:
   void on_poll();
 
  private:
+  void reset_state();
+
   // Send Messages.
   void send_json(const QString& json);
   void send_map(const QVariantMap& map);
@@ -190,6 +192,9 @@ signals:
   void shrink_set_to_side_task(Direction dir);
   void shrink_against_marked_task(QVariantList dirs);
   void perform_action_task(ActionType action, QVariantMap extra_args);
+  void start_hover_task();
+  void hover_task();
+  void post_hover_task();
 
   // Handle messages.
   void run_next_task();
@@ -211,12 +216,18 @@ signals:
   QString _iframe;
   QVariantMap _click_pos;
 
+  // State for hovering.
+  bool _hovering;
+  QVariantMap _hover_args;
+  int _jitter;
+
   // Simple Request-Response Pair Tracking.
   bool _waiting_for_results;
   int _next_msg_id;  // This is one more than the max msg id issued out.
   int _expected_msg_id; // This is the next msg id we're expecting from a response message.
   Message _last_resp;  // Our last response. This can be used by handlers in our queue.
   std::deque<AppTask> _queue;
+
 };
 
 }

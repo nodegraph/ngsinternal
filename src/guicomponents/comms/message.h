@@ -57,8 +57,6 @@ enum RequestType {
 enum ActionType {
   kSendClick,
   kMouseOver,
-  kStartMouseHover,
-  kStopMouseHover,
   kSendText,
   kSendEnter,
   kGetText,

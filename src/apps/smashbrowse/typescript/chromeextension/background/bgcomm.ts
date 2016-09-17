@@ -16,7 +16,7 @@ class BgComm {
     private connect_timer: number
 
     // Our internal state.
-    private content_tab_id: number // This is set by the first message received from any tab.
+    private tab_id: number // This is set by the first message received from any tab.
     private iframe: string // This is the current iframe, that the webdriver is acting upon.
 
     // Listeners to extract the the nodejs's chrome extension server port number.
@@ -33,7 +33,7 @@ class BgComm {
         this.connect_to_content()
 
         // Our state.
-        this.content_tab_id = null
+        this.tab_id = null
         this.iframe = ""
 
         // Hack to retrieve the nodejs port.
@@ -62,12 +62,12 @@ class BgComm {
     }
 
     on_tab_created(tab: chrome.tabs.Tab) {
-        if (this.content_tab_id == null) {
+        if (this.tab_id == null) {
             return
         }
         // Close any external tabs that get opened outside our tab being controlled by webdriver.
-        if (this.content_tab_id != tab.id) {
-            chrome.tabs.remove(tab.id)
+        if (this.tab_id != tab.id) {
+            //chrome.tabs.remove(tab.id)
         }
     }
 
@@ -79,10 +79,13 @@ class BgComm {
         if (!tab.url) {
             return
         }
-        this.content_tab_id = tab.id
+        this.tab_id = tab.id
         this.nodejs_port = BgComm.extract_port_from_url(tab.url)
-        this.connect_to_nodejs()
-        chrome.tabs.onUpdated.removeListener(this.bound_on_tab_updated)
+        if (this.nodejs_port != -1) {
+            this.connect_to_nodejs()
+            chrome.tabs.onUpdated.removeListener(this.bound_on_tab_updated)
+            BrowserWrap.close_other_tabs(this.tab_id)
+        }
     }
 
     static extract_port_from_url(url: string): number {
@@ -113,7 +116,7 @@ class BgComm {
         try {
             this.nodejs_socket = new WebSocket('wss://localhost:' + this.nodejs_port)
             this.nodejs_socket.onerror = function(error: ErrorEvent) {
-                console.error("nodejs socket error: " + JSON.stringify(error))
+                console.error("Error: nodejs socket error: " + JSON.stringify(error))
             }.bind(this)
             this.nodejs_socket.onopen = function(event: Event) {
                 // BgComm is now connected.
@@ -165,18 +168,19 @@ class BgComm {
     // Send a message to the content script.
     send_to_content(msg: BaseMessage): void {
         //console.log("bg sending message to content: " + JSON.stringify(msg))
-        chrome.tabs.sendMessage(this.content_tab_id, msg)
+        chrome.tabs.sendMessage(this.tab_id, msg)
     }
 
     // Receive a message from the content script. We simply forward the message to nodejs.
     receive_from_content(msg: BaseMessage, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
-        console.log("bg received from frameid: " + sender.frameId + " : " + JSON.stringify(msg))
+        //console.log("bg received from frameid: " + sender.frameId + " : " + JSON.stringify(msg))
+        
         // The first tab to send us a content message will be the tab that we pay attention to.
-        if (!this.content_tab_id) {
-            this.content_tab_id = sender.tab.id
+        if (!this.tab_id) {
+            this.tab_id = sender.tab.id
         }
         // Skip messages from tabs that we're not interested in.
-        if (this.content_tab_id != sender.tab.id) {
+        if (this.tab_id != sender.tab.id) {
             return
         }
 
@@ -191,12 +195,12 @@ class BgComm {
         }
 
         // Pass the message to nodejs.
-        console.log("sending to nodejs: " + JSON.stringify(msg))
+        //console.log("sending to nodejs: " + JSON.stringify(msg))
         this.send_to_nodejs(msg);
     }
 
     get_tab_id() {
-        return this.content_tab_id
+        return this.tab_id
     }
 }
 

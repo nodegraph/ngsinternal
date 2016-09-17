@@ -8,6 +8,11 @@ interface MarkedSetInfo {
     unmarked: number[]
 }
 
+interface SetOverlayIndex{
+    set_index: number,
+    overlay_index: number
+}
+
 class OverlaySets {
     //Our data is just an array of overlay set's.
     sets: OverlaySet[]
@@ -41,22 +46,26 @@ class OverlaySets {
         this.sets[set_index] = os
     }
 
-    //Finds the first set index under the mouse matching the marked state.
-    //If marked is null, then the marked state will not be considered.
-    find_set_index(page_pos: Point, marked: boolean | Object = null): number {
-        // When there are multiple we get the first one which is not already marked.
+    // Finds the set index which has an overlay of the smallest area containing the point.
+    // If match_marked_state is true, then it will only consider sets with a marked set equal to the marked state argument.
+    find_set_overlay_index(page_pos: Point, match_marked_state: boolean = false, marked_state: boolean = false): SetOverlayIndex {
+        let min_overlay_area: number = -1
+        let min_soi: SetOverlayIndex = {set_index: -1, overlay_index: -1}
         for (let i = 0; i < this.sets.length; i++) {
             let oset = this.sets[i]
-            if (oset.contains_point(page_pos)) {
-                if (marked === null) {
-                    return i
+            let overlay_index = oset.find_overlay_index(page_pos)
+            if (overlay_index.index >= 0) {
+                if (match_marked_state && oset.marked !== marked_state) {
+                    continue
                 }
-                if (oset.marked === marked) {
-                    return i
+                if (min_overlay_area === -1 || overlay_index.area < min_overlay_area) {
+                    min_overlay_area = overlay_index.area
+                    min_soi.set_index = i
+                    min_soi.overlay_index = overlay_index.index
                 }
             }
         }
-        return -1
+        return min_soi
     }
 
     //Mark the first unmarked set under the mouse.
@@ -76,8 +85,8 @@ class OverlaySets {
 
     //Destroy a set.
     destroy_set(page_pos: Point): void {
-        let set_index = this.find_set_index(page_pos, null)
-        this.destroy_set_by_index(set_index)
+        let soi = this.find_set_overlay_index(page_pos)
+        this.destroy_set_by_index(soi.set_index)
     }
 
     //Shift.

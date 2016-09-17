@@ -4,7 +4,7 @@ class GUICollection {
     event_blocker: EventBlocker
     content_comm: ContentComm
     page_overlays: PageOverlays
-    
+
 
     wait_popup: WaitPopup
     text_input_popup: TextInputPopup
@@ -42,7 +42,7 @@ class GUICollection {
             this.page_overlays.initialize()
         }
         if (!this.wait_popup.initialized) {
-         this.wait_popup.initialize()
+            this.wait_popup.initialize()
         }
         if (!this.text_input_popup.initialized) {
             this.text_input_popup.initialize()
@@ -52,7 +52,7 @@ class GUICollection {
         }
     }
 
-    
+
     contains_element(element: Node): boolean {
         if (this.wait_popup.contains_element(element)) {
             return true
@@ -75,13 +75,13 @@ class GUICollection {
         if (!this.page_overlays.initialized()) {
             return
         }
-        let click_pos = new Point({x: e.pageX, y: e.pageY})
+        let click_pos = new Point({ x: e.pageX, y: e.pageY })
 
         // Update the click box overly.
         this.page_overlays.update_crosshair(click_pos)
 
         // Send the request to the app.
-        let im = new InfoMessage(0, PageWrap.get_iframe_index_path_as_string(window), InfoType.kShowWebActionMenu, {click_pos: click_pos})
+        let im = new InfoMessage(0, PageWrap.get_iframe_index_path_as_string(window), InfoType.kShowWebActionMenu, { click_pos: click_pos })
         this.content_comm.send_to_bg(im)
 
         // Prevent default behavior of the event.
@@ -90,7 +90,7 @@ class GUICollection {
     }
 
     on_mouse_over(e: MouseEvent): void {
-        let point = new Point({x: e.pageX, y: e.pageY})
+        let point = new Point({ x: e.pageX, y: e.pageY })
         let text_elem_wrap = this.page_wrap.get_top_text_elem_wrap_at(point)
         let image_elem_wrap = this.page_wrap.get_top_image_elem_wrap_at(point)
         this.page_overlays.update_overlays(text_elem_wrap, image_elem_wrap)
@@ -99,22 +99,24 @@ class GUICollection {
     get_crosshair_info(click_pos: Point): any {
         // Get the text and image values.
         let elem_wraps = this.page_wrap.get_visible_overlapping_at(click_pos)
-        let text_values = PageWrap.get_text_values_at(elem_wraps,click_pos)
-        let image_values = PageWrap.get_image_values_at(elem_wraps,click_pos)
+        let text_values = PageWrap.get_text_values_at(elem_wraps, click_pos)
+        let image_values = PageWrap.get_image_values_at(elem_wraps, click_pos)
 
-        // Get the nearest click pos.
-        let nearest_rel_click_pos = new Point({x: 0, y: 0})
-        if (elem_wraps.length>0) {
+        // Get the click pos relative to the topmost/innermost/nearest element in the stack of elements
+        // under the click point. Note that this element may not be in an overlay set yet. 
+        let nearest_rel_click_pos = new Point({ x: 0, y: 0 })
+        if (elem_wraps.length > 0) {
             nearest_rel_click_pos = elem_wraps[0].page_box.get_relative_point(click_pos)
         }
 
-        // Determine the set index at the click point and relative click pos to this.
-        let set_index = this.overlay_sets.find_set_index(click_pos)
-        let overlay_index = -1
+        // Determine the set index and overlay index at the click point.
+        // Also determine the click pos relative to this overlay.
+        let set_overlay_index = this.overlay_sets.find_set_overlay_index(click_pos)
+        let set_index = set_overlay_index.set_index
+        let overlay_index = set_overlay_index.overlay_index
         let overlay_rel_click_pos: Point = new Point({ x: 1, y: 1 })
         if (set_index >= 0) {
             let oset = this.overlay_sets.sets[set_index]
-            overlay_index = oset.find_overlay_index(click_pos)
             overlay_rel_click_pos = oset.overlays[overlay_index].elem_wrap.page_box.get_relative_point(click_pos)
         }
 

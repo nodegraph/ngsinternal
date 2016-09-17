@@ -77,7 +77,12 @@ export class WebDriverWrap {
     }
 
     close_browser(): webdriver.promise.Promise<void> {
-        return this.driver.quit()
+        let self = this
+        function cleanup():void {
+            self.driver = null; 
+            self.flow = null;
+        }
+        return this.driver.quit().then(cleanup)
     }
 
     // Returns a promise which navigates the browser to another url.
@@ -251,7 +256,7 @@ export class WebDriverWrap {
             function (element: webdriver.WebElement) {
                 let our_driver = <webdriver.WebDriver>this.driver
                 return our_driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).perform().then(
-                    function () { },
+                    function () {console.log('info: moved mouse to: ' + relative_x + "," + relative_y + " over: " + xpath) },
                     function (error) { console.info('Warning: could not move_over_element (computedstyle): ' + xpath); throw (error) }
                 )
             }.bind(this)
