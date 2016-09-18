@@ -4,7 +4,7 @@ class EventBlocker {
     gui_collection: GUICollection // This is like our owning parent.
     
     // Our Members.
-    events_are_blocked: boolean
+    private events_are_blocked: boolean
     
     constructor(gc: GUICollection) {
         this.events_are_blocked = false
@@ -40,7 +40,8 @@ class EventBlocker {
         'keyup',
         'input']
 
-    block_event = (event: UIEvent): boolean => {
+    // Note this is an instance property that is a function.
+    block_event(event: UIEvent): boolean {
         
         if (event.target && (event.target instanceof Element)) { // event.target.tagName
             if (this.gui_collection.contains_element(<Element>event.target)) {
@@ -79,22 +80,26 @@ class EventBlocker {
         return false;
     }
 
-    block_events = (): void => {
+    block_event_bound = (event: UIEvent): boolean => {
+        return this.block_event(event)
+    }
+
+    block_events(): void {
         if (this.events_are_blocked) {
             return
         }
         for (var i = 0; i < EventBlocker.event_types.length; i++) {
-            window.addEventListener(EventBlocker.event_types[i], this.block_event, true)
+            window.addEventListener(EventBlocker.event_types[i], this.block_event_bound, true)
         }
         this.events_are_blocked = true
     }
 
-    unblock_events = (): void => {
+    unblock_events(): void {
         if (!this.events_are_blocked) {
             return
         }
         for (var i = 0; i < EventBlocker.event_types.length; i++) {
-            window.removeEventListener(EventBlocker.event_types[i], this.block_event, true);
+            window.removeEventListener(EventBlocker.event_types[i], this.block_event_bound, true);
         }
         this.events_are_blocked = false
     }

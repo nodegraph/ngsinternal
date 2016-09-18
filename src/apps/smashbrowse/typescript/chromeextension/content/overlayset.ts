@@ -66,10 +66,10 @@ class OverlaySet {
             if (overlay.contains_point(page_pos)) {
                 // Initialize variables if they haven't been set yet.
                 if (min_area < 0 || min_index < 0) {
-                    min_area = overlay.elem_wrap.page_box.get_area()
+                    min_area = overlay.elem_wrap.get_box().get_area()
                     min_index = i
                 } else {
-                    let area = overlay.elem_wrap.page_box.get_area()
+                    let area = overlay.elem_wrap.get_box().get_area()
                     if (area < min_area) {
                         min_area = area
                         min_index = i
@@ -89,7 +89,7 @@ class OverlaySet {
 
     static find_element(elem_wraps: ElemWrap[], element: Element): number {
         for(var i=0; i<elem_wraps.length; i++) {
-            if(elem_wraps[i].element === element) {
+            if(elem_wraps[i].get_element() === element) {
                 return i;
             }
         }
@@ -110,8 +110,8 @@ class OverlaySet {
             let neighbors = this.overlays[i].elem_wrap.get_similar_neighbors(side, match_criteria, page_wrap)
             for (let j = 0; j < neighbors.length; j++) {
                 // If the neighbor isn't already in the existing set or the similar set, then add it.
-                if ((OverlaySet.find_element(similar_elem_wraps, neighbors[j].element) < 0) &&
-                    (OverlaySet.find_element(existing_elem_wraps, neighbors[j].element) < 0)) {
+                if ((OverlaySet.find_element(similar_elem_wraps, neighbors[j].get_element()) < 0) &&
+                    (OverlaySet.find_element(existing_elem_wraps, neighbors[j].get_element()) < 0)) {
                     similar_elem_wraps.push(neighbors[j])
                 }
             }
@@ -138,7 +138,7 @@ class OverlaySet {
         for (let i = 0; i < this.overlays.length; i++) {
             for (let j = 0; j < sides.length; j++) {
                 let ew: ElemWrap = this.overlays[i].elem_wrap
-                let beam: Box = ew.page_box.get_beam(sides[j], PageWrap.get_bounds())
+                let beam: Box = ew.get_box().get_beam(sides[j], PageWrap.get_bounds())
                 beams.push(beam)
             }
         }
@@ -149,7 +149,7 @@ class OverlaySet {
         for (let i = 0; i < this.overlays.length; i++) {
             let intersects = false
             for (let j = 0; j < beams.length; j++) {
-                if (beams[j].intersects(this.overlays[i].elem_wrap.page_box)) {
+                if (beams[j].intersects(this.overlays[i].elem_wrap.get_box())) {
                     intersects = true
                     break
                 }
@@ -167,7 +167,7 @@ class OverlaySet {
         let extreme_index: number
         for (let i = 0; i < this.overlays.length; i++) {
             let overlay = this.overlays[i]
-            let page_box = overlay.elem_wrap.page_box
+            let page_box = overlay.elem_wrap.get_box()
             if (i == 0) {
                 // Initialize extreme values.
                 extreme = page_box.get_extreme(side)
@@ -186,7 +186,7 @@ class OverlaySet {
         let next_overlays: Overlay[] = []
         for (let i = 0; i < this.overlays.length; i++) {
             let overlay = this.overlays[i]
-            let page_box = overlay.elem_wrap.page_box
+            let page_box = overlay.elem_wrap.get_box()
             let value = page_box.get_extreme(side)
             if (value == extreme) {
                 // Add to next overlays.

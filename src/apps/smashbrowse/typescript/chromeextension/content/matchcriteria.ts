@@ -41,26 +41,26 @@ class MatchCriteria {
     //Returns true if the two elem wraps match, according to the match criteria.
     matches(a: ElemWrap, b: ElemWrap): boolean {
 
-        if (this.match_left && (a.page_box.left != b.page_box.left)) {
+        if (this.match_left && (a.get_box().left != b.get_box().left)) {
             return false
         }
 
-        if (this.match_right && (a.page_box.right != b.page_box.right)) {
+        if (this.match_right && (a.get_box().right != b.get_box().right)) {
             return false
         }
 
-        if (this.match_top && (a.page_box.top != b.page_box.top)) {
+        if (this.match_top && (a.get_box().top != b.get_box().top)) {
             return false
         }
 
-        if (this.match_bottom && (a.page_box.bottom != b.page_box.bottom)) {
+        if (this.match_bottom && (a.get_box().bottom != b.get_box().bottom)) {
             return false
         }
 
         // Match font style.
         if (this.match_font || this.match_font_size) {
-            var style_a = window.getComputedStyle(a.element, null)
-            var style_b = window.getComputedStyle(b.element, null)
+            var style_a = window.getComputedStyle(a.get_element(), null)
+            var style_b = window.getComputedStyle(b.get_element(), null)
 
             if (this.match_font && (style_a.font != style_b.font)) {
                 return false

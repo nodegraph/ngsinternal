@@ -13,10 +13,10 @@ class ElemWrap {
     // Our dependencies.
     
     // Our members.
-    element: Element // The actual dom element.
-    page_box: Box // Our bounds in page space.
-    wrap_type: WrapType // Our wrapping type.
-    getter: () => string // Gets the value of our wrapping type.
+    private element: Element // The actual dom element.
+    private page_box: Box // Our bounds in page space.
+    private wrap_type: WrapType // Our wrapping type.
+    private getter: () => string // Cached values getter for our specific wrapping type.
     
     // Constructor.
     constructor(element: Element) {
@@ -24,24 +24,48 @@ class ElemWrap {
         
         // Our Members.
         this.element = element
+
         // Cached values, which need to be updated when the element changes.
         this.page_box = new Box()
-        // Update.
-        this.update()
-    }
-    
-    //Update all internal state.
-    update(): void {
-        // Update cached member values.
+
+        // Our wrap type and getter should stay fixed throughout our lifetime.
         this.wrap_type = this.calculate_wrap_type()
         this.getter = this.get_getter_from_wrap_type(this.wrap_type)
-        this.page_box = new Box(this.calculate_page_box())
+
+        // Update.
+        this.update()
     }
 
     // Returns an unique opaque pointer for the purposes of identification.
     // When two ElemWraps return the same id, they represent a wrapper around the same dom element.
-    get_id(): Element {
+    get_id() {
         return this.element
+    }
+
+    get_element() {
+        return this.element
+    }
+
+    get_wrap_type() {
+        return this.wrap_type
+    }
+
+    get_box() {
+        return this.page_box
+    }
+
+    get_getter(): () => string {
+        return this.getter
+    }
+
+    get_frame_index_path(): number[] {
+        let local_window: Window = this.element.ownerDocument.defaultView
+        return PageWrap.get_iframe_index_path(local_window)
+    }
+
+    // Update all internal state.
+    update(): void {
+        this.update_page_box()
     }
 
     // Returns true if this and the other ElemWrap represent the same dom element.
@@ -50,10 +74,6 @@ class ElemWrap {
             return true
         }
         return false
-    }
-
-    get_wrap_type(): WrapType {
-        return this.wrap_type
     }
 
     // Get our wrap type.
@@ -94,25 +114,17 @@ class ElemWrap {
         return null
     }
 
-    get_getter(): () => string {
-        return this.getter
-    }
-
-    get_frame_index_path(): number[] {
-        let local_window: Window = this.element.ownerDocument.defaultView
-        return PageWrap.get_iframe_index_path(local_window)
-    }
-
     //----------------------------------------------------------------------------------------
-    //Element geometry.
+    // Geometry Related.
     //----------------------------------------------------------------------------------------
 
-
-    calculate_page_box(): Box {
+    update_page_box() {
         let elem_rect = this.element.getBoundingClientRect()
-        let box = new Box(elem_rect)
-        box.to_page_space()
-        return box
+        this.page_box.left = elem_rect.left
+        this.page_box.right = elem_rect.right
+        this.page_box.top = elem_rect.top
+        this.page_box.bottom = elem_rect.bottom
+        this.page_box.to_page_space()
     }
 
     //Returns true if the outer element contains the inner element.
@@ -125,7 +137,7 @@ class ElemWrap {
     }
 
     //Note this containment test uses a sigma of 1.0.
-    contains_point(page_pos: Point): boolean {
+    contains_point (page_pos: Point): boolean {
         return this.page_box.contains_point(page_pos)
     }
 
@@ -292,7 +304,7 @@ class ElemWrap {
 
 
     //----------------------------------------------------------------------------------------
-    //Scroll Bars.
+    // Scroll Bars.
     //----------------------------------------------------------------------------------------
 
     //Returns true if the element has horizontal scroll bars.

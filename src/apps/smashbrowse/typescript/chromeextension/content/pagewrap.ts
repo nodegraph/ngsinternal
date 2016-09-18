@@ -318,7 +318,7 @@ class PageWrap {
         let intersecting: ElemWrap[] = []
         let elem_wraps = this.get_all_visible()
         for (let i = 0; i < elem_wraps.length; i++) {
-            if (page_box.intersects(elem_wraps[i].page_box)) {
+            if (page_box.intersects(elem_wraps[i].get_box())) {
                 intersecting.push(elem_wraps[i])
             }
         }
@@ -330,7 +330,7 @@ class PageWrap {
         let contained: ElemWrap[] = []
         let elem_wraps = this.get_all_visible()
         for (let i = 0; i < elem_wraps.length; i++) {
-            if (page_box.contains(elem_wraps[i].page_box)) {
+            if (page_box.contains(elem_wraps[i].get_box())) {
                 contained.push(elem_wraps[i])
             }
         }
@@ -357,7 +357,7 @@ class PageWrap {
             }
 
             // Skip the elem wrap if it's part of the smash browse menu.
-            if (this.gui_collection.contains_element(wrapper.element)) {
+            if (this.gui_collection.contains_element(wrapper.get_element())) {
                 continue
             }
 

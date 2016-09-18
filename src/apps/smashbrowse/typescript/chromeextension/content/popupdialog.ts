@@ -4,11 +4,11 @@
 
 class BasePopup {
     // Our Dependencies
-    initialized: boolean // whehter we've been initialized'
+    protected initialized: boolean // whehter we've been initialized'
 
     // Our Members.
-    popup_hider: HTMLDivElement
-    popup: HTMLDivElement
+    private popup_hider: HTMLDivElement
+    protected popup: HTMLDivElement
     
     
     constructor() {
@@ -31,6 +31,10 @@ class BasePopup {
         this.popup_hider.appendChild(this.popup)
 
         this.initialized = true
+    }
+
+    is_initialized(): boolean {
+        return this.initialized
     }
 
     open(): void {
@@ -98,17 +102,17 @@ class WaitPopup extends BasePopup {
 
 class InputPopup extends BasePopup {
     // Layout Elements.
-    center: HTMLBlockElement
-    label: HTMLParagraphElement
-    input_div: HTMLDivElement
-    button_group: HTMLParagraphElement
+    private center: HTMLBlockElement
+    private label: HTMLParagraphElement
+    private input_div: HTMLDivElement
+    private button_group: HTMLParagraphElement
 
     // Button Elements.
-    ok: HTMLInputElement 
-    cancel: HTMLInputElement 
+    private ok: HTMLInputElement 
+    private cancel: HTMLInputElement 
 
     // Result Callback.
-    callback: (result: string) => void
+    protected callback: (result: string) => void
 
     constructor() {
         // Call base constructor.
@@ -158,8 +162,8 @@ class InputPopup extends BasePopup {
         this.button_group.appendChild(this.cancel)
 
         // Hook up listeners.
-        this.ok.addEventListener("click", this.on_ok, false)
-        this.cancel.addEventListener("click", this.on_cancel, false)
+        this.ok.addEventListener("click", () => {this.on_ok()}, false)
+        this.cancel.addEventListener("click", () => {this.on_cancel()}, false)
     }
 
     // Note in the inner_html the input element must have an id of "smash_browse_popup_input".
@@ -184,7 +188,7 @@ class InputPopup extends BasePopup {
         return ""
     }
 
-    on_ok = (): void => {
+    on_ok(): void {
         this.close()
         // Call the callback.
         if (this.callback) {
@@ -192,7 +196,7 @@ class InputPopup extends BasePopup {
         }
     };
 
-    on_cancel = (): void => {
+    on_cancel (): void {
         this.close()
     };
 }

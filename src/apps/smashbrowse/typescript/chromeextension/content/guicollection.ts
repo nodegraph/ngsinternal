@@ -41,13 +41,13 @@ class GUICollection {
         if (!this.page_overlays.initialized()) {
             this.page_overlays.initialize()
         }
-        if (!this.wait_popup.initialized) {
+        if (!this.wait_popup.is_initialized) {
             this.wait_popup.initialize()
         }
-        if (!this.text_input_popup.initialized) {
+        if (!this.text_input_popup.is_initialized) {
             this.text_input_popup.initialize()
         }
-        if (!this.select_input_popup.initialized) {
+        if (!this.select_input_popup.is_initialized) {
             this.select_input_popup.initialize()
         }
     }
@@ -107,7 +107,7 @@ class GUICollection {
         // under the click point. Note that this element may not be in an overlay set yet. 
         let nearest_rel_click_pos = new Point({ x: 0, y: 0 })
         if (elem_wraps.length > 0) {
-            nearest_rel_click_pos = elem_wraps[0].page_box.get_relative_point(click_pos)
+            nearest_rel_click_pos = elem_wraps[0].get_box().get_relative_point(click_pos)
         }
 
         // Determine the set index and overlay index at the click point.
@@ -118,7 +118,7 @@ class GUICollection {
         let overlay_rel_click_pos: Point = new Point({ x: 1, y: 1 })
         if (set_index >= 0) {
             let oset = this.overlay_sets.sets[set_index]
-            overlay_rel_click_pos = oset.overlays[overlay_index].elem_wrap.page_box.get_relative_point(click_pos)
+            overlay_rel_click_pos = oset.overlays[overlay_index].elem_wrap.get_box().get_relative_point(click_pos)
         }
 
         // Determine the xpath of the overlay element.
@@ -129,7 +129,7 @@ class GUICollection {
         let option_texts: string[] = []
         if (set_index >= 0) {
             let oset = this.overlay_sets.sets[set_index]
-            let element = oset.overlays[0].elem_wrap.element
+            let element = oset.overlays[0].elem_wrap.get_element()
             if (element instanceof HTMLSelectElement) {
                 let select: HTMLSelectElement = <HTMLSelectElement>element
                 for (let i = 0; i < element.options.length; i++) {

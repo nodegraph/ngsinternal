@@ -11,11 +11,11 @@ class Overlay {
     static enlarge = 0
     
     // Our dom elements.
-    left: HTMLDivElement
-    right: HTMLDivElement
-    top: HTMLDivElement
-    bottom: HTMLDivElement
-    marker: HTMLDivElement
+    private left: HTMLDivElement
+    private right: HTMLDivElement
+    private top: HTMLDivElement
+    private bottom: HTMLDivElement
+    private marker: HTMLDivElement
     
     elem_wrap: ElemWrap
     
@@ -44,7 +44,7 @@ class Overlay {
         this.update_dom_elements(color, color_index)
     }
 
-    //Destroy our dom elements.
+    // Destroy our dom elements.
     destroy(): void {
         // Release the elem_wrap
         this.elem_wrap = null
@@ -137,7 +137,7 @@ class Overlay {
         this.marker.style.outlineColor = color
 
         // Set the geometry of the dom elements.
-        let page_box = this.elem_wrap.page_box
+        let page_box = this.elem_wrap.get_box()
         let width = page_box.right - page_box.left
         let height = page_box.bottom - page_box.top
         let t = Overlay.thickness
