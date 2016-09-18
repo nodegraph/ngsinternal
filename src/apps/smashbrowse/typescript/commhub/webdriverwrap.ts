@@ -80,11 +80,11 @@ export class WebDriverWrap {
         if (!this.driver) {
             return webdriver.promise.fullyResolved<void>(1)
         }
-        let cleanup = ():void => {
-            this.driver = null; 
-            this.flow = null;
-        }
-        return this.driver.quit().then(cleanup)
+        return this.driver.getSession().then(
+            (session) => {
+                this.driver.quit().then(
+                    () => { this.driver = null; this.flow = null; })
+            })
     }
 
     // Returns a promise which navigates the browser to another url.

@@ -34,11 +34,14 @@ DebugUtils.catch_uncaught_exceptions()
 //------------------------------------------------------------------------------------------------
 
 class BaseConnection {
-    socket: ws
-    webdriverwrap: WebDriverWrap
+    protected socket: ws
+    protected webdriverwrap: WebDriverWrap
     constructor(webdriverwrap: WebDriverWrap) {
         this.webdriverwrap = webdriverwrap
         this.socket = null
+    }
+    set_socket(socket: ws) {
+        this.socket = socket
     }
     is_alive(): boolean {
         if (this.socket && this.socket.readyState === 1) {
@@ -104,7 +107,10 @@ class AppConnection extends BaseConnection {
             case RequestType.kCheckBrowserIsOpen: {
                 let on_response = (open: boolean) => {
                     if (!open) {
-                        this.webdriverwrap.open_browser()
+                        if (!this.webdriverwrap.open_browser()) {
+                            send_msg_to_app(new ResponseMessage(msg.id, '-1', false))
+                            return
+                        }
                         // Now convert this request to navigate to a default url with a port number.
                         let url = "https://www.google.com/?" + get_ext_server_port()
                         let relay = new RequestMessage(msg.id, '-1', RequestType.kNavigateTo, { url: url })
@@ -129,13 +135,11 @@ class AppConnection extends BaseConnection {
                 }
             } break
             case RequestType.kCloseBrowser: {
-                if (!this.webdriverwrap) {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
-                } else {
-                    this.webdriverwrap.close_browser().then(
-                        () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
-                        () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) })
-                }
+                // Clear all the connections to our extension socket server.
+                ext_server.clear_connections()
+                this.webdriverwrap.close_browser().then(
+                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
+                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) })
             } break
             case RequestType.kNavigateTo: {
                 this.webdriverwrap.navigate_to(req.args.url).then(() => {
@@ -265,7 +269,7 @@ class BaseSocketServer {
         this.server = new ws.Server(options)
         let on_connection = (socket: ws) => {
             let conn: C = new ConnConstructor(this.webdriverwrap);
-            conn.socket = socket
+            conn.set_socket(socket)
             socket.on('message', (json: string) => { conn.receive_json(json) })
             this.connections.push(conn)
         }
@@ -302,6 +306,9 @@ class BaseSocketServer {
     on_build_failed() {
         console.error("Error: SocketServer failed to build.")
     }
+    clear_connections() {
+        this.connections.length = 0
+    }
     clean_invalid_connections() {
         let conns = this.connections
         for (let i = 0; i < conns.length; i++) {
@@ -330,7 +337,6 @@ class BaseSocketServer {
                 sent = true
             }
         }
-
         if (!sent) {
             console.error('Error: base socket server could not find a connection to send a message.')
         }

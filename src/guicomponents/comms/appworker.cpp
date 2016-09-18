@@ -256,9 +256,8 @@ void AppWorker::shutdown() {
 }
 
 void AppWorker::reset() {
-  reset_state();
   close_browser();
-  check_browser_is_open();
+  queue_task(std::bind(&AppWorker::reset_task, this), "reset");
 }
 
 // -----------------------------------------------------------------
@@ -1018,6 +1017,12 @@ void AppWorker::perform_action_task(ActionType action, QVariantMap extra_args) {
 void AppWorker::emit_option_texts_task() {
   QStringList ot = _last_resp[Message::kValue].toMap()[Message::kOptionTexts].toStringList();
   emit select_option_texts(ot);
+  run_next_task();
+}
+
+void AppWorker::reset_task() {
+  reset_state();
+  check_browser_is_open();
   run_next_task();
 }
 

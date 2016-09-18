@@ -204,6 +204,7 @@ signals:
   void hover_task();
   void post_hover_task();
   void emit_option_texts_task();
+  void reset_task();
 
   // Handle messages.
   void run_next_task();

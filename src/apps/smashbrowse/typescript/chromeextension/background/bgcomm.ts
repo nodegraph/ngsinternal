@@ -12,9 +12,6 @@ class BgComm {
     private nodejs_socket: WebSocket // socket to communicate with the nodejs app
     private nodejs_port: number
 
-    // Timer to attempt connections.
-    private connect_timer: number
-
     // Our internal state.
     private tab_id: number // This is set by the first message received from any tab.
     private iframe: string // This is the current iframe, that the webdriver is acting upon.
@@ -36,17 +33,6 @@ class BgComm {
         // Hack to retrieve the nodejs port.
         // The very first opened tab's url will have the port number embedded into the url.
         chrome.tabs.onUpdated.addListener(this.on_tab_updated_bound)
-        chrome.tabs.onCreated.addListener(this.on_tab_created)
-
-        // Seems like the nodejs connect is lost frequently so we poll it.
-        // this.connect_timer = setInterval(this.connect_to_nodejs, 500)
-
-        // The background script is persistent once the browser is up.
-        // So we shouldn't be closing the nodejs_socket until the browser closes down.
-
-        // window.onbeforeunload = function() {
-        //     this.nodejs_socket.close()
-        // }
     }
 
     set_iframe(iframe: string): void {
@@ -87,7 +73,7 @@ class BgComm {
         this.nodejs_port = BgComm.extract_port_from_url(tab.url)
         if (this.nodejs_port != -1) {
             this.connect_to_nodejs()
-            chrome.tabs.onUpdated.removeListener(this.on_tab_updated)
+            chrome.tabs.onUpdated.removeListener(this.on_tab_updated_bound)
             BrowserWrap.close_other_tabs(this.tab_id)
         }
     }
