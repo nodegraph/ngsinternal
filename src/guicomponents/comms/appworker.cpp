@@ -733,6 +733,10 @@ void AppWorker::extract_text() {
   queue_task(std::bind(&AppWorker::perform_action_task,this,ActionType::kGetText,extra_args), "extract_text2");
   block_events();
 }
+void AppWorker::get_option_texts() {
+  queue_task(std::bind(&AppWorker::get_crosshair_info_task,this), "get_option_texts1");
+  queue_task(std::bind(&AppWorker::emit_option_texts_task,this), "get_option_texts2");
+}
 void AppWorker::select_from_dropdown(const QString& option_text) {
   check_busy()
   QVariantMap extra_args;
@@ -780,6 +784,7 @@ void AppWorker::scroll_left() {
   queue_task(std::bind(&AppWorker::perform_action_task,this,ActionType::kScrollLeft,extra_args), "scroll_left2");
   block_events();
 }
+
 
 // -----------------------------------------------------------------
 // Tasks. Our members which get bound into tasks.
@@ -999,6 +1004,12 @@ void AppWorker::perform_action_task(ActionType action, QVariantMap extra_args) {
   Message req(RequestType::kPerformAction);
   req[Message::kArgs] = args;
   send_msg_task(req);
+}
+
+void AppWorker::emit_option_texts_task() {
+  QStringList ot = _last_resp[Message::kValue].toMap()[Message::kOptionTexts].toStringList();
+  emit select_option_texts(ot);
+  run_next_task();
 }
 
 // -----------------------------------------------------------------

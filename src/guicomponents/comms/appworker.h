@@ -157,16 +157,19 @@ Q_OBJECT
   Q_INVOKABLE void type_text(const QString& text);
   Q_INVOKABLE void type_enter();
   Q_INVOKABLE void extract_text();
+  Q_INVOKABLE void get_option_texts(); // Results will be emitted by signal.
   Q_INVOKABLE void select_from_dropdown(const QString& option_text);
   Q_INVOKABLE void scroll_down();
   Q_INVOKABLE void scroll_up();
   Q_INVOKABLE void scroll_right();
   Q_INVOKABLE void scroll_left();
 
+
 signals:
   void show_web_action_menu();
   void show_iframe_menu();
   void web_action_ignored();
+  void select_option_texts(QStringList option_texts);
 
  private slots:
   void on_text_received(const QString & text);
@@ -200,6 +203,7 @@ signals:
   void start_hover_task();
   void hover_task();
   void post_hover_task();
+  void emit_option_texts_task();
 
   // Handle messages.
   void run_next_task();

@@ -66,12 +66,17 @@ AppStackPage{
     }
 
     function on_select_from_dropdown() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/SelectDropdownPage.qml", web_action_stack_page, {})
+    	app_worker.get_option_texts()
+    }
+    
+    // Receive option texts from the app worker.
+    function on_select_option_texts(option_texts) {
+    	var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/SelectDropdownPage.qml", web_action_stack_page, {})
         page.visible = true
         page.init("")
         page.set_title("Select from Dropdown")
         page.callback = app_worker.select_from_dropdown.bind(app_worker)
-        page.set_option_texts(app_worker.get_option_texts())
+        page.set_option_texts(option_texts)
         stack_view.push_page(page)
         visible = true
     }

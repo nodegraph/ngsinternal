@@ -175,6 +175,7 @@ Rectangle {
         app_worker.show_web_action_menu.connect(web_action_stack_page.on_show_web_action_menu)
         app_worker.show_iframe_menu.connect(web_action_stack_page.on_show_iframe_menu)
         app_worker.web_action_ignored.connect(web_action_stack_page.on_busy)
+        app_worker.select_option_texts.connect(web_action_stack_page.on_select_option_texts)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.
