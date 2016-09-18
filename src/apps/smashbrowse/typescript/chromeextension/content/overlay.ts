@@ -17,10 +17,11 @@ class Overlay {
     private bottom: HTMLDivElement
     private marker: HTMLDivElement
     
-    elem_wrap: ElemWrap
+    // Our ElemWrap.
+    private elem_wrap: ElemWrap
     
     constructor(class_name: string, color: string, color_index: number, mark = false, elem_wrap: ElemWrap=null) {
-        //Primary roperty.
+        // Primary roperty.
         this.elem_wrap = elem_wrap // Note the elem wrap is allowed to be null as well.
 
         // Our dom elements.
@@ -34,6 +35,18 @@ class Overlay {
         this.create_dom_elements(class_name)
         this.update_dom_elements(color, color_index)
         this.mark(mark)
+    }
+
+    get_elem_wrap() {
+        return this.elem_wrap
+    }
+
+    set_elem_wrap(elem_wrap: ElemWrap) {
+        this.elem_wrap = elem_wrap
+    }
+
+    is_valid() {
+        return this.elem_wrap.is_valid()
     }
     
     // Update all internal state.
@@ -66,11 +79,11 @@ class Overlay {
         return this.elem_wrap.contains_point(page_pos)
     }
 
-    // ----------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
     // Private methods.
     //----------------------------------------------------------------------------------
 
-    //Creates dom elements representing the four edges of the box overlay.
+    // Creates dom elements representing the four edges of the box overlay.
     create_dom_elements(class_name: string): void {
         this.left = document.createElement("div")
         this.left.classList.add(class_name)
@@ -98,7 +111,7 @@ class Overlay {
         document.body.appendChild(this.marker)
     }
 
-    //Updates the dom elements to reflect new position and size.
+    // Updates the dom elements to reflect new position and size.
     update_dom_elements(color: string, color_index: number): void {
         if (!this.elem_wrap) {
             this.left.style.left = '0px'
@@ -173,7 +186,7 @@ class Overlay {
         this.marker.style.height = (height + 2 * Overlay.enlarge + 2 * t) + 'px'
     }
 
-    //Updates the css style of the dom elements to reflect new color.
+    // Updates the css style of the dom elements to reflect new color.
     mark(mark: boolean): void {
         if (mark) {
             this.marker.style.outlineWidth = "4px"

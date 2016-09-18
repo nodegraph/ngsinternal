@@ -15,10 +15,18 @@ interface SetOverlayIndex{
 
 class OverlaySets {
     //Our data is just an array of overlay set's.
-    sets: OverlaySet[]
+    private sets: OverlaySet[]
     
     constructor() {
         this.sets = []
+    }
+
+    get_num_sets() {
+        return this.sets.length
+    }
+
+    get_set(index: number) {
+        return this.sets[index]
     }
     
     destroy(): void {
@@ -29,19 +37,26 @@ class OverlaySets {
         this.sets.length = 0
     }
 
-    //Update all internal state.
+    // Update all internal state.
     update(): void {
+        // Update sets and trim invalid ones.
         for (let i = 0; i < this.sets.length; i++) {
-            this.sets[i].update()
+            let set = this.sets[i]
+            set.update()
+            if (!set.is_valid()) {
+                set.destroy()
+                this.sets.splice(i,1)
+                i -= 1
+            }
         }
     }
 
-    //Add an overlay set.
+    // Add an overlay set.
     add_set(os: OverlaySet): void {
         this.sets.push(os)
     }
 
-    //Replace an overlay set at specified index.
+    // Replace an overlay set at specified index.
     replace_set(set_index: number, os: OverlaySet): void {
         this.sets[set_index] = os
     }
@@ -55,7 +70,7 @@ class OverlaySets {
             let oset = this.sets[i]
             let overlay_index = oset.find_overlay_index(page_pos)
             if (overlay_index.index >= 0) {
-                if (match_marked_state && oset.marked !== marked_state) {
+                if (match_marked_state && oset.is_marked() !== marked_state) {
                     continue
                 }
                 if (min_overlay_area === -1 || overlay_index.area < min_overlay_area) {
@@ -68,7 +83,7 @@ class OverlaySets {
         return min_soi
     }
 
-    //Mark the first unmarked set under the mouse.
+    // Mark the first unmarked set under the mouse.
     mark_set(set_index: number, mark: boolean): void {
         if (set_index < 0) {
             return
@@ -76,20 +91,20 @@ class OverlaySets {
         this.sets[set_index].mark(mark)
     }
 
-    //Unmark all sets.
+    // Unmark all sets.
     unmark_all(): void {
         for (let i = 0; i < this.sets.length; i++) {
             this.sets[i].mark(false)
         }
     }
 
-    //Destroy a set.
+    // Destroy a set.
     destroy_set(page_pos: Point): void {
         let soi = this.find_set_overlay_index(page_pos)
         this.destroy_set_by_index(soi.set_index)
     }
 
-    //Shift.
+    // Shift.
     shift(set_index: number, direction: Direction, wrap_type: WrapType, page_wrap: PageWrap): void {
         if (set_index < 0) {
             return
@@ -111,7 +126,7 @@ class OverlaySets {
         let marked: number[] = []
         let unmarked: number[] = []
         for (let i = 0; i < this.sets.length; i++) {
-            if (this.sets[i].marked) {
+            if (this.sets[i].is_marked()) {
                 marked.push(i)
             } else {
                 unmarked.push(i)
@@ -171,7 +186,7 @@ class OverlaySets {
 
         // Remove any empty sets.
         for (let i = 0; i < this.sets.length; i++) {
-            if (this.sets[i].overlays.length == 0) {
+            if (this.sets[i].get_num_overlays() == 0) {
                 this.sets.splice(i, 1)
                 i -= 1
             }
@@ -191,26 +206,26 @@ class OverlaySets {
         if (set_index < 0 || overlay_index < 0) {
             return
         }
-        return this.sets[set_index].overlays[overlay_index].elem_wrap.get_xpath()
+        return this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_xpath()
     }
 
     scroll_down(set_index: number, overlay_index: number): void {
-        let scroller = this.sets[set_index].overlays[overlay_index].elem_wrap.get_closest_scroll(true)
+        let scroller = this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_closest_scroll(true)
         scroller.scroll_down()
     }
 
     scroll_up(set_index: number, overlay_index: number): void {
-        let scroller = this.sets[set_index].overlays[overlay_index].elem_wrap.get_closest_scroll(true)
+        let scroller = this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_closest_scroll(true)
         scroller.scroll_up()
     }
 
     scroll_right(set_index: number, overlay_index: number): void {
-        let scroller = this.sets[set_index].overlays[overlay_index].elem_wrap.get_closest_scroll(false)
+        let scroller = this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_closest_scroll(false)
         scroller.scroll_right()
     }
 
     scroll_left(set_index: number, overlay_index: number): void {
-        let scroller = this.sets[set_index].overlays[overlay_index].elem_wrap.get_closest_scroll(false)
+        let scroller = this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_closest_scroll(false)
         scroller.scroll_left()
     }
 
@@ -218,7 +233,7 @@ class OverlaySets {
     // Private methods.
     //-------------------------------------------------------------------------
 
-    //Destroy a set by index.
+    // Destroy a set by index.
     destroy_set_by_index(set_index: number): void {
         if (set_index < 0 || set_index >= this.sets.length) {
             return

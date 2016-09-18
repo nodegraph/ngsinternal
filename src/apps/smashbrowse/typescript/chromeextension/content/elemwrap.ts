@@ -17,6 +17,7 @@ class ElemWrap {
     private page_box: Box // Our bounds in page space.
     private wrap_type: WrapType // Our wrapping type.
     private getter: () => string // Cached values getter for our specific wrapping type.
+    private valid: boolean
     
     // Constructor.
     constructor(element: Element) {
@@ -30,7 +31,10 @@ class ElemWrap {
 
         // Our wrap type and getter should stay fixed throughout our lifetime.
         this.wrap_type = this.calculate_wrap_type()
-        this.getter = this.get_getter_from_wrap_type(this.wrap_type)
+        this.getter = ElemWrap.get_getter_from_wrap_type(this.wrap_type)
+
+        // Become invalid once element disappears.
+        this.valid = true
 
         // Update.
         this.update()
@@ -58,6 +62,10 @@ class ElemWrap {
         return this.getter
     }
 
+    is_valid() {
+        return this.valid
+    }
+
     get_frame_index_path(): number[] {
         let local_window: Window = this.element.ownerDocument.defaultView
         return PageWrap.get_iframe_index_path(local_window)
@@ -65,7 +73,12 @@ class ElemWrap {
 
     // Update all internal state.
     update(): void {
-        this.update_page_box()
+        if (document.body.contains(this.element)) {
+            this.update_page_box()
+        } else {
+            this.valid = false
+            this.page_box.reset()
+        }
     }
 
     // Returns true if this and the other ElemWrap represent the same dom element.
@@ -77,7 +90,7 @@ class ElemWrap {
     }
 
     // Get our wrap type.
-    calculate_wrap_type(): WrapType {
+    private calculate_wrap_type(): WrapType {
         if (this.is_iframe()) {
             return WrapType.iframe
         }
@@ -96,20 +109,20 @@ class ElemWrap {
         return -1
     }
 
-    get_getter_from_wrap_type(wrap_type: WrapType): () => string {
+    static get_getter_from_wrap_type(wrap_type: WrapType): () => string {
         // Note this returns functions that are not bound to this.
         // This means that these functions can be called by many instances.
         switch (wrap_type) {
             case WrapType.text:
-                return this.get_text
+                return ElemWrap.prototype.get_text
             case WrapType.image:
-                return this.get_image
+                return ElemWrap.prototype.get_image
             case WrapType.input:
-                return this.is_input
+                return ElemWrap.prototype.is_input
             case WrapType.select:
-                return this.is_select
+                return ElemWrap.prototype.is_select
             case WrapType.iframe:
-                return this.is_iframe
+                return ElemWrap.prototype.is_iframe
         }
         return null
     }
@@ -118,7 +131,7 @@ class ElemWrap {
     // Geometry Related.
     //----------------------------------------------------------------------------------------
 
-    update_page_box() {
+    private update_page_box() {
         let elem_rect = this.element.getBoundingClientRect()
         this.page_box.left = elem_rect.left
         this.page_box.right = elem_rect.right
@@ -262,7 +275,7 @@ class ElemWrap {
 
     shift(dir: Direction, wrap_type: WrapType, page_wrap: PageWrap): void {
         // Find the proper getter for the type we're shifting to.
-        let getter: () => string = this.get_getter_from_wrap_type(wrap_type)
+        let getter: () => string = ElemWrap.get_getter_from_wrap_type(wrap_type)
         let elem_wrap: ElemWrap = this.get_neighboring_elem_wrap(getter, dir, page_wrap)
         if (elem_wrap) {
             this.element = elem_wrap.element

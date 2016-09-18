@@ -339,7 +339,7 @@ class PageWrap {
 
     // Returns elem wraps which match any of the target values.
     get_by_any_value(wrap_type: WrapType, target_values: string[]): ElemWrap[] {
-        let getter = ElemWrap.prototype.get_getter_from_wrap_type(wrap_type)
+        let getter = ElemWrap.get_getter_from_wrap_type(wrap_type)
 
         // Get all elem wraps.
         let elem_wraps = this.get_all_visible()
@@ -382,7 +382,7 @@ class PageWrap {
         let candidates: ElemWrap[] = this.get_by_any_value(wrap_type, target_values)
 
         // Get our getter.
-        let getter: () => string = ElemWrap.prototype.get_getter_from_wrap_type(wrap_type)
+        let getter: () => string = ElemWrap.get_getter_from_wrap_type(wrap_type)
 
         // Determines arrays of surrounding elem wraps for each elem wrap.
         let overlaps: string[][] = []

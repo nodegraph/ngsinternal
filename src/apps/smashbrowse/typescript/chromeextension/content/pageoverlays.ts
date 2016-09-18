@@ -58,12 +58,12 @@ class PageOverlays {
     }
 
     private update_text_box_overlay(elem_wrap: ElemWrap): void {
-        this.text_box_overlay.elem_wrap = elem_wrap
+        this.text_box_overlay.set_elem_wrap(elem_wrap)
         this.text_box_overlay.update(DistinctColors.text_color, -1)
     }
 
     private update_image_box_overlay(elem_wrap: ElemWrap): void {
-        this.image_box_overlay.elem_wrap = elem_wrap
+        this.image_box_overlay.set_elem_wrap(elem_wrap)
         this.image_box_overlay.update(DistinctColors.image_color, -1)
     }
 

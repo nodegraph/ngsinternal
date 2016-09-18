@@ -117,8 +117,8 @@ class GUICollection {
         let overlay_index = set_overlay_index.overlay_index
         let overlay_rel_click_pos: Point = new Point({ x: 1, y: 1 })
         if (set_index >= 0) {
-            let oset = this.overlay_sets.sets[set_index]
-            overlay_rel_click_pos = oset.overlays[overlay_index].elem_wrap.get_box().get_relative_point(click_pos)
+            let oset = this.overlay_sets.get_set(set_index)
+            overlay_rel_click_pos = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(click_pos)
         }
 
         // Determine the xpath of the overlay element.
@@ -128,8 +128,8 @@ class GUICollection {
         let option_values: string[] = []
         let option_texts: string[] = []
         if (set_index >= 0) {
-            let oset = this.overlay_sets.sets[set_index]
-            let element = oset.overlays[0].elem_wrap.get_element()
+            let oset = this.overlay_sets.get_set(set_index)
+            let element = oset.get_overlay(0).get_elem_wrap().get_element()
             if (element instanceof HTMLSelectElement) {
                 let select: HTMLSelectElement = <HTMLSelectElement>element
                 for (let i = 0; i < element.options.length; i++) {
