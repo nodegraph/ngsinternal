@@ -32,6 +32,15 @@ class ContentComm {
         // The base message will get flattened out into a regular dict obj, during the transfer from the bgcomm.
         let msg = BaseMessage.create_from_obj(obj)
 
+        // Some messages apply to all frames.
+        if (msg.get_msg_type() == MessageType.kRequestMessage) {
+            let req = <RequestMessage>(msg)
+            if (req.request == RequestType.kUpdateOveralys) {
+                this.handler.handle_bg_request(req)
+                return
+            }
+        } 
+
         // Ignore the message if it doesn't match our iframe.
         if (msg.iframe != PageWrap.get_iframe_index_path_as_string(window)) {
             return

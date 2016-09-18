@@ -26,8 +26,9 @@ class ContentCommHandler {
         let success_msg = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), true)
         switch (req.request) {
             case RequestType.kUpdateOveralys: {
+                // This message applies to all iframes so we don't send a reponse message back.
+                // Otherwise there would be too many. Instead bg comm will send a single response back for all iframes.
                 this.gui_collection.overlay_sets.update()
-                this.content_comm.send_to_bg(success_msg)
             } break
             case RequestType.kCreateSetFromMatchValues: {
                 if (req.args.match_values.length) {

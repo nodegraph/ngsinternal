@@ -67,6 +67,15 @@ class BgCommHandler {
                 let response = new ResponseMessage(req.id, "-99", true)
                 this.bg_comm.send_to_nodejs(response)
             } break
+            case RequestType.kUpdateOveralys: {
+                // Update overlays applies to all iframes. 
+                // Each iframe will not respond because this always succeeds.
+                req.iframe = this.bg_comm.get_iframe()
+                this.bg_comm.send_to_content(req)
+                // Instead we send a single reponse back for all iframes.
+                let response = new ResponseMessage(req.id, "-1", true)
+                this.bg_comm.send_to_nodejs(response)
+            } break
             default: {
                 // Forward it to the right iframe in the content.
                 req.iframe = this.bg_comm.get_iframe()

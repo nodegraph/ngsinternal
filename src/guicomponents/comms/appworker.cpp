@@ -662,8 +662,17 @@ void AppWorker::shrink_left_and_right_of_marked() {
 // -----------------------------------------------------------------
 
 void AppWorker::block_events() {
-  Message req(RequestType::kBlockEvents);
-  queue_task(std::bind(&AppWorker::send_msg_task,this,req), "block_events");
+  // This action implies the browser's event unblocked for a time to allow
+  // some actions to be performed. After such an action we need to update
+  // the overlays as elements may disappear or move around.
+  {
+    Message req(RequestType::kBlockEvents);
+    queue_task(std::bind(&AppWorker::send_msg_task, this, req), "block_events");
+  }
+  {
+    Message msg(RequestType::kUpdateOveralys);
+    queue_task(std::bind(&AppWorker::send_msg_task, this, msg), "update_overlays");
+  }
 }
 
 void AppWorker::unblock_events() {
