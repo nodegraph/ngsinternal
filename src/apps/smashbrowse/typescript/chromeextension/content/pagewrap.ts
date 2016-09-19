@@ -2,7 +2,7 @@
 // The class encapsulates the properties of a web page.
 class PageWrap {
     // Our Dependencies.
-    gui_collection: GUICollection // This is like our owning parent.
+    private gui_collection: GUICollection // This is like our owning parent.
     
     // Constructor.
     constructor(gc: GUICollection) {

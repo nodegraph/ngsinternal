@@ -12,7 +12,7 @@ class GUICollection {
 
     page_wrap: PageWrap
 
-    distinct_colors: DistinctColors
+    private distinct_colors: DistinctColors
     overlay_sets: OverlaySets
 
     constructor(content_comm: ContentComm) {
