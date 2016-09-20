@@ -35,6 +35,7 @@ class ContentComm {
         // Some messages apply to all frames.
         if (msg.get_msg_type() == MessageType.kRequestMessage) {
             let req = <RequestMessage>(msg)
+            // Update overlays on all frames.
             if (req.request == RequestType.kUpdateOveralys) {
                 this.handler.handle_bg_request(req)
                 return

@@ -290,6 +290,18 @@ void AppWorker::update_overlays() {
   queue_task(std::bind(&AppWorker::send_msg_task, this, msg), "update_overlays");
 }
 
+void AppWorker::cache_frame() {
+  check_busy()
+  Message msg(RequestType::kCacheFrame);
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg), "cache_frame");
+}
+
+void AppWorker::load_cached_frame() {
+  check_busy()
+  Message msg(RequestType::kLoadCachedFrame);
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg), "load_cached_frame");
+}
+
 // -----------------------------------------------------------------
 // Navigation.
 // -----------------------------------------------------------------

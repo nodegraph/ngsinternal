@@ -39,6 +39,8 @@ enum RequestType {
   // Page Content Set Requests.
   kPerformAction,
   kUpdateOveralys,
+  kCacheFrame,
+  kLoadCachedFrame,
   kCreateSetFromMatchValues,
   kCreateSetFromWrapType,
   kDeleteSet,

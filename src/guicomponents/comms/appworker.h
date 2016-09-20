@@ -75,6 +75,8 @@ Q_OBJECT
   Q_INVOKABLE void clear_all_cookies();
   Q_INVOKABLE void set_all_cookies();
   Q_INVOKABLE void update_overlays();
+  Q_INVOKABLE void cache_frame();
+  Q_INVOKABLE void load_cached_frame();
 
   // Navigation.
   Q_INVOKABLE void navigate_to(const QString& url);

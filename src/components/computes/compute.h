@@ -30,8 +30,8 @@ class COMPUTES_EXPORT Compute: public Component {
   // Our state.
   virtual void update_state();
 
-  // Our compute type.
-  const char* get_compute_type() {return "";}
+//  // Our compute type.
+//  const char* get_compute_type() {return "";}
 
   // Our results.
   virtual const QVariantMap& get_results() const;

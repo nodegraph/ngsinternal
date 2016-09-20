@@ -63,4 +63,19 @@ ListModel {
         script: "app_worker.reset()"
     }
 
+
+    ListElement {
+        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        title: "Cache Frame"
+        description: "Cache the Frame to local Storage"
+        script: "app_worker.cache_frame()"
+    }
+
+    ListElement {
+        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        title: "Load Cached Frame"
+        description: "Load Cached Frame to local Storage"
+        script: "app_worker.load_cached_frame()"
+    }
+
 }
