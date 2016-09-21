@@ -473,6 +473,7 @@ void CreateSetFromValuesNodeEntity::create_internals() {
     in->create_internals();
     BaseInputEntity* type = new_ff BaseInputEntity(inputs, "type");
     type->create_internals();
+    type->set_param_type(ParamType::kWrapType);
     BaseInputEntity* values = new_ff BaseInputEntity(inputs, "values");
     values->create_internals();
   }
@@ -499,6 +500,7 @@ void CreateSetFromTypeNodeEntity::create_internals() {
     in->create_internals();
     BaseInputEntity* type = new_ff BaseInputEntity(inputs, "type");
     type->create_internals();
+    type->set_param_type(ParamType::kWrapType);
   }
   {
     Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
@@ -543,9 +545,13 @@ void InputEntity::create_internals() {
   new_ff InputShape(this);
   // Our sub entities.
   {
-    Entity* label = new_ff InputLabelEntity(this, "label");
+    InputLabelEntity* label = new_ff InputLabelEntity(this, "label");
     label->create_internals();
   }
+}
+
+void InputEntity::set_param_type(ParamType param_type) {
+  get<InputCompute>()->set_param_type(param_type);
 }
 
 void InputLabelEntity::create_internals() {

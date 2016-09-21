@@ -44,8 +44,7 @@ void CloseBrowserCompute::update_state() {
 
   _app_worker->close_browser();
 
-  // Pass the inputs through, but wipe out the browser cookies.
-  // Todo: wipe out the browser cookies.
+  // Pass the inputs through.
   const QVariant &value = _inputs.at("in")->get_result("out");
   set_result("out", value);
 }
@@ -64,22 +63,19 @@ CreateSetFromValuesCompute::~CreateSetFromValuesCompute() {
 void CreateSetFromValuesCompute::update_state() {
   // Make sure our input deps are hashed.
   Compute::update_state();
-//
-//  QVariant type = _inputs.at("type")->get_result("out");
-//  QVariant values = _inputs.at("values")->get_result("out");
-//
-//  std::string request =
-//      "{\
-//         \"request\": \"create_set_from_match_values\", \
-//         \"wrap_type\": \"" + type.toString().toStdString() + "\", \
-//         \"match_values\": \"" + values.toString().toStdString() + "\" \
-//       }";
-//  _app_worker->handle_request_from_app(request.c_str());
-//
-//  // Pass the inputs through, but wipe out the browser cookies.
-//  // Todo: wipe out the browser cookies.
-//  const QVariant &value = _inputs.at("in")->get_result("out");
-//  set_result("out", value);
+
+  QVariant wrap_type = _inputs.at("type")->get_result("out");
+  QVariant match_values = _inputs.at("values")->get_result("out");
+
+  QVariantMap args;
+  args[Message::kWrapType] = wrap_type;
+  args[Message::kMatchValues] = match_values;
+  Message msg(RequestType::kCreateSetFromMatchValues, args);
+  _app_worker->send_msg(msg);
+
+  // Pass the inputs through.
+  const QVariant &value = _inputs.at("in")->get_result("out");
+  set_result("out", value);
 }
 
 //--------------------------------------------------------------------------------

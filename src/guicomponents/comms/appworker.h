@@ -166,6 +166,9 @@ Q_OBJECT
   Q_INVOKABLE void scroll_right();
   Q_INVOKABLE void scroll_left();
 
+  // These are meant to be called by Compute components.
+  void send_msg(Message& msg);  // msg is not const because it gets tagged with an id.
+  void send_action_msg(Message& msg);
 
 signals:
   void show_web_action_menu();
@@ -183,7 +186,7 @@ signals:
   // Send Messages.
   void send_json(const QString& json);
   void send_map(const QVariantMap& map);
-  void send_msg(Message& msg);  // msg is not const because it gets tagged with an id.
+
 
   // Task Management.
   void queue_task(AppTask task, const std::string& about);

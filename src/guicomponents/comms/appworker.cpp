@@ -121,6 +121,12 @@ void AppWorker::send_msg(Message& msg) {
   queue_task(std::bind(&AppWorker::send_msg_task, this, msg), "send_msg");
 }
 
+void AppWorker::send_action_msg(Message& msg) {
+  unblock_events();
+  queue_task(std::bind(&AppWorker::send_msg_task, this, msg), "send_msg");
+  block_events();
+}
+
 void AppWorker::send_msg_task(Message msg) {
   // Tag the request with an id. We expect a response with the same id.
   msg[Message::kID] = _next_msg_id;

@@ -7,6 +7,8 @@ class QSurfaceFormat;
 
 namespace ngs {
 
+enum ParamType;
+
 class FileModel;
 class AppComm;
 class AppWorker;
@@ -139,6 +141,7 @@ class ENTITIES_EXPORT InputEntity : public Entity {
   using Entity::Entity;
   InputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
+  virtual void set_param_type(ParamType param_type);
 };
 
 class ENTITIES_EXPORT InputLabelEntity : public Entity {

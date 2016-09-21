@@ -8,6 +8,17 @@ namespace ngs {
 
 class OutputCompute;
 
+enum ParamType {
+  kQtType,
+  kQInt,
+  kQString,
+  kQStringList,
+  kWrapType,
+  kActionType,
+  kDirection,
+};
+
+
 class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   Q_OBJECT
  public:
@@ -23,11 +34,18 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   // Our value.
   void set_value(QVariant& var);
 
+  // Our data type.
+  void set_param_type(ParamType param_type);
+
   // Our dynamic output compute dependency.
   bool can_link_output_compute(const Dep<OutputCompute>& output) const;
   bool link_output_compute(Dep<OutputCompute>& output);
   void unlink_output_compute();
   Dep<OutputCompute> get_output_compute() const;
+
+  // Serialization.
+  virtual void save(SimpleSaver& saver) const;
+  virtual void load(SimpleLoader& loader);
 
  private:
 
@@ -35,7 +53,13 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   Dep<OutputCompute> _output;
 
   // Our data.
-  QVariant _param_data;
+  // Usually stores the value directly.
+  // If it has a string starting with "data." then it's
+  // an expression which pulls a value from the data tree flowing through the graph.
+  QVariant _param_value;
+
+  // Our data type.
+  ParamType _param_type;
 };
 
 

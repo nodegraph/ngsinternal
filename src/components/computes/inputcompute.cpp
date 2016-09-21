@@ -8,11 +8,15 @@
 
 #include <components/compshapes/linkshape.h>
 
+#include <QtCore/QIODevice>
+#include <QtCore/QDataStream>
+
 namespace ngs {
 
 InputCompute::InputCompute(Entity* entity)
     : QObject(),
       Compute(entity, kDID()),
+      _param_type(ParamType::kQtType),
       _output(this) {
 	get_dep_loader()->register_dynamic_dep(_output);
 }
@@ -25,13 +29,18 @@ void InputCompute::update_state() {
   if (_output) {
     set_result("out", _output->get_result("out"));
   } else {
-    set_result("out", _param_data);
+    set_result("out", _param_value);
   }
 }
 
-void InputCompute::set_value(QVariant& var) {
+void InputCompute::set_value(QVariant& value) {
   start_method();
-  _param_data = var;
+  _param_value = value;
+}
+
+void InputCompute::set_param_type(ParamType param_type) {
+  start_method();
+  _param_type = param_type;
 }
 
 bool InputCompute::can_link_output_compute(const Dep<OutputCompute>& output) const {
@@ -69,6 +78,44 @@ void InputCompute::unlink_output_compute() {
   if (_output) {
     _output.reset();
   }
+}
+
+void InputCompute::save(SimpleSaver& saver) const {
+  start_method();
+  Compute::save(saver);
+
+  // Serialize the param type.
+  size_t type = _param_type;
+  saver.save(type);
+
+  // Serialize the param value.
+  QByteArray data;
+  QDataStream ds(&data,QIODevice::WriteOnly);
+  ds << _param_value;
+  int num_bytes = data.size();
+  saver.save(num_bytes);
+  saver.save_raw(data.data(), num_bytes);
+}
+
+void InputCompute::load(SimpleLoader& loader) {
+  start_method();
+  Compute::load(loader);
+
+  // Load the param type.
+  size_t type;
+  loader.load(type);
+  _param_type = static_cast<ParamType>(type);
+
+  // Load the num bytes of the param value.
+  int num_bytes;
+  loader.load(num_bytes);
+
+  // Load the param value.
+  QByteArray data;
+  data.resize(num_bytes);
+  loader.load_raw(data.data(), num_bytes);
+  QDataStream ds(&data,QIODevice::ReadOnly);
+  ds >> _param_value;
 }
 
 }

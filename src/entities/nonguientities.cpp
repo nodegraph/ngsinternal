@@ -143,6 +143,10 @@ void BaseInputEntity::create_internals() {
   new_ff InputCompute(this);
 }
 
+void BaseInputEntity::set_param_type(ParamType param_type) {
+  get<InputCompute>()->set_param_type(param_type);
+}
+
 void BaseOutputEntity::create_internals() {
   // Our components.
   new_ff OutputCompute(this);

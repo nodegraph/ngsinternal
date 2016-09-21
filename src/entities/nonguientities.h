@@ -5,6 +5,8 @@
 
 namespace ngs {
 
+enum ParamType;
+
 class ENTITIES_EXPORT BaseNamespaceEntity : public Entity {
  public:
   ENTITY_ID(BaseNamespaceEntity, "namespace")
@@ -75,6 +77,7 @@ class ENTITIES_EXPORT BaseInputEntity : public Entity {
   using Entity::Entity;
   BaseInputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
+  virtual void set_param_type(ParamType param_type);
 };
 
 class ENTITIES_EXPORT BaseOutputEntity : public Entity {
