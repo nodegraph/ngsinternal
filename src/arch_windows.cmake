@@ -13,6 +13,12 @@ add_definitions("-DGLES_MAJOR_VERSION=${gles_major_version}")
 add_definitions("-DGLES_MINOR_VERSION=${gles_minor_version}")
 add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 
+# You'll need to add these definitions manual in eclipse in Project/Properties/C/C++ Include Paths and Symbols.
+# __pragma(x)=_Pragma("(x)")
+# _wassert(a,b,c)=1
+# __int64=long long
+# __int32=int
+
 # ---------------------------------------------------------
 # Qt Directory.
 # ---------------------------------------------------------
