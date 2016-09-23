@@ -32,17 +32,33 @@ OutputShape::OutputShape(Entity* entity)
   get_dep_loader()->register_fixed_dep(_node_shape, "../..");
   get_dep_loader()->register_fixed_dep(_output_compute, ".");
 
-  _tris.resize(2);
-  _bg_tri = &_tris[0];
-  _fg_tri = &_tris[1];
+
 }
 
 OutputShape::~OutputShape() {
 }
 
+bool OutputShape::is_exposed() const {
+  size_t index = _output_compute->get_exposed_output_index();
+  if (index == -1) {
+    return false;
+  }
+  return true;
+}
+
 void OutputShape::update_state() {
-  size_t order = _output_compute->get_exposed_output_index();
-  //std::cerr << "exposed index: " << order << "\n";
+  // If we're not exposed then clear out our shapes.
+  if (!is_exposed()) {
+    _tris.clear();
+    return;
+  }
+
+  // Make sure our shapes are allocated.
+  _tris.resize(2);
+  ShapeInstance* bg = &_tris[0];
+  ShapeInstance* fg = &_tris[1];
+
+  size_t exposed_index = _output_compute->get_exposed_output_index();
 
   // Get the node bounds.
   const Polygon& bounds = _node_shape->get_bounds();
@@ -52,16 +68,15 @@ void OutputShape::update_state() {
   bounds.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
-  size_t num_plugs = _output_compute->get_num_exposed_outputs();
-  //std::cerr << "num exposed: " << num_plugs << "\n";
+  size_t num_exposed = _output_compute->get_num_exposed_outputs();
 
   float min_x(node_min.x);
   float max_x(node_max.x);
-  float delta = (max_x - min_x) / (num_plugs + 1);
+  float delta = (max_x - min_x) / (num_exposed + 1);
   float start = min_x + delta;
 
   // Update the origin, which is the center of the triangle.
-  _origin = glm::vec2(start + order * delta, node_min.y - plug_offset - plug_size.y/2.0f );
+  _origin = glm::vec2(start + exposed_index * delta, node_min.y - plug_offset - plug_size.y/2.0f );
 
   // Update our bounds.
   std::vector<glm::vec2>& verts = _bounds.vertices;
@@ -74,27 +89,27 @@ void OutputShape::update_state() {
   set_pannable(_node_shape->is_selected());
 
   // Update our bg triangle.
-  _bg_tri->set_scale(plug_size);
-  _bg_tri->set_rotate(0);
-  _bg_tri->set_translate(verts[0], bg_depth);
-  _bg_tri->set_color(bg_color);
+  bg->set_scale(plug_size);
+  bg->set_rotate(0);
+  bg->set_translate(verts[0], bg_depth);
+  bg->set_color(bg_color);
   if (_node_shape->is_selected()) {
-    _bg_tri->state |= selected_transform_bitmask;
+    bg->state |= selected_transform_bitmask;
   } else {
-    _bg_tri->state &= ~selected_transform_bitmask;
+    bg->state &= ~selected_transform_bitmask;
   }
 
   // Update our fg triangle.
   // h' = h - 3*border_width
   // w' = w - 2*sqrt(3)*border_width
-  _fg_tri->set_scale(plug_size - glm::vec2(2.0f * sqrt(3.0f) * plug_border_width, 3.0f * plug_border_width));
-  _fg_tri->set_rotate(0);
-  _fg_tri->set_translate(verts[0] + glm::vec2(0, 2*plug_border_width), fg_depth);
-  _fg_tri->set_color(fg_color);
+  fg->set_scale(plug_size - glm::vec2(2.0f * sqrt(3.0f) * plug_border_width, 3.0f * plug_border_width));
+  fg->set_rotate(0);
+  fg->set_translate(verts[0] + glm::vec2(0, 2*plug_border_width), fg_depth);
+  fg->set_color(fg_color);
   if (_node_shape->is_selected()) {
-    _fg_tri->state |= selected_transform_bitmask;
+    fg->state |= selected_transform_bitmask;
   } else {
-    _fg_tri->state &= ~selected_transform_bitmask;
+    fg->state &= ~selected_transform_bitmask;
   }
 }
 

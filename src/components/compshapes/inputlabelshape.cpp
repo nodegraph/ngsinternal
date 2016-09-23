@@ -23,12 +23,10 @@ const float InputLabelShape::default_text_angle = boost::math::constants::pi<flo
 
 InputLabelShape::InputLabelShape(Entity* entity)
     : CompShape(entity, kDID()),
-      _factory(this),
       _resources(this),
       _input_shape(this),
       _link_shape(this),
       _state(0) {
-  get_dep_loader()->register_fixed_dep(_factory, "");
   get_dep_loader()->register_fixed_dep(_resources, "");
   get_dep_loader()->register_fixed_dep(_input_shape, "..");
 }
@@ -65,6 +63,12 @@ bool InputLabelShape::update_deps() {
 }
 
 void InputLabelShape::update_state() {
+  // If the input shape is not exposed then clear out our shapes.
+  if (!_input_shape->is_exposed()) {
+    _chars.clear();
+    return;
+  }
+
   // Get the input shape's origin.
   const glm::vec2 &origin = _input_shape->get_origin();
 

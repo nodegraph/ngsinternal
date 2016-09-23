@@ -29,7 +29,6 @@ class COMPSHAPES_EXPORT InputLabelShape: public CompShape {
  private:
 
   // Our fixed deps.
-  Dep<BaseFactory> _factory;
   Dep<Resources> _resources;
   Dep<InputShape> _input_shape;
 

@@ -41,6 +41,7 @@ GroupNodeShape::~GroupNodeShape() {
 void GroupNodeShape::update_state() {
   RectNodeShape::update_state();
 
+  // The following updates the marker shapes.
   const Polygon& bounds = get_bounds();
   glm::vec2 target_center = 0.5f * (bounds.vertices[0] + bounds.vertices[3]) - glm::vec2(indicator_offset, 0);
   glm::vec2 translate = target_center - glm::vec2(0, sqrt(2.0f)*indicator_size.x/2.0f);
@@ -71,19 +72,5 @@ void GroupNodeShape::update_state() {
   _quads_cache.insert(_quads_cache.end(), _marker_bg);
   _quads_cache.insert(_quads_cache.end(), _marker_fg);
 }
-
-//size_t GroupNodeShape::get_input_order(const std::string& input_name) const {
-//  if (_input_order.count(input_name)) {
-//    return _input_order.at(input_name);
-//  }
-//  return 0;
-//}
-//
-//size_t GroupNodeShape::get_output_order(const std::string& output_name) const {
-//  if (_output_order.count(output_name)) {
-//    return _output_order.at(output_name);
-//  }
-//  return 0;
-//}
 
 }

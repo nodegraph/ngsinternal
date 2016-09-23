@@ -13,17 +13,4 @@ UpperHierarchyChange::UpperHierarchyChange(Entity* entity)
 UpperHierarchyChange::~UpperHierarchyChange() {
 }
 
-//void UpperHierarchyChange::initialize_fixed_deps() {
-//  Component::initialize_fixed_deps();
-//  update_state();
-//}
-//
-//void UpperHierarchyChange::update_state() {
-//  if (has_entity("..")) {
-//    _parent_change = get_dep<UpperHierarchyChange>(get_entity(".."));
-//  } else {
-//    _parent_change.reset();
-//  }
-//}
-
 }

@@ -6,13 +6,22 @@
 
 namespace ngs {
 
-// This class represents changes that happen to an Entity.
-// These changes are just the addition and removal of child entities.
-// Each EntityChanges has a dependency on it's parent entity's
-// EntityChange component. This is because entities are allowed
-// to be renamed. When an entity is renamed (for example a group),
-// all the child entities' paths will change.
-// These paths may be displayed in the gui .. etc, requiring an update.
+// This component represents the cumulative dirty state of the entity
+// tree below the entity to which this component belongs.
+// For example:
+//    A
+//   / \
+//  B   C
+// The lower hierarchy change component at entity A will be dirty
+// under the following conditions.
+// 1) Entity A was just renamed.
+// 2) A child entity was just added. (eg B or C)
+// 3) A child entity was just removed. (eg D or E)
+// 4) A child entity was just renamed. (eg D was renamed to B)
+//
+// Note implementation wise there are some hooks in the Entity class
+// where when child entities are added or removed the lower hierarchy change
+// component gets dirtied.
 
 class OBJECTMODEL_EXPORT LowerHierarchyChange : public Component {
  public:

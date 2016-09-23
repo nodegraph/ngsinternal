@@ -24,11 +24,11 @@ OutputCompute::~OutputCompute() {
 void OutputCompute::update_state() {
   if (dep_is_dirty(_upper_change)) {
     update_index();
-  }
 
-  // Using our name we query our nodes compute results.
-  const std::string& our_name = our_entity()->get_name();
-  set_result("out", _node_compute->get_result(our_name));
+    // Using our name we query our nodes compute results.
+    const std::string& our_name = our_entity()->get_name();
+    set_result("out", _node_compute->get_result(our_name));
+  }
 }
 
 void OutputCompute::set_exposed(bool exposed) {
@@ -67,7 +67,6 @@ void OutputCompute::update_index() {
 
   // Get the outputs namespacing entity.
   Entity* outputs_space = our_entity()->get_parent();
-  std::cerr << "outputs space name: " << outputs_space->get_name() << "\n";
 
   // Loop through all its children.
   const Entity::NameToChildMap& children = outputs_space->get_children();
@@ -77,7 +76,6 @@ void OutputCompute::update_index() {
   _num_outputs = 0;
   // Loop.
   for (auto iter: children) {
-    std::cerr << "child: " << iter.second->get_name() << "\n";
     // Record all exposed output computes names.
     if (iter.second->get_did() == kOutputEntity) {
       ++_num_outputs;

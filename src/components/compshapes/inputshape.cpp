@@ -34,22 +34,30 @@ InputShape::InputShape(Entity* entity)
       _compute(this) {
   get_dep_loader()->register_fixed_dep(_node_shape, "../..");
   get_dep_loader()->register_fixed_dep(_compute, "../..");
-
-  _quads.resize(2);
-  _bg_quad = &_quads[0];
-  _fg_quad = &_quads[1];
 }
 
 InputShape::~InputShape() {
 }
 
+bool InputShape::is_exposed() const {
+  size_t index = _compute->get_exposed_input_index(get_name());
+  if (index == -1) {
+    return false;
+  }
+  return true;
+}
+
 void InputShape::update_state() {
-  size_t order = _compute->get_exposed_input_index(get_name());
-  if(order == -1) {
-    std::cerr << "found an input shape which should not exist: " << get_name() << "\n";
+  size_t exposed_index = _compute->get_exposed_input_index(get_name());
+  if(exposed_index == -1) {
+    _quads.resize(0); // Empty out our quads if we're not visible.
     return;
   }
-  std::cerr << "exposed input index: " << order << "\n";
+
+  // Make sure the shapes are allocated.
+  _quads.resize(2);
+  ShapeInstance* bg = &_quads[0];
+  ShapeInstance* fg = &_quads[1];
 
   // Get the node bounds.
   const Polygon& bounds = _node_shape->get_bounds();
@@ -59,21 +67,20 @@ void InputShape::update_state() {
   bounds.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
-  size_t num_plugs = _compute->get_num_exposed_inputs();
-  std::cerr << "num exposed inputs: " << num_plugs << "\n";
+  size_t num_exposed = _compute->get_num_exposed_inputs();
 
   float min_x(node_min.x);
   float max_x(node_max.x);
-  float delta = (max_x - min_x) / (num_plugs + 1);
+  float delta = (max_x - min_x) / (num_exposed + 1);
   float start = min_x + delta;
 
   // Update the origin, which is the center of the quad.
-  _origin = glm::vec2 (start + order * delta, node_max.y + plug_offset + plug_size.y / 2.0f);
+  _origin = glm::vec2 (start + exposed_index * delta, node_max.y + plug_offset + plug_size.y / 2.0f);
 
   // Update our bounds.
   std::vector<glm::vec2>& verts = _bounds.vertices;
   verts.resize(4);
-  verts[0] = glm::vec2(start + order * delta - plug_size.x / 2.0f, node_max.y + plug_offset);
+  verts[0] = glm::vec2(start + exposed_index * delta - plug_size.x / 2.0f, node_max.y + plug_offset);
   verts[1] = verts[0] + glm::vec2(plug_size.x, 0);
   verts[2] = verts[1] + glm::vec2(0, plug_size.y);
   verts[3] = verts[2] + glm::vec2(-plug_size.x, 0);
@@ -82,23 +89,23 @@ void InputShape::update_state() {
   set_pannable(_node_shape->is_selected());
 
   // Update our bg quad.
-  _bg_quad->set_scale(plug_size);
-  _bg_quad->set_translate(verts[0], bg_depth);
-  _bg_quad->set_color(bg_color);
+  bg->set_scale(plug_size);
+  bg->set_translate(verts[0], bg_depth);
+  bg->set_color(bg_color);
   if (_node_shape->is_selected()) {
-    _bg_quad->state |= selected_transform_bitmask;
+    bg->state |= selected_transform_bitmask;
   } else {
-    _bg_quad->state &= ~selected_transform_bitmask;
+    bg->state &= ~selected_transform_bitmask;
   }
 
   // Update our fg quad.
-  _fg_quad->set_scale(plug_size - 2.0f* plug_border_size);
-  _fg_quad->set_translate(verts[0] + plug_border_size, fg_depth);
-  _fg_quad->set_color(fg_color);
+  fg->set_scale(plug_size - 2.0f* plug_border_size);
+  fg->set_translate(verts[0] + plug_border_size, fg_depth);
+  fg->set_color(fg_color);
   if (_node_shape->is_selected()) {
-    _fg_quad->state |= selected_transform_bitmask;
+    fg->state |= selected_transform_bitmask;
   } else {
-    _fg_quad->state &= ~selected_transform_bitmask;
+    fg->state &= ~selected_transform_bitmask;
   }
 
 }

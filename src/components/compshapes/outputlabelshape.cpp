@@ -49,6 +49,12 @@ bool OutputLabelShape::update_deps() {
 }
 
 void OutputLabelShape::update_state() {
+  // If the output shape is not exposed then clear out our shapes.
+  if (!_output_shape->is_exposed()) {
+    _chars.clear();
+    return;
+  }
+
   // Remove any link shapes that have been destroyed.
   DepUSet<LinkShape>::iterator iter = _link_shapes.begin();
   while(iter != _link_shapes.end()) {

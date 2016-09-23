@@ -27,6 +27,8 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
   InputShape(Entity* entity);
   virtual ~InputShape();
 
+  bool is_exposed() const;
+
   // Our state.
   virtual void update_state();
 
@@ -52,8 +54,6 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
 
   // Our quad instances.
   std::vector<ShapeInstance> _quads;
-  ShapeInstance* _bg_quad;
-  ShapeInstance* _fg_quad;
 
   // Our quad bounds.
   Polygon _bounds;

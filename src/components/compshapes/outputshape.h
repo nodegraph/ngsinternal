@@ -27,6 +27,8 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
   OutputShape(Entity* entity);
   virtual ~OutputShape();
 
+  bool is_exposed() const;
+
   // Our state.
   virtual void update_state();
 
@@ -49,8 +51,6 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
 
   // Our tri instances.
   std::vector<ShapeInstance> _tris;
-  ShapeInstance* _bg_tri;
-  ShapeInstance* _fg_tri;
 
   // Our bounds.
   Polygon _bounds;

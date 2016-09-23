@@ -25,8 +25,10 @@ struct {
 
 GroupNodeCompute::GroupNodeCompute(Entity* entity):
     Compute(entity, kDID()),
-    _factory(this) {
+    _factory(this),
+    _lower_change(this) {
   get_dep_loader()->register_fixed_dep(_factory, "");
+  get_dep_loader()->register_fixed_dep(_lower_change, ".");
 }
 
 GroupNodeCompute::~GroupNodeCompute() {
@@ -104,6 +106,10 @@ HierarchyUpdate GroupNodeCompute::update_hierarchy() {
 
 void GroupNodeCompute::update_state() {
   Compute::update_state();
+
+  if (!dep_is_dirty(_lower_change)) {
+    return;
+  }
 
   // For each input data if there is an associated input node, we set data on the input node
   // from the input data. The input data handles connections to other entities internally.

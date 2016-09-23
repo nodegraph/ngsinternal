@@ -88,6 +88,7 @@ void Entity::rename(const std::string& next_name) {
   }
   // A change has occurred to this entity.
   get<LowerHierarchyChange>()->dirty();
+  get<UpperHierarchyChange>()->dirty();
 }
 
 void Entity::add_orphan_child(Entity* child) {
@@ -105,6 +106,13 @@ void Entity::add_orphan_child(Entity* child) {
   _children[child->get_name()] = child;
   // A change has occurred to this entity.
   get<LowerHierarchyChange>()->dirty();
+  get<UpperHierarchyChange>()->dirty();
+  // The child's upper hierarchy component is not connected yet.
+  // So we make it dirty too.
+  UpperHierarchyChange* u = child->get<UpperHierarchyChange>();
+  if (u) {
+	  u->dirty();
+  }
 }
 
 void Entity::take_child(Entity* child) {
@@ -139,6 +147,13 @@ void Entity::remove_child(Entity* child) {
   child->_parent = NULL;
   // A change has occurred to this entity.
   get<LowerHierarchyChange>()->dirty();
+  get<UpperHierarchyChange>()->dirty();
+  // The child's upper hierarchy component is not connected yet.
+  // So we make it dirty too.
+  UpperHierarchyChange* u = child->get<UpperHierarchyChange>();
+  if (u) {
+    u->dirty();
+  }
 }
 
 void Entity::reparent_child(Entity* child, Entity* next_parent) {
@@ -175,8 +190,6 @@ void Entity::rename_child(const std::string& prev_name, const std::string& next_
   remove_child(e);
   e->set_name(next_name);
   add_orphan_child(e);
-  // A change has occurred to this entity.
-  get<LowerHierarchyChange>()->dirty();
 }
 
 const Entity::NameToChildMap& Entity::get_children() const {
