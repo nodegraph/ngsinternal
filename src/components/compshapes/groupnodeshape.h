@@ -30,18 +30,6 @@ class COMPSHAPES_EXPORT GroupNodeShape: public RectNodeShape {
   // Our state.
   virtual void update_state();
 
-//  // Input and Output Ordering.
-//  virtual size_t get_input_order(const std::string& input_name) const;
-//  virtual size_t get_output_order(const std::string& output_name) const;
-//
-//  // Num inputs and outputs.
-//  virtual size_t get_num_linkable_inputs() const {return _input_order.size();} // number of inputs with input plugs
-//  virtual size_t get_num_linkable_outputs() const {return _output_order.size();} // number of outputs with output plugs
-//  virtual size_t get_num_input_params() const {return 0;} // number of inputs without input plugs
-//  virtual size_t get_num_output_params() const {return 0;} // number of outputs without output plugs
-//  virtual size_t get_num_all_inputs() const {return _input_order.size();} // number of all inputs
-//  virtual size_t get_num_all_outputs() const {return _output_order.size();} // number of all outputs
-
  private:
 
   // Our fixed deps.
