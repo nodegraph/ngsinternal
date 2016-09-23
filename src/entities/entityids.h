@@ -48,7 +48,7 @@ enum EntityDID {
   kBaseDotNodeEntity,
   // Other Nodes.
   kBaseMockNodeEntity,
-  kBaseComputeNodeEntity,
+  kBaseScriptNodeEntity,
   // ------------------------------
   // Gui Based Entities.
   // ------------------------------
@@ -70,11 +70,12 @@ enum EntityDID {
   kDotNodeEntity,
   // Other Nodes.
   kMockNodeEntity,
-  kComputeNodeEntity,
+  kScriptNodeEntity,
   kOpenBrowserNodeEntity,
   kCloseBrowserNodeEntity,
   kCreateSetFromValuesNodeEntity,
   kCreateSetFromTypeNodeEntity,
+  kMouseActionNodeEntity,
   // Count.
   kNumEntityImplementationIDs,
 };

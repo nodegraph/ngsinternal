@@ -75,6 +75,7 @@ enum ComponentDID {
   kCloseBrowserCompute,
   kCreateSetFromValuesCompute,
   kCreateSetFromTypeCompute,
+  kMouseActionCompute,
   // --
   kFBORenderer,
   kFBOWorker,

@@ -9,10 +9,11 @@ namespace ngs {
 class OutputCompute;
 
 enum ParamType {
-  kQtType,
-  kQInt,
+  kQVariantMap,
   kQString,
   kQStringList,
+  kInt,
+  kFloat,
   kWrapType,
   kActionType,
   kDirection,
@@ -32,10 +33,14 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   virtual void update_state();
 
   // Our value.
-  void set_value(QVariant& var);
+  void set_value(const QVariant& value);
 
   // Our data type.
   void set_param_type(ParamType param_type);
+
+  // Exposure.
+  void set_exposed(bool exposed);
+  bool is_exposed() const;
 
   // Our dynamic output compute dependency.
   bool can_link_output_compute(const Dep<OutputCompute>& output) const;
@@ -60,6 +65,9 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
 
   // Our data type.
   ParamType _param_type;
+
+  // Whether we are exposed in the node graph as a plug on a node.
+  bool _exposed;
 };
 
 

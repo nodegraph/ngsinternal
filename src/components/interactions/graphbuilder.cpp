@@ -23,6 +23,52 @@ GraphBuilder::GraphBuilder(Entity* entity)
 GraphBuilder::~GraphBuilder() {
 }
 
+Entity* GraphBuilder::build_open_browser_node() {
+  BaseEntityInstancer* ei = _factory->get_entity_instancer();
+  Entity* root_group = get_entity("root");
+
+  Entity* node = ei->instance(root_group, "open browser", kOpenBrowserNodeEntity);
+  node->create_internals();
+
+  // Todo: Connect it to the last selected node. Then make this node selected.
+
+  return node;
+}
+
+Entity* GraphBuilder::build_close_browser_node() {
+  BaseEntityInstancer* ei = _factory->get_entity_instancer();
+  Entity* root_group = get_entity("root");
+
+  Entity* node = ei->instance(root_group, "close browser", kCloseBrowserNodeEntity);
+  node->create_internals();
+
+  // Todo: Connect it to the last selected node. Then make this node selected.
+
+  return node;
+}
+
+Entity* GraphBuilder::build_click_node(int set_index, int overlay_index, float rel_x, float rel_y) {
+  BaseEntityInstancer* ei = _factory->get_entity_instancer();
+  Entity* root_group = get_entity("root");
+
+  Entity* node = ei->instance(root_group, "input one", kInputNodeEntity);
+  node->create_internals();
+
+  Dep<InputCompute> si_dep = get_dep<InputCompute>(node->get_entity("./inputs/set_index"));
+  Dep<InputCompute> oi_dep = get_dep<InputCompute>(node->get_entity("./inputs/overlay_index"));
+  Dep<InputCompute> x_dep = get_dep<InputCompute>(node->get_entity("./inputs/x"));
+  Dep<InputCompute> y_dep = get_dep<InputCompute>(node->get_entity("./inputs/y"));
+
+  si_dep->set_value(set_index);
+  oi_dep->set_value(overlay_index);
+  x_dep->set_value(rel_x);
+  y_dep->set_value(rel_y);
+
+  // Todo: Connect it to the last selected node. Then make this node selected.
+
+  return node;
+}
+
 void GraphBuilder::build_stress_graph() {
 
   std::cerr << "starting to create nodes\n";
@@ -174,7 +220,7 @@ void GraphBuilder::build_test_graph() {
     Entity* n1 = ei->instance(sub_group, "sub middle node", kMockNodeEntity);
     Entity* n2 = ei->instance(sub_group, "sub top node", kMockNodeEntity);
     Entity* n3 = ei->instance(sub_group, "sub bottom node", kMockNodeEntity);
-    Entity* n4 = ei->instance(sub_group, "NoOp", kComputeNodeEntity);
+    Entity* n4 = ei->instance(sub_group, "NoOp", kScriptNodeEntity);
 
     n1->create_internals();
     n2->create_internals();
@@ -252,5 +298,7 @@ void GraphBuilder::build_test_graph() {
 
   }
 }
+
+
 
 }

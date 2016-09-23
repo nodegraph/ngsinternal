@@ -16,6 +16,8 @@ OutputNodeCompute::~OutputNodeCompute() {
 }
 
 void OutputNodeCompute::update_state() {
+  Compute::update_state();
+
   if (_inputs.count("in")) {
     set_result("out",_inputs.at("in")->get_result("out"));
   }

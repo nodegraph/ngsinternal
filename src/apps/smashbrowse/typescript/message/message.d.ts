@@ -25,6 +25,7 @@ declare const enum RequestType {
     kSwitchIFrame,
     
     // Page Content Set Requests.
+    kGetXPath,
     kPerformAction,
     kUpdateOveralys,
     kCacheFrame,
@@ -47,6 +48,8 @@ declare const enum RequestType {
 declare const enum ActionType {
     kSendClick,
     kMouseOver,
+    kStartMouseHover,
+    kStopMouseHover,
     kSendText,
     kSendEnter,
     kGetText,

@@ -2,6 +2,7 @@
 #include <base/objectmodel/basefactory.h>
 #include <base/objectmodel/deploader.h>
 #include <entities/entityids.h>
+#include <entities/guientities.h>
 #include <base/objectmodel/lowerhierarchychange.h>
 
 #include <components/computes/groupnodecompute.h>
@@ -15,33 +16,94 @@
 
 namespace ngs {
 
+struct {
+    bool operator()(const Dep<CompShape>& a, const Dep<CompShape>& b)
+    {
+        return a->get_pos().x < b->get_pos().x;
+    }
+} CompShapeCompare;
+
 GroupNodeCompute::GroupNodeCompute(Entity* entity):
-    Compute(entity, kDID()) {
+    Compute(entity, kDID()),
+    _factory(this) {
+  get_dep_loader()->register_fixed_dep(_factory, "");
 }
 
 GroupNodeCompute::~GroupNodeCompute() {
 }
 
+HierarchyUpdate GroupNodeCompute::update_hierarchy() {
+  bool hierarchy_changed = false;
 
-void GroupNodeCompute::update_state() {
+  // Make sure the inputs and outputs on this group match up
+  // with the input and output nodes inside this group.
+  Entity* inputs_space = get_entity("./inputs");
+  Entity* outputs_space = get_entity("./outputs");
+  BaseEntityInstancer* ei = _factory->get_entity_instancer();
 
-  // Connect to our inputs.
-  if (dep_is_dirty(_lower_change)) {
-    // Clear our old inputs.
-    _inputs.clear();
-
-    // Connect to our input plugs.
-    const Entity::NameToChildMap& children = get_entity("./inputs")->get_children();
-    for (auto &iter: children) {
-      Dep<InputCompute> dep = get_dep<InputCompute>(iter.second);
-      if (dep) {
-        _inputs.insert({iter.first,dep});
+  // Make sure all the input/outputs nodes in this group are represented by inputs/outputs.
+  const Entity::NameToChildMap& children = our_entity()->get_children();
+  for (auto &iter : children) {
+    const std::string& child_name = iter.first;
+    Entity* child = iter.second;
+    size_t did = child->get_did();
+    if (did == kInputNodeEntity) {
+      //InputNodeEntity* ine = static_cast<InputNodeEntity*>(child);
+      if (inputs_space->has_child_name(child_name)) {
+        continue;
       }
-      // Because we just added a new connection in our cleaning state method,
-      // we need to make sure that it is clean.
-      dep->clean();
+      InputEntity* in = static_cast<InputEntity*>(ei->instance(inputs_space, child_name, kInputEntity));
+      in->create_internals();
+      in->initialize_deps();
+      hierarchy_changed = true;
+    } else if (did == kOutputNodeEntity) {
+      if (outputs_space->has_child_name(child_name)) {
+        continue;
+      }
+      OutputEntity* out = static_cast<OutputEntity*>(ei->instance(outputs_space, child_name, kOutputEntity));
+      out->create_internals();
+      out->initialize_deps();
+      hierarchy_changed = true;
     }
   }
+
+   // Now remove any inputs/outputs that no longer have associated nodes in this group.
+  {
+    std::vector<Entity*> _inputs_to_destroy;
+    for (auto &iter : inputs_space->get_children()) {
+      const std::string& child_name = iter.first;
+      if (!our_entity()->has_child_name(child_name)) {
+        _inputs_to_destroy.push_back(iter.second);
+      }
+    }
+    std::vector<Entity*> _outputs_to_destroy;
+    for (auto &iter : outputs_space->get_children()) {
+      const std::string& child_name = iter.first;
+      if (!our_entity()->has_child_name(child_name)) {
+        _outputs_to_destroy.push_back(iter.second);
+      }
+    }
+    for (Entity* e : _inputs_to_destroy) {
+      // This can leave dangling link shapes, which are cleaned up by subsequest passes of update_hierarchy().
+      delete_ff(e);
+      hierarchy_changed = true;
+    }
+    for (Entity* e : _outputs_to_destroy) {
+      // This can leave dangling link shapes, which are cleaned up by subsequest passes of update_hierarchy().
+      delete_ff(e);
+      hierarchy_changed = true;
+    }
+  }
+
+  if (hierarchy_changed) {
+    return kChanged;
+  }
+  return kUnchanged;
+
+}
+
+void GroupNodeCompute::update_state() {
+  Compute::update_state();
 
   // For each input data if there is an associated input node, we set data on the input node
   // from the input data. The input data handles connections to other entities internally.

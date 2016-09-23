@@ -6,6 +6,7 @@
 namespace ngs {
 
 class NodeShape;
+class OutputCompute;
 
 class COMPSHAPES_EXPORT OutputShape: public CompShape {
  public:
@@ -29,9 +30,6 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
   // Our state.
   virtual void update_state();
 
-  // Our ordering.
-  virtual size_t get_num_outputs() const;
-
   // Our bounds.
   virtual const Polygon& get_bounds() const;
 
@@ -47,6 +45,7 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
 
   // Our fixed deps.
   Dep<NodeShape> _node_shape;
+  Dep<OutputCompute> _output_compute;
 
   // Our tri instances.
   std::vector<ShapeInstance> _tris;

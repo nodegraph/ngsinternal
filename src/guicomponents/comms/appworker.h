@@ -18,6 +18,7 @@ namespace ngs {
 
 class AppComm;
 class FileModel;
+class GraphBuilder;
 
 // Helper which wraps the input url with things like http://.
 // Webdriver needs proper urls to navigate.
@@ -170,6 +171,21 @@ Q_OBJECT
   void send_msg(Message& msg);  // msg is not const because it gets tagged with an id.
   void send_action_msg(Message& msg);
 
+  void _click(int set_index, int overlay_index, float rel_x, float rel_y);
+  void _mouse_over(int set_index, int overlay_index, float rel_x, float rel_y);
+  void _start_mouse_hover(int set_index, int overlay_index, float rel_x, float rel_y);
+  void _stop_mouse_hover();
+  void _type_text(int set_index, int overlay_index, const QString& text);
+  void _type_enter(int set_index, int overlay_index);
+  void _extract_text(int set_index, int overlay_index);
+  void _select_from_dropdown(int set_index, int overlay_index, const QString& option_text);
+  void _scroll_down(int set_index, int overlay_index);
+  void _scroll_up(int set_index, int overlay_index);
+  void _scroll_right(int set_index, int overlay_index);
+  void _scroll_left(int set_index, int overlay_index);
+
+  void create_click_node_task();
+
 signals:
   void show_web_action_menu();
   void show_iframe_menu();
@@ -194,6 +210,7 @@ signals:
   // Tasks. Our members which get bound into tasks.
   void send_msg_task(Message msg);
   void get_crosshair_info_task();
+  void get_xpath_task();
   void create_set_by_matching_text_task();
   void create_set_by_matching_images_task();
   void delete_set_task();
@@ -204,7 +221,7 @@ signals:
   void unmark_set_task();
   void shrink_set_to_side_task(Direction dir);
   void shrink_against_marked_task(QVariantList dirs);
-  void perform_action_task(ActionType action, QVariantMap extra_args);
+  void perform_action_task(ActionType action, QVariantMap arg_overrides);
   void start_hover_task();
   void hover_task();
   void post_hover_task();
@@ -219,6 +236,7 @@ signals:
   // Our fixed dependencies.
   Dep<AppComm> _app_comm;
   Dep<FileModel> _file_model;
+  Dep<GraphBuilder> _graph_builder;
 
   // Poll timer.
   QTimer _poll_timer;
@@ -241,7 +259,8 @@ signals:
   bool _waiting_for_results;
   int _next_msg_id;  // This is one more than the max msg id issued out.
   int _expected_msg_id; // This is the next msg id we're expecting from a response message.
-  Message _last_resp;  // Our last response. This can be used by handlers in our queue.
+  Message _last_resp; // The last response message received. _last_resp[value] gets copied into _chain_state.
+  QVariantMap _chain_state;  // The 'value' value from responses will get merged into this state overriding previous values.
   std::deque<AppTask> _queue;
 
 };

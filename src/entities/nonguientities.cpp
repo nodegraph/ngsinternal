@@ -26,116 +26,95 @@ void BaseAppEntity::create_internals() {
   new_ff Factory(this);
 }
 
+Entity* BaseNodeHelperEntity::add_namespace(Entity* parent, const std::string& name) {
+  Entity* links = new_ff BaseNamespaceEntity(parent, name);
+  links->create_internals();
+  return links;
+}
+
+Entity* BaseNodeHelperEntity::add_input(Entity* parent, const std::string& name) {
+  Entity* input = new_ff BaseInputEntity(parent, name);
+  input->create_internals();
+  return input;
+}
+
+Entity* BaseNodeHelperEntity::add_output(Entity* parent, const std::string& name) {
+  Entity* output = new_ff BaseOutputEntity(parent, name);
+  output->create_internals();
+  return output;
+}
+
+void BaseNodeHelperEntity::create_internals() {
+  _inputs = add_namespace(this, "inputs");
+  _outputs = add_namespace(this, "outputs");
+}
+
 void BaseGroupNodeEntity::create_internals() {
+  BaseNodeHelperEntity::create_internals();
+
   // Our components.
   new_ff GroupNodeCompute(this);
+
   // Our sub entities.
-  {
-    Entity* links = new_ff BaseNamespaceEntity(this, "links");
-    links->create_internals();
-  }
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-  }
+  add_namespace(this, "links");
 }
 
 void BaseLinkEntity::create_internals() {
 }
 
 void BaseDotNodeEntity::create_internals() {
+  BaseNodeHelperEntity::create_internals();
+
   // Our components.
   new_ff DotNodeCompute(this);
+
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    Entity* input = new_ff BaseInputEntity(inputs, "in");
-    input->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    Entity* output = new_ff BaseOutputEntity(outputs,"out");
-    output->create_internals();
-  }
+  add_input(_inputs, "in");
+  add_output(_outputs,"out");
 }
 
 void BaseInputNodeEntity::create_internals() {
+  BaseNodeHelperEntity::create_internals();
+
   // Our components.
   new_ff InputNodeCompute(this);
+
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    Entity* output = new_ff BaseOutputEntity(outputs, "out");
-    output->create_internals();
-  }
+  add_output(_outputs, "out");
 }
 
 void BaseOutputNodeEntity::create_internals() {
+  BaseNodeHelperEntity::create_internals();
+
   // Our components.
   new_ff OutputNodeCompute(this);
+
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    Entity* input = new_ff BaseInputEntity(inputs, "in");
-    input->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-  }
+  add_input(_inputs, "in");
 }
 
 void BaseMockNodeEntity::create_internals() {
+  BaseNodeHelperEntity::create_internals();
+
   // Our components.
   new_ff MockNodeCompute(this);
+
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    Entity* in_a = new_ff BaseInputEntity(inputs, "a");
-    in_a->create_internals();
-    Entity* in_b = new_ff BaseInputEntity(inputs, "b");
-    in_b->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    Entity* out_c = new_ff BaseOutputEntity(outputs, "c");
-    out_c->create_internals();
-    Entity* out_d = new_ff BaseOutputEntity(outputs, "d");
-    out_d->create_internals();
-  }
+  add_input(_inputs, "a");
+  add_input(_inputs, "b");
+  add_output(_outputs, "c");
+  add_output(_outputs, "d");
 }
 
-void BaseComputeNodeEntity::create_internals() {
+void BaseScriptNodeEntity::create_internals() {
+  BaseNodeHelperEntity::create_internals();
+
   // Our components.
   Compute* dc = new_ff ScriptNodeCompute(this);
 
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    Entity* in = new_ff BaseInputEntity(inputs, "in");
-    in->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    Entity* out = new_ff BaseOutputEntity(outputs, "out");
-    out->create_internals();
-  }
+  add_input(_inputs, "in");
+  add_output(_outputs, "out");
 }
 
 void BaseInputEntity::create_internals() {

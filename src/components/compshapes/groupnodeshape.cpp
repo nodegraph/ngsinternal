@@ -22,12 +22,7 @@ const glm::vec2 GroupNodeShape::indicator_border_size(10,10);
 const std::array<unsigned char,4> GroupNodeShape::indicator_bg_color = { 255, 255, 255, 255 };
 const std::array<unsigned char,4> GroupNodeShape::indicator_fg_color = { 255, 128, 171, 255 };
 
-struct {
-    bool operator()(const Dep<CompShape>& a, const Dep<CompShape>& b)
-    {
-        return a->get_pos().x < b->get_pos().x;
-    }
-} CompShapeCompare;
+
 
 GroupNodeShape::GroupNodeShape(Entity* entity)
     : RectNodeShape(entity, kDID()),
@@ -77,115 +72,18 @@ void GroupNodeShape::update_state() {
   _quads_cache.insert(_quads_cache.end(), _marker_fg);
 }
 
-HierarchyUpdate GroupNodeShape::update_hierarchy() {
-  bool hierarchy_changed = false;
-
-  // Make sure the inputs and outputs on this group match up
-  // with the input and output nodes inside this group.
-  Entity* inputs = get_entity("./inputs");
-  Entity* outputs = get_entity("./outputs");
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
-
-  // Make sure all the input/outputs nodes in this group are represented by inputs/outputs.
-  const Entity::NameToChildMap& children = our_entity()->get_children();
-  for (auto &iter : children) {
-    const std::string& child_name = iter.first;
-    Entity* child = iter.second;
-    size_t did = child->get_did();
-    if (did == kInputNodeEntity) {
-      if (inputs->has_child_name(child_name)) {
-        continue;
-      }
-      Entity* in = ei->instance(inputs, child_name, kInputEntity);
-      in->create_internals();
-      in->initialize_deps();
-      hierarchy_changed = true;
-    } else if (did == kOutputNodeEntity) {
-      if (outputs->has_child_name(child_name)) {
-        continue;
-      }
-      Entity* out = ei->instance(outputs, child_name, kOutputEntity);
-      out->create_internals();
-      out->initialize_deps();
-      hierarchy_changed = true;
-    }
-  }
-
-   // Now remove any inputs/outputs that no longer have associated nodes in this group.
-  {
-    std::vector<Entity*> _inputs_to_destroy;
-    for (auto &iter : inputs->get_children()) {
-      const std::string& child_name = iter.first;
-      if (!our_entity()->has_child_name(child_name)) {
-        _inputs_to_destroy.push_back(iter.second);
-      }
-    }
-    std::vector<Entity*> _outputs_to_destroy;
-    for (auto &iter : outputs->get_children()) {
-      const std::string& child_name = iter.first;
-      if (!our_entity()->has_child_name(child_name)) {
-        _outputs_to_destroy.push_back(iter.second);
-      }
-    }
-    for (Entity* e : _inputs_to_destroy) {
-      // This can leave dangling link shapes, which are cleaned up by subsequest passes of update_hierarchy().
-      delete_ff(e);
-      hierarchy_changed = true;
-    }
-    for (Entity* e : _outputs_to_destroy) {
-      // This can leave dangling link shapes, which are cleaned up by subsequest passes of update_hierarchy().
-      delete_ff(e);
-      hierarchy_changed = true;
-    }
-  }
-
-  // Now order the inputs.
-  {
-    std::vector<Dep<CompShape> > input_node_shapes;
-    for (auto &iter : inputs->get_children()) {
-      input_node_shapes.push_back(get_dep<CompShape>(our_entity()->get_child(iter.first)));
-    }
-    std::sort(input_node_shapes.begin(), input_node_shapes.end(), CompShapeCompare);
-
-    _input_order.clear();
-    for (size_t i = 0; i < input_node_shapes.size(); ++i) {
-      _input_order[input_node_shapes[i]->get_name()] = i;
-    }
-  }
-
-  // Now order the outputs.
-  {
-    std::vector<Dep<CompShape> > output_node_shapes;
-    for (auto &iter : outputs->get_children()) {
-      output_node_shapes.push_back(get_dep<CompShape>(our_entity()->get_child(iter.first)));
-    }
-    std::sort(output_node_shapes.begin(), output_node_shapes.end(), CompShapeCompare);
-
-    _output_order.clear();
-    for (size_t i = 0; i < output_node_shapes.size(); ++i) {
-      _output_order[output_node_shapes[i]->get_name()] = i;
-    }
-  }
-
-  if (hierarchy_changed) {
-    return kChanged;
-  }
-  return kUnchanged;
-
-}
-
-size_t GroupNodeShape::get_input_order(const std::string& input_name) const {
-  if (_input_order.count(input_name)) {
-    return _input_order.at(input_name);
-  }
-  return 0;
-}
-
-size_t GroupNodeShape::get_output_order(const std::string& output_name) const {
-  if (_output_order.count(output_name)) {
-    return _output_order.at(output_name);
-  }
-  return 0;
-}
+//size_t GroupNodeShape::get_input_order(const std::string& input_name) const {
+//  if (_input_order.count(input_name)) {
+//    return _input_order.at(input_name);
+//  }
+//  return 0;
+//}
+//
+//size_t GroupNodeShape::get_output_order(const std::string& output_name) const {
+//  if (_output_order.count(output_name)) {
+//    return _output_order.at(output_name);
+//  }
+//  return 0;
+//}
 
 }

@@ -20,6 +20,16 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
 
   // Our state.
   virtual void update_state();
+  virtual HierarchyUpdate update_hierarchy();
+
+//  // Info about our inputs. Note the output info can be found on OutputCompute.
+//  virtual size_t get_exposed_input_index(const std::string& input_name) const;
+//  virtual size_t get_num_exposed_inputs() const;
+//  virtual size_t get_num_hidden_inputs() const;
+//  virtual size_t get_num_inputs() const;
+
+ private:
+  Dep<BaseFactory> _factory;
 
 };
 

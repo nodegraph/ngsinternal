@@ -12,7 +12,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/nodeshape.h>
-#include <components/compshapes/linkshape.h>
+#include <components/computes/compute.h>
 #include <cmath>
 
 namespace ngs {
@@ -30,8 +30,10 @@ const float InputShape::plug_offset = 10;
 
 InputShape::InputShape(Entity* entity)
     : CompShape(entity, kDID()),
-      _node_shape(this) {
+      _node_shape(this),
+      _compute(this) {
   get_dep_loader()->register_fixed_dep(_node_shape, "../..");
+  get_dep_loader()->register_fixed_dep(_compute, "../..");
 
   _quads.resize(2);
   _bg_quad = &_quads[0];
@@ -42,8 +44,12 @@ InputShape::~InputShape() {
 }
 
 void InputShape::update_state() {
-
-  size_t order = _node_shape->get_input_order(get_name());
+  size_t order = _compute->get_exposed_input_index(get_name());
+  if(order == -1) {
+    std::cerr << "found an input shape which should not exist: " << get_name() << "\n";
+    return;
+  }
+  std::cerr << "exposed input index: " << order << "\n";
 
   // Get the node bounds.
   const Polygon& bounds = _node_shape->get_bounds();
@@ -53,7 +59,9 @@ void InputShape::update_state() {
   bounds.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
-  size_t num_plugs = _node_shape->get_num_linkable_inputs();
+  size_t num_plugs = _compute->get_num_exposed_inputs();
+  std::cerr << "num exposed inputs: " << num_plugs << "\n";
+
   float min_x(node_min.x);
   float max_x(node_max.x);
   float delta = (max_x - min_x) / (num_plugs + 1);

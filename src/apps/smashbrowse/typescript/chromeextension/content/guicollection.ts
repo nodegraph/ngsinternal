@@ -121,9 +121,6 @@ class GUICollection {
             overlay_rel_click_pos = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(click_pos)
         }
 
-        // Determine the xpath of the overlay element.
-        let xpath = this.overlay_sets.get_xpath(set_index, overlay_index)
-
         // If we're a select element, grab the option values and texts.
         let option_values: string[] = []
         let option_texts: string[] = []
@@ -146,8 +143,6 @@ class GUICollection {
             click_pos: click_pos,
             nearest_rel_click_pos: nearest_rel_click_pos,
             overlay_rel_click_pos: overlay_rel_click_pos,
-            // The xpath.
-            xpath: xpath,
             // Text and image values under click.
             text_values: text_values,
             image_values: image_values,

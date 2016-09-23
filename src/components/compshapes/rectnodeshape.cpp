@@ -160,57 +160,57 @@ void RectNodeShape::update_chars_cache() {
   _chars_cache.insert(_chars_cache.end(), _node_name_chars.begin(), _node_name_chars.end());
 }
 
-void RectNodeShape::push_input_name(const std::string& input_name) {
-  _linkable_input_names.push_back(input_name);
-}
+//void RectNodeShape::push_input_name(const std::string& input_name) {
+//  _linkable_input_names.push_back(input_name);
+//}
+//
+//void RectNodeShape::push_output_name(const std::string& output_name) {
+//  _linkable_output_names.push_back(output_name);
+//}
+//
+//size_t RectNodeShape::get_input_order(const std::string& input_name) const {
+//  for (size_t i=0; i<_linkable_input_names.size(); ++i) {
+//    if (_linkable_input_names[i] == input_name) {
+//      return i;
+//    }
+//  }
+//  return 0;
+//}
+//
+//size_t RectNodeShape::get_output_order(const std::string& output_name) const {
+//  for (size_t i=0; i<_linkable_output_names.size(); ++i) {
+//    if (_linkable_output_names[i] == output_name) {
+//      return i;
+//    }
+//  }
+//  return 0;
+//}
 
-void RectNodeShape::push_output_name(const std::string& output_name) {
-  _linkable_output_names.push_back(output_name);
-}
-
-size_t RectNodeShape::get_input_order(const std::string& input_name) const {
-  for (size_t i=0; i<_linkable_input_names.size(); ++i) {
-    if (_linkable_input_names[i] == input_name) {
-      return i;
-    }
-  }
-  return 0;
-}
-
-size_t RectNodeShape::get_output_order(const std::string& output_name) const {
-  for (size_t i=0; i<_linkable_output_names.size(); ++i) {
-    if (_linkable_output_names[i] == output_name) {
-      return i;
-    }
-  }
-  return 0;
-}
-
-size_t RectNodeShape::get_num_linkable_inputs() const {
-  return _linkable_input_names.size();
-}
-
-size_t RectNodeShape::get_num_linkable_outputs() const {
-  return _linkable_output_names.size();
-}
-
-size_t RectNodeShape::get_num_input_params() const {
-  return get_num_all_inputs() - get_num_linkable_inputs();
-}
-
-size_t RectNodeShape::get_num_output_params() const {
-  return get_num_all_outputs() - get_num_linkable_outputs();
-}
-
-size_t RectNodeShape::get_num_all_inputs() const {
-  start_method();
-  return get_entity("./inputs")->get_children().size();
-}
-
-size_t RectNodeShape::get_num_all_outputs() const {
-  start_method();
-  return get_entity("./outputs")->get_children().size();
-}
+//size_t RectNodeShape::get_num_linkable_inputs() const {
+//  return _linkable_input_names.size();
+//}
+//
+//size_t RectNodeShape::get_num_linkable_outputs() const {
+//  return _linkable_output_names.size();
+//}
+//
+//size_t RectNodeShape::get_num_input_params() const {
+//  return get_num_all_inputs() - get_num_linkable_inputs();
+//}
+//
+//size_t RectNodeShape::get_num_output_params() const {
+//  return get_num_all_outputs() - get_num_linkable_outputs();
+//}
+//
+//size_t RectNodeShape::get_num_all_inputs() const {
+//  start_method();
+//  return get_entity("./inputs")->get_children().size();
+//}
+//
+//size_t RectNodeShape::get_num_all_outputs() const {
+//  start_method();
+//  return get_entity("./outputs")->get_children().size();
+//}
 
 void RectNodeShape::save(SimpleSaver& saver) const {
   start_method();
@@ -223,10 +223,10 @@ void RectNodeShape::save(SimpleSaver& saver) const {
   saver.save(_color[1]);
   saver.save(_color[2]);
   saver.save(_color[3]);
-  // Ordered input names.
-  saver.save_vector(_linkable_input_names);
-  // Ordered output names.
-  saver.save_vector(_linkable_output_names);
+//  // Ordered input names.
+//  saver.save_vector(_linkable_input_names);
+//  // Ordered output names.
+//  saver.save_vector(_linkable_output_names);
 }
 void RectNodeShape::load(SimpleLoader& loader) {
   start_method();
@@ -239,10 +239,10 @@ void RectNodeShape::load(SimpleLoader& loader) {
   loader.load(_color[1]);
   loader.load(_color[2]);
   loader.load(_color[3]);
-  // Ordered input names.
-  loader.load_vector(_linkable_input_names);
-  // Ordered output names.
-  loader.load_vector(_linkable_output_names);
+//  // Ordered input names.
+//  loader.load_vector(_linkable_input_names);
+//  // Ordered output names.
+//  loader.load_vector(_linkable_output_names);
 }
 
 }

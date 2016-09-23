@@ -27,8 +27,10 @@ const float OutputShape::plug_offset = 10.0f;
 
 OutputShape::OutputShape(Entity* entity)
     : CompShape(entity, kDID()),
-      _node_shape(this) {
+      _node_shape(this),
+      _output_compute(this){
   get_dep_loader()->register_fixed_dep(_node_shape, "../..");
+  get_dep_loader()->register_fixed_dep(_output_compute, ".");
 
   _tris.resize(2);
   _bg_tri = &_tris[0];
@@ -39,7 +41,8 @@ OutputShape::~OutputShape() {
 }
 
 void OutputShape::update_state() {
-  size_t order = _node_shape->get_output_order(get_name());
+  size_t order = _output_compute->get_exposed_output_index();
+  //std::cerr << "exposed index: " << order << "\n";
 
   // Get the node bounds.
   const Polygon& bounds = _node_shape->get_bounds();
@@ -49,7 +52,9 @@ void OutputShape::update_state() {
   bounds.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
-  size_t num_plugs = get_num_outputs();
+  size_t num_plugs = _output_compute->get_num_exposed_outputs();
+  //std::cerr << "num exposed: " << num_plugs << "\n";
+
   float min_x(node_min.x);
   float max_x(node_max.x);
   float delta = (max_x - min_x) / (num_plugs + 1);
@@ -66,7 +71,7 @@ void OutputShape::update_state() {
   verts[2] = verts[1] + glm::vec2(plug_size.x, 0);
 
   // Update our pannable state.
-    set_pannable(_node_shape->is_selected());
+  set_pannable(_node_shape->is_selected());
 
   // Update our bg triangle.
   _bg_tri->set_scale(plug_size);
@@ -91,11 +96,6 @@ void OutputShape::update_state() {
   } else {
     _fg_tri->state &= ~selected_transform_bitmask;
   }
-}
-
-size_t OutputShape::get_num_outputs() const {
-  start_method();
-  return get_entity("..")->get_children().size();
 }
 
 const Polygon& OutputShape::get_bounds() const {

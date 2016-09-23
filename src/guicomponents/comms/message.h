@@ -37,6 +37,7 @@ enum RequestType {
   kSwitchIFrame,
 
   // Page Content Set Requests.
+  kGetXPath,
   kPerformAction,
   kUpdateOveralys,
   kCacheFrame,
@@ -59,6 +60,8 @@ enum RequestType {
 enum ActionType {
   kSendClick,
   kMouseOver,
+  kStartMouseHover,
+  kStopMouseHover,
   kSendText,
   kSendEnter,
   kGetText,

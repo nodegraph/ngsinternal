@@ -1,4 +1,6 @@
 #pragma once
+//#define __pragma(x) _Pragma("(x)")
+
 #include <base/objectmodel/objectmodel_export.h>
 #include <base/objectmodel/deplink.h>
 #include <base/objectmodel/depset.h>
@@ -6,6 +8,15 @@
 
 #include <unordered_set>
 #include <unordered_map>
+
+
+
+#include <stdio.h>
+#include <stddef.h>
+#include <vcruntime.h>
+#include <inttypes.h>
+
+#include <cstdlib>
 #include <vector>
 #include <cassert>
 #include <memory>
@@ -45,6 +56,7 @@ class OBJECTMODEL_EXPORT Component {
   typedef std::unordered_map<Component*, std::weak_ptr<DepLink> > DepLinks;
   typedef std::unordered_map<size_t, DepLinks> IIDToDepLinks;
   typedef std::unordered_map<size_t, Components> IIDToComponents;
+
 
 //  template <class T>
 //  struct ConvertToDep {

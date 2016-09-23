@@ -6,7 +6,7 @@
 namespace ngs {
 
 class NodeShape;
-class LinkShape;
+class Compute;
 
 class COMPSHAPES_EXPORT InputShape: public CompShape {
  public:
@@ -48,6 +48,7 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
 
   // Our fixed deps.
   Dep<NodeShape> _node_shape;
+  Dep<Compute> _compute;
 
   // Our quad instances.
   std::vector<ShapeInstance> _quads;

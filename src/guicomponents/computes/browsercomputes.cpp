@@ -9,55 +9,68 @@ namespace ngs {
 
 //--------------------------------------------------------------------------------
 
-OpenBrowserCompute::OpenBrowserCompute(Entity* entity)
-    : Compute(entity, kDID()),
+BrowserCompute::BrowserCompute(Entity* entity, size_t did)
+    : Compute(entity, did),
       _app_worker(this) {
   get_dep_loader()->register_fixed_dep(_app_worker, "");
 }
 
-OpenBrowserCompute::~OpenBrowserCompute() {
+BrowserCompute::~BrowserCompute() {
 }
 
-void OpenBrowserCompute::update_state() {
+void BrowserCompute::update_state() {
   Compute::update_state();
-
-  _app_worker->open_browser();
 
   // Pass the inputs through.
   const QVariant &value = _inputs.at("in")->get_result("out");
   set_result("out", value);
+
+  // Derived classes can do other work here or override this entirely.
 }
+
+QVariantMap BrowserCompute::get_map(const std::string& input_name) {
+  return _inputs.at(input_name)->get_result("out").toMap();
+}
+
+QString BrowserCompute::get_string(const std::string& input_name) {
+  return _inputs.at(input_name)->get_result("out").toString();
+}
+
+QStringList BrowserCompute::get_string_list(const std::string& input_name) {
+  return _inputs.at(input_name)->get_result("out").toStringList();
+}
+
+int BrowserCompute::get_int(const std::string& input_name) {
+  return _inputs.at(input_name)->get_result("out").toInt();
+}
+
+float BrowserCompute::get_float(const std::string& input_name) {
+  return _inputs.at(input_name)->get_result("out").toFloat();
+}
+
+WrapType BrowserCompute::get_wrap_type(const std::string& input_name) {
+  return static_cast<WrapType>(_inputs.at(input_name)->get_result("out").toInt());
+}
+
+ActionType BrowserCompute::get_action_type(const std::string& input_name) {
+  return static_cast<ActionType>(_inputs.at(input_name)->get_result("out").toInt());
+}
+
+Direction BrowserCompute::get_direction(const std::string& input_name) {
+  return static_cast<Direction>(_inputs.at(input_name)->get_result("out").toInt());
+}
+
 
 //--------------------------------------------------------------------------------
 
-CloseBrowserCompute::CloseBrowserCompute(Entity* entity)
-    : Compute(entity, kDID()),
-      _app_worker(this) {
-  get_dep_loader()->register_fixed_dep(_app_worker, "");
-}
-
-CloseBrowserCompute::~CloseBrowserCompute() {
+void OpenBrowserCompute::update_state() {
+  BrowserCompute::update_state();
+  _app_worker->open_browser();
 }
 
 void CloseBrowserCompute::update_state() {
   Compute::update_state();
-
   _app_worker->close_browser();
-
-  // Pass the inputs through.
-  const QVariant &value = _inputs.at("in")->get_result("out");
-  set_result("out", value);
-}
-
-//--------------------------------------------------------------------------------
-
-CreateSetFromValuesCompute::CreateSetFromValuesCompute(Entity* entity)
-    : Compute(entity, kDID()),
-      _app_worker(this) {
-  get_dep_loader()->register_fixed_dep(_app_worker, "");
-}
-
-CreateSetFromValuesCompute::~CreateSetFromValuesCompute() {
 }
 
 void CreateSetFromValuesCompute::update_state() {
@@ -78,26 +91,43 @@ void CreateSetFromValuesCompute::update_state() {
   set_result("out", value);
 }
 
-//--------------------------------------------------------------------------------
-
-CreateSetFromTypeCompute::CreateSetFromTypeCompute(Entity* entity)
-    : Compute(entity, kDID()),
-      _app_worker(this) {
-  get_dep_loader()->register_fixed_dep(_app_worker, "");
-}
-
-CreateSetFromTypeCompute::~CreateSetFromTypeCompute() {
-}
-
 void CreateSetFromTypeCompute::update_state() {
   Compute::update_state();
 
-//  _app_worker->handle_request_from_app("{ \"request\" : \"close_browser\" }");
-//
-//  // Pass the inputs through, but wipe out the browser cookies.
-//  // Todo: wipe out the browser cookies.
-//  const QVariant &value = _inputs.at("in")->get_result("out");
-//  set_result("out", value);
+  QVariant wrap_type = _inputs.at("type")->get_result("out");
+
+  QVariantMap args;
+  args[Message::kWrapType] = wrap_type;
+  Message msg(RequestType::kCreateSetFromWrapType, args);
+  _app_worker->send_msg(msg);
+
+  // Pass the inputs through.
+  const QVariant &value = _inputs.at("in")->get_result("out");
+  set_result("out", value);
+}
+
+void MouseActionCompute::update_state() {
+  Compute::update_state();
+
+  int set_index = _inputs.at("set_index")->get_result("out").toInt();
+  int overlay_index = _inputs.at("overlay_index")->get_result("out").toInt();
+  int action_type = _inputs.at("action_type")->get_result("out").toInt();
+  float rel_x = _inputs.at("x")->get_result("out").toFloat();
+  float rel_y = _inputs.at("y")->get_result("out").toFloat();
+
+  if (action_type == ActionType::kSendClick) {
+    _app_worker->_click(set_index, overlay_index, rel_x, rel_y);
+  } else if (action_type == ActionType::kMouseOver) {
+
+  } else if (action_type == ActionType::kStartMouseHover) {
+
+  } else {
+    std::cerr << "Error unknown mouse action type encountered.\n";
+  }
+
+  // Pass the inputs through.
+  const QVariant &value = _inputs.at("in")->get_result("out");
+  set_result("out", value);
 }
 
 }

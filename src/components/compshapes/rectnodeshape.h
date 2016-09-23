@@ -47,19 +47,19 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
   virtual const Polygon& get_bounds() const;
   virtual HitRegion hit_test(const glm::vec2& point) const;
 
-  // Input and Output Ordering.
-  virtual void push_input_name(const std::string& input_name);
-  virtual void push_output_name(const std::string& output_name);
-  virtual size_t get_input_order(const std::string& input_name) const;
-  virtual size_t get_output_order(const std::string& output_name) const;
+//  // Input and Output Ordering.
+//  virtual void push_input_name(const std::string& input_name);
+//  virtual void push_output_name(const std::string& output_name);
+//  virtual size_t get_input_order(const std::string& input_name) const;
+//  virtual size_t get_output_order(const std::string& output_name) const;
 
-  // Num inputs and outputs.
-  virtual size_t get_num_linkable_inputs() const; // number of inputs with input plugs
-  virtual size_t get_num_linkable_outputs() const; // number of outputs with output plugs
-  virtual size_t get_num_input_params() const; // number of inputs without input plugs
-  virtual size_t get_num_output_params() const; // number of outputs without output plugs
-  virtual size_t get_num_all_inputs() const;
-  virtual size_t get_num_all_outputs() const;
+//  // Num inputs and outputs.
+//  virtual size_t get_num_linkable_inputs() const; // number of inputs with input plugs
+//  virtual size_t get_num_linkable_outputs() const; // number of outputs with output plugs
+//  virtual size_t get_num_input_params() const; // number of inputs without input plugs
+//  virtual size_t get_num_output_params() const; // number of outputs without output plugs
+//  virtual size_t get_num_all_inputs() const;
+//  virtual size_t get_num_all_outputs() const;
 
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
@@ -81,8 +81,6 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
   // Our main color.
   std::array<unsigned char, 4> _color;
 
-
-
   // Our quad bounds.
   Polygon _bg_bounds;
 
@@ -97,9 +95,9 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
   ShapeInstance _node_quad_bg;
   ShapeInstance _node_quad_fg;
 
-  // Our input output ordering.
-  std::vector<std::string> _linkable_input_names;
-  std::vector<std::string> _linkable_output_names;
+//  // Our input output ordering.
+//  std::vector<std::string> _linkable_input_names;
+//  std::vector<std::string> _linkable_output_names;
 
 };
 

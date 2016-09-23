@@ -221,8 +221,6 @@ void QtAppEntity::create_internals() {
   new_ff Resources(this);
   new_ff NodeSelection(this);
   new_ff ShapeCanvas(this);
-  // Qt related.
-  //new_ff NodeGraphEditor(this); // This needs to be manually created because it needs a valid Qt object to be it's parent, in order to render properly.
 }
 
 void AppEntity::create_internals() {
@@ -235,33 +233,48 @@ void AppEntity::create_internals() {
   new_ff ShapeCanvas(this);
 }
 
+void NodeHelperEntity::create_internals() {
+  _inputs = add_namespace(this, "inputs");
+  _outputs = add_namespace(this, "outputs");
+}
+
+Entity* NodeHelperEntity::add_namespace(Entity* parent, const std::string& name) {
+  Entity* links = new_ff BaseNamespaceEntity(parent, name);
+  links->create_internals();
+  return links;
+}
+
+Entity* NodeHelperEntity::add_input(Entity* parent, const std::string& name, ParamType type, bool expose) {
+  InputEntity* input = new_ff InputEntity(parent, name);
+  input->create_internals();
+  input->set_param_type(type);
+  input->set_exposed(expose);
+  return input;
+}
+
+Entity* NodeHelperEntity::add_output(Entity* parent, const std::string& name, bool expose) {
+  OutputEntity* output = new_ff OutputEntity(parent, name);
+  output->create_internals();
+  output->set_exposed(expose);
+  return output;
+}
+
 void GroupNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
   new_ff GroupNodeCompute(this);
   // Gui related.
   new_ff GroupInteraction(this);
-  //new_ff GroupOverlayShape(this);
   new_ff CompShapeCollective(this);
   new_ff GroupNodeShape(this);
-
-  // Create our internal namespace entities.
-  create_namespaces();
+  // Create more namespace entities.
+  add_namespace(this, "links");
 }
 
 void GroupNodeEntity::create_namespaces() {
-  // Our sub entities.
-  {
-    Entity* links = new_ff BaseNamespaceEntity(this, "links");
-    links->create_internals();
-  }
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-  }
+  add_namespace(this, "links");
+  add_namespace(this, "inputs");
+  add_namespace(this, "outputs");
 }
 
 void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const {
@@ -324,224 +337,133 @@ void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>
 
 void LinkEntity::create_internals() {
   // Our components.
-  // Gui related.
+  // Gui components.
   new_ff LinkShape(this);
 }
 
 void DotNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
   new_ff DotNodeCompute(this);
-  // Gui related.
+  // Gui components.
   DotNodeShape* shape = new_ff DotNodeShape(this);
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    Entity* input = new_ff InputEntity(inputs, "in");
-    input->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    Entity* output = new_ff OutputEntity(outputs,"out");
-    output->create_internals();
-  }
+  add_input(_inputs, "in");
+  add_output(_outputs,"out");
 }
 
 void InputNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
   new_ff InputNodeCompute(this);
-  // Gui related.
-  RectNodeShape* shape = new_ff InputNodeShape(this);
-  shape->push_output_name("out");
+  // Gui components.
+  new_ff InputNodeShape(this);
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    Entity* output = new_ff OutputEntity(outputs, "out");
-    output->create_internals();
-  }
+  add_output(_outputs, "out");
 }
 
 void OutputNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
   new_ff OutputNodeCompute(this);
-  // Gui related.
-  RectNodeShape* shape = new_ff OutputNodeShape(this);
-  shape->push_input_name("in");
+  // Gui components.
+  new_ff OutputNodeShape(this);
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    Entity* input = new_ff InputEntity(inputs, "in");
-    input->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-  }
+  add_input(_inputs, "in");
 }
 
 void MockNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
   new_ff MockNodeCompute(this);
-  // Gui related.
-  RectNodeShape* shape = new_ff RectNodeShape(this);
-  shape->push_input_name("a");
-  shape->push_input_name("b");
-  shape->push_output_name("c");
-  shape->push_output_name("d");
+  // Gui components.
+  new_ff RectNodeShape(this);
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    InputEntity* in_a = new_ff InputEntity(inputs, "a");
-    in_a->create_internals();
-    InputEntity* in_b = new_ff InputEntity(inputs, "b");
-    in_b->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    OutputEntity* out_c = new_ff OutputEntity(outputs, "c");
-    out_c->create_internals();
-    OutputEntity* out_d = new_ff OutputEntity(outputs, "d");
-    out_d->create_internals();
-  }
+  add_input(_inputs, "a");
+  add_input(_inputs, "b");
+  add_output(_outputs, "c");
+  add_output(_outputs, "d");
 }
 
 void OpenBrowserNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
   new_ff OpenBrowserCompute(this);
-  // Gui related.
-  RectNodeShape* shape = new_ff RectNodeShape(this);
-  shape->push_input_name("in");
-  shape->push_output_name("out");
+  // Gui components.
+  new_ff RectNodeShape(this);
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    InputEntity* in = new_ff InputEntity(inputs, "in");
-    in->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    OutputEntity* out = new_ff OutputEntity(outputs, "out");
-    out->create_internals();
-  }
+  add_input(_inputs, "in");
+  add_output(_outputs, "out");
 }
 
 void CloseBrowserNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
   new_ff CloseBrowserCompute(this);
-  // Gui related.
-  RectNodeShape* shape = new_ff RectNodeShape(this);
-  shape->push_input_name("in");
-  shape->push_output_name("out");
+  // Gui components.
+  new_ff RectNodeShape(this);
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    InputEntity* in = new_ff InputEntity(inputs, "in");
-    in->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    OutputEntity* out = new_ff OutputEntity(outputs, "out");
-    out->create_internals();
-  }
+  add_input(_inputs, "in");
+  add_output(_outputs, "out");
 }
 
 void CreateSetFromValuesNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
   new_ff CreateSetFromValuesCompute(this);
-  // Gui related.
-  RectNodeShape* shape = new_ff RectNodeShape(this);
-  shape->push_input_name("in");
-  shape->push_output_name("out");
+  // Gui components.
+  new_ff RectNodeShape(this);
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    InputEntity* in = new_ff InputEntity(inputs, "in");
-    in->create_internals();
-    BaseInputEntity* type = new_ff BaseInputEntity(inputs, "type");
-    type->create_internals();
-    type->set_param_type(ParamType::kWrapType);
-    BaseInputEntity* values = new_ff BaseInputEntity(inputs, "values");
-    values->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    OutputEntity* out = new_ff OutputEntity(outputs, "out");
-    out->create_internals();
-  }
+  add_input(_inputs, "in");
+  add_input(_inputs, "type", ParamType::kWrapType);
+  add_input(_inputs, "values", ParamType::kQStringList);
+  add_output(_outputs, "out");
 }
 
 void CreateSetFromTypeNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
   new_ff CreateSetFromTypeCompute(this);
-  // Gui related.
-  RectNodeShape* shape = new_ff RectNodeShape(this);
-  shape->push_input_name("in");
-  shape->push_output_name("out");
+  // Gui components..
+  new_ff RectNodeShape(this);
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    InputEntity* in = new_ff InputEntity(inputs, "in");
-    in->create_internals();
-    BaseInputEntity* type = new_ff BaseInputEntity(inputs, "type");
-    type->create_internals();
-    type->set_param_type(ParamType::kWrapType);
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    OutputEntity* out = new_ff OutputEntity(outputs, "out");
-    out->create_internals();
-  }
+  add_input(_inputs, "in");
+  add_input(_inputs, "type", ParamType::kWrapType, false);
+  add_output(_outputs, "out");
+}
+
+void MouseActionNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
+  // Our components.
+  new_ff MouseActionCompute(this);
+  // Gui components.
+  new_ff RectNodeShape(this);
+  // Our input sub entities.
+  add_input(_inputs, "in");
+  add_input(_inputs, "set_index", ParamType::kInt, false);
+  add_input(_inputs, "overlay_index", ParamType::kInt, false);
+  add_input(_inputs, "action_type", ParamType::kActionType, false);
+  add_input(_inputs, "x", ParamType::kFloat, false);
+  add_input(_inputs, "y", ParamType::kFloat, false);
+  add_output(_outputs, "out");
 }
 
 
-void ComputeNodeEntity::create_internals() {
+void ScriptNodeEntity::create_internals() {
+  NodeHelperEntity::create_internals();
   // Our components.
-  Compute* dc = new_ff ScriptNodeCompute(this);
-  // Gui related.
-  RectNodeShape* shape = new_ff RectNodeShape(this);
-  shape->push_input_name("in");
-  shape->push_output_name("out");
-
-  // Entity is fully build at this point, at least in terms of the non opengl gui components.
-  // The data computer allows initializing at this point.
-  // dc->update_deps();
-
+  new_ff ScriptNodeCompute(this);
+  // Gui components.
+  new_ff RectNodeShape(this);
   // Our sub entities.
-  {
-    Entity* inputs = new_ff BaseNamespaceEntity(this, "inputs");
-    inputs->create_internals();
-    InputEntity* in = new_ff InputEntity(inputs, "in");
-    in->create_internals();
-  }
-  {
-    Entity* outputs = new_ff BaseNamespaceEntity(this, "outputs");
-    outputs->create_internals();
-    OutputEntity* out = new_ff OutputEntity(outputs, "out");
-    out->create_internals();
-  }
+  add_input(_inputs, "in");
+  add_output(_outputs, "out");
 }
 
 void InputEntity::create_internals() {
   // Our components.
   new_ff InputCompute(this);
-  // Gui related.
+  // Gui components.
   new_ff InputShape(this);
   // Our sub entities.
   {
@@ -554,16 +476,20 @@ void InputEntity::set_param_type(ParamType param_type) {
   get<InputCompute>()->set_param_type(param_type);
 }
 
+void InputEntity::set_exposed(bool expose) {
+  get<InputCompute>()->set_exposed(expose);
+}
+
 void InputLabelEntity::create_internals() {
   // Our components.
-  // Gui related.
+  // Gui components.
   new_ff InputLabelShape(this);
 }
 
 void OutputEntity::create_internals() {
   // Our components.
   new_ff OutputCompute(this);
-  // Gui related.
+  // Gui components.
   new_ff OutputShape(this);
   // Our sub entities.
   {
@@ -571,10 +497,13 @@ void OutputEntity::create_internals() {
     label->create_internals();
   }
 }
+void OutputEntity::set_exposed(bool expose) {
+  get<OutputCompute>()->set_exposed(expose);
+}
 
 void OutputLabelEntity::create_internals() {
   // Our components.
-  // Gui related.
+  // Gui components.
   new_ff OutputLabelShape(this);
 }
 

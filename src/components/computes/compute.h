@@ -18,6 +18,7 @@ namespace ngs {
 
 class LowerHierarchyChange;
 class InputCompute;
+class OutputCompute;
 
 class COMPUTES_EXPORT Compute: public Component {
  public:
@@ -30,12 +31,15 @@ class COMPUTES_EXPORT Compute: public Component {
   // Our state.
   virtual void update_state();
 
-//  // Our compute type.
-//  const char* get_compute_type() {return "";}
+  // Info about our inputs. Note the output info can be found on OutputCompute.
+  virtual size_t get_exposed_input_index(const std::string& input_name) const;
+  virtual size_t get_num_exposed_inputs() const;
+  virtual size_t get_num_hidden_inputs() const;
+  virtual size_t get_num_inputs() const;
 
   // Our results.
   virtual const QVariantMap& get_results() const;
-  virtual const QVariant& get_result(const std::string& name) const;
+  virtual QVariant get_result(const std::string& name) const;
 
   // Helpers.
   static bool check_variant_is_bool_and_true(const QVariant& value, const std::string& message);
@@ -47,6 +51,9 @@ class COMPUTES_EXPORT Compute: public Component {
 
   static const QVariant _empty_variant;
 
+ private:
+  void gather_inputs();
+
  protected:
   // Our fixed deps.
   Dep<LowerHierarchyChange> _lower_change;
@@ -54,6 +61,7 @@ class COMPUTES_EXPORT Compute: public Component {
   // Our dynamic deps. These are gathered and not saved.
   // Map from input plug names to their internal output plugs.
   std::unordered_map<std::string, Dep<InputCompute> > _inputs;
+  std::vector<Dep<InputCompute> > _exposed_inputs; // These are in alphabetical order.
 
   // Map from output plug names to results.
   // QVariantMap is a typedef for QMap<QString, QVariant>.

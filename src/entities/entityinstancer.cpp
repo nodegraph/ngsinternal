@@ -24,7 +24,7 @@ namespace ngs {
     case_statement(BaseDotNodeEntity)\
     /* Other Nodes. */\
     case_statement(BaseMockNodeEntity)\
-    case_statement(BaseComputeNodeEntity)\
+    case_statement(BaseScriptNodeEntity)\
     /* ------------------------------*/\
     /* Gui Based Entities.       */\
     /* ------------------------------*/\
@@ -46,7 +46,7 @@ namespace ngs {
     case_statement(DotNodeEntity)\
     /* Other Nodes. */\
     case_statement(MockNodeEntity)\
-    case_statement(ComputeNodeEntity)\
+    case_statement(ScriptNodeEntity)\
     case_statement(OpenBrowserNodeEntity)\
     case_statement(CloseBrowserNodeEntity)\
     case_statement(CreateSetFromValuesNodeEntity)\

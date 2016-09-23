@@ -16,8 +16,9 @@ namespace ngs {
 InputCompute::InputCompute(Entity* entity)
     : QObject(),
       Compute(entity, kDID()),
-      _param_type(ParamType::kQtType),
-      _output(this) {
+      _param_type(ParamType::kQVariantMap),
+      _output(this),
+      _exposed(true) {
 	get_dep_loader()->register_dynamic_dep(_output);
 }
 
@@ -33,7 +34,7 @@ void InputCompute::update_state() {
   }
 }
 
-void InputCompute::set_value(QVariant& value) {
+void InputCompute::set_value(const QVariant& value) {
   start_method();
   _param_value = value;
 }
@@ -41,6 +42,16 @@ void InputCompute::set_value(QVariant& value) {
 void InputCompute::set_param_type(ParamType param_type) {
   start_method();
   _param_type = param_type;
+}
+
+void InputCompute::set_exposed(bool exposed) {
+  start_method();
+  _exposed = exposed;
+}
+
+bool InputCompute::is_exposed() const {
+  start_method();
+  return _exposed;
 }
 
 bool InputCompute::can_link_output_compute(const Dep<OutputCompute>& output) const {

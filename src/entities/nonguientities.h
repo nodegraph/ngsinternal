@@ -10,7 +10,6 @@ enum ParamType;
 class ENTITIES_EXPORT BaseNamespaceEntity : public Entity {
  public:
   ENTITY_ID(BaseNamespaceEntity, "namespace")
-  using Entity::Entity; // not supported on msvc 2013
   BaseNamespaceEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
@@ -18,7 +17,6 @@ class ENTITIES_EXPORT BaseNamespaceEntity : public Entity {
 class ENTITIES_EXPORT BaseAppEntity : public Entity {
  public:
   ENTITY_ID(BaseAppEntity, "base app")
-  using Entity::Entity;
   BaseAppEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
@@ -26,55 +24,62 @@ class ENTITIES_EXPORT BaseAppEntity : public Entity {
 class ENTITIES_EXPORT BaseLinkEntity : public Entity {
  public:
   ENTITY_ID(BaseLinkEntity, "base link head")
-  using Entity::Entity;
   BaseLinkEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseGroupNodeEntity : public Entity {
+class ENTITIES_EXPORT BaseNodeHelperEntity : public Entity {
+ public:
+  ENTITY_ID(InvalidEntity, "base node helper")
+  BaseNodeHelperEntity(Entity* parent, const std::string& name):Entity(parent, name), _inputs(NULL), _outputs(NULL){}
+  virtual void create_internals();
+ protected:
+  Entity* add_namespace(Entity* parent, const std::string& name);
+  Entity* add_input(Entity* parent, const std::string& name);
+  Entity* add_output(Entity* parent, const std::string& name);
+
+  Entity* _inputs;
+  Entity* _outputs;
+};
+
+class ENTITIES_EXPORT BaseGroupNodeEntity : public BaseNodeHelperEntity {
  public:
   ENTITY_ID(BaseGroupNodeEntity, "base group")
-  using Entity::Entity;
-  BaseGroupNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  BaseGroupNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseDotNodeEntity : public Entity {
+class ENTITIES_EXPORT BaseDotNodeEntity : public BaseNodeHelperEntity {
  public:
   ENTITY_ID(BaseDotNodeEntity, "base dot")
-  using Entity::Entity;
-  BaseDotNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  BaseDotNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseInputNodeEntity : public Entity {
+class ENTITIES_EXPORT BaseInputNodeEntity : public BaseNodeHelperEntity {
  public:
   ENTITY_ID(BaseInputNodeEntity, "base input")
-  using Entity::Entity;
-  BaseInputNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  BaseInputNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseOutputNodeEntity : public Entity {
+class ENTITIES_EXPORT BaseOutputNodeEntity : public BaseNodeHelperEntity {
  public:
   ENTITY_ID(BaseOutputNodeEntity, "base output")
-  using Entity::Entity;
-  BaseOutputNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  BaseOutputNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseMockNodeEntity : public Entity {
+class ENTITIES_EXPORT BaseMockNodeEntity : public BaseNodeHelperEntity {
  public:
   ENTITY_ID(BaseMockNodeEntity, "base mock")
-  using Entity::Entity;
-  BaseMockNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  BaseMockNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
   virtual void create_internals();
 };
 
 class ENTITIES_EXPORT BaseInputEntity : public Entity {
  public:
   ENTITY_ID(BaseInputEntity, "base input param")
-  using Entity::Entity;
   BaseInputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
   virtual void set_param_type(ParamType param_type);
@@ -83,16 +88,14 @@ class ENTITIES_EXPORT BaseInputEntity : public Entity {
 class ENTITIES_EXPORT BaseOutputEntity : public Entity {
  public:
   ENTITY_ID(BaseOutputEntity, "base output param")
-  using Entity::Entity;
   BaseOutputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseComputeNodeEntity : public Entity {
+class ENTITIES_EXPORT BaseScriptNodeEntity : public BaseNodeHelperEntity {
  public:
-  ENTITY_ID(BaseComputeNodeEntity, "base compute")
-  using Entity::Entity;
-  BaseComputeNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  ENTITY_ID(BaseScriptNodeEntity, "base compute")
+  BaseScriptNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
   virtual void create_internals();
 };
 

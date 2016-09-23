@@ -237,6 +237,7 @@ bool Component::dep_creates_cycle(const Component* dependency) const {
   // if the dependency is actually dependant on us.
   if (dependency->is_recursive_dependency(this)) {
     std::cerr << "Warning the requested component would have created a cycle so a null reference is likely being returned.\n";
+    assert(false);
     return true;
   }
   return false;
