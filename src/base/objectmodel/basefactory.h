@@ -10,7 +10,7 @@ class Entity;
 class OBJECTMODEL_EXPORT BaseEntityInstancer {
  public:
   virtual ~BaseEntityInstancer();
-  virtual Entity* instance(Entity* entity, const std::string& name, size_t derived_id) const = 0;
+  virtual Entity* instance(Entity* parent, const std::string& name, size_t derived_id) const = 0;
   virtual size_t get_iid(size_t derived_id) const = 0;
   virtual const char* get_did_name(size_t derived_id) const = 0;
 };
@@ -32,6 +32,10 @@ class OBJECTMODEL_EXPORT BaseFactory: public Component {
 
   virtual BaseEntityInstancer* get_entity_instancer() const = 0;
   virtual BaseComponentInstancer* get_component_instancer() const = 0;
+
+  virtual Entity* instance_entity(Entity* parent, const std::string& name, size_t derived_id) const;
+  virtual Component* instance_component(Entity* entity, size_t derived_id) const;
+
 };
 
 
