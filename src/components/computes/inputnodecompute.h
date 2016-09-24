@@ -13,6 +13,8 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   InputNodeCompute(Entity* entity);
   virtual ~InputNodeCompute();
 
+  virtual void create_inputs_outputs();
+
   virtual void set_value(const QVariant& value);
 
   // Our data is always set on us from the group.

@@ -15,6 +15,9 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   COMPONENT_ID(Compute, InvalidComponent);
   BrowserCompute(Entity* entity, size_t did);
   virtual ~BrowserCompute();
+
+  virtual void create_inputs_outputs();
+
   // Our state.
   virtual void update_state();
 
@@ -28,8 +31,6 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   WrapType get_wrap_type(const std::string& input_name);
   ActionType get_action_type(const std::string& input_name);
   Direction get_direction(const std::string& input_name);
-
-
 
  protected:
   Dep<AppWorker> _app_worker;
@@ -53,6 +54,7 @@ class GUICOMPUTES_EXPORT CreateSetFromValuesCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, CreateSetFromValuesCompute);
   CreateSetFromValuesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
   virtual void update_state();
 };
 
@@ -60,6 +62,7 @@ class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, CreateSetFromTypeCompute);
   CreateSetFromTypeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
   virtual void update_state();
 };
 
@@ -67,6 +70,7 @@ class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, MouseActionCompute);
   MouseActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
   virtual void update_state();
 };
 

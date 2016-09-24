@@ -18,6 +18,12 @@ BrowserCompute::BrowserCompute(Entity* entity, size_t did)
 BrowserCompute::~BrowserCompute() {
 }
 
+void BrowserCompute::create_inputs_outputs() {
+  Compute::create_inputs_outputs();
+  create_input("in");
+  create_output("out");
+}
+
 void BrowserCompute::update_state() {
   Compute::update_state();
 
@@ -73,6 +79,12 @@ void CloseBrowserCompute::update_state() {
   _app_worker->close_browser();
 }
 
+void CreateSetFromValuesCompute::create_inputs_outputs() {
+  BrowserCompute::create_inputs_outputs();
+  create_input("type", ParamType::kWrapType, false);
+  create_input("values", ParamType::kQStringList, false);
+}
+
 void CreateSetFromValuesCompute::update_state() {
   // Make sure our input deps are hashed.
   Compute::update_state();
@@ -91,6 +103,11 @@ void CreateSetFromValuesCompute::update_state() {
   set_result("out", value);
 }
 
+void CreateSetFromTypeCompute::create_inputs_outputs() {
+  BrowserCompute::create_inputs_outputs();
+  create_input("type", ParamType::kWrapType, false);
+}
+
 void CreateSetFromTypeCompute::update_state() {
   Compute::update_state();
 
@@ -104,6 +121,15 @@ void CreateSetFromTypeCompute::update_state() {
   // Pass the inputs through.
   const QVariant &value = _inputs.at("in")->get_result("out");
   set_result("out", value);
+}
+
+void MouseActionCompute::create_inputs_outputs() {
+  BrowserCompute::create_inputs_outputs();
+  create_input("set_index", ParamType::kInt, false);
+  create_input("overlay_index", ParamType::kInt, false);
+  create_input("action_type", ParamType::kActionType, false);
+  create_input("x", ParamType::kFloat, false);
+  create_input("y", ParamType::kFloat, false);
 }
 
 void MouseActionCompute::update_state() {

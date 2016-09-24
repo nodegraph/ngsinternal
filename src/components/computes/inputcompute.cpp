@@ -44,6 +44,11 @@ void InputCompute::set_param_type(ParamType param_type) {
   _param_type = param_type;
 }
 
+ParamType InputCompute::get_param_type() const {
+  start_method();
+  return _param_type;
+}
+
 void InputCompute::set_exposed(bool exposed) {
   start_method();
   _exposed = exposed;
@@ -99,6 +104,9 @@ void InputCompute::save(SimpleSaver& saver) const {
   size_t type = _param_type;
   saver.save(type);
 
+  // Serialize the exposed value.
+  saver.save(_exposed);
+
   // Serialize the param value.
   QByteArray data;
   QDataStream ds(&data,QIODevice::WriteOnly);
@@ -116,6 +124,9 @@ void InputCompute::load(SimpleLoader& loader) {
   size_t type;
   loader.load(type);
   _param_type = static_cast<ParamType>(type);
+
+  // Load the exposed value.
+  loader.load(_exposed);
 
   // Load the num bytes of the param value.
   int num_bytes;

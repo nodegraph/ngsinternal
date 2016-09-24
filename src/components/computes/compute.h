@@ -1,6 +1,8 @@
 #pragma once
 #include <base/objectmodel/component.h>
 #include <components/computes/computes_export.h>
+#include <components/computes/paramtypes.h>
+
 #include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
 #include <string>
@@ -16,6 +18,7 @@ namespace ngs {
 #define TEMPLATE_EXPORT 
 #endif
 
+class BaseFactory;
 class LowerHierarchyChange;
 class InputCompute;
 class OutputCompute;
@@ -27,6 +30,8 @@ class COMPUTES_EXPORT Compute: public Component {
 
   Compute(Entity* entity, size_t derived_id);
   virtual ~Compute();
+
+  virtual void create_inputs_outputs();
 
   // Our state.
   virtual void update_state();
@@ -55,6 +60,13 @@ class COMPUTES_EXPORT Compute: public Component {
   void gather_inputs();
 
  protected:
+  Entity* create_input(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
+  Entity* create_output(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
+  Entity* create_namespace(const std::string& name);
+  Entity* get_inputs_space();
+  Entity* get_outputs_space();
+
+
   // Our fixed deps.
   Dep<LowerHierarchyChange> _lower_change;
 

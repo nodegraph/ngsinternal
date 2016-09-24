@@ -11,6 +11,14 @@ MockNodeCompute::MockNodeCompute(Entity* entity):
 MockNodeCompute::~MockNodeCompute() {
 }
 
+void MockNodeCompute::create_inputs_outputs() {
+  Compute::create_inputs_outputs();
+  create_input("a");
+  create_input("b");
+  create_output("c");
+  create_output("d");
+}
+
 void MockNodeCompute::update_state() {
   Compute::update_state();
   ++_counter;

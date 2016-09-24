@@ -12,6 +12,8 @@ class COMPUTES_EXPORT OutputNodeCompute: public Compute {
   OutputNodeCompute(Entity* entity);
   virtual ~OutputNodeCompute();
 
+  virtual void create_inputs_outputs();
+
   // Our state.
   virtual void update_state();
 

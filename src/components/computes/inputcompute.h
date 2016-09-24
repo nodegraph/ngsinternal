@@ -1,24 +1,13 @@
 #pragma once
 #include <components/computes/computes_export.h>
 #include <components/computes/compute.h>
+#include <components/computes/paramtypes.h>
 
 #include <QtCore/QObject>
 
 namespace ngs {
 
 class OutputCompute;
-
-enum ParamType {
-  kQVariantMap,
-  kQString,
-  kQStringList,
-  kInt,
-  kFloat,
-  kWrapType,
-  kActionType,
-  kDirection,
-};
-
 
 class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   Q_OBJECT
@@ -29,6 +18,9 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   InputCompute(Entity* entity);
   virtual ~InputCompute();
 
+  // We override to stop creating the inputs and outputs namespace.
+  virtual void create_inputs_outputs() {}
+
   // Our state.
   virtual void update_state();
 
@@ -37,6 +29,7 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
 
   // Our data type.
   void set_param_type(ParamType param_type);
+  ParamType get_param_type() const;
 
   // Exposure.
   void set_exposed(bool exposed);

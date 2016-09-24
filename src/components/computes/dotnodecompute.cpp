@@ -13,6 +13,12 @@ DotNodeCompute::DotNodeCompute(Entity* entity)
 DotNodeCompute::~DotNodeCompute() {
 }
 
+void DotNodeCompute::create_inputs_outputs() {
+  Compute::create_inputs_outputs();
+  create_input("in");
+  create_output("out");
+}
+
 void DotNodeCompute::update_state() {
   Compute::update_state();
   const QVariant &value = _inputs.at("in")->get_result("out");

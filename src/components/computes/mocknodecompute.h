@@ -13,11 +13,12 @@ class COMPUTES_EXPORT MockNodeCompute: public Compute {
   MockNodeCompute(Entity* entity);
   virtual ~MockNodeCompute();
 
+  virtual void create_inputs_outputs();
+
   // Our state.
   virtual void update_state();
 
  private:
-
   unsigned int _counter;
 };
 

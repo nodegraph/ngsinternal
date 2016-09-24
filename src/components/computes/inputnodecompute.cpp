@@ -14,6 +14,11 @@ InputNodeCompute::InputNodeCompute(Entity* entity):
 InputNodeCompute::~InputNodeCompute() {
 }
 
+void InputNodeCompute::create_inputs_outputs() {
+  Compute::create_inputs_outputs();
+  create_output("out");
+}
+
 void InputNodeCompute::set_value(const QVariant& value) {
   set_result("out", value);
 }

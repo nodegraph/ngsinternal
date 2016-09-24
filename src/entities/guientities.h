@@ -58,93 +58,74 @@ class ENTITIES_EXPORT LinkEntity : public Entity {
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT NodeHelperEntity : public Entity {
- public:
-  ENTITY_ID(InvalidEntity, "node helper")
-  NodeHelperEntity(Entity* parent, const std::string& name)
-      : Entity(parent, name),
-        _inputs(NULL),
-        _outputs(NULL) {
-  }
-  virtual void create_internals();
- protected:
-  Entity* add_namespace(Entity* parent, const std::string& name);
-  Entity* add_input(Entity* parent, const std::string& name, ParamType type = ParamType::kQVariantMap, bool expose = true);
-  Entity* add_output(Entity* parent, const std::string& name, bool expose = true);
-
-  Entity* _inputs;
-  Entity* _outputs;
-};
-
-class ENTITIES_EXPORT GroupNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT GroupNodeEntity : public Entity {
  public:
   ENTITY_ID(GroupNodeEntity, "group")
-  GroupNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  GroupNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
-  virtual void create_namespaces();
   virtual void copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const;
 };
 
-class ENTITIES_EXPORT DotNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT DotNodeEntity : public Entity {
  public:
   ENTITY_ID(DotNodeEntity, "dot")
-  DotNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  DotNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT InputNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT InputNodeEntity : public Entity {
  public:
   ENTITY_ID(InputNodeEntity, "input")
-  InputNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  InputNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT OutputNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT OutputNodeEntity : public Entity {
  public:
   ENTITY_ID(OutputNodeEntity, "output")
-  OutputNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  OutputNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT MockNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT MockNodeEntity : public Entity {
  public:
   ENTITY_ID(MockNodeEntity, "mock")
-  MockNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  MockNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT OpenBrowserNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT OpenBrowserNodeEntity : public Entity {
  public:
   ENTITY_ID(OpenBrowserNodeEntity, "open browser")
-  OpenBrowserNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  OpenBrowserNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT CloseBrowserNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT CloseBrowserNodeEntity : public Entity {
  public:
   ENTITY_ID(CloseBrowserNodeEntity, "close browser")
-  CloseBrowserNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  CloseBrowserNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT CreateSetFromValuesNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT CreateSetFromValuesNodeEntity : public Entity {
  public:
   ENTITY_ID(CreateSetFromValuesNodeEntity, "open browser")
-  CreateSetFromValuesNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  CreateSetFromValuesNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT CreateSetFromTypeNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT CreateSetFromTypeNodeEntity : public Entity {
  public:
   ENTITY_ID(CreateSetFromTypeNodeEntity, "open browser")
-  CreateSetFromTypeNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  CreateSetFromTypeNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT MouseActionNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT MouseActionNodeEntity : public Entity {
  public:
   ENTITY_ID(MouseActionNodeEntity, "mouse action")
-  MouseActionNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  MouseActionNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
@@ -169,6 +150,7 @@ class ENTITIES_EXPORT OutputEntity : public Entity {
   ENTITY_ID(OutputEntity, "output param")
   OutputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
+  virtual void set_param_type(ParamType param_type);
   virtual void set_exposed(bool expose);
 };
 
@@ -179,10 +161,10 @@ class ENTITIES_EXPORT OutputLabelEntity : public Entity {
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT ScriptNodeEntity : public NodeHelperEntity {
+class ENTITIES_EXPORT ScriptNodeEntity : public Entity {
  public:
   ENTITY_ID(ScriptNodeEntity, "compute")
-  ScriptNodeEntity(Entity* parent, const std::string& name):NodeHelperEntity(parent, name){}
+  ScriptNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 

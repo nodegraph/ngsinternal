@@ -15,6 +15,11 @@ OutputNodeCompute::OutputNodeCompute(Entity* entity):
 OutputNodeCompute::~OutputNodeCompute() {
 }
 
+void OutputNodeCompute::create_inputs_outputs() {
+  Compute::create_inputs_outputs();
+  create_input( "in");
+}
+
 void OutputNodeCompute::update_state() {
   Compute::update_state();
 

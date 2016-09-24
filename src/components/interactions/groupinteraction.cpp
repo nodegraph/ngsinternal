@@ -55,10 +55,10 @@ GroupInteraction::~GroupInteraction(){
 
 void GroupInteraction::initialize_fixed_deps() {
   Component::initialize_fixed_deps();
-  _links_folder = get_entity("./links");
 }
 
 void GroupInteraction::update_state() {
+  _links_folder = get_entity("./links");
 }
 
 glm::vec2 GroupInteraction::get_drag_delta() const {

@@ -34,6 +34,11 @@ GroupNodeCompute::GroupNodeCompute(Entity* entity):
 GroupNodeCompute::~GroupNodeCompute() {
 }
 
+void GroupNodeCompute::create_inputs_outputs() {
+  Compute::create_inputs_outputs();
+  create_namespace("links");
+}
+
 HierarchyUpdate GroupNodeCompute::update_hierarchy() {
   bool hierarchy_changed = false;
 

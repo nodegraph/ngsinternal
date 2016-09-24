@@ -15,8 +15,15 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   OutputCompute(Entity* entity);
   virtual ~OutputCompute();
 
+  // We override to stop creating the inputs and outputs namespace.
+  virtual void create_inputs_outputs() {}
+
   // Our state.
   virtual void update_state();
+
+  // Our data type.
+  void set_param_type(ParamType param_type);
+  ParamType get_param_type() const;
 
   // Exposure.
   void set_exposed(bool exposed);
@@ -28,6 +35,10 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   virtual size_t get_num_hidden_outputs() const;
   virtual size_t get_num_outputs() const;
 
+  // Serialization.
+  virtual void save(SimpleSaver& saver) const;
+  virtual void load(SimpleLoader& loader);
+
  private:
   // Update our relative positioning against other OutputComputes.
   void update_index();
@@ -35,6 +46,9 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   // Our fixed deps.
   Dep<UpperHierarchyChange> _upper_change;
   Dep<Compute> _node_compute;
+
+  // Our data type.
+  ParamType _param_type;
 
   // Exposure.
   bool _exposed;

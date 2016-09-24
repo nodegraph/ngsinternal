@@ -672,13 +672,11 @@ void FileModel::create_graph(const QVariantMap& arg) {
   item->setData(settings["browser_height"], kBrowserHeightRole);
   setItem(_working_row, 0, item);
 
-  // Destroy the existing graph.
-//  std::unordered_set<size_t> dids;
-//  dids.insert(kBaseNamespaceEntity);
-//  get_root_group()->destroy_all_children_except(dids);
-
+  // Clear the existing nodes.
+  // Most of the child entities of the root group entity are nodes.
   get_root_group()->destroy_all_children();
-  static_cast<GroupNodeEntity*>(get_root_group())->create_namespaces();
+  // Except for the "inputs", "outputs", and "links" namespace entities. So we recreated them here.
+  get_dep<Compute>(get_root_group())->create_inputs_outputs();
 
   // Now sort everyting.
   sort_files();

@@ -28,52 +28,38 @@ class ENTITIES_EXPORT BaseLinkEntity : public Entity {
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseNodeHelperEntity : public Entity {
- public:
-  ENTITY_ID(InvalidEntity, "base node helper")
-  BaseNodeHelperEntity(Entity* parent, const std::string& name):Entity(parent, name), _inputs(NULL), _outputs(NULL){}
-  virtual void create_internals();
- protected:
-  Entity* add_namespace(Entity* parent, const std::string& name);
-  Entity* add_input(Entity* parent, const std::string& name);
-  Entity* add_output(Entity* parent, const std::string& name);
-
-  Entity* _inputs;
-  Entity* _outputs;
-};
-
-class ENTITIES_EXPORT BaseGroupNodeEntity : public BaseNodeHelperEntity {
+class ENTITIES_EXPORT BaseGroupNodeEntity : public Entity {
  public:
   ENTITY_ID(BaseGroupNodeEntity, "base group")
-  BaseGroupNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
+  BaseGroupNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseDotNodeEntity : public BaseNodeHelperEntity {
+class ENTITIES_EXPORT BaseDotNodeEntity : public Entity {
  public:
   ENTITY_ID(BaseDotNodeEntity, "base dot")
-  BaseDotNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
+  BaseDotNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseInputNodeEntity : public BaseNodeHelperEntity {
+class ENTITIES_EXPORT BaseInputNodeEntity : public Entity {
  public:
   ENTITY_ID(BaseInputNodeEntity, "base input")
-  BaseInputNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
+  BaseInputNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseOutputNodeEntity : public BaseNodeHelperEntity {
+class ENTITIES_EXPORT BaseOutputNodeEntity : public Entity {
  public:
   ENTITY_ID(BaseOutputNodeEntity, "base output")
-  BaseOutputNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
+  BaseOutputNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseMockNodeEntity : public BaseNodeHelperEntity {
+class ENTITIES_EXPORT BaseMockNodeEntity : public Entity {
  public:
   ENTITY_ID(BaseMockNodeEntity, "base mock")
-  BaseMockNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
+  BaseMockNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 
@@ -92,10 +78,10 @@ class ENTITIES_EXPORT BaseOutputEntity : public Entity {
   virtual void create_internals();
 };
 
-class ENTITIES_EXPORT BaseScriptNodeEntity : public BaseNodeHelperEntity {
+class ENTITIES_EXPORT BaseScriptNodeEntity : public Entity {
  public:
   ENTITY_ID(BaseScriptNodeEntity, "base compute")
-  BaseScriptNodeEntity(Entity* parent, const std::string& name):BaseNodeHelperEntity(parent, name){}
+  BaseScriptNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals();
 };
 

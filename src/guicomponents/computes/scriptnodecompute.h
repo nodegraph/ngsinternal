@@ -13,6 +13,8 @@ class GUICOMPUTES_EXPORT ScriptNodeCompute: public Compute  {
   ScriptNodeCompute(Entity* entity);
   virtual ~ScriptNodeCompute();
 
+  virtual void create_inputs_outputs();
+
   // Our state.
   virtual void update_state();
 

@@ -18,6 +18,8 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   GroupNodeCompute(Entity* entity);
   virtual ~GroupNodeCompute();
 
+  virtual void create_inputs_outputs();
+
   // Our state.
   virtual void update_state();
   virtual HierarchyUpdate update_hierarchy();

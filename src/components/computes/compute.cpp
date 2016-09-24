@@ -4,6 +4,7 @@
 #include <base/objectmodel/lowerhierarchychange.h>
 #include <base/objectmodel/deploader.h>
 #include <entities/entityids.h>
+#include <entities/entityinstancer.h>
 
 namespace ngs {
 
@@ -22,6 +23,11 @@ Compute::Compute(Entity* entity, size_t derived_id)
 }
 
 Compute::~Compute() {
+}
+
+void Compute::create_inputs_outputs() {
+  create_namespace("inputs");
+  create_namespace("outputs");
 }
 
 void Compute::update_state() {
@@ -135,6 +141,39 @@ bool Compute::check_variant_is_map(const QVariant& value, const std::string& mes
   return false;
 }
 
+Entity* Compute::create_input(const std::string& name, ParamType type, bool exposed) {
+  BaseEntityInstancer* ei = get_dep<BaseFactory>("")->get_entity_instancer();
+  Entity* inputs_space = get_inputs_space();
+  InputEntity* input = static_cast<InputEntity*>(ei->instance(inputs_space, name, kInputEntity));
+  input->create_internals();
+  input->set_param_type(type);
+  input->set_exposed(exposed);
+  return input;
+}
 
+Entity* Compute::create_output(const std::string& name, ParamType type, bool exposed) {
+  BaseEntityInstancer* ei = get_dep<BaseFactory>("")->get_entity_instancer();
+  Entity* outputs_space = get_outputs_space();
+  OutputEntity* output = static_cast<OutputEntity*>(ei->instance(outputs_space, name, kOutputEntity));
+  output->create_internals();
+  output->set_param_type(type);
+  output->set_exposed(exposed);
+  return output;
+}
+
+Entity* Compute::create_namespace(const std::string& name) {
+  BaseEntityInstancer* ei = get_dep<BaseFactory>("")->get_entity_instancer();
+  Entity* space = static_cast<BaseNamespaceEntity*>(ei->instance(our_entity(), name, kBaseNamespaceEntity));
+  space->create_internals();
+  return space;
+}
+
+Entity* Compute::get_inputs_space() {
+  return our_entity()->get_child("inputs");
+}
+
+Entity* Compute::get_outputs_space() {
+  return our_entity()->get_child("outputs");
+}
 
 }

@@ -16,9 +16,10 @@ class COMPUTES_EXPORT DotNodeCompute: public Compute {
   DotNodeCompute(Entity* entity);
   virtual ~DotNodeCompute();
 
+  virtual void create_inputs_outputs();
+
   // Our state.
   virtual void update_state();
-
 };
 
 

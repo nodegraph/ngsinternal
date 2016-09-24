@@ -31,6 +31,16 @@ void OutputCompute::update_state() {
   }
 }
 
+void OutputCompute::set_param_type(ParamType param_type) {
+  start_method();
+  _param_type = param_type;
+}
+
+ParamType OutputCompute::get_param_type() const {
+  start_method();
+  return _param_type;
+}
+
 void OutputCompute::set_exposed(bool exposed) {
   start_method();
   _exposed = exposed;
@@ -108,6 +118,35 @@ void OutputCompute::update_index() {
   } else {
     _exposed_index = -1;
   }
+}
+
+void OutputCompute::save(SimpleSaver& saver) const {
+  start_method();
+  Compute::save(saver);
+
+  // Serialize the param type.
+  size_t type = _param_type;
+  saver.save(type);
+
+  // Serialize the exposed value.
+  saver.save(_exposed);
+}
+
+void OutputCompute::load(SimpleLoader& loader) {
+  start_method();
+  Compute::load(loader);
+
+  // Load the param type.
+  size_t type;
+  loader.load(type);
+  _param_type = static_cast<ParamType>(type);
+
+  // Load the exposed value.
+  loader.load(_exposed);
+
+  // Load the num bytes of the param value.
+  int num_bytes;
+  loader.load(num_bytes);
 }
 
 }
