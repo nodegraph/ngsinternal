@@ -77,7 +77,7 @@ bool NodeShape::is_being_viewed() const {
 }
 
 void NodeShape::update_state() {
-
+  std::cerr << "NodeShape update state\n";
 }
 
 void NodeShape::update_edit_view_quads(const glm::vec2& pen) {
@@ -128,7 +128,6 @@ void NodeShape::update_quads_cache() {
 }
 
 void NodeShape::update_edit_view_text() {
-  start_method();
   glm::vec2 extra_chars_min;
   glm::vec2 extra_chars_max;
 

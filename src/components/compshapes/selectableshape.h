@@ -15,7 +15,7 @@ class COMPSHAPES_EXPORT SelectableShape: public CompShape {
   virtual bool is_selected() const;
 
   // Our sub interfaces.
-  virtual bool is_selectable() {return true;}
+  virtual bool is_selectable() const {return true;}
 
  protected:
   bool _selected;

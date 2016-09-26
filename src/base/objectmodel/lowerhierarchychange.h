@@ -32,11 +32,11 @@ class OBJECTMODEL_EXPORT LowerHierarchyChange : public Component {
   virtual ~LowerHierarchyChange();
 
   // Our state.
-  virtual void update_state();
+  virtual void update_wires();
 
  private:
   // Our dynamic deps. These are not serialized and gathered at runtime.
-  DepUSet<LowerHierarchyChange> _child_changes;
+  DepUSet<LowerHierarchyChange> _children;
 };
 
 }

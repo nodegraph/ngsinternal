@@ -350,12 +350,7 @@ void Component::propagate_dirtiness(Component* dirty_source) {
   }
 }
 
-void Component::propagate_cleanliness() {
-  // --------------------------------------------------------
-  // **Note** We don't call start_method here.
-  // This is a special case.
-  // --------------------------------------------------------
-
+void Component::clean_dependencies() {
   // If we're already clean there is nothing to do.
   if (!_dirty) {
     return;
@@ -370,18 +365,29 @@ void Component::propagate_cleanliness() {
       }
     }
   }
+}
+
+void Component::clean_self() {
+  if (!_dirty) {
+    return;
+  }
 
   // Now we clean/update our internal state.
   update_state();
 
   // Our dependencies is now marked clean.
   // Note that all dependencies are actually clean before the
-  // update_state() call. Clear it later allows update_state()
-  // to optimize base on which dependencies were actually dirty.
+  // update_state() call. The _dirty_dependencies var allows update_state()
+  // to optimize based on which dependencies were actually dirty.
   _dirty_dependencies.clear();
 
   // We are now clean.
   _dirty = false;
+}
+
+void Component::propagate_cleanliness() {
+  clean_dependencies();
+  clean_self();
 }
 
 void Component::update_wires() {

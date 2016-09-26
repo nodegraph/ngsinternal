@@ -27,7 +27,7 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   virtual ~NodeShape();
 
   // Our sub interfaces.
-  virtual bool is_linkable() {return true;}
+  virtual bool is_linkable() const {return true;}
 
   // Our state.
   virtual void update_state();

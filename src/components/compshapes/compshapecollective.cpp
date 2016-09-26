@@ -11,6 +11,7 @@
 #include <components/compshapes/dotnodeshape.h>
 
 #include <iostream>
+#include <thread>
 
 namespace ngs {
 
@@ -38,6 +39,8 @@ void CompShapeCollective::gather_wires() {
 }
 
 void CompShapeCollective::update_state() {
+  std::cerr << "CompShapeCollective update state\n";
+
   // Collect our shape instances.
   _quads.clear();
   collect_quad_instances(_quads);
@@ -232,6 +235,69 @@ void CompShapeCollective::get_aa_bounds(const DepUSet<NodeShape>& comp_shapes, g
   }
   coalesce_bounds(bounds, min, max);
 }
+
+//void tessellator(const std::vector<DepLinkPtr>& dependencies, size_t start_index, size_t end_index) {
+//  for (size_t i = start_index; i < end_index; ++i) {
+//    dependencies[i]->dependency->clean_self();
+//  }
+//}
+//
+//void CompShapeCollective::clean_dependencies() {
+//  // If we're already clean there is nothing to do.
+//  if (!is_state_dirty()) {
+//    return;
+//  }
+//
+//  // Collect our dependencies.
+//  const IIDToDepLinks& dependencies = get_dependencies();
+//  std::vector<DepLinkPtr> deps;
+//  for (auto & iid_iter: dependencies) {
+//    for (auto & dep_iter : iid_iter.second) {
+//      DepLinkPtr link = dep_iter.second.lock();
+//      if (link && link->dependency) {
+//        if (link->dependency->get_iid() == kICompShape) {
+//          // For comp shapes, clean the dependencies.
+//          link->dependency->clean_dependencies();
+//          // But gather the comp shape itself, so can we tessellate the shapes in parallel.
+//          deps.push_back(link);
+//        } else {
+//          link->dependency->propagate_cleanliness();
+//        }
+//      }
+//    }
+//  }
+//
+//  if (deps.size() >= 8) {
+//    const size_t num_threads = 8;
+//    std::vector<std::thread> threads;
+//    threads.resize(num_threads);
+//
+//    size_t delta = deps.size() / num_threads;
+//    size_t mod = deps.size() % num_threads;
+//    if (mod) {
+//      delta += 1;
+//    }
+//
+//    size_t start = 0;
+//    for (size_t i = 0; i < num_threads; ++i) {
+//      size_t end = start + delta;
+//      if (i == num_threads - 1) {
+//        end = deps.size();
+//      }
+//      threads[i] = std::thread(tessellator, deps, start, end);
+//      start = end;
+//    }
+//
+//    // Wait for all threads to finish.
+//    for (int i = 0; i < num_threads; ++i) {
+//      threads[i].join();
+//    }
+//  } else {
+//    for (size_t i=0; i<deps.size(); ++i) {
+//      deps[i]->dependency->propagate_cleanliness();
+//    }
+//  }
+//}
 
 }
 

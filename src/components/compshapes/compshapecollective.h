@@ -52,6 +52,8 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
   static void get_aa_bounds(const DepUSet<CompShape>& shapes, glm::vec2& min, glm::vec2& max);
   static void get_aa_bounds(const DepUSet<NodeShape>& shapes, glm::vec2& min, glm::vec2& max);
 
+
+  //virtual void clean_dependencies(); // Multi threaded override.
  protected:
 
   void add(const Dep<CompShape>& c);

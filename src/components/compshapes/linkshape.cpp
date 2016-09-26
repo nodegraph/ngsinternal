@@ -62,6 +62,8 @@ bool LinkShape::should_destroy() {
 }
 
 void LinkShape::update_state() {
+  std::cerr << "LinkShape update state\n";
+
   if (_input_shape) {
     _head_pos = _input_shape->get_origin();
   }
@@ -105,7 +107,6 @@ const Dep<OutputShape>& LinkShape::get_output_shape() const {
 }
 
 void LinkShape::update_positioning_helper(const glm::vec2& head_pos, const glm::vec2& tail_pos) {
-  start_method();
   const glm::vec2 diff = head_pos - tail_pos;
   _dir = glm::normalize(diff);
   _perp = glm::vec2(-_dir.y, _dir.x);  // equivalent to dir rotated 90 degrees using right hand rule

@@ -112,6 +112,8 @@ class OBJECTMODEL_EXPORT Component {
   bool is_state_dirty() const {return _dirty;}
 
   // Dirty/Clean Propagation.
+  virtual void clean_dependencies();
+  virtual void clean_self();
   void propagate_cleanliness();
   void propagate_dirtiness(Component* dependency);
 
@@ -232,6 +234,10 @@ class OBJECTMODEL_EXPORT Component {
   virtual bool is_initialized_gl() {return true;}
   virtual void initialize_gl_helper();
 
+ protected:
+  const IIDToDepLinks& get_dependencies() {return _dependencies;}
+  const Components& get_dirty_dependencies() {return _dirty_dependencies; }
+
  private:
 
 //  // Private Serialization methods.
@@ -268,6 +274,7 @@ class OBJECTMODEL_EXPORT Component {
 
   // Our dirty state.
   bool _dirty;
+
 
   // Our dependants which depend on us for information.
   // Note changing our dependants doesn't make our content dirty because

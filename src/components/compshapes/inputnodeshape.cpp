@@ -22,6 +22,7 @@ InputNodeShape::~InputNodeShape() {
 }
 
 void InputNodeShape::update_state() {
+  std::cerr << "InputNodeShape update state\n";
   RectNodeShape::update_state();
 
   const Polygon& bounds = get_bounds();

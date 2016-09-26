@@ -11,14 +11,12 @@ LowerHierarchyChange::LowerHierarchyChange(Entity* entity):
 LowerHierarchyChange::~LowerHierarchyChange() {
 }
 
-void LowerHierarchyChange::update_state() {
-  _child_changes.clear();
-  for (auto &iter: our_entity()->get_children()) {
-    // Take ownership of the deps.
-    Dep<LowerHierarchyChange> our_dep(this);
-    our_dep = get_dep<LowerHierarchyChange>(iter.second);
-    _child_changes.insert(our_dep);
-  }
+void LowerHierarchyChange::update_wires() {
+//  _children.clear();
+//  for (auto &iter: our_entity()->get_children()) {
+//    Dep<LowerHierarchyChange> our_dep = get_dep<LowerHierarchyChange>(iter.second);
+//    _children.insert(our_dep);
+//  }
 }
 
 }

@@ -16,7 +16,6 @@
 #include <base/device/unpackedbuffers/framebuffer.h>
 #include <base/device/unpackedbuffers/texture.h>
 #include <base/objectmodel/entity.h>
-#include <components/compshapes/nodeselection.h>
 #include <utility>
 #include <cassert>
 #include <components/resources/resources.h>

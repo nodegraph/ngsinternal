@@ -23,6 +23,8 @@ OutputNodeShape::~OutputNodeShape() {
 }
 
 void OutputNodeShape::update_state() {
+  std::cerr << "OutputNodeShape update state\n";
+
   RectNodeShape::update_state();
 
   const Polygon& bounds = get_bounds();

@@ -29,7 +29,7 @@ class COMPSHAPES_EXPORT CompShape: public Component{
   virtual const glm::vec2& get_pos() const;
 
   // Pannable.
-  virtual bool is_pannable();
+  virtual bool is_pannable() const;
 
   // Hit testing.
   virtual const Polygon& get_bounds() const;
@@ -44,8 +44,8 @@ class COMPSHAPES_EXPORT CompShape: public Component{
 
   // Our sub interfaces. Note all interfaces are still registered under the KICompShape IID.
   // To get the sub interface just do: get_dep<SelectableShape>(comp_shape->our_entity());
-  virtual bool is_selectable() {return false;}
-  virtual bool is_linkable(){return false;}
+  virtual bool is_selectable() const {return false;}
+  virtual bool is_linkable() const {return false;}
 
  protected:
   virtual void set_pannable(bool pannable);

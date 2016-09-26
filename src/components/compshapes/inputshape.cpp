@@ -48,6 +48,7 @@ bool InputShape::is_exposed() const {
 }
 
 void InputShape::update_state() {
+  std::cerr << "InputShape update state\n";
   size_t exposed_index = _compute->get_exposed_input_index(get_name());
   if(exposed_index == -1) {
     _quads.resize(0); // Empty out our quads if we're not visible.

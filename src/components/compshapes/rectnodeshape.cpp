@@ -92,6 +92,8 @@ HitRegion RectNodeShape::hit_test(const glm::vec2& point) const {
 }
 
 void RectNodeShape::update_state() {
+  std::cerr << "RectNodeShape update state\n";
+
   // Update our chars.
   update_text();
 
@@ -149,7 +151,6 @@ void RectNodeShape::update_quads_cache() {
 }
 
 void RectNodeShape::update_text() {
-  start_method();
   const std::string& name = our_entity()->get_name();
   const glm::vec2 &anchor = _pos;
   _resources->get_text_limits()->tessellate_to_instances(name, glm::vec2(0,0), 0, anchor, _node_quad_fg.state, _node_name_chars, _text_min, _text_max);

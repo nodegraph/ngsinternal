@@ -47,6 +47,8 @@ bool OutputShape::is_exposed() const {
 }
 
 void OutputShape::update_state() {
+  std::cerr << "OutputShape update state\n";
+
   // If we're not exposed then clear out our shapes.
   if (!is_exposed()) {
     _tris.clear();

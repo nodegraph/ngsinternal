@@ -42,6 +42,8 @@ void OutputLabelShape::gather_wires() {
 }
 
 void OutputLabelShape::update_state() {
+  std::cerr << "OutputLabelShape update state\n";
+
   // If the output shape is not exposed then clear out our shapes.
   if (!_output_shape->is_exposed()) {
     _chars.clear();

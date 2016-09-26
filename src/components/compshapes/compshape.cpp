@@ -25,7 +25,7 @@ void CompShape::set_pannable(bool pannable) {
   _pannable = pannable;
 }
 
-bool CompShape::is_pannable() {
+bool CompShape::is_pannable() const {
   return _pannable;
 }
 

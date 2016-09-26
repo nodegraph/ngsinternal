@@ -23,7 +23,6 @@ class Resources;
 class Entity;
 class ShapeCanvas;
 class Interaction;
-class NodeSelection;
 class NodeGraphView;
 
 // The FBOWorker depebds on the FBORenderer.

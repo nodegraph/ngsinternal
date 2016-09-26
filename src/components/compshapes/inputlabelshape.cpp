@@ -52,6 +52,8 @@ void InputLabelShape::gather_wires() {
 }
 
 void InputLabelShape::update_state() {
+  std::cerr << "InputLabelShape update state\n";
+
   // If the input shape is not exposed then clear out our shapes.
   if (!_input_shape->is_exposed()) {
     _chars.clear();
