@@ -168,8 +168,8 @@ bool GroupInteraction::bg_hit(const MouseInfo& info) {
 
   // Do a hit test.
   HitRegion region;
-  Dep<CompShape> cs = _shape_collective->hit_test(updated_info.object_space_pos.xy(), region);
-  if (!cs)  {
+  Entity* e = _shape_collective->hit_test(updated_info.object_space_pos.xy(), region);
+  if (!e)  {
     return true;
   }
   return false;
@@ -181,14 +181,14 @@ bool GroupInteraction::node_hit(const MouseInfo& info) {
 
   // Do a hit test.
   HitRegion region;
-  Dep<CompShape> cs = _shape_collective->hit_test(updated_info.object_space_pos.xy(), region);
-  if (!cs) {
+  Entity* e = _shape_collective->hit_test(updated_info.object_space_pos.xy(), region);
+  if (!e) {
     return false;
   }
-  if ( (cs->our_entity()->get_did() == kInputEntity) ||
-      (cs->our_entity()->get_did() == kOutputEntity) ){
+  if ( (e->get_did() == kInputEntity) ||
+      (e->get_did() == kOutputEntity) ){
     return false;
-  } else if (cs->is_linkable()) {
+  } else if (get_dep<CompShape>(e)->is_linkable()) {
     return true;
   }
   return false;
@@ -202,8 +202,20 @@ void GroupInteraction::accumulate_select(const MouseInfo& a, const MouseInfo& b)
 
   // Do a hit test.
   HitRegion region;
-  Dep<CompShape> cs_a = _shape_collective->hit_test(ua.object_space_pos.xy(), region);
-  Dep<CompShape> cs_b = _shape_collective->hit_test(ub.object_space_pos.xy(), region);
+  Dep<CompShape> cs_a(this);
+  {
+    Entity* cs_e = _shape_collective->hit_test(ua.object_space_pos.xy(), region);
+    if (cs_e) {
+      cs_a = get_dep<CompShape>(cs_e);
+    }
+  }
+  Dep<CompShape> cs_b(this);
+  {
+    Entity* cs_e = _shape_collective->hit_test(ub.object_space_pos.xy(), region);
+    if (cs_e) {
+      cs_b = get_dep<CompShape>(cs_e);
+    }
+  }
 
 
   if (cs_a && cs_a->is_linkable()) {
@@ -226,7 +238,13 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
 
   // Do a hit test.
   HitRegion region;
-  Dep<CompShape> comp_shape = _shape_collective->hit_test(updated_mouse_info.object_space_pos.xy(), region);
+  Dep<CompShape> comp_shape(this);
+  {
+    Entity* e = _shape_collective->hit_test(updated_mouse_info.object_space_pos.xy(), region);
+    if (e) {
+      comp_shape = get_dep<CompShape>(e);
+    }
+  }
 
   // Record the mouse down position.
   _mouse_down_pos = updated_mouse_info.object_space_pos.xy();
@@ -492,7 +510,13 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
     }
 
     HitRegion region;
-    Dep<CompShape> comp_shape = _shape_collective->hit_test(updated_mouse_info.object_space_pos.xy(), region);
+    Dep<CompShape> comp_shape(this);
+    {
+      Entity* e = _shape_collective->hit_test(updated_mouse_info.object_space_pos.xy(), region);
+      if (e) {
+        comp_shape = get_dep<CompShape>(e);
+      }
+    }
 
     Entity* comp_shape_entity = NULL;
     bool is_input_param = false;

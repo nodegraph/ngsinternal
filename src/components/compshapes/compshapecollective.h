@@ -26,6 +26,10 @@ class DotNode;
 class COMPSHAPES_EXPORT CompShapeCollective: public Component {
  public:
 
+  static void coalesce_bounds(const std::vector<Polygon>& bounds, glm::vec2& min, glm::vec2& max);
+  static void get_aa_bounds(const DepUSet<CompShape>& shapes, glm::vec2& min, glm::vec2& max);
+  static void get_aa_bounds(const DepUSet<NodeShape>& shapes, glm::vec2& min, glm::vec2& max);
+
   COMPONENT_ID(CompShapeCollective, CompShapeCollective);
 
   CompShapeCollective(Entity* entity);
@@ -36,22 +40,16 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
   virtual void update_state();
 
   // Shape Instances.
-  const std::vector<ShapeInstance>& get_quads() const {return _quads;}
-  const std::vector<ShapeInstance>& get_tris() const {return _tris;}
-  const std::vector<ShapeInstance>& get_circles() const {return _circles;}
-  const std::vector<CharInstance>& get_chars() const {return _chars;}
+  const std::vector<ShapeInstance>& get_quads() const {external(); return _quads;}
+  const std::vector<ShapeInstance>& get_tris() const {external(); return _tris;}
+  const std::vector<ShapeInstance>& get_circles() const {external(); return _circles;}
+  const std::vector<CharInstance>& get_chars() const {external(); return _chars;}
 
   // Hit Testing.
-  virtual Dep<CompShape> hit_test(const glm::vec2& point, HitRegion& type);
+  virtual Entity* hit_test(const glm::vec2& point, HitRegion& type) const;
 
   // Axis Aligned Bounds.
   void get_aa_bounds(glm::vec2& min, glm::vec2& max) const; // bounds for all nodes and links in the group.
-  void get_aa_bounds(const std::unordered_set<Entity*>& entities, glm::vec2& min, glm::vec2& max);
-
-  static void coalesce_bounds(const std::vector<Polygon>& bounds, glm::vec2& min, glm::vec2& max);
-  static void get_aa_bounds(const DepUSet<CompShape>& shapes, glm::vec2& min, glm::vec2& max);
-  static void get_aa_bounds(const DepUSet<NodeShape>& shapes, glm::vec2& min, glm::vec2& max);
-
 
   //virtual void clean_dependencies(); // Multi threaded override.
  protected:

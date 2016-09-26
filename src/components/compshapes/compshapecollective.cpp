@@ -25,6 +25,7 @@ CompShapeCollective::~CompShapeCollective() {
 }
 
 void CompShapeCollective::gather_wires() {
+  internal();
   // Clear any comp shapes that have been destroyed.
   DepUSet<CompShape>::iterator iter = _comp_shapes.begin();
   while (iter != _comp_shapes.end()) {
@@ -39,6 +40,7 @@ void CompShapeCollective::gather_wires() {
 }
 
 void CompShapeCollective::update_state() {
+  internal();
   std::cerr << "CompShapeCollective update state\n";
 
   // Collect our shape instances.
@@ -57,16 +59,19 @@ void CompShapeCollective::update_state() {
 }
 
 void CompShapeCollective::add(const Dep<CompShape>& c) {
+  internal();
   assert(!_comp_shapes.count(c));
   _comp_shapes.insert(c);
 }
 
 void CompShapeCollective::remove(const Dep<CompShape>& c) {
+  internal();
   assert(_comp_shapes.count(c));
   _comp_shapes.erase(c);
 }
 
 void CompShapeCollective::collect_comp_shapes() {
+  internal();
   for (auto &iter: our_entity()->get_children()) {
     // Skip this group's inputs and outputs.
     if (iter.first == "inputs") {
@@ -80,6 +85,7 @@ void CompShapeCollective::collect_comp_shapes() {
 }
 
 void CompShapeCollective::collect_comp_shapes(Entity* entity) {
+  internal();
   // Look for any new comp shapes.
   if (entity->has<CompShape>()) {
     Dep<CompShape> cs = get_dep<CompShape>(entity);
@@ -103,6 +109,7 @@ void CompShapeCollective::collect_comp_shapes(Entity* entity) {
 }
 
 void CompShapeCollective::collect_quad_instances(std::vector<ShapeInstance>& quads) {
+  internal();
   for (auto &dep : _comp_shapes) {
     if (!dep) {
       continue;
@@ -116,6 +123,7 @@ void CompShapeCollective::collect_quad_instances(std::vector<ShapeInstance>& qua
 }
 
 void CompShapeCollective::collect_tri_instances(std::vector<ShapeInstance>& quads) {
+  internal();
   for (auto &dep : _comp_shapes) {
     if (!dep) {
       continue;
@@ -129,6 +137,7 @@ void CompShapeCollective::collect_tri_instances(std::vector<ShapeInstance>& quad
 }
 
 void CompShapeCollective::collect_circle_instances(std::vector<ShapeInstance>& circles) {
+  internal();
   for (auto &dep : _comp_shapes) {
     if (!dep) {
       continue;
@@ -142,6 +151,7 @@ void CompShapeCollective::collect_circle_instances(std::vector<ShapeInstance>& c
 }
 
 void CompShapeCollective::collect_char_instances(std::vector<CharInstance>& chars) {
+  internal();
   for (auto &dep : _comp_shapes) {
     if (!dep) {
       continue;
@@ -154,18 +164,19 @@ void CompShapeCollective::collect_char_instances(std::vector<CharInstance>& char
   }
 }
 
-Dep<CompShape> CompShapeCollective::hit_test(const glm::vec2& point, HitRegion& type) {
+Entity* CompShapeCollective::hit_test(const glm::vec2& point, HitRegion& type) const {
+  external();
   for (auto &dep: _comp_shapes) {
     if (dep) {
       type = dep->hit_test(point);
       if (type) {
-        return dep;
+        return dep->our_entity();
       }
     }
   }
 
   type = kMissed;
-  return Dep<CompShape>(this);
+  return NULL;
 }
 
 void CompShapeCollective::get_aa_bounds(glm::vec2& min, glm::vec2& max) const {
@@ -174,18 +185,8 @@ void CompShapeCollective::get_aa_bounds(glm::vec2& min, glm::vec2& max) const {
   get_aa_bounds(_comp_shapes, min, max);
 }
 
-void CompShapeCollective::get_aa_bounds(const std::unordered_set<Entity*>& entities, glm::vec2& min, glm::vec2& max) {
-  std::unordered_set<Dep<CompShape>, DepHash<CompShape> > comp_shapes;
-  for (Entity* e: entities) {
-    Dep<CompShape> cs = get_dep<CompShape>(e);
-    if (cs) {
-      comp_shapes.insert(cs);
-    }
-  }
-  get_aa_bounds(comp_shapes, min, max);
-}
-
 void CompShapeCollective::coalesce_bounds(const std::vector<Polygon>& bounds, glm::vec2& min, glm::vec2& max) {
+  // Static Method.
   min=glm::vec2(0,0);
   max=glm::vec2(0,0);
 
@@ -221,6 +222,7 @@ void CompShapeCollective::coalesce_bounds(const std::vector<Polygon>& bounds, gl
 }
 
 void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, glm::vec2& min, glm::vec2& max) {
+  // Static Method.
   std::vector<Polygon> bounds;
   for(Dep<CompShape> c: comp_shapes){
     bounds.push_back(c->get_bounds());
@@ -229,6 +231,7 @@ void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, g
 }
 
 void CompShapeCollective::get_aa_bounds(const DepUSet<NodeShape>& comp_shapes, glm::vec2& min, glm::vec2& max) {
+  // Static Method.
   std::vector<Polygon> bounds;
   for(Dep<NodeShape> c: comp_shapes){
     bounds.push_back(c->get_bounds());
