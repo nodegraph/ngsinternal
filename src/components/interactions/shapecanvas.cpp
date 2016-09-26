@@ -115,7 +115,7 @@ void ShapeCanvas::update_state() {
 }
 
 void ShapeCanvas::initialize_gl() {
-  start_method();
+  external();
   // Create our drawing pipeline.
   if (!_quad_pipeline) {
     _quad_pipeline = new_ff QuadPipelineSetup(_resources->get_quad_vertex_shader(), _resources->get_quad_fragment_shader());
@@ -141,7 +141,7 @@ bool ShapeCanvas::is_initialized_gl() {
 }
 
 void ShapeCanvas::draw_gl() {
-  start_method();
+  external();
 
   // To deal macos artifacts when there is nothing to draw.
   if (!_quad_pipeline->has_instances()) {
@@ -172,17 +172,17 @@ void ShapeCanvas::draw_gl() {
 }
 
 const Dep<GroupInteraction>& ShapeCanvas::get_current_interaction() const {
-  start_method();
+  external();
   return _current_interaction;
 }
 
 const Dep<CompShapeCollective>& ShapeCanvas::get_current_shape_collective() const {
-  start_method();
+  external();
   return _current_shape_collective;
 }
 
 void ShapeCanvas::push_group(Entity* group) {
-  start_method();
+  external();
   _group_stack.push_back(group);
 
   // Cache some values.
@@ -202,7 +202,7 @@ void ShapeCanvas::push_group(Entity* group) {
 }
 
 void ShapeCanvas::pop_group() {
-  start_method();
+  external();
 
   // The last group should not be popped.
   if (_group_stack.size()<=1) {
@@ -239,7 +239,7 @@ Entity* ShapeCanvas::get_current_group() const {
 }
 
 void ShapeCanvas::surface() {
-  start_method();
+  external();
   pop_group();
 
   // The group we're surfacing to needs to have its inputs and output updated.
@@ -247,7 +247,7 @@ void ShapeCanvas::surface() {
 }
 
 void ShapeCanvas::dive(Entity* selected) {
-  start_method();
+  external();
   // If the selected is a group dive into it.
   if (selected->has<GroupInteraction>()) {
     push_group(selected);
@@ -255,7 +255,7 @@ void ShapeCanvas::dive(Entity* selected) {
 }
 
 void ShapeCanvas::dive() {
-  start_method();
+  external();
   const DepUSet<NodeShape>& selected = _ng_state->get_selected();
   // Dive into the first selected group.
   for (const Dep<NodeShape> &cs: selected) {

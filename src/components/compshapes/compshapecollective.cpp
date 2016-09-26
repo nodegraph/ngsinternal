@@ -169,7 +169,7 @@ Dep<CompShape> CompShapeCollective::hit_test(const glm::vec2& point, HitRegion& 
 }
 
 void CompShapeCollective::get_aa_bounds(glm::vec2& min, glm::vec2& max) const {
-  start_method();
+  external();
   // Get the bounds.
   get_aa_bounds(_comp_shapes, min, max);
 }

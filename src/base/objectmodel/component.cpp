@@ -164,7 +164,7 @@ DepLinkPtr Component::get_dep(const Path& path, size_t iid) {
 }
 
 DepLinkPtr Component::connect_to_dep(Component* c) {
-  start_method();
+  external();
 
   // If this is going to create a cycle return NULL.
   if (dep_creates_cycle(c)) {
@@ -180,7 +180,7 @@ DepLinkPtr Component::connect_to_dep(Component* c) {
 }
 
 void Component::disconnect_from_dep(Component* c) {
-  start_method();
+  external();
   unregister_dependency(c);
   c->unregister_dependant(this);
 }
@@ -192,7 +192,7 @@ void Component::disconnect_from_dep(Component* c) {
 // Registering a dependant never makes us dirty.
 // However it does make our dependant dirty.
 void Component::register_dependant(Component* c) const {
-  start_method();
+  external();
   // We don't check for cycles here because if we're registering a dependant,
   // then we've already checked for cycles when we're registering the
   // dependency (the other end).
@@ -203,7 +203,7 @@ void Component::register_dependant(Component* c) const {
 // Unregistering a dependant never makes us dirty.
 // However it does make our dependant dirty.
 void Component::unregister_dependant(Component* c) const {
-  start_method();
+  external();
   Components& coms = _dependants[c->get_iid()];
   coms.erase(c);
 }
@@ -214,7 +214,7 @@ void Component::unregister_dependant(Component* c) const {
 
 // Returns true if there is a dependency path between the dependant and dependency.
 bool Component::is_recursive_dependency(const Component* dependency) const {
-  start_method();
+  external();
   if (this == dependency) {
     return true;
   }
@@ -232,7 +232,7 @@ bool Component::is_recursive_dependency(const Component* dependency) const {
 }
 
 bool Component::dep_creates_cycle(const Component* dependency) const {
-  start_method();
+  external();
   // The proposed link between us and the dependency would create a cycle
   // if the dependency is actually dependant on us.
   if (dependency->is_recursive_dependency(this)) {
@@ -244,7 +244,7 @@ bool Component::dep_creates_cycle(const Component* dependency) const {
 }
 
 DepLinkPtr Component::get_dep_link(Component* c) const {
-  start_method();
+  external();
   const size_t iid = c->get_iid();
   if (_dependencies.count(c->get_iid())) {
     const DepLinks &links = _dependencies.at(iid);
@@ -261,7 +261,7 @@ DepLinkPtr Component::get_dep_link(Component* c) const {
 }
 
 void Component::set_dep_link(Component* c, DepLinkPtr link) {
-  start_method();
+  external();
   const size_t iid = c->get_iid();
   DepLinks &links = _dependencies[iid];
   assert(links.count(c) == 0);
@@ -272,7 +272,7 @@ void Component::set_dep_link(Component* c, DepLinkPtr link) {
 }
 
 DepLinkPtr Component::register_dependency(Component* c) {
-  start_method();
+  external();
   // We assume cycle check has already been performed.
 
   // See if we have an existing dep link.
@@ -294,12 +294,12 @@ DepLinkPtr Component::register_dependency(Component* c) {
 
 // Unregistering a dependency make us dirty.
 void Component::unregister_dependency(Component* c) {
-  start_method();
+  external();
   remove_dep_link(c, c->get_iid());
 }
 
 void Component::remove_dep_link(Component* c, size_t iid) {
-  start_method();
+  external();
   // Removing a dependency can never create cycles.
   DepLinks& dep_links = _dependencies[iid];
   std::shared_ptr<DepLink> dep_link;

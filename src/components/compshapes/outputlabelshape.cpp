@@ -124,7 +124,7 @@ void OutputLabelShape::update_state() {
 }
 
 const std::vector<CharInstance> * OutputLabelShape::get_char_instances() const {
-  start_method();
+  external();
   return &_chars;
 }
 

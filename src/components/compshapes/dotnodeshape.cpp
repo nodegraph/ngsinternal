@@ -59,22 +59,22 @@ void DotNodeShape::update_state() {
 }
 
 void DotNodeShape::set_pos(const glm::vec2& anchor) {
-  start_method();
+  external();
   _pos = anchor;
 }
 
 const glm::vec2& DotNodeShape::get_pos() const {
-  start_method();
+  external();
   return _pos;
 }
 
 const Polygon& DotNodeShape::get_bounds() const {
-  start_method();
+  external();
   return _bounds;
 }
 
 void DotNodeShape::select(bool selected) {
-  start_method();
+  external();
   NodeShape::select(selected);
   if (selected) {
     _bg_circle.state |= (selected_transform_bitmask|selected_color_bitmask);
@@ -86,13 +86,13 @@ void DotNodeShape::select(bool selected) {
 }
 
 void DotNodeShape::save(SimpleSaver& saver) const {
-  start_method();
+  external();
   CompShape::save(saver);
   saver.save(_pos.x);
   saver.save(_pos.y);
 }
 void DotNodeShape::load(SimpleLoader& loader) {
-  start_method();
+  external();
   CompShape::load(loader);
   loader.load(_pos.x);
   loader.load(_pos.y);

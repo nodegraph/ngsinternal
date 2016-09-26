@@ -64,7 +64,7 @@ void Compute::gather_inputs() {
 }
 
 size_t Compute::get_exposed_input_index(const std::string& input_name) const {
-  start_method();
+  external();
   for (size_t i=0; i<_exposed_inputs.size(); ++i) {
     if (_exposed_inputs[i]->get_name() == input_name) {
       return i;
@@ -74,27 +74,27 @@ size_t Compute::get_exposed_input_index(const std::string& input_name) const {
 }
 
 size_t Compute::get_num_exposed_inputs() const {
-  start_method();
+  external();
   return _exposed_inputs.size();
 }
 
 size_t Compute::get_num_hidden_inputs() const {
-  start_method();
+  external();
   return get_num_inputs() - get_num_exposed_inputs();
 }
 
 size_t Compute::get_num_inputs() const {
-  start_method();
+  external();
   return _inputs.size();
 }
 
 const QVariantMap& Compute::get_results() const {
-  start_method();
+  external();
   return _results;
 }
 
 QVariant Compute::get_result(const std::string& name) const{
-  start_method();
+  external();
   if (!_results.count(name.c_str())) {
     return _empty_variant;
   }
@@ -102,7 +102,7 @@ QVariant Compute::get_result(const std::string& name) const{
 }
 
 void Compute::set_result(const std::string& name, const QVariant& value) {
-  start_method();
+  external();
   _results.insert(name.c_str(), value);
 }
 

@@ -110,28 +110,28 @@ void FileModel::set_max_node_posts(int max) {
 }
 
 void FileModel::on_item_changed(QStandardItem* item) {
-  start_method();
+  external();
   save_model();
 }
 
 QString FileModel::get_edition() const {
-  start_method();
+  external();
   return _edition.c_str();
 }
 
 QString FileModel::get_license() const {
-  start_method();
+  external();
   return _license.c_str();
 }
 
 void FileModel::set_license(const QString& edition, const QString& license) {
-  start_method();
+  external();
   _edition = edition.toStdString();
   _license = license.toStdString();
 }
 
 void FileModel::create_crypto(const QString& chosen_password) {
-  start_method();
+  external();
   assert(_nonce.empty());
   assert(_key.empty());
 
@@ -142,7 +142,7 @@ void FileModel::create_crypto(const QString& chosen_password) {
 }
 
 void FileModel::save_crypto() const{
-  start_method();
+  external();
   // Save out the crypto config.
   {
     std::stringstream ss;
@@ -157,7 +157,7 @@ void FileModel::save_crypto() const{
 }
 
 bool FileModel::crypto_exists() const {
-  start_method();
+  external();
   if (file_exists(kCryptoFile)) {
     return true;
   }
@@ -165,7 +165,7 @@ bool FileModel::crypto_exists() const {
 }
 
 void FileModel::load_crypto() {
-  start_method();
+  external();
   if (!file_exists(kCryptoFile)) {
     return;
   }
@@ -184,7 +184,7 @@ void FileModel::load_crypto() {
 }
 
 bool FileModel::check_password(const QString& password) {
-  start_method();
+  external();
   if (!Crypto::check_password(password.toStdString(), _hashed_password)) {
     return false;
   }
@@ -195,7 +195,7 @@ bool FileModel::check_password(const QString& password) {
 
 
 void FileModel::sort_files() {
-  start_method();
+  external();
   QString title = data(index(_working_row,0), kTitleRole).toString();
   sort(0,Qt::AscendingOrder);
   _working_row = find_index(title);
@@ -203,7 +203,7 @@ void FileModel::sort_files() {
 }
 
 int FileModel::find_index(const QString& title) const {
-  start_method();
+  external();
   for (int i=0; i<rowCount(); ++i) {
     if (title == data(index(i,0), kTitleRole).toString()) {
       return i;
@@ -213,12 +213,12 @@ int FileModel::find_index(const QString& title) const {
 }
 
 int FileModel::get_working_row() const {
-  start_method();
+  external();
   return _working_row;
 }
 
 int FileModel::get_role(const QString& role_name) const {
-  start_method();
+  external();
   QHash<int, QByteArray>::const_iterator iter;
   for (iter = _roles.begin(); iter != _roles.end(); ++iter) {
     if (iter.value() == role_name.toUtf8()) {
@@ -230,18 +230,18 @@ int FileModel::get_role(const QString& role_name) const {
 }
 
 QVariant FileModel::get_setting(int row, int role) const {
-  start_method();
+  external();
   return data(index(row,0), role);
 }
 
 QVariant FileModel::get_setting(int row, const QString& role_name) const {
-  start_method();
+  external();
   int role = get_role(role_name);
   return get_setting(row, role);
 }
 
 void FileModel::set_setting(int row, int role, const QVariant& value) {
-  start_method();
+  external();
   if (role == kTitleRole) {
     // The title role is treated as an edge case as we need to make sure it's unique.
     QVariant current_title = data(index(row,0),kTitleRole);
@@ -262,53 +262,53 @@ void FileModel::set_setting(int row, int role, const QVariant& value) {
 }
 
 void FileModel::set_setting(int row, const QString& role_name, const QVariant& value) {
-  start_method();
+  external();
   int role = get_role(role_name);
   return set_setting(row, role, value);
 }
 
 QVariant FileModel::get_work_setting(int role) const {
-  start_method();
+  external();
   int row = get_working_row();
   return get_setting(row, role);
 }
 
 QVariant FileModel::get_work_setting(const QString& role_name) const {
-  start_method();
+  external();
   int row = get_working_row();
   return get_setting(row, role_name);
 }
 
 void FileModel::set_work_setting(int role, const QVariant& value) {
-  start_method();
+  external();
   int row = get_working_row();
   set_setting(row, role, value);
 }
 
 void FileModel::set_work_setting(const QString& role_name, const QVariant& value) {
-  start_method();
+  external();
   int row = get_working_row();
   set_setting(row, role_name, value);
 }
 
 QString FileModel::get_prefixed_file(const QString& file) const {
-  start_method();
+  external();
   return _app_dir + "/" + file;
 }
 
 // Data operations.
 std::string FileModel::encrypt_data(const std::string& data) const {
-  start_method();
+  external();
   return Crypto::encrypt(data, _key, _nonce);
 }
 
 std::string FileModel::decrypt_data(const std::string& encrypted_data) const {
-  start_method();
+  external();
   return Crypto::decrypt(encrypted_data, _key, _nonce);
 }
 
 void FileModel::write_file(const QString& filename, const std::string& data, bool encrypt) const {
-  start_method();
+  external();
   QString full_name = get_prefixed_file(filename);
   //std::cerr << "saving to file: " << full_name.toStdString() << "\n";
 
@@ -334,7 +334,7 @@ void FileModel::write_file(const QString& filename, const std::string& data, boo
 }
 
 QByteArray FileModel::load_file(const QString& filename, bool decrypt) const {
-  start_method();
+  external();
   QString full_name = get_prefixed_file(filename);
   //std::cerr << "loading from file: " << full_name.toStdString() << "\n";
 
@@ -360,7 +360,7 @@ QByteArray FileModel::load_file(const QString& filename, bool decrypt) const {
 }
 
 void FileModel::destroy_file(const QString& filename) const {
-  start_method();
+  external();
   QString full_name = get_prefixed_file(filename);
   // Erase the file.
   QFile file(full_name);
@@ -368,7 +368,7 @@ void FileModel::destroy_file(const QString& filename) const {
 }
 
 bool FileModel::title_exists(const QString& title) const {
-  start_method();
+  external();
   for (int i=0; i<rowCount(); ++i) {
     if (title == data(index(i,0), kTitleRole).toString()) {
       return true;
@@ -378,7 +378,7 @@ bool FileModel::title_exists(const QString& title) const {
 }
 
 QString FileModel::make_title_unique(const QString& title) const {
-  start_method();
+  external();
   if (!title_exists(title)) {
     return title;
   }
@@ -408,7 +408,7 @@ QString FileModel::make_title_unique(const QString& title) const {
 }
 
 bool FileModel::file_exists(const QString& filename) const {
-  start_method();
+  external();
   QString full = get_prefixed_file(filename);
   QFileInfo info(full);
   if (info.exists()) {
@@ -418,7 +418,7 @@ bool FileModel::file_exists(const QString& filename) const {
 }
 
 QString FileModel::make_filename_unique(const QString& filename) const {
-  start_method();
+  external();
   std::string name = filename.toStdString();
   size_t last_index = name.find_last_not_of("0123456789");
   std::string suffix = name.substr(last_index + 1);
@@ -442,7 +442,7 @@ QString FileModel::make_filename_unique(const QString& filename) const {
 }
 
 void FileModel::load_model() {
-  start_method();
+  external();
   QByteArray contents = load_file(kAppFile, true);
   if (contents.size()==0) {
     return;
@@ -504,7 +504,7 @@ void FileModel::load_model() {
 }
 
 void FileModel::save_model() {
-  start_method();
+  external();
   // Save out our data to a string.
   std::stringstream ss;
   {
@@ -540,7 +540,7 @@ void FileModel::save_model() {
 }
 
 void FileModel::load_graph() {
-  start_method();
+  external();
   if (_working_row < 0) {
     // Create the first graph file.
     QVariantMap info;
@@ -558,7 +558,7 @@ void FileModel::load_graph() {
 }
 
 void FileModel::save_graph() {
-  start_method();
+  external();
   if (_working_row < 0) {
     return;
   }
@@ -566,7 +566,7 @@ void FileModel::save_graph() {
 }
 
 void FileModel::load_graph(int row) {
-  start_method();
+  external();
   _working_row = row;
 
   // Load the graph file.
@@ -607,7 +607,7 @@ void FileModel::load_graph(int row) {
 }
 
 void FileModel::save_graph(int row) {
-  start_method();
+  external();
   _working_row = row;
 
   // Save the graph to a string.
@@ -634,7 +634,7 @@ void FileModel::save_graph(int row) {
 
 // The info argument must contain all required key-value pairs.
 void FileModel::create_graph(const QVariantMap& arg) {
-  start_method();
+  external();
   // Fill any missing key-value with default values.
   QVariantMap settings = _default_settings;
   QVariantMap::const_iterator iter;
@@ -683,7 +683,7 @@ void FileModel::create_graph(const QVariantMap& arg) {
 }
 
 void FileModel::destroy_graph(int row) {
-  start_method();
+  external();
   if (rowCount() <= 1) {
     return;
   }
@@ -716,7 +716,7 @@ void FileModel::destroy_graph(int row) {
 // The info argument does not need to contain all key-value pairs.
 // Only those key-value pairs present will be updated.
 void FileModel::update_graph(int row, const QVariantMap& settings) {
-  start_method();
+  external();
   QVariantMap::const_iterator iter;
   for (iter = settings.begin(); iter != settings.end(); ++iter) {
     set_setting(row, iter.key(), iter.value());

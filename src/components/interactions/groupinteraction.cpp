@@ -62,7 +62,7 @@ void GroupInteraction::update_shape_collective() {
 }
 
 glm::vec2 GroupInteraction::get_drag_delta() const {
-  start_method();
+  external();
   MouseInfo current_info = _mouse_over_info;
   _view_controls.update_coord_spaces_with_last_model_view(current_info);
   // Compute the delta vector.
@@ -70,7 +70,7 @@ glm::vec2 GroupInteraction::get_drag_delta() const {
 }
 
 void GroupInteraction::revert_to_pre_pressed_selection() {
-  start_method();
+  external();
 
   // If we clicked a link shape, we don't offer this option.
   if (_link_shape) {
@@ -97,7 +97,7 @@ void GroupInteraction::revert_to_pre_pressed_selection() {
 }
 
 void GroupInteraction::toggle_selection_under_press(const Dep<NodeShape>& hit_shape) {
-  start_method();
+  external();
   // Flip the selection.
   if (_selection->is_selected(hit_shape)) {
     _selection->toggle_selected(hit_shape);
@@ -109,7 +109,7 @@ void GroupInteraction::toggle_selection_under_press(const Dep<NodeShape>& hit_sh
 }
 
 Dep<LinkShape> GroupInteraction::create_link() {
-  start_method();
+  external();
 
   Entity* link = _factory->instance_entity(_links_folder, "link", kLinkEntity);
   link->create_internals();
@@ -123,12 +123,12 @@ Dep<LinkShape> GroupInteraction::create_link() {
 }
 
 void GroupInteraction::destroy_link(Entity* link) {
-  start_method();
+  external();
   delete_ff(link);
 }
 
 bool GroupInteraction::has_link(Entity* entity) const {
-  start_method();
+  external();
   Entity* head = entity->has_entity("./link");
   if (head) {
     return true;
@@ -216,7 +216,7 @@ void GroupInteraction::accumulate_select(const MouseInfo& a, const MouseInfo& b)
 }
 
 Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
-  start_method();
+  external();
   // Record the selection state, before anything changes.
   _preselection = _selection->get_selected();
 
@@ -446,7 +446,7 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
 }
 
 void GroupInteraction::released(const MouseInfo& mouse_info) {
-  start_method();
+  external();
   _mouse_is_down = false;
 
   MouseInfo updated_mouse_info = mouse_info;
@@ -624,7 +624,7 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
 }
 
 void GroupInteraction::moved(const MouseInfo& mouse_info) {
-  start_method();
+  external();
   _mouse_over_info = mouse_info;
   _view_controls.update_coord_spaces(_mouse_over_info);
 
@@ -667,7 +667,7 @@ void GroupInteraction::moved(const MouseInfo& mouse_info) {
 }
 
 void GroupInteraction::wheel_rolled(const WheelInfo& info) {
-  start_method();
+  external();
   //_mouse_over_info
   TrackBall::Mode action = TrackBall::ZOOM;
   // Adjust the trackball accordingly.
@@ -675,7 +675,7 @@ void GroupInteraction::wheel_rolled(const WheelInfo& info) {
 }
 
 void GroupInteraction::pinch_zoom(const glm::vec2& origin, float factor) {
-  start_method();
+  external();
   MouseInfo info = get_vec2_info(origin);
   _view_controls.update_coord_spaces(info);
 
@@ -689,7 +689,7 @@ void GroupInteraction::finalize_pinch_zoom() {
 }
 
 const glm::mat4 GroupInteraction::get_mouse_model_view() const {
-  start_method();
+  external();
   glm::mat4 m(1);
   m[3][0] = _mouse_over_info.screen_pos_gl.x;
   m[3][1] = _mouse_over_info.screen_pos_gl.y;
@@ -702,27 +702,27 @@ bool GroupInteraction::is_panning_selection() const {
 }
 
 void GroupInteraction::edit(const Dep<NodeShape>& comp_shape) {
-  start_method();
+  external();
   _selection->set_edit_node(comp_shape);
 }
 
 void GroupInteraction::view(const Dep<NodeShape>& comp_shape) {
-  start_method();
+  external();
   _selection->set_view_node(comp_shape);
 }
 
 void GroupInteraction::select(const Dep<NodeShape>& comp_shape) {
-  start_method();
+  external();
   _selection->select(comp_shape);
 }
 
 void GroupInteraction::deselect(const Dep<NodeShape>& comp_shape) {
-  start_method();
+  external();
   _selection->deselect(comp_shape);
 }
 
 void GroupInteraction::select_all() {
-  start_method();
+  external();
   Entity* group_node = get_entity(".");
   DepUSet<NodeShape> set;
   for (const auto &iter: group_node->get_children()) {
@@ -741,7 +741,7 @@ void GroupInteraction::deselect_all() {
 }
 
 void GroupInteraction::frame_all() {
-  start_method();
+  external();
   glm::vec2 min;
   glm::vec2 max;
   _shape_collective->get_aa_bounds(min,max);
@@ -749,7 +749,7 @@ void GroupInteraction::frame_all() {
 }
 
 void GroupInteraction::frame_selected(const DepUSet<NodeShape>& selected) {
-  start_method();
+  external();
   if (selected.empty()) {
     return;
   }
@@ -769,13 +769,13 @@ glm::vec2 GroupInteraction::get_center_in_object_space() const {
 }
 
 void GroupInteraction::collapse_selected() {
-  start_method();
+  external();
   const DepUSet<NodeShape>& selected = _selection->get_selected();
   collapse(selected);
 }
 
 void GroupInteraction::explode_selected() {
-  start_method();
+  external();
   const DepUSet<NodeShape>& selected = _selection->get_selected();
   if (selected.empty()) {
     return;
@@ -784,7 +784,7 @@ void GroupInteraction::explode_selected() {
 }
 
 void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
-  start_method();
+  external();
   if (selected.empty()) {
     return;
   }
@@ -848,7 +848,7 @@ void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
 }
 
 void GroupInteraction::explode(const Dep<NodeShape>& cs) {
-  start_method();
+  external();
   // Determine the exploding center.
   glm::vec2 min, max;
   cs->get_bounds().get_aa_bounds(min, max);
@@ -906,38 +906,38 @@ void GroupInteraction::explode(const Dep<NodeShape>& cs) {
 }
 
 void GroupInteraction::resize_gl(GLsizei width, GLsizei height) {
-  start_method();
+  external();
   _view_controls.resize(width, height);
 }
 
 const ViewportParams& GroupInteraction::get_viewport_params() const {
-  start_method();
+  external();
   return _view_controls.viewport;
 }
 
 const glm::mat4& GroupInteraction::get_model_view() const {
-  start_method();
+  external();
   return _view_controls.get_model_view();
 }
 const glm::mat4& GroupInteraction::get_last_model_view() const{
-  start_method();
+  external();
   return _view_controls.get_last_model_view();
 }
 const glm::mat4& GroupInteraction::get_projection() const{
-  start_method();
+  external();
   return _view_controls.get_projection();
 }
 glm::mat4 GroupInteraction::get_model_view_project() const{
-  start_method();
+  external();
   return _view_controls.get_model_view_project();
 }
 glm::mat4 GroupInteraction::get_last_model_view_project() const{
-  start_method();
+  external();
   return _view_controls.get_last_model_view_project();
 }
 
 Entity* GroupInteraction::create_node(size_t did) {
-  start_method();
+  external();
 
   // Determine the initial name for the new node.
   std::string node_name = _factory->get_entity_name_for_did(did);

@@ -36,10 +36,10 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
   virtual void update_state();
 
   // Shape Instances.
-  const std::vector<ShapeInstance>& get_quads() {return _quads;}
-  const std::vector<ShapeInstance>& get_tris() {return _tris;}
-  const std::vector<ShapeInstance>& get_circles() {return _circles;}
-  const std::vector<CharInstance>& get_chars() {return _chars;}
+  const std::vector<ShapeInstance>& get_quads() const {return _quads;}
+  const std::vector<ShapeInstance>& get_tris() const {return _tris;}
+  const std::vector<ShapeInstance>& get_circles() const {return _circles;}
+  const std::vector<CharInstance>& get_chars() const {return _chars;}
 
   // Hit Testing.
   virtual Dep<CompShape> hit_test(const glm::vec2& point, HitRegion& type);

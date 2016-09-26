@@ -12,11 +12,11 @@ CompShape::~CompShape(){
 }
 
 void CompShape::set_pos(const glm::vec2& anchor) {
-  start_method();
+  external();
 }
 
 const glm::vec2& CompShape::get_pos() const {
-  start_method();
+  external();
   static const glm::vec2 dummy;
   return dummy;
 }
@@ -30,13 +30,13 @@ bool CompShape::is_pannable() const {
 }
 
 const Polygon& CompShape::get_bounds() const {
-  start_method();
+  external();
   static const Polygon dummy;
   return dummy;
 }
 
 HitRegion CompShape::hit_test(const glm::vec2& point) const {
-  start_method();
+  external();
   if (simple_hit_test(point)) {
     return kShape;
   }
@@ -44,7 +44,7 @@ HitRegion CompShape::hit_test(const glm::vec2& point) const {
 }
 
 bool CompShape::simple_hit_test(const glm::vec2& point) const {
-  start_method();
+  external();
   return get_bounds().contains(point);
 }
 

@@ -200,22 +200,22 @@ void LinkShape::update_state_helper() {
 }
 
 const Polygon& LinkShape::get_bounds() const {
-  start_method();
+  external();
   return _bounds;
 }
 
 const std::vector<ShapeInstance>* LinkShape::get_tri_instances() const {
-  start_method();
+  external();
   return &_tris;
 }
 
 const std::vector<ShapeInstance>* LinkShape::get_quad_instances() const {
-  start_method();
+  external();
   return &_quads;
 }
 
 HitRegion LinkShape::hit_test(const glm::vec2& point) const {
-  start_method();
+  external();
   if (!simple_hit_test(point)) {
     return kMissed;
   }
@@ -229,7 +229,7 @@ HitRegion LinkShape::hit_test(const glm::vec2& point) const {
 }
 
 void LinkShape::select(bool selected) {
-  start_method();
+  external();
   SelectableShape::select(selected);
   if (selected) {
     _bg_quad->state |= (selected_transform_bitmask|selected_color_bitmask);
@@ -245,22 +245,22 @@ void LinkShape::select(bool selected) {
 }
 
 void LinkShape::set_head_pos(const glm::vec2& pos) {
-  start_method();
+  external();
   _head_pos = pos;
 }
 
 const glm::vec2& LinkShape::get_head_pos() const {
-  start_method();
+  external();
   return _head_pos;
 }
 
 void LinkShape::set_tail_pos(const glm::vec2& pos) {
-  start_method();
+  external();
   _tail_pos = pos;
 }
 
 const glm::vec2& LinkShape::get_tail_position() const {
-  start_method();
+  external();
   return _tail_pos;
 }
 

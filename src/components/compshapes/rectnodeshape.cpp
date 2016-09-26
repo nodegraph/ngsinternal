@@ -50,7 +50,7 @@ RectNodeShape::~RectNodeShape() {
 }
 
 void RectNodeShape::select(bool selected) {
-  start_method();
+  external();
   NodeShape::select(selected);
 
   if (selected) {
@@ -69,22 +69,22 @@ void RectNodeShape::select(bool selected) {
 }
 
 void RectNodeShape::set_pos(const glm::vec2& pos) {
-  start_method();
+  external();
   _pos = pos;
 }
 
 const glm::vec2& RectNodeShape::get_pos() const {
-  start_method();
+  external();
   return _pos;
 }
 
 const Polygon& RectNodeShape::get_bounds() const {
-  start_method();
+  external();
   return _bg_bounds;
 }
 
 HitRegion RectNodeShape::hit_test(const glm::vec2& point) const {
-  start_method();
+  external();
   if (!simple_hit_test(point)) {
     return kMissed;
   }
@@ -162,7 +162,7 @@ void RectNodeShape::update_chars_cache() {
 }
 
 void RectNodeShape::save(SimpleSaver& saver) const {
-  start_method();
+  external();
   CompShape::save(saver);
   // Position.
   saver.save(_pos.x);
@@ -174,7 +174,7 @@ void RectNodeShape::save(SimpleSaver& saver) const {
   saver.save(_color[3]);
 }
 void RectNodeShape::load(SimpleLoader& loader) {
-  start_method();
+  external();
   CompShape::load(loader);
   // Position.
   loader.load(_pos.x);

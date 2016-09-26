@@ -116,17 +116,17 @@ void OutputShape::update_state() {
 }
 
 const Polygon& OutputShape::get_bounds() const {
-  start_method();
+  external();
   return _bounds;
 }
 
 const std::vector<ShapeInstance>* OutputShape::get_tri_instances() const {
-  start_method();
+  external();
   return &_tris;
 }
 
 const glm::vec2& OutputShape::get_origin() const {
-  start_method();
+  external();
   return _origin;
 }
 

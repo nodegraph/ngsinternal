@@ -112,17 +112,17 @@ void InputShape::update_state() {
 }
 
 const Polygon& InputShape::get_bounds() const {
-  start_method();
+  external();
   return _bounds;
 }
 
 const std::vector<ShapeInstance>* InputShape::get_quad_instances() const {
-  start_method();
+  external();
   return &_quads;
 }
 
 const glm::vec2& InputShape::get_origin() const {
-  start_method();
+  external();
   return _origin;
 }
 

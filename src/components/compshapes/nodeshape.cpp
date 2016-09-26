@@ -35,7 +35,7 @@ NodeShape::~NodeShape() {
 }
 
 void NodeShape::select(bool selected) {
-  start_method();
+  external();
   SelectableShape::select(selected);
 
   if (selected) {
@@ -59,20 +59,20 @@ void NodeShape::select(bool selected) {
 }
 
 void NodeShape::edit(bool on) {
-  start_method();
+  external();
   _being_edited = on;
 }
 bool NodeShape::is_being_edited() const {
-  start_method();
+  external();
   return _being_edited;
 }
 
 void NodeShape::view(bool on) {
-  start_method();
+  external();
   _being_viewed = on;
 }
 bool NodeShape::is_being_viewed() const {
-  start_method();
+  external();
   return _being_viewed;
 }
 

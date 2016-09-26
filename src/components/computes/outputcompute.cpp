@@ -32,42 +32,42 @@ void OutputCompute::update_state() {
 }
 
 void OutputCompute::set_param_type(ParamType param_type) {
-  start_method();
+  external();
   _param_type = param_type;
 }
 
 ParamType OutputCompute::get_param_type() const {
-  start_method();
+  external();
   return _param_type;
 }
 
 void OutputCompute::set_exposed(bool exposed) {
-  start_method();
+  external();
   _exposed = exposed;
 }
 
 bool OutputCompute::is_exposed() const {
-  start_method();
+  external();
   return _exposed;
 }
 
 size_t OutputCompute::get_exposed_output_index() const {
-  start_method();
+  external();
   return _exposed_index;
 }
 
 size_t OutputCompute::get_num_exposed_outputs() const {
-  start_method();
+  external();
   return _num_exposed;
 }
 
 size_t OutputCompute::get_num_hidden_outputs() const {
-  start_method();
+  external();
   return get_num_outputs() - get_num_exposed_outputs();
 }
 
 size_t OutputCompute::get_num_outputs() const {
-  start_method();
+  external();
   return _num_outputs;
 }
 
@@ -121,7 +121,7 @@ void OutputCompute::update_index() {
 }
 
 void OutputCompute::save(SimpleSaver& saver) const {
-  start_method();
+  external();
   Compute::save(saver);
 
   // Serialize the param type.
@@ -133,7 +133,7 @@ void OutputCompute::save(SimpleSaver& saver) const {
 }
 
 void OutputCompute::load(SimpleLoader& loader) {
-  start_method();
+  external();
   Compute::load(loader);
 
   // Load the param type.

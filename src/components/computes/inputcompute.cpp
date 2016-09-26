@@ -34,27 +34,27 @@ void InputCompute::update_state() {
 }
 
 void InputCompute::set_value(const QVariant& value) {
-  start_method();
+  external();
   _param_value = value;
 }
 
 void InputCompute::set_param_type(ParamType param_type) {
-  start_method();
+  external();
   _param_type = param_type;
 }
 
 ParamType InputCompute::get_param_type() const {
-  start_method();
+  external();
   return _param_type;
 }
 
 void InputCompute::set_exposed(bool exposed) {
-  start_method();
+  external();
   _exposed = exposed;
 }
 
 bool InputCompute::is_exposed() const {
-  start_method();
+  external();
   return _exposed;
 }
 
@@ -67,7 +67,7 @@ bool InputCompute::can_link_output_compute(const Dep<OutputCompute>& output) con
 }
 
 bool InputCompute::link_output_compute(Dep<OutputCompute>& output) {
-  start_method();
+  external();
   assert(output);
 
   // Make sure to be disconnected before connecting.
@@ -84,19 +84,19 @@ bool InputCompute::link_output_compute(Dep<OutputCompute>& output) {
 }
 
 Dep<OutputCompute> InputCompute::get_output_compute() const {
-  start_method();
+  external();
   return _output;
 }
 
 void InputCompute::unlink_output_compute() {
-  start_method();
+  external();
   if (_output) {
     _output.reset();
   }
 }
 
 void InputCompute::save(SimpleSaver& saver) const {
-  start_method();
+  external();
   Compute::save(saver);
 
   // Serialize the param type.
@@ -116,7 +116,7 @@ void InputCompute::save(SimpleSaver& saver) const {
 }
 
 void InputCompute::load(SimpleLoader& loader) {
-  start_method();
+  external();
   Compute::load(loader);
 
   // Load the param type.

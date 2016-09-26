@@ -112,7 +112,7 @@ void InputLabelShape::update_state() {
 }
 
 const std::vector<CharInstance> * InputLabelShape::get_char_instances() const {
-  start_method();
+  external();
   return &_chars;
 }
 

@@ -55,7 +55,7 @@ void NodeSelection::update_state() {
 }
 
 void NodeSelection::set_edit_node(const Dep<NodeShape>& node) {
-  start_method();
+  external();
   if (_edit_node) {
     _edit_node->edit(false);
   }
@@ -64,7 +64,7 @@ void NodeSelection::set_edit_node(const Dep<NodeShape>& node) {
 }
 
 void NodeSelection::set_view_node(const Dep<NodeShape>& node) {
-  start_method();
+  external();
   if (_view_node) {
     _view_node->view(false);
   }
@@ -73,17 +73,17 @@ void NodeSelection::set_view_node(const Dep<NodeShape>& node) {
 }
 
 const Dep<NodeShape>& NodeSelection::get_edit_node() const {
-  start_method();
+  external();
   return _edit_node;
 }
 
 const Dep<NodeShape>& NodeSelection::get_view_node() const {
-  start_method();
+  external();
   return _view_node;
 }
 
 void NodeSelection::clear_edit_node() {
-  start_method();
+  external();
   if (_edit_node) {
     _edit_node->edit(false);
   }
@@ -91,7 +91,7 @@ void NodeSelection::clear_edit_node() {
 }
 
 void NodeSelection::clear_view_node() {
-  start_method();
+  external();
   if (_view_node) {
     _view_node->view(false);
   }
@@ -99,7 +99,7 @@ void NodeSelection::clear_view_node() {
 }
 
 void NodeSelection::select(const Dep<NodeShape>& e) {
-  start_method();
+  external();
   if (!e) {
     return;
   }
@@ -111,7 +111,7 @@ void NodeSelection::select(const Dep<NodeShape>& e) {
 }
 
 void NodeSelection::deselect(const Dep<NodeShape>& e) {
-  start_method();
+  external();
   if (e) {
     e->select(false);
   }
@@ -119,28 +119,28 @@ void NodeSelection::deselect(const Dep<NodeShape>& e) {
 }
 
 void NodeSelection::select(const DepUSet<NodeShape>& set) {
-  start_method();
+  external();
   for (const Dep<NodeShape>& cs : set) {
     select(cs);
   }
 }
 
 void NodeSelection::deselect(const DepUSet<NodeShape>& set) {
-  start_method();
+  external();
   for (const Dep<NodeShape>& cs: set) {
     deselect(cs);
   }
 }
 
 bool NodeSelection::is_selected(const Dep<NodeShape>& e) const{
-  start_method();
+  external();
   if (_selected.count(e)) {
     return true;
   }
   return false;
 }
 void NodeSelection::toggle_selected(const Dep<NodeShape>& e) {
-  start_method();
+  external();
   if (is_selected(e)) {
     deselect(e);
   } else {
@@ -153,7 +153,7 @@ const DepUSet<NodeShape>& NodeSelection::get_selected() const{
 }
 
 void NodeSelection::clear_selection() {
-  start_method();
+  external();
   // We don't call the deselect() method which erase elements one by one as it's slow.
   // We clear everything at once.
   for (const Dep<NodeShape>& d: _selected) {

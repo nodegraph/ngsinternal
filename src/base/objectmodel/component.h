@@ -169,8 +169,10 @@ class OBJECTMODEL_EXPORT Component {
  protected:
 
   // This should be added at the start of all methods.
-  void start_method() {dirty_state();}
-  void start_method() const {}
+  void external() {dirty_state();}
+  void external() const {}
+  void internal() {}
+  void internal() const {}
 
   // ------------------------------------------------
   // Our 4 get_dep implementations.
