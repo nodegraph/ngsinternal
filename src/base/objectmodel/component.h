@@ -104,7 +104,7 @@ class OBJECTMODEL_EXPORT Component {
   // Wires. Propagates clean wires through dependency traversal.
   // Note: This is differnt from Entity::clean_wires as it traverses
   //       through dependencies and through entity hierarchy visitation.
-  void clean_wires();
+  void update_wires();
 
   // Dirty/Clean State.
   void dirty_state();

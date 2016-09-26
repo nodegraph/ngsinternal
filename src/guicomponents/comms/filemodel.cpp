@@ -550,7 +550,7 @@ void FileModel::load_graph() {
     // Build the default graph.
     _graph_builder->build_test_graph();
     get_app_root()->initialize_wires();
-    get_app_root()->clean_wires();
+    get_app_root()->update_wires();
     save_graph();
   } else {
     load_graph(_working_row);
@@ -600,7 +600,7 @@ void FileModel::load_graph(int row) {
   // Although everything down from the root group is updated by the load.
   // Everything from the app root is not updated. So we update it here.
   get_app_root()->initialize_wires();
-  get_app_root()->clean_wires();
+  get_app_root()->update_wires();
 
   // Save the model with the latest row.
   save_model();

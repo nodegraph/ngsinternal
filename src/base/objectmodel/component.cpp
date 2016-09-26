@@ -384,7 +384,7 @@ void Component::propagate_cleanliness() {
   _dirty = false;
 }
 
-void Component::clean_wires() {
+void Component::update_wires() {
   // Update our wires.
   gather_wires();
 
@@ -393,7 +393,7 @@ void Component::clean_wires() {
     for (auto & dep_iter : iid_iter.second) {
       DepLinkPtr link = dep_iter.second.lock();
       if (link && link->dependency) {
-          link->dependency->clean_wires();
+          link->dependency->update_wires();
       }
     }
   }

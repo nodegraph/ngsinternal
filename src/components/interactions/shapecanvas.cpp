@@ -243,7 +243,7 @@ void ShapeCanvas::surface() {
   pop_group();
 
   // The group we're surfacing to needs to have its inputs and output updated.
-  get_app_root()->clean_wires();
+  get_app_root()->update_wires();
 }
 
 void ShapeCanvas::dive(Entity* selected) {

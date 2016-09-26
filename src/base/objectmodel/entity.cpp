@@ -230,14 +230,14 @@ void Entity::initialize_wires() {
   }
 }
 
-void Entity::clean_wires() {
+void Entity::update_wires() {
   // First we deal with our own components.
   for (auto &iter : _components) {
     iter.second->gather_wires();
   }
   // Next deal with our child entities.
   for (auto &iter : _children) {
-    iter.second->clean_wires();
+    iter.second->update_wires();
   }
 }
 
@@ -348,6 +348,7 @@ void Entity::load_components(SimpleLoader& loader) {
 void Entity::load(SimpleLoader& loader) {
   load_helper(loader);
   initialize_wires();
+  update_wires();
 }
 
 void Entity::load_helper(SimpleLoader& loader) {
@@ -362,6 +363,7 @@ void Entity::paste(SimpleLoader& loader) {
   // Load child entities.
   paste_without_merging(loader);
   initialize_wires();
+  update_wires();
 }
 
 void Entity::set_name(const std::string& name) {
@@ -505,6 +507,7 @@ void Entity::paste_without_merging(SimpleLoader& loader) {
   Entity* folder = new_ff Entity(this, "__internal_folder__");
   folder->paste_with_merging(loader);
   folder->initialize_wires();
+  folder->update_wires();
   folder->bake_paths();
 
 

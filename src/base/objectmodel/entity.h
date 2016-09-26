@@ -144,7 +144,7 @@ class OBJECTMODEL_EXPORT Entity {
 
   // Gathers all non-serialized component wires in entity tree below us and and on us.
   // Non-serialized component wires are those that are gathered dynamically by components.
-  void clean_wires();
+  void update_wires();
 
   // This returns true if an entity wants to be destroyed.
   bool should_destroy();
