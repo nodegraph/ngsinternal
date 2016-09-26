@@ -21,9 +21,11 @@ int main(int argc, char **argv) {
     root_group->create_internals();
 
     TestDeps* test_deps = new_ff TestDeps(app_root);
-    app_root->initialize_deps();
-    app_root->update_deps_and_hierarchy();
 
+    // Now that all entities have been created, let's initialize wires.
+    app_root->initialize_wires();
+
+    // Perform the test.
     test_deps->test();
 
     // Cleanup.

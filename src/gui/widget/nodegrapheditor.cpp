@@ -119,8 +119,7 @@ void NodeGraphEditor::initializeGL() {
     start_glew(); // Initialize glew for the scene graph render thread.
   }
 
-  get_app_root()->initialize_deps();
-  get_app_root()->update_deps_and_hierarchy();
+  get_app_root()->clean_wires();
   get_app_root()->initialize_gl();
 }
 
@@ -142,41 +141,36 @@ void NodeGraphEditor::paintGL() {
 
 void NodeGraphEditor::draw_canvas_gl() {
   makeCurrent();
-  _canvas->clean();
+  _canvas->clean_state();
   _canvas->draw_gl();
 }
 
 void NodeGraphEditor::mousePressEvent(QMouseEvent *event) {
   MouseInfo info = get_mouse_info(event);
-  _canvas->clean();
   _canvas->get_current_interaction()->pressed(info);
   update();
 }
 
 void NodeGraphEditor::mouseReleaseEvent(QMouseEvent* event) {
   MouseInfo info = get_mouse_info(event);
-  _canvas->clean();
   _canvas->get_current_interaction()->released(info);
   update();
 }
 
 void NodeGraphEditor::mouseMoveEvent(QMouseEvent *event) {
   MouseInfo info = get_mouse_info(event);
-  _canvas->clean();
   _canvas->get_current_interaction()->moved(info);
   update();
 }
 
 void NodeGraphEditor::mouseDoubleClickEvent(QMouseEvent *event) {
   MouseInfo info = get_mouse_info(event);
-  _canvas->clean();
   update();
 }
 
 void NodeGraphEditor::wheelEvent(QWheelEvent *event) {
   WheelInfo info;
   get_wheel_info(event,info);
-  _canvas->clean();
   _canvas->get_current_interaction()->wheel_rolled(info);
   event->accept();
   update();
@@ -184,13 +178,11 @@ void NodeGraphEditor::wheelEvent(QWheelEvent *event) {
 
 void NodeGraphEditor::keyPressEvent(QKeyEvent* event) {
   KeyInfo info = get_key_info_qt(event);
-  _canvas->clean();
   update();
 }
 
 void NodeGraphEditor::keyReleaseEvent(QKeyEvent * event) {
   KeyInfo info = get_key_info_qt(event);
-  _canvas->clean();
   update();
 }
 

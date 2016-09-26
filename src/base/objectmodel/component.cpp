@@ -63,15 +63,14 @@ Component::~Component() {
 
 }
 
-void Component::initialize_fixed_deps() {
-  _dep_loader->initialize_fixed_deps();
-}
-
-void Component::initialize_dynamic_deps() {
-  _dep_loader->initialize_dynamic_deps();
+void Component::initialize_wires() {
+  // Assumes we're already dirty.
+  _dep_loader->update_fixed_wires();
+  _dep_loader->update_dynamic_wires();
 }
 
 void Component::initialize_gl_helper() {
+  // Assumes we're already dirty.
   // Initialize in a depth first fashion.
   if (is_initialized_gl()) {
     return;
@@ -91,7 +90,6 @@ void Component::initialize_gl_helper() {
 }
 
 Entity* Component::our_entity() const {
-  start_method();
   return _entity;
 }
 
@@ -216,6 +214,7 @@ void Component::unregister_dependant(Component* c) const {
 
 // Returns true if there is a dependency path between the dependant and dependency.
 bool Component::is_recursive_dependency(const Component* dependency) const {
+  start_method();
   if (this == dependency) {
     return true;
   }
@@ -233,11 +232,12 @@ bool Component::is_recursive_dependency(const Component* dependency) const {
 }
 
 bool Component::dep_creates_cycle(const Component* dependency) const {
+  start_method();
   // The proposed link between us and the dependency would create a cycle
   // if the dependency is actually dependant on us.
   if (dependency->is_recursive_dependency(this)) {
     std::cerr << "Warning the requested component would have created a cycle so a null reference is likely being returned.\n";
-    assert(false);
+    //assert(false);
     return true;
   }
   return false;
@@ -384,11 +384,26 @@ void Component::propagate_cleanliness() {
   _dirty = false;
 }
 
-void Component::dirty() {
+void Component::clean_wires() {
+  // Update our wires.
+  gather_wires();
+
+  // Update the wires of our dependencies.
+  for (auto & iid_iter: _dependencies) {
+    for (auto & dep_iter : iid_iter.second) {
+      DepLinkPtr link = dep_iter.second.lock();
+      if (link && link->dependency) {
+          link->dependency->clean_wires();
+      }
+    }
+  }
+}
+
+void Component::dirty_state() {
   propagate_dirtiness(this);
 }
 
-void Component::clean() {
+void Component::clean_state() {
   propagate_cleanliness();
 }
 

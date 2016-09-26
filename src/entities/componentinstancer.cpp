@@ -107,7 +107,7 @@ Component* ComponentInstancer::instance(Entity* entity, size_t did) const{
 
 #define IID_CASE(C) case k##C: return C::kIID();
 
-size_t ComponentInstancer::get_loadable_iid(size_t did) const {
+size_t ComponentInstancer::get_iid_for_did(size_t did) const {
   ComponentDID d = static_cast<ComponentDID>(did);
   switch(d) {
     COMPONENT_CASES(IID_CASE)

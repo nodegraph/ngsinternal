@@ -63,10 +63,9 @@ AppWorker::AppWorker(Entity* parent)
 
 AppWorker::~AppWorker() {
 }
-void AppWorker::initialize_fixed_deps() {
-  std::cerr << "AppWorker initialize_fixed_deps state\n";
-  Component::initialize_fixed_deps();
 
+void AppWorker::initialize_wires() {
+  Component::initialize_wires();
   if (!_connected) {
     connect(_app_comm->get_web_socket(), SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_text_received(const QString &)));
     _connected = true;
@@ -709,7 +708,7 @@ void AppWorker::create_click_node_task() {
   float rel_y = rel_pos["y"].toFloat();
 
   Entity* node = _graph_builder->build_click_node(set_index, overlay_index, rel_x, rel_y);
-  get_dep<Compute>(node)->clean();
+  get_dep<Compute>(node)->clean_state(); // Execute the node's task.
 
   run_next_task();
 }

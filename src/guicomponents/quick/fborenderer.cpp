@@ -148,7 +148,7 @@ void FBORenderer::resize_gl(GLsizei width, GLsizei height) {
 
 
 void FBORenderer::draw() {
-  _ng_canvas->clean();
+  _ng_canvas->clean_state();
   _ng_canvas->draw_gl();
   // Make sure that all the gl commands have flushed threw.
   glFlush();

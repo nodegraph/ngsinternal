@@ -57,7 +57,7 @@ namespace ngs {
 
 
 
-const int NodeGraphQuickItem::kLongPressTimeThreshold = 400; // in milli seconds.
+const int NodeGraphQuickItem::kLongPressTimeThreshold = 10000; //400; // in milli seconds.
 const float NodeGraphQuickItem::kLongPressDistanceThreshold = 30; // in object space.
 const int NodeGraphQuickItem::kDoublePressTimeThreshold = 300; // max time between release events for a double tap/click.
 
@@ -109,17 +109,11 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
   _long_press_timer.setSingleShot(true);
   _long_press_timer.setInterval(kLongPressTimeThreshold);
   connect(&_long_press_timer,SIGNAL(timeout()),this,SLOT(on_long_press()));
-
-  initialize_fixed_deps();
 }
 
 NodeGraphQuickItem::~NodeGraphQuickItem() {
   setParentItem(NULL);
 }
-
-void NodeGraphQuickItem::initialize_fixed_deps() {
-  Component::initialize_fixed_deps();
-  _entity_instancer = _factory->get_entity_instancer();
 
 //  #if ARCH == ARCH_ANDROID
 //      {
@@ -130,7 +124,6 @@ void NodeGraphQuickItem::initialize_fixed_deps() {
 //        window()->setFormat(format);
 //      }
 //  #endif
-}
 
 void NodeGraphQuickItem::update_state() {
   lock_links(_file_model->get_work_setting(FileModel::kLockLinksRole).toBool());
@@ -140,7 +133,6 @@ void NodeGraphQuickItem::update_state() {
 void NodeGraphQuickItem::cleanup() {
   qDebug() <<  "node graph quick item doing cleanup \n";
   get_app_root()->uninitialize_gl();
-  get_app_root()->uninitialize_deps();
   finish_glew();
 }
 
@@ -192,22 +184,16 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
       gpu();
     }
 
-    get_app_root()->initialize_deps();
-    get_app_root()->update_deps_and_hierarchy();
+    get_app_root()->clean_wires();
     get_app_root()->initialize_gl();
 
     // Set the initial size.
     get_current_interaction()->resize_gl(_device_pixel_ratio*width(), _device_pixel_ratio*height());
   }
 
-  // We can only clean ourself on the rendering thread, due to components
-  // making use of the gl context.
-  //clean();
-
   // Create a texture display node.
   TextureDisplayNode* node = static_cast<TextureDisplayNode*>(oldNode);
   if (!node) {
-    clean();
     node = new_ff TextureDisplayNode();
     QSGTexture* test = _fbo_worker->get_display_texture();
     node->setTexture(_fbo_worker->get_display_texture());
@@ -252,8 +238,6 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
     return;
   }
-  clean();
-
   std::cerr << "received double click event\n";
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   update();
@@ -263,8 +247,6 @@ void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
-
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->moved(info);
   update();
@@ -274,8 +256,6 @@ void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
-
   MouseInfo info = get_hover_info(event);
   get_current_interaction()->moved(info);
   update();
@@ -285,8 +265,6 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
-
   _long_press_timer.start();
   _last_press = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->update_mouse_info(_last_press);
@@ -318,7 +296,6 @@ void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
 
   // Stop the long press timer if
   if (_long_press_timer.isActive()) {
@@ -338,8 +315,6 @@ void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
-
   WheelInfo info = get_wheel_info(event);
   get_current_interaction()->wheel_rolled(info);
   update();
@@ -350,8 +325,6 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
-
   KeyInfo info = get_key_info_qt(event);
   update();
 }
@@ -360,8 +333,6 @@ void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
-
   KeyInfo info = get_key_info_qt(event);
   update();
 }
@@ -370,8 +341,6 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
-
   switch (event->type()) {
   case QEvent::TouchBegin:
   case QEvent::TouchUpdate:
@@ -554,7 +523,7 @@ size_t NodeGraphQuickItem::get_num_nodes() const {
 
 void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
   e->create_internals();
-  e->initialize_deps();
+  e->initialize_wires();
   Dep<NodeShape> cs = get_dep<NodeShape>(e);
   if (centered) {
     get_current_interaction()->centralize(cs);
@@ -562,56 +531,60 @@ void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
     cs->set_pos(_last_press.object_space_pos.xy());
   }
   // The parenting group node needs to update its inputs and outputs.
-  get_app_root()->update_deps_and_hierarchy();
+  //get_app_root()->update_wires();
   _selection->clear_selection();
   _selection->select(cs);
+
+  // A little overkill, but we clean the wires on everything in this group.
+  our_entity()->clean_wires();
+
   // Save the node graph changes.
   save();
   update();
 }
 
 void NodeGraphQuickItem::create_group_node(bool centered) {
-  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "group", kGroupNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "group", kGroupNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_input_node(bool centered) {
-  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "input", kInputNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "input", kInputNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_output_node(bool centered) {
-  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "output", kOutputNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "output", kOutputNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_dot_node(bool centered) {
-  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "dot", kDotNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "dot", kDotNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_mock_node(bool centered) {
-  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "mock", kMockNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "mock", kMockNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_open_browser_node(bool centered) {
-  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "open browser", kOpenBrowserNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "open browser", kOpenBrowserNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_close_browser_node(bool centered) {
-  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "close browser", kCloseBrowserNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "close browser", kCloseBrowserNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_create_set_from_values_node(bool centered) {
-  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "create set from values", kCreateSetFromValuesNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "create set from values", kCreateSetFromValuesNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_create_set_from_type_node(bool centered) {
-  Entity* e = _entity_instancer->instance(get_current_interaction()->our_entity(), "create set from type", kCreateSetFromTypeNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "create set from type", kCreateSetFromTypeNodeEntity);
   finish_creating_node(e, centered);
 }
 
@@ -703,7 +676,7 @@ void NodeGraphQuickItem::edit_node() {
 
 void NodeGraphQuickItem::destroy_selection() {
   _selection->destroy_selection();
-  get_app_root()->update_deps_and_hierarchy();
+  get_app_root()->clean_dead_entities();
   // Save the node graph changes.
   save();
   update();
@@ -755,8 +728,6 @@ void NodeGraphQuickItem::frame_all() {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
-
   get_current_interaction()->frame_all();
   update();
 }
@@ -765,7 +736,6 @@ void NodeGraphQuickItem::frame_selected() {
   if (!_license_checker->license_is_valid()) {
       return;
     }
-  clean();
   get_current_interaction()->frame_selected(_selection->get_selected());
   update();
 }
@@ -787,7 +757,7 @@ void NodeGraphQuickItem::cut() {
   _selection->copy();
   _selection->destroy_selection();
   // Links may need to be cleaned up.
-  get_app_root()->update_deps_and_hierarchy();
+  get_app_root()->clean_dead_entities();
 
   // Save the node graph changes.
   save();
@@ -822,7 +792,7 @@ void NodeGraphQuickItem::paste(bool centered) {
     Dep<NodeShape> ns = get_dep<NodeShape>(e);
     if (ns) {
       node_shapes.insert(ns);
-      ns->clean(); // we need them clean as we'll be using their bounds.
+      ns->clean_state(); // we need them clean as we'll be using their bounds.
     }
   }
 

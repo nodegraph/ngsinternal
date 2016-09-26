@@ -11,11 +11,6 @@ LowerHierarchyChange::LowerHierarchyChange(Entity* entity):
 LowerHierarchyChange::~LowerHierarchyChange() {
 }
 
-void LowerHierarchyChange::initialize_fixed_deps() {
-  Component::initialize_fixed_deps();
-  update_state();
-}
-
 void LowerHierarchyChange::update_state() {
   _child_changes.clear();
   for (auto &iter: our_entity()->get_children()) {

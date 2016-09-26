@@ -30,8 +30,8 @@ class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
   virtual ~LinkShape();
 
   // Our state.
-  virtual HierarchyUpdate update_hierarchy();
   virtual void update_state();
+  virtual bool should_destroy();
 
 //  virtual void make_interactive();
   virtual void start_moving();

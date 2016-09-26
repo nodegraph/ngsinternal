@@ -42,13 +42,20 @@ class DynamicDepUSetWrapper: public PathedDep {
     }
   }
 
-  virtual void initialize() {
+  virtual bool update_wire() {
+    DepUSet<T> next_deps;
     for (size_t i = 0; i < _paths.size(); ++i) {
-      Entity* target = _fixed_dependant->has_entity(_paths[i]);
-      if (target) {
-        _deps->insert(_fixed_dependant->get_dep<T>(target));
+      Dep<T> next_dep(_fixed_dependant);
+      if (_fixed_dependant->our_entity()->has_entity(_paths[i])) {
+        next_dep = _fixed_dependant->get_dep<T>(_paths[i]);
+        next_deps->insert(next_dep);
       }
     }
+    if (*_deps == next_deps) {
+      return false;
+    }
+    *_deps = next_deps;
+    return true;
   }
 
  private:
@@ -57,21 +64,18 @@ class DynamicDepUSetWrapper: public PathedDep {
   std::vector<std::string> _paths;
 };
 
-
-
 // DynamicDeps change the dependency that they point to
 // dynamically at runtime.
 template<class T>
 class DynamicDepWrapper : public PathedDep {
  public:
 
-  const std::string kUnlinkedTarget="__INTERNAL__/UNLINKED";
+  const std::string kUnlinkedTarget="__INTERNAL__/UNLINKED"; // We assume this path never exists in the entity hierarchy.
 
   DynamicDepWrapper(Dep<T>* dep)
       : _dep(dep),
         _path(kUnlinkedTarget){
   }
-
   // Serialization.
   virtual void save(SimpleSaver& saver) const {
     bake_path();
@@ -80,17 +84,17 @@ class DynamicDepWrapper : public PathedDep {
   virtual void load(SimpleLoader& loader) {
     loader.load(_path);
   }
-  virtual void initialize() {
-    if (_path == kUnlinkedTarget) {
-      return;
+  virtual bool update_wire() {
+    Component* dep_owner = _dep->_fixed_dependant;
+    Dep<T> next_dep(dep_owner);
+    if (dep_owner->our_entity()->has_entity(_path)) {
+      next_dep = dep_owner->get_dep<T>(_path);
     }
-    Entity* target = _dep->_fixed_dependant->has_entity(_path);
-    if (target) {
-    	Component* c = _dep->_fixed_dependant;
-      *_dep = c->get_dep<T>(target);
-    } else {
-      _path = kUnlinkedTarget;
+    if (*_dep == next_dep) {
+      return false;
     }
+    *_dep = next_dep;
+    return true;
   }
   virtual void bake_path() const{
     if (*_dep) {
@@ -108,8 +112,9 @@ class DynamicDepWrapper : public PathedDep {
   mutable std::string _path;
 };
 
-// FixedDeps have fixed absolute or relative paths,
-// represented with a const string.
+// FixedDeps have a fixed absolute or relative path represented by a const string.
+// Note even though the relative path is fixed, if the entity or component that
+// owns this is moved in the entity hierarchy, it will refer to a differnt component.
 template<class T>
 class FixedDepWrapper : public PathedDep {
  public:
@@ -119,12 +124,20 @@ class FixedDepWrapper : public PathedDep {
   }
 
   // Serialization.
-  virtual void initialize() {
-    Entity* target = _dep->_fixed_dependant->has_entity(_path);
-    if (target) {
-    	Component* c = _dep->_fixed_dependant;
-      *_dep = c->get_dep<T>(target);
+  // Because the path is fixed there is no need for save and load logic.
+  // The path is fixed in the code.
+
+  virtual bool update_wire() {
+    Component* dep_owner = _dep->_fixed_dependant;
+    Dep<T> next_dep(dep_owner);
+    if (dep_owner->our_entity()->has_entity(_path)) {
+      next_dep = dep_owner->get_dep<T>(_path);
     }
+    if (*_dep == next_dep) {
+      return false;
+    }
+    *_dep = next_dep;
+    return true;
   }
 
  private:

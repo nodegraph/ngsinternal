@@ -34,7 +34,7 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void create_inputs_outputs();
 
   // Our state.
-  virtual void update_state();
+  virtual void gather_wires();
 
   // Info about our inputs. Note the output info can be found on OutputCompute.
   virtual size_t get_exposed_input_index(const std::string& input_name) const;
@@ -56,7 +56,6 @@ class COMPUTES_EXPORT Compute: public Component {
 
   static const QVariant _empty_variant;
 
- private:
   void gather_inputs();
 
  protected:

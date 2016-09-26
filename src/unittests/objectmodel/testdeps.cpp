@@ -61,27 +61,23 @@ void TestDeps::test() {
 }
 
 void TestDeps::set_up() {
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
-  assert(ei);
-
   Entity* root_group = get_entity("root");
   assert(root_group);
 
   // Create the nodes.
-  _mock = ei->instance(root_group, "mock", kBaseMockNodeEntity);
-  _dot_a = ei->instance(root_group, "dot_a", kBaseDotNodeEntity);
-  _dot_b = ei->instance(root_group, "dot_b", kBaseDotNodeEntity);
-  _dot_c = ei->instance(root_group, "dot_c", kBaseDotNodeEntity);
-  _dot_d = ei->instance(root_group, "dot_d", kBaseDotNodeEntity);
+  _mock = _factory->instance_entity(root_group, "mock", kBaseMockNodeEntity);
+  _dot_a = _factory->instance_entity(root_group, "dot_a", kBaseDotNodeEntity);
+  _dot_b = _factory->instance_entity(root_group, "dot_b", kBaseDotNodeEntity);
+  _dot_c = _factory->instance_entity(root_group, "dot_c", kBaseDotNodeEntity);
+  _dot_d = _factory->instance_entity(root_group, "dot_d", kBaseDotNodeEntity);
   _mock->create_internals();
   _dot_a->create_internals();
   _dot_b->create_internals();
   _dot_c->create_internals();
   _dot_d->create_internals();
 
-  // Update the dependencies.
-  our_entity()->get_app_root()->initialize_deps();
-  our_entity()->get_app_root()->update_deps_and_hierarchy();
+  // Initialize the wires.
+  our_entity()->get_app_root()->initialize_wires();
 
   // Cache the compute components of the nodes.
   _mock_compute = get_dep<Compute>(_mock);
@@ -133,7 +129,8 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean _mock_out_d.
-  _mock_d_compute->clean();
+  _mock_d_compute->clean_wires();
+  _mock_d_compute->clean_state();
   {
     // Only the mock c output param should be dirty.
     std::unordered_set<Component*> cs;
@@ -143,7 +140,8 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean _mock_out_c.
-  _mock_c_compute->clean();
+  _mock_c_compute->clean_wires();
+  _mock_c_compute->clean_state();
   {
     // Everything should be clean now.
     verify_all(false);
@@ -161,7 +159,8 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean the dot_c output plug.
-  _dot_c_out_compute->clean();
+  _dot_c_out_compute->clean_wires();
+  _dot_c_out_compute->clean_state();
   {
     // Everything should be clean now.
     verify_all(false);
@@ -179,7 +178,8 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean the dot_d output plug.
-  _dot_d_out_compute->clean();
+  _dot_d_out_compute->clean_wires();
+  _dot_d_out_compute->clean_state();
   {
     // Everything should be clean now.
     verify_all(false);
@@ -212,7 +212,8 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean dot_c_out_out.
-  _dot_c_out_compute->clean();
+  _dot_c_out_compute->clean_wires();
+  _dot_c_out_compute->clean_state();
   {
     // Only the stuff down the mock d chain should be dirty.
 
@@ -228,7 +229,8 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean dot_d_out_out.
-  _dot_d_out_compute->clean();
+  _dot_d_out_compute->clean_wires();
+  _dot_d_out_compute->clean_state();
   {
     // Everything should be clean now.
     verify_all(false);
@@ -274,7 +276,8 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_c_out_compute.
-  _dot_c_out_compute->clean();
+  _dot_c_out_compute->clean_wires();
+  _dot_c_out_compute->clean_state();
   {
     std::unordered_set<Component*> cs;
     cs.insert(_mock_d_compute.get());
@@ -286,7 +289,8 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_d_out_compute.
-  _dot_d_out_compute->clean();
+  _dot_d_out_compute->clean_wires();
+  _dot_d_out_compute->clean_state();
   {
     // Everything should be clean now.
     verify_all(false);
@@ -314,7 +318,8 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_c_out_compute.
-  _dot_c_out_compute->clean();
+  _dot_c_out_compute->clean_wires();
+  _dot_c_out_compute->clean_state();
   {
     std::unordered_set<Component*> cs;
     cs.insert(_mock_d_compute.get());
@@ -326,7 +331,8 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_d_out_compute.
-  _dot_d_out_compute->clean();
+  _dot_d_out_compute->clean_wires();
+  _dot_d_out_compute->clean_state();
   {
     // Everything should be clean now.
     verify_all(false);
@@ -344,7 +350,8 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_c_out_compute.
-  _dot_c_out_compute->clean();
+  _dot_c_out_compute->clean_wires();
+  _dot_c_out_compute->clean_state();
   {
     // Everything should be clean now.
     verify_all(false);
@@ -380,91 +387,91 @@ void TestDeps::test_dep_low_level() {
 void TestDeps::verify(std::unordered_set<Component*> cs, bool dirty) {
   // Node Computes.
   if (cs.count(_mock_compute.get())) {
-    assert(_mock_compute->is_dirty() == dirty);
+    assert(_mock_compute->is_state_dirty() == dirty);
   } else {
-    assert(_mock_compute->is_dirty() == !dirty);
+    assert(_mock_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_a_compute.get())) {
-    assert(_dot_a_compute->is_dirty() == dirty);
+    assert(_dot_a_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_a_compute->is_dirty() == !dirty);
+    assert(_dot_a_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_b_compute.get())) {
-    assert(_dot_b_compute->is_dirty() == dirty);
+    assert(_dot_b_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_b_compute->is_dirty() == !dirty);
+    assert(_dot_b_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_c_compute.get())) {
-    assert(_dot_c_compute->is_dirty() == dirty);
+    assert(_dot_c_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_c_compute->is_dirty() == !dirty);
+    assert(_dot_c_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_d_compute.get())) {
-    assert(_dot_d_compute->is_dirty() == dirty);
+    assert(_dot_d_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_d_compute->is_dirty() == !dirty);
+    assert(_dot_d_compute->is_state_dirty() == !dirty);
   }
 
   // Plug Computes.
   if (cs.count(_mock_a_compute.get())) {
-    assert(_mock_a_compute->is_dirty() == dirty);
+    assert(_mock_a_compute->is_state_dirty() == dirty);
   } else {
-    assert(_mock_a_compute->is_dirty() == !dirty);
+    assert(_mock_a_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_mock_b_compute.get())) {
-    assert(_mock_b_compute->is_dirty() == dirty);
+    assert(_mock_b_compute->is_state_dirty() == dirty);
   } else {
-    assert(_mock_b_compute->is_dirty() == !dirty);
+    assert(_mock_b_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_mock_c_compute.get())) {
-    assert(_mock_c_compute->is_dirty() == dirty);
+    assert(_mock_c_compute->is_state_dirty() == dirty);
   } else {
-    assert(_mock_c_compute->is_dirty() == !dirty);
+    assert(_mock_c_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_mock_d_compute.get())) {
-    assert(_mock_d_compute->is_dirty() == dirty);
+    assert(_mock_d_compute->is_state_dirty() == dirty);
   } else {
-    assert(_mock_d_compute->is_dirty() == !dirty);
+    assert(_mock_d_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_a_in_compute.get())) {
-    assert(_dot_a_in_compute->is_dirty() == dirty);
+    assert(_dot_a_in_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_a_in_compute->is_dirty() == !dirty);
+    assert(_dot_a_in_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_a_out_compute.get())) {
-    assert(_dot_a_out_compute->is_dirty() == dirty);
+    assert(_dot_a_out_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_a_out_compute->is_dirty() == !dirty);
+    assert(_dot_a_out_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_b_in_compute.get())) {
-    assert(_dot_b_in_compute->is_dirty() == dirty);
+    assert(_dot_b_in_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_b_in_compute->is_dirty() == !dirty);
+    assert(_dot_b_in_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_b_out_compute.get())) {
-    assert(_dot_b_out_compute->is_dirty() == dirty);
+    assert(_dot_b_out_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_b_out_compute->is_dirty() == !dirty);
+    assert(_dot_b_out_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_c_in_compute.get())) {
-    assert(_dot_c_in_compute->is_dirty() == dirty);
+    assert(_dot_c_in_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_c_in_compute->is_dirty() == !dirty);
+    assert(_dot_c_in_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_c_out_compute.get())) {
-    assert(_dot_c_out_compute->is_dirty() == dirty);
+    assert(_dot_c_out_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_c_out_compute->is_dirty() == !dirty);
+    assert(_dot_c_out_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_d_in_compute.get())) {
-    assert(_dot_d_in_compute->is_dirty() == dirty);
+    assert(_dot_d_in_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_d_in_compute->is_dirty() == !dirty);
+    assert(_dot_d_in_compute->is_state_dirty() == !dirty);
   }
   if (cs.count(_dot_d_out_compute.get())) {
-    assert(_dot_d_out_compute->is_dirty() == dirty);
+    assert(_dot_d_out_compute->is_state_dirty() == dirty);
   } else {
-    assert(_dot_d_out_compute->is_dirty() == !dirty);
+    assert(_dot_d_out_compute->is_state_dirty() == !dirty);
   }
 }
 
@@ -496,48 +503,69 @@ void TestDeps::verify_all(bool dirty) {
 
 void TestDeps::clean_all_components() {
   // Node Computes.
-  _mock_compute->clean();
-  _dot_a_compute->clean();
-  _dot_b_compute->clean();
-  _dot_c_compute->clean();
-  _dot_d_compute->clean();
+  _mock_compute->clean_wires();
+  _dot_a_compute->clean_wires();
+  _dot_b_compute->clean_wires();
+  _dot_c_compute->clean_wires();
+  _dot_d_compute->clean_wires();
 
   // Plug Computes.
-  _mock_a_compute->clean();
-  _mock_b_compute->clean();
-  _mock_c_compute->clean();
-  _mock_d_compute->clean();
-  _dot_a_in_compute->clean();
-  _dot_a_out_compute->clean();
-  _dot_b_in_compute->clean();
-  _dot_b_out_compute->clean();
-  _dot_c_in_compute->clean();
-  _dot_c_out_compute->clean();
-  _dot_d_in_compute->clean();
-  _dot_d_out_compute->clean();
+  _mock_a_compute->clean_wires();
+  _mock_b_compute->clean_wires();
+  _mock_c_compute->clean_wires();
+  _mock_d_compute->clean_wires();
+  _dot_a_in_compute->clean_wires();
+  _dot_a_out_compute->clean_wires();
+  _dot_b_in_compute->clean_wires();
+  _dot_b_out_compute->clean_wires();
+  _dot_c_in_compute->clean_wires();
+  _dot_c_out_compute->clean_wires();
+  _dot_d_in_compute->clean_wires();
+  _dot_d_out_compute->clean_wires();
+
+  // Node Computes.
+  _mock_compute->clean_state();
+  _dot_a_compute->clean_state();
+  _dot_b_compute->clean_state();
+  _dot_c_compute->clean_state();
+  _dot_d_compute->clean_state();
+
+  // Plug Computes.
+  _mock_a_compute->clean_state();
+  _mock_b_compute->clean_state();
+  _mock_c_compute->clean_state();
+  _mock_d_compute->clean_state();
+  _dot_a_in_compute->clean_state();
+  _dot_a_out_compute->clean_state();
+  _dot_b_in_compute->clean_state();
+  _dot_b_out_compute->clean_state();
+  _dot_c_in_compute->clean_state();
+  _dot_c_out_compute->clean_state();
+  _dot_d_in_compute->clean_state();
+  _dot_d_out_compute->clean_state();
 }
 
 void TestDeps::dirty_all_components() {
   // Dirty the compute components in the nodes.
-  _mock_compute->dirty();
-  _dot_a_compute->dirty();
-  _dot_b_compute->dirty();
-  _dot_c_compute->dirty();
-  _dot_d_compute->dirty();
+  _mock_compute->dirty_state();
+  _dot_a_compute->dirty_state();
+  _dot_b_compute->dirty_state();
+  _dot_c_compute->dirty_state();
+  _dot_d_compute->dirty_state();
 
   // Dirty the compute components in the plugs
-  _mock_a_compute->dirty();
-  _mock_b_compute->dirty();
-  _mock_c_compute->dirty();
-  _mock_d_compute->dirty();
-  _dot_a_in_compute->dirty();
-  _dot_a_out_compute->dirty();
-  _dot_b_in_compute->dirty();
-  _dot_b_out_compute->dirty();
-  _dot_c_in_compute->dirty();
-  _dot_c_out_compute->dirty();
-  _dot_d_in_compute->dirty();
-  _dot_d_out_compute->dirty();
+  _mock_a_compute->dirty_state();
+  _mock_b_compute->dirty_state();
+  _mock_c_compute->dirty_state();
+  _mock_d_compute->dirty_state();
+  _dot_a_in_compute->dirty_state();
+  _dot_a_out_compute->dirty_state();
+  _dot_b_in_compute->dirty_state();
+  _dot_b_out_compute->dirty_state();
+  _dot_c_in_compute->dirty_state();
+  _dot_c_out_compute->dirty_state();
+  _dot_d_in_compute->dirty_state();
+  _dot_d_out_compute->dirty_state();
 }
 
 

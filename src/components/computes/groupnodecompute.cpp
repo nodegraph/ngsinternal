@@ -39,14 +39,13 @@ void GroupNodeCompute::create_inputs_outputs() {
   create_namespace("links");
 }
 
-HierarchyUpdate GroupNodeCompute::update_hierarchy() {
-  bool hierarchy_changed = false;
+void GroupNodeCompute::gather_wires() {
+  bool changed = false;
 
   // Make sure the inputs and outputs on this group match up
   // with the input and output nodes inside this group.
   Entity* inputs_space = get_entity("./inputs");
   Entity* outputs_space = get_entity("./outputs");
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
 
   // Make sure all the input/outputs nodes in this group are represented by inputs/outputs.
   const Entity::NameToChildMap& children = our_entity()->get_children();
@@ -55,22 +54,25 @@ HierarchyUpdate GroupNodeCompute::update_hierarchy() {
     Entity* child = iter.second;
     size_t did = child->get_did();
     if (did == kInputNodeEntity) {
-      //InputNodeEntity* ine = static_cast<InputNodeEntity*>(child);
       if (inputs_space->has_child_name(child_name)) {
         continue;
       }
-      InputEntity* in = static_cast<InputEntity*>(ei->instance(inputs_space, child_name, kInputEntity));
+      InputEntity* in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, child_name, kInputEntity));
       in->create_internals();
-      in->initialize_deps();
-      hierarchy_changed = true;
+      in->set_param_type(ParamType::kQVariantMap);
+      in->set_exposed(true);
+      in->initialize_wires();
+      changed = true;
     } else if (did == kOutputNodeEntity) {
       if (outputs_space->has_child_name(child_name)) {
         continue;
       }
-      OutputEntity* out = static_cast<OutputEntity*>(ei->instance(outputs_space, child_name, kOutputEntity));
+      OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, child_name, kOutputEntity));
       out->create_internals();
-      out->initialize_deps();
-      hierarchy_changed = true;
+      out->set_param_type(ParamType::kQVariantMap);
+      out->set_exposed(true);
+      out->initialize_wires();
+      changed = true;
     }
   }
 
@@ -93,29 +95,20 @@ HierarchyUpdate GroupNodeCompute::update_hierarchy() {
     for (Entity* e : _inputs_to_destroy) {
       // This can leave dangling link shapes, which are cleaned up by subsequest passes of update_hierarchy().
       delete_ff(e);
-      hierarchy_changed = true;
+      changed = true;
     }
     for (Entity* e : _outputs_to_destroy) {
       // This can leave dangling link shapes, which are cleaned up by subsequest passes of update_hierarchy().
       delete_ff(e);
-      hierarchy_changed = true;
+      changed = true;
     }
   }
 
-  if (hierarchy_changed) {
-    return kChanged;
-  }
-  return kUnchanged;
-
+  // Now do the base Compute::update_wires();
+  Compute::gather_wires();
 }
 
 void GroupNodeCompute::update_state() {
-  Compute::update_state();
-
-  if (!dep_is_dirty(_lower_change)) {
-    return;
-  }
-
   // For each input data if there is an associated input node, we set data on the input node
   // from the input data. The input data handles connections to other entities internally.
   for (auto &iter: _inputs) {

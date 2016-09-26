@@ -26,7 +26,6 @@ InputCompute::~InputCompute() {
 }
 
 void InputCompute::update_state() {
-  Compute::update_state();
   if (_output) {
     set_result("out", _output->get_result("out"));
   } else {

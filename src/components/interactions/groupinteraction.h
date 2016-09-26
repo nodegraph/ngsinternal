@@ -57,8 +57,10 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   virtual ~GroupInteraction();
 
   // Our state.
-  virtual void initialize_fixed_deps();
   virtual void update_state();
+
+  // Optimized wire gathering.
+  virtual void update_shape_collective();
 
   // -----------------------------------------------------------------------
   // Handle all the incoming input from the user.
@@ -145,7 +147,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
 
  private:
 
-  Entity* create_link();
+  Dep<LinkShape> create_link();
   void destroy_link(Entity* entity);
   bool has_link(Entity* entity) const;
 

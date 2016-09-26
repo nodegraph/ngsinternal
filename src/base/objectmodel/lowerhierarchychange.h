@@ -32,7 +32,6 @@ class OBJECTMODEL_EXPORT LowerHierarchyChange : public Component {
   virtual ~LowerHierarchyChange();
 
   // Our state.
-  virtual void initialize_fixed_deps();
   virtual void update_state();
 
  private:

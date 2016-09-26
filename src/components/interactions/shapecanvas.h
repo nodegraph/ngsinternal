@@ -36,7 +36,7 @@ class INTERACTIONS_EXPORT ShapeCanvas: public Component {
   virtual ~ShapeCanvas();
 
   // Our state.
-  virtual void initialize_fixed_deps();
+  virtual void gather_wires();
   virtual void update_state();
   virtual void initialize_gl();
   virtual void uninitialize_gl();

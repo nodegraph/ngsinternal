@@ -23,27 +23,22 @@ CompShapeCollective::CompShapeCollective(Entity* entity)
 CompShapeCollective::~CompShapeCollective() {
 }
 
-void CompShapeCollective::update_state() {
-  //std::cerr << "CompShapeCollective is updating state\n";
-
-  if (dep_is_dirty(_lower_change)) {
-
-    //std::cerr << "comp shape collective lower change is dirty!\n";
-
-    // Clear any comp shapes that have been destroyed.
-    DepUSet<CompShape>::iterator iter = _comp_shapes.begin();
-    while (iter != _comp_shapes.end()) {
-      if (!*iter) {
-        iter = _comp_shapes.erase(iter);
-      } else {
-        ++iter;
-      }
+void CompShapeCollective::gather_wires() {
+  // Clear any comp shapes that have been destroyed.
+  DepUSet<CompShape>::iterator iter = _comp_shapes.begin();
+  while (iter != _comp_shapes.end()) {
+    if (!*iter) {
+      iter = _comp_shapes.erase(iter);
+    } else {
+      ++iter;
     }
-    // Collect any new comp shapes.
-    collect_comp_shapes();
   }
+  // Collect any new comp shapes.
+  collect_comp_shapes();
+}
 
-  // Collect our shapes.
+void CompShapeCollective::update_state() {
+  // Collect our shape instances.
   _quads.clear();
   collect_quad_instances(_quads);
 
@@ -59,13 +54,11 @@ void CompShapeCollective::update_state() {
 }
 
 void CompShapeCollective::add(const Dep<CompShape>& c) {
-  start_method();
   assert(!_comp_shapes.count(c));
   _comp_shapes.insert(c);
 }
 
 void CompShapeCollective::remove(const Dep<CompShape>& c) {
-  start_method();
   assert(_comp_shapes.count(c));
   _comp_shapes.erase(c);
 }
@@ -89,9 +82,6 @@ void CompShapeCollective::collect_comp_shapes(Entity* entity) {
     Dep<CompShape> cs = get_dep<CompShape>(entity);
     if (!_comp_shapes.count(cs)) {
       add(cs);
-      // Newly added entities will be dirty, so we need to clean it
-      // inside our update.
-      cs->clean();
     }
   }
 
@@ -110,51 +100,58 @@ void CompShapeCollective::collect_comp_shapes(Entity* entity) {
 }
 
 void CompShapeCollective::collect_quad_instances(std::vector<ShapeInstance>& quads) {
-  start_method();
-  for (auto &dep: _comp_shapes) {
+  for (auto &dep : _comp_shapes) {
+    if (!dep) {
+      continue;
+    }
     const std::vector<ShapeInstance>* shapes = dep->get_quad_instances();
     if (!shapes) {
       continue;
     }
-    quads.insert(quads.end(),shapes->begin(),shapes->end());
+    quads.insert(quads.end(), shapes->begin(), shapes->end());
   }
 }
 
 void CompShapeCollective::collect_tri_instances(std::vector<ShapeInstance>& quads) {
-  start_method();
-  for (auto &dep: _comp_shapes) {
+  for (auto &dep : _comp_shapes) {
+    if (!dep) {
+      continue;
+    }
     const std::vector<ShapeInstance>* shapes = dep->get_tri_instances();
     if (!shapes) {
       continue;
     }
-    quads.insert(quads.end(),shapes->begin(),shapes->end());
+    quads.insert(quads.end(), shapes->begin(), shapes->end());
   }
 }
 
 void CompShapeCollective::collect_circle_instances(std::vector<ShapeInstance>& circles) {
-  start_method();
-  for (auto &dep: _comp_shapes) {
+  for (auto &dep : _comp_shapes) {
+    if (!dep) {
+      continue;
+    }
     const std::vector<ShapeInstance>* shapes = dep->get_circle_instances();
     if (!shapes) {
       continue;
     }
-    circles.insert(circles.end(),shapes->begin(),shapes->end());
+    circles.insert(circles.end(), shapes->begin(), shapes->end());
   }
 }
 
 void CompShapeCollective::collect_char_instances(std::vector<CharInstance>& chars) {
-  start_method();
-  for (auto &dep: _comp_shapes) {
+  for (auto &dep : _comp_shapes) {
+    if (!dep) {
+      continue;
+    }
     const std::vector<CharInstance>* instances = dep->get_char_instances();
     if (!instances) {
       continue;
     }
-    chars.insert(chars.end(),instances->begin(),instances->end());
+    chars.insert(chars.end(), instances->begin(), instances->end());
   }
 }
 
 Dep<CompShape> CompShapeCollective::hit_test(const glm::vec2& point, HitRegion& type) {
-  start_method();
   for (auto &dep: _comp_shapes) {
     if (dep) {
       type = dep->hit_test(point);

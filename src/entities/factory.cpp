@@ -16,13 +16,4 @@ Factory::~Factory() {
   delete_ff(_entity_instancer);
 }
 
-BaseEntityInstancer* Factory::get_entity_instancer() const {
-return _entity_instancer;
-}
-
-BaseComponentInstancer* Factory::get_component_instancer() const {
-  return _component_instancer;
-}
-
-
 }

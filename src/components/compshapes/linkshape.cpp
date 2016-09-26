@@ -48,18 +48,17 @@ LinkShape::LinkShape(Entity* entity)
 LinkShape::~LinkShape() {
 }
 
-HierarchyUpdate LinkShape::update_hierarchy() {
+bool LinkShape::should_destroy() {
   // When interactively dragging the link, we don't allow hierarchy updates.
   if (_interactive) {
-    return kUnchanged;
+    return false;
   }
+
   // If either the input or output shape is not set then this is a dangling link that needs to be destroyed.
   if ((!_input_shape) || (!_output_shape)) {
-    return kRequestDestruction;
-  } else {
-    return kUnchanged;
+    return true;
   }
-  return kRequestDestruction;
+  return false;
 }
 
 void LinkShape::update_state() {

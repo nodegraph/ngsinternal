@@ -20,7 +20,6 @@ void MockNodeCompute::create_inputs_outputs() {
 }
 
 void MockNodeCompute::update_state() {
-  Compute::update_state();
   ++_counter;
   set_result("c", _counter);
   set_result("d", _counter+1);

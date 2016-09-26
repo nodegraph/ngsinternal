@@ -82,7 +82,7 @@ size_t EntityInstancer::get_iid(size_t did) const {
 
 #define NAME_CASE(E) case k##E: return E::kDIDName();
 
-const char* EntityInstancer::get_did_name(size_t did) const {
+const char* EntityInstancer::get_name_for_did(size_t did) const {
   EntityDID d = static_cast<EntityDID>(did);
   switch (d) {
     ENTITY_CASES(NAME_CASE)

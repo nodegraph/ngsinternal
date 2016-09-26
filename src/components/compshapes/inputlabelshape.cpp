@@ -34,32 +34,21 @@ InputLabelShape::InputLabelShape(Entity* entity)
 InputLabelShape::~InputLabelShape() {
 }
 
-bool InputLabelShape::update_deps() {
-  start_method();
-  std::vector<Entity*> dependants = _input_shape->get_dependants_by_did(kICompShape, kLinkShape);
+void InputLabelShape::gather_wires() {
+  std::unordered_set<Entity*> dependants = _input_shape->get_dependants_by_did(kICompShape, kLinkShape);
   //assert(dependants.size() <= 1);
 
   // Note there should only be one link, but when dragging the head of the link onto
   // a connected input there will two links for a moment.
-
   if (dependants.size() > 0) {
-    Dep<LinkShape> link_shape = get_dep<LinkShape>(dependants[dependants.size()-1]);
-    if (link_shape == _link_shape) {
-      // Return false if the dependencies haven't changed.
-      return false;
-    } else {
-      _link_shape = link_shape;
-      // Return true if the dependencies haven't changed.
-      return true;
+    Entity* dependant = *(dependants.begin());
+    // If the link shape component owner is the same, then the link shape likely the same.
+    if (_link_shape.get() && _link_shape.get()->our_entity() != dependant) {
+      _link_shape = get_dep<LinkShape>(dependant);
     }
-  }
-
-  // Otherwise.
-  if (_link_shape) {
+  } else {
     _link_shape.reset();
-    return true;
   }
-  return false;
 }
 
 void InputLabelShape::update_state() {

@@ -24,10 +24,8 @@ GraphBuilder::~GraphBuilder() {
 }
 
 Entity* GraphBuilder::build_open_browser_node() {
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
   Entity* root_group = get_entity("root");
-
-  Entity* node = ei->instance(root_group, "open browser", kOpenBrowserNodeEntity);
+  Entity* node = _factory->instance_entity(root_group, "open browser", kOpenBrowserNodeEntity);
   node->create_internals();
 
   // Todo: Connect it to the last selected node. Then make this node selected.
@@ -36,10 +34,8 @@ Entity* GraphBuilder::build_open_browser_node() {
 }
 
 Entity* GraphBuilder::build_close_browser_node() {
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
   Entity* root_group = get_entity("root");
-
-  Entity* node = ei->instance(root_group, "close browser", kCloseBrowserNodeEntity);
+  Entity* node = _factory->instance_entity(root_group, "close browser", kCloseBrowserNodeEntity);
   node->create_internals();
 
   // Todo: Connect it to the last selected node. Then make this node selected.
@@ -48,10 +44,8 @@ Entity* GraphBuilder::build_close_browser_node() {
 }
 
 Entity* GraphBuilder::build_click_node(int set_index, int overlay_index, float rel_x, float rel_y) {
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
   Entity* root_group = get_entity("root");
-
-  Entity* node = ei->instance(root_group, "input one", kInputNodeEntity);
+  Entity* node = _factory->instance_entity(root_group, "input one", kInputNodeEntity);
   node->create_internals();
 
   Dep<InputCompute> si_dep = get_dep<InputCompute>(node->get_entity("./inputs/set_index"));
@@ -73,8 +67,6 @@ void GraphBuilder::build_stress_graph() {
 
   std::cerr << "starting to create nodes\n";
 
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
-
   Entity* root_group = get_entity("root");
 
   const size_t cols = 100;
@@ -89,7 +81,7 @@ void GraphBuilder::build_stress_graph() {
       std::string name = boost::lexical_cast<std::string>(num);
 
       // Build a node.
-      Entity* node = ei->instance(root_group, name, kMockNodeEntity);
+      Entity* node = _factory->instance_entity(root_group, name, kMockNodeEntity);
       node->create_internals();
 
       // Position it.
@@ -116,23 +108,22 @@ void GraphBuilder::build_stress_graph() {
 }
 
 void GraphBuilder::build_test_graph() {
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
   Entity* root_group = get_entity("root");
 
-  Entity* i1 = ei->instance(root_group, "input one", kInputNodeEntity);
-  Entity* o1 = ei->instance(root_group, "output one", kOutputNodeEntity);
+  Entity* i1 = _factory->instance_entity(root_group, "input one", kInputNodeEntity);
+  Entity* o1 = _factory->instance_entity(root_group, "output one", kOutputNodeEntity);
   i1->create_internals();
   o1->create_internals();
 
-  Entity* n1 = ei->instance(root_group, "middle node", kMockNodeEntity);
-  Entity* n2 = ei->instance(root_group, "top node", kMockNodeEntity);
-  Entity* n3 = ei->instance(root_group, "bottom node", kMockNodeEntity);
+  Entity* n1 = _factory->instance_entity(root_group, "middle node", kMockNodeEntity);
+  Entity* n2 = _factory->instance_entity(root_group, "top node", kMockNodeEntity);
+  Entity* n3 = _factory->instance_entity(root_group, "bottom node", kMockNodeEntity);
   n1->create_internals();
   n2->create_internals();
   n3->create_internals();
 
-  Entity* d1 = ei->instance(root_group, "dot1", kDotNodeEntity);
-  Entity* d2 = ei->instance(root_group, "dot2", kDotNodeEntity);
+  Entity* d1 = _factory->instance_entity(root_group, "dot1", kDotNodeEntity);
+  Entity* d2 = _factory->instance_entity(root_group, "dot2", kDotNodeEntity);
   d1->create_internals();
   d2->create_internals();
 
@@ -154,8 +145,7 @@ void GraphBuilder::build_test_graph() {
   Entity* n3_ope1 = n3->get_entity("./outputs/c");
   Entity* n3_ope2 = n3->get_entity("./outputs/d");
 
-  get_app_root()->initialize_deps();
-  get_app_root()->update_deps_and_hierarchy();
+  get_app_root()->initialize_wires();
 
 
   Dep<InputCompute> n1_ip1 = get_dep<InputCompute>(n1_ipe1);
@@ -209,7 +199,7 @@ void GraphBuilder::build_test_graph() {
   // ------------------------------------------------------------------------
 
   {
-    Entity* sub_group = ei->instance(root_group, "group one", kGroupNodeEntity);
+    Entity* sub_group = _factory->instance_entity(root_group, "group one", kGroupNodeEntity);
     sub_group->create_internals();
 
     glm::vec2 pos;
@@ -217,18 +207,18 @@ void GraphBuilder::build_test_graph() {
     pos.y = 700;
     get_dep<CompShape>(sub_group)->set_pos(pos);
 
-    Entity* n1 = ei->instance(sub_group, "sub middle node", kMockNodeEntity);
-    Entity* n2 = ei->instance(sub_group, "sub top node", kMockNodeEntity);
-    Entity* n3 = ei->instance(sub_group, "sub bottom node", kMockNodeEntity);
-    Entity* n4 = ei->instance(sub_group, "NoOp", kScriptNodeEntity);
+    Entity* n1 = _factory->instance_entity(sub_group, "sub middle node", kMockNodeEntity);
+    Entity* n2 = _factory->instance_entity(sub_group, "sub top node", kMockNodeEntity);
+    Entity* n3 = _factory->instance_entity(sub_group, "sub bottom node", kMockNodeEntity);
+    Entity* n4 = _factory->instance_entity(sub_group, "NoOp", kScriptNodeEntity);
 
     n1->create_internals();
     n2->create_internals();
     n3->create_internals();
     n4->create_internals();
 
-    Entity* i1 = ei->instance(sub_group, "input1", kInputNodeEntity);
-    Entity* o1 = ei->instance(sub_group, "output1", kOutputNodeEntity);
+    Entity* i1 = _factory->instance_entity(sub_group, "input1", kInputNodeEntity);
+    Entity* o1 = _factory->instance_entity(sub_group, "output1", kOutputNodeEntity);
 
     i1->create_internals();
     o1->create_internals();
@@ -251,8 +241,7 @@ void GraphBuilder::build_test_graph() {
     Entity* n3_ope1 = n3->get_entity("./outputs/c");
     Entity* n3_ope2 = n3->get_entity("./outputs/d");
 
-    get_app_root()->initialize_deps();
-    get_app_root()->update_deps_and_hierarchy();
+    get_app_root()->initialize_wires();
 
 	Dep<InputCompute> n1_ip1 = get_dep<InputCompute>(n1_ipe1);
 	Dep<InputCompute> n1_ip2 = get_dep<InputCompute>(n1_ipe2);

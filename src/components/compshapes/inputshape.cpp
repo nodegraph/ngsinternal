@@ -128,7 +128,7 @@ const glm::vec2& InputShape::get_origin() const {
 // We (the InputShape instance) can't grab a dep to the LinkShape as it will create a cycle.
 // The link shape has a dependency on us. This is why we return the entity of the link shape.
 Entity* InputShape::find_link_entity() {
-  std::vector<Entity*> dependants = get_dependants_by_did(kICompShape, kLinkShape);
+  std::unordered_set<Entity*> dependants = get_dependants_by_did(kICompShape, kLinkShape);
   assert(dependants.size() <= 1);
   if (dependants.size()>0) {
     return *dependants.begin();

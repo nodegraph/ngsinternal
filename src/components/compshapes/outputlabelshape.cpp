@@ -29,23 +29,16 @@ OutputLabelShape::OutputLabelShape(Entity* entity)
 OutputLabelShape::~OutputLabelShape() {
 }
 
-bool OutputLabelShape::update_deps() {
-  start_method();
+void OutputLabelShape::gather_wires() {
   DepUSet<LinkShape> deps;
-  std::vector<Entity*> dependants = _output_shape->get_dependants_by_did(kICompShape, kLinkShape);
+  std::unordered_set<Entity*> dependants = _output_shape->get_dependants_by_did(kICompShape, kLinkShape);
+
+  // Update our wires.
+  _link_shapes.clear();
   for (Entity* e: dependants) {
     Dep<LinkShape> link_shape = get_dep<LinkShape>(e);
-    deps.insert(link_shape);
+    _link_shapes.insert(link_shape);
   }
-
-  // Return false if the dependencies haven't changed.
-  if (deps == _link_shapes) {
-    return false;
-  }
-
-  // Otherwise return true.
-  _link_shapes = deps;
-  return true;
 }
 
 void OutputLabelShape::update_state() {

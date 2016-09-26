@@ -81,7 +81,7 @@
 
 namespace ngs {
 
-void QMLAppEntity::create_internals() {
+void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff Factory(this);
   // Gui related.
@@ -213,7 +213,7 @@ NodeGraphView* QMLAppEntity::get_node_graph_view() {
   return get<NodeGraphView>();
 }
 
-void QtAppEntity::create_internals() {
+void QtAppEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff Factory(this);
   // Gui related.
@@ -223,7 +223,7 @@ void QtAppEntity::create_internals() {
   new_ff ShapeCanvas(this);
 }
 
-void AppEntity::create_internals() {
+void AppEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff Factory(this);
   // Gui related.
@@ -233,7 +233,7 @@ void AppEntity::create_internals() {
   new_ff ShapeCanvas(this);
 }
 
-void GroupNodeEntity::create_internals() {
+void GroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff GroupNodeCompute(this))->create_inputs_outputs();
   // Gui related.
@@ -300,82 +300,82 @@ void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>
     }
 }
 
-void LinkEntity::create_internals() {
+void LinkEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   // Gui components.
   new_ff LinkShape(this);
 }
 
-void DotNodeEntity::create_internals() {
+void DotNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff DotNodeCompute(this))->create_inputs_outputs();
   // Gui components.
   DotNodeShape* shape = new_ff DotNodeShape(this);
 }
 
-void InputNodeEntity::create_internals() {
+void InputNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff InputNodeCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff InputNodeShape(this);
 }
 
-void OutputNodeEntity::create_internals() {
+void OutputNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff OutputNodeCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff OutputNodeShape(this);
 }
 
-void MockNodeEntity::create_internals() {
+void MockNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff MockNodeCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff RectNodeShape(this);
 }
 
-void OpenBrowserNodeEntity::create_internals() {
+void OpenBrowserNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff OpenBrowserCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff RectNodeShape(this);
 }
 
-void CloseBrowserNodeEntity::create_internals() {
+void CloseBrowserNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff CloseBrowserCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff RectNodeShape(this);
 }
 
-void CreateSetFromValuesNodeEntity::create_internals() {
+void CreateSetFromValuesNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff CreateSetFromValuesCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff RectNodeShape(this);
 }
 
-void CreateSetFromTypeNodeEntity::create_internals() {
+void CreateSetFromTypeNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff CreateSetFromTypeCompute(this))->create_inputs_outputs();
   new_ff RectNodeShape(this);
 }
 
-void MouseActionNodeEntity::create_internals() {
+void MouseActionNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff MouseActionCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff RectNodeShape(this);
 }
 
-void ScriptNodeEntity::create_internals() {
+void ScriptNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff ScriptNodeCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff RectNodeShape(this);
 }
 
-void InputEntity::create_internals() {
+void InputEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff InputCompute(this);
   // Gui components.
@@ -395,13 +395,13 @@ void InputEntity::set_exposed(bool expose) {
   get<InputCompute>()->set_exposed(expose);
 }
 
-void InputLabelEntity::create_internals() {
+void InputLabelEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   // Gui components.
   new_ff InputLabelShape(this);
 }
 
-void OutputEntity::create_internals() {
+void OutputEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff OutputCompute(this);
   // Gui components.
@@ -421,7 +421,7 @@ void OutputEntity::set_exposed(bool expose) {
   get<OutputCompute>()->set_exposed(expose);
 }
 
-void OutputLabelEntity::create_internals() {
+void OutputLabelEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   // Gui components.
   new_ff OutputLabelShape(this);

@@ -87,8 +87,8 @@ void Entity::rename(const std::string& next_name) {
     set_name(next_name);
   }
   // A change has occurred to this entity.
-  get<LowerHierarchyChange>()->dirty();
-  get<UpperHierarchyChange>()->dirty();
+  get<LowerHierarchyChange>()->dirty_state();
+  get<UpperHierarchyChange>()->dirty_state();
 }
 
 void Entity::add_orphan_child(Entity* child) {
@@ -105,13 +105,13 @@ void Entity::add_orphan_child(Entity* child) {
   // Insert the child under the unique name.
   _children[child->get_name()] = child;
   // A change has occurred to this entity.
-  get<LowerHierarchyChange>()->dirty();
-  get<UpperHierarchyChange>()->dirty();
+  get<LowerHierarchyChange>()->dirty_state();
+  get<UpperHierarchyChange>()->dirty_state();
   // The child's upper hierarchy component is not connected yet.
   // So we make it dirty too.
   UpperHierarchyChange* u = child->get<UpperHierarchyChange>();
   if (u) {
-	  u->dirty();
+	  u->dirty_state();
   }
 }
 
@@ -146,13 +146,13 @@ void Entity::remove_child(Entity* child) {
   _children.erase(child->get_name());
   child->_parent = NULL;
   // A change has occurred to this entity.
-  get<LowerHierarchyChange>()->dirty();
-  get<UpperHierarchyChange>()->dirty();
+  get<LowerHierarchyChange>()->dirty_state();
+  get<UpperHierarchyChange>()->dirty_state();
   // The child's upper hierarchy component is not connected yet.
   // So we make it dirty too.
   UpperHierarchyChange* u = child->get<UpperHierarchyChange>();
   if (u) {
-    u->dirty();
+    u->dirty_state();
   }
 }
 
@@ -221,126 +221,23 @@ bool Entity::is_root_group() const {
   return false;
 }
 
-void Entity::initialize_fixed_deps() {
+void Entity::initialize_wires() {
   for (auto &iter: _components) {
-    iter.second->initialize_fixed_deps();
+    iter.second->initialize_wires();
   }
   for (auto &iter: _children) {
-    iter.second->initialize_fixed_deps();
+    iter.second->initialize_wires();
   }
 }
 
-void Entity::initialize_dynamic_deps() {
-  for (auto &iter: _components) {
-    iter.second->initialize_dynamic_deps();
+void Entity::clean_wires() {
+  // First we deal with our own components.
+  for (auto &iter : _components) {
+    iter.second->gather_wires();
   }
-  for (auto &iter: _children) {
-    iter.second->initialize_dynamic_deps();
-  }
-}
-
-void Entity::initialize_deps() {
-  initialize_fixed_deps();
-  initialize_dynamic_deps();
-}
-
-void Entity::uninitialize_deps() {
-  for (auto &iter: _components) {
-    iter.second->uninitialize_deps();
-  }
-  for (auto &iter: _children) {
-    iter.second->uninitialize_deps();
-  }
-}
-
-void Entity::update_deps() {
-  // Encoding the proper update order among the components
-  // is tedious to encode. So we currently rely on multiple
-  // passes until the deps no longer change.
-  static const size_t kMaxUpdateRuns = 5;
-  size_t count = 0;
-  while(update_deps_helper()) {
-    ++count;
-    if (count>kMaxUpdateRuns) {
-      assert(false);
-    }
-  }
-}
-
-bool Entity::update_deps_helper() {
-  bool changed = false;
-  for (auto &iter: _components) {
-    if (iter.second->update_deps()) {
-      changed = true;
-    }
-  }
-  for (auto &iter: _children) {
-    if (iter.second->update_deps_helper()) {
-      changed = true;
-    }
-  }
-  return changed;
-}
-
-void Entity::update_hierarchy() {
-  // Encoding the proper update order among the components
-  // is tedious to encode. So we currently rely on multiple
-  // passes until the hierarchy no longer change.
-  static const size_t kMaxUpdateRuns = 5;
-  size_t count = 0;
-  while(update_hierarchy_helper()) {
-    ++count;
-    if (count>kMaxUpdateRuns) {
-      assert(false);
-    }
-  }
-}
-
-bool Entity::update_hierarchy_helper() {
-  bool changed = false;
-  for (auto &iter: _components) {
-    HierarchyUpdate t = iter.second->update_hierarchy();
-    if (t == kRequestDestruction) {
-      std::cerr << "Destroying due to destruction request\n";
-      delete2_ff(this);
-      return true;
-    } else if (t != kUnchanged) {
-      changed = true;
-    }
-  }
-  // Because our children can destroy them selves, we need to restart
-  // the loop if anything returns anything other than kUnchanged.
-  {
-    bool repeat = false;
-    do {
-      repeat = false;
-      for (auto &iter : _children) {
-        if (iter.second->update_hierarchy_helper()) {
-          repeat = true;
-          break;
-        }
-      }
-    } while (repeat);
-  }
-  // All children will report kUnchanged at this point.
-
-  // Now return our changed state.
-  return changed;
-}
-
-void Entity::update_deps_and_hierarchy() {
-  static const size_t kMaxUpdateRuns = 5;
-  size_t count = 0;
-  while(true) {
-    ++count;
-    if (count>kMaxUpdateRuns) {
-      assert(false);
-    }
-    bool hierarchy_changed = update_hierarchy_helper();
-    bool deps_changed = update_deps_helper();
-    if ((!hierarchy_changed) && (!deps_changed)) {
-      break;
-    }
+  // Next deal with our child entities.
+  for (auto &iter : _children) {
+    iter.second->clean_wires();
   }
 }
 
@@ -359,6 +256,27 @@ void Entity::uninitialize_gl() {
   }
   for (auto &iter: _children) {
     iter.second->uninitialize_gl();
+  }
+}
+
+bool Entity::should_destroy() {
+  for (auto &iter: _components) {
+    if (iter.second->should_destroy()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void Entity::clean_dead_entities() {
+  if (should_destroy()) {
+    delete2_ff(this);
+    return;
+  }
+  // We make a copy of the map, as destruction of entities modifies it.
+  NameToChildMap copy = _children;
+  for (auto &iter: copy) {
+    iter.second->clean_dead_entities();
   }
 }
 
@@ -401,7 +319,7 @@ void Entity::save(SimpleSaver& saver) const {
 }
 
 void Entity::load_components(SimpleLoader& loader) {
-  BaseComponentInstancer* ci = get_app_root()->get<BaseFactory>()->get_component_instancer();
+  BaseFactory* factory = get_app_root()->get<BaseFactory>();
   size_t num_components;
   loader.load(num_components);
   for (size_t i=0; i<num_components; ++i) {
@@ -409,7 +327,7 @@ void Entity::load_components(SimpleLoader& loader) {
     size_t derived_id;
     loader.load(derived_id);
     // Does this component already exist.
-    Component* c = get(ci->get_loadable_iid(derived_id));
+    Component* c = get(factory->get_component_iid(derived_id));
     // Make sure it has the same derived id.
     if (c && c->get_did() != derived_id) {
       //assert(false);
@@ -419,7 +337,7 @@ void Entity::load_components(SimpleLoader& loader) {
     }
     // Otherwise we create one.
     if (!c) {
-      c = ci->instance(this, derived_id);
+      c = factory->instance_component(this, derived_id);
       assert(c);
     }
     // Now load it up.
@@ -429,11 +347,7 @@ void Entity::load_components(SimpleLoader& loader) {
 
 void Entity::load(SimpleLoader& loader) {
   load_helper(loader);
-  // Now that everything has been pasted we need to update our deps and hierarchy.
-  initialize_fixed_deps();
-  initialize_dynamic_deps();
-  update_hierarchy();
-  update_deps();
+  initialize_wires();
 }
 
 void Entity::load_helper(SimpleLoader& loader) {
@@ -447,11 +361,7 @@ void Entity::paste(SimpleLoader& loader) {
   // There shouldn't be any components to load.
   // Load child entities.
   paste_without_merging(loader);
-  // Now that everything has been pasted we need to update our deps and hierarchy.
-  initialize_fixed_deps();
-  initialize_dynamic_deps();
-  update_hierarchy();
-  update_deps();
+  initialize_wires();
 }
 
 void Entity::set_name(const std::string& name) {
@@ -594,11 +504,7 @@ void Entity::paste_without_merging(SimpleLoader& loader) {
   // so we don't need to fix up any references.
   Entity* folder = new_ff Entity(this, "__internal_folder__");
   folder->paste_with_merging(loader);
-
-  folder->initialize_fixed_deps();
-  folder->initialize_dynamic_deps();
-  folder->update_hierarchy();
-  folder->update_deps();
+  folder->initialize_wires();
   folder->bake_paths();
 
 
@@ -612,7 +518,7 @@ void Entity::paste_without_merging(SimpleLoader& loader) {
     // Here we have a slight creeping of specialized logic, for the
     // GroupNodeEntity's links, inputs, and outputs folders.
     // Skip the inputs and outputs folders.
-    // We rely on GroupNodeShape::update_hierarchy to create them for us.
+    // We rely on GroupNodeShape::update_wires to create them for us.
     if ((iter.first == "inputs") || (iter.first == "outputs") ){
       continue;
     }
@@ -698,8 +604,7 @@ Entity* Entity::paste_entity_with_merging(SimpleLoader& loader) {
 
   // If the entity is missing, create one.
   if (!entity) {
-    BaseEntityInstancer* ei = get_app_root()->get<BaseFactory>()->get_entity_instancer();
-    entity = ei->instance(this, name, did);
+    entity = get_app_root()->get<BaseFactory>()->instance_entity(this, name, did);
   }
   entity->load_helper(loader);
 

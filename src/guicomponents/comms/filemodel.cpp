@@ -91,10 +91,6 @@ FileModel::FileModel(Entity* app_root)
 FileModel::~FileModel() {
 }
 
-void FileModel::initialize_fixed_deps() {
-  Component::initialize_fixed_deps();
-}
-
 bool FileModel::get_hide_passwords() const {
   return get_work_setting(FileModel::kHidePasswordsRole).toBool();
 }
@@ -553,8 +549,8 @@ void FileModel::load_graph() {
     create_graph(info);
     // Build the default graph.
     _graph_builder->build_test_graph();
-    get_app_root()->initialize_deps();
-    get_app_root()->update_deps_and_hierarchy();
+    get_app_root()->initialize_wires();
+    get_app_root()->clean_wires();
     save_graph();
   } else {
     load_graph(_working_row);
@@ -603,8 +599,8 @@ void FileModel::load_graph(int row) {
 
   // Although everything down from the root group is updated by the load.
   // Everything from the app root is not updated. So we update it here.
-  get_app_root()->initialize_deps();
-  get_app_root()->update_deps_and_hierarchy();
+  get_app_root()->initialize_wires();
+  get_app_root()->clean_wires();
 
   // Save the model with the latest row.
   save_model();

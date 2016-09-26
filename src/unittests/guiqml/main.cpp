@@ -77,6 +77,9 @@ int main(int argc, char **argv)
     Entity* root_group = new_ff GroupNodeEntity(app_root, "root");
     root_group->create_internals();
 
+    // Now that all the entities have been created, let's initialize the wires.
+    app_root->initialize_wires();
+
     // Get the NodeGraphView (QQuickView).
     NodeGraphView* view = app_root->get_node_graph_view();
     app_root->init_view(format);
@@ -109,8 +112,6 @@ int main(int argc, char **argv)
 //    node_graph->setHeight(480);
 
     // Build a test graph.
-    app_root->initialize_deps();
-    app_root->update_deps_and_hierarchy();
     app_root->get_graph_builder()->build_test_graph();
 
     execReturn = app.exec();

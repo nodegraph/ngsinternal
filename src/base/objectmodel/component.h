@@ -32,11 +32,10 @@ class SimpleSaver;
 class SimpleLoader;
 class DepLoader;
 
-enum HierarchyUpdate {
+enum WiresChange {
   kUnchanged,
   kChanged,
-  kRequestDestruction,
-  kNumHierarchyUpdates
+  kRequestDestruction
 };
 
 // Components will often depend on other components to perform their job.
@@ -102,10 +101,15 @@ class OBJECTMODEL_EXPORT Component {
   virtual size_t get_iid() const;
   virtual size_t get_did() const;
 
+  // Wires. Propagates clean wires through dependency traversal.
+  // Note: This is differnt from Entity::clean_wires as it traverses
+  //       through dependencies and through entity hierarchy visitation.
+  void clean_wires();
+
   // Dirty/Clean State.
-  void dirty();
-  void clean();
-  bool is_dirty() const {return _dirty;}
+  void dirty_state();
+  void clean_state();
+  bool is_state_dirty() const {return _dirty;}
 
   // Dirty/Clean Propagation.
   void propagate_cleanliness();
@@ -136,24 +140,25 @@ class OBJECTMODEL_EXPORT Component {
   // Note that we don't give out the components directly as this could create a cycle.
   // The calling component should instead call get_dep(entity) instead.
   template <class T>
-  std::vector<Entity*> get_dependants() const {
+  std::unordered_set<Entity*> get_dependants() const {
     return get_dependants_by_iid(T::kIID());
   }
 
-  std::vector<Entity*> get_dependants_by_iid(size_t iid) const {
+  std::unordered_set<Entity*> get_dependants_by_iid(size_t iid) const {
     const Components& coms = _dependants[iid];
-    std::vector<Entity*> values;
-    values.resize(coms.size());
-    std::transform(coms.begin(), coms.end(), values.begin(), ConvertToEntity());
+    std::unordered_set<Entity*> values;
+    for (Component* c: coms) {
+      values.insert(c->our_entity());
+    }
     return values;
   }
 
-  std::vector<Entity*> get_dependants_by_did(size_t iid, size_t did) const {
+  std::unordered_set<Entity*> get_dependants_by_did(size_t iid, size_t did) const {
     const Components& coms = _dependants[iid];
-    std::vector<Entity*> values;
+    std::unordered_set<Entity*> values;
     for (Component* c: coms) {
       if (c->get_did() == did) {
-        values.push_back(c->our_entity());
+        values.insert(c->our_entity());
       }
     }
     return values;
@@ -162,7 +167,7 @@ class OBJECTMODEL_EXPORT Component {
  protected:
 
   // This should be added at the start of all methods.
-  void start_method() {dirty();}
+  void start_method() {dirty_state();}
   void start_method() const {}
 
   // ------------------------------------------------
@@ -187,27 +192,39 @@ class OBJECTMODEL_EXPORT Component {
 
   DepLoader* get_dep_loader() {return _dep_loader;}
 
-  // Dependency Initialization.
-  // No opengl calls are allowed when updating deps.
-  virtual void initialize_fixed_deps();
-  virtual void initialize_dynamic_deps();
-  virtual void uninitialize_deps() {}
+  // Wires represent the imaginary wires which link us to our dependencies (components we depend on).
+  // This method initializes wires from serialized data, which are fixed or relative paths to other
+  // entities in the entity tree.
+  // 1) This should be called once on all entities after all entities are created.
+  // 2) This should also be called on all entities after some entities are destroyed or created.
+  //    However for speed reasons we call this only on newly created entities.
+  //    What this means is that once an entity's wire points to a destroyed entity's component,
+  //    it will always stay null, even when a new entity's component is created in its place.
+  //    These cases rarely occur, but when they do just call initialize_wires on those entities
+  //    that need there wires to point to the new component. This logic could also live in update_wires().
+  virtual void initialize_wires();
 
-  // Update the dependencies that we depend on, based on our current state.
-  // This should not create or destroy other entities around our entity.
-  // Returns true if deps were changed.
-  // Multiple update_deps passes over components happen, until all components in our system return false.
-  virtual bool update_deps() {return false;}
+  // This method updates our wires based on our current state.
+  // This method should not update our dependency components at the other end of the wire.
+  // This method is orthogonal to update_deps().
+  // In order to update our wires we are allowed to modify the entity hierarchy around us.
+  // Just make sure to return the an appropriate value to indicate the hierarchy change performed.
+  // Note: we request that we be destroyed by returning an appropriate value.
+  // Note: No opengl calls are allowed when updating wires.
+  // Note: The component should be marked as dirty if the wires change.
+  // Note: start_method() (method which dirties the component) should not be called in derived methods.
+  virtual void gather_wires() {}
 
-  // Update the entity hierarchy around us, based on our current state.
-  // In order to keep this orthogonal to update_deps, this should try not to update any deps of any components.
-  // However there may be cases where this may be unavoidable.
-  // Returns the update performed. Components may request destruction as well.
-  virtual HierarchyUpdate update_hierarchy() {return kUnchanged;}
+  // This method should return true, when it determines that this component's entity
+  // does not need to exist anymore. For example if a LinkShape see it has no input or output to connect to.
+  virtual bool should_destroy() {return false;}
 
   // Update our state from our dirty dependencies. This is called as a result of cleaning.
   // Opengl calls are allowed when updating state, but an opengl context must be current beore calling clean().
+  // Note: start_method() (method which dirties the component) should not be called in derived methods.
   virtual void update_state() {}
+
+
 
   // Opengl Initialization.
   virtual void initialize_gl() {} // Called to initialize opengl resources.

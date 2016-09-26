@@ -44,19 +44,12 @@ NodeGraphRenderer::NodeGraphRenderer(Entity* parent)
   get_dep_loader()->register_fixed_dep(_canvas, "");
   get_dep_loader()->register_fixed_dep(_graph_builder, "");
 
-  initialize_fixed_deps();
-
   std::cerr << "enter something to continue\n";
   int dummy;
   std::cin >> dummy;
 }
 
 NodeGraphRenderer::~NodeGraphRenderer() {
-}
-
-void NodeGraphRenderer::initialize_fixed_deps() {
-  std::cerr << "NodeGraphRenderer is initializing fixed deps\n";
-  Component::initialize_fixed_deps();
 }
 
 void NodeGraphRenderer::build_test_graph() {
@@ -82,11 +75,7 @@ void NodeGraphRenderer::render() {
   }
   if (!_canvas->is_initialized_gl()) {
     std::cerr << "initializing the app in the gl context \n";
-
-    get_app_root()->initialize_deps();
-    get_app_root()->update_deps_and_hierarchy();
     get_app_root()->initialize_gl();
-
     std::cerr << "now building the test graph \n";
     _graph_builder->build_test_graph();
   }

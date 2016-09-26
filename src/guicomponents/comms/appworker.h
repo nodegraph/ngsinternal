@@ -36,7 +36,7 @@ Q_OBJECT
   virtual ~AppWorker();
 
   // Our state.
-  virtual void initialize_fixed_deps();
+  virtual void initialize_wires();
 
   static QString get_app_bin_dir();
   static QString get_user_data_dir();

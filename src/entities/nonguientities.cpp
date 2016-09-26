@@ -18,48 +18,48 @@
 
 namespace ngs {
 
-void BaseNamespaceEntity::create_internals() {
+void BaseNamespaceEntity::create_internals(const std::vector<size_t>& ids) {
 }
 
-void BaseAppEntity::create_internals() {
+void BaseAppEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff Factory(this);
 }
 
-void BaseGroupNodeEntity::create_internals() {
+void BaseGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff GroupNodeCompute(this))->create_inputs_outputs();
 }
 
-void BaseLinkEntity::create_internals() {
+void BaseLinkEntity::create_internals(const std::vector<size_t>& ids) {
 }
 
-void BaseDotNodeEntity::create_internals() {
+void BaseDotNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff DotNodeCompute(this))->create_inputs_outputs();
 }
 
-void BaseInputNodeEntity::create_internals() {
+void BaseInputNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff InputNodeCompute(this))->create_inputs_outputs();
 }
 
-void BaseOutputNodeEntity::create_internals() {
+void BaseOutputNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff OutputNodeCompute(this))->create_inputs_outputs();
 }
 
-void BaseMockNodeEntity::create_internals() {
+void BaseMockNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff MockNodeCompute(this))->create_inputs_outputs();
 }
 
-void BaseScriptNodeEntity::create_internals() {
+void BaseScriptNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff ScriptNodeCompute(this))->create_inputs_outputs();
 }
 
-void BaseInputEntity::create_internals() {
+void BaseInputEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff InputCompute(this);
 }
@@ -68,7 +68,7 @@ void BaseInputEntity::set_param_type(ParamType param_type) {
   get<InputCompute>()->set_param_type(param_type);
 }
 
-void BaseOutputEntity::create_internals() {
+void BaseOutputEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff OutputCompute(this);
 }

@@ -51,8 +51,9 @@ public:
     _set_deps.push_back(w);
   }
 
-  void initialize_fixed_deps();
-  void initialize_dynamic_deps();
+  // Updates return true if something actually changes in the update.
+  bool update_fixed_wires();
+  bool update_dynamic_wires();
 
   void save(SimpleSaver& saver) const;
   void load(SimpleLoader& loader);

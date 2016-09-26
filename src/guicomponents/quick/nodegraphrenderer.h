@@ -25,8 +25,6 @@ Q_OBJECT
   // Testing.
   Q_INVOKABLE void build_test_graph();
 
-  virtual void initialize_fixed_deps();
-
   Renderer *createRenderer() const;
   void render();
 

@@ -143,10 +143,6 @@ void OutputCompute::load(SimpleLoader& loader) {
 
   // Load the exposed value.
   loader.load(_exposed);
-
-  // Load the num bytes of the param value.
-  int num_bytes;
-  loader.load(num_bytes);
 }
 
 }

@@ -53,12 +53,12 @@ GroupInteraction::GroupInteraction(Entity* entity)
 GroupInteraction::~GroupInteraction(){
 }
 
-void GroupInteraction::initialize_fixed_deps() {
-  Component::initialize_fixed_deps();
-}
-
 void GroupInteraction::update_state() {
   _links_folder = get_entity("./links");
+}
+
+void GroupInteraction::update_shape_collective() {
+  _shape_collective->gather_wires();
 }
 
 glm::vec2 GroupInteraction::get_drag_delta() const {
@@ -108,12 +108,18 @@ void GroupInteraction::toggle_selection_under_press(const Dep<NodeShape>& hit_sh
   }
 }
 
-Entity* GroupInteraction::create_link() {
+Dep<LinkShape> GroupInteraction::create_link() {
   start_method();
-  Entity* link = _factory->get_entity_instancer()->instance(_links_folder, "link", kLinkEntity);
+
+  Entity* link = _factory->instance_entity(_links_folder, "link", kLinkEntity);
   link->create_internals();
-  link->initialize_deps();
-  return link;
+
+  Dep<LinkShape> dep = get_dep<LinkShape>(link);
+  dep->start_moving(); // This prevents the link from getting destroyed.
+
+  // New link created, so we need to clean the wires. (Note a wire is differnt from a link. See Component.h)
+  update_shape_collective();
+  return dep;
 }
 
 void GroupInteraction::destroy_link(Entity* link) {
@@ -288,15 +294,13 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
           // Clear the output shape but leave the input shape linked.
           _link_shape->unlink_output_shape();
         } else {
-          Entity *e = create_link();
-          _link_shape = get_dep<LinkShape>(e);
-          _link_shape->start_moving();
+          _link_shape = create_link();
           // Link the output shape.
           _link_shape->link_input_shape(input_shape);
         }
 
         // Update all deps.
-        get_app_root()->update_deps_and_hierarchy();
+        //get_app_root()->initialize_wires();
 
         // Set the initial tail pos.
         const glm::vec2& plug_center = input_shape->get_origin();
@@ -318,13 +322,8 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         Dep<OutputShape> output_shape = get_dep<OutputShape>(comp_shape_entity);
 
         // We always create a new link when clicking on output plugs, because output plugs can have multiple links (unlike input links).
-        Entity* link = create_link();
-        _link_shape = get_dep<LinkShape>(link);
-        _link_shape->start_moving();
+        _link_shape = create_link();
         _link_shape->link_output_shape(output_shape);
-
-        // Update all deps.
-        get_app_root()->update_deps_and_hierarchy();
 
         // Set the intial head pos.
         const glm::vec2 &plug_center = output_shape->get_origin();
@@ -381,9 +380,6 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         _link_shape->start_moving();
         _link_shape->unlink_input_shape();
 
-        // Update all deps.
-        get_app_root()->update_deps_and_hierarchy();
-
         // Transition.
         _state=kDraggingLinkHead;
 
@@ -403,9 +399,6 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
         // Put the link in interactive mode.
         _link_shape->start_moving();
         _link_shape->unlink_output_shape();
-
-        // Update all deps.
-        get_app_root()->update_deps_and_hierarchy();
 
         // Transition.
         _state=kDraggingLinkTail;
@@ -553,9 +546,6 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
         _link_shape->link_input_shape(input_shape);
         _link_shape->finished_moving();
 
-        // Update all deps.
-        get_app_root()->update_deps_and_hierarchy();
-
         // Transition to default state.
         _state = kNodeSelectionAndDragging;
 
@@ -586,9 +576,6 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
         // Update the link shape's output shape.
         _link_shape->link_output_shape(output_shape);
         _link_shape->finished_moving();
-
-        // Update all deps.
-        get_app_root()->update_deps_and_hierarchy();
 
         // Transition to the default state.
         _state = kNodeSelectionAndDragging;
@@ -624,14 +611,16 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
     } else {
       if ( (_state==kDraggingLinkHead) || (_state==kTwoClickOutputToInput) || (_state==kDraggingLinkTail) || (_state==kTwoClickInputToOutput) ) {
         clear_selection:
+        // Links may need to be cleaned up.
+        get_app_root()->clean_dead_entities();
         reset_state();
       }
-
       // Stop the tracking.
       _view_controls.track_ball.stop_tracking();
     }
   }
-
+  our_entity()->clean_dead_entities();
+  update_shape_collective();
 }
 
 void GroupInteraction::moved(const MouseInfo& mouse_info) {
@@ -821,8 +810,9 @@ void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
   std::string raw_copy = our_entity()->copy_to_string(selected_entities);
 
   // Create a group node to hold the collapsed nodes.
-  Entity* collapsed_node = _factory->get_entity_instancer()->instance(our_entity(), "collapsed", kGroupNodeEntity);
+  Entity* collapsed_node = _factory->instance_entity(our_entity(), "collapsed", kGroupNodeEntity);
   collapsed_node->create_internals();
+  collapsed_node->initialize_wires();
 
   // Position it at the center of the collapsed nodes.
   Dep<NodeShape> collapsed_node_cs = get_dep<NodeShape>(collapsed_node);
@@ -850,7 +840,7 @@ void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
   }
 
   // Update our deps and hierarchy.
-  get_app_root()->update_deps_and_hierarchy();
+  //get_app_root()->initialize_wires();
 
   // Select the collapsed node.
   _selection->clear_selection();
@@ -893,7 +883,7 @@ void GroupInteraction::explode(const Dep<NodeShape>& cs) {
 
   // Destroy the exploding group.
   delete2_ff(cs_entity);
-  get_app_root()->update_deps_and_hierarchy();
+  //get_app_root()->initialize_wires();
 
   // Center the pasted nodes around the exploding center.
   glm::vec2 offset = exploding_center - nodes_center;
@@ -950,11 +940,10 @@ Entity* GroupInteraction::create_node(size_t did) {
   start_method();
 
   // Determine the initial name for the new node.
-  BaseEntityInstancer* ei = _factory->get_entity_instancer();
-  std::string node_name = ei->get_did_name(did);
+  std::string node_name = _factory->get_entity_name_for_did(did);
 
   // Create the node.
-  Entity* node = ei->instance(our_entity(), node_name, did);
+  Entity* node = _factory->instance_entity(our_entity(), node_name, did);
 
   // Position the node to the center of the screen.
   // Get the center in post perspective space.

@@ -32,6 +32,7 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
   virtual ~CompShapeCollective();
 
   // Our state.
+  virtual void gather_wires();
   virtual void update_state();
 
   // Shape Instances.

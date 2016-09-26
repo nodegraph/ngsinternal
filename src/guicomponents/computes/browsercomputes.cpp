@@ -25,8 +25,6 @@ void BrowserCompute::create_inputs_outputs() {
 }
 
 void BrowserCompute::update_state() {
-  Compute::update_state();
-
   // Pass the inputs through.
   const QVariant &value = _inputs.at("in")->get_result("out");
   set_result("out", value);
@@ -75,7 +73,7 @@ void OpenBrowserCompute::update_state() {
 }
 
 void CloseBrowserCompute::update_state() {
-  Compute::update_state();
+  BrowserCompute::update_state();
   _app_worker->close_browser();
 }
 
@@ -87,7 +85,7 @@ void CreateSetFromValuesCompute::create_inputs_outputs() {
 
 void CreateSetFromValuesCompute::update_state() {
   // Make sure our input deps are hashed.
-  Compute::update_state();
+  BrowserCompute::update_state();
 
   QVariant wrap_type = _inputs.at("type")->get_result("out");
   QVariant match_values = _inputs.at("values")->get_result("out");
@@ -109,7 +107,7 @@ void CreateSetFromTypeCompute::create_inputs_outputs() {
 }
 
 void CreateSetFromTypeCompute::update_state() {
-  Compute::update_state();
+  BrowserCompute::update_state();
 
   QVariant wrap_type = _inputs.at("type")->get_result("out");
 
@@ -133,7 +131,7 @@ void MouseActionCompute::create_inputs_outputs() {
 }
 
 void MouseActionCompute::update_state() {
-  Compute::update_state();
+  BrowserCompute::update_state();
 
   int set_index = _inputs.at("set_index")->get_result("out").toInt();
   int overlay_index = _inputs.at("overlay_index")->get_result("out").toInt();

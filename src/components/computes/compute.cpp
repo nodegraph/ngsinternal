@@ -30,10 +30,8 @@ void Compute::create_inputs_outputs() {
   create_namespace("outputs");
 }
 
-void Compute::update_state() {
-  if (dep_is_dirty(_lower_change)) {
-    gather_inputs();
-  }
+void Compute::gather_wires() {
+  gather_inputs();
 }
 
 void Compute::gather_inputs() {
@@ -49,9 +47,6 @@ void Compute::gather_inputs() {
       Dep<InputCompute> dep = get_dep<InputCompute>(iter.second);
       if (dep) {
         _inputs.insert({iter.first, dep});
-        // Because we just added a new connection in our cleaning state method,
-        // we need to make sure that it is clean.
-        dep->clean();
       }
     }
   }
@@ -142,9 +137,9 @@ bool Compute::check_variant_is_map(const QVariant& value, const std::string& mes
 }
 
 Entity* Compute::create_input(const std::string& name, ParamType type, bool exposed) {
-  BaseEntityInstancer* ei = get_dep<BaseFactory>("")->get_entity_instancer();
+  Dep<BaseFactory> factory = get_dep<BaseFactory>("");
   Entity* inputs_space = get_inputs_space();
-  InputEntity* input = static_cast<InputEntity*>(ei->instance(inputs_space, name, kInputEntity));
+  InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, name, kInputEntity));
   input->create_internals();
   input->set_param_type(type);
   input->set_exposed(exposed);
@@ -152,9 +147,9 @@ Entity* Compute::create_input(const std::string& name, ParamType type, bool expo
 }
 
 Entity* Compute::create_output(const std::string& name, ParamType type, bool exposed) {
-  BaseEntityInstancer* ei = get_dep<BaseFactory>("")->get_entity_instancer();
+  Dep<BaseFactory> factory = get_dep<BaseFactory>("");
   Entity* outputs_space = get_outputs_space();
-  OutputEntity* output = static_cast<OutputEntity*>(ei->instance(outputs_space, name, kOutputEntity));
+  OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, name, kOutputEntity));
   output->create_internals();
   output->set_param_type(type);
   output->set_exposed(exposed);
@@ -162,8 +157,8 @@ Entity* Compute::create_output(const std::string& name, ParamType type, bool exp
 }
 
 Entity* Compute::create_namespace(const std::string& name) {
-  BaseEntityInstancer* ei = get_dep<BaseFactory>("")->get_entity_instancer();
-  Entity* space = static_cast<BaseNamespaceEntity*>(ei->instance(our_entity(), name, kBaseNamespaceEntity));
+  Dep<BaseFactory> factory = get_dep<BaseFactory>("");
+  Entity* space = static_cast<BaseNamespaceEntity*>(factory->instance_entity(our_entity(), name, kBaseNamespaceEntity));
   space->create_internals();
   return space;
 }

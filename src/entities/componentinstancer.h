@@ -10,8 +10,8 @@ class ENTITIES_EXPORT ComponentInstancer: public BaseComponentInstancer {
  public:
   ComponentInstancer(){}
   virtual ~ComponentInstancer(){}
-  virtual Component* instance(Entity* entity, size_t derived_id) const;
-  virtual size_t get_loadable_iid(size_t derived_id) const;
+  virtual Component* instance(Entity* entity, size_t did) const;
+  virtual size_t get_iid_for_did(size_t did) const;
 };
 
 }

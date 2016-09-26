@@ -41,7 +41,7 @@ Q_OBJECT
   NodeGraphQuickItem(Entity* parent);
   virtual ~NodeGraphQuickItem();
 
-  virtual void initialize_fixed_deps();
+  // Our state.
   virtual void update_state();
 
   Q_INVOKABLE QString get_ngs_version() const;
@@ -164,9 +164,6 @@ Q_OBJECT
   Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;
   Dep<LicenseChecker> _license_checker;
-
-  // Cached helper.
-  BaseEntityInstancer* _entity_instancer;
 
   // Used to detect long press.
   QTimer _long_press_timer;

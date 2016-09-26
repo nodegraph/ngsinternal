@@ -54,10 +54,9 @@ ShapeCanvas::~ShapeCanvas() {
   delete_ff(_quad_pipeline);
 }
 
-void ShapeCanvas::initialize_fixed_deps() {
-  Component::initialize_fixed_deps();
+void ShapeCanvas::gather_wires() {
   if (_group_stack.empty()) {
-	  push_group(get_entity("root"));
+    push_group(get_entity("root"));
   } else if (!_current_interaction) {
     _group_stack.clear();
     push_group(get_entity("root"));
@@ -244,7 +243,7 @@ void ShapeCanvas::surface() {
   pop_group();
 
   // The group we're surfacing to needs to have its inputs and output updated.
-  get_app_root()->update_deps_and_hierarchy();
+  get_app_root()->clean_wires();
 }
 
 void ShapeCanvas::dive(Entity* selected) {

@@ -102,9 +102,8 @@ int main(int argc, char *argv[]) {
     // Build our node graph editor.
     NodeGraphEditor* ng_editor = new_ff NodeGraphEditor(app_root, window, shared_widget);
 
-    // Update the dependencies.
-    app_root->initialize_deps();
-    app_root->update_deps_and_hierarchy();
+    // Now that all the entities have been created, let's initialize the wires.
+    app_root->initialize_wires();
 
     // Build a test node graph.
     ng_editor->build_test_graph();

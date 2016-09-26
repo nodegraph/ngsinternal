@@ -84,8 +84,9 @@ class OBJECTMODEL_EXPORT Entity {
   Entity(Entity* parent, const std::string& name);
   virtual ~Entity();
 
-  // Creates internal components and children.
-  virtual void create_internals() {}
+  // Creates internal components. The ids argument can contain ids for sub entities or components.
+  // It is up to the derived entity classes what the ids actually mean.
+  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>()) {}
 
   // Our parent.
   Entity* get_parent() const;
@@ -125,16 +126,31 @@ class OBJECTMODEL_EXPORT Entity {
   Entity* get_root_group() const;
   bool is_root_group() const;
 
-  // Initialize deps.
-  void initialize_deps();
-  void uninitialize_deps();
-
   // Initialize GL.
   void initialize_gl();
   void uninitialize_gl();
 
-  // Update hierarchy and deps.
-  void update_deps_and_hierarchy();
+  // Wires represent an imaginary line which connects to components that are our dependencies.
+
+  // Initializes serialized component wires in entity tree below us and on us.
+  // Serialized component wires are wires which actually get saved on disk.
+  // Serialized component wires have an associated absolute or relative path to point to other component dependencies.
+  // This should only be called once after an entity is constructed.
+  // Note: it should be called after all entities are created others the wires may
+  //      refer to something that has not been created yet.
+  // Also: it should be called on newly created nodes to initialize their wires and allow
+  //       them to embed properly into the graph.
+  void initialize_wires();
+
+  // Gathers all non-serialized component wires in entity tree below us and and on us.
+  // Non-serialized component wires are those that are gathered dynamically by components.
+  void clean_wires();
+
+  // This returns true if an entity wants to be destroyed.
+  bool should_destroy();
+
+  // Cleans out all entities that want to be destroyed from the entity tree.
+  void clean_dead_entities();
 
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
@@ -214,7 +230,7 @@ class OBJECTMODEL_EXPORT Entity {
   void clear_last_pasted();
 
  protected:
-  Component* get(size_t interface_id) const;
+  Component* get(size_t iid) const;
 
   template<class T>
   T* get() const {
@@ -224,21 +240,6 @@ class OBJECTMODEL_EXPORT Entity {
   Entity* get_entity_helper(const Path& path) const;
 
  private:
-
-  // Initialize our dependencies, upon creation or loading.
-  void initialize_fixed_deps();
-  void initialize_dynamic_deps();
-
-  // Updates the dependencies that our components depend on.
-  // See the Component class for more details.
-  void update_deps();
-  bool update_deps_helper();
-
-  // Updates the hierarchy around us.
-  // See the Component class for more details.
-  void update_hierarchy();
-  bool update_hierarchy_helper();
-
   // ---------------------------------------------------------------------
   // Copy and Paste related.
   // ---------------------------------------------------------------------
