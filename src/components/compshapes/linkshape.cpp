@@ -62,8 +62,6 @@ bool LinkShape::should_destroy() {
 }
 
 void LinkShape::update_state() {
-  std::cerr << "LinkShape update state\n";
-
   if (_input_shape) {
     _head_pos = _input_shape->get_origin();
   }

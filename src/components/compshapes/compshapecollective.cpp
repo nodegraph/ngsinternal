@@ -38,7 +38,6 @@ void CompShapeCollective::update_wires() {
 
 void CompShapeCollective::update_state() {
   internal();
-  std::cerr << "CompShapeCollective update state\n";
 
   // Collect our shape instances.
   _quads.clear();

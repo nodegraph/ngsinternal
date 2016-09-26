@@ -319,8 +319,6 @@ void Entity::load_components(SimpleLoader& loader) {
 
 void Entity::load(SimpleLoader& loader) {
   load_helper(loader);
-  initialize_wires();
-  clean_wires();
 }
 
 void Entity::load_helper(SimpleLoader& loader) {
@@ -334,8 +332,6 @@ void Entity::paste(SimpleLoader& loader) {
   // There shouldn't be any components to load.
   // Load child entities.
   paste_without_merging(loader);
-  initialize_wires();
-  clean_wires();
 }
 
 void Entity::set_name(const std::string& name) {
@@ -446,6 +442,9 @@ void Entity::paste_from_string(const std::string& raw) {
   Bits* bits = create_bits_from_string(raw);
   SimpleLoader loader(bits);
   paste(loader);
+
+  initialize_wires();
+  clean_wires();
 }
 
 const std::unordered_set<Entity*>& Entity::get_last_pasted() {

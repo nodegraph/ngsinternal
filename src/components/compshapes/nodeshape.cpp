@@ -76,10 +76,6 @@ bool NodeShape::is_being_viewed() const {
   return _being_viewed;
 }
 
-void NodeShape::update_state() {
-  std::cerr << "NodeShape update state\n";
-}
-
 void NodeShape::update_edit_view_quads(const glm::vec2& pen) {
 
   //glm::vec2 text_dim = _text_max - _text_min;

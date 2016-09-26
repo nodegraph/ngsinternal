@@ -30,7 +30,6 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   virtual bool is_linkable() const {return true;}
 
   // Our state.
-  virtual void update_state();
 
   // Our shape instancing.
   virtual const std::vector<ShapeInstance>* get_quad_instances() const {return &_quads_cache;}

@@ -29,7 +29,6 @@ DotNodeShape::~DotNodeShape() {
 }
 
 void DotNodeShape::update_state() {
-  std::cerr << "DotNodeShape update state\n";
   // Update our bounds.
   {
     std::vector<glm::vec2> &verts = _bounds.vertices;

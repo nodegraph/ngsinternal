@@ -36,7 +36,6 @@ GroupNodeShape::~GroupNodeShape() {
 }
 
 void GroupNodeShape::update_state() {
-  std::cerr << "GroupNodeShape update state\n";
   RectNodeShape::update_state();
 
   // The following updates the marker shapes.

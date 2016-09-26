@@ -35,8 +35,6 @@ NodeSelection::~NodeSelection() {
 }
 
 void NodeSelection::update_state() {
-  std::cerr << "NodeSelection update state\n";
-
   if (!_edit_node) {
     _edit_node.reset();
   }

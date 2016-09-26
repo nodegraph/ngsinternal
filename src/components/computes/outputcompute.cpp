@@ -19,7 +19,6 @@ OutputCompute::~OutputCompute() {
 }
 
 void OutputCompute::update_wires() {
-  std::cerr << "OutputCompute::gather_wires called\n";
   update_index();
 }
 

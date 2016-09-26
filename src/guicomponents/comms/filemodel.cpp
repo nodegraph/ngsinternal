@@ -566,6 +566,7 @@ void FileModel::save_graph() {
 }
 
 void FileModel::load_graph(int row) {
+  std::cerr << "Starting to load graph at row: " << row << "\n";
   external();
   _working_row = row;
 
@@ -597,10 +598,17 @@ void FileModel::load_graph(int row) {
   //get_root_group()->destroy_all_children();
   get_root_group()->load(loader);
 
+  std::cerr << "done loading graph -  aaaa\n";
+
   // Although everything down from the root group is updated by the load.
   // Everything from the app root is not updated. So we update it here.
   get_app_root()->initialize_wires();
+
+  std::cerr << "done loading graph -  bbbb\n";
+
   get_app_root()->clean_wires();
+
+  std::cerr << "done loading graph\n";
 
   // Save the model with the latest row.
   save_model();

@@ -92,8 +92,6 @@ HitRegion RectNodeShape::hit_test(const glm::vec2& point) const {
 }
 
 void RectNodeShape::update_state() {
-  std::cerr << "RectNodeShape update state\n";
-
   // Update our chars.
   update_text();
 
