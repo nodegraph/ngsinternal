@@ -119,7 +119,7 @@ void NodeGraphEditor::initializeGL() {
     start_glew(); // Initialize glew for the scene graph render thread.
   }
 
-  get_app_root()->update_wires();
+  get_app_root()->clean_wires();
   get_app_root()->initialize_gl();
 }
 

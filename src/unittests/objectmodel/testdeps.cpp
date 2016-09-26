@@ -129,7 +129,7 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean _mock_out_d.
-  _mock_d_compute->update_wires();
+  _mock_d_compute->clean_wires();
   _mock_d_compute->clean_state();
   {
     // Only the mock c output param should be dirty.
@@ -140,7 +140,7 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean _mock_out_c.
-  _mock_c_compute->update_wires();
+  _mock_c_compute->clean_wires();
   _mock_c_compute->clean_state();
   {
     // Everything should be clean now.
@@ -159,7 +159,7 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean the dot_c output plug.
-  _dot_c_out_compute->update_wires();
+  _dot_c_out_compute->clean_wires();
   _dot_c_out_compute->clean_state();
   {
     // Everything should be clean now.
@@ -178,7 +178,7 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean the dot_d output plug.
-  _dot_d_out_compute->update_wires();
+  _dot_d_out_compute->clean_wires();
   _dot_d_out_compute->clean_state();
   {
     // Everything should be clean now.
@@ -212,7 +212,7 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean dot_c_out_out.
-  _dot_c_out_compute->update_wires();
+  _dot_c_out_compute->clean_wires();
   _dot_c_out_compute->clean_state();
   {
     // Only the stuff down the mock d chain should be dirty.
@@ -229,7 +229,7 @@ void TestDeps::test_connecting_plugs() {
   }
 
   // Clean dot_d_out_out.
-  _dot_d_out_compute->update_wires();
+  _dot_d_out_compute->clean_wires();
   _dot_d_out_compute->clean_state();
   {
     // Everything should be clean now.
@@ -276,7 +276,7 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_c_out_compute.
-  _dot_c_out_compute->update_wires();
+  _dot_c_out_compute->clean_wires();
   _dot_c_out_compute->clean_state();
   {
     std::unordered_set<Component*> cs;
@@ -289,7 +289,7 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_d_out_compute.
-  _dot_d_out_compute->update_wires();
+  _dot_d_out_compute->clean_wires();
   _dot_d_out_compute->clean_state();
   {
     // Everything should be clean now.
@@ -318,7 +318,7 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_c_out_compute.
-  _dot_c_out_compute->update_wires();
+  _dot_c_out_compute->clean_wires();
   _dot_c_out_compute->clean_state();
   {
     std::unordered_set<Component*> cs;
@@ -331,7 +331,7 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_d_out_compute.
-  _dot_d_out_compute->update_wires();
+  _dot_d_out_compute->clean_wires();
   _dot_d_out_compute->clean_state();
   {
     // Everything should be clean now.
@@ -350,7 +350,7 @@ void TestDeps::test_disconnecting_plugs() {
   }
 
   // Clean dot_c_out_compute.
-  _dot_c_out_compute->update_wires();
+  _dot_c_out_compute->clean_wires();
   _dot_c_out_compute->clean_state();
   {
     // Everything should be clean now.
@@ -503,25 +503,25 @@ void TestDeps::verify_all(bool dirty) {
 
 void TestDeps::clean_all_components() {
   // Node Computes.
-  _mock_compute->update_wires();
-  _dot_a_compute->update_wires();
-  _dot_b_compute->update_wires();
-  _dot_c_compute->update_wires();
-  _dot_d_compute->update_wires();
+  _mock_compute->clean_wires();
+  _dot_a_compute->clean_wires();
+  _dot_b_compute->clean_wires();
+  _dot_c_compute->clean_wires();
+  _dot_d_compute->clean_wires();
 
   // Plug Computes.
-  _mock_a_compute->update_wires();
-  _mock_b_compute->update_wires();
-  _mock_c_compute->update_wires();
-  _mock_d_compute->update_wires();
-  _dot_a_in_compute->update_wires();
-  _dot_a_out_compute->update_wires();
-  _dot_b_in_compute->update_wires();
-  _dot_b_out_compute->update_wires();
-  _dot_c_in_compute->update_wires();
-  _dot_c_out_compute->update_wires();
-  _dot_d_in_compute->update_wires();
-  _dot_d_out_compute->update_wires();
+  _mock_a_compute->clean_wires();
+  _mock_b_compute->clean_wires();
+  _mock_c_compute->clean_wires();
+  _mock_d_compute->clean_wires();
+  _dot_a_in_compute->clean_wires();
+  _dot_a_out_compute->clean_wires();
+  _dot_b_in_compute->clean_wires();
+  _dot_b_out_compute->clean_wires();
+  _dot_c_in_compute->clean_wires();
+  _dot_c_out_compute->clean_wires();
+  _dot_d_in_compute->clean_wires();
+  _dot_d_out_compute->clean_wires();
 
   // Node Computes.
   _mock_compute->clean_state();

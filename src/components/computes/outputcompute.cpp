@@ -1,34 +1,32 @@
 #include <components/computes/outputcompute.h>
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/deploader.h>
-#include <base/objectmodel/upperhierarchychange.h>
 #include <entities/entityids.h>
 
 namespace ngs {
 
 OutputCompute::OutputCompute(Entity* entity)
     : Compute(entity, kDID()),
-      _upper_change(this),
       _node_compute(this),
       _exposed(true),
       _exposed_index(-1),
       _num_exposed(-1),
       _num_outputs(-1){
-  get_dep_loader()->register_fixed_dep(_upper_change, "../..");
   get_dep_loader()->register_fixed_dep(_node_compute, "../..");
 }
 
 OutputCompute::~OutputCompute() {
 }
 
-void OutputCompute::update_state() {
-  if (dep_is_dirty(_upper_change)) {
-    update_index();
+void OutputCompute::update_wires() {
+  std::cerr << "OutputCompute::gather_wires called\n";
+  update_index();
+}
 
-    // Using our name we query our nodes compute results.
-    const std::string& our_name = our_entity()->get_name();
-    set_result("out", _node_compute->get_result(our_name));
-  }
+void OutputCompute::update_state() {
+  // Using our name we query our nodes compute results.
+  const std::string& our_name = our_entity()->get_name();
+  set_result("out", _node_compute->get_result(our_name));
 }
 
 void OutputCompute::set_param_type(ParamType param_type) {

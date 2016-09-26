@@ -104,7 +104,7 @@ class OBJECTMODEL_EXPORT Component {
   // Wires. Propagates clean wires through dependency traversal.
   // Note: This is differnt from Entity::clean_wires as it traverses
   //       through dependencies and through entity hierarchy visitation.
-  void update_wires();
+  void clean_wires();
 
   // Dirty/Clean State.
   void dirty_state();
@@ -217,7 +217,7 @@ class OBJECTMODEL_EXPORT Component {
   // Note: No opengl calls are allowed when updating wires.
   // Note: The component should be marked as dirty if the wires change.
   // Note: start_method() (method which dirties the component) should not be called in derived methods.
-  virtual void gather_wires() {}
+  virtual void update_wires() {}
 
   // This method should return true, when it determines that this component's entity
   // does not need to exist anymore. For example if a LinkShape see it has no input or output to connect to.

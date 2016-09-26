@@ -1,7 +1,6 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/deploader.h>
-#include <base/objectmodel/lowerhierarchychange.h>
 #include <base/utils/permit.h>
 
 #include <entities/entityids.h>
@@ -16,15 +15,13 @@
 namespace ngs {
 
 CompShapeCollective::CompShapeCollective(Entity* entity)
-    : Component(entity, kIID(), kDID()),
-      _lower_change(this) {
-  get_dep_loader()->register_fixed_dep(_lower_change, ".");
+    : Component(entity, kIID(), kDID()) {
 }
 
 CompShapeCollective::~CompShapeCollective() {
 }
 
-void CompShapeCollective::gather_wires() {
+void CompShapeCollective::update_wires() {
   internal();
   // Clear any comp shapes that have been destroyed.
   DepUSet<CompShape>::iterator iter = _comp_shapes.begin();

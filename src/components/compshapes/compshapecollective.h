@@ -20,7 +20,6 @@ class CompShape;
 class NodeShape;
 class Polygon;
 
-class LowerHierarchyChange;
 class DotNode;
 
 class COMPSHAPES_EXPORT CompShapeCollective: public Component {
@@ -36,7 +35,7 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
   virtual ~CompShapeCollective();
 
   // Our state.
-  virtual void gather_wires();
+  virtual void update_wires();
   virtual void update_state();
 
   // Shape Instances.
@@ -64,9 +63,6 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
   void collect_tri_instances(std::vector<ShapeInstance>& quads);
   void collect_circle_instances(std::vector<ShapeInstance>& quads);
   void collect_char_instances(std::vector<CharInstance>& chars);
-
-  // Our fixed deps.
-  Dep<LowerHierarchyChange> _lower_change;
 
   // Our dynamic deps.
   // Our set of comp shapes is not serialized because the update_state can gather them up.

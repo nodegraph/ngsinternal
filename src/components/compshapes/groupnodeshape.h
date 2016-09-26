@@ -5,7 +5,6 @@
 namespace ngs {
 
 class BaseFactory;
-class LowerHierarchyChange;
 class GroupInteraction;
 
 class COMPSHAPES_EXPORT GroupNodeShape: public RectNodeShape {
@@ -34,7 +33,6 @@ class COMPSHAPES_EXPORT GroupNodeShape: public RectNodeShape {
 
   // Our fixed deps.
   Dep<BaseFactory> _factory;
-  Dep<LowerHierarchyChange> _lower_change;
 
   // Our indicator is simply a square rotated 45 degrees.
   ShapeInstance _marker_bg;

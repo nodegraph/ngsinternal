@@ -45,7 +45,6 @@ class DotNode;
 class LinkShape;
 class InputShape;
 class OutputShape;
-class LowerHierarchyChange;
 
 
 class INTERACTIONS_EXPORT GroupInteraction: public Component {
@@ -159,7 +158,6 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   Dep<BaseFactory> _factory;
   Dep<NodeSelection> _selection;
   Dep<CompShapeCollective> _shape_collective;
-  Dep<LowerHierarchyChange> _lower_change;
 
   // Interactive dragging state.
   Dep<LinkShape> _link_shape; // The link that we're dragging out.

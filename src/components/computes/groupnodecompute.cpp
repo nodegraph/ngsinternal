@@ -3,7 +3,6 @@
 #include <base/objectmodel/deploader.h>
 #include <entities/entityids.h>
 #include <entities/guientities.h>
-#include <base/objectmodel/lowerhierarchychange.h>
 
 #include <components/computes/groupnodecompute.h>
 #include <components/computes/inputcompute.h>
@@ -25,10 +24,8 @@ struct {
 
 GroupNodeCompute::GroupNodeCompute(Entity* entity):
     Compute(entity, kDID()),
-    _factory(this),
-    _lower_change(this) {
+    _factory(this) {
   get_dep_loader()->register_fixed_dep(_factory, "");
-  get_dep_loader()->register_fixed_dep(_lower_change, ".");
 }
 
 GroupNodeCompute::~GroupNodeCompute() {
@@ -39,7 +36,7 @@ void GroupNodeCompute::create_inputs_outputs() {
   create_namespace("links");
 }
 
-void GroupNodeCompute::gather_wires() {
+void GroupNodeCompute::update_wires() {
   bool changed = false;
 
   // Make sure the inputs and outputs on this group match up
@@ -105,7 +102,7 @@ void GroupNodeCompute::gather_wires() {
   }
 
   // Now do the base Compute::update_wires();
-  Compute::gather_wires();
+  Compute::update_wires();
 }
 
 void GroupNodeCompute::update_state() {

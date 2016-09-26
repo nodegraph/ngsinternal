@@ -34,7 +34,7 @@ InputLabelShape::InputLabelShape(Entity* entity)
 InputLabelShape::~InputLabelShape() {
 }
 
-void InputLabelShape::gather_wires() {
+void InputLabelShape::update_wires() {
   std::unordered_set<Entity*> dependants = _input_shape->get_dependants_by_did(kICompShape, kLinkShape);
   //assert(dependants.size() <= 1);
 

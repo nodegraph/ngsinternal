@@ -54,10 +54,10 @@ set(krelease 1)
 add_definitions("-DDEBUG_TYPE=${kdebug}")
 add_definitions("-DRELEASE_TYPE=${krelease}")
 
-set(kobfuscate_code 0)
-if (kobfuscate_code)
-    add_definitions("-DOBFUSCATE_CODE")
-endif()
+# Various Build Settings Follow.
+# Debug the object model.
+add_definitions("-DDEBUG_OBJECT_MODEL")
+
 
 # Debug binaries will not have d as a postfix, because this makes our scripts have special cases.
 # set(CMAKE_DEBUG_POSTFIX d)

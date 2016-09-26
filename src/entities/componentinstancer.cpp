@@ -1,5 +1,3 @@
-#include <base/objectmodel/lowerhierarchychange.h>
-#include <base/objectmodel/upperhierarchychange.h>
 
 #include <components/compshapes/dotnodeshape.h>
 #include <components/compshapes/inputnodeshape.h>
@@ -74,9 +72,6 @@ namespace ngs {
     case_statement(CreateSetFromTypeCompute)\
     /* Graph Building. */\
     case_statement(GraphBuilder)\
-    /* Hierarchy Changes. */\
-    case_statement(LowerHierarchyChange)\
-    case_statement(UpperHierarchyChange)\
     /* Interactions. */\
     case_statement(GroupInteraction)\
     /* App Level. */\

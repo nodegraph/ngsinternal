@@ -4,7 +4,6 @@
 
 namespace ngs {
 
-class UpperHierarchyChange;
 class Entity;
 
 class COMPUTES_EXPORT OutputCompute: public Compute {
@@ -19,6 +18,7 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   virtual void create_inputs_outputs() {}
 
   // Our state.
+  virtual void update_wires();
   virtual void update_state();
 
   // Our data type.
@@ -44,7 +44,6 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   void update_index();
 
   // Our fixed deps.
-  Dep<UpperHierarchyChange> _upper_change;
   Dep<Compute> _node_compute;
 
   // Our data type.

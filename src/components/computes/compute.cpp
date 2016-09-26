@@ -1,7 +1,6 @@
 #include <components/computes/compute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
-#include <base/objectmodel/lowerhierarchychange.h>
 #include <base/objectmodel/deploader.h>
 #include <entities/entityids.h>
 #include <entities/entityinstancer.h>
@@ -17,9 +16,7 @@ struct InputComputeComparator {
 const QVariant Compute::_empty_variant;
 
 Compute::Compute(Entity* entity, size_t derived_id)
-    : Component(entity, kIID(), derived_id),
-      _lower_change(this) {
-  get_dep_loader()->register_fixed_dep(_lower_change, ".");
+    : Component(entity, kIID(), derived_id) {
 }
 
 Compute::~Compute() {
@@ -30,7 +27,7 @@ void Compute::create_inputs_outputs() {
   create_namespace("outputs");
 }
 
-void Compute::gather_wires() {
+void Compute::update_wires() {
   gather_inputs();
 }
 

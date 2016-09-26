@@ -2,8 +2,6 @@
 #include <base/objectmodel/basefactory.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/entity.h>
-#include <base/objectmodel/lowerhierarchychange.h>
-#include <base/objectmodel/upperhierarchychange.h>
 #include <base/utils/path.h>
 
 #include <base/utils/simplesaver.h>
@@ -21,11 +19,6 @@ Entity::Entity(Entity* parent, const std::string& name)
     // Note the adding ourself as a child will also set our _parent pointer.
     parent->add_orphan_child(this);
   }
-  // All entities have an entity change component.
-  // This allows other components to depend on changes to this entity.
-  // These entity level changes are just the addition and removal of our child entities.
-  new_ff LowerHierarchyChange(this);
-  new_ff UpperHierarchyChange(this);
 }
 
 Entity::~Entity() {
@@ -86,9 +79,6 @@ void Entity::rename(const std::string& next_name) {
   } else {
     set_name(next_name);
   }
-  // A change has occurred to this entity.
-  get<LowerHierarchyChange>()->dirty_state();
-  get<UpperHierarchyChange>()->dirty_state();
 }
 
 void Entity::add_orphan_child(Entity* child) {
@@ -104,15 +94,6 @@ void Entity::add_orphan_child(Entity* child) {
   }
   // Insert the child under the unique name.
   _children[child->get_name()] = child;
-  // A change has occurred to this entity.
-  get<LowerHierarchyChange>()->dirty_state();
-  get<UpperHierarchyChange>()->dirty_state();
-  // The child's upper hierarchy component is not connected yet.
-  // So we make it dirty too.
-  UpperHierarchyChange* u = child->get<UpperHierarchyChange>();
-  if (u) {
-	  u->dirty_state();
-  }
 }
 
 void Entity::take_child(Entity* child) {
@@ -145,15 +126,6 @@ void Entity::remove_child(Entity* child) {
   // Remove the child.
   _children.erase(child->get_name());
   child->_parent = NULL;
-  // A change has occurred to this entity.
-  get<LowerHierarchyChange>()->dirty_state();
-  get<UpperHierarchyChange>()->dirty_state();
-  // The child's upper hierarchy component is not connected yet.
-  // So we make it dirty too.
-  UpperHierarchyChange* u = child->get<UpperHierarchyChange>();
-  if (u) {
-    u->dirty_state();
-  }
 }
 
 void Entity::reparent_child(Entity* child, Entity* next_parent) {
@@ -230,14 +202,14 @@ void Entity::initialize_wires() {
   }
 }
 
-void Entity::update_wires() {
+void Entity::clean_wires() {
   // First we deal with our own components.
   for (auto &iter : _components) {
-    iter.second->gather_wires();
+    iter.second->update_wires();
   }
   // Next deal with our child entities.
   for (auto &iter : _children) {
-    iter.second->update_wires();
+    iter.second->clean_wires();
   }
 }
 
@@ -348,7 +320,7 @@ void Entity::load_components(SimpleLoader& loader) {
 void Entity::load(SimpleLoader& loader) {
   load_helper(loader);
   initialize_wires();
-  update_wires();
+  clean_wires();
 }
 
 void Entity::load_helper(SimpleLoader& loader) {
@@ -363,7 +335,7 @@ void Entity::paste(SimpleLoader& loader) {
   // Load child entities.
   paste_without_merging(loader);
   initialize_wires();
-  update_wires();
+  clean_wires();
 }
 
 void Entity::set_name(const std::string& name) {
@@ -507,7 +479,7 @@ void Entity::paste_without_merging(SimpleLoader& loader) {
   Entity* folder = new_ff Entity(this, "__internal_folder__");
   folder->paste_with_merging(loader);
   folder->initialize_wires();
-  folder->update_wires();
+  folder->clean_wires();
   folder->bake_paths();
 
 

@@ -16,7 +16,6 @@
 #include <components/compshapes/outputlabelshape.h>
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/basefactory.h>
-#include <base/objectmodel/lowerhierarchychange.h>
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/entity.h>
 #include <components/compshapes/linkshape.h>
@@ -37,7 +36,6 @@ GroupInteraction::GroupInteraction(Entity* entity)
       _factory(this),
       _selection(this),
       _shape_collective(this),
-      _lower_change(this),
       _link_shape(this),
       _links_folder(NULL),
       _mouse_is_down(false),
@@ -47,7 +45,6 @@ GroupInteraction::GroupInteraction(Entity* entity)
   get_dep_loader()->register_fixed_dep(_factory, "");
   get_dep_loader()->register_fixed_dep(_selection, "");
   get_dep_loader()->register_fixed_dep(_shape_collective, ".");
-  get_dep_loader()->register_fixed_dep(_lower_change, ".");
 }
 
 GroupInteraction::~GroupInteraction(){
@@ -58,7 +55,7 @@ void GroupInteraction::update_state() {
 }
 
 void GroupInteraction::update_shape_collective() {
-  _shape_collective->gather_wires();
+  _shape_collective->update_wires();
 }
 
 glm::vec2 GroupInteraction::get_drag_delta() const {

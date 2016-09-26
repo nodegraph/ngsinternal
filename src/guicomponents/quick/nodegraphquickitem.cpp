@@ -184,7 +184,7 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
       gpu();
     }
 
-    get_app_root()->update_wires();
+    get_app_root()->clean_wires();
     get_app_root()->initialize_gl();
 
     // Set the initial size.
@@ -538,7 +538,7 @@ void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
   // A little overkill, but we clean the wires on everything in this group.
   // Otherwise after creating nodes like mock or input or output nodes,
   // they appear with their input and outplugs not showing.
-  our_entity()->update_wires();
+  our_entity()->clean_wires();
 
   // Save the node graph changes.
   save();

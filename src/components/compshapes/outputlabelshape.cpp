@@ -29,7 +29,7 @@ OutputLabelShape::OutputLabelShape(Entity* entity)
 OutputLabelShape::~OutputLabelShape() {
 }
 
-void OutputLabelShape::gather_wires() {
+void OutputLabelShape::update_wires() {
   DepUSet<LinkShape> deps;
   std::unordered_set<Entity*> dependants = _output_shape->get_dependants_by_did(kICompShape, kLinkShape);
 

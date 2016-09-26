@@ -19,7 +19,6 @@ namespace ngs {
 #endif
 
 class BaseFactory;
-class LowerHierarchyChange;
 class InputCompute;
 class OutputCompute;
 
@@ -34,7 +33,7 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void create_inputs_outputs();
 
   // Our state.
-  virtual void gather_wires();
+  virtual void update_wires();
 
   // Info about our inputs. Note the output info can be found on OutputCompute.
   virtual size_t get_exposed_input_index(const std::string& input_name) const;
@@ -64,10 +63,6 @@ class COMPUTES_EXPORT Compute: public Component {
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
   Entity* get_outputs_space();
-
-
-  // Our fixed deps.
-  Dep<LowerHierarchyChange> _lower_change;
 
   // Our dynamic deps. These are gathered and not saved.
   // Map from input plug names to their internal output plugs.

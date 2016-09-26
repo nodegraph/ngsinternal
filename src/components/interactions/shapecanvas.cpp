@@ -54,7 +54,7 @@ ShapeCanvas::~ShapeCanvas() {
   delete_ff(_quad_pipeline);
 }
 
-void ShapeCanvas::gather_wires() {
+void ShapeCanvas::update_wires() {
   if (_group_stack.empty()) {
     push_group(get_entity("root"));
   } else if (!_current_interaction) {
@@ -243,7 +243,7 @@ void ShapeCanvas::surface() {
   pop_group();
 
   // The group we're surfacing to needs to have its inputs and output updated.
-  get_app_root()->update_wires();
+  get_app_root()->clean_wires();
 }
 
 void ShapeCanvas::dive(Entity* selected) {

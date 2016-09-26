@@ -327,10 +327,12 @@ void Component::propagate_dirtiness(Component* dirty_source) {
 
   // Record the source of this dirtiness.
   if (dirty_source != this) {
+#ifdef DEBUG_OBJECT_MODEL
     DepLinks& links = _dependencies[dirty_source->get_iid()];
     assert(links.count(dirty_source));
     DepLinkPtr link = links[dirty_source].lock();
     assert(link);
+#endif
     _dirty_dependencies.insert(dirty_source);
   }
 
@@ -390,16 +392,16 @@ void Component::propagate_cleanliness() {
   clean_self();
 }
 
-void Component::update_wires() {
+void Component::clean_wires() {
   // Update our wires.
-  gather_wires();
+  update_wires();
 
   // Update the wires of our dependencies.
   for (auto & iid_iter: _dependencies) {
     for (auto & dep_iter : iid_iter.second) {
       DepLinkPtr link = dep_iter.second.lock();
       if (link && link->dependency) {
-          link->dependency->update_wires();
+          link->dependency->clean_wires();
       }
     }
   }

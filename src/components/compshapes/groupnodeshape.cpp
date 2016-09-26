@@ -1,6 +1,5 @@
 #include "groupnodeshape.h"
 #include <base/objectmodel/deploader.h>
-#include <base/objectmodel/lowerhierarchychange.h>
 #include <base/objectmodel/basefactory.h>
 #include <entities/entityids.h>
 #include <components/compshapes/inputshape.h>
@@ -26,10 +25,8 @@ const std::array<unsigned char,4> GroupNodeShape::indicator_fg_color = { 255, 12
 
 GroupNodeShape::GroupNodeShape(Entity* entity)
     : RectNodeShape(entity, kDID()),
-      _factory(this),
-      _lower_change(this) {
+      _factory(this) {
   get_dep_loader()->register_fixed_dep(_factory, "");
-  get_dep_loader()->register_fixed_dep(_lower_change, ".");
 
   _marker_bg.state = 0;
   _marker_fg.state = 0;

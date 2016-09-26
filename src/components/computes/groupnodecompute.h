@@ -21,12 +21,11 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   virtual void create_inputs_outputs();
 
   // Our state.
-  virtual void gather_wires();
+  virtual void update_wires();
   virtual void update_state();
 
  private:
   Dep<BaseFactory> _factory;
-  Dep<LowerHierarchyChange> _lower_change;
 };
 
 }

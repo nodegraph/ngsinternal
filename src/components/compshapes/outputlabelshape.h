@@ -19,7 +19,7 @@ class COMPSHAPES_EXPORT OutputLabelShape: public CompShape {
   virtual ~OutputLabelShape();
 
   // Our state.
-  virtual void gather_wires();
+  virtual void update_wires();
   virtual void update_state();
 
   // Our shape instances.

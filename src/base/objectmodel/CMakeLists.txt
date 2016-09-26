@@ -5,9 +5,7 @@ set(sources
 	deplink.cpp
 	deploader.cpp
     entity.cpp
-    lowerhierarchychange.cpp
     patheddeps.cpp
-    upperhierarchychange.cpp
     )
     
 set(headers
@@ -17,8 +15,6 @@ set(headers
 	deplink.h
 	deploader.h
 	entity.h
-    lowerhierarchychange.h
-    upperhierarchychange.h
     )
     
 add_library(ngs_objectmodel  ${sources} ${headers})
