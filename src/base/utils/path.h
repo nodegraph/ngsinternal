@@ -23,23 +23,29 @@ class SimpleLoader;
 
 class UTILS_EXPORT Path {
  public:
+  // We assume this path never exists in the entity hierarchy.
+  static const std::deque<std::string> kInvalidPathElements;
   static const std::string kCurrentDir;
   static const std::string kParentDir;
 
-  Path();
-  Path(const std::vector<std::string>& elements);
+  static std::deque<std::string> split_string(const std::string& path);
+
+  // The explicit keyword prevents Path({}) from getting coerced to Path().
+  explicit Path();
+//  Path(const std::vector<std::string>& elements);
   Path(const std::deque<std::string>& elements);
-  Path(const std::string& full_path);
-  Path(const char* full_path);
+//  Path(const std::string& full_path);
+//  Path(const char* full_path);
   Path(const Path& other);
   ~Path();
+
+  void invalidate() {_elements = kInvalidPathElements;}
 
   // Serialization.
   void save(SimpleSaver& saver) const;
   void load(SimpleLoader& loader);
 
   // Initializers.
-  void set(const std::string& full_path);
   bool is_absolute() const;
   void make_relative_to(const Path& base);
   size_t get_num_prefix_elements(const Path& prefix) const;

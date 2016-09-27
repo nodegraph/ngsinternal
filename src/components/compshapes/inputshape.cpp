@@ -32,8 +32,8 @@ InputShape::InputShape(Entity* entity)
     : CompShape(entity, kDID()),
       _node_shape(this),
       _compute(this) {
-  get_dep_loader()->register_fixed_dep(_node_shape, "../..");
-  get_dep_loader()->register_fixed_dep(_compute, "../..");
+  get_dep_loader()->register_fixed_dep(_node_shape, Path({"..",".."}));
+  get_dep_loader()->register_fixed_dep(_compute, Path({"..",".."}));
 }
 
 InputShape::~InputShape() {

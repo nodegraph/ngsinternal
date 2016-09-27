@@ -94,6 +94,7 @@ class Dep: public DepLinkHolder {
     return *this;
   }
 
+#ifdef MULTITHREAD_COMPONENTS
   // Helper class to lock the component before use, and unlock it after use.
   class MutexHelper {
    public:
@@ -121,6 +122,14 @@ class Dep: public DepLinkHolder {
     }
     return NULL;
   }
+#else
+  T* operator->() const {
+    if (_link) {
+      return static_cast<T*>(_link->dependency);
+    }
+    return NULL;
+  }
+#endif
 
   operator bool() const {
     if (_link && _link->dependency) {

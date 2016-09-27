@@ -41,8 +41,8 @@ NodeGraphRenderer::NodeGraphRenderer(Entity* parent)
       Component(parent, kIID(), kDID()),
       _canvas(this),
       _graph_builder(this){
-  get_dep_loader()->register_fixed_dep(_canvas, "");
-  get_dep_loader()->register_fixed_dep(_graph_builder, "");
+  get_dep_loader()->register_fixed_dep(_canvas, Path({}));
+  get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
 
   std::cerr << "enter something to continue\n";
   int dummy;

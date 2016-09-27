@@ -34,7 +34,7 @@ public:
   ~DepLoader();
 
   template <class T>
-  void register_fixed_dep(Dep<T>& dep, const std::string& path) {
+  void register_fixed_dep(Dep<T>& dep, const Path& path) {
     FixedDepWrapper<T>* w = new_ff FixedDepWrapper<T>(&dep, path);
     _fixed_deps.push_back(w);
   }
@@ -52,8 +52,8 @@ public:
   }
 
   // Updates return true if something actually changes in the update.
-  bool update_fixed_wires();
-  bool update_dynamic_wires();
+  void update_fixed_wires();
+  void update_dynamic_wires();
 
   void save(SimpleSaver& saver) const;
   void load(SimpleLoader& loader);

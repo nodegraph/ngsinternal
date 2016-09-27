@@ -17,24 +17,16 @@ DepLoader::~DepLoader() {
   }
 }
 
-bool DepLoader::update_fixed_wires() {
-  bool changed = false;
+void DepLoader::update_fixed_wires() {
   for (PathedDep* d: _fixed_deps) {
-    if (d->update_wire()) {
-      changed = true;
-    }
+    d->update_wire();
   }
-  return changed;
 }
 
-bool DepLoader::update_dynamic_wires() {
-  bool changed = false;
+void DepLoader::update_dynamic_wires() {
   for (PathedDep* d: _dynamic_deps) {
-    if (d->update_wire()) {
-      changed = true;
-    }
+    d->update_wire();
   }
-  return changed;
 }
 
 void DepLoader::save(SimpleSaver& saver) const {

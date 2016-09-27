@@ -10,29 +10,24 @@
 
 namespace ngs {
 
+const std::deque<std::string> Path::kInvalidPathElements = {"__INTERNAL__", "__INVALID_PATH__"};
 const std::string Path::kCurrentDir(".");
 const std::string Path::kParentDir("..");
 
-Path::Path() {
+std::deque<std::string> Path::split_string(const std::string& path) {
+  std::string delimiter = "/";
+  std::vector<std::string> splits = split(path, delimiter);
+  std::deque<std::string> elements;
+  elements.insert(elements.end(),splits.begin(),splits.end());
+  return elements;
 }
 
-Path::Path(const std::vector<std::string>& elements) {
-  for (const std::string& s : elements) {
-    _elements.push_back(s);
-  }
+
+Path::Path(): _elements(kInvalidPathElements) {
 }
 
 Path::Path(const std::deque<std::string>& elements)
     : _elements(elements) {
-}
-
-Path::Path(const std::string& full_path) {
-  set(full_path);
-}
-
-Path::Path(const char* full_path_pointer) {
-  std::string full_path(full_path_pointer);
-  set(full_path);
 }
 
 Path::Path(const Path& other)
@@ -40,12 +35,6 @@ Path::Path(const Path& other)
 }
 
 Path::~Path() {
-}
-
-void Path::set(const std::string& full_path) {
-  std::string delimiter = "/";
-  std::vector<std::string> path = split(full_path, delimiter);
-  _elements.insert(_elements.end(),path.begin(),path.end());
 }
 
 bool Path::is_absolute() const {

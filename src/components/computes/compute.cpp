@@ -34,7 +34,7 @@ void Compute::update_wires() {
 void Compute::gather_inputs() {
   // Connect to our inputs.
   _inputs.clear();
-  Entity* inputs_space = has_entity("./inputs");
+  Entity* inputs_space = has_entity(Path({".","inputs"}));
   if (inputs_space) {
     const Entity::NameToChildMap& children = inputs_space->get_children();
     for (auto iter: children) {
@@ -134,7 +134,7 @@ bool Compute::check_variant_is_map(const QVariant& value, const std::string& mes
 }
 
 Entity* Compute::create_input(const std::string& name, ParamType type, bool exposed) {
-  Dep<BaseFactory> factory = get_dep<BaseFactory>("");
+  Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
   InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, name, kInputEntity));
   input->create_internals();
@@ -144,7 +144,7 @@ Entity* Compute::create_input(const std::string& name, ParamType type, bool expo
 }
 
 Entity* Compute::create_output(const std::string& name, ParamType type, bool exposed) {
-  Dep<BaseFactory> factory = get_dep<BaseFactory>("");
+  Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* outputs_space = get_outputs_space();
   OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, name, kOutputEntity));
   output->create_internals();
@@ -154,7 +154,7 @@ Entity* Compute::create_output(const std::string& name, ParamType type, bool exp
 }
 
 Entity* Compute::create_namespace(const std::string& name) {
-  Dep<BaseFactory> factory = get_dep<BaseFactory>("");
+  Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* space = static_cast<BaseNamespaceEntity*>(factory->instance_entity(our_entity(), name, kBaseNamespaceEntity));
   space->create_internals();
   return space;

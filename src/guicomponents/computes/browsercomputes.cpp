@@ -12,7 +12,7 @@ namespace ngs {
 BrowserCompute::BrowserCompute(Entity* entity, size_t did)
     : Compute(entity, did),
       _app_worker(this) {
-  get_dep_loader()->register_fixed_dep(_app_worker, "");
+  get_dep_loader()->register_fixed_dep(_app_worker, Path({}));
 }
 
 BrowserCompute::~BrowserCompute() {

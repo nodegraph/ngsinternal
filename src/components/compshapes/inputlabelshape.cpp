@@ -27,8 +27,8 @@ InputLabelShape::InputLabelShape(Entity* entity)
       _input_shape(this),
       _link_shape(this),
       _state(0) {
-  get_dep_loader()->register_fixed_dep(_resources, "");
-  get_dep_loader()->register_fixed_dep(_input_shape, "..");
+  get_dep_loader()->register_fixed_dep(_resources, Path({}));
+  get_dep_loader()->register_fixed_dep(_input_shape, Path({".."}));
 }
 
 InputLabelShape::~InputLabelShape() {
@@ -72,7 +72,7 @@ void InputLabelShape::update_state() {
   }
 
   // Get our name.
-  const std::string& name = get_entity("..")->get_name();
+  const std::string& name = get_entity(Path({".."}))->get_name();
 
   // Tessellate our text.
   if (!_link_shape) {

@@ -14,7 +14,7 @@ class OBJECTMODEL_EXPORT PathedDep {
 
   virtual void save(SimpleSaver& saver) const {}
   virtual void load(SimpleLoader& loader) {}
-  virtual bool update_wire() {return false;}
+  virtual void update_wire() {}
   virtual void bake_path() const {}
 };
 

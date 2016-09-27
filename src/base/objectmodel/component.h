@@ -88,6 +88,7 @@ class OBJECTMODEL_EXPORT Component {
   Component(Entity* entity, size_t interface_id, size_t derived_id);
   virtual ~Component();
 
+#ifdef MULTITHREAD_COMPONENTS
   // Lockable.
   void lock() {
     _mutex.lock();
@@ -95,6 +96,7 @@ class OBJECTMODEL_EXPORT Component {
   void unlock() {
     _mutex.unlock();
   }
+#endif
 
   // The entity which own us.
   Entity* our_entity() const;
@@ -307,7 +309,9 @@ class OBJECTMODEL_EXPORT Component {
   DepLoader* _dep_loader;
 
   // Locking.
+#ifdef MULTITHREAD_COMPONENTS
   std::recursive_mutex _mutex;
+#endif
 
   // The Dependency class needs access to our private dependency methods.
   friend class Entity;

@@ -17,14 +17,14 @@ namespace ngs {
 GraphBuilder::GraphBuilder(Entity* entity)
     : Component(entity, kIID(), kDID()),
       _factory(this) {
-  get_dep_loader()->register_fixed_dep(_factory, "");
+  get_dep_loader()->register_fixed_dep(_factory, Path({}));
 }
 
 GraphBuilder::~GraphBuilder() {
 }
 
 Entity* GraphBuilder::build_open_browser_node() {
-  Entity* root_group = get_entity("root");
+  Entity* root_group = get_entity(Path({"root"}));
   Entity* node = _factory->instance_entity(root_group, "open browser", kOpenBrowserNodeEntity);
   node->create_internals();
 
@@ -34,7 +34,7 @@ Entity* GraphBuilder::build_open_browser_node() {
 }
 
 Entity* GraphBuilder::build_close_browser_node() {
-  Entity* root_group = get_entity("root");
+  Entity* root_group = get_entity(Path({"root"}));
   Entity* node = _factory->instance_entity(root_group, "close browser", kCloseBrowserNodeEntity);
   node->create_internals();
 
@@ -44,14 +44,14 @@ Entity* GraphBuilder::build_close_browser_node() {
 }
 
 Entity* GraphBuilder::build_click_node(int set_index, int overlay_index, float rel_x, float rel_y) {
-  Entity* root_group = get_entity("root");
+  Entity* root_group = get_entity(Path({"root"}));
   Entity* node = _factory->instance_entity(root_group, "input one", kInputNodeEntity);
   node->create_internals();
 
-  Dep<InputCompute> si_dep = get_dep<InputCompute>(node->get_entity("./inputs/set_index"));
-  Dep<InputCompute> oi_dep = get_dep<InputCompute>(node->get_entity("./inputs/overlay_index"));
-  Dep<InputCompute> x_dep = get_dep<InputCompute>(node->get_entity("./inputs/x"));
-  Dep<InputCompute> y_dep = get_dep<InputCompute>(node->get_entity("./inputs/y"));
+  Dep<InputCompute> si_dep = get_dep<InputCompute>(node->get_entity(Path({".","inputs","set_index"})));
+  Dep<InputCompute> oi_dep = get_dep<InputCompute>(node->get_entity(Path({".","inputs","overlay_index"})));
+  Dep<InputCompute> x_dep = get_dep<InputCompute>(node->get_entity(Path({".","inputs","x"})));
+  Dep<InputCompute> y_dep = get_dep<InputCompute>(node->get_entity(Path({".","inputs","y"})));
 
   si_dep->set_value(set_index);
   oi_dep->set_value(overlay_index);
@@ -67,7 +67,7 @@ void GraphBuilder::build_stress_graph() {
 
   std::cerr << "starting to create nodes\n";
 
-  Entity* root_group = get_entity("root");
+  Entity* root_group = get_entity(Path({"root"}));
 
   const size_t cols = 100;
   const size_t rows = 10;
@@ -92,10 +92,10 @@ void GraphBuilder::build_stress_graph() {
       // Link up the node.
       if (y > 0) {
         // Connect links to the previous row.
-        Dep<OutputCompute> op0 = get_dep<OutputCompute>(node->get_entity("./outputs/c"));
-        Dep<OutputCompute> op1 = get_dep<OutputCompute>(node->get_entity("./outputs/d"));
-        Dep<InputCompute> ip0 = get_dep<InputCompute>(prev_row[x]->get_entity("./inputs/a"));
-        Dep<InputCompute> ip1 = get_dep<InputCompute>(prev_row[x]->get_entity("./inputs/b"));
+        Dep<OutputCompute> op0 = get_dep<OutputCompute>(node->get_entity(Path({".","outputs","c"})));
+        Dep<OutputCompute> op1 = get_dep<OutputCompute>(node->get_entity(Path({".","outputs","d"})));
+        Dep<InputCompute> ip0 = get_dep<InputCompute>(prev_row[x]->get_entity(Path({".","inputs","a"})));
+        Dep<InputCompute> ip1 = get_dep<InputCompute>(prev_row[x]->get_entity(Path({".","inputs","b"})));
 
         ip0->link_output_compute(op0);
         ip1->link_output_compute(op1);
@@ -108,7 +108,7 @@ void GraphBuilder::build_stress_graph() {
 }
 
 void GraphBuilder::build_test_graph() {
-  Entity* root_group = get_entity("root");
+  Entity* root_group = get_entity(Path({"root"}));
 
   Entity* i1 = _factory->instance_entity(root_group, "input one", kInputNodeEntity);
   Entity* o1 = _factory->instance_entity(root_group, "output one", kOutputNodeEntity);
@@ -127,23 +127,23 @@ void GraphBuilder::build_test_graph() {
   d1->create_internals();
   d2->create_internals();
 
-  Entity* n1_ipe1 = n1->get_entity("./inputs/a");
-  Entity* n1_ipe2 = n1->get_entity("./inputs/b");
+  Entity* n1_ipe1 = n1->get_entity(Path({".","inputs","a"}));
+  Entity* n1_ipe2 = n1->get_entity(Path({".","inputs","b"}));
 
-  Entity* n2_ipe1 = n2->get_entity("./inputs/a");
-  Entity* n2_ipe2 = n2->get_entity("./inputs/b");
+  Entity* n2_ipe1 = n2->get_entity(Path({".","inputs","a"}));
+  Entity* n2_ipe2 = n2->get_entity(Path({".","inputs","b"}));
 
-  Entity* n3_ipe1 = n3->get_entity("./inputs/a");
-  Entity* n3_ipe2 = n3->get_entity("./inputs/b");
+  Entity* n3_ipe1 = n3->get_entity(Path({".","inputs","a"}));
+  Entity* n3_ipe2 = n3->get_entity(Path({".","inputs","b"}));
 
-  Entity* n1_ope1 = n1->get_entity("./outputs/c");
-  Entity* n1_ope2 = n1->get_entity("./outputs/d");
+  Entity* n1_ope1 = n1->get_entity(Path({".","outputs","c"}));
+  Entity* n1_ope2 = n1->get_entity(Path({".","outputs","d"}));
 
-  Entity* n2_ope1 = n2->get_entity("./outputs/c");
-  Entity* n2_ope2 = n2->get_entity("./outputs/d");
+  Entity* n2_ope1 = n2->get_entity(Path({".","outputs","c"}));
+  Entity* n2_ope2 = n2->get_entity(Path({".","outputs","d"}));
 
-  Entity* n3_ope1 = n3->get_entity("./outputs/c");
-  Entity* n3_ope2 = n3->get_entity("./outputs/d");
+  Entity* n3_ope1 = n3->get_entity(Path({".","outputs","c"}));
+  Entity* n3_ope2 = n3->get_entity(Path({".","outputs","d"}));
 
   get_app_root()->initialize_wires();
 
@@ -223,23 +223,23 @@ void GraphBuilder::build_test_graph() {
     i1->create_internals();
     o1->create_internals();
 
-    Entity* n1_ipe1 = n1->get_entity("./inputs/a");
-    Entity* n1_ipe2 = n1->get_entity("./inputs/b");
+    Entity* n1_ipe1 = n1->get_entity(Path({".","inputs","a"}));
+    Entity* n1_ipe2 = n1->get_entity(Path({".","inputs","b"}));
 
-    Entity* n2_ipe1 = n2->get_entity("./inputs/a");
-    Entity* n2_ipe2 = n2->get_entity("./inputs/b");
+    Entity* n2_ipe1 = n2->get_entity(Path({".","inputs","a"}));
+    Entity* n2_ipe2 = n2->get_entity(Path({".","inputs","b"}));
 
-    Entity* n3_ipe1 = n3->get_entity("./inputs/a");
-    Entity* n3_ipe2 = n3->get_entity("./inputs/b");
+    Entity* n3_ipe1 = n3->get_entity(Path({".","inputs","a"}));
+    Entity* n3_ipe2 = n3->get_entity(Path({".","inputs","b"}));
 
-    Entity* n1_ope1 = n1->get_entity("./outputs/c");
-    Entity* n1_ope2 = n1->get_entity("./outputs/d");
+    Entity* n1_ope1 = n1->get_entity(Path({".","outputs","c"}));
+    Entity* n1_ope2 = n1->get_entity(Path({".","outputs","d"}));
 
-    Entity* n2_ope1 = n2->get_entity("./outputs/c");
-    Entity* n2_ope2 = n2->get_entity("./outputs/d");
+    Entity* n2_ope1 = n2->get_entity(Path({".","outputs","c"}));
+    Entity* n2_ope2 = n2->get_entity(Path({".","outputs","d"}));
 
-    Entity* n3_ope1 = n3->get_entity("./outputs/c");
-    Entity* n3_ope2 = n3->get_entity("./outputs/d");
+    Entity* n3_ope1 = n3->get_entity(Path({".","outputs","c"}));
+    Entity* n3_ope2 = n3->get_entity(Path({".","outputs","d"}));
 
     get_app_root()->initialize_wires();
 

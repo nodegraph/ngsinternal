@@ -26,7 +26,7 @@ const std::array<unsigned char,4> GroupNodeShape::indicator_fg_color = { 255, 12
 GroupNodeShape::GroupNodeShape(Entity* entity)
     : RectNodeShape(entity, kDID()),
       _factory(this) {
-  get_dep_loader()->register_fixed_dep(_factory, "");
+  get_dep_loader()->register_fixed_dep(_factory, Path({}));
 
   _marker_bg.state = 0;
   _marker_fg.state = 0;

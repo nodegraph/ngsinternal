@@ -39,7 +39,7 @@ TestDeps::TestDeps(Entity* entity)
       _dot_c_out_compute(this),
       _dot_d_in_compute(this),
       _dot_d_out_compute(this){
-  get_dep_loader()->register_fixed_dep(_factory, "");
+  get_dep_loader()->register_fixed_dep(_factory, Path({}));
 }
 
 TestDeps::~TestDeps() {
@@ -61,7 +61,7 @@ void TestDeps::test() {
 }
 
 void TestDeps::set_up() {
-  Entity* root_group = get_entity("root");
+  Entity* root_group = get_entity(Path({"root"}));
   assert(root_group);
 
   // Create the nodes.
@@ -87,22 +87,22 @@ void TestDeps::set_up() {
   _dot_d_compute = get_dep<Compute>(_dot_d);
 
   // Cache the compute components of the plugs.
-  _mock_a_compute = get_dep<InputCompute>(_mock->get_entity("./inputs/a"));
-  _mock_b_compute = get_dep<InputCompute>(_mock->get_entity("./inputs/b"));
-  _mock_c_compute = get_dep<OutputCompute>(_mock->get_entity("./outputs/c"));
-  _mock_d_compute = get_dep<OutputCompute>(_mock->get_entity("./outputs/d"));
+  _mock_a_compute = get_dep<InputCompute>(_mock->get_entity(Path({".","inputs","a"})));
+  _mock_b_compute = get_dep<InputCompute>(_mock->get_entity(Path({".","inputs","b"})));
+  _mock_c_compute = get_dep<OutputCompute>(_mock->get_entity(Path({".","outputs","c"})));
+  _mock_d_compute = get_dep<OutputCompute>(_mock->get_entity(Path({".","outputs","d"})));
 
-  _dot_a_in_compute = get_dep<InputCompute>(_dot_a->get_entity("./inputs/in"));
-  _dot_a_out_compute = get_dep<OutputCompute>(_dot_a->get_entity("./outputs/out"));
+  _dot_a_in_compute = get_dep<InputCompute>(_dot_a->get_entity(Path({".","inputs","in"})));
+  _dot_a_out_compute = get_dep<OutputCompute>(_dot_a->get_entity(Path({".","outputs","out"})));
 
-  _dot_b_in_compute = get_dep<InputCompute>(_dot_b->get_entity("./inputs/in"));
-  _dot_b_out_compute = get_dep<OutputCompute>(_dot_b->get_entity("./outputs/out"));
+  _dot_b_in_compute = get_dep<InputCompute>(_dot_b->get_entity(Path({".","inputs","in"})));
+  _dot_b_out_compute = get_dep<OutputCompute>(_dot_b->get_entity(Path({".","outputs","out"})));
 
-  _dot_c_in_compute = get_dep<InputCompute>(_dot_c->get_entity("./inputs/in"));
-  _dot_c_out_compute = get_dep<OutputCompute>(_dot_c->get_entity("./outputs/out"));
+  _dot_c_in_compute = get_dep<InputCompute>(_dot_c->get_entity(Path({".","inputs","in"})));
+  _dot_c_out_compute = get_dep<OutputCompute>(_dot_c->get_entity(Path({".","outputs","out"})));
 
-  _dot_d_in_compute = get_dep<InputCompute>(_dot_d->get_entity("./inputs/in"));
-  _dot_d_out_compute = get_dep<OutputCompute>(_dot_d->get_entity("./outputs/out"));
+  _dot_d_in_compute = get_dep<InputCompute>(_dot_d->get_entity(Path({".","inputs","in"})));
+  _dot_d_out_compute = get_dep<OutputCompute>(_dot_d->get_entity(Path({".","outputs","out"})));
 
   // verify everything is dirty
   verify_all(true);

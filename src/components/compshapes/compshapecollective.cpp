@@ -94,8 +94,8 @@ void CompShapeCollective::collect_comp_shapes(Entity* entity) {
   // If it's a group node we don't dive into it.
   // We show its inputs and outputs.
   if (entity->get_did() == kGroupNodeEntity) {
-    collect_comp_shapes(entity->get_entity("./inputs"));
-    collect_comp_shapes(entity->get_entity("./outputs"));
+    collect_comp_shapes(entity->get_entity(Path({".","inputs"})));
+    collect_comp_shapes(entity->get_entity(Path({".","outputs"})));
     return;
   }
 

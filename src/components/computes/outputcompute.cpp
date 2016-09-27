@@ -12,7 +12,7 @@ OutputCompute::OutputCompute(Entity* entity)
       _exposed_index(-1),
       _num_exposed(-1),
       _num_outputs(-1){
-  get_dep_loader()->register_fixed_dep(_node_compute, "../..");
+  get_dep_loader()->register_fixed_dep(_node_compute, Path({"..",".."}));
 }
 
 OutputCompute::~OutputCompute() {

@@ -51,9 +51,9 @@ AppWorker::AppWorker(Entity* parent)
       _waiting_for_results(false),
       _next_msg_id(0),
       _connected(false){
-  get_dep_loader()->register_fixed_dep(_app_comm, "");
-  get_dep_loader()->register_fixed_dep(_file_model, "");
-  get_dep_loader()->register_fixed_dep(_graph_builder, "");
+  get_dep_loader()->register_fixed_dep(_app_comm, Path({}));
+  get_dep_loader()->register_fixed_dep(_file_model, Path({}));
+  get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
 
   // Setup the poll timer.
   _poll_timer.setSingleShot(false);

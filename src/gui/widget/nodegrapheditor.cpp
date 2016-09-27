@@ -65,9 +65,9 @@ NodeGraphEditor::NodeGraphEditor(Entity* entity, QWidget* parent, const QGLWidge
       _canvas(this),
       _graph_builder(this),
       _initialized_gl(false) {
-  get_dep_loader()->register_fixed_dep(_resources, "");
-  get_dep_loader()->register_fixed_dep(_canvas, "");
-  get_dep_loader()->register_fixed_dep(_graph_builder, "");
+  get_dep_loader()->register_fixed_dep(_resources, Path({}));
+  get_dep_loader()->register_fixed_dep(_canvas, Path({}));
+  get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
 
 
 #if ARCH == ARCH_MACOS

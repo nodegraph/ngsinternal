@@ -42,16 +42,16 @@ GroupInteraction::GroupInteraction(Entity* entity)
       _state(kNodeSelectionAndDragging),
       _hit_region(kMissed),
       _panning_selection(false) {
-  get_dep_loader()->register_fixed_dep(_factory, "");
-  get_dep_loader()->register_fixed_dep(_selection, "");
-  get_dep_loader()->register_fixed_dep(_shape_collective, ".");
+  get_dep_loader()->register_fixed_dep(_factory, Path({}));
+  get_dep_loader()->register_fixed_dep(_selection, Path({}));
+  get_dep_loader()->register_fixed_dep(_shape_collective, Path({"."}));
 }
 
 GroupInteraction::~GroupInteraction(){
 }
 
 void GroupInteraction::update_state() {
-  _links_folder = get_entity("./links");
+  _links_folder = get_entity(Path({".","links"}));
 }
 
 void GroupInteraction::update_shape_collective() {
@@ -126,7 +126,7 @@ void GroupInteraction::destroy_link(Entity* link) {
 
 bool GroupInteraction::has_link(Entity* entity) const {
   external();
-  Entity* head = entity->has_entity("./link");
+  Entity* head = entity->has_entity(Path({".","link"}));
   if (head) {
     return true;
   }
@@ -744,7 +744,7 @@ void GroupInteraction::deselect(const Dep<NodeShape>& comp_shape) {
 
 void GroupInteraction::select_all() {
   external();
-  Entity* group_node = get_entity(".");
+  Entity* group_node = get_entity(Path({"."}));
   DepUSet<NodeShape> set;
   for (const auto &iter: group_node->get_children()) {
     Entity* child = iter.second;
@@ -811,7 +811,7 @@ void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
   }
 
   // The parent of all the selected entities.
-  Entity* parent = (*selected.begin())->get_entity("..");
+  Entity* parent = (*selected.begin())->get_entity(Path({".."}));
   assert(parent == our_entity());
 
   // Determine where to place the collapsed group node.
@@ -896,7 +896,7 @@ void GroupInteraction::explode(const Dep<NodeShape>& cs) {
   std::string raw_copy = cs_entity->copy_to_string(nodes);
 
   // Paste these nodes outside the exploding group.
-  Entity* parent = cs->get_entity("..");
+  Entity* parent = cs->get_entity(Path({".."}));
   parent->paste_from_string(raw_copy);
 
   // Get the pasted nodes.

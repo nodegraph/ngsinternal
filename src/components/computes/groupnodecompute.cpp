@@ -25,7 +25,7 @@ struct {
 GroupNodeCompute::GroupNodeCompute(Entity* entity):
     Compute(entity, kDID()),
     _factory(this) {
-  get_dep_loader()->register_fixed_dep(_factory, "");
+  get_dep_loader()->register_fixed_dep(_factory, Path({}));
 }
 
 GroupNodeCompute::~GroupNodeCompute() {
@@ -41,8 +41,8 @@ void GroupNodeCompute::update_wires() {
 
   // Make sure the inputs and outputs on this group match up
   // with the input and output nodes inside this group.
-  Entity* inputs_space = get_entity("./inputs");
-  Entity* outputs_space = get_entity("./outputs");
+  Entity* inputs_space = get_entity(Path({".","inputs"}));
+  Entity* outputs_space = get_entity(Path({".","outputs"}));
 
   // Make sure all the input/outputs nodes in this group are represented by inputs/outputs.
   const Entity::NameToChildMap& children = our_entity()->get_children();
@@ -128,7 +128,7 @@ void GroupNodeCompute::update_state() {
 
   // Find all of our output data entities.
   // For each one if there is an associated output node, we clean it and cache the result.
-  Entity* outputs = get_entity("./outputs");
+  Entity* outputs = get_entity(Path({".","outputs"}));
   for (auto &iter: outputs->get_children()) {
     Entity* oe = iter.second;
     const std::string& output_name = oe->get_name();

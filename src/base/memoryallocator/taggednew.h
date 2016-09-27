@@ -20,20 +20,21 @@
 
  */
 
-#if BUILD_TYPE == RELEASE_TYPE
-// Memory is not tracked.
-#define TRACK_NEW new
-#define TRACK_ALLOC(size_bytes) ::operator new(size_bytes)
-#define TRACK_DELETE(PTR) delete(PTR); PTR=NULL;
-#define TRACK_DELETE2(PTR) delete(PTR);
-#define TRACK_DELETE_ARRAY(PTR) delete[](PTR); PTR=NULL;
+
+#ifdef DEBUG_MEMORY_ALLOCATION
+  // Enable memory allocation tracking.
+  #define TRACK_NEW new(__FILE__, __LINE__)
+  #define TRACK_ALLOC(size_bytes) ::operator new(size_bytes,__FILE__,__LINE__)
+  #define TRACK_DELETE(PTR) delete(PTR); PTR=NULL;
+  #define TRACK_DELETE2(PTR) delete(PTR);
+  #define TRACK_DELETE_ARRAY(PTR) delete[](PTR); PTR=NULL;
 #else
-// Memory is tracked on desktop platforms.
-#define TRACK_NEW new(__FILE__, __LINE__)
-#define TRACK_ALLOC(size_bytes) ::operator new(size_bytes,__FILE__,__LINE__)
-#define TRACK_DELETE(PTR) delete(PTR); PTR=NULL;
-#define TRACK_DELETE2(PTR) delete(PTR);
-#define TRACK_DELETE_ARRAY(PTR) delete[](PTR); PTR=NULL;
+  // Disable memory allocation tracking.
+  #define TRACK_NEW new
+  #define TRACK_ALLOC(size_bytes) ::operator new(size_bytes)
+  #define TRACK_DELETE(PTR) delete(PTR); PTR=NULL;
+  #define TRACK_DELETE2(PTR) delete(PTR);
+  #define TRACK_DELETE_ARRAY(PTR) delete[](PTR); PTR=NULL;
 #endif
 
 #define new_ff TRACK_NEW

@@ -61,7 +61,7 @@ void ScriptNodeCompute::update_state() {
 //  }
 //
 //  // Make sure we have enough result data for each of our outputs.
-//  Entity* outputs = get_entity("./outputs");
+//  Entity* outputs = get_entity(Path({".","outputs"}));
 //  for (auto &out: outputs->get_children()) {
 //    const std::string& output_name = out.first;
 //    if (!_results.count(output_name.c_str())) {

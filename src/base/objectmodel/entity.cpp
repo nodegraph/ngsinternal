@@ -185,7 +185,7 @@ bool Entity::is_app_root() const {
 }
 
 Entity* Entity::get_root_group() const {
-  return get_app_root()->get_entity("./root");
+  return get_app_root()->get_entity(Path({"root"}));
 }
 
 bool Entity::is_root_group() const {

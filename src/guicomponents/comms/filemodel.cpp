@@ -41,7 +41,7 @@ FileModel::FileModel(Entity* app_root)
       _graph_builder(this),
       _working_row(-1),
       _use_encryption(true){
-  get_dep_loader()->register_fixed_dep(_graph_builder, "");
+  get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
 
   // Make sure the data dir exists.
   QString data_dir = AppWorker::get_user_data_dir();
@@ -602,7 +602,7 @@ void FileModel::load_graph(int row) {
 
   // Although everything down from the root group is updated by the load.
   // Everything from the app root is not updated. So we update it here.
-  get_app_root()->initialize_wires();
+  get_root_group()->initialize_wires();
 
   std::cerr << "done loading graph -  bbbb\n";
 

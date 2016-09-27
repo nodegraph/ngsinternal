@@ -29,8 +29,8 @@ OutputShape::OutputShape(Entity* entity)
     : CompShape(entity, kDID()),
       _node_shape(this),
       _output_compute(this){
-  get_dep_loader()->register_fixed_dep(_node_shape, "../..");
-  get_dep_loader()->register_fixed_dep(_output_compute, ".");
+  get_dep_loader()->register_fixed_dep(_node_shape, Path({"..",".."}));
+  get_dep_loader()->register_fixed_dep(_output_compute, Path({"."}));
 
 
 }

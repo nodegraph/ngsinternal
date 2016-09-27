@@ -57,6 +57,8 @@ add_definitions("-DRELEASE_TYPE=${krelease}")
 # Various Build Settings Follow.
 # Debug the object model.
 add_definitions("-DDEBUG_OBJECT_MODEL")
+#add_definitions("-DDEBUG_MEMORY_ALLOCATION")
+#add_definitions("-DMULTITHREAD_COMPONENTS")
 
 
 # Debug binaries will not have d as a postfix, because this makes our scripts have special cases.

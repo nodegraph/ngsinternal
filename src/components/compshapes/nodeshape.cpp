@@ -23,7 +23,7 @@ NodeShape::NodeShape(Entity* entity, size_t did)
       _shared_state(0),
       _being_edited(false),
       _being_viewed(false){
-  get_dep_loader()->register_fixed_dep(_resources, "");
+  get_dep_loader()->register_fixed_dep(_resources, Path({}));
 
   _edit_quad_bg.state = 0;
   _edit_quad_fg.state = 0;

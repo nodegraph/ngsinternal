@@ -22,8 +22,8 @@ OutputLabelShape::OutputLabelShape(Entity* entity)
       _resources(this),
       _output_shape(this),
       _state(0) {
-  get_dep_loader()->register_fixed_dep(_resources, "");
-  get_dep_loader()->register_fixed_dep(_output_shape, "..");
+  get_dep_loader()->register_fixed_dep(_resources, Path({}));
+  get_dep_loader()->register_fixed_dep(_output_shape, Path({".."}));
 }
 
 OutputLabelShape::~OutputLabelShape() {
@@ -72,7 +72,7 @@ void OutputLabelShape::update_state() {
   }
 
   // Get our name.
-  const std::string& name = get_entity("..")->get_name();
+  const std::string& name = get_entity(Path({".."}))->get_name();
 
   // Find the link shape with the smallest angle.
   // This finds the left most link coming out of the output shape.
