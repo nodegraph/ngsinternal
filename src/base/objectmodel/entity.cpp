@@ -6,9 +6,11 @@
 
 #include <base/utils/simplesaver.h>
 #include <base/utils/simpleloader.h>
+#include <base/utils/threadpool.h>
 
 #include <boost/lexical_cast.hpp>
 #include <entities/factory.h>
+#include <functional>
 
 namespace ngs {
 
@@ -191,6 +193,30 @@ bool Entity::is_root_group() const {
     return true;
   }
   return false;
+}
+
+void Entity::collect_components(std::vector<Component*>& comps) const {
+  for (auto &iter: _components) {
+    comps.push_back(iter.second);
+  }
+  for (auto &iter: _children) {
+    iter.second->collect_components(comps);
+  }
+}
+
+void helper(const std::vector<Component*>& comps, std::pair<size_t,size_t>& range) {
+  for (size_t i=range.first; i<range.second; ++i) {
+    std::cerr << "<" << i << "> ";
+    comps[i]->initialize_wires();
+  }
+}
+
+void Entity::initialize_wires_mt() {
+  std::vector<Component*> comps;
+  collect_components(comps);
+
+  std::function<void(std::pair<size_t,size_t>&)> func = std::bind(helper, comps, std::placeholders::_1);
+  ThreadPool p(comps.size(), 32, func);
 }
 
 void Entity::initialize_wires() {

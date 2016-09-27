@@ -8,7 +8,6 @@ template<class T>
 class Dep: public DepLinkHolder {
  public:
   // If the fixed dependant is null, we won't actually be connected to the dependency.
-
   template<class D>
   Dep(const Dep<D>& other)
       : _fixed_dependant(other._fixed_dependant),
@@ -95,9 +94,30 @@ class Dep: public DepLinkHolder {
     return *this;
   }
 
-  T* operator->() const {
+  // Helper class to lock the component before use, and unlock it after use.
+  class MutexHelper {
+   public:
+    MutexHelper(T* comp)
+        : _comp(comp) {
+      if (_comp) {
+        _comp->lock();
+      }
+    }
+    T* operator->() {
+      return _comp;
+    }
+    ~MutexHelper() {
+      if (_comp) {
+        _comp->unlock();
+      }
+    }
+   private:
+    T* _comp;
+  };
+
+  MutexHelper operator->() const {
     if (_link) {
-      return static_cast<T*>(_link->dependency);
+      return MutexHelper(static_cast<T*>(_link->dependency));
     }
     return NULL;
   }

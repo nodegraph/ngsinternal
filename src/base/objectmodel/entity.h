@@ -130,8 +130,10 @@ class OBJECTMODEL_EXPORT Entity {
   void initialize_gl();
   void uninitialize_gl();
 
-  // Wires represent an imaginary line which connects to components that are our dependencies.
+  // Helper routines for multi threading.
+  void collect_components(std::vector<Component*>& comps) const;
 
+  // Wires represent an imaginary line which connects to components that are our dependencies.
   // Initializes serialized component wires in entity tree below us and on us.
   // Serialized component wires are wires which actually get saved on disk.
   // Serialized component wires have an associated absolute or relative path to point to other component dependencies.
@@ -141,6 +143,7 @@ class OBJECTMODEL_EXPORT Entity {
   // Also: it should be called on newly created nodes to initialize their wires and allow
   //       them to embed properly into the graph.
   void initialize_wires();
+  void initialize_wires_mt();
 
   // Gathers all non-serialized component wires in entity tree below us and and on us.
   // Non-serialized component wires are those that are gathered dynamically by components.

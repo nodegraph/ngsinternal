@@ -16,7 +16,7 @@ namespace ngs {
 class FileModel;
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT AppComm : public QObject, Component {
+class COMMS_EXPORT AppComm : public QObject, public Component {
 Q_OBJECT
  public:
   COMPONENT_ID(AppComm, AppComm)

@@ -23,6 +23,7 @@
 #include <iostream>
 #include <array>
 #include <algorithm>
+#include <mutex>
 
 namespace ngs {
 
@@ -86,6 +87,14 @@ class OBJECTMODEL_EXPORT Component {
   // This is why the interface_id is also an argument here.
   Component(Entity* entity, size_t interface_id, size_t derived_id);
   virtual ~Component();
+
+  // Lockable.
+  void lock() {
+    _mutex.lock();
+  }
+  void unlock() {
+    _mutex.unlock();
+  }
 
   // The entity which own us.
   Entity* our_entity() const;
@@ -196,6 +205,8 @@ class OBJECTMODEL_EXPORT Component {
 
   DepLoader* get_dep_loader() {return _dep_loader;}
 
+ public:
+
   // Wires represent the imaginary wires which link us to our dependencies (components we depend on).
   // This method initializes wires from serialized data, which are fixed or relative paths to other
   // entities in the entity tree.
@@ -217,7 +228,9 @@ class OBJECTMODEL_EXPORT Component {
   // Note: No opengl calls are allowed when updating wires.
   // Note: The component should be marked as dirty if the wires change.
   // Note: start_method() (method which dirties the component) should not be called in derived methods.
+
   virtual void update_wires() {}
+ protected:
 
   // This method should return true, when it determines that this component's entity
   // does not need to exist anymore. For example if a LinkShape see it has no input or output to connect to.
@@ -292,6 +305,9 @@ class OBJECTMODEL_EXPORT Component {
 
   // Our dep loader.
   DepLoader* _dep_loader;
+
+  // Locking.
+  std::recursive_mutex _mutex;
 
   // The Dependency class needs access to our private dependency methods.
   friend class Entity;

@@ -25,7 +25,7 @@ class GraphBuilder;
 QUrl get_proper_url(const QString& input);
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT AppWorker : public QObject, Component {
+class COMMS_EXPORT AppWorker : public QObject, public Component {
 Q_OBJECT
  public:
   COMPONENT_ID(AppWorker, AppWorker)
