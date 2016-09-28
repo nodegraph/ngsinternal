@@ -19,9 +19,6 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   NodeSelection(Entity* entity);
   ~NodeSelection();
 
-  // Our state.
-  virtual void update_state();
-
   // Edit node.
   void set_edit_node(const Dep<NodeShape>& node);
   const Dep<NodeShape>& get_edit_node() const;
@@ -57,6 +54,10 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   // Copy and Paste.
   virtual void copy();
   virtual void paste(Entity* group);
+
+ protected:
+  // Our state.
+  virtual void update_state();
 
  private:
 

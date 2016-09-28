@@ -49,6 +49,7 @@ LinkShape::~LinkShape() {
 }
 
 bool LinkShape::should_destroy() {
+  internal();
   // When interactively dragging the link, we don't allow hierarchy updates.
   if (_interactive) {
     return false;
@@ -62,6 +63,7 @@ bool LinkShape::should_destroy() {
 }
 
 void LinkShape::update_state() {
+  internal();
   if (_input_shape) {
     _head_pos = _input_shape->get_origin();
   }
@@ -73,38 +75,47 @@ void LinkShape::update_state() {
 }
 
 void LinkShape::start_moving() {
+  external();
   _interactive = true;
   select(true);
 }
 
 void LinkShape::finished_moving() {
+  external();
   _interactive = false;
   select(false);
 }
 
 // In interactive mode we can set the input shape.
 void LinkShape::link_input_shape(const Dep<InputShape>& input_shape) {
+  external();
   _input_shape = input_shape;
 }
 void LinkShape::unlink_input_shape() {
+  external();
   _input_shape.reset();
 }
 const Dep<InputShape>& LinkShape::get_input_shape() const {
+  external();
   return _input_shape;
 }
 
 // In interactive mode we can also set the output shape.
 void LinkShape::link_output_shape(const Dep<OutputShape>& output_shape) {
+  external();
   _output_shape = output_shape;
 }
 void LinkShape::unlink_output_shape() {
+  external();
   _output_shape.reset();
 }
 const Dep<OutputShape>& LinkShape::get_output_shape() const {
+  external();
   return _output_shape;
 }
 
 void LinkShape::update_positioning_helper(const glm::vec2& head_pos, const glm::vec2& tail_pos) {
+  internal();
   const glm::vec2 diff = head_pos - tail_pos;
   _dir = glm::normalize(diff);
   _perp = glm::vec2(-_dir.y, _dir.x);  // equivalent to dir rotated 90 degrees using right hand rule
@@ -173,6 +184,7 @@ void LinkShape::update_positioning_helper(const glm::vec2& head_pos, const glm::
 }
 
 void LinkShape::update_state_helper() {
+  internal();
   if (_interactive) {
     return;
   }
@@ -263,21 +275,26 @@ const glm::vec2& LinkShape::get_tail_position() const {
 }
 
 float LinkShape::get_angle() const {
+  external();
   return _angle;
 }
 
 float LinkShape::get_full_length() const {
+  external();
   return _full_length;
 }
 
 float LinkShape::get_body_length() const {
+  external();
   return _body_length;
 }
 
 const glm::vec2& LinkShape::get_dir() const {
+  external();
   return _dir;
 }
 const glm::vec2& LinkShape::get_perp() const {
+  external();
   return _perp;
 }
 

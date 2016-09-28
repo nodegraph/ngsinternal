@@ -29,6 +29,7 @@ DotNodeShape::~DotNodeShape() {
 }
 
 void DotNodeShape::update_state() {
+  internal();
   // Update our bounds.
   {
     std::vector<glm::vec2> &verts = _bounds.vertices;
@@ -98,6 +99,7 @@ void DotNodeShape::load(SimpleLoader& loader) {
 }
 
 size_t DotNodeShape::get_input_order(const std::string& input_name) const {
+  external();
   if (input_name == "in") {
     return 0;
   }
@@ -105,6 +107,7 @@ size_t DotNodeShape::get_input_order(const std::string& input_name) const {
 }
 
 size_t DotNodeShape::get_output_order(const std::string& output_name) const {
+  external();
   if (output_name == "out") {
     return 0;
   }
@@ -112,6 +115,7 @@ size_t DotNodeShape::get_output_order(const std::string& output_name) const {
 }
 
 void DotNodeShape::update_circles_cache() {
+  internal();
   NodeShape::update_circles_cache();
   _circles_cache.insert(_circles_cache.end(), _bg_circle);
   _circles_cache.insert(_circles_cache.end(), _fg_circle);

@@ -36,16 +36,13 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
   RectNodeShape(Entity* entity, size_t did);
   virtual ~RectNodeShape();
 
-  // Our state.
-  virtual void update_state();
-
   // Positioning.
   virtual void set_pos(const glm::vec2& pos);
   virtual const glm::vec2& get_pos() const;
 
   // Hit testing.
   virtual const Polygon& get_bounds() const;
-  virtual HitRegion hit_test(const glm::vec2& point) const;
+  //virtual HitRegion hit_test(const glm::vec2& point) const;
 
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
@@ -53,6 +50,10 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
 
   // Selection.
   virtual void select(bool selected);
+
+ protected:
+  // Our state.
+  virtual void update_state();
 
  private:
   void update_node_quads();

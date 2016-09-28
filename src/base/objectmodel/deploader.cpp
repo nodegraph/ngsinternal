@@ -17,6 +17,11 @@ DepLoader::~DepLoader() {
   }
 }
 
+void DepLoader::initialize_wires() {
+  update_fixed_wires();
+  update_dynamic_wires();
+}
+
 void DepLoader::update_fixed_wires() {
   for (PathedDep* d: _fixed_deps) {
     d->update_wire();

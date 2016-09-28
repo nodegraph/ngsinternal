@@ -41,9 +41,6 @@ Q_OBJECT
   NodeGraphQuickItem(Entity* parent);
   virtual ~NodeGraphQuickItem();
 
-  // Our state.
-  virtual void update_state();
-
   Q_INVOKABLE QString get_ngs_version() const;
   Q_INVOKABLE size_t get_num_nodes() const;
 
@@ -99,7 +96,7 @@ Q_OBJECT
 
   // Lock Graph.
   Q_INVOKABLE void lock_links(bool locked);
-  Q_INVOKABLE bool links_are_locked();
+  Q_INVOKABLE bool links_are_locked() const;
 
  public Q_SLOTS:
   void cleanup();
@@ -123,6 +120,9 @@ Q_OBJECT
  void mark_progress();
 
  protected:
+ // Our state.
+ virtual void update_state();
+
   virtual QSGNode* updatePaintNode(QSGNode*, UpdatePaintNodeData*);
   virtual void releaseResources();
 

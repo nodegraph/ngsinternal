@@ -51,11 +51,13 @@ GroupInteraction::~GroupInteraction(){
 }
 
 void GroupInteraction::update_state() {
+  internal();
   _links_folder = get_entity(Path({".","links"}));
 }
 
 void GroupInteraction::update_shape_collective() {
-  _shape_collective->update_wires();
+  internal(); // Wire cleaning is kept orthogonal from dependency dirtiness propagation.
+  _shape_collective.get()->clean_local_wires();
 }
 
 glm::vec2 GroupInteraction::get_drag_delta() const {
@@ -143,6 +145,7 @@ bool GroupInteraction::has_link(Entity* entity) const {
 //}
 
 void GroupInteraction::reset_state() {
+  external();
   // Reset our finite state machine
   if (_link_shape) {
     Entity* e = _link_shape->our_entity();
@@ -160,7 +163,8 @@ void GroupInteraction::reset_state() {
   _view_controls.track_ball.stop_tracking();
 }
 
-bool GroupInteraction::bg_hit(const MouseInfo& info) {
+bool GroupInteraction::bg_hit(const MouseInfo& info) const {
+  external();
   MouseInfo updated_info = info;
   _view_controls.update_coord_spaces(updated_info);
 
@@ -173,7 +177,8 @@ bool GroupInteraction::bg_hit(const MouseInfo& info) {
   return false;
 }
 
-bool GroupInteraction::node_hit(const MouseInfo& info) {
+bool GroupInteraction::node_hit(const MouseInfo& info) const {
+  external();
   MouseInfo updated_info = info;
   _view_controls.update_coord_spaces(updated_info);
 
@@ -183,16 +188,14 @@ bool GroupInteraction::node_hit(const MouseInfo& info) {
   if (!e) {
     return false;
   }
-  if ( (e->get_did() == kInputEntity) ||
-      (e->get_did() == kOutputEntity) ){
-    return false;
-  } else if (get_dep<CompShape>(e)->is_linkable()) {
+  if (region == kNodeShapeRegion) {
     return true;
   }
   return false;
 }
 
 void GroupInteraction::accumulate_select(const MouseInfo& a, const MouseInfo& b) {
+  external();
   MouseInfo ua = a;
   MouseInfo ub = b;
   _view_controls.update_coord_spaces(ua);
@@ -707,6 +710,7 @@ void GroupInteraction::pinch_zoom(const glm::vec2& origin, float factor) {
 }
 
 void GroupInteraction::finalize_pinch_zoom() {
+  external();
   _view_controls.track_ball.finalize_pinch_zoom();
 }
 
@@ -720,6 +724,7 @@ const glm::mat4 GroupInteraction::get_mouse_model_view() const {
 }
 
 bool GroupInteraction::is_panning_selection() const {
+  external();
   return _panning_selection;
 }
 
@@ -764,6 +769,7 @@ void GroupInteraction::select_all() {
 }
 
 void GroupInteraction::deselect_all() {
+  external();
   _selection->clear_all();
 }
 
@@ -795,11 +801,13 @@ void GroupInteraction::frame_selected(const DepUSet<NodeShape>& selected) {
 }
 
 void GroupInteraction::centralize(const Dep<NodeShape>& node) {
+  external();
   glm::vec2 center = _view_controls.get_center_in_object_space();
   node->set_pos(center);
 }
 
 glm::vec2 GroupInteraction::get_center_in_object_space() const {
+  external();
   return _view_controls.get_center_in_object_space();
 }
 

@@ -28,9 +28,7 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
   virtual ~OutputShape();
 
   bool is_exposed() const;
-
-  // Our state.
-  virtual void update_state();
+  virtual HitRegion hit_test(const glm::vec2& point) const;
 
   // Our bounds.
   virtual const Polygon& get_bounds() const;
@@ -42,6 +40,11 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
   const glm::vec2& get_origin() const;
 
   const Dep<NodeShape>& get_node_shape() {return _node_shape;}
+
+ protected:
+
+  // Our state.
+  virtual void update_state();
 
  private:
 

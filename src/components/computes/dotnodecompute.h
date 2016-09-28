@@ -18,6 +18,7 @@ class COMPUTES_EXPORT DotNodeCompute: public Compute {
 
   virtual void create_inputs_outputs();
 
+protected:
   // Our state.
   virtual void update_state();
 };

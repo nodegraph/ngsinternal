@@ -18,12 +18,14 @@ class COMPSHAPES_EXPORT OutputLabelShape: public CompShape {
   OutputLabelShape(Entity* entity);
   virtual ~OutputLabelShape();
 
+  // Our shape instances.
+  virtual const std::vector<CharInstance> * get_char_instances() const;
+
+ protected:
+
   // Our state.
   virtual void update_wires();
   virtual void update_state();
-
-  // Our shape instances.
-  virtual const std::vector<CharInstance> * get_char_instances() const;
 
  private:
 

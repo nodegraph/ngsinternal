@@ -28,7 +28,7 @@ class SimpleLoader;
 class Component;
 class PathedDep;
 
-class DepLoader {
+class OBJECTMODEL_EXPORT DepLoader {
 public:
   DepLoader();
   ~DepLoader();
@@ -52,14 +52,16 @@ public:
   }
 
   // Updates return true if something actually changes in the update.
-  void update_fixed_wires();
-  void update_dynamic_wires();
+  void initialize_wires();
 
   void save(SimpleSaver& saver) const;
   void load(SimpleLoader& loader);
   void bake_paths();
 
  private:
+  void update_fixed_wires();
+  void update_dynamic_wires();
+
   std::vector<PathedDep*> _fixed_deps;
   std::vector<PathedDep*> _dynamic_deps;
   std::vector<PathedDep*> _set_deps;

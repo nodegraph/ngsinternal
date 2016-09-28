@@ -23,9 +23,6 @@ class COMPSHAPES_EXPORT DotNodeShape: public NodeShape {
   DotNodeShape(Entity* entity);
   virtual ~DotNodeShape();
 
-  // Our state.
-  virtual void update_state();
-
   // Positioning.
   virtual void set_pos(const glm::vec2& anchor);
   virtual const glm::vec2& get_pos() const;
@@ -50,6 +47,9 @@ class COMPSHAPES_EXPORT DotNodeShape: public NodeShape {
   virtual size_t get_num_all_outputs() const {return 1;} // number of all outputs
 
  protected:
+  // Our state.
+  virtual void update_state();
+
   virtual void update_circles_cache();
 
  private:

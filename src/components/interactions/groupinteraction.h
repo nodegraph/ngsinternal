@@ -55,9 +55,6 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   GroupInteraction(Entity* entity);
   virtual ~GroupInteraction();
 
-  // Our state.
-  virtual void update_state();
-
   // Optimized wire gathering.
   virtual void update_shape_collective();
 
@@ -69,8 +66,8 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   virtual Dep<NodeShape> pressed(const MouseInfo& mouse_info);
   virtual void accumulate_select(const MouseInfo& a, const MouseInfo& b);
   virtual void reset_state();
-  virtual bool bg_hit(const MouseInfo& info);
-  virtual bool node_hit(const MouseInfo& info);
+  virtual bool bg_hit(const MouseInfo& info) const;
+  virtual bool node_hit(const MouseInfo& info) const;
 
   // Mouse Releases.
   virtual void released(const MouseInfo& mouse_info);
@@ -144,6 +141,10 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   }
 
   Entity* create_node(size_t did);
+
+ protected:
+  // Our state.
+  virtual void update_state();
 
  private:
 

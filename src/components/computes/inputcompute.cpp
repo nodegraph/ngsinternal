@@ -26,6 +26,7 @@ InputCompute::~InputCompute() {
 }
 
 void InputCompute::update_state() {
+  internal();
   if (_output) {
     set_result("out", _output->get_result("out"));
   } else {
@@ -59,6 +60,7 @@ bool InputCompute::is_exposed() const {
 }
 
 bool InputCompute::can_link_output_compute(const Dep<OutputCompute>& output) const {
+  external();
   assert(output);
   if (dep_creates_cycle(output)) {
     return false;

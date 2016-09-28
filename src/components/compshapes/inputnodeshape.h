@@ -22,6 +22,7 @@ class COMPSHAPES_EXPORT InputNodeShape: public RectNodeShape {
   InputNodeShape(Entity* entity);
   virtual ~InputNodeShape();
 
+protected:
   // Our state.
   virtual void update_state();
 

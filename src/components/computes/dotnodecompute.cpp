@@ -14,12 +14,14 @@ DotNodeCompute::~DotNodeCompute() {
 }
 
 void DotNodeCompute::create_inputs_outputs() {
+  external();
   Compute::create_inputs_outputs();
   create_input("in");
   create_output("out");
 }
 
 void DotNodeCompute::update_state() {
+  internal();
   const QVariant &value = _inputs.at("in")->get_result("out");
   set_result("out", value);
 }

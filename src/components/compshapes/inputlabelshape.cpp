@@ -35,6 +35,8 @@ InputLabelShape::~InputLabelShape() {
 }
 
 void InputLabelShape::update_wires() {
+  internal();
+
   std::unordered_set<Entity*> dependants = _input_shape->get_dependants_by_did(kICompShape, kLinkShape);
   //assert(dependants.size() <= 1);
 
@@ -52,6 +54,8 @@ void InputLabelShape::update_wires() {
 }
 
 void InputLabelShape::update_state() {
+  internal();
+
   // If the input shape is not exposed then clear out our shapes.
   if (!_input_shape->is_exposed()) {
     _chars.clear();

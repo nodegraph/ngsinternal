@@ -66,6 +66,8 @@ AppWorker::~AppWorker() {
 
 void AppWorker::initialize_wires() {
   Component::initialize_wires();
+
+  // Create a qt signal slot connection. One time only!
   if (!_connected) {
     connect(_app_comm->get_web_socket(), SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_text_received(const QString &)));
     _connected = true;

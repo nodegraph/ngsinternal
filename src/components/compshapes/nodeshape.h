@@ -31,7 +31,7 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   // Our sub interfaces.
   virtual bool is_linkable() const {return true;}
 
-  // Our state.
+  HitRegion hit_test(const glm::vec2& point) const;
 
   // Our shape instancing.
   virtual const std::vector<ShapeInstance>* get_quad_instances() const {return &_quads_cache;}

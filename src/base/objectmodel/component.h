@@ -39,6 +39,11 @@ enum WiresChange {
   kRequestDestruction
 };
 
+// Used to mark static methods.
+// This makes marking of methods/functions symmetric with
+// our other markers ... external() and internal().
+static inline void is_static() {}
+
 // Components will often depend on other components to perform their job.
 // Here are some rules for derived Components, in order to maintain proper dependency relationships.
 // - They can give out pointers to internal components which they depend on through members.
@@ -116,11 +121,15 @@ class OBJECTMODEL_EXPORT Component {
   // Note: This is differnt from Entity::clean_wires as it traverses
   //       through dependencies and through entity hierarchy visitation.
   void clean_wires();
+  void clean_local_wires();
 
   // Dirty/Clean State.
   void dirty_state();
   void clean_state();
   bool is_state_dirty() const {return _dirty;}
+
+  // GL.
+  virtual bool is_initialized_gl() const {return is_initialized_gl_imp();}
 
   // Dirty/Clean Propagation.
   virtual void clean_dependencies();
@@ -185,6 +194,7 @@ class OBJECTMODEL_EXPORT Component {
   void internal() {}
   void internal() const {}
 
+
   // ------------------------------------------------
   // Our 4 get_dep implementations.
   // ------------------------------------------------
@@ -207,7 +217,9 @@ class OBJECTMODEL_EXPORT Component {
 
   DepLoader* get_dep_loader() {return _dep_loader;}
 
- public:
+  // ----------------------------------------------------------------------------------------------------------
+  // Component Wires and State.
+  // ----------------------------------------------------------------------------------------------------------
 
   // Wires represent the imaginary wires which link us to our dependencies (components we depend on).
   // This method initializes wires from serialized data, which are fixed or relative paths to other
@@ -232,7 +244,6 @@ class OBJECTMODEL_EXPORT Component {
   // Note: start_method() (method which dirties the component) should not be called in derived methods.
 
   virtual void update_wires() {}
- protected:
 
   // This method should return true, when it determines that this component's entity
   // does not need to exist anymore. For example if a LinkShape see it has no input or output to connect to.
@@ -243,22 +254,22 @@ class OBJECTMODEL_EXPORT Component {
   // Note: start_method() (method which dirties the component) should not be called in derived methods.
   virtual void update_state() {}
 
-
-
+  // ----------------------------------------------------------------------------------------------------------
   // Opengl Initialization.
+  // ----------------------------------------------------------------------------------------------------------
   virtual void initialize_gl() {} // Called to initialize opengl resources.
   virtual void uninitialize_gl() {} // Called to release and destroy opengl resources.
-  virtual bool is_initialized_gl() {return true;}
   virtual void initialize_gl_helper();
-
- protected:
-  const IIDToDepLinks& get_dependencies() {return _dependencies;}
-  const Components& get_dirty_dependencies() {return _dirty_dependencies; }
+  virtual bool is_initialized_gl_imp() const {return true;} // This is made public in derived classes.
 
  private:
 
-//  // Private Serialization methods.
+  // Private Serialization methods.
   virtual void pre_save(SimpleSaver& saver) const;
+
+  // ----------------------------------------------------------------------------------------------------------
+  // Dependencies.
+  // ----------------------------------------------------------------------------------------------------------
 
   // Dependencies.
   DepLinkPtr connect_to_dep(Component* c);

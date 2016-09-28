@@ -28,9 +28,7 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
   virtual ~InputShape();
 
   bool is_exposed() const;
-
-  // Our state.
-  virtual void update_state();
+  virtual HitRegion hit_test(const glm::vec2& point) const;
 
   // Our bounds.
   virtual const Polygon& get_bounds() const;
@@ -42,9 +40,14 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
   const glm::vec2& get_origin() const;
 
   // Find our link. Note we don't have dependency on the link, as the link depends on us and it would create a dependency cycle.
-  Entity* find_link_entity();
+  Entity* find_link_entity() const;
 
-  const Dep<NodeShape>& get_node_shape() const {return _node_shape;}
+  const Dep<NodeShape>& get_node_shape() const {external(); return _node_shape;}
+
+ protected:
+
+  // Our state.
+  virtual void update_state();
 
  private:
 

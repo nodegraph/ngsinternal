@@ -34,10 +34,6 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
   CompShapeCollective(Entity* entity);
   virtual ~CompShapeCollective();
 
-  // Our state.
-  virtual void update_wires();
-  virtual void update_state();
-
   // Shape Instances.
   const std::vector<ShapeInstance>& get_quads() const {external(); return _quads;}
   const std::vector<ShapeInstance>& get_tris() const {external(); return _tris;}
@@ -52,6 +48,12 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
 
   //virtual void clean_dependencies(); // Multi threaded override.
  protected:
+
+  // Our state.
+  virtual void update_wires();
+  virtual void update_state();
+
+ private:
 
   void add(const Dep<CompShape>& c);
   void remove(const Dep<CompShape>& c);

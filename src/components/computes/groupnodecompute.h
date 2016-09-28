@@ -20,6 +20,8 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
 
   virtual void create_inputs_outputs();
 
+ protected:
+
   // Our state.
   virtual void update_wires();
   virtual void update_state();

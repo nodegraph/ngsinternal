@@ -36,6 +36,7 @@ GroupNodeShape::~GroupNodeShape() {
 }
 
 void GroupNodeShape::update_state() {
+  internal();
   RectNodeShape::update_state();
 
   // The following updates the marker shapes.

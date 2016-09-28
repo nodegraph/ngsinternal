@@ -126,21 +126,25 @@ NodeGraphQuickItem::~NodeGraphQuickItem() {
 //  #endif
 
 void NodeGraphQuickItem::update_state() {
+  internal();
   lock_links(_file_model->get_work_setting(FileModel::kLockLinksRole).toBool());
 }
 
 // This gets called from the scene graph render thread.
 void NodeGraphQuickItem::cleanup() {
+  internal();
   qDebug() <<  "node graph quick item doing cleanup \n";
   get_app_root()->uninitialize_gl();
   finish_glew();
 }
 
 void NodeGraphQuickItem::releaseResources() {
+  internal();
   window()->scheduleRenderJob(new CleanUpGL(get_app_root()), QQuickWindow::BeforeSynchronizingStage);
 }
 
 void NodeGraphQuickItem::handle_window_changed(QQuickWindow *win) {
+  internal();
   if (win) {
     //connect(win, SIGNAL(beforeSynchronizing()), this, SLOT(sync()), Qt::DirectConnection);
     connect(win, SIGNAL(sceneGraphInvalidated()), this, SLOT(cleanup()), Qt::DirectConnection);
@@ -159,6 +163,7 @@ void NodeGraphQuickItem::handle_window_changed(QQuickWindow *win) {
 // Note we render to a texture and use a QSGSimpleTextureNode to display
 // it in the scenegraph.
 QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*) {
+  internal();
   {
     //std::cerr << "OpenGL version " << glGetString(GL_VERSION)<< endl;
     //std::cerr << "GLSL version " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
@@ -215,6 +220,7 @@ QSGNode* NodeGraphQuickItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
 }
 
 void NodeGraphQuickItem::geometryChanged(const QRectF & newGeometry, const QRectF & oldGeometry) {
+  internal();
   QQuickItem::geometryChanged(newGeometry, oldGeometry);
   const Dep<GroupInteraction>& interaction = get_current_interaction();
   if (interaction) {
@@ -225,16 +231,19 @@ void NodeGraphQuickItem::geometryChanged(const QRectF & newGeometry, const QRect
 
 // Focus overrides.
 void NodeGraphQuickItem::focusInEvent(QFocusEvent * event) {
+  internal();
 	update();
 }
 
 void NodeGraphQuickItem::focusOutEvent(QFocusEvent * event) {
+  internal();
   update();
 }
 
 
 // Mouse overrides.
 void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
+  internal();
   if (!_license_checker->license_is_valid()) {
     return;
   }
@@ -243,6 +252,7 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
 }
 
 void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
+  internal();
   if (!_license_checker->license_is_valid()) {
     return;
   }
@@ -252,6 +262,7 @@ void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
 }
 
 void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
+  internal();
   if (!_license_checker->license_is_valid()) {
     return;
   }
@@ -261,6 +272,7 @@ void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
 }
 
 void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
+  internal();
   if (!_license_checker->license_is_valid()) {
     return;
   }
@@ -292,6 +304,7 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
 }
 
 void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
+  internal();
   if (!_license_checker->license_is_valid()) {
     return;
   }
@@ -308,6 +321,7 @@ void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
 }
 
 void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
+  internal();
   if (!_license_checker->license_is_valid()) {
     return;
   }
@@ -318,6 +332,7 @@ void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
 
 // Key overrides.
 void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
+  internal();
   if (!_license_checker->license_is_valid()) {
     return;
   }
@@ -326,6 +341,7 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
 }
 
 void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
+  internal();
   if (!_license_checker->license_is_valid()) {
     return;
   }
@@ -334,6 +350,7 @@ void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
 }
 
 void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
+  internal();
   if (!_license_checker->license_is_valid()) {
     return;
   }
@@ -448,6 +465,7 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
 //}
 
 void NodeGraphQuickItem::popup_context_menu() {
+  internal();
   // Make sure the interaction is not in the middle of an action like dragging a link.
   get_current_interaction()->reset_state();
 
@@ -484,6 +502,7 @@ void NodeGraphQuickItem::popup_context_menu() {
 }
 
 void NodeGraphQuickItem::on_long_press() {
+  internal();
   glm::vec2 d = get_current_interaction()->get_drag_delta();
 
   // If we haven't moven't that much from the mouse press
@@ -495,10 +514,12 @@ void NodeGraphQuickItem::on_long_press() {
 }
 
 const Dep<GroupInteraction>& NodeGraphQuickItem::get_current_interaction() const {
+  external();
   return _canvas->get_current_interaction();
 }
 
 void NodeGraphQuickItem::toggle_selection_under_long_press() {
+  external();
   if (!_last_pressed_node) {
     return;
   }
@@ -507,15 +528,18 @@ void NodeGraphQuickItem::toggle_selection_under_long_press() {
 }
 
 QString NodeGraphQuickItem::get_ngs_version() const {
+  external();
   return NGS_VERSION;
 }
 
 size_t NodeGraphQuickItem::get_num_nodes() const {
+  external();
   // 3 is for the group node entities namespace folders (inputs, outputs, links).
   return get_current_interaction()->our_entity()->get_children().size() -3;
 }
 
 void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
+  external();
   e->create_internals();
   e->initialize_wires();
   Dep<NodeShape> cs = get_dep<NodeShape>(e);
@@ -537,51 +561,61 @@ void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
 }
 
 void NodeGraphQuickItem::create_group_node(bool centered) {
+  external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "group", kGroupNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_input_node(bool centered) {
+  external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "input", kInputNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_output_node(bool centered) {
+  external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "output", kOutputNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_dot_node(bool centered) {
+  external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "dot", kDotNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_mock_node(bool centered) {
+  external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "mock", kMockNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_open_browser_node(bool centered) {
+  external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "open browser", kOpenBrowserNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_close_browser_node(bool centered) {
+  external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "close browser", kCloseBrowserNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_create_set_from_values_node(bool centered) {
+  external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "create set from values", kCreateSetFromValuesNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_create_set_from_type_node(bool centered) {
+  external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "create set from type", kCreateSetFromTypeNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::process_node() {
+  external();
   // Return if don't have a last pressed shape.
   if (!_last_pressed_node) {
     return;
@@ -597,6 +631,7 @@ void NodeGraphQuickItem::process_node() {
 }
 
 void NodeGraphQuickItem::view_node() {
+  external();
   // Return if don't have a last pressed shape.
   if (!_last_pressed_node) {
     return;
@@ -640,6 +675,7 @@ void NodeGraphQuickItem::view_node() {
 }
 
 void NodeGraphQuickItem::edit_node() {
+  external();
   // Return if don't have a last pressed shape.
   if (!_last_pressed_node) {
     return;
@@ -683,12 +719,14 @@ void NodeGraphQuickItem::edit_node() {
 }
 
 void NodeGraphQuickItem::destroy_selection() {
+  external();
   _selection->destroy_selection();
   get_app_root()->clean_dead_entities();
   update();
 }
 
 void NodeGraphQuickItem::dive() {
+  external();
   // When switching groups we clear the selection.
   // We don't allow inter-group selections.
   _canvas->dive(_last_pressed_node->our_entity());
@@ -698,6 +736,7 @@ void NodeGraphQuickItem::dive() {
 }
 
 void NodeGraphQuickItem::surface() {
+  external();
   // When switching groups we clear the selection.
   // We don't allow inter-group selections.
   _canvas->surface();
@@ -706,54 +745,65 @@ void NodeGraphQuickItem::surface() {
 }
 
 void NodeGraphQuickItem::surface_to_root() {
+  external();
   _canvas->surface_to_root();
   update();
 }
 
 void NodeGraphQuickItem::select_last_press() {
+  external();
   get_current_interaction()->select(_last_pressed_node);
   update();
 }
 
 void NodeGraphQuickItem::deselect_last_press() {
+  external();
   get_current_interaction()->deselect(_last_pressed_node);
   update();
 }
 
 void NodeGraphQuickItem::select_all() {
+  external();
   get_current_interaction()->select_all();
   update();
 }
 
 void NodeGraphQuickItem::deselect_all() {
+  external();
   get_current_interaction()->deselect_all();
   update();
 }
 
 void NodeGraphQuickItem::frame_all() {
+  external();
   get_current_interaction()->frame_all();
   update();
 }
 
 void NodeGraphQuickItem::frame_selected() {
+  external();
   get_current_interaction()->frame_selected(_selection->get_selected());
   update();
 }
 
 void NodeGraphQuickItem::save() {
+  external();
   _file_model->save_graph();
 }
 
 void NodeGraphQuickItem::load() {
+  external();
   _file_model->load_graph();
 }
 
 void NodeGraphQuickItem::copy() {
+  external();
   _selection->copy();
   update();
 }
 
 void NodeGraphQuickItem::cut() {
+  external();
   _selection->copy();
   _selection->destroy_selection();
   // Links may need to be cleaned up.
@@ -762,6 +812,7 @@ void NodeGraphQuickItem::cut() {
 }
 
 void NodeGraphQuickItem::paste(bool centered) {
+  external();
   const Dep<GroupInteraction>& interaction = get_current_interaction();
   Entity* group = interaction->our_entity();
   _selection->paste(group);
@@ -815,21 +866,25 @@ void NodeGraphQuickItem::paste(bool centered) {
 }
 
 void NodeGraphQuickItem::collapse_to_group() {
+  external();
   get_current_interaction()->collapse_selected();
   update();
 }
 
 void NodeGraphQuickItem::explode_group() {
+  external();
   get_current_interaction()->explode_selected();
   update();
 }
 
 // Lock Graph.
 void NodeGraphQuickItem::lock_links(bool locked) {
+  external();
   _link_locked = locked;
 }
 
-bool NodeGraphQuickItem::links_are_locked() {
+bool NodeGraphQuickItem::links_are_locked() const {
+  external();
   return _link_locked;
 }
 

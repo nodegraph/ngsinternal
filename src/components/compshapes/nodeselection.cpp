@@ -36,6 +36,7 @@ NodeSelection::~NodeSelection() {
 }
 
 void NodeSelection::update_state() {
+  internal();
   if (!_edit_node) {
     _edit_node.reset();
   }
@@ -170,6 +171,7 @@ void NodeSelection::toggle_selected(const Dep<NodeShape>& e) {
 }
 
 const DepUSet<NodeShape>& NodeSelection::get_selected() const{
+  external();
   return _selected;
 }
 
@@ -186,6 +188,7 @@ void NodeSelection::clear_selection() {
 }
 
 void NodeSelection::destroy_selection() {
+  external();
   for(const Dep<NodeShape>& cs: _selected) {
     if (!cs) {
       continue;
@@ -226,12 +229,14 @@ void NodeSelection::destroy_selection() {
 
 // Clear all references to nodes.
 void NodeSelection::clear_all() {
+  external();
   clear_selection();
   clear_edit_node();
   clear_view_node();
 }
 
 void NodeSelection::copy() {
+  external();
   if (_selected.empty()) {
     return;
   }
@@ -251,6 +256,7 @@ void NodeSelection::copy() {
 }
 
 void NodeSelection::paste(Entity* group) {
+  external();
   if (_raw_copy.empty()) {
     return;
   }

@@ -36,14 +36,11 @@ Q_OBJECT
   FBOWorker(Entity* entity);
   virtual ~FBOWorker();
 
-  // Our state.
-  virtual void update_state();
-
   // These method must be called from Qt's Scene Graph rendering thread.
   // Generally this would be the "QQuickItem::updatePaintNode" method.
   virtual void initialize_gl();
   virtual void uninitialize_gl();
-  virtual bool is_initialized_gl();
+  virtual bool is_initialized_gl_imp() const;
 
   // Get the finished display texture.
   QSGTexture* get_display_texture();
@@ -55,6 +52,10 @@ Q_OBJECT
   QSGTexture* swap_buffers();
 
 Q_SIGNALS:
+
+ protected:
+  // Our state.
+  virtual void update_state();
 
  private:
   // Our fixed deps.

@@ -29,12 +29,6 @@ class QUICK_EXPORT FBORenderer: public Component {
   FBORenderer(Entity* entity);
   virtual ~FBORenderer();
 
-  // Our state.
-  virtual void update_state();
-  virtual void initialize_gl();
-  virtual void uninitialize_gl();
-  virtual bool is_initialized_gl();
-
   void resize_gl(int width, int height);
   void render();
 
@@ -42,6 +36,14 @@ class QUICK_EXPORT FBORenderer: public Component {
   GLuint get_render_texture_name();
 
   void swap_buffers();
+
+ protected:
+
+  // Our state.
+  virtual void update_state();
+  virtual void initialize_gl();
+  virtual void uninitialize_gl();
+  virtual bool is_initialized_gl_imp() const;
 
  private:
   void setup_fbo();

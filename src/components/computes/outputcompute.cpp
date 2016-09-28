@@ -19,10 +19,12 @@ OutputCompute::~OutputCompute() {
 }
 
 void OutputCompute::update_wires() {
+  internal();
   update_index();
 }
 
 void OutputCompute::update_state() {
+  internal();
   // Using our name we query our nodes compute results.
   const std::string& our_name = our_entity()->get_name();
   set_result("out", _node_compute->get_result(our_name));
@@ -69,6 +71,8 @@ size_t OutputCompute::get_num_outputs() const {
 }
 
 void OutputCompute::update_index() {
+  internal();
+
   // Note this is slightly inefficient because all output computes will perform
   // this same computation individually.
 

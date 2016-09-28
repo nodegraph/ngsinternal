@@ -29,11 +29,6 @@ class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
   LinkShape(Entity* entity);
   virtual ~LinkShape();
 
-  // Our state.
-  virtual void update_state();
-  virtual bool should_destroy();
-
-//  virtual void make_interactive();
   virtual void start_moving();
   virtual void finished_moving();
 
@@ -73,6 +68,11 @@ class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
   // Our shape instances.
   virtual const std::vector<ShapeInstance>* get_tri_instances() const;
   virtual const std::vector<ShapeInstance>* get_quad_instances() const;
+
+ protected:
+  // Our state.
+  virtual void update_state();
+  virtual bool should_destroy();
 
  private:
   virtual void update_positioning_helper(const glm::vec2& head_pos, const glm::vec2& tail_pos);

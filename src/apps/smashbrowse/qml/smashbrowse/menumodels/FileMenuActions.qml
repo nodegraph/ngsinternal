@@ -30,7 +30,7 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_insert_drive_file_white_48dp.png"
-        title: "Info on Current File"
+        title: "File Info"
         description: "Edit name and description of current graph."
         script: "file_menu_stack_page.on_edit_file_info()"
     }

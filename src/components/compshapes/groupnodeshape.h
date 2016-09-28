@@ -26,6 +26,8 @@ class COMPSHAPES_EXPORT GroupNodeShape: public RectNodeShape {
   GroupNodeShape(Entity* entity);
   virtual ~GroupNodeShape();
 
+ protected:
+
   // Our state.
   virtual void update_state();
 

@@ -23,15 +23,18 @@ Compute::~Compute() {
 }
 
 void Compute::create_inputs_outputs() {
+  external();
   create_namespace("inputs");
   create_namespace("outputs");
 }
 
 void Compute::update_wires() {
+  internal();
   gather_inputs();
 }
 
 void Compute::gather_inputs() {
+  internal();
   // Connect to our inputs.
   _inputs.clear();
   Entity* inputs_space = has_entity(Path({".","inputs"}));
@@ -104,6 +107,7 @@ void Compute::set_result(const std::string& name, const QVariant& value) {
 }
 
 bool Compute::check_variant_is_bool_and_true(const QVariant& value, const std::string& message) {
+  is_static();
   if (value.userType() != QMetaType::Bool) {
     std::cerr << "Error: " << "variant is not a bool: " << message << "\n";
     return false;
@@ -116,6 +120,7 @@ bool Compute::check_variant_is_bool_and_true(const QVariant& value, const std::s
 }
 
 bool Compute::check_variant_is_list(const QVariant& value, const std::string& message) {
+  is_static();
   // For some reason the value.userType() call returns 1119 which doesn't match
   // QMetaType::QVariantList or QMetaType::QStringList. So we use canConvert instead.
   if (value.canConvert(QMetaType::QVariantList)) {
@@ -126,6 +131,7 @@ bool Compute::check_variant_is_list(const QVariant& value, const std::string& me
 }
 
 bool Compute::check_variant_is_map(const QVariant& value, const std::string& message) {
+  is_static();
   if (value.userType() == QMetaType::QVariantMap) {
     return true;
   }
@@ -134,6 +140,7 @@ bool Compute::check_variant_is_map(const QVariant& value, const std::string& mes
 }
 
 Entity* Compute::create_input(const std::string& name, ParamType type, bool exposed) {
+  external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
   InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, name, kInputEntity));
@@ -144,6 +151,7 @@ Entity* Compute::create_input(const std::string& name, ParamType type, bool expo
 }
 
 Entity* Compute::create_output(const std::string& name, ParamType type, bool exposed) {
+  external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* outputs_space = get_outputs_space();
   OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, name, kOutputEntity));
@@ -154,6 +162,7 @@ Entity* Compute::create_output(const std::string& name, ParamType type, bool exp
 }
 
 Entity* Compute::create_namespace(const std::string& name) {
+  external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* space = static_cast<BaseNamespaceEntity*>(factory->instance_entity(our_entity(), name, kBaseNamespaceEntity));
   space->create_internals();
@@ -161,10 +170,12 @@ Entity* Compute::create_namespace(const std::string& name) {
 }
 
 Entity* Compute::get_inputs_space() {
+  external();
   return our_entity()->get_child("inputs");
 }
 
 Entity* Compute::get_outputs_space() {
+  external();
   return our_entity()->get_child("outputs");
 }
 

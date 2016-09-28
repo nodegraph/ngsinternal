@@ -46,26 +46,32 @@ FBORenderer::~FBORenderer() {
 }
 
 void FBORenderer::update_state() {
+  internal();
   //render();
 }
 
 GLuint FBORenderer::get_display_texture_name() {
+  external();
   return _display_texture->get_name();
 }
 
 GLuint FBORenderer::get_render_texture_name() {
+  external();
   return _render_texture->get_name();
 }
 
 GLsizei FBORenderer::get_texture_width() {
+  internal();
   return _display_texture->get_chunk_geometry().get_width();
 }
 
 GLsizei FBORenderer::get_texture_height() {
+  internal();
   return _display_texture->get_chunk_geometry().get_height();
 }
 
 void FBORenderer::initialize_gl() {
+  internal();
   // Create and setup two fbos.
   setup_fbo();
   swap_buffers();
@@ -76,6 +82,7 @@ void FBORenderer::initialize_gl() {
 }
 
 void FBORenderer::uninitialize_gl() {
+  internal();
   delete_ff(_render_rbo);
   delete_ff(_render_fbo);
   delete_ff(_render_texture);
@@ -84,7 +91,8 @@ void FBORenderer::uninitialize_gl() {
   delete_ff(_display_texture);
 }
 
-bool FBORenderer::is_initialized_gl() {
+bool FBORenderer::is_initialized_gl_imp() const {
+  internal();
   if (_render_rbo) {
     return true;
   }
@@ -92,6 +100,7 @@ bool FBORenderer::is_initialized_gl() {
 }
 
 void FBORenderer::setup_fbo() {
+  internal();
   const ViewportParams &viewport = _ng_canvas->get_current_interaction()->get_viewport_params();
 
   // RenderBuffer.
@@ -130,7 +139,7 @@ void FBORenderer::setup_fbo() {
 
 
 void FBORenderer::resize_gl(GLsizei width, GLsizei height) {
-
+  external();
   _ng_canvas->get_current_interaction()->resize_gl(width,height);
 
   _render_rbo->bind();
@@ -147,6 +156,7 @@ void FBORenderer::resize_gl(GLsizei width, GLsizei height) {
 
 
 void FBORenderer::draw() {
+  internal();
   _ng_canvas->clean_state();
   _ng_canvas->draw_gl();
   // Make sure that all the gl commands have flushed threw.
@@ -154,6 +164,7 @@ void FBORenderer::draw() {
 }
 
 void FBORenderer::render() {
+  external();
   const ViewportParams& p = _ng_canvas->get_current_interaction()->get_viewport_params();
   if (p.is_empty()) {
     return;
@@ -175,6 +186,7 @@ void FBORenderer::render() {
 }
 
 void FBORenderer::swap_buffers() {
+  external();
   // Swap the rendering buffers.
   std::swap(_render_rbo, _display_rbo);
   std::swap(_render_fbo, _display_fbo);

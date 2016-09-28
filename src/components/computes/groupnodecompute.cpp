@@ -32,11 +32,14 @@ GroupNodeCompute::~GroupNodeCompute() {
 }
 
 void GroupNodeCompute::create_inputs_outputs() {
+  external();
   Compute::create_inputs_outputs();
   create_namespace("links");
 }
 
 void GroupNodeCompute::update_wires() {
+  internal();
+
   bool changed = false;
 
   // Make sure the inputs and outputs on this group match up
@@ -106,6 +109,8 @@ void GroupNodeCompute::update_wires() {
 }
 
 void GroupNodeCompute::update_state() {
+  internal();
+
   // For each input data if there is an associated input node, we set data on the input node
   // from the input data. The input data handles connections to other entities internally.
   for (auto &iter: _inputs) {

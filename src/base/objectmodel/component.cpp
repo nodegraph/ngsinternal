@@ -64,13 +64,10 @@ Component::~Component() {
 }
 
 void Component::initialize_wires() {
-  // Assumes we're already dirty.
-  _dep_loader->update_fixed_wires();
-  _dep_loader->update_dynamic_wires();
+  _dep_loader->initialize_wires();
 }
 
 void Component::initialize_gl_helper() {
-  // Assumes we're already dirty.
   // Initialize in a depth first fashion.
   if (is_initialized_gl()) {
     return;
@@ -405,6 +402,10 @@ void Component::clean_wires() {
       }
     }
   }
+}
+
+void Component::clean_local_wires() {
+  update_wires();
 }
 
 void Component::dirty_state() {

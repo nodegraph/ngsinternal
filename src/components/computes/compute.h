@@ -25,15 +25,17 @@ class OutputCompute;
 class COMPUTES_EXPORT Compute: public Component {
  public:
 
+  static const QVariant _empty_variant;
+  static bool check_variant_is_bool_and_true(const QVariant& value, const std::string& message);
+  static bool check_variant_is_list(const QVariant& value, const std::string& message);
+  static bool check_variant_is_map(const QVariant& value, const std::string& message);
+
   COMPONENT_ID(Compute, InvalidComponent);
 
   Compute(Entity* entity, size_t derived_id);
   virtual ~Compute();
 
   virtual void create_inputs_outputs();
-
-  // Our state.
-  virtual void update_wires();
 
   // Info about our inputs. Note the output info can be found on OutputCompute.
   virtual size_t get_exposed_input_index(const std::string& input_name) const;
@@ -45,24 +47,22 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual const QVariantMap& get_results() const;
   virtual QVariant get_result(const std::string& name) const;
 
-  // Helpers.
-  static bool check_variant_is_bool_and_true(const QVariant& value, const std::string& message);
-  static bool check_variant_is_list(const QVariant& value, const std::string& message);
-  static bool check_variant_is_map(const QVariant& value, const std::string& message);
-
  protected:
+  // Our state.
+  virtual void update_wires();
+
+  // Results.
   void set_result(const std::string& name, const QVariant& value);
 
-  static const QVariant _empty_variant;
-
-  void gather_inputs();
-
- protected:
+  // Plugs.
   Entity* create_input(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
   Entity* create_output(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
   Entity* get_outputs_space();
+
+ protected:
+  void gather_inputs();
 
   // Our dynamic deps. These are gathered and not saved.
   // Map from input plug names to their internal output plugs.

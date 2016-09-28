@@ -55,6 +55,7 @@ ShapeCanvas::~ShapeCanvas() {
 }
 
 void ShapeCanvas::update_wires() {
+  internal();
   if (_group_stack.empty()) {
     push_group(get_entity(Path({"root"})));
   } else if (!_current_interaction) {
@@ -64,6 +65,7 @@ void ShapeCanvas::update_wires() {
 }
 
 void ShapeCanvas::update_state() {
+  internal();
   // Note the open gl context must be bound/active for this update.
   if (!_quad_pipeline) {
     return;
@@ -115,7 +117,7 @@ void ShapeCanvas::update_state() {
 }
 
 void ShapeCanvas::initialize_gl() {
-  external();
+  internal();
   // Create our drawing pipeline.
   if (!_quad_pipeline) {
     _quad_pipeline = new_ff QuadPipelineSetup(_resources->get_quad_vertex_shader(), _resources->get_quad_fragment_shader());
@@ -129,11 +131,13 @@ void ShapeCanvas::initialize_gl() {
 }
 
 void ShapeCanvas::uninitialize_gl() {
+  internal();
   delete_ff(_quad_pipeline);
   delete_ff(_text_pipeline);
 }
 
-bool ShapeCanvas::is_initialized_gl() {
+bool ShapeCanvas::is_initialized_gl_imp() const {
+  internal();
   if (_quad_pipeline) {
     return true;
   }
@@ -171,6 +175,40 @@ void ShapeCanvas::draw_gl() {
   _text_pipeline->disable();
 }
 
+void ShapeCanvas::surface() {
+  external();
+  pop_group();
+
+  // The group we're surfacing to needs to have its inputs and output updated.
+  get_app_root()->clean_wires();
+}
+
+void ShapeCanvas::surface_to_root() {
+  external();
+  while(_group_stack.size()>1) {
+    pop_group();
+  }
+}
+
+void ShapeCanvas::dive(Entity* selected) {
+  external();
+  // If the selected is a group dive into it.
+  if (selected->has<GroupInteraction>()) {
+    push_group(selected);
+  }
+}
+
+void ShapeCanvas::dive() {
+  external();
+  const DepUSet<NodeShape>& selected = _ng_state->get_selected();
+  // Dive into the first selected group.
+  for (const Dep<NodeShape> &cs: selected) {
+    if (cs->get_did() == kGroupNodeShape) {
+      dive(cs->our_entity());
+    }
+  }
+}
+
 const Dep<GroupInteraction>& ShapeCanvas::get_current_interaction() const {
   external();
   return _current_interaction;
@@ -181,8 +219,12 @@ const Dep<CompShapeCollective>& ShapeCanvas::get_current_shape_collective() cons
   return _current_shape_collective;
 }
 
+// -----------------------------------------------------------------------------------
+// Private:
+// -----------------------------------------------------------------------------------
+
 void ShapeCanvas::push_group(Entity* group) {
-  external();
+  internal();
   _group_stack.push_back(group);
 
   // Cache some values.
@@ -202,7 +244,7 @@ void ShapeCanvas::push_group(Entity* group) {
 }
 
 void ShapeCanvas::pop_group() {
-  external();
+  internal();
 
   // The last group should not be popped.
   if (_group_stack.size()<=1) {
@@ -228,41 +270,11 @@ void ShapeCanvas::pop_group() {
   }
 }
 
-void ShapeCanvas::surface_to_root() {
-  while(_group_stack.size()>1) {
-    pop_group();
-  }
-}
-
 Entity* ShapeCanvas::get_current_group() const {
+  internal();
   return _group_stack.back();
 }
 
-void ShapeCanvas::surface() {
-  external();
-  pop_group();
 
-  // The group we're surfacing to needs to have its inputs and output updated.
-  get_app_root()->clean_wires();
-}
-
-void ShapeCanvas::dive(Entity* selected) {
-  external();
-  // If the selected is a group dive into it.
-  if (selected->has<GroupInteraction>()) {
-    push_group(selected);
-  }
-}
-
-void ShapeCanvas::dive() {
-  external();
-  const DepUSet<NodeShape>& selected = _ng_state->get_selected();
-  // Dive into the first selected group.
-  for (const Dep<NodeShape> &cs: selected) {
-    if (cs->get_did() == kGroupNodeShape) {
-      dive(cs->our_entity());
-    }
-  }
-}
 
 }

@@ -40,6 +40,7 @@ InputShape::~InputShape() {
 }
 
 bool InputShape::is_exposed() const {
+  external();
   size_t index = _compute->get_exposed_input_index(get_name());
   if (index == -1) {
     return false;
@@ -47,7 +48,16 @@ bool InputShape::is_exposed() const {
   return true;
 }
 
+HitRegion InputShape::hit_test(const glm::vec2& point) const {
+  external();
+  if (simple_hit_test(point)) {
+    return kInputShapeRegion;
+  }
+  return kMissed;
+}
+
 void InputShape::update_state() {
+  internal();
   size_t exposed_index = _compute->get_exposed_input_index(get_name());
   if(exposed_index == -1) {
     _quads.resize(0); // Empty out our quads if we're not visible.
@@ -127,7 +137,8 @@ const glm::vec2& InputShape::get_origin() const {
 
 // We (the InputShape instance) can't grab a dep to the LinkShape as it will create a cycle.
 // The link shape has a dependency on us. This is why we return the entity of the link shape.
-Entity* InputShape::find_link_entity() {
+Entity* InputShape::find_link_entity() const {
+  external();
   std::unordered_set<Entity*> dependants = get_dependants_by_did(kICompShape, kLinkShape);
   assert(dependants.size() <= 1);
   if (dependants.size()>0) {

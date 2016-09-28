@@ -16,11 +16,13 @@ OutputNodeCompute::~OutputNodeCompute() {
 }
 
 void OutputNodeCompute::create_inputs_outputs() {
+  external();
   Compute::create_inputs_outputs();
   create_input("in");
 }
 
 void OutputNodeCompute::update_state() {
+  internal();
   if (_inputs.count("in")) {
     set_result("out", _inputs.at("in")->get_result("out"));
   }

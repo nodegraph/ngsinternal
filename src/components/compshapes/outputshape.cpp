@@ -31,14 +31,13 @@ OutputShape::OutputShape(Entity* entity)
       _output_compute(this){
   get_dep_loader()->register_fixed_dep(_node_shape, Path({"..",".."}));
   get_dep_loader()->register_fixed_dep(_output_compute, Path({"."}));
-
-
 }
 
 OutputShape::~OutputShape() {
 }
 
 bool OutputShape::is_exposed() const {
+  external();
   size_t index = _output_compute->get_exposed_output_index();
   if (index == -1) {
     return false;
@@ -46,7 +45,16 @@ bool OutputShape::is_exposed() const {
   return true;
 }
 
+HitRegion OutputShape::hit_test(const glm::vec2& point) const {
+  external();
+  if (simple_hit_test(point)) {
+    return kOutputShapeRegion;
+  }
+  return kMissed;
+}
+
 void OutputShape::update_state() {
+  internal();
   // If we're not exposed then clear out our shapes.
   if (!is_exposed()) {
     _tris.clear();

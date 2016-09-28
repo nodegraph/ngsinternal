@@ -7,6 +7,9 @@ enum COMPSHAPES_EXPORT HitRegion {
   kMissed,
   kLinkHead,
   kLinkTail,
+  kInputShapeRegion,
+  kOutputShapeRegion,
+  kNodeShapeRegion, // include all node shapes ... dot nodes, input nodes, output nodes, etc
   kShape,
 };
 

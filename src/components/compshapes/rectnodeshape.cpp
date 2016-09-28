@@ -83,15 +83,16 @@ const Polygon& RectNodeShape::get_bounds() const {
   return _bg_bounds;
 }
 
-HitRegion RectNodeShape::hit_test(const glm::vec2& point) const {
-  external();
-  if (!simple_hit_test(point)) {
-    return kMissed;
-  }
-  return kShape;
-}
+//HitRegion RectNodeShape::hit_test(const glm::vec2& point) const {
+//  external();
+//  if (!simple_hit_test(point)) {
+//    return kMissed;
+//  }
+//  return kShape;
+//}
 
 void RectNodeShape::update_state() {
+  internal();
   // Update our chars.
   update_text();
 
@@ -114,6 +115,7 @@ void RectNodeShape::update_state() {
 }
 
 void RectNodeShape::update_node_quads() {
+  internal();
   // Bg Quad.
   glm::vec2 text_dim = _text_max - _text_min;
   glm::vec2 bg_min = _pos-glm::vec2(70,40);
@@ -143,18 +145,21 @@ void RectNodeShape::update_node_quads() {
 }
 
 void RectNodeShape::update_quads_cache() {
+  internal();
   NodeShape::update_quads_cache();
   _quads_cache.insert(_quads_cache.end(), _node_quad_bg);
   _quads_cache.insert(_quads_cache.end(), _node_quad_fg);
 }
 
 void RectNodeShape::update_text() {
+  internal();
   const std::string& name = our_entity()->get_name();
   const glm::vec2 &anchor = _pos;
   _resources->get_text_limits()->tessellate_to_instances(name, glm::vec2(0,0), 0, anchor, _node_quad_fg.state, _node_name_chars, _text_min, _text_max);
 }
 
 void RectNodeShape::update_chars_cache() {
+  internal();
   NodeShape::update_chars_cache();
   _chars_cache.insert(_chars_cache.end(), _node_name_chars.begin(), _node_name_chars.end());
 }

@@ -21,9 +21,6 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   // We override to stop creating the inputs and outputs namespace.
   virtual void create_inputs_outputs() {}
 
-  // Our state.
-  virtual void update_state();
-
   // Our value.
   void set_value(const QVariant& value);
 
@@ -44,6 +41,10 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
   virtual void load(SimpleLoader& loader);
+
+ protected:
+  // Our state.
+  virtual void update_state();
 
  private:
 

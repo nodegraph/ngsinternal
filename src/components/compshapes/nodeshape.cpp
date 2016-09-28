@@ -39,6 +39,14 @@ NodeShape::NodeShape(Entity* entity, size_t did)
 NodeShape::~NodeShape() {
 }
 
+HitRegion NodeShape::hit_test(const glm::vec2& point) const {
+  external();
+  if (!simple_hit_test(point)) {
+    return kMissed;
+  }
+  return kNodeShapeRegion;
+}
+
 void NodeShape::select(bool selected) {
   external();
   SelectableShape::select(selected);

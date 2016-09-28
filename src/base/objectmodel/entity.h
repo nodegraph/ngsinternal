@@ -143,6 +143,8 @@ class OBJECTMODEL_EXPORT Entity {
   // Also: it should be called on newly created nodes to initialize their wires and allow
   //       them to embed properly into the graph.
   void initialize_wires();
+
+  void helper(const std::vector<Component*>& comps, std::pair<size_t,size_t>& range);
   void initialize_wires_mt();
 
   // Gathers all non-serialized component wires in entity tree below us and and on us.

@@ -15,11 +15,7 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   virtual ~OutputCompute();
 
   // We override to stop creating the inputs and outputs namespace.
-  virtual void create_inputs_outputs() {}
-
-  // Our state.
-  virtual void update_wires();
-  virtual void update_state();
+  virtual void create_inputs_outputs() {external();}
 
   // Our data type.
   void set_param_type(ParamType param_type);
@@ -38,6 +34,12 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
   virtual void load(SimpleLoader& loader);
+
+ protected:
+
+  // Our state.
+  virtual void update_wires();
+  virtual void update_state();
 
  private:
   // Update our relative positioning against other OutputComputes.

@@ -30,10 +30,12 @@ ScriptNodeCompute::~ScriptNodeCompute() {
 }
 
 void ScriptNodeCompute::create_inputs_outputs() {
+  external();
   Compute::create_inputs_outputs();
 }
 
 void ScriptNodeCompute::update_state() {
+  internal();
   // Make sure we have references to our input computes.
   Compute::update_state();
 

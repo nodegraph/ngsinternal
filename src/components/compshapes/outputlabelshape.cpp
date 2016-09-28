@@ -30,6 +30,8 @@ OutputLabelShape::~OutputLabelShape() {
 }
 
 void OutputLabelShape::update_wires() {
+  internal();
+
   DepUSet<LinkShape> deps;
   std::unordered_set<Entity*> dependants = _output_shape->get_dependants_by_did(kICompShape, kLinkShape);
 
@@ -42,6 +44,8 @@ void OutputLabelShape::update_wires() {
 }
 
 void OutputLabelShape::update_state() {
+  internal();
+
   // If the output shape is not exposed then clear out our shapes.
   if (!_output_shape->is_exposed()) {
     _chars.clear();

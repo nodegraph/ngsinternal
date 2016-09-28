@@ -35,18 +35,11 @@ class INTERACTIONS_EXPORT ShapeCanvas: public Component {
   ShapeCanvas(Entity* entity);
   virtual ~ShapeCanvas();
 
-  // Our state.
-  virtual void update_wires();
-  virtual void update_state();
-  virtual void initialize_gl();
-  virtual void uninitialize_gl();
-  virtual bool is_initialized_gl();
-
   // Draw.
   virtual void draw_gl();
 
   // Get pipeline.
-  virtual QuadPipelineSetup* get_pipeline() {return _quad_pipeline;}
+  virtual QuadPipelineSetup* get_pipeline() const {external(); return _quad_pipeline;}
 
   // Group navigation.
   void surface();
@@ -55,6 +48,14 @@ class INTERACTIONS_EXPORT ShapeCanvas: public Component {
   void dive();
   const Dep<GroupInteraction>& get_current_interaction() const;
 
+ protected:
+
+  // Our state.
+  virtual void update_wires();
+  virtual void update_state();
+  virtual void initialize_gl();
+  virtual void uninitialize_gl();
+  virtual bool is_initialized_gl_imp() const;
 
  private:
 

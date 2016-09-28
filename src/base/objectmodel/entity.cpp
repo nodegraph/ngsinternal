@@ -204,7 +204,7 @@ void Entity::collect_components(std::vector<Component*>& comps) const {
   }
 }
 
-void helper(const std::vector<Component*>& comps, std::pair<size_t,size_t>& range) {
+void Entity::helper(const std::vector<Component*>& comps, std::pair<size_t,size_t>& range) {
   for (size_t i=range.first; i<range.second; ++i) {
     std::cerr << "<" << i << "> ";
     comps[i]->initialize_wires();
@@ -215,7 +215,7 @@ void Entity::initialize_wires_mt() {
   std::vector<Component*> comps;
   collect_components(comps);
 
-  std::function<void(std::pair<size_t,size_t>&)> func = std::bind(helper, comps, std::placeholders::_1);
+  std::function<void(std::pair<size_t,size_t>&)> func = std::bind(&Entity::helper, this, comps, std::placeholders::_1);
   ThreadPool p(comps.size(), 32, func);
 }
 

@@ -12,6 +12,7 @@ MockNodeCompute::~MockNodeCompute() {
 }
 
 void MockNodeCompute::create_inputs_outputs() {
+  external();
   Compute::create_inputs_outputs();
   create_input("a");
   create_input("b");
@@ -20,6 +21,7 @@ void MockNodeCompute::create_inputs_outputs() {
 }
 
 void MockNodeCompute::update_state() {
+  internal();
   ++_counter;
   set_result("c", _counter);
   set_result("d", _counter+1);
