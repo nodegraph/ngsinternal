@@ -76,7 +76,7 @@ class DynamicDepWrapper : public PathedDep {
  public:
   DynamicDepWrapper(Dep<T>* dep)
       : _dep(dep),
-        _path(){
+        _path(Path::kInvalidPathElements){
   }
   // Serialization.
   virtual void save(SimpleSaver& saver) const {

@@ -98,8 +98,8 @@ Rectangle {
         visible: false
     }
 
-    FileStackPage {
-        id: file_stack_page
+    FileMenuStackPage {
+        id: file_menu_stack_page
         visible: false
     }
 
@@ -157,7 +157,7 @@ Rectangle {
 
     function update_dependencies() {
         // Mode change connections.
-        main_bar.switch_to_mode.connect(file_stack_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(file_menu_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(view_node_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(edit_node_page.on_switch_to_mode)

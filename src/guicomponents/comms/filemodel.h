@@ -62,13 +62,15 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
 
   // Graph.
   Q_INVOKABLE void load_graph();
-  Q_INVOKABLE void save_graph();
   Q_INVOKABLE void load_graph(int row);
+  Q_INVOKABLE void save_graph();
   Q_INVOKABLE void save_graph(int row);
+  Q_INVOKABLE void destroy_graph();
+  Q_INVOKABLE void destroy_graph(int row);
 
   Q_INVOKABLE QVariantMap get_default_settings() {return _default_settings;} // This has to be returned by value, otherwise QML gets 'undefined'.
   Q_INVOKABLE void create_graph(const QVariantMap& info);
-  Q_INVOKABLE void destroy_graph(int row);
+
   Q_INVOKABLE void update_graph(int row, const QVariantMap& info);
 
   // The working row has the file that the app is currently working with.
@@ -76,6 +78,9 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   // the currently selected item in the gui. This is not always the same
   // as the working row.
   Q_INVOKABLE int get_working_row() const;
+  Q_INVOKABLE QString get_current_title() const;
+  Q_INVOKABLE QString get_current_description() const;
+  Q_INVOKABLE void update_current_graph(const QVariantMap& info);
 
   // Title generators.
   Q_INVOKABLE QString make_title_unique(const QString& title) const;

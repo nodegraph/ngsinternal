@@ -161,7 +161,7 @@ StackView {
         var model = create_component(model_url)
         return model
     }
-
+    
     // Assumes the model and page are dynamically created.
     function push_by_components(title, page, model) {
         // Update the model.

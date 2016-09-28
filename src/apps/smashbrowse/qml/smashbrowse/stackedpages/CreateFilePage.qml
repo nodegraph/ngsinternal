@@ -77,7 +77,7 @@ Rectangle {
             AppTextField {
                 id: title_field
                 tool_bar: copy_paste_bar
-                text: create_file ? file_model.get_default_settings().title : file_stack_page.get_file_page().get_current_setting('title') //
+                text: create_file ? file_model.get_default_settings().title : file_model.get_current_title()
                 anchors {
                     left: parent.left
                     right: parent.right
@@ -105,7 +105,7 @@ Rectangle {
             AppTextField {
                 id: description_field
                 tool_bar: copy_paste_bar
-                text: create_file ? file_model.get_default_settings().description : file_stack_page.get_file_page().get_current_setting('description') //
+                text: create_file ? file_model.get_default_settings().description : file_model.get_current_description()
                 anchors {
                     left: parent.left
                     right: parent.right
@@ -128,14 +128,10 @@ Rectangle {
 
                     // Set values.
                     if (create_file == true) {
-                        file_model.create_graph(info)
-                        node_graph_item.update()
+                    	file_menu_stack_page.on_create_graph_info(info)
                     } else {
-                        file_stack_page.get_file_page().update_current_graph(info)
+                        file_menu_stack_page.on_update_current_graph_info(info)
                     }
-
-                    // Pop stack down to the file page.
-                    file_stack_page.on_close_file_options()
                 }
             }
             Rectangle {

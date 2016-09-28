@@ -22,10 +22,6 @@ std::deque<std::string> Path::split_string(const std::string& path) {
   return elements;
 }
 
-
-Path::Path(): _elements(kInvalidPathElements) {
-}
-
 Path::Path(const std::deque<std::string>& elements)
     : _elements(elements) {
 }

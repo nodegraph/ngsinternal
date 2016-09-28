@@ -30,12 +30,7 @@ class UTILS_EXPORT Path {
 
   static std::deque<std::string> split_string(const std::string& path);
 
-  // The explicit keyword prevents Path({}) from getting coerced to Path().
-  explicit Path();
-//  Path(const std::vector<std::string>& elements);
   Path(const std::deque<std::string>& elements);
-//  Path(const std::string& full_path);
-//  Path(const char* full_path);
   Path(const Path& other);
   ~Path();
 

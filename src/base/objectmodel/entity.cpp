@@ -396,14 +396,29 @@ void Entity::make_child_name_unique(std::string& name) const {
   }
 }
 
-// Note paths always omit the name of the top most node,
-// as there is only one unique one to use.
+//// Note paths always omit the name of the top most node,
+//// as there is only one unique one to use.
+//Path Entity::get_path() const {
+//  Path path;
+//  if (_parent) {
+//    path = _parent->get_path();
+//    path.push_back(get_name());
+//    return path;
+//  }
+//  // Note the top most node's name is omitted.
+//  return path;
+//}
+
 Path Entity::get_path() const {
-  Path path;
-  if (_parent) {
-    path = _parent->get_path();
-    path.push_back(get_name());
-    return path;
+  Path path({});
+  const Entity* child = this;
+  const Entity* parent = child->get_parent();
+  // Note the app root has doesn't have a name.
+  // The app root as a null parent. Hence the while condition below.
+  while(parent) {
+    path.push_front(child->get_name());
+    child = parent;
+    parent = child->get_parent();
   }
   // Note the top most node's name is omitted.
   return path;

@@ -229,6 +229,14 @@ int FileModel::get_role(const QString& role_name) const {
   return -1;
 }
 
+Q_INVOKABLE QString FileModel::get_current_title() const {
+  return get_setting(_working_row, Role::kTitleRole).toString();
+}
+
+Q_INVOKABLE QString FileModel::get_current_description() const {
+  return get_setting(_working_row, Role::kDescriptionRole).toString();
+}
+
 QVariant FileModel::get_setting(int row, int role) const {
   external();
   return data(index(row,0), role);
@@ -544,14 +552,13 @@ void FileModel::load_graph() {
   if (_working_row < 0) {
     // Create the first graph file.
     QVariantMap info;
-    info["title"] = "demo";
-    info["description"] = "A simple demo.";
+    info["title"] = "untitled";
+    info["description"] = "you can rename this file";
     create_graph(info);
-    // Build the default graph.
-    _graph_builder->build_test_graph();
-    get_app_root()->initialize_wires();
-    get_app_root()->clean_wires();
-    save_graph();
+//    // Build the default graph.
+//    _graph_builder->build_test_graph();
+//    get_app_root()->initialize_wires();
+//    get_app_root()->clean_wires();
   } else {
     load_graph(_working_row);
   }
@@ -640,6 +647,11 @@ void FileModel::save_graph(int row) {
   write_file(graph_file, ss.str(), _use_encryption);
 }
 
+void FileModel::destroy_graph() {
+  external();
+  destroy_graph(_working_row);
+}
+
 // The info argument must contain all required key-value pairs.
 void FileModel::create_graph(const QVariantMap& arg) {
   external();
@@ -685,8 +697,6 @@ void FileModel::create_graph(const QVariantMap& arg) {
   // Now sort everyting.
   sort_files();
   save_model();
-
-  // Save the new empty graph as the new graph.
   save_graph();
 }
 
@@ -719,6 +729,10 @@ void FileModel::destroy_graph(int row) {
 
   // Now save the model.
   save_model();
+}
+
+void FileModel::update_current_graph(const QVariantMap& info) {
+  update_graph(_working_row, info);
 }
 
 // The info argument does not need to contain all key-value pairs.

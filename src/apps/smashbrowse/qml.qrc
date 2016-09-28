@@ -19,10 +19,11 @@
         <file>qml/smashbrowse/stackedpages/qmldir</file>
         <file>qml/smashbrowse/stackedpages/NodeActionStackPage.qml</file>
         <file>qml/smashbrowse/stackedpages/DataStackPage.qml</file>
-        <file>qml/smashbrowse/stackedpages/FileStackPage.qml</file>
+        <file>qml/smashbrowse/stackedpages/FileMenuStackPage.qml</file>
         <file>qml/smashbrowse/stackedpages/NodeActionPage.qml</file>
         <file>qml/smashbrowse/stackedpages/DataPage.qml</file>
-        <file>qml/smashbrowse/stackedpages/FilePage.qml</file>
+        <file>qml/smashbrowse/stackedpages/FileListPage.qml</file>
+        <file>qml/smashbrowse/stackedpages/FileMenuPage.qml</file>
         <file>qml/smashbrowse/stackedpages/CreateFilePage.qml</file>
         <file>qml/smashbrowse/stackedpages/EditStringPage.qml</file>
         <file>qml/smashbrowse/stackedpages/EditBooleanPage.qml</file>
@@ -69,7 +70,7 @@
         <file>qml/smashbrowse/menumodels/CopyPasteNodeActions.qml</file>
         <file>qml/smashbrowse/menumodels/ExplodeCollapseNodeActions.qml</file>
         <file>qml/smashbrowse/menumodels/IFrameActions.qml</file>
-        <file>qml/smashbrowse/menumodels/FileActions.qml</file>
+        <file>qml/smashbrowse/menumodels/FileMenuActions.qml</file>
         <file>qml/smashbrowse/menumodels/WebActions.qml</file>
         <file>qml/smashbrowse/menumodels/WebActionsTest.qml</file>
         <file>qml/smashbrowse/menumodels/WebActionsNavigate.qml</file>
@@ -189,6 +190,11 @@
         <file alias="icons/ic_create_new_folder_white_48dp.png">../../external/icons/ic_create_new_folder_white_48dp.png</file>
         <file alias="icons/ic_folder_black_48dp.png">../../external/icons/ic_folder_black_48dp.png</file>
         <file alias="icons/ic_folder_white_48dp.png">../../external/icons/ic_folder_white_48dp.png</file>
+        
+        <file alias="icons/ic_archive_black_48dp.png">../../external/icons/ic_archive_black_48dp.png</file>
+        <file alias="icons/ic_archive_white_48dp.png">../../external/icons/ic_archive_white_48dp.png</file>
+        <file alias="icons/ic_unarchive_black_48dp.png">../../external/icons/ic_unarchive_black_48dp.png</file>
+        <file alias="icons/ic_unarchive_white_48dp.png">../../external/icons/ic_unarchive_white_48dp.png</file>
         
         <!-- Node Graph Menu Icons. -->
         <file alias="icons/ic_lock_open_black_48dp.png">../../external/icons/ic_lock_open_black_48dp.png</file>

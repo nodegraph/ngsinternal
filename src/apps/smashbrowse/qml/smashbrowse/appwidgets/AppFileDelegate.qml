@@ -60,13 +60,16 @@ Rectangle {
         anchors.fill: parent
         onPressed: {
             mouse.accepted = true
-            file_delegate.ListView.view.currentIndex = index
+            // We keep the index on the currently loaded file.
+            // file_delegate.ListView.view.currentIndex = index
+            var stack_view = file_delegate.ListView.view.parent_stack_view
+            stack_view.stack_page.on_file_single_clicked(index)
         }
         onDoubleClicked: {
             mouse.accepted = true
             file_delegate.ListView.view.currentIndex = index
             var stack_view = file_delegate.ListView.view.parent_stack_view
-            stack_view.stack_page.on_open_file_options()
+            stack_view.stack_page.on_file_double_clicked(index)
         }
     }
 }

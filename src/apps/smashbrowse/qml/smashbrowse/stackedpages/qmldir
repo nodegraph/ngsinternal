@@ -6,8 +6,9 @@ NodeActionPage 1.0 NodeActionPage.qml
 DataStackPage 1.0 DataStackPage.qml
 DataPage 1.0 DataPage.qml
 
-FileStackPage 1.0 FileStackPage.qml
-FilePage 1.0 FilePage.qml
+FileMenuStackPage 1.0 FileMenuStackPage.qml
+FileListPage 1.0 FileListPage.qml
+FileMenuPage 1.0 FileMenuPage.qml
 
 WebActionBusyPage 1.0 WebActionBusyPage.qml
 WebActionStackPage 1.0 WebActionStackPage.qml

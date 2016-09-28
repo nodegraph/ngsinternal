@@ -305,9 +305,6 @@ void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
   // Deal with the release event.
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->released(info);
-
-  // Save the node graph changes.
-  save();
   update();
 }
 
@@ -427,8 +424,6 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
       }
 
       if (event->type() == QEvent::TouchEnd) {
-        // Save the node graph changes.
-        save();
       }
 
 
@@ -539,9 +534,6 @@ void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
   // Otherwise after creating nodes like mock or input or output nodes,
   // they appear with their input and outplugs not showing.
   our_entity()->clean_wires();
-
-  // Save the node graph changes.
-  save();
   update();
 }
 
@@ -679,8 +671,6 @@ void NodeGraphQuickItem::edit_node() {
 void NodeGraphQuickItem::destroy_selection() {
   _selection->destroy_selection();
   get_app_root()->clean_dead_entities();
-  // Save the node graph changes.
-  save();
   update();
 }
 
@@ -760,9 +750,6 @@ void NodeGraphQuickItem::cut() {
   _selection->destroy_selection();
   // Links may need to be cleaned up.
   get_app_root()->clean_dead_entities();
-
-  // Save the node graph changes.
-  save();
   update();
 }
 
@@ -816,22 +803,16 @@ void NodeGraphQuickItem::paste(bool centered) {
   for (const Dep<NodeShape> &node : node_shapes) {
     _selection->select(node);
   }
-  // Save the node graph changes.
-  save();
   update();
 }
 
 void NodeGraphQuickItem::collapse_to_group() {
   get_current_interaction()->collapse_selected();
-  // Save the node graph changes.
-  save();
   update();
 }
 
 void NodeGraphQuickItem::explode_group() {
   get_current_interaction()->explode_selected();
-  // Save the node graph changes.
-  save();
   update();
 }
 
