@@ -764,9 +764,13 @@ void GroupInteraction::deselect_all() {
 
 void GroupInteraction::frame_all() {
   external();
+  // Make sure the shapes have been tessellated.
+  _shape_collective->clean_state();
+  // Get the bounds.
   glm::vec2 min;
   glm::vec2 max;
   _shape_collective->get_aa_bounds(min,max);
+  // Frame the bounds..
   _view_controls.frame(min, max);
 }
 
@@ -775,9 +779,13 @@ void GroupInteraction::frame_selected(const DepUSet<NodeShape>& selected) {
   if (selected.empty()) {
     return;
   }
+  // Make sure the shapes have been tessellated.
+  _shape_collective->clean_state();
+  // Get the bounds.
   glm::vec2 min;
   glm::vec2 max;
   _shape_collective->get_aa_bounds(selected,min,max);
+  // Frame the bounds.
   _view_controls.frame(min, max);
 }
 

@@ -238,15 +238,14 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
     return;
   }
-  std::cerr << "received double click event\n";
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   update();
 }
 
 void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
-      return;
-    }
+    return;
+  }
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->moved(info);
   update();
@@ -254,8 +253,8 @@ void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
 
 void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
   if (!_license_checker->license_is_valid()) {
-      return;
-    }
+    return;
+  }
   MouseInfo info = get_hover_info(event);
   get_current_interaction()->moved(info);
   update();
@@ -263,8 +262,8 @@ void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
 
 void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
-      return;
-    }
+    return;
+  }
   _long_press_timer.start();
   _last_press = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->update_mouse_info(_last_press);
@@ -294,8 +293,8 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
 
 void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
-      return;
-    }
+    return;
+  }
 
   // Stop the long press timer if
   if (_long_press_timer.isActive()) {
@@ -310,8 +309,8 @@ void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
 
 void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
   if (!_license_checker->license_is_valid()) {
-      return;
-    }
+    return;
+  }
   WheelInfo info = get_wheel_info(event);
   get_current_interaction()->wheel_rolled(info);
   update();
@@ -320,24 +319,24 @@ void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
 // Key overrides.
 void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
   if (!_license_checker->license_is_valid()) {
-      return;
-    }
+    return;
+  }
   KeyInfo info = get_key_info_qt(event);
   update();
 }
 
 void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
   if (!_license_checker->license_is_valid()) {
-      return;
-    }
+    return;
+  }
   KeyInfo info = get_key_info_qt(event);
   update();
 }
 
 void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
   if (!_license_checker->license_is_valid()) {
-      return;
-    }
+    return;
+  }
   switch (event->type()) {
   case QEvent::TouchBegin:
   case QEvent::TouchUpdate:
@@ -717,17 +716,11 @@ void NodeGraphQuickItem::deselect_all() {
 }
 
 void NodeGraphQuickItem::frame_all() {
-  if (!_license_checker->license_is_valid()) {
-      return;
-    }
   get_current_interaction()->frame_all();
   update();
 }
 
 void NodeGraphQuickItem::frame_selected() {
-  if (!_license_checker->license_is_valid()) {
-      return;
-    }
   get_current_interaction()->frame_selected(_selection->get_selected());
   update();
 }

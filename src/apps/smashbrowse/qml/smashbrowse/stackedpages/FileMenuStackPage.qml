@@ -42,7 +42,6 @@ AppStackPage{
         // Load the graph.
         file_model.load_graph(row)
         // Frame the graph.
-        node_graph_item.update()
         node_graph_item.frame_all()
         node_graph_item.update()
         // Finished.
