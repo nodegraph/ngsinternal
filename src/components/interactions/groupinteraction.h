@@ -57,6 +57,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
 
   // Optimized wire gathering.
   virtual void update_shape_collective();
+  virtual void clean_dead_links();
 
   // -----------------------------------------------------------------------
   // Handle all the incoming input from the user.

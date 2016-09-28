@@ -806,8 +806,10 @@ void NodeGraphQuickItem::cut() {
   external();
   _selection->copy();
   _selection->destroy_selection();
-  // Links may need to be cleaned up.
-  get_app_root()->clean_dead_entities();
+  // Clean out dead links and update the shape collective.
+  const Dep<GroupInteraction>& interaction = get_current_interaction();
+  interaction->clean_dead_links();
+  interaction->update_shape_collective();
   update();
 }
 
@@ -862,6 +864,10 @@ void NodeGraphQuickItem::paste(bool centered) {
   for (const Dep<NodeShape> &node : node_shapes) {
     _selection->select(node);
   }
+
+  // Clean out dead links and update the shape collective.
+  interaction->clean_dead_links();
+  interaction->update_shape_collective();
   update();
 }
 

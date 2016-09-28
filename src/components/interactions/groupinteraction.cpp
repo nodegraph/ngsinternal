@@ -60,6 +60,11 @@ void GroupInteraction::update_shape_collective() {
   _shape_collective.get()->clean_local_wires();
 }
 
+void GroupInteraction::clean_dead_links() {
+  internal(); // Wire cleaning is kept orthogonal from dependency dirtiness propagation.
+  _shape_collective->our_entity()->clean_dead_entities();
+}
+
 glm::vec2 GroupInteraction::get_drag_delta() const {
   external();
   MouseInfo current_info = _mouse_over_info;
@@ -882,8 +887,9 @@ void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
     delete_ff(e);
   }
 
-  // Update our deps and hierarchy.
-  //get_app_root()->initialize_wires();
+  // Clean out dead links and update the shape collective.
+  clean_dead_links();
+  update_shape_collective();
 
   // Select the collapsed node.
   _selection->clear_selection();
@@ -946,6 +952,9 @@ void GroupInteraction::explode(const Dep<NodeShape>& cs) {
     _selection->select(cs);
   }
 
+  // Clean out dead links and update the shape collective.
+  clean_dead_links();
+  update_shape_collective();
 }
 
 void GroupInteraction::resize_gl(GLsizei width, GLsizei height) {
