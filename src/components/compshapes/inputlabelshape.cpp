@@ -44,10 +44,7 @@ void InputLabelShape::update_wires() {
   // a connected input there will two links for a moment.
   if (dependants.size() > 0) {
     Entity* dependant = *(dependants.begin());
-    // If the link shape component owner is the same, then the link shape likely the same.
-    if (_link_shape.get() && _link_shape.get()->our_entity() != dependant) {
-      _link_shape = get_dep<LinkShape>(dependant);
-    }
+    _link_shape = get_dep<LinkShape>(dependant);
   } else {
     _link_shape.reset();
   }

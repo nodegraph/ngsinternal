@@ -24,7 +24,7 @@ const std::array<unsigned char,4> InputShape::fg_color = { 100, 100, 100, 255 };
 
 const glm::vec2 InputShape::plug_size(100,100);
 const glm::vec2 InputShape::plug_border_size(10,10);
-const float InputShape::plug_radius = 50;
+const float InputShape::plug_radius = 80;
 const float InputShape::plug_offset = 10;
 
 
