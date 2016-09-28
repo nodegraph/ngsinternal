@@ -26,14 +26,12 @@
   #define TRACK_NEW new(__FILE__, __LINE__)
   #define TRACK_ALLOC(size_bytes) ::operator new(size_bytes,__FILE__,__LINE__)
   #define TRACK_DELETE(PTR) delete(PTR); PTR=NULL;
-  #define TRACK_DELETE2(PTR) delete(PTR);
   #define TRACK_DELETE_ARRAY(PTR) delete[](PTR); PTR=NULL;
 #else
   // Disable memory allocation tracking.
   #define TRACK_NEW new
   #define TRACK_ALLOC(size_bytes) ::operator new(size_bytes)
   #define TRACK_DELETE(PTR) delete(PTR); PTR=NULL;
-  #define TRACK_DELETE2(PTR) delete(PTR);
   #define TRACK_DELETE_ARRAY(PTR) delete[](PTR); PTR=NULL;
 #endif
 
@@ -41,6 +39,5 @@
 #define alloc_ff TRACK_ALLOC
 
 #define delete_ff(PTR) TRACK_DELETE(PTR)
-#define delete2_ff(PTR) TRACK_DELETE2(PTR)
 #define delete_array_ff TRACK_DELETE_ARRAY
 

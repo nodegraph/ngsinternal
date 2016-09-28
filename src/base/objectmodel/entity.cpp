@@ -268,7 +268,8 @@ bool Entity::should_destroy() {
 
 void Entity::clean_dead_entities() {
   if (should_destroy()) {
-    delete2_ff(this);
+    Entity* e = this;
+    delete_ff(e);
     return;
   }
   // We make a copy of the map, as destruction of entities modifies it.

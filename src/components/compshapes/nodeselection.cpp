@@ -206,23 +206,8 @@ void NodeSelection::destroy_selection() {
       clear_view_node();
     }
 
-//    // If we have a selected link shape we want to destroy all the associated
-//    // connections as well.
-//    if (cs->get_did() == kLinkShape) {
-//      Dep<LinkShape> link_shape(cs, true);
-//      const Dep<InputShape>& input_shape = link_shape->get_input_shape();
-//      if (input_shape) {
-//        Dep<InputCompute> input_compute = get_dep<InputCompute>(input_shape->our_entity());
-//        // Unlink components.
-//        input_compute->unlink_output_compute();
-//      }
-//      // Destroy entities. This automatically disconnect many components.
-//      delete2_ff(link_shape->our_entity());
-//    } else {
-//      delete2_ff(cs->our_entity());
-//    }
-
-    delete2_ff(cs->our_entity());
+    Entity* e = cs->our_entity();
+    delete_ff(e);
   }
   _selected.clear();
 }
