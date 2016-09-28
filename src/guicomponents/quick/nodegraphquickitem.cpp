@@ -581,6 +581,21 @@ void NodeGraphQuickItem::create_create_set_from_type_node(bool centered) {
   finish_creating_node(e, centered);
 }
 
+void NodeGraphQuickItem::process_node() {
+  // Return if don't have a last pressed shape.
+  if (!_last_pressed_node) {
+    return;
+  }
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  if(compute) {
+    // Update our node graph selection object which also tracks and edit and view nodes.
+    get_current_interaction()->process(_last_pressed_node);
+    update();
+  }else {
+    qDebug() << "Error: could not find compute to perform. \n";
+  }
+}
+
 void NodeGraphQuickItem::view_node() {
   // Return if don't have a last pressed shape.
   if (!_last_pressed_node) {

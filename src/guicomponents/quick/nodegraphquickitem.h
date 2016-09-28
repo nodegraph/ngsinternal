@@ -65,6 +65,7 @@ Q_OBJECT
   // View and Edit.
   Q_INVOKABLE void view_node();
   Q_INVOKABLE void edit_node();
+  Q_INVOKABLE void process_node();
 
   // Group Navigation.
   Q_INVOKABLE void dive();

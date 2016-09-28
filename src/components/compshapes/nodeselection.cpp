@@ -27,6 +27,7 @@ NodeSelection::NodeSelection(Entity* entity)
     : Component(entity, kIID(), kDID()),
       _edit_node(this),
       _view_node(this),
+      _processing_node(this),
       _locked(false),
       _accumulate(false){
 }
@@ -70,6 +71,15 @@ void NodeSelection::set_view_node(const Dep<NodeShape>& node) {
   _view_node = node;
 }
 
+void NodeSelection::set_processing_node(const Dep<NodeShape>& node) {
+  external();
+  if (_processing_node) {
+    _processing_node->processing(false);
+  }
+  node->processing(true);
+  _processing_node = node;
+}
+
 const Dep<NodeShape>& NodeSelection::get_edit_node() const {
   external();
   return _edit_node;
@@ -78,6 +88,11 @@ const Dep<NodeShape>& NodeSelection::get_edit_node() const {
 const Dep<NodeShape>& NodeSelection::get_view_node() const {
   external();
   return _view_node;
+}
+
+const Dep<NodeShape>& NodeSelection::get_processing_node() const {
+  external();
+  return _processing_node;
 }
 
 void NodeSelection::clear_edit_node() {
@@ -94,6 +109,14 @@ void NodeSelection::clear_view_node() {
     _view_node->view(false);
   }
   _view_node.reset();
+}
+
+void NodeSelection::clear_processing_node() {
+  external();
+  if (_processing_node) {
+    _processing_node->view(false);
+  }
+  _processing_node.reset();
 }
 
 void NodeSelection::select(const Dep<NodeShape>& e) {

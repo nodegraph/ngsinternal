@@ -110,6 +110,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
 
   virtual void edit(const Dep<NodeShape>& shape);
   virtual void view(const Dep<NodeShape>& shape);
+  virtual void process(const Dep<NodeShape>& shape);
 
   // -----------------------------------------------------------------------
   // Node Graph Framing.

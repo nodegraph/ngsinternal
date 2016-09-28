@@ -15,6 +15,8 @@ const std::array<unsigned char,4> NodeShape::edit_bg_color = { 255, 255, 255, 25
 const std::array<unsigned char,4> NodeShape::edit_fg_color = { 100, 221, 23, 255};
 const std::array<unsigned char,4> NodeShape::view_bg_color = { 255, 255, 255, 255 };
 const std::array<unsigned char,4> NodeShape::view_fg_color = { 224, 64, 251, 255 };
+const std::array<unsigned char,4> NodeShape::processing_bg_color = { 255, 255, 255, 255 };
+const std::array<unsigned char,4> NodeShape::processing_fg_color = { 239, 108, 0, 255};
 
 
 NodeShape::NodeShape(Entity* entity, size_t did)
@@ -22,13 +24,16 @@ NodeShape::NodeShape(Entity* entity, size_t did)
       _resources(this),
       _shared_state(0),
       _being_edited(false),
-      _being_viewed(false){
+      _being_viewed(false),
+      _processing(false){
   get_dep_loader()->register_fixed_dep(_resources, Path({}));
 
   _edit_quad_bg.state = 0;
   _edit_quad_fg.state = 0;
   _view_quad_bg.state = 0;
   _view_quad_fg.state = 0;
+  _processing_quad_bg.state = 0;
+  _processing_quad_fg.state = 0;
 }
 
 NodeShape::~NodeShape() {
@@ -48,12 +53,17 @@ void NodeShape::select(bool selected) {
   _edit_quad_fg.state = _shared_state;
   _view_quad_bg.state = _shared_state;
   _view_quad_fg.state = _shared_state;
+  _processing_quad_bg.state = _shared_state;
+  _processing_quad_fg.state = _shared_state;
 
   // Update the chars to the shared state.
   for (CharInstance& ci: _edit_chars) {
     ci.set_state(_shared_state);
   }
   for (CharInstance& ci: _view_chars) {
+    ci.set_state(_shared_state);
+  }
+  for (CharInstance& ci: _processing_chars) {
     ci.set_state(_shared_state);
   }
 }
@@ -74,6 +84,15 @@ void NodeShape::view(bool on) {
 bool NodeShape::is_being_viewed() const {
   external();
   return _being_viewed;
+}
+
+void NodeShape::processing(bool on) {
+  external();
+  _processing = on;
+}
+bool NodeShape::is_processing() const {
+  external();
+  return _processing;
 }
 
 void NodeShape::update_edit_view_quads(const glm::vec2& pen) {
@@ -108,6 +127,25 @@ void NodeShape::update_edit_view_quads(const glm::vec2& pen) {
     _view_quad_fg.set_rotate(0);
     _view_quad_fg.set_translate(start + marker_border_size, marker_fg_depth);
     _view_quad_fg.set_color(view_fg_color);
+
+    // Update the start pos.
+    start.x += 160;
+  }
+
+  if (_processing) {
+    glm::vec2 size(150, 150);
+    _processing_quad_bg.set_scale(size);
+    _processing_quad_bg.set_rotate(0);
+    _processing_quad_bg.set_translate(start, marker_bg_depth);
+    _processing_quad_bg.set_color(processing_bg_color);
+
+    _processing_quad_fg.set_scale(size - 2.0f * marker_border_size);
+    _processing_quad_fg.set_rotate(0);
+    _processing_quad_fg.set_translate(start + marker_border_size, marker_fg_depth);
+    _processing_quad_fg.set_color(processing_fg_color);
+
+    // Update the start pos.
+    start.x += 160;
   }
 }
 
@@ -120,6 +158,10 @@ void NodeShape::update_quads_cache() {
   if (_being_viewed) {
     _quads_cache.insert(_quads_cache.end(), _view_quad_bg);
     _quads_cache.insert(_quads_cache.end(), _view_quad_fg);
+  }
+  if (_processing) {
+    _quads_cache.insert(_quads_cache.end(), _processing_quad_bg);
+    _quads_cache.insert(_quads_cache.end(), _processing_quad_fg);
   }
 }
 
@@ -137,6 +179,11 @@ void NodeShape::update_edit_view_text() {
     pos += glm::vec2(40, 40);
     _resources->get_text_limits()->tessellate_to_instances("V", glm::vec2(0,0), 0, pos, _shared_state, _view_chars, extra_chars_min, extra_chars_max);
   }
+  if (_processing) {
+    glm::vec2 pos(_processing_quad_bg.translate[0], _processing_quad_bg.translate[1]);
+    pos += glm::vec2(40, 40);
+    _resources->get_text_limits()->tessellate_to_instances("P", glm::vec2(0,0), 0, pos, _shared_state, _processing_chars, extra_chars_min, extra_chars_max);
+  }
 }
 
 void NodeShape::update_chars_cache() {
@@ -146,6 +193,9 @@ void NodeShape::update_chars_cache() {
   }
   if (_being_viewed) {
     _chars_cache.insert(_chars_cache.end(), _view_chars.begin(), _view_chars.end());
+  }
+  if (_processing) {
+    _chars_cache.insert(_chars_cache.end(), _processing_chars.begin(), _processing_chars.end());
   }
 }
 

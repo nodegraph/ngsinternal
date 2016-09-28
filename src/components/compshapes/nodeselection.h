@@ -32,6 +32,11 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   const Dep<NodeShape>& get_view_node() const;
   void clear_view_node();
 
+  // Processing node.
+  void set_processing_node(const Dep<NodeShape>& node);
+  const Dep<NodeShape>& get_processing_node() const;
+  void clear_processing_node();
+
   // The selection is global throughout the system.
   void select(const Dep<NodeShape>& e);
   void deselect(const Dep<NodeShape>& e);
@@ -63,6 +68,7 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   // Our edit and view nodes.
   Dep<NodeShape> _edit_node;
   Dep<NodeShape> _view_node;
+  Dep<NodeShape> _processing_node;
 
   // The current selection.
   DepUSet<NodeShape> _selected;

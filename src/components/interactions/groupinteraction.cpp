@@ -733,6 +733,11 @@ void GroupInteraction::view(const Dep<NodeShape>& comp_shape) {
   _selection->set_view_node(comp_shape);
 }
 
+void GroupInteraction::process(const Dep<NodeShape>& comp_shape) {
+  external();
+  _selection->set_processing_node(comp_shape);
+}
+
 void GroupInteraction::select(const Dep<NodeShape>& comp_shape) {
   external();
   _selection->select(comp_shape);

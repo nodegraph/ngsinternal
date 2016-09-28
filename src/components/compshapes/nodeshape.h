@@ -22,6 +22,8 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   static const std::array<unsigned char,4> edit_fg_color;
   static const std::array<unsigned char,4> view_bg_color;
   static const std::array<unsigned char,4> view_fg_color;
+  static const std::array<unsigned char,4> processing_bg_color;
+  static const std::array<unsigned char,4> processing_fg_color;
 
   NodeShape(Entity* entity, size_t did);
   virtual ~NodeShape();
@@ -48,6 +50,10 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   virtual void view(bool on);
   virtual bool is_being_viewed() const;
 
+  // Processing State.
+  virtual void processing(bool on);
+  virtual bool is_processing() const;
+
  protected:
   virtual void update_edit_view_quads(const glm::vec2& pen);
   virtual void update_edit_view_text();
@@ -61,16 +67,17 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   Dep<Resources> _resources;
 
   // Our accumulation caches.
-  std::vector<ShapeInstance> _tris_cache; // This is a cache of our quads.
-  std::vector<ShapeInstance> _quads_cache; // This is a cache of our quads.
-  std::vector<CharInstance> _chars_cache; // This is a cache of our quads.
-  std::vector<ShapeInstance> _circles_cache; // This is a cache of our circles.
+  std::vector<ShapeInstance> _tris_cache;
+  std::vector<ShapeInstance> _quads_cache;
+  std::vector<CharInstance> _chars_cache;
+  std::vector<ShapeInstance> _circles_cache;
 
  private:
 
-  // Ard edit and view state.
+  // Our visual marking state.
   bool _being_edited;
   bool _being_viewed;
+  bool _processing;
 
   // Shared state.
   unsigned char _shared_state;
@@ -78,13 +85,15 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   // Edit and view chars.
   std::vector<CharInstance> _edit_chars; // This just holds an 'E'.
   std::vector<CharInstance> _view_chars; // This just holds an 'V'.
+  std::vector<CharInstance> _processing_chars; // This just holds an 'P'.
 
   // Edit and view shapes.
   ShapeInstance _edit_quad_bg;
   ShapeInstance _edit_quad_fg;
   ShapeInstance _view_quad_bg;
   ShapeInstance _view_quad_fg;
-
+  ShapeInstance _processing_quad_bg;
+  ShapeInstance _processing_quad_fg;
 };
 
 }

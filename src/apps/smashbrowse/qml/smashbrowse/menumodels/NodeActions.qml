@@ -22,6 +22,14 @@ ListModel {
         script: "node_graph_item.edit_node();
                  main_bar.switch_to_current_mode();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        title: "Test Processing Marker."
+        description: "Edit the parameters of this node"
+        script: "node_graph_item.process_node();
+                 main_bar.switch_to_current_mode();"
+    }
 
     ListElement {
         image_url: "qrc:///icons/ic_select_all_white_48dp.png"
