@@ -31,7 +31,6 @@ class COMPUTES_EXPORT Compute: public Component {
   static bool check_variant_is_map(const QVariant& value, const std::string& message);
 
   COMPONENT_ID(Compute, InvalidComponent);
-
   Compute(Entity* entity, size_t derived_id);
   virtual ~Compute();
 
@@ -43,16 +42,24 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual size_t get_num_hidden_inputs() const;
   virtual size_t get_num_inputs() const;
 
+  // Our inputs.
+  QVariantMap get_inputs() const;
+  void set_params(const QVariantMap& inputs);
+
   // Our results.
-  virtual const QVariantMap& get_results() const;
-  virtual QVariant get_result(const std::string& name) const;
+  virtual const QVariantMap& get_outputs() const;
+  virtual void set_outputs(const QVariantMap& outputs);
+
+  virtual QVariant get_output(const std::string& name) const;
+  virtual void set_output(const std::string& name, const QVariant& value);
+
 
  protected:
   // Our state.
   virtual void update_wires();
 
   // Results.
-  void set_result(const std::string& name, const QVariant& value);
+
 
   // Plugs.
   Entity* create_input(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
@@ -71,7 +78,7 @@ class COMPUTES_EXPORT Compute: public Component {
 
   // Map from output plug names to results.
   // QVariantMap is a typedef for QMap<QString, QVariant>.
-  QVariantMap _results;
+  QVariantMap _outputs;
 };
 
 }

@@ -8,9 +8,7 @@ class Entity;
 
 class COMPUTES_EXPORT OutputCompute: public Compute {
  public:
-
   COMPONENT_ID(Compute, OutputCompute);
-
   OutputCompute(Entity* entity);
   virtual ~OutputCompute();
 

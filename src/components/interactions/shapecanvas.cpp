@@ -219,6 +219,11 @@ const Dep<CompShapeCollective>& ShapeCanvas::get_current_shape_collective() cons
   return _current_shape_collective;
 }
 
+Dep<BaseFactory> ShapeCanvas::get_factory() const {
+  external();
+  return _factory;
+}
+
 // -----------------------------------------------------------------------------------
 // Private:
 // -----------------------------------------------------------------------------------
@@ -271,7 +276,7 @@ void ShapeCanvas::pop_group() {
 }
 
 Entity* ShapeCanvas::get_current_group() const {
-  internal();
+  external();
   return _group_stack.back();
 }
 

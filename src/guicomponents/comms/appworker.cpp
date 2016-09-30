@@ -1,14 +1,17 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
+#include <base/objectmodel/basefactory.h>
 
 #include <components/interactions/graphbuilder.h>
 #include <components/computes/compute.h>
+#include <components/computes/inputcompute.h>
 
 #include <guicomponents/comms/appworker.h>
 #include <guicomponents/comms/appcomm.h>
 #include <guicomponents/comms/filemodel.h>
+#include <components/interactions/shapecanvas.h>
 
-
+#include <entities/entityids.h>
 
 #include <cstddef>
 #include <cassert>
@@ -45,6 +48,7 @@ AppWorker::AppWorker(Entity* parent)
       _app_comm(this),
       _file_model(this),
       _graph_builder(this),
+      _canvas(this),
       _show_browser(false),
       _hovering(false),
       _jitter(kJitterSize),
@@ -54,6 +58,7 @@ AppWorker::AppWorker(Entity* parent)
   get_dep_loader()->register_fixed_dep(_app_comm, Path({}));
   get_dep_loader()->register_fixed_dep(_file_model, Path({}));
   get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
+  get_dep_loader()->register_fixed_dep(_canvas, Path({}));
 
   // Setup the poll timer.
   _poll_timer.setSingleShot(false);
@@ -695,37 +700,65 @@ void AppWorker::unblock_events() {
 // Perform Web Actions.
 // -----------------------------------------------------------------
 
-void AppWorker::click() {
+void AppWorker::record_click() {
   check_busy()
   QVariantMap extra_args;
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "click1");
-  queue_task((AppTask)std::bind(&AppWorker::create_click_node_task,this), "click2");
+  queue_task((AppTask)std::bind(&AppWorker::build_compute_node_task,this, kClickActionCompute), "click2");
 }
 
-void AppWorker::create_click_node_task() {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  int overlay_index = _chain_state[Message::kOverlayIndex].toInt();
-  QVariantMap rel_pos = _chain_state[Message::kOverlayRelClickPos].toMap();
-  float rel_x = rel_pos["x"].toFloat();
-  float rel_y = rel_pos["y"].toFloat();
+void AppWorker::build_compute_node_task(size_t compute_did) {
+  Entity* group = _canvas->get_current_group();
 
-  Entity* node = _graph_builder->build_click_node(set_index, overlay_index, rel_x, rel_y);
-  get_dep<Compute>(node)->clean_state(); // Execute the node's task.
+  // Create the node.
+  Entity* node = _canvas->get_factory()->instance_entity(group, "click", kComputeNodeEntity);
+  node->create_internals();
+
+  // Add the compute to the node.
+  Compute* compute = static_cast<Compute*>(_canvas->get_factory()->instance_component(node, compute_did));
+  compute->create_inputs_outputs();
+
+  // Set the values on all the inputs from the chain_state.
+  QVariantMap::const_iterator iter;
+  for (iter = _chain_state.begin() ; iter != _chain_state.end(); ++iter) {
+    // Find the input entity.
+    Path path({".","inputs"});
+    path.push_back(iter.key().toStdString());
+    Entity* input_entity = node->has_entity(path);
+    // Skip this key if the entity doesn't exist.
+    if (!input) {
+      continue;
+    }
+    // Get the compute.
+    Dep<InputCompute> compute = get_dep<InputCompute>(input_entity);
+    // Skip inputs which are plugs and not params.
+    if (compute->is_exposed()) {
+      continue;
+    }
+    compute->set_value(iter.value());
+  }
+
+  // Todo: Connect it to the last selected node.
+
+  // Now execute it.
+  compute->clean_state();
 
   run_next_task();
 }
 
-void AppWorker::_click(int set_index, int overlay_index, float rel_x, float rel_y) {
-  _chain_state[Message::kSetIndex] = set_index;
-  _chain_state[Message::kOverlayIndex] = overlay_index;
-  QVariantMap rel_pos;
-  rel_pos["x"] = rel_x;
-  rel_pos["y"] = rel_y;
-  _chain_state[Message::kOverlayRelClickPos] = rel_pos;
+void AppWorker::queue_chain_state_merge(const QVariantMap& map) {
+  queue_task((AppTask)std::bind(&AppWorker::merge_in_chain_state_task,this, map), "queue_chain_state_merge");
+}
 
-  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "_click1");
+void AppWorker::queue_finished() {
+  queue_task((AppTask)std::bind(&AppWorker::finished_task,this), "queue_finished");
+}
+
+// Relies on kSetIndex, kOverlayIndex, kOverlayIndex.
+void AppWorker::queue_click() {
+  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "queue_click1");
   unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task, this, ActionType::kSendClick, QVariantMap()), "_click2");
+  queue_task((AppTask)std::bind(&AppWorker::perform_action_task, this, ActionType::kSendClick, QVariantMap()), "queue_click2");
   block_events();
 }
 
@@ -844,6 +877,19 @@ void AppWorker::scroll_left() {
 // -----------------------------------------------------------------
 // Tasks. Our members which get bound into tasks.
 // -----------------------------------------------------------------
+
+void AppWorker::merge_in_chain_state_task(const QVariantMap& map) {
+  // Merge the values into the chain_state.
+  for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+    _chain_state.insert(iter.key(), iter.value());
+  }
+  run_next_task();
+}
+
+void AppWorker::finished_task() {
+  emit finished_sequence(_chain_state["outputs"].toMap());
+  run_next_task();
+}
 
 void AppWorker::send_msg_task(Message msg) {
   // Tag the request with an id. We expect a response with the same id.

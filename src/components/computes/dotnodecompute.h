@@ -10,9 +10,7 @@ class InputCompute;
 
 class COMPUTES_EXPORT DotNodeCompute: public Compute {
  public:
-
   COMPONENT_ID(Compute, DotNodeCompute);
-
   DotNodeCompute(Entity* entity);
   virtual ~DotNodeCompute();
 

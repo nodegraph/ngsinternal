@@ -1,5 +1,6 @@
 
 set(sources
+    componentids.cpp
 	componentinstancer.cpp
     entityinstancer.cpp
     factory.cpp

@@ -44,13 +44,14 @@ namespace ngs {
     case_statement(OutputNodeEntity)\
     /* Dot Node. */\
     case_statement(DotNodeEntity)\
-    /* Other Nodes. */\
-    case_statement(MockNodeEntity)\
-    case_statement(ScriptNodeEntity)\
-    case_statement(OpenBrowserNodeEntity)\
-    case_statement(CloseBrowserNodeEntity)\
-    case_statement(CreateSetFromValuesNodeEntity)\
-    case_statement(CreateSetFromTypeNodeEntity)\
+    /* Compute Nodes. */\
+    case_statement(ComputeNodeEntity)\
+//    case_statement(MockNodeEntity)\
+//    case_statement(ScriptNodeEntity)\
+//    case_statement(OpenBrowserNodeEntity)\
+//    case_statement(CloseBrowserNodeEntity)\
+//    case_statement(CreateSetFromValuesNodeEntity)\
+//    case_statement(CreateSetFromTypeNodeEntity)\
     /* Invalids. */\
     case kInvalidEntity:\
     case kNumEntityImplementationIDs:\

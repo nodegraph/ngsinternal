@@ -73,6 +73,24 @@ size_t Compute::get_exposed_input_index(const std::string& input_name) const {
   return -1;
 }
 
+QVariantMap Compute::get_inputs() const {
+  external();
+  QVariantMap map;
+  for (auto iter: _inputs) {
+    map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
+  }
+  return map;
+}
+
+void Compute::set_params(const QVariantMap& params) {
+  QVariantMap::const_iterator iter;
+  for (iter = params.begin(); iter != params.end(); ++iter) {
+    if (_inputs.count(iter.key().toStdString())) {
+      _inputs.at(iter.key().toStdString())->set_value(iter.value());
+    }
+  }
+}
+
 size_t Compute::get_num_exposed_inputs() const {
   external();
   return _exposed_inputs.size();
@@ -88,22 +106,29 @@ size_t Compute::get_num_inputs() const {
   return _inputs.size();
 }
 
-const QVariantMap& Compute::get_results() const {
+
+
+const QVariantMap& Compute::get_outputs() const {
   external();
-  return _results;
+  return _outputs;
 }
 
-QVariant Compute::get_result(const std::string& name) const{
+void Compute::set_outputs(const QVariantMap& outputs) {
   external();
-  if (!_results.count(name.c_str())) {
+  _outputs = outputs;
+}
+
+QVariant Compute::get_output(const std::string& name) const{
+  external();
+  if (!_outputs.count(name.c_str())) {
     return _empty_variant;
   }
-  return _results[name.c_str()];
+  return _outputs[name.c_str()];
 }
 
-void Compute::set_result(const std::string& name, const QVariant& value) {
+void Compute::set_output(const std::string& name, const QVariant& value) {
   external();
-  _results.insert(name.c_str(), value);
+  _outputs.insert(name.c_str(), value);
 }
 
 bool Compute::check_variant_is_bool_and_true(const QVariant& value, const std::string& message) {

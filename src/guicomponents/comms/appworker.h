@@ -19,6 +19,7 @@ namespace ngs {
 class AppComm;
 class FileModel;
 class GraphBuilder;
+class ShapeCanvas;
 
 // Helper which wraps the input url with things like http://.
 // Webdriver needs proper urls to navigate.
@@ -152,8 +153,10 @@ Q_OBJECT
   Q_INVOKABLE void block_events();
   Q_INVOKABLE void unblock_events();
 
+
+
   // Perform web actions.
-  Q_INVOKABLE void click();
+  Q_INVOKABLE void record_click();
   Q_INVOKABLE void mouse_over();
   Q_INVOKABLE void start_mouse_hover();
   Q_INVOKABLE void stop_mouse_hover();
@@ -171,7 +174,9 @@ Q_OBJECT
   void send_msg(Message& msg);  // msg is not const because it gets tagged with an id.
   void send_action_msg(Message& msg);
 
-  void _click(int set_index, int overlay_index, float rel_x, float rel_y);
+  void queue_chain_state_merge(const QVariantMap& map);
+  void queue_finished();
+  void queue_click();
   void _mouse_over(int set_index, int overlay_index, float rel_x, float rel_y);
   void _start_mouse_hover(int set_index, int overlay_index, float rel_x, float rel_y);
   void _stop_mouse_hover();
@@ -184,13 +189,12 @@ Q_OBJECT
   void _scroll_right(int set_index, int overlay_index);
   void _scroll_left(int set_index, int overlay_index);
 
-  void create_click_node_task();
-
 signals:
   void show_web_action_menu();
   void show_iframe_menu();
   void web_action_ignored();
   void select_option_texts(QStringList option_texts);
+  void finished_sequence(const QVariantMap& outputs);
 
  private slots:
   void on_text_received(const QString & text);
@@ -208,6 +212,10 @@ signals:
   void queue_task(AppTask task, const std::string& about);
 
   // Tasks. Our members which get bound into tasks.
+  void merge_in_chain_state_task(const QVariantMap& map);
+  void finished_task();
+  void build_compute_node_task(size_t compute_did);
+
   void send_msg_task(Message msg);
   void get_crosshair_info_task();
   void get_xpath_task();
@@ -237,6 +245,7 @@ signals:
   Dep<AppComm> _app_comm;
   Dep<FileModel> _file_model;
   Dep<GraphBuilder> _graph_builder;
+  Dep<ShapeCanvas> _canvas;
 
   // Poll timer.
   QTimer _poll_timer;

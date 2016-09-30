@@ -23,8 +23,8 @@ void MockNodeCompute::create_inputs_outputs() {
 void MockNodeCompute::update_state() {
   internal();
   ++_counter;
-  set_result("c", _counter);
-  set_result("d", _counter+1);
+  set_output("c", _counter);
+  set_output("d", _counter+1);
 }
 
 }

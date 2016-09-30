@@ -68,14 +68,15 @@ enum EntityDID {
   kOutputNodeEntity,
   // Dot Node.
   kDotNodeEntity,
-  // Other Nodes.
-  kMockNodeEntity,
-  kScriptNodeEntity,
-  kOpenBrowserNodeEntity,
-  kCloseBrowserNodeEntity,
-  kCreateSetFromValuesNodeEntity,
-  kCreateSetFromTypeNodeEntity,
-  kMouseActionNodeEntity,
+  // Compute Nodes.
+  kComputeNodeEntity,
+//  kMockNodeEntity,
+//  kScriptNodeEntity,
+//  kOpenBrowserNodeEntity,
+//  kCloseBrowserNodeEntity,
+//  kCreateSetFromValuesNodeEntity,
+//  kCreateSetFromTypeNodeEntity,
+//  kMouseActionNodeEntity,
   // Count.
   kNumEntityImplementationIDs,
 };

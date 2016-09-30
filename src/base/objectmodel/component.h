@@ -134,6 +134,7 @@ class OBJECTMODEL_EXPORT Component {
   // Dirty/Clean Propagation.
   virtual void clean_dependencies();
   virtual void clean_self();
+  void gather_dirty_components(std::vector<Component*>& comps); // Rectursively gather dirty components in order of execution needed to clean them.
   void propagate_cleanliness();
   void propagate_dirtiness(Component* dependency);
 

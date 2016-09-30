@@ -7,6 +7,7 @@
 namespace ngs {
 
 class BaseFactory;
+class ShapeCanvas;
 
 class INTERACTIONS_EXPORT GraphBuilder: public Component {
  public:
@@ -15,11 +16,6 @@ class INTERACTIONS_EXPORT GraphBuilder: public Component {
 
   GraphBuilder(Entity* entity);
   virtual ~GraphBuilder();
-
-  // Web Action Node Builders.
-  virtual Entity* build_open_browser_node();
-  virtual Entity* build_close_browser_node();
-  virtual Entity* build_click_node(int set_index, int overlay_index, float rel_x, float rel_y);
 
   // Test Graph Builders.
 

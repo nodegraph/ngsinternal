@@ -7,9 +7,7 @@ namespace ngs {
 
 class GUICOMPUTES_EXPORT ScriptNodeCompute: public Compute  {
  public:
-
   COMPONENT_ID(Compute, ScriptNodeCompute);
-
   ScriptNodeCompute(Entity* entity);
   virtual ~ScriptNodeCompute();
 

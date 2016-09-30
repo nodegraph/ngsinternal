@@ -12,9 +12,7 @@ class LinkShape;
 
 class COMPUTES_EXPORT GroupNodeCompute: public Compute {
  public:
-
   COMPONENT_ID(Compute, GroupNodeCompute);
-
   GroupNodeCompute(Entity* entity);
   virtual ~GroupNodeCompute();
 

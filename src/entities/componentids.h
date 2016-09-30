@@ -1,4 +1,7 @@
 #pragma once
+#include <entities/entities_export.h>
+
+namespace ngs {
 
 // These macros should be used in class declarations.
 // These IDs are used heavily in serialization and identifying
@@ -68,14 +71,14 @@ enum ComponentDID {
   kOutputCompute,
   kGroupNodeCompute,
   kInputNodeCompute,
+  kOutputNodeCompute,
   kScriptNodeCompute,
   kMockNodeCompute,
-  kOutputNodeCompute,
   kOpenBrowserCompute,
   kCloseBrowserCompute,
   kCreateSetFromValuesCompute,
   kCreateSetFromTypeCompute,
-  kMouseActionCompute,
+  kClickActionCompute,
   // --
   kFBORenderer,
   kFBOWorker,
@@ -102,3 +105,7 @@ enum ComponentDID {
   // Count.
   kNumComponentImplementationIDs,
 };
+
+ENTITIES_EXPORT const char* get_compute_name(size_t did);
+
+}

@@ -12,9 +12,7 @@ class OutputCompute;
 class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   Q_OBJECT
  public:
-
   COMPONENT_ID(Compute, InputCompute);
-
   InputCompute(Entity* entity);
   virtual ~InputCompute();
 

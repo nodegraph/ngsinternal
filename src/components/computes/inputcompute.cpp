@@ -28,9 +28,9 @@ InputCompute::~InputCompute() {
 void InputCompute::update_state() {
   internal();
   if (_output) {
-    set_result("out", _output->get_result("out"));
+    set_output("out", _output->get_output("out"));
   } else {
-    set_result("out", _param_value);
+    set_output("out", _param_value);
   }
 }
 

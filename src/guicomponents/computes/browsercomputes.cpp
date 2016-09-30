@@ -28,52 +28,55 @@ void BrowserCompute::create_inputs_outputs() {
 void BrowserCompute::update_state() {
   internal();
   // Pass the inputs through.
-  const QVariant &value = _inputs.at("in")->get_result("out");
-  set_result("out", value);
+  const QVariant &value = _inputs.at("in")->get_output("out");
+  set_output("out", value);
 
   // Derived classes can do other work here or override this entirely.
 }
 
+void BrowserCompute::on_finished_sequence(const QVariantMap& outputs) {
+  set_outputs(outputs);
+}
+
 QVariantMap BrowserCompute::get_map(const std::string& input_name) const {
   external();
-  return _inputs.at(input_name)->get_result("out").toMap();
+  return _inputs.at(input_name)->get_output("out").toMap();
 }
 
 QString BrowserCompute::get_string(const std::string& input_name) const {
   external();
-  return _inputs.at(input_name)->get_result("out").toString();
+  return _inputs.at(input_name)->get_output("out").toString();
 }
 
 QStringList BrowserCompute::get_string_list(const std::string& input_name) const {
   external();
-  return _inputs.at(input_name)->get_result("out").toStringList();
+  return _inputs.at(input_name)->get_output("out").toStringList();
 }
 
 int BrowserCompute::get_int(const std::string& input_name) const {
   external();
-  return _inputs.at(input_name)->get_result("out").toInt();
+  return _inputs.at(input_name)->get_output("out").toInt();
 }
 
 float BrowserCompute::get_float(const std::string& input_name) const {
   external();
-  return _inputs.at(input_name)->get_result("out").toFloat();
+  return _inputs.at(input_name)->get_output("out").toFloat();
 }
 
 WrapType BrowserCompute::get_wrap_type(const std::string& input_name) const {
   external();
-  return static_cast<WrapType>(_inputs.at(input_name)->get_result("out").toInt());
+  return static_cast<WrapType>(_inputs.at(input_name)->get_output("out").toInt());
 }
 
 ActionType BrowserCompute::get_action_type(const std::string& input_name) const {
   external();
-  return static_cast<ActionType>(_inputs.at(input_name)->get_result("out").toInt());
+  return static_cast<ActionType>(_inputs.at(input_name)->get_output("out").toInt());
 }
 
 Direction BrowserCompute::get_direction(const std::string& input_name) const {
   external();
-  return static_cast<Direction>(_inputs.at(input_name)->get_result("out").toInt());
+  return static_cast<Direction>(_inputs.at(input_name)->get_output("out").toInt());
 }
-
 
 //--------------------------------------------------------------------------------
 
@@ -101,8 +104,8 @@ void CreateSetFromValuesCompute::update_state() {
   // Make sure our input deps are hashed.
   BrowserCompute::update_state();
 
-  QVariant wrap_type = _inputs.at("type")->get_result("out");
-  QVariant match_values = _inputs.at("values")->get_result("out");
+  QVariant wrap_type = _inputs.at("type")->get_output("out");
+  QVariant match_values = _inputs.at("values")->get_output("out");
 
   QVariantMap args;
   args[Message::kWrapType] = wrap_type;
@@ -111,8 +114,8 @@ void CreateSetFromValuesCompute::update_state() {
   _app_worker->send_msg(msg);
 
   // Pass the inputs through.
-  const QVariant &value = _inputs.at("in")->get_result("out");
-  set_result("out", value);
+  const QVariant &value = _inputs.at("in")->get_output("out");
+  set_output("out", value);
 }
 
 void CreateSetFromTypeCompute::create_inputs_outputs() {
@@ -125,7 +128,7 @@ void CreateSetFromTypeCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  QVariant wrap_type = _inputs.at("type")->get_result("out");
+  QVariant wrap_type = _inputs.at("type")->get_output("out");
 
   QVariantMap args;
   args[Message::kWrapType] = wrap_type;
@@ -133,43 +136,29 @@ void CreateSetFromTypeCompute::update_state() {
   _app_worker->send_msg(msg);
 
   // Pass the inputs through.
-  const QVariant &value = _inputs.at("in")->get_result("out");
-  set_result("out", value);
+  const QVariant &value = _inputs.at("in")->get_output("out");
+  set_output("out", value);
 }
 
-void MouseActionCompute::create_inputs_outputs() {
+void ClickActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input("set_index", ParamType::kInt, false);
-  create_input("overlay_index", ParamType::kInt, false);
-  create_input("action_type", ParamType::kActionType, false);
-  create_input("x", ParamType::kFloat, false);
-  create_input("y", ParamType::kFloat, false);
+  create_input(Message::kSetIndex, ParamType::kInt, false);
+  create_input(Message::kOverlayIndex, ParamType::kInt, false);
+  create_input(Message::kPosition, ParamType::kQVariantMap, false);
 }
 
-void MouseActionCompute::update_state() {
+void ClickActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
-
-  int set_index = _inputs.at("set_index")->get_result("out").toInt();
-  int overlay_index = _inputs.at("overlay_index")->get_result("out").toInt();
-  int action_type = _inputs.at("action_type")->get_result("out").toInt();
-  float rel_x = _inputs.at("x")->get_result("out").toFloat();
-  float rel_y = _inputs.at("y")->get_result("out").toFloat();
-
-  if (action_type == ActionType::kSendClick) {
-    _app_worker->_click(set_index, overlay_index, rel_x, rel_y);
-  } else if (action_type == ActionType::kMouseOver) {
-
-  } else if (action_type == ActionType::kStartMouseHover) {
-
-  } else {
-    std::cerr << "Error unknown mouse action type encountered.\n";
-  }
+  QVariantMap inputs = get_inputs();
+  _app_worker->queue_chain_state_merge(inputs);
+  _app_worker->queue_click();
+  _app_worker->queue_finished();
 
   // Pass the inputs through.
-  const QVariant &value = _inputs.at("in")->get_result("out");
-  set_result("out", value);
+  const QVariant &value = _inputs.at("in")->get_output("out");
+  set_output("out", value);
 }
 
 }

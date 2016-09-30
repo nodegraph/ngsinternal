@@ -116,7 +116,7 @@ void GroupNodeCompute::update_state() {
   for (auto &iter: _inputs) {
     Dep<InputCompute> op = iter.second;
     const std::string& input_name = op->our_entity()->get_name();
-    const QVariant& input_value = op->get_result("out");
+    const QVariant& input_value = op->get_output("out");
     // Find an entity in this group with the same name as the input data.
     Entity* e = our_entity()->get_child(input_name);
     // Make sure we have an entity.
@@ -150,7 +150,7 @@ void GroupNodeCompute::update_state() {
       output_computer->propagate_cleanliness();
     }
     // Copy the value from the output node to the output plug.
-    set_result(output_name, output_computer->get_result("out"));
+    set_output(output_name, output_computer->get_output("out"));
   }
 
 }

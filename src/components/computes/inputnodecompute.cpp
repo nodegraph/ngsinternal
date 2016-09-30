@@ -20,7 +20,7 @@ void InputNodeCompute::create_inputs_outputs() {
 }
 
 void InputNodeCompute::set_value(const QVariant& value) {
-  set_result("out", value);
+  set_output("out", value);
 }
 
 }

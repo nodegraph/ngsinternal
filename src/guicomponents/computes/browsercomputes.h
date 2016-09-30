@@ -18,6 +18,8 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   virtual void create_inputs_outputs();
 
+  virtual void on_finished_sequence(const QVariantMap& outputs);
+
   QVariantMap get_map(const std::string& input_name) const;
   QString get_string(const std::string& input_name) const;
   QStringList get_string_list(const std::string& input_name) const;
@@ -70,10 +72,10 @@ class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public BrowserCompute {
   virtual void update_state();
 };
 
-class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT ClickActionCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, MouseActionCompute);
-  MouseActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, ClickActionCompute);
+  ClickActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
   virtual void update_state();

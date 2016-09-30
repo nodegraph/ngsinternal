@@ -27,7 +27,7 @@ void OutputCompute::update_state() {
   internal();
   // Using our name we query our nodes compute results.
   const std::string& our_name = our_entity()->get_name();
-  set_result("out", _node_compute->get_result(our_name));
+  set_output("out", _node_compute->get_output(our_name));
 }
 
 void OutputCompute::set_param_type(ParamType param_type) {

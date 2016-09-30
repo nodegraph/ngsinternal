@@ -584,33 +584,9 @@ void NodeGraphQuickItem::create_dot_node(bool centered) {
   finish_creating_node(e, centered);
 }
 
-void NodeGraphQuickItem::create_mock_node(bool centered) {
+void NodeGraphQuickItem::create_compute_node(bool centered, size_t compute_did) {
   external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "mock", kMockNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_open_browser_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "open browser", kOpenBrowserNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_close_browser_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "close browser", kCloseBrowserNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_create_set_from_values_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "create set from values", kCreateSetFromValuesNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_create_set_from_type_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "create set from type", kCreateSetFromTypeNodeEntity);
+  Entity* e = _factory->create_compute_node(get_current_interaction()->our_entity(), compute_did);
   finish_creating_node(e, centered);
 }
 
@@ -664,7 +640,7 @@ void NodeGraphQuickItem::view_node() {
     test.insert("boolean2", false);
     test.insert("submap", submap);
     test.insert("subarray", sublist);
-    emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_results());
+    emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_outputs());
 
     // Update our node graph selection object which also tracks and edit and view nodes.
     get_current_interaction()->view(_last_pressed_node);

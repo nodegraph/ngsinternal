@@ -24,7 +24,7 @@ void OutputNodeCompute::create_inputs_outputs() {
 void OutputNodeCompute::update_state() {
   internal();
   if (_inputs.count("in")) {
-    set_result("out", _inputs.at("in")->get_result("out"));
+    set_output("out", _inputs.at("in")->get_output("out"));
   }
 }
 

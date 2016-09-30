@@ -9,7 +9,6 @@ class InputCompute;
 class COMPUTES_EXPORT MockNodeCompute: public Compute {
  public:
   COMPONENT_ID(Compute, MockNodeCompute);
-
   MockNodeCompute(Entity* entity);
   virtual ~MockNodeCompute();
 

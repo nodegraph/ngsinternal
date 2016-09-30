@@ -349,6 +349,27 @@ void Component::propagate_dirtiness(Component* dirty_source) {
   }
 }
 
+void Component::gather_dirty_components(std::vector<Component*>& comps) {
+  // If we're already clean then our children should be clean too.
+  if (!_dirty) {
+    return;
+  }
+
+  // Check our dependencies first.
+  for (auto & iid_iter: _dependencies) {
+    for (auto & dep_iter : iid_iter.second) {
+      DepLinkPtr link = dep_iter.second.lock();
+      if (link && link->dependency) {
+          link->dependency->gather_dirty_components(comps);
+      }
+    }
+  }
+  // Now check ourself.
+  if (_dirty) {
+    comps.push_back(this);
+  }
+}
+
 void Component::clean_dependencies() {
   // If we're already clean there is nothing to do.
   if (!_dirty) {

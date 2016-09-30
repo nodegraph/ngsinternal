@@ -7,9 +7,7 @@ namespace ngs {
 
 class COMPUTES_EXPORT InputNodeCompute: public Compute {
  public:
-
   COMPONENT_ID(Compute, InputNodeCompute);
-
   InputNodeCompute(Entity* entity);
   virtual ~InputNodeCompute();
 

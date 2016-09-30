@@ -1,5 +1,6 @@
 #include <base/objectmodel/objectmodel_export.h>
 #include <base/objectmodel/basefactory.h>
+#include <base/objectmodel/entity.h>
 
 namespace ngs {
 
@@ -25,6 +26,17 @@ const char* BaseFactory::get_entity_name_for_did(size_t derived_id) const {
 
 size_t BaseFactory::get_component_iid(size_t did) const {
   return _component_instancer->get_iid_for_did(did);
+}
+
+Entity* BaseFactory::create_entity(Entity* parent, const std::string& name, size_t did) const {
+  Entity* e = instance_entity(parent, name, did);
+  e->create_internals();
+  return e;
+}
+
+Component* BaseFactory::create_component(Entity* entity, size_t did) const {
+  Component* c = instance_component(entity, did);
+  return c;
 }
 
 }

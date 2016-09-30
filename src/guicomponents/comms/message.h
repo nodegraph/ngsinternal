@@ -132,6 +132,7 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kAction;
   static const char* kText;
   static const char* kOptionText;
+  static const char* kPosition;
 
   static const char* kDirection;
   static const char* kDirections;

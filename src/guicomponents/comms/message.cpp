@@ -32,6 +32,7 @@ const char* Message::kOverlayIndex = "overlay_index";
 const char* Message::kAction = "action";
 const char* Message::kText = "text";
 const char* Message::kOptionText = "option_text";
+const char* Message::kPosition = "position";
 
 const char* Message::kDirection = "direction";
 const char* Message::kDirections = "directions";
