@@ -120,6 +120,7 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kURL;
   static const char* kWidth;
   static const char* kHeight;
+  static const char* kDimensions;
 
   static const char* kWrapType;
   static const char* kMatchValues;

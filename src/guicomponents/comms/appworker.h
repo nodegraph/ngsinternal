@@ -20,6 +20,7 @@ class AppComm;
 class FileModel;
 class GraphBuilder;
 class ShapeCanvas;
+class Compute;
 
 // Helper which wraps the input url with things like http://.
 // Webdriver needs proper urls to navigate.
@@ -36,14 +37,16 @@ Q_OBJECT
   explicit AppWorker(Entity* parent);
   virtual ~AppWorker();
 
-  // Our state.
-  virtual void initialize_wires();
-
+  // Paths to resources.
   static QString get_app_bin_dir();
   static QString get_user_data_dir();
   Q_INVOKABLE QString get_smash_browse_url();
 
-  // Polling to socket connections open and browser open.
+  // Crean a node's compute.
+  void clean_compute(Dep<Compute>& compute);
+
+  // Polling Control.
+  // Polling can ensure the browser is open and of the expected dimensions.
   static const int kPollInterval;
   Q_INVOKABLE bool is_polling();
   Q_INVOKABLE void start_polling();
@@ -54,46 +57,28 @@ Q_OBJECT
   Q_INVOKABLE bool is_busy() {return !_queue.empty();}
 
   // ---------------------------------------------------------------------------------
-  // Browser Actions.
+  // Recordable Actions.
   // ---------------------------------------------------------------------------------
 
-
-  Q_INVOKABLE void open_browser();
-  Q_INVOKABLE void close_browser();
-  Q_INVOKABLE void check_browser_is_open();
-  Q_INVOKABLE void check_browser_size();
-
-  // Helpers to shutdown app.
-  Q_INVOKABLE void shutdown();
-  Q_INVOKABLE void reset();
-
-  // ---------------------------------------------------------------------------------
-  // Web Actions. These calls will put information into the _last_resp member.
-  //              They are bound to make MessageHandlers, and can make use of _last_resp.
-  // ---------------------------------------------------------------------------------
-
-  // Test features.
-  Q_INVOKABLE void get_all_cookies();
-  Q_INVOKABLE void clear_all_cookies();
-  Q_INVOKABLE void set_all_cookies();
-  Q_INVOKABLE void update_overlays();
-  Q_INVOKABLE void cache_frame();
-  Q_INVOKABLE void load_cached_frame();
+  // Browser actions.
+  Q_INVOKABLE void record_open_browser();
+  Q_INVOKABLE void record_close_browser();
+  Q_INVOKABLE void record_check_browser_is_open();
+  Q_INVOKABLE void record_check_browser_size();
 
   // Navigation.
-  Q_INVOKABLE void navigate_to(const QString& url);
-  Q_INVOKABLE void navigate_refresh();
-  Q_INVOKABLE void switch_to_iframe();
+  Q_INVOKABLE void record_navigate_to(const QString& url);
+  Q_INVOKABLE void record_navigate_refresh();
+  Q_INVOKABLE void record_switch_to_iframe();
 
   // Create set by matching values.
-  Q_INVOKABLE void create_set_by_matching_text();
-  Q_INVOKABLE void create_set_by_matching_images();
+  Q_INVOKABLE void record_create_set_by_matching_values();
 
   // Create set by type.
-  Q_INVOKABLE void create_set_of_inputs();
-  Q_INVOKABLE void create_set_of_selects();
-  Q_INVOKABLE void create_set_of_images();
-  Q_INVOKABLE void create_set_of_text();
+  Q_INVOKABLE void record_create_set_of_inputs();
+  Q_INVOKABLE void record_create_set_of_selects();
+  Q_INVOKABLE void record_create_set_of_images();
+  Q_INVOKABLE void record_create_set_of_text();
 
   // Delete set.
   Q_INVOKABLE void delete_set();
@@ -149,15 +134,9 @@ Q_OBJECT
   Q_INVOKABLE void shrink_right_of_marked();
   Q_INVOKABLE void shrink_left_and_right_of_marked();
 
-  // Block/Unblock events in the browser content scripts.
-  Q_INVOKABLE void block_events();
-  Q_INVOKABLE void unblock_events();
-
-
-
   // Perform web actions.
   Q_INVOKABLE void record_click();
-  Q_INVOKABLE void mouse_over();
+  Q_INVOKABLE void record_mouse_over();
   Q_INVOKABLE void start_mouse_hover();
   Q_INVOKABLE void stop_mouse_hover();
   Q_INVOKABLE void type_text(const QString& text);
@@ -170,13 +149,52 @@ Q_OBJECT
   Q_INVOKABLE void scroll_right();
   Q_INVOKABLE void scroll_left();
 
-  // These are meant to be called by Compute components.
-  void send_msg(Message& msg);  // msg is not const because it gets tagged with an id.
-  void send_action_msg(Message& msg);
 
-  void queue_chain_state_merge(const QVariantMap& map);
-  void queue_finished();
+  // ---------------------------------------------------------------------------------
+  // Queued Tasks.
+  // ---------------------------------------------------------------------------------
+
+  void queue_get_xpath();
+  void queue_get_crosshair_info();
+  void queue_merge_chain_state(const QVariantMap& map);
+  void queue_build_compute_node(size_t compute_did);
+  void queue_finished(std::function<void(const QVariantMap&)> finalize_update);
+
+  // Queue Cookie Tasks.
+  void queue_get_all_cookies();
+  void queue_clear_all_cookies();
+  void queue_set_all_cookies();
+
+  // Queue Browser Tasks.
+  void queue_open_browser();
+  void queue_close_browser();
+  void queue_check_browser_is_open();
+  void queue_check_browser_size();
+  void queue_reset();
+
+  // Queue Page Content Tasks.
+  void queue_block_events();
+  void queue_unblock_events();
+
+  // Queue Navigate Tasks.
+  void queue_navigate_to();
+  void queue_navigate_refresh();
+  void queue_swith_to_iframe();
+
+  // Queue Set Tasks.
+  void queue_update_overlays();
+  void queue_create_set_by_matching_values();
+  void queue_create_set_by_matching_type();
+  void queue_delete_set();
+
+
+  // Queue Action Tasks.
+  void queue_perform_action(ActionType action);
   void queue_click();
+  void queue_mouse_over();
+  void queue_start_mouse_hover();
+  void queue_stop_mouse_hover();
+
   void _mouse_over(int set_index, int overlay_index, float rel_x, float rel_y);
   void _start_mouse_hover(int set_index, int overlay_index, float rel_x, float rel_y);
   void _stop_mouse_hover();
@@ -194,33 +212,68 @@ signals:
   void show_iframe_menu();
   void web_action_ignored();
   void select_option_texts(QStringList option_texts);
-  void finished_sequence(const QVariantMap& outputs);
 
  private slots:
   void on_text_received(const QString & text);
   void on_poll();
 
+ protected:
+  // Our state.
+  virtual void initialize_wires();
+
  private:
   void reset_state();
 
   // Send Messages.
-  void send_json(const QString& json);
-  void send_map(const QVariantMap& map);
+//  void send_json(const QString& json);
+//  void send_map(const QVariantMap& map);
 
 
   // Task Management.
   void queue_task(AppTask task, const std::string& about);
+  void run_next_task();
+  void handle_response_from_nodejs(const Message& sm);
+  void handle_info_from_nodejs(const Message& msg);
 
-  // Tasks. Our members which get bound into tasks.
-  void merge_in_chain_state_task(const QVariantMap& map);
-  void finished_task();
+  // Tasks grab input settings from the chain_state and build
+  // messages to send out from those settings.
+
+  // Cookie Tasks.
+  void get_all_cookies_task();
+  void clear_all_cookies_task();
+  void set_all_cookies_task();
+
+  // Infrastructure Tasks.
+  void merge_chain_state_task(const QVariantMap& map);
+  void finished_task(std::function<void(const QVariantMap&)> finalize_update);
   void build_compute_node_task(size_t compute_did);
-
   void send_msg_task(Message msg);
   void get_crosshair_info_task();
   void get_xpath_task();
-  void create_set_by_matching_text_task();
-  void create_set_by_matching_images_task();
+
+  // Browser Tasks.
+  void open_browser_task();
+  void close_browser_task();
+  void check_browser_is_open_task();
+  void check_browser_size_task();
+
+  // Page Content Tasks.
+  void block_events_task();
+  void unblock_events_task();
+
+  // Browser Reset and Shutdown Tasks.
+  void shutdown_task();
+  void reset_browser_task();
+
+  // Navigation Tasks.
+  void navigate_to_task();
+  void navigate_refresh_task();
+  void switch_to_iframe_task();
+
+  // Set Creation/Modification Tasks.
+  void update_overlays_task();
+  void create_set_by_matching_values_task();
+  void create_set_by_matching_type_task();
   void delete_set_task();
   template<WrapType WRAP_TYPE, Direction DIR>
   void shift_set_task();
@@ -229,17 +282,14 @@ signals:
   void unmark_set_task();
   void shrink_set_to_side_task(Direction dir);
   void shrink_against_marked_task(QVariantList dirs);
-  void perform_action_task(ActionType action, QVariantMap arg_overrides);
+  void perform_action_task(ActionType action);
   void start_hover_task();
   void hover_task();
   void post_hover_task();
   void emit_option_texts_task();
   void reset_task();
 
-  // Handle messages.
-  void run_next_task();
-  void handle_response_from_nodejs(const Message& sm);
-  void handle_info_from_nodejs(const Message& msg);
+
 
   // Our fixed dependencies.
   Dep<AppComm> _app_comm;
@@ -271,6 +321,8 @@ signals:
   Message _last_resp; // The last response message received. _last_resp[value] gets copied into _chain_state.
   QVariantMap _chain_state;  // The 'value' value from responses will get merged into this state overriding previous values.
   std::deque<AppTask> _queue;
+
+  Dep<Compute> _compute;
 
 };
 

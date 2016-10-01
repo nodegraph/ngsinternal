@@ -46,20 +46,19 @@ class COMPUTES_EXPORT Compute: public Component {
   QVariantMap get_inputs() const;
   void set_params(const QVariantMap& inputs);
 
-  // Our results.
   virtual const QVariantMap& get_outputs() const;
-  virtual void set_outputs(const QVariantMap& outputs);
-
   virtual QVariant get_output(const std::string& name) const;
-  virtual void set_output(const std::string& name, const QVariant& value);
-
 
  protected:
   // Our state.
   virtual void update_wires();
 
-  // Results.
+  // Our outputs. These are called during cleaning, so they don't dirty the instance's state.
+  virtual void set_outputs(const QVariantMap& outputs);
+  virtual void set_output(const std::string& name, const QVariant& value);
 
+  virtual void copy_outputs(const std::string& output_name, Dep<InputCompute>& other_compute, const std::string& other_output_name);
+  virtual void copy_outputs(const std::string& output_name, Dep<Compute>& other_compute, const std::string& other_output_name);
 
   // Plugs.
   Entity* create_input(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);

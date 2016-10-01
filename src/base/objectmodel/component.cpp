@@ -370,10 +370,10 @@ void Component::gather_dirty_components(std::vector<Component*>& comps) {
   }
 }
 
-void Component::clean_dependencies() {
+bool Component::clean_dependencies() {
   // If we're already clean there is nothing to do.
   if (!_dirty) {
-    return;
+    return true;
   }
 
   // Otherwise first propagate cleanliness to our children.
@@ -381,20 +381,36 @@ void Component::clean_dependencies() {
     for (auto & dep_iter : iid_iter.second) {
       DepLinkPtr link = dep_iter.second.lock();
       if (link && link->dependency) {
-          link->dependency->propagate_cleanliness();
+          if (!link->dependency->propagate_cleanliness()) {
+            // When the update_state is asynchronous we return right away.
+            // Another clean needs to happen from the original starting component,
+            // after the asynchronous update_state finishes and emits a signal.
+            return false;
+          }
       }
     }
   }
+  return true;
 }
 
-void Component::clean_self() {
+bool Component::clean_self() {
   if (!_dirty) {
-    return;
+    return true;
   }
 
   // Now we clean/update our internal state.
   update_state();
 
+  // If our update is asynchronous, then a finalize_update() will
+  // mark this component as clean.
+  if (update_is_asynchronous()) {
+    return false;
+  }
+
+  return clean_finalize();
+}
+
+bool Component::clean_finalize() {
   // Our dependencies is now marked clean.
   // Note that all dependencies are actually clean before the
   // update_state() call. The _dirty_dependencies var allows update_state()
@@ -403,11 +419,15 @@ void Component::clean_self() {
 
   // We are now clean.
   _dirty = false;
+
+  return true;
 }
 
-void Component::propagate_cleanliness() {
-  clean_dependencies();
-  clean_self();
+bool Component::propagate_cleanliness() {
+  if (clean_dependencies()) {
+    return clean_self();
+  }
+  return false;
 }
 
 void Component::clean_wires() {

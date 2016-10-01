@@ -132,10 +132,12 @@ class OBJECTMODEL_EXPORT Component {
   virtual bool is_initialized_gl() const {return is_initialized_gl_imp();}
 
   // Dirty/Clean Propagation.
-  virtual void clean_dependencies();
-  virtual void clean_self();
+  virtual bool clean_dependencies();
+  virtual bool clean_self();
+  virtual bool update_is_asynchronous() const {return false;}
+  virtual bool clean_finalize();
   void gather_dirty_components(std::vector<Component*>& comps); // Rectursively gather dirty components in order of execution needed to clean them.
-  void propagate_cleanliness();
+  bool propagate_cleanliness();
   void propagate_dirtiness(Component* dependency);
 
   // Serialization.
@@ -254,6 +256,7 @@ class OBJECTMODEL_EXPORT Component {
   // Opengl calls are allowed when updating state, but an opengl context must be current beore calling clean().
   // Note: start_method() (method which dirties the component) should not be called in derived methods.
   virtual void update_state() {}
+  virtual void finalize_state() {}
 
   // ----------------------------------------------------------------------------------------------------------
   // Opengl Initialization.

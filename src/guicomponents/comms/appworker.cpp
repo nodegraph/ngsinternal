@@ -28,8 +28,11 @@
 #include <QtWebSockets/QWebSocket>
 
 #include <iostream>
+#include <sstream>
 
 namespace ngs {
+
+#define check_busy()   if (is_busy()) {emit web_action_ignored(); return;}
 
 const int AppWorker::kPollInterval = 1000;
 const int AppWorker::kJitterSize = 1;
@@ -49,6 +52,7 @@ AppWorker::AppWorker(Entity* parent)
       _file_model(this),
       _graph_builder(this),
       _canvas(this),
+      _compute(this),
       _show_browser(false),
       _hovering(false),
       _jitter(kJitterSize),
@@ -93,6 +97,12 @@ QString AppWorker::get_smash_browse_url() {
   return app_dir;
 }
 
+void AppWorker::clean_compute(Dep<Compute>& compute) {
+  external();
+  _compute = compute;
+  _compute->clean_state();
+}
+
 bool AppWorker::is_polling() {
   return _poll_timer.isActive();
 }
@@ -120,25 +130,15 @@ void AppWorker::reset_state() {
     _jitter = kJitterSize;
 }
 
-void AppWorker::send_json(const QString& json) {
-  Message msg(json);
-  send_msg(msg);
-}
-
-void AppWorker::send_map(const QVariantMap& map) {
-  Message msg(map);
-  send_msg(msg);
-}
-
-void AppWorker::send_msg(Message& msg) {
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "send_msg");
-}
-
-void AppWorker::send_action_msg(Message& msg) {
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "send_msg");
-  block_events();
-}
+//void AppWorker::send_json(const QString& json) {
+//  Message msg(json);
+//  send_msg(msg);
+//}
+//
+//void AppWorker::send_map(const QVariantMap& map) {
+//  Message msg(map);
+//  send_msg(msg);
+//}
 
 void AppWorker::queue_task(AppTask task, const std::string& about) {
   const AppTask test = task;
@@ -177,6 +177,80 @@ void AppWorker::queue_task(AppTask task, const std::string& about) {
   }
 }
 
+void AppWorker::run_next_task() {
+  // Unblock the scheduler.
+  _waiting_for_results = false;
+
+  // Otherwise we got the expected response id.
+  // Pop the queue.
+  if (_queue.size()) {
+    _queue.pop_front();
+  }
+
+  // Call the next handler.
+  if (_queue.size()) {
+    _queue[0]();
+  }
+}
+
+void AppWorker::handle_response_from_nodejs(const Message& msg) {
+
+  // Todo: Sometime we will get duplicate messages. Try to determine the cause.
+  // If we get the same message (which include msg.id), ignore it.
+  if (msg == _last_resp) {
+    return;
+  }
+
+  // Get the response id. This is supposed to match with the request id.
+  int resp_id = msg[Message::kID].toInt();
+
+  // Determine the request id.
+  int req_id = _next_msg_id -1;
+
+  // Check the ids.
+  if (resp_id != req_id) {
+    std::cerr << "Error: response id: " << resp_id << " did not match request id: " << req_id << "\n";
+  } else {
+    std::cerr << "Success: response id: " << resp_id << " matches request id: " << req_id << "\n";
+  }
+
+  assert(resp_id == req_id);
+
+  // Update the last message.
+  _last_resp = msg;
+
+  // Merge the values into the chain_state.
+  QVariantMap &value = _last_resp[Message::kValue].toMap();
+  for (QVariantMap::const_iterator iter = value.constBegin(); iter != value.constEnd(); ++iter) {
+    _chain_state.insert(iter.key(), iter.value());
+  }
+
+  // Run the next task.
+  run_next_task();
+}
+
+void AppWorker::handle_info_from_nodejs(const Message& msg) {
+  std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
+  if (msg[Message::kInfo] == InfoType::kShowWebActionMenu) {
+    _click_pos = msg[Message::kValue].toMap()[Message::kClickPos].toMap();
+    std::cerr << "got click x,y: " << _click_pos["x"].toInt() << ", " << _click_pos["y"].toInt() << "\n";
+
+    _iframe = msg[Message::kIFrame].toString();
+    if (msg[Message::kValue].toMap().count(Message::kPrevIFrame)) {
+      QString prev_iframe = msg[Message::kValue].toMap().value(Message::kPrevIFrame).toString();
+      emit show_iframe_menu();
+    } else {
+      emit show_web_action_menu();
+    }
+  } else {
+      std::cerr << "comm->app: received info: " << msg.to_string().toStdString() << "\n";
+  }
+}
+
+// -----------------------------------------------------------------
+// Our Slots.
+// -----------------------------------------------------------------
+
 void AppWorker::on_text_received(const QString & text) {
 
   std::cerr << "app_worker got text: " << text.toStdString() << "\n";
@@ -210,200 +284,166 @@ void AppWorker::on_text_received(const QString & text) {
   //}
 }
 
+void AppWorker::on_poll() {
+  if (_app_comm->check_connection()) {
+    if (_show_browser) {
+      std::cerr << "polling open browser!\n";
+      if (_queue.empty()) {
+        queue_check_browser_is_open();
+        queue_check_browser_size();
+        // Debugging. - this makes the browser only come up once.
+        _show_browser = false;
+      }
+    }
+  }
+  if (_hovering) {
+    if (_queue.empty()) {
+      hover_task();
+    }
+  }
+}
+
 // -----------------------------------------------------------------
 // Browser Actions.
 // -----------------------------------------------------------------
 
-void AppWorker::open_browser() {
-  Message msg(RequestType::kOpenBrowser);
-
-  QVariantMap args;
-  args[Message::kURL] = get_smash_browse_url();
-
-  msg[Message::kArgs] = args;
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "open_browser");
+void AppWorker::record_open_browser() {
+  check_busy();
+  queue_build_compute_node(kOpenBrowserCompute);
 }
 
-void AppWorker::close_browser() {
-  Message msg(RequestType::kCloseBrowser);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "close_browser");
+void AppWorker::record_close_browser() {
+  check_busy();
+  queue_build_compute_node(kCloseBrowserCompute);
 }
 
-void test() {
-  std::cerr << "running test func!\n";
+void AppWorker::record_check_browser_is_open() {
+  check_busy();
+  queue_build_compute_node(kCheckBrowserIsOpen);
 }
 
-void AppWorker::check_browser_is_open() {
-  Message msg(RequestType::kCheckBrowserIsOpen);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "check_browser_is_open");
-}
-
-void AppWorker::check_browser_size() {
-  Message msg(RequestType::kResizeBrowser);
-
+void AppWorker::record_check_browser_size() {
   int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
   int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
 
-  QJsonObject args;
-  args[Message::kWidth] = width;
-  args[Message::kHeight] = height;
+  QVariantMap dims;
+  dims[Message::kWidth] = width;
+  dims[Message::kHeight] = height;
 
-  msg[Message::kArgs] = args;
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "check_browser_size");
-}
+  QVariantMap args;
+  args[Message::kDimensions] = dims;
 
-void AppWorker::shutdown() {
-  Message msg(RequestType::kShutdown);
-  //queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg));
-  // We force the shutdown task to run right away.
-  send_msg_task(msg);
-  _app_comm->destroy_connection();
-}
-
-void AppWorker::reset() {
-  close_browser();
-  queue_task((AppTask)std::bind(&AppWorker::reset_task, this), "reset");
+  queue_merge_chain_state(args);
+  queue_build_compute_node(kCheckBrowserSizeCompute);
 }
 
 // -----------------------------------------------------------------
 // Test Features.
 // -----------------------------------------------------------------
 
-#define check_busy()   if (is_busy()) {emit web_action_ignored(); return;}
 
-void AppWorker::get_all_cookies() {
+
+
+void AppWorker::get_all_cookies_task() {
   check_busy()
-  Message msg(RequestType::kGetAllCookies);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "get_all_cookies");
+  Message req(RequestType::kGetAllCookies);
+  send_msg_task(req);
 }
 
-void AppWorker::clear_all_cookies() {
+void AppWorker::clear_all_cookies_task() {
   check_busy()
-  Message msg(RequestType::kClearAllCookies);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "clear_all_cookies");
+  Message req(RequestType::kClearAllCookies);
+  send_msg_task(req);
 }
 
-void AppWorker::set_all_cookies() {
+void AppWorker::set_all_cookies_task() {
   check_busy()
-  Message msg(RequestType::kSetAllCookies);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "set_all_cookies");
+  Message req(RequestType::kSetAllCookies);
+  send_msg_task(req);
 }
 
-void AppWorker::update_overlays() {
-  check_busy()
-  Message msg(RequestType::kUpdateOveralys);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "update_overlays");
-}
-
-void AppWorker::cache_frame() {
-  check_busy()
-  Message msg(RequestType::kCacheFrame);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "cache_frame");
-}
-
-void AppWorker::load_cached_frame() {
-  check_busy()
-  Message msg(RequestType::kLoadCachedFrame);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "load_cached_frame");
-}
+//void AppWorker::cache_frame() {
+//  check_busy()
+//  Message msg(RequestType::kCacheFrame);
+//  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "cache_frame");
+//}
+//
+//void AppWorker::load_cached_frame() {
+//  check_busy()
+//  Message msg(RequestType::kLoadCachedFrame);
+//  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "load_cached_frame");
+//}
 
 // -----------------------------------------------------------------
 // Navigation.
 // -----------------------------------------------------------------
 
-void AppWorker::navigate_to(const QString& url) {
+void AppWorker::record_navigate_to(const QString& url) {
   check_busy()
-
-  // Fix the url.
   QString decorated_url = get_proper_url(url).toString();
 
-  // Create the args.
   QVariantMap args;
   args[Message::kURL] = decorated_url;
 
-  // Send the message.
-  Message msg(RequestType::kNavigateTo, args);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "navigate_to");
+  queue_merge_chain_state(args);
+  queue_build_compute_node(kNavigateToCompute);
 }
 
-void AppWorker::switch_to_iframe() {
+void AppWorker::record_switch_to_iframe() {
   check_busy()
-  QVariantMap args;
-  args[Message::kIFrame] = _iframe;
-
-  Message msg(RequestType::kSwitchIFrame, args);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "switch_to_iframe");
+  queue_get_crosshair_info();
+  queue_build_compute_node(kSwitchToIFrameCompute);
 }
 
-void AppWorker::navigate_refresh() {
+void AppWorker::record_navigate_refresh() {
   check_busy()
-  // Send the message.
-  Message msg(RequestType::kNavigateRefresh);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "navigate_refresh");
+  queue_build_compute_node(kNavigateRefreshCompute);
 }
 
 // -----------------------------------------------------------------
 // Create set by matching values.
 // -----------------------------------------------------------------
 
-void AppWorker::create_set_by_matching_text() {
+void AppWorker::record_create_set_by_matching_values() {
   check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "create_set_by_matching_text1");
-  queue_task((AppTask)std::bind(&AppWorker::create_set_by_matching_text_task,this), "create_set_by_matching_text2");
-}
-
-void AppWorker::create_set_by_matching_images() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "create_set_by_matching_images1");
-  queue_task((AppTask)std::bind(&AppWorker::create_set_by_matching_images_task,this), "create_set_by_matching_images2");
+  queue_get_crosshair_info();
+  queue_build_compute_node(kCreateSetFromValuesCompute);
 }
 
 // -----------------------------------------------------------------
 // Create set by type.
 // -----------------------------------------------------------------
 
-void AppWorker::create_set_of_inputs() {
+void AppWorker::record_create_set_of_inputs() {
   check_busy()
   QVariantMap args;
   args[Message::kWrapType] = WrapType::input;
-
-  Message req(RequestType::kCreateSetFromWrapType);
-  req[Message::kArgs] = args;
-
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, req), "create_set_of_inputs");
+  queue_merge_chain_state(args);
+  queue_build_compute_node(kCreateSetFromTypeCompute);
 }
 
-void AppWorker::create_set_of_selects() {
+void AppWorker::record_create_set_of_selects() {
   check_busy()
   QVariantMap args;
   args[Message::kWrapType] = WrapType::select;
-
-  Message req(RequestType::kCreateSetFromWrapType);
-  req[Message::kArgs] = args;
-
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, req), "create_set_of_selects");
+  queue_merge_chain_state(args);
+  queue_build_compute_node(kCreateSetFromTypeCompute);
 }
 
-void AppWorker::create_set_of_images() {
+void AppWorker::record_create_set_of_images() {
   check_busy()
   QVariantMap args;
   args[Message::kWrapType] = WrapType::image;
-
-  Message req(RequestType::kCreateSetFromWrapType);
-  req[Message::kArgs] = args;
-
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, req), "create_set_of_images");
+  queue_merge_chain_state(args);
+  queue_build_compute_node(kCreateSetFromTypeCompute);
 }
 
-void AppWorker::create_set_of_text() {
+void AppWorker::record_create_set_of_text() {
   check_busy()
   QVariantMap args;
   args[Message::kWrapType] = WrapType::text;
-
-  Message req(RequestType::kCreateSetFromWrapType);
-  req[Message::kArgs] = args;
-
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, req), "create_set_of_text");
+  queue_merge_chain_state(args);
+  queue_build_compute_node(kCreateSetFromTypeCompute);
 }
 
 // -----------------------------------------------------------------
@@ -412,8 +452,8 @@ void AppWorker::create_set_of_text() {
 
 void AppWorker::delete_set() {
   check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "delete_set1");
-  queue_task((AppTask)std::bind(&AppWorker::delete_set_task,this), "delete_set2");
+  queue_get_crosshair_info();
+  queue_delete_set();
 }
 
 // -----------------------------------------------------------------
@@ -677,35 +717,11 @@ void AppWorker::shrink_left_and_right_of_marked() {
 // Block/Unblock events in the browser content scripts.
 // -----------------------------------------------------------------
 
-void AppWorker::block_events() {
-  // This action implies the browser's event unblocked for a time to allow
-  // some actions to be performed. After such an action we need to update
-  // the overlays as elements may disappear or move around.
-  {
-    Message req(RequestType::kBlockEvents);
-    queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, req), "block_events");
-  }
-  {
-    Message msg(RequestType::kUpdateOveralys);
-    queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "update_overlays");
-  }
-}
 
-void AppWorker::unblock_events() {
-  Message req(RequestType::kUnblockEvents);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task,this,req), "unblock_events");
-}
 
 // -----------------------------------------------------------------
 // Perform Web Actions.
 // -----------------------------------------------------------------
-
-void AppWorker::record_click() {
-  check_busy()
-  QVariantMap extra_args;
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "click1");
-  queue_task((AppTask)std::bind(&AppWorker::build_compute_node_task,this, kClickActionCompute), "click2");
-}
 
 void AppWorker::build_compute_node_task(size_t compute_did) {
   Entity* group = _canvas->get_current_group();
@@ -746,47 +762,174 @@ void AppWorker::build_compute_node_task(size_t compute_did) {
   run_next_task();
 }
 
-void AppWorker::queue_chain_state_merge(const QVariantMap& map) {
-  queue_task((AppTask)std::bind(&AppWorker::merge_in_chain_state_task,this, map), "queue_chain_state_merge");
+// ---------------------------------------------------------------------------------
+// Queued Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_get_xpath() {
+  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "queue_get_xpath");
 }
 
-void AppWorker::queue_finished() {
-  queue_task((AppTask)std::bind(&AppWorker::finished_task,this), "queue_finished");
+void AppWorker::queue_get_crosshair_info() {
+  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "queue_get_crosshair_info");
 }
 
-// Relies on kSetIndex, kOverlayIndex, kOverlayIndex.
+void AppWorker::queue_merge_chain_state(const QVariantMap& map) {
+  queue_task((AppTask)std::bind(&AppWorker::merge_chain_state_task,this, map), "queue_merge_chain_state");
+}
+
+void AppWorker::queue_build_compute_node(size_t compute_did) {
+  std::stringstream ss;
+  ss << "queue build compute node with did: " << compute_did;
+  queue_task((AppTask)std::bind(&AppWorker::build_compute_node_task,this, compute_did), ss.str());
+}
+
+void AppWorker::queue_finished(std::function<void(const QVariantMap&)> finalize_update) {
+  queue_task((AppTask)std::bind(&AppWorker::finished_task,this,finalize_update), "queue_finished");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Cookie Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_get_all_cookies() {
+  queue_task((AppTask)std::bind(&AppWorker::get_all_cookies_task, this), "queue_get_all_cookies");
+}
+
+void AppWorker::queue_clear_all_cookies() {
+  queue_task((AppTask)std::bind(&AppWorker::clear_all_cookies_task, this), "queue_clear_all_cookies");
+}
+
+void AppWorker::queue_set_all_cookies() {
+  queue_task((AppTask)std::bind(&AppWorker::set_all_cookies_task, this), "queue_set_all_cookies");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Browser Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_open_browser() {
+  queue_task((AppTask)std::bind(&AppWorker::open_browser_task,this), "queue_open_browser");
+}
+
+void AppWorker::queue_close_browser() {
+  queue_task((AppTask)std::bind(&AppWorker::close_browser_task,this), "queue_close_browser");
+}
+
+void AppWorker::queue_check_browser_is_open() {
+  queue_task((AppTask)std::bind(&AppWorker::check_browser_is_open_task,this), "queue_check_browser_is_open");
+}
+
+void AppWorker::queue_check_browser_size() {
+  queue_task((AppTask)std::bind(&AppWorker::check_browser_size_task,this), "queue_check_browser_size");
+}
+
+void AppWorker::queue_reset() {
+  queue_task((AppTask)std::bind(&AppWorker::reset_task, this), "reset");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Page Content Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_block_events() {
+  queue_task((AppTask)std::bind(&AppWorker::block_events_task, this), "reset");
+}
+
+void AppWorker::queue_unblock_events() {
+  queue_task((AppTask)std::bind(&AppWorker::unblock_events_task, this), "reset");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Navigate Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_navigate_to() {
+  queue_task((AppTask)std::bind(&AppWorker::navigate_to_task,this), "queue_navigate_to");
+}
+
+void AppWorker::queue_navigate_refresh() {
+  queue_task((AppTask)std::bind(&AppWorker::navigate_refresh_task,this), "queue_navigate_refresh");
+}
+
+void AppWorker::queue_swith_to_iframe() {
+  queue_task((AppTask)std::bind(&AppWorker::switch_to_iframe_task,this), "queue_swith_to_iframe");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Set Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_update_overlays() {
+  queue_task((AppTask)std::bind(&AppWorker::update_overlays_task, this), "queue_update_overlays");
+}
+
+void AppWorker::queue_create_set_by_matching_values() {
+  queue_task((AppTask)std::bind(&AppWorker::create_set_by_matching_values_task,this), "queue_create_set_by_matching_values");
+}
+
+void AppWorker::queue_create_set_by_matching_type() {
+  queue_task((AppTask)std::bind(&AppWorker::create_set_by_matching_type_task,this), "queue_create_set_by_matching_type");
+}
+
+void AppWorker::queue_delete_set() {
+  queue_task((AppTask)std::bind(&AppWorker::delete_set_task,this), "queue_delete_set");
+}
+
 void AppWorker::queue_click() {
-  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "queue_click1");
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task, this, ActionType::kSendClick, QVariantMap()), "queue_click2");
-  block_events();
+  queue_get_xpath();
+  queue_unblock_events();
+  queue_perform_action(ActionType::kSendClick);
+  queue_block_events();
 }
 
-void AppWorker::mouse_over() {
-  check_busy()
-  QVariantMap extra_args;
+void AppWorker::queue_mouse_over() {
+  queue_get_xpath();
+  queue_unblock_events();
+  queue_perform_action(ActionType::kMouseOver);
+  queue_block_events();
+}
 
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "mouse_over1");
-  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "mouse_over2");
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this, ActionType::kMouseOver, extra_args), "mouse_over3");
-  block_events();
+void AppWorker::queue_start_mouse_hover() {
+  queue_get_xpath();
+  queue_unblock_events();
+  queue_perform_action(ActionType::kStartMouseHover);
+  queue_block_events();
+}
+
+void AppWorker::queue_stop_mouse_hover() {
+  queue_get_xpath();
+  queue_unblock_events();
+  queue_perform_action(ActionType::kStopMouseHover);
+  queue_block_events();
+}
+
+void AppWorker::queue_perform_action(ActionType action) {
+  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this, action), "queue_perform_action_task");
+}
+
+void AppWorker::record_click() {
+  check_busy();
+  queue_get_crosshair_info();
+  queue_build_compute_node(kClickActionCompute);
+}
+
+void AppWorker::record_mouse_over() {
+  check_busy();
+  queue_get_crosshair_info();
+  queue_build_compute_node(kMouseOverActionCompute);
 }
 void AppWorker::start_mouse_hover() {
-  check_busy()
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "start_mouse_hover1");
-  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "start_mouse_hover2");
-  queue_task((AppTask)std::bind(&AppWorker::start_hover_task,this), "start_mouse_hover3");
-  //queue_task((AppTask)std::bind(&AppWorker::hover_task,this), "start_mouse_hover3");
-  block_events();
+  check_busy();
+  queue_get_crosshair_info();
+  queue_build_compute_node(kStartMouseHoverCompute);
 }
 void AppWorker::stop_mouse_hover() {
-  check_busy()
+  check_busy();
   _hovering = false;
 }
 void AppWorker::type_text(const QString& text) {
-  check_busy()
+  check_busy();
   QVariantMap extra_args;
   extra_args[Message::kText] = text;
 
@@ -794,7 +937,7 @@ void AppWorker::type_text(const QString& text) {
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "type_text1");
   queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "type_text2");
   queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kSendText,extra_args), "type_text3");
-  block_events();
+  block_events_task();
 }
 void AppWorker::type_enter() {
   check_busy()
@@ -804,7 +947,7 @@ void AppWorker::type_enter() {
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "type_enter1");
   queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "type_enter2");
   queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kSendEnter,extra_args), "type_enter3");
-  block_events();
+  block_events_task();
 }
 void AppWorker::extract_text() {
   check_busy()
@@ -814,7 +957,7 @@ void AppWorker::extract_text() {
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "extract_text1");
   queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "extract_text2");
   queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kGetText,extra_args), "extract_text3");
-  block_events();
+  block_events_task();
 }
 void AppWorker::get_option_texts() {
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "get_option_texts1");
@@ -829,7 +972,7 @@ void AppWorker::select_from_dropdown(const QString& option_text) {
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "select_from_dropdown1");
   queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "select_from_drpdown2");
   queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kSelectOption,extra_args), "select_from_dropdown3");
-  block_events();
+  block_events_task();
 }
 
 void AppWorker::scroll_down() {
@@ -840,7 +983,7 @@ void AppWorker::scroll_down() {
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "scroll_down1");
   // no need for xpath
   queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kScrollDown,extra_args), "scroll_down2");
-  block_events();
+  block_events_task();
 }
 void AppWorker::scroll_up() {
   check_busy()
@@ -850,7 +993,7 @@ void AppWorker::scroll_up() {
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "scroll_up1");
   // no need for xpath
   queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kScrollUp,extra_args), "scroll_up2");
-  block_events();
+  block_events_task();
 }
 void AppWorker::scroll_right() {
   check_busy()
@@ -860,7 +1003,7 @@ void AppWorker::scroll_right() {
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "scroll_right1");
   // no need for xpath
   queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kScrollRight,extra_args), "scroll_right2");
-  block_events();
+  block_events_task();
 }
 void AppWorker::scroll_left() {
   check_busy()
@@ -870,7 +1013,7 @@ void AppWorker::scroll_left() {
   queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "scroll_left1");
   // no need for xpath
   queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kScrollLeft,extra_args), "scroll_left2");
-  block_events();
+  block_events_task();
 }
 
 
@@ -878,7 +1021,7 @@ void AppWorker::scroll_left() {
 // Tasks. Our members which get bound into tasks.
 // -----------------------------------------------------------------
 
-void AppWorker::merge_in_chain_state_task(const QVariantMap& map) {
+void AppWorker::merge_chain_state_task(const QVariantMap& map) {
   // Merge the values into the chain_state.
   for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
     _chain_state.insert(iter.key(), iter.value());
@@ -886,8 +1029,17 @@ void AppWorker::merge_in_chain_state_task(const QVariantMap& map) {
   run_next_task();
 }
 
-void AppWorker::finished_task() {
-  emit finished_sequence(_chain_state["outputs"].toMap());
+void AppWorker::finished_task(std::function<void(const QVariantMap&)> finalize_update) {
+  finalize_update(_chain_state["outputs"].toMap());
+  // If the compute is still dirty, it's because one of the dependencies has an
+  // asynchronous update_state() method. In this case just run the cleaning processing again.
+  if (_compute) {
+    if (!_compute->is_state_dirty()) {
+      //
+    } else {
+      _compute->clean_state();
+    }
+  }
   run_next_task();
 }
 
@@ -922,25 +1074,129 @@ void AppWorker::get_xpath_task() {
   send_msg_task(req);
 }
 
-void AppWorker::create_set_by_matching_text_task() {
+// ------------------------------------------------------------------------
+// Browser Tasks.
+// ------------------------------------------------------------------------
+
+void AppWorker::open_browser_task() {
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::text;
-  args[Message::kMatchValues] = _chain_state[Message::kTextValues];
+  args[Message::kURL] = get_smash_browse_url();
 
-  Message req(RequestType::kCreateSetFromMatchValues);
+  Message req(RequestType::kOpenBrowser);
   req[Message::kArgs] = args;
-
   send_msg_task(req);
 }
 
-void AppWorker::create_set_by_matching_images_task() {
+void AppWorker::close_browser_task() {
+  Message req(RequestType::kCloseBrowser);
+  send_msg_task(req);
+}
+
+void AppWorker::check_browser_is_open_task() {
+  Message req(RequestType::kCheckBrowserIsOpen);
+  send_msg_task(req);
+}
+
+void AppWorker::check_browser_size_task() {
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::image;
-  args[Message::kMatchValues] = _chain_state[Message::kImageValues];
+  args[Message::kWidth] = _chain_state[Message::kWidth];
+  args[Message::kHeight] = _chain_state[Message::kHeight];
+
+  Message req(RequestType::kResizeBrowser);
+  req[Message::kArgs] = args;
+  send_msg_task(req);
+}
+
+// ------------------------------------------------------------------------
+// Page Content Tasks.
+// ------------------------------------------------------------------------
+
+void AppWorker::block_events_task() {
+  // This action implies the browser's event unblocked for a time to allow
+  // some actions to be performed. After such an action we need to update
+  // the overlays as elements may disappear or move around.
+  {
+    Message req(RequestType::kBlockEvents);
+    send_msg_task(req);
+  }
+  {
+    Message req(RequestType::kUpdateOveralys);
+    send_msg_task(req);
+  }
+}
+
+void AppWorker::unblock_events_task() {
+  Message req(RequestType::kUnblockEvents);
+  send_msg_task(req);
+}
+
+// ------------------------------------------------------------------------
+// Browser Reset and Shutdown Tasks.
+// ------------------------------------------------------------------------
+
+void AppWorker::shutdown_task() {
+  Message msg(RequestType::kShutdown);
+  // Shutdown without queuing it.
+  send_msg_task(msg);
+  _app_comm->destroy_connection();
+}
+
+void AppWorker::reset_browser_task() {
+  // Close the browser without queuing it.
+  close_browser_task();
+  // Queue the reset now that all the queued task have been destroyed.
+  queue_reset();
+}
+
+// ------------------------------------------------------------------------
+// Navigation Tasks.
+// ------------------------------------------------------------------------
+
+void AppWorker::navigate_to_task() {
+  QVariantMap args;
+  args[Message::kURL] = _chain_state[Message::kURL];
+  Message req(RequestType::kNavigateTo, args);
+  send_msg_task(req);
+}
+
+void AppWorker::navigate_refresh_task() {
+  Message req(RequestType::kNavigateRefresh);
+  send_msg_task(req);
+}
+
+void AppWorker::switch_to_iframe_task() {
+  QVariantMap args;
+  args[Message::kIFrame] = _chain_state[Message::kIFrame];
+  Message req(RequestType::kSwitchIFrame, args);
+  send_msg_task(req);
+}
+
+// ------------------------------------------------------------------------
+// Set Creation/Modification Tasks.
+// ------------------------------------------------------------------------
+
+void AppWorker::update_overlays_task() {
+  check_busy()
+  Message req(RequestType::kUpdateOveralys);
+  send_msg_task(req);
+}
+
+void AppWorker::create_set_by_matching_values_task() {
+  QVariantMap args;
+  args[Message::kWrapType] = _chain_state[Message::kWrapType];
+  args[Message::kMatchValues] = _chain_state[Message::kMatchValues];
 
   Message req(RequestType::kCreateSetFromMatchValues);
   req[Message::kArgs] = args;
+  send_msg_task(req);
+}
 
+void AppWorker::create_set_by_matching_type_task() {
+  QVariantMap args;
+  args[Message::kWrapType] = _chain_state[Message::kWrapType];
+
+  Message req(RequestType::kCreateSetFromWrapType);
+  req[Message::kArgs] = args;
   send_msg_task(req);
 }
 
@@ -1058,6 +1314,32 @@ void AppWorker::shrink_against_marked_task(QVariantList dirs) {
   send_msg_task(req);
 }
 
+void AppWorker::perform_action_task(ActionType action) {
+  int set_index = _chain_state[Message::kSetIndex].toInt();
+  if (set_index < 0) {
+    run_next_task();
+    return;
+  }
+
+  int overlay_index = _chain_state[Message::kOverlayIndex].toInt();
+  QString xpath = _chain_state[Message::kXPath].toString();
+
+  QVariantMap args;
+  args[Message::kSetIndex] = set_index;
+  args[Message::kOverlayIndex] = overlay_index;
+  args[Message::kXPath] = xpath;
+  args[Message::kAction] = action;
+
+  // Get other settings from the last response.
+  if (action == kSendClick || action == kMouseOver) {
+    args[Message::kOverlayRelClickPos] = _chain_state[Message::kOverlayRelClickPos];
+  }
+
+  Message req(RequestType::kPerformAction);
+  req[Message::kArgs] = args;
+  send_msg_task(req);
+}
+
 void AppWorker::start_hover_task() {
   std::cerr << "start hover task running\n";
   _hover_args = _chain_state;
@@ -1084,7 +1366,7 @@ void AppWorker::hover_task() {
   unblock_events();
   queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this, ActionType::kMouseOver, _hover_args), "hover_task");
   queue_task((AppTask)std::bind(&AppWorker::post_hover_task, this), "post_hover_task");
-  block_events();
+  block_events_task();
 }
 
 void AppWorker::post_hover_task() {
@@ -1097,39 +1379,6 @@ void AppWorker::post_hover_task() {
   run_next_task();
 }
 
-void AppWorker::perform_action_task(ActionType action, QVariantMap arg_overrides) {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  if (set_index < 0) {
-    run_next_task();
-    return;
-  }
-
-  int overlay_index = _chain_state[Message::kOverlayIndex].toInt();
-  QString xpath = _chain_state[Message::kXPath].toString();
-
-  QVariantMap args;
-  args[Message::kSetIndex] = set_index;
-  args[Message::kOverlayIndex] = overlay_index;
-  args[Message::kXPath] = xpath;
-  args[Message::kAction] = action;
-
-  // Get other settings from the last response.
-  if (action == kSendClick || action == kMouseOver) {
-    args[Message::kOverlayRelClickPos] = _chain_state[Message::kOverlayRelClickPos];
-  }
-
-  // Merge the extra args. Note these actually override the above key value pairs.
-  QVariantMap::iterator iter;
-  for (iter = arg_overrides.begin(); iter != arg_overrides.end(); ++iter) {
-    args[iter.key()] = iter.value();
-  }
-
-
-  Message req(RequestType::kPerformAction);
-  req[Message::kArgs] = args;
-  send_msg_task(req);
-}
-
 void AppWorker::emit_option_texts_task() {
   QStringList ot = _chain_state[Message::kOptionTexts].toStringList();
   emit select_option_texts(ot);
@@ -1138,99 +1387,8 @@ void AppWorker::emit_option_texts_task() {
 
 void AppWorker::reset_task() {
   reset_state();
-  check_browser_is_open();
-  run_next_task();
+  queue_check_browser_is_open();
 }
 
-// -----------------------------------------------------------------
-// Handle Messages.
-// -----------------------------------------------------------------
-
-void AppWorker::run_next_task() {
-  // Unblock the scheduler.
-  _waiting_for_results = false;
-
-  // Otherwise we got the expected response id.
-  // Pop the queue.
-  if (_queue.size()) {
-    _queue.pop_front();
-  }
-
-  // Call the next handler.
-  if (_queue.size()) {
-    _queue[0]();
-  }
-}
-
-void AppWorker::handle_response_from_nodejs(const Message& msg) {
-
-  // Todo: Sometime we will get duplicate messages. Try to determine the cause.
-  // If we get the same message (which include msg.id), ignore it.
-  if (msg == _last_resp) {
-    return;
-  }
-
-  // Get the response id. This is supposed to match with the request id.
-  int resp_id = msg[Message::kID].toInt();
-
-  // Determine the request id.
-  int req_id = _next_msg_id -1;
-
-  // Check the ids.
-  if (resp_id != req_id) {
-    std::cerr << "Error: response id: " << resp_id << " did not match request id: " << req_id << "\n";
-  } else {
-    std::cerr << "Success: response id: " << resp_id << " matches request id: " << req_id << "\n";
-  }
-
-  assert(resp_id == req_id);
-
-  // Update the last message.
-  _last_resp = msg;
-
-  // Merge the values into the chain_state.
-  QVariantMap &value = _last_resp[Message::kValue].toMap();
-  for (QVariantMap::const_iterator iter = value.constBegin(); iter != value.constEnd(); ++iter) {
-    _chain_state.insert(iter.key(), iter.value());
-  }
-
-  // Run the next task.
-  run_next_task();
-}
-
-void AppWorker::handle_info_from_nodejs(const Message& msg) {
-  std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
-  if (msg[Message::kInfo] == InfoType::kShowWebActionMenu) {
-    _click_pos = msg[Message::kValue].toMap()[Message::kClickPos].toMap();
-    std::cerr << "got click x,y: " << _click_pos["x"].toInt() << ", " << _click_pos["y"].toInt() << "\n";
-
-    _iframe = msg[Message::kIFrame].toString();
-    if (msg[Message::kValue].toMap().count(Message::kPrevIFrame)) {
-      QString prev_iframe = msg[Message::kValue].toMap().value(Message::kPrevIFrame).toString();
-      emit show_iframe_menu();
-    } else {
-      emit show_web_action_menu();
-    }
-  } else {
-      std::cerr << "comm->app: received info: " << msg.to_string().toStdString() << "\n";
-  }
-}
-
-void AppWorker::on_poll() {
-  if (_app_comm->check_connection()) {
-    if (_show_browser) {
-      std::cerr << "polling open browser!\n";
-      check_browser_is_open();
-      check_browser_size();
-      // Debugging. - this makes the browser only come up once.
-      _show_browser = false;
-    }
-  }
-  if (_hovering) {
-    if (_queue.empty()) {
-      hover_task();
-    }
-  }
-}
 
 }

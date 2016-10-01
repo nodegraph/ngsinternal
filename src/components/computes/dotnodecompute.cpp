@@ -22,8 +22,7 @@ void DotNodeCompute::create_inputs_outputs() {
 
 void DotNodeCompute::update_state() {
   internal();
-  const QVariant &value = _inputs.at("in")->get_output("out");
-  set_output("out", value);
+  copy_outputs("out", _inputs.at("in"), "out");
 }
 
 }

@@ -114,20 +114,21 @@ void GroupNodeCompute::update_state() {
   // For each input data if there is an associated input node, we set data on the input node
   // from the input data. The input data handles connections to other entities internally.
   for (auto &iter: _inputs) {
-    Dep<InputCompute> op = iter.second;
-    const std::string& input_name = op->our_entity()->get_name();
-    const QVariant& input_value = op->get_output("out");
-    // Find an entity in this group with the same name as the input data.
-    Entity* e = our_entity()->get_child(input_name);
-    // Make sure we have an entity.
-    if (!e) {
-      //assert(false);
+    Dep<InputCompute>& input = iter.second;
+    const std::string& input_name = input->get_name();
+    // Find the input node in this group with the same name as the input plug.
+    Entity* input_node = our_entity()->get_child(input_name);
+    // Make sure we have an input node.
+    if (!input_node) {
+      assert(false);
       continue;
     }
     // If it has an input computer, copy the value from the input plug to the input computer.
-    Dep<InputNodeCompute> input_computer = get_dep<InputNodeCompute>(e);
-    if (input_computer) {
-      input_computer->set_value(input_value);
+    Dep<Compute> input_node_compute = get_dep<Compute>(input_node);
+    if (input_node_compute) {
+      // Hack to call protected method on Compute instance.
+      void (Compute::*hack)(const std::string&, Dep<InputCompute>&, const std::string&) = &GroupNodeCompute::copy_outputs;
+      (input_node_compute.get()->*hack)("out", input, "out");
     }
   }
 
@@ -135,22 +136,24 @@ void GroupNodeCompute::update_state() {
   // For each one if there is an associated output node, we clean it and cache the result.
   Entity* outputs = get_entity(Path({".","outputs"}));
   for (auto &iter: outputs->get_children()) {
-    Entity* oe = iter.second;
-    const std::string& output_name = oe->get_name();
-    // Find an entity in this group with the same name as the output data.
-    Entity* o = our_entity()->get_child(output_name);
-    // Make sure we have an entity.
-    if (!o) {
-      //assert(false);
+    Dep<Compute> output = get_dep<Compute>(iter.second);
+    const std::string& output_name = output->get_name();
+    // Find an output node in this group with the same name as the output plug.
+    Entity* output_node = our_entity()->get_child(output_name);
+    // Make sure we have an output node.
+    if (!output_node) {
+      assert(false);
       continue;
     }
     // If it has an output computer, clean it.
-    Dep<OutputNodeCompute> output_computer = get_dep<OutputNodeCompute>(o);
-    if (output_computer) {
-      output_computer->propagate_cleanliness();
+    Dep<Compute> output_node_compute = get_dep<Compute>(output_node);
+    if (output_node_compute) {
+      output_node_compute->propagate_cleanliness();
     }
     // Copy the value from the output node to the output plug.
-    set_output(output_name, output_computer->get_output("out"));
+    // Hack to call protected method on Compute instance.
+    void (Compute::*hack)(const std::string&, Dep<Compute>&, const std::string&) = &GroupNodeCompute::copy_outputs;
+    (output.get()->*hack)(output_name, output_node_compute, "out");
   }
 
 }
