@@ -14,7 +14,8 @@ namespace ngs {
 
 TestWindow::TestWindow(QWidget * parent):
     QGLWidget(parent),
-    _done(false){
+    _done(false),
+    test_callback(NULL){
 
 #if ARCH == ARCH_MACOS
   QGLFormat glFormat;

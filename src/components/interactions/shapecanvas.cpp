@@ -28,6 +28,8 @@
 #include <components/interactions/viewcontrols.h>
 #include <freetype-gl/texture-atlas.h>
 
+#include <guicomponents/comms/appworker.h>
+
 #include <iostream>
 #include <QtCore/qDebug>
 
@@ -232,6 +234,9 @@ void ShapeCanvas::push_group(Entity* group) {
   internal();
   _group_stack.push_back(group);
 
+  // Hack: update the app_worker with a copy of this info.
+  _factory->set_current_group(get_current_group());
+
   // Cache some values.
   Dep<GroupInteraction> prev_interaction = _current_interaction;
   Dep<CompShapeCollective> prev_shape_collective = _current_shape_collective;
@@ -258,6 +263,9 @@ void ShapeCanvas::pop_group() {
 
   // Otherwise pop it.
   _group_stack.pop_back();
+
+  // Hack: update the app_worker with a copy of this info.
+  _factory->set_current_group(get_current_group());
 
   // Cache some values.
   Dep<GroupInteraction> prev_interaction = _current_interaction;

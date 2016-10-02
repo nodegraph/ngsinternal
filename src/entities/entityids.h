@@ -1,4 +1,5 @@
 #pragma once
+#include <entities/entities_export.h>
 
 namespace ngs {
 
@@ -78,5 +79,7 @@ ENTITY_ENTRY1(ComputeNodeEntity)
 enum class EntityDID: size_t {
   ENTITY_ENTRIES()
 };
+
+ENTITIES_EXPORT const char* get_entity_did_name(EntityDID did);
 
 }

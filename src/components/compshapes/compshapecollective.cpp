@@ -86,8 +86,10 @@ void CompShapeCollective::collect_comp_shapes(Entity* entity) {
   // Look for any new comp shapes.
   if (entity->has<CompShape>()) {
     Dep<CompShape> cs = get_dep<CompShape>(entity);
-    if (!_comp_shapes.count(cs)) {
-      add(cs);
+    if (cs) {
+      if (!_comp_shapes.count(cs)) {
+        add(cs);
+      }
     }
   }
 

@@ -39,4 +39,12 @@ Component* BaseFactory::create_component(Entity* entity, ComponentDID did) const
   return c;
 }
 
+void BaseFactory::set_current_group(Entity* e) {
+  _current_group = e;
+}
+
+Entity* BaseFactory::get_current_group() {
+  return _current_group;
+}
+
 }

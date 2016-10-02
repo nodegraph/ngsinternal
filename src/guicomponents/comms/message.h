@@ -11,7 +11,7 @@ namespace ngs {
 
 // Note in order for the enums to be visible in Qt they have to start with a capital letter.
 // Note these enums have to be kept in sync with the typescript file, socketmessage.ts.
-enum RequestType {
+enum class RequestType : int {
   kUnknownRequest,
 
   // Chrome BG Requests.
@@ -56,24 +56,28 @@ enum RequestType {
   // Info Request.
   kGetCrosshairInfo,
 };
+Q_DECLARE_METATYPE(RequestType);
 
-enum MouseActionType {
+enum class MouseActionType : int {
   kSendClick,
   kMouseOver,
   kStartMouseHover,
   kStopMouseHover,
 };
+Q_DECLARE_METATYPE(MouseActionType);
 
-enum TextActionType {
+enum class TextActionType : int {
   kSendText,
   kSendEnter,
 };
+Q_DECLARE_METATYPE(TextActionType);
 
-enum ElementActionType {
+enum class ElementActionType : int {
   kGetText,
   kSelectOption,
   kScroll
 };
+Q_DECLARE_METATYPE(ElementActionType);
 
 //enum ActionType {
 //  kSendClick,
@@ -90,34 +94,38 @@ enum ElementActionType {
 //  kScrollLeft
 //};
 
-enum InfoType {
+enum class InfoType : int {
   kPageIsLoading,
   kPageIsReady,
   kBgIsConnected,
   kShowWebActionMenu
 };
+Q_DECLARE_METATYPE(InfoType);
 
-enum MessageType {
+enum class MessageType : int {
   kUnformedMessage,
   kRequestMessage,
   kResponseMessage,
   kInfoMessage
 };
+Q_DECLARE_METATYPE(MessageType);
 
-enum WrapType {
+enum class WrapType : int {
     text,
     image,
     input,
     select,
     iframe
 };
+Q_DECLARE_METATYPE(WrapType);
 
-enum Direction {
+enum class Direction : int {
     left,
     right,
     up,
     down
 };
+Q_DECLARE_METATYPE(Direction);
 
 class COMMS_EXPORT Message: public QVariantMap {
  public:

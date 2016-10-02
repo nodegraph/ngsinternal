@@ -51,18 +51,18 @@ AppWorker::AppWorker(Entity* parent)
       _app_comm(this),
       _file_model(this),
       _graph_builder(this),
-      _canvas(this),
+      _factory(this),
       _compute(this),
       _show_browser(false),
       _hovering(false),
       _jitter(kJitterSize),
       _waiting_for_results(false),
       _next_msg_id(0),
-      _connected(false){
+      _connected(false) {
   get_dep_loader()->register_fixed_dep(_app_comm, Path({}));
   get_dep_loader()->register_fixed_dep(_file_model, Path({}));
   get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
-  get_dep_loader()->register_fixed_dep(_canvas, Path({}));
+  get_dep_loader()->register_fixed_dep(_factory, Path({}));
 
   // Setup the poll timer.
   _poll_timer.setSingleShot(false);
@@ -273,7 +273,7 @@ void AppWorker::record_create_set_by_matching_values() {
 void AppWorker::record_create_set_of_inputs() {
   check_busy()
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::input;
+  args[Message::kWrapType].setValue(WrapType::input);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kCreateSetFromTypeCompute);
 }
@@ -281,7 +281,7 @@ void AppWorker::record_create_set_of_inputs() {
 void AppWorker::record_create_set_of_selects() {
   check_busy()
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::select;
+  args[Message::kWrapType].setValue(WrapType::select);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kCreateSetFromTypeCompute);
 }
@@ -289,7 +289,7 @@ void AppWorker::record_create_set_of_selects() {
 void AppWorker::record_create_set_of_images() {
   check_busy()
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::image;
+  args[Message::kWrapType].setValue(WrapType::image);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kCreateSetFromTypeCompute);
 }
@@ -297,7 +297,7 @@ void AppWorker::record_create_set_of_images() {
 void AppWorker::record_create_set_of_text() {
   check_busy()
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::text;
+  args[Message::kWrapType].setValue(WrapType::text);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kCreateSetFromTypeCompute);
 }
@@ -320,8 +320,8 @@ void AppWorker::record_shift_to_text_above() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::text;
-  args[Message::kDirection] = Direction::up;
+  args[Message::kWrapType].setValue(WrapType::text);
+  args[Message::kDirection].setValue(Direction::up);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -329,8 +329,8 @@ void AppWorker::record_shift_to_text_below() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::text;
-  args[Message::kDirection] = Direction::down;
+  args[Message::kWrapType].setValue(WrapType::text);
+  args[Message::kDirection].setValue(Direction::down);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -338,8 +338,8 @@ void AppWorker::record_shift_to_text_on_left() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::text;
-  args[Message::kDirection] = Direction::left;
+  args[Message::kWrapType].setValue(WrapType::text);
+  args[Message::kDirection].setValue(Direction::left);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -347,8 +347,8 @@ void AppWorker::record_shift_to_text_on_right() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::text;
-  args[Message::kDirection] = Direction::right;
+  args[Message::kWrapType].setValue(WrapType::text);
+  args[Message::kDirection].setValue(Direction::right);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -357,8 +357,8 @@ void AppWorker::record_shift_to_images_above() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::image;
-  args[Message::kDirection] = Direction::up;
+  args[Message::kWrapType].setValue(WrapType::image);
+  args[Message::kDirection].setValue(Direction::up);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -366,8 +366,8 @@ void AppWorker::record_shift_to_images_below() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::image;
-  args[Message::kDirection] = Direction::down;
+  args[Message::kWrapType].setValue(WrapType::image);
+  args[Message::kDirection].setValue(Direction::down);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -375,8 +375,8 @@ void AppWorker::record_shift_to_images_on_left() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::image;
-  args[Message::kDirection] = Direction::left;
+  args[Message::kWrapType].setValue(WrapType::image);
+  args[Message::kDirection].setValue(Direction::left);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -384,8 +384,8 @@ void AppWorker::record_shift_to_images_on_right() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::image;
-  args[Message::kDirection] = Direction::right;
+  args[Message::kWrapType].setValue(WrapType::image);
+  args[Message::kDirection].setValue(Direction::right);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -394,8 +394,8 @@ void AppWorker::record_shift_to_inputs_above() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::input;
-  args[Message::kDirection] = Direction::up;
+  args[Message::kWrapType].setValue(WrapType::input);
+  args[Message::kDirection].setValue(Direction::up);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -403,8 +403,8 @@ void AppWorker::record_shift_to_inputs_below() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::input;
-  args[Message::kDirection] = Direction::down;
+  args[Message::kWrapType].setValue(WrapType::input);
+  args[Message::kDirection].setValue(Direction::down);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -412,8 +412,8 @@ void AppWorker::record_shift_to_inputs_on_left() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::input;
-  args[Message::kDirection] = Direction::left;
+  args[Message::kWrapType].setValue(WrapType::input);
+  args[Message::kDirection].setValue(Direction::left);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -421,8 +421,8 @@ void AppWorker::record_shift_to_inputs_on_right() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::input;
-  args[Message::kDirection] = Direction::right;
+  args[Message::kWrapType].setValue(WrapType::input);
+  args[Message::kDirection].setValue(Direction::right);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -431,8 +431,8 @@ void AppWorker::record_shift_to_selects_above() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::select;
-  args[Message::kDirection] = Direction::up;
+  args[Message::kWrapType].setValue(WrapType::select);
+  args[Message::kDirection].setValue(Direction::up);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -440,8 +440,8 @@ void AppWorker::record_shift_to_selects_below() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::select;
-  args[Message::kDirection] = Direction::down;
+  args[Message::kWrapType].setValue(WrapType::select);
+  args[Message::kDirection].setValue(Direction::down);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -449,8 +449,8 @@ void AppWorker::record_shift_to_selects_on_left() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::select;
-  args[Message::kDirection] = Direction::left;
+  args[Message::kWrapType].setValue(WrapType::select);
+  args[Message::kDirection].setValue(Direction::left);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -458,8 +458,8 @@ void AppWorker::record_shift_to_selects_on_right() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::select;
-  args[Message::kDirection] = Direction::right;
+  args[Message::kWrapType].setValue(WrapType::select);
+  args[Message::kDirection].setValue(Direction::right);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -468,8 +468,8 @@ void AppWorker::record_shift_to_iframes_above() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::iframe;
-  args[Message::kDirection] = Direction::up;
+  args[Message::kWrapType].setValue(WrapType::iframe);
+  args[Message::kDirection].setValue(Direction::up);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -477,8 +477,8 @@ void AppWorker::record_shift_to_iframes_below() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::iframe;
-  args[Message::kDirection] = Direction::down;
+  args[Message::kWrapType].setValue(WrapType::iframe);
+  args[Message::kDirection].setValue(Direction::down);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -486,8 +486,8 @@ void AppWorker::record_shift_to_iframes_on_left() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::iframe;
-  args[Message::kDirection] = Direction::left;
+  args[Message::kWrapType].setValue(WrapType::iframe);
+  args[Message::kDirection].setValue(Direction::left);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -495,8 +495,8 @@ void AppWorker::record_shift_to_iframes_on_right() {
   check_busy()
   queue_get_crosshair_info();
   QVariantMap args;
-  args[Message::kWrapType] = WrapType::iframe;
-  args[Message::kDirection] = Direction::right;
+  args[Message::kWrapType].setValue(WrapType::iframe);
+  args[Message::kDirection].setValue(Direction::right);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShiftSetCompute);
 }
@@ -519,7 +519,7 @@ void AppWorker::record_expand_above() {
 
   QVariantMap args;
   args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = Direction::up;
+  args[Message::kDirection].setValue(Direction::up);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kExpandSetCompute);
 }
@@ -538,7 +538,7 @@ void AppWorker::record_expand_below() {
 
   QVariantMap args;
   args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = Direction::down;
+  args[Message::kDirection].setValue(Direction::down);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kExpandSetCompute);
 }
@@ -557,7 +557,7 @@ void AppWorker::record_expand_left() {
 
   QVariantMap args;
   args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = Direction::left;
+  args[Message::kDirection].setValue(Direction::left);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kExpandSetCompute);
 }
@@ -576,7 +576,7 @@ void AppWorker::record_expand_right() {
 
   QVariantMap args;
   args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = Direction::right;
+  args[Message::kDirection].setValue(Direction::right);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kExpandSetCompute);
 }
@@ -611,7 +611,7 @@ void AppWorker::record_shrink_set_to_topmost() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kDirection] = Direction::up;
+  args[Message::kDirection].setValue(Direction::up);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShrinkSetToSideCompute);
 }
@@ -621,7 +621,7 @@ void AppWorker::record_shrink_set_to_bottommost() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kDirection] = Direction::down;
+  args[Message::kDirection].setValue(Direction::down);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShrinkSetToSideCompute);
 }
@@ -631,7 +631,7 @@ void AppWorker::record_shrink_set_to_leftmost() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kDirection] = Direction::left;
+  args[Message::kDirection].setValue(Direction::left);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShrinkSetToSideCompute);
 }
@@ -641,7 +641,7 @@ void AppWorker::record_shrink_set_to_rightmost() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kDirection] = Direction::right;
+  args[Message::kDirection].setValue(Direction::right);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kShrinkSetToSideCompute);
 }
@@ -655,7 +655,7 @@ void AppWorker::record_shrink_above_of_marked() {
   queue_get_crosshair_info();
 
   QVariantList dirs;
-  dirs.append(Direction::up);
+  dirs.append(QVariant::fromValue(Direction::up));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
@@ -666,7 +666,7 @@ void AppWorker::record_shrink_below_of_marked() {
   queue_get_crosshair_info();
 
   QVariantList dirs;
-  dirs.append(Direction::down);
+  dirs.append(QVariant::fromValue(Direction::down));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
@@ -677,8 +677,8 @@ void AppWorker::record_shrink_above_and_below_of_marked() {
   queue_get_crosshair_info();
 
   QVariantList dirs;
-  dirs.append(Direction::up);
-  dirs.append(Direction::down);
+  dirs.append(QVariant::fromValue(Direction::up));
+  dirs.append(QVariant::fromValue(Direction::down));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
@@ -689,7 +689,7 @@ void AppWorker::record_shrink_left_of_marked() {
   queue_get_crosshair_info();
 
   QVariantList dirs;
-  dirs.append(Direction::left);
+  dirs.append(QVariant::fromValue(Direction::left));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
@@ -700,7 +700,7 @@ void AppWorker::record_shrink_right_of_marked() {
   queue_get_crosshair_info();
 
   QVariantList dirs;
-  dirs.append(Direction::right);
+  dirs.append(QVariant::fromValue(Direction::right));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
@@ -711,8 +711,8 @@ void AppWorker::record_shrink_left_and_right_of_marked() {
   queue_get_crosshair_info();
 
   QVariantList dirs;
-  dirs.append(Direction::left);
-  dirs.append(Direction::right);
+  dirs.append(QVariant::fromValue(Direction::left));
+  dirs.append(QVariant::fromValue(Direction::right));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
@@ -727,7 +727,7 @@ void AppWorker::record_click() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kMouseAction] = MouseActionType::kSendClick;
+  args[Message::kMouseAction].setValue(MouseActionType::kSendClick);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kMouseActionCompute);
 }
@@ -737,7 +737,7 @@ void AppWorker::record_mouse_over() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kMouseAction] = MouseActionType::kMouseOver;
+  args[Message::kMouseAction].setValue(MouseActionType::kMouseOver);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kMouseActionCompute);
 }
@@ -763,7 +763,7 @@ void AppWorker::record_type_text(const QString& text) {
 
   QVariantMap args;
   args[Message::kText] = text;
-  args[Message::kTextAction] = TextActionType::kSendText;
+  args[Message::kTextAction].setValue(TextActionType::kSendText);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kTextActionCompute);
 }
@@ -773,7 +773,7 @@ void AppWorker::record_type_enter() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kTextAction] = TextActionType::kSendEnter;
+  args[Message::kTextAction].setValue(TextActionType::kSendEnter);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kTextActionCompute);
 }
@@ -787,7 +787,7 @@ void AppWorker::record_extract_text() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kElementAction] = ElementActionType::kGetText;
+  args[Message::kElementAction].setValue(ElementActionType::kGetText);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kElementActionCompute);
 }
@@ -797,7 +797,7 @@ void AppWorker::record_select_from_dropdown(const QString& option_text) {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kElementAction] = ElementActionType::kSelectOption;
+  args[Message::kElementAction].setValue(ElementActionType::kSelectOption);
   args[Message::kOptionText] = option_text;
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kElementActionCompute);
@@ -808,8 +808,8 @@ void AppWorker::record_scroll_down() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kElementAction] = ElementActionType::kScroll;
-  args[Message::kDirection] = Direction::down;
+  args[Message::kElementAction].setValue(ElementActionType::kScroll);
+  args[Message::kDirection].setValue(Direction::down);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kElementActionCompute);
 }
@@ -819,8 +819,8 @@ void AppWorker::record_scroll_up() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kElementAction] = ElementActionType::kScroll;
-  args[Message::kDirection] = Direction::up;
+  args[Message::kElementAction].setValue(ElementActionType::kScroll);
+  args[Message::kDirection].setValue(Direction::up);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kElementActionCompute);
 }
@@ -830,8 +830,8 @@ void AppWorker::record_scroll_right() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kElementAction] = ElementActionType::kScroll;
-  args[Message::kDirection] = Direction::right;
+  args[Message::kElementAction].setValue(ElementActionType::kScroll);
+  args[Message::kDirection].setValue(Direction::right);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kElementActionCompute);
 }
@@ -841,8 +841,8 @@ void AppWorker::record_scroll_left() {
   queue_get_crosshair_info();
 
   QVariantMap args;
-  args[Message::kElementAction] = ElementActionType::kScroll;
-  args[Message::kDirection] = Direction::left;
+  args[Message::kElementAction].setValue(ElementActionType::kScroll);
+  args[Message::kDirection].setValue(Direction::left);
   queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kElementActionCompute);
 }
@@ -1140,7 +1140,7 @@ void AppWorker::handle_response_from_nodejs(const Message& msg) {
 
 void AppWorker::handle_info_from_nodejs(const Message& msg) {
   std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
-  if (msg[Message::kInfo] == InfoType::kShowWebActionMenu) {
+  if (msg[Message::kInfo] == QVariant::fromValue(InfoType::kShowWebActionMenu)) {
     _click_pos = msg[Message::kValue].toMap()[Message::kClickPos].toMap();
     std::cerr << "got click x,y: " << _click_pos["x"].toInt() << ", " << _click_pos["y"].toInt() << "\n";
 
@@ -1214,15 +1214,18 @@ void AppWorker::finished_task(std::function<void(const QVariantMap&)> finalize_u
 }
 
 void AppWorker::build_compute_node_task(ComponentDID compute_did) {
-  Entity* group = _canvas->get_current_group();
-
   // Create the node.
-  Entity* node = _canvas->get_factory()->instance_entity(group, "click", EntityDID::kComputeNodeEntity);
+  Entity* group = _factory->get_current_group();
+  Entity* node = _factory->instance_entity(group, "click", EntityDID::kComputeNodeEntity);
   node->create_internals();
 
   // Add the compute to the node.
-  Compute* compute = static_cast<Compute*>(_canvas->get_factory()->instance_component(node, compute_did));
+  Compute* compute = static_cast<Compute*>(_factory->instance_component(node, compute_did));
   compute->create_inputs_outputs();
+
+  // Initialize and update the wires.
+  node->initialize_wires();
+  node->clean_wires();
 
   // Set the values on all the inputs from the chain_state.
   QVariantMap::const_iterator iter;
@@ -1232,7 +1235,7 @@ void AppWorker::build_compute_node_task(ComponentDID compute_did) {
     path.push_back(iter.key().toStdString());
     Entity* input_entity = node->has_entity(path);
     // Skip this key if the entity doesn't exist.
-    if (!input) {
+    if (!input_entity) {
       continue;
     }
     // Get the compute.
@@ -1489,7 +1492,7 @@ void AppWorker::perform_mouse_action_task() {
 
 void AppWorker::perform_hover_action_task() {
   QVariantMap args;
-  args[Message::kMouseAction] = MouseActionType::kMouseOver;
+  args[Message::kMouseAction].setValue(MouseActionType::kMouseOver);
   args[Message::kXPath] = _hover_state[Message::kXPath];
   args[Message::kOverlayRelClickPos] = _hover_state[Message::kOverlayRelClickPos];
 

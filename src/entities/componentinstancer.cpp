@@ -106,8 +106,6 @@ class InvalidComponent: public Component {
     case ComponentDID::kFBOWorker:\
       break;
 
-#define INST_CASE(C) case ComponentDID::k##C: return new_ff C(entity);
-
 Component* ComponentInstancer::instance(Entity* entity, ComponentDID did) const{
   // Define our component type traits.
   #undef COMPONENT_ENTRY1
@@ -121,8 +119,6 @@ Component* ComponentInstancer::instance(Entity* entity, ComponentDID did) const{
   assert(false);
   return NULL;
 }
-
-#define IID_CASE(C) case ComponentDID::k##C: return C::kIID();
 
 ComponentIID ComponentInstancer::get_iid_for_did(ComponentDID did) const {
   #undef COMPONENT_ENTRY1

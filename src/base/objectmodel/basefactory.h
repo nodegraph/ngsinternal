@@ -40,9 +40,13 @@ class OBJECTMODEL_EXPORT BaseFactory: public Component {
   virtual Component* create_component(Entity* entity, ComponentDID did) const;
   virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const = 0;
 
+  virtual void set_current_group(Entity*);
+  virtual Entity* get_current_group();
+
  protected:
   BaseEntityInstancer* _entity_instancer;
   BaseComponentInstancer* _component_instancer;
+  Entity* _current_group;
 
 };
 

@@ -19,8 +19,8 @@ namespace ngs {
 class AppComm;
 class FileModel;
 class GraphBuilder;
-class ShapeCanvas;
 class Compute;
+class BaseFactory;
 
 // Helper which wraps the input url with things like http://.
 // Webdriver needs proper urls to navigate.
@@ -305,7 +305,7 @@ signals:
   Dep<AppComm> _app_comm;
   Dep<FileModel> _file_model;
   Dep<GraphBuilder> _graph_builder;
-  Dep<ShapeCanvas> _canvas;
+  Dep<BaseFactory> _factory;
 
   // Poll timer.
   QTimer _poll_timer;
@@ -333,7 +333,6 @@ signals:
   std::deque<AppTask> _queue;
 
   Dep<Compute> _compute;
-
 };
 
 }
