@@ -31,6 +31,8 @@ class OutputCompute;
 class InputCompute;
 class BaseFactory;
 
+enum class EntityDID : size_t;
+
 // The user interactions can get quite complex.
 // The GroupInteraction holds an enum which encapsulates the current state.
 // State transitions are noted by the change in the enum value of the current state.
@@ -141,7 +143,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
     _view_controls.update_coord_spaces(info);
   }
 
-  Entity* create_node(size_t did);
+  Entity* create_node(EntityDID did);
 
  protected:
   // Our state.

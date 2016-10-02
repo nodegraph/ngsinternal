@@ -28,9 +28,13 @@ const char* Message::kMatchValues = "match_values";
 const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";
 
+const char* Message::kMouseAction = "mouse_action";
+const char* Message::kTextAction = "text_action";
+const char* Message::kElementAction = "element_action";
+
 const char* Message::kSetIndex = "set_index";
 const char* Message::kOverlayIndex = "overlay_index";
-const char* Message::kAction = "action";
+
 const char* Message::kText = "text";
 const char* Message::kOptionText = "option_text";
 const char* Message::kPosition = "position";

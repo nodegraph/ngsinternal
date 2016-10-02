@@ -57,113 +57,116 @@ Q_OBJECT
   Q_INVOKABLE bool is_busy() {return !_queue.empty();}
 
   // ---------------------------------------------------------------------------------
-  // Recordable Actions.
+  // Record Actions.
   // ---------------------------------------------------------------------------------
 
-  // Browser actions.
+  // Record Browser Actions.
   Q_INVOKABLE void record_open_browser();
   Q_INVOKABLE void record_close_browser();
   Q_INVOKABLE void record_check_browser_is_open();
   Q_INVOKABLE void record_check_browser_size();
 
-  // Navigation.
+  // Record Navigate Actions.
   Q_INVOKABLE void record_navigate_to(const QString& url);
   Q_INVOKABLE void record_navigate_refresh();
   Q_INVOKABLE void record_switch_to_iframe();
 
-  // Create set by matching values.
+  // Record Create Set By Matching Values.
   Q_INVOKABLE void record_create_set_by_matching_values();
 
-  // Create set by type.
+  // Record Create Set By Type.
   Q_INVOKABLE void record_create_set_of_inputs();
   Q_INVOKABLE void record_create_set_of_selects();
   Q_INVOKABLE void record_create_set_of_images();
   Q_INVOKABLE void record_create_set_of_text();
 
-  // Delete set.
-  Q_INVOKABLE void delete_set();
+  // Record Delete Set.
+  Q_INVOKABLE void record_delete_set();
 
-  // Shift sets.
-  Q_INVOKABLE void shift_to_text_above();
-  Q_INVOKABLE void shift_to_text_below();
-  Q_INVOKABLE void shift_to_text_on_left();
-  Q_INVOKABLE void shift_to_text_on_right();
+  // Record Shift Sets.
+  Q_INVOKABLE void record_shift_to_text_above();
+  Q_INVOKABLE void record_shift_to_text_below();
+  Q_INVOKABLE void record_shift_to_text_on_left();
+  Q_INVOKABLE void record_shift_to_text_on_right();
 
-  Q_INVOKABLE void shift_to_images_above();
-  Q_INVOKABLE void shift_to_images_below();
-  Q_INVOKABLE void shift_to_images_on_left();
-  Q_INVOKABLE void shift_to_images_on_right();
+  Q_INVOKABLE void record_shift_to_images_above();
+  Q_INVOKABLE void record_shift_to_images_below();
+  Q_INVOKABLE void record_shift_to_images_on_left();
+  Q_INVOKABLE void record_shift_to_images_on_right();
 
-  Q_INVOKABLE void shift_to_inputs_above();
-  Q_INVOKABLE void shift_to_inputs_below();
-  Q_INVOKABLE void shift_to_inputs_on_left();
-  Q_INVOKABLE void shift_to_inputs_on_right();
+  Q_INVOKABLE void record_shift_to_inputs_above();
+  Q_INVOKABLE void record_shift_to_inputs_below();
+  Q_INVOKABLE void record_shift_to_inputs_on_left();
+  Q_INVOKABLE void record_shift_to_inputs_on_right();
 
-  Q_INVOKABLE void shift_to_selects_above();
-  Q_INVOKABLE void shift_to_selects_below();
-  Q_INVOKABLE void shift_to_selects_on_left();
-  Q_INVOKABLE void shift_to_selects_on_right();
+  Q_INVOKABLE void record_shift_to_selects_above();
+  Q_INVOKABLE void record_shift_to_selects_below();
+  Q_INVOKABLE void record_shift_to_selects_on_left();
+  Q_INVOKABLE void record_shift_to_selects_on_right();
 
-  Q_INVOKABLE void shift_to_iframes_above();
-  Q_INVOKABLE void shift_to_iframes_below();
-  Q_INVOKABLE void shift_to_iframes_on_left();
-  Q_INVOKABLE void shift_to_iframes_on_right();
+  Q_INVOKABLE void record_shift_to_iframes_above();
+  Q_INVOKABLE void record_shift_to_iframes_below();
+  Q_INVOKABLE void record_shift_to_iframes_on_left();
+  Q_INVOKABLE void record_shift_to_iframes_on_right();
 
-  // Expand sets.
-  Q_INVOKABLE void expand_above();
-  Q_INVOKABLE void expand_below();
-  Q_INVOKABLE void expand_left();
-  Q_INVOKABLE void expand_right();
+  // Record Expand Sets.
+  Q_INVOKABLE void record_expand_above();
+  Q_INVOKABLE void record_expand_below();
+  Q_INVOKABLE void record_expand_left();
+  Q_INVOKABLE void record_expand_right();
 
-  // Mark sets.
-  Q_INVOKABLE void mark_set();
-  Q_INVOKABLE void unmark_set();
-  Q_INVOKABLE void merge_sets();
+  // Record Mark Sets.
+  Q_INVOKABLE void record_mark_set();
+  Q_INVOKABLE void record_unmark_set();
+  Q_INVOKABLE void record_merge_sets();
 
-  // Shrink to one side.
-  Q_INVOKABLE void shrink_set_to_topmost();
-  Q_INVOKABLE void shrink_set_to_bottommost();
-  Q_INVOKABLE void shrink_set_to_leftmost();
-  Q_INVOKABLE void shrink_set_to_rightmost();
+  // Record Shrink To One Side.
+  Q_INVOKABLE void record_shrink_set_to_topmost();
+  Q_INVOKABLE void record_shrink_set_to_bottommost();
+  Q_INVOKABLE void record_shrink_set_to_leftmost();
+  Q_INVOKABLE void record_shrink_set_to_rightmost();
 
-  // Shrink against marked sets.
-  Q_INVOKABLE void shrink_above_of_marked();
-  Q_INVOKABLE void shrink_below_of_marked();
-  Q_INVOKABLE void shrink_above_and_below_of_marked();
-  Q_INVOKABLE void shrink_left_of_marked();
-  Q_INVOKABLE void shrink_right_of_marked();
-  Q_INVOKABLE void shrink_left_and_right_of_marked();
+  // Record Shrink Against Marked Sets.
+  Q_INVOKABLE void record_shrink_above_of_marked();
+  Q_INVOKABLE void record_shrink_below_of_marked();
+  Q_INVOKABLE void record_shrink_above_and_below_of_marked();
+  Q_INVOKABLE void record_shrink_left_of_marked();
+  Q_INVOKABLE void record_shrink_right_of_marked();
+  Q_INVOKABLE void record_shrink_left_and_right_of_marked();
 
-  // Perform web actions.
+  // Record Mouse Actions.
   Q_INVOKABLE void record_click();
   Q_INVOKABLE void record_mouse_over();
-  Q_INVOKABLE void start_mouse_hover();
-  Q_INVOKABLE void stop_mouse_hover();
-  Q_INVOKABLE void type_text(const QString& text);
-  Q_INVOKABLE void type_enter();
-  Q_INVOKABLE void extract_text();
-  Q_INVOKABLE void get_option_texts(); // Results will be emitted by signal.
-  Q_INVOKABLE void select_from_dropdown(const QString& option_text);
-  Q_INVOKABLE void scroll_down();
-  Q_INVOKABLE void scroll_up();
-  Q_INVOKABLE void scroll_right();
-  Q_INVOKABLE void scroll_left();
+  Q_INVOKABLE void record_start_mouse_hover();
+  Q_INVOKABLE void record_stop_mouse_hover();
 
+  // Record Text Actions.
+  Q_INVOKABLE void record_type_text(const QString& text);
+  Q_INVOKABLE void record_type_enter();
+
+  // Record Element Actions.
+  Q_INVOKABLE void record_extract_text();
+  Q_INVOKABLE void record_select_from_dropdown(const QString& option_text);
+  Q_INVOKABLE void record_scroll_down();
+  Q_INVOKABLE void record_scroll_up();
+  Q_INVOKABLE void record_scroll_right();
+  Q_INVOKABLE void record_scroll_left();
 
   // ---------------------------------------------------------------------------------
   // Queued Tasks.
   // ---------------------------------------------------------------------------------
 
+  // Queue Framework Tasks.
   void queue_get_xpath();
   void queue_get_crosshair_info();
   void queue_merge_chain_state(const QVariantMap& map);
-  void queue_build_compute_node(size_t compute_did);
+  void queue_build_compute_node(ComponentDID compute_did);
   void queue_finished(std::function<void(const QVariantMap&)> finalize_update);
 
   // Queue Cookie Tasks.
-  void queue_get_all_cookies();
-  void queue_clear_all_cookies();
-  void queue_set_all_cookies();
+  Q_INVOKABLE void queue_get_all_cookies();
+  Q_INVOKABLE void queue_clear_all_cookies();
+  Q_INVOKABLE void queue_set_all_cookies();
 
   // Queue Browser Tasks.
   void queue_open_browser();
@@ -179,33 +182,32 @@ Q_OBJECT
   // Queue Navigate Tasks.
   void queue_navigate_to();
   void queue_navigate_refresh();
-  void queue_swith_to_iframe();
+  void queue_switch_to_iframe();
 
   // Queue Set Tasks.
   void queue_update_overlays();
   void queue_create_set_by_matching_values();
   void queue_create_set_by_matching_type();
   void queue_delete_set();
+  void queue_shift_set();
+  void queue_expand_set();
+  void queue_mark_set();
+  void queue_unmark_set();
+  void queue_merge_sets();
+  void queue_shrink_set_to_side();
+  void queue_shrink_against_marked();
 
+  // Queue Perform Action Tasks.
+  void queue_perform_mouse_action();
+  void queue_perform_mouse_hover();
+  void queue_perform_post_mouse_hover();
+  void queue_perform_text_action();
+  void queue_perform_element_action();
 
-  // Queue Action Tasks.
-  void queue_perform_action(ActionType action);
-  void queue_click();
-  void queue_mouse_over();
+  // Queue other actions.
   void queue_start_mouse_hover();
   void queue_stop_mouse_hover();
-
-  void _mouse_over(int set_index, int overlay_index, float rel_x, float rel_y);
-  void _start_mouse_hover(int set_index, int overlay_index, float rel_x, float rel_y);
-  void _stop_mouse_hover();
-  void _type_text(int set_index, int overlay_index, const QString& text);
-  void _type_enter(int set_index, int overlay_index);
-  void _extract_text(int set_index, int overlay_index);
-  void _select_from_dropdown(int set_index, int overlay_index, const QString& option_text);
-  void _scroll_down(int set_index, int overlay_index);
-  void _scroll_up(int set_index, int overlay_index);
-  void _scroll_right(int set_index, int overlay_index);
-  void _scroll_left(int set_index, int overlay_index);
+  Q_INVOKABLE void queue_emit_option_texts(); // Used to extract options from dropdowns and emit back to qml.
 
 signals:
   void show_web_action_menu();
@@ -228,6 +230,10 @@ signals:
 //  void send_json(const QString& json);
 //  void send_map(const QVariantMap& map);
 
+  // -----------------------------------------------------------------------------
+  // Tasks grab input settings from the chain_state and build
+  // messages to send out from those settings.
+  // -----------------------------------------------------------------------------
 
   // Task Management.
   void queue_task(AppTask task, const std::string& about);
@@ -235,21 +241,18 @@ signals:
   void handle_response_from_nodejs(const Message& sm);
   void handle_info_from_nodejs(const Message& msg);
 
-  // Tasks grab input settings from the chain_state and build
-  // messages to send out from those settings.
+  // Infrastructure Tasks.
+  void send_msg_task(Message msg);
+  void get_crosshair_info_task();
+  void get_xpath_task();
+  void merge_chain_state_task(const QVariantMap& map);
+  void finished_task(std::function<void(const QVariantMap&)> finalize_update);
+  void build_compute_node_task(ComponentDID compute_did);
 
   // Cookie Tasks.
   void get_all_cookies_task();
   void clear_all_cookies_task();
   void set_all_cookies_task();
-
-  // Infrastructure Tasks.
-  void merge_chain_state_task(const QVariantMap& map);
-  void finished_task(std::function<void(const QVariantMap&)> finalize_update);
-  void build_compute_node_task(size_t compute_did);
-  void send_msg_task(Message msg);
-  void get_crosshair_info_task();
-  void get_xpath_task();
 
   // Browser Tasks.
   void open_browser_task();
@@ -275,17 +278,24 @@ signals:
   void create_set_by_matching_values_task();
   void create_set_by_matching_type_task();
   void delete_set_task();
-  template<WrapType WRAP_TYPE, Direction DIR>
   void shift_set_task();
-  void expand_task(Direction dir, const QVariantMap& match_criteria);
+  void expand_set_task();
   void mark_set_task();
   void unmark_set_task();
-  void shrink_set_to_side_task(Direction dir);
-  void shrink_against_marked_task(QVariantList dirs);
-  void perform_action_task(ActionType action);
-  void start_hover_task();
-  void hover_task();
+  void merge_sets_task();
+  void shrink_set_to_side_task();
+  void shrink_against_marked_task();
+
+  void perform_mouse_action_task();
+  void perform_hover_action_task();
+  void perform_text_action_task();
+  void perform_element_action_task();
+
+  void start_mouse_hover_task();
+  void stop_mouse_hover_task();
+  void mouse_hover_task();
   void post_hover_task();
+
   void emit_option_texts_task();
   void reset_task();
 
@@ -310,7 +320,7 @@ signals:
 
   // State for hovering.
   bool _hovering;
-  QVariantMap _hover_args;
+  QVariantMap _hover_state;
   static const int kJitterSize;
   int _jitter;
 

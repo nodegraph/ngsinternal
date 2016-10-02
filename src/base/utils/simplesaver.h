@@ -7,10 +7,12 @@
 #include <cassert>
 
 #include <base/utils/simpletypes.h>
+#include <entities/componentids.h>
 
 namespace ngs {
 
 class Bits;
+enum class EntityDID : size_t;
 
 UTILS_EXPORT void open_output_file_stream(const std::string& filename, std::ofstream& ofs);
 
@@ -80,7 +82,11 @@ void SimpleSaver::save_deque(const std::deque<DataType> &data) {
 // Primitive Specializations.
 // -------------------------------------------------------------------
 
+template<> UTILS_EXPORT
+void SimpleSaver::save<EntityDID>(const EntityDID &data);
 
+template<> UTILS_EXPORT
+void SimpleSaver::save<ComponentDID>(const ComponentDID &data);
 
 template<> UTILS_EXPORT
 void SimpleSaver::save<long>(const long &data);

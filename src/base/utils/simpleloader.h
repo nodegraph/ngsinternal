@@ -1,7 +1,6 @@
 #pragma once
 #include <base/utils/utils_export.h>
 #include <base/utils/simpletypes.h>
-#include <base/utils/bits.h>
 
 #include <iostream>
 #include <fstream>
@@ -12,7 +11,9 @@
 
 namespace ngs {
 
-//class Bits;
+class Bits;
+enum class EntityDID : size_t;
+enum class ComponentDID : size_t;
 
 UTILS_EXPORT void open_input_file_stream(const std::string& filename, std::ifstream& ifs);
 UTILS_EXPORT void open_input_string_stream(const std::string& contents, std::istringstream& iss);
@@ -125,6 +126,12 @@ void SimpleLoader::rewind_vector(const std::vector<DataType>& data) {
 // -------------------------------------------------------------------
 // Primitive Load Specializations.
 // -------------------------------------------------------------------
+
+template<> UTILS_EXPORT
+void SimpleLoader::load<EntityDID>(EntityDID& data);
+
+template<> UTILS_EXPORT
+void SimpleLoader::load<ComponentDID>(ComponentDID& data);
 
 template<> UTILS_EXPORT
 void SimpleLoader::load<long>(long& data);

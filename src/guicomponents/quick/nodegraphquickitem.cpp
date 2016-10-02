@@ -482,9 +482,9 @@ void NodeGraphQuickItem::popup_context_menu() {
   {
     if (_last_pressed_node) {
       Entity* e = _last_pressed_node->our_entity();
-      size_t did = e->get_did();
+      EntityDID did = e->get_did();
       // Send out context menu request signals.
-      if (did == kGroupNodeEntity) {
+      if (did == EntityDID::kGroupNodeEntity) {
         // Show the group context menu.
         emit group_node_context_menu_requested();
       } else if (e->has<Compute>()) {
@@ -562,29 +562,29 @@ void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
 
 void NodeGraphQuickItem::create_group_node(bool centered) {
   external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "group", kGroupNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "group", EntityDID::kGroupNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_input_node(bool centered) {
   external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "input", kInputNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "input", EntityDID::kInputNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_output_node(bool centered) {
   external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "output", kOutputNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "output", EntityDID::kOutputNodeEntity);
   finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_dot_node(bool centered) {
   external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "dot", kDotNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "dot", EntityDID::kDotNodeEntity);
   finish_creating_node(e, centered);
 }
 
-void NodeGraphQuickItem::create_compute_node(bool centered, size_t compute_did) {
+void NodeGraphQuickItem::create_compute_node(bool centered, ComponentDID compute_did) {
   external();
   Entity* e = _factory->create_compute_node(get_current_interaction()->our_entity(), compute_did);
   finish_creating_node(e, centered);

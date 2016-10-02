@@ -2,7 +2,7 @@
 
 namespace ngs {
 
-SelectableShape::SelectableShape(Entity* entity, size_t did):
+SelectableShape::SelectableShape(Entity* entity, ComponentDID did):
   CompShape(entity, did),
   _selected(false) {
 }

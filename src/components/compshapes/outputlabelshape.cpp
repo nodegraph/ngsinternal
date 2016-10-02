@@ -33,7 +33,7 @@ void OutputLabelShape::update_wires() {
   internal();
 
   DepUSet<LinkShape> deps;
-  std::unordered_set<Entity*> dependants = _output_shape->get_dependants_by_did(kICompShape, kLinkShape);
+  std::unordered_set<Entity*> dependants = _output_shape->get_dependants_by_did(ComponentIID::kICompShape, ComponentDID::kLinkShape);
 
   // Update our wires.
   _link_shapes.clear();

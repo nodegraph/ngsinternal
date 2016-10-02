@@ -21,7 +21,7 @@ class COMPSHAPES_EXPORT CompShape: public Component{
 
   COMPONENT_ID(CompShape, InvalidComponent);
 
-  CompShape(Entity* entity, size_t did);
+  CompShape(Entity* entity, ComponentDID did);
   virtual ~CompShape();
 
   // Positioning.

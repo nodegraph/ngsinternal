@@ -51,7 +51,7 @@ class Dep: public DepLinkHolder {
   T* get() const {
     // Return the dependency from the link.
     if (_link) {
-      size_t id =T::kIID();
+      ComponentIID id =T::kIID();
       return static_cast<T*>(_link->dependency);
     }
     return NULL;
@@ -84,7 +84,7 @@ class Dep: public DepLinkHolder {
         // Otherwise, create a new link.
         // We dynamically get the interface id (iid) in order to allow us to predeclare
         // the T type when declaring Dep<T> members in a class declaration (header).
-        size_t iid = other._link->dependency->get_iid();
+        ComponentIID iid = other._link->dependency->get_iid();
         _link = _fixed_dependant->get_dep(other._link->dependency->our_entity(), iid);
       }
     } else {

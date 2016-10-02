@@ -1,19 +1,20 @@
 #pragma once
 
+namespace ngs {
+
 // These macros should be used in class declarations.
 // These IDs are used heavily in serialization and identifying
 // components in Entities.
-
 // Entities always implement the Entity class interface.
 #define ENTITY_ID(derived, derived_name)\
-  static size_t kIID()\
+  static EntityIID kIID()\
   { return EntityIID::kIEntity; }\
-  virtual size_t get_iid() const\
+  virtual EntityIID get_iid() const\
   { return kIID(); }\
   \
-  static size_t kDID()\
+  static EntityDID kDID()\
   { return EntityDID::k##derived; }\
-  virtual size_t get_did() const\
+  virtual EntityDID get_did() const\
   { return kDID(); }\
   \
   static const char* kDIDName()\
@@ -23,60 +24,59 @@
 
 
 // Entity Interface IDs.
-enum EntityIID {
+enum class EntityIID : size_t {
+  kIInvalidEntity,
   kIEntity,
 };
 
-// Entity Derived/Implementation IDs.
-enum EntityDID {
-  kInvalidEntity,
-  // ------------------------------
-  // Non Gui Based Entities.
-  // ------------------------------
-  kBaseNamespaceEntity,
-  // App.
-  kBaseAppEntity,
-  // Links.
-  kBaseLinkEntity,
-  kBaseInputEntity,
-  kBaseOutputEntity,
-  // Group Node.
-  kBaseGroupNodeEntity,
-  kBaseInputNodeEntity,
-  kBaseOutputNodeEntity,
-  // Dot Node.
-  kBaseDotNodeEntity,
-  // Other Nodes.
-  kBaseMockNodeEntity,
-  kBaseScriptNodeEntity,
-  // ------------------------------
-  // Gui Based Entities.
-  // ------------------------------
-  // App.
-  kAppEntity,
-  kQMLAppEntity,
-  kQtAppEntity,
-  // Links.
-  kLinkEntity,
-  kInputEntity,
-  kInputLabelEntity,
-  kOutputEntity,
-  kOutputLabelEntity,
-  // Group Node.
-  kGroupNodeEntity,
-  kInputNodeEntity,
-  kOutputNodeEntity,
-  // Dot Node.
-  kDotNodeEntity,
-  // Compute Nodes.
-  kComputeNodeEntity,
-//  kMockNodeEntity,
-//  kScriptNodeEntity,
-//  kOpenBrowserNodeEntity,
-//  kCloseBrowserNodeEntity,
-//  kCreateSetFromValuesNodeEntity,
-//  kCreateSetFromTypeNodeEntity,
-//  kMouseActionNodeEntity,
-  // Count.
-  kNumEntityImplementationIDs,
+#define ENTITY_ENTRY1(NAME) k##NAME,
+#define ENTITY_ENTRY2(NAME, VALUE) k##NAME = VALUE,
+
+#define ENTITY_ENTRIES()\
+ENTITY_ENTRY1(InvalidEntity)\
+/* ------------------------------ */\
+/* Non Gui Based Entities. */\
+/* ------------------------------ */\
+ENTITY_ENTRY1(BaseNamespaceEntity)\
+/* App. */\
+ENTITY_ENTRY1(BaseAppEntity)\
+/* Links. */\
+ENTITY_ENTRY1(BaseLinkEntity)\
+ENTITY_ENTRY1(BaseInputEntity)\
+ENTITY_ENTRY1(BaseOutputEntity)\
+/* Group Node. */\
+ENTITY_ENTRY1(BaseGroupNodeEntity)\
+ENTITY_ENTRY1(BaseInputNodeEntity)\
+ENTITY_ENTRY1(BaseOutputNodeEntity)\
+/* Dot Node. */\
+ENTITY_ENTRY1(BaseDotNodeEntity)\
+/* Other Nodes. */\
+ENTITY_ENTRY1(BaseMockNodeEntity)\
+ENTITY_ENTRY1(BaseScriptNodeEntity)\
+/* ------------------------------ */\
+/* Gui Based Entities. */\
+/* ------------------------------ */\
+/* App. */\
+ENTITY_ENTRY1(AppEntity)\
+ENTITY_ENTRY1(QMLAppEntity)\
+ENTITY_ENTRY1(QtAppEntity)\
+/* Links. */\
+ENTITY_ENTRY1(LinkEntity)\
+ENTITY_ENTRY1(InputEntity)\
+ENTITY_ENTRY1(InputLabelEntity)\
+ENTITY_ENTRY1(OutputEntity)\
+ENTITY_ENTRY1(OutputLabelEntity)\
+/* Group Node. */\
+ENTITY_ENTRY1(GroupNodeEntity)\
+ENTITY_ENTRY1(InputNodeEntity)\
+ENTITY_ENTRY1(OutputNodeEntity)\
+/* Dot Node. */\
+ENTITY_ENTRY1(DotNodeEntity)\
+/* Compute Nodes. */\
+ENTITY_ENTRY1(ComputeNodeEntity)
+
+enum class EntityDID: size_t {
+  ENTITY_ENTRIES()
 };
+
+}

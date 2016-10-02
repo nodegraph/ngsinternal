@@ -7,7 +7,7 @@ namespace ngs {
 class COMPSHAPES_EXPORT SelectableShape: public CompShape {
  public:
   COMPONENT_ID(CompShape, InvalidComponent);
-  SelectableShape(Entity* entity, size_t did);
+  SelectableShape(Entity* entity, ComponentDID did);
   virtual ~SelectableShape();
 
   // Selection.

@@ -65,11 +65,11 @@ void TestDeps::set_up() {
   assert(root_group);
 
   // Create the nodes.
-  _mock = _factory->instance_entity(root_group, "mock", kBaseMockNodeEntity);
-  _dot_a = _factory->instance_entity(root_group, "dot_a", kBaseDotNodeEntity);
-  _dot_b = _factory->instance_entity(root_group, "dot_b", kBaseDotNodeEntity);
-  _dot_c = _factory->instance_entity(root_group, "dot_c", kBaseDotNodeEntity);
-  _dot_d = _factory->instance_entity(root_group, "dot_d", kBaseDotNodeEntity);
+  _mock = _factory->instance_entity(root_group, "mock", EntityDID::kBaseMockNodeEntity);
+  _dot_a = _factory->instance_entity(root_group, "dot_a", EntityDID::kBaseDotNodeEntity);
+  _dot_b = _factory->instance_entity(root_group, "dot_b", EntityDID::kBaseDotNodeEntity);
+  _dot_c = _factory->instance_entity(root_group, "dot_c", EntityDID::kBaseDotNodeEntity);
+  _dot_d = _factory->instance_entity(root_group, "dot_d", EntityDID::kBaseDotNodeEntity);
   _mock->create_internals();
   _dot_a->create_internals();
   _dot_b->create_internals();

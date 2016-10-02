@@ -31,7 +31,7 @@ class COMPUTES_EXPORT Compute: public Component {
   static bool check_variant_is_map(const QVariant& value, const std::string& message);
 
   COMPONENT_ID(Compute, InvalidComponent);
-  Compute(Entity* entity, size_t derived_id);
+  Compute(Entity* entity, ComponentDID derived_id);
   virtual ~Compute();
 
   virtual void create_inputs_outputs();

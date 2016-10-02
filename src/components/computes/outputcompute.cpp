@@ -88,7 +88,7 @@ void OutputCompute::update_index() {
   // Loop.
   for (auto iter: children) {
     // Record all exposed output computes names.
-    if (iter.second->get_did() == kOutputEntity) {
+    if (iter.second->get_did() == EntityDID::kOutputEntity) {
       ++_num_outputs;
 
       // If the entity is us, just use ourself.

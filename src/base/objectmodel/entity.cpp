@@ -53,7 +53,7 @@ const std::string& Entity::get_name() const {
 
 void Entity::add(Component* c) {
   assert(c);
-  size_t iid = c->get_iid();
+  ComponentIID iid = c->get_iid();
   assert(!_components.count(iid));
   _components[iid] = c;
   c->_entity = this;
@@ -61,13 +61,13 @@ void Entity::add(Component* c) {
 
 void Entity::remove(Component* c) {
   assert(c);
-  size_t iid = c->get_iid();
+  ComponentIID iid = c->get_iid();
   assert(_components.count(iid));
   _components.erase(iid);
   c->_entity = NULL;
 }
 
-Component* Entity::get(size_t iid) const {
+Component* Entity::get(ComponentIID iid) const {
   if (!_components.count(iid)) {
     return NULL;
   }
@@ -145,7 +145,7 @@ void Entity::destroy_all_children() {
   assert(_children.empty());
 }
 
-void Entity::destroy_all_children_except(const std::unordered_set<size_t>& dids) {
+void Entity::destroy_all_children_except(const std::unordered_set<EntityDID>& dids) {
   // The order of deletion of child entities is random.
   // Deleting children will modify our children's set so we make a copy.
   NameToChildMap copy = _children;
@@ -289,7 +289,7 @@ void Entity::bake_paths() {
 }
 
 void Entity::pre_save(SimpleSaver& saver) const {
-  size_t derived_id = get_did();
+  EntityDID derived_id = get_did();
   saver.save(derived_id);
   std::string name = get_name();
   saver.save(name);
@@ -323,15 +323,15 @@ void Entity::load_components(SimpleLoader& loader) {
   loader.load(num_components);
   for (size_t i=0; i<num_components; ++i) {
     // Peek at the derived id.
-    size_t derived_id;
+    ComponentDID derived_id;
     loader.load(derived_id);
     // Does this component already exist.
     Component* c = get(factory->get_component_iid(derived_id));
     // Make sure it has the same derived id.
     if (c && c->get_did() != derived_id) {
       //assert(false);
-      std::cerr << "warning: replacing a component with did: " << c->get_did()
-          << "with another with did: " << derived_id << "at entity path: " << get_path().get_as_string() << "\n";
+      std::cerr << "warning: replacing a component with did: " << (int)c->get_did()
+          << "with another with did: " << (int)derived_id << "at entity path: " << get_path().get_as_string() << "\n";
       delete_ff(c);
     }
     // Otherwise we create one.
@@ -604,7 +604,7 @@ void Entity::paste_with_merging(SimpleLoader& loader) {
 
 Entity* Entity::paste_entity_with_merging(SimpleLoader& loader) {
   // Peek at the file.
-  size_t did;
+  EntityDID did;
   loader.load(did);
   std::string name;
   loader.load(name);

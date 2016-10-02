@@ -203,7 +203,7 @@ void ShapeCanvas::dive() {
   const DepUSet<NodeShape>& selected = _ng_state->get_selected();
   // Dive into the first selected group.
   for (const Dep<NodeShape> &cs: selected) {
-    if (cs->get_did() == kGroupNodeShape) {
+    if (cs->get_did() == ComponentDID::kGroupNodeShape) {
       dive(cs->our_entity());
     }
   }

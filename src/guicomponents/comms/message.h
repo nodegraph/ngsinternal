@@ -57,20 +57,38 @@ enum RequestType {
   kGetCrosshairInfo,
 };
 
-enum ActionType {
+enum MouseActionType {
   kSendClick,
   kMouseOver,
   kStartMouseHover,
   kStopMouseHover,
+};
+
+enum TextActionType {
   kSendText,
   kSendEnter,
+};
+
+enum ElementActionType {
   kGetText,
   kSelectOption,
-  kScrollDown,
-  kScrollUp,
-  kScrollRight,
-  kScrollLeft
+  kScroll
 };
+
+//enum ActionType {
+//  kSendClick,
+//  kMouseOver,
+//  kStartMouseHover,
+//  kStopMouseHover,
+//  kSendText,
+//  kSendEnter,
+//  kGetText,
+//  kSelectOption,
+//  kScrollDown,
+//  kScrollUp,
+//  kScrollRight,
+//  kScrollLeft
+//};
 
 enum InfoType {
   kPageIsLoading,
@@ -128,9 +146,13 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kTextValues;
   static const char* kImageValues;
 
+  static const char* kMouseAction;
+  static const char* kTextAction;
+  static const char* kElementAction;
+
   static const char* kSetIndex;
   static const char* kOverlayIndex;
-  static const char* kAction;
+
   static const char* kText;
   static const char* kOptionText;
   static const char* kPosition;

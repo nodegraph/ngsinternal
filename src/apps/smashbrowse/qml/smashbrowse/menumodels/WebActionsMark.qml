@@ -9,21 +9,21 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Mark Set"
         description: "Mark set under crosshair."
-        script: "app_worker.mark_set()"
+        script: "app_worker.record_mark_set()"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Unmark Set"
         description: "Unmark set under crosshair."
-        script: "app_worker.unmark_set()"
+        script: "app_worker.record_unmark_set()"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Merge Sets"
         description: "Merge all marked sets."
-        script: "app_worker.merge_sets()"
+        script: "app_worker.record_merge_sets()"
     }
 
 }

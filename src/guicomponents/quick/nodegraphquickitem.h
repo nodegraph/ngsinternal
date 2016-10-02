@@ -51,7 +51,7 @@ Q_OBJECT
   Q_INVOKABLE void create_input_node(bool centered);
   Q_INVOKABLE void create_output_node(bool centered);
   Q_INVOKABLE void create_dot_node(bool centered);
-  Q_INVOKABLE void create_compute_node(bool centered, size_t did);
+  Q_INVOKABLE void create_compute_node(bool centered, ComponentDID did);
 
   // View and Edit.
   Q_INVOKABLE void view_node();

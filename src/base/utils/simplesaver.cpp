@@ -40,6 +40,17 @@ void SimpleSaver::save_raw(const void* raw, size_t num_bytes) {
 }
 
 
+template<> UTILS_EXPORT
+void SimpleSaver::save<EntityDID>(const EntityDID &data) {
+  size_t num = static_cast<size_t>(data);
+  save(num);
+}
+
+template<> UTILS_EXPORT
+void SimpleSaver::save<ComponentDID>(const ComponentDID &data) {
+  size_t num = static_cast<size_t>(data);
+  save(num);
+}
 
 // We always store long as 64 bits.
 // On 64bit arch, long is 32 bits on windows, and 64 bits on linux.

@@ -9,7 +9,7 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Click"
         description: "Click on an element."
-        script: "app_worker.click()"
+        script: "app_worker.record_click()"
     }
 
     ListElement {
@@ -23,14 +23,14 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Press Enter/Submit"
         description: "Type enter or submit into a text input element."
-        script: "app_worker.type_enter()"
+        script: "app_worker.record_type_enter()"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Extract Text"
         description: "Extract text from an element."
-        script: "app_worker.extract_text()"
+        script: "app_worker.record_extract_text()"
     }
 
     ListElement {
@@ -44,19 +44,19 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Hover the Mouse"
         description: "Hover the mouse over the crosshair."
-        script: "app_worker.mouse_over()"
+        script: "app_worker.record_mouse_over()"
     }
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Start Hovering the Mouse"
         description: "Starts hovering the mouse over the crosshair."
-        script: "app_worker.start_mouse_hover()"
+        script: "app_worker.record_start_mouse_hover()"
     }
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Stop Hovering the Mouse"
         description: "Stops hovering the mouse over the crosshair."
-        script: "app_worker.stop_mouse_hover()"
+        script: "app_worker.record_stop_mouse_hover()"
     }
 
     ListElement {

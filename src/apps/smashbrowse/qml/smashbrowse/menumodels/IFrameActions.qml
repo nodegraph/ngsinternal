@@ -9,7 +9,7 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Switch to IFrame"
         description: "The crosshair is in a another iframe."
-        script: "app_worker.switch_to_iframe();
+        script: "app_worker.record_switch_to_iframe();
                  web_action_stack_page.on_show_web_action_menu()"
     }
 

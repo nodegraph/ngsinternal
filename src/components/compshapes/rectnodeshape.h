@@ -33,7 +33,7 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
   static const glm::vec2 node_border_size;
 
   RectNodeShape(Entity* entity);
-  RectNodeShape(Entity* entity, size_t did);
+  RectNodeShape(Entity* entity, ComponentDID did);
   virtual ~RectNodeShape();
 
   // Positioning.

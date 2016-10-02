@@ -115,7 +115,7 @@ void GroupInteraction::toggle_selection_under_press(const Dep<NodeShape>& hit_sh
 Dep<LinkShape> GroupInteraction::create_link() {
   external();
 
-  Entity* link = _factory->instance_entity(_links_folder, "link", kLinkEntity);
+  Entity* link = _factory->instance_entity(_links_folder, "link", EntityDID::kLinkEntity);
   link->create_internals();
 
   Dep<LinkShape> dep = get_dep<LinkShape>(link);
@@ -285,9 +285,9 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
 
     if (comp_shape) {
       comp_shape_entity = comp_shape->our_entity();
-      if (comp_shape_entity->get_did() == kInputEntity) {
+      if (comp_shape_entity->get_did() == EntityDID::kInputEntity) {
         is_input_param = true;
-      } else if (comp_shape_entity->get_did() == kOutputEntity) {
+      } else if (comp_shape_entity->get_did() == EntityDID::kOutputEntity) {
         is_output_param = true;
       } else if (comp_shape->is_linkable()) {
         is_node = true;
@@ -535,9 +535,9 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
     if (comp_shape) {
       comp_shape_entity = comp_shape->our_entity();
 
-      if (comp_shape_entity->get_did() == kInputEntity) {
+      if (comp_shape_entity->get_did() == EntityDID::kInputEntity) {
         is_input_param = true;
-      } else if (comp_shape_entity->get_did() == kOutputEntity) {
+      } else if (comp_shape_entity->get_did() == EntityDID::kOutputEntity) {
         is_output_param = true;
       } else if (comp_shape->is_linkable()) {
         is_node = true;
@@ -858,7 +858,7 @@ void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
   std::string raw_copy = our_entity()->copy_to_string(selected_entities);
 
   // Create a group node to hold the collapsed nodes.
-  Entity* collapsed_node = _factory->instance_entity(our_entity(), "collapsed", kGroupNodeEntity);
+  Entity* collapsed_node = _factory->instance_entity(our_entity(), "collapsed", EntityDID::kGroupNodeEntity);
   collapsed_node->create_internals();
   collapsed_node->initialize_wires();
 
@@ -988,7 +988,7 @@ glm::mat4 GroupInteraction::get_last_model_view_project() const{
   return _view_controls.get_last_model_view_project();
 }
 
-Entity* GroupInteraction::create_node(size_t did) {
+Entity* GroupInteraction::create_node(EntityDID did) {
   external();
 
   // Determine the initial name for the new node.

@@ -62,7 +62,7 @@ class BaseFactory;
 class TestDeps: public Component {
  public:
 
-  COMPONENT_ID(TestComponent, TestComponent)
+  COMPONENT_ID(InvalidComponent, InvalidComponent)
 
   TestDeps(Entity* entity);
   ~TestDeps();

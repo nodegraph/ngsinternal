@@ -18,7 +18,7 @@ Q_OBJECT
 
   COMPONENT_ID(NodeGraphEditor, NodeGraphEditor)
 
-  NodeGraphEditor(Entity* entity, QWidget* parent, const QGLWidget* shared_widget);
+  NodeGraphEditor(Entity* entity, QWidget* parent = NULL, const QGLWidget* shared_widget = NULL);
   virtual ~NodeGraphEditor();
 
   void draw_canvas_gl(); // public for now, so that RenderThread can call it.

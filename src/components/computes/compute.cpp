@@ -15,7 +15,7 @@ struct InputComputeComparator {
 
 const QVariant Compute::_empty_variant;
 
-Compute::Compute(Entity* entity, size_t derived_id)
+Compute::Compute(Entity* entity, ComponentDID derived_id)
     : Component(entity, kIID(), derived_id) {
 }
 
@@ -41,7 +41,7 @@ void Compute::gather_inputs() {
   if (inputs_space) {
     const Entity::NameToChildMap& children = inputs_space->get_children();
     for (auto iter: children) {
-      if (iter.second->get_did() != kInputEntity) {
+      if (iter.second->get_did() != EntityDID::kInputEntity) {
         continue;
       }
       Dep<InputCompute> dep = get_dep<InputCompute>(iter.second);
@@ -176,7 +176,7 @@ Entity* Compute::create_input(const std::string& name, ParamType type, bool expo
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
-  InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, name, kInputEntity));
+  InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, name, EntityDID::kInputEntity));
   input->create_internals();
   input->set_param_type(type);
   input->set_exposed(exposed);
@@ -187,7 +187,7 @@ Entity* Compute::create_output(const std::string& name, ParamType type, bool exp
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* outputs_space = get_outputs_space();
-  OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, name, kOutputEntity));
+  OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, name, EntityDID::kOutputEntity));
   output->create_internals();
   output->set_param_type(type);
   output->set_exposed(exposed);
@@ -197,7 +197,7 @@ Entity* Compute::create_output(const std::string& name, ParamType type, bool exp
 Entity* Compute::create_namespace(const std::string& name) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
-  Entity* space = static_cast<BaseNamespaceEntity*>(factory->instance_entity(our_entity(), name, kBaseNamespaceEntity));
+  Entity* space = static_cast<BaseNamespaceEntity*>(factory->instance_entity(our_entity(), name, EntityDID::kBaseNamespaceEntity));
   space->create_internals();
   return space;
 }

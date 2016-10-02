@@ -47,10 +47,10 @@ class BgComm {
         if (this.tab_id == null) {
             return
         }
-        // Close any external tabs that get opened outside our tab being controlled by webdriver.
-        if (this.tab_id != tab.id) {
-            //chrome.tabs.remove(tab.id)
-        }
+//        // Close any external tabs that get opened outside our tab being controlled by webdriver.
+//        if (this.tab_id != tab.id) {
+//            chrome.tabs.remove(tab.id)
+//        }
     }
 
     on_tab_created_bound = (tab: chrome.tabs.Tab) => {

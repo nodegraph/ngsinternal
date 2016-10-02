@@ -52,22 +52,22 @@ void GroupNodeCompute::update_wires() {
   for (auto &iter : children) {
     const std::string& child_name = iter.first;
     Entity* child = iter.second;
-    size_t did = child->get_did();
-    if (did == kInputNodeEntity) {
+    EntityDID did = child->get_did();
+    if (did == EntityDID::kInputNodeEntity) {
       if (inputs_space->has_child_name(child_name)) {
         continue;
       }
-      InputEntity* in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, child_name, kInputEntity));
+      InputEntity* in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, child_name, EntityDID::kInputEntity));
       in->create_internals();
       in->set_param_type(ParamType::kQVariantMap);
       in->set_exposed(true);
       in->initialize_wires();
       changed = true;
-    } else if (did == kOutputNodeEntity) {
+    } else if (did == EntityDID::kOutputNodeEntity) {
       if (outputs_space->has_child_name(child_name)) {
         continue;
       }
-      OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, child_name, kOutputEntity));
+      OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, child_name, EntityDID::kOutputEntity));
       out->create_internals();
       out->set_param_type(ParamType::kQVariantMap);
       out->set_exposed(true);

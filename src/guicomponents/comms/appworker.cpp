@@ -126,7 +126,7 @@ void AppWorker::reset_state() {
 
     // State for hovering.
     _hovering = false;
-    _hover_args.clear();
+    _hover_state.clear();
     _jitter = kJitterSize;
 }
 
@@ -140,6 +140,915 @@ void AppWorker::reset_state() {
 //  send_msg(msg);
 //}
 
+// -----------------------------------------------------------------
+// Our Slots.
+// -----------------------------------------------------------------
+
+void AppWorker::on_text_received(const QString & text) {
+
+  std::cerr << "app_worker got text: " << text.toStdString() << "\n";
+
+//  // Multiple message may arrive concatenated in the json string, so we split them.
+//  QRegExp regex("(\\{[^\\{\\}]*\\})");
+//  QStringList splits;
+//  int pos = 0;
+//  while ((pos = regex.indexIn(text, pos)) != -1) {
+//      splits << regex.cap(1);
+//      pos += regex.matchedLength();
+//  }
+
+  // Loop over each message string.
+  //for (int i=0; i<splits.size(); ++i) {
+    //std::cerr << "hub --> app-" << i << ": " << splits[i].toStdString() << "\n";
+    //Message msg(splits[i]);
+    Message msg(text);
+    MessageType type = msg.get_msg_type();
+    if (type == MessageType::kRequestMessage) {
+      // We shouldn't be getting request message from nodejs.
+      std::cerr << "Error: App should not be receiving request messages.\n";
+      assert(false);
+    } else if (type == MessageType::kResponseMessage) {
+      handle_response_from_nodejs(msg);
+    } else if (type == MessageType::kInfoMessage) {
+      handle_info_from_nodejs(msg);
+    } else {
+      std::cerr << "Error: Got message of unknown type!\n";
+    }
+  //}
+}
+
+void AppWorker::on_poll() {
+  if (_app_comm->check_connection()) {
+    if (_show_browser) {
+      std::cerr << "polling open browser!\n";
+      if (_queue.empty()) {
+        queue_check_browser_is_open();
+        queue_check_browser_size();
+        // Debugging. - this makes the browser only come up once.
+        _show_browser = false;
+      }
+    }
+  }
+  if (_hovering) {
+    if (_queue.empty()) {
+      mouse_hover_task();
+    }
+  }
+}
+
+// -----------------------------------------------------------------
+// // Record Browser Actions.
+// -----------------------------------------------------------------
+
+void AppWorker::record_open_browser() {
+  check_busy();
+  queue_build_compute_node(ComponentDID::kOpenBrowserCompute);
+}
+
+void AppWorker::record_close_browser() {
+  check_busy();
+  queue_build_compute_node(ComponentDID::kCloseBrowserCompute);
+}
+
+void AppWorker::record_check_browser_is_open() {
+  check_busy();
+  queue_build_compute_node(ComponentDID::kCheckBrowserIsOpenCompute);
+}
+
+void AppWorker::record_check_browser_size() {
+  int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
+  int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
+
+  QVariantMap dims;
+  dims[Message::kWidth] = width;
+  dims[Message::kHeight] = height;
+
+  QVariantMap args;
+  args[Message::kDimensions] = dims;
+
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kCheckBrowserSizeCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Navigate Actions.
+// -----------------------------------------------------------------
+
+void AppWorker::record_navigate_to(const QString& url) {
+  check_busy()
+  QString decorated_url = get_proper_url(url).toString();
+
+  QVariantMap args;
+  args[Message::kURL] = decorated_url;
+
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kNavigateToCompute);
+}
+
+void AppWorker::record_switch_to_iframe() {
+  check_busy()
+  queue_get_crosshair_info();
+  queue_build_compute_node(ComponentDID::kSwitchToIFrameCompute);
+}
+
+void AppWorker::record_navigate_refresh() {
+  check_busy()
+  queue_build_compute_node(ComponentDID::kNavigateRefreshCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Create Set By Matching Values..
+// -----------------------------------------------------------------
+
+void AppWorker::record_create_set_by_matching_values() {
+  check_busy()
+  queue_get_crosshair_info();
+  queue_build_compute_node(ComponentDID::kCreateSetFromValuesCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Create Set By Type.
+// -----------------------------------------------------------------
+
+void AppWorker::record_create_set_of_inputs() {
+  check_busy()
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::input;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kCreateSetFromTypeCompute);
+}
+
+void AppWorker::record_create_set_of_selects() {
+  check_busy()
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::select;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kCreateSetFromTypeCompute);
+}
+
+void AppWorker::record_create_set_of_images() {
+  check_busy()
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::image;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kCreateSetFromTypeCompute);
+}
+
+void AppWorker::record_create_set_of_text() {
+  check_busy()
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::text;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kCreateSetFromTypeCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Delete Set.
+// -----------------------------------------------------------------
+
+void AppWorker::record_delete_set() {
+  check_busy()
+  queue_get_crosshair_info();
+  queue_build_compute_node(ComponentDID::kDeleteSetCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Shift Sets.
+// -----------------------------------------------------------------
+
+void AppWorker::record_shift_to_text_above() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::text;
+  args[Message::kDirection] = Direction::up;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_text_below() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::text;
+  args[Message::kDirection] = Direction::down;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_text_on_left() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::text;
+  args[Message::kDirection] = Direction::left;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_text_on_right() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::text;
+  args[Message::kDirection] = Direction::right;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+
+void AppWorker::record_shift_to_images_above() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::image;
+  args[Message::kDirection] = Direction::up;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_images_below() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::image;
+  args[Message::kDirection] = Direction::down;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_images_on_left() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::image;
+  args[Message::kDirection] = Direction::left;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_images_on_right() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::image;
+  args[Message::kDirection] = Direction::right;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+
+void AppWorker::record_shift_to_inputs_above() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::input;
+  args[Message::kDirection] = Direction::up;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_inputs_below() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::input;
+  args[Message::kDirection] = Direction::down;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_inputs_on_left() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::input;
+  args[Message::kDirection] = Direction::left;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_inputs_on_right() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::input;
+  args[Message::kDirection] = Direction::right;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+
+void AppWorker::record_shift_to_selects_above() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::select;
+  args[Message::kDirection] = Direction::up;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_selects_below() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::select;
+  args[Message::kDirection] = Direction::down;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_selects_on_left() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::select;
+  args[Message::kDirection] = Direction::left;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_selects_on_right() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::select;
+  args[Message::kDirection] = Direction::right;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+
+void AppWorker::record_shift_to_iframes_above() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::iframe;
+  args[Message::kDirection] = Direction::up;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_iframes_below() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::iframe;
+  args[Message::kDirection] = Direction::down;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_iframes_on_left() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::iframe;
+  args[Message::kDirection] = Direction::left;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+void AppWorker::record_shift_to_iframes_on_right() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType] = WrapType::iframe;
+  args[Message::kDirection] = Direction::right;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShiftSetCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Expand Sets.
+// -----------------------------------------------------------------
+
+void AppWorker::record_expand_above() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap match_criteria;
+  match_criteria[Message::kMatchLeft] = true;
+  match_criteria[Message::kMatchRight] = false;
+  match_criteria[Message::kMatchTop] = false;
+  match_criteria[Message::kMatchBottom] = false;
+  match_criteria[Message::kMatchFont] = true;
+  match_criteria[Message::kMatchFontSize] = true;
+
+  QVariantMap args;
+  args[Message::kMatchCriteria] = match_criteria;
+  args[Message::kDirection] = Direction::up;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kExpandSetCompute);
+}
+
+void AppWorker::record_expand_below() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap match_criteria;
+  match_criteria[Message::kMatchLeft] = true;
+  match_criteria[Message::kMatchRight] = false;
+  match_criteria[Message::kMatchTop] = false;
+  match_criteria[Message::kMatchBottom] = false;
+  match_criteria[Message::kMatchFont] = true;
+  match_criteria[Message::kMatchFontSize] = true;
+
+  QVariantMap args;
+  args[Message::kMatchCriteria] = match_criteria;
+  args[Message::kDirection] = Direction::down;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kExpandSetCompute);
+}
+
+void AppWorker::record_expand_left() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap match_criteria;
+  match_criteria[Message::kMatchLeft] = false;
+  match_criteria[Message::kMatchRight] = false;
+  match_criteria[Message::kMatchTop] = true;
+  match_criteria[Message::kMatchBottom] = false;
+  match_criteria[Message::kMatchFont] = true;
+  match_criteria[Message::kMatchFontSize] = true;
+
+  QVariantMap args;
+  args[Message::kMatchCriteria] = match_criteria;
+  args[Message::kDirection] = Direction::left;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kExpandSetCompute);
+}
+
+void AppWorker::record_expand_right() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap match_criteria;
+  match_criteria[Message::kMatchLeft] = false;
+  match_criteria[Message::kMatchRight] = false;
+  match_criteria[Message::kMatchTop] = true;
+  match_criteria[Message::kMatchBottom] = false;
+  match_criteria[Message::kMatchFont] = true;
+  match_criteria[Message::kMatchFontSize] = true;
+
+  QVariantMap args;
+  args[Message::kMatchCriteria] = match_criteria;
+  args[Message::kDirection] = Direction::right;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kExpandSetCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Mark Sets.
+// -----------------------------------------------------------------
+
+void AppWorker::record_mark_set() {
+  check_busy();
+  queue_get_crosshair_info();
+  queue_build_compute_node(ComponentDID::kMarkSetCompute);
+}
+
+void AppWorker::record_unmark_set() {
+  check_busy();
+  queue_get_crosshair_info();
+  queue_build_compute_node(ComponentDID::kUnmarkSetCompute);
+}
+
+void AppWorker::record_merge_sets() {
+  check_busy();
+  queue_build_compute_node(ComponentDID::kMergeSetsCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Shrink To One Side.
+// -----------------------------------------------------------------
+
+void AppWorker::record_shrink_set_to_topmost() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kDirection] = Direction::up;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShrinkSetToSideCompute);
+}
+
+void AppWorker::record_shrink_set_to_bottommost() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kDirection] = Direction::down;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShrinkSetToSideCompute);
+}
+
+void AppWorker::record_shrink_set_to_leftmost() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kDirection] = Direction::left;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShrinkSetToSideCompute);
+}
+
+void AppWorker::record_shrink_set_to_rightmost() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kDirection] = Direction::right;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kShrinkSetToSideCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Shrink Against Marked Sets.
+// -----------------------------------------------------------------
+
+void AppWorker::record_shrink_above_of_marked() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantList dirs;
+  dirs.append(Direction::up);
+  QVariantMap args;
+  args[Message::kDirections] = dirs;
+  queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
+}
+
+void AppWorker::record_shrink_below_of_marked() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantList dirs;
+  dirs.append(Direction::down);
+  QVariantMap args;
+  args[Message::kDirections] = dirs;
+  queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
+}
+
+void AppWorker::record_shrink_above_and_below_of_marked() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantList dirs;
+  dirs.append(Direction::up);
+  dirs.append(Direction::down);
+  QVariantMap args;
+  args[Message::kDirections] = dirs;
+  queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
+}
+
+void AppWorker::record_shrink_left_of_marked() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantList dirs;
+  dirs.append(Direction::left);
+  QVariantMap args;
+  args[Message::kDirections] = dirs;
+  queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
+}
+
+void AppWorker::record_shrink_right_of_marked() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantList dirs;
+  dirs.append(Direction::right);
+  QVariantMap args;
+  args[Message::kDirections] = dirs;
+  queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
+}
+
+void AppWorker::record_shrink_left_and_right_of_marked() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantList dirs;
+  dirs.append(Direction::left);
+  dirs.append(Direction::right);
+  QVariantMap args;
+  args[Message::kDirections] = dirs;
+  queue_build_compute_node(ComponentDID::kShrinkAgainstMarkedCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Mouse Actions.
+// -----------------------------------------------------------------
+
+void AppWorker::record_click() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kMouseAction] = MouseActionType::kSendClick;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kMouseActionCompute);
+}
+
+void AppWorker::record_mouse_over() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kMouseAction] = MouseActionType::kMouseOver;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kMouseActionCompute);
+}
+
+void AppWorker::record_start_mouse_hover() {
+  check_busy();
+  queue_get_crosshair_info();
+  queue_build_compute_node(ComponentDID::kStartMouseHoverActionCompute);
+}
+
+void AppWorker::record_stop_mouse_hover() {
+  check_busy();
+  queue_build_compute_node(ComponentDID::kStopMouseHoverActionCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Text Actions.
+// -----------------------------------------------------------------
+
+void AppWorker::record_type_text(const QString& text) {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kText] = text;
+  args[Message::kTextAction] = TextActionType::kSendText;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kTextActionCompute);
+}
+
+void AppWorker::record_type_enter() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kTextAction] = TextActionType::kSendEnter;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kTextActionCompute);
+}
+
+// -----------------------------------------------------------------
+// Record Element Actions.
+// -----------------------------------------------------------------
+
+void AppWorker::record_extract_text() {
+  check_busy()
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kElementAction] = ElementActionType::kGetText;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kElementActionCompute);
+}
+
+void AppWorker::record_select_from_dropdown(const QString& option_text) {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kElementAction] = ElementActionType::kSelectOption;
+  args[Message::kOptionText] = option_text;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kElementActionCompute);
+}
+
+void AppWorker::record_scroll_down() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kElementAction] = ElementActionType::kScroll;
+  args[Message::kDirection] = Direction::down;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kElementActionCompute);
+}
+
+void AppWorker::record_scroll_up() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kElementAction] = ElementActionType::kScroll;
+  args[Message::kDirection] = Direction::up;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kElementActionCompute);
+}
+
+void AppWorker::record_scroll_right() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kElementAction] = ElementActionType::kScroll;
+  args[Message::kDirection] = Direction::right;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kElementActionCompute);
+}
+
+void AppWorker::record_scroll_left() {
+  check_busy();
+  queue_get_crosshair_info();
+
+  QVariantMap args;
+  args[Message::kElementAction] = ElementActionType::kScroll;
+  args[Message::kDirection] = Direction::left;
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kElementActionCompute);
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Framework Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_get_xpath() {
+  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "queue_get_xpath");
+}
+
+void AppWorker::queue_get_crosshair_info() {
+  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "queue_get_crosshair_info");
+}
+
+void AppWorker::queue_merge_chain_state(const QVariantMap& map) {
+  queue_task((AppTask)std::bind(&AppWorker::merge_chain_state_task,this, map), "queue_merge_chain_state");
+}
+
+void AppWorker::queue_build_compute_node(ComponentDID compute_did) {
+  std::stringstream ss;
+  ss << "queue build compute node with did: " << (size_t)compute_did;
+  queue_task((AppTask)std::bind(&AppWorker::build_compute_node_task,this, compute_did), ss.str());
+}
+
+void AppWorker::queue_finished(std::function<void(const QVariantMap&)> finalize_update) {
+  queue_task((AppTask)std::bind(&AppWorker::finished_task,this,finalize_update), "queue_finished");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Cookie Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_get_all_cookies() {
+  queue_task((AppTask)std::bind(&AppWorker::get_all_cookies_task, this), "queue_get_all_cookies");
+}
+
+void AppWorker::queue_clear_all_cookies() {
+  queue_task((AppTask)std::bind(&AppWorker::clear_all_cookies_task, this), "queue_clear_all_cookies");
+}
+
+void AppWorker::queue_set_all_cookies() {
+  queue_task((AppTask)std::bind(&AppWorker::set_all_cookies_task, this), "queue_set_all_cookies");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Browser Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_open_browser() {
+  queue_task((AppTask)std::bind(&AppWorker::open_browser_task,this), "queue_open_browser");
+}
+
+void AppWorker::queue_close_browser() {
+  queue_task((AppTask)std::bind(&AppWorker::close_browser_task,this), "queue_close_browser");
+}
+
+void AppWorker::queue_check_browser_is_open() {
+  queue_task((AppTask)std::bind(&AppWorker::check_browser_is_open_task,this), "queue_check_browser_is_open");
+}
+
+void AppWorker::queue_check_browser_size() {
+  queue_task((AppTask)std::bind(&AppWorker::check_browser_size_task,this), "queue_check_browser_size");
+}
+
+void AppWorker::queue_reset() {
+  queue_task((AppTask)std::bind(&AppWorker::reset_task, this), "reset");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Page Content Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_block_events() {
+  queue_task((AppTask)std::bind(&AppWorker::block_events_task, this), "reset");
+}
+
+void AppWorker::queue_unblock_events() {
+  queue_task((AppTask)std::bind(&AppWorker::unblock_events_task, this), "reset");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Navigate Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_navigate_to() {
+  queue_task((AppTask)std::bind(&AppWorker::navigate_to_task,this), "queue_navigate_to");
+}
+
+void AppWorker::queue_navigate_refresh() {
+  queue_task((AppTask)std::bind(&AppWorker::navigate_refresh_task,this), "queue_navigate_refresh");
+}
+
+void AppWorker::queue_switch_to_iframe() {
+  queue_task((AppTask)std::bind(&AppWorker::switch_to_iframe_task,this), "queue_swith_to_iframe");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Set Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_update_overlays() {
+  queue_task((AppTask)std::bind(&AppWorker::update_overlays_task, this), "queue_update_overlays");
+}
+
+void AppWorker::queue_create_set_by_matching_values() {
+  queue_task((AppTask)std::bind(&AppWorker::create_set_by_matching_values_task,this), "queue_create_set_by_matching_values");
+}
+
+void AppWorker::queue_create_set_by_matching_type() {
+  queue_task((AppTask)std::bind(&AppWorker::create_set_by_matching_type_task,this), "queue_create_set_by_matching_type");
+}
+
+void AppWorker::queue_delete_set() {
+  queue_task((AppTask)std::bind(&AppWorker::delete_set_task,this), "queue_delete_set");
+}
+
+void AppWorker::queue_shift_set() {
+  queue_task((AppTask)std::bind(&AppWorker::shift_set_task,this), "queue_shift_set");
+}
+
+void AppWorker::queue_expand_set() {
+  queue_task((AppTask)std::bind(&AppWorker::expand_set_task,this), "queue_expand_set");
+}
+
+void AppWorker::queue_mark_set() {
+  queue_task((AppTask)std::bind(&AppWorker::mark_set_task,this), "queue_mark_set");
+}
+
+void AppWorker::queue_unmark_set() {
+  queue_task((AppTask)std::bind(&AppWorker::unmark_set_task,this), "queue_unmark_set");
+}
+
+void AppWorker::queue_merge_sets() {
+  queue_task((AppTask)std::bind(&AppWorker::merge_sets_task, this), "queue_merge_sets");
+}
+
+void AppWorker::queue_shrink_set_to_side() {
+  queue_task((AppTask)std::bind(&AppWorker::shrink_set_to_side_task, this), "queue_merge_sets");
+}
+
+void AppWorker::queue_shrink_against_marked() {
+  queue_task((AppTask)std::bind(&AppWorker::shrink_against_marked_task,this), "queue_shrink_against_marked");
+}
+
+// ---------------------------------------------------------------------------------
+// Queue Perform Action Tasks.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_perform_mouse_action() {
+  queue_get_xpath();
+  queue_unblock_events();
+  queue_task((AppTask)std::bind(&AppWorker::perform_mouse_action_task,this), "queue_perform_action_task");
+  queue_block_events();
+}
+
+void AppWorker::queue_perform_mouse_hover() {
+  queue_get_xpath();
+  queue_unblock_events();
+  queue_task((AppTask)std::bind(&AppWorker::perform_hover_action_task,this), "queue_perform_hover");
+  queue_block_events();
+}
+
+void AppWorker::queue_perform_post_mouse_hover() {
+  queue_task((AppTask)std::bind(&AppWorker::post_hover_task, this), "queue_perform_post_hover");
+}
+
+void AppWorker::queue_perform_text_action() {
+  queue_get_xpath();
+  queue_unblock_events();
+  queue_task((AppTask)std::bind(&AppWorker::perform_text_action_task,this), "queue_perform_text_action");
+  queue_block_events();
+}
+
+void AppWorker::queue_perform_element_action() {
+  queue_get_xpath();
+  queue_unblock_events();
+  queue_task((AppTask)std::bind(&AppWorker::perform_element_action_task,this), "queue_perform_element_action");
+  queue_block_events();
+}
+
+// ---------------------------------------------------------------------------------
+// Queue other actions.
+// ---------------------------------------------------------------------------------
+
+void AppWorker::queue_start_mouse_hover() {
+  queue_get_xpath();
+  queue_task((AppTask)std::bind(&AppWorker::start_mouse_hover_task,this), "queue_stop_mouse_hover");
+}
+
+void AppWorker::queue_stop_mouse_hover() {
+  queue_task((AppTask)std::bind(&AppWorker::stop_mouse_hover_task,this), "queue_stop_mouse_hover");
+}
+
+void AppWorker::queue_emit_option_texts() {
+  queue_get_crosshair_info();
+  queue_task((AppTask)std::bind(&AppWorker::emit_option_texts_task,this), "select_from_dropdown3");
+}
+
+
+
+// ------------------------------------------------------------------------
+// Task Management.
+// ------------------------------------------------------------------------
+
 void AppWorker::queue_task(AppTask task, const std::string& about) {
   const AppTask test = task;
   _queue.push_back(test);
@@ -149,7 +1058,7 @@ void AppWorker::queue_task(AppTask task, const std::string& about) {
   bool ok_to_run = true;
 
   if (_queue.size() > 1) {
-	  ok_to_run = false;
+    ok_to_run = false;
   }
 
   // Make sure we're not already waiting for results.
@@ -172,7 +1081,7 @@ void AppWorker::queue_task(AppTask task, const std::string& about) {
 
   // Run the worker if we're all clear to run.
   if (ok_to_run) {
-	  std::cerr << "running task.\n";
+    std::cerr << "running task.\n";
     _queue[0]();
   }
 }
@@ -247,487 +1156,68 @@ void AppWorker::handle_info_from_nodejs(const Message& msg) {
   }
 }
 
-// -----------------------------------------------------------------
-// Our Slots.
-// -----------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Infrastructure Tasks.
+// ------------------------------------------------------------------------
 
-void AppWorker::on_text_received(const QString & text) {
+void AppWorker::send_msg_task(Message msg) {
+  // Tag the request with an id. We expect a response with the same id.
+  msg[Message::kID] = _next_msg_id;
 
-  std::cerr << "app_worker got text: " << text.toStdString() << "\n";
+  std::cerr << "app --> comhub: " << msg.to_string().toStdString() << "\n";
 
-//  // Multiple message may arrive concatenated in the json string, so we split them.
-//  QRegExp regex("(\\{[^\\{\\}]*\\})");
-//  QStringList splits;
-//  int pos = 0;
-//  while ((pos = regex.indexIn(text, pos)) != -1) {
-//      splits << regex.cap(1);
-//      pos += regex.matchedLength();
-//  }
+  // Increment the counter. Note we're ok with this overflowing and looping around.
+  _next_msg_id += 1;
 
-  // Loop over each message string.
-  //for (int i=0; i<splits.size(); ++i) {
-    //std::cerr << "hub --> app-" << i << ": " << splits[i].toStdString() << "\n";
-    //Message msg(splits[i]);
-    Message msg(text);
-    MessageType type = msg.get_msg_type();
-    if (type == MessageType::kRequestMessage) {
-      // We shouldn't be getting request message from nodejs.
-      std::cerr << "Error: App should not be receiving request messages.\n";
-      assert(false);
-    } else if (type == MessageType::kResponseMessage) {
-      handle_response_from_nodejs(msg);
-    } else if (type == MessageType::kInfoMessage) {
-      handle_info_from_nodejs(msg);
+  // Send the request to nodejs.
+  _waiting_for_results = true;
+  size_t num_bytes = _app_comm->get_web_socket()->sendTextMessage(msg.to_string());
+  assert(num_bytes);
+}
+
+void AppWorker::get_crosshair_info_task() {
+  QVariantMap args;
+  args[Message::kClickPos] = _click_pos;
+  Message req(RequestType::kGetCrosshairInfo,args);
+  send_msg_task(req);
+}
+
+// Should be run after a response message like get_crosshair_info_task that has set_index and overlay_index.
+void AppWorker::get_xpath_task() {
+  QVariantMap args;
+  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
+  args[Message::kOverlayIndex] = _chain_state[Message::kOverlayIndex];
+  Message req(RequestType::kGetXPath,args);
+  send_msg_task(req);
+}
+
+void AppWorker::merge_chain_state_task(const QVariantMap& map) {
+  // Merge the values into the chain_state.
+  for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+    _chain_state.insert(iter.key(), iter.value());
+  }
+  run_next_task();
+}
+
+void AppWorker::finished_task(std::function<void(const QVariantMap&)> finalize_update) {
+  finalize_update(_chain_state["outputs"].toMap());
+  // If the compute is still dirty, it's because one of the dependencies has an
+  // asynchronous update_state() method. In this case just run the cleaning processing again.
+  if (_compute) {
+    if (!_compute->is_state_dirty()) {
+      //
     } else {
-      std::cerr << "Error: Got message of unknown type!\n";
-    }
-  //}
-}
-
-void AppWorker::on_poll() {
-  if (_app_comm->check_connection()) {
-    if (_show_browser) {
-      std::cerr << "polling open browser!\n";
-      if (_queue.empty()) {
-        queue_check_browser_is_open();
-        queue_check_browser_size();
-        // Debugging. - this makes the browser only come up once.
-        _show_browser = false;
-      }
+      _compute->clean_state();
     }
   }
-  if (_hovering) {
-    if (_queue.empty()) {
-      hover_task();
-    }
-  }
+  run_next_task();
 }
 
-// -----------------------------------------------------------------
-// Browser Actions.
-// -----------------------------------------------------------------
-
-void AppWorker::record_open_browser() {
-  check_busy();
-  queue_build_compute_node(kOpenBrowserCompute);
-}
-
-void AppWorker::record_close_browser() {
-  check_busy();
-  queue_build_compute_node(kCloseBrowserCompute);
-}
-
-void AppWorker::record_check_browser_is_open() {
-  check_busy();
-  queue_build_compute_node(kCheckBrowserIsOpen);
-}
-
-void AppWorker::record_check_browser_size() {
-  int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
-  int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
-
-  QVariantMap dims;
-  dims[Message::kWidth] = width;
-  dims[Message::kHeight] = height;
-
-  QVariantMap args;
-  args[Message::kDimensions] = dims;
-
-  queue_merge_chain_state(args);
-  queue_build_compute_node(kCheckBrowserSizeCompute);
-}
-
-// -----------------------------------------------------------------
-// Test Features.
-// -----------------------------------------------------------------
-
-
-
-
-void AppWorker::get_all_cookies_task() {
-  check_busy()
-  Message req(RequestType::kGetAllCookies);
-  send_msg_task(req);
-}
-
-void AppWorker::clear_all_cookies_task() {
-  check_busy()
-  Message req(RequestType::kClearAllCookies);
-  send_msg_task(req);
-}
-
-void AppWorker::set_all_cookies_task() {
-  check_busy()
-  Message req(RequestType::kSetAllCookies);
-  send_msg_task(req);
-}
-
-//void AppWorker::cache_frame() {
-//  check_busy()
-//  Message msg(RequestType::kCacheFrame);
-//  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "cache_frame");
-//}
-//
-//void AppWorker::load_cached_frame() {
-//  check_busy()
-//  Message msg(RequestType::kLoadCachedFrame);
-//  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, msg), "load_cached_frame");
-//}
-
-// -----------------------------------------------------------------
-// Navigation.
-// -----------------------------------------------------------------
-
-void AppWorker::record_navigate_to(const QString& url) {
-  check_busy()
-  QString decorated_url = get_proper_url(url).toString();
-
-  QVariantMap args;
-  args[Message::kURL] = decorated_url;
-
-  queue_merge_chain_state(args);
-  queue_build_compute_node(kNavigateToCompute);
-}
-
-void AppWorker::record_switch_to_iframe() {
-  check_busy()
-  queue_get_crosshair_info();
-  queue_build_compute_node(kSwitchToIFrameCompute);
-}
-
-void AppWorker::record_navigate_refresh() {
-  check_busy()
-  queue_build_compute_node(kNavigateRefreshCompute);
-}
-
-// -----------------------------------------------------------------
-// Create set by matching values.
-// -----------------------------------------------------------------
-
-void AppWorker::record_create_set_by_matching_values() {
-  check_busy()
-  queue_get_crosshair_info();
-  queue_build_compute_node(kCreateSetFromValuesCompute);
-}
-
-// -----------------------------------------------------------------
-// Create set by type.
-// -----------------------------------------------------------------
-
-void AppWorker::record_create_set_of_inputs() {
-  check_busy()
-  QVariantMap args;
-  args[Message::kWrapType] = WrapType::input;
-  queue_merge_chain_state(args);
-  queue_build_compute_node(kCreateSetFromTypeCompute);
-}
-
-void AppWorker::record_create_set_of_selects() {
-  check_busy()
-  QVariantMap args;
-  args[Message::kWrapType] = WrapType::select;
-  queue_merge_chain_state(args);
-  queue_build_compute_node(kCreateSetFromTypeCompute);
-}
-
-void AppWorker::record_create_set_of_images() {
-  check_busy()
-  QVariantMap args;
-  args[Message::kWrapType] = WrapType::image;
-  queue_merge_chain_state(args);
-  queue_build_compute_node(kCreateSetFromTypeCompute);
-}
-
-void AppWorker::record_create_set_of_text() {
-  check_busy()
-  QVariantMap args;
-  args[Message::kWrapType] = WrapType::text;
-  queue_merge_chain_state(args);
-  queue_build_compute_node(kCreateSetFromTypeCompute);
-}
-
-// -----------------------------------------------------------------
-// Delete set.
-// -----------------------------------------------------------------
-
-void AppWorker::delete_set() {
-  check_busy()
-  queue_get_crosshair_info();
-  queue_delete_set();
-}
-
-// -----------------------------------------------------------------
-// Shift sets
-// -----------------------------------------------------------------
-
-void AppWorker::shift_to_text_above() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_text_above1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::text, Direction::up>,this), "shift_to_text_above2");
-}
-void AppWorker::shift_to_text_below() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_text_below1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::text, Direction::down>,this), "shift_to_text_below2");
-}
-void AppWorker::shift_to_text_on_left() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_text_on_left1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::text, Direction::left>,this), "shift_to_text_on_left2");
-}
-void AppWorker::shift_to_text_on_right() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_text_on_right1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::text, Direction::right>,this), "shift_to_text_on_right2");
-}
-
-void AppWorker::shift_to_images_above() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_images_above1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::image, Direction::up>,this), "shift_to_images_above2");
-}
-void AppWorker::shift_to_images_below() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_images_below1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::image, Direction::down>,this), "shift_to_images_below2");
-}
-void AppWorker::shift_to_images_on_left() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_images_on_left1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::image, Direction::left>,this), "shift_to_images_on_left2");
-}
-void AppWorker::shift_to_images_on_right() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_images_on_right1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::image, Direction::right>,this), "shift_to_images_on_right2");
-}
-
-void AppWorker::shift_to_inputs_above() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_inputs_above1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::input, Direction::up>,this), "shift_to_inputs_above2");
-}
-void AppWorker::shift_to_inputs_below() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_inputs_below1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::input, Direction::down>,this), "shift_to_inputs_below2");
-}
-void AppWorker::shift_to_inputs_on_left() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_inputs_on_left1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::input, Direction::left>,this), "shift_to_inputs_on_left2");
-}
-void AppWorker::shift_to_inputs_on_right() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_inputs_on_right1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::input, Direction::right>,this), "shift_to_inputs_on_right2");
-}
-
-void AppWorker::shift_to_selects_above() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_selects_above1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::select, Direction::up>,this), "shift_to_selects_above2");
-}
-void AppWorker::shift_to_selects_below() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_selects_below1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::select, Direction::down>,this), "shift_to_selects_below2");
-}
-void AppWorker::shift_to_selects_on_left() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_selects_on_left1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::select, Direction::left>,this), "shift_to_selects_on_left2");
-}
-void AppWorker::shift_to_selects_on_right() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_selects_on_right1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::select, Direction::right>,this), "shift_to_selects_on_right2");
-}
-
-void AppWorker::shift_to_iframes_above() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_iframes_above1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::iframe, Direction::up>,this), "shift_to_iframes_above2");
-}
-void AppWorker::shift_to_iframes_below() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_iframes_below1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::iframe, Direction::down>,this), "shift_to_iframes_below2");
-}
-void AppWorker::shift_to_iframes_on_left() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_iframes_on_left1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::iframe, Direction::left>,this), "shift_to_iframes_on_left2");
-}
-void AppWorker::shift_to_iframes_on_right() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shift_to_iframes_on_right1");
-  queue_task((AppTask)std::bind(&AppWorker::shift_set_task<WrapType::iframe, Direction::right>,this), "shift_to_iframes_on_right2");
-}
-
-// -----------------------------------------------------------------
-// Expand sets
-// -----------------------------------------------------------------
-
-void AppWorker::expand_above() {
-  check_busy()
-  QVariantMap match_criteria;
-  match_criteria[Message::kMatchLeft] = true;
-  match_criteria[Message::kMatchRight] = false;
-  match_criteria[Message::kMatchTop] = false;
-  match_criteria[Message::kMatchBottom] = false;
-  match_criteria[Message::kMatchFont] = true;
-  match_criteria[Message::kMatchFontSize] = true;
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "expand_above1");
-  queue_task((AppTask)std::bind(&AppWorker::expand_task,this, Direction::up, match_criteria), "expand_above2");
-}
-
-void AppWorker::expand_below() {
-  check_busy()
-  QVariantMap match_criteria;
-  match_criteria[Message::kMatchLeft] = true;
-  match_criteria[Message::kMatchRight] = false;
-  match_criteria[Message::kMatchTop] = false;
-  match_criteria[Message::kMatchBottom] = false;
-  match_criteria[Message::kMatchFont] = true;
-  match_criteria[Message::kMatchFontSize] = true;
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "expand_below1");
-  queue_task((AppTask)std::bind(&AppWorker::expand_task,this, Direction::down, match_criteria), "expand_below2");
-}
-
-void AppWorker::expand_left() {
-  check_busy()
-  QVariantMap match_criteria;
-  match_criteria[Message::kMatchLeft] = false;
-  match_criteria[Message::kMatchRight] = false;
-  match_criteria[Message::kMatchTop] = true;
-  match_criteria[Message::kMatchBottom] = false;
-  match_criteria[Message::kMatchFont] = true;
-  match_criteria[Message::kMatchFontSize] = true;
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "expand_left1");
-  queue_task((AppTask)std::bind(&AppWorker::expand_task,this, Direction::left, match_criteria), "expand_left2");
-}
-
-void AppWorker::expand_right() {
-  check_busy()
-  QVariantMap match_criteria;
-  match_criteria[Message::kMatchLeft] = false;
-  match_criteria[Message::kMatchRight] = false;
-  match_criteria[Message::kMatchTop] = true;
-  match_criteria[Message::kMatchBottom] = false;
-  match_criteria[Message::kMatchFont] = true;
-  match_criteria[Message::kMatchFontSize] = true;
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "expand_right1");
-  queue_task((AppTask)std::bind(&AppWorker::expand_task,this, Direction::right, match_criteria), "expand_right2");
-}
-
-// -----------------------------------------------------------------
-// Mark sets
-// -----------------------------------------------------------------
-
-void AppWorker::mark_set() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "mark_set1");
-  queue_task((AppTask)std::bind(&AppWorker::mark_set_task,this), "mark_set2");
-}
-
-void AppWorker::unmark_set() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "unmark_set1");
-  queue_task((AppTask)std::bind(&AppWorker::unmark_set_task,this), "unmark_set2");
-}
-
-void AppWorker::merge_sets() {
-  check_busy()
-  Message req(RequestType::kMergeMarkedSets);
-  queue_task((AppTask)std::bind(&AppWorker::send_msg_task, this, req), "merge_sets");
-}
-
-// -----------------------------------------------------------------
-// Shrink to one side.
-// -----------------------------------------------------------------
-
-void AppWorker::shrink_set_to_topmost() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_set_to_topmost1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_set_to_side_task,this,Direction::up), "shrink_set_to_topmost2");
-}
-void AppWorker::shrink_set_to_bottommost() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_set_to_bottommost1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_set_to_side_task,this,Direction::down), "shrink_set_to_bottommost2");
-}
-void AppWorker::shrink_set_to_leftmost() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_set_to_leftmost1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_set_to_side_task,this,Direction::left), "shrink_set_to_leftmost2");
-}
-void AppWorker::shrink_set_to_rightmost() {
-  check_busy()
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_set_to_rightmost1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_set_to_side_task,this,Direction::right), "shrink_set_to_rightmost2");
-}
-
-void AppWorker::shrink_above_of_marked() {
-  check_busy()
-  QVariantList dirs;
-  dirs.append(Direction::up);
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_above_of_marked1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_against_marked_task,this,dirs), "shrink_above_of_marked2");
-}
-void AppWorker::shrink_below_of_marked() {
-  check_busy()
-  QVariantList dirs;
-  dirs.append(Direction::down);
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_below_of_marked1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_against_marked_task,this,dirs), "shrink_below_of_marked2");
-}
-void AppWorker::shrink_above_and_below_of_marked() {
-  check_busy()
-  QVariantList dirs;
-  dirs.append(Direction::up);
-  dirs.append(Direction::down);
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_above_and_below_of_marked1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_against_marked_task,this,dirs), "shrink_above_and_below_of_marked2");
-}
-void AppWorker::shrink_left_of_marked() {
-  check_busy()
-  QVariantList dirs;
-  dirs.append(Direction::left);
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_left_of_marked1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_against_marked_task,this,dirs), "shrink_left_of_marked2");
-}
-void AppWorker::shrink_right_of_marked() {
-  check_busy()
-  QVariantList dirs;
-  dirs.append(Direction::right);
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_right_of_marked1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_against_marked_task,this,dirs), "shrink_right_of_marked2");
-}
-void AppWorker::shrink_left_and_right_of_marked() {
-  check_busy()
-  QVariantList dirs;
-  dirs.append(Direction::left);
-  dirs.append(Direction::right);
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "shrink_left_and_right_of_marked1");
-  queue_task((AppTask)std::bind(&AppWorker::shrink_against_marked_task,this,dirs), "shrink_left_and_right_of_marked2");
-}
-
-// -----------------------------------------------------------------
-// Block/Unblock events in the browser content scripts.
-// -----------------------------------------------------------------
-
-
-
-// -----------------------------------------------------------------
-// Perform Web Actions.
-// -----------------------------------------------------------------
-
-void AppWorker::build_compute_node_task(size_t compute_did) {
+void AppWorker::build_compute_node_task(ComponentDID compute_did) {
   Entity* group = _canvas->get_current_group();
 
   // Create the node.
-  Entity* node = _canvas->get_factory()->instance_entity(group, "click", kComputeNodeEntity);
+  Entity* node = _canvas->get_factory()->instance_entity(group, "click", EntityDID::kComputeNodeEntity);
   node->create_internals();
 
   // Add the compute to the node.
@@ -762,317 +1252,29 @@ void AppWorker::build_compute_node_task(size_t compute_did) {
   run_next_task();
 }
 
-// ---------------------------------------------------------------------------------
-// Queued Tasks.
-// ---------------------------------------------------------------------------------
 
-void AppWorker::queue_get_xpath() {
-  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "queue_get_xpath");
-}
+// ------------------------------------------------------------------------
+// Cookie Tasks.
+// ------------------------------------------------------------------------
 
-void AppWorker::queue_get_crosshair_info() {
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "queue_get_crosshair_info");
-}
-
-void AppWorker::queue_merge_chain_state(const QVariantMap& map) {
-  queue_task((AppTask)std::bind(&AppWorker::merge_chain_state_task,this, map), "queue_merge_chain_state");
-}
-
-void AppWorker::queue_build_compute_node(size_t compute_did) {
-  std::stringstream ss;
-  ss << "queue build compute node with did: " << compute_did;
-  queue_task((AppTask)std::bind(&AppWorker::build_compute_node_task,this, compute_did), ss.str());
-}
-
-void AppWorker::queue_finished(std::function<void(const QVariantMap&)> finalize_update) {
-  queue_task((AppTask)std::bind(&AppWorker::finished_task,this,finalize_update), "queue_finished");
-}
-
-// ---------------------------------------------------------------------------------
-// Queue Cookie Tasks.
-// ---------------------------------------------------------------------------------
-
-void AppWorker::queue_get_all_cookies() {
-  queue_task((AppTask)std::bind(&AppWorker::get_all_cookies_task, this), "queue_get_all_cookies");
-}
-
-void AppWorker::queue_clear_all_cookies() {
-  queue_task((AppTask)std::bind(&AppWorker::clear_all_cookies_task, this), "queue_clear_all_cookies");
-}
-
-void AppWorker::queue_set_all_cookies() {
-  queue_task((AppTask)std::bind(&AppWorker::set_all_cookies_task, this), "queue_set_all_cookies");
-}
-
-// ---------------------------------------------------------------------------------
-// Queue Browser Tasks.
-// ---------------------------------------------------------------------------------
-
-void AppWorker::queue_open_browser() {
-  queue_task((AppTask)std::bind(&AppWorker::open_browser_task,this), "queue_open_browser");
-}
-
-void AppWorker::queue_close_browser() {
-  queue_task((AppTask)std::bind(&AppWorker::close_browser_task,this), "queue_close_browser");
-}
-
-void AppWorker::queue_check_browser_is_open() {
-  queue_task((AppTask)std::bind(&AppWorker::check_browser_is_open_task,this), "queue_check_browser_is_open");
-}
-
-void AppWorker::queue_check_browser_size() {
-  queue_task((AppTask)std::bind(&AppWorker::check_browser_size_task,this), "queue_check_browser_size");
-}
-
-void AppWorker::queue_reset() {
-  queue_task((AppTask)std::bind(&AppWorker::reset_task, this), "reset");
-}
-
-// ---------------------------------------------------------------------------------
-// Queue Page Content Tasks.
-// ---------------------------------------------------------------------------------
-
-void AppWorker::queue_block_events() {
-  queue_task((AppTask)std::bind(&AppWorker::block_events_task, this), "reset");
-}
-
-void AppWorker::queue_unblock_events() {
-  queue_task((AppTask)std::bind(&AppWorker::unblock_events_task, this), "reset");
-}
-
-// ---------------------------------------------------------------------------------
-// Queue Navigate Tasks.
-// ---------------------------------------------------------------------------------
-
-void AppWorker::queue_navigate_to() {
-  queue_task((AppTask)std::bind(&AppWorker::navigate_to_task,this), "queue_navigate_to");
-}
-
-void AppWorker::queue_navigate_refresh() {
-  queue_task((AppTask)std::bind(&AppWorker::navigate_refresh_task,this), "queue_navigate_refresh");
-}
-
-void AppWorker::queue_swith_to_iframe() {
-  queue_task((AppTask)std::bind(&AppWorker::switch_to_iframe_task,this), "queue_swith_to_iframe");
-}
-
-// ---------------------------------------------------------------------------------
-// Queue Set Tasks.
-// ---------------------------------------------------------------------------------
-
-void AppWorker::queue_update_overlays() {
-  queue_task((AppTask)std::bind(&AppWorker::update_overlays_task, this), "queue_update_overlays");
-}
-
-void AppWorker::queue_create_set_by_matching_values() {
-  queue_task((AppTask)std::bind(&AppWorker::create_set_by_matching_values_task,this), "queue_create_set_by_matching_values");
-}
-
-void AppWorker::queue_create_set_by_matching_type() {
-  queue_task((AppTask)std::bind(&AppWorker::create_set_by_matching_type_task,this), "queue_create_set_by_matching_type");
-}
-
-void AppWorker::queue_delete_set() {
-  queue_task((AppTask)std::bind(&AppWorker::delete_set_task,this), "queue_delete_set");
-}
-
-void AppWorker::queue_click() {
-  queue_get_xpath();
-  queue_unblock_events();
-  queue_perform_action(ActionType::kSendClick);
-  queue_block_events();
-}
-
-void AppWorker::queue_mouse_over() {
-  queue_get_xpath();
-  queue_unblock_events();
-  queue_perform_action(ActionType::kMouseOver);
-  queue_block_events();
-}
-
-void AppWorker::queue_start_mouse_hover() {
-  queue_get_xpath();
-  queue_unblock_events();
-  queue_perform_action(ActionType::kStartMouseHover);
-  queue_block_events();
-}
-
-void AppWorker::queue_stop_mouse_hover() {
-  queue_get_xpath();
-  queue_unblock_events();
-  queue_perform_action(ActionType::kStopMouseHover);
-  queue_block_events();
-}
-
-void AppWorker::queue_perform_action(ActionType action) {
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this, action), "queue_perform_action_task");
-}
-
-void AppWorker::record_click() {
-  check_busy();
-  queue_get_crosshair_info();
-  queue_build_compute_node(kClickActionCompute);
-}
-
-void AppWorker::record_mouse_over() {
-  check_busy();
-  queue_get_crosshair_info();
-  queue_build_compute_node(kMouseOverActionCompute);
-}
-void AppWorker::start_mouse_hover() {
-  check_busy();
-  queue_get_crosshair_info();
-  queue_build_compute_node(kStartMouseHoverCompute);
-}
-void AppWorker::stop_mouse_hover() {
-  check_busy();
-  _hovering = false;
-}
-void AppWorker::type_text(const QString& text) {
-  check_busy();
-  QVariantMap extra_args;
-  extra_args[Message::kText] = text;
-
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "type_text1");
-  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "type_text2");
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kSendText,extra_args), "type_text3");
-  block_events_task();
-}
-void AppWorker::type_enter() {
+void AppWorker::get_all_cookies_task() {
   check_busy()
-  QVariantMap extra_args;
-
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "type_enter1");
-  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "type_enter2");
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kSendEnter,extra_args), "type_enter3");
-  block_events_task();
-}
-void AppWorker::extract_text() {
-  check_busy()
-  QVariantMap extra_args;
-
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "extract_text1");
-  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "extract_text2");
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kGetText,extra_args), "extract_text3");
-  block_events_task();
-}
-void AppWorker::get_option_texts() {
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "get_option_texts1");
-  queue_task((AppTask)std::bind(&AppWorker::emit_option_texts_task,this), "get_option_texts2");
-}
-void AppWorker::select_from_dropdown(const QString& option_text) {
-  check_busy()
-  QVariantMap extra_args;
-  extra_args[Message::kOptionText] = option_text;
-
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "select_from_dropdown1");
-  queue_task((AppTask)std::bind(&AppWorker::get_xpath_task,this), "select_from_drpdown2");
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kSelectOption,extra_args), "select_from_dropdown3");
-  block_events_task();
-}
-
-void AppWorker::scroll_down() {
-  check_busy()
-  QVariantMap extra_args;
-
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "scroll_down1");
-  // no need for xpath
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kScrollDown,extra_args), "scroll_down2");
-  block_events_task();
-}
-void AppWorker::scroll_up() {
-  check_busy()
-  QVariantMap extra_args;
-
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "scroll_up1");
-  // no need for xpath
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kScrollUp,extra_args), "scroll_up2");
-  block_events_task();
-}
-void AppWorker::scroll_right() {
-  check_busy()
-  QVariantMap extra_args;
-
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "scroll_right1");
-  // no need for xpath
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kScrollRight,extra_args), "scroll_right2");
-  block_events_task();
-}
-void AppWorker::scroll_left() {
-  check_busy()
-  QVariantMap extra_args;
-
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "scroll_left1");
-  // no need for xpath
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this,ActionType::kScrollLeft,extra_args), "scroll_left2");
-  block_events_task();
-}
-
-
-// -----------------------------------------------------------------
-// Tasks. Our members which get bound into tasks.
-// -----------------------------------------------------------------
-
-void AppWorker::merge_chain_state_task(const QVariantMap& map) {
-  // Merge the values into the chain_state.
-  for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
-    _chain_state.insert(iter.key(), iter.value());
-  }
-  run_next_task();
-}
-
-void AppWorker::finished_task(std::function<void(const QVariantMap&)> finalize_update) {
-  finalize_update(_chain_state["outputs"].toMap());
-  // If the compute is still dirty, it's because one of the dependencies has an
-  // asynchronous update_state() method. In this case just run the cleaning processing again.
-  if (_compute) {
-    if (!_compute->is_state_dirty()) {
-      //
-    } else {
-      _compute->clean_state();
-    }
-  }
-  run_next_task();
-}
-
-void AppWorker::send_msg_task(Message msg) {
-  // Tag the request with an id. We expect a response with the same id.
-  msg[Message::kID] = _next_msg_id;
-
-  std::cerr << "app --> comhub: " << msg.to_string().toStdString() << "\n";
-
-  // Increment the counter. Note we're ok with this overflowing and looping around.
-  _next_msg_id += 1;
-
-  // Send the request to nodejs.
-  _waiting_for_results = true;
-  size_t num_bytes = _app_comm->get_web_socket()->sendTextMessage(msg.to_string());
-  assert(num_bytes);
-}
-
-void AppWorker::get_crosshair_info_task() {
-  QVariantMap args;
-  args[Message::kClickPos] = _click_pos;
-  Message req(RequestType::kGetCrosshairInfo,args);
+  Message req(RequestType::kGetAllCookies);
   send_msg_task(req);
 }
 
-// Should be run after a response message like get_crosshair_info_task that has set_index and overlay_index.
-void AppWorker::get_xpath_task() {
-  QVariantMap args;
-  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
-  args[Message::kOverlayIndex] = _chain_state[Message::kOverlayIndex];
-  Message req(RequestType::kGetXPath,args);
+void AppWorker::clear_all_cookies_task() {
+  check_busy()
+  Message req(RequestType::kClearAllCookies);
   send_msg_task(req);
 }
+
+void AppWorker::set_all_cookies_task() {
+  check_busy()
+  Message req(RequestType::kSetAllCookies);
+  send_msg_task(req);
+}
+
 
 // ------------------------------------------------------------------------
 // Browser Tasks.
@@ -1201,51 +1403,30 @@ void AppWorker::create_set_by_matching_type_task() {
 }
 
 void AppWorker::delete_set_task() {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  if (set_index<0) {
-    run_next_task();
-    return;
-  }
-
   QVariantMap args;
-  args[Message::kSetIndex] = set_index;
+  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
 
   Message req(RequestType::kDeleteSet);
   req[Message::kArgs] = args;
-
   send_msg_task(req);
 }
 
-template <WrapType WRAP_TYPE, Direction DIR>
 void AppWorker::shift_set_task() {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  if (set_index < 0) {
-    run_next_task();
-    return;
-  }
-
   QVariantMap args;
-  args[Message::kSetIndex] = set_index;
-  args[Message::kDirection] = DIR;
-  args[Message::kWrapType] = WRAP_TYPE;
+  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
+  args[Message::kDirection] = _chain_state[Message::kDirection];
+  args[Message::kWrapType] = _chain_state[Message::kWrapType];
 
   Message req(RequestType::kShiftSet);
   req[Message::kArgs] = args;
-
   send_msg_task(req);
 }
 
-void AppWorker::expand_task(Direction dir, const QVariantMap& match_criteria) {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  if (set_index < 0) {
-    run_next_task();
-    return;
-  }
-
+void AppWorker::expand_set_task() {
   QVariantMap args;
-  args[Message::kSetIndex] = set_index;
-  args[Message::kDirection] = dir;
-  args[Message::kMatchCriteria] = match_criteria;
+  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
+  args[Message::kDirection] = _chain_state[Message::kDirection];
+  args[Message::kMatchCriteria] = _chain_state[Message::kMatchCriteria];
 
   Message req(RequestType::kExpandSet);
   req[Message::kArgs] = args;
@@ -1253,14 +1434,8 @@ void AppWorker::expand_task(Direction dir, const QVariantMap& match_criteria) {
 }
 
 void AppWorker::mark_set_task() {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  if (set_index < 0) {
-    run_next_task();
-    return;
-  }
-
   QVariantMap args;
-  args[Message::kSetIndex] = set_index;
+  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
 
   Message req(RequestType::kMarkSet);
   req[Message::kArgs] = args;
@@ -1268,90 +1443,99 @@ void AppWorker::mark_set_task() {
 }
 
 void AppWorker::unmark_set_task() {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  if (set_index < 0) {
-    run_next_task();
-    return;
-  }
-
   QVariantMap args;
-  args[Message::kSetIndex] = set_index;
+  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
 
   Message req(RequestType::kUnmarkSet);
   req[Message::kArgs] = args;
   send_msg_task(req);
 }
 
-void AppWorker::shrink_set_to_side_task(Direction dir) {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  if (set_index < 0) {
-    run_next_task();
-    return;
-  }
+void AppWorker::merge_sets_task() {
+  Message req(RequestType::kMergeMarkedSets);
+  send_msg_task(req);
+}
 
+void AppWorker::shrink_set_to_side_task() {
   QVariantMap args;
-  args[Message::kSetIndex] = set_index;
-  args[Message::kDirection] = dir;
+  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
+  args[Message::kDirection] = _chain_state[Message::kDirection];
 
   Message req(RequestType::kShrinkSet);
   req[Message::kArgs] = args;
   send_msg_task(req);
 }
 
-void AppWorker::shrink_against_marked_task(QVariantList dirs) {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  if (set_index < 0) {
-    run_next_task();
-    return;
-  }
-
+void AppWorker::shrink_against_marked_task() {
   QVariantMap args;
-  args[Message::kSetIndex] = set_index;
-  args[Message::kDirections] = dirs;
+  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
+  args[Message::kDirections] = _chain_state[Message::kDirections];
 
   Message req(RequestType::kShrinkSetToMarked);
   req[Message::kArgs] = args;
   send_msg_task(req);
 }
 
-void AppWorker::perform_action_task(ActionType action) {
-  int set_index = _chain_state[Message::kSetIndex].toInt();
-  if (set_index < 0) {
-    run_next_task();
-    return;
-  }
-
-  int overlay_index = _chain_state[Message::kOverlayIndex].toInt();
-  QString xpath = _chain_state[Message::kXPath].toString();
-
+void AppWorker::perform_mouse_action_task() {
   QVariantMap args;
-  args[Message::kSetIndex] = set_index;
-  args[Message::kOverlayIndex] = overlay_index;
-  args[Message::kXPath] = xpath;
-  args[Message::kAction] = action;
-
-  // Get other settings from the last response.
-  if (action == kSendClick || action == kMouseOver) {
-    args[Message::kOverlayRelClickPos] = _chain_state[Message::kOverlayRelClickPos];
-  }
+  args[Message::kMouseAction] = _chain_state[Message::kMouseAction];
+  args[Message::kXPath] = _chain_state[Message::kXPath];
+  args[Message::kOverlayRelClickPos] = _chain_state[Message::kOverlayRelClickPos];
 
   Message req(RequestType::kPerformAction);
   req[Message::kArgs] = args;
   send_msg_task(req);
 }
 
-void AppWorker::start_hover_task() {
-  std::cerr << "start hover task running\n";
-  _hover_args = _chain_state;
+void AppWorker::perform_hover_action_task() {
+  QVariantMap args;
+  args[Message::kMouseAction] = MouseActionType::kMouseOver;
+  args[Message::kXPath] = _hover_state[Message::kXPath];
+  args[Message::kOverlayRelClickPos] = _hover_state[Message::kOverlayRelClickPos];
+
+  Message req(RequestType::kPerformAction);
+  req[Message::kArgs] = args;
+  send_msg_task(req);
+}
+
+void AppWorker::perform_text_action_task() {
+  QVariantMap args;
+  args[Message::kTextAction] = _chain_state[Message::kTextAction];
+  args[Message::kXPath] = _chain_state[Message::kXPath];
+  args[Message::kText] = _chain_state[Message::kText];
+
+  Message req(RequestType::kPerformAction);
+  req[Message::kArgs] = args;
+  send_msg_task(req);
+}
+
+void AppWorker::perform_element_action_task() {
+  QVariantMap args;
+  args[Message::kElementAction] = _chain_state[Message::kElementAction];
+  args[Message::kXPath] = _chain_state[Message::kXPath];
+  args[Message::kOptionText] = _chain_state[Message::kOptionText]; // Used for selecting element from dropdowns.
+  args[Message::kDirection] = _chain_state[Message::kDirection]; // Used for the scrolling directions.
+
+  Message req(RequestType::kPerformAction);
+  req[Message::kArgs] = args;
+  send_msg_task(req);
+}
+
+void AppWorker::start_mouse_hover_task() {
+  _hover_state = _chain_state;
   _hovering = true;
-  std::cerr << "running next task\n";
   run_next_task();
 }
 
-void AppWorker::hover_task() {
+void AppWorker::stop_mouse_hover_task() {
+  _hovering = false;
+  run_next_task();
+}
+
+void AppWorker::mouse_hover_task() {
   // Jitter the hover position back and forth by one.
-  int x = _hover_args[Message::kOverlayRelClickPos].toMap()["x"].toInt();
-  int y = _hover_args[Message::kOverlayRelClickPos].toMap()["y"].toInt();
+  int x = _hover_state[Message::kOverlayRelClickPos].toMap()["x"].toInt();
+  int y = _hover_state[Message::kOverlayRelClickPos].toMap()["y"].toInt();
   x += _jitter;
   y += _jitter;
   _jitter *= -1;
@@ -1360,13 +1544,13 @@ void AppWorker::hover_task() {
   QVariantMap pos;
   pos["x"] = x;
   pos["y"] = y;
-  _hover_args[Message::kOverlayRelClickPos] = pos;
+  _hover_state[Message::kOverlayRelClickPos] = pos;
 
   // Queue the tasks.
-  unblock_events();
-  queue_task((AppTask)std::bind(&AppWorker::perform_action_task,this, ActionType::kMouseOver, _hover_args), "hover_task");
-  queue_task((AppTask)std::bind(&AppWorker::post_hover_task, this), "post_hover_task");
-  block_events_task();
+  queue_unblock_events();
+  queue_perform_mouse_hover();
+  queue_perform_post_mouse_hover();
+  queue_block_events();
 }
 
 void AppWorker::post_hover_task() {

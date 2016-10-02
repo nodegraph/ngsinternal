@@ -109,6 +109,20 @@ void SimpleLoader::rewind_raw(size_t num_bytes) {
 // Primitive Load Specializations.
 // -------------------------------------------------------------------
 
+template<> UTILS_EXPORT
+void SimpleLoader::load<EntityDID>(EntityDID& data) {
+  size_t num;
+  load(num);
+  data = static_cast<EntityDID>(num);
+}
+
+template<> UTILS_EXPORT
+void SimpleLoader::load<ComponentDID>(ComponentDID& data) {
+  size_t num;
+  load(num);
+  data = static_cast<ComponentDID>(num);
+}
+
 // Longs are always stored as 64 bit long longs by the SimpleSaver.
 // On windows they are 4 bytes. On linux they are 8 bytes.
 // So we cast to long after reading in the data.

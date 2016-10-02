@@ -30,6 +30,7 @@ target_link_libraries(
     ngs_memoryallocator
     # guicomponents
     ngs_comms
+    ngs_gui
     ngs_quick
     ngs_guicomputes
     )

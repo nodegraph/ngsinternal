@@ -139,7 +139,7 @@ const glm::vec2& InputShape::get_origin() const {
 // The link shape has a dependency on us. This is why we return the entity of the link shape.
 Entity* InputShape::find_link_entity() const {
   external();
-  std::unordered_set<Entity*> dependants = get_dependants_by_did(kICompShape, kLinkShape);
+  std::unordered_set<Entity*> dependants = get_dependants_by_did(ComponentIID::kICompShape, ComponentDID::kLinkShape);
   assert(dependants.size() <= 1);
   if (dependants.size()>0) {
     return *dependants.begin();

@@ -37,7 +37,7 @@ InputLabelShape::~InputLabelShape() {
 void InputLabelShape::update_wires() {
   internal();
 
-  std::unordered_set<Entity*> dependants = _input_shape->get_dependants_by_did(kICompShape, kLinkShape);
+  std::unordered_set<Entity*> dependants = _input_shape->get_dependants_by_did(ComponentIID::kICompShape, ComponentDID::kLinkShape);
   //assert(dependants.size() <= 1);
 
   // Note there should only be one link, but when dragging the head of the link onto

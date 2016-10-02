@@ -6,6 +6,8 @@
 #include <base/objectmodel/depset.h>
 #include <base/utils/path.h>
 
+#include <entities/componentids.h>
+
 #include <unordered_set>
 #include <unordered_map>
 
@@ -59,8 +61,8 @@ class OBJECTMODEL_EXPORT Component {
 
   typedef std::unordered_set<Component*> Components;
   typedef std::unordered_map<Component*, std::weak_ptr<DepLink> > DepLinks;
-  typedef std::unordered_map<size_t, DepLinks> IIDToDepLinks;
-  typedef std::unordered_map<size_t, Components> IIDToComponents;
+  typedef std::unordered_map<ComponentIID, DepLinks> IIDToDepLinks;
+  typedef std::unordered_map<ComponentIID, Components> IIDToComponents;
 
 
 //  template <class T>
@@ -90,7 +92,7 @@ class OBJECTMODEL_EXPORT Component {
   // this is called in the initializer list of derived components and so the virtual
   // method will not fully resolve to the dervied components get_iid() method.
   // This is why the interface_id is also an argument here.
-  Component(Entity* entity, size_t interface_id, size_t derived_id);
+  Component(Entity* entity, ComponentIID interface_id, ComponentDID derived_id);
   virtual ~Component();
 
 #ifdef MULTITHREAD_COMPONENTS
@@ -114,8 +116,8 @@ class OBJECTMODEL_EXPORT Component {
   const std::string& get_name() const;
 
   // Our ids.
-  virtual size_t get_iid() const;
-  virtual size_t get_did() const;
+  virtual ComponentIID get_iid() const;
+  virtual ComponentDID get_did() const;
 
   // Wires. Propagates clean wires through dependency traversal.
   // Note: This is differnt from Entity::clean_wires as it traverses
@@ -169,7 +171,7 @@ class OBJECTMODEL_EXPORT Component {
     return get_dependants_by_iid(T::kIID());
   }
 
-  std::unordered_set<Entity*> get_dependants_by_iid(size_t iid) const {
+  std::unordered_set<Entity*> get_dependants_by_iid(ComponentIID iid) const {
     const Components& coms = _dependants[iid];
     std::unordered_set<Entity*> values;
     for (Component* c: coms) {
@@ -178,7 +180,7 @@ class OBJECTMODEL_EXPORT Component {
     return values;
   }
 
-  std::unordered_set<Entity*> get_dependants_by_did(size_t iid, size_t did) const {
+  std::unordered_set<Entity*> get_dependants_by_did(ComponentIID iid, ComponentDID did) const {
     const Components& coms = _dependants[iid];
     std::unordered_set<Entity*> values;
     for (Component* c: coms) {
@@ -211,8 +213,8 @@ class OBJECTMODEL_EXPORT Component {
     return Dep<T>(get_dep(path, T::kIID()));
   }
 
-  DepLinkPtr get_dep(Entity* e, size_t iid);
-  DepLinkPtr get_dep(const Path& path, size_t iid);
+  DepLinkPtr get_dep(Entity* e, ComponentIID iid);
+  DepLinkPtr get_dep(const Path& path, ComponentIID iid);
 
   bool dep_creates_cycle(const DepLinkHolder& dep) const{
     return dep_creates_cycle(dep.get_component());
@@ -295,14 +297,14 @@ class OBJECTMODEL_EXPORT Component {
   // Registration of Dependencies.
   DepLinkPtr register_dependency(Component* c);
   void unregister_dependency(Component* c);
-  void remove_dep_link(Component* c, size_t iid);
+  void remove_dep_link(Component* c, ComponentIID iid);
 
   // Our parent entity.
   Entity* _entity; // borrowed reference.
 
   // ID numbers.
-  size_t _iid; // The id for the interface we implement.
-  size_t _did; // The id which represents us as a derived/implement type.
+  ComponentIID _iid; // The id for the interface we implement.
+  ComponentDID _did; // The id which represents us as a derived/implement type.
 
   // Our dirty state.
   bool _dirty;

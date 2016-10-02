@@ -19,7 +19,7 @@ const std::array<unsigned char,4> NodeShape::processing_bg_color = { 255, 255, 2
 const std::array<unsigned char,4> NodeShape::processing_fg_color = { 239, 108, 0, 255};
 
 
-NodeShape::NodeShape(Entity* entity, size_t did)
+NodeShape::NodeShape(Entity* entity, ComponentDID did)
     : SelectableShape(entity, did),
       _resources(this),
       _shared_state(0),

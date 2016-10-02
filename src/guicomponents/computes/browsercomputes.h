@@ -13,7 +13,7 @@ class AppWorker;
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  public:
   COMPONENT_ID(Compute, InvalidComponent);
-  BrowserCompute(Entity* entity, size_t did);
+  BrowserCompute(Entity* entity, ComponentDID did);
   virtual ~BrowserCompute();
 
   virtual void create_inputs_outputs();
@@ -115,19 +115,28 @@ class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public BrowserCompute {
   virtual void update_state();
 };
 
-class GUICOMPUTES_EXPORT ClickActionCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT DeleteSetCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, ClickActionCompute);
-  ClickActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, DeleteSetCompute);
+  DeleteSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
   virtual void update_state();
 };
 
-class GUICOMPUTES_EXPORT MouseOverActionCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT ShiftSetCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, MouseOverActionCompute);
-  MouseOverActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, ShiftSetCompute);
+  ShiftSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
+ protected:
+  virtual void update_state();
+};
+
+class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, MouseActionCompute);
+  MouseActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
   virtual void update_state();
@@ -146,6 +155,76 @@ class GUICOMPUTES_EXPORT StopMouseHoverActionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, StopMouseHoverActionCompute);
   StopMouseHoverActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+ protected:
+  virtual void update_state();
+};
+
+class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, TextActionCompute);
+  TextActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
+ protected:
+  virtual void update_state();
+};
+
+class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ElementActionCompute);
+  ElementActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
+ protected:
+  virtual void update_state();
+};
+
+class GUICOMPUTES_EXPORT ExpandSetCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ExpandSetCompute);
+  ExpandSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
+ protected:
+  virtual void update_state();
+};
+
+class GUICOMPUTES_EXPORT MarkSetCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, MarkSetCompute);
+  MarkSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
+ protected:
+  virtual void update_state();
+};
+
+class GUICOMPUTES_EXPORT UnmarkSetCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, UnmarkSetCompute);
+  UnmarkSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
+ protected:
+  virtual void update_state();
+};
+
+class GUICOMPUTES_EXPORT MergeSetsCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, MergeSetsCompute);
+  MergeSetsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+ protected:
+  virtual void update_state();
+};
+
+class GUICOMPUTES_EXPORT ShrinkSetToSideCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ShrinkSetToSideCompute);
+  ShrinkSetToSideCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
+ protected:
+  virtual void update_state();
+};
+
+class GUICOMPUTES_EXPORT ShrinkAgainstMarkedCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ShrinkAgainstMarkedCompute);
+  ShrinkAgainstMarkedCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
   virtual void update_state();

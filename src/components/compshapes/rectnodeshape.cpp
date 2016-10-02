@@ -39,7 +39,7 @@ RectNodeShape::RectNodeShape(Entity* entity)
   _node_quad_fg.state = 0;
 }
 
-RectNodeShape::RectNodeShape(Entity* entity, size_t did)
+RectNodeShape::RectNodeShape(Entity* entity, ComponentDID did)
     : NodeShape(entity, did),
       _color(node_bg_color) {
   _node_quad_bg.state = 0;

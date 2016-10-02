@@ -3,7 +3,7 @@
 
 namespace ngs {
 
-CompShape::CompShape(Entity* entity, size_t did)
+CompShape::CompShape(Entity* entity, ComponentDID did)
     : Component(entity, kIID(), did),
       _pannable(false){
 }

@@ -36,10 +36,29 @@
 #include <entities/factory.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
+#include <guicomponents/quick/fborenderer.h>
+#include <guicomponents/quick/fboworker.h>
+#include <guicomponents/quick/nodegraphquickitem.h>
+#include <guicomponents/quick/nodegraphrenderer.h>
+#include <guicomponents/quick/nodegraphview.h>
+#include <guicomponents/comms/appcomm.h>
+#include <guicomponents/comms/appworker.h>
+#include <guicomponents/comms/licensechecker.h>
+#include <gui/widget/nodegrapheditor.h>
+
+
 #include <iostream>
 #include <cassert>
 
 namespace ngs {
+
+// An invalid component which should never be created.
+class InvalidComponent: public Component {
+ public:
+  InvalidComponent(Entity* entity):Component(entity, kIID(), kDID()) {}
+  COMPONENT_ID(InvalidComponent, InvalidComponent);
+};
+
 
 #define COMPONENT_CASES(case_statement)\
     /* Factories. */\
@@ -79,37 +98,43 @@ namespace ngs {
     case_statement(Resources)\
     case_statement(ShapeCanvas)\
     /* Invalid and Components which must be manually created. */\
-    case kInvalidComponent:\
-    case kTestComponent:\
-    case kNodeGraphEditor:\
-    case kNodeGraphQuickItem:\
-    case kFBORenderer:\
-    case kFBOWorker:\
-    case kNumComponentImplementationIDs:\
+    case ComponentDID::kInvalidComponent:\
+    case ComponentDID::kTestComponent:\
+    case ComponentDID::kNodeGraphEditor:\
+    case ComponentDID::kNodeGraphQuickItem:\
+    case ComponentDID::kFBORenderer:\
+    case ComponentDID::kFBOWorker:\
       break;
 
-#define INST_CASE(C) case k##C: return new_ff C(entity);
+#define INST_CASE(C) case ComponentDID::k##C: return new_ff C(entity);
 
-Component* ComponentInstancer::instance(Entity* entity, size_t did) const{
-  ComponentDID d = static_cast<ComponentDID>(did);
-  switch (d) {
-    COMPONENT_CASES(INST_CASE)
+Component* ComponentInstancer::instance(Entity* entity, ComponentDID did) const{
+  // Define our component type traits.
+  #undef COMPONENT_ENTRY1
+  #undef COMPONENT_ENTRY2
+  #define COMPONENT_ENTRY1(NAME) case ComponentDID::k##NAME: return new_ff NAME(entity);
+  #define COMPONENT_ENTRY2(NAME, VALUE) COMPONENT_ENTRY1(NAME)
+  switch (did) {
+    COMPONENT_ENTRIES()
   }
-  std::cerr << "Error: ComponentInstancer is unable to create entity with derived id: " << did << "\n";
+  std::cerr << "Error: ComponentInstancer is unable to create entity with derived id: " << (int)did << "\n";
   assert(false);
   return NULL;
 }
 
-#define IID_CASE(C) case k##C: return C::kIID();
+#define IID_CASE(C) case ComponentDID::k##C: return C::kIID();
 
-size_t ComponentInstancer::get_iid_for_did(size_t did) const {
-  ComponentDID d = static_cast<ComponentDID>(did);
-  switch(d) {
-    COMPONENT_CASES(IID_CASE)
+ComponentIID ComponentInstancer::get_iid_for_did(ComponentDID did) const {
+  #undef COMPONENT_ENTRY1
+  #undef COMPONENT_ENTRY2
+  #define COMPONENT_ENTRY1(NAME) case ComponentDID::k##NAME: return NAME::kIID();
+  #define COMPONENT_ENTRY2(NAME, VALUE) COMPONENT_ENTRY1(NAME)
+  switch(did) {
+    COMPONENT_ENTRIES()
   }
-  std::cerr << "Error: ComponentInstancer is not supposed to see this derived id in a file: " << did << "\n";
+  std::cerr << "Error: ComponentInstancer is not supposed to see this derived id in a file: " << (int)did << "\n";
   assert(false);
-  return size_t(-1);
+  return ComponentIID::kIInvalidComponent;
 }
 
 }

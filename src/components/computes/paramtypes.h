@@ -7,6 +7,7 @@ enum ParamType {
   kQString,
   kQStringList,
   kInt,
+  kIntList,
   kFloat,
   kWrapType,
   kActionType,

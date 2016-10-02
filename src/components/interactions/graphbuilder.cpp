@@ -43,7 +43,7 @@ void GraphBuilder::build_stress_graph() {
       std::string name = boost::lexical_cast<std::string>(num);
 
       // Build a node.
-      Entity* node = _factory->create_compute_node(root_group, kMockNodeCompute, name);
+      Entity* node = _factory->create_compute_node(root_group, ComponentDID::kMockNodeCompute, name);
 
       // Position it.
       glm::vec2 pos(x * 300, y * 300);
@@ -71,15 +71,15 @@ void GraphBuilder::build_stress_graph() {
 void GraphBuilder::build_test_graph() {
   Entity* root_group = get_entity(Path({"root"}));
 
-  Entity* i1 = _factory->create_entity(root_group, "input one", kInputNodeEntity);
-  Entity* o1 = _factory->create_entity(root_group, "output one", kOutputNodeEntity);
+  Entity* i1 = _factory->create_entity(root_group, "input one", EntityDID::kInputNodeEntity);
+  Entity* o1 = _factory->create_entity(root_group, "output one", EntityDID::kOutputNodeEntity);
 
-  Entity* n1 = _factory->create_compute_node(root_group, kMockNodeCompute, "middle node");
-  Entity* n2 = _factory->create_compute_node(root_group, kMockNodeCompute, "top node");
-  Entity* n3 = _factory->create_compute_node(root_group, kMockNodeCompute, "bottom node");
+  Entity* n1 = _factory->create_compute_node(root_group, ComponentDID::kMockNodeCompute, "middle node");
+  Entity* n2 = _factory->create_compute_node(root_group, ComponentDID::kMockNodeCompute, "top node");
+  Entity* n3 = _factory->create_compute_node(root_group, ComponentDID::kMockNodeCompute, "bottom node");
 
-  Entity* d1 = _factory->create_entity(root_group, "dot1", kDotNodeEntity);
-  Entity* d2 = _factory->create_entity(root_group, "dot2", kDotNodeEntity);
+  Entity* d1 = _factory->create_entity(root_group, "dot1", EntityDID::kDotNodeEntity);
+  Entity* d2 = _factory->create_entity(root_group, "dot2", EntityDID::kDotNodeEntity);
 
   Entity* n1_ipe1 = n1->get_entity(Path({".","inputs","a"}));
   Entity* n1_ipe2 = n1->get_entity(Path({".","inputs","b"}));
@@ -153,7 +153,7 @@ void GraphBuilder::build_test_graph() {
   // ------------------------------------------------------------------------
 
   {
-    Entity* sub_group = _factory->instance_entity(root_group, "group one", kGroupNodeEntity);
+    Entity* sub_group = _factory->instance_entity(root_group, "group one", EntityDID::kGroupNodeEntity);
     sub_group->create_internals();
 
     glm::vec2 pos;
@@ -161,13 +161,13 @@ void GraphBuilder::build_test_graph() {
     pos.y = 700;
     get_dep<CompShape>(sub_group)->set_pos(pos);
 
-    Entity* n1 = _factory->create_compute_node(sub_group, kMockNodeCompute, "sub middle node");
-    Entity* n2 = _factory->create_compute_node(sub_group, kMockNodeCompute, "sub top node");
-    Entity* n3 = _factory->create_compute_node(sub_group, kMockNodeCompute, "sub bottom node");
-    Entity* n4 = _factory->create_compute_node(sub_group, kScriptNodeCompute, "NoOp");
+    Entity* n1 = _factory->create_compute_node(sub_group, ComponentDID::kMockNodeCompute, "sub middle node");
+    Entity* n2 = _factory->create_compute_node(sub_group, ComponentDID::kMockNodeCompute, "sub top node");
+    Entity* n3 = _factory->create_compute_node(sub_group, ComponentDID::kMockNodeCompute, "sub bottom node");
+    Entity* n4 = _factory->create_compute_node(sub_group, ComponentDID::kScriptNodeCompute, "NoOp");
 
-    Entity* i1 = _factory->create_entity(sub_group, "input1", kInputNodeEntity);
-    Entity* o1 = _factory->create_entity(sub_group, "output1", kOutputNodeEntity);
+    Entity* i1 = _factory->create_entity(sub_group, "input1", EntityDID::kInputNodeEntity);
+    Entity* o1 = _factory->create_entity(sub_group, "output1", EntityDID::kOutputNodeEntity);
 
     Entity* n1_ipe1 = n1->get_entity(Path({".","inputs","a"}));
     Entity* n1_ipe2 = n1->get_entity(Path({".","inputs","b"}));

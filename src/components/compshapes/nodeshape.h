@@ -25,7 +25,7 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   static const std::array<unsigned char,4> processing_bg_color;
   static const std::array<unsigned char,4> processing_fg_color;
 
-  NodeShape(Entity* entity, size_t did);
+  NodeShape(Entity* entity, ComponentDID did);
   virtual ~NodeShape();
 
   // Our sub interfaces.

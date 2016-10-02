@@ -1,6 +1,7 @@
 #pragma once
 #include <base/objectmodel/objectmodel_export.h>
 #include <base/objectmodel/component.h>
+#include <entities/entityids.h>
 //#include <base/utils/path.h>
 
 #include <cassert>
@@ -53,18 +54,18 @@ class OBJECTMODEL_EXPORT Entity {
  public:
 
   // Our interface id.
-  static size_t kIID() {
-    return -1;
+  static EntityIID kIID() {
+    return EntityIID::kIInvalidEntity;
   }
-  virtual size_t get_iid() const {
+  virtual EntityIID get_iid() const {
     return kIID();
   }
 
   // Our derived id.
-  static size_t kDID() {
-    return -1;
+  static EntityDID kDID() {
+    return EntityDID::kInvalidEntity;
   }
-  virtual size_t get_did() const {
+  virtual EntityDID get_did() const {
     return kDID();
   }
 
@@ -77,7 +78,7 @@ class OBJECTMODEL_EXPORT Entity {
   }
 
   // The maximum number of component interfaces we can have.
-  typedef std::unordered_map<size_t, Component*> IIDToComponentMap;
+  typedef std::unordered_map<ComponentIID, Component*> IIDToComponentMap;
   typedef std::unordered_map<std::string, Entity*> NameToChildMap;
 
   // Constructors.
@@ -106,7 +107,7 @@ class OBJECTMODEL_EXPORT Entity {
   virtual void remove_child(Entity* child);
   void reparent_child(Entity* child, Entity* next_parent);
   void destroy_all_children();
-  void destroy_all_children_except(const std::unordered_set<size_t>& dids);
+  void destroy_all_children_except(const std::unordered_set<EntityDID>& dids);
   void rename_child(const std::string& prev_name, const std::string& next_name);
   const NameToChildMap& get_children() const;
 
@@ -235,7 +236,7 @@ class OBJECTMODEL_EXPORT Entity {
   void clear_last_pasted();
 
  protected:
-  Component* get(size_t iid) const;
+  Component* get(ComponentIID iid) const;
 
   template<class T>
   T* get() const {
@@ -288,7 +289,7 @@ class OBJECTMODEL_EXPORT Entity {
   std::unordered_set<Entity*> _last_pasted;
 
   // This is the only method that can call our "get<>" method.
-  friend DepLinkPtr Component::get_dep(Entity*, size_t);
+  friend DepLinkPtr Component::get_dep(Entity*, ComponentIID);
 
   friend class GroupNodeEntity;
 };

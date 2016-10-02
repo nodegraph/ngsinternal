@@ -13,7 +13,7 @@
 
 namespace ngs {
 
-Component::Component(Entity* entity, size_t interface_id, size_t derived_id)
+Component::Component(Entity* entity, ComponentIID interface_id, ComponentDID derived_id)
     : _entity(entity),
       _iid(interface_id),
       _did(derived_id),
@@ -114,11 +114,11 @@ Entity* Component::get_root_group() const {
   return our_entity()->get_root_group();
 }
 
-size_t Component::get_iid() const {
+ComponentIID Component::get_iid() const {
   return _iid;
 }
 
-size_t Component::get_did() const {
+ComponentDID Component::get_did() const {
   return _did;
 }
 
@@ -127,7 +127,7 @@ std::string Component::get_path_as_string() const {
 }
 
 void Component::pre_save(SimpleSaver& saver) const {
-  size_t derived_id = get_did();
+  ComponentDID derived_id = get_did();
   saver.save(derived_id);
 }
 
@@ -144,7 +144,7 @@ void Component::bake_paths() {
   _dep_loader->bake_paths();
 }
 
-DepLinkPtr Component::get_dep(Entity* e, size_t iid) {
+DepLinkPtr Component::get_dep(Entity* e, ComponentIID iid) {
   Component* dependency = e->get(iid);
   if (!dependency) {
     return DepLinkPtr();
@@ -152,7 +152,7 @@ DepLinkPtr Component::get_dep(Entity* e, size_t iid) {
   return connect_to_dep(dependency);
 }
 
-DepLinkPtr Component::get_dep(const Path& path, size_t iid) {
+DepLinkPtr Component::get_dep(const Path& path, ComponentIID iid) {
   Entity* e = get_entity(path);
   if (!e) {
     return DepLinkPtr();
@@ -242,7 +242,7 @@ bool Component::dep_creates_cycle(const Component* dependency) const {
 
 DepLinkPtr Component::get_dep_link(Component* c) const {
   external();
-  const size_t iid = c->get_iid();
+  const ComponentIID iid = c->get_iid();
   if (_dependencies.count(c->get_iid())) {
     const DepLinks &links = _dependencies.at(iid);
     if (links.count(c)) {
@@ -259,7 +259,7 @@ DepLinkPtr Component::get_dep_link(Component* c) const {
 
 void Component::set_dep_link(Component* c, DepLinkPtr link) {
   external();
-  const size_t iid = c->get_iid();
+  const ComponentIID iid = c->get_iid();
   DepLinks &links = _dependencies[iid];
   assert(links.count(c) == 0);
   links.insert({c,DepLinkWPtr(link)});
@@ -295,7 +295,7 @@ void Component::unregister_dependency(Component* c) {
   remove_dep_link(c, c->get_iid());
 }
 
-void Component::remove_dep_link(Component* c, size_t iid) {
+void Component::remove_dep_link(Component* c, ComponentIID iid) {
   external();
   // Removing a dependency can never create cycles.
   DepLinks& dep_links = _dependencies[iid];

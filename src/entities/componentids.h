@@ -10,14 +10,15 @@ namespace ngs {
 // We allows derived Components to form interfaces,
 // or to implement other interfaces.
 #define COMPONENT_ID(base,derived)\
-  static size_t kIID()\
+  static ComponentIID kIID()\
   { return ComponentIID::kI##base; }\
   \
-  static size_t kDID()\
+  static ComponentDID kDID()\
   { return ComponentDID::k##derived; }
 
 // Component Interface IDs.
-enum ComponentIID {
+enum class ComponentIID : size_t {
+  kIInvalidComponent,
   kIBaseFactory,
   kICompShape,
   kICompShapeCollective,
@@ -43,77 +44,84 @@ enum ComponentIID {
   kIResources,
   kIShapeCanvas,
   kITestComponent,
-  // Count.
-  kNumComponentInterfaceIDs,
 };
 
-// Component Derived/Implementation IDs.
-enum ComponentDID {
-  kInvalidComponent,
-  // Factories
-  kFactory,
-  // CompShapes.
-  kDotNodeShape,
-  kGroupNodeShape,
-  kInputNodeShape,
-  kInputLabelShape,
-  kInputShape,
-  kLinkShape,
-  kRectNodeShape,
-  kOutputNodeShape,
-  kOutputLabelShape,
-  kOutputShape,
-  // --
-  kCompShapeCollective,
-  // Computes.
-  kDotNodeCompute,
-  kInputCompute,
-  kOutputCompute,
-  kGroupNodeCompute,
-  kInputNodeCompute,
-  kOutputNodeCompute,
-  kScriptNodeCompute,
-  kMockNodeCompute,
-  kOpenBrowserCompute,
-  kCloseBrowserCompute,
-  kCheckBrowserIsOpenCompute,
-  kCheckBrowserSizeCompute,
-  kNavigateToCompute,
-  kNavigateRefreshCompute,
-  kSwitchToIFrameCompute,
-  kCreateSetFromValuesCompute,
-  kCreateSetFromTypeCompute,
-  kClickActionCompute,
-  kMouseOverActionCompute,
-  kStartMouseHoverActionCompute,
-  kStopMouseHoverActionCompute,
-  // --
-  kFBORenderer,
-  kFBOWorker,
-  kGraphBuilder,
-  // --
-  kLowerHierarchyChange,
-  kUpperHierarchyChange,
-  // Interactions.
-  kGroupInteraction,
-  // --
-  kNodeGraphEditor,
-  kNodeGraphQuickItem,
-  kNodeGraphRenderer,
-  kNodeGraphView,
-  kFileModel,
-  kAppComm,
-  kAppWorker,
-  kLicenseChecker,
-  // --
-  kNodeSelection,
-  kResources,
-  kShapeCanvas,
-  kTestComponent,
-  // Count.
-  kNumComponentImplementationIDs,
+#define COMPONENT_ENTRY1(NAME) k##NAME,
+#define COMPONENT_ENTRY2(NAME, VALUE) k##NAME = VALUE,
+
+#define COMPONENT_ENTRIES()\
+COMPONENT_ENTRY1(InvalidComponent)\
+/* Factories */\
+COMPONENT_ENTRY1(Factory)\
+/* CompShapes. */\
+COMPONENT_ENTRY1(DotNodeShape)\
+COMPONENT_ENTRY1(GroupNodeShape)\
+COMPONENT_ENTRY1(InputNodeShape)\
+COMPONENT_ENTRY1(InputLabelShape)\
+COMPONENT_ENTRY1(InputShape)\
+COMPONENT_ENTRY1(LinkShape)\
+COMPONENT_ENTRY1(RectNodeShape)\
+COMPONENT_ENTRY1(OutputNodeShape)\
+COMPONENT_ENTRY1(OutputLabelShape)\
+COMPONENT_ENTRY1(OutputShape)\
+/* -- */\
+COMPONENT_ENTRY1(CompShapeCollective)\
+/* Computes. */\
+COMPONENT_ENTRY1(DotNodeCompute)\
+COMPONENT_ENTRY1(InputCompute)\
+COMPONENT_ENTRY1(OutputCompute)\
+COMPONENT_ENTRY1(GroupNodeCompute)\
+COMPONENT_ENTRY1(InputNodeCompute)\
+COMPONENT_ENTRY1(OutputNodeCompute)\
+COMPONENT_ENTRY1(ScriptNodeCompute)\
+COMPONENT_ENTRY1(MockNodeCompute)\
+COMPONENT_ENTRY1(OpenBrowserCompute)\
+COMPONENT_ENTRY1(CloseBrowserCompute)\
+COMPONENT_ENTRY1(CheckBrowserIsOpenCompute)\
+COMPONENT_ENTRY1(CheckBrowserSizeCompute)\
+COMPONENT_ENTRY1(NavigateToCompute)\
+COMPONENT_ENTRY1(NavigateRefreshCompute)\
+COMPONENT_ENTRY1(SwitchToIFrameCompute)\
+COMPONENT_ENTRY1(CreateSetFromValuesCompute)\
+COMPONENT_ENTRY1(CreateSetFromTypeCompute)\
+COMPONENT_ENTRY1(DeleteSetCompute)\
+COMPONENT_ENTRY1(ShiftSetCompute)\
+COMPONENT_ENTRY1(MouseActionCompute)\
+COMPONENT_ENTRY1(StartMouseHoverActionCompute)\
+COMPONENT_ENTRY1(StopMouseHoverActionCompute)\
+COMPONENT_ENTRY1(TextActionCompute)\
+COMPONENT_ENTRY1(ElementActionCompute)\
+COMPONENT_ENTRY1(ExpandSetCompute)\
+COMPONENT_ENTRY1(MarkSetCompute)\
+COMPONENT_ENTRY1(UnmarkSetCompute)\
+COMPONENT_ENTRY1(MergeSetsCompute)\
+COMPONENT_ENTRY1(ShrinkSetToSideCompute)\
+COMPONENT_ENTRY1(ShrinkAgainstMarkedCompute)\
+/* -- */\
+COMPONENT_ENTRY1(FBORenderer)\
+COMPONENT_ENTRY1(FBOWorker)\
+COMPONENT_ENTRY1(GraphBuilder)\
+/* Interactions. */\
+COMPONENT_ENTRY1(GroupInteraction)\
+/* -- */\
+COMPONENT_ENTRY1(NodeGraphEditor)\
+COMPONENT_ENTRY1(NodeGraphQuickItem)\
+COMPONENT_ENTRY1(NodeGraphRenderer)\
+COMPONENT_ENTRY1(NodeGraphView)\
+COMPONENT_ENTRY1(FileModel)\
+COMPONENT_ENTRY1(AppComm)\
+COMPONENT_ENTRY1(AppWorker)\
+COMPONENT_ENTRY1(LicenseChecker)\
+/* -- */\
+COMPONENT_ENTRY1(NodeSelection)\
+COMPONENT_ENTRY1(Resources)\
+COMPONENT_ENTRY1(ShapeCanvas)\
+
+enum class ComponentDID : size_t {
+  COMPONENT_ENTRIES()
 };
 
-ENTITIES_EXPORT const char* get_compute_name(size_t did);
+ENTITIES_EXPORT const char* get_compute_name(ComponentDID did);
+
 
 }

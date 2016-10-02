@@ -330,7 +330,7 @@ void FileModel::write_file(const QString& filename, const std::string& data, boo
 
     // test
     {
-      QByteArray test(cipher_text.c_str(), cipher_text.size());
+      QByteArray test(cipher_text.c_str(), static_cast<int>(cipher_text.size()));
       std::string test2(test.data(), test.size());
       std::string decrypted = decrypt_data(test2);
       assert(decrypted == data);
@@ -360,7 +360,7 @@ QByteArray FileModel::load_file(const QString& filename, bool decrypt) const {
   if (decrypt) {
     std::string cipher_text(contents.data(), contents.size());
     std::string decrypted = decrypt_data(cipher_text);
-    QByteArray contents2(&decrypted[0], decrypted.size());
+    QByteArray contents2(&decrypted[0], static_cast<int>(decrypted.size()));
     return contents2;
   }
 
@@ -501,7 +501,7 @@ void FileModel::load_model() {
     item->setData(max_node_posts, kMaxNodePostsRole);
     item->setData(browser_width, kBrowserWidthRole);
     item->setData(browser_height, kBrowserHeightRole);
-    setItem(i, 0, item);
+    setItem(static_cast<int>(i), 0, item);
   }
 
   assert(_working_row >= 0);
@@ -526,16 +526,17 @@ void FileModel::save_model() {
     saver.save(row_count);
 
     for (size_t i=0; i<row_count; ++i) {
-      saver.save(data(index(i,0), kTitleRole).toString().toStdString());
-      saver.save(data(index(i,0), kFilenameRole).toString().toStdString());
-      saver.save(data(index(i,0), kDescriptionRole).toString().toStdString());
-      saver.save(data(index(i,0), kAutoRunRole).toBool());
-      saver.save(data(index(i,0), kAutoRunIntervalRole).toInt());
-      saver.save(data(index(i,0), kHidePasswordsRole).toBool());
-      saver.save(data(index(i,0), kLockLinksRole).toBool());
-      saver.save(data(index(i,0), kMaxNodePostsRole).toInt());
-      saver.save(data(index(i,0), kBrowserWidthRole).toInt());
-      saver.save(data(index(i,0), kBrowserHeightRole).toInt());
+      int ii = static_cast<int>(i);
+      saver.save(data(index(ii,0), kTitleRole).toString().toStdString());
+      saver.save(data(index(ii,0), kFilenameRole).toString().toStdString());
+      saver.save(data(index(ii,0), kDescriptionRole).toString().toStdString());
+      saver.save(data(index(ii,0), kAutoRunRole).toBool());
+      saver.save(data(index(ii,0), kAutoRunIntervalRole).toInt());
+      saver.save(data(index(ii,0), kHidePasswordsRole).toBool());
+      saver.save(data(index(ii,0), kLockLinksRole).toBool());
+      saver.save(data(index(ii,0), kMaxNodePostsRole).toInt());
+      saver.save(data(index(ii,0), kBrowserWidthRole).toInt());
+      saver.save(data(index(ii,0), kBrowserHeightRole).toInt());
     }
   }
 
