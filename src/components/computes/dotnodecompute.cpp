@@ -22,7 +22,7 @@ void DotNodeCompute::create_inputs_outputs() {
 
 void DotNodeCompute::update_state() {
   internal();
-  copy_outputs("out", _inputs.at("in"), "out");
+  copy_outputs("out", _named_inputs.at("in"), "out");
 }
 
 }

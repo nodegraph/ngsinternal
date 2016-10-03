@@ -42,8 +42,7 @@ target_link_libraries(ngs_compshapes
 	ngs_memoryallocator 
 	ngs_objectmodel 
 	ngs_device 
-	ngs_resources 
-	ngs_computes)
+	ngs_resources)
 
 # Install.
 INSTALL(TARGETS ngs_compshapes

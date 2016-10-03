@@ -21,6 +21,7 @@ namespace ngs {
 class BaseFactory;
 class InputCompute;
 class OutputCompute;
+class Inputs;
 
 class COMPUTES_EXPORT Compute: public Component {
  public:
@@ -35,12 +36,6 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual ~Compute();
 
   virtual void create_inputs_outputs();
-
-  // Info about our inputs. Note the output info can be found on OutputCompute.
-  virtual size_t get_exposed_input_index(const std::string& input_name) const;
-  virtual size_t get_num_exposed_inputs() const;
-  virtual size_t get_num_hidden_inputs() const;
-  virtual size_t get_num_inputs() const;
 
   // Our inputs.
   QVariantMap get_inputs() const;
@@ -68,12 +63,8 @@ class COMPUTES_EXPORT Compute: public Component {
   Entity* get_outputs_space();
 
  protected:
-  void gather_inputs();
-
-  // Our dynamic deps. These are gathered and not saved.
-  // Map from input plug names to their internal output plugs.
-  std::unordered_map<std::string, Dep<InputCompute> > _inputs;
-  std::vector<Dep<InputCompute> > _exposed_inputs; // These are in alphabetical order.
+  Dep<Inputs> _inputs;
+  std::unordered_map<std::string, Dep<InputCompute> > _named_inputs;
 
   // Map from output plug names to results.
   // QVariantMap is a typedef for QMap<QString, QVariant>.

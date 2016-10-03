@@ -1,4 +1,4 @@
-#include <components/computes/outputcompute.h>
+
 #include <components/resources/resources.h>
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/deploader.h>
@@ -11,6 +11,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <components/compshapes/nodeshape.h>
 #include <components/compshapes/outputshape.h>
+#include <components/computes/baseoutputs.h>
 
 namespace ngs {
 
@@ -28,9 +29,9 @@ const float OutputShape::plug_offset = 10.0f;
 OutputShape::OutputShape(Entity* entity)
     : CompShape(entity, kDID()),
       _node_shape(this),
-      _output_compute(this){
+      _outputs(this){
   get_dep_loader()->register_fixed_dep(_node_shape, Path({"..",".."}));
-  get_dep_loader()->register_fixed_dep(_output_compute, Path({"."}));
+  get_dep_loader()->register_fixed_dep(_outputs, Path({"..",".."}));
 }
 
 OutputShape::~OutputShape() {
@@ -38,7 +39,7 @@ OutputShape::~OutputShape() {
 
 bool OutputShape::is_exposed() const {
   external();
-  size_t index = _output_compute->get_exposed_output_index();
+  size_t index = _outputs->get_exposed_index(get_name());
   if (index == -1) {
     return false;
   }
@@ -66,7 +67,7 @@ void OutputShape::update_state() {
   ShapeInstance* bg = &_tris[0];
   ShapeInstance* fg = &_tris[1];
 
-  size_t exposed_index = _output_compute->get_exposed_output_index();
+  size_t exposed_index = _outputs->get_exposed_index(get_name());
 
   // Get the node bounds.
   const Polygon& bounds = _node_shape->get_bounds();
@@ -76,7 +77,7 @@ void OutputShape::update_state() {
   bounds.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
-  size_t num_exposed = _output_compute->get_num_exposed_outputs();
+  size_t num_exposed = _outputs->get_num_exposed();
 
   float min_x(node_min.x);
   float max_x(node_max.x);

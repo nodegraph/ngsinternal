@@ -28,7 +28,9 @@
 #include <components/computes/outputnodecompute.h>
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/inputcompute.h>
+#include <components/computes/inputs.h>
 #include <components/computes/outputcompute.h>
+#include <components/computes/outputs.h>
 #include <entities/componentinstancer.h>
 #include <components/interactions/viewcontrols.h>
 #include <components/interactions/graphbuilder.h>
@@ -58,53 +60,6 @@ class InvalidComponent: public Component {
   InvalidComponent(Entity* entity):Component(entity, kIID(), kDID()) {}
   COMPONENT_ID(InvalidComponent, InvalidComponent);
 };
-
-
-#define COMPONENT_CASES(case_statement)\
-    /* Factories. */\
-    case_statement(Factory)\
-    /* Comp Shapes. */\
-    case_statement(DotNodeShape)\
-    case_statement(GroupNodeShape)\
-    case_statement(InputNodeShape)\
-    case_statement(InputLabelShape)\
-    case_statement(InputShape)\
-    case_statement(LinkShape)\
-    case_statement(RectNodeShape)\
-    case_statement(OutputNodeShape)\
-    case_statement(OutputLabelShape)\
-    case_statement(OutputShape)\
-    /* Comp Shape Collective. */\
-    case_statement(CompShapeCollective)\
-    /* Computes. */\
-    case_statement(DotNodeCompute)\
-    case_statement(InputCompute)\
-    case_statement(OutputCompute)\
-    case_statement(GroupNodeCompute)\
-    case_statement(InputNodeCompute)\
-    case_statement(ScriptNodeCompute)\
-    case_statement(MockNodeCompute)\
-    case_statement(OutputNodeCompute)\
-    case_statement(OpenBrowserCompute)\
-    case_statement(CloseBrowserCompute)\
-    case_statement(CreateSetFromValuesCompute)\
-    case_statement(CreateSetFromTypeCompute)\
-    /* Graph Building. */\
-    case_statement(GraphBuilder)\
-    /* Interactions. */\
-    case_statement(GroupInteraction)\
-    /* App Level. */\
-    case_statement(NodeSelection)\
-    case_statement(Resources)\
-    case_statement(ShapeCanvas)\
-    /* Invalid and Components which must be manually created. */\
-    case ComponentDID::kInvalidComponent:\
-    case ComponentDID::kTestComponent:\
-    case ComponentDID::kNodeGraphEditor:\
-    case ComponentDID::kNodeGraphQuickItem:\
-    case ComponentDID::kFBORenderer:\
-    case ComponentDID::kFBOWorker:\
-      break;
 
 Component* ComponentInstancer::instance(Entity* entity, ComponentDID did) const{
   // Define our component type traits.

@@ -12,7 +12,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/nodeshape.h>
-#include <components/computes/compute.h>
+#include <components/computes/baseinputs.h>
 #include <cmath>
 
 namespace ngs {
@@ -31,9 +31,9 @@ const float InputShape::plug_offset = 10;
 InputShape::InputShape(Entity* entity)
     : CompShape(entity, kDID()),
       _node_shape(this),
-      _compute(this) {
+      _inputs(this) {
   get_dep_loader()->register_fixed_dep(_node_shape, Path({"..",".."}));
-  get_dep_loader()->register_fixed_dep(_compute, Path({"..",".."}));
+  get_dep_loader()->register_fixed_dep(_inputs, Path({"..",".."}));
 }
 
 InputShape::~InputShape() {
@@ -41,7 +41,7 @@ InputShape::~InputShape() {
 
 bool InputShape::is_exposed() const {
   external();
-  size_t index = _compute->get_exposed_input_index(get_name());
+  size_t index = _inputs->get_exposed_index(get_name());
   if (index == -1) {
     return false;
   }
@@ -58,7 +58,7 @@ HitRegion InputShape::hit_test(const glm::vec2& point) const {
 
 void InputShape::update_state() {
   internal();
-  size_t exposed_index = _compute->get_exposed_input_index(get_name());
+  size_t exposed_index = _inputs->get_exposed_index(get_name());
   if(exposed_index == -1) {
     _quads.resize(0); // Empty out our quads if we're not visible.
     return;
@@ -77,7 +77,7 @@ void InputShape::update_state() {
   bounds.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
-  size_t num_exposed = _compute->get_num_exposed_inputs();
+  size_t num_exposed = _inputs->get_num_exposed();
 
   float min_x(node_min.x);
   float max_x(node_max.x);

@@ -1,5 +1,7 @@
 
 set(sources
+    inputs.cpp
+    outputs.cpp
 	compute.cpp
 	dotnodecompute.cpp
 	groupnodecompute.cpp
@@ -18,6 +20,10 @@ qt5_wrap_cpp(moc_imps ${moc_headers})
 list(APPEND sources ${moc_imps})
     
 set(headers
+    baseinputs.h
+    baseoutputs.h
+    inputs.h
+    outputs.h
 	compute.h
 	dotnodecompute.h
 	groupnodecompute.h
@@ -33,6 +39,7 @@ target_link_libraries(ngs_computes
 	ngs_memoryallocator 
 	ngs_objectmodel 
 	ngs_memoryallocator
+	ngs_compshapes
 	)
 
 qt5_use_modules(ngs_computes Core)

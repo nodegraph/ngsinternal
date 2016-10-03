@@ -23,12 +23,6 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   void set_exposed(bool exposed);
   bool is_exposed() const;
 
-  // Our relative positioning.
-  virtual size_t get_exposed_output_index() const;
-  virtual size_t get_num_exposed_outputs() const;
-  virtual size_t get_num_hidden_outputs() const;
-  virtual size_t get_num_outputs() const;
-
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
   virtual void load(SimpleLoader& loader);
@@ -40,9 +34,6 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   virtual void update_state();
 
  private:
-  // Update our relative positioning against other OutputComputes.
-  void update_index();
-
   // Our fixed deps.
   Dep<Compute> _node_compute;
 
@@ -51,11 +42,6 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
 
   // Exposure.
   bool _exposed;
-
-  // Gathered info about our relative positioning.
-  size_t _exposed_index; // Our position within the exposed outputs.
-  size_t _num_exposed; // Total number of exposed outputs.
-  size_t _num_outputs; // Total number of outputs.
 
   friend class InputCompute;
   friend class OutputShape;

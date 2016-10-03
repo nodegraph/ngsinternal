@@ -87,48 +87,6 @@ class ENTITIES_EXPORT OutputNodeEntity : public Entity {
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };
 
-//class ENTITIES_EXPORT MockNodeEntity : public Entity {
-// public:
-//  ENTITY_ID(MockNodeEntity, "mock")
-//  MockNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-//  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-//};
-
-//class ENTITIES_EXPORT OpenBrowserNodeEntity : public Entity {
-// public:
-//  ENTITY_ID(OpenBrowserNodeEntity, "open browser")
-//  OpenBrowserNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-//  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-//};
-
-//class ENTITIES_EXPORT CloseBrowserNodeEntity : public Entity {
-// public:
-//  ENTITY_ID(CloseBrowserNodeEntity, "close browser")
-//  CloseBrowserNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-//  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-//};
-
-//class ENTITIES_EXPORT CreateSetFromValuesNodeEntity : public Entity {
-// public:
-//  ENTITY_ID(CreateSetFromValuesNodeEntity, "open browser")
-//  CreateSetFromValuesNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-//  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-//};
-
-//class ENTITIES_EXPORT CreateSetFromTypeNodeEntity : public Entity {
-// public:
-//  ENTITY_ID(CreateSetFromTypeNodeEntity, "open browser")
-//  CreateSetFromTypeNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-//  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-//};
-
-//class ENTITIES_EXPORT MouseActionNodeEntity : public Entity {
-// public:
-//  ENTITY_ID(MouseActionNodeEntity, "mouse action")
-//  MouseActionNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-//  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-//};
-
 class ENTITIES_EXPORT InputEntity : public Entity {
  public:
   ENTITY_ID(InputEntity, "input")
@@ -160,13 +118,6 @@ class ENTITIES_EXPORT OutputLabelEntity : public Entity {
   OutputLabelEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };
-
-//class ENTITIES_EXPORT ScriptNodeEntity : public Entity {
-// public:
-//  ENTITY_ID(ScriptNodeEntity, "compute")
-//  ScriptNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-//  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-//};
 
 class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
  public:

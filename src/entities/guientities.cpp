@@ -34,9 +34,11 @@
 #include <components/computes/groupnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/inputnodecompute.h>
+#include <components/computes/inputs.h>
 #include <components/computes/mocknodecompute.h>
 #include <components/computes/outputcompute.h>
 #include <components/computes/outputnodecompute.h>
+#include <components/computes/outputs.h>
 
 #include <gui/widget/nodegrapheditor.h>
 
@@ -240,6 +242,8 @@ void GroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);
   new_ff GroupNodeShape(this);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
 }
 
 void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const {
@@ -310,7 +314,9 @@ void DotNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff DotNodeCompute(this))->create_inputs_outputs();
   // Gui components.
-  DotNodeShape* shape = new_ff DotNodeShape(this);
+  new_ff DotNodeShape(this);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
 }
 
 void InputNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -318,6 +324,8 @@ void InputNodeEntity::create_internals(const std::vector<size_t>& ids) {
   (new_ff InputNodeCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff InputNodeShape(this);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
 }
 
 void OutputNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -325,61 +333,17 @@ void OutputNodeEntity::create_internals(const std::vector<size_t>& ids) {
   (new_ff OutputNodeCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff OutputNodeShape(this);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
 }
-
-//void MockNodeEntity::create_internals(const std::vector<size_t>& ids) {
-//  // Our components.
-//  (new_ff MockNodeCompute(this))->create_inputs_outputs();
-//  // Gui components.
-//  new_ff RectNodeShape(this);
-//}
-
-//void OpenBrowserNodeEntity::create_internals(const std::vector<size_t>& ids) {
-//  // Our components.
-//  (new_ff OpenBrowserCompute(this))->create_inputs_outputs();
-//  // Gui components.
-//  new_ff RectNodeShape(this);
-//}
-
-//void CloseBrowserNodeEntity::create_internals(const std::vector<size_t>& ids) {
-//  // Our components.
-//  (new_ff CloseBrowserCompute(this))->create_inputs_outputs();
-//  // Gui components.
-//  new_ff RectNodeShape(this);
-//}
-
-//void CreateSetFromValuesNodeEntity::create_internals(const std::vector<size_t>& ids) {
-//  // Our components.
-//  (new_ff CreateSetFromValuesCompute(this))->create_inputs_outputs();
-//  // Gui components.
-//  new_ff RectNodeShape(this);
-//}
-
-//void CreateSetFromTypeNodeEntity::create_internals(const std::vector<size_t>& ids) {
-//  // Our components.
-//  (new_ff CreateSetFromTypeCompute(this))->create_inputs_outputs();
-//  new_ff RectNodeShape(this);
-//}
-
-//void MouseActionNodeEntity::create_internals(const std::vector<size_t>& ids) {
-//  // Our components.
-//  (new_ff MouseActionCompute(this))->create_inputs_outputs();
-//  // Gui components.
-//  new_ff RectNodeShape(this);
-//}
-
-//void ScriptNodeEntity::create_internals(const std::vector<size_t>& ids) {
-//  // Our components.
-//  (new_ff ScriptNodeCompute(this))->create_inputs_outputs();
-//  // Gui components.
-//  new_ff RectNodeShape(this);
-//}
 
 void ComputeNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   // The compute component must be added in later.
   // Gui components.
   new_ff RectNodeShape(this);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
 }
 
 void InputEntity::create_internals(const std::vector<size_t>& ids) {

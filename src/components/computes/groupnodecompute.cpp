@@ -113,7 +113,7 @@ void GroupNodeCompute::update_state() {
 
   // For each input data if there is an associated input node, we set data on the input node
   // from the input data. The input data handles connections to other entities internally.
-  for (auto &iter: _inputs) {
+  for (auto &iter: _named_inputs) {
     Dep<InputCompute>& input = iter.second;
     const std::string& input_name = input->get_name();
     // Find the input node in this group with the same name as the input plug.

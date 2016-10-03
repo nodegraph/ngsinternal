@@ -44,6 +44,8 @@ enum class ComponentIID : size_t {
   kIResources,
   kIShapeCanvas,
   kITestComponent,
+  kIBaseInputs,
+  kIBaseOutputs,
 };
 
 #define COMPONENT_ENTRY1(NAME) k##NAME,
@@ -116,6 +118,9 @@ COMPONENT_ENTRY2(LicenseChecker, 54)\
 COMPONENT_ENTRY2(NodeSelection, 55)\
 COMPONENT_ENTRY2(Resources, 56)\
 COMPONENT_ENTRY2(ShapeCanvas, 57)\
+/* -- */\
+COMPONENT_ENTRY2(Inputs, 58)\
+COMPONENT_ENTRY2(Outputs, 59)
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()

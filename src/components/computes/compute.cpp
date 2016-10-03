@@ -2,6 +2,7 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
 #include <base/objectmodel/deploader.h>
+#include <components/computes/inputs.h>
 #include <entities/entityids.h>
 #include <entities/entityinstancer.h>
 
@@ -16,7 +17,9 @@ struct InputComputeComparator {
 const QVariant Compute::_empty_variant;
 
 Compute::Compute(Entity* entity, ComponentDID derived_id)
-    : Component(entity, kIID(), derived_id) {
+    : Component(entity, kIID(), derived_id),
+      _inputs(this) {
+  get_dep_loader()->register_fixed_dep(_inputs, Path({"."})); // Note this only exists for node computes and not for plug computes.
 }
 
 Compute::~Compute() {
@@ -30,53 +33,25 @@ void Compute::create_inputs_outputs() {
 
 void Compute::update_wires() {
   internal();
-  gather_inputs();
-}
-
-void Compute::gather_inputs() {
-  internal();
-  // Connect to our inputs.
-  _inputs.clear();
-  Entity* inputs_space = has_entity(Path({".","inputs"}));
-  if (inputs_space) {
-    const Entity::NameToChildMap& children = inputs_space->get_children();
-    for (auto iter: children) {
-      if (iter.second->get_did() != EntityDID::kInputEntity) {
-        continue;
-      }
-      Dep<InputCompute> dep = get_dep<InputCompute>(iter.second);
-      if (dep) {
-        _inputs.insert({iter.first, dep});
-      }
+  // The inputs component will only be present on the entity containing a node based compute.
+  if (_inputs) {
+    const std::unordered_map<std::string, Entity*>& exposed = _inputs->get_exposed();
+    const std::unordered_map<std::string, Entity*>& hidden = _inputs->get_hidden();
+    for (auto iter: exposed) {
+      Dep<InputCompute> input = get_dep<InputCompute>(iter.second);
+      _named_inputs.insert({input->get_name(), input});
+    }
+    for (auto iter: hidden) {
+      Dep<InputCompute> input = get_dep<InputCompute>(iter.second);
+      _named_inputs.insert({input->get_name(), input});
     }
   }
-
-  // Get all the exposed inputs.
-  _exposed_inputs.clear();
-  for (auto iter: _inputs) {
-    if (iter.second->is_exposed()) {
-      _exposed_inputs.push_back(iter.second);
-    }
-  }
-
-  // Sort the inputs alphabetically.
-  std::sort(_exposed_inputs.begin(), _exposed_inputs.end(), InputComputeComparator());
-}
-
-size_t Compute::get_exposed_input_index(const std::string& input_name) const {
-  external();
-  for (size_t i=0; i<_exposed_inputs.size(); ++i) {
-    if (_exposed_inputs[i]->get_name() == input_name) {
-      return i;
-    }
-  }
-  return -1;
 }
 
 QVariantMap Compute::get_inputs() const {
   external();
   QVariantMap map;
-  for (auto iter: _inputs) {
+  for (auto iter: _named_inputs) {
     map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
   }
   return map;
@@ -85,28 +60,11 @@ QVariantMap Compute::get_inputs() const {
 void Compute::set_params(const QVariantMap& params) {
   QVariantMap::const_iterator iter;
   for (iter = params.begin(); iter != params.end(); ++iter) {
-    if (_inputs.count(iter.key().toStdString())) {
-      _inputs.at(iter.key().toStdString())->set_value(iter.value());
+    if (_named_inputs.count(iter.key().toStdString())) {
+      _named_inputs.at(iter.key().toStdString())->set_value(iter.value());
     }
   }
 }
-
-size_t Compute::get_num_exposed_inputs() const {
-  external();
-  return _exposed_inputs.size();
-}
-
-size_t Compute::get_num_hidden_inputs() const {
-  external();
-  return get_num_inputs() - get_num_exposed_inputs();
-}
-
-size_t Compute::get_num_inputs() const {
-  external();
-  return _inputs.size();
-}
-
-
 
 const QVariantMap& Compute::get_outputs() const {
   external();
