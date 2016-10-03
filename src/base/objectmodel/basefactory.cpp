@@ -39,12 +39,39 @@ Component* BaseFactory::create_component(Entity* entity, ComponentDID did) const
   return c;
 }
 
-void BaseFactory::set_current_group(Entity* e) {
-  _current_group = e;
+void BaseFactory::push_group(Entity* group) {
+  internal();
+  _group_stack.push_back(group);
 }
 
-Entity* BaseFactory::get_current_group() {
-  return _current_group;
+void BaseFactory::pop_group() {
+  internal();
+  // The last group should not be popped.
+  if (_group_stack.size()<=1) {
+    return;
+  }
+  // Otherwise pop it.
+  _group_stack.pop_back();
+}
+
+Entity* BaseFactory::get_current_group() const {
+  external();
+  return _group_stack.back();
+}
+
+bool BaseFactory::no_current_group() const {
+  if (_group_stack.empty()) {
+    return true;
+  }
+  return false;
+}
+
+size_t BaseFactory::get_group_stack_depth() const {
+  return _group_stack.size();
+}
+
+void BaseFactory::clear_group_stack() {
+  _group_stack.clear();
 }
 
 }

@@ -49,7 +49,6 @@ class INTERACTIONS_EXPORT ShapeCanvas: public Component {
 
   // Internals.
   const Dep<GroupInteraction>& get_current_interaction() const;
-  Entity* get_current_group() const;
   const Dep<CompShapeCollective>& get_current_shape_collective() const;
   Dep<BaseFactory> get_factory() const;
  protected:
@@ -83,9 +82,6 @@ class INTERACTIONS_EXPORT ShapeCanvas: public Component {
   // Draw settings.
   bool _clear_depth;
   bool _clear_color;
-
-  // Our group stack.
-  std::vector<Entity*> _group_stack;
 };
 
 }

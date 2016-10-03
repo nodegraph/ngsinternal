@@ -136,8 +136,8 @@ void GroupNodeCompute::update_state() {
   // For each one if there is an associated output node, we clean it and cache the result.
   Entity* outputs = get_entity(Path({".","outputs"}));
   for (auto &iter: outputs->get_children()) {
-    Dep<Compute> output = get_dep<Compute>(iter.second);
-    const std::string& output_name = output->get_name();
+    Entity* output_entity = iter.second;
+    const std::string& output_name = output_entity->get_name();
     // Find an output node in this group with the same name as the output plug.
     Entity* output_node = our_entity()->get_child(output_name);
     // Make sure we have an output node.
@@ -152,8 +152,9 @@ void GroupNodeCompute::update_state() {
     }
     // Copy the value from the output node to the output plug.
     // Hack to call protected method on Compute instance.
-    void (Compute::*hack)(const std::string&, Dep<Compute>&, const std::string&) = &GroupNodeCompute::copy_outputs;
-    (output.get()->*hack)(output_name, output_node_compute, "out");
+//    void (Compute::*hack)(const std::string&, Dep<Compute>&, const std::string&) = &GroupNodeCompute::copy_outputs;
+//    (output.get()->*hack)(output_name, output_node_compute, "out");
+    set_output(output_name, output_node_compute->get_output("out"));
   }
 
 }

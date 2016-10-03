@@ -58,10 +58,10 @@ ShapeCanvas::~ShapeCanvas() {
 
 void ShapeCanvas::update_wires() {
   internal();
-  if (_group_stack.empty()) {
+  if (_factory->no_current_group()) {
     push_group(get_entity(Path({"root"})));
   } else if (!_current_interaction) {
-    _group_stack.clear();
+    _factory->clear_group_stack();
     push_group(get_entity(Path({"root"})));
   }
 }
@@ -187,7 +187,7 @@ void ShapeCanvas::surface() {
 
 void ShapeCanvas::surface_to_root() {
   external();
-  while(_group_stack.size()>1) {
+  while(_factory->get_group_stack_depth()>1) {
     pop_group();
   }
 }
@@ -232,10 +232,7 @@ Dep<BaseFactory> ShapeCanvas::get_factory() const {
 
 void ShapeCanvas::push_group(Entity* group) {
   internal();
-  _group_stack.push_back(group);
-
-  // Hack: update the app_worker with a copy of this info.
-  _factory->set_current_group(get_current_group());
+  _factory->push_group(group);
 
   // Cache some values.
   Dep<GroupInteraction> prev_interaction = _current_interaction;
@@ -257,21 +254,18 @@ void ShapeCanvas::pop_group() {
   internal();
 
   // The last group should not be popped.
-  if (_group_stack.size()<=1) {
+  if (_factory->get_group_stack_depth()<=1) {
     return;
   }
 
   // Otherwise pop it.
-  _group_stack.pop_back();
-
-  // Hack: update the app_worker with a copy of this info.
-  _factory->set_current_group(get_current_group());
+  _factory->pop_group();
 
   // Cache some values.
   Dep<GroupInteraction> prev_interaction = _current_interaction;
   Dep<CompShapeCollective> prev_shape_collective = _current_shape_collective;
-  _current_interaction = get_dep<GroupInteraction>(get_current_group());
-  _current_shape_collective = get_dep<CompShapeCollective>(get_current_group());
+  _current_interaction = get_dep<GroupInteraction>(_factory->get_current_group());
+  _current_shape_collective = get_dep<CompShapeCollective>(_factory->get_current_group());
 
   // Copy over some settings to the new interaction.
   if (prev_interaction) {
@@ -282,12 +276,5 @@ void ShapeCanvas::pop_group() {
     _current_interaction->set_mouse_over_info(prev_interaction->get_mouse_over_info());
   }
 }
-
-Entity* ShapeCanvas::get_current_group() const {
-  external();
-  return _group_stack.back();
-}
-
-
 
 }

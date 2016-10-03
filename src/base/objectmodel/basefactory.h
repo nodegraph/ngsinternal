@@ -40,13 +40,20 @@ class OBJECTMODEL_EXPORT BaseFactory: public Component {
   virtual Component* create_component(Entity* entity, ComponentDID did) const;
   virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const = 0;
 
-  virtual void set_current_group(Entity*);
-  virtual Entity* get_current_group();
+  // Group navigation management.
+  virtual void push_group(Entity* group);
+  virtual void pop_group();
+  virtual Entity* get_current_group() const;
+  virtual bool no_current_group() const;
+  virtual size_t get_group_stack_depth() const;
+  virtual void clear_group_stack();
 
  protected:
   BaseEntityInstancer* _entity_instancer;
   BaseComponentInstancer* _component_instancer;
-  Entity* _current_group;
+
+  // Our group stack.
+  std::vector<Entity*> _group_stack;
 
 };
 

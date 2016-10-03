@@ -239,9 +239,13 @@ bool Component::dep_creates_cycle(const Component* dependency) const {
   external();
   // The proposed link between us and the dependency would create a cycle
   // if the dependency is actually dependant on us.
-  if (dependency->is_recursive_dependency(this)) {
+  std::vector<const Component*> path;
+  if (dependency->is_recursive_dependency(this, &path)) {
     std::cerr << "Warning the requested component would have created a cycle so a null reference is likely being returned.\n";
-    //assert(false);
+    for (size_t i=path.size()-1; i>=0; --i) {
+      std::cerr << "entity named: " << path[i]->get_name() << " with component did: " << (size_t)path[i]->get_did() << " depend on following\n";
+    }
+    assert(false);
     return true;
   }
   return false;

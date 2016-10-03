@@ -85,6 +85,7 @@ Rectangle {
                     enter_string_page.callback(text_field.text)
                     enter_string_page.parent_stack_view.pop_page()
                     main_bar.switch_to_current_mode()
+                    node_graph_item.update()
                 }
             }
             Rectangle {
