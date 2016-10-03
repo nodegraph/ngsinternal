@@ -16,9 +16,9 @@ source /d/src/ngsinternal/src/scripts/msys2/setup_env.sh
 Note this is where the $ARCH and $ARCH_BITS get set inside the desktop shortcuts.
 You will like want to create a desktop shortcuts similar to the following:
 
-%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" %ARCH_WINDOWS x64"
-%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" %ARCH_WINRT x64"
-%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" %ARCH_ANDROID x86"
+%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINDOWS x64"
+%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_WINRT x64"
+%comspec% /k ""%SRC_ROOT%\ngsinternal\src\scripts\msys2\launch_msys2.bat" ARCH_ANDROID x86"
 
 Note that these shortcuts are setting the $ARCH and $ARCH_BITS env variable for setup_env.sh to read.
 

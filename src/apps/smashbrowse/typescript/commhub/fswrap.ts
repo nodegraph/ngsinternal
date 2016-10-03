@@ -98,7 +98,7 @@ export class FSWrap {
 
     static file_exists(path: string): boolean {
         try {
-            fs.accessSync(path, fs.F_OK);
+            fs.accessSync(path, fs.constants.F_OK);
             return true
         } catch (e) {
             return false
