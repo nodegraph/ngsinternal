@@ -278,13 +278,13 @@ class OBJECTMODEL_EXPORT Component {
   // ----------------------------------------------------------------------------------------------------------
 
   // Dependencies.
-  DepLinkPtr connect_to_dep(Component* c) const;
-  void disconnect_from_dep(Component* c) const;
+  DepLinkPtr connect_to_dep(Component* c);
+  void disconnect_from_dep(Component* c);
 
   // Our dep links.
   //bool has_dep_link(Component* c) const;
   DepLinkPtr get_dep_link(Component* c) const;
-  void set_dep_link(Component* c, DepLinkPtr link) const;
+  void set_dep_link(Component* c, DepLinkPtr link);
 
   // Cycles.
   bool is_recursive_dependency(const Component* dependency, std::vector<const Component*>* path = NULL) const;
@@ -295,9 +295,9 @@ class OBJECTMODEL_EXPORT Component {
   void unregister_dependant(Component* c) const;
 
   // Registration of Dependencies.
-  DepLinkPtr register_dependency(Component* c) const;
-  void unregister_dependency(Component* c) const;
-  void remove_dep_link(Component* c, ComponentIID iid) const;
+  DepLinkPtr register_dependency(Component* c);
+  void unregister_dependency(Component* c);
+  void remove_dep_link(Component* c, ComponentIID iid);
 
   // Our parent entity.
   Entity* _entity; // borrowed reference.
@@ -311,18 +311,13 @@ class OBJECTMODEL_EXPORT Component {
 
 
   // Our dependants which depend on us for information.
-  // Note changing our dependants doesn't make our state dirty because
+  // Note changing our dependants doesn't make our content dirty because
   // we don't allow usage of upstream dependant components from within.
   // We only propagate dirtiness to them.
   mutable IIDToComponents _dependants;
 
   // Our dependencies on which we depend for information.
-  // Note changing our dependencies doesn't directly make our state dirty because
-  // there are occasions where we temporarily need to access a depedencies and
-  // call a const method on it. Now if we were to to hold onto this Dep<T> pointer
-  // inside our class then the instance should become dirty (assuming external()
-  // and internal() are being used properly).
-  mutable IIDToDepLinks _dependencies;
+  IIDToDepLinks _dependencies;
 
   // Our dependencies which were dirtied.
   Components _dirty_dependencies;

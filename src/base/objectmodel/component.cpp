@@ -4,7 +4,6 @@
 #include <base/objectmodel/dep.h>
 #include <base/objectmodel/deploader.h>
 
-#include <entities/entityids.h>
 
 #include <base/utils/simplesaver.h>
 
@@ -161,13 +160,7 @@ DepLinkPtr Component::get_dep(const Path& path, ComponentIID iid) {
   return get_dep(e, iid);
 }
 
-DepLinkPtr Component::connect_to_dep(Component* c) const {
-  // Just connecting to deps shouldn't make us dirty, because
-  // there are occasion where we need to grab a reference temporarily
-  // during an update_state computation.
-  // If you hold onto it though, then some member of your class
-  // gets modified and hence the class becomes dirty if you mark all
-  // your members appropriately with external() and internal().
+DepLinkPtr Component::connect_to_dep(Component* c) {
   external();
 
   // If this is going to create a cycle return NULL.
@@ -179,14 +172,14 @@ DepLinkPtr Component::connect_to_dep(Component* c) const {
 
   // Otherwise.
   DepLinkPtr ptr = register_dependency(c);
-  c->register_dependant(const_cast<Component*>(this));
+  c->register_dependant(this);
   return ptr;
 }
 
-void Component::disconnect_from_dep(Component* c) const {
+void Component::disconnect_from_dep(Component* c) {
   external();
   unregister_dependency(c);
-  c->unregister_dependant(const_cast<Component*>(this));
+  c->unregister_dependant(this);
 }
 
 // --------------------------------------------------------------
@@ -246,15 +239,9 @@ bool Component::dep_creates_cycle(const Component* dependency) const {
   external();
   // The proposed link between us and the dependency would create a cycle
   // if the dependency is actually dependant on us.
-  std::vector<const Component*> path;
-  if (dependency->is_recursive_dependency(this, &path)) {
+  if (dependency->is_recursive_dependency(this)) {
     std::cerr << "Warning the requested component would have created a cycle so a null reference is likely being returned.\n";
-    for (size_t i=0; i<path.size(); ++i) {
-      std::cerr << "[" << i << "] entity name: " << path[i]->get_name() << "component did: " << (size_t)path[i]->get_did() << "\n";
-//          << " entity type: " << get_entity_did_name(path[i]->our_entity()->get_did())
-//          << " component type: " << get_component_did_name(path[i]->get_did()) << "\n";
-    }
-    assert(false);
+    //assert(false);
     return true;
   }
   return false;
@@ -277,22 +264,18 @@ DepLinkPtr Component::get_dep_link(Component* c) const {
   return DepLinkPtr();
 }
 
-void Component::set_dep_link(Component* c, DepLinkPtr link) const {
+void Component::set_dep_link(Component* c, DepLinkPtr link) {
   external();
   const ComponentIID iid = c->get_iid();
   DepLinks &links = _dependencies[iid];
   assert(links.count(c) == 0);
   links.insert({c,DepLinkWPtr(link)});
 
-  // Newly added dependencies are not know to be either dirty or clean.
-  // So we should assume that they are dirty, and clean them.
-  // However we don't add them to our _dirty_dependencies cache.
-  // We reserve this cache exclusively for the case where a dependency
-  // propagates dirtiness over to us.
-  //_dirty_dependencies.insert(c);
+  // Newly added dependencies are dirty with respect to us so that we can update from it.
+  _dirty_dependencies.insert(c);
 }
 
-DepLinkPtr Component::register_dependency(Component* c) const {
+DepLinkPtr Component::register_dependency(Component* c) {
   external();
   // We assume cycle check has already been performed.
 
@@ -308,18 +291,18 @@ DepLinkPtr Component::register_dependency(Component* c) const {
   }
 
   // Otherwise we need to create a dep link.
-  DepLinkPtr dp(new_ff DepLink(const_cast<Component*>(this), c));
+  DepLinkPtr dp(new_ff DepLink(this, c));
   set_dep_link(c, dp);
   return dp;
 }
 
 // Unregistering a dependency make us dirty.
-void Component::unregister_dependency(Component* c) const {
+void Component::unregister_dependency(Component* c) {
   external();
   remove_dep_link(c, c->get_iid());
 }
 
-void Component::remove_dep_link(Component* c, ComponentIID iid) const {
+void Component::remove_dep_link(Component* c, ComponentIID iid) {
   external();
   // Removing a dependency can never create cycles.
   DepLinks& dep_links = _dependencies[iid];
