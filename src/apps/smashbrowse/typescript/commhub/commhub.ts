@@ -181,36 +181,41 @@ class AppConnection extends BaseConnection {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
                 })
             } break
-            case RequestType.kPerformAction: {
+            case RequestType.kPerformMouseAction: {
                 switch (req.args.action) {
-                    case ActionType.kSendClick: {
+                    case MouseActionType.kSendClick: {
                         let p = this.webdriverwrap.click_on_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
-                    case ActionType.kMouseOver: {
+                    case MouseActionType.kMouseOver: {
                         let p = this.webdriverwrap.mouse_over_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
-                    case ActionType.kSendText: {
+                }
+            } break
+            case RequestType.kPerformTextAction: {
+                switch (req.args.action) {
+                    case TextActionType.kSendText: {
                         let p = this.webdriverwrap.send_text(req.args.xpath, req.args.text)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
-                    case ActionType.kSendEnter: {
+                    case TextActionType.kSendEnter: {
                         let p = this.webdriverwrap.send_key(req.args.xpath, Key.RETURN)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
-                    case ActionType.kGetText: {
+                }
+            } break
+            case RequestType.kPerformElementAction: {
+                switch (req.args.action) {
+                    case ElementActionType.kGetText: {
                         let p = this.webdriverwrap.get_text(req.args.xpath)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
-                    case ActionType.kSelectOption: {
+                    case ElementActionType.kSelectOption: {
                         let p = this.webdriverwrap.select_option(req.args.xpath, req.args.option_text)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
-                    case ActionType.kScrollDown:
-                    case ActionType.kScrollUp:
-                    case ActionType.kScrollRight:
-                    case ActionType.kScrollLeft: {
+                    case ElementActionType.kScroll: {
                         // Scroll actions need to be performed by the extension
                         // so we pass it through.
                         send_msg_to_ext(req)

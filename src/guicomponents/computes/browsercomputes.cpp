@@ -151,7 +151,8 @@ void CreateSetFromValuesCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kWrapType, ParamType::kWrapType, false);
-  create_input(Message::kMatchValues, ParamType::kQStringList, false);
+  create_input(Message::kTextValues, ParamType::kQStringList, false);
+  create_input(Message::kImageValues, ParamType::kQStringList, false);
 }
 
 void CreateSetFromValuesCompute::update_state() {

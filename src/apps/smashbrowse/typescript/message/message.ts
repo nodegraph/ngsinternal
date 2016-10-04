@@ -27,7 +27,9 @@ const enum RequestType {
 
     // Page Content Set Requests.
     kGetXPath,
-    kPerformAction,
+    kPerformMouseAction,
+    kPerformTextAction,
+    kPerformElementAction,
     kUpdateOveralys,
     kCacheFrame,
     kLoadCachedFrame,
@@ -46,20 +48,38 @@ const enum RequestType {
     kGetCrosshairInfo,
 }
 
-const enum ActionType {
+declare const enum MouseActionType {
     kSendClick,
     kMouseOver,
     kStartMouseHover,
     kStopMouseHover,
+}
+
+declare const enum TextActionType {
     kSendText,
     kSendEnter,
+}
+
+declare const enum ElementActionType {
     kGetText,
     kSelectOption,
-    kScrollDown,
-    kScrollUp,
-    kScrollRight,
-    kScrollLeft
+    kScroll
 }
+
+// const enum ActionType {
+//     kSendClick,
+//     kMouseOver,
+//     kStartMouseHover,
+//     kStopMouseHover,
+//     kSendText,
+//     kSendEnter,
+//     kGetText,
+//     kSelectOption,
+//     kScrollDown,
+//     kScrollUp,
+//     kScrollRight,
+//     kScrollLeft
+// }
 
 const enum InfoType {
     kPageIsLoading,

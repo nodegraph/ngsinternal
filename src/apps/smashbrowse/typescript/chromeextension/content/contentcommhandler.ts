@@ -45,27 +45,25 @@ class ContentCommHandler {
             case RequestType.kGetXPath: {
                 // Determine the xpath of the overlay element.
                 let xpath = this.gui_collection.overlay_sets.get_xpath(req.args.set_index, req.args.overlay_index)
-                let value = {xpath: xpath}
+                let value = { xpath: xpath }
                 let resp = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), true, value)
                 this.content_comm.send_to_bg(resp)
             }
             case RequestType.kCreateSetFromMatchValues: {
-                if (req.args.match_values.length) {
-                    switch (req.args.wrap_type) {
-                        case WrapType.text: {
-                            let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.text, req.args.match_values)
-                            this.gui_collection.add_overlay_set(elem_wraps)
-                            this.gui_collection.overlay_sets.update()
-                        } break
-                        case WrapType.image: {
-                            let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, req.args.match_values)
-                            this.gui_collection.add_overlay_set(elem_wraps)
-                            this.gui_collection.overlay_sets.update()
-                            console.log('overlay set added for image')
-                        } break
-                        default: {
-                            console.error("Error: create_set_from_match_values")
-                        }
+                switch (req.args.wrap_type) {
+                    case WrapType.text: {
+                        let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.text, req.args.text_values)
+                        this.gui_collection.add_overlay_set(elem_wraps)
+                        this.gui_collection.overlay_sets.update()
+                    } break
+                    case WrapType.image: {
+                        let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, req.args.image_values)
+                        this.gui_collection.add_overlay_set(elem_wraps)
+                        this.gui_collection.overlay_sets.update()
+                        console.log('overlay set added for image')
+                    } break
+                    default: {
+                        console.error("Error: Attempt to create set from unknown wrap type.")
                     }
                 }
                 this.content_comm.send_to_bg(success_msg)
@@ -116,18 +114,25 @@ class ContentCommHandler {
                 this.gui_collection.event_blocker.unblock_events()
                 this.content_comm.send_to_bg(success_msg)
             } break
-            case RequestType.kPerformAction: {
+            case RequestType.kPerformElementAction: {
                 // We (content script) can handle only the scrolling actions.
                 // When scrolling there may be AJAX requests dynamically loading elements into the scrolled page.
                 // In this case the scroll may not move fully to the requested position.
-                if (req.args.action == ActionType.kScrollDown) {
-                    this.gui_collection.overlay_sets.scroll_down(req.args.set_index, req.args.overlay_index);
-                } else if (req.args.action == ActionType.kScrollUp) {
-                    this.gui_collection.overlay_sets.scroll_up(req.args.set_index, req.args.overlay_index);
-                } else if (req.args.action == ActionType.kScrollRight) {
-                    this.gui_collection.overlay_sets.scroll_right(req.args.set_index, req.args.overlay_index);
-                } else if (req.args.action == ActionType.kScrollLeft) {
-                    this.gui_collection.overlay_sets.scroll_left(req.args.set_index, req.args.overlay_index);
+                if (req.args.action == ElementActionType.kScroll) {
+                    switch (req.args.direction) {
+                        case Direction.down: {
+                            this.gui_collection.overlay_sets.scroll_down(req.args.set_index, req.args.overlay_index);
+                        } break
+                        case Direction.up: {
+                            this.gui_collection.overlay_sets.scroll_up(req.args.set_index, req.args.overlay_index);
+                        } break
+                        case Direction.right: {
+                            this.gui_collection.overlay_sets.scroll_right(req.args.set_index, req.args.overlay_index);
+                        } break
+                        case Direction.left: {
+                            this.gui_collection.overlay_sets.scroll_left(req.args.set_index, req.args.overlay_index);
+                        } break
+                    }
                 }
                 this.content_comm.send_to_bg(success_msg)
             } break
@@ -138,7 +143,7 @@ class ContentCommHandler {
             } break
 
         }
-        
+
     }
 
 }

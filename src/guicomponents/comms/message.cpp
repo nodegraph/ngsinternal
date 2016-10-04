@@ -23,8 +23,6 @@ const char* Message::kHeight = "height";
 const char* Message::kDimensions = "dimensions";
 
 const char* Message::kWrapType = "wrap_type";
-const char* Message::kMatchValues = "match_values";
-
 const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";
 

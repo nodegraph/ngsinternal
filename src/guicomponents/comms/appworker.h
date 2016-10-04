@@ -73,7 +73,8 @@ Q_OBJECT
   Q_INVOKABLE void record_switch_to_iframe();
 
   // Record Create Set By Matching Values.
-  Q_INVOKABLE void record_create_set_by_matching_values();
+  Q_INVOKABLE void record_create_set_by_matching_text_values();
+  Q_INVOKABLE void record_create_set_by_matching_image_values();
 
   // Record Create Set By Type.
   Q_INVOKABLE void record_create_set_of_inputs();

@@ -340,9 +340,21 @@ void AppWorker::record_navigate_refresh() {
 // Record Create Set By Matching Values..
 // -----------------------------------------------------------------
 
-void AppWorker::record_create_set_by_matching_values() {
+void AppWorker::record_create_set_by_matching_text_values() {
   check_busy()
   queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType].setValue(WrapType::text);
+  queue_merge_chain_state(args);
+  queue_build_compute_node(ComponentDID::kCreateSetFromValuesCompute);
+}
+
+void AppWorker::record_create_set_by_matching_image_values() {
+  check_busy()
+  queue_get_crosshair_info();
+  QVariantMap args;
+  args[Message::kWrapType].setValue(WrapType::image);
+  queue_merge_chain_state(args);
   queue_build_compute_node(ComponentDID::kCreateSetFromValuesCompute);
 }
 
@@ -1478,7 +1490,8 @@ void AppWorker::update_overlays_task() {
 void AppWorker::create_set_by_matching_values_task() {
   QVariantMap args;
   args[Message::kWrapType] = _chain_state[Message::kWrapType];
-  args[Message::kMatchValues] = _chain_state[Message::kMatchValues];
+  args[Message::kTextValues] = _chain_state[Message::kTextValues];
+  args[Message::kImageValues] = _chain_state[Message::kImageValues];
 
   Message req(RequestType::kCreateSetFromMatchValues);
   req[Message::kArgs] = args;
@@ -1574,7 +1587,7 @@ void AppWorker::perform_mouse_action_task() {
   args[Message::kXPath] = _chain_state[Message::kXPath];
   args[Message::kOverlayRelClickPos] = _chain_state[Message::kOverlayRelClickPos];
 
-  Message req(RequestType::kPerformAction);
+  Message req(RequestType::kPerformMouseAction);
   req[Message::kArgs] = args;
   send_msg_task(req);
 }
@@ -1585,7 +1598,7 @@ void AppWorker::perform_hover_action_task() {
   args[Message::kXPath] = _hover_state[Message::kXPath];
   args[Message::kOverlayRelClickPos] = _hover_state[Message::kOverlayRelClickPos];
 
-  Message req(RequestType::kPerformAction);
+  Message req(RequestType::kPerformMouseAction);
   req[Message::kArgs] = args;
   send_msg_task(req);
 }
@@ -1596,7 +1609,7 @@ void AppWorker::perform_text_action_task() {
   args[Message::kXPath] = _chain_state[Message::kXPath];
   args[Message::kText] = _chain_state[Message::kText];
 
-  Message req(RequestType::kPerformAction);
+  Message req(RequestType::kPerformTextAction);
   req[Message::kArgs] = args;
   send_msg_task(req);
 }
@@ -1608,7 +1621,7 @@ void AppWorker::perform_element_action_task() {
   args[Message::kOptionText] = _chain_state[Message::kOptionText]; // Used for selecting element from dropdowns.
   args[Message::kDirection] = _chain_state[Message::kDirection]; // Used for the scrolling directions.
 
-  Message req(RequestType::kPerformAction);
+  Message req(RequestType::kPerformElementAction);
   req[Message::kArgs] = args;
   send_msg_task(req);
 }

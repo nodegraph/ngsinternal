@@ -38,7 +38,9 @@ enum class RequestType : int {
 
   // Page Content Set Requests.
   kGetXPath,
-  kPerformAction,
+  kPerformMouseAction,
+  kPerformTextAction,
+  kPerformElementAction,
   kUpdateOveralys,
   kCacheFrame,
   kLoadCachedFrame,
@@ -149,8 +151,6 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kDimensions;
 
   static const char* kWrapType;
-  static const char* kMatchValues;
-
   static const char* kTextValues;
   static const char* kImageValues;
 
