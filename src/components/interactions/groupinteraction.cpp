@@ -1014,4 +1014,39 @@ Entity* GroupInteraction::create_node(EntityDID did) {
   return node;
 }
 
+void GroupInteraction::link(Entity* upstream, Entity* downstream) {
+  Dep<InputCompute> input_compute = get_dep<InputCompute>(downstream);
+  Dep<InputShape> input_shape = get_dep<InputShape>(downstream);
+  Dep<OutputCompute> output_compute = get_dep<OutputCompute>(upstream);
+  Dep<OutputShape> output_shape = get_dep<OutputShape>(upstream);
+
+  // Remove any existing link shapes on this input.
+  // There is only one link per input.
+  Entity* old_link_entity = input_shape->find_link_entity();
+  if (old_link_entity) {
+    // Remove any existing compute connection on this input compute.
+    input_compute->unlink_output_compute();
+    // Destroy the link.
+    delete_ff(old_link_entity);
+  }
+
+  // Try to connect the input and output computes.
+  if (!input_compute->link_output_compute(output_compute)) {
+    // Otherwise destroy the link and selection.
+    assert(false);
+  }
+
+  // Link the output shape.
+  _link_shape = create_link();
+  _link_shape->link_input_shape(input_shape);
+  _link_shape->link_output_shape(output_shape);
+  _link_shape->finished_moving();
+
+  // Transition to default state.
+  _state = kNodeSelectionAndDragging;
+
+  // Reset our interactive dragging state.
+  _link_shape.reset();
+}
+
 }

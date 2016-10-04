@@ -347,4 +347,11 @@ class OBJECTMODEL_EXPORT Component {
   friend class DynamicDepUSetWrapper;
 };
 
+// An invalid component which should never be created.
+class InvalidComponent: public Component {
+ public:
+  COMPONENT_ID(InvalidComponent, InvalidComponent);
+  InvalidComponent(Entity* entity):Component(entity, kIID(), kDID()) {}
+};
+
 }

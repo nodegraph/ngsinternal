@@ -10,6 +10,8 @@
 #include <components/compshapes/compshapecollective.h>
 #include <components/compshapes/dotnodeshape.h>
 
+#include <components/computes/baseoutputs.h>
+
 #include <iostream>
 #include <thread>
 
@@ -265,6 +267,46 @@ void CompShapeCollective::get_aa_bounds(const DepUSet<NodeShape>& comp_shapes, g
 //  std::function<void(std::pair<size_t,size_t>&)> func = std::bind(tessellator, deps, std::placeholders::_1);
 //  ThreadPool p(deps.size(),32, func);
 //}
+
+Dep<CompShape> CompShapeCollective::get_lowest() {
+  // Variables to track the lowest.
+  Dep<CompShape> lowest(this);
+  glm::vec2 lowest_pos;
+
+  // Loop through all the comp shapes.
+  DepUSet<CompShape>::iterator iter;
+  bool first = true;
+  for (iter = _comp_shapes.begin(); iter != _comp_shapes.end(); ++iter) {
+    Dep<CompShape> cs = (*iter);
+
+    // If the comp shape is not a node's linkable shape then continue.
+    if (!cs->is_linkable()) {
+      continue;
+    }
+
+    // If the entity has no exposed outputs then continue.
+    Dep<BaseOutputs> outputs = get_dep<BaseOutputs>(cs->our_entity());
+    if (outputs->get_exposed().empty()) {
+      continue;
+    }
+
+
+    if (first) {
+      // Use the first valid value to initialize the lowest variables.
+      lowest = (*iter);
+      const glm::vec2& pos = lowest->get_pos();
+      lowest_pos = pos;
+      // first is no longer true.
+      first = false;
+    } else {
+      if ((*iter)->get_pos().y < lowest_pos.y) {
+        lowest = (*iter);
+        lowest_pos = lowest->get_pos();
+      }
+    }
+  }
+  return lowest;
+}
 
 }
 

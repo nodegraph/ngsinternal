@@ -54,13 +54,6 @@
 
 namespace ngs {
 
-// An invalid component which should never be created.
-class InvalidComponent: public Component {
- public:
-  InvalidComponent(Entity* entity):Component(entity, kIID(), kDID()) {}
-  COMPONENT_ID(InvalidComponent, InvalidComponent);
-};
-
 Component* ComponentInstancer::instance(Entity* entity, ComponentDID did) const{
   // Define our component type traits.
   #undef COMPONENT_ENTRY1

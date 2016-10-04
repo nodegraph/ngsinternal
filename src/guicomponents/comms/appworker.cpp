@@ -5,6 +5,17 @@
 #include <components/interactions/graphbuilder.h>
 #include <components/computes/compute.h>
 #include <components/computes/inputcompute.h>
+#include <components/computes/outputcompute.h>
+#include <components/computes/baseoutputs.h>
+#include <components/computes/baseinputs.h>
+
+#include <components/interactions/groupinteraction.h>
+
+#include <components/compshapes/nodeshape.h>
+#include <components/compshapes/linkshape.h>
+#include <components/compshapes/inputshape.h>
+#include <components/compshapes/outputshape.h>
+#include <components/compshapes/compshapecollective.h>
 
 #include <guicomponents/comms/appworker.h>
 #include <guicomponents/comms/appcomm.h>
@@ -45,6 +56,73 @@ QUrl get_proper_url(const QString& input) {
   return result.isValid() ? result : QUrl::fromUserInput("about:blank");
 }
 
+class Linker: public Component {
+ public:
+  COMPONENT_ID(InvalidComponent, InvalidComponent);
+  Linker(Entity* entity):Component(entity, kIID(), kDID()) {}
+  // upstream and downstream are the output and input entities respectively.
+  void link(Entity* downstream) {
+    // Get the factory.
+    Dep<BaseFactory> factory = get_dep<BaseFactory>(get_app_root());
+    Entity* current_group = factory->get_current_group();
+
+    // Get the current comp shape collective.
+    Dep<CompShapeCollective> collective = get_dep<CompShapeCollective>(current_group);
+
+    // Find the lowest node that's where we'll link to.
+    Dep<CompShape> upstream_node = collective->get_lowest();
+    if (!upstream_node) {
+      return;
+    }
+    Entity* upstream = upstream_node->our_entity();
+
+    // -------------------------------------------------------------------------
+    // At this point we have both the upstream and downstream nodes to connect.
+    // -------------------------------------------------------------------------
+
+    std::cerr << "we now have both upstream and downstream\n";
+
+    // Position our node below the upstream.
+    Dep<NodeShape> downstream_node = get_dep<NodeShape>(downstream);
+    glm::vec2 pos = upstream_node->get_pos();
+    pos.y -= 700;
+    downstream_node->set_pos(pos);
+
+    // Get the exposed outputs from the upstream node.
+    Dep<BaseOutputs> outputs = get_dep<BaseOutputs>(upstream);
+    const std::unordered_map<std::string, Entity*>& exposed_outputs = outputs->get_exposed();
+
+    // Get the exposed inputs from the downstream node.
+    Dep<BaseInputs> inputs = get_dep<BaseInputs>(downstream);
+    const std::unordered_map<std::string, Entity*>& exposed_inputs = inputs->get_exposed();
+
+    // If we have exposed outputs and inputs then lets connect the first of each of them.
+    if (!exposed_outputs.empty() && !exposed_inputs.empty()) {
+      Entity* output = exposed_outputs.begin()->second;
+      Entity* input = exposed_inputs.begin()->second;
+
+      // Link the computes.
+      Dep<OutputCompute> output_compute = get_dep<OutputCompute>(output);
+      Dep<InputCompute> input_compute = get_dep<InputCompute>(input);
+      input_compute->link_output_compute(output_compute);
+
+      // Create a link.
+      Entity* links_folder = current_group->get_entity(Path({".","links"}));
+      Entity* link = factory->instance_entity(links_folder, "link", EntityDID::kLinkEntity);
+      link->create_internals();
+
+      // Link the link, input and output shapes.
+      Dep<OutputShape> output_shape = get_dep<OutputShape>(output);
+      Dep<InputShape> input_shape = get_dep<InputShape>(input);
+      Dep<LinkShape> link_shape= get_dep<LinkShape>(link);
+      link_shape->start_moving();
+      link_shape->link_input_shape(input_shape);
+      link_shape->link_output_shape(output_shape);
+      link_shape->finished_moving();
+    }
+  }
+};
+
 AppWorker::AppWorker(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
@@ -53,6 +131,7 @@ AppWorker::AppWorker(Entity* parent)
       _graph_builder(this),
       _factory(this),
       _compute(this),
+      _node_selection(this),
       _show_browser(false),
       _hovering(false),
       _jitter(kJitterSize),
@@ -63,6 +142,7 @@ AppWorker::AppWorker(Entity* parent)
   get_dep_loader()->register_fixed_dep(_file_model, Path({}));
   get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
+  get_dep_loader()->register_fixed_dep(_node_selection, Path({}));
 
   // Setup the poll timer.
   _poll_timer.setSingleShot(false);
@@ -1225,7 +1305,7 @@ void AppWorker::build_compute_node_task(ComponentDID compute_did) {
 
   // Initialize and update the wires.
   node->initialize_wires();
-  node->clean_wires();
+  group->clean_wires();
 
   // Set the values on all the inputs from the chain_state.
   QVariantMap::const_iterator iter;
@@ -1247,7 +1327,16 @@ void AppWorker::build_compute_node_task(ComponentDID compute_did) {
     compute->set_value(iter.value());
   }
 
-  // Todo: Connect it to the last selected node.
+  // Position and link the node we just created.
+  // We use a dummy component to avoid creating a cycle.
+  {
+    Linker* linker = new_ff Linker(get_app_root());
+    linker->link(node);
+    delete_ff(linker);
+  }
+
+  // Clean the wires in this group, as new nodes and links were created.
+  _factory->get_current_group()->clean_wires();
 
   // Now execute it.
   compute->clean_state();

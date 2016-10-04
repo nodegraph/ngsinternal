@@ -145,6 +145,8 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
 
   Entity* create_node(EntityDID did);
 
+  void link(Entity* upstream, Entity* downstream);
+
  protected:
   // Our state.
   virtual void update_state();

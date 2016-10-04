@@ -21,6 +21,7 @@ class FileModel;
 class GraphBuilder;
 class Compute;
 class BaseFactory;
+class NodeSelection;
 
 // Helper which wraps the input url with things like http://.
 // Webdriver needs proper urls to navigate.
@@ -306,6 +307,7 @@ signals:
   Dep<FileModel> _file_model;
   Dep<GraphBuilder> _graph_builder;
   Dep<BaseFactory> _factory;
+  Dep<NodeSelection> _node_selection;
 
   // Poll timer.
   QTimer _poll_timer;
