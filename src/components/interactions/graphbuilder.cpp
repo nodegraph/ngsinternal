@@ -26,6 +26,7 @@ GraphBuilder::~GraphBuilder() {
 }
 
 void GraphBuilder::build_stress_graph() {
+  external();
 
   std::cerr << "starting to create nodes\n";
 
@@ -69,6 +70,8 @@ void GraphBuilder::build_stress_graph() {
 }
 
 void GraphBuilder::build_test_graph() {
+  external();
+
   Entity* root_group = get_entity(Path({"root"}));
 
   Entity* i1 = _factory->create_entity(root_group, "input one", EntityDID::kInputNodeEntity);
@@ -233,6 +236,7 @@ void GraphBuilder::build_test_graph() {
 
   }
 }
+
 
 
 

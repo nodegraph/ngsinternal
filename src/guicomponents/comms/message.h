@@ -9,7 +9,15 @@
 
 namespace ngs {
 
-// Note in order for the enums to be visible in Qt they have to start with a capital letter.
+template<class E>
+typename std::underlying_type<E>::type to_underlying(E e) {
+   return static_cast<typename std::underlying_type<E>::type>(e);
+}
+
+
+// Note we don't use the Q_DECLARE_METATYPE() or the Q_ENUM() macro because we may eventually
+// move away from qml to javascript/typescript oriented gui framework, where we want our json
+// message to only contain pure javascript primitive types.
 // Note these enums have to be kept in sync with the typescript file, socketmessage.ts.
 enum class RequestType : int {
   kUnknownRequest,
@@ -58,7 +66,7 @@ enum class RequestType : int {
   // Info Request.
   kGetCrosshairInfo,
 };
-Q_DECLARE_METATYPE(RequestType);
+//Q_DECLARE_METATYPE(RequestType);
 
 enum class MouseActionType : int {
   kSendClick,
@@ -66,20 +74,20 @@ enum class MouseActionType : int {
   kStartMouseHover,
   kStopMouseHover,
 };
-Q_DECLARE_METATYPE(MouseActionType);
+//Q_DECLARE_METATYPE(MouseActionType);
 
 enum class TextActionType : int {
   kSendText,
   kSendEnter,
 };
-Q_DECLARE_METATYPE(TextActionType);
+//Q_DECLARE_METATYPE(TextActionType);
 
 enum class ElementActionType : int {
   kGetText,
   kSelectOption,
   kScroll
 };
-Q_DECLARE_METATYPE(ElementActionType);
+//Q_DECLARE_METATYPE(ElementActionType);
 
 //enum ActionType {
 //  kSendClick,
@@ -102,7 +110,7 @@ enum class InfoType : int {
   kBgIsConnected,
   kShowWebActionMenu
 };
-Q_DECLARE_METATYPE(InfoType);
+//Q_DECLARE_METATYPE(InfoType);
 
 enum class MessageType : int {
   kUnformedMessage,
@@ -110,7 +118,7 @@ enum class MessageType : int {
   kResponseMessage,
   kInfoMessage
 };
-Q_DECLARE_METATYPE(MessageType);
+//Q_DECLARE_METATYPE(MessageType);
 
 enum class WrapType : int {
     text,
@@ -119,7 +127,7 @@ enum class WrapType : int {
     select,
     iframe
 };
-Q_DECLARE_METATYPE(WrapType);
+//Q_DECLARE_METATYPE(WrapType);
 
 enum class Direction : int {
     left,
@@ -127,7 +135,7 @@ enum class Direction : int {
     up,
     down
 };
-Q_DECLARE_METATYPE(Direction);
+//Q_DECLARE_METATYPE(Direction);
 
 class COMMS_EXPORT Message: public QVariantMap {
  public:

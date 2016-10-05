@@ -37,6 +37,7 @@ enum class ComponentIID : size_t {
   kIFileModel,
   kIAppComm,
   kIAppWorker,
+  kIAppRecorder,
   kILicenseChecker,
   kILinkGroup,
   kINodeSelection,
@@ -120,13 +121,13 @@ COMPONENT_ENTRY2(Resources, 56)\
 COMPONENT_ENTRY2(ShapeCanvas, 57)\
 /* -- */\
 COMPONENT_ENTRY2(Inputs, 58)\
-COMPONENT_ENTRY2(Outputs, 59)
+COMPONENT_ENTRY2(Outputs, 59)\
+COMPONENT_ENTRY2(AppRecorder, 60)
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()
 };
 
-ENTITIES_EXPORT const char* get_compute_name(ComponentDID did);
 
 ENTITIES_EXPORT const char* get_component_did_name(ComponentDID did);
 

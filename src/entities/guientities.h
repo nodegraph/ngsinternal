@@ -13,6 +13,7 @@ enum ParamType;
 class FileModel;
 class AppComm;
 class AppWorker;
+class AppRecorder;
 class LicenseChecker;
 class NodeGraphQuickItem;
 class GraphBuilder;
@@ -31,6 +32,7 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   FileModel* get_file_model();
   AppComm* get_app_comm();
   AppWorker* get_app_worker();
+  AppRecorder* get_app_recorder();
   LicenseChecker* get_license_checker();
   NodeGraphQuickItem* get_node_graph_quick_item();
   GraphBuilder* get_graph_builder();
@@ -124,6 +126,7 @@ class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
   ENTITY_ID(ComputeNodeEntity, "compute")
  ComputeNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
+  Compute* get_compute();
 };
 
 }

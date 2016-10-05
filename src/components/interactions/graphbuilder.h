@@ -7,7 +7,7 @@
 namespace ngs {
 
 class BaseFactory;
-class ShapeCanvas;
+class Compute;
 
 class INTERACTIONS_EXPORT GraphBuilder: public Component {
  public:
@@ -17,17 +17,16 @@ class INTERACTIONS_EXPORT GraphBuilder: public Component {
   GraphBuilder(Entity* entity);
   virtual ~GraphBuilder();
 
-  // Test Graph Builders.
-
-  // Assumes that app_root is build with one group node as a child.
+  // Graph Builders.
   virtual void build_test_graph();
   virtual void build_stress_graph();
-
 
 
  private:
   // Our fixed deps.
   Dep<BaseFactory> _factory;
+
+
 };
 
 }

@@ -409,8 +409,10 @@ bool Component::clean_self() {
     return true;
   }
 
-  // Now we clean/update our internal state.
-  update_state();
+  if (!is_processing()) {
+    // Now we clean/update our internal state.
+    update_state();
+  }
 
   // If our update is asynchronous, then a finalize_update() will
   // mark this component as clean.

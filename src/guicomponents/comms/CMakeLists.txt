@@ -4,6 +4,7 @@ set(sources
     message.cpp
     appcomm.cpp
     appworker.cpp
+    apprecorder.cpp
     licensechecker.cpp
     )
    
@@ -15,6 +16,7 @@ set(moc_headers
     message.h
     appcomm.h
     appworker.h
+    apprecorder.h
     licensechecker.h
     )
     

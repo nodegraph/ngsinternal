@@ -182,7 +182,7 @@ class AppConnection extends BaseConnection {
                 })
             } break
             case RequestType.kPerformMouseAction: {
-                switch (req.args.action) {
+                switch (req.args.mouse_action) {
                     case MouseActionType.kSendClick: {
                         let p = this.webdriverwrap.click_on_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                         WebDriverWrap.terminate_chain(p, req.id)
@@ -191,10 +191,13 @@ class AppConnection extends BaseConnection {
                         let p = this.webdriverwrap.mouse_over_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
+                    default: {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, "unknown mouse action"))
+                    }
                 }
             } break
             case RequestType.kPerformTextAction: {
-                switch (req.args.action) {
+                switch (req.args.text_action) {
                     case TextActionType.kSendText: {
                         let p = this.webdriverwrap.send_text(req.args.xpath, req.args.text)
                         WebDriverWrap.terminate_chain(p, req.id)
@@ -203,10 +206,13 @@ class AppConnection extends BaseConnection {
                         let p = this.webdriverwrap.send_key(req.args.xpath, Key.RETURN)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
+                    default: {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, "unknown text action"))
+                    }
                 }
             } break
             case RequestType.kPerformElementAction: {
-                switch (req.args.action) {
+                switch (req.args.element_action) {
                     case ElementActionType.kGetText: {
                         let p = this.webdriverwrap.get_text(req.args.xpath)
                         WebDriverWrap.terminate_chain(p, req.id)
@@ -220,6 +226,9 @@ class AppConnection extends BaseConnection {
                         // so we pass it through.
                         send_msg_to_ext(req)
                     } break
+                    default: {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, "unknown element action"))
+                    }
                 }
             } break
             default: {

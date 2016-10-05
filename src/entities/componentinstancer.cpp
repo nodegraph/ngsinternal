@@ -45,6 +45,7 @@
 #include <guicomponents/quick/nodegraphview.h>
 #include <guicomponents/comms/appcomm.h>
 #include <guicomponents/comms/appworker.h>
+#include <guicomponents/comms/apprecorder.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <gui/widget/nodegrapheditor.h>
 

@@ -23,17 +23,15 @@ class Compute;
 class BaseFactory;
 class NodeSelection;
 
-// Helper which wraps the input url with things like http://.
-// Webdriver needs proper urls to navigate.
-QUrl get_proper_url(const QString& input);
+class TaskContext;
+
+typedef std::function<void()> AppTask;
 
 // This class communicates with the nodejs process.
 class COMMS_EXPORT AppWorker : public QObject, public Component {
 Q_OBJECT
  public:
   COMPONENT_ID(AppWorker, AppWorker)
-
-  typedef std::function<void()> AppTask;
 
   explicit AppWorker(Entity* parent);
   virtual ~AppWorker();
@@ -42,9 +40,6 @@ Q_OBJECT
   static QString get_app_bin_dir();
   static QString get_user_data_dir();
   Q_INVOKABLE QString get_smash_browse_url();
-
-  // Crean a node's compute.
-  void clean_compute(Dep<Compute>& compute);
 
   // Polling Control.
   // Polling can ensure the browser is open and of the expected dimensions.
@@ -55,161 +50,69 @@ Q_OBJECT
   Q_INVOKABLE void make_browser_visible() {_show_browser = true;}
 
   // Task queue info.
-  Q_INVOKABLE bool is_busy() {return !_queue.empty();}
-
-  // ---------------------------------------------------------------------------------
-  // Record Actions.
-  // ---------------------------------------------------------------------------------
-
-  // Record Browser Actions.
-  Q_INVOKABLE void record_open_browser();
-  Q_INVOKABLE void record_close_browser();
-  Q_INVOKABLE void record_check_browser_is_open();
-  Q_INVOKABLE void record_check_browser_size();
-
-  // Record Navigate Actions.
-  Q_INVOKABLE void record_navigate_to(const QString& url);
-  Q_INVOKABLE void record_navigate_refresh();
-  Q_INVOKABLE void record_switch_to_iframe();
-
-  // Record Create Set By Matching Values.
-  Q_INVOKABLE void record_create_set_by_matching_text_values();
-  Q_INVOKABLE void record_create_set_by_matching_image_values();
-
-  // Record Create Set By Type.
-  Q_INVOKABLE void record_create_set_of_inputs();
-  Q_INVOKABLE void record_create_set_of_selects();
-  Q_INVOKABLE void record_create_set_of_images();
-  Q_INVOKABLE void record_create_set_of_text();
-
-  // Record Delete Set.
-  Q_INVOKABLE void record_delete_set();
-
-  // Record Shift Sets.
-  Q_INVOKABLE void record_shift_to_text_above();
-  Q_INVOKABLE void record_shift_to_text_below();
-  Q_INVOKABLE void record_shift_to_text_on_left();
-  Q_INVOKABLE void record_shift_to_text_on_right();
-
-  Q_INVOKABLE void record_shift_to_images_above();
-  Q_INVOKABLE void record_shift_to_images_below();
-  Q_INVOKABLE void record_shift_to_images_on_left();
-  Q_INVOKABLE void record_shift_to_images_on_right();
-
-  Q_INVOKABLE void record_shift_to_inputs_above();
-  Q_INVOKABLE void record_shift_to_inputs_below();
-  Q_INVOKABLE void record_shift_to_inputs_on_left();
-  Q_INVOKABLE void record_shift_to_inputs_on_right();
-
-  Q_INVOKABLE void record_shift_to_selects_above();
-  Q_INVOKABLE void record_shift_to_selects_below();
-  Q_INVOKABLE void record_shift_to_selects_on_left();
-  Q_INVOKABLE void record_shift_to_selects_on_right();
-
-  Q_INVOKABLE void record_shift_to_iframes_above();
-  Q_INVOKABLE void record_shift_to_iframes_below();
-  Q_INVOKABLE void record_shift_to_iframes_on_left();
-  Q_INVOKABLE void record_shift_to_iframes_on_right();
-
-  // Record Expand Sets.
-  Q_INVOKABLE void record_expand_above();
-  Q_INVOKABLE void record_expand_below();
-  Q_INVOKABLE void record_expand_left();
-  Q_INVOKABLE void record_expand_right();
-
-  // Record Mark Sets.
-  Q_INVOKABLE void record_mark_set();
-  Q_INVOKABLE void record_unmark_set();
-  Q_INVOKABLE void record_merge_sets();
-
-  // Record Shrink To One Side.
-  Q_INVOKABLE void record_shrink_set_to_topmost();
-  Q_INVOKABLE void record_shrink_set_to_bottommost();
-  Q_INVOKABLE void record_shrink_set_to_leftmost();
-  Q_INVOKABLE void record_shrink_set_to_rightmost();
-
-  // Record Shrink Against Marked Sets.
-  Q_INVOKABLE void record_shrink_above_of_marked();
-  Q_INVOKABLE void record_shrink_below_of_marked();
-  Q_INVOKABLE void record_shrink_above_and_below_of_marked();
-  Q_INVOKABLE void record_shrink_left_of_marked();
-  Q_INVOKABLE void record_shrink_right_of_marked();
-  Q_INVOKABLE void record_shrink_left_and_right_of_marked();
-
-  // Record Mouse Actions.
-  Q_INVOKABLE void record_click();
-  Q_INVOKABLE void record_mouse_over();
-  Q_INVOKABLE void record_start_mouse_hover();
-  Q_INVOKABLE void record_stop_mouse_hover();
-
-  // Record Text Actions.
-  Q_INVOKABLE void record_type_text(const QString& text);
-  Q_INVOKABLE void record_type_enter();
-
-  // Record Element Actions.
-  Q_INVOKABLE void record_extract_text();
-  Q_INVOKABLE void record_select_from_dropdown(const QString& option_text);
-  Q_INVOKABLE void record_scroll_down();
-  Q_INVOKABLE void record_scroll_up();
-  Q_INVOKABLE void record_scroll_right();
-  Q_INVOKABLE void record_scroll_left();
+  Q_INVOKABLE bool is_busy() {return !_stack.empty();}
 
   // ---------------------------------------------------------------------------------
   // Queued Tasks.
   // ---------------------------------------------------------------------------------
 
   // Queue Framework Tasks.
-  void queue_get_xpath();
-  void queue_get_crosshair_info();
-  void queue_merge_chain_state(const QVariantMap& map);
-  void queue_build_compute_node(ComponentDID compute_did);
-  void queue_finished(std::function<void(const QVariantMap&)> finalize_update);
+  void queue_get_xpath(TaskContext& tc);
+  void queue_get_crosshair_info(TaskContext& tc);
+  void queue_merge_chain_state(TaskContext& tc, const QVariantMap& map);
+  void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did, std::function<void(Entity*,Compute*)> on_node_built);
+  void queue_get_outputs(TaskContext& tc, std::function<void(const QVariantMap&)> on_get_outputs);
+ private:
+  // Special queue methods which control the stack of queues.
+  void queue_start_sequence(TaskContext& tc);
+  void queue_finished_sequence(TaskContext& tc, std::function<void()> on_finished_sequence);
+ public:
 
   // Queue Cookie Tasks.
-  Q_INVOKABLE void queue_get_all_cookies();
-  Q_INVOKABLE void queue_clear_all_cookies();
-  Q_INVOKABLE void queue_set_all_cookies();
+  void queue_get_all_cookies(TaskContext& tc);
+  void queue_clear_all_cookies(TaskContext& tc);
+  void queue_set_all_cookies(TaskContext& tc);
 
   // Queue Browser Tasks.
-  void queue_open_browser();
-  void queue_close_browser();
-  void queue_check_browser_is_open();
-  void queue_check_browser_size();
-  void queue_reset();
+  void queue_open_browser(TaskContext& tc);
+  void queue_close_browser(TaskContext& tc);
+  void queue_check_browser_is_open(TaskContext& tc);
+  void queue_check_browser_size(TaskContext& tc);
+  void queue_reset(TaskContext& tc);
 
   // Queue Page Content Tasks.
-  void queue_block_events();
-  void queue_unblock_events();
+  void queue_block_events(TaskContext& tc);
+  void queue_unblock_events(TaskContext& tc);
 
   // Queue Navigate Tasks.
-  void queue_navigate_to();
-  void queue_navigate_refresh();
-  void queue_switch_to_iframe();
+  void queue_navigate_to(TaskContext& tc);
+  void queue_navigate_refresh(TaskContext& tc);
+  void queue_switch_to_iframe(TaskContext& tc);
 
   // Queue Set Tasks.
-  void queue_update_overlays();
-  void queue_create_set_by_matching_values();
-  void queue_create_set_by_matching_type();
-  void queue_delete_set();
-  void queue_shift_set();
-  void queue_expand_set();
-  void queue_mark_set();
-  void queue_unmark_set();
-  void queue_merge_sets();
-  void queue_shrink_set_to_side();
-  void queue_shrink_against_marked();
+  void queue_update_overlays(TaskContext& tc);
+  void queue_create_set_by_matching_values(TaskContext& tc);
+  void queue_create_set_by_matching_type(TaskContext& tc);
+  void queue_delete_set(TaskContext& tc);
+  void queue_shift_set(TaskContext& tc);
+  void queue_expand_set(TaskContext& tc);
+  void queue_mark_set(TaskContext& tc);
+  void queue_unmark_set(TaskContext& tc);
+  void queue_merge_sets(TaskContext& tc);
+  void queue_shrink_set_to_side(TaskContext& tc);
+  void queue_shrink_against_marked(TaskContext& tc);
 
   // Queue Perform Action Tasks.
-  void queue_perform_mouse_action();
-  void queue_perform_mouse_hover();
-  void queue_perform_post_mouse_hover();
-  void queue_perform_text_action();
-  void queue_perform_element_action();
+  void queue_perform_mouse_action(TaskContext& tc);
+  void queue_perform_mouse_hover(TaskContext& tc);
+  void queue_perform_post_mouse_hover(TaskContext& tc);
+  void queue_perform_text_action(TaskContext& tc);
+  void queue_perform_element_action(TaskContext& tc);
 
   // Queue other actions.
-  void queue_start_mouse_hover();
-  void queue_stop_mouse_hover();
-  Q_INVOKABLE void queue_emit_option_texts(); // Used to extract options from dropdowns and emit back to qml.
+  void queue_start_mouse_hover(TaskContext& tc);
+  void queue_stop_mouse_hover(TaskContext& tc);
+  void queue_emit_option_texts(TaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
 
 signals:
   void show_web_action_menu();
@@ -228,17 +131,17 @@ signals:
  private:
   void reset_state();
 
-  // Send Messages.
-//  void send_json(const QString& json);
-//  void send_map(const QVariantMap& map);
-
   // -----------------------------------------------------------------------------
   // Tasks grab input settings from the chain_state and build
   // messages to send out from those settings.
   // -----------------------------------------------------------------------------
 
   // Task Management.
-  void queue_task(AppTask task, const std::string& about);
+  typedef std::deque<AppTask> TaskQueue;
+  typedef std::vector<TaskQueue> TaskQueueStack;
+
+  TaskQueue& get_task_queue();
+  void queue_task(TaskContext& tc, AppTask task, const std::string& about);
   void run_next_task();
   void handle_response_from_nodejs(const Message& sm);
   void handle_info_from_nodejs(const Message& msg);
@@ -248,8 +151,10 @@ signals:
   void get_crosshair_info_task();
   void get_xpath_task();
   void merge_chain_state_task(const QVariantMap& map);
-  void finished_task(std::function<void(const QVariantMap&)> finalize_update);
-  void build_compute_node_task(ComponentDID compute_did);
+  void get_outputs_task(std::function<void(const QVariantMap&)> on_finished_sequence);
+  void start_sequence_task();
+  void finished_sequence_task(std::function<void()> on_finished_sequence);
+  void build_compute_node_task(ComponentDID compute_did, std::function<void(Entity* node, Compute* compute)> on_node_built);
 
   // Cookie Tasks.
   void get_all_cookies_task();
@@ -301,12 +206,8 @@ signals:
   void emit_option_texts_task();
   void reset_task();
 
-
-
   // Our fixed dependencies.
   Dep<AppComm> _app_comm;
-  Dep<FileModel> _file_model;
-  Dep<GraphBuilder> _graph_builder;
   Dep<BaseFactory> _factory;
   Dep<NodeSelection> _node_selection;
 
@@ -328,14 +229,33 @@ signals:
   int _jitter;
 
   // Simple Request-Response Pair Tracking.
-  bool _waiting_for_results;
+  bool _waiting_for_response;
   int _next_msg_id;  // This is one more than the max msg id issued out.
   int _expected_msg_id; // This is the next msg id we're expecting from a response message.
   Message _last_resp; // The last response message received. _last_resp[value] gets copied into _chain_state.
   QVariantMap _chain_state;  // The 'value' value from responses will get merged into this state overriding previous values.
-  std::deque<AppTask> _queue;
 
-  Dep<Compute> _compute;
+  // Task Management.
+  TaskQueueStack _stack;
+  friend class TaskContext;
+
+};
+
+
+class COMMS_EXPORT TaskContext {
+ public:
+  TaskContext(AppWorker* app_worker, std::function<void ()> on_finished_sequence = std::function<void()>()):
+    app_worker(app_worker),
+    on_finished_sequence(on_finished_sequence),
+    stack_index(-1) {
+    app_worker->queue_start_sequence(*this);
+  }
+  ~TaskContext(){
+    app_worker->queue_finished_sequence(*this,on_finished_sequence);
+  }
+  AppWorker* app_worker;
+  std::function<void ()> on_finished_sequence;
+  size_t stack_index;
 };
 
 }

@@ -6,6 +6,7 @@
 namespace ngs {
 
 class Entity;
+class Compute;
 
 class OBJECTMODEL_EXPORT BaseEntityInstancer {
  public:
@@ -38,7 +39,9 @@ class OBJECTMODEL_EXPORT BaseFactory: public Component {
 
   virtual Entity* create_entity(Entity* parent, const std::string& name, EntityDID did) const;
   virtual Component* create_component(Entity* entity, ComponentDID did) const;
+
   virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const = 0;
+  virtual std::pair<Entity*, Compute*> create_compute_node2(Entity* parent, ComponentDID compute_did, const std::string& name="") const = 0;
 
   // Group navigation management.
   virtual void push_group(Entity* group);

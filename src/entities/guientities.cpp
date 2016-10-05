@@ -44,6 +44,7 @@
 
 #include <guicomponents/comms/appcomm.h>
 #include <guicomponents/comms/appworker.h>
+#include <guicomponents/comms/apprecorder.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/browsercomputes.h>
@@ -100,6 +101,7 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff FileModel(this);
   new_ff AppComm(this);
   new_ff AppWorker(this);
+  new_ff AppRecorder(this);
   new_ff LicenseChecker(this);
 }
 
@@ -134,6 +136,7 @@ void QMLAppEntity::expose_to_qml() {
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
   AppComm* app_comm = get_app_comm();
   AppWorker* app_worker = get_app_worker();
+  AppRecorder* app_recorder = get_app_recorder();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
 
@@ -152,6 +155,7 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
   context->setContextProperty(QStringLiteral("app_comm"), app_comm);
   context->setContextProperty(QStringLiteral("app_worker"), app_worker);
+  context->setContextProperty(QStringLiteral("app_recorder"), app_recorder);
   context->setContextProperty(QStringLiteral("license_checker"), license_checker);
 
   // Expose other useful objects to qml.
@@ -197,6 +201,10 @@ AppComm* QMLAppEntity::get_app_comm() {
 
 AppWorker* QMLAppEntity::get_app_worker() {
   return get<AppWorker>();
+}
+
+AppRecorder* QMLAppEntity::get_app_recorder() {
+  return get<AppRecorder>();
 }
 
 LicenseChecker* QMLAppEntity::get_license_checker() {
@@ -344,6 +352,10 @@ void ComputeNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff RectNodeShape(this);
   new_ff Inputs(this);
   new_ff Outputs(this);
+}
+
+Compute* ComputeNodeEntity::get_compute() {
+  return get<Compute>();
 }
 
 void InputEntity::create_internals(const std::vector<size_t>& ids) {

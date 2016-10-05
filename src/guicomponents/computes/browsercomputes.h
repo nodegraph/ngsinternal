@@ -9,6 +9,7 @@ namespace ngs {
 class Entity;
 class InputCompute;
 class AppWorker;
+class TaskContext;
 
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  public:
@@ -18,25 +19,21 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   virtual void create_inputs_outputs();
 
-  virtual void on_finalize_update(const QVariantMap& outputs);
+  virtual void on_get_outputs(const QVariantMap& outputs);
 
-//  QVariantMap get_map(const std::string& input_name) const;
-//  QString get_string(const std::string& input_name) const;
-//  QStringList get_string_list(const std::string& input_name) const;
-//
-//  int get_int(const std::string& input_name) const;
-//  float get_float(const std::string& input_name) const;
-//
-//  WrapType get_wrap_type(const std::string& input_name) const;
-//  ActionType get_action_type(const std::string& input_name) const;
-//  Direction get_direction(const std::string& input_name) const;
+  virtual bool update_is_asynchronous() const {external(); return true;}
+  bool is_processing() const {external(); return _processing;}
 
  protected:
   // Our state.
-  virtual void pre_update_state();
-  virtual void post_update_state();
+  virtual void pre_update_state(TaskContext& tc);
+  virtual void post_update_state(TaskContext& tc);
+
+  void dump_map(const QVariantMap& inputs) const;
 
   Dep<AppWorker> _app_worker;
+
+  bool _processing;
 };
 
 class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {

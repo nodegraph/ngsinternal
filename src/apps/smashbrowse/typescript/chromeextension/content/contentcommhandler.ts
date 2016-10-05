@@ -48,7 +48,7 @@ class ContentCommHandler {
                 let value = { xpath: xpath }
                 let resp = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), true, value)
                 this.content_comm.send_to_bg(resp)
-            }
+            } break
             case RequestType.kCreateSetFromMatchValues: {
                 switch (req.args.wrap_type) {
                     case WrapType.text: {

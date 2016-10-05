@@ -13,7 +13,8 @@ namespace ngs {
 
 BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
-      _app_worker(this) {
+      _app_worker(this),
+      _processing(false) {
   get_dep_loader()->register_fixed_dep(_app_worker, Path({}));
 }
 
@@ -27,91 +28,68 @@ void BrowserCompute::create_inputs_outputs() {
   create_output("out");
 }
 
-void BrowserCompute::pre_update_state() {
+void BrowserCompute::dump_map(const QVariantMap& inputs) const {
+  QVariantMap::const_iterator iter;
+  for (iter = inputs.begin(); iter != inputs.end(); ++iter) {
+    std::cerr << iter.key().toStdString() << " : " << iter.value().toString().toStdString() << "\n";
+  }
+}
+
+void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
+  _processing = true;
   QVariantMap inputs = get_inputs();
-  _app_worker->queue_merge_chain_state(inputs);
+  std::cerr << "pre up -------------------------\n";
+  dump_map(inputs);
+  _app_worker->queue_merge_chain_state(tc, inputs);
 }
 
-void BrowserCompute::post_update_state() {
+void BrowserCompute::post_update_state(TaskContext& tc) {
   internal();
-  std::function<void(const QVariantMap&)> finalize_update = std::bind(&BrowserCompute::on_finalize_update,this,std::placeholders::_1);
-  _app_worker->queue_finished(finalize_update);
+  std::function<void(const QVariantMap&)> on_get_outputs_bound = std::bind(&BrowserCompute::on_get_outputs,this,std::placeholders::_1);
+  _app_worker->queue_get_outputs(tc, on_get_outputs_bound);
 }
 
-void BrowserCompute::on_finalize_update(const QVariantMap& outputs) {
+void BrowserCompute::on_get_outputs(const QVariantMap& outputs) {
+  internal();
+  std::cerr << "BrowserCompute has gotten outputs: " << (size_t)get_did() << "\n";
+  _processing = false;
   set_outputs(outputs);
   clean_finalize();
 }
-
-//QVariantMap BrowserCompute::get_map(const std::string& input_name) const {
-//  external();
-//  return _inputs.at(input_name)->get_output("out").toMap();
-//}
-//
-//QString BrowserCompute::get_string(const std::string& input_name) const {
-//  external();
-//  return _inputs.at(input_name)->get_output("out").toString();
-//}
-//
-//QStringList BrowserCompute::get_string_list(const std::string& input_name) const {
-//  external();
-//  return _inputs.at(input_name)->get_output("out").toStringList();
-//}
-//
-//int BrowserCompute::get_int(const std::string& input_name) const {
-//  external();
-//  return _inputs.at(input_name)->get_output("out").toInt();
-//}
-//
-//float BrowserCompute::get_float(const std::string& input_name) const {
-//  external();
-//  return _inputs.at(input_name)->get_output("out").toFloat();
-//}
-//
-//WrapType BrowserCompute::get_wrap_type(const std::string& input_name) const {
-//  external();
-//  return static_cast<WrapType>(_inputs.at(input_name)->get_output("out").toInt());
-//}
-//
-//ActionType BrowserCompute::get_action_type(const std::string& input_name) const {
-//  external();
-//  return static_cast<ActionType>(_inputs.at(input_name)->get_output("out").toInt());
-//}
-//
-//Direction BrowserCompute::get_direction(const std::string& input_name) const {
-//  external();
-//  return static_cast<Direction>(_inputs.at(input_name)->get_output("out").toInt());
-//}
 
 //--------------------------------------------------------------------------------
 
 void OpenBrowserCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_open_browser();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_open_browser(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void CloseBrowserCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_close_browser();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_close_browser(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void CheckBrowserIsOpenCompute::update_state(){
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_check_browser_is_open();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_check_browser_is_open(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void CheckBrowserSizeCompute::update_state(){
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_check_browser_size();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_check_browser_size(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void NavigateToCompute::create_inputs_outputs() {
@@ -122,16 +100,18 @@ void NavigateToCompute::create_inputs_outputs() {
 
 void NavigateToCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_navigate_to();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_navigate_to(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void NavigateRefreshCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_navigate_refresh();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_navigate_refresh(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void SwitchToIFrameCompute::create_inputs_outputs() {
@@ -142,9 +122,10 @@ void SwitchToIFrameCompute::create_inputs_outputs() {
 
 void SwitchToIFrameCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_switch_to_iframe();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_switch_to_iframe(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void CreateSetFromValuesCompute::create_inputs_outputs() {
@@ -157,9 +138,10 @@ void CreateSetFromValuesCompute::create_inputs_outputs() {
 
 void CreateSetFromValuesCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_create_set_by_matching_values();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_create_set_by_matching_values(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void CreateSetFromTypeCompute::create_inputs_outputs() {
@@ -170,9 +152,10 @@ void CreateSetFromTypeCompute::create_inputs_outputs() {
 
 void CreateSetFromTypeCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_create_set_by_matching_type();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_create_set_by_matching_type(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void DeleteSetCompute::create_inputs_outputs() {
@@ -183,9 +166,10 @@ void DeleteSetCompute::create_inputs_outputs() {
 
 void DeleteSetCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_delete_set();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_delete_set(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void ShiftSetCompute::create_inputs_outputs() {
@@ -198,9 +182,10 @@ void ShiftSetCompute::create_inputs_outputs() {
 
 void ShiftSetCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_shift_set();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_shift_set(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void MouseActionCompute::create_inputs_outputs() {
@@ -214,9 +199,10 @@ void MouseActionCompute::create_inputs_outputs() {
 
 void MouseActionCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_perform_mouse_action();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_perform_mouse_action(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void StartMouseHoverActionCompute::create_inputs_outputs() {
@@ -229,16 +215,18 @@ void StartMouseHoverActionCompute::create_inputs_outputs() {
 
 void StartMouseHoverActionCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_start_mouse_hover();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_start_mouse_hover(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void StopMouseHoverActionCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_stop_mouse_hover();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_stop_mouse_hover(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void TextActionCompute::create_inputs_outputs() {
@@ -253,9 +241,10 @@ void TextActionCompute::create_inputs_outputs() {
 
 void TextActionCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_perform_text_action();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_perform_text_action(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void ElementActionCompute::create_inputs_outputs() {
@@ -271,9 +260,10 @@ void ElementActionCompute::create_inputs_outputs() {
 
 void ElementActionCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_perform_element_action();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_perform_element_action(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void ExpandSetCompute::create_inputs_outputs() {
@@ -286,9 +276,10 @@ void ExpandSetCompute::create_inputs_outputs() {
 
 void ExpandSetCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_expand_set();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_expand_set(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void MarkSetCompute::create_inputs_outputs() {
@@ -299,9 +290,10 @@ void MarkSetCompute::create_inputs_outputs() {
 
 void MarkSetCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_mark_set();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_mark_set(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void UnmarkSetCompute::create_inputs_outputs() {
@@ -312,16 +304,18 @@ void UnmarkSetCompute::create_inputs_outputs() {
 
 void UnmarkSetCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_unmark_set();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_unmark_set(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void MergeSetsCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_merge_sets();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_merge_sets(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void ShrinkSetToSideCompute::create_inputs_outputs() {
@@ -333,9 +327,10 @@ void ShrinkSetToSideCompute::create_inputs_outputs() {
 
 void ShrinkSetToSideCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_shrink_set_to_side();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_shrink_set_to_side(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
@@ -347,9 +342,10 @@ void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
 
 void ShrinkAgainstMarkedCompute::update_state() {
   internal();
-  BrowserCompute::pre_update_state();
-  _app_worker->queue_shrink_against_marked();
-  BrowserCompute::post_update_state();
+  TaskContext tc(_app_worker.get());
+  BrowserCompute::pre_update_state(tc);
+  _app_worker->queue_shrink_against_marked(tc);
+  BrowserCompute::post_update_state(tc);
 }
 
 }

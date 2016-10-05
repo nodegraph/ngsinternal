@@ -50,7 +50,7 @@ AppStackPage{
         page.visible = true
         page.init("www.")
         page.set_title("Enter URL")
-        page.callback = app_worker.record_navigate_to.bind(app_worker)
+        page.callback = app_recorder.record_navigate_to.bind(app_worker)
         stack_view.push_page(page)
         visible = true
     }
@@ -60,7 +60,7 @@ AppStackPage{
         page.visible = true
         page.init("")
         page.set_title("Type Text")
-        page.callback = app_worker.record_type_text.bind(app_worker)
+        page.callback = app_recorder.record_type_text.bind(app_worker)
         stack_view.push_page(page)
         visible = true
     }
@@ -75,7 +75,7 @@ AppStackPage{
         page.visible = true
         page.init("")
         page.set_title("Select from Dropdown")
-        page.callback = app_worker.record_select_from_dropdown.bind(app_worker)
+        page.callback = app_recorder.record_select_from_dropdown.bind(app_worker)
         page.set_option_texts(option_texts)
         stack_view.push_page(page)
         visible = true
