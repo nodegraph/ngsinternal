@@ -137,6 +137,9 @@ Q_OBJECT
   signals:
     void web_action_ignored();
 
+ protected:
+    virtual void initialize_wires();
+
  private:
     void on_node_built(Entity* node, Compute* compute);
     void on_finished_sequence();
@@ -152,6 +155,7 @@ Q_OBJECT
 
   std::function<void(Entity*,Compute*)> _on_node_built;
   std::function<void()> _on_finished_sequence;
+  std::function<void()> _on_empty_stack;
 };
 
 }

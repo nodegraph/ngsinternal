@@ -239,7 +239,11 @@ export class WebDriverWrap {
     click_on_element(xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<void> {
         return this.get_element(xpath).then(
             (element: webdriver.WebElement) => {
+                //return element.click()
                 return this.driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).click().perform()
+            },
+            (error: any) => {
+                console.log('Error: was not able to click element.')
             }
         )
     }
@@ -268,15 +272,13 @@ export class WebDriverWrap {
     // Helper to terminate promise chains.
     static terminate_chain<T>(p: webdriver.promise.Promise<T>, id: Number) {
         p.then(
-            () => {
-                // Send success response to the app.
-                console.log('terminating chain success with numargs: ' + arguments.length)
-                if (arguments.length == 0) {
-                    send_msg_to_app(new ResponseMessage(id, '-1', true))
-                } else {
-                    // Send the first argument in the response.
-                    send_msg_to_app(new ResponseMessage(id, '-1', true))
-                }
+            (result) => {
+                // Send the first argument in the response.
+                console.log('terminiating chain with the following result:')
+                try {
+                    console.log("result: " + JSON.stringify(result))
+                } catch(e){}
+                send_msg_to_app(new ResponseMessage(id, '-1', true, result))
             },
             (error: any) => {
                 // Output error details.

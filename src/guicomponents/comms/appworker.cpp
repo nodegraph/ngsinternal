@@ -43,8 +43,6 @@
 
 namespace ngs {
 
-#define check_busy()   if (is_busy()) {emit web_action_ignored(); return;}
-
 const int AppWorker::kPollInterval = 1000;
 const int AppWorker::kJitterSize = 1;
 
@@ -71,6 +69,10 @@ AppWorker::AppWorker(Entity* parent)
 }
 
 AppWorker::~AppWorker() {
+}
+
+void AppWorker::set_empty_stack_callback(std::function<void()> callback) {
+  _empty_stack_callback = callback;
 }
 
 void AppWorker::initialize_wires() {
@@ -266,11 +268,15 @@ void AppWorker::queue_reset(TaskContext& tc) {
 // ---------------------------------------------------------------------------------
 
 void AppWorker::queue_block_events(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::block_events_task, this), "reset");
+  queue_task(tc, (AppTask)std::bind(&AppWorker::block_events_task, this), "queue_block_events");
 }
 
 void AppWorker::queue_unblock_events(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::unblock_events_task, this), "reset");
+  queue_task(tc, (AppTask)std::bind(&AppWorker::unblock_events_task, this), "queue_unblock_events");
+}
+
+void AppWorker::queue_wait_until_loaded(TaskContext& tc) {
+  queue_task(tc, (AppTask)std::bind(&AppWorker::wait_until_loaded_task, this), "queue_wait_until_loaded");
 }
 
 // ---------------------------------------------------------------------------------
@@ -345,7 +351,9 @@ void AppWorker::queue_perform_mouse_action(TaskContext& tc) {
   queue_get_xpath(tc);
   queue_unblock_events(tc);
   queue_task(tc, (AppTask)std::bind(&AppWorker::perform_mouse_action_task,this), "queue_perform_action_task");
-  queue_block_events(tc);
+  queue_block_events(tc); // After we're done interacting with the page, block events on the page.
+  queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
+  queue_update_overlays(tc); // Our actions may have moved elements arounds, so we update our overlays.
 }
 
 void AppWorker::queue_perform_mouse_hover(TaskContext& tc) {
@@ -353,6 +361,8 @@ void AppWorker::queue_perform_mouse_hover(TaskContext& tc) {
   queue_unblock_events(tc);
   queue_task(tc, (AppTask)std::bind(&AppWorker::perform_hover_action_task,this), "queue_perform_hover");
   queue_block_events(tc);
+  queue_wait_until_loaded(tc);
+  queue_update_overlays(tc);
 }
 
 void AppWorker::queue_perform_post_mouse_hover(TaskContext& tc) {
@@ -364,6 +374,8 @@ void AppWorker::queue_perform_text_action(TaskContext& tc) {
   queue_unblock_events(tc);
   queue_task(tc, (AppTask)std::bind(&AppWorker::perform_text_action_task,this), "queue_perform_text_action");
   queue_block_events(tc);
+  queue_wait_until_loaded(tc);
+  queue_update_overlays(tc);
 }
 
 void AppWorker::queue_perform_element_action(TaskContext& tc) {
@@ -371,6 +383,8 @@ void AppWorker::queue_perform_element_action(TaskContext& tc) {
   queue_unblock_events(tc);
   queue_task(tc, (AppTask)std::bind(&AppWorker::perform_element_action_task,this), "queue_perform_element_action");
   queue_block_events(tc);
+  queue_wait_until_loaded(tc);
+  queue_update_overlays(tc);
 }
 
 // ---------------------------------------------------------------------------------
@@ -424,9 +438,8 @@ void AppWorker::queue_task(TaskContext& tc, AppTask task, const std::string& abo
     ok_to_run = false;
   }
 
-
+  // Push the task onto the right queue for the context.
   _stack[tc.stack_index].push_back(task);
-  std::cerr << "pushing: " << about << " queue is now of size: " << get_task_queue().size() << " ok_to_run: " << ok_to_run << "\n";
 
   // Run the worker if we're all clear to run.
   if (ok_to_run) {
@@ -441,6 +454,7 @@ void AppWorker::run_next_task() {
   }
 
   if (_stack.empty()) {
+    _empty_stack_callback();
     return;
   }
 
@@ -578,6 +592,7 @@ void AppWorker::finished_sequence_task(std::function<void()> on_finished_sequenc
   if (on_finished_sequence) {
     on_finished_sequence();
   }
+
   run_next_task();
 }
 
@@ -640,19 +655,16 @@ void AppWorker::build_compute_node_task(ComponentDID compute_did, std::function<
 // ------------------------------------------------------------------------
 
 void AppWorker::get_all_cookies_task() {
-  check_busy()
   Message req(RequestType::kGetAllCookies);
   send_msg_task(req);
 }
 
 void AppWorker::clear_all_cookies_task() {
-  check_busy()
   Message req(RequestType::kClearAllCookies);
   send_msg_task(req);
 }
 
 void AppWorker::set_all_cookies_task() {
-  check_busy()
   Message req(RequestType::kSetAllCookies);
   send_msg_task(req);
 }
@@ -699,18 +711,17 @@ void AppWorker::block_events_task() {
   // This action implies the browser's event unblocked for a time to allow
   // some actions to be performed. After such an action we need to update
   // the overlays as elements may disappear or move around.
-  {
-    Message req(RequestType::kBlockEvents);
-    send_msg_task(req);
-  }
-  {
-    Message req(RequestType::kUpdateOveralys);
-    send_msg_task(req);
-  }
+  Message req(RequestType::kBlockEvents);
+  send_msg_task(req);
 }
 
 void AppWorker::unblock_events_task() {
   Message req(RequestType::kUnblockEvents);
+  send_msg_task(req);
+}
+
+void AppWorker::wait_until_loaded_task() {
+  Message req(RequestType::kWaitUntilLoaded);
   send_msg_task(req);
 }
 
@@ -761,7 +772,6 @@ void AppWorker::switch_to_iframe_task() {
 // ------------------------------------------------------------------------
 
 void AppWorker::update_overlays_task() {
-  check_busy()
   Message req(RequestType::kUpdateOveralys);
   send_msg_task(req);
 }
@@ -936,6 +946,8 @@ void AppWorker::mouse_hover_task() {
   queue_perform_mouse_hover(tc);
   queue_perform_post_mouse_hover(tc);
   queue_block_events(tc);
+  queue_wait_until_loaded(tc);
+  queue_update_overlays(tc);
 }
 
 void AppWorker::post_hover_task() {

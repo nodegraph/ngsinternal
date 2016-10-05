@@ -15,6 +15,7 @@ class MutationMonitor {
     private mutation_observer: MutationObserver
     private mutation_observer_config: MutationObserverInit
     private page_is_ready: boolean
+    private loaded_callbacks: (()=>void) []
     
     // Constructor.
     constructor(cc: ContentComm, gc: GUICollection) {
@@ -26,6 +27,9 @@ class MutationMonitor {
         this.mutation_timer = null
         this.page_is_ready = false // Page is ready when there have been no dom mutations for (mutation_done_interval) seconds.
 
+        // Callbacks.
+        this.loaded_callbacks = []
+
         // Mutation Observer.
         this.mutation_observer = new MutationObserver((mutations: MutationRecord[], observer: MutationObserver) => { this.on_mutation(mutations, observer) })
         this.mutation_observer_config = {
@@ -34,6 +38,18 @@ class MutationMonitor {
             attributes: false,
             characterData: false
         }
+    }
+
+    add_loaded_callback(callback: ()=>void): void {
+        this.loaded_callbacks.push(callback)
+    }
+
+    fire_loaded_callbacks(): void {
+        for (let i=0; i< this.loaded_callbacks.length; ++i) {
+            this.loaded_callbacks[i]()
+        }
+        // The callbacks should only be fired once, so clear them.
+        this.loaded_callbacks.length = 0
     }
 
     //---------------------------------------------------------------------------------
@@ -62,6 +78,9 @@ class MutationMonitor {
 
         // Now that the mutation's have stopped, let's adjust the page.
         this.adjust_page()
+
+        // Fire loaded callbacks.
+        this.fire_loaded_callbacks()
     }
 
     // This function is called every interval.

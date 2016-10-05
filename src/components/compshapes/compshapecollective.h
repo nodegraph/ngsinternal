@@ -46,7 +46,7 @@ class COMPSHAPES_EXPORT CompShapeCollective: public Component {
   // Axis Aligned Bounds.
   void get_aa_bounds(glm::vec2& min, glm::vec2& max) const; // bounds for all nodes and links in the group.
 
-  Dep<CompShape> get_lowest();
+  Dep<CompShape> get_lowest(const std::unordered_set<Entity*>& ignore = std::unordered_set<Entity*>());
 
   //virtual void clean_dependencies(); // Multi threaded override.
  protected:

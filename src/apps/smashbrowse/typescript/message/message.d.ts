@@ -18,6 +18,7 @@ declare const enum RequestType {
     // Web Page Requests.
     kBlockEvents,
     kUnblockEvents,
+    kWaitUntilLoaded,
     kNavigateTo,
     kNavigateBack,
     kNavigateForward,

@@ -36,6 +36,8 @@ Q_OBJECT
   explicit AppWorker(Entity* parent);
   virtual ~AppWorker();
 
+  void set_empty_stack_callback(std::function<void()> callback);
+
   // Paths to resources.
   static QString get_app_bin_dir();
   static QString get_user_data_dir();
@@ -51,6 +53,7 @@ Q_OBJECT
 
   // Task queue info.
   Q_INVOKABLE bool is_busy() {return !_stack.empty();}
+
 
   // ---------------------------------------------------------------------------------
   // Queued Tasks.
@@ -83,6 +86,7 @@ Q_OBJECT
   // Queue Page Content Tasks.
   void queue_block_events(TaskContext& tc);
   void queue_unblock_events(TaskContext& tc);
+  void queue_wait_until_loaded(TaskContext& tc);
 
   // Queue Navigate Tasks.
   void queue_navigate_to(TaskContext& tc);
@@ -117,7 +121,6 @@ Q_OBJECT
 signals:
   void show_web_action_menu();
   void show_iframe_menu();
-  void web_action_ignored();
   void select_option_texts(QStringList option_texts);
 
  private slots:
@@ -170,6 +173,7 @@ signals:
   // Page Content Tasks.
   void block_events_task();
   void unblock_events_task();
+  void wait_until_loaded_task();
 
   // Browser Reset and Shutdown Tasks.
   void shutdown_task();
@@ -234,6 +238,8 @@ signals:
   int _expected_msg_id; // This is the next msg id we're expecting from a response message.
   Message _last_resp; // The last response message received. _last_resp[value] gets copied into _chain_state.
   QVariantMap _chain_state;  // The 'value' value from responses will get merged into this state overriding previous values.
+
+  std::function<void()> _empty_stack_callback;
 
   // Task Management.
   TaskQueueStack _stack;

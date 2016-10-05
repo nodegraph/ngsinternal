@@ -268,7 +268,7 @@ void CompShapeCollective::get_aa_bounds(const DepUSet<NodeShape>& comp_shapes, g
 //  ThreadPool p(deps.size(),32, func);
 //}
 
-Dep<CompShape> CompShapeCollective::get_lowest() {
+Dep<CompShape> CompShapeCollective::get_lowest(const std::unordered_set<Entity*>& ignore) {
   // Variables to track the lowest.
   Dep<CompShape> lowest(this);
   glm::vec2 lowest_pos;
@@ -278,6 +278,11 @@ Dep<CompShape> CompShapeCollective::get_lowest() {
   bool first = true;
   for (iter = _comp_shapes.begin(); iter != _comp_shapes.end(); ++iter) {
     Dep<CompShape> cs = (*iter);
+
+    // Ignore shapes matching the ignore argument.
+    if (ignore.count(cs->our_entity())) {
+      continue;
+    }
 
     // If the comp shape is not a node's linkable shape then continue.
     if (!cs->is_linkable()) {

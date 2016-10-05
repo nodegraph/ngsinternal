@@ -66,7 +66,7 @@ class Linker: public Component {
     Dep<CompShapeCollective> collective = get_dep<CompShapeCollective>(current_group);
 
     // Find the lowest node that's where we'll link to.
-    Dep<CompShape> upstream_node = collective->get_lowest();
+    Dep<CompShape> upstream_node = collective->get_lowest({downstream});
     if (!upstream_node) {
       return;
     }
@@ -75,8 +75,6 @@ class Linker: public Component {
     // -------------------------------------------------------------------------
     // At this point we have both the upstream and downstream nodes to connect.
     // -------------------------------------------------------------------------
-
-    std::cerr << "we now have both upstream and downstream\n";
 
     // Position our node below the upstream.
     Dep<NodeShape> downstream_node = get_dep<NodeShape>(downstream);
@@ -136,9 +134,15 @@ AppRecorder::AppRecorder(Entity* parent)
 
   _on_node_built = std::bind(&AppRecorder::on_node_built, this, std::placeholders::_1, std::placeholders::_2);
   _on_finished_sequence = std::bind(&AppRecorder::on_finished_sequence, this);
+  _on_empty_stack = _on_finished_sequence;
 }
 
 AppRecorder::~AppRecorder() {
+}
+
+void AppRecorder::initialize_wires() {
+  Component::initialize_wires();
+  _app_worker->set_empty_stack_callback(_on_empty_stack);
 }
 
 void AppRecorder::clean_compute(Entity* compute_entity) {
@@ -165,7 +169,6 @@ void AppRecorder::continue_cleaning_compute() {
 }
 
 void AppRecorder::on_node_built(Entity* node, Compute* compute) {
-  std::cerr << "AppRec on node build: " << node << "," << compute << "\n";
   // Position and link the node we just created.
   // We use a dummy component to avoid creating a cycle.
   {
@@ -182,7 +185,6 @@ void AppRecorder::on_node_built(Entity* node, Compute* compute) {
 }
 
 void AppRecorder::on_finished_sequence() {
-  std::cerr << "AppRect on finished sequence!\n";
   continue_cleaning_compute();
 }
 

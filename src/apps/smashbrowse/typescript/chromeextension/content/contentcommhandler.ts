@@ -114,6 +114,15 @@ class ContentCommHandler {
                 this.gui_collection.event_blocker.unblock_events()
                 this.content_comm.send_to_bg(success_msg)
             } break
+            case RequestType.kWaitUntilLoaded: {
+                if (mutation_monitor.is_loading()) {
+                    mutation_monitor.add_loaded_callback(
+                        () => { this.content_comm.send_to_bg(success_msg) }
+                    )
+                } else {
+                    this.content_comm.send_to_bg(success_msg)
+                }
+            } break
             case RequestType.kPerformElementAction: {
                 // We (content script) can handle only the scrolling actions.
                 // When scrolling there may be AJAX requests dynamically loading elements into the scrolled page.

@@ -39,9 +39,11 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
   _processing = true;
   QVariantMap inputs = get_inputs();
-  std::cerr << "pre up -------------------------\n";
-  dump_map(inputs);
   _app_worker->queue_merge_chain_state(tc, inputs);
+  // Make sure nothing is loading right now.
+  // Note in general a page may start loading content at random times.
+  // For examples ads may rotate and flip content.
+  _app_worker->queue_wait_until_loaded(tc);
 }
 
 void BrowserCompute::post_update_state(TaskContext& tc) {
@@ -52,7 +54,6 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
 
 void BrowserCompute::on_get_outputs(const QVariantMap& outputs) {
   internal();
-  std::cerr << "BrowserCompute has gotten outputs: " << (size_t)get_did() << "\n";
   _processing = false;
   set_outputs(outputs);
   clean_finalize();
@@ -103,6 +104,7 @@ void NavigateToCompute::update_state() {
   TaskContext tc(_app_worker.get());
   BrowserCompute::pre_update_state(tc);
   _app_worker->queue_navigate_to(tc);
+  _app_worker->queue_wait_until_loaded(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -193,7 +195,7 @@ void MouseActionCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, ParamType::kInt, false);
   create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  create_input(Message::kPosition, ParamType::kQVariantMap, false);
+  create_input(Message::kOverlayRelClickPos, ParamType::kQVariantMap, false);
   create_input(Message::kMouseAction, ParamType::kInt, false);
 }
 
