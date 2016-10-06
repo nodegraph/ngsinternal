@@ -438,7 +438,13 @@ void AppWorker::queue_task(TaskContext& tc, AppTask task, const std::string& abo
     ok_to_run = false;
   }
 
-  // Push the task onto the right queue for the context.
+  // Push the task onto the right queue for the context. (This is not always the top queue.)
+  // This is important because while a TaskContext is open another function/routine may open
+  // another Sub-TaskContext. When the Sub-TaskContext falls out of context, we will be left
+  // with its queue at the top of the queue stack. Now when other tasks get queued from the
+  // original task context, the top queue is not the right one for it. The top one used to be
+  // the right one for it before the Sub-TaskContext was created and destroyed. This is why
+  // we have to the select the appropriate queue with tc.stack_index.
   _stack[tc.stack_index].push_back(task);
 
   // Run the worker if we're all clear to run.
