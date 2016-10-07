@@ -1,16 +1,23 @@
 import webdriver = require('selenium-webdriver')
-import chrome = require('selenium-webdriver/chrome');
+import chrome = require('selenium-webdriver/chrome')
 import Path = require('path')
 
 import {FSWrap} from './fswrap'
 import {send_msg_to_app, send_msg_to_ext, get_app_server_port, get_ext_server_port} from './commhub'
 import {DebugUtils} from './debugutils'
 
-
-
 export let Key = webdriver.Key
 let By = webdriver.By
 let Until = webdriver.until
+
+// This is an example of how to get a list of process ids on windows.
+// Note tasklist is specific to the windows platform.
+// import child_process =  require('child_process')
+// let before: string
+// child_process.exec('tasklist', function (err: Error, stdout: string, stderr: string) {
+//     before = stdout
+//     console.log('processes: ' + stdout)
+// });
 
 export class WebDriverWrap {
 

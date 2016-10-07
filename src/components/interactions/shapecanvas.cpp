@@ -28,7 +28,7 @@
 #include <components/interactions/viewcontrols.h>
 #include <freetype-gl/texture-atlas.h>
 
-#include <guicomponents/comms/appworker.h>
+#include <guicomponents/comms/webworker.h>
 
 #include <iostream>
 #include <QtCore/qDebug>

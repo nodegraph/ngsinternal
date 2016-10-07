@@ -11,7 +11,7 @@ const enum RequestType {
 
     // Browser Requests.
     kShutdown,
-    kCheckBrowserIsOpen,
+    kIsBrowserOpen,
     kResizeBrowser,
     kOpenBrowser,
     kCloseBrowser,

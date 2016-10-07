@@ -111,7 +111,6 @@ void NodeJSProcess::start_process() {
 
   // We wait processing events until it's running.
   while(!is_running()) {
-    std::cerr << "waiting for nodejs process to run\n";
     qApp->processEvents();
   }
 
@@ -119,8 +118,6 @@ void NodeJSProcess::start_process() {
   while(get_nodejs_port().isEmpty()) {
     qApp->processEvents();
   }
-
-  std::cerr << "nodejs should now be running !!!!!\n";
 }
 
 void NodeJSProcess::stop_process() {

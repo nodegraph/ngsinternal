@@ -4,7 +4,6 @@
 
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/comms/filemodel.h>
-#include <guicomponents/comms/appcomm.h>
 
 #include <QtGui/QGuiApplication>
 #include <QtQml/QtQml>

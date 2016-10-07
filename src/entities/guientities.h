@@ -12,8 +12,8 @@ enum ParamType;
 
 class FileModel;
 class AppComm;
-class AppWorker;
-class AppRecorder;
+class WebWorker;
+class WebRecorder;
 class LicenseChecker;
 class NodeGraphQuickItem;
 class GraphBuilder;
@@ -30,8 +30,8 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   void embed_node_graph();
 
   FileModel* get_file_model();
-  AppWorker* get_app_worker();
-  AppRecorder* get_app_recorder();
+  WebWorker* get_app_worker();
+  WebRecorder* get_app_recorder();
   LicenseChecker* get_license_checker();
   NodeGraphQuickItem* get_node_graph_quick_item();
   GraphBuilder* get_graph_builder();

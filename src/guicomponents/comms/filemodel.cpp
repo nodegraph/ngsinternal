@@ -10,7 +10,7 @@
 #include <components/interactions/graphbuilder.h>
 
 #include <guicomponents/comms/appconfig.h>
-#include <guicomponents/comms/appworker.h>
+#include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 

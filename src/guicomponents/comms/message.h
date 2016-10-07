@@ -30,7 +30,7 @@ enum class RequestType : int {
 
   // Browser Requests.
   kShutdown,
-  kCheckBrowserIsOpen,
+  kIsBrowserOpen,
   kResizeBrowser,
   kOpenBrowser,
   kCloseBrowser,

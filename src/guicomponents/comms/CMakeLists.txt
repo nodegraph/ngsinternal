@@ -6,14 +6,14 @@ set(sources
     messagesender.cpp
     messagereceiver.cpp
     appconfig.cpp
-    apptaskqueue.cpp
-    appcomm.cpp
-    appworker.cpp
-    apprecorder.cpp
+    taskscheduler.cpp
+    webworker.cpp
+    webrecorder.cpp
     licensechecker.cpp
     )
    
 set(headers
+    taskscheduler.h
 )
     
 set(moc_headers
@@ -23,10 +23,8 @@ set(moc_headers
     messagesender.h
     messagereceiver.h
     appconfig.h
-    apptaskqueue.h
-    appcomm.h
-    appworker.h
-    apprecorder.h
+    webworker.h
+    webrecorder.h
     licensechecker.h
     )
     

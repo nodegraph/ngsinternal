@@ -8,9 +8,9 @@ namespace ngs {
 
 class Entity;
 class InputCompute;
-class AppWorker;
-class AppTaskQueue;
-class AppTaskContext;
+class WebWorker;
+class TaskScheduler;
+class TaskContext;
 
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  public:
@@ -27,13 +27,13 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
  protected:
   // Our state.
-  virtual void pre_update_state(AppTaskContext& tc);
-  virtual void post_update_state(AppTaskContext& tc);
+  virtual void pre_update_state(TaskContext& tc);
+  virtual void post_update_state(TaskContext& tc);
 
   void dump_map(const QVariantMap& inputs) const;
 
-  Dep<AppWorker> _app_worker;
-  Dep<AppTaskQueue> _task_queue;
+  Dep<WebWorker> _app_worker;
+  Dep<TaskScheduler> _task_queue;
 
   bool _processing;
 };
@@ -54,18 +54,18 @@ class GUICOMPUTES_EXPORT CloseBrowserCompute: public BrowserCompute {
   virtual void update_state();
 };
 
-class GUICOMPUTES_EXPORT CheckBrowserIsOpenCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT IsBrowserOpenCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, CheckBrowserIsOpenCompute);
-  CheckBrowserIsOpenCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, IsBrowserOpenCompute);
+  IsBrowserOpenCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
   virtual void update_state();
 };
 
-class GUICOMPUTES_EXPORT CheckBrowserSizeCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT ResizeBrowserCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, CheckBrowserSizeCompute);
-  CheckBrowserSizeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, ResizeBrowserCompute);
+  ResizeBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
   virtual void update_state();
 };

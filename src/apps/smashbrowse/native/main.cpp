@@ -31,7 +31,6 @@
 #include <entities/guientities.h>
 #include <components/interactions/graphbuilder.h>
 #include <gui/widget/splashscreen.h>
-#include <guicomponents/comms/appcomm.h>
 #include <guicomponents/comms/message.h>
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>

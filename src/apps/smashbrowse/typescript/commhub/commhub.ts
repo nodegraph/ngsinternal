@@ -52,14 +52,13 @@ class BaseConnection {
     send_json(json: string): void {
         this.socket.send(json)
     }
-    receive_json (json: string): void {
+    receive_json(json: string): void {
     }
 }
 
 class ChromeConnection extends BaseConnection {
     constructor(webdriverwrap: WebDriverWrap) {
         super(webdriverwrap)
-        console.log('building chrome connection')
     }
 
     receive_json(json: string): void {
@@ -77,13 +76,12 @@ class AppConnection extends BaseConnection {
     constructor(webdriverwrap: WebDriverWrap) {
         super(webdriverwrap)
         this.timer = null
-        console.log('building app connection')
     }
 
     // The can send us messages either from c++ or from qml.
     // These requests will be handled by webdriverjs, or the extension scripts in the browser.
     // Requests will always return with a response message containing return values.
-    receive_json (json: string): void {
+    receive_json(json: string): void {
         console.log('app --> commhub: ' + json)
 
         // Build the message.
@@ -106,7 +104,7 @@ class AppConnection extends BaseConnection {
                 this.webdriverwrap.close_browser().then(() => { process.exit(-1) })
                 break;
             }
-            case RequestType.kCheckBrowserIsOpen: {
+            case RequestType.kOpenBrowser: {
                 let on_response = (open: boolean) => {
                     if (!open) {
                         if (!this.webdriverwrap.open_browser()) {
@@ -129,12 +127,15 @@ class AppConnection extends BaseConnection {
                     () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) }
                     )
             } break
-            case RequestType.kOpenBrowser: {
-                if (this.webdriverwrap.open_browser()) {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
-                } else {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false))
+            case RequestType.kIsBrowserOpen: {
+                let on_response = (open: boolean) => {
+                    if (open) {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                    } else {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false))
+                    }
                 }
+                this.webdriverwrap.browser_is_open(on_response)
             } break
             case RequestType.kCloseBrowser: {
                 // Clear all the connections to our extension socket server.
@@ -284,7 +285,6 @@ class BaseSocketServer {
         let options: any = { server: this.https_server }
         this.server = new ws.Server(options)
         let on_connection = (socket: ws) => {
-            console.log('got a connection!')
             let conn: C = new ConnConstructor(this.webdriverwrap);
             conn.set_socket(socket)
             socket.on('message', (json: string) => { conn.receive_json(json) })

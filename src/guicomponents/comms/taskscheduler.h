@@ -23,31 +23,31 @@ class Compute;
 class BaseFactory;
 class NodeSelection;
 
-class AppTaskContext;
+class TaskContext;
 
-typedef std::function<void()> AppTask;
+typedef std::function<void()> Task;
 
-// This class communicates with the nodejs process.
-class COMMS_EXPORT AppTaskQueue : public QObject, public Component {
-Q_OBJECT
+class COMMS_EXPORT TaskScheduler : public Component {
  public:
-  COMPONENT_ID(AppTaskQueue, AppTaskQueue)
+  COMPONENT_ID(TaskScheduler, TaskScheduler)
 
-  explicit AppTaskQueue(Entity* parent);
-  virtual ~AppTaskQueue();
+  explicit TaskScheduler(Entity* parent);
+  virtual ~TaskScheduler();
 
   void open();
   void close();
   bool is_open() const;
+  bool is_waiting_for_response() const {return _waiting_for_response;}
 
+  void reset_stack();
   void set_empty_stack_callback(std::function<void()> callback);
 
-  void queue_task(AppTaskContext& tc, AppTask task, const std::string& about);
+  void queue_task(TaskContext& tc, Task task, const std::string& about);
   void run_next_task();
   void send_msg_task(Message msg);
 
   // Task queue info.
-  Q_INVOKABLE bool is_busy() const {external(); return !_stack.empty();}
+  bool is_busy() const {external(); return !_stack.empty();}
   const Message& get_last_response() const{external(); return _last_response;}
 
   // Handle incoming messages.
@@ -55,17 +55,15 @@ Q_OBJECT
   void handle_info(const Message& msg);
 
  private:
-  typedef std::deque<AppTask> TaskQueue;
-  typedef std::vector<TaskQueue> TaskQueueStack;
+  typedef std::deque<Task> Queue;
+  typedef std::vector<Queue> QueueStack;
 
   // Task Management.
-  TaskQueue& get_top_queue();
-
-
+  Queue& get_top_queue();
 
   // Methods to queue our special start and finish tasks.
-  void queue_start_sequence(AppTaskContext& tc);
-  void queue_finished_sequence(AppTaskContext& tc, std::function<void()> on_finished_sequence);
+  void queue_start_sequence(TaskContext& tc);
+  void queue_finished_sequence(TaskContext& tc, std::function<void()> on_finished_sequence);
 
   // Our special start and finish tasks.
   void start_sequence_task();
@@ -78,7 +76,7 @@ Q_OBJECT
   std::function<void()> _empty_stack_callback;
 
   // A stack of queues.
-  TaskQueueStack _stack;
+  QueueStack _stack;
 
   // Simple Request-Response Pair Tracking.
   bool _waiting_for_response;
@@ -90,22 +88,22 @@ Q_OBJECT
   bool _connected;
 
   // Friends.
-  friend class AppTaskContext;
+  friend class TaskContext;
 };
 
 
-class COMMS_EXPORT AppTaskContext {
+class COMMS_EXPORT TaskContext {
  public:
-  AppTaskContext(Dep<AppTaskQueue>& task_queue, std::function<void ()> on_finished_sequence = std::function<void()>()):
+  TaskContext(Dep<TaskScheduler>& task_queue, std::function<void ()> on_finished_sequence = std::function<void()>()):
     task_queue(task_queue.get()),
     on_finished_sequence(on_finished_sequence),
     stack_index(-1) {
     task_queue->queue_start_sequence(*this);
   }
-  ~AppTaskContext(){
+  ~TaskContext(){
     task_queue->queue_finished_sequence(*this,on_finished_sequence);
   }
-  AppTaskQueue* task_queue;
+  TaskScheduler* task_queue;
   std::function<void ()> on_finished_sequence;
   size_t stack_index;
 };

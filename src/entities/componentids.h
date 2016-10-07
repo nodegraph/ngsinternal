@@ -40,9 +40,9 @@ enum class ComponentIID : size_t {
   kIMessageReceiver,
   kIAppConfig,
   //kIAppComm,
-  kIAppWorker,
-  kIAppRecorder,
-  kIAppTaskQueue,
+  kIWebWorker,
+  kIWebRecorder,
+  kITaskScheduler,
   kILicenseChecker,
   kILinkGroup,
   kINodeSelection,
@@ -85,8 +85,8 @@ COMPONENT_ENTRY2(ScriptNodeCompute, 19)\
 COMPONENT_ENTRY2(MockNodeCompute, 20)\
 COMPONENT_ENTRY2(OpenBrowserCompute, 21)\
 COMPONENT_ENTRY2(CloseBrowserCompute, 22)\
-COMPONENT_ENTRY2(CheckBrowserIsOpenCompute, 23)\
-COMPONENT_ENTRY2(CheckBrowserSizeCompute, 24)\
+COMPONENT_ENTRY2(IsBrowserOpenCompute, 23)\
+COMPONENT_ENTRY2(ResizeBrowserCompute, 24)\
 COMPONENT_ENTRY2(NavigateToCompute, 25)\
 COMPONENT_ENTRY2(NavigateRefreshCompute, 26)\
 COMPONENT_ENTRY2(SwitchToIFrameCompute, 27)\
@@ -118,7 +118,7 @@ COMPONENT_ENTRY2(NodeGraphRenderer, 49)\
 COMPONENT_ENTRY2(NodeGraphView, 50)\
 COMPONENT_ENTRY2(FileModel, 51)\
 /*COMPONENT_ENTRY2(AppComm, 52)\*/\
-COMPONENT_ENTRY2(AppWorker, 53)\
+COMPONENT_ENTRY2(WebWorker, 53)\
 COMPONENT_ENTRY2(LicenseChecker, 54)\
 /* -- */\
 COMPONENT_ENTRY2(NodeSelection, 55)\
@@ -127,8 +127,8 @@ COMPONENT_ENTRY2(ShapeCanvas, 57)\
 /* -- */\
 COMPONENT_ENTRY2(Inputs, 58)\
 COMPONENT_ENTRY2(Outputs, 59)\
-COMPONENT_ENTRY2(AppRecorder, 60)\
-COMPONENT_ENTRY2(AppTaskQueue, 61)\
+COMPONENT_ENTRY2(WebRecorder, 60)\
+COMPONENT_ENTRY2(TaskScheduler, 61)\
 COMPONENT_ENTRY2(NodeJSProcess, 62)\
 COMPONENT_ENTRY2(AppConfig, 63)\
 COMPONENT_ENTRY2(MessageSender, 64)\

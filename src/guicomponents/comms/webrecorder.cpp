@@ -17,10 +17,9 @@
 #include <components/compshapes/outputshape.h>
 #include <components/compshapes/compshapecollective.h>
 
-#include <guicomponents/comms/apprecorder.h>
-#include <guicomponents/comms/appworker.h>
-#include <guicomponents/comms/appcomm.h>
-#include <guicomponents/comms/apptaskqueue.h>
+#include <guicomponents/comms/webrecorder.h>
+#include <guicomponents/comms/webworker.h>
+#include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/filemodel.h>
 #include <components/interactions/shapecanvas.h>
 
@@ -120,7 +119,7 @@ class Linker: public Component {
 
 
 
-AppRecorder::AppRecorder(Entity* parent)
+WebRecorder::WebRecorder(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
       _app_worker(this),
@@ -135,32 +134,32 @@ AppRecorder::AppRecorder(Entity* parent)
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
   get_dep_loader()->register_fixed_dep(_file_model, Path({}));
 
-  _on_node_built = std::bind(&AppRecorder::on_node_built, this, std::placeholders::_1, std::placeholders::_2);
-  _on_finished_sequence = std::bind(&AppRecorder::on_finished_sequence, this);
+  _on_node_built = std::bind(&WebRecorder::on_node_built, this, std::placeholders::_1, std::placeholders::_2);
+  _on_finished_sequence = std::bind(&WebRecorder::on_finished_sequence, this);
   _on_empty_stack = _on_finished_sequence;
 }
 
-AppRecorder::~AppRecorder() {
+WebRecorder::~WebRecorder() {
 }
 
-void AppRecorder::initialize_wires() {
+void WebRecorder::initialize_wires() {
   Component::initialize_wires();
   _task_queue->set_empty_stack_callback(_on_empty_stack);
 }
 
-void AppRecorder::clean_compute(Entity* compute_entity) {
+void WebRecorder::clean_compute(Entity* compute_entity) {
   external();
   _compute = get_dep<Compute>(compute_entity);
   _compute->clean_state();
 }
 
-void AppRecorder::clean_compute(Dep<Compute>& compute) {
+void WebRecorder::clean_compute(Dep<Compute>& compute) {
   external();
   _compute = compute;
   _compute->clean_state();
 }
 
-void AppRecorder::continue_cleaning_compute() {
+void WebRecorder::continue_cleaning_compute() {
   external();
   if (!_compute) {
     return;
@@ -171,7 +170,7 @@ void AppRecorder::continue_cleaning_compute() {
   _compute->clean_state();
 }
 
-void AppRecorder::on_node_built(Entity* node, Compute* compute) {
+void WebRecorder::on_node_built(Entity* node, Compute* compute) {
   // Position and link the node we just created.
   // We use a dummy component to avoid creating a cycle.
   {
@@ -187,7 +186,7 @@ void AppRecorder::on_node_built(Entity* node, Compute* compute) {
   clean_compute(compute->our_entity());
 }
 
-void AppRecorder::on_finished_sequence() {
+void WebRecorder::on_finished_sequence() {
   continue_cleaning_compute();
 }
 
@@ -195,28 +194,28 @@ void AppRecorder::on_finished_sequence() {
 // // Record Browser Actions.
 // -----------------------------------------------------------------
 
-#define check_busy()   if (_task_queue->is_busy()) {emit web_action_ignored(); return;} AppTaskContext tc(_task_queue, _on_finished_sequence);
+#define check_busy()   if (_task_queue->is_busy()) {emit web_action_ignored(); return;} TaskContext tc(_task_queue, _on_finished_sequence);
 #define finish()
 
-void AppRecorder::record_open_browser() {
+void WebRecorder::record_open_browser() {
   check_busy();
   _app_worker->queue_build_compute_node(tc, ComponentDID::kOpenBrowserCompute, _on_node_built);
   finish();
 }
 
-void AppRecorder::record_close_browser() {
+void WebRecorder::record_close_browser() {
   check_busy();
   _app_worker->queue_build_compute_node(tc, ComponentDID::kCloseBrowserCompute, _on_node_built);
   finish();
 }
 
-void AppRecorder::record_check_browser_is_open() {
+void WebRecorder::record_is_browser_open() {
   check_busy();
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kCheckBrowserIsOpenCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kIsBrowserOpenCompute, _on_node_built);
   finish();
 }
 
-void AppRecorder::record_check_browser_size() {
+void WebRecorder::record_check_browser_size() {
   check_busy();
   int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
   int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
@@ -229,7 +228,7 @@ void AppRecorder::record_check_browser_size() {
   args[Message::kDimensions] = dims;
 
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kCheckBrowserSizeCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kResizeBrowserCompute, _on_node_built);
   finish();
 }
 
@@ -237,7 +236,7 @@ void AppRecorder::record_check_browser_size() {
 // Record Navigate Actions.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_navigate_to(const QString& url) {
+void WebRecorder::record_navigate_to(const QString& url) {
   check_busy()
   QString decorated_url = get_proper_url(url).toString();
 
@@ -249,14 +248,14 @@ void AppRecorder::record_navigate_to(const QString& url) {
   finish();
 }
 
-void AppRecorder::record_switch_to_iframe() {
+void WebRecorder::record_switch_to_iframe() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   _app_worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute, _on_node_built);
   finish();
 }
 
-void AppRecorder::record_navigate_refresh() {
+void WebRecorder::record_navigate_refresh() {
   check_busy()
   _app_worker->queue_build_compute_node(tc, ComponentDID::kNavigateRefreshCompute, _on_node_built);
   finish();
@@ -266,7 +265,7 @@ void AppRecorder::record_navigate_refresh() {
 // Record Create Set By Matching Values..
 // -----------------------------------------------------------------
 
-void AppRecorder::record_create_set_by_matching_text_values() {
+void WebRecorder::record_create_set_by_matching_text_values() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -276,7 +275,7 @@ void AppRecorder::record_create_set_by_matching_text_values() {
   finish();
 }
 
-void AppRecorder::record_create_set_by_matching_image_values() {
+void WebRecorder::record_create_set_by_matching_image_values() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -290,7 +289,7 @@ void AppRecorder::record_create_set_by_matching_image_values() {
 // Record Create Set By Type.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_create_set_of_inputs() {
+void WebRecorder::record_create_set_of_inputs() {
   check_busy()
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::input);
@@ -299,7 +298,7 @@ void AppRecorder::record_create_set_of_inputs() {
   finish();
 }
 
-void AppRecorder::record_create_set_of_selects() {
+void WebRecorder::record_create_set_of_selects() {
   check_busy()
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::select);
@@ -308,7 +307,7 @@ void AppRecorder::record_create_set_of_selects() {
   finish();
 }
 
-void AppRecorder::record_create_set_of_images() {
+void WebRecorder::record_create_set_of_images() {
   check_busy()
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::image);
@@ -317,7 +316,7 @@ void AppRecorder::record_create_set_of_images() {
   finish();
 }
 
-void AppRecorder::record_create_set_of_text() {
+void WebRecorder::record_create_set_of_text() {
   check_busy()
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::text);
@@ -330,7 +329,7 @@ void AppRecorder::record_create_set_of_text() {
 // Record Delete Set.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_delete_set() {
+void WebRecorder::record_delete_set() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   _app_worker->queue_build_compute_node(tc, ComponentDID::kDeleteSetCompute, _on_node_built);
@@ -341,7 +340,7 @@ void AppRecorder::record_delete_set() {
 // Record Shift Sets.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_shift_to_text_above() {
+void WebRecorder::record_shift_to_text_above() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -351,7 +350,7 @@ void AppRecorder::record_shift_to_text_above() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_text_below() {
+void WebRecorder::record_shift_to_text_below() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -361,7 +360,7 @@ void AppRecorder::record_shift_to_text_below() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_text_on_left() {
+void WebRecorder::record_shift_to_text_on_left() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -371,7 +370,7 @@ void AppRecorder::record_shift_to_text_on_left() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_text_on_right() {
+void WebRecorder::record_shift_to_text_on_right() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -382,7 +381,7 @@ void AppRecorder::record_shift_to_text_on_right() {
   finish();
 }
 
-void AppRecorder::record_shift_to_images_above() {
+void WebRecorder::record_shift_to_images_above() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -392,7 +391,7 @@ void AppRecorder::record_shift_to_images_above() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_images_below() {
+void WebRecorder::record_shift_to_images_below() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -402,7 +401,7 @@ void AppRecorder::record_shift_to_images_below() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_images_on_left() {
+void WebRecorder::record_shift_to_images_on_left() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -412,7 +411,7 @@ void AppRecorder::record_shift_to_images_on_left() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_images_on_right() {
+void WebRecorder::record_shift_to_images_on_right() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -423,7 +422,7 @@ void AppRecorder::record_shift_to_images_on_right() {
   finish();
 }
 
-void AppRecorder::record_shift_to_inputs_above() {
+void WebRecorder::record_shift_to_inputs_above() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -433,7 +432,7 @@ void AppRecorder::record_shift_to_inputs_above() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_inputs_below() {
+void WebRecorder::record_shift_to_inputs_below() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -443,7 +442,7 @@ void AppRecorder::record_shift_to_inputs_below() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_inputs_on_left() {
+void WebRecorder::record_shift_to_inputs_on_left() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -453,7 +452,7 @@ void AppRecorder::record_shift_to_inputs_on_left() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_inputs_on_right() {
+void WebRecorder::record_shift_to_inputs_on_right() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -464,7 +463,7 @@ void AppRecorder::record_shift_to_inputs_on_right() {
   finish();
 }
 
-void AppRecorder::record_shift_to_selects_above() {
+void WebRecorder::record_shift_to_selects_above() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -474,7 +473,7 @@ void AppRecorder::record_shift_to_selects_above() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_selects_below() {
+void WebRecorder::record_shift_to_selects_below() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -484,7 +483,7 @@ void AppRecorder::record_shift_to_selects_below() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_selects_on_left() {
+void WebRecorder::record_shift_to_selects_on_left() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -494,7 +493,7 @@ void AppRecorder::record_shift_to_selects_on_left() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_selects_on_right() {
+void WebRecorder::record_shift_to_selects_on_right() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -505,7 +504,7 @@ void AppRecorder::record_shift_to_selects_on_right() {
   finish();
 }
 
-void AppRecorder::record_shift_to_iframes_above() {
+void WebRecorder::record_shift_to_iframes_above() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -515,7 +514,7 @@ void AppRecorder::record_shift_to_iframes_above() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_iframes_below() {
+void WebRecorder::record_shift_to_iframes_below() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -525,7 +524,7 @@ void AppRecorder::record_shift_to_iframes_below() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_iframes_on_left() {
+void WebRecorder::record_shift_to_iframes_on_left() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -535,7 +534,7 @@ void AppRecorder::record_shift_to_iframes_on_left() {
   _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
   finish();
 }
-void AppRecorder::record_shift_to_iframes_on_right() {
+void WebRecorder::record_shift_to_iframes_on_right() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
@@ -550,7 +549,7 @@ void AppRecorder::record_shift_to_iframes_on_right() {
 // Record Expand Sets.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_expand_above() {
+void WebRecorder::record_expand_above() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -570,7 +569,7 @@ void AppRecorder::record_expand_above() {
   finish();
 }
 
-void AppRecorder::record_expand_below() {
+void WebRecorder::record_expand_below() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -590,7 +589,7 @@ void AppRecorder::record_expand_below() {
   finish();
 }
 
-void AppRecorder::record_expand_left() {
+void WebRecorder::record_expand_left() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -610,7 +609,7 @@ void AppRecorder::record_expand_left() {
   finish();
 }
 
-void AppRecorder::record_expand_right() {
+void WebRecorder::record_expand_right() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -634,21 +633,21 @@ void AppRecorder::record_expand_right() {
 // Record Mark Sets.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_mark_set() {
+void WebRecorder::record_mark_set() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
   _app_worker->queue_build_compute_node(tc, ComponentDID::kMarkSetCompute, _on_node_built);
   finish();
 }
 
-void AppRecorder::record_unmark_set() {
+void WebRecorder::record_unmark_set() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
   _app_worker->queue_build_compute_node(tc, ComponentDID::kUnmarkSetCompute, _on_node_built);
   finish();
 }
 
-void AppRecorder::record_merge_sets() {
+void WebRecorder::record_merge_sets() {
   check_busy();
   _app_worker->queue_build_compute_node(tc, ComponentDID::kMergeSetsCompute, _on_node_built);
   finish();
@@ -658,7 +657,7 @@ void AppRecorder::record_merge_sets() {
 // Record Shrink To One Side.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_shrink_set_to_topmost() {
+void WebRecorder::record_shrink_set_to_topmost() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -669,7 +668,7 @@ void AppRecorder::record_shrink_set_to_topmost() {
   finish();
 }
 
-void AppRecorder::record_shrink_set_to_bottommost() {
+void WebRecorder::record_shrink_set_to_bottommost() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -680,7 +679,7 @@ void AppRecorder::record_shrink_set_to_bottommost() {
   finish();
 }
 
-void AppRecorder::record_shrink_set_to_leftmost() {
+void WebRecorder::record_shrink_set_to_leftmost() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -691,7 +690,7 @@ void AppRecorder::record_shrink_set_to_leftmost() {
   finish();
 }
 
-void AppRecorder::record_shrink_set_to_rightmost() {
+void WebRecorder::record_shrink_set_to_rightmost() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -706,7 +705,7 @@ void AppRecorder::record_shrink_set_to_rightmost() {
 // Record Shrink Against Marked Sets.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_shrink_above_of_marked() {
+void WebRecorder::record_shrink_above_of_marked() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -718,7 +717,7 @@ void AppRecorder::record_shrink_above_of_marked() {
   finish();
 }
 
-void AppRecorder::record_shrink_below_of_marked() {
+void WebRecorder::record_shrink_below_of_marked() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -730,7 +729,7 @@ void AppRecorder::record_shrink_below_of_marked() {
   finish();
 }
 
-void AppRecorder::record_shrink_above_and_below_of_marked() {
+void WebRecorder::record_shrink_above_and_below_of_marked() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -743,7 +742,7 @@ void AppRecorder::record_shrink_above_and_below_of_marked() {
   finish();
 }
 
-void AppRecorder::record_shrink_left_of_marked() {
+void WebRecorder::record_shrink_left_of_marked() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -755,7 +754,7 @@ void AppRecorder::record_shrink_left_of_marked() {
   finish();
 }
 
-void AppRecorder::record_shrink_right_of_marked() {
+void WebRecorder::record_shrink_right_of_marked() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -767,7 +766,7 @@ void AppRecorder::record_shrink_right_of_marked() {
   finish();
 }
 
-void AppRecorder::record_shrink_left_and_right_of_marked() {
+void WebRecorder::record_shrink_left_and_right_of_marked() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -784,7 +783,7 @@ void AppRecorder::record_shrink_left_and_right_of_marked() {
 // Record Mouse Actions.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_click() {
+void WebRecorder::record_click() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -795,7 +794,7 @@ void AppRecorder::record_click() {
   finish();
 }
 
-void AppRecorder::record_mouse_over() {
+void WebRecorder::record_mouse_over() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -806,14 +805,14 @@ void AppRecorder::record_mouse_over() {
   finish();
 }
 
-void AppRecorder::record_start_mouse_hover() {
+void WebRecorder::record_start_mouse_hover() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
   _app_worker->queue_build_compute_node(tc, ComponentDID::kStartMouseHoverActionCompute, _on_node_built);
   finish();
 }
 
-void AppRecorder::record_stop_mouse_hover() {
+void WebRecorder::record_stop_mouse_hover() {
   check_busy();
   _app_worker->queue_build_compute_node(tc, ComponentDID::kStopMouseHoverActionCompute, _on_node_built);
   finish();
@@ -823,7 +822,7 @@ void AppRecorder::record_stop_mouse_hover() {
 // Record Text Actions.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_type_text(const QString& text) {
+void WebRecorder::record_type_text(const QString& text) {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -835,7 +834,7 @@ void AppRecorder::record_type_text(const QString& text) {
   finish();
 }
 
-void AppRecorder::record_type_enter() {
+void WebRecorder::record_type_enter() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -850,7 +849,7 @@ void AppRecorder::record_type_enter() {
 // Record Element Actions.
 // -----------------------------------------------------------------
 
-void AppRecorder::record_extract_text() {
+void WebRecorder::record_extract_text() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -861,7 +860,7 @@ void AppRecorder::record_extract_text() {
   finish();
 }
 
-void AppRecorder::record_select_from_dropdown(const QString& option_text) {
+void WebRecorder::record_select_from_dropdown(const QString& option_text) {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -873,7 +872,7 @@ void AppRecorder::record_select_from_dropdown(const QString& option_text) {
   finish();
 }
 
-void AppRecorder::record_scroll_down() {
+void WebRecorder::record_scroll_down() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -885,7 +884,7 @@ void AppRecorder::record_scroll_down() {
   finish();
 }
 
-void AppRecorder::record_scroll_up() {
+void WebRecorder::record_scroll_up() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -897,7 +896,7 @@ void AppRecorder::record_scroll_up() {
   finish();
 }
 
-void AppRecorder::record_scroll_right() {
+void WebRecorder::record_scroll_right() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 
@@ -909,7 +908,7 @@ void AppRecorder::record_scroll_right() {
   finish();
 }
 
-void AppRecorder::record_scroll_left() {
+void WebRecorder::record_scroll_left() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
 

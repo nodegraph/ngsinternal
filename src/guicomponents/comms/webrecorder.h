@@ -21,17 +21,17 @@ class GraphBuilder;
 class Compute;
 class BaseFactory;
 class NodeSelection;
-class AppWorker;
-class AppTaskQueue;
+class WebWorker;
+class TaskScheduler;
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT AppRecorder : public QObject, public Component {
+class COMMS_EXPORT WebRecorder : public QObject, public Component {
 Q_OBJECT
  public:
-  COMPONENT_ID(AppRecorder, AppRecorder)
+  COMPONENT_ID(WebRecorder, WebRecorder)
 
-  explicit AppRecorder(Entity* parent);
-  virtual ~AppRecorder();
+  explicit WebRecorder(Entity* parent);
+  virtual ~WebRecorder();
 
   // Asynchronous Component Cleaning.
   void clean_compute(Entity* compute_entity);
@@ -45,7 +45,7 @@ Q_OBJECT
   // Record Browser Actions.
   Q_INVOKABLE void record_open_browser();
   Q_INVOKABLE void record_close_browser();
-  Q_INVOKABLE void record_check_browser_is_open();
+  Q_INVOKABLE void record_is_browser_open();
   Q_INVOKABLE void record_check_browser_size();
 
   // Record Navigate Actions.
@@ -146,8 +146,8 @@ Q_OBJECT
     void on_finished_sequence();
 
   // Our fixed dependencies.
-  Dep<AppWorker> _app_worker;
-  Dep<AppTaskQueue> _task_queue;
+  Dep<WebWorker> _app_worker;
+  Dep<TaskScheduler> _task_queue;
   Dep<GraphBuilder> _graph_builder;
   Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;

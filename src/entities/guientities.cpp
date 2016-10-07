@@ -46,10 +46,9 @@
 #include <guicomponents/comms/messagesender.h>
 #include <guicomponents/comms/messagereceiver.h>
 #include <guicomponents/comms/appconfig.h>
-#include <guicomponents/comms/apptaskqueue.h>
-#include <guicomponents/comms/appcomm.h>
-#include <guicomponents/comms/appworker.h>
-#include <guicomponents/comms/apprecorder.h>
+#include <guicomponents/comms/taskscheduler.h>
+#include <guicomponents/comms/webworker.h>
+#include <guicomponents/comms/webrecorder.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/browsercomputes.h>
@@ -108,10 +107,10 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff MessageSender(this);
   new_ff MessageReceiver(this);
   new_ff AppConfig(this);
-  new_ff AppTaskQueue(this);
+  new_ff TaskScheduler(this);
   //new_ff AppComm(this);
-  new_ff AppWorker(this);
-  new_ff AppRecorder(this);
+  new_ff WebWorker(this);
+  new_ff WebRecorder(this);
   new_ff LicenseChecker(this);
 }
 
@@ -144,8 +143,8 @@ void QMLAppEntity::expose_to_qml() {
   // Grab some components without using Deps.
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
-  AppWorker* app_worker = get_app_worker();
-  AppRecorder* app_recorder = get_app_recorder();
+  WebWorker* app_worker = get_app_worker();
+  WebRecorder* app_recorder = get_app_recorder();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
 
@@ -207,12 +206,12 @@ FileModel* QMLAppEntity::get_file_model() {
   return get<FileModel>();
 }
 
-AppWorker* QMLAppEntity::get_app_worker() {
-  return get<AppWorker>();
+WebWorker* QMLAppEntity::get_app_worker() {
+  return get<WebWorker>();
 }
 
-AppRecorder* QMLAppEntity::get_app_recorder() {
-  return get<AppRecorder>();
+WebRecorder* QMLAppEntity::get_app_recorder() {
+  return get<WebRecorder>();
 }
 
 LicenseChecker* QMLAppEntity::get_license_checker() {

@@ -17,41 +17,40 @@
 #include <components/compshapes/outputshape.h>
 #include <components/compshapes/compshapecollective.h>
 
-#include <guicomponents/comms/apptaskqueue.h>
+#include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/messagesender.h>
 
 #include <entities/entityids.h>
 
 namespace ngs {
 
-AppTaskQueue::AppTaskQueue(Entity* parent)
-    : QObject(NULL),
-      Component(parent, kIID(), kDID()),
+TaskScheduler::TaskScheduler(Entity* parent)
+    : Component(parent, kIID(), kDID()),
       _msg_sender(this),
       _waiting_for_response(false),
       _connected(false) {
   get_dep_loader()->register_fixed_dep(_msg_sender, Path({}));
 }
 
-AppTaskQueue::~AppTaskQueue() {
+TaskScheduler::~TaskScheduler() {
 }
 
-void AppTaskQueue::open() {
+void TaskScheduler::open() {
   external();
   _msg_sender->open();
 }
 
-void AppTaskQueue::close() {
+void TaskScheduler::close() {
   external();
   _msg_sender->close();
 }
 
-bool AppTaskQueue::is_open() const {
+bool TaskScheduler::is_open() const {
   external();
   return _msg_sender->is_open();
 }
 
-void AppTaskQueue::set_empty_stack_callback(std::function<void()> callback) {
+void TaskScheduler::set_empty_stack_callback(std::function<void()> callback) {
   external();
   _empty_stack_callback = callback;
 }
@@ -60,25 +59,25 @@ void AppTaskQueue::set_empty_stack_callback(std::function<void()> callback) {
 // Queue Framework Tasks.
 // ---------------------------------------------------------------------------------
 
-void AppTaskQueue::queue_start_sequence(AppTaskContext& tc) {
+void TaskScheduler::queue_start_sequence(TaskContext& tc) {
   tc.stack_index = _stack.size();
-  _stack.push_back(TaskQueue());
-  queue_task(tc, (AppTask)std::bind(&AppTaskQueue::start_sequence_task,this), "queue_start_sequence");
+  _stack.push_back(Queue());
+  queue_task(tc, (Task)std::bind(&TaskScheduler::start_sequence_task,this), "queue_start_sequence");
 }
 
-void AppTaskQueue::queue_finished_sequence(AppTaskContext& tc, std::function<void()> on_finished_sequence) {
-  queue_task(tc, (AppTask)std::bind(&AppTaskQueue::finished_sequence_task,this,on_finished_sequence), "queue_finished_sequence");
+void TaskScheduler::queue_finished_sequence(TaskContext& tc, std::function<void()> on_finished_sequence) {
+  queue_task(tc, (Task)std::bind(&TaskScheduler::finished_sequence_task,this,on_finished_sequence), "queue_finished_sequence");
 }
 
 // ------------------------------------------------------------------------
 // Task Queue Management.
 // ------------------------------------------------------------------------
 
-AppTaskQueue::TaskQueue& AppTaskQueue::get_top_queue() {
+TaskScheduler::Queue& TaskScheduler::get_top_queue() {
   return _stack.back();
 }
 
-void AppTaskQueue::queue_task(AppTaskContext& tc, AppTask task, const std::string& about) {
+void TaskScheduler::queue_task(TaskContext& tc, Task task, const std::string& about) {
 
   // Check to see if we can run the next worker.
   bool ok_to_run = true;
@@ -108,7 +107,7 @@ void AppTaskQueue::queue_task(AppTaskContext& tc, AppTask task, const std::strin
   }
 }
 
-void AppTaskQueue::run_next_task() {
+void TaskScheduler::run_next_task() {
   // If we're waiting for a response, then don't run the next task yet.
   if (_waiting_for_response) {
     return;
@@ -125,7 +124,7 @@ void AppTaskQueue::run_next_task() {
   }
 
   // Pop a task and run it..
-  AppTask task = get_top_queue().front();
+  Task task = get_top_queue().front();
   get_top_queue().pop_front();
   task();
 }
@@ -134,7 +133,7 @@ void AppTaskQueue::run_next_task() {
 // Incoming Message Handlers.
 // ------------------------------------------------------------------------
 
-void AppTaskQueue::handle_response(const Message& msg) {
+void TaskScheduler::handle_response(const Message& msg) {
   // Get the response id. This is supposed to match with the request id.
   int resp_id = msg[Message::kID].toInt();
 
@@ -160,14 +159,14 @@ void AppTaskQueue::handle_response(const Message& msg) {
   run_next_task();
 }
 
-void AppTaskQueue::handle_info(const Message& msg) {
+void TaskScheduler::handle_info(const Message& msg) {
 }
 
 // ------------------------------------------------------------------------
 // Infrastructure Tasks.
 // ------------------------------------------------------------------------
 
-void AppTaskQueue::send_msg_task(Message msg) {
+void TaskScheduler::send_msg_task(Message msg) {
   // Tag the request with an id. We expect a response with the same id.
   msg[Message::kID] = _next_msg_id;
 
@@ -183,13 +182,13 @@ void AppTaskQueue::send_msg_task(Message msg) {
   _msg_sender->send_msg(msg);
 }
 
-void AppTaskQueue::start_sequence_task() {
+void TaskScheduler::start_sequence_task() {
   // Make sure that we are the first task in the queue.
   //assert(get_task_queue().empty());
   run_next_task();
 }
 
-void AppTaskQueue::finished_sequence_task(std::function<void()> on_finished_sequence) {
+void TaskScheduler::finished_sequence_task(std::function<void()> on_finished_sequence) {
   // Make sure that we are the last task in the queue.
   assert(get_top_queue().empty());
 

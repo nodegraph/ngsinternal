@@ -4,8 +4,8 @@
 #include <guicomponents/comms/message.h>
 #include <guicomponents/comms/messagesender.h>
 #include <guicomponents/comms/messagereceiver.h>
-#include <guicomponents/comms/apptaskqueue.h>
-#include <guicomponents/comms/appworker.h>
+#include <guicomponents/comms/taskscheduler.h>
+#include <guicomponents/comms/webworker.h>
 
 
 #include <openssl/aes.h>

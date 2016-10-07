@@ -51,13 +51,13 @@ void MessageSender::send_msg(const Message& msg) const {
 void MessageSender::on_connected() {
   internal();
   _trying_to_open = false;
-  qDebug() << "message sender is now connected";
+  //qDebug() << "message sender is now connected";
 }
 
 void MessageSender::on_disconnected() {
   internal();
   _trying_to_open = false;
-  qDebug() << "message sender is now disconnected";
+  //qDebug() << "message sender is now disconnected";
 }
 
 void MessageSender::on_error(QAbstractSocket::SocketError error) {
@@ -67,20 +67,19 @@ void MessageSender::on_error(QAbstractSocket::SocketError error) {
     return;
   } else if (error == QAbstractSocket::RemoteHostClosedError) {
   }
-
   qDebug() << "MessageSender Error: " << error;
   qDebug() << "WebSocket error string: " << _web_socket->errorString();
 }
 
 void MessageSender::on_ssl_error(const QList<QSslError>& errors) {
   internal();
-  qDebug() << "SSLError: " << errors;
+  //qDebug() << "SSLError: " << errors;
   _web_socket->ignoreSslErrors(errors);
 }
 
 void MessageSender::on_state_changed(QAbstractSocket::SocketState s) {
   internal();
-  qDebug() << "state changed: " << s;
+  //qDebug() << "state changed: " << s;
 }
 
 void MessageSender::close() {
@@ -105,43 +104,43 @@ void MessageSender::open() {
   }
 
   const QString& nodejs_port = _process->get_nodejs_port();
-  std::cerr << "nodejs_port is: " << nodejs_port.toStdString() << "\n";
 
   // Form the websocket server's url using the port number.
   QString url("wss://localhost:");
   url += nodejs_port;
-  std::cerr << "socket url: " << url.toStdString() << "\n";
 
   // Do we have ssl support?
-  std::cerr << "ssl support: " << QSslSocket::supportsSsl() << "\n";
+  //std::cerr << "ssl support: " << QSslSocket::supportsSsl() << "\n";
 
-  // Open the port.
-  QList<QSslCertificate> cert = QSslCertificate::fromPath(AppConfig::get_app_bin_dir()+"/cert.pem");
-  std::cerr << "num certs: " << cert.count() << "\n";
-  QSslError error(QSslError::SelfSignedCertificate, cert.at(0));
-  QList<QSslError> expectedSslErrors;
-  expectedSslErrors.append(error);
-  _web_socket->ignoreSslErrors(expectedSslErrors);
+  // Trying to ignore the ssl error doesn't seem to work..
+//  QList<QSslCertificate> cert = QSslCertificate::fromPath(AppConfig::get_app_bin_dir()+"/cert.pem");
+//  std::cerr << "num certs: " << cert.count() << "\n";
+//  QSslError error(QSslError::SelfSignedCertificate, cert.at(0));
+//  QList<QSslError> expectedSslErrors;
+//  expectedSslErrors.append(error);
+//  _web_socket->ignoreSslErrors(expectedSslErrors);
 
-  // The first attempt will fail but will gather ssl errrors to ignore.
+  // The first attempt will fail but will gather the ssl errror to ignore.
   _web_socket->open(QUrl(url));
 
   // Wait till it's open.
+  // However this is should success in opening on the second open attempt.
+  // The first attempt is above which is known to fail.
   while (!is_open()) {
-    std::cerr << "waiting for socket to open\n";
     // We wait processing events until the socket connection is complete.
     qApp->processEvents();
+
+    // After processing event we may now be open.
     if (is_open()) {
       break;
     }
 
+    // Otherwise if we're not in the process of opening, try to open the socket again.
     if (!_trying_to_open) {
       _trying_to_open = true;
       _web_socket->open(QUrl(url));
     }
   }
-
-  std::cerr << "the socket connection should now be open\n";
 }
 
 bool MessageSender::is_open() const{

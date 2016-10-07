@@ -16,8 +16,8 @@
 
 namespace ngs {
 
-class AppTaskQueue;
-class AppTaskContext;
+class TaskScheduler;
+class TaskContext;
 class FileModel;
 class GraphBuilder;
 class Compute;
@@ -25,22 +25,25 @@ class BaseFactory;
 
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT AppWorker : public QObject, public Component {
+class COMMS_EXPORT WebWorker : public QObject, public Component {
 Q_OBJECT
  public:
-  COMPONENT_ID(AppWorker, AppWorker)
+  COMPONENT_ID(WebWorker, WebWorker)
 
-  explicit AppWorker(Entity* parent);
-  virtual ~AppWorker();
+  explicit WebWorker(Entity* parent);
+  virtual ~WebWorker();
 
-  void open();
-  void close();
+  Q_INVOKABLE void open();
+  Q_INVOKABLE void close();
+  Q_INVOKABLE bool is_open();
+  Q_INVOKABLE void close_browser();
 
+  // Handle Incoming messages. Note the same messages are also handled by the AppTaskQueue.
   void handle_response(const Message& sm);
   void handle_info(const Message& msg);
 
   // Polling Control.
-  // Polling can ensure the browser is open and of the expected dimensions.
+  // Polling is used to ensure that the browser is open and of the expected dimensions.
   static const int kPollInterval;
   Q_INVOKABLE bool is_polling();
   Q_INVOKABLE void start_polling();
@@ -52,58 +55,58 @@ Q_OBJECT
   // ---------------------------------------------------------------------------------
 
   // Queue Framework Tasks.
-  void queue_get_xpath(AppTaskContext& tc);
-  void queue_get_crosshair_info(AppTaskContext& tc);
-  void queue_merge_chain_state(AppTaskContext& tc, const QVariantMap& map);
-  void queue_build_compute_node(AppTaskContext& tc, ComponentDID compute_did, std::function<void(Entity*,Compute*)> on_node_built);
-  void queue_get_outputs(AppTaskContext& tc, std::function<void(const QVariantMap&)> on_get_outputs);
+  void queue_get_xpath(TaskContext& tc);
+  void queue_get_crosshair_info(TaskContext& tc);
+  void queue_merge_chain_state(TaskContext& tc, const QVariantMap& map);
+  void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did, std::function<void(Entity*,Compute*)> on_node_built);
+  void queue_get_outputs(TaskContext& tc, std::function<void(const QVariantMap&)> on_get_outputs);
 
   // Queue Cookie Tasks.
-  void queue_get_all_cookies(AppTaskContext& tc);
-  void queue_clear_all_cookies(AppTaskContext& tc);
-  void queue_set_all_cookies(AppTaskContext& tc);
+  void queue_get_all_cookies(TaskContext& tc);
+  void queue_clear_all_cookies(TaskContext& tc);
+  void queue_set_all_cookies(TaskContext& tc);
 
   // Queue Browser Tasks.
-  void queue_open_browser(AppTaskContext& tc);
-  void queue_close_browser(AppTaskContext& tc);
-  void queue_check_browser_is_open(AppTaskContext& tc);
-  void queue_check_browser_size(AppTaskContext& tc);
-  void queue_reset(AppTaskContext& tc);
+  void queue_open_browser(TaskContext& tc);
+  void queue_close_browser(TaskContext& tc);
+  void queue_is_browser_open(TaskContext& tc);
+  void queue_resize_browser(TaskContext& tc);
+  void queue_reset(TaskContext& tc);
 
   // Queue Page Content Tasks.
-  void queue_block_events(AppTaskContext& tc);
-  void queue_unblock_events(AppTaskContext& tc);
-  void queue_wait_until_loaded(AppTaskContext& tc);
+  void queue_block_events(TaskContext& tc);
+  void queue_unblock_events(TaskContext& tc);
+  void queue_wait_until_loaded(TaskContext& tc);
 
   // Queue Navigate Tasks.
-  void queue_navigate_to(AppTaskContext& tc);
-  void queue_navigate_refresh(AppTaskContext& tc);
-  void queue_switch_to_iframe(AppTaskContext& tc);
+  void queue_navigate_to(TaskContext& tc);
+  void queue_navigate_refresh(TaskContext& tc);
+  void queue_switch_to_iframe(TaskContext& tc);
 
   // Queue Set Tasks.
-  void queue_update_overlays(AppTaskContext& tc);
-  void queue_create_set_by_matching_values(AppTaskContext& tc);
-  void queue_create_set_by_matching_type(AppTaskContext& tc);
-  void queue_delete_set(AppTaskContext& tc);
-  void queue_shift_set(AppTaskContext& tc);
-  void queue_expand_set(AppTaskContext& tc);
-  void queue_mark_set(AppTaskContext& tc);
-  void queue_unmark_set(AppTaskContext& tc);
-  void queue_merge_sets(AppTaskContext& tc);
-  void queue_shrink_set_to_side(AppTaskContext& tc);
-  void queue_shrink_against_marked(AppTaskContext& tc);
+  void queue_update_overlays(TaskContext& tc);
+  void queue_create_set_by_matching_values(TaskContext& tc);
+  void queue_create_set_by_matching_type(TaskContext& tc);
+  void queue_delete_set(TaskContext& tc);
+  void queue_shift_set(TaskContext& tc);
+  void queue_expand_set(TaskContext& tc);
+  void queue_mark_set(TaskContext& tc);
+  void queue_unmark_set(TaskContext& tc);
+  void queue_merge_sets(TaskContext& tc);
+  void queue_shrink_set_to_side(TaskContext& tc);
+  void queue_shrink_against_marked(TaskContext& tc);
 
   // Queue Perform Action Tasks.
-  void queue_perform_mouse_action(AppTaskContext& tc);
-  void queue_perform_mouse_hover(AppTaskContext& tc);
-  void queue_perform_post_mouse_hover(AppTaskContext& tc);
-  void queue_perform_text_action(AppTaskContext& tc);
-  void queue_perform_element_action(AppTaskContext& tc);
+  void queue_perform_mouse_action(TaskContext& tc);
+  void queue_perform_mouse_hover(TaskContext& tc);
+  void queue_perform_post_mouse_hover(TaskContext& tc);
+  void queue_perform_text_action(TaskContext& tc);
+  void queue_perform_element_action(TaskContext& tc);
 
   // Queue other actions.
-  void queue_start_mouse_hover(AppTaskContext& tc);
-  void queue_stop_mouse_hover(AppTaskContext& tc);
-  void queue_emit_option_texts(AppTaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
+  void queue_start_mouse_hover(TaskContext& tc);
+  void queue_stop_mouse_hover(TaskContext& tc);
+  void queue_emit_option_texts(TaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
 
 signals:
   void show_web_action_menu();
@@ -143,8 +146,8 @@ signals:
   // Browser Tasks.
   void open_browser_task();
   void close_browser_task();
-  void check_browser_is_open_task();
-  void check_browser_size_task();
+  void is_browser_open_task();
+  void resize_browser_task();
 
   // Page Content Tasks.
   void block_events_task();
@@ -187,7 +190,7 @@ signals:
   void reset_task();
 
   // Our fixed dependencies.
-  Dep<AppTaskQueue> _task_queue;
+  Dep<TaskScheduler> _task_queue;
   Dep<BaseFactory> _factory;
 
   // Poll timer.

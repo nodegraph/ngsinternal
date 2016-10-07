@@ -29,10 +29,10 @@ const char* get_compute_name(ComponentDID did) {
     return "open browser";
   } else if (did == ComponentDID::kCloseBrowserCompute) {
     return "close browser";
-  } else if (did == ComponentDID::kCheckBrowserIsOpenCompute) {
-    return "check browser is open";
-  } else if (did == ComponentDID::kCheckBrowserSizeCompute) {
-    return "check browser size";
+  } else if (did == ComponentDID::kIsBrowserOpenCompute) {
+    return "is browser open";
+  } else if (did == ComponentDID::kResizeBrowserCompute) {
+    return "resize browser";
   } else if (did == ComponentDID::kNavigateToCompute) {
     return "navigate to";
   } else if (did == ComponentDID::kNavigateRefreshCompute) {

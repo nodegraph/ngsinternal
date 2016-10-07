@@ -23,6 +23,7 @@ Rectangle {
     color: "blue"
 
     property alias node_graph_page: node_graph_page
+    property bool tried_closing_browser: false
 
     // Clean up routine.
     function on_closing(close) {
@@ -31,20 +32,27 @@ Rectangle {
             app_worker.stop_polling()
             close.accepted = false
             close_timer.start()
+        } else if (!tried_closing_browser) {
+        	app_worker.close_browser()
+        	tried_closing_browser = true
+        	close.accepted = false
+            close_timer.start()
         } else if (app_worker.is_open()) {
             // Make nodejs shut itself down.
             // It will close the browser as part of its shutdown.
             app_worker.close()
             close.accepted = false
             close_timer.start()
+        } else {
+        	node_graph_item.parent = null
+        	tried_closing_browser = false
         }
-        node_graph_item.parent = null
     }
 
     // Timer that delays closing/exit a bit so we can clean up.
     Timer {
         id: close_timer
-        interval: 100
+        interval: 200
         running: false
         repeat: false
         onTriggered: quick_view.close()
