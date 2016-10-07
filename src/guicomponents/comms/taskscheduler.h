@@ -1,15 +1,7 @@
 #pragma once
 #include <guicomponents/comms/comms_export.h>
 #include <base/objectmodel/component.h>
-#include <entities/componentids.h>
-#include <base/objectmodel/dep.h>
 #include <guicomponents/comms/message.h>
-
-#include <QtCore/QObject>
-#include <QtCore/QTimer>
-#include <QtCore/QUrl>
-#include <QtNetwork/QAbstractSocket>
-#include <QtNetwork/QSslError>
 
 #include <functional>
 #include <deque>
@@ -17,12 +9,6 @@
 namespace ngs {
 
 class MessageSender;
-class FileModel;
-class GraphBuilder;
-class Compute;
-class BaseFactory;
-class NodeSelection;
-
 class TaskContext;
 
 typedef std::function<void()> Task;

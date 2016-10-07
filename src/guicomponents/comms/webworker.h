@@ -1,25 +1,20 @@
 #pragma once
 #include <guicomponents/comms/comms_export.h>
 #include <base/objectmodel/component.h>
-#include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
-#include <guicomponents/comms/message.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
-#include <QtCore/QUrl>
-#include <QtNetwork/QAbstractSocket>
-#include <QtNetwork/QSslError>
+#include <QtCore/QMap>
 
-#include <functional>
-#include <deque>
+//#include <functional>
+//#include <deque>
 
 namespace ngs {
 
+class Message;
 class TaskScheduler;
 class TaskContext;
-class FileModel;
-class GraphBuilder;
 class Compute;
 class BaseFactory;
 

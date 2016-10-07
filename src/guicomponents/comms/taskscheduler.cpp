@@ -1,26 +1,8 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
-#include <base/objectmodel/basefactory.h>
-
-#include <components/interactions/graphbuilder.h>
-#include <components/computes/compute.h>
-#include <components/computes/inputcompute.h>
-#include <components/computes/outputcompute.h>
-#include <components/computes/baseoutputs.h>
-#include <components/computes/baseinputs.h>
-
-#include <components/interactions/groupinteraction.h>
-
-#include <components/compshapes/nodeshape.h>
-#include <components/compshapes/linkshape.h>
-#include <components/compshapes/inputshape.h>
-#include <components/compshapes/outputshape.h>
-#include <components/compshapes/compshapecollective.h>
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/messagesender.h>
-
-#include <entities/entityids.h>
 
 namespace ngs {
 

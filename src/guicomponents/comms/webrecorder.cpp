@@ -2,14 +2,11 @@
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
 
-#include <components/interactions/graphbuilder.h>
 #include <components/computes/compute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
 #include <components/computes/baseoutputs.h>
 #include <components/computes/baseinputs.h>
-
-#include <components/interactions/groupinteraction.h>
 
 #include <components/compshapes/nodeshape.h>
 #include <components/compshapes/linkshape.h>
@@ -21,26 +18,8 @@
 #include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/filemodel.h>
-#include <components/interactions/shapecanvas.h>
 
-#include <entities/entityids.h>
-
-#include <cstddef>
-#include <cassert>
-
-#include <openssl/aes.h>
-
-#include <QtCore/QDebug>
-#include <QtCore/QFile>
-#include <QtGui/QGuiApplication>
-#include <QtCore/QStandardPaths>
-
-#include <QtCore/QJsonObject>
-#include <QtCore/QJsonValue>
-#include <QtWebSockets/QWebSocket>
-
-#include <iostream>
-#include <sstream>
+#include <QtCore/QUrl>
 
 namespace ngs {
 
@@ -124,13 +103,11 @@ WebRecorder::WebRecorder(Entity* parent)
       Component(parent, kIID(), kDID()),
       _app_worker(this),
       _task_queue(this),
-      _graph_builder(this),
       _factory(this),
       _file_model(this),
       _compute(this) {
   get_dep_loader()->register_fixed_dep(_app_worker, Path({}));
   get_dep_loader()->register_fixed_dep(_task_queue, Path({}));
-  get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
   get_dep_loader()->register_fixed_dep(_file_model, Path({}));
 

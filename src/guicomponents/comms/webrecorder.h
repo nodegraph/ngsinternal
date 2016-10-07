@@ -1,26 +1,16 @@
 #pragma once
 #include <guicomponents/comms/comms_export.h>
 #include <base/objectmodel/component.h>
-#include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
 #include <guicomponents/comms/message.h>
 
-#include <QtCore/QObject>
-#include <QtCore/QTimer>
-#include <QtCore/QUrl>
-#include <QtNetwork/QAbstractSocket>
-#include <QtNetwork/QSslError>
-
 #include <functional>
-#include <deque>
 
 namespace ngs {
 
 class FileModel;
-class GraphBuilder;
 class Compute;
 class BaseFactory;
-class NodeSelection;
 class WebWorker;
 class TaskScheduler;
 
@@ -148,7 +138,6 @@ Q_OBJECT
   // Our fixed dependencies.
   Dep<WebWorker> _app_worker;
   Dep<TaskScheduler> _task_queue;
-  Dep<GraphBuilder> _graph_builder;
   Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;
 

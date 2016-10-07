@@ -1,8 +1,9 @@
-#include <guicomponents/comms/webworker.h>
-#include <guicomponents/comms/taskscheduler.h>
-
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
+
+#include <guicomponents/comms/webworker.h>
+#include <guicomponents/comms/taskscheduler.h>
+#include <guicomponents/comms/message.h>
 
 #include <base/objectmodel/basefactory.h>
 #include <components/computes/inputcompute.h>
@@ -11,6 +12,7 @@
 #include <sstream>
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QUrl>
 
 namespace ngs {
 
