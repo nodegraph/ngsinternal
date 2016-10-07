@@ -28,6 +28,8 @@ Q_OBJECT
   explicit WebWorker(Entity* parent);
   virtual ~WebWorker();
 
+  void set_web_node_builder(std::function<void(ComponentDID,const QVariantMap&)> builder) {_web_node_builder = builder;}
+
   Q_INVOKABLE void open();
   Q_INVOKABLE void close();
   Q_INVOKABLE bool is_open();
@@ -55,7 +57,7 @@ Q_OBJECT
   void queue_get_xpath(TaskContext& tc);
   void queue_get_crosshair_info(TaskContext& tc);
   void queue_merge_chain_state(TaskContext& tc, const QVariantMap& map);
-  void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did, std::function<void(Entity*,Compute*)> on_node_built);
+  void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did);
   void queue_get_outputs(TaskContext& tc, std::function<void(const QVariantMap&)> on_get_outputs);
 
   // Queue Cookie Tasks.
@@ -133,7 +135,7 @@ signals:
   void get_outputs_task(std::function<void(const QVariantMap&)> on_finished_sequence);
   void start_sequence_task();
   void finished_sequence_task(std::function<void()> on_finished_sequence);
-  void build_compute_node_task(ComponentDID compute_did, std::function<void(Entity* node, Compute* compute)> on_node_built);
+  void build_compute_node_task(ComponentDID compute_did);
 
   // Cookie Tasks.
   void get_all_cookies_task();
@@ -188,7 +190,6 @@ signals:
 
   // Our fixed dependencies.
   Dep<TaskScheduler> _task_queue;
-  Dep<BaseFactory> _factory;
 
   // Poll timer.
   QTimer _poll_timer;
@@ -206,6 +207,9 @@ signals:
 
   // The 'value' value from responses will get merged into this state overriding previous values.
   QVariantMap _chain_state;
+
+  // This avoid dep cycles. And is used to build our web nodes.
+  std::function<void(ComponentDID,const QVariantMap&)> _web_node_builder;
 };
 
 

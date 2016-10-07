@@ -132,8 +132,9 @@ Q_OBJECT
     virtual void initialize_wires();
 
  private:
-    void on_node_built(Entity* node, Compute* compute);
-    void on_finished_sequence();
+    //void on_build_web_node(Entity* node, Compute* compute);
+    void on_empty_stack();
+    void build_web_node(ComponentDID compute_did, const QVariantMap& chain_state);
 
   // Our fixed dependencies.
   Dep<WebWorker> _app_worker;
@@ -144,8 +145,7 @@ Q_OBJECT
   // Compute that is currently being cleaned.
   Dep<Compute> _compute;
 
-  std::function<void(Entity*,Compute*)> _on_node_built;
-  std::function<void()> _on_finished_sequence;
+  // Called when the task scheduler is empty.
   std::function<void()> _on_empty_stack;
 };
 

@@ -47,8 +47,8 @@ void TaskScheduler::queue_start_sequence(TaskContext& tc) {
   queue_task(tc, (Task)std::bind(&TaskScheduler::start_sequence_task,this), "queue_start_sequence");
 }
 
-void TaskScheduler::queue_finished_sequence(TaskContext& tc, std::function<void()> on_finished_sequence) {
-  queue_task(tc, (Task)std::bind(&TaskScheduler::finished_sequence_task,this,on_finished_sequence), "queue_finished_sequence");
+void TaskScheduler::queue_finished_sequence(TaskContext& tc) {
+  queue_task(tc, (Task)std::bind(&TaskScheduler::finished_sequence_task,this), "queue_finished_sequence");
 }
 
 // ------------------------------------------------------------------------
@@ -170,7 +170,7 @@ void TaskScheduler::start_sequence_task() {
   run_next_task();
 }
 
-void TaskScheduler::finished_sequence_task(std::function<void()> on_finished_sequence) {
+void TaskScheduler::finished_sequence_task() {
   // Make sure that we are the last task in the queue.
   assert(get_top_queue().empty());
 
@@ -178,10 +178,10 @@ void TaskScheduler::finished_sequence_task(std::function<void()> on_finished_seq
   // Note each sequence of tasks is associated with a TaskContext and with one queue on the stack.
   _stack.pop_back();
 
-  // Now call the callback which may add more queues to the stack.
-  if (on_finished_sequence) {
-    on_finished_sequence();
-  }
+//  // Now call the callback which may add more queues to the stack.
+//  if (on_finished_sequence) {
+//    on_finished_sequence();
+//  }
 
   run_next_task();
 }

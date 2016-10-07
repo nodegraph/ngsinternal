@@ -34,8 +34,63 @@ QUrl get_proper_url(const QString& input) {
 class Linker: public Component {
  public:
   COMPONENT_ID(InvalidComponent, InvalidComponent);
-  Linker(Entity* entity):Component(entity, kIID(), kDID()) {}
-  // upstream and downstream are the output and input entities respectively.
+  // Entity should be set to the app root.
+  Linker(Entity* entity):Component(entity, kIID(), kDID()),
+      _factory(this),
+      _node(NULL),
+      _compute(NULL){
+	  _factory = get_dep<BaseFactory>(get_app_root());
+  }
+
+
+  void build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+    build_compute_node(compute_did, chain_state);
+    link(_node);
+  }
+
+  Entity* get_node() {return _node;}
+  Compute* get_compute() {return _compute;}
+
+ private:
+  Dep<BaseFactory> _factory;
+  Entity* _node;
+  Compute* _compute;
+
+  void build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+    // Create the node.
+    Entity* group = _factory->get_current_group();
+    std::pair<Entity*, Compute*> internals = _factory->create_compute_node2(group, compute_did);
+    _node = internals.first;
+    _compute = internals.second;
+
+    // Initialize and update the wires.
+    _node->initialize_wires();
+    group->clean_wires();
+
+    // Set the values on all the inputs from the chain_state.
+    QVariantMap::const_iterator iter;
+    for (iter = chain_state.begin() ; iter != chain_state.end(); ++iter) {
+      // Find the input entity.
+      Path path({".","inputs"});
+      path.push_back(iter.key().toStdString());
+      Entity* input_entity = _node->has_entity(path);
+      // Skip this key if the entity doesn't exist.
+      if (!input_entity) {
+        continue;
+      }
+      // Get the compute.
+      Dep<InputCompute> compute = get_dep<InputCompute>(input_entity);
+      // Skip inputs which are plugs and not params.
+      if (compute->is_exposed()) {
+        continue;
+      }
+
+      std::cerr << "setting name: " << iter.key().toStdString() << " value: " << iter.value().toString().toStdString()
+          << " type: " << iter.value().type() << " usertype: " << iter.value().userType() << "\n";
+      compute->set_value(iter.value());
+    }
+  }
+
   void link(Entity* downstream) {
     // Get the factory.
     Dep<BaseFactory> factory = get_dep<BaseFactory>(get_app_root());
@@ -93,7 +148,11 @@ class Linker: public Component {
       link_shape->link_output_shape(output_shape);
       link_shape->finished_moving();
     }
+
+    // Clean the wires in this group, as new nodes and links were created.
+    _factory->get_current_group()->clean_wires();
   }
+
 };
 
 
@@ -111,9 +170,7 @@ WebRecorder::WebRecorder(Entity* parent)
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
   get_dep_loader()->register_fixed_dep(_file_model, Path({}));
 
-  _on_node_built = std::bind(&WebRecorder::on_node_built, this, std::placeholders::_1, std::placeholders::_2);
-  _on_finished_sequence = std::bind(&WebRecorder::on_finished_sequence, this);
-  _on_empty_stack = _on_finished_sequence;
+  _on_empty_stack = std::bind(&WebRecorder::on_empty_stack, this);
 }
 
 WebRecorder::~WebRecorder() {
@@ -122,6 +179,9 @@ WebRecorder::~WebRecorder() {
 void WebRecorder::initialize_wires() {
   Component::initialize_wires();
   _task_queue->set_empty_stack_callback(_on_empty_stack);
+  std::function<void(ComponentDID, const QVariantMap&)> builder =
+      std::bind(&WebRecorder::build_web_node, this, std::placeholders::_1, std::placeholders::_2);
+  _app_worker->set_web_node_builder(builder);
 }
 
 void WebRecorder::clean_compute(Entity* compute_entity) {
@@ -147,48 +207,47 @@ void WebRecorder::continue_cleaning_compute() {
   _compute->clean_state();
 }
 
-void WebRecorder::on_node_built(Entity* node, Compute* compute) {
-  // Position and link the node we just created.
-  // We use a dummy component to avoid creating a cycle.
-  {
-    Linker* linker = new_ff Linker(get_app_root());
-    linker->link(node);
-    delete_ff(linker);
-  }
-
-  // Clean the wires in this group, as new nodes and links were created.
-  _factory->get_current_group()->clean_wires();
-
-  // Now execute it.
-  clean_compute(compute->our_entity());
+void WebRecorder::on_empty_stack() {
+  continue_cleaning_compute();
 }
 
-void WebRecorder::on_finished_sequence() {
-  continue_cleaning_compute();
+void WebRecorder::build_web_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+
+  Linker* linker = new_ff Linker(get_app_root());
+  linker->build_and_link_compute_node(compute_did, chain_state);
+
+  // Grab the compute..
+  Compute* compute = linker->get_compute();
+
+  // Destroy our linker.
+  delete_ff(linker);
+
+  // Clean the compute.
+  clean_compute(compute->our_entity());
 }
 
 // -----------------------------------------------------------------
 // // Record Browser Actions.
 // -----------------------------------------------------------------
 
-#define check_busy()   if (_task_queue->is_busy()) {emit web_action_ignored(); return;} TaskContext tc(_task_queue, _on_finished_sequence);
+#define check_busy()   if (_task_queue->is_busy()) {emit web_action_ignored(); return;} TaskContext tc(_task_queue);
 #define finish()
 
 void WebRecorder::record_open_browser() {
   check_busy();
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kOpenBrowserCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kOpenBrowserCompute);
   finish();
 }
 
 void WebRecorder::record_close_browser() {
   check_busy();
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kCloseBrowserCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kCloseBrowserCompute);
   finish();
 }
 
 void WebRecorder::record_is_browser_open() {
   check_busy();
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kIsBrowserOpenCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kIsBrowserOpenCompute);
   finish();
 }
 
@@ -205,7 +264,7 @@ void WebRecorder::record_check_browser_size() {
   args[Message::kDimensions] = dims;
 
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kResizeBrowserCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kResizeBrowserCompute);
   finish();
 }
 
@@ -221,7 +280,7 @@ void WebRecorder::record_navigate_to(const QString& url) {
   args[Message::kURL] = decorated_url;
 
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kNavigateToCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kNavigateToCompute);
   finish();
 }
 
@@ -230,13 +289,13 @@ void WebRecorder::record_switch_to_iframe() {
   QVariantMap args;
   args[Message::kIFrame]= _app_worker->get_iframe_to_switch_to();
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute);
   finish();
 }
 
 void WebRecorder::record_navigate_refresh() {
   check_busy()
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kNavigateRefreshCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kNavigateRefreshCompute);
   finish();
 }
 
@@ -250,7 +309,7 @@ void WebRecorder::record_create_set_by_matching_text_values() {
   QVariantMap args;
   args[Message::kWrapType]= to_underlying(WrapType::text);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromValuesCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromValuesCompute);
   finish();
 }
 
@@ -260,7 +319,7 @@ void WebRecorder::record_create_set_by_matching_image_values() {
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::image);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromValuesCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromValuesCompute);
   finish();
 }
 
@@ -273,7 +332,7 @@ void WebRecorder::record_create_set_of_inputs() {
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::input);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute);
   finish();
 }
 
@@ -282,7 +341,7 @@ void WebRecorder::record_create_set_of_selects() {
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::select);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute);
   finish();
 }
 
@@ -291,7 +350,7 @@ void WebRecorder::record_create_set_of_images() {
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::image);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute);
   finish();
 }
 
@@ -300,7 +359,7 @@ void WebRecorder::record_create_set_of_text() {
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::text);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute);
   finish();
 }
 
@@ -311,7 +370,7 @@ void WebRecorder::record_create_set_of_text() {
 void WebRecorder::record_delete_set() {
   check_busy()
   _app_worker->queue_get_crosshair_info(tc);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kDeleteSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kDeleteSetCompute);
   finish();
 }
 
@@ -326,7 +385,7 @@ void WebRecorder::record_shift_to_text_above() {
   args[Message::kWrapType] = to_underlying(WrapType::text);
   args[Message::kDirection] = to_underlying(Direction::up);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_text_below() {
@@ -336,7 +395,7 @@ void WebRecorder::record_shift_to_text_below() {
   args[Message::kWrapType] = to_underlying(WrapType::text);
   args[Message::kDirection] = to_underlying(Direction::down);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_text_on_left() {
@@ -346,7 +405,7 @@ void WebRecorder::record_shift_to_text_on_left() {
   args[Message::kWrapType] = to_underlying(WrapType::text);
   args[Message::kDirection] = to_underlying(Direction::left);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_text_on_right() {
@@ -356,7 +415,7 @@ void WebRecorder::record_shift_to_text_on_right() {
   args[Message::kWrapType] = to_underlying(WrapType::text);
   args[Message::kDirection] = to_underlying(Direction::right);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 
@@ -367,7 +426,7 @@ void WebRecorder::record_shift_to_images_above() {
   args[Message::kWrapType] = to_underlying(WrapType::image);
   args[Message::kDirection] = to_underlying(Direction::up);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_images_below() {
@@ -377,7 +436,7 @@ void WebRecorder::record_shift_to_images_below() {
   args[Message::kWrapType] = to_underlying(WrapType::image);
   args[Message::kDirection] = to_underlying(Direction::down);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_images_on_left() {
@@ -387,7 +446,7 @@ void WebRecorder::record_shift_to_images_on_left() {
   args[Message::kWrapType] = to_underlying(WrapType::image);
   args[Message::kDirection] = to_underlying(Direction::left);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_images_on_right() {
@@ -397,7 +456,7 @@ void WebRecorder::record_shift_to_images_on_right() {
   args[Message::kWrapType] = to_underlying(WrapType::image);
   args[Message::kDirection] = to_underlying(Direction::right);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 
@@ -408,7 +467,7 @@ void WebRecorder::record_shift_to_inputs_above() {
   args[Message::kWrapType] = to_underlying(WrapType::input);
   args[Message::kDirection] = to_underlying(Direction::up);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_inputs_below() {
@@ -418,7 +477,7 @@ void WebRecorder::record_shift_to_inputs_below() {
   args[Message::kWrapType] = to_underlying(WrapType::input);
   args[Message::kDirection] = to_underlying(Direction::down);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_inputs_on_left() {
@@ -428,7 +487,7 @@ void WebRecorder::record_shift_to_inputs_on_left() {
   args[Message::kWrapType] = to_underlying(WrapType::input);
   args[Message::kDirection] = to_underlying(Direction::left);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_inputs_on_right() {
@@ -438,7 +497,7 @@ void WebRecorder::record_shift_to_inputs_on_right() {
   args[Message::kWrapType] = to_underlying(WrapType::input);
   args[Message::kDirection] = to_underlying(Direction::right);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 
@@ -449,7 +508,7 @@ void WebRecorder::record_shift_to_selects_above() {
   args[Message::kWrapType] = to_underlying(WrapType::select);
   args[Message::kDirection] = to_underlying(Direction::up);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_selects_below() {
@@ -459,7 +518,7 @@ void WebRecorder::record_shift_to_selects_below() {
   args[Message::kWrapType] = to_underlying(WrapType::select);
   args[Message::kDirection] = to_underlying(Direction::down);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_selects_on_left() {
@@ -469,7 +528,7 @@ void WebRecorder::record_shift_to_selects_on_left() {
   args[Message::kWrapType] = to_underlying(WrapType::select);
   args[Message::kDirection] = to_underlying(Direction::left);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_selects_on_right() {
@@ -479,7 +538,7 @@ void WebRecorder::record_shift_to_selects_on_right() {
   args[Message::kWrapType] = to_underlying(WrapType::select);
   args[Message::kDirection] = to_underlying(Direction::right);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 
@@ -490,7 +549,7 @@ void WebRecorder::record_shift_to_iframes_above() {
   args[Message::kWrapType] = to_underlying(WrapType::iframe);
   args[Message::kDirection] = to_underlying(Direction::up);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_iframes_below() {
@@ -500,7 +559,7 @@ void WebRecorder::record_shift_to_iframes_below() {
   args[Message::kWrapType] = to_underlying(WrapType::iframe);
   args[Message::kDirection] = to_underlying(Direction::down);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_iframes_on_left() {
@@ -510,7 +569,7 @@ void WebRecorder::record_shift_to_iframes_on_left() {
   args[Message::kWrapType] = to_underlying(WrapType::iframe);
   args[Message::kDirection] = to_underlying(Direction::left);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 void WebRecorder::record_shift_to_iframes_on_right() {
@@ -520,7 +579,7 @@ void WebRecorder::record_shift_to_iframes_on_right() {
   args[Message::kWrapType] = to_underlying(WrapType::iframe);
   args[Message::kDirection] = to_underlying(Direction::right);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
 }
 
@@ -544,7 +603,7 @@ void WebRecorder::record_expand_above() {
   args[Message::kMatchCriteria] = match_criteria;
   args[Message::kDirection] = to_underlying(Direction::up);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
 }
 
@@ -564,7 +623,7 @@ void WebRecorder::record_expand_below() {
   args[Message::kMatchCriteria] = match_criteria;
   args[Message::kDirection] = to_underlying(Direction::down);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
 }
 
@@ -584,7 +643,7 @@ void WebRecorder::record_expand_left() {
   args[Message::kMatchCriteria] = match_criteria;
   args[Message::kDirection] = to_underlying(Direction::left);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
 }
 
@@ -604,7 +663,7 @@ void WebRecorder::record_expand_right() {
   args[Message::kMatchCriteria] = match_criteria;
   args[Message::kDirection] = to_underlying(Direction::right);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
 }
 
@@ -615,20 +674,20 @@ void WebRecorder::record_expand_right() {
 void WebRecorder::record_mark_set() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kMarkSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kMarkSetCompute);
   finish();
 }
 
 void WebRecorder::record_unmark_set() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kUnmarkSetCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kUnmarkSetCompute);
   finish();
 }
 
 void WebRecorder::record_merge_sets() {
   check_busy();
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kMergeSetsCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kMergeSetsCompute);
   finish();
 }
 
@@ -643,7 +702,7 @@ void WebRecorder::record_shrink_set_to_topmost() {
   QVariantMap args;
   args[Message::kDirection] = to_underlying(Direction::up);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
 }
 
@@ -654,7 +713,7 @@ void WebRecorder::record_shrink_set_to_bottommost() {
   QVariantMap args;
   args[Message::kDirection] = to_underlying(Direction::down);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
 }
 
@@ -665,7 +724,7 @@ void WebRecorder::record_shrink_set_to_leftmost() {
   QVariantMap args;
   args[Message::kDirection] = to_underlying(Direction::left);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
 }
 
@@ -676,7 +735,7 @@ void WebRecorder::record_shrink_set_to_rightmost() {
   QVariantMap args;
   args[Message::kDirection] = to_underlying(Direction::right);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
 }
 
@@ -692,7 +751,7 @@ void WebRecorder::record_shrink_above_of_marked() {
   dirs.append(to_underlying(Direction::up));
   QVariantMap args;
   args[Message::kDirections] = dirs;
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
 
@@ -704,7 +763,7 @@ void WebRecorder::record_shrink_below_of_marked() {
   dirs.append(to_underlying(Direction::down));
   QVariantMap args;
   args[Message::kDirections] = dirs;
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
 
@@ -717,7 +776,7 @@ void WebRecorder::record_shrink_above_and_below_of_marked() {
   dirs.append(to_underlying(Direction::down));
   QVariantMap args;
   args[Message::kDirections] = dirs;
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
 
@@ -729,7 +788,7 @@ void WebRecorder::record_shrink_left_of_marked() {
   dirs.append(to_underlying(Direction::left));
   QVariantMap args;
   args[Message::kDirections] = dirs;
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
 
@@ -741,7 +800,7 @@ void WebRecorder::record_shrink_right_of_marked() {
   dirs.append(to_underlying(Direction::right));
   QVariantMap args;
   args[Message::kDirections] = dirs;
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
 
@@ -754,7 +813,7 @@ void WebRecorder::record_shrink_left_and_right_of_marked() {
   dirs.append(to_underlying(Direction::right));
   QVariantMap args;
   args[Message::kDirections] = dirs;
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
 
@@ -769,7 +828,7 @@ void WebRecorder::record_click() {
   QVariantMap args;
   args[Message::kMouseAction] = to_underlying(MouseActionType::kSendClick);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
   finish();
 }
 
@@ -780,20 +839,20 @@ void WebRecorder::record_mouse_over() {
   QVariantMap args;
   args[Message::kMouseAction] = to_underlying(MouseActionType::kMouseOver);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
   finish();
 }
 
 void WebRecorder::record_start_mouse_hover() {
   check_busy();
   _app_worker->queue_get_crosshair_info(tc);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kStartMouseHoverActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kStartMouseHoverActionCompute);
   finish();
 }
 
 void WebRecorder::record_stop_mouse_hover() {
   check_busy();
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kStopMouseHoverActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kStopMouseHoverActionCompute);
   finish();
 }
 
@@ -809,7 +868,7 @@ void WebRecorder::record_type_text(const QString& text) {
   args[Message::kText] = text;
   args[Message::kTextAction] = to_underlying(TextActionType::kSendText);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kTextActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kTextActionCompute);
   finish();
 }
 
@@ -820,7 +879,7 @@ void WebRecorder::record_type_enter() {
   QVariantMap args;
   args[Message::kTextAction] = to_underlying(TextActionType::kSendEnter);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kTextActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kTextActionCompute);
   finish();
 }
 
@@ -835,7 +894,7 @@ void WebRecorder::record_extract_text() {
   QVariantMap args;
   args[Message::kElementAction] = to_underlying(ElementActionType::kGetText);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
 }
 
@@ -847,7 +906,7 @@ void WebRecorder::record_select_from_dropdown(const QString& option_text) {
   args[Message::kElementAction] = to_underlying(ElementActionType::kSelectOption);
   args[Message::kOptionText] = option_text;
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
 }
 
@@ -859,7 +918,7 @@ void WebRecorder::record_scroll_down() {
   args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
   args[Message::kDirection] = to_underlying(Direction::down);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
 }
 
@@ -871,7 +930,7 @@ void WebRecorder::record_scroll_up() {
   args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
   args[Message::kDirection] = to_underlying(Direction::up);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
 }
 
@@ -883,7 +942,7 @@ void WebRecorder::record_scroll_right() {
   args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
   args[Message::kDirection] = to_underlying(Direction::right);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
 }
 
@@ -895,7 +954,7 @@ void WebRecorder::record_scroll_left() {
   args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
   args[Message::kDirection] = to_underlying(Direction::left);
   _app_worker->queue_merge_chain_state(tc, args);
-  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute, _on_node_built);
+  _app_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
 }
 

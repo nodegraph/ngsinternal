@@ -49,11 +49,11 @@ class COMMS_EXPORT TaskScheduler : public Component {
 
   // Methods to queue our special start and finish tasks.
   void queue_start_sequence(TaskContext& tc);
-  void queue_finished_sequence(TaskContext& tc, std::function<void()> on_finished_sequence);
+  void queue_finished_sequence(TaskContext& tc);
 
   // Our special start and finish tasks.
   void start_sequence_task();
-  void finished_sequence_task(std::function<void()> on_finished_sequence);
+  void finished_sequence_task();
 
   // Our fixed dependencies.
   Dep<MessageSender> _msg_sender;
@@ -80,17 +80,15 @@ class COMMS_EXPORT TaskScheduler : public Component {
 
 class COMMS_EXPORT TaskContext {
  public:
-  TaskContext(Dep<TaskScheduler>& task_queue, std::function<void ()> on_finished_sequence = std::function<void()>()):
+  TaskContext(Dep<TaskScheduler>& task_queue):
     task_queue(task_queue.get()),
-    on_finished_sequence(on_finished_sequence),
     stack_index(-1) {
     task_queue->queue_start_sequence(*this);
   }
   ~TaskContext(){
-    task_queue->queue_finished_sequence(*this,on_finished_sequence);
+    task_queue->queue_finished_sequence(*this);
   }
   TaskScheduler* task_queue;
-  std::function<void ()> on_finished_sequence;
   size_t stack_index;
 };
 
