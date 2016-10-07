@@ -33,6 +33,8 @@ Q_OBJECT
   Q_INVOKABLE bool is_open();
   Q_INVOKABLE void close_browser();
 
+  const QString& get_iframe_to_switch_to() {return _iframe_to_switch_to;}
+
   // Handle Incoming messages. Note the same messages are also handled by the AppTaskQueue.
   void handle_response(const Message& sm);
   void handle_info(const Message& msg);
@@ -193,8 +195,8 @@ signals:
   bool _show_browser;
 
   // State to bring up the web actions menu, and handle menu activations.
-  QString _iframe;
-  QVariantMap _click_pos;
+  QString _iframe_to_switch_to;
+  QVariantMap _browser_click_pos;
 
   // State for hovering.
   bool _hovering;

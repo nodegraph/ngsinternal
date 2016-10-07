@@ -227,7 +227,9 @@ void WebRecorder::record_navigate_to(const QString& url) {
 
 void WebRecorder::record_switch_to_iframe() {
   check_busy()
-  _app_worker->queue_get_crosshair_info(tc);
+  QVariantMap args;
+  args[Message::kIFrame]= _app_worker->get_iframe_to_switch_to();
+  _app_worker->queue_merge_chain_state(tc, args);
   _app_worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute, _on_node_built);
   finish();
 }

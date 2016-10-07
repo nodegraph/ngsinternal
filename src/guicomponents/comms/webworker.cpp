@@ -329,10 +329,10 @@ void WebWorker::handle_response(const Message& msg) {
 void WebWorker::handle_info(const Message& msg) {
   std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
   if (msg[Message::kInfo] == to_underlying(InfoType::kShowWebActionMenu)) {
-    _click_pos = msg[Message::kValue].toMap()[Message::kClickPos].toMap();
-    std::cerr << "got click x,y: " << _click_pos["x"].toInt() << ", " << _click_pos["y"].toInt() << "\n";
+    _browser_click_pos = msg[Message::kValue].toMap()[Message::kClickPos].toMap();
+    std::cerr << "got click x,y: " << _browser_click_pos["x"].toInt() << ", " << _browser_click_pos["y"].toInt() << "\n";
 
-    _iframe = msg[Message::kIFrame].toString();
+    _iframe_to_switch_to = msg[Message::kIFrame].toString();
     if (msg[Message::kValue].toMap().count(Message::kPrevIFrame)) {
       QString prev_iframe = msg[Message::kValue].toMap().value(Message::kPrevIFrame).toString();
       emit show_iframe_menu();
@@ -350,7 +350,7 @@ void WebWorker::handle_info(const Message& msg) {
 
 void WebWorker::get_crosshair_info_task() {
   QVariantMap args;
-  args[Message::kClickPos] = _click_pos;
+  args[Message::kClickPos] = _browser_click_pos;
   Message req(RequestType::kGetCrosshairInfo,args);
   _task_queue->send_msg_task(req);
 }
