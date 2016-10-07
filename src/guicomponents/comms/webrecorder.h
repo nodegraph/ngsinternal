@@ -132,14 +132,12 @@ Q_OBJECT
     virtual void initialize_wires();
 
  private:
-    //void on_build_web_node(Entity* node, Compute* compute);
     void on_empty_stack();
     void build_web_node(ComponentDID compute_did, const QVariantMap& chain_state);
 
   // Our fixed dependencies.
   Dep<WebWorker> _app_worker;
   Dep<TaskScheduler> _task_queue;
-  Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;
 
   // Compute that is currently being cleaned.
