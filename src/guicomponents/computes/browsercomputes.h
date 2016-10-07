@@ -9,7 +9,8 @@ namespace ngs {
 class Entity;
 class InputCompute;
 class AppWorker;
-class TaskContext;
+class AppTaskQueue;
+class AppTaskContext;
 
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  public:
@@ -26,12 +27,13 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
  protected:
   // Our state.
-  virtual void pre_update_state(TaskContext& tc);
-  virtual void post_update_state(TaskContext& tc);
+  virtual void pre_update_state(AppTaskContext& tc);
+  virtual void post_update_state(AppTaskContext& tc);
 
   void dump_map(const QVariantMap& inputs) const;
 
   Dep<AppWorker> _app_worker;
+  Dep<AppTaskQueue> _task_queue;
 
   bool _processing;
 };

@@ -17,8 +17,10 @@
 #include <components/compshapes/outputshape.h>
 #include <components/compshapes/compshapecollective.h>
 
+#include <guicomponents/comms/appconfig.h>
 #include <guicomponents/comms/appworker.h>
 #include <guicomponents/comms/appcomm.h>
+#include <guicomponents/comms/apptaskqueue.h>
 #include <guicomponents/comms/filemodel.h>
 #include <components/interactions/shapecanvas.h>
 
@@ -49,18 +51,13 @@ const int AppWorker::kJitterSize = 1;
 AppWorker::AppWorker(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
-      _app_comm(this),
+      _task_queue(this),
       _factory(this),
-      _node_selection(this),
       _show_browser(false),
       _hovering(false),
-      _jitter(kJitterSize),
-      _waiting_for_response(false),
-      _next_msg_id(0),
-      _connected(false) {
-  get_dep_loader()->register_fixed_dep(_app_comm, Path({}));
+      _jitter(kJitterSize) {
+  get_dep_loader()->register_fixed_dep(_task_queue, Path({}));
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
-  get_dep_loader()->register_fixed_dep(_node_selection, Path({}));
 
   // Setup the poll timer.
   _poll_timer.setSingleShot(false);
@@ -71,32 +68,12 @@ AppWorker::AppWorker(Entity* parent)
 AppWorker::~AppWorker() {
 }
 
-void AppWorker::set_empty_stack_callback(std::function<void()> callback) {
-  _empty_stack_callback = callback;
+void AppWorker::open() {
+  _task_queue->open();
 }
 
-void AppWorker::initialize_wires() {
-  Component::initialize_wires();
-
-  // Create a qt signal slot connection. One time only!
-  if (!_connected) {
-    connect(_app_comm->get_web_socket(), SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_text_received(const QString &)));
-    _connected = true;
-  }
-}
-
-QString AppWorker::get_app_bin_dir() {
-  return QCoreApplication::applicationDirPath();
-}
-
-QString AppWorker::get_user_data_dir() {
-  return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-}
-
-QString AppWorker::get_smash_browse_url() {
-  QString app_dir = get_app_bin_dir();
-  app_dir += QString("/../html/smashbrowse.html");
-  return app_dir;
+void AppWorker::close() {
+  _task_queue->close();
 }
 
 bool AppWorker::is_polling() {
@@ -113,12 +90,7 @@ void AppWorker::stop_polling() {
 
 void AppWorker::reset_state() {
     // State for message queuing.
-    _waiting_for_response = false;
-    _next_msg_id = 0;
-    _expected_msg_id = -1;
-    _last_resp = Message();
     _chain_state.clear();
-    _stack.clear();
 
     // State for hovering.
     _hovering = false;
@@ -130,54 +102,20 @@ void AppWorker::reset_state() {
 // Our Slots.
 // -----------------------------------------------------------------
 
-void AppWorker::on_text_received(const QString & text) {
-
-  std::cerr << "app_worker got text: " << text.toStdString() << "\n";
-
-//  // Multiple message may arrive concatenated in the json string, so we split them.
-//  QRegExp regex("(\\{[^\\{\\}]*\\})");
-//  QStringList splits;
-//  int pos = 0;
-//  while ((pos = regex.indexIn(text, pos)) != -1) {
-//      splits << regex.cap(1);
-//      pos += regex.matchedLength();
-//  }
-
-  // Loop over each message string.
-  //for (int i=0; i<splits.size(); ++i) {
-    //std::cerr << "hub --> app-" << i << ": " << splits[i].toStdString() << "\n";
-    //Message msg(splits[i]);
-    Message msg(text);
-    MessageType type = msg.get_msg_type();
-    if (type == MessageType::kRequestMessage) {
-      // We shouldn't be getting request message from nodejs.
-      std::cerr << "Error: App should not be receiving request messages.\n";
-      assert(false);
-    } else if (type == MessageType::kResponseMessage) {
-      handle_response_from_nodejs(msg);
-    } else if (type == MessageType::kInfoMessage) {
-      handle_info_from_nodejs(msg);
-    } else {
-      std::cerr << "Error: Got message of unknown type!\n";
-    }
-  //}
-}
-
 void AppWorker::on_poll() {
-  if (_app_comm->check_connection()) {
-    if (_show_browser) {
-      std::cerr << "polling open browser!\n";
-      if (_stack.empty()) {
-        TaskContext tc(this);
-        queue_check_browser_is_open(tc);
-        queue_check_browser_size(tc);
-        // Debugging. - this makes the browser only come up once.
-        _show_browser = false;
-      }
+  if (_show_browser) {
+    std::cerr << "polling open browser!\n";
+    if (!_task_queue->is_busy()) {
+      AppTaskContext tc(_task_queue);
+      queue_check_browser_is_open(tc);
+      queue_check_browser_size(tc);
+      // Debugging. - this makes the browser only come up once.
+      _show_browser = false;
     }
   }
+
   if (_hovering) {
-    if (_stack.empty()) {
+    if (!_task_queue->is_busy()) {
       mouse_hover_task();
     }
   }
@@ -187,201 +125,187 @@ void AppWorker::on_poll() {
 // Queue Framework Tasks.
 // ---------------------------------------------------------------------------------
 
-void AppWorker::queue_get_xpath(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::get_xpath_task,this), "queue_get_xpath");
+void AppWorker::queue_get_xpath(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::get_xpath_task,this), "queue_get_xpath");
 }
 
-void AppWorker::queue_get_crosshair_info(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "queue_get_crosshair_info");
+void AppWorker::queue_get_crosshair_info(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::get_crosshair_info_task,this), "queue_get_crosshair_info");
 }
 
-void AppWorker::queue_merge_chain_state(TaskContext& tc, const QVariantMap& map) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::merge_chain_state_task,this, map), "queue_merge_chain_state");
+void AppWorker::queue_merge_chain_state(AppTaskContext& tc, const QVariantMap& map) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::merge_chain_state_task,this, map), "queue_merge_chain_state");
 }
 
-void AppWorker::queue_build_compute_node(TaskContext& tc, ComponentDID compute_did, std::function<void(Entity*,Compute*)> on_node_built) {
+void AppWorker::queue_build_compute_node(AppTaskContext& tc, ComponentDID compute_did, std::function<void(Entity*,Compute*)> on_node_built) {
   std::stringstream ss;
   ss << "queue build compute node with did: " << (size_t)compute_did;
-  queue_task(tc, (AppTask)std::bind(&AppWorker::build_compute_node_task,this, compute_did, on_node_built), ss.str());
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::build_compute_node_task,this, compute_did, on_node_built), ss.str());
 }
 
-void AppWorker::queue_get_outputs(TaskContext& tc, std::function<void(const QVariantMap&)> on_get_outputs) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::get_outputs_task,this,on_get_outputs), "queue_get_outputs");
-}
-
-AppWorker::TaskQueue& AppWorker::get_task_queue() {
-  return _stack.back();
-}
-
-void AppWorker::queue_start_sequence(TaskContext& tc) {
-  tc.stack_index = _stack.size();
-  _stack.push_back(TaskQueue());
-  queue_task(tc, (AppTask)std::bind(&AppWorker::start_sequence_task,this), "queue_start_sequence");
-}
-
-void AppWorker::queue_finished_sequence(TaskContext& tc, std::function<void()> on_finished_sequence) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::finished_sequence_task,this,on_finished_sequence), "queue_finished_sequence");
+void AppWorker::queue_get_outputs(AppTaskContext& tc, std::function<void(const QVariantMap&)> on_get_outputs) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::get_outputs_task,this,on_get_outputs), "queue_get_outputs");
 }
 
 // ---------------------------------------------------------------------------------
 // Queue Cookie Tasks.
 // ---------------------------------------------------------------------------------
 
-void AppWorker::queue_get_all_cookies(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::get_all_cookies_task, this), "queue_get_all_cookies");
+void AppWorker::queue_get_all_cookies(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::get_all_cookies_task, this), "queue_get_all_cookies");
 }
 
-void AppWorker::queue_clear_all_cookies(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::clear_all_cookies_task, this), "queue_clear_all_cookies");
+void AppWorker::queue_clear_all_cookies(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::clear_all_cookies_task, this), "queue_clear_all_cookies");
 }
 
-void AppWorker::queue_set_all_cookies(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::set_all_cookies_task, this), "queue_set_all_cookies");
+void AppWorker::queue_set_all_cookies(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::set_all_cookies_task, this), "queue_set_all_cookies");
 }
 
 // ---------------------------------------------------------------------------------
 // Queue Browser Tasks.
 // ---------------------------------------------------------------------------------
 
-void AppWorker::queue_open_browser(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::open_browser_task,this), "queue_open_browser");
+void AppWorker::queue_open_browser(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::open_browser_task,this), "queue_open_browser");
 }
 
-void AppWorker::queue_close_browser(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::close_browser_task,this), "queue_close_browser");
+void AppWorker::queue_close_browser(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::close_browser_task,this), "queue_close_browser");
 }
 
-void AppWorker::queue_check_browser_is_open(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::check_browser_is_open_task,this), "queue_check_browser_is_open");
+void AppWorker::queue_check_browser_is_open(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::check_browser_is_open_task,this), "queue_check_browser_is_open");
 }
 
-void AppWorker::queue_check_browser_size(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::check_browser_size_task,this), "queue_check_browser_size");
+void AppWorker::queue_check_browser_size(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::check_browser_size_task,this), "queue_check_browser_size");
 }
 
-void AppWorker::queue_reset(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::reset_task, this), "reset");
+void AppWorker::queue_reset(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::reset_task, this), "reset");
 }
 
 // ---------------------------------------------------------------------------------
 // Queue Page Content Tasks.
 // ---------------------------------------------------------------------------------
 
-void AppWorker::queue_block_events(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::block_events_task, this), "queue_block_events");
+void AppWorker::queue_block_events(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::block_events_task, this), "queue_block_events");
 }
 
-void AppWorker::queue_unblock_events(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::unblock_events_task, this), "queue_unblock_events");
+void AppWorker::queue_unblock_events(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::unblock_events_task, this), "queue_unblock_events");
 }
 
-void AppWorker::queue_wait_until_loaded(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::wait_until_loaded_task, this), "queue_wait_until_loaded");
+void AppWorker::queue_wait_until_loaded(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::wait_until_loaded_task, this), "queue_wait_until_loaded");
 }
 
 // ---------------------------------------------------------------------------------
 // Queue Navigate Tasks.
 // ---------------------------------------------------------------------------------
 
-void AppWorker::queue_navigate_to(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::navigate_to_task,this), "queue_navigate_to");
+void AppWorker::queue_navigate_to(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::navigate_to_task,this), "queue_navigate_to");
 }
 
-void AppWorker::queue_navigate_refresh(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::navigate_refresh_task,this), "queue_navigate_refresh");
+void AppWorker::queue_navigate_refresh(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::navigate_refresh_task,this), "queue_navigate_refresh");
 }
 
-void AppWorker::queue_switch_to_iframe(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::switch_to_iframe_task,this), "queue_swith_to_iframe");
+void AppWorker::queue_switch_to_iframe(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::switch_to_iframe_task,this), "queue_swith_to_iframe");
 }
 
 // ---------------------------------------------------------------------------------
 // Queue Set Tasks.
 // ---------------------------------------------------------------------------------
 
-void AppWorker::queue_update_overlays(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::update_overlays_task, this), "queue_update_overlays");
+void AppWorker::queue_update_overlays(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::update_overlays_task, this), "queue_update_overlays");
 }
 
-void AppWorker::queue_create_set_by_matching_values(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::create_set_by_matching_values_task,this), "queue_create_set_by_matching_values");
+void AppWorker::queue_create_set_by_matching_values(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::create_set_by_matching_values_task,this), "queue_create_set_by_matching_values");
 }
 
-void AppWorker::queue_create_set_by_matching_type(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::create_set_by_matching_type_task,this), "queue_create_set_by_matching_type");
+void AppWorker::queue_create_set_by_matching_type(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::create_set_by_matching_type_task,this), "queue_create_set_by_matching_type");
 }
 
-void AppWorker::queue_delete_set(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::delete_set_task,this), "queue_delete_set");
+void AppWorker::queue_delete_set(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::delete_set_task,this), "queue_delete_set");
 }
 
-void AppWorker::queue_shift_set(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::shift_set_task,this), "queue_shift_set");
+void AppWorker::queue_shift_set(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::shift_set_task,this), "queue_shift_set");
 }
 
-void AppWorker::queue_expand_set(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::expand_set_task,this), "queue_expand_set");
+void AppWorker::queue_expand_set(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::expand_set_task,this), "queue_expand_set");
 }
 
-void AppWorker::queue_mark_set(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::mark_set_task,this), "queue_mark_set");
+void AppWorker::queue_mark_set(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::mark_set_task,this), "queue_mark_set");
 }
 
-void AppWorker::queue_unmark_set(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::unmark_set_task,this), "queue_unmark_set");
+void AppWorker::queue_unmark_set(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::unmark_set_task,this), "queue_unmark_set");
 }
 
-void AppWorker::queue_merge_sets(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::merge_sets_task, this), "queue_merge_sets");
+void AppWorker::queue_merge_sets(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::merge_sets_task, this), "queue_merge_sets");
 }
 
-void AppWorker::queue_shrink_set_to_side(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::shrink_set_to_side_task, this), "queue_merge_sets");
+void AppWorker::queue_shrink_set_to_side(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::shrink_set_to_side_task, this), "queue_merge_sets");
 }
 
-void AppWorker::queue_shrink_against_marked(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::shrink_against_marked_task,this), "queue_shrink_against_marked");
+void AppWorker::queue_shrink_against_marked(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::shrink_against_marked_task,this), "queue_shrink_against_marked");
 }
 
 // ---------------------------------------------------------------------------------
 // Queue Perform Action Tasks.
 // ---------------------------------------------------------------------------------
 
-void AppWorker::queue_perform_mouse_action(TaskContext& tc) {
+void AppWorker::queue_perform_mouse_action(AppTaskContext& tc) {
   queue_get_xpath(tc);
   queue_unblock_events(tc);
-  queue_task(tc, (AppTask)std::bind(&AppWorker::perform_mouse_action_task,this), "queue_perform_action_task");
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::perform_mouse_action_task,this), "queue_perform_action_task");
   queue_block_events(tc); // After we're done interacting with the page, block events on the page.
   queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
   queue_update_overlays(tc); // Our actions may have moved elements arounds, so we update our overlays.
 }
 
-void AppWorker::queue_perform_mouse_hover(TaskContext& tc) {
+void AppWorker::queue_perform_mouse_hover(AppTaskContext& tc) {
   queue_get_xpath(tc);
   queue_unblock_events(tc);
-  queue_task(tc, (AppTask)std::bind(&AppWorker::perform_hover_action_task,this), "queue_perform_hover");
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::perform_hover_action_task,this), "queue_perform_hover");
   queue_block_events(tc);
   queue_wait_until_loaded(tc);
   queue_update_overlays(tc);
 }
 
-void AppWorker::queue_perform_post_mouse_hover(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::post_hover_task, this), "queue_perform_post_hover");
+void AppWorker::queue_perform_post_mouse_hover(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::post_hover_task, this), "queue_perform_post_hover");
 }
 
-void AppWorker::queue_perform_text_action(TaskContext& tc) {
+void AppWorker::queue_perform_text_action(AppTaskContext& tc) {
   queue_get_xpath(tc);
   queue_unblock_events(tc);
-  queue_task(tc, (AppTask)std::bind(&AppWorker::perform_text_action_task,this), "queue_perform_text_action");
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::perform_text_action_task,this), "queue_perform_text_action");
   queue_block_events(tc);
   queue_wait_until_loaded(tc);
   queue_update_overlays(tc);
 }
 
-void AppWorker::queue_perform_element_action(TaskContext& tc) {
+void AppWorker::queue_perform_element_action(AppTaskContext& tc) {
   queue_get_xpath(tc);
   queue_unblock_events(tc);
-  queue_task(tc, (AppTask)std::bind(&AppWorker::perform_element_action_task,this), "queue_perform_element_action");
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::perform_element_action_task,this), "queue_perform_element_action");
   queue_block_events(tc);
   queue_wait_until_loaded(tc);
   queue_update_overlays(tc);
@@ -391,130 +315,33 @@ void AppWorker::queue_perform_element_action(TaskContext& tc) {
 // Queue other actions.
 // ---------------------------------------------------------------------------------
 
-void AppWorker::queue_start_mouse_hover(TaskContext& tc) {
+void AppWorker::queue_start_mouse_hover(AppTaskContext& tc) {
   queue_get_xpath(tc);
-  queue_task(tc, (AppTask)std::bind(&AppWorker::start_mouse_hover_task,this), "queue_stop_mouse_hover");
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::start_mouse_hover_task,this), "queue_stop_mouse_hover");
 }
 
-void AppWorker::queue_stop_mouse_hover(TaskContext& tc) {
-  queue_task(tc, (AppTask)std::bind(&AppWorker::stop_mouse_hover_task,this), "queue_stop_mouse_hover");
+void AppWorker::queue_stop_mouse_hover(AppTaskContext& tc) {
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::stop_mouse_hover_task,this), "queue_stop_mouse_hover");
 }
 
-void AppWorker::queue_emit_option_texts(TaskContext& tc) {
+void AppWorker::queue_emit_option_texts(AppTaskContext& tc) {
   queue_get_crosshair_info(tc);
-  queue_task(tc, (AppTask)std::bind(&AppWorker::emit_option_texts_task,this), "select_from_dropdown3");
+  _task_queue->queue_task(tc, (AppTask)std::bind(&AppWorker::emit_option_texts_task,this), "select_from_dropdown3");
 }
-
-
 
 // ------------------------------------------------------------------------
-// Task Management.
+// Handle Incoming Messages.
 // ------------------------------------------------------------------------
 
-void AppWorker::queue_task(TaskContext& tc, AppTask task, const std::string& about) {
-
-  // Check to see if we can run the next worker.
-  bool ok_to_run = true;
-
-  // Make sure we're not already waiting for results.
-  // We only allow one request to be in-flight at a time.
-  if (_waiting_for_response) {
-    ok_to_run = false;
-  }
-
-  // Make sure nodejs is running.
-  if (!_app_comm->nodejs_is_running()) {
-    std::cerr << "Error: nodejs is not running.\n";
-    ok_to_run = false;
-  }
-
-  // Make sure we're connected to nodejs.
-  if (!_app_comm->nodejs_is_connected()) {
-    std::cerr << "Error: nodejs is not connected.\n";
-    ok_to_run = false;
-  }
-
-  if (get_task_queue().size() > 0) {
-    ok_to_run = false;
-  }
-
-  // Push the task onto the right queue for the context. (This is not always the top queue.)
-  // This is important because while a TaskContext is open another function/routine may open
-  // another Sub-TaskContext. When the Sub-TaskContext falls out of context, we will be left
-  // with its queue at the top of the queue stack. Now when other tasks get queued from the
-  // original task context, the top queue is not the right one for it. The top one used to be
-  // the right one for it before the Sub-TaskContext was created and destroyed. This is why
-  // we have to the select the appropriate queue with tc.stack_index.
-  _stack[tc.stack_index].push_back(task);
-
-  // Run the worker if we're all clear to run.
-  if (ok_to_run) {
-    run_next_task();
-  }
-}
-
-void AppWorker::run_next_task() {
-  // If we're waiting for a response, then don't run the next task yet.
-  if (_waiting_for_response) {
-    return;
-  }
-
-  if (_stack.empty()) {
-    _empty_stack_callback();
-    return;
-  }
-
-  // If the queue is empty we're done.
-  if (get_task_queue().empty()) {
-    return;
-  }
-
-  // Pop a task and run it..
-  AppTask task = get_task_queue().front();
-  get_task_queue().pop_front();
-  task();
-}
-
-void AppWorker::handle_response_from_nodejs(const Message& msg) {
-
-  // Todo: Sometime we will get duplicate messages. Try to determine the cause.
-  // If we get the same message (which include msg.id), ignore it.
-//  if (msg == _last_resp) {
-//    return;
-//  }
-
-  // Get the response id. This is supposed to match with the request id.
-  int resp_id = msg[Message::kID].toInt();
-
-  // Determine the request id.
-  int req_id = _next_msg_id -1;
-
-  // Check the ids.
-  if (resp_id != req_id) {
-    std::cerr << "Error: response id: " << resp_id << " did not match request id: " << req_id << "\n";
-  } else {
-    std::cerr << "Success: response id: " << resp_id << " matches request id: " << req_id << "\n";
-  }
-
-  assert(resp_id == req_id);
-
-  // Update the last message.
-  _last_resp = msg;
-
+void AppWorker::handle_response(const Message& msg) {
   // Merge the values into the chain_state.
-  QVariantMap &value = _last_resp[Message::kValue].toMap();
+  QVariantMap &value = msg[Message::kValue].toMap();
   for (QVariantMap::const_iterator iter = value.constBegin(); iter != value.constEnd(); ++iter) {
     _chain_state.insert(iter.key(), iter.value());
   }
-
-  // Record the fact that we've received our response.
-  _waiting_for_response = false;
-
-  // Run the next task.
-  run_next_task();
 }
 
-void AppWorker::handle_info_from_nodejs(const Message& msg) {
+void AppWorker::handle_info(const Message& msg) {
   std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
   if (msg[Message::kInfo] == to_underlying(InfoType::kShowWebActionMenu)) {
     _click_pos = msg[Message::kValue].toMap()[Message::kClickPos].toMap();
@@ -536,26 +363,11 @@ void AppWorker::handle_info_from_nodejs(const Message& msg) {
 // Infrastructure Tasks.
 // ------------------------------------------------------------------------
 
-void AppWorker::send_msg_task(Message msg) {
-  // Tag the request with an id. We expect a response with the same id.
-  msg[Message::kID] = _next_msg_id;
-
-  std::cerr << "app --> comhub: " << msg.to_string().toStdString() << "\n";
-
-  // Increment the counter. Note we're ok with this overflowing and looping around.
-  _next_msg_id += 1;
-
-  // Send the request to nodejs.
-  _waiting_for_response = true;
-  size_t num_bytes = _app_comm->get_web_socket()->sendTextMessage(msg.to_string());
-  assert(num_bytes);
-}
-
 void AppWorker::get_crosshair_info_task() {
   QVariantMap args;
   args[Message::kClickPos] = _click_pos;
   Message req(RequestType::kGetCrosshairInfo,args);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 // Should be run after a response message like get_crosshair_info_task that has set_index and overlay_index.
@@ -564,7 +376,7 @@ void AppWorker::get_xpath_task() {
   args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
   args[Message::kOverlayIndex] = _chain_state[Message::kOverlayIndex];
   Message req(RequestType::kGetXPath,args);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::merge_chain_state_task(const QVariantMap& map) {
@@ -572,34 +384,12 @@ void AppWorker::merge_chain_state_task(const QVariantMap& map) {
   for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
     _chain_state.insert(iter.key(), iter.value());
   }
-  run_next_task();
+  _task_queue->run_next_task();
 }
 
 void AppWorker::get_outputs_task(std::function<void(const QVariantMap&)> on_get_outputs) {
   on_get_outputs(_chain_state["outputs"].toMap());
-  run_next_task();
-}
-
-void AppWorker::start_sequence_task() {
-  // Make sure that we are the first task in the queue.
-  //assert(get_task_queue().empty());
-  run_next_task();
-}
-
-void AppWorker::finished_sequence_task(std::function<void()> on_finished_sequence) {
-  // Make sure that we are the last task in the queue.
-  assert(get_task_queue().empty());
-
-  // We're done with this sequence of tasks so we pop the queue off of the stack.
-  // Note each sequence of tasks is associated with a TaskContext and with one queue on the stack.
-  _stack.pop_back();
-
-  // Now call the callback which may add more queues to the stack.
-  if (on_finished_sequence) {
-    on_finished_sequence();
-  }
-
-  run_next_task();
+  _task_queue->run_next_task();
 }
 
 void AppWorker::build_compute_node_task(ComponentDID compute_did, std::function<void(Entity* node, Compute* compute)> on_node_built) {
@@ -638,21 +428,7 @@ void AppWorker::build_compute_node_task(ComponentDID compute_did, std::function<
 
   on_node_built(node, compute);
 
-//  // Position and link the node we just created.
-//  // We use a dummy component to avoid creating a cycle.
-//  {
-//    Linker* linker = new_ff Linker(get_app_root());
-//    linker->link(node);
-//    delete_ff(linker);
-//  }
-//
-//  // Clean the wires in this group, as new nodes and links were created.
-//  _factory->get_current_group()->clean_wires();
-//
-//  // Now execute it.
-//  _graph_builder->clean_compute(compute->our_entity());
-//
-  run_next_task();
+  _task_queue->run_next_task();
 }
 
 
@@ -662,17 +438,17 @@ void AppWorker::build_compute_node_task(ComponentDID compute_did, std::function<
 
 void AppWorker::get_all_cookies_task() {
   Message req(RequestType::kGetAllCookies);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::clear_all_cookies_task() {
   Message req(RequestType::kClearAllCookies);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::set_all_cookies_task() {
   Message req(RequestType::kSetAllCookies);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 
@@ -682,21 +458,21 @@ void AppWorker::set_all_cookies_task() {
 
 void AppWorker::open_browser_task() {
   QVariantMap args;
-  args[Message::kURL] = get_smash_browse_url();
+  args[Message::kURL] = AppConfig::get_smash_browse_url();
 
   Message req(RequestType::kOpenBrowser);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::close_browser_task() {
   Message req(RequestType::kCloseBrowser);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::check_browser_is_open_task() {
   Message req(RequestType::kCheckBrowserIsOpen);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::check_browser_size_task() {
@@ -706,7 +482,7 @@ void AppWorker::check_browser_size_task() {
 
   Message req(RequestType::kResizeBrowser);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 // ------------------------------------------------------------------------
@@ -718,17 +494,17 @@ void AppWorker::block_events_task() {
   // some actions to be performed. After such an action we need to update
   // the overlays as elements may disappear or move around.
   Message req(RequestType::kBlockEvents);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::unblock_events_task() {
   Message req(RequestType::kUnblockEvents);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::wait_until_loaded_task() {
   Message req(RequestType::kWaitUntilLoaded);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 // ------------------------------------------------------------------------
@@ -738,15 +514,15 @@ void AppWorker::wait_until_loaded_task() {
 void AppWorker::shutdown_task() {
   Message msg(RequestType::kShutdown);
   // Shutdown without queuing it.
-  send_msg_task(msg);
-  _app_comm->destroy_connection();
+  _task_queue->send_msg_task(msg);
+  _task_queue->close();
 }
 
 void AppWorker::reset_browser_task() {
   // Close the browser without queuing it.
   close_browser_task();
   // Queue the reset now that all the queued task have been destroyed.
-  TaskContext tc(this);
+  AppTaskContext tc(_task_queue);
   queue_reset(tc);
 }
 
@@ -758,19 +534,19 @@ void AppWorker::navigate_to_task() {
   QVariantMap args;
   args[Message::kURL] = _chain_state[Message::kURL];
   Message req(RequestType::kNavigateTo, args);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::navigate_refresh_task() {
   Message req(RequestType::kNavigateRefresh);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::switch_to_iframe_task() {
   QVariantMap args;
   args[Message::kIFrame] = _chain_state[Message::kIFrame];
   Message req(RequestType::kSwitchIFrame, args);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 // ------------------------------------------------------------------------
@@ -779,7 +555,7 @@ void AppWorker::switch_to_iframe_task() {
 
 void AppWorker::update_overlays_task() {
   Message req(RequestType::kUpdateOveralys);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::create_set_by_matching_values_task() {
@@ -790,7 +566,7 @@ void AppWorker::create_set_by_matching_values_task() {
 
   Message req(RequestType::kCreateSetFromMatchValues);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::create_set_by_matching_type_task() {
@@ -799,7 +575,7 @@ void AppWorker::create_set_by_matching_type_task() {
 
   Message req(RequestType::kCreateSetFromWrapType);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::delete_set_task() {
@@ -808,7 +584,7 @@ void AppWorker::delete_set_task() {
 
   Message req(RequestType::kDeleteSet);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::shift_set_task() {
@@ -819,7 +595,7 @@ void AppWorker::shift_set_task() {
 
   Message req(RequestType::kShiftSet);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::expand_set_task() {
@@ -830,7 +606,7 @@ void AppWorker::expand_set_task() {
 
   Message req(RequestType::kExpandSet);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::mark_set_task() {
@@ -839,7 +615,7 @@ void AppWorker::mark_set_task() {
 
   Message req(RequestType::kMarkSet);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::unmark_set_task() {
@@ -848,12 +624,12 @@ void AppWorker::unmark_set_task() {
 
   Message req(RequestType::kUnmarkSet);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::merge_sets_task() {
   Message req(RequestType::kMergeMarkedSets);
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::shrink_set_to_side_task() {
@@ -863,7 +639,7 @@ void AppWorker::shrink_set_to_side_task() {
 
   Message req(RequestType::kShrinkSet);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::shrink_against_marked_task() {
@@ -873,7 +649,7 @@ void AppWorker::shrink_against_marked_task() {
 
   Message req(RequestType::kShrinkSetToMarked);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::perform_mouse_action_task() {
@@ -884,7 +660,7 @@ void AppWorker::perform_mouse_action_task() {
 
   Message req(RequestType::kPerformMouseAction);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::perform_hover_action_task() {
@@ -895,7 +671,7 @@ void AppWorker::perform_hover_action_task() {
 
   Message req(RequestType::kPerformMouseAction);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::perform_text_action_task() {
@@ -906,7 +682,7 @@ void AppWorker::perform_text_action_task() {
 
   Message req(RequestType::kPerformTextAction);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::perform_element_action_task() {
@@ -918,18 +694,18 @@ void AppWorker::perform_element_action_task() {
 
   Message req(RequestType::kPerformElementAction);
   req[Message::kArgs] = args;
-  send_msg_task(req);
+  _task_queue->send_msg_task(req);
 }
 
 void AppWorker::start_mouse_hover_task() {
   _hover_state = _chain_state;
   _hovering = true;
-  run_next_task();
+  _task_queue->run_next_task();
 }
 
 void AppWorker::stop_mouse_hover_task() {
   _hovering = false;
-  run_next_task();
+  _task_queue->run_next_task();
 }
 
 void AppWorker::mouse_hover_task() {
@@ -947,7 +723,7 @@ void AppWorker::mouse_hover_task() {
   _hover_state[Message::kOverlayRelClickPos] = pos;
 
   // Queue the tasks.
-  TaskContext tc(this);
+  AppTaskContext tc(_task_queue);
   queue_unblock_events(tc);
   queue_perform_mouse_hover(tc);
   queue_perform_post_mouse_hover(tc);
@@ -959,22 +735,22 @@ void AppWorker::mouse_hover_task() {
 void AppWorker::post_hover_task() {
   // Stop hovering if the last hover fails.
   // This happens if the element we're hovering over disappears or webdriver switches to another iframe.
-  bool success = _last_resp[Message::kSuccess].toBool();
+  bool success = _task_queue->get_last_response()[Message::kSuccess].toBool();
   if (!success) {
     _hovering = false;
   }
-  run_next_task();
+  _task_queue->run_next_task();
 }
 
 void AppWorker::emit_option_texts_task() {
   QStringList ot = _chain_state[Message::kOptionTexts].toStringList();
   emit select_option_texts(ot);
-  run_next_task();
+  _task_queue->run_next_task();
 }
 
 void AppWorker::reset_task() {
   reset_state();
-  TaskContext tc(this);
+  AppTaskContext tc(_task_queue);
   queue_check_browser_is_open(tc);
 }
 

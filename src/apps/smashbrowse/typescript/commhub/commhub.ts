@@ -59,6 +59,7 @@ class BaseConnection {
 class ChromeConnection extends BaseConnection {
     constructor(webdriverwrap: WebDriverWrap) {
         super(webdriverwrap)
+        console.log('building chrome connection')
     }
 
     receive_json(json: string): void {
@@ -76,6 +77,7 @@ class AppConnection extends BaseConnection {
     constructor(webdriverwrap: WebDriverWrap) {
         super(webdriverwrap)
         this.timer = null
+        console.log('building app connection')
     }
 
     // The can send us messages either from c++ or from qml.
@@ -282,6 +284,7 @@ class BaseSocketServer {
         let options: any = { server: this.https_server }
         this.server = new ws.Server(options)
         let on_connection = (socket: ws) => {
+            console.log('got a connection!')
             let conn: C = new ConnConstructor(this.webdriverwrap);
             conn.set_socket(socket)
             socket.on('message', (json: string) => { conn.receive_json(json) })

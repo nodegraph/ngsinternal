@@ -30,7 +30,6 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   void embed_node_graph();
 
   FileModel* get_file_model();
-  AppComm* get_app_comm();
   AppWorker* get_app_worker();
   AppRecorder* get_app_recorder();
   LicenseChecker* get_license_checker();

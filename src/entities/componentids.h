@@ -35,9 +35,14 @@ enum class ComponentIID : size_t {
   kINodeGraphRenderer,
   kINodeGraphView,
   kIFileModel,
-  kIAppComm,
+  kINodeJSProcess,
+  kIMessageSender,
+  kIMessageReceiver,
+  kIAppConfig,
+  //kIAppComm,
   kIAppWorker,
   kIAppRecorder,
+  kIAppTaskQueue,
   kILicenseChecker,
   kILinkGroup,
   kINodeSelection,
@@ -112,7 +117,7 @@ COMPONENT_ENTRY2(NodeGraphQuickItem, 48)\
 COMPONENT_ENTRY2(NodeGraphRenderer, 49)\
 COMPONENT_ENTRY2(NodeGraphView, 50)\
 COMPONENT_ENTRY2(FileModel, 51)\
-COMPONENT_ENTRY2(AppComm, 52)\
+/*COMPONENT_ENTRY2(AppComm, 52)\*/\
 COMPONENT_ENTRY2(AppWorker, 53)\
 COMPONENT_ENTRY2(LicenseChecker, 54)\
 /* -- */\
@@ -122,7 +127,12 @@ COMPONENT_ENTRY2(ShapeCanvas, 57)\
 /* -- */\
 COMPONENT_ENTRY2(Inputs, 58)\
 COMPONENT_ENTRY2(Outputs, 59)\
-COMPONENT_ENTRY2(AppRecorder, 60)
+COMPONENT_ENTRY2(AppRecorder, 60)\
+COMPONENT_ENTRY2(AppTaskQueue, 61)\
+COMPONENT_ENTRY2(NodeJSProcess, 62)\
+COMPONENT_ENTRY2(AppConfig, 63)\
+COMPONENT_ENTRY2(MessageSender, 64)\
+COMPONENT_ENTRY2(MessageReceiver, 65)
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()

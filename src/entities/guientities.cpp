@@ -42,6 +42,11 @@
 
 #include <gui/widget/nodegrapheditor.h>
 
+#include <guicomponents/comms/nodejsprocess.h>
+#include <guicomponents/comms/messagesender.h>
+#include <guicomponents/comms/messagereceiver.h>
+#include <guicomponents/comms/appconfig.h>
+#include <guicomponents/comms/apptaskqueue.h>
 #include <guicomponents/comms/appcomm.h>
 #include <guicomponents/comms/appworker.h>
 #include <guicomponents/comms/apprecorder.h>
@@ -99,7 +104,12 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff NodeGraphView(this);
   // Qt Releated Components.
   new_ff FileModel(this);
-  new_ff AppComm(this);
+  new_ff NodeJSProcess(this);
+  new_ff MessageSender(this);
+  new_ff MessageReceiver(this);
+  new_ff AppConfig(this);
+  new_ff AppTaskQueue(this);
+  //new_ff AppComm(this);
   new_ff AppWorker(this);
   new_ff AppRecorder(this);
   new_ff LicenseChecker(this);
@@ -134,11 +144,14 @@ void QMLAppEntity::expose_to_qml() {
   // Grab some components without using Deps.
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
-  AppComm* app_comm = get_app_comm();
   AppWorker* app_worker = get_app_worker();
   AppRecorder* app_recorder = get_app_recorder();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
+
+  // Clean and open the socket on app_worker.
+  app_worker->clean_state();
+  app_worker->open();
 
   // Register gl types.
   qRegisterMetaType<GLsizei>("GLsizei");
@@ -153,7 +166,6 @@ void QMLAppEntity::expose_to_qml() {
   QQmlContext* context = view->engine()->rootContext();
   context->setContextProperty(QStringLiteral("file_model"), file_model);
   context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
-  context->setContextProperty(QStringLiteral("app_comm"), app_comm);
   context->setContextProperty(QStringLiteral("app_worker"), app_worker);
   context->setContextProperty(QStringLiteral("app_recorder"), app_recorder);
   context->setContextProperty(QStringLiteral("license_checker"), license_checker);
@@ -193,10 +205,6 @@ void QMLAppEntity::embed_node_graph() {
 
 FileModel* QMLAppEntity::get_file_model() {
   return get<FileModel>();
-}
-
-AppComm* QMLAppEntity::get_app_comm() {
-  return get<AppComm>();
 }
 
 AppWorker* QMLAppEntity::get_app_worker() {

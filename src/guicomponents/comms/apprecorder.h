@@ -22,6 +22,7 @@ class Compute;
 class BaseFactory;
 class NodeSelection;
 class AppWorker;
+class AppTaskQueue;
 
 // This class communicates with the nodejs process.
 class COMMS_EXPORT AppRecorder : public QObject, public Component {
@@ -146,6 +147,7 @@ Q_OBJECT
 
   // Our fixed dependencies.
   Dep<AppWorker> _app_worker;
+  Dep<AppTaskQueue> _task_queue;
   Dep<GraphBuilder> _graph_builder;
   Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;

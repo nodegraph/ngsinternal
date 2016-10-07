@@ -43,6 +43,12 @@
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/quick/nodegraphrenderer.h>
 #include <guicomponents/quick/nodegraphview.h>
+
+#include <guicomponents/comms/nodejsprocess.h>
+#include <guicomponents/comms/messagesender.h>
+#include <guicomponents/comms/messagereceiver.h>
+#include <guicomponents/comms/appconfig.h>
+#include <guicomponents/comms/apptaskqueue.h>
 #include <guicomponents/comms/appcomm.h>
 #include <guicomponents/comms/appworker.h>
 #include <guicomponents/comms/apprecorder.h>

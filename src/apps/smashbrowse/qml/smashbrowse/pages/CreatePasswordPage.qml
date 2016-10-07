@@ -23,14 +23,13 @@ Rectangle {
     // Properties.
     color: app_settings.menu_stack_bg_color
 
-    function on_nodejs_connected() {
+    function show_license_entry_page() {
         // Hide this page.
         create_password_page.visible = false
 
         // Show the license page.
         license_page.update_fields()
         license_page.visible = true
-        app_comm.nodejs_connected.disconnect(on_nodejs_connected)
 
         // Erase passwords from page.
         password_1.text = ""
@@ -98,8 +97,8 @@ Rectangle {
                     file_model.create_crypto(password_1.text)
                     file_model.save_crypto();
 
-                    // Connect to nodejs.
-                    app_utils.connect_to_nodejs(on_nodejs_connected)
+                    // Now show the license entry page.
+                    show_license_entry_page()
                 }
             }
         }

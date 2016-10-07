@@ -31,10 +31,10 @@ Rectangle {
             app_worker.stop_polling()
             close.accepted = false
             close_timer.start()
-        } else if (app_comm.nodejs_is_connected()) {
+        } else if (app_worker.is_open()) {
             // Make nodejs shut itself down.
             // It will close the browser as part of its shutdown.
-            app_worker.shutdown()
+            app_worker.close()
             close.accepted = false
             close_timer.start()
         }

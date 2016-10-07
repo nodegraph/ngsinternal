@@ -55,6 +55,7 @@ Rectangle {
         // Switch to node graph mode.
         main_bar.on_switch_to_mode(app_settings.node_graph_mode)
         app_worker.make_browser_visible()
+        app_worker.start_polling()
         // Load the last graph.
         app_utils.load_last_graph()
     }

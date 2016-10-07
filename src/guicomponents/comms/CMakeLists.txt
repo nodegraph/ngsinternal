@@ -2,6 +2,11 @@
 set(sources
     filemodel.cpp
     message.cpp
+    nodejsprocess.cpp
+    messagesender.cpp
+    messagereceiver.cpp
+    appconfig.cpp
+    apptaskqueue.cpp
     appcomm.cpp
     appworker.cpp
     apprecorder.cpp
@@ -14,6 +19,11 @@ set(headers
 set(moc_headers
     filemodel.h
     message.h
+    nodejsprocess.h
+    messagesender.h
+    messagereceiver.h
+    appconfig.h
+    apptaskqueue.h
     appcomm.h
     appworker.h
     apprecorder.h

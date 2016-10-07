@@ -24,7 +24,7 @@ Rectangle {
     color: app_settings.menu_stack_bg_color
 
     function on_nodejs_connected() {
-        app_utils.check_license(file_model.get_edition(), file_model.get_license(), on_license_checked)
+
     }
 
     function on_license_checked(valid) {
@@ -50,6 +50,7 @@ Rectangle {
             // Switch to node graph mode.
             main_bar.on_switch_to_mode(app_settings.node_graph_mode)
             app_worker.make_browser_visible()
+            app_worker.start_polling()
 
             // Erase the password from this page.
             password_field.text = ""
@@ -117,7 +118,7 @@ Rectangle {
             text: "continue"
             onClicked: {
                 if (file_model.check_password(password_field.text)) {
-                    app_utils.connect_to_nodejs(on_nodejs_connected)
+                    app_utils.check_license(file_model.get_edition(), file_model.get_license(), on_license_checked)
                 } else {
                     status_label.text = "password is incorrect"
                 }

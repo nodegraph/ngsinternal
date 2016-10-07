@@ -20,6 +20,7 @@
 #include <guicomponents/comms/apprecorder.h>
 #include <guicomponents/comms/appworker.h>
 #include <guicomponents/comms/appcomm.h>
+#include <guicomponents/comms/apptaskqueue.h>
 #include <guicomponents/comms/filemodel.h>
 #include <components/interactions/shapecanvas.h>
 
@@ -123,11 +124,13 @@ AppRecorder::AppRecorder(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
       _app_worker(this),
+      _task_queue(this),
       _graph_builder(this),
       _factory(this),
       _file_model(this),
       _compute(this) {
   get_dep_loader()->register_fixed_dep(_app_worker, Path({}));
+  get_dep_loader()->register_fixed_dep(_task_queue, Path({}));
   get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
   get_dep_loader()->register_fixed_dep(_file_model, Path({}));
@@ -142,7 +145,7 @@ AppRecorder::~AppRecorder() {
 
 void AppRecorder::initialize_wires() {
   Component::initialize_wires();
-  _app_worker->set_empty_stack_callback(_on_empty_stack);
+  _task_queue->set_empty_stack_callback(_on_empty_stack);
 }
 
 void AppRecorder::clean_compute(Entity* compute_entity) {
@@ -192,7 +195,7 @@ void AppRecorder::on_finished_sequence() {
 // // Record Browser Actions.
 // -----------------------------------------------------------------
 
-#define check_busy()   if (_app_worker->is_busy()) {emit web_action_ignored(); return;} TaskContext tc(_app_worker.get(), _on_finished_sequence);
+#define check_busy()   if (_task_queue->is_busy()) {emit web_action_ignored(); return;} AppTaskContext tc(_task_queue, _on_finished_sequence);
 #define finish()
 
 void AppRecorder::record_open_browser() {

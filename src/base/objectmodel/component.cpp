@@ -24,12 +24,14 @@ Component::Component(Entity* entity, ComponentIID interface_id, ComponentDID der
   _dep_loader = new_ff DepLoader();
 }
 
-// Destruction of a Component will not destroy any other depedencies or dependants.
+// Destruction of a Component should not destroy any other depedencies or dependants.
 // This is because:
-// * The Entities owns the components.
-// * Components are not linked only inter-entity wise, but intra-entity wise as well.
+// * The Entities are the actual owners of the components.
+// * Not only are components linked inter-entity wise, but intra-entity wise as well.
 // * When components are linked intra-entity wise they reference components in other
 //   entities which should not be destroyed.
+// * In either inter or intra entity linking, the linked components should not be
+//   destroyed because other components could still be using them.
 
 Component::~Component() {
 
