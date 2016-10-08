@@ -12,6 +12,9 @@ TaskScheduler::TaskScheduler(Entity* parent)
     : Component(parent, kIID(), kDID()),
       _msg_sender(this),
       _waiting_for_response(false),
+      _next_msg_id(0),
+      _ignore_outstanding_response(false),
+      _outstanding_response_id(-1),
       _connected(false) {
   get_dep_loader()->register_fixed_dep(_msg_sender, Path({}));
 }
@@ -38,10 +41,10 @@ void TaskScheduler::force_stack_reset() {
   // Clear the stack of queues.
   _stack.clear();
 
-  // Wait for an outstanding response to be sent back to us.
-  while (_waiting_for_response) {
-    qApp->processEvents();
-  }
+  // An outstanding response to be sent back to us later.
+  // Record state to ignore it.
+  _ignore_outstanding_response = true;
+  _outstanding_response_id = _next_msg_id -1;
 
   // Now reset our other members.
   _waiting_for_response = false;
@@ -146,7 +149,15 @@ void TaskScheduler::handle_response(const Message& msg) {
     std::cerr << "Success: response id: " << resp_id << " matches request id: " << req_id << "\n";
   }
 
-  assert(resp_id == req_id);
+  if (resp_id != req_id) {
+    if (_ignore_outstanding_response && resp_id == _outstanding_response_id) {
+      _ignore_outstanding_response = false;
+      _outstanding_response_id = -1;
+      return;
+    } else {
+      assert(false);
+    }
+  }
 
   // Update the last message.
   _last_response = msg;
@@ -195,11 +206,7 @@ void TaskScheduler::finished_sequence_task() {
   // Note each sequence of tasks is associated with a TaskContext and with one queue on the stack.
   _stack.pop_back();
 
-//  // Now call the callback which may add more queues to the stack.
-//  if (on_finished_sequence) {
-//    on_finished_sequence();
-//  }
-
+  // Run the next task.
   run_next_task();
 }
 

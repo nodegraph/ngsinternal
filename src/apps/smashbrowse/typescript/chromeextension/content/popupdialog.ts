@@ -87,7 +87,7 @@ class WaitPopup extends BasePopup {
         super.initialize()
 
         // Fill the popup's contents with a static wait message with a spinning hourglass.
-        let hourglass_url = chrome.extension.getURL("images/hourglass.gif");
+        let hourglass_url = chrome.extension.getURL("images/hourglass.gif") + "?" + Math.random()
         this.popup.innerHTML = '\
         <center>\
         <p class="smash_browse_label_text">Please wait for page to finish loading.</p>\

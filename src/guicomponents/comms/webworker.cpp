@@ -53,12 +53,12 @@ bool WebWorker::is_open() {
 void WebWorker::force_close_browser() {
   _task_sheduler->force_stack_reset();
   {
-    // Check whether the browser is open.
+    // Make sure the browser is closed.
     TaskContext tc(_task_sheduler);
     queue_close_browser(tc);
   }
 
-  // Wait for the response.
+  // Wait for the tasks to fully flush out.
   while (_task_sheduler->is_busy()) {
     qApp->processEvents();
   }
@@ -92,7 +92,6 @@ void WebWorker::reset_state() {
 
 void WebWorker::on_poll() {
   if (_show_browser) {
-    std::cerr << "polling open browser!\n";
     if (!_task_sheduler->is_busy()) {
       TaskContext tc(_task_sheduler);
       queue_open_browser(tc);
@@ -335,8 +334,6 @@ void WebWorker::handle_info(const Message& msg) {
   std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
   if (msg[Message::kInfo] == to_underlying(InfoType::kShowWebActionMenu)) {
     _browser_click_pos = msg[Message::kValue].toMap()[Message::kClickPos].toMap();
-    std::cerr << "got click x,y: " << _browser_click_pos["x"].toInt() << ", " << _browser_click_pos["y"].toInt() << "\n";
-
     _iframe_to_switch_to = msg[Message::kIFrame].toString();
     if (msg[Message::kValue].toMap().count(Message::kPrevIFrame)) {
       QString prev_iframe = msg[Message::kValue].toMap().value(Message::kPrevIFrame).toString();

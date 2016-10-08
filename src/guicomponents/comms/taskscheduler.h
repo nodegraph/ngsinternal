@@ -67,7 +67,13 @@ class COMMS_EXPORT TaskScheduler : public Component {
   // Simple Request-Response Pair Tracking.
   bool _waiting_for_response;
   int _next_msg_id;  // This is one more than the max msg id issued out.
-  Message _last_response; // The last response message received.
+
+  // Used after resetting the queue, as the response for a request with this id may still be outstanding.
+  bool _ignore_outstanding_response;
+  int _outstanding_response_id;
+
+  // The last response we got.
+  Message _last_response;
 
   // Whether we're connected for receiving text messages from the socket.
   bool _connected;
