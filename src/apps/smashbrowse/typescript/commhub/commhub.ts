@@ -140,9 +140,17 @@ class AppConnection extends BaseConnection {
             case RequestType.kCloseBrowser: {
                 // Clear all the connections to our extension socket server.
                 ext_server.clear_connections()
-                this.webdriverwrap.close_browser().then(
-                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
-                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) })
+                let on_response = (open: boolean) => {
+                    if (!open) {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                    } else {
+                        this.webdriverwrap.close_browser().then(
+                            () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
+                            () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) })
+                    }
+                }
+                this.webdriverwrap.browser_is_open(on_response)
+
             } break
             case RequestType.kNavigateTo: {
                 this.webdriverwrap.navigate_to(req.args.url).then(() => {

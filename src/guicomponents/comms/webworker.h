@@ -33,7 +33,7 @@ Q_OBJECT
   Q_INVOKABLE void open();
   Q_INVOKABLE void close();
   Q_INVOKABLE bool is_open();
-  Q_INVOKABLE void close_browser();
+  Q_INVOKABLE void force_close_browser();
 
   const QString& get_iframe_to_switch_to() {return _iframe_to_switch_to;}
 
@@ -189,7 +189,7 @@ signals:
   void reset_task();
 
   // Our fixed dependencies.
-  Dep<TaskScheduler> _task_queue;
+  Dep<TaskScheduler> _task_sheduler;
 
   // Poll timer.
   QTimer _poll_timer;
@@ -207,6 +207,11 @@ signals:
 
   // The 'value' value from responses will get merged into this state overriding previous values.
   QVariantMap _chain_state;
+
+  // The success value of the last response.
+  // Note that "success" is overview/cumulative value denoting whether the task completed its task successfully.
+  // More detailed values are in the "value" part of the message.
+  bool _last_response_success;
 
   // This avoid dep cycles. And is used to build our web nodes.
   std::function<void(ComponentDID,const QVariantMap&)> _web_node_builder;

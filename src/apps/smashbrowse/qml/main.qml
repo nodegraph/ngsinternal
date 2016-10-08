@@ -28,22 +28,26 @@ Rectangle {
     // Clean up routine.
     function on_closing(close) {
         if (app_worker.is_polling()) {
+        	console.log('111')
             // Make sure the polling is stopped.
             app_worker.stop_polling()
             close.accepted = false
             close_timer.start()
         } else if (!tried_closing_browser) {
-        	app_worker.close_browser()
+        	console.log('222')
+        	app_worker.force_close_browser()
         	tried_closing_browser = true
         	close.accepted = false
             close_timer.start()
         } else if (app_worker.is_open()) {
+        	console.log('333')
             // Make nodejs shut itself down.
             // It will close the browser as part of its shutdown.
             app_worker.close()
             close.accepted = false
             close_timer.start()
         } else {
+        	console.log('444')
         	node_graph_item.parent = null
         	tried_closing_browser = false
         }

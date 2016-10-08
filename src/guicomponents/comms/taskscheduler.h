@@ -25,7 +25,7 @@ class COMMS_EXPORT TaskScheduler : public Component {
   bool is_open() const;
   bool is_waiting_for_response() const {return _waiting_for_response;}
 
-  void reset_stack();
+  void force_stack_reset();
   void set_empty_stack_callback(std::function<void()> callback);
 
   void queue_task(TaskContext& tc, Task task, const std::string& about);
@@ -67,7 +67,6 @@ class COMMS_EXPORT TaskScheduler : public Component {
   // Simple Request-Response Pair Tracking.
   bool _waiting_for_response;
   int _next_msg_id;  // This is one more than the max msg id issued out.
-  int _expected_msg_id; // This is the next msg id we're expecting from a response message.
   Message _last_response; // The last response message received.
 
   // Whether we're connected for receiving text messages from the socket.

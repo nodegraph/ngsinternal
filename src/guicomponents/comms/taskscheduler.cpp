@@ -4,6 +4,8 @@
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/messagesender.h>
 
+#include <QtCore/QCoreApplication>
+
 namespace ngs {
 
 TaskScheduler::TaskScheduler(Entity* parent)
@@ -30,6 +32,21 @@ void TaskScheduler::close() {
 bool TaskScheduler::is_open() const {
   external();
   return _msg_sender->is_open();
+}
+
+void TaskScheduler::force_stack_reset() {
+  // Clear the stack of queues.
+  _stack.clear();
+
+  // Wait for an outstanding response to be sent back to us.
+  while (_waiting_for_response) {
+    qApp->processEvents();
+  }
+
+  // Now reset our other members.
+  _waiting_for_response = false;
+  _next_msg_id = 0;
+  _last_response = Message();
 }
 
 void TaskScheduler::set_empty_stack_callback(std::function<void()> callback) {
