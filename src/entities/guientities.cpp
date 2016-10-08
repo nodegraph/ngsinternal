@@ -143,14 +143,14 @@ void QMLAppEntity::expose_to_qml() {
   // Grab some components without using Deps.
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
-  WebWorker* app_worker = get_app_worker();
-  WebRecorder* app_recorder = get_app_recorder();
+  WebWorker* web_worker = get_app_worker();
+  WebRecorder* web_recorder = get_app_recorder();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
 
-  // Clean and open the socket on app_worker.
-  app_worker->clean_state();
-  app_worker->open();
+  // Clean and open the socket on web_worker.
+  web_worker->clean_state();
+  web_worker->open();
 
   // Register gl types.
   qRegisterMetaType<GLsizei>("GLsizei");
@@ -165,8 +165,8 @@ void QMLAppEntity::expose_to_qml() {
   QQmlContext* context = view->engine()->rootContext();
   context->setContextProperty(QStringLiteral("file_model"), file_model);
   context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
-  context->setContextProperty(QStringLiteral("app_worker"), app_worker);
-  context->setContextProperty(QStringLiteral("app_recorder"), app_recorder);
+  context->setContextProperty(QStringLiteral("web_worker"), web_worker);
+  context->setContextProperty(QStringLiteral("web_recorder"), web_recorder);
   context->setContextProperty(QStringLiteral("license_checker"), license_checker);
 
   // Expose other useful objects to qml.

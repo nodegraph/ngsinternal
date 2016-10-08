@@ -27,23 +27,23 @@ Rectangle {
 
     // Clean up routine.
     function on_closing(close) {
-        if (app_worker.is_polling()) {
+        if (web_worker.is_polling()) {
         	console.log('111')
             // Make sure the polling is stopped.
-            app_worker.stop_polling()
+            web_worker.stop_polling()
             close.accepted = false
             close_timer.start()
         } else if (!tried_closing_browser) {
         	console.log('222')
-        	app_worker.force_close_browser()
+        	web_worker.force_close_browser()
         	tried_closing_browser = true
         	close.accepted = false
             close_timer.start()
-        } else if (app_worker.is_open()) {
+        } else if (web_worker.is_open()) {
         	console.log('333')
             // Make nodejs shut itself down.
             // It will close the browser as part of its shutdown.
-            app_worker.close()
+            web_worker.close()
             close.accepted = false
             close_timer.start()
         } else {
@@ -184,12 +184,12 @@ Rectangle {
         node_graph_item.group_node_context_menu_requested.connect(node_action_stack_page.on_group_node_context_menu)
 
         // Web actions mode.
-        app_worker.show_web_action_menu.connect(web_action_stack_page.on_show_web_action_menu)
-        app_worker.show_iframe_menu.connect(web_action_stack_page.on_show_iframe_menu)
+        web_worker.show_web_action_menu.connect(web_action_stack_page.on_show_web_action_menu)
+        web_worker.show_iframe_menu.connect(web_action_stack_page.on_show_iframe_menu)
         
-        app_worker.select_option_texts.connect(web_action_stack_page.on_select_option_texts)
+        web_worker.select_option_texts.connect(web_action_stack_page.on_select_option_texts)
         
-        app_recorder.web_action_ignored.connect(web_action_stack_page.on_busy)
+        web_recorder.web_action_ignored.connect(web_action_stack_page.on_busy)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.

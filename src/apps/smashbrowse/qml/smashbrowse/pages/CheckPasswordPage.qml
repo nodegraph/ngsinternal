@@ -49,8 +49,8 @@ Rectangle {
         if (!upgrade_license_check_box.checked) {
             // Switch to node graph mode.
             main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-            app_worker.make_browser_visible()
-            app_worker.start_polling()
+            web_worker.make_browser_visible()
+            web_worker.start_polling()
 
             // Erase the password from this page.
             password_field.text = ""
