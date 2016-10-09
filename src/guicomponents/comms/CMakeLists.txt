@@ -7,7 +7,6 @@ set(sources
     messagereceiver.cpp
     appconfig.cpp
     taskscheduler.cpp
-    webnodemanipulator.cpp
     webworker.cpp
     webrecorder.cpp
     licensechecker.cpp
@@ -15,7 +14,6 @@ set(sources
    
 set(headers
     taskscheduler.h
-    webnodemanipulator.h
 )
     
 set(moc_headers

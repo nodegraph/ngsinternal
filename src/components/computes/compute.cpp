@@ -52,8 +52,8 @@ void Compute::update_wires() {
 void Compute::update_state() {
   // Notify the gui side that a computation is now processing on the compute side.
   if ((get_did() != ComponentDID::kInputCompute) && (get_did() != ComponentDID::kOutputCompute)) {
-    Dep<BaseNodeGraphManipulator> vp = get_dep<BaseNodeGraphManipulator>(get_app_root());
-    vp->set_processing(our_entity());
+    Dep<BaseNodeGraphManipulator> manipulator = get_dep<BaseNodeGraphManipulator>(get_app_root());
+    manipulator->set_compute_node(our_entity());
   }
 }
 

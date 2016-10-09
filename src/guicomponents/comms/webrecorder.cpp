@@ -8,7 +8,7 @@
 #include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/filemodel.h>
-#include <guicomponents/comms/webnodemanipulator.h>
+#include <guicomponents/quick/nodegraphmanipulator.h>
 
 #include <QtCore/QUrl>
 
@@ -75,18 +75,21 @@ void WebRecorder::on_empty_stack() {
 }
 
 void WebRecorder::build_web_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+  Dep<BaseNodeGraphManipulator> manipulator = get_dep<BaseNodeGraphManipulator>(get_app_root());
+  Entity* node = manipulator->build_and_link_compute_node(compute_did, chain_state);
+  clean_compute(node);
 
-  WebNodeManipulator* linker = new_ff WebNodeManipulator(get_app_root());
-  linker->build_and_link_compute_node(compute_did, chain_state);
-
-  // Grab the compute..
-  Compute* compute = linker->get_compute();
-
-  // Destroy our linker.
-  delete_ff(linker);
-
-  // Clean the compute.
-  clean_compute(compute->our_entity());
+//  WebNodeManipulator* linker = new_ff WebNodeManipulator(get_app_root());
+//  linker->build_and_link_compute_node(compute_did, chain_state);
+//
+//  // Grab the compute..
+//  Compute* compute = linker->get_compute();
+//
+//  // Destroy our linker.
+//  delete_ff(linker);
+//
+//  // Clean the compute.
+//  clean_compute(compute->our_entity());
 }
 
 // -----------------------------------------------------------------
