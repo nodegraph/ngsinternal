@@ -40,9 +40,7 @@ FBORenderer::FBORenderer(Entity* entity)
 }
 
 FBORenderer::~FBORenderer() {
-  delete_ff(_render_rbo);
-  delete_ff(_render_fbo);
-  delete_ff(_render_texture);
+  uninitialize_gl();
 }
 
 void FBORenderer::update_state() {
@@ -72,6 +70,8 @@ GLsizei FBORenderer::get_texture_height() {
 
 void FBORenderer::initialize_gl() {
   internal();
+  uninitialize_gl();
+
   // Create and setup two fbos.
   setup_fbo();
   swap_buffers();

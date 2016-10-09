@@ -13,14 +13,20 @@
 
 namespace ngs {
 
-class Grabber: public Component {
+class Grabber : public Component {
  public:
   COMPONENT_ID(InvalidComponent, InvalidComponent);
-  Grabber(Entity* entity):Component(entity, kIID(), kDID()) {}
-  QWebSocket* get_web_socket(Entity* app_root) {
-    Dep<MessageSender> sender = get_dep<MessageSender>(app_root);
+  Grabber(Entity* app_root)
+      : Component(NULL, kIID(), kDID()),
+        _app_root(app_root) {
+    // Note invalid components are created with a NULL entity parent.
+  }
+  QWebSocket* get_web_socket() {
+    Dep<MessageSender> sender = get_dep<MessageSender>(_app_root);
     return sender->get_web_socket();
   }
+ private:
+  Entity* _app_root;
 };
 
 MessageReceiver::MessageReceiver(Entity* parent)
@@ -42,10 +48,11 @@ void MessageReceiver::initialize_wires() {
 
   // Create a qt signal slot connection. Make sure this only happens once!!
   if (!_connected) {
-    Grabber* temp = new_ff Grabber(NULL);
-    _web_socket = temp->get_web_socket(get_app_root());
+    Grabber* temp = new_ff Grabber(get_app_root());
+    _web_socket = temp->get_web_socket();
     connect(_web_socket, SIGNAL(textMessageReceived(const QString &)), this, SLOT(on_text_received(const QString &)));
     _connected = true;
+    delete_ff(temp);
   }
 }
 
