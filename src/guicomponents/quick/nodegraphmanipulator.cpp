@@ -206,7 +206,7 @@ void NodeGraphManipulatorImp::link(Entity* downstream) {
 
 NodeGraphManipulator::NodeGraphManipulator(Entity* entity):
     BaseNodeGraphManipulator(entity, kDID()),
-    _imp(new_ff NodeGraphManipulatorImp(entity))
+    _imp(new_ff NodeGraphManipulatorImp(get_app_root()))
 {
 }
 
