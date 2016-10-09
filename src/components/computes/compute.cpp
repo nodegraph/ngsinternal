@@ -19,8 +19,11 @@ const QVariant Compute::_empty_variant;
 
 Compute::Compute(Entity* entity, ComponentDID derived_id)
     : Component(entity, kIID(), derived_id),
-      _inputs(this) {
-  get_dep_loader()->register_fixed_dep(_inputs, Path({"."})); // Note this only exists for node computes and not for plug computes.
+      _inputs(this),
+      _ng_manipulator(this) {
+  // Note this only exists for node computes and not for plug computes.
+  get_dep_loader()->register_fixed_dep(_inputs, Path({"."}));
+  // We only grab the _ng_manipulator for non input/output computes, to avoid cycles.
 }
 
 Compute::~Compute() {
@@ -30,6 +33,13 @@ void Compute::create_inputs_outputs() {
   external();
   create_namespace("inputs");
   create_namespace("outputs");
+}
+
+void Compute::initialize_wires() {
+  Component::initialize_wires();
+  if ((get_did() != ComponentDID::kInputCompute) && (get_did() != ComponentDID::kOutputCompute)) {
+    _ng_manipulator = get_dep<BaseNodeGraphManipulator>(get_app_root());
+  }
 }
 
 void Compute::update_wires() {
@@ -50,11 +60,21 @@ void Compute::update_wires() {
 }
 
 void Compute::update_state() {
+  internal();
   // Notify the gui side that a computation is now processing on the compute side.
-  if ((get_did() != ComponentDID::kInputCompute) && (get_did() != ComponentDID::kOutputCompute)) {
-    Dep<BaseNodeGraphManipulator> manipulator = get_dep<BaseNodeGraphManipulator>(get_app_root());
-    manipulator->set_compute_node(our_entity());
+  if (_ng_manipulator) {
+    _ng_manipulator->set_compute_node(our_entity());
   }
+}
+
+bool Compute::clean_finalize() {
+  internal();
+  Component::clean_finalize();
+  // Notify the gui side that a computation is now processing on the compute side.
+  if (_ng_manipulator) {
+    _ng_manipulator->clear_compute_node();
+  }
+  return true;
 }
 
 QVariantMap Compute::get_inputs() const {

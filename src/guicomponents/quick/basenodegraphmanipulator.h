@@ -22,6 +22,7 @@ class BaseNodeGraphManipulator: public Component {
 
   // Show the processing marker on a node.
   virtual void set_compute_node(Entity* entity) = 0;
+  virtual void clear_compute_node() = 0;
 
 };
 

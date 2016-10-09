@@ -25,9 +25,9 @@ namespace ngs {
 
 NodeSelection::NodeSelection(Entity* entity)
     : Component(entity, kIID(), kDID()),
-      _edit_node(this),
-      _view_node(this),
-      _compute_node(this),
+      _edit_node_shape(this),
+      _view_node_shape(this),
+      _compute_node_shape(this),
       _locked(false),
       _accumulate(false){
 }
@@ -37,20 +37,20 @@ NodeSelection::~NodeSelection() {
 
 void NodeSelection::update_state() {
   internal();
-  if (!_edit_node) {
-    _edit_node.reset();
+  if (!_edit_node_shape) {
+    _edit_node_shape.reset();
   }
-  if (!_view_node) {
-    _view_node.reset();
+  if (!_view_node_shape) {
+    _view_node_shape.reset();
   }
-  if (!_compute_node) {
-    _compute_node.reset();
+  if (!_compute_node_shape) {
+    _compute_node_shape.reset();
   }
 
-  DepUSet<NodeShape>::iterator iter = _selected.begin();
-  while(iter != _selected.end()) {
+  DepUSet<NodeShape>::iterator iter = _selected_node_shapes.begin();
+  while(iter != _selected_node_shapes.end()) {
     if (!*iter) {
-      iter = _selected.erase(iter);
+      iter = _selected_node_shapes.erase(iter);
     } else {
       ++iter;
     }
@@ -59,20 +59,20 @@ void NodeSelection::update_state() {
 
 void NodeSelection::set_edit_node(const Dep<NodeShape>& node) {
   external();
-  if (_edit_node) {
-    _edit_node->show_edit_marker(false);
+  if (_edit_node_shape) {
+    _edit_node_shape->show_edit_marker(false);
   }
   node->show_edit_marker(true);
-  _edit_node = node;
+  _edit_node_shape = node;
 }
 
 void NodeSelection::set_view_node(const Dep<NodeShape>& node) {
   external();
-  if (_view_node) {
-    _view_node->show_view_marker(false);
+  if (_view_node_shape) {
+    _view_node_shape->show_view_marker(false);
   }
   node->show_view_marker(true);
-  _view_node = node;
+  _view_node_shape = node;
 }
 
 void NodeSelection::set_compute_node_entity(Entity* node) {
@@ -82,50 +82,50 @@ void NodeSelection::set_compute_node_entity(Entity* node) {
 
 void NodeSelection::set_compute_node(const Dep<NodeShape>& node) {
   external();
-  if (_compute_node) {
-    _compute_node->show_compute_marker(false);
+  if (_compute_node_shape) {
+    _compute_node_shape->show_compute_marker(false);
   }
   node->show_compute_marker(true);
-  _compute_node = node;
+  _compute_node_shape = node;
 }
 
 const Dep<NodeShape>& NodeSelection::get_edit_node() const {
   external();
-  return _edit_node;
+  return _edit_node_shape;
 }
 
 const Dep<NodeShape>& NodeSelection::get_view_node() const {
   external();
-  return _view_node;
+  return _view_node_shape;
 }
 
 const Dep<NodeShape>& NodeSelection::get_compute_node() const {
   external();
-  return _compute_node;
+  return _compute_node_shape;
 }
 
 void NodeSelection::clear_edit_node() {
   external();
-  if (_edit_node) {
-    _edit_node->show_edit_marker(false);
+  if (_edit_node_shape) {
+    _edit_node_shape->show_edit_marker(false);
   }
-  _edit_node.reset();
+  _edit_node_shape.reset();
 }
 
 void NodeSelection::clear_view_node() {
   external();
-  if (_view_node) {
-    _view_node->show_view_marker(false);
+  if (_view_node_shape) {
+    _view_node_shape->show_view_marker(false);
   }
-  _view_node.reset();
+  _view_node_shape.reset();
 }
 
 void NodeSelection::clear_compute_node() {
   external();
-  if (_compute_node) {
-    _compute_node->show_view_marker(false);
+  if (_compute_node_shape) {
+    _compute_node_shape->show_compute_marker(false);
   }
-  _compute_node.reset();
+  _compute_node_shape.reset();
 }
 
 void NodeSelection::select(const Dep<NodeShape>& e) {
@@ -137,7 +137,7 @@ void NodeSelection::select(const Dep<NodeShape>& e) {
   Dep<NodeShape> dep(this);
   dep = e;
   dep->select(true);
-  _selected.insert(dep);
+  _selected_node_shapes.insert(dep);
 }
 
 void NodeSelection::deselect(const Dep<NodeShape>& e) {
@@ -145,7 +145,7 @@ void NodeSelection::deselect(const Dep<NodeShape>& e) {
   if (e) {
     e->select(false);
   }
-  _selected.erase(e);
+  _selected_node_shapes.erase(e);
 }
 
 void NodeSelection::select(const DepUSet<NodeShape>& set) {
@@ -164,7 +164,7 @@ void NodeSelection::deselect(const DepUSet<NodeShape>& set) {
 
 bool NodeSelection::is_selected(const Dep<NodeShape>& e) const{
   external();
-  if (_selected.count(e)) {
+  if (_selected_node_shapes.count(e)) {
     return true;
   }
   return false;
@@ -180,24 +180,24 @@ void NodeSelection::toggle_selected(const Dep<NodeShape>& e) {
 
 const DepUSet<NodeShape>& NodeSelection::get_selected() const{
   external();
-  return _selected;
+  return _selected_node_shapes;
 }
 
 void NodeSelection::clear_selection() {
   external();
   // We don't call the deselect() method which erase elements one by one as it's slow.
   // We clear everything at once.
-  for (const Dep<NodeShape>& d: _selected) {
+  for (const Dep<NodeShape>& d: _selected_node_shapes) {
     if (d) {
       d->select(false);
     }
   }
-  _selected.clear();
+  _selected_node_shapes.clear();
 }
 
 void NodeSelection::destroy_selection() {
   external();
-  for(const Dep<NodeShape>& cs: _selected) {
+  for(const Dep<NodeShape>& cs: _selected_node_shapes) {
     if (!cs) {
       continue;
     }
@@ -206,21 +206,21 @@ void NodeSelection::destroy_selection() {
     cs->select(false);
 
     // If we're destroying the edit node, clean up the reference to it.
-    if (cs == _edit_node) {
+    if (cs == _edit_node_shape) {
       clear_edit_node();
     }
     // If we're destroying the view node, clean up the reference to it.
-    if (cs == _view_node) {
+    if (cs == _view_node_shape) {
       clear_view_node();
     }
-    if (cs == _compute_node) {
+    if (cs == _compute_node_shape) {
       clear_compute_node();
     }
 
     Entity* e = cs->our_entity();
     delete_ff(e);
   }
-  _selected.clear();
+  _selected_node_shapes.clear();
 }
 
 // Clear all references to nodes.
@@ -233,17 +233,17 @@ void NodeSelection::clear_all() {
 
 void NodeSelection::copy() {
   external();
-  if (_selected.empty()) {
+  if (_selected_node_shapes.empty()) {
     return;
   }
   // Determine the group entity.
-  Dep<NodeShape> ns = *_selected.begin();
+  Dep<NodeShape> ns = *_selected_node_shapes.begin();
   Entity* node = ns->our_entity();
   Entity* group = node->get_parent();
 
   // Convert the comp shapes to their entities.
   std::unordered_set<Entity*> selected_entities;
-  for (const auto &s: _selected) {
+  for (const auto &s: _selected_node_shapes) {
     selected_entities.insert(s->our_entity());
   }
 

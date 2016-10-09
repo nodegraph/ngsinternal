@@ -68,12 +68,12 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
 
   // Our dynamic deps. These are not serialized.
   // Our edit and view nodes.
-  Dep<NodeShape> _edit_node;
-  Dep<NodeShape> _view_node;
-  Dep<NodeShape> _compute_node;
+  Dep<NodeShape> _edit_node_shape;
+  Dep<NodeShape> _view_node_shape;
+  Dep<NodeShape> _compute_node_shape;
 
   // The current selection.
-  DepUSet<NodeShape> _selected;
+  DepUSet<NodeShape> _selected_node_shapes;
 
   // Our copied nodes.
   std::string _raw_copy;

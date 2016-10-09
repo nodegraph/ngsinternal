@@ -17,7 +17,6 @@ class ENTITIES_EXPORT Factory: public BaseFactory {
   virtual ~Factory();
 
   virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const;
-  virtual std::pair<Entity*, Compute*> create_compute_node2(Entity* parent, ComponentDID compute_did, const std::string& name="") const;
 };
 
 }

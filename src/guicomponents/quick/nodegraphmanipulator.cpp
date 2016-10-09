@@ -25,32 +25,37 @@
 
 namespace ngs {
 
-NodeGraphManipulator::NodeGraphManipulator(Entity* entity):
-    BaseNodeGraphManipulator(entity, kDID()),
-    _factory(this),
-    _node_selection(this),
-    _ng_quick(this) {
-  get_dep_loader()->register_fixed_dep(_factory, Path({}));
-  get_dep_loader()->register_fixed_dep(_node_selection, Path({}));
-  get_dep_loader()->register_fixed_dep(_ng_quick, Path({}));
+// -----------------------------------------------------------------------------------
+// Imp..
+// -----------------------------------------------------------------------------------
+
+Imp::Imp(Entity* e)
+    : Component(e, kIID(), kDID()),
+      _factory(this),
+      _node_selection(this),
+      _ng_quick(this) {
+  get_dep_loader()->register_fixed_dep(_factory, Path( { }));
+  get_dep_loader()->register_fixed_dep(_node_selection, Path( { }));
+  get_dep_loader()->register_fixed_dep(_ng_quick, Path( { }));
 }
 
-NodeGraphManipulator::~NodeGraphManipulator(){
-}
-
-void NodeGraphManipulator::set_compute_node(Entity* entity) {
+void Imp::set_compute_node(Entity* entity) {
   _node_selection->set_compute_node_entity(entity);
   _ng_quick->update();
 }
 
+void Imp::clear_compute_node() {
+  _node_selection->clear_compute_node();
+  _ng_quick->update();
+}
 
-Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+Entity* Imp::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
   Entity* node = build_compute_node(compute_did, chain_state);
   link(node);
   return node;
 }
 
-Entity* NodeGraphManipulator::build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+Entity* Imp::build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
   // Create the node.
   Entity* group = _factory->get_current_group();
   Entity* _node = _factory->create_compute_node(group, compute_did);
@@ -85,7 +90,7 @@ Entity* NodeGraphManipulator::build_compute_node(ComponentDID compute_did, const
   return _node;
 }
 
-void NodeGraphManipulator::link(Entity* downstream) {
+void Imp::link(Entity* downstream) {
   // Get the factory.
   Dep<BaseFactory> factory = get_dep<BaseFactory>(get_app_root());
   Entity* current_group = factory->get_current_group();
@@ -145,6 +150,32 @@ void NodeGraphManipulator::link(Entity* downstream) {
 
   // Clean the wires in this group, as new nodes and links were created.
   _factory->get_current_group()->clean_wires();
+}
+
+// -----------------------------------------------------------------------------------
+// The NodeGraphManipulator.
+// -----------------------------------------------------------------------------------
+
+NodeGraphManipulator::NodeGraphManipulator(Entity* entity):
+    BaseNodeGraphManipulator(entity, kDID()),
+    _imp(new_ff Imp(entity))
+{
+}
+
+NodeGraphManipulator::~NodeGraphManipulator(){
+  delete_ff(_imp);
+}
+
+void NodeGraphManipulator::set_compute_node(Entity* entity) {
+  _imp->set_compute_node(entity);
+}
+
+void NodeGraphManipulator::clear_compute_node() {
+  _imp->clear_compute_node();
+}
+
+Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+  return _imp->build_and_link_compute_node(compute_did, chain_state);
 }
 
 }

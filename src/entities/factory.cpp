@@ -84,10 +84,7 @@ Factory::~Factory() {
 }
 
 Entity* Factory::create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name) const {
-  return create_compute_node2(parent, compute_did, name).first;
-}
-
-std::pair<Entity*, Compute*> Factory::create_compute_node2(Entity* parent, ComponentDID compute_did, const std::string& name) const {
+  //return create_compute_node2(parent, compute_did, name).first;
   std::string node_name;
   if (name.empty()) {
     node_name = get_compute_name(compute_did);
@@ -97,7 +94,8 @@ std::pair<Entity*, Compute*> Factory::create_compute_node2(Entity* parent, Compo
   Entity* e = create_entity(parent, node_name, EntityDID::kComputeNodeEntity);
   Compute* c = static_cast<Compute*>(create_component(e, compute_did));
   c->create_inputs_outputs();
-  return {e,c};
+  return e;
 }
+
 
 }

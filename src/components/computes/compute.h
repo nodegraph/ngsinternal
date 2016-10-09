@@ -18,10 +18,9 @@ namespace ngs {
 #define TEMPLATE_EXPORT 
 #endif
 
-class BaseFactory;
-class InputCompute;
-class OutputCompute;
 class Inputs;
+class InputCompute;
+class BaseNodeGraphManipulator;
 
 class COMPUTES_EXPORT Compute: public Component {
  public:
@@ -46,8 +45,10 @@ class COMPUTES_EXPORT Compute: public Component {
 
  protected:
   // Our state.
+  virtual void initialize_wires();
   virtual void update_wires();
   virtual void update_state();
+  virtual bool clean_finalize();
 
   // Our outputs. These are called during cleaning, so they don't dirty the instance's state.
   virtual void set_outputs(const QVariantMap& outputs);
@@ -65,6 +66,8 @@ class COMPUTES_EXPORT Compute: public Component {
 
  protected:
   Dep<Inputs> _inputs;
+  Dep<BaseNodeGraphManipulator> _ng_manipulator;
+
   std::unordered_map<std::string, Dep<InputCompute> > _named_inputs;
 
   // Map from output plug names to results.
