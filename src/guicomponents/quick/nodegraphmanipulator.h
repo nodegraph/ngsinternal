@@ -4,7 +4,7 @@
 #include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
 
-#include <guicomponents/quick/basevisualizeprocessing.h>
+#include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <string>
 
 namespace ngs {
@@ -12,12 +12,12 @@ namespace ngs {
 class NodeSelection;
 class NodeGraphQuickItem;
 
-class QUICK_EXPORT VisualizeProcessing: public BaseVisualizeProcessing {
+class QUICK_EXPORT NodeGraphManipulator: public BaseNodeGraphManipulator {
  public:
-  COMPONENT_ID(BaseVisualizeProcessing, VisualizeProcessing);
+  COMPONENT_ID(BaseNodeGraphManipulator, NodeGraphManipulator);
 
-  VisualizeProcessing(Entity* entity);
-  virtual ~VisualizeProcessing();
+  NodeGraphManipulator(Entity* entity);
+  virtual ~NodeGraphManipulator();
 
   virtual void set_processing(Entity* entity);
 

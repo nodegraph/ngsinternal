@@ -5,7 +5,7 @@
 #include <components/computes/inputs.h>
 #include <entities/entityids.h>
 #include <entities/entityinstancer.h>
-#include <guicomponents/quick/basevisualizeprocessing.h>
+#include <guicomponents/quick/basenodegraphmanipulator.h>
 
 namespace ngs {
 
@@ -52,7 +52,7 @@ void Compute::update_wires() {
 void Compute::update_state() {
   // Notify the gui side that a computation is now processing on the compute side.
   if ((get_did() != ComponentDID::kInputCompute) && (get_did() != ComponentDID::kOutputCompute)) {
-    Dep<BaseVisualizeProcessing> vp = get_dep<BaseVisualizeProcessing>(get_app_root());
+    Dep<BaseNodeGraphManipulator> vp = get_dep<BaseNodeGraphManipulator>(get_app_root());
     vp->set_processing(our_entity());
   }
 }

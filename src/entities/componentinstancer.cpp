@@ -43,7 +43,7 @@
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/quick/nodegraphrenderer.h>
 #include <guicomponents/quick/nodegraphview.h>
-#include <guicomponents/quick/visualizeprocessing.h>
+#include <guicomponents/quick/nodegraphmanipulator.h>
 
 #include <guicomponents/comms/nodejsprocess.h>
 #include <guicomponents/comms/messagesender.h>
