@@ -61,7 +61,11 @@ Component::~Component() {
   }
 
   // Remove ourself from our entity.
-  our_entity()->remove(this);
+  // Some components may be created temporarily without an entity.
+  // In this case our entity will be null.
+  if (our_entity()) {
+    our_entity()->remove(this);
+  }
 
 }
 

@@ -29,14 +29,25 @@ namespace ngs {
 // Imp..
 // -----------------------------------------------------------------------------------
 
-Imp::Imp(Entity* e)
-    : Component(e, kIID(), kDID()),
+// Note that the Imp Component gets created outside the app_root hierarchy.
+// The Imp Component has no parent and in a sense is its own root.
+// Because it has no parent, you must explicitly hold a pointer to this when
+// allocated so that you can manipulate it and delete it.
+Imp::Imp(Entity* app_root)
+    : Component(NULL, kIID(), kDID()),
+      _app_root(app_root),
       _factory(this),
       _node_selection(this),
       _ng_quick(this) {
-  get_dep_loader()->register_fixed_dep(_factory, Path( { }));
-  get_dep_loader()->register_fixed_dep(_node_selection, Path( { }));
-  get_dep_loader()->register_fixed_dep(_ng_quick, Path( { }));
+}
+
+void Imp::initialize_wires() {
+  Component::initialize_wires();
+
+  _factory = get_dep<BaseFactory>(_app_root);
+  _node_selection = get_dep<NodeSelection>(_app_root);
+  _ng_quick = get_dep<NodeGraphQuickItem>(_app_root);
+
 }
 
 void Imp::set_compute_node(Entity* entity) {
@@ -92,7 +103,7 @@ Entity* Imp::build_compute_node(ComponentDID compute_did, const QVariantMap& cha
 
 void Imp::link(Entity* downstream) {
   // Get the factory.
-  Dep<BaseFactory> factory = get_dep<BaseFactory>(get_app_root());
+  Dep<BaseFactory> factory = get_dep<BaseFactory>(_app_root);
   Entity* current_group = factory->get_current_group();
 
   // Get the current comp shape collective.
@@ -164,6 +175,11 @@ NodeGraphManipulator::NodeGraphManipulator(Entity* entity):
 
 NodeGraphManipulator::~NodeGraphManipulator(){
   delete_ff(_imp);
+}
+
+void NodeGraphManipulator::initialize_wires() {
+  Component::initialize_wires();
+  _imp->initialize_wires();
 }
 
 void NodeGraphManipulator::set_compute_node(Entity* entity) {
