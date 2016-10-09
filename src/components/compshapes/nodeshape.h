@@ -43,19 +43,19 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   virtual void select(bool selected);
 
   // Edit State.
-  virtual void edit(bool on);
-  virtual bool is_being_edited() const;
+  virtual void show_edit_marker(bool on);
+  virtual bool edit_marker_is_showing() const;
 
   // View State.
-  virtual void view(bool on);
-  virtual bool is_being_viewed() const;
+  virtual void show_view_marker(bool on);
+  virtual bool view_marker_is_showing() const;
 
   // Processing State.
   // Attention "is_being_processed" is similarly named to currently_processing.
   // Do not confuse this or mistakenly override the other.
   // This process term here should be renamed. It's purely for visualization.
-  virtual void process(bool on);
-  virtual bool is_being_processed() const;
+  virtual void show_compute_marker(bool on);
+  virtual bool compute_marker_is_showing() const;
 
  protected:
   virtual void update_quads(const glm::vec2& pen);
@@ -78,9 +78,9 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
  private:
 
   // Our visual marking state.
-  bool _being_edited;
-  bool _being_viewed;
-  bool _being_processed;
+  bool _show_edit_marker;
+  bool _show_view_marker;
+  bool _show_compute_marker;
 
   // Shared state.
   unsigned char _shared_state;

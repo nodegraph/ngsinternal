@@ -19,21 +19,21 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   NodeSelection(Entity* entity);
   ~NodeSelection();
 
-  // Edit node.
+  // Tracks the node currently being edited.
   void set_edit_node(const Dep<NodeShape>& node);
   const Dep<NodeShape>& get_edit_node() const;
   void clear_edit_node();
 
-  // View node.
+  // Tracks the node currently being viewed.
   void set_view_node(const Dep<NodeShape>& node);
   const Dep<NodeShape>& get_view_node() const;
   void clear_view_node();
 
-  // Processing node.
-  void set_processing_node_entity(Entity* node);
-  void set_processing_node(const Dep<NodeShape>& node);
-  const Dep<NodeShape>& get_processing_node() const;
-  void clear_processing_node();
+  // Tracks the node currently performing its compute.
+  void set_compute_node_entity(Entity* node);
+  void set_compute_node(const Dep<NodeShape>& node);
+  const Dep<NodeShape>& get_compute_node() const;
+  void clear_compute_node();
 
   // The selection is global throughout the system.
   void select(const Dep<NodeShape>& e);
@@ -70,7 +70,7 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   // Our edit and view nodes.
   Dep<NodeShape> _edit_node;
   Dep<NodeShape> _view_node;
-  Dep<NodeShape> _processing_node;
+  Dep<NodeShape> _compute_node;
 
   // The current selection.
   DepUSet<NodeShape> _selected;

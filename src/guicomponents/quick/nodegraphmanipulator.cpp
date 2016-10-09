@@ -17,7 +17,7 @@ NodeGraphManipulator::~NodeGraphManipulator(){
 }
 
 void NodeGraphManipulator::set_processing(Entity* entity) {
-  _node_selection->set_processing_node_entity(entity);
+  _node_selection->set_compute_node_entity(entity);
   _ng_quick->update();
 }
 

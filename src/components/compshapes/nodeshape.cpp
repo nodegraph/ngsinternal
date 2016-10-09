@@ -23,9 +23,9 @@ NodeShape::NodeShape(Entity* entity, ComponentDID did)
     : SelectableShape(entity, did),
       _resources(this),
       _shared_state(0),
-      _being_edited(false),
-      _being_viewed(false),
-      _being_processed(false){
+      _show_edit_marker(false),
+      _show_view_marker(false),
+      _show_compute_marker(false){
   get_dep_loader()->register_fixed_dep(_resources, Path({}));
 
   _edit_quad_bg.state = 0;
@@ -76,38 +76,38 @@ void NodeShape::select(bool selected) {
   }
 }
 
-void NodeShape::edit(bool on) {
+void NodeShape::show_edit_marker(bool on) {
   external();
-  _being_edited = on;
+  _show_edit_marker = on;
 }
-bool NodeShape::is_being_edited() const {
+bool NodeShape::edit_marker_is_showing() const {
   external();
-  return _being_edited;
-}
-
-void NodeShape::view(bool on) {
-  external();
-  _being_viewed = on;
-}
-bool NodeShape::is_being_viewed() const {
-  external();
-  return _being_viewed;
+  return _show_edit_marker;
 }
 
-void NodeShape::process(bool on) {
+void NodeShape::show_view_marker(bool on) {
   external();
-  _being_processed = on;
+  _show_view_marker = on;
 }
-bool NodeShape::is_being_processed() const {
+bool NodeShape::view_marker_is_showing() const {
   external();
-  return _being_processed;
+  return _show_view_marker;
+}
+
+void NodeShape::show_compute_marker(bool on) {
+  external();
+  _show_compute_marker = on;
+}
+bool NodeShape::compute_marker_is_showing() const {
+  external();
+  return _show_compute_marker;
 }
 
 void NodeShape::update_quads(const glm::vec2& pen) {
   //glm::vec2 text_dim = _text_max - _text_min;
   glm::vec2 start = pen; //_pos + glm::vec2(text_dim.x + 80, -40);
 
-  if (_being_edited) {
+  if (_show_edit_marker) {
     glm::vec2 size(150, 150);
     _edit_quad_bg.set_scale(size);
     _edit_quad_bg.set_rotate(0);
@@ -123,7 +123,7 @@ void NodeShape::update_quads(const glm::vec2& pen) {
     start.x += 160;
   }
 
-  if (_being_viewed) {
+  if (_show_view_marker) {
     glm::vec2 size(150, 150);
     _view_quad_bg.set_scale(size);
     _view_quad_bg.set_rotate(0);
@@ -141,7 +141,7 @@ void NodeShape::update_quads(const glm::vec2& pen) {
 
 
 
-  if (_being_processed) {
+  if (_show_compute_marker) {
     glm::vec2 size(150, 150);
     _processing_quad_bg.set_scale(size);
     _processing_quad_bg.set_rotate(0);
@@ -160,15 +160,15 @@ void NodeShape::update_quads(const glm::vec2& pen) {
 
 void NodeShape::update_quads_cache() {
   _quads_cache.clear();
-  if (_being_edited) {
+  if (_show_edit_marker) {
     _quads_cache.insert(_quads_cache.end(), _edit_quad_bg);
     _quads_cache.insert(_quads_cache.end(), _edit_quad_fg);
   }
-  if (_being_viewed) {
+  if (_show_view_marker) {
     _quads_cache.insert(_quads_cache.end(), _view_quad_bg);
     _quads_cache.insert(_quads_cache.end(), _view_quad_fg);
   }
-  if (_being_processed) {
+  if (_show_compute_marker) {
     _quads_cache.insert(_quads_cache.end(), _processing_quad_bg);
     _quads_cache.insert(_quads_cache.end(), _processing_quad_fg);
   }
@@ -178,17 +178,17 @@ void NodeShape::update_edit_view_text() {
   glm::vec2 extra_chars_min;
   glm::vec2 extra_chars_max;
 
-  if (_being_edited) {
+  if (_show_edit_marker) {
     glm::vec2 pos(_edit_quad_bg.translate[0], _edit_quad_bg.translate[1]);
     pos += glm::vec2(40, 40);
     _resources->get_text_limits()->tessellate_to_instances("E", glm::vec2(0,0), 0, pos, _shared_state, _edit_chars, extra_chars_min, extra_chars_max);
   }
-  if (_being_viewed) {
+  if (_show_view_marker) {
     glm::vec2 pos(_view_quad_bg.translate[0], _view_quad_bg.translate[1]);
     pos += glm::vec2(40, 40);
     _resources->get_text_limits()->tessellate_to_instances("V", glm::vec2(0,0), 0, pos, _shared_state, _view_chars, extra_chars_min, extra_chars_max);
   }
-  if (_being_processed) {
+  if (_show_compute_marker) {
     glm::vec2 pos(_processing_quad_bg.translate[0], _processing_quad_bg.translate[1]);
     pos += glm::vec2(40, 40);
     _resources->get_text_limits()->tessellate_to_instances("P", glm::vec2(0,0), 0, pos, _shared_state, _processing_chars, extra_chars_min, extra_chars_max);
@@ -197,13 +197,13 @@ void NodeShape::update_edit_view_text() {
 
 void NodeShape::update_chars_cache() {
   _chars_cache.clear();
-  if (_being_edited) {
+  if (_show_edit_marker) {
     _chars_cache.insert(_chars_cache.end(), _edit_chars.begin(), _edit_chars.end());
   }
-  if (_being_viewed) {
+  if (_show_view_marker) {
     _chars_cache.insert(_chars_cache.end(), _view_chars.begin(), _view_chars.end());
   }
-  if (_being_processed) {
+  if (_show_compute_marker) {
     _chars_cache.insert(_chars_cache.end(), _processing_chars.begin(), _processing_chars.end());
   }
 }
