@@ -137,7 +137,7 @@ class OBJECTMODEL_EXPORT Component {
   virtual bool clean_dependencies();
   virtual bool clean_self();
   virtual bool update_is_asynchronous() const {return false;}
-  virtual bool currently_processing() const {return false;}
+  virtual bool is_computing() const {return false;}
   virtual bool clean_finalize();
   void gather_dirty_components(std::vector<Component*>& comps); // Rectursively gather dirty components in order of execution needed to clean them.
   bool propagate_cleanliness();

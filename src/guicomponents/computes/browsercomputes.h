@@ -23,7 +23,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   virtual void on_get_outputs(const QVariantMap& outputs);
 
   virtual bool update_is_asynchronous() const {external(); return true;}
-  bool is_processing() const {external(); return _processing;}
+  virtual bool is_computing() const {external(); return _is_computing;}
 
  protected:
   // Our state.
@@ -35,7 +35,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   Dep<WebWorker> _web_worker;
   Dep<TaskScheduler> _task_scheduler;
 
-  bool _processing;
+  bool _is_computing;
 };
 
 class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {
