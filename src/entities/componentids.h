@@ -31,6 +31,7 @@ enum class ComponentIID : size_t {
   kIInputPlug,
   kIGroupInteraction,
   kINodeGraphEditor,
+  kIBaseVisualizeProcessing,
   kINodeGraphQuickItem,
   kINodeGraphRenderer,
   kINodeGraphView,
@@ -132,7 +133,8 @@ COMPONENT_ENTRY2(TaskScheduler, 61)\
 COMPONENT_ENTRY2(NodeJSProcess, 62)\
 COMPONENT_ENTRY2(AppConfig, 63)\
 COMPONENT_ENTRY2(MessageSender, 64)\
-COMPONENT_ENTRY2(MessageReceiver, 65)
+COMPONENT_ENTRY2(MessageReceiver, 65)\
+COMPONENT_ENTRY2(VisualizeProcessing, 66)
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()

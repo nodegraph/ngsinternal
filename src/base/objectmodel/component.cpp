@@ -411,7 +411,7 @@ bool Component::clean_self() {
     return true;
   }
 
-  if (!is_processing()) {
+  if (!currently_processing()) {
     // Now we clean/update our internal state.
     update_state();
   }

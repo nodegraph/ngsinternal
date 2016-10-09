@@ -32,8 +32,8 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   void dump_map(const QVariantMap& inputs) const;
 
-  Dep<WebWorker> _app_worker;
-  Dep<TaskScheduler> _task_queue;
+  Dep<WebWorker> _web_worker;
+  Dep<TaskScheduler> _task_scheduler;
 
   bool _processing;
 };

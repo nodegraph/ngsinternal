@@ -110,6 +110,8 @@ void GroupNodeCompute::update_wires() {
 
 void GroupNodeCompute::update_state() {
   internal();
+  Compute::update_state();
+
 
   // For each input data if there is an associated input node, we set data on the input node
   // from the input data. The input data handles connections to other entities internally.

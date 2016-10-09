@@ -2,6 +2,8 @@
 #include <components/computes/outputcompute.h>
 
 #include <base/objectmodel/deploader.h>
+#include <base/objectmodel/basefactory.h>
+
 #include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/browsercomputes.h>
@@ -14,11 +16,11 @@ namespace ngs {
 
 BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
-      _app_worker(this),
-      _task_queue(this),
+      _web_worker(this),
+      _task_scheduler(this),
       _processing(false) {
-  get_dep_loader()->register_fixed_dep(_app_worker, Path({}));
-  get_dep_loader()->register_fixed_dep(_task_queue, Path({}));
+  get_dep_loader()->register_fixed_dep(_web_worker, Path({}));
+  get_dep_loader()->register_fixed_dep(_task_scheduler, Path({}));
 }
 
 BrowserCompute::~BrowserCompute() {
@@ -42,17 +44,17 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
   _processing = true;
   QVariantMap inputs = get_inputs();
-  _app_worker->queue_merge_chain_state(tc, inputs);
+  _web_worker->queue_merge_chain_state(tc, inputs);
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.
   // For examples ads may rotate and flip content.
-  _app_worker->queue_wait_until_loaded(tc);
+  _web_worker->queue_wait_until_loaded(tc);
 }
 
 void BrowserCompute::post_update_state(TaskContext& tc) {
   internal();
   std::function<void(const QVariantMap&)> on_get_outputs_bound = std::bind(&BrowserCompute::on_get_outputs,this,std::placeholders::_1);
-  _app_worker->queue_get_outputs(tc, on_get_outputs_bound);
+  _web_worker->queue_get_outputs(tc, on_get_outputs_bound);
 }
 
 void BrowserCompute::on_get_outputs(const QVariantMap& outputs) {
@@ -66,33 +68,41 @@ void BrowserCompute::on_get_outputs(const QVariantMap& outputs) {
 
 void OpenBrowserCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_open_browser(tc);
+  _web_worker->queue_open_browser(tc);
   BrowserCompute::post_update_state(tc);
 }
 
 void CloseBrowserCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_close_browser(tc);
+  _web_worker->queue_close_browser(tc);
   BrowserCompute::post_update_state(tc);
 }
 
 void IsBrowserOpenCompute::update_state(){
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_is_browser_open(tc);
+  _web_worker->queue_is_browser_open(tc);
   BrowserCompute::post_update_state(tc);
 }
 
 void ResizeBrowserCompute::update_state(){
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_resize_browser(tc);
+  _web_worker->queue_resize_browser(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -104,18 +114,22 @@ void NavigateToCompute::create_inputs_outputs() {
 
 void NavigateToCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_navigate_to(tc);
-  _app_worker->queue_wait_until_loaded(tc);
+  _web_worker->queue_navigate_to(tc);
+  _web_worker->queue_wait_until_loaded(tc);
   BrowserCompute::post_update_state(tc);
 }
 
 void NavigateRefreshCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_navigate_refresh(tc);
+  _web_worker->queue_navigate_refresh(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -127,9 +141,11 @@ void SwitchToIFrameCompute::create_inputs_outputs() {
 
 void SwitchToIFrameCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_switch_to_iframe(tc);
+  _web_worker->queue_switch_to_iframe(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -143,9 +159,11 @@ void CreateSetFromValuesCompute::create_inputs_outputs() {
 
 void CreateSetFromValuesCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_create_set_by_matching_values(tc);
+  _web_worker->queue_create_set_by_matching_values(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -157,9 +175,11 @@ void CreateSetFromTypeCompute::create_inputs_outputs() {
 
 void CreateSetFromTypeCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_create_set_by_matching_type(tc);
+  _web_worker->queue_create_set_by_matching_type(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -171,9 +191,11 @@ void DeleteSetCompute::create_inputs_outputs() {
 
 void DeleteSetCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_delete_set(tc);
+  _web_worker->queue_delete_set(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -187,9 +209,11 @@ void ShiftSetCompute::create_inputs_outputs() {
 
 void ShiftSetCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_shift_set(tc);
+  _web_worker->queue_shift_set(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -204,9 +228,11 @@ void MouseActionCompute::create_inputs_outputs() {
 
 void MouseActionCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_perform_mouse_action(tc);
+  _web_worker->queue_perform_mouse_action(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -220,17 +246,21 @@ void StartMouseHoverActionCompute::create_inputs_outputs() {
 
 void StartMouseHoverActionCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_start_mouse_hover(tc);
+  _web_worker->queue_start_mouse_hover(tc);
   BrowserCompute::post_update_state(tc);
 }
 
 void StopMouseHoverActionCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_stop_mouse_hover(tc);
+  _web_worker->queue_stop_mouse_hover(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -246,9 +276,11 @@ void TextActionCompute::create_inputs_outputs() {
 
 void TextActionCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_perform_text_action(tc);
+  _web_worker->queue_perform_text_action(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -265,9 +297,11 @@ void ElementActionCompute::create_inputs_outputs() {
 
 void ElementActionCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_perform_element_action(tc);
+  _web_worker->queue_perform_element_action(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -281,9 +315,11 @@ void ExpandSetCompute::create_inputs_outputs() {
 
 void ExpandSetCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_expand_set(tc);
+  _web_worker->queue_expand_set(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -295,9 +331,11 @@ void MarkSetCompute::create_inputs_outputs() {
 
 void MarkSetCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_mark_set(tc);
+  _web_worker->queue_mark_set(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -309,17 +347,21 @@ void UnmarkSetCompute::create_inputs_outputs() {
 
 void UnmarkSetCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_unmark_set(tc);
+  _web_worker->queue_unmark_set(tc);
   BrowserCompute::post_update_state(tc);
 }
 
 void MergeSetsCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_merge_sets(tc);
+  _web_worker->queue_merge_sets(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -332,9 +374,11 @@ void ShrinkSetToSideCompute::create_inputs_outputs() {
 
 void ShrinkSetToSideCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_shrink_set_to_side(tc);
+  _web_worker->queue_shrink_set_to_side(tc);
   BrowserCompute::post_update_state(tc);
 }
 
@@ -347,9 +391,11 @@ void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
 
 void ShrinkAgainstMarkedCompute::update_state() {
   internal();
-  TaskContext tc(_task_queue);
+  BrowserCompute::update_state();
+
+  TaskContext tc(_task_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _app_worker->queue_shrink_against_marked(tc);
+  _web_worker->queue_shrink_against_marked(tc);
   BrowserCompute::post_update_state(tc);
 }
 

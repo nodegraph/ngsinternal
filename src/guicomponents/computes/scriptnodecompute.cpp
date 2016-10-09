@@ -36,7 +36,6 @@ void ScriptNodeCompute::create_inputs_outputs() {
 
 void ScriptNodeCompute::update_state() {
   internal();
-  // Make sure we have references to our input computes.
   Compute::update_state();
 
 //  // Accumulate all of our inputs into a map.

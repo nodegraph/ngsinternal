@@ -47,6 +47,7 @@ class COMPUTES_EXPORT Compute: public Component {
  protected:
   // Our state.
   virtual void update_wires();
+  virtual void update_state();
 
   // Our outputs. These are called during cleaning, so they don't dirty the instance's state.
   virtual void set_outputs(const QVariantMap& outputs);

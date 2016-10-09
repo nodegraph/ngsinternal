@@ -7,11 +7,14 @@ set(quick_src
 	fboworker.cpp
 	texturedisplaynode.cpp
 	nodegraphview.cpp
+	visualizeprocessing.cpp
     )
    
 set(quick_headers
     eventtoinfo.h
     fborenderer.h
+    basevisualizeprocessing.h
+    visualizeprocessing.h
 )
     
 set(moc_quick

@@ -23,6 +23,8 @@ void OutputNodeCompute::create_inputs_outputs() {
 
 void OutputNodeCompute::update_state() {
   internal();
+  Compute::update_state();
+
   if (_named_inputs.count("in")) {
     copy_outputs("out", _named_inputs.at("in"), "out");
   }

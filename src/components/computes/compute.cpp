@@ -5,6 +5,7 @@
 #include <components/computes/inputs.h>
 #include <entities/entityids.h>
 #include <entities/entityinstancer.h>
+#include <guicomponents/quick/basevisualizeprocessing.h>
 
 namespace ngs {
 
@@ -45,6 +46,14 @@ void Compute::update_wires() {
       Dep<InputCompute> input = get_dep<InputCompute>(iter.second);
       _named_inputs.insert({input->get_name(), input});
     }
+  }
+}
+
+void Compute::update_state() {
+  // Notify the gui side that a computation is now processing on the compute side.
+  if ((get_did() != ComponentDID::kInputCompute) && (get_did() != ComponentDID::kOutputCompute)) {
+    Dep<BaseVisualizeProcessing> vp = get_dep<BaseVisualizeProcessing>(get_app_root());
+    vp->set_processing(our_entity());
   }
 }
 

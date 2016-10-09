@@ -22,6 +22,8 @@ void DotNodeCompute::create_inputs_outputs() {
 
 void DotNodeCompute::update_state() {
   internal();
+  Compute::update_state();
+
   copy_outputs("out", _named_inputs.at("in"), "out");
 }
 

@@ -30,6 +30,7 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   void clear_view_node();
 
   // Processing node.
+  void set_processing_node_entity(Entity* node);
   void set_processing_node(const Dep<NodeShape>& node);
   const Dep<NodeShape>& get_processing_node() const;
   void clear_processing_node();

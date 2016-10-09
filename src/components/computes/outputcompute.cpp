@@ -21,6 +21,8 @@ void OutputCompute::update_wires() {
 
 void OutputCompute::update_state() {
   internal();
+  Compute::update_state();
+
   // Using our name we query our nodes compute results.
   const std::string& our_name = our_entity()->get_name();
   copy_outputs("out", _node_compute, our_name);

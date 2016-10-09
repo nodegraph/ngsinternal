@@ -57,6 +57,7 @@
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/quick/nodegraphview.h>
+#include <guicomponents/quick/visualizeprocessing.h>
 
 #include <QtGui/QGuiApplication>
 #include <QtQml/QtQml>
@@ -101,6 +102,7 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff FBOWorker(this);
   new_ff NodeGraphQuickItem(this);
   new_ff NodeGraphView(this);
+  new_ff VisualizeProcessing(this);
   // Qt Releated Components.
   new_ff FileModel(this);
   new_ff NodeJSProcess(this);

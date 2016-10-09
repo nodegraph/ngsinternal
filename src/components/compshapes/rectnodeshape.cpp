@@ -101,7 +101,7 @@ void RectNodeShape::update_state() {
 
   glm::vec2 text_dim = _text_max - _text_min;
   glm::vec2 start = _pos + glm::vec2(text_dim.x + 80, -40);
-  update_edit_view_quads(start);
+  update_quads(start);
 
   // The edit and view text position relies on the edit and view quads.
   update_edit_view_text();

@@ -43,6 +43,9 @@ void NodeSelection::update_state() {
   if (!_view_node) {
     _view_node.reset();
   }
+  if (!_processing_node) {
+    _processing_node.reset();
+  }
 
   DepUSet<NodeShape>::iterator iter = _selected.begin();
   while(iter != _selected.end()) {
@@ -72,12 +75,17 @@ void NodeSelection::set_view_node(const Dep<NodeShape>& node) {
   _view_node = node;
 }
 
+void NodeSelection::set_processing_node_entity(Entity* node) {
+  Dep<NodeShape> node_shape = get_dep<NodeShape>(node);
+  set_processing_node(node_shape);
+}
+
 void NodeSelection::set_processing_node(const Dep<NodeShape>& node) {
   external();
   if (_processing_node) {
-    _processing_node->processing(false);
+    _processing_node->process(false);
   }
-  node->processing(true);
+  node->process(true);
   _processing_node = node;
 }
 
@@ -204,6 +212,9 @@ void NodeSelection::destroy_selection() {
     // If we're destroying the view node, clean up the reference to it.
     if (cs == _view_node) {
       clear_view_node();
+    }
+    if (cs == _processing_node) {
+      clear_processing_node();
     }
 
     Entity* e = cs->our_entity();
