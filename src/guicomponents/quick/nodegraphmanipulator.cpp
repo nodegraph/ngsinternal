@@ -25,15 +25,52 @@
 
 namespace ngs {
 
+// This is the implementation class for the NodeGraphManipulator.
+// It is held by a raw pointer in NodeGraphManipulator to avoid dependency cycles.
+// This allows us to call this from the non-gui side (eg computes) at arbitrary
+// locations to update the gui side to reflect non-gui side changes.
+class NodeGraphManipulatorImp: public Component {
+ public:
+  // Note that components with and IID of kIInvalidComponent, should not be
+  // created with the app root as its parent as there may be other invalid components
+  // which also get created later resulting in collisions.
+  // Invalid components are always created under a null entity.
+  // Note that an invalid component usually needs a reference to the app root entity
+  // in order create Dep<>s to other components.
+  COMPONENT_ID(InvalidComponent, InvalidComponent);
+  NodeGraphManipulatorImp(Entity* app_root);
+
+  virtual void initialize_wires();
+
+  // Update current compute markers on nodes.
+  void set_compute_node(Entity* entity);
+  void clear_compute_node();
+
+  // Builds and positions a compute node under the lowest node in the node graph.
+  // If possible it will also link the latest node with the lowest.
+  Entity* build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state);
+
+ private:
+  Entity* build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state);
+  void link(Entity* downstream);
+
+  Entity* _app_root;
+  Dep<BaseFactory> _factory;
+  Dep<NodeSelection> _node_selection;
+  Dep<NodeGraphQuickItem> _ng_quick;
+};
+
+
+
 // -----------------------------------------------------------------------------------
-// Imp..
+// NodeGraphManipulatorImp.
 // -----------------------------------------------------------------------------------
 
-// Note that the Imp Component gets created outside the app_root hierarchy.
-// The Imp Component has no parent and in a sense is its own root.
+// Note that the NodeGraphManipulatorImp Component gets created outside the app_root hierarchy.
+// The NodeGraphManipulatorImp Component has no parent and in a sense is its own root.
 // Because it has no parent, you must explicitly hold a pointer to this when
 // allocated so that you can manipulate it and delete it.
-Imp::Imp(Entity* app_root)
+NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
     : Component(NULL, kIID(), kDID()),
       _app_root(app_root),
       _factory(this),
@@ -41,7 +78,7 @@ Imp::Imp(Entity* app_root)
       _ng_quick(this) {
 }
 
-void Imp::initialize_wires() {
+void NodeGraphManipulatorImp::initialize_wires() {
   Component::initialize_wires();
 
   _factory = get_dep<BaseFactory>(_app_root);
@@ -50,23 +87,23 @@ void Imp::initialize_wires() {
 
 }
 
-void Imp::set_compute_node(Entity* entity) {
+void NodeGraphManipulatorImp::set_compute_node(Entity* entity) {
   _node_selection->set_compute_node_entity(entity);
   _ng_quick->update();
 }
 
-void Imp::clear_compute_node() {
+void NodeGraphManipulatorImp::clear_compute_node() {
   _node_selection->clear_compute_node();
   _ng_quick->update();
 }
 
-Entity* Imp::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
   Entity* node = build_compute_node(compute_did, chain_state);
   link(node);
   return node;
 }
 
-Entity* Imp::build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
   // Create the node.
   Entity* group = _factory->get_current_group();
   Entity* _node = _factory->create_compute_node(group, compute_did);
@@ -101,7 +138,7 @@ Entity* Imp::build_compute_node(ComponentDID compute_did, const QVariantMap& cha
   return _node;
 }
 
-void Imp::link(Entity* downstream) {
+void NodeGraphManipulatorImp::link(Entity* downstream) {
   // Get the factory.
   Dep<BaseFactory> factory = get_dep<BaseFactory>(_app_root);
   Entity* current_group = factory->get_current_group();
@@ -169,7 +206,7 @@ void Imp::link(Entity* downstream) {
 
 NodeGraphManipulator::NodeGraphManipulator(Entity* entity):
     BaseNodeGraphManipulator(entity, kDID()),
-    _imp(new_ff Imp(entity))
+    _imp(new_ff NodeGraphManipulatorImp(entity))
 {
 }
 
