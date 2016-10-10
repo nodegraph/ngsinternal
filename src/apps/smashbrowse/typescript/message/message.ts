@@ -173,8 +173,8 @@ class RequestMessage extends BaseMessage {
 }
 
 class ResponseMessage extends BaseMessage {
-    success: boolean
-    value: any
+    success: boolean // Whether the app should continue sending more requests in this sequence. False means some unrecoverable error has occured.
+    value: any // The return value in response to a previous request.
     constructor(id: Number, iframe: string, success: boolean, value: any = 0) {
         super(id, iframe)
         this.msg_type = MessageType.kResponseMessage

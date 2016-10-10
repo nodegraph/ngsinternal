@@ -25,6 +25,9 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   // Update current compute markers on nodes.
   virtual void set_compute_node(Entity* entity);
   virtual void clear_compute_node();
+  virtual void set_error_node(); // Show error marker on the current compute node.
+  virtual void clear_error_node();
+  virtual void update_clean_marker(Entity* entity, bool clean);
 
   // Build and link a compute node.
   virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state);

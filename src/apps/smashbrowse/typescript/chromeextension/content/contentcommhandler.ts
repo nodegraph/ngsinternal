@@ -46,7 +46,7 @@ class ContentCommHandler {
                 // Determine the xpath of the overlay element.
                 let xpath = this.gui_collection.overlay_sets.get_xpath(req.args.set_index, req.args.overlay_index)
                 let value = { xpath: xpath }
-                let resp = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), true, value)
+                let resp = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), (xpath != ""), value)
                 this.content_comm.send_to_bg(resp)
             } break
             case RequestType.kCreateSetFromMatchValues: {

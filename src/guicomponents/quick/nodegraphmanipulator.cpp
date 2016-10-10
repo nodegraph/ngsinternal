@@ -44,6 +44,9 @@ class NodeGraphManipulatorImp: public Component {
   // Update current compute markers on nodes.
   void set_compute_node(Entity* entity);
   void clear_compute_node();
+  void set_error_node();
+  void clear_error_node();
+  void update_clean_marker(Entity* entity, bool clean);
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
@@ -98,6 +101,26 @@ void NodeGraphManipulatorImp::set_compute_node(Entity* entity) {
 void NodeGraphManipulatorImp::clear_compute_node() {
   _node_selection->clear_compute_node();
   _ng_quick->update();
+}
+
+void NodeGraphManipulatorImp::set_error_node() {
+  Dep<NodeShape> compute_node = _node_selection->get_compute_node();
+  if (compute_node) {
+    _node_selection->set_error_node(compute_node);
+    _ng_quick->update();
+  }
+}
+
+void NodeGraphManipulatorImp::clear_error_node() {
+  _node_selection->clear_error_node();
+  _ng_quick->update();
+}
+
+void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
+  Dep<NodeShape> ns = get_dep<NodeShape>(entity);
+  ns->show_clean_marker(clean);
+  _ng_quick->update();
+  qApp->processEvents();
 }
 
 Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
@@ -236,6 +259,18 @@ void NodeGraphManipulator::set_compute_node(Entity* entity) {
 
 void NodeGraphManipulator::clear_compute_node() {
   _imp->clear_compute_node();
+}
+
+void NodeGraphManipulator::set_error_node() {
+  _imp->set_error_node();
+}
+
+void NodeGraphManipulator::clear_error_node() {
+  _imp->clear_error_node();
+}
+
+void NodeGraphManipulator::update_clean_marker(Entity* entity, bool clean) {
+  _imp->update_clean_marker(entity, clean);
 }
 
 Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {

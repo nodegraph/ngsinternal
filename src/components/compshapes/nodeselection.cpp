@@ -28,6 +28,7 @@ NodeSelection::NodeSelection(Entity* entity)
       _edit_node_shape(this),
       _view_node_shape(this),
       _compute_node_shape(this),
+      _error_node_shape(this),
       _locked(false),
       _accumulate(false){
 }
@@ -80,6 +81,11 @@ void NodeSelection::set_compute_node_entity(Entity* node) {
   set_compute_node(node_shape);
 }
 
+void NodeSelection::set_error_node_entity(Entity* node) {
+  Dep<NodeShape> node_shape = get_dep<NodeShape>(node);
+  set_error_node(node_shape);
+}
+
 void NodeSelection::set_compute_node(const Dep<NodeShape>& node) {
   external();
   if (_compute_node_shape) {
@@ -87,6 +93,15 @@ void NodeSelection::set_compute_node(const Dep<NodeShape>& node) {
   }
   node->show_compute_marker(true);
   _compute_node_shape = node;
+}
+
+void NodeSelection::set_error_node(const Dep<NodeShape>& node) {
+  external();
+  if (_error_node_shape) {
+    _error_node_shape->show_error_marker(false);
+  }
+  node->show_error_marker(true);
+  _error_node_shape = node;
 }
 
 const Dep<NodeShape>& NodeSelection::get_edit_node() const {
@@ -102,6 +117,11 @@ const Dep<NodeShape>& NodeSelection::get_view_node() const {
 const Dep<NodeShape>& NodeSelection::get_compute_node() const {
   external();
   return _compute_node_shape;
+}
+
+const Dep<NodeShape>& NodeSelection::get_error_node() const {
+  external();
+  return _error_node_shape;
 }
 
 void NodeSelection::clear_edit_node() {
@@ -126,6 +146,14 @@ void NodeSelection::clear_compute_node() {
     _compute_node_shape->show_compute_marker(false);
   }
   _compute_node_shape.reset();
+}
+
+void NodeSelection::clear_error_node() {
+  external();
+  if (_error_node_shape) {
+    _error_node_shape->show_error_marker(false);
+  }
+  _error_node_shape.reset();
 }
 
 void NodeSelection::select(const Dep<NodeShape>& e) {

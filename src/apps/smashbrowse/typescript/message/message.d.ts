@@ -114,8 +114,8 @@ declare class RequestMessage extends BaseMessage {
 }
 
 declare class ResponseMessage extends BaseMessage {
-    success: boolean
-    value: any
+    success: boolean // Whether the app should continue sending more requests in this sequence. False means some unrecoverable error has occured.
+    value: any // The return value in response to a previous request.
     constructor(id: Number, iframe: string, success: boolean, value?: any)
 }
 

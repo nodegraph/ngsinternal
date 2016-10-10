@@ -204,6 +204,8 @@ class COMMS_EXPORT Message: public QVariantMap {
   // Initializes a request message.
   Message(RequestType rt, const QVariantMap& args = QVariantMap());
   // Initializes a response message.
+  // The success arg is whether the app should continue sending more requests in this sequence.
+  // False means some unrecoverable error has occured.
   Message(bool success, const QVariant& value = QVariant());
   // Initializes an info message.
   Message(InfoType it, const QVariant& value = QVariant());

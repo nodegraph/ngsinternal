@@ -19,6 +19,9 @@ class BaseNodeGraphManipulator: public Component {
   // Show the processing marker on a node.
   virtual void set_compute_node(Entity* entity) = 0;
   virtual void clear_compute_node() = 0;
+  virtual void set_error_node() = 0; // Show error marker on the current compute node.
+  virtual void clear_error_node() = 0;
+  virtual void update_clean_marker(Entity* entity, bool clean) = 0;
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.

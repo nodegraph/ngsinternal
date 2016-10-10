@@ -35,6 +35,12 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   const Dep<NodeShape>& get_compute_node() const;
   void clear_compute_node();
 
+  // Tracks the node currently having an error with its compute.
+  void set_error_node_entity(Entity* node);
+  void set_error_node(const Dep<NodeShape>& node);
+  const Dep<NodeShape>& get_error_node() const;
+  void clear_error_node();
+
   // The selection is global throughout the system.
   void select(const Dep<NodeShape>& e);
   void deselect(const Dep<NodeShape>& e);
@@ -71,6 +77,7 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   Dep<NodeShape> _edit_node_shape;
   Dep<NodeShape> _view_node_shape;
   Dep<NodeShape> _compute_node_shape;
+  Dep<NodeShape> _error_node_shape;
 
   // The current selection.
   DepUSet<NodeShape> _selected_node_shapes;

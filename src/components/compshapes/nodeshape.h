@@ -9,21 +9,43 @@ class Resources;
 class NodeSelection;
 class Compute;
 
+class NodeMarker {
+ public:
+  static const float _bg_depth;
+  static const float _fg_depth;
+  static const glm::vec2 _border_size;
+
+  NodeMarker();
+  ~NodeMarker();
+
+  void set_bg_color(const std::array<unsigned char,4>& bg_color);
+  void set_fg_color(const std::array<unsigned char,4>& fg_color);
+  void set_letter(const std::string& letter);
+
+  void show(bool show) {_show_marker = show;}
+  bool is_showing() const {return _show_marker;}
+
+  void set_state(unsigned char state);
+  void update_quads(glm::vec2& start);
+  void update_quads_cache(std::vector<ShapeInstance>& quads_cache);
+  void update_chars(Resources* resources, unsigned char state);
+  void update_chars_cache(std::vector<CharInstance>& chars_cache);
+
+ private:
+  bool _show_marker;
+
+  std::array<unsigned char,4> _bg_color;
+  std::array<unsigned char,4> _fg_color;
+  std::string _letter;
+
+  ShapeInstance _bg_quad;
+  ShapeInstance _fg_quad;
+  std::vector<CharInstance> _chars;
+};
+
 class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
  public:
   COMPONENT_ID(CompShape, InvalidComponent);
-
-  static const float marker_bg_depth;
-  static const float marker_fg_depth;
-
-  static const glm::vec2 marker_border_size;
-
-  static const std::array<unsigned char,4> edit_bg_color;
-  static const std::array<unsigned char,4> edit_fg_color;
-  static const std::array<unsigned char,4> view_bg_color;
-  static const std::array<unsigned char,4> view_fg_color;
-  static const std::array<unsigned char,4> processing_bg_color;
-  static const std::array<unsigned char,4> processing_fg_color;
 
   NodeShape(Entity* entity, ComponentDID did);
   virtual ~NodeShape();
@@ -51,11 +73,16 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   virtual bool view_marker_is_showing() const;
 
   // Processing State.
-  // Attention "is_being_processed" is similarly named to currently_processing.
-  // Do not confuse this or mistakenly override the other.
-  // This process term here should be renamed. It's purely for visualization.
   virtual void show_compute_marker(bool on);
   virtual bool compute_marker_is_showing() const;
+
+  // Clean State.
+  virtual void show_clean_marker(bool on);
+  virtual bool clean_marker_is_showing() const;
+
+  // Error State.
+  virtual void show_error_marker(bool on);
+  virtual bool error_marker_is_showing() const;
 
  protected:
   virtual void update_quads(const glm::vec2& pen);
@@ -77,26 +104,14 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
 
  private:
 
-  // Our visual marking state.
-  bool _show_edit_marker;
-  bool _show_view_marker;
-  bool _show_compute_marker;
+  NodeMarker _edit_marker;
+  NodeMarker _view_marker;
+  NodeMarker _compute_marker;
+  NodeMarker _clean_marker;
+  NodeMarker _error_marker;
 
   // Shared state.
   unsigned char _shared_state;
-
-  // Edit and view chars.
-  std::vector<CharInstance> _edit_chars; // This just holds an 'E'.
-  std::vector<CharInstance> _view_chars; // This just holds an 'V'.
-  std::vector<CharInstance> _processing_chars; // This just holds an 'P'.
-
-  // Edit and view shapes.
-  ShapeInstance _edit_quad_bg;
-  ShapeInstance _edit_quad_fg;
-  ShapeInstance _view_quad_bg;
-  ShapeInstance _view_quad_fg;
-  ShapeInstance _processing_quad_bg;
-  ShapeInstance _processing_quad_fg;
 };
 
 }

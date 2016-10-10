@@ -3,6 +3,7 @@
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/messagesender.h>
+#include <guicomponents/quick/basenodegraphmanipulator.h>
 
 #include <QtCore/QCoreApplication>
 
@@ -11,12 +12,14 @@ namespace ngs {
 TaskScheduler::TaskScheduler(Entity* parent)
     : Component(parent, kIID(), kDID()),
       _msg_sender(this),
+      _ng_manipulator(this),
       _waiting_for_response(false),
       _next_msg_id(0),
       _ignore_outstanding_response(false),
       _outstanding_response_id(-1),
       _connected(false) {
   get_dep_loader()->register_fixed_dep(_msg_sender, Path({}));
+  get_dep_loader()->register_fixed_dep(_ng_manipulator, Path({}));
 }
 
 TaskScheduler::~TaskScheduler() {
@@ -164,6 +167,13 @@ void TaskScheduler::handle_response(const Message& msg) {
 
   // Record the fact that we've received our response.
   _waiting_for_response = false;
+
+  // If the response indicates an un-continuable error has occured, we reset the stack.
+  if (!_last_response[Message::kSuccess].toBool()) {
+    force_stack_reset();
+    // Also show the error marker on the node.
+    _ng_manipulator->set_error_node();
+  }
 
   // Run the next task.
   run_next_task();

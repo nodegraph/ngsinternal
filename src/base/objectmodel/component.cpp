@@ -357,6 +357,7 @@ void Component::propagate_dirtiness(Component* dirty_source) {
 
   // Set ourselves dirty.
   _dirty = true;
+  dirty_was_set();
 
   // Recurse the dirtiness to our dependants.
   for (auto &iid_iter: _dependants) {
@@ -438,6 +439,7 @@ bool Component::clean_finalize() {
 
   // We are now clean.
   _dirty = false;
+  dirty_was_set();
 
   return true;
 }

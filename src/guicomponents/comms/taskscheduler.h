@@ -9,6 +9,8 @@
 namespace ngs {
 
 class MessageSender;
+class BaseNodeGraphManipulator;
+
 class TaskContext;
 
 typedef std::function<void()> Task;
@@ -57,6 +59,7 @@ class COMMS_EXPORT TaskScheduler : public Component {
 
   // Our fixed dependencies.
   Dep<MessageSender> _msg_sender;
+  Dep<BaseNodeGraphManipulator> _ng_manipulator;
 
   // Called when the stack becomes empty.
   std::function<void()> _empty_stack_callback;

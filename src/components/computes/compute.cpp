@@ -34,6 +34,12 @@ void Compute::create_inputs_outputs() {
   create_namespace("outputs");
 }
 
+void Compute::dirty_was_set() {
+  if (_ng_manipulator) {
+      _ng_manipulator->update_clean_marker(our_entity(), !is_state_dirty());
+  }
+}
+
 void Compute::initialize_wires() {
   Component::initialize_wires();
   if ((get_did() != ComponentDID::kInputCompute) && (get_did() != ComponentDID::kOutputCompute)) {

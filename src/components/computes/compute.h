@@ -35,6 +35,7 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual ~Compute();
 
   virtual void create_inputs_outputs();
+  virtual void dirty_was_set();
 
   // Our inputs.
   QVariantMap get_inputs() const;

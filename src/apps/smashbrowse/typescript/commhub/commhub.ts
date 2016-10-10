@@ -130,9 +130,9 @@ class AppConnection extends BaseConnection {
             case RequestType.kIsBrowserOpen: {
                 let on_response = (open: boolean) => {
                     if (open) {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true))
                     } else {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false))
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, false))
                     }
                 }
                 this.webdriverwrap.browser_is_open(on_response)

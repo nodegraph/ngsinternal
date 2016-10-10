@@ -129,6 +129,7 @@ class OBJECTMODEL_EXPORT Component {
   void dirty_state();
   void clean_state();
   bool is_state_dirty() const {return _dirty;}
+  virtual void dirty_was_set() {}
 
   // GL.
   virtual bool is_initialized_gl() const {return is_initialized_gl_imp();}
