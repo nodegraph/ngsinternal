@@ -6,7 +6,9 @@
 namespace ngs {
 
 class NodeShape;
-class BaseOutputs;
+
+template <bool INPUT> class Topology;
+typedef Topology<false> OutputTopology;
 
 class COMPSHAPES_EXPORT OutputShape: public CompShape {
  public:
@@ -50,7 +52,7 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
 
   // Our fixed deps.
   Dep<NodeShape> _node_shape;
-  Dep<BaseOutputs> _outputs;
+  Dep<OutputTopology> _outputs;
 
   // Our tri instances.
   std::vector<ShapeInstance> _tris;

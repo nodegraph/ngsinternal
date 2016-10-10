@@ -20,6 +20,7 @@
 #include <components/compshapes/inputlabelshape.h>
 #include <components/compshapes/nodeselection.h>
 #include <components/compshapes/outputlabelshape.h>
+#include <components/compshapes/topology.h>
 
 #include <components/computes/compute.h>
 #include <components/computes/groupnodecompute.h>
@@ -28,9 +29,7 @@
 #include <components/computes/outputnodecompute.h>
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/inputcompute.h>
-#include <components/computes/inputs.h>
 #include <components/computes/outputcompute.h>
-#include <components/computes/outputs.h>
 #include <entities/componentinstancer.h>
 #include <components/interactions/viewcontrols.h>
 #include <components/interactions/graphbuilder.h>

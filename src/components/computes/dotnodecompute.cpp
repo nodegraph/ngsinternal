@@ -24,7 +24,7 @@ void DotNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
-  copy_outputs("out", _named_inputs.at("in"), "out");
+  copy_outputs("out", _inputs->get_exposed().at("in"), "out");
 }
 
 }

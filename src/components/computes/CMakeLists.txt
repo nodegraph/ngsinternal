@@ -1,7 +1,6 @@
 
 set(sources
-    inputs.cpp
-    outputs.cpp
+	flux.cpp
 	compute.cpp
 	dotnodecompute.cpp
 	groupnodecompute.cpp
@@ -20,10 +19,7 @@ qt5_wrap_cpp(moc_imps ${moc_headers})
 list(APPEND sources ${moc_imps})
     
 set(headers
-    baseinputs.h
-    baseoutputs.h
-    inputs.h
-    outputs.h
+    flux.h
 	compute.h
 	dotnodecompute.h
 	groupnodecompute.h

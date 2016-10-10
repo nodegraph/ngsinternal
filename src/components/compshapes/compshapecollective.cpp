@@ -7,10 +7,10 @@
 #include <entities/entityids.h>
 
 #include <components/compshapes/compshape.h>
+#include <components/compshapes/topology.h>
 #include <components/compshapes/compshapecollective.h>
 #include <components/compshapes/dotnodeshape.h>
 
-#include <components/computes/baseoutputs.h>
 
 #include <iostream>
 #include <thread>
@@ -290,8 +290,8 @@ Dep<CompShape> CompShapeCollective::get_lowest(const std::unordered_set<Entity*>
     }
 
     // If the entity has no exposed outputs then continue.
-    Dep<BaseOutputs> outputs = get_dep<BaseOutputs>(cs->our_entity());
-    if (outputs->get_exposed().empty()) {
+    Dep<OutputTopology> outputs = get_dep<OutputTopology>(cs->our_entity());
+    if (outputs->get_num_exposed() == 0) {
       continue;
     }
 

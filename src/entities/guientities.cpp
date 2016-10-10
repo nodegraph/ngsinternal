@@ -17,6 +17,7 @@
 #include <components/resources/resources.h>
 
 #include <components/compshapes/compshapecollective.h>
+#include <components/compshapes/topology.h>
 #include <components/compshapes/dotnodeshape.h>
 #include <components/compshapes/inputlabelshape.h>
 #include <components/compshapes/inputnodeshape.h>
@@ -34,11 +35,9 @@
 #include <components/computes/groupnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/inputnodecompute.h>
-#include <components/computes/inputs.h>
 #include <components/computes/mocknodecompute.h>
 #include <components/computes/outputcompute.h>
 #include <components/computes/outputnodecompute.h>
-#include <components/computes/outputs.h>
 
 #include <gui/widget/nodegrapheditor.h>
 
@@ -261,6 +260,8 @@ void GroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff GroupNodeShape(this);
   new_ff Inputs(this);
   new_ff Outputs(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
 }
 
 void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const {
@@ -334,6 +335,8 @@ void DotNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff DotNodeShape(this);
   new_ff Inputs(this);
   new_ff Outputs(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
 }
 
 void InputNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -343,6 +346,8 @@ void InputNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputNodeShape(this);
   new_ff Inputs(this);
   new_ff Outputs(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
 }
 
 void OutputNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -352,6 +357,8 @@ void OutputNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff OutputNodeShape(this);
   new_ff Inputs(this);
   new_ff Outputs(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
 }
 
 void ComputeNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -361,6 +368,8 @@ void ComputeNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff RectNodeShape(this);
   new_ff Inputs(this);
   new_ff Outputs(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
 }
 
 Compute* ComputeNodeEntity::get_compute() {

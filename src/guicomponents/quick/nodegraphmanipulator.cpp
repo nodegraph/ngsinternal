@@ -13,10 +13,9 @@
 #include <components/computes/compute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
-#include <components/computes/baseoutputs.h>
-#include <components/computes/baseinputs.h>
 
 // CompShapes.
+#include <components/compshapes/topology.h>
 #include <components/compshapes/nodeshape.h>
 #include <components/compshapes/linkshape.h>
 #include <components/compshapes/inputshape.h>
@@ -49,6 +48,10 @@ class NodeGraphManipulatorImp: public Component {
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
   Entity* build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state);
+
+  // Update inputs and outputs configuration for the gui side.
+  virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
+  virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
 
  private:
   Entity* build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state);
@@ -101,6 +104,16 @@ Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID comput
   Entity* node = build_compute_node(compute_did, chain_state);
   link(node);
   return node;
+}
+
+void NodeGraphManipulatorImp::set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
+  Dep<InputTopology> topo = get_dep<InputTopology>(entity);
+  topo->set_topology(ordering);
+}
+
+void NodeGraphManipulatorImp::set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
+  Dep<OutputTopology> topo = get_dep<OutputTopology>(entity);
+  topo->set_topology(ordering);
 }
 
 Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
@@ -164,21 +177,19 @@ void NodeGraphManipulatorImp::link(Entity* downstream) {
   downstream_node->set_pos(pos);
 
   // Get the exposed outputs from the upstream node.
-  Dep<BaseOutputs> outputs = get_dep<BaseOutputs>(upstream);
-  const std::unordered_map<std::string, Entity*>& exposed_outputs = outputs->get_exposed();
+  Dep<Outputs> outputs = get_dep<Outputs>(upstream);
+  const std::unordered_map<std::string, Dep<OutputCompute> >& exposed_outputs = outputs->get_exposed();
 
   // Get the exposed inputs from the downstream node.
-  Dep<BaseInputs> inputs = get_dep<BaseInputs>(downstream);
-  const std::unordered_map<std::string, Entity*>& exposed_inputs = inputs->get_exposed();
+  Dep<Inputs> inputs = get_dep<Inputs>(downstream);
+  const std::unordered_map<std::string, Dep<InputCompute> >& exposed_inputs = inputs->get_exposed();
 
   // If we have exposed outputs and inputs then lets connect the first of each of them.
   if (!exposed_outputs.empty() && !exposed_inputs.empty()) {
-    Entity* output = exposed_outputs.begin()->second;
-    Entity* input = exposed_inputs.begin()->second;
+    Dep<OutputCompute> output_compute = exposed_outputs.begin()->second;
+    Dep<InputCompute> input_compute = exposed_inputs.begin()->second;
 
     // Link the computes.
-    Dep<OutputCompute> output_compute = get_dep<OutputCompute>(output);
-    Dep<InputCompute> input_compute = get_dep<InputCompute>(input);
     input_compute->link_output_compute(output_compute);
 
     // Create a link.
@@ -187,8 +198,8 @@ void NodeGraphManipulatorImp::link(Entity* downstream) {
     link->create_internals();
 
     // Link the link, input and output shapes.
-    Dep<OutputShape> output_shape = get_dep<OutputShape>(output);
-    Dep<InputShape> input_shape = get_dep<InputShape>(input);
+    Dep<OutputShape> output_shape = get_dep<OutputShape>(output_compute->our_entity());
+    Dep<InputShape> input_shape = get_dep<InputShape>(input_compute->our_entity());
     Dep<LinkShape> link_shape = get_dep<LinkShape>(link);
     link_shape->start_moving();
     link_shape->link_input_shape(input_shape);
@@ -229,6 +240,14 @@ void NodeGraphManipulator::clear_compute_node() {
 
 Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
   return _imp->build_and_link_compute_node(compute_did, chain_state);
+}
+
+void NodeGraphManipulator::set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
+  _imp->set_input_topology(entity, ordering);
+}
+
+void NodeGraphManipulator::set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
+  _imp->set_output_topology(entity, ordering);
 }
 
 }

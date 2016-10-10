@@ -7,11 +7,13 @@
 #include <base/utils/simplesaver.h>
 #include <base/utils/simpleloader.h>
 
-#include <cassert>
-#include <boost/math/constants/constants.hpp>
+#include <components/compshapes/topology.h>
 #include <components/compshapes/nodeshape.h>
 #include <components/compshapes/outputshape.h>
-#include <components/computes/baseoutputs.h>
+
+
+#include <cassert>
+#include <boost/math/constants/constants.hpp>
 
 namespace ngs {
 

@@ -16,13 +16,18 @@ class BaseNodeGraphManipulator: public Component {
   BaseNodeGraphManipulator(Entity* entity, ComponentDID did):Component(entity, kIID(), did){}
   virtual ~BaseNodeGraphManipulator(){}
 
+  // Show the processing marker on a node.
+  virtual void set_compute_node(Entity* entity) = 0;
+  virtual void clear_compute_node() = 0;
+
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
   virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) = 0;
 
-  // Show the processing marker on a node.
-  virtual void set_compute_node(Entity* entity) = 0;
-  virtual void clear_compute_node() = 0;
+  // Update inputs and outputs configuration for the gui side.
+  virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
+  virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
+
 
 };
 

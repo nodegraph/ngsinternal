@@ -115,8 +115,8 @@ void GroupNodeCompute::update_state() {
 
   // For each input data if there is an associated input node, we set data on the input node
   // from the input data. The input data handles connections to other entities internally.
-  for (auto &iter: _named_inputs) {
-    Dep<InputCompute>& input = iter.second;
+  for (auto &iter: _inputs->get_all()) {
+    const Dep<InputCompute>& input = iter.second;
     const std::string& input_name = input->get_name();
     // Find the input node in this group with the same name as the input plug.
     Entity* input_node = our_entity()->get_child(input_name);
@@ -129,7 +129,7 @@ void GroupNodeCompute::update_state() {
     Dep<Compute> input_node_compute = get_dep<Compute>(input_node);
     if (input_node_compute) {
       // Hack to call protected method on Compute instance.
-      void (Compute::*hack)(const std::string&, Dep<InputCompute>&, const std::string&) = &GroupNodeCompute::copy_outputs;
+      void (Compute::*hack)(const std::string&, const Dep<InputCompute>&, const std::string&) = &GroupNodeCompute::copy_outputs;
       (input_node_compute.get()->*hack)("out", input, "out");
     }
   }

@@ -2,7 +2,6 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
 #include <base/objectmodel/deploader.h>
-#include <components/computes/inputs.h>
 #include <entities/entityids.h>
 #include <entities/entityinstancer.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
@@ -42,23 +41,6 @@ void Compute::initialize_wires() {
   }
 }
 
-void Compute::update_wires() {
-  internal();
-  // The inputs component will only be present on the entity containing a node based compute.
-  if (_inputs) {
-    const std::unordered_map<std::string, Entity*>& exposed = _inputs->get_exposed();
-    const std::unordered_map<std::string, Entity*>& hidden = _inputs->get_hidden();
-    for (auto iter: exposed) {
-      Dep<InputCompute> input = get_dep<InputCompute>(iter.second);
-      _named_inputs.insert({input->get_name(), input});
-    }
-    for (auto iter: hidden) {
-      Dep<InputCompute> input = get_dep<InputCompute>(iter.second);
-      _named_inputs.insert({input->get_name(), input});
-    }
-  }
-}
-
 void Compute::update_state() {
   internal();
   // Notify the gui side that a computation is now processing on the compute side.
@@ -80,7 +62,10 @@ bool Compute::clean_finalize() {
 QVariantMap Compute::get_inputs() const {
   external();
   QVariantMap map;
-  for (auto iter: _named_inputs) {
+  for (auto iter: _inputs->get_exposed()) {
+    map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
+  }
+  for (auto iter: _inputs->get_hidden()) {
     map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
   }
   return map;
@@ -89,8 +74,10 @@ QVariantMap Compute::get_inputs() const {
 void Compute::set_params(const QVariantMap& params) {
   QVariantMap::const_iterator iter;
   for (iter = params.begin(); iter != params.end(); ++iter) {
-    if (_named_inputs.count(iter.key().toStdString())) {
-      _named_inputs.at(iter.key().toStdString())->set_value(iter.value());
+    if (_inputs->get_exposed().count(iter.key().toStdString())) {
+      _inputs->get_exposed().at(iter.key().toStdString())->set_value(iter.value());
+    } else if (_inputs->get_hidden().count(iter.key().toStdString())) {
+      _inputs->get_hidden().at(iter.key().toStdString())->set_value(iter.value());
     }
   }
 }
@@ -118,11 +105,11 @@ void Compute::set_output(const std::string& name, const QVariant& value) {
   _outputs.insert(name.c_str(), value);
 }
 
-void Compute::copy_outputs(const std::string& output_name, Dep<InputCompute>& other_compute, const std::string& other_output_name) {
+void Compute::copy_outputs(const std::string& output_name, const Dep<InputCompute>& other_compute, const std::string& other_output_name) {
   set_output(output_name, other_compute->get_output(other_output_name));
 }
 
-void Compute::copy_outputs(const std::string& output_name, Dep<Compute>& other_compute, const std::string& other_output_name) {
+void Compute::copy_outputs(const std::string& output_name, const Dep<Compute>& other_compute, const std::string& other_output_name) {
   set_output(output_name, other_compute->get_output(other_output_name));
 }
 

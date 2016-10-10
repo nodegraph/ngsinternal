@@ -9,11 +9,13 @@
 #include <base/utils/simplesaver.h>
 #include <base/utils/simpleloader.h>
 
-#include <boost/math/constants/constants.hpp>
+#include <components/compshapes/topology.h>
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/nodeshape.h>
-#include <components/computes/baseinputs.h>
+
+
 #include <cmath>
+#include <boost/math/constants/constants.hpp>
 
 namespace ngs {
 

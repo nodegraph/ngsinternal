@@ -2,6 +2,7 @@
 #include <base/objectmodel/component.h>
 #include <components/computes/computes_export.h>
 #include <components/computes/paramtypes.h>
+#include <components/computes/flux.h>
 
 #include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
@@ -18,7 +19,6 @@ namespace ngs {
 #define TEMPLATE_EXPORT 
 #endif
 
-class Inputs;
 class InputCompute;
 class BaseNodeGraphManipulator;
 
@@ -46,7 +46,6 @@ class COMPUTES_EXPORT Compute: public Component {
  protected:
   // Our state.
   virtual void initialize_wires();
-  virtual void update_wires();
   virtual void update_state();
   virtual bool clean_finalize();
 
@@ -54,8 +53,8 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void set_outputs(const QVariantMap& outputs);
   virtual void set_output(const std::string& name, const QVariant& value);
 
-  virtual void copy_outputs(const std::string& output_name, Dep<InputCompute>& other_compute, const std::string& other_output_name);
-  virtual void copy_outputs(const std::string& output_name, Dep<Compute>& other_compute, const std::string& other_output_name);
+  virtual void copy_outputs(const std::string& output_name, const Dep<InputCompute>& other_compute, const std::string& other_output_name);
+  virtual void copy_outputs(const std::string& output_name, const Dep<Compute>& other_compute, const std::string& other_output_name);
 
   // Plugs.
   Entity* create_input(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
@@ -67,8 +66,6 @@ class COMPUTES_EXPORT Compute: public Component {
  protected:
   Dep<Inputs> _inputs;
   Dep<BaseNodeGraphManipulator> _ng_manipulator;
-
-  std::unordered_map<std::string, Dep<InputCompute> > _named_inputs;
 
   // Map from output plug names to results.
   // QVariantMap is a typedef for QMap<QString, QVariant>.

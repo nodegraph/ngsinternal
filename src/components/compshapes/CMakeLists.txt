@@ -1,5 +1,6 @@
 
 set(sources
+	topology.cpp
     compshape.cpp
     compshapecollective.cpp
     dotnodeshape.cpp
@@ -18,6 +19,7 @@ set(sources
     )
     
 set(headers
+	topology.h
     compshape.h
     compshapecollective.h
     dotnodeshape.h
