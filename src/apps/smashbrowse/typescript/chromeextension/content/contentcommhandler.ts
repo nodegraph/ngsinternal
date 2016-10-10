@@ -50,14 +50,15 @@ class ContentCommHandler {
                 this.content_comm.send_to_bg(resp)
             } break
             case RequestType.kCreateSetFromMatchValues: {
+                let elem_wraps: ElemWrap[]
                 switch (req.args.wrap_type) {
                     case WrapType.text: {
-                        let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.text, req.args.text_values)
+                        elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.text, req.args.text_values)
                         this.gui_collection.add_overlay_set(elem_wraps)
                         this.gui_collection.overlay_sets.update()
                     } break
                     case WrapType.image: {
-                        let elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, req.args.image_values)
+                        elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, req.args.image_values)
                         this.gui_collection.add_overlay_set(elem_wraps)
                         this.gui_collection.overlay_sets.update()
                         console.log('overlay set added for image')
@@ -66,7 +67,12 @@ class ContentCommHandler {
                         console.error("Error: Attempt to create set from unknown wrap type.")
                     }
                 }
-                this.content_comm.send_to_bg(success_msg)
+                if (elem_wraps.length > 0) {
+                    this.content_comm.send_to_bg(success_msg)
+                } else {
+                    let failed_resp = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), false)
+                    this.content_comm.send_to_bg(failed_resp)
+                }
             } break
             case RequestType.kCreateSetFromWrapType: {
                 let elem_wraps = this.gui_collection.page_wrap.get_by_any_value(req.args.wrap_type, [])

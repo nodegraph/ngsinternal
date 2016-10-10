@@ -66,21 +66,6 @@ declare const enum ElementActionType {
     kScroll
 }
 
-// declare const enum ActionType {
-//     kSendClick,
-//     kMouseOver,
-//     kStartMouseHover,
-//     kStopMouseHover,
-//     kSendText,
-//     kSendEnter,
-//     kGetText,
-//     kSelectOption,
-//     kScrollDown,
-//     kScrollUp,
-//     kScrollRight,
-//     kScrollLeft
-// }
-
 declare const enum InfoType {
     kPageIsLoading,
     kPageIsReady,
