@@ -67,8 +67,23 @@ bool Flux<Traits>::wires_are_up_to_date() {
     }
   }
 
+  // Check the number of inputs/outputs.
   if (_all.size() != num_io) {
     return false;
+  }
+
+  // Make sure all the exposed are actually exposed.
+  for (auto iter: _exposed) {
+    if (!iter.second->is_exposed()) {
+      return false;
+    }
+  }
+
+  // Make sure all the hidden are actually hidden.
+  for (auto iter: _hidden) {
+    if (iter.second->is_exposed()) {
+      return false;
+    }
   }
 
   return true;
