@@ -22,6 +22,7 @@ class NodeShape;
 class BaseFactory;
 class BaseEntityInstancer;
 class LicenseChecker;
+class BaseNodeGraphManipulator;
 
 
 class QUICK_EXPORT NodeGraphQuickItem : public QQuickItem, public Component
@@ -44,8 +45,6 @@ Q_OBJECT
   Q_INVOKABLE QString get_ngs_version() const;
   Q_INVOKABLE size_t get_num_nodes() const;
 
-
-
   // Node Creation.
   Q_INVOKABLE void create_group_node(bool centered);
   Q_INVOKABLE void create_input_node(bool centered);
@@ -57,6 +56,8 @@ Q_OBJECT
   Q_INVOKABLE void view_node();
   Q_INVOKABLE void edit_node();
   Q_INVOKABLE void process_node();
+  Q_INVOKABLE void dirty_node();
+  Q_INVOKABLE void clean_node();
 
   // Group Navigation.
   Q_INVOKABLE void dive();
@@ -159,6 +160,7 @@ Q_OBJECT
   Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;
   Dep<LicenseChecker> _license_checker;
+  Dep<BaseNodeGraphManipulator> _ng_manipulator;
 
   // Used to detect long press.
   QTimer _long_press_timer;

@@ -41,6 +41,8 @@ bool TaskScheduler::is_open() const {
 }
 
 void TaskScheduler::force_stack_reset() {
+  std::cerr << "forcing stack reset \n";
+
   // Clear the stack of queues.
   _stack.clear();
 
@@ -53,11 +55,6 @@ void TaskScheduler::force_stack_reset() {
   _waiting_for_response = false;
   _next_msg_id = 0;
   _last_response = Message();
-}
-
-void TaskScheduler::set_empty_stack_callback(std::function<void()> callback) {
-  external();
-  _empty_stack_callback = callback;
 }
 
 // ---------------------------------------------------------------------------------
@@ -119,7 +116,7 @@ void TaskScheduler::run_next_task() {
   }
 
   if (_stack.empty()) {
-    _empty_stack_callback();
+    _ng_manipulator->continue_cleaning_to_ultimate_target();
     return;
   }
 
@@ -173,6 +170,7 @@ void TaskScheduler::handle_response(const Message& msg) {
     force_stack_reset();
     // Also show the error marker on the node.
     _ng_manipulator->set_error_node();
+    _ng_manipulator->clear_ultimate_target();
   }
 
   // Run the next task.

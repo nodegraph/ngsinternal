@@ -37,6 +37,7 @@
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/quick/texturedisplaynode.h>
+#include <guicomponents/quick/basenodegraphmanipulator.h>
 
 
 #include <QtQuick/QQuickWindow>
@@ -85,6 +86,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
       _factory(this),
       _file_model(this),
       _license_checker(this),
+      _ng_manipulator(this),
       _last_pressed_node(this),
       _link_locked(false) {
 
@@ -94,6 +96,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
   get_dep_loader()->register_fixed_dep(_file_model, Path({}));
   get_dep_loader()->register_fixed_dep(_license_checker, Path({}));
+  get_dep_loader()->register_fixed_dep(_ng_manipulator, Path({}));
 
   _device_pixel_ratio = static_cast<GLsizei>(QGuiApplication::primaryScreen()->devicePixelRatio());
 
@@ -606,6 +609,37 @@ void NodeGraphQuickItem::process_node() {
   }
 }
 
+void NodeGraphQuickItem::dirty_node() {
+  external();
+  // Return if don't have a last pressed shape.
+  if (!_last_pressed_node) {
+    return;
+  }
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  if(compute) {
+    // Update our node graph selection object which also tracks and edit and view nodes.
+    compute->dirty_state();
+    update();
+  }else {
+    qDebug() << "Error: could not find compute to perform. \n";
+  }
+}
+
+void NodeGraphQuickItem::clean_node() {
+  external();
+  // Return if don't have a last pressed shape.
+  if (!_last_pressed_node) {
+    return;
+  }
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  if(compute) {
+    // Update our node graph selection object which also tracks and edit and view nodes.
+    _ng_manipulator->set_ultimate_target(compute->our_entity());
+  }else {
+    qDebug() << "Error: could not find compute to perform. \n";
+  }
+}
+
 void NodeGraphQuickItem::view_node() {
   external();
   // Return if don't have a last pressed shape.
@@ -616,7 +650,7 @@ void NodeGraphQuickItem::view_node() {
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
     qDebug() << "performing compute! \n";
-    compute->propagate_cleanliness();
+    _ng_manipulator->set_ultimate_target(compute->our_entity());
 
     QVariantMap submap;
     submap.insert("xxnumber int", 123);

@@ -27,13 +27,10 @@ WebRecorder::WebRecorder(Entity* parent)
       Component(parent, kIID(), kDID()),
       _web_worker(this),
       _task_scheduler(this),
-      _file_model(this),
-      _compute(this) {
+      _file_model(this) {
   get_dep_loader()->register_fixed_dep(_web_worker, Path({}));
   get_dep_loader()->register_fixed_dep(_task_scheduler, Path({}));
   get_dep_loader()->register_fixed_dep(_file_model, Path({}));
-
-  _on_empty_stack = std::bind(&WebRecorder::on_empty_stack, this);
 }
 
 WebRecorder::~WebRecorder() {
@@ -41,55 +38,6 @@ WebRecorder::~WebRecorder() {
 
 void WebRecorder::initialize_wires() {
   Component::initialize_wires();
-  _task_scheduler->set_empty_stack_callback(_on_empty_stack);
-  std::function<void(ComponentDID, const QVariantMap&)> builder =
-      std::bind(&WebRecorder::build_web_node, this, std::placeholders::_1, std::placeholders::_2);
-  _web_worker->set_web_node_builder(builder);
-}
-
-void WebRecorder::clean_compute(Entity* compute_entity) {
-  external();
-  _compute = get_dep<Compute>(compute_entity);
-  _compute->clean_state();
-}
-
-void WebRecorder::clean_compute(Dep<Compute>& compute) {
-  external();
-  _compute = compute;
-  _compute->clean_state();
-}
-
-void WebRecorder::continue_cleaning_compute() {
-  external();
-  if (!_compute) {
-    return;
-  }
-  if (!_compute->is_state_dirty()) {
-    return;
-  }
-  _compute->clean_state();
-}
-
-void WebRecorder::on_empty_stack() {
-  continue_cleaning_compute();
-}
-
-void WebRecorder::build_web_node(ComponentDID compute_did, const QVariantMap& chain_state) {
-  Dep<BaseNodeGraphManipulator> manipulator = get_dep<BaseNodeGraphManipulator>(get_app_root());
-  Entity* node = manipulator->build_and_link_compute_node(compute_did, chain_state);
-  clean_compute(node);
-
-//  WebNodeManipulator* linker = new_ff WebNodeManipulator(get_app_root());
-//  linker->build_and_link_compute_node(compute_did, chain_state);
-//
-//  // Grab the compute..
-//  Compute* compute = linker->get_compute();
-//
-//  // Destroy our linker.
-//  delete_ff(linker);
-//
-//  // Clean the compute.
-//  clean_compute(compute->our_entity());
 }
 
 // -----------------------------------------------------------------

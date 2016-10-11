@@ -50,6 +50,8 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void update_state();
   virtual bool clean_finalize();
 
+
+
   // Our outputs. These are called during cleaning, so they don't dirty the instance's state.
   virtual void set_outputs(const QVariantMap& outputs);
   virtual void set_output(const std::string& name, const QVariant& value);

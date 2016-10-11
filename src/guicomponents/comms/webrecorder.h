@@ -4,8 +4,6 @@
 #include <base/objectmodel/dep.h>
 #include <guicomponents/comms/message.h>
 
-#include <functional>
-
 namespace ngs {
 
 class FileModel;
@@ -22,11 +20,6 @@ Q_OBJECT
 
   explicit WebRecorder(Entity* parent);
   virtual ~WebRecorder();
-
-  // Asynchronous Component Cleaning.
-  void clean_compute(Entity* compute_entity);
-  void clean_compute(Dep<Compute>& compute);
-  void continue_cleaning_compute();
 
   // ---------------------------------------------------------------------------------
   // Record Actions.
@@ -139,12 +132,6 @@ Q_OBJECT
   Dep<WebWorker> _web_worker;
   Dep<TaskScheduler> _task_scheduler;
   Dep<FileModel> _file_model;
-
-  // Compute that is currently being cleaned.
-  Dep<Compute> _compute;
-
-  // Called when the task scheduler is empty.
-  std::function<void()> _on_empty_stack;
 };
 
 }

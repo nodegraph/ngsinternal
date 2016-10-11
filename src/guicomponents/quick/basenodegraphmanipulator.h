@@ -16,6 +16,11 @@ class BaseNodeGraphManipulator: public Component {
   BaseNodeGraphManipulator(Entity* entity, ComponentDID did):Component(entity, kIID(), did){}
   virtual ~BaseNodeGraphManipulator(){}
 
+  // Asynchronous Component Cleaning.
+  virtual void set_ultimate_target(Entity* entity) = 0;
+  virtual void clear_ultimate_target() = 0;
+  virtual void continue_cleaning_to_ultimate_target() = 0;
+
   // Show the processing marker on a node.
   virtual void set_compute_node(Entity* entity) = 0;
   virtual void clear_compute_node() = 0;

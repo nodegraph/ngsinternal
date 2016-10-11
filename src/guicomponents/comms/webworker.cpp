@@ -4,6 +4,7 @@
 #include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
+#include <guicomponents/quick/basenodegraphmanipulator.h>
 
 #include <base/objectmodel/basefactory.h>
 #include <components/computes/inputcompute.h>
@@ -23,11 +24,13 @@ WebWorker::WebWorker(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
       _task_sheduler(this),
+      _ng_manipulator(this),
       _show_browser(false),
       _hovering(false),
       _jitter(kJitterSize),
       _last_response_success(true){
   get_dep_loader()->register_fixed_dep(_task_sheduler, Path({}));
+  get_dep_loader()->register_fixed_dep(_ng_manipulator, Path({}));
 
   // Setup the poll timer.
   _poll_timer.setSingleShot(false);
@@ -380,43 +383,8 @@ void WebWorker::get_outputs_task(std::function<void(const QVariantMap&)> on_get_
 }
 
 void WebWorker::build_compute_node_task(ComponentDID compute_did) {
-  _web_node_builder(compute_did, _chain_state);
-//  // Create the node.
-//  Entity* group = _factory->get_current_group();
-//  std::pair<Entity*, Compute*> internals = _factory->create_compute_node2(group, compute_did);
-//  Entity* node = internals.first;
-//  Compute* compute = internals.second;
-//
-//  // Initialize and update the wires.
-//  node->initialize_wires();
-//  group->clean_wires();
-//
-//  // Set the values on all the inputs from the chain_state.
-//  QVariantMap::const_iterator iter;
-//  for (iter = _chain_state.begin() ; iter != _chain_state.end(); ++iter) {
-//    // Find the input entity.
-//    Path path({".","inputs"});
-//    path.push_back(iter.key().toStdString());
-//    Entity* input_entity = node->has_entity(path);
-//    // Skip this key if the entity doesn't exist.
-//    if (!input_entity) {
-//      continue;
-//    }
-//    // Get the compute.
-//    Dep<InputCompute> compute = get_dep<InputCompute>(input_entity);
-//    // Skip inputs which are plugs and not params.
-//    if (compute->is_exposed()) {
-//      continue;
-//    }
-//
-//    std::cerr << "setting name: " << iter.key().toStdString() << " value: " << iter.value().toString().toStdString()
-//        << " type: " << iter.value().type() << " usertype: " << iter.value().userType() << "\n";
-//    compute->set_value(iter.value());
-//  }
-//
-//  on_node_built(node, compute);
-
-  _task_sheduler->run_next_task();
+  Entity* node = _ng_manipulator->build_and_link_compute_node(compute_did, _chain_state);
+  _ng_manipulator->set_ultimate_target(node);
 }
 
 

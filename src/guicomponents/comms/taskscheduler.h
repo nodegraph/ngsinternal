@@ -28,7 +28,6 @@ class COMMS_EXPORT TaskScheduler : public Component {
   bool is_waiting_for_response() const {return _waiting_for_response;}
 
   void force_stack_reset();
-  void set_empty_stack_callback(std::function<void()> callback);
 
   void queue_task(TaskContext& tc, Task task, const std::string& about);
   void run_next_task();
@@ -60,9 +59,6 @@ class COMMS_EXPORT TaskScheduler : public Component {
   // Our fixed dependencies.
   Dep<MessageSender> _msg_sender;
   Dep<BaseNodeGraphManipulator> _ng_manipulator;
-
-  // Called when the stack becomes empty.
-  std::function<void()> _empty_stack_callback;
 
   // A stack of queues.
   QueueStack _stack;

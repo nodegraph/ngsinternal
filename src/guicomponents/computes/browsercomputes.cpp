@@ -17,8 +17,7 @@ namespace ngs {
 BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
       _web_worker(this),
-      _task_scheduler(this),
-      _is_computing(false) {
+      _task_scheduler(this) {
   get_dep_loader()->register_fixed_dep(_web_worker, Path({}));
   get_dep_loader()->register_fixed_dep(_task_scheduler, Path({}));
 }
@@ -42,7 +41,6 @@ void BrowserCompute::dump_map(const QVariantMap& inputs) const {
 
 void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
-  _is_computing = true;
   QVariantMap inputs = get_inputs();
   _web_worker->queue_merge_chain_state(tc, inputs);
   // Make sure nothing is loading right now.
@@ -59,7 +57,6 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
 
 void BrowserCompute::on_get_outputs(const QVariantMap& outputs) {
   internal();
-  _is_computing = false;
   set_outputs(outputs);
   clean_finalize();
 }

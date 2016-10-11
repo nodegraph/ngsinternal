@@ -416,10 +416,8 @@ bool Component::clean_self() {
     return true;
   }
 
-  if (!is_computing()) {
-    // Now we clean/update our internal state.
-    update_state();
-  }
+  // Now we clean/update our internal state.
+  update_state();
 
   // If our update is asynchronous, then a finalize_update() will
   // mark this component as clean.

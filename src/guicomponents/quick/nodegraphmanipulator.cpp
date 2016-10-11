@@ -40,6 +40,11 @@ class NodeGraphManipulatorImp: public Component {
   NodeGraphManipulatorImp(Entity* app_root);
 
   virtual void initialize_wires();
+  
+  // Asynchronous Component Cleaning.
+  void set_ultimate_target(Entity* entity);
+  void clear_ultimate_target();
+  void continue_cleaning_to_ultimate_target();
 
   // Update current compute markers on nodes.
   void set_compute_node(Entity* entity);
@@ -64,6 +69,12 @@ class NodeGraphManipulatorImp: public Component {
   Dep<BaseFactory> _factory;
   Dep<NodeSelection> _node_selection;
   Dep<NodeGraphQuickItem> _ng_quick;
+
+  // The ultimate compute (of a node) that we are trying to clean.
+  // Note that there maybe many asynchronous computes which cause each cleaning pass over the dependencies
+  // to finish early (returning false). Holding this reference to the ultimate component we want to clean
+  // allows us to restart the cleaning process once other asynchronous cleaning processes finish.
+  Dep<Compute> _ultimate_target;
 };
 
 
@@ -81,7 +92,8 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
       _app_root(app_root),
       _factory(this),
       _node_selection(this),
-      _ng_quick(this) {
+      _ng_quick(this),
+      _ultimate_target(this) {
 }
 
 void NodeGraphManipulatorImp::initialize_wires() {
@@ -91,6 +103,31 @@ void NodeGraphManipulatorImp::initialize_wires() {
   _node_selection = get_dep<NodeSelection>(_app_root);
   _ng_quick = get_dep<NodeGraphQuickItem>(_app_root);
 
+}
+
+void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity) {
+  external();
+  // Clear the error marker on nodes.
+  _node_selection->clear_error_node();
+  // Set and try cleaning the ultimate target.
+  _ultimate_target = get_dep<Compute>(entity);
+  _ultimate_target->clean_state();
+}
+
+void NodeGraphManipulatorImp::clear_ultimate_target() {
+  external();
+  _ultimate_target.reset();
+}
+
+void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_target() {
+  external();
+  if (!_ultimate_target) {
+    return;
+  }
+  if (!_ultimate_target->is_state_dirty()) {
+    return;
+  }
+  _ultimate_target->clean_state();
 }
 
 void NodeGraphManipulatorImp::set_compute_node(Entity* entity) {
@@ -106,7 +143,9 @@ void NodeGraphManipulatorImp::clear_compute_node() {
 void NodeGraphManipulatorImp::set_error_node() {
   Dep<NodeShape> compute_node = _node_selection->get_compute_node();
   if (compute_node) {
+    // Show the error marker on the node.
     _node_selection->set_error_node(compute_node);
+    // Update the gui.
     _ng_quick->update();
   }
 }
@@ -251,6 +290,18 @@ NodeGraphManipulator::~NodeGraphManipulator(){
 void NodeGraphManipulator::initialize_wires() {
   Component::initialize_wires();
   _imp->initialize_wires();
+}
+
+void NodeGraphManipulator::set_ultimate_target(Entity* entity) {
+  _imp->set_ultimate_target(entity);
+}
+
+void NodeGraphManipulator::clear_ultimate_target() {
+  _imp->clear_ultimate_target();
+}
+
+void NodeGraphManipulator::continue_cleaning_to_ultimate_target() {
+  _imp->continue_cleaning_to_ultimate_target();
 }
 
 void NodeGraphManipulator::set_compute_node(Entity* entity) {

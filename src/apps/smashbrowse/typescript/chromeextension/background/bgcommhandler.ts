@@ -64,7 +64,7 @@ class BgCommHandler {
             case RequestType.kSwitchIFrame: {
                 this.bg_comm.set_iframe(req.args.iframe)
                 // Send response to nodejs.
-                let response = new ResponseMessage(req.id, "-99", true)
+                let response = new ResponseMessage(req.id, "-1", true)
                 this.bg_comm.send_to_nodejs(response)
             } break
             case RequestType.kUpdateOveralys:

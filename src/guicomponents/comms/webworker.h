@@ -7,9 +7,6 @@
 #include <QtCore/QTimer>
 #include <QtCore/QMap>
 
-//#include <functional>
-//#include <deque>
-
 namespace ngs {
 
 class Message;
@@ -17,7 +14,7 @@ class TaskScheduler;
 class TaskContext;
 class Compute;
 class BaseFactory;
-
+class BaseNodeGraphManipulator;
 
 // This class communicates with the nodejs process.
 class COMMS_EXPORT WebWorker : public QObject, public Component {
@@ -27,8 +24,6 @@ Q_OBJECT
 
   explicit WebWorker(Entity* parent);
   virtual ~WebWorker();
-
-  void set_web_node_builder(std::function<void(ComponentDID,const QVariantMap&)> builder) {_web_node_builder = builder;}
 
   Q_INVOKABLE void open();
   Q_INVOKABLE void close();
@@ -190,6 +185,7 @@ signals:
 
   // Our fixed dependencies.
   Dep<TaskScheduler> _task_sheduler;
+  Dep<BaseNodeGraphManipulator> _ng_manipulator;
 
   // Poll timer.
   QTimer _poll_timer;
@@ -212,9 +208,6 @@ signals:
   // Note that "success" is overview/cumulative value denoting whether the task completed its task successfully.
   // More detailed values are in the "value" part of the message.
   bool _last_response_success;
-
-  // This avoid dep cycles. And is used to build our web nodes.
-  std::function<void(ComponentDID,const QVariantMap&)> _web_node_builder;
 };
 
 
