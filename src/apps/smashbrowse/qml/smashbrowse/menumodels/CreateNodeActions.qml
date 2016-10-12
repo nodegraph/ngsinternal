@@ -18,7 +18,13 @@ ListModel {
             }
         }
     }
-
+    ListElement {
+        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
+        title: "Web Group Node"
+        description: "A node which groups a number of nodes inside of itself."
+        script: "node_graph_item.create_web_group_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
         title: "Group Node"

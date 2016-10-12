@@ -17,7 +17,7 @@ class BaseNodeGraphManipulator: public Component {
   virtual ~BaseNodeGraphManipulator(){}
 
   // Asynchronous Component Cleaning.
-  virtual void set_ultimate_target(Entity* entity) = 0;
+  virtual void set_ultimate_target(Entity* entity, bool force_stack_reset = false) = 0;
   virtual void clear_ultimate_target() = 0;
   virtual void continue_cleaning_to_ultimate_target() = 0;
 

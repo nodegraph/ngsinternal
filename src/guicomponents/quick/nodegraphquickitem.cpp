@@ -9,7 +9,6 @@
 #include <components/interactions/shapecanvas.h>
 #include <components/interactions/groupinteraction.h>
 #include <components/interactions/graphbuilder.h>
-
 #include <gui/widget/splashscreen.h>
 
 
@@ -30,6 +29,7 @@
 #include <components/compshapes/nodeselection.h>
 #include <components/compshapes/nodeshape.h>
 #include <components/interactions/viewcontrols.h>
+#include <guicomponents/comms/basegrouptraits.h>
 
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/quick/eventtoinfo.h>
@@ -488,7 +488,7 @@ void NodeGraphQuickItem::popup_context_menu() {
       Entity* e = _last_pressed_node->our_entity();
       EntityDID did = e->get_did();
       // Send out context menu request signals.
-      if (did == EntityDID::kGroupNodeEntity) {
+      if (e->has<GroupInteraction>()) {
         // Show the group context menu.
         emit group_node_context_menu_requested();
       } else if (e->has<Compute>()) {
@@ -570,6 +570,12 @@ void NodeGraphQuickItem::create_group_node(bool centered) {
   finish_creating_node(e, centered);
 }
 
+void NodeGraphQuickItem::create_web_group_node(bool centered) {
+  external();
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "web group", EntityDID::kWebGroupNodeEntity);
+  finish_creating_node(e, centered);
+}
+
 void NodeGraphQuickItem::create_input_node(bool centered) {
   external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "input", EntityDID::kInputNodeEntity);
@@ -635,7 +641,7 @@ void NodeGraphQuickItem::clean_node() {
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
     // Update our node graph selection object which also tracks and edit and view nodes.
-    _ng_manipulator->set_ultimate_target(compute->our_entity());
+    _ng_manipulator->set_ultimate_target(compute->our_entity(), true);
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
   }
@@ -651,7 +657,7 @@ void NodeGraphQuickItem::view_node() {
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
     qDebug() << "performing compute! \n";
-    _ng_manipulator->set_ultimate_target(compute->our_entity());
+    _ng_manipulator->set_ultimate_target(compute->our_entity(), true);
 
     QVariantMap submap;
     submap.insert("xxnumber int", 123);
@@ -738,9 +744,16 @@ void NodeGraphQuickItem::destroy_selection() {
 
 void NodeGraphQuickItem::dive() {
   external();
-  // When switching groups we clear the selection.
-  // We don't allow inter-group selections.
-  _canvas->dive(_last_pressed_node->our_entity());
+
+  // Let the group traits performs its transition behavior.
+  Entity* group_entity = _last_pressed_node->our_entity();
+  Dep<BaseGroupTraits> t = get_dep<BaseGroupTraits>(group_entity);
+  t->on_enter();
+
+  // Switch to the next group on the canvas.
+  _canvas->dive(group_entity);
+
+  // We clear the selection because we don't allow inter-group selections.
   _selection->clear_selection();
   frame_all();
   update();
@@ -748,9 +761,16 @@ void NodeGraphQuickItem::dive() {
 
 void NodeGraphQuickItem::surface() {
   external();
-  // When switching groups we clear the selection.
-  // We don't allow inter-group selections.
+
+  // Let the group traits performs its transition behavior.
+  Entity* group_entity = _factory->get_current_group();
+  Dep<BaseGroupTraits> t = get_dep<BaseGroupTraits>(group_entity);
+  t->on_exit();
+
+  // Switch to the next group on the canvas.
   _canvas->surface();
+
+  // We clear the selection, because don't allow inter-group selections.
   _selection->clear_selection();
   update();
 }

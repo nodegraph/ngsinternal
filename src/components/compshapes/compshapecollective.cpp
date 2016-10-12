@@ -99,7 +99,7 @@ void CompShapeCollective::collect_comp_shapes(Entity* entity) {
 
   // If it's a group node we don't dive into it.
   // We show its inputs and outputs.
-  if (entity->get_did() == EntityDID::kGroupNodeEntity) {
+  if (entity->get_did() == EntityDID::kGroupNodeEntity || entity->get_did() == EntityDID::kWebGroupNodeEntity) {
     collect_comp_shapes(entity->get_entity(Path({".","inputs"})));
     collect_comp_shapes(entity->get_entity(Path({".","outputs"})));
     return;
@@ -228,7 +228,9 @@ void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, g
   // Static Method.
   std::vector<Polygon> bounds;
   for(Dep<CompShape> c: comp_shapes){
-    bounds.push_back(c->get_bounds());
+	  if (c) {
+		  bounds.push_back(c->get_bounds());
+	  }
   }
   coalesce_bounds(bounds, min, max);
 }

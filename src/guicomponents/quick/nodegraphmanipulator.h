@@ -23,7 +23,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual ~NodeGraphManipulator();
 
   // Asynchronous Component Cleaning.
-  virtual void set_ultimate_target(Entity* entity);
+  virtual void set_ultimate_target(Entity* entity, bool force_stack_reset);
   virtual void clear_ultimate_target();
   virtual void continue_cleaning_to_ultimate_target();
 

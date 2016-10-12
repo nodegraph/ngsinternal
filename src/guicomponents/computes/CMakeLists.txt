@@ -2,9 +2,11 @@
 set(sources
     scriptnodecompute.cpp
     browsercomputes.cpp
+    webgroupnodecompute.cpp
     )
    
 set(headers
+    webgroupnodecompute.h
 )
     
 set(moc_headers

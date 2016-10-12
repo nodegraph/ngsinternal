@@ -53,6 +53,16 @@ bool WebWorker::is_open() {
   return _task_sheduler->is_open();
 }
 
+void WebWorker::open_browser() {
+  TaskContext tc(_task_sheduler);
+  queue_open_browser(tc);
+}
+
+void WebWorker::close_browser() {
+  TaskContext tc(_task_sheduler);
+  queue_close_browser(tc);
+}
+
 void WebWorker::force_close_browser() {
   _task_sheduler->force_stack_reset();
   {
@@ -384,7 +394,7 @@ void WebWorker::get_outputs_task(std::function<void(const QVariantMap&)> on_get_
 
 void WebWorker::build_compute_node_task(ComponentDID compute_did) {
   Entity* node = _ng_manipulator->build_and_link_compute_node(compute_did, _chain_state);
-  _ng_manipulator->set_ultimate_target(node);
+  _ng_manipulator->set_ultimate_target(node, false);
 }
 
 

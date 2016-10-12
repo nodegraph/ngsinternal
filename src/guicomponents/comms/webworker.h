@@ -28,7 +28,10 @@ Q_OBJECT
   Q_INVOKABLE void open();
   Q_INVOKABLE void close();
   Q_INVOKABLE bool is_open();
+  Q_INVOKABLE void open_browser();
+  Q_INVOKABLE void close_browser();
   Q_INVOKABLE void force_close_browser();
+
 
   const QString& get_iframe_to_switch_to() {return _iframe_to_switch_to;}
 
@@ -42,7 +45,8 @@ Q_OBJECT
   Q_INVOKABLE bool is_polling();
   Q_INVOKABLE void start_polling();
   Q_INVOKABLE void stop_polling();
-  Q_INVOKABLE void make_browser_visible() {_show_browser = true;}
+  Q_INVOKABLE void show_browser() {_show_browser = true;}
+  Q_INVOKABLE void hide_browser() {_show_browser = false;}
 
   // ---------------------------------------------------------------------------------
   // Queue Tasks.

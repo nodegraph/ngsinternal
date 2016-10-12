@@ -13,6 +13,8 @@
 #include <components/interactions/groupinteraction.h>
 #include <components/interactions/graphbuilder.h>
 #include <components/interactions/viewcontrols.h>
+#include <guicomponents/comms/grouptraits.h>
+#include <guicomponents/comms/webgrouptraits.h>
 
 #include <components/resources/resources.h>
 
@@ -52,6 +54,7 @@
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
+#include <guicomponents/computes/webgroupnodecompute.h>
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
@@ -254,12 +257,13 @@ void AppEntity::create_internals(const std::vector<size_t>& ids) {
 void GroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff GroupNodeCompute(this))->create_inputs_outputs();
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  new_ff GroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);
   new_ff GroupNodeShape(this);
-  new_ff Inputs(this);
-  new_ff Outputs(this);
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
 }
@@ -320,6 +324,20 @@ void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>
         e->save(saver);
       }
     }
+}
+
+void WebGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
+  // Our components.
+  (new_ff WebGroupNodeCompute(this))->create_inputs_outputs();
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  new_ff WebGroupTraits(this);
+  // Gui related.
+  new_ff GroupInteraction(this);
+  new_ff CompShapeCollective(this);
+  new_ff GroupNodeShape(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
 }
 
 void LinkEntity::create_internals(const std::vector<size_t>& ids) {

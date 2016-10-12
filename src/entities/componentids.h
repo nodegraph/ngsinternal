@@ -33,6 +33,7 @@ enum class ComponentIID : size_t {
   kILowerHierarchyChange,
   kIUpperHierarchyChange,
   kIInputPlug,
+  kIBaseGroupTraits,
   kIGroupInteraction,
   kINodeGraphEditor,
   kIBaseNodeGraphManipulator,
@@ -87,6 +88,7 @@ COMPONENT_ENTRY1(DotNodeCompute)\
 COMPONENT_ENTRY1(InputCompute)\
 COMPONENT_ENTRY1(OutputCompute)\
 COMPONENT_ENTRY1(GroupNodeCompute)\
+COMPONENT_ENTRY1(WebGroupNodeCompute)\
 COMPONENT_ENTRY1(InputNodeCompute)\
 COMPONENT_ENTRY1(OutputNodeCompute)\
 COMPONENT_ENTRY1(ScriptNodeCompute)\
@@ -118,6 +120,8 @@ COMPONENT_ENTRY1(FBORenderer)\
 COMPONENT_ENTRY1(FBOWorker)\
 COMPONENT_ENTRY1(GraphBuilder)\
 /* Interactions. */\
+COMPONENT_ENTRY1(GroupTraits)\
+COMPONENT_ENTRY1(WebGroupTraits)\
 COMPONENT_ENTRY1(GroupInteraction)\
 /* -- */\
 COMPONENT_ENTRY1(NodeGraphEditor)\

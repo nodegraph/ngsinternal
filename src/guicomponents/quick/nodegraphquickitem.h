@@ -47,6 +47,7 @@ Q_OBJECT
 
   // Node Creation.
   Q_INVOKABLE void create_group_node(bool centered);
+  Q_INVOKABLE void create_web_group_node(bool centered);
   Q_INVOKABLE void create_input_node(bool centered);
   Q_INVOKABLE void create_output_node(bool centered);
   Q_INVOKABLE void create_dot_node(bool centered);

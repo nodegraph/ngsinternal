@@ -43,7 +43,7 @@ class NodeGraphManipulatorImp: public Component {
   virtual void initialize_wires();
   
   // Asynchronous Component Cleaning.
-  void set_ultimate_target(Entity* entity);
+  void set_ultimate_target(Entity* entity, bool force_stack_reset = false);
   void clear_ultimate_target();
   void continue_cleaning_to_ultimate_target();
 
@@ -108,13 +108,15 @@ void NodeGraphManipulatorImp::initialize_wires() {
   _task_scheduler = get_dep<TaskScheduler>(_app_root);
 }
 
-void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity) {
+void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_stack_reset) {
   external();
   // Clear the error marker on nodes.
   _node_selection->clear_error_node();
   // This may be called while we are already trying to clean another ultimate target.
   // Hence we force a stack reset to clear out any pre-existing tasks.
-  _task_scheduler->force_stack_reset();
+  if (force_stack_reset) {
+    _task_scheduler->force_stack_reset();
+  }
   // Set and try cleaning the ultimate target.
   _ultimate_target = get_dep<Compute>(entity);
   _ultimate_target->clean_state();
@@ -299,8 +301,8 @@ void NodeGraphManipulator::initialize_wires() {
   _imp->initialize_wires();
 }
 
-void NodeGraphManipulator::set_ultimate_target(Entity* entity) {
-  _imp->set_ultimate_target(entity);
+void NodeGraphManipulator::set_ultimate_target(Entity* entity, bool force_stack_reset) {
+  _imp->set_ultimate_target(entity, force_stack_reset);
 }
 
 void NodeGraphManipulator::clear_ultimate_target() {

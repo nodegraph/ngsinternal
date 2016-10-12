@@ -7,6 +7,8 @@
 #include <components/interactions/canvas.h>
 #include <components/interactions/shapecanvas.h>
 #include <components/interactions/groupinteraction.h>
+#include <guicomponents/comms/grouptraits.h>
+#include <guicomponents/comms/webgrouptraits.h>
 
 #include <components/resources/resources.h>
 
@@ -53,6 +55,7 @@
 #include <guicomponents/comms/webrecorder.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <gui/widget/nodegrapheditor.h>
+#include <guicomponents/computes/webgroupnodecompute.h>
 
 
 #include <iostream>

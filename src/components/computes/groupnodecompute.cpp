@@ -24,8 +24,8 @@ struct {
     }
 } CompShapeCompare;
 
-GroupNodeCompute::GroupNodeCompute(Entity* entity):
-    Compute(entity, kDID()),
+GroupNodeCompute::GroupNodeCompute(Entity* entity, ComponentDID did):
+    Compute(entity, did),
     _factory(this) {
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
 }

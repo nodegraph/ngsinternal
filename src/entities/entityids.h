@@ -69,6 +69,7 @@ ENTITY_ENTRY1(OutputEntity)\
 ENTITY_ENTRY1(OutputLabelEntity)\
 /* Group Node. */\
 ENTITY_ENTRY1(GroupNodeEntity)\
+ENTITY_ENTRY1(WebGroupNodeEntity)\
 ENTITY_ENTRY1(InputNodeEntity)\
 ENTITY_ENTRY1(OutputNodeEntity)\
 /* Dot Node. */\
