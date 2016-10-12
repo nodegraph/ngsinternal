@@ -14,8 +14,7 @@
 namespace ngs {
 
 InputCompute::InputCompute(Entity* entity)
-    : QObject(),
-      Compute(entity, kDID()),
+    : Compute(entity, kDID()),
       _param_type(ParamType::kQVariantMap),
       _output(this),
       _exposed(true) {

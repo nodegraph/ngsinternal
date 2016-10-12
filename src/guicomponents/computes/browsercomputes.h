@@ -7,7 +7,6 @@
 namespace ngs {
 
 class Entity;
-class InputCompute;
 class WebWorker;
 class TaskScheduler;
 class TaskContext;

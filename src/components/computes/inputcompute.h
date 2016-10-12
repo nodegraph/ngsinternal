@@ -3,14 +3,11 @@
 #include <components/computes/compute.h>
 #include <components/computes/paramtypes.h>
 
-#include <QtCore/QObject>
-
 namespace ngs {
 
 class OutputCompute;
 
-class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
-  Q_OBJECT
+class COMPUTES_EXPORT InputCompute: public Compute  {
  public:
   COMPONENT_ID(Compute, InputCompute);
   InputCompute(Entity* entity);

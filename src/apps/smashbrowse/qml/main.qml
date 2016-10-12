@@ -14,8 +14,6 @@ import smashbrowse.appwidgets 1.0
 import smashbrowse.appconfig 1.0
 import smashbrowse.menumodels 1.0
 
-import InputCompute 1.0
-
 Rectangle {
     id: app_window
     anchors.fill: parent

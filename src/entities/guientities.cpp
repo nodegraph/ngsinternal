@@ -160,7 +160,7 @@ void QMLAppEntity::expose_to_qml() {
   qRegisterMetaType<size_t>("size_t"); // Used by some of our c++ quick item classes. (eg. NodeGraphQuickItem::get_num_nodes())
 
   // Register other types.
-  qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
+  //qmlRegisterUncreatableType<InputCompute>("InputCompute", 1, 0, "InputCompute", "You cannot create this type from QML.");
 
   // Inject them into the qml context.
   QQmlContext* context = view->engine()->rootContext();

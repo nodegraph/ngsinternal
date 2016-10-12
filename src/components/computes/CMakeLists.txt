@@ -12,7 +12,6 @@ set(sources
     )
     
 set(moc_headers
-	inputcompute.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})
@@ -23,6 +22,7 @@ set(headers
 	compute.h
 	dotnodecompute.h
 	groupnodecompute.h
+	inputcompute.h
 	inputnodecompute.h
 	mocknodecompute.h
 	outputcompute.h
