@@ -134,6 +134,7 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_target() {
     return;
   }
   if (!_ultimate_target->is_state_dirty()) {
+    _ultimate_target.reset();
     return;
   }
   _ultimate_target->clean_state();
