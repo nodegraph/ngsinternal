@@ -113,14 +113,6 @@ void Compute::set_output(const std::string& name, const QVariant& value) {
   _outputs.insert(name.c_str(), value);
 }
 
-void Compute::copy_outputs(const std::string& output_name, const Dep<InputCompute>& other_compute, const std::string& other_output_name) {
-  set_output(output_name, other_compute->get_output(other_output_name));
-}
-
-void Compute::copy_outputs(const std::string& output_name, const Dep<Compute>& other_compute, const std::string& other_output_name) {
-  set_output(output_name, other_compute->get_output(other_output_name));
-}
-
 bool Compute::check_variant_is_bool_and_true(const QVariant& value, const std::string& message) {
   is_static();
   if (value.userType() != QMetaType::Bool) {

@@ -23,8 +23,7 @@ void DotNodeCompute::create_inputs_outputs() {
 bool DotNodeCompute::update_state() {
   internal();
   Compute::update_state();
-
-  copy_outputs("out", _inputs->get_exposed().at("in"), "out");
+  set_output("out", _inputs->get_exposed().at("in")->get_output("out"));
   return true;
 }
 

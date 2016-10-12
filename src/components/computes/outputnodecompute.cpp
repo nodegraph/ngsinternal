@@ -25,10 +25,7 @@ void OutputNodeCompute::create_inputs_outputs() {
 bool OutputNodeCompute::update_state() {
   internal();
   Compute::update_state();
-
-  if (_inputs->get_exposed().count("in")) {
-    copy_outputs("out", _inputs->get_exposed().at("in"), "out");
-  }
+  set_output("out", _inputs->get_exposed().at("in")->get_output("out"));
   return true;
 }
 

@@ -56,9 +56,6 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void set_outputs(const QVariantMap& outputs);
   virtual void set_output(const std::string& name, const QVariant& value);
 
-  virtual void copy_outputs(const std::string& output_name, const Dep<InputCompute>& other_compute, const std::string& other_output_name);
-  virtual void copy_outputs(const std::string& output_name, const Dep<Compute>& other_compute, const std::string& other_output_name);
-
   // Plugs.
   Entity* create_input(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
   Entity* create_output(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
