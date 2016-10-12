@@ -112,26 +112,44 @@ void GroupNodeCompute::update_wires() {
 
 void GroupNodeCompute::set_self_dirty(bool dirty) {
   Compute::set_self_dirty(dirty);
+  if (!dirty) {
+    return;
+  }
 
-  if (dirty) {
-    // For each input on this group if there is an associated input node, we set data on the input node.
-    for (auto &iter: _inputs->get_all()) {
-      const Dep<InputCompute>& input = iter.second;
-      const std::string& input_name = input->get_name();
-      // Find the input node inside this group with the same name as the input.
-      Entity* input_node = our_entity()->get_child(input_name);
-      // Make sure we have an input node.
-      if (!input_node) {
-        assert(false);
-        continue;
-      }
-      // Dirty all the input compute nodes.
-      Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
-      if (input_node_compute) {
-        input_node_compute->dirty_state();
+  // Dirty the computes on all nodes in this group.
+  const Entity::NameToChildMap& children = our_entity()->get_children();
+  for (auto &iter : children) {
+    const std::string& child_name = iter.first;
+    Entity* child = iter.second;
+    EntityDID did = child->get_did();
+    if (did != EntityDID::kBaseNamespaceEntity) {
+      Dep<Compute> compute = get_dep<Compute>(child);
+      if (compute) {
+        compute->dirty_state();
       }
     }
   }
+
+//  // Dirty all the input nodes in this group.
+//  if (dirty) {
+//    // For each input on this group if there is an associated input node, we set data on the input node.
+//    for (auto &iter: _inputs->get_all()) {
+//      const Dep<InputCompute>& input = iter.second;
+//      const std::string& input_name = input->get_name();
+//      // Find the input node inside this group with the same name as the input.
+//      Entity* input_node = our_entity()->get_child(input_name);
+//      // Make sure we have an input node.
+//      if (!input_node) {
+//        assert(false);
+//        continue;
+//      }
+//      // Dirty all the input compute nodes.
+//      Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
+//      if (input_node_compute) {
+//        input_node_compute->dirty_state();
+//      }
+//    }
+//  }
 }
 
 bool GroupNodeCompute::update_state() {
