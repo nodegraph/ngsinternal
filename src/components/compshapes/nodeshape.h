@@ -73,8 +73,8 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   virtual bool view_marker_is_showing() const;
 
   // Processing State.
-  virtual void show_compute_marker(bool on);
-  virtual bool compute_marker_is_showing() const;
+  virtual void show_processing_marker(bool on);
+  virtual bool processing_marker_is_showing() const;
 
   // Clean State.
   virtual void show_clean_marker(bool on);
@@ -106,7 +106,7 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
 
   NodeMarker _edit_marker;
   NodeMarker _view_marker;
-  NodeMarker _compute_marker;
+  NodeMarker _processing_marker;
   NodeMarker _clean_marker;
   NodeMarker _error_marker;
 

@@ -33,9 +33,10 @@ FBOWorker::FBOWorker(Entity* entity)
 FBOWorker::~FBOWorker() {
 }
 
-void FBOWorker::update_state() {
+bool FBOWorker::update_state() {
   internal();
   //render_next_texture();
+  return true;
 }
 
 // This gets called from the main scene graph render thread.

@@ -15,12 +15,18 @@ InputNodeCompute::~InputNodeCompute() {
 }
 
 void InputNodeCompute::create_inputs_outputs() {
+  external();
   Compute::create_inputs_outputs();
   create_output("out");
 }
 
 void InputNodeCompute::set_value(const QVariant& value) {
+  external();
   set_output("out", value);
+}
+
+QVariant InputNodeCompute::get_value() const {
+  return get_output("out");
 }
 
 }

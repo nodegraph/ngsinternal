@@ -58,12 +58,12 @@ HitRegion InputShape::hit_test(const glm::vec2& point) const {
   return kMissed;
 }
 
-void InputShape::update_state() {
+bool InputShape::update_state() {
   internal();
   size_t exposed_index = _inputs->get_exposed_index(get_name());
   if(exposed_index == -1) {
     _quads.resize(0); // Empty out our quads if we're not visible.
-    return;
+    return true;
   }
 
   // Make sure the shapes are allocated.
@@ -119,7 +119,7 @@ void InputShape::update_state() {
   } else {
     fg->state &= ~selected_transform_bitmask;
   }
-
+  return true;
 }
 
 const Polygon& InputShape::get_bounds() const {

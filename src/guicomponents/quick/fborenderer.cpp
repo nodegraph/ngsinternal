@@ -43,9 +43,10 @@ FBORenderer::~FBORenderer() {
   uninitialize_gl();
 }
 
-void FBORenderer::update_state() {
+bool FBORenderer::update_state() {
   internal();
   //render();
+  return true;
 }
 
 GLuint FBORenderer::get_display_texture_name() {

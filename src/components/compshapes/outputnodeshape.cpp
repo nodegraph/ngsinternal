@@ -22,7 +22,7 @@ OutputNodeShape::OutputNodeShape(Entity* entity)
 OutputNodeShape::~OutputNodeShape() {
 }
 
-void OutputNodeShape::update_state() {
+bool OutputNodeShape::update_state() {
   internal();
   RectNodeShape::update_state();
 
@@ -55,6 +55,8 @@ void OutputNodeShape::update_state() {
   // Append our marker shapes onto the quads_cache.
   _quads_cache.insert(_quads_cache.end(), _marker_bg);
   _quads_cache.insert(_quads_cache.end(), _marker_fg);
+
+  return true;
 }
 
 }

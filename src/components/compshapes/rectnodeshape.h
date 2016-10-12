@@ -53,7 +53,7 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
 
  protected:
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 
  private:
   void update_node_quads();

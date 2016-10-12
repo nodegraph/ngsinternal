@@ -19,8 +19,12 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
   // We override to stop creating the inputs and outputs namespace.
   virtual void create_inputs_outputs() {}
 
+  // Our parameter.
+  void set_param_value(const QVariant& value);
+  QVariant get_param_value() const;
+
   // Our value.
-  void set_value(const QVariant& value);
+  QVariant get_value() const;
 
   // Our data type.
   void set_param_type(ParamType param_type);
@@ -42,7 +46,7 @@ class COMPUTES_EXPORT InputCompute: public QObject, public Compute  {
 
  protected:
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 
  private:
 

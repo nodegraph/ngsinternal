@@ -26,7 +26,7 @@ class COMPSHAPES_EXPORT InputLabelShape: public CompShape {
 
   // Our state.
   virtual void update_wires();
-  virtual void update_state();
+  virtual bool update_state();
 
  private:
 

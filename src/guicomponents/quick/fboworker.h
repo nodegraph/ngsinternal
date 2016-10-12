@@ -55,7 +55,7 @@ Q_SIGNALS:
 
  protected:
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 
  private:
   // Our fixed deps.

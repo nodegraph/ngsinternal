@@ -55,7 +55,7 @@ class INTERACTIONS_EXPORT ShapeCanvas: public Component {
 
   // Our state.
   virtual void update_wires();
-  virtual void update_state();
+  virtual bool update_state();
   virtual void initialize_gl();
   virtual void uninitialize_gl();
   virtual bool is_initialized_gl_imp() const;

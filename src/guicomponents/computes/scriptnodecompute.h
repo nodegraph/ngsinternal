@@ -15,7 +15,7 @@ class GUICOMPUTES_EXPORT ScriptNodeCompute: public Compute  {
 
 protected:
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 
  private:
   QString _script;

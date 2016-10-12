@@ -20,11 +20,12 @@ void DotNodeCompute::create_inputs_outputs() {
   create_output("out");
 }
 
-void DotNodeCompute::update_state() {
+bool DotNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
   copy_outputs("out", _inputs->get_exposed().at("in"), "out");
+  return true;
 }
 
 }

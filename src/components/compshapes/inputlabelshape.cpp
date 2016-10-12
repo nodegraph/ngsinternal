@@ -50,13 +50,13 @@ void InputLabelShape::update_wires() {
   }
 }
 
-void InputLabelShape::update_state() {
+bool InputLabelShape::update_state() {
   internal();
 
   // If the input shape is not exposed then clear out our shapes.
   if (!_input_shape->is_exposed()) {
     _chars.clear();
-    return;
+    return true;
   }
 
   // Get the input shape's origin.
@@ -108,6 +108,7 @@ void InputLabelShape::update_state() {
       }
     }
   }
+  return true;
 }
 
 const std::vector<CharInstance> * InputLabelShape::get_char_instances() const {

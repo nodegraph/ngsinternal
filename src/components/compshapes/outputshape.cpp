@@ -56,12 +56,12 @@ HitRegion OutputShape::hit_test(const glm::vec2& point) const {
   return kMissed;
 }
 
-void OutputShape::update_state() {
+bool OutputShape::update_state() {
   internal();
   // If we're not exposed then clear out our shapes.
   if (!is_exposed()) {
     _tris.clear();
-    return;
+    return true;
   }
 
   // Make sure our shapes are allocated.
@@ -122,6 +122,7 @@ void OutputShape::update_state() {
   } else {
     fg->state &= ~selected_transform_bitmask;
   }
+  return true;
 }
 
 const Polygon& OutputShape::get_bounds() const {

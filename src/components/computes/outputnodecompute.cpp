@@ -22,13 +22,14 @@ void OutputNodeCompute::create_inputs_outputs() {
   create_input("in");
 }
 
-void OutputNodeCompute::update_state() {
+bool OutputNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
   if (_inputs->get_exposed().count("in")) {
     copy_outputs("out", _inputs->get_exposed().at("in"), "out");
   }
+  return true;
 }
 
 }

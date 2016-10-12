@@ -128,9 +128,10 @@ NodeGraphQuickItem::~NodeGraphQuickItem() {
 //      }
 //  #endif
 
-void NodeGraphQuickItem::update_state() {
+bool NodeGraphQuickItem::update_state() {
   internal();
   lock_links(_file_model->get_work_setting(FileModel::kLockLinksRole).toBool());
+  return true;
 }
 
 // This gets called from the scene graph render thread.

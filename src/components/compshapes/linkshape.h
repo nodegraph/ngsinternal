@@ -71,7 +71,7 @@ class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
 
  protected:
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
   virtual bool should_destroy();
 
  private:

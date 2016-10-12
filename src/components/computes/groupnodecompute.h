@@ -6,9 +6,7 @@
 namespace ngs {
 
 class BaseFactory;
-class InputShape;
-class OutputShape;
-class LinkShape;
+class BaseNodeGraphManipulator;
 
 class COMPUTES_EXPORT GroupNodeCompute: public Compute {
  public:
@@ -22,7 +20,8 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
 
   // Our state.
   virtual void update_wires();
-  virtual void update_state();
+  virtual bool update_state();
+  virtual void set_self_dirty(bool dirty);
 
  private:
   Dep<BaseFactory> _factory;

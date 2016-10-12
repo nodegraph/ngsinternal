@@ -30,10 +30,10 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   void clear_view_node();
 
   // Tracks the node currently performing its compute.
-  void set_compute_node_entity(Entity* node);
-  void set_compute_node(const Dep<NodeShape>& node);
-  const Dep<NodeShape>& get_compute_node() const;
-  void clear_compute_node();
+  void set_processing_node_entity(Entity* node);
+  void set_processing_node(const Dep<NodeShape>& node);
+  const Dep<NodeShape>& get_processing_node() const;
+  void clear_processing_node();
 
   // Tracks the node currently having an error with its compute.
   void set_error_node_entity(Entity* node);
@@ -64,7 +64,7 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
 
  protected:
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 
  private:
 

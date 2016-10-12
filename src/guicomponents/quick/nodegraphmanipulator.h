@@ -28,8 +28,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void continue_cleaning_to_ultimate_target();
 
   // Update current compute markers on nodes.
-  virtual void set_compute_node(Entity* entity);
-  virtual void clear_compute_node();
+  virtual void set_processing_node(Entity* entity);
+  virtual void clear_processing_node();
   virtual void set_error_node(); // Show error marker on the current compute node.
   virtual void clear_error_node();
   virtual void update_clean_marker(Entity* entity, bool clean);

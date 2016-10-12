@@ -18,7 +18,7 @@ class COMPUTES_EXPORT DotNodeCompute: public Compute {
 
 protected:
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 

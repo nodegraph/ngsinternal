@@ -25,7 +25,7 @@ InputCompute::InputCompute(Entity* entity)
 InputCompute::~InputCompute() {
 }
 
-void InputCompute::update_state() {
+bool InputCompute::update_state() {
   internal();
   Compute::update_state();
 
@@ -34,11 +34,22 @@ void InputCompute::update_state() {
   } else {
     set_output("out", _param_value);
   }
+  return true;
 }
 
-void InputCompute::set_value(const QVariant& value) {
+void InputCompute::set_param_value(const QVariant& value) {
   external();
   _param_value = value;
+}
+
+QVariant InputCompute::get_param_value() const {
+  external();
+  return _param_value;
+}
+
+QVariant InputCompute::get_value() const {
+  external();
+  return get_output("out");
 }
 
 void InputCompute::set_param_type(ParamType param_type) {

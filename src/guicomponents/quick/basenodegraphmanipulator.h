@@ -22,8 +22,8 @@ class BaseNodeGraphManipulator: public Component {
   virtual void continue_cleaning_to_ultimate_target() = 0;
 
   // Show the processing marker on a node.
-  virtual void set_compute_node(Entity* entity) = 0;
-  virtual void clear_compute_node() = 0;
+  virtual void set_processing_node(Entity* entity) = 0;
+  virtual void clear_processing_node() = 0;
   virtual void set_error_node() = 0; // Show error marker on the current compute node.
   virtual void clear_error_node() = 0;
   virtual void update_clean_marker(Entity* entity, bool clean) = 0;

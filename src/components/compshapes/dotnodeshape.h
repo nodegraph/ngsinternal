@@ -48,7 +48,7 @@ class COMPSHAPES_EXPORT DotNodeShape: public NodeShape {
 
  protected:
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 
   virtual void update_circles_cache();
 

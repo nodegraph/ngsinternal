@@ -1,6 +1,7 @@
 #include <guicomponents/quick/nodegraphmanipulator.h>
 #include <components/compshapes/nodeselection.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
+#include <guicomponents/comms/taskscheduler.h>
 
 // ObjectModel.
 #include <base/memoryallocator/taggednew.h>
@@ -47,8 +48,8 @@ class NodeGraphManipulatorImp: public Component {
   void continue_cleaning_to_ultimate_target();
 
   // Update current compute markers on nodes.
-  void set_compute_node(Entity* entity);
-  void clear_compute_node();
+  void set_processing_node(Entity* entity);
+  void clear_processing_node();
   void set_error_node();
   void clear_error_node();
   void update_clean_marker(Entity* entity, bool clean);
@@ -69,6 +70,7 @@ class NodeGraphManipulatorImp: public Component {
   Dep<BaseFactory> _factory;
   Dep<NodeSelection> _node_selection;
   Dep<NodeGraphQuickItem> _ng_quick;
+  Dep<TaskScheduler> _task_scheduler;
 
   // The ultimate compute (of a node) that we are trying to clean.
   // Note that there maybe many asynchronous computes which cause each cleaning pass over the dependencies
@@ -93,6 +95,7 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
       _factory(this),
       _node_selection(this),
       _ng_quick(this),
+      _task_scheduler(this),
       _ultimate_target(this) {
 }
 
@@ -102,13 +105,16 @@ void NodeGraphManipulatorImp::initialize_wires() {
   _factory = get_dep<BaseFactory>(_app_root);
   _node_selection = get_dep<NodeSelection>(_app_root);
   _ng_quick = get_dep<NodeGraphQuickItem>(_app_root);
-
+  _task_scheduler = get_dep<TaskScheduler>(_app_root);
 }
 
 void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity) {
   external();
   // Clear the error marker on nodes.
   _node_selection->clear_error_node();
+  // This may be called while we are already trying to clean another ultimate target.
+  // Hence we force a stack reset to clear out any pre-existing tasks.
+  _task_scheduler->force_stack_reset();
   // Set and try cleaning the ultimate target.
   _ultimate_target = get_dep<Compute>(entity);
   _ultimate_target->clean_state();
@@ -116,6 +122,7 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity) {
 
 void NodeGraphManipulatorImp::clear_ultimate_target() {
   external();
+  std::cerr << "clearing ultimate target\n";
   _ultimate_target.reset();
 }
 
@@ -130,18 +137,18 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_target() {
   _ultimate_target->clean_state();
 }
 
-void NodeGraphManipulatorImp::set_compute_node(Entity* entity) {
-  _node_selection->set_compute_node_entity(entity);
+void NodeGraphManipulatorImp::set_processing_node(Entity* entity) {
+  _node_selection->set_processing_node_entity(entity);
   _ng_quick->update();
 }
 
-void NodeGraphManipulatorImp::clear_compute_node() {
-  _node_selection->clear_compute_node();
+void NodeGraphManipulatorImp::clear_processing_node() {
+  _node_selection->clear_processing_node();
   _ng_quick->update();
 }
 
 void NodeGraphManipulatorImp::set_error_node() {
-  Dep<NodeShape> compute_node = _node_selection->get_compute_node();
+  Dep<NodeShape> compute_node = _node_selection->get_processing_node();
   if (compute_node) {
     // Show the error marker on the node.
     _node_selection->set_error_node(compute_node);
@@ -207,7 +214,7 @@ Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, co
 
     std::cerr << "setting name: " << iter.key().toStdString() << " value: " << iter.value().toString().toStdString() << " type: " << iter.value().type()
               << " usertype: " << iter.value().userType() << "\n";
-    compute->set_value(iter.value());
+    compute->set_param_value(iter.value());
   }
 
   return _node;
@@ -304,12 +311,12 @@ void NodeGraphManipulator::continue_cleaning_to_ultimate_target() {
   _imp->continue_cleaning_to_ultimate_target();
 }
 
-void NodeGraphManipulator::set_compute_node(Entity* entity) {
-  _imp->set_compute_node(entity);
+void NodeGraphManipulator::set_processing_node(Entity* entity) {
+  _imp->set_processing_node(entity);
 }
 
-void NodeGraphManipulator::clear_compute_node() {
-  _imp->clear_compute_node();
+void NodeGraphManipulator::clear_processing_node() {
+  _imp->clear_processing_node();
 }
 
 void NodeGraphManipulator::set_error_node() {

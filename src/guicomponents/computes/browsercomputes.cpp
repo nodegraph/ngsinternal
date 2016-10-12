@@ -63,7 +63,7 @@ void BrowserCompute::on_get_outputs(const QVariantMap& outputs) {
 
 //--------------------------------------------------------------------------------
 
-void OpenBrowserCompute::update_state() {
+bool OpenBrowserCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -71,9 +71,10 @@ void OpenBrowserCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_open_browser(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
-void CloseBrowserCompute::update_state() {
+bool CloseBrowserCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -81,9 +82,10 @@ void CloseBrowserCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_close_browser(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
-void IsBrowserOpenCompute::update_state(){
+bool IsBrowserOpenCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
@@ -91,9 +93,10 @@ void IsBrowserOpenCompute::update_state(){
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_is_browser_open(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
-void ResizeBrowserCompute::update_state(){
+bool ResizeBrowserCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
@@ -101,6 +104,7 @@ void ResizeBrowserCompute::update_state(){
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_resize_browser(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void NavigateToCompute::create_inputs_outputs() {
@@ -109,7 +113,7 @@ void NavigateToCompute::create_inputs_outputs() {
   create_input(Message::kURL, ParamType::kQString, false);
 }
 
-void NavigateToCompute::update_state() {
+bool NavigateToCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -118,9 +122,10 @@ void NavigateToCompute::update_state() {
   _web_worker->queue_navigate_to(tc);
   _web_worker->queue_wait_until_loaded(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
-void NavigateRefreshCompute::update_state() {
+bool NavigateRefreshCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -128,6 +133,7 @@ void NavigateRefreshCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_navigate_refresh(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void SwitchToIFrameCompute::create_inputs_outputs() {
@@ -136,7 +142,7 @@ void SwitchToIFrameCompute::create_inputs_outputs() {
   create_input(Message::kIFrame, ParamType::kQString, false);
 }
 
-void SwitchToIFrameCompute::update_state() {
+bool SwitchToIFrameCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -144,6 +150,7 @@ void SwitchToIFrameCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_switch_to_iframe(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void CreateSetFromValuesCompute::create_inputs_outputs() {
@@ -154,7 +161,7 @@ void CreateSetFromValuesCompute::create_inputs_outputs() {
   create_input(Message::kImageValues, ParamType::kQStringList, false);
 }
 
-void CreateSetFromValuesCompute::update_state() {
+bool CreateSetFromValuesCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -162,6 +169,7 @@ void CreateSetFromValuesCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_create_set_by_matching_values(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void CreateSetFromTypeCompute::create_inputs_outputs() {
@@ -170,7 +178,7 @@ void CreateSetFromTypeCompute::create_inputs_outputs() {
   create_input(Message::kWrapType, ParamType::kWrapType, false);
 }
 
-void CreateSetFromTypeCompute::update_state() {
+bool CreateSetFromTypeCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -178,6 +186,7 @@ void CreateSetFromTypeCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_create_set_by_matching_type(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void DeleteSetCompute::create_inputs_outputs() {
@@ -186,7 +195,7 @@ void DeleteSetCompute::create_inputs_outputs() {
   create_input(Message::kSetIndex, ParamType::kInt, false);
 }
 
-void DeleteSetCompute::update_state() {
+bool DeleteSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -194,6 +203,7 @@ void DeleteSetCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_delete_set(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void ShiftSetCompute::create_inputs_outputs() {
@@ -204,7 +214,7 @@ void ShiftSetCompute::create_inputs_outputs() {
   create_input(Message::kWrapType, ParamType::kInt, false);
 }
 
-void ShiftSetCompute::update_state() {
+bool ShiftSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -212,6 +222,7 @@ void ShiftSetCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_shift_set(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void MouseActionCompute::create_inputs_outputs() {
@@ -223,7 +234,7 @@ void MouseActionCompute::create_inputs_outputs() {
   create_input(Message::kMouseAction, ParamType::kInt, false);
 }
 
-void MouseActionCompute::update_state() {
+bool MouseActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -231,6 +242,7 @@ void MouseActionCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_perform_mouse_action(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void StartMouseHoverActionCompute::create_inputs_outputs() {
@@ -241,7 +253,7 @@ void StartMouseHoverActionCompute::create_inputs_outputs() {
   create_input(Message::kPosition, ParamType::kQVariantMap, false);
 }
 
-void StartMouseHoverActionCompute::update_state() {
+bool StartMouseHoverActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -249,9 +261,10 @@ void StartMouseHoverActionCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_start_mouse_hover(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
-void StopMouseHoverActionCompute::update_state() {
+bool StopMouseHoverActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -259,6 +272,7 @@ void StopMouseHoverActionCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_stop_mouse_hover(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void TextActionCompute::create_inputs_outputs() {
@@ -271,7 +285,7 @@ void TextActionCompute::create_inputs_outputs() {
   create_input(Message::kText, ParamType::kQString, false); // Only used when the text action is set to send text.
 }
 
-void TextActionCompute::update_state() {
+bool TextActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -279,6 +293,7 @@ void TextActionCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_perform_text_action(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void ElementActionCompute::create_inputs_outputs() {
@@ -292,7 +307,7 @@ void ElementActionCompute::create_inputs_outputs() {
   create_input(Message::kDirection, ParamType::kInt, false); // Only used when the element action is set to scroll.
 }
 
-void ElementActionCompute::update_state() {
+bool ElementActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -300,6 +315,7 @@ void ElementActionCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_perform_element_action(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void ExpandSetCompute::create_inputs_outputs() {
@@ -310,7 +326,7 @@ void ExpandSetCompute::create_inputs_outputs() {
   create_input(Message::kMatchCriteria, ParamType::kQVariantMap, false);
 }
 
-void ExpandSetCompute::update_state() {
+bool ExpandSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -318,6 +334,7 @@ void ExpandSetCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_expand_set(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void MarkSetCompute::create_inputs_outputs() {
@@ -326,7 +343,7 @@ void MarkSetCompute::create_inputs_outputs() {
   create_input(Message::kSetIndex, ParamType::kInt, false);
 }
 
-void MarkSetCompute::update_state() {
+bool MarkSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -334,6 +351,7 @@ void MarkSetCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_mark_set(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void UnmarkSetCompute::create_inputs_outputs() {
@@ -342,7 +360,7 @@ void UnmarkSetCompute::create_inputs_outputs() {
   create_input(Message::kSetIndex, ParamType::kInt, false);
 }
 
-void UnmarkSetCompute::update_state() {
+bool UnmarkSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -350,9 +368,10 @@ void UnmarkSetCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_unmark_set(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
-void MergeSetsCompute::update_state() {
+bool MergeSetsCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -360,6 +379,7 @@ void MergeSetsCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_merge_sets(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void ShrinkSetToSideCompute::create_inputs_outputs() {
@@ -369,7 +389,7 @@ void ShrinkSetToSideCompute::create_inputs_outputs() {
   create_input(Message::kDirection, ParamType::kInt, false);
 }
 
-void ShrinkSetToSideCompute::update_state() {
+bool ShrinkSetToSideCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -377,6 +397,7 @@ void ShrinkSetToSideCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_shrink_set_to_side(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
@@ -386,7 +407,7 @@ void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
   create_input(Message::kDirections, ParamType::kIntList, false);
 }
 
-void ShrinkAgainstMarkedCompute::update_state() {
+bool ShrinkAgainstMarkedCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -394,6 +415,7 @@ void ShrinkAgainstMarkedCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _web_worker->queue_shrink_against_marked(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
 }
 
 }

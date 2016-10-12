@@ -17,7 +17,7 @@ class COMPUTES_EXPORT MockNodeCompute: public Compute {
  protected:
 
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 
  private:
   unsigned int _counter;

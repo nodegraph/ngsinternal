@@ -28,7 +28,7 @@ DotNodeShape::DotNodeShape(Entity* entity):
 DotNodeShape::~DotNodeShape() {
 }
 
-void DotNodeShape::update_state() {
+bool DotNodeShape::update_state() {
   internal();
   // Update our bounds.
   {
@@ -56,6 +56,7 @@ void DotNodeShape::update_state() {
   update_chars_cache();
   update_quads_cache();
   update_circles_cache();
+  return true;
 }
 
 void DotNodeShape::set_pos(const glm::vec2& anchor) {

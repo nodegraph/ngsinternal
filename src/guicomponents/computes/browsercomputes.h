@@ -21,9 +21,6 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   virtual void create_inputs_outputs();
 
   virtual void on_get_outputs(const QVariantMap& outputs);
-
-  virtual bool update_is_asynchronous() const {external(); return true;}
-
  protected:
   // Our state.
   virtual void pre_update_state(TaskContext& tc);
@@ -40,7 +37,7 @@ class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {
   COMPONENT_ID(Compute, OpenBrowserCompute);
   OpenBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT CloseBrowserCompute: public BrowserCompute {
@@ -48,7 +45,7 @@ class GUICOMPUTES_EXPORT CloseBrowserCompute: public BrowserCompute {
   COMPONENT_ID(Compute, CloseBrowserCompute);
   CloseBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT IsBrowserOpenCompute: public BrowserCompute {
@@ -56,7 +53,7 @@ class GUICOMPUTES_EXPORT IsBrowserOpenCompute: public BrowserCompute {
   COMPONENT_ID(Compute, IsBrowserOpenCompute);
   IsBrowserOpenCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT ResizeBrowserCompute: public BrowserCompute {
@@ -64,7 +61,7 @@ class GUICOMPUTES_EXPORT ResizeBrowserCompute: public BrowserCompute {
   COMPONENT_ID(Compute, ResizeBrowserCompute);
   ResizeBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT NavigateToCompute: public BrowserCompute {
@@ -73,7 +70,7 @@ class GUICOMPUTES_EXPORT NavigateToCompute: public BrowserCompute {
   NavigateToCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT NavigateRefreshCompute: public BrowserCompute {
@@ -81,7 +78,7 @@ class GUICOMPUTES_EXPORT NavigateRefreshCompute: public BrowserCompute {
   COMPONENT_ID(Compute, NavigateRefreshCompute);
   NavigateRefreshCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT SwitchToIFrameCompute: public BrowserCompute {
@@ -90,7 +87,7 @@ class GUICOMPUTES_EXPORT SwitchToIFrameCompute: public BrowserCompute {
   SwitchToIFrameCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT CreateSetFromValuesCompute: public BrowserCompute {
@@ -99,7 +96,7 @@ class GUICOMPUTES_EXPORT CreateSetFromValuesCompute: public BrowserCompute {
   CreateSetFromValuesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public BrowserCompute {
@@ -108,7 +105,7 @@ class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public BrowserCompute {
   CreateSetFromTypeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT DeleteSetCompute: public BrowserCompute {
@@ -117,7 +114,7 @@ class GUICOMPUTES_EXPORT DeleteSetCompute: public BrowserCompute {
   DeleteSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT ShiftSetCompute: public BrowserCompute {
@@ -126,7 +123,7 @@ class GUICOMPUTES_EXPORT ShiftSetCompute: public BrowserCompute {
   ShiftSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
@@ -135,7 +132,7 @@ class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
   MouseActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT StartMouseHoverActionCompute: public BrowserCompute {
@@ -144,7 +141,7 @@ class GUICOMPUTES_EXPORT StartMouseHoverActionCompute: public BrowserCompute {
   StartMouseHoverActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT StopMouseHoverActionCompute: public BrowserCompute {
@@ -152,7 +149,7 @@ class GUICOMPUTES_EXPORT StopMouseHoverActionCompute: public BrowserCompute {
   COMPONENT_ID(Compute, StopMouseHoverActionCompute);
   StopMouseHoverActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
@@ -161,7 +158,7 @@ class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
   TextActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
@@ -170,7 +167,7 @@ class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
   ElementActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT ExpandSetCompute: public BrowserCompute {
@@ -179,7 +176,7 @@ class GUICOMPUTES_EXPORT ExpandSetCompute: public BrowserCompute {
   ExpandSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT MarkSetCompute: public BrowserCompute {
@@ -188,7 +185,7 @@ class GUICOMPUTES_EXPORT MarkSetCompute: public BrowserCompute {
   MarkSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT UnmarkSetCompute: public BrowserCompute {
@@ -197,7 +194,7 @@ class GUICOMPUTES_EXPORT UnmarkSetCompute: public BrowserCompute {
   UnmarkSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT MergeSetsCompute: public BrowserCompute {
@@ -205,7 +202,7 @@ class GUICOMPUTES_EXPORT MergeSetsCompute: public BrowserCompute {
   COMPONENT_ID(Compute, MergeSetsCompute);
   MergeSetsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT ShrinkSetToSideCompute: public BrowserCompute {
@@ -214,7 +211,7 @@ class GUICOMPUTES_EXPORT ShrinkSetToSideCompute: public BrowserCompute {
   ShrinkSetToSideCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT ShrinkAgainstMarkedCompute: public BrowserCompute {
@@ -223,7 +220,7 @@ class GUICOMPUTES_EXPORT ShrinkAgainstMarkedCompute: public BrowserCompute {
   ShrinkAgainstMarkedCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
  protected:
-  virtual void update_state();
+  virtual bool update_state();
 };
 
 }

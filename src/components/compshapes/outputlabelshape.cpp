@@ -43,13 +43,13 @@ void OutputLabelShape::update_wires() {
   }
 }
 
-void OutputLabelShape::update_state() {
+bool OutputLabelShape::update_state() {
   internal();
 
   // If the output shape is not exposed then clear out our shapes.
   if (!_output_shape->is_exposed()) {
     _chars.clear();
-    return;
+    return true;
   }
 
   // Remove any link shapes that have been destroyed.
@@ -123,6 +123,7 @@ void OutputLabelShape::update_state() {
       }
     }
   }
+  return true;
 }
 
 const std::vector<CharInstance> * OutputLabelShape::get_char_instances() const {

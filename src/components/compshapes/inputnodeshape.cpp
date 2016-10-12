@@ -21,7 +21,7 @@ InputNodeShape::InputNodeShape(Entity* entity)
 InputNodeShape::~InputNodeShape() {
 }
 
-void InputNodeShape::update_state() {
+bool InputNodeShape::update_state() {
   internal();
   RectNodeShape::update_state();
 
@@ -61,6 +61,7 @@ void InputNodeShape::update_state() {
   // Append our marker shapes onto the quads_cache.
   _tris_cache.insert(_tris_cache.end(), _marker_bg);
   _tris_cache.insert(_tris_cache.end(), _marker_fg);
+  return true;
 }
 
 

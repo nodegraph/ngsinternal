@@ -35,7 +35,7 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual ~Compute();
 
   virtual void create_inputs_outputs();
-  virtual void dirty_was_set();
+  virtual void set_self_dirty(bool dirty);
 
   // Our inputs.
   QVariantMap get_inputs() const;
@@ -47,7 +47,7 @@ class COMPUTES_EXPORT Compute: public Component {
  protected:
   // Our state.
   virtual void initialize_wires();
-  virtual void update_state();
+  virtual bool update_state();
   virtual bool clean_finalize();
 
 

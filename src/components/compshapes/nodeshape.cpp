@@ -104,9 +104,9 @@ NodeShape::NodeShape(Entity* entity, ComponentDID did)
   _view_marker.set_bg_color( { 255, 255, 255, 255 });
   _view_marker.set_fg_color( { 224, 64, 251, 255 });
 
-  _compute_marker.set_letter("P");
-  _compute_marker.set_bg_color( { 255, 255, 255, 255 });
-  _compute_marker.set_fg_color( { 239, 108, 0, 255 });
+  _processing_marker.set_letter("P");
+  _processing_marker.set_bg_color( { 255, 255, 255, 255 });
+  _processing_marker.set_fg_color( { 239, 108, 0, 255 });
 
   _clean_marker.set_letter("C");
   _clean_marker.set_bg_color( { 255, 255, 255, 255 });
@@ -140,7 +140,7 @@ void NodeShape::select(bool selected) {
 
   _edit_marker.set_state(_shared_state);
   _view_marker.set_state(_shared_state);
-  _compute_marker.set_state(_shared_state);
+  _processing_marker.set_state(_shared_state);
   _clean_marker.set_state(_shared_state);
   _error_marker.set_state(_shared_state);
 }
@@ -163,13 +163,13 @@ bool NodeShape::view_marker_is_showing() const {
   return _view_marker.is_showing();
 }
 
-void NodeShape::show_compute_marker(bool on) {
+void NodeShape::show_processing_marker(bool on) {
   external();
-  _compute_marker.show(on);
+  _processing_marker.show(on);
 }
-bool NodeShape::compute_marker_is_showing() const {
+bool NodeShape::processing_marker_is_showing() const {
   external();
-  return _compute_marker.is_showing();
+  return _processing_marker.is_showing();
 }
 
 void NodeShape::show_clean_marker(bool on) {
@@ -194,7 +194,7 @@ void NodeShape::update_quads(const glm::vec2& pen) {
   glm::vec2 start = pen;
   _edit_marker.update_quads(start);
   _view_marker.update_quads(start);
-  _compute_marker.update_quads(start);
+  _processing_marker.update_quads(start);
   _clean_marker.update_quads(start);
   _error_marker.update_quads(start);
 }
@@ -203,7 +203,7 @@ void NodeShape::update_quads_cache() {
   _quads_cache.clear();
   _edit_marker.update_quads_cache(_quads_cache);
   _view_marker.update_quads_cache(_quads_cache);
-  _compute_marker.update_quads_cache(_quads_cache);
+  _processing_marker.update_quads_cache(_quads_cache);
   _clean_marker.update_quads_cache(_quads_cache);
   _error_marker.update_quads_cache(_quads_cache);
 }
@@ -211,7 +211,7 @@ void NodeShape::update_quads_cache() {
 void NodeShape::update_edit_view_text() {
   _edit_marker.update_chars(_resources.get(), _shared_state);
   _view_marker.update_chars(_resources.get(), _shared_state);
-  _compute_marker.update_chars(_resources.get(), _shared_state);
+  _processing_marker.update_chars(_resources.get(), _shared_state);
   _clean_marker.update_chars(_resources.get(), _shared_state);
   _error_marker.update_chars(_resources.get(), _shared_state);
 }
@@ -220,7 +220,7 @@ void NodeShape::update_chars_cache() {
   _chars_cache.clear();
   _edit_marker.update_chars_cache(_chars_cache);
   _view_marker.update_chars_cache(_chars_cache);
-  _compute_marker.update_chars_cache(_chars_cache);
+  _processing_marker.update_chars_cache(_chars_cache);
   _clean_marker.update_chars_cache(_chars_cache);
   _error_marker.update_chars_cache(_chars_cache);
 }

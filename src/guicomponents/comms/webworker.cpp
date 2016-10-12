@@ -98,7 +98,7 @@ void WebWorker::on_poll() {
     if (!_task_sheduler->is_busy()) {
       TaskContext tc(_task_sheduler);
       queue_open_browser(tc);
-      queue_resize_browser(tc);
+      //queue_resize_browser(tc);
       // Debugging. - this makes the browser only come up once.
       _show_browser = false;
     }

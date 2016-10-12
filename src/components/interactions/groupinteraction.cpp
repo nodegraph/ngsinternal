@@ -50,9 +50,10 @@ GroupInteraction::GroupInteraction(Entity* entity)
 GroupInteraction::~GroupInteraction(){
 }
 
-void GroupInteraction::update_state() {
+bool GroupInteraction::update_state() {
   internal();
   _links_folder = get_entity(Path({".","links"}));
+  return true;
 }
 
 void GroupInteraction::update_shape_collective() {
@@ -745,7 +746,7 @@ void GroupInteraction::view(const Dep<NodeShape>& comp_shape) {
 
 void GroupInteraction::process(const Dep<NodeShape>& comp_shape) {
   external();
-  _selection->set_compute_node(comp_shape);
+  _selection->set_processing_node(comp_shape);
 }
 
 void GroupInteraction::select(const Dep<NodeShape>& comp_shape) {

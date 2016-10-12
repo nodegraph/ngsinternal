@@ -34,7 +34,8 @@ void Compute::create_inputs_outputs() {
   create_namespace("outputs");
 }
 
-void Compute::dirty_was_set() {
+void Compute::set_self_dirty(bool dirty) {
+  Component::set_self_dirty(dirty);
   if (_ng_manipulator) {
       _ng_manipulator->update_clean_marker(our_entity(), !is_state_dirty());
   }
@@ -47,12 +48,13 @@ void Compute::initialize_wires() {
   }
 }
 
-void Compute::update_state() {
+bool Compute::update_state() {
   internal();
   // Notify the gui side that a computation is now processing on the compute side.
   if (_ng_manipulator) {
-    _ng_manipulator->set_compute_node(our_entity());
+    _ng_manipulator->set_processing_node(our_entity());
   }
+  return true;
 }
 
 bool Compute::clean_finalize() {
@@ -60,7 +62,7 @@ bool Compute::clean_finalize() {
   Component::clean_finalize();
   // Notify the gui side that a computation is now processing on the compute side.
   if (_ng_manipulator) {
-    _ng_manipulator->clear_compute_node();
+    _ng_manipulator->clear_processing_node();
   }
   return true;
 }
@@ -81,9 +83,9 @@ void Compute::set_params(const QVariantMap& params) {
   QVariantMap::const_iterator iter;
   for (iter = params.begin(); iter != params.end(); ++iter) {
     if (_inputs->get_exposed().count(iter.key().toStdString())) {
-      _inputs->get_exposed().at(iter.key().toStdString())->set_value(iter.value());
+      _inputs->get_exposed().at(iter.key().toStdString())->set_param_value(iter.value());
     } else if (_inputs->get_hidden().count(iter.key().toStdString())) {
-      _inputs->get_hidden().at(iter.key().toStdString())->set_value(iter.value());
+      _inputs->get_hidden().at(iter.key().toStdString())->set_param_value(iter.value());
     }
   }
 }

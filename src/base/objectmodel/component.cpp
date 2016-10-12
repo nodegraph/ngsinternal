@@ -333,6 +333,11 @@ void Component::remove_dep_link(Component* c, ComponentIID iid) {
 // --------------------------------------------------------------
 // Dirty/Clean Logic.
 // --------------------------------------------------------------
+
+void Component::set_self_dirty(bool dirty) {
+  _dirty = dirty;
+}
+
 void Component::propagate_dirtiness(Component* dirty_source) {
   // --------------------------------------------------------
   // **Note** We don't call start_method here.
@@ -356,8 +361,7 @@ void Component::propagate_dirtiness(Component* dirty_source) {
   }
 
   // Set ourselves dirty.
-  _dirty = true;
-  dirty_was_set();
+  set_self_dirty(true);
 
   // Recurse the dirtiness to our dependants.
   for (auto &iid_iter: _dependants) {
@@ -417,15 +421,11 @@ bool Component::clean_self() {
   }
 
   // Now we clean/update our internal state.
-  update_state();
-
-  // If our update is asynchronous, then a finalize_update() will
-  // mark this component as clean.
-  if (update_is_asynchronous()) {
-    return false;
+  if (update_state()) {
+    clean_finalize();
+    return true;
   }
-
-  return clean_finalize();
+  return false;
 }
 
 bool Component::clean_finalize() {
@@ -434,11 +434,8 @@ bool Component::clean_finalize() {
   // update_state() call. The _dirty_dependencies var allows update_state()
   // to optimize based on which dependencies were actually dirty.
   _dirty_dependencies.clear();
-
   // We are now clean.
-  _dirty = false;
-  dirty_was_set();
-
+  set_self_dirty(false);
   return true;
 }
 

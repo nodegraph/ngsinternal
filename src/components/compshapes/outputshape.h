@@ -46,7 +46,7 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
  protected:
 
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 
  private:
 

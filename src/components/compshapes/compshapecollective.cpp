@@ -39,7 +39,7 @@ void CompShapeCollective::update_wires() {
   collect_comp_shapes();
 }
 
-void CompShapeCollective::update_state() {
+bool CompShapeCollective::update_state() {
   internal();
 
   // Collect our shape instances.
@@ -55,6 +55,8 @@ void CompShapeCollective::update_state() {
   // Collect our text.
   _chars.clear();
   collect_char_instances(_chars);
+
+  return true;
 }
 
 void CompShapeCollective::add(const Dep<CompShape>& c) {

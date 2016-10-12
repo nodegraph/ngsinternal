@@ -116,7 +116,7 @@ Q_OBJECT
 
  protected:
  // Our state.
- virtual void update_state();
+ virtual bool update_state();
 
   virtual QSGNode* updatePaintNode(QSGNode*, UpdatePaintNodeData*);
   virtual void releaseResources();

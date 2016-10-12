@@ -34,9 +34,10 @@ void ScriptNodeCompute::create_inputs_outputs() {
   Compute::create_inputs_outputs();
 }
 
-void ScriptNodeCompute::update_state() {
+bool ScriptNodeCompute::update_state() {
   internal();
   Compute::update_state();
+  return true;
 
 //  // Accumulate all of our inputs into a map.
 //  QVariantMap inputs_obj;

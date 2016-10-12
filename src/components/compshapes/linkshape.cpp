@@ -62,7 +62,7 @@ bool LinkShape::should_destroy() {
   return false;
 }
 
-void LinkShape::update_state() {
+bool LinkShape::update_state() {
   internal();
   if (_input_shape) {
     _head_pos = _input_shape->get_origin();
@@ -72,6 +72,7 @@ void LinkShape::update_state() {
   }
   update_positioning_helper(_head_pos, _tail_pos);
   update_state_helper();
+  return true;
 }
 
 void LinkShape::start_moving() {

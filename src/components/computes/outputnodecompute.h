@@ -14,7 +14,7 @@ class COMPUTES_EXPORT OutputNodeCompute: public Compute {
 
  protected:
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
 
 };
 

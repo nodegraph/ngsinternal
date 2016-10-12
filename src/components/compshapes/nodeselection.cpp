@@ -36,7 +36,7 @@ NodeSelection::NodeSelection(Entity* entity)
 NodeSelection::~NodeSelection() {
 }
 
-void NodeSelection::update_state() {
+bool NodeSelection::update_state() {
   internal();
   if (!_edit_node_shape) {
     _edit_node_shape.reset();
@@ -45,7 +45,10 @@ void NodeSelection::update_state() {
     _view_node_shape.reset();
   }
   if (!_compute_node_shape) {
-    _compute_node_shape.reset();
+      _compute_node_shape.reset();
+  }
+  if (!_error_node_shape) {
+      _error_node_shape.reset();
   }
 
   DepUSet<NodeShape>::iterator iter = _selected_node_shapes.begin();
@@ -56,29 +59,26 @@ void NodeSelection::update_state() {
       ++iter;
     }
   }
+  return true;
 }
 
 void NodeSelection::set_edit_node(const Dep<NodeShape>& node) {
   external();
-  if (_edit_node_shape) {
-    _edit_node_shape->show_edit_marker(false);
-  }
+  clear_edit_node();
   node->show_edit_marker(true);
   _edit_node_shape = node;
 }
 
 void NodeSelection::set_view_node(const Dep<NodeShape>& node) {
   external();
-  if (_view_node_shape) {
-    _view_node_shape->show_view_marker(false);
-  }
+  clear_view_node();
   node->show_view_marker(true);
   _view_node_shape = node;
 }
 
-void NodeSelection::set_compute_node_entity(Entity* node) {
+void NodeSelection::set_processing_node_entity(Entity* node) {
   Dep<NodeShape> node_shape = get_dep<NodeShape>(node);
-  set_compute_node(node_shape);
+  set_processing_node(node_shape);
 }
 
 void NodeSelection::set_error_node_entity(Entity* node) {
@@ -86,20 +86,16 @@ void NodeSelection::set_error_node_entity(Entity* node) {
   set_error_node(node_shape);
 }
 
-void NodeSelection::set_compute_node(const Dep<NodeShape>& node) {
+void NodeSelection::set_processing_node(const Dep<NodeShape>& node) {
   external();
-  if (_compute_node_shape) {
-    _compute_node_shape->show_compute_marker(false);
-  }
-  node->show_compute_marker(true);
+  clear_processing_node();
+  node->show_processing_marker(true);
   _compute_node_shape = node;
 }
 
 void NodeSelection::set_error_node(const Dep<NodeShape>& node) {
   external();
-  if (_error_node_shape) {
-    _error_node_shape->show_error_marker(false);
-  }
+  clear_error_node();
   node->show_error_marker(true);
   _error_node_shape = node;
 }
@@ -114,7 +110,7 @@ const Dep<NodeShape>& NodeSelection::get_view_node() const {
   return _view_node_shape;
 }
 
-const Dep<NodeShape>& NodeSelection::get_compute_node() const {
+const Dep<NodeShape>& NodeSelection::get_processing_node() const {
   external();
   return _compute_node_shape;
 }
@@ -140,10 +136,10 @@ void NodeSelection::clear_view_node() {
   _view_node_shape.reset();
 }
 
-void NodeSelection::clear_compute_node() {
+void NodeSelection::clear_processing_node() {
   external();
   if (_compute_node_shape) {
-    _compute_node_shape->show_compute_marker(false);
+    _compute_node_shape->show_processing_marker(false);
   }
   _compute_node_shape.reset();
 }
@@ -225,30 +221,17 @@ void NodeSelection::clear_selection() {
 
 void NodeSelection::destroy_selection() {
   external();
+
   for(const Dep<NodeShape>& cs: _selected_node_shapes) {
     if (!cs) {
       continue;
     }
-
-    // Deselect it.
-    cs->select(false);
-
-    // If we're destroying the edit node, clean up the reference to it.
-    if (cs == _edit_node_shape) {
-      clear_edit_node();
-    }
-    // If we're destroying the view node, clean up the reference to it.
-    if (cs == _view_node_shape) {
-      clear_view_node();
-    }
-    if (cs == _compute_node_shape) {
-      clear_compute_node();
-    }
-
     Entity* e = cs->our_entity();
     delete_ff(e);
   }
   _selected_node_shapes.clear();
+  // Shoud any of our cached Dep<> references, reference a destroyed node they
+  // will become null.
 }
 
 // Clear all references to nodes.

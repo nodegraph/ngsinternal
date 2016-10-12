@@ -40,7 +40,7 @@ class QUICK_EXPORT FBORenderer: public Component {
  protected:
 
   // Our state.
-  virtual void update_state();
+  virtual bool update_state();
   virtual void initialize_gl();
   virtual void uninitialize_gl();
   virtual bool is_initialized_gl_imp() const;

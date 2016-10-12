@@ -91,7 +91,7 @@ const Polygon& RectNodeShape::get_bounds() const {
 //  return kShape;
 //}
 
-void RectNodeShape::update_state() {
+bool RectNodeShape::update_state() {
   internal();
   // Update our chars.
   update_text();
@@ -112,6 +112,7 @@ void RectNodeShape::update_state() {
 
   // We have no triangles.
   _tris_cache.clear();
+  return true;
 }
 
 void RectNodeShape::update_node_quads() {

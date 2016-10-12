@@ -66,11 +66,11 @@ void ShapeCanvas::update_wires() {
   }
 }
 
-void ShapeCanvas::update_state() {
+bool ShapeCanvas::update_state() {
   internal();
   // Note the open gl context must be bound/active for this update.
   if (!_quad_pipeline) {
-    return;
+    return true;
   }
 
   // If the current group interaction is dirty, then load data from it.
@@ -116,6 +116,7 @@ void ShapeCanvas::update_state() {
     // Load our text vertices.
     _text_pipeline->load_char_instances(_current_shape_collective->get_chars());
   }
+  return true;
 }
 
 void ShapeCanvas::initialize_gl() {
