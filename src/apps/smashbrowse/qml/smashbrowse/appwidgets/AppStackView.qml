@@ -143,6 +143,8 @@ StackView {
     // Page and Model Creation.
     // --------------------------------------------------------------------------------------------------
 
+
+
     function create_component(page_url) {
         // We need to have a valid parent like stack_view, this prevents the
         // page from being destroyed, and lets us control when it gets destroyed.

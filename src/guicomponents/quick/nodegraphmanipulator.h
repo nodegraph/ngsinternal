@@ -26,6 +26,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void set_ultimate_target(Entity* entity, bool force_stack_reset);
   virtual void clear_ultimate_target();
   virtual void continue_cleaning_to_ultimate_target();
+  virtual bool is_busy_cleaning();
 
   // Update current compute markers on nodes.
   virtual void set_processing_node(Entity* entity);

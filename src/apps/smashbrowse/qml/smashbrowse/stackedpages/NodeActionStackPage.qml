@@ -33,11 +33,22 @@ AppStackPage{
     // Create/Remove Pages.
     // -------------------------------------------------------------------------------------------
 
+    function show_busy_page() {
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/ProcessingPage.qml", node_action_stack_page, {})
+        page.visible = true
+        page.set_title("Processing Nodes")
+        stack_view.push_page(page)
+    }
+
     function on_node_context_menu() {
         app_settings.vibrate()
         center_new_nodes = false
         stack_view.clear_pages()
-        stack_view.push_by_names("Node Options", "NodeActionPage", "NodeActions")
+        if (web_worker.is_busy_cleaning()) {
+            show_busy_page()
+        } else {
+        	stack_view.push_by_names("Node Options", "NodeActionPage", "NodeActions")
+        }
         visible = true
     }
 
@@ -45,7 +56,11 @@ AppStackPage{
         app_settings.vibrate()
         center_new_nodes = false
         stack_view.clear_pages()
-        stack_view.push_by_names("Group Node Options", "NodeActionPage", "GroupNodeActions")
+        if (web_worker.is_busy_cleaning()) {
+            show_busy_page()
+        } else {
+            stack_view.push_by_names("Group Node Options", "NodeActionPage", "GroupNodeActions")
+        }
         visible = true
     }
 
@@ -53,7 +68,11 @@ AppStackPage{
         app_settings.vibrate()
         center_new_nodes = false
         stack_view.clear_pages()
-        stack_view.push_by_names("Node Graph Options", "NodeActionPage", "NodeGraphActions")
+        if (web_worker.is_busy_cleaning()) {
+            show_busy_page()
+        } else {
+            stack_view.push_by_names("Node Graph Options", "NodeActionPage", "NodeGraphActions")
+        }
         visible = true
     }
 
@@ -61,7 +80,11 @@ AppStackPage{
         center_new_nodes = true
         visible = true
         stack_view.clear_pages()
-        stack_view.push_by_names("Options", "NodeActionPage", model_name)
+        if (web_worker.is_busy_cleaning()) {
+            show_busy_page()
+        } else {
+            stack_view.push_by_names("Options", "NodeActionPage", model_name)
+        }
     }
 
 }

@@ -20,6 +20,7 @@ class BaseNodeGraphManipulator: public Component {
   virtual void set_ultimate_target(Entity* entity, bool force_stack_reset = false) = 0;
   virtual void clear_ultimate_target() = 0;
   virtual void continue_cleaning_to_ultimate_target() = 0;
+  virtual bool is_busy_cleaning() = 0;
 
   // Show the processing marker on a node.
   virtual void set_processing_node(Entity* entity) = 0;

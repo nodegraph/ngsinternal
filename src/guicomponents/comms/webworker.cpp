@@ -77,6 +77,15 @@ void WebWorker::force_close_browser() {
   }
 }
 
+void WebWorker::force_stack_reset() {
+  _ng_manipulator->clear_ultimate_target();
+  _task_sheduler->force_stack_reset();
+}
+
+bool WebWorker::is_busy_cleaning() {
+  return _ng_manipulator->is_busy_cleaning();
+}
+
 bool WebWorker::is_polling() {
   return _poll_timer.isActive();
 }

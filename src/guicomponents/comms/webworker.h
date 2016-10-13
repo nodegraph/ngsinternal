@@ -31,7 +31,8 @@ Q_OBJECT
   Q_INVOKABLE void open_browser();
   Q_INVOKABLE void close_browser();
   Q_INVOKABLE void force_close_browser();
-
+  Q_INVOKABLE void force_stack_reset();
+  Q_INVOKABLE bool is_busy_cleaning();
 
   const QString& get_iframe_to_switch_to() {return _iframe_to_switch_to;}
 

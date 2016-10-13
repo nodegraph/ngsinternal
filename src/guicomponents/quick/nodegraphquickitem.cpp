@@ -744,6 +744,10 @@ void NodeGraphQuickItem::destroy_selection() {
 
 void NodeGraphQuickItem::dive() {
   external();
+  // Return if don't have a last pressed shape.
+  if (!_last_pressed_node) {
+    return;
+  }
 
   // Let the group traits performs its transition behavior.
   Entity* group_entity = _last_pressed_node->our_entity();

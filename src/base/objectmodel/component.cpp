@@ -355,8 +355,9 @@ void Component::propagate_dirtiness(Component* dirty_source) {
     _dirty_dependencies.insert(dirty_source);
   }
 
-  // If we're already dirty there is no need to continue..
+  // If we're already dirty there is no need to continue.
   if (_dirty) {
+    check_self_dirty();
     return;
   }
 

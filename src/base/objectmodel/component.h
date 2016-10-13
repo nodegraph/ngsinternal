@@ -142,6 +142,7 @@ class OBJECTMODEL_EXPORT Component {
   bool propagate_cleanliness();
   void propagate_dirtiness(Component* dependency);
   virtual void set_self_dirty(bool dirty);
+  virtual void check_self_dirty() {}
 
   // Serialization.
   virtual void save(SimpleSaver& saver) const;

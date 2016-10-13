@@ -22,3 +22,4 @@ EditEnumPage 1.0 EditEnumPage.qml
 
 EnterStringPage 1.0 EnterStringPage.qml
 SelectDropdownPage 1.0 SelectDropdownPage.qml
+ProcessingPage 1.0 ProcessingPage.qml

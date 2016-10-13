@@ -34,6 +34,7 @@
         <file>qml/smashbrowse/stackedpages/WebActionStackPage.qml</file>
         <file>qml/smashbrowse/stackedpages/EnterStringPage.qml</file>
         <file>qml/smashbrowse/stackedpages/SelectDropdownPage.qml</file>
+        <file>qml/smashbrowse/stackedpages/ProcessingPage.qml</file>
         
         <!-- AppWidgets -->
         <file>qml/smashbrowse/appwidgets/qmldir</file>

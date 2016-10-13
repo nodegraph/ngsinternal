@@ -46,6 +46,7 @@ class NodeGraphManipulatorImp: public Component {
   void set_ultimate_target(Entity* entity, bool force_stack_reset = false);
   void clear_ultimate_target();
   void continue_cleaning_to_ultimate_target();
+  bool is_busy_cleaning();
 
   // Update current compute markers on nodes.
   void set_processing_node(Entity* entity);
@@ -110,6 +111,11 @@ void NodeGraphManipulatorImp::initialize_wires() {
 
 void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_stack_reset) {
   external();
+
+  if (!get_dep<Compute>(entity)->is_state_dirty()) {
+    return;
+  }
+
   // Clear the error marker on nodes.
   _node_selection->clear_error_node();
   // This may be called while we are already trying to clean another ultimate target.
@@ -138,6 +144,14 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_target() {
     return;
   }
   _ultimate_target->clean_state();
+}
+
+bool NodeGraphManipulatorImp::is_busy_cleaning() {
+  external();
+  if (_ultimate_target) {
+    return true;
+  }
+  return false;
 }
 
 void NodeGraphManipulatorImp::set_processing_node(Entity* entity) {
@@ -312,6 +326,10 @@ void NodeGraphManipulator::clear_ultimate_target() {
 
 void NodeGraphManipulator::continue_cleaning_to_ultimate_target() {
   _imp->continue_cleaning_to_ultimate_target();
+}
+
+bool NodeGraphManipulator::is_busy_cleaning() {
+  return _imp->is_busy_cleaning();
 }
 
 void NodeGraphManipulator::set_processing_node(Entity* entity) {
