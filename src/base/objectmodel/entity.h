@@ -235,14 +235,6 @@ class OBJECTMODEL_EXPORT Entity {
   const std::unordered_set<Entity*>& get_last_pasted();
   void clear_last_pasted();
 
-  template<class T>
-  void set_dirty() {
-    T* comp = get<T>();
-    if (comp) {
-      comp->dirty_state();
-    }
-  }
-
  protected:
   Component* get(ComponentIID iid) const;
 
