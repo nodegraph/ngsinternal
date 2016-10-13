@@ -127,7 +127,7 @@ class OBJECTMODEL_EXPORT Component {
 
   // Dirty/Clean State.
   void dirty_state();
-  void clean_state();
+  bool clean_state();
   bool is_state_dirty() const {return _dirty;}
 
 

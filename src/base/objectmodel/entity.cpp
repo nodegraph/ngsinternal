@@ -67,6 +67,13 @@ void Entity::remove(Component* c) {
   c->_entity = NULL;
 }
 
+bool Entity::has_comp(ComponentIID iid) const {
+  if (get(iid)) {
+    return true;
+  }
+  return false;
+}
+
 Component* Entity::get(ComponentIID iid) const {
   if (!_components.count(iid)) {
     return NULL;

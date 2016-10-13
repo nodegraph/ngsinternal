@@ -16,6 +16,17 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
 
   virtual void create_inputs_outputs();
 
+  // Dirty nodes inside web groups. This is called when the ultimate target
+  // we want to clean is outside a web group. If we are inside a web group we
+  // assume we are interactively building a web recording and we only want the
+  // latest added node to execute.
+  // This should be called from the app root.
+  virtual void dirty_web_groups();
+  virtual void dirty_web_computes();
+
+  virtual void dirty_all_node_computes();
+  virtual void dirty_input_node_computes();
+
  protected:
 
   // Our state.

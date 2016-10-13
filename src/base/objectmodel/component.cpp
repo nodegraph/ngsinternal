@@ -469,8 +469,8 @@ void Component::dirty_state() {
   propagate_dirtiness(this);
 }
 
-void Component::clean_state() {
-  propagate_cleanliness();
+bool Component::clean_state() {
+  return propagate_cleanliness();
 }
 
 

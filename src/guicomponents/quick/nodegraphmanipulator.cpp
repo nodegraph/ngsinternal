@@ -2,6 +2,7 @@
 #include <components/compshapes/nodeselection.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/comms/taskscheduler.h>
+#include <guicomponents/comms/basegrouptraits.h>
 
 // ObjectModel.
 #include <base/memoryallocator/taggednew.h>
@@ -14,6 +15,7 @@
 #include <components/computes/compute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
+#include <components/computes/groupnodecompute.h>
 
 // CompShapes.
 #include <components/compshapes/topology.h>
@@ -116,6 +118,17 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_sta
     return;
   }
 
+  // If the ultimate target is outside a web group, we dirty the contents of all
+  // web groups. The logic is that when we are inside a web group, we assume we are
+  // interactively building a web script.
+  Entity* parent = entity->get_parent();
+  Dep<BaseGroupTraits> t = get_dep<BaseGroupTraits>(parent);
+  if (t->get_group_type() == GroupType::DataGroup) {
+    Entity* root_entity = _app_root->get_child("root");
+    Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(root_entity);
+    c->dirty_web_groups();
+  }
+
   // Clear the error marker on nodes.
   _node_selection->clear_error_node();
   // This may be called while we are already trying to clean another ultimate target.
@@ -125,7 +138,10 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_sta
   }
   // Set and try cleaning the ultimate target.
   _ultimate_target = get_dep<Compute>(entity);
-  _ultimate_target->clean_state();
+  if (_ultimate_target->clean_state()) {
+    // Reset the ultimate target if we can clean it right away.
+    _ultimate_target.reset();
+  }
 }
 
 void NodeGraphManipulatorImp::clear_ultimate_target() {
