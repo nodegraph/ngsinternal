@@ -122,7 +122,7 @@ class OverlaySets {
     }
 
     // Shift.
-    shift(set_index: number, direction: Direction, wrap_type: WrapType, page_wrap: PageWrap): void {
+    shift(set_index: number, direction: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
         if (!this.set_index_is_valid(set_index)) {
             return
         }
@@ -131,7 +131,7 @@ class OverlaySets {
     }
 
     // Expand.
-    expand(set_index: number, direction: Direction, match_criteria: MatchCriteria, page_wrap: PageWrap) {
+    expand(set_index: number, direction: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap) {
         if (!this.set_index_is_valid(set_index)) {
             return
         }
@@ -177,7 +177,7 @@ class OverlaySets {
 
     // Shrink to marked set.
     //- sides is an array of sides
-    shrink_set_to_marked(set_index: number, sides: Direction[]): void {
+    shrink_set_to_marked(set_index: number, sides: DirectionType[]): void {
         if (!this.set_index_is_valid(set_index)) {
             return
         }
@@ -215,7 +215,7 @@ class OverlaySets {
     }
 
     // Shrink set to an extreme on a given side.
-    shrink_to_extreme(set_index: number, side: Direction): void {
+    shrink_to_extreme(set_index: number, side: DirectionType): void {
         if (!this.set_index_is_valid(set_index)) {
             return
         }

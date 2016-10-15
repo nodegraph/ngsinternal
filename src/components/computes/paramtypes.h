@@ -4,7 +4,7 @@
 
 namespace ngs {
 
-enum class ParamType {
+enum class ParamType: int {
   kMap,
   kList,
 
@@ -21,7 +21,7 @@ enum class ParamType {
   kBooleanList,
 };
 
-enum class HintType {
+enum class HintType: int {
   kEnum,
   kMin,
   kMax,
@@ -36,7 +36,7 @@ struct COMPUTES_EXPORT Hint {
   static const char* kMax;
 };
 
-enum class EnumHint {
+enum class EnumHint: int {
   kNotEnumType,
   kMessageType,
   kInfoType,

@@ -25,14 +25,12 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
 
-    property var parent_stack_view //  This is set when pushed onto the stack view.
-    
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
         title_text: "Feature Unavailable"
         show_back_button: true
-        stack_view: parent_stack_view
+        stack_view: info_page.Stack.view
     }
 
     AppLabel {

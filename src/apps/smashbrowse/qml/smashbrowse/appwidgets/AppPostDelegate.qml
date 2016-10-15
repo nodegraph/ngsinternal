@@ -65,7 +65,6 @@ Rectangle {
         onDoubleClicked: {
             mouse.accepted = true
             post_delegate.ListView.view.currentIndex = index
-            var stack_view = post_delegate.ListView.view.parent_stack_view
         }
     }
 }

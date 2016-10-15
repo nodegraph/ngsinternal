@@ -22,10 +22,6 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
 
-    // This is set when added to the app stack view.
-    property var parent_stack_view
-    property var value
-
     // Our Methods.
     function set_title(title) {
         stack_view_header.title_text = title
@@ -37,7 +33,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: parent_stack_view
+        stack_view: action_busy_page.Stack.view
     }
 
     ColumnLayout {
@@ -70,7 +66,7 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    action_busy_page.parent_stack_view.pop_page()
+                    action_busy_page.Stack.view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

@@ -57,7 +57,36 @@ Rectangle {
         onTriggered: quick_view.close()
     }
 
+    // Enums.
+    QtObject {
+        id: js_enum
+        property int kUndefined: 0
+        property int kNull: 1
+        property int kObject: 2
+        property int kArray: 3
+        property int kString: 4
+        property int kNumber: 5
+        property int kBoolean: 6
+    }
+
+    QtObject {
+        id: msg_enum_enum // an enumeration of enumerations
+        property int kNotEnumType: 0
+        property int kMessageType: 1
+        property int kInfoType: 2
+        property int kMouseActionType: 3
+        property int kTextActionType: 4
+        property int kElementActionType: 5
+        property int kWrapType: 6
+        property int kDirectionType: 7
+    }
+
+
     // Global App Objects.
+
+    AppEnums {
+        id: app_enums
+    }
 
     AppUnits {
         id: app_units
@@ -123,13 +152,13 @@ Rectangle {
     DataStackPage {
         id: edit_node_page
         visible: false
-        mode: app_settings.edit_node_mode
+        _allow_edits: true
     }
 
     DataStackPage {
         id: view_node_page
         visible: false
-        mode: app_settings.view_node_mode
+        _allow_edits: false
     }
 
     CreatePasswordPage {

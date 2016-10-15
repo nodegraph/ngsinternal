@@ -22,9 +22,6 @@ Rectangle {
     // Properties.
     color: app_settings.menu_stack_bg_color
 
-    // This is set when added to the app stack view.
-    property var parent_stack_view
-
     // Properties.
     property bool create_file: true
     property alias title_field: title_field
@@ -38,7 +35,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: parent_stack_view
+        stack_view: create_file_page.Stack.view
     }
 
     ColumnLayout {
@@ -142,7 +139,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    create_file_page.parent_stack_view.pop_page()
+                    create_file_page.Stack.view.pop_page()
 
                     console.log('default settings: ' + JSON.stringify(file_model.get_default_settings()))
                 }

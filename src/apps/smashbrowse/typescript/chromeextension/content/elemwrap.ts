@@ -234,7 +234,7 @@ class ElemWrap {
     //----------------------------------------------------------------------------------------
 
     // Returns the next topmost element on one side of us.
-    get_neighboring_elem_wrap(getter: () => string, side: Direction, page_wrap: PageWrap): ElemWrap {
+    get_neighboring_elem_wrap(getter: () => string, side: DirectionType, page_wrap: PageWrap): ElemWrap {
         let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
 
         // Get all elem wraps intersecting the beam.
@@ -273,7 +273,7 @@ class ElemWrap {
         return min_candidate
     }
 
-    shift(dir: Direction, wrap_type: WrapType, page_wrap: PageWrap): void {
+    shift(dir: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
         // Find the proper getter for the type we're shifting to.
         let getter: () => string = ElemWrap.get_getter_from_wrap_type(wrap_type)
         let elem_wrap: ElemWrap = this.get_neighboring_elem_wrap(getter, dir, page_wrap)
@@ -284,7 +284,7 @@ class ElemWrap {
 
 
     //Returns the next topmost element on one side of us.
-    get_similar_neighbors(side: Direction, match_criteria: MatchCriteria, page_wrap: PageWrap): ElemWrap[] {
+    get_similar_neighbors(side: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap): ElemWrap[] {
         let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
 
         // Get all elem wraps intersecting the beam.

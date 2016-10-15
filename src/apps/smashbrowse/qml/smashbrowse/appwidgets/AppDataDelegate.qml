@@ -24,18 +24,26 @@ Rectangle {
     // Note: the "name" and "value" variables are not declared here.
     // They come from the model and are exposed here by QML.
 
-    function get_image_url() {
-        var stack_view = data_delegate.ListView.view.parent_stack_view
-        var path = stack_view.get_title_path(1, depth_index+1)
-        path.push(name)
-        return stack_view.stack_page.get_image_url(path)
+    function get_stack_view() {
+        return data_delegate.ListView.view._list_page.Stack.view
     }
 
-    function get_value_as_string() {
-        var stack_view = data_delegate.ListView.view.parent_stack_view
-        var path = stack_view.get_title_path(1, depth_index+1)
+    function get_stack_page() {
+        return data_delegate.ListView.view._list_page.Stack.view._stack_page
+    }
+
+    function get_image_for_value() {
+        var path = get_stack_view().get_title_path(1, depth_index+1)
         path.push(name)
-        return stack_view.stack_page.get_value_as_string(path)
+        var value = get_stack_page().get_value(path)
+        return get_stack_page().get_image_for_value(value)
+    }
+
+    function get_string_for_value() {
+        var path = get_stack_view().get_title_path(1, depth_index+1)
+        path.push(name)
+        var value = get_stack_page().get_value(path)
+        return get_stack_page().get_string_for_value(value)
     }
 
     Row {
@@ -49,7 +57,7 @@ Rectangle {
                 width: parent.height * 2/3
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: data_delegate.ListView.view.parent_stack_view ? get_image_url() : ""
+                source: get_stack_view() ? get_image_for_value() : ""
             }
         }
 
@@ -67,7 +75,7 @@ Rectangle {
             }
             // The value of the data in smaller text on bottom.
             Text {
-                text: data_delegate.ListView.view.parent_stack_view ? get_value_as_string() : ""
+                text: get_stack_view() ? get_string_for_value() : ""
                 font.family: "Arial"
                 font.pointSize: app_settings.menu_page_description_point_size
                 font.italic: false
@@ -81,54 +89,58 @@ Rectangle {
         anchors.fill: parent
         onPressed: {
             mouse.accepted = true
+            // We need to specify the data_delegate id, in order to get the right ListView.
             data_delegate.ListView.view.currentIndex = index
         }
 
         onDoubleClicked: {
             mouse.accepted = true
+
             // Set current index.
+            // We need to specify the data_delegate id, in order to get the right ListView.
             data_delegate.ListView.view.currentIndex = index
 
             // Use functionality implemented on our containing stack view.
-            var stack_view = data_delegate.ListView.view.parent_stack_view
+            var stack_view = get_stack_view()
+            var stack_page = get_stack_page()
 
             // Get our current value and type.
             var path = stack_view.get_title_path(1, depth_index+1)
             path.push(name)
-            var value = stack_view.stack_page.get_value(path)
-            var value_type = stack_view.stack_page.get_value_type(path)
+            var value = stack_page.get_value(path)
+            var value_type = app_enums.get_js_enum(value)
 
             // Push a different page depending on the value type.
             switch(value_type) {
-            case 'string_type':
-                if (stack_view.allow_editing) {
+            case js_enum.kString:
+                if (stack_page._allow_edits) {
                     var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EditStringPage.qml", edit_node_page, {})
                     page.set_value(value)
                     page.set_title(name)
                     stack_view.push_page(page)
                 }
                 break
-            case 'boolean_type':
-                if (stack_view.allow_editing) {
+            case js_enum.kBoolean:
+                if (stack_page._allow_edits) {
                     var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EditBooleanPage.qml", edit_node_page, {})
                     page.set_value(value)
                     page.set_title(name)
                     stack_view.push_page(page)
                 }
                 break
-            case 'number_type':
-                if (stack_view.allow_editing) {
+            case js_enum.kNumber:
+                if (stack_page._allow_edits) {
                     var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EditNumberPage.qml", edit_node_page, {})
                     page.set_value(value)
                     page.set_title(name)
                     stack_view.push_page(page)
                 }
                 break
-            case 'dictionary_type':
-                stack_view.stack_page.view_object(name, value);
+            case js_enum.kObject:
+                stack_page.view_object(name, value);
                 break
-            case 'array_type':
-                stack_view.stack_page.view_array(name, value);
+            case js_enum.kArray:
+                stack_page.view_array(name, value);
                 break
             default:
                 console.log("Error: AppDataDelegate::onDoubleClicked encountered unknown type: " + value_type)

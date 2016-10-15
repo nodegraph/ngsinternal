@@ -197,7 +197,7 @@ void WebRecorder::record_shift_to_text_above() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::text);
-  args[Message::kDirection] = to_underlying(Direction::up);
+  args[Message::kDirection] = to_underlying(DirectionType::up);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -207,7 +207,7 @@ void WebRecorder::record_shift_to_text_below() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::text);
-  args[Message::kDirection] = to_underlying(Direction::down);
+  args[Message::kDirection] = to_underlying(DirectionType::down);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -217,7 +217,7 @@ void WebRecorder::record_shift_to_text_on_left() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::text);
-  args[Message::kDirection] = to_underlying(Direction::left);
+  args[Message::kDirection] = to_underlying(DirectionType::left);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -227,7 +227,7 @@ void WebRecorder::record_shift_to_text_on_right() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::text);
-  args[Message::kDirection] = to_underlying(Direction::right);
+  args[Message::kDirection] = to_underlying(DirectionType::right);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -238,7 +238,7 @@ void WebRecorder::record_shift_to_images_above() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::image);
-  args[Message::kDirection] = to_underlying(Direction::up);
+  args[Message::kDirection] = to_underlying(DirectionType::up);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -248,7 +248,7 @@ void WebRecorder::record_shift_to_images_below() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::image);
-  args[Message::kDirection] = to_underlying(Direction::down);
+  args[Message::kDirection] = to_underlying(DirectionType::down);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -258,7 +258,7 @@ void WebRecorder::record_shift_to_images_on_left() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::image);
-  args[Message::kDirection] = to_underlying(Direction::left);
+  args[Message::kDirection] = to_underlying(DirectionType::left);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -268,7 +268,7 @@ void WebRecorder::record_shift_to_images_on_right() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::image);
-  args[Message::kDirection] = to_underlying(Direction::right);
+  args[Message::kDirection] = to_underlying(DirectionType::right);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -279,7 +279,7 @@ void WebRecorder::record_shift_to_inputs_above() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::input);
-  args[Message::kDirection] = to_underlying(Direction::up);
+  args[Message::kDirection] = to_underlying(DirectionType::up);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -289,7 +289,7 @@ void WebRecorder::record_shift_to_inputs_below() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::input);
-  args[Message::kDirection] = to_underlying(Direction::down);
+  args[Message::kDirection] = to_underlying(DirectionType::down);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -299,7 +299,7 @@ void WebRecorder::record_shift_to_inputs_on_left() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::input);
-  args[Message::kDirection] = to_underlying(Direction::left);
+  args[Message::kDirection] = to_underlying(DirectionType::left);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -309,7 +309,7 @@ void WebRecorder::record_shift_to_inputs_on_right() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::input);
-  args[Message::kDirection] = to_underlying(Direction::right);
+  args[Message::kDirection] = to_underlying(DirectionType::right);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -320,7 +320,7 @@ void WebRecorder::record_shift_to_selects_above() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::select);
-  args[Message::kDirection] = to_underlying(Direction::up);
+  args[Message::kDirection] = to_underlying(DirectionType::up);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -330,7 +330,7 @@ void WebRecorder::record_shift_to_selects_below() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::select);
-  args[Message::kDirection] = to_underlying(Direction::down);
+  args[Message::kDirection] = to_underlying(DirectionType::down);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -340,7 +340,7 @@ void WebRecorder::record_shift_to_selects_on_left() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::select);
-  args[Message::kDirection] = to_underlying(Direction::left);
+  args[Message::kDirection] = to_underlying(DirectionType::left);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -350,7 +350,7 @@ void WebRecorder::record_shift_to_selects_on_right() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::select);
-  args[Message::kDirection] = to_underlying(Direction::right);
+  args[Message::kDirection] = to_underlying(DirectionType::right);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -361,7 +361,7 @@ void WebRecorder::record_shift_to_iframes_above() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::iframe);
-  args[Message::kDirection] = to_underlying(Direction::up);
+  args[Message::kDirection] = to_underlying(DirectionType::up);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -371,7 +371,7 @@ void WebRecorder::record_shift_to_iframes_below() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::iframe);
-  args[Message::kDirection] = to_underlying(Direction::down);
+  args[Message::kDirection] = to_underlying(DirectionType::down);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -381,7 +381,7 @@ void WebRecorder::record_shift_to_iframes_on_left() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::iframe);
-  args[Message::kDirection] = to_underlying(Direction::left);
+  args[Message::kDirection] = to_underlying(DirectionType::left);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -391,7 +391,7 @@ void WebRecorder::record_shift_to_iframes_on_right() {
   _web_worker->queue_get_crosshair_info(tc);
   QVariantMap args;
   args[Message::kWrapType] = to_underlying(WrapType::iframe);
-  args[Message::kDirection] = to_underlying(Direction::right);
+  args[Message::kDirection] = to_underlying(DirectionType::right);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -415,7 +415,7 @@ void WebRecorder::record_expand_above() {
 
   QVariantMap args;
   args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = to_underlying(Direction::up);
+  args[Message::kDirection] = to_underlying(DirectionType::up);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
@@ -435,7 +435,7 @@ void WebRecorder::record_expand_below() {
 
   QVariantMap args;
   args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = to_underlying(Direction::down);
+  args[Message::kDirection] = to_underlying(DirectionType::down);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
@@ -455,7 +455,7 @@ void WebRecorder::record_expand_left() {
 
   QVariantMap args;
   args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = to_underlying(Direction::left);
+  args[Message::kDirection] = to_underlying(DirectionType::left);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
@@ -475,7 +475,7 @@ void WebRecorder::record_expand_right() {
 
   QVariantMap args;
   args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = to_underlying(Direction::right);
+  args[Message::kDirection] = to_underlying(DirectionType::right);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
@@ -514,7 +514,7 @@ void WebRecorder::record_shrink_set_to_topmost() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantMap args;
-  args[Message::kDirection] = to_underlying(Direction::up);
+  args[Message::kDirection] = to_underlying(DirectionType::up);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
@@ -525,7 +525,7 @@ void WebRecorder::record_shrink_set_to_bottommost() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantMap args;
-  args[Message::kDirection] = to_underlying(Direction::down);
+  args[Message::kDirection] = to_underlying(DirectionType::down);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
@@ -536,7 +536,7 @@ void WebRecorder::record_shrink_set_to_leftmost() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantMap args;
-  args[Message::kDirection] = to_underlying(Direction::left);
+  args[Message::kDirection] = to_underlying(DirectionType::left);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
@@ -547,7 +547,7 @@ void WebRecorder::record_shrink_set_to_rightmost() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantMap args;
-  args[Message::kDirection] = to_underlying(Direction::right);
+  args[Message::kDirection] = to_underlying(DirectionType::right);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
@@ -562,7 +562,7 @@ void WebRecorder::record_shrink_above_of_marked() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantList dirs;
-  dirs.append(to_underlying(Direction::up));
+  dirs.append(to_underlying(DirectionType::up));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
@@ -574,7 +574,7 @@ void WebRecorder::record_shrink_below_of_marked() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantList dirs;
-  dirs.append(to_underlying(Direction::down));
+  dirs.append(to_underlying(DirectionType::down));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
@@ -586,8 +586,8 @@ void WebRecorder::record_shrink_above_and_below_of_marked() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantList dirs;
-  dirs.append(to_underlying(Direction::up));
-  dirs.append(to_underlying(Direction::down));
+  dirs.append(to_underlying(DirectionType::up));
+  dirs.append(to_underlying(DirectionType::down));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
@@ -599,7 +599,7 @@ void WebRecorder::record_shrink_left_of_marked() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantList dirs;
-  dirs.append(to_underlying(Direction::left));
+  dirs.append(to_underlying(DirectionType::left));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
@@ -611,7 +611,7 @@ void WebRecorder::record_shrink_right_of_marked() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantList dirs;
-  dirs.append(to_underlying(Direction::right));
+  dirs.append(to_underlying(DirectionType::right));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
@@ -623,8 +623,8 @@ void WebRecorder::record_shrink_left_and_right_of_marked() {
   _web_worker->queue_get_crosshair_info(tc);
 
   QVariantList dirs;
-  dirs.append(to_underlying(Direction::left));
-  dirs.append(to_underlying(Direction::right));
+  dirs.append(to_underlying(DirectionType::left));
+  dirs.append(to_underlying(DirectionType::right));
   QVariantMap args;
   args[Message::kDirections] = dirs;
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
@@ -730,7 +730,7 @@ void WebRecorder::record_scroll_down() {
 
   QVariantMap args;
   args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
-  args[Message::kDirection] = to_underlying(Direction::down);
+  args[Message::kDirection] = to_underlying(DirectionType::down);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -742,7 +742,7 @@ void WebRecorder::record_scroll_up() {
 
   QVariantMap args;
   args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
-  args[Message::kDirection] = to_underlying(Direction::up);
+  args[Message::kDirection] = to_underlying(DirectionType::up);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -754,7 +754,7 @@ void WebRecorder::record_scroll_right() {
 
   QVariantMap args;
   args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
-  args[Message::kDirection] = to_underlying(Direction::right);
+  args[Message::kDirection] = to_underlying(DirectionType::right);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -766,7 +766,7 @@ void WebRecorder::record_scroll_left() {
 
   QVariantMap args;
   args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
-  args[Message::kDirection] = to_underlying(Direction::left);
+  args[Message::kDirection] = to_underlying(DirectionType::left);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();

@@ -22,9 +22,6 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
 
-    // This is set when added to the app stack view.
-    property var parent_stack_view
-
     // Our Methods.
     function set_title(title) {
         stack_view_header.title_text = title
@@ -36,7 +33,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: parent_stack_view
+        stack_view: processing_page.Stack.view
     }
 
     ColumnLayout {
@@ -59,7 +56,7 @@ Rectangle {
                 text: "stop processing"
                 onClicked: {
                     web_worker.force_stack_reset()
-                    processing_page.parent_stack_view.pop_page()
+                    processing_page.Stack.view.pop_page()
                     main_bar.switch_to_current_mode()
                 }
             }
@@ -71,7 +68,7 @@ Rectangle {
             AppLabelButton {
                 text: "wait for process to finish"
                 onClicked: {
-                    processing_page.parent_stack_view.pop_page()
+                    processing_page.Stack.view.pop_page()
                     main_bar.switch_to_current_mode()
                 }
             }

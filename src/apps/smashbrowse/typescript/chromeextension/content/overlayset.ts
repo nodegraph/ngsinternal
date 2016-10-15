@@ -105,7 +105,7 @@ class OverlaySet {
     }
 
     // Shift.
-    shift(side: Direction, wrap_type: WrapType, page_wrap: PageWrap): void {
+    shift(side: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
         for (let i = 0; i < this.overlays.length; i++) {
             this.overlays[i].get_elem_wrap().shift(side, wrap_type, page_wrap)
         }
@@ -121,7 +121,7 @@ class OverlaySet {
     }
 
     // Expand
-    expand(side: Direction, match_criteria: MatchCriteria, page_wrap: PageWrap): void {
+    expand(side: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap): void {
         // Cache the elem_wraps already in this set.
         let existing_elem_wraps: ElemWrap[] = []
         for (let i = 0; i < this.overlays.length; i++) {
@@ -157,7 +157,7 @@ class OverlaySet {
         }
     }
 
-    get_beams(sides: Direction[]): Box[] {
+    get_beams(sides: DirectionType[]): Box[] {
         let beams: Box[] = []
         for (let i = 0; i < this.overlays.length; i++) {
             for (let j = 0; j < sides.length; j++) {
@@ -186,7 +186,7 @@ class OverlaySet {
         }
     }
 
-    shrink_to_extreme(side: Direction): void {
+    shrink_to_extreme(side: DirectionType): void {
         let extreme: number
         let extreme_index: number
         for (let i = 0; i < this.overlays.length; i++) {

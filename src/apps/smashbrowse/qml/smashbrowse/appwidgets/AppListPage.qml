@@ -39,9 +39,6 @@ Rectangle {
     property alias stack_view_header: stack_view_header
     property alias list_view: list_view
 
-    // Our Dependencies.
-    property alias parent_stack_view: list_view.parent_stack_view //  This is set when pushed onto the stack view.
-
     // Our Methods.
     function set_title(title) {
         stack_view_header.title_text = title
@@ -53,7 +50,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: parent_stack_view
+        stack_view: list_page.Stack.view
     }
 
     // Our ListView.
@@ -83,7 +80,7 @@ Rectangle {
         focus: true
 
         // Our parenting stack view.
-        property var parent_stack_view: null
+        property var _list_page: list_page
     }
 
 

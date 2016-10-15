@@ -204,7 +204,7 @@ Entity* Compute::get_outputs_space() {
 }
 
 void Compute::add_hint(const std::string& name, HintType hint_type, const QVariant& value) {
-  _hints[name.c_str()].toMap()[Hint::get_as_string(hint_type)] = value;
+  _hints[name.c_str()].toMap()[QString::number(to_underlying(hint_type))] = value;
 }
 
 const QVariantMap& Compute::get_hints() const {

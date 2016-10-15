@@ -21,6 +21,16 @@ Rectangle {
     border.color: "white"
     border.width: app_settings.list_item_border_width
     color: "transparent"
+    
+    
+    function get_stack_view() {
+        return file_delegate.ListView.view._list_page.Stack.view
+    }
+
+    function get_stack_page() {
+        return file_delegate.ListView.view._list_page.Stack.view._stack_page
+    }
+    
     Row {
         Rectangle {
             height: app_settings.list_item_height_large
@@ -62,14 +72,12 @@ Rectangle {
             mouse.accepted = true
             // We keep the index on the currently loaded file.
             // file_delegate.ListView.view.currentIndex = index
-            var stack_view = file_delegate.ListView.view.parent_stack_view
-            stack_view.stack_page.on_file_single_clicked(index)
+            get_stack_page().on_file_single_clicked(index)
         }
         onDoubleClicked: {
             mouse.accepted = true
             file_delegate.ListView.view.currentIndex = index
-            var stack_view = file_delegate.ListView.view.parent_stack_view
-            stack_view.stack_page.on_file_double_clicked(index)
+            get_stack_page().on_file_double_clicked(index)
         }
     }
 }

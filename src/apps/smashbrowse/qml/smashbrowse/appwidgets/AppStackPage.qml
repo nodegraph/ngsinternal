@@ -34,6 +34,6 @@ Rectangle{
     // The main stack view.
     AppStackView{
         id: stack_view
-        property alias stack_page: stack_page
+        property alias _stack_page: stack_page
     }
 }

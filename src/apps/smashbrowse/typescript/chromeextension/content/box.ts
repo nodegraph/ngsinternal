@@ -1,7 +1,7 @@
 //import {Point} from "./point"
 
-// Direction.
-const enum Direction {
+// DirectionType.
+const enum DirectionType {
     left,
     right,
     up,
@@ -126,24 +126,24 @@ class Box {
     }
 
     //Returns true if this page box is on one side of another page box.
-    is_oriented_on(side: Direction, other: BoxInterface): number {
+    is_oriented_on(side: DirectionType, other: BoxInterface): number {
         switch (side) {
-            case Direction.left:
+            case DirectionType.left:
                 if (this.right < other.right) {
                     return other.right - this.right
                 }
                 break
-            case Direction.right:
+            case DirectionType.right:
                 if (this.left > other.left) {
                     return this.left - other.left
                 }
                 break
-            case Direction.up:
+            case DirectionType.up:
                 if (this.bottom < other.bottom) {
                     return other.bottom - this.bottom
                 }
                 break
-            case Direction.down:
+            case DirectionType.down:
                 if (this.top > other.top) {
                     return this.top - other.top
                 }
@@ -153,19 +153,19 @@ class Box {
     }
 
     //Returns a beam to one side of us.
-    get_beam(side: Direction, page_dim: Box) : Box {
+    get_beam(side: DirectionType, page_dim: Box) : Box {
         let beam = new Box(this)
         switch (side) {
-            case Direction.left:
+            case DirectionType.left:
                 beam.left = 0
                 break
-            case Direction.right:
+            case DirectionType.right:
                 beam.right = page_dim.get_width()
                 break
-            case Direction.up:
+            case DirectionType.up:
                 beam.top = 0
                 break
-            case Direction.down:
+            case DirectionType.down:
                 beam.bottom = page_dim.get_height()
                 break
             default:
@@ -175,15 +175,15 @@ class Box {
     }
 
     //Returns a side value.
-    get_extreme(side: Direction) : number {
+    get_extreme(side: DirectionType) : number {
         switch (side) {
-            case Direction.left:
+            case DirectionType.left:
                 return this.left
-            case Direction.right:
+            case DirectionType.right:
                 return this.right
-            case Direction.up:
+            case DirectionType.up:
                 return this.top
-            case Direction.down:
+            case DirectionType.down:
                 return this.bottom
             default:
                 console.log("Error: Box.get_extreme(side) was given an unknown side argument: " + side)

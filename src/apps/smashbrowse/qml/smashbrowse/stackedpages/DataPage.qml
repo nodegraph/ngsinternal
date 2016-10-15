@@ -17,6 +17,6 @@ AppListPage {
     id: data_page
 
     // Our settings.
-    show_back_button: data_page.parent_stack_view && (data_page.parent_stack_view.depth > 1)
+    show_back_button: data_page.Stack.view && (data_page.Stack.view.depth > 1)
     delegate: AppDataDelegate{}
 }

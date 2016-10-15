@@ -76,6 +76,9 @@ class COMPUTES_EXPORT Compute: public Component {
 
   // Hints are generally used for the hidden inputs (params) of a node.
   // They are used to display customized guis for the input.
+  // Note this maps the input name to hints.
+  // Hints are encoded by a key which is the string of the number representing the HintType.
+  // The value is a QVariant holding an int representing an enum or another type.
   QVariantMap _hints;
 };
 

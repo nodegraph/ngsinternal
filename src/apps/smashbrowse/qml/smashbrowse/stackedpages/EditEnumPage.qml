@@ -23,21 +23,19 @@ Rectangle {
     color: app_settings.menu_stack_bg_color
 
     // This is set when added to the app stack view.
-    property var parent_stack_view
     property string enum_type
 
     // Our Methods.
     function set_enum_type(type) {
-        enum_type = type
-        if (enum_type == 'MouseActionType') {
+        if (type == app_enums.EnumHint.kMouseActionType) {
             check_box.set_options(app_enums.mouse_action_types)
-        } else if (enum_type == 'TextActionType') {
+        } else if (type == app_enums.EnumHint.kTextActionType) {
             check_box.set_options(app_enums.text_action_types)
-        } else if (enum_type == 'ElementActionType') {
+        } else if (type == app_enums.EnumHint.kElementActionType) {
             check_box.set_options(app_enums.element_action_types)
-        } else if (enum_type == 'WrapType') {
+        } else if (type == app_enums.EnumHint.kWrapType) {
             check_box.set_options(app_enums.wrap_types)
-        } else if (enum_type == 'Direction') {
+        } else if (type == app_enums.EnumHint.kDirectionType) {
             check_box.set_options(app_enums.direction_types)
         } else {
             console.log('Error: attempt to edit an enum with invalid type.')
@@ -70,7 +68,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: parent_stack_view
+        stack_view: edit_enum_page.Stack.view
     }
 
     ColumnLayout {
@@ -96,9 +94,9 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    var path = parent_stack_view.get_title_path(1, parent_stack_view.depth)
-                    parent_stack_view.stack_page.set_value(path, get_value())
-                    parent_stack_view.pop_page()
+                    var path = edit_enum_page.Stack.view.get_title_path(1, edit_enum_page.Stack.view.depth)
+                    edit_enum_page.Stack.view._stack_page.set_value(path, get_value())
+                    edit_enum_page.Stack.view.pop_page()
                 }
             }
             Rectangle {
@@ -109,7 +107,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    parent_stack_view.pop_page()
+                    edit_enum_page.Stack.view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

@@ -66,7 +66,7 @@ Rectangle {
             mouse.accepted = true
             menu_item_delegate.ListView.view.currentIndex = index
             if (typeof script !== "undefined") {
-                menu_item_delegate.ListView.view.parent_stack_view.execute_script(script)
+                menu_item_delegate.ListView.view._list_page.Stack.view.execute_script(script)
             }
         }
     }

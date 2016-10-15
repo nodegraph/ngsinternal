@@ -21,19 +21,6 @@ StackView {
     // Geometry.
     anchors.fill: parent
 
-//    // Implements back key navigation
-//    focus: true
-//    Keys.onReleased: if (event.key === Qt.Key_Back && stack_view.depth > 1) {
-//                         stack_view.pop();
-//                         event.accepted = true;
-//                     }
-
-    // Dependencies.
-    property var stack_view_header
-
-    // Properties.
-    property var allow_editing: false
-
     // Get the current path of the data displayed on the top stack page.
     function get_title_path(begin_index, end_index) {
         var path = []
@@ -86,7 +73,6 @@ StackView {
         // We don't use the "destroyOnPop' setting.
         // We destroy our pages manually in pop_page, for better control.
         push(page)
-        page.parent_stack_view = stack_view
     }
 
     function pop_page() {
@@ -98,9 +84,6 @@ StackView {
         try {
             // Get the top page.
             var page = stack_view.get(stack_view.depth-1)
-
-            // Stops any further get_value and get_value_as_string evaluations.
-            page.parent_stack_view = null
 
             // The model in the page is manually created, and so must be manually destroyed as well.
             var model = null

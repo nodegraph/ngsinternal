@@ -22,9 +22,6 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
 
-    // This is set when added to the app stack view.
-    property var parent_stack_view
-
     // Callback will be called with the entered text.
     property var callback
 
@@ -47,7 +44,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: parent_stack_view
+        stack_view: enter_string_page.Stack.view
     }
 
     ColumnLayout {
@@ -83,7 +80,7 @@ Rectangle {
                 text: "accept"
                 onClicked: {
                     enter_string_page.callback(text_field.text)
-                    enter_string_page.parent_stack_view.pop_page()
+                    enter_string_page.Stack.view.pop_page()
                     main_bar.switch_to_current_mode()
                     node_graph_item.update()
                 }
@@ -96,7 +93,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    enter_string_page.parent_stack_view.pop_page()
+                    enter_string_page.Stack.view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

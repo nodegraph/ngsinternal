@@ -111,13 +111,13 @@ enum class WrapType : int {
 };
 //Q_DECLARE_METATYPE(WrapType);
 
-enum class Direction : int {
+enum class DirectionType : int {
     left,
     right,
     up,
     down
 };
-//Q_DECLARE_METATYPE(Direction);
+//Q_DECLARE_METATYPE(DirectionType);
 
 class COMMS_EXPORT Message: public QVariantMap {
  public:

@@ -23,17 +23,8 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
 
-    // This is set when added to the app stack view.
-    property var parent_stack_view
-    property var value
-
     // Callback will be called with the selected option text.
     property var callback
-
-    // Methods.
-    function set_value(value) {
-        select_page.value = value
-    }
 
     // Our Methods.
     function set_title(title) {
@@ -49,7 +40,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: parent_stack_view
+        stack_view: select_page.Stack.view
     }
 
     ColumnLayout {
@@ -76,9 +67,8 @@ Rectangle {
                 text: "accept"
                 onClicked: {
                     var value = combo_box.currentText
-                    select_page.value = value
                     select_page.callback(value)
-                    select_page.parent_stack_view.pop_page()
+                    select_page.Stack.view.pop_page()
                     main_bar.switch_to_current_mode()
                 }
             }
@@ -90,7 +80,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    select_page.parent_stack_view.pop_page()
+                    select_page.Stack.view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

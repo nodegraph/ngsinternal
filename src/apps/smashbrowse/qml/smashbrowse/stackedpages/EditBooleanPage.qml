@@ -22,9 +22,6 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
 
-    // This is set when added to the app stack view.
-    property var parent_stack_view
-
     // Our Methods.
     function set_value(value) {
         check_box.checked = value
@@ -44,7 +41,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: parent_stack_view
+        stack_view: edit_boolean_page.Stack.view
     }
 
     ColumnLayout {
@@ -75,9 +72,9 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    var path = parent_stack_view.get_title_path(1, parent_stack_view.depth)
-                    parent_stack_view.stack_page.set_value(path, get_value())
-                    parent_stack_view.pop_page()
+                    var path = edit_boolean_page.Stack.view.get_title_path(1, edit_boolean_page.Stack.view.depth)
+                    edit_boolean_page.Stack.view._stack_page.set_value(path, get_value())
+                    edit_boolean_page.Stack.view.pop_page()
                 }
             }
             Rectangle {
@@ -88,7 +85,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    parent_stack_view.pop_page()
+                    edit_boolean_page.Stack.view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

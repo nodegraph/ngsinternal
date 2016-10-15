@@ -17,24 +17,24 @@ class Utils {
         return true
     }
 
-    static value_is_more_extreme(value: number, extreme: number, side: Direction) {
+    static value_is_more_extreme(value: number, extreme: number, side: DirectionType) {
         switch (side) {
-            case Direction.left:
+            case DirectionType.left:
                 if (value < extreme) {
                     return true
                 }
                 break
-            case Direction.right:
+            case DirectionType.right:
                 if (value > extreme) {
                     return true
                 }
                 break
-            case Direction.up:
+            case DirectionType.up:
                 if (value < extreme) {
                     return true
                 }
                 break
-            case Direction.down:
+            case DirectionType.down:
                 if (value > extreme) {
                     return true
                 }

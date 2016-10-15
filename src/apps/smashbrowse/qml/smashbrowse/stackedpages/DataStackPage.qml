@@ -17,206 +17,109 @@ AppStackPage{
     id: data_stack_page
 
     // Settings.
-    property var mode: app_settings.view_node_mode
+    property var _allow_edits: false
 
     // Internal Properties.
     property var _values
     property var _hints
 
+    // --------------------------------------------------------------------------------------------------
+    // Methods.
+    // --------------------------------------------------------------------------------------------------
+
     // Framework Methods.
-    function on_switch_to_mode(m) {
-        if (m == mode) {
-            visible = true;
+    function on_switch_to_mode(mode) {
+        if (_allow_edits) {
+            if (mode == app_settings.edit_node_mode) {
+                visible = true
+            } else {
+                visible = false
+            }
         } else {
-            visible = false;
+            if (mode == app_settings.view_node_mode) {
+                visible = true
+            } else {
+                visible = false
+            }
         }
     }
 
-    // Main method to show data.
+    // Show data values with hints on how to show it.
     function on_show_data(name, values, hints) {
         app_settings.vibrate()
         stack_view.clear_pages()
+
+        // Show the next object.
         _values = values
         _hints = hints
-        if (mode != app_settings.view_node_mode) {
-            stack_view.allow_editing = true // Allow data to be edited.
-        }
         view_object(name, _values)
     }
 
     // --------------------------------------------------------------------------------------------------
-    // Hints for Data Display.
+    // Hints.
     // --------------------------------------------------------------------------------------------------
 
     function get_hints(path) {
-        // The hints hierarchy doesn't have arrays.
-        // Individual hints are represent by single json strings.
-
-        // Drill down into the hints according to the specified path.
-        var hints = _hints
-        for (var i=0; i<path.length; i++) {
-            var element = path[i]
-            if (hints.hasOwnProperty(element)) {
-                hints = hints[element]
-            } else {
-                // We get here if hints doesn't have the expected element.
-                // This mean we may have a primitive or bad hints.
-                // Either way we return the closest hints we have.
-                break;
-            }
-        }
-
-        // Make sure we have hint string to return.
-        if (typeof hints === 'string') {
-            return hints
-        }
-        return ""
+        return app_utils.get_sub_object(_hints, path)
     }
 
     // --------------------------------------------------------------------------------------------------
-    // Data Display.
+    // Values.
     // --------------------------------------------------------------------------------------------------
 
     // Set the value at the given path in _values.
     function set_value(path, value) {
-        console.log('set_value: ' + path + ' value: ' + value)
-        // Make sure the path has at least one element.
-        if (path.length <=0) {
-            return
-        }
-
-        // Drill down into data according to the specified path.
-        var data = _values
-        for (var i=0; i<path.length; i++) {
-            // Determine the index.
-            var index = null
-            if (typeof data === 'object') {
-                if (Object.getPrototypeOf(data) === Array.prototype) {
-                    // Arrays have number indexes.
-                    index = Number(path[i])
-                } else if (Object.getPrototypeOf(data) === Object.prototype){
-                    // Objects have string indexes.
-                    index = path[i]
-                } else {
-                    console.log("Error: DataStackPage::set_value was expecting an object or an array 333.")
-                }
-            } else {
-                console.log("Error: DataStackPage::set_value was expecting an object or an array 4444.")
-                return
-            }
-            // Determine if this is the last element of the path.
-            var last = false
-            if (i == (path.length-1)) {
-                last = true
-            }
-            // If this is the last element, we set the value on the object or array.
-            if (last) {
-                data[index] = value
-            } else {
-                data = data[index]
-            }
-        }
-        console.log('data: ' + JSON.stringify(_values))
+        app_utils.set_sub_object(_values, path, value)
     }
 
     // Get the value at the given path in _values.
     function get_value(path) {
-        console.log('get_value: ' + path)
-        // Make sure the path has at least one element.
-        if (path.length <=0) {
-            console.log('Error: get_value called with empty path')
-            return null
-        }
-
-        // Drill down into data according to the specified path.
-        var data = _values
-        for (var i=0; i<path.length; i++) {
-            if (typeof data === 'object') {
-                if (Object.getPrototypeOf(data) === Array.prototype) {
-                    data = data[Number(path[i])]
-                } else if (Object.getPrototypeOf(data) === Object.prototype){
-                    data = data[path[i]]
-                }  else {
-                    console.log("Error: DataStackPage::get_value was expecting an object or an array 111.")
-                    return null
-                }
-            } else {
-                 console.log("Error: DataStackPage::get_value was expecting an object or an array 222: " + JSON.stringify(data) + " path: " + path)
-                 console.log(new Error().stack);
-                return null
-            }
-        }
-        return data
+        return app_utils.get_sub_object(_values, path)
     }
 
-    // Get the value type at the given path in _values.
-    function get_value_type(path) {
-        console.log('get_value_type: ' + path)
-        var value = get_value(path)
-        if (value === null) {
-            return "unknown_type"
-        }else if (typeof value === 'string') {
-            // String.
-            return 'string_type'
-        } else if (typeof value === 'boolean') {
-            // Boolean.
-            return 'boolean_type'
-        } else if (typeof value === 'number'){
-            // Number.
-            return 'number_type'
-        } else if (typeof value === 'object') {
-            if (Object.getPrototypeOf(value) === Object.prototype) {
-                // Object.
-                return 'dictionary_type'
-            } else if (Object.getPrototypeOf(value) === Array.prototype) {
-                // Array.
-                return "array_type"
-            }
-        }
-        return "unknown_type"
-    }
-
-
-    // Get the value as a string at the given path in _values.
-    function get_value_as_string(path) {
-        console.log('get_value_as_string: ' + path)
-        var value = get_value(path)
-        var value_type = get_value_type(path)
-
+    // Get a string which represents the value's type or actual value.
+    function get_string_for_value(value) {
+        var value_type = app_enums.get_js_enum(value)
         switch(value_type) {
-        case 'string_type':
-        case 'boolean_type':
-        case 'number_type':
+        case js_enum.kString:
+        case js_enum.kBoolean:
+        case js_enum.kNumber:
             return value.toString()
-        case 'dictionary_type':
+        case js_enum.kObject:
             return "folder of values"
-        case 'array_type':
+        case js_enum.kArray:
             return "array of values"
+        case js_enum.kUndefined:
+            return "undefined"
+        case js_enum.kNull:
+            return "null"
         default:
-            console.log("Error: DataStackPage::get_value_as_string encountered unknown type: " + value_type + " for path: " + path + " for value: " + value)
+            console.log("Error: DataStackPage::get_string_for_value encountered unknown type: " + value_type + " for value: " + value)
             console.log(new Error().stack);
         }
         return "unknown value"
     }
 
-    // Get the icon corresponding to the value type at the given path in _values.
-    function get_image_url(path) {
-        console.log('get_image_url: ' + path)
-        var value_type = get_value_type(path)
-
+    // Get an image which represents the value's type.
+    function get_image_for_value(value) {
+        var value_type = app_enums.get_js_enum(value)
         switch(value_type) {
-        case 'string_type':
+        case js_enum.kString:
             return 'qrc:///icons/ic_font_download_white_48dp.png'
-        case 'boolean_type':
+        case js_enum.kBoolean:
             return 'qrc:///icons/ic_check_box_white_24dp.png'
-        case 'number_type':
+        case js_enum.kNumber:
             return 'qrc:///icons/ic_looks_3_white_48dp.png'
-        case 'dictionary_type':
+        case js_enum.kObject:
             return 'qrc:///icons/ic_folder_white_48dp.png'
-        case 'array_type':
+        case js_enum.kArray:
             return 'qrc:///icons/ic_folder_white_48dp.png'
+        case js_enum.kUndefined:
+            return 'qrc:///icons/ic_warning_white_48dp.png'
+        case js_enum.kNull:
+            return 'qrc:///icons/ic_warning_white_48dp.png'
         default:
-            console.log("Error: DataStackPage::get_image_url encountered unknown type.")
+            console.log("Error: DataStackPage::get_image_for_value encountered unknown type.")
             console.log(new Error().stack);
         }
         return ""

@@ -135,16 +135,16 @@ class ContentCommHandler {
                 // In this case the scroll may not move fully to the requested position.
                 if (req.args.action == ElementActionType.kScroll) {
                     switch (req.args.direction) {
-                        case Direction.down: {
+                        case DirectionType.down: {
                             this.gui_collection.overlay_sets.scroll_down(req.args.set_index, req.args.overlay_index);
                         } break
-                        case Direction.up: {
+                        case DirectionType.up: {
                             this.gui_collection.overlay_sets.scroll_up(req.args.set_index, req.args.overlay_index);
                         } break
-                        case Direction.right: {
+                        case DirectionType.right: {
                             this.gui_collection.overlay_sets.scroll_right(req.args.set_index, req.args.overlay_index);
                         } break
-                        case Direction.left: {
+                        case DirectionType.left: {
                             this.gui_collection.overlay_sets.scroll_left(req.args.set_index, req.args.overlay_index);
                         } break
                     }
