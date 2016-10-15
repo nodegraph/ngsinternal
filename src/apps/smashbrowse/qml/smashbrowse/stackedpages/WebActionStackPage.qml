@@ -48,7 +48,7 @@ AppStackPage{
     function on_url_entry() {
         var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EnterStringPage.qml", web_action_stack_page, {})
         page.visible = true
-        page.init("www.")
+        page.set_value("www.")
         page.set_title("Enter URL")
         page.callback = web_recorder.record_navigate_to.bind(web_worker)
         stack_view.push_page(page)
@@ -58,7 +58,7 @@ AppStackPage{
     function on_type_text() {
         var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EnterStringPage.qml", web_action_stack_page, {})
         page.visible = true
-        page.init("")
+        page.set_value("")
         page.set_title("Type Text")
         page.callback = web_recorder.record_type_text.bind(web_worker)
         stack_view.push_page(page)
@@ -73,7 +73,7 @@ AppStackPage{
     function on_select_option_texts(option_texts) {
     	var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/SelectDropdownPage.qml", web_action_stack_page, {})
         page.visible = true
-        page.init("")
+        page.set_value("")
         page.set_title("Select from Dropdown")
         page.callback = web_recorder.record_select_from_dropdown.bind(web_worker)
         page.set_option_texts(option_texts)

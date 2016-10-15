@@ -79,6 +79,23 @@ QVariantMap Compute::get_inputs() const {
   return map;
 }
 
+QVariantMap Compute::get_hidden_inputs() const {
+  QVariantMap map;
+  for (auto iter: _inputs->get_hidden()) {
+    iter.second->clean_state();
+    map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
+  }
+  return map;
+}
+
+QVariantMap Compute::get_exposed_inputs() const {
+  QVariantMap map;
+  for (auto iter: _inputs->get_exposed()) {
+    map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
+  }
+  return map;
+}
+
 void Compute::set_params(const QVariantMap& params) {
   QVariantMap::const_iterator iter;
   for (iter = params.begin(); iter != params.end(); ++iter) {
@@ -184,6 +201,14 @@ Entity* Compute::get_inputs_space() {
 Entity* Compute::get_outputs_space() {
   external();
   return our_entity()->get_child("outputs");
+}
+
+void Compute::add_hint(const std::string& name, HintType hint_type, const QVariant& value) {
+  _hints[name.c_str()].toMap()[Hint::get_as_string(hint_type)] = value;
+}
+
+const QVariantMap& Compute::get_hints() const {
+  return _hints;
 }
 
 }

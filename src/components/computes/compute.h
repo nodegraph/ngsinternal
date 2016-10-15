@@ -39,6 +39,8 @@ class COMPUTES_EXPORT Compute: public Component {
 
   // Our inputs.
   QVariantMap get_inputs() const;
+  QVariantMap get_hidden_inputs() const; // These are the params of the node.
+  QVariantMap get_exposed_inputs() const; // These are the linkable inputs of the node.
   void set_params(const QVariantMap& inputs);
 
   virtual const QVariantMap& get_outputs() const;
@@ -50,18 +52,19 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual bool update_state();
   virtual bool clean_finalize();
 
-
-
   // Our outputs. These are called during cleaning, so they don't dirty the instance's state.
   virtual void set_outputs(const QVariantMap& outputs);
   virtual void set_output(const std::string& name, const QVariant& value);
 
   // Plugs.
-  Entity* create_input(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
-  Entity* create_output(const std::string& name, ParamType type = ParamType::kQVariantMap, bool exposed = true);
+  Entity* create_input(const std::string& name, ParamType type = ParamType::kMap, bool exposed = true);
+  Entity* create_output(const std::string& name, ParamType type = ParamType::kMap, bool exposed = true);
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
   Entity* get_outputs_space();
+
+  void add_hint(const std::string& name, HintType hint_type, const QVariant& value);
+  const QVariantMap& get_hints() const;
 
  protected:
   Dep<Inputs> _inputs;
@@ -70,6 +73,10 @@ class COMPUTES_EXPORT Compute: public Component {
   // Map from output plug names to results.
   // QVariantMap is a typedef for QMap<QString, QVariant>.
   QVariantMap _outputs;
+
+  // Hints are generally used for the hidden inputs (params) of a node.
+  // They are used to display customized guis for the input.
+  QVariantMap _hints;
 };
 
 }

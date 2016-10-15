@@ -110,7 +110,7 @@ bool ResizeBrowserCompute::update_state(){
 void NavigateToCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kURL, ParamType::kQString, false);
+  create_input(Message::kURL, ParamType::kString, false);
 }
 
 bool NavigateToCompute::update_state() {
@@ -139,7 +139,7 @@ bool NavigateRefreshCompute::update_state() {
 void SwitchToIFrameCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kIFrame, ParamType::kQString, false);
+  create_input(Message::kIFrame, ParamType::kString, false);
 }
 
 bool SwitchToIFrameCompute::update_state() {
@@ -156,9 +156,10 @@ bool SwitchToIFrameCompute::update_state() {
 void CreateSetFromValuesCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kWrapType, ParamType::kWrapType, false);
-  create_input(Message::kTextValues, ParamType::kQStringList, false);
-  create_input(Message::kImageValues, ParamType::kQStringList, false);
+  create_input(Message::kWrapType, ParamType::kInt, false);
+  add_hint(Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
+  create_input(Message::kTextValues, ParamType::kStringList, false);
+  create_input(Message::kImageValues, ParamType::kStringList, false);
 }
 
 bool CreateSetFromValuesCompute::update_state() {
@@ -175,7 +176,8 @@ bool CreateSetFromValuesCompute::update_state() {
 void CreateSetFromTypeCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kWrapType, ParamType::kWrapType, false);
+  create_input(Message::kWrapType, ParamType::kInt, false);
+  add_hint(Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
 }
 
 bool CreateSetFromTypeCompute::update_state() {
@@ -211,7 +213,9 @@ void ShiftSetCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, ParamType::kInt, false);
   create_input(Message::kDirection, ParamType::kInt, false);
+  add_hint(Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
   create_input(Message::kWrapType, ParamType::kInt, false);
+  add_hint(Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
 }
 
 bool ShiftSetCompute::update_state() {
@@ -230,7 +234,7 @@ void MouseActionCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, ParamType::kInt, false);
   create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  create_input(Message::kOverlayRelClickPos, ParamType::kQVariantMap, false);
+  create_input(Message::kOverlayRelClickPos, ParamType::kMap, false);
   create_input(Message::kMouseAction, ParamType::kInt, false);
 }
 
@@ -250,7 +254,7 @@ void StartMouseHoverActionCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, ParamType::kInt, false);
   create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  create_input(Message::kPosition, ParamType::kQVariantMap, false);
+  create_input(Message::kPosition, ParamType::kMap, false);
 }
 
 bool StartMouseHoverActionCompute::update_state() {
@@ -280,9 +284,9 @@ void TextActionCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, ParamType::kInt, false);
   create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  create_input(Message::kPosition, ParamType::kQVariantMap, false);
+  create_input(Message::kPosition, ParamType::kMap, false);
   create_input(Message::kTextAction, ParamType::kInt, false);
-  create_input(Message::kText, ParamType::kQString, false); // Only used when the text action is set to send text.
+  create_input(Message::kText, ParamType::kString, false); // Only used when the text action is set to send text.
 }
 
 bool TextActionCompute::update_state() {
@@ -301,9 +305,9 @@ void ElementActionCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, ParamType::kInt, false);
   create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  create_input(Message::kPosition, ParamType::kQVariantMap, false);
+  create_input(Message::kPosition, ParamType::kMap, false);
   create_input(Message::kElementAction, ParamType::kInt, false);
-  create_input(Message::kOptionText, ParamType::kQString, false); // Only used when the element action is set to select option from dropdown.
+  create_input(Message::kOptionText, ParamType::kString, false); // Only used when the element action is set to select option from dropdown.
   create_input(Message::kDirection, ParamType::kInt, false); // Only used when the element action is set to scroll.
 }
 
@@ -323,7 +327,7 @@ void ExpandSetCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, ParamType::kInt, false);
   create_input(Message::kDirection, ParamType::kInt, false); // Only used when the element action is set to scroll.
-  create_input(Message::kMatchCriteria, ParamType::kQVariantMap, false);
+  create_input(Message::kMatchCriteria, ParamType::kMap, false);
 }
 
 bool ExpandSetCompute::update_state() {

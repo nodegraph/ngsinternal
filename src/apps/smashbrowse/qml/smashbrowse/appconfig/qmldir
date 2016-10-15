@@ -2,3 +2,4 @@ module appconfig
 AppSettings 1.0 AppSettings.qml
 AppUnits 1.0 AppUnits.qml
 AppUtils 1.0 AppUtils.qml
+AppEnums 1.0 AppEnums.qml

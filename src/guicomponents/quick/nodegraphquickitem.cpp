@@ -657,7 +657,7 @@ void NodeGraphQuickItem::view_node() {
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
     qDebug() << "performing compute! \n";
-    _ng_manipulator->set_ultimate_target(compute->our_entity(), true);
+    //_ng_manipulator->set_ultimate_target(compute->our_entity(), true);
 
     QVariantMap submap;
     submap.insert("xxnumber int", 123);
@@ -681,6 +681,8 @@ void NodeGraphQuickItem::view_node() {
     test.insert("boolean2", false);
     test.insert("submap", submap);
     test.insert("subarray", sublist);
+
+
     emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_outputs());
 
     // Update our node graph selection object which also tracks and edit and view nodes.
@@ -701,7 +703,7 @@ void NodeGraphQuickItem::edit_node() {
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
     qDebug() << "performing compute! \n";
-    compute->propagate_cleanliness();
+    //compute->propagate_cleanliness();
 
     QVariantMap submap;
     submap.insert("xxnumber int", 123);
@@ -718,14 +720,21 @@ void NodeGraphQuickItem::edit_node() {
     sublist.push_back(false);
 
     QVariantMap test;
-    test.insert("number int", 123);
+    test.insert("number", 1);
     test.insert("string", "booya man");
     test.insert("number float", 234.545);
     test.insert("boolean", true);
     test.insert("boolean2", false);
     test.insert("submap", submap);
     test.insert("subarray", sublist);
-    emit edit_node_params(compute->our_entity()->get_name().c_str(), test);
+
+    QVariantMap hints;
+    hints[Hint::get_as_string(HintType::kEnum)] = to_underlying(EnumHint::kWrapType);
+    QVariantMap all_hints;
+    all_hints.insert("number", hints);
+
+    //emit edit_node_params(compute->our_entity()->get_name().c_str(), compute->get_hidden_inputs());
+    emit edit_node_params(compute->our_entity()->get_name().c_str(), test, all_hints);
 
     // Update our node graph selection object which also tracks and edit and view nodes.
     get_current_interaction()->edit(_last_pressed_node);

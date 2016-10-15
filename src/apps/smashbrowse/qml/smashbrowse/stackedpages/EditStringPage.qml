@@ -24,15 +24,16 @@ Rectangle {
     
     // This is set when added to the app stack view.
     property var parent_stack_view
-    property var value
-
-    // Methods.
-    function init(value) {
-        text_field.text = value
-        edit_string_page.value = value
-    }
 
     // Our Methods.
+    function set_value(value) {
+        text_field.text = value
+    }
+
+    function get_value(value) {
+        return text_field.text
+    }
+
     function set_title(title) {
         stack_view_header.title_text = title
     }
@@ -78,10 +79,9 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    edit_string_page.value = text_field.text
-                    var path = edit_string_page.parent_stack_view.get_title_path(1, edit_string_page.parent_stack_view.depth)
-                    edit_string_page.parent_stack_view.stack_page.set_value(path, text_field.text)
-                    edit_string_page.parent_stack_view.pop_page()
+                    var path = parent_stack_view.get_title_path(1, parent_stack_view.depth)
+                    parent_stack_view.stack_page.set_value(path, get_value())
+                    parent_stack_view.pop_page()
                 }
             }
             Rectangle {
@@ -92,7 +92,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    edit_string_page.parent_stack_view.pop_page()
+                    parent_stack_view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

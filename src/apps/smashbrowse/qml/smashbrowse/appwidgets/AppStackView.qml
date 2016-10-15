@@ -100,10 +100,11 @@ StackView {
             var page = stack_view.get(stack_view.depth-1)
 
             // Stops any further get_value and get_value_as_string evaluations.
-            //page.parent_stack_view = null
+            page.parent_stack_view = null
 
             // The model in the page is manually created, and so must be manually destroyed as well.
             var model = null
+            console.log('model is dynamic: ' + page.model_is_dynamic)
             if (page.model_is_dynamic) {
                 model = page.model
             }
@@ -170,7 +171,9 @@ StackView {
         var props={}
         props.edition = file_model.get_edition()
         props.node_limit_reached = (props.edition != "pro") && (node_graph_item.get_num_nodes() >= 10)
-        model.update(props)
+        if (model.update) {
+            model.update(props)
+        }
         // Configure the page.
         page.model = model
         page.model_is_dynamic = true

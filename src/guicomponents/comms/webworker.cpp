@@ -86,6 +86,11 @@ bool WebWorker::is_busy_cleaning() {
   return _ng_manipulator->is_busy_cleaning();
 }
 
+void WebWorker::queue_emit_option_texts() {
+  TaskContext tc(_task_sheduler);
+  queue_emit_option_texts(tc);
+}
+
 bool WebWorker::is_polling() {
   return _poll_timer.isActive();
 }

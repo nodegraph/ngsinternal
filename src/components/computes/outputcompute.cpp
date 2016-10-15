@@ -54,7 +54,7 @@ void OutputCompute::save(SimpleSaver& saver) const {
   Compute::save(saver);
 
   // Serialize the param type.
-  size_t type = _param_type;
+  size_t type = static_cast<size_t>(_param_type);
   saver.save(type);
 
   // Serialize the exposed value.

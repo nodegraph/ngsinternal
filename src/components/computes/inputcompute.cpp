@@ -15,7 +15,7 @@ namespace ngs {
 
 InputCompute::InputCompute(Entity* entity)
     : Compute(entity, kDID()),
-      _param_type(ParamType::kQVariantMap),
+      _param_type(ParamType::kMap),
       _output(this),
       _exposed(true) {
 	get_dep_loader()->register_dynamic_dep(_output);
@@ -114,7 +114,7 @@ void InputCompute::save(SimpleSaver& saver) const {
   Compute::save(saver);
 
   // Serialize the param type.
-  size_t type = _param_type;
+  size_t type = static_cast<size_t>(_param_type);
   saver.save(type);
 
   // Serialize the exposed value.

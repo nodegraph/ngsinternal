@@ -59,6 +59,7 @@
         <file>qml/smashbrowse/appwidgets/AppLabel.qml</file>
         <file>qml/smashbrowse/appwidgets/AppCheckBox.qml</file>
         <file>qml/smashbrowse/appwidgets/AppRadioButton.qml</file>
+        <file>qml/smashbrowse/appwidgets/AppComboBox.qml</file>
         
         <!-- MenuModels -->
         <file>qml/smashbrowse/menumodels/qmldir</file>
@@ -95,6 +96,7 @@
         <file>qml/smashbrowse/appconfig/AppSettings.qml</file>
         <file>qml/smashbrowse/appconfig/AppUnits.qml</file>
         <file>qml/smashbrowse/appconfig/AppUtils.qml</file>
+        <file>qml/smashbrowse/appconfig/AppEnums.qml</file>
         
         <!-- Pages -->
         <file>qml/smashbrowse/pages/qmldir</file>

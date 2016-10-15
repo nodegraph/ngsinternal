@@ -21,21 +21,25 @@ Rectangle {
     border.width: app_settings.list_item_border_width
     color: "transparent"
 
+    // Note: the "name" and "value" variables are not declared here.
+    // They come from the model and are exposed here by QML.
+
     function get_image_url() {
         var stack_view = data_delegate.ListView.view.parent_stack_view
         var path = stack_view.get_title_path(1, depth_index+1)
-        path.push(data_name)
+        path.push(name)
         return stack_view.stack_page.get_image_url(path)
     }
 
     function get_value_as_string() {
         var stack_view = data_delegate.ListView.view.parent_stack_view
         var path = stack_view.get_title_path(1, depth_index+1)
-        path.push(data_name)
+        path.push(name)
         return stack_view.stack_page.get_value_as_string(path)
     }
 
     Row {
+        // The large icon on the left that indicates the data type.
         Rectangle {
             height: app_settings.list_item_height_large
             width: app_settings.list_item_height_large
@@ -49,16 +53,19 @@ Rectangle {
             }
         }
 
+        // The textual content on the right that refers to the data value.
         Column {
             anchors.verticalCenter: parent.verticalCenter
+            // The name of the data in large text on top.
             Text {
-                text: data_name
+                text: name
                 font.family: "Arial"
                 font.bold: true
                 font.pointSize: app_settings.menu_page_title_point_size
                 font.italic: false
                 color: "white"
             }
+            // The value of the data in smaller text on bottom.
             Text {
                 text: data_delegate.ListView.view.parent_stack_view ? get_value_as_string() : ""
                 font.family: "Arial"
@@ -87,7 +94,7 @@ Rectangle {
 
             // Get our current value and type.
             var path = stack_view.get_title_path(1, depth_index+1)
-            path.push(data_name)
+            path.push(name)
             var value = stack_view.stack_page.get_value(path)
             var value_type = stack_view.stack_page.get_value_type(path)
 
@@ -96,32 +103,32 @@ Rectangle {
             case 'string_type':
                 if (stack_view.allow_editing) {
                     var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EditStringPage.qml", edit_node_page, {})
-                    page.init(value)
-                    page.set_title(data_name)
+                    page.set_value(value)
+                    page.set_title(name)
                     stack_view.push_page(page)
                 }
                 break
             case 'boolean_type':
                 if (stack_view.allow_editing) {
                     var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EditBooleanPage.qml", edit_node_page, {})
-                    page.init(data_name, our_boolean_value)
-                    page.set_title(data_name)
+                    page.set_value(value)
+                    page.set_title(name)
                     stack_view.push_page(page)
                 }
                 break
             case 'number_type':
                 if (stack_view.allow_editing) {
                     var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EditNumberPage.qml", edit_node_page, {})
-                    page.init(data_name, our_number_value)
-                    page.set_title(data_name)
+                    page.set_value(value)
+                    page.set_title(name)
                     stack_view.push_page(page)
                 }
                 break
             case 'dictionary_type':
-                stack_view.stack_page.view_object(data_name, value);
+                stack_view.stack_page.view_object(name, value);
                 break
             case 'array_type':
-                stack_view.stack_page.view_array(data_name, value);
+                stack_view.stack_page.view_array(name, value);
                 break
             default:
                 console.log("Error: AppDataDelegate::onDoubleClicked encountered unknown type: " + value_type)

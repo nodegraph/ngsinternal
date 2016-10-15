@@ -111,7 +111,7 @@ Q_OBJECT
  void node_context_menu_requested();
 
  void view_node_outputs(const QString& name, const QVariantMap& results);
- void edit_node_params(const QString& name, const QVariantMap& params);
+ void edit_node_params(const QString& name, const QVariantMap& params, const QVariantMap& hints);
 
  void mark_progress();
 

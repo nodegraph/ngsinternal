@@ -24,18 +24,19 @@ Rectangle {
 
     // This is set when added to the app stack view.
     property var parent_stack_view
-    property var value
 
     // Callback will be called with the entered text.
     property var callback
 
-    // Methods.
-    function init(value) {
+    // Our Methods.
+    function set_value(value) {
         text_field.text = value
-        enter_string_page.value = value
     }
 
-    // Our Methods.
+	function get_value() {
+		return text_field.text
+	}
+    
     function set_title(title) {
         stack_view_header.title_text = title
     }
@@ -81,7 +82,6 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    enter_string_page.value = text_field.text
                     enter_string_page.callback(text_field.text)
                     enter_string_page.parent_stack_view.pop_page()
                     main_bar.switch_to_current_mode()

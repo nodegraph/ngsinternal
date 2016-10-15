@@ -8,7 +8,7 @@ class QSurfaceFormat;
 
 namespace ngs {
 
-enum ParamType;
+enum class ParamType;
 
 class FileModel;
 class AppComm;

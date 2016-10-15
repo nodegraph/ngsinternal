@@ -1,5 +1,6 @@
 
 set(sources
+    paramtypes.cpp
 	flux.cpp
 	compute.cpp
 	dotnodecompute.cpp
@@ -18,6 +19,7 @@ qt5_wrap_cpp(moc_imps ${moc_headers})
 list(APPEND sources ${moc_imps})
     
 set(headers
+    paramtypes.h
     flux.h
 	compute.h
 	dotnodecompute.h

@@ -5,7 +5,7 @@
 
 namespace ngs {
 
-enum ParamType;
+enum class ParamType;
 
 class ENTITIES_EXPORT BaseNamespaceEntity : public Entity {
  public:

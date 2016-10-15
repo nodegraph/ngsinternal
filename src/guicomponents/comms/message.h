@@ -1,5 +1,6 @@
 #pragma once
 #include <guicomponents/comms/comms_export.h>
+#include <base/utils/enumutil.h>
 
 #include <QtCore/QString>
 #include <QtCore/QJsonDocument>
@@ -8,11 +9,6 @@
 #include <QtCore/QVariant>
 
 namespace ngs {
-
-template<class E>
-typename std::underlying_type<E>::type to_underlying(E e) {
-   return static_cast<typename std::underlying_type<E>::type>(e);
-}
 
 
 // Note we don't use the Q_DECLARE_METATYPE() or the Q_ENUM() macro because we may eventually
@@ -89,21 +85,6 @@ enum class ElementActionType : int {
   kScroll
 };
 //Q_DECLARE_METATYPE(ElementActionType);
-
-//enum ActionType {
-//  kSendClick,
-//  kMouseOver,
-//  kStartMouseHover,
-//  kStopMouseHover,
-//  kSendText,
-//  kSendEnter,
-//  kGetText,
-//  kSelectOption,
-//  kScrollDown,
-//  kScrollUp,
-//  kScrollRight,
-//  kScrollLeft
-//};
 
 enum class InfoType : int {
   kPageIsLoading,
