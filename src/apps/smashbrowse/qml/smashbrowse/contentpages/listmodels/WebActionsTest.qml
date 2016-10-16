@@ -53,7 +53,7 @@ ListModel {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "test busy"
         description: "Close the browser."
-        script: "web_action_stack_page.on_busy()"
+        script: "web_menu_list_stack_page.on_busy()"
     }
 
     ListElement {

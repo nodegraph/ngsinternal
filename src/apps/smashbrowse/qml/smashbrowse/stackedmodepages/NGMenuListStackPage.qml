@@ -15,7 +15,7 @@ import smashbrowse.contentpages.listmodels 1.0
 
 
 AppStackPage{
-    id: node_action_stack_page
+    id: page
 
     // Our Properties.
     property bool center_new_nodes: false
@@ -34,10 +34,10 @@ AppStackPage{
     // -------------------------------------------------------------------------------------------
 
     function show_busy_page() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/ProcessingPage.qml", node_action_stack_page, {})
-        page.visible = true
-        page.set_title("Processing Nodes")
-        stack_view.push_page(page)
+        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/ProcessingPage.qml", ng_menu_list_stack_page, {})
+        push_page.visible = true
+        push_page.set_title("Processing Nodes")
+        stack_view.push_page(push_page)
     }
 
     function on_node_context_menu() {

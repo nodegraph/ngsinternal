@@ -10,7 +10,7 @@ ListModel {
         title: "Switch to IFrame"
         description: "The crosshair is in a another iframe."
         script: "web_recorder.record_switch_to_iframe();
-                 web_action_stack_page.on_show_web_action_menu()"
+                 web_menu_list_stack_page.on_show_web_action_menu()"
     }
 
 }

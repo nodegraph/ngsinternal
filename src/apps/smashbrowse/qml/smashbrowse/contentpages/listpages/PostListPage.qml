@@ -18,7 +18,7 @@ import smashbrowse.contentpages.listmodels 1.0
 // The max node posts is specified in app_settings.max_node_posts.
 
 BaseListPage {
-    id: posts_page
+    id: page
 
     // Dimensions.
     height: app_settings.page_height

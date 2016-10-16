@@ -14,7 +14,7 @@ import smashbrowse.contentpages.listmodels 1.0
 
 
 AppStackPage{
-    id: data_stack_page
+    id: page
 
     // Settings.
     property var _allow_edits: false
@@ -132,8 +132,8 @@ AppStackPage{
 
     // Push next model on the stack.
     function push_by_model(title, model) {
-        var page = stack_view.create_page("DataListPage")
-        stack_view.push_by_components(title, page, model)
+        var data_list = stack_view.create_page("DataListPage")
+        stack_view.push_by_components(title, data_list, model)
     }
 
     // Create a list model.
@@ -142,7 +142,7 @@ AppStackPage{
                 import QtQuick 2.6;
                 ListModel {
                 } "
-        return Qt.createQmlObject(script, data_stack_page, "view_node_dynamic_content")
+        return Qt.createQmlObject(script, page, "view_node_dynamic_content")
     }
 
     // Display the contents of a dict.

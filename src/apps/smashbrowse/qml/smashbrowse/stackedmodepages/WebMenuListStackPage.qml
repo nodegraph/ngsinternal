@@ -16,7 +16,7 @@ import smashbrowse.contentpages.listmodels 1.0
 
 
 AppStackPage{
-    id: web_action_stack_page
+    id: page
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
@@ -46,22 +46,22 @@ AppStackPage{
     }
 
     function on_url_entry() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", web_action_stack_page, {})
-        page.visible = true
-        page.set_value("www.")
-        page.set_title("Enter URL")
-        page.callback = web_recorder.record_navigate_to.bind(web_worker)
-        stack_view.push_page(page)
+        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
+        push_page.visible = true
+        push_page.set_value("www.")
+        push_page.set_title("Enter URL")
+        push_page.callback = web_recorder.record_navigate_to.bind(web_worker)
+        stack_view.push_page(push_page)
         visible = true
     }
 
     function on_type_text() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", web_action_stack_page, {})
-        page.visible = true
-        page.set_value("")
-        page.set_title("Type Text")
-        page.callback = web_recorder.record_type_text.bind(web_worker)
-        stack_view.push_page(page)
+        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
+        push_page.visible = true
+        push_page.set_value("")
+        push_page.set_title("Type Text")
+        push_page.callback = web_recorder.record_type_text.bind(web_worker)
+        stack_view.push_page(push_page)
         visible = true
     }
 
@@ -71,20 +71,20 @@ AppStackPage{
     
     // Receive option texts from the app worker.
     function on_select_option_texts(option_texts) {
-    	var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", web_action_stack_page, {})
-        page.visible = true
-        page.set_title("Select from Dropdown")
-        page.callback = web_recorder.record_select_from_dropdown.bind(web_worker)
-        page.set_option_texts(option_texts)
-        stack_view.push_page(page)
+    	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
+        push_page.visible = true
+        push_page.set_title("Select from Dropdown")
+        push_page.callback = web_recorder.record_select_from_dropdown.bind(web_worker)
+        push_page.set_option_texts(option_texts)
+        stack_view.push_page(push_page)
         visible = true
     }
 
     function on_busy() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/WebActionBusyPage.qml", edit_node_page, {})
-        page.visible = true
-        page.set_title("Busy")
-        stack_view.push_page(page)
+        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/WebActionBusyPage.qml", edit_data_list_stack_page, {})
+        push_page.visible = true
+        push_page.set_title("Busy")
+        stack_view.push_page(push_page)
     }
 
 }

@@ -11,7 +11,7 @@ ListModel {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Navigate..."
         description: "Navigate to a url."
-        script: "web_action_stack_page.on_url_entry()"
+        script: "web_menu_list_stack_page.on_url_entry()"
     }
 
     ListElement {

@@ -68,8 +68,8 @@ Rectangle {
         }
 
         // Make sure the node actions aren't showing.
-        node_action_stack_page.stack_view.clear_pages()
-        node_action_stack_page.visible = false
+        ng_menu_list_stack_page.stack_view.clear_pages()
+        ng_menu_list_stack_page.visible = false
     }
 
     function switch_to_last_mode(m) {

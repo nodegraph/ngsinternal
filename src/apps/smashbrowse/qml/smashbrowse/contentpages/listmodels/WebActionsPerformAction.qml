@@ -16,7 +16,7 @@ ListModel {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Type Text"
         description: "Type text into a text input element."
-        script: "web_action_stack_page.on_type_text()"
+        script: "web_menu_list_stack_page.on_type_text()"
     }
 
     ListElement {
@@ -37,7 +37,7 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Select from Dropdown"
         description: "Select a choice from a dropdown."
-        script: "web_action_stack_page.on_select_from_dropdown()"
+        script: "web_menu_list_stack_page.on_select_from_dropdown()"
     }
 
     ListElement {

@@ -16,7 +16,7 @@ import smashbrowse.contentpages.listmodels 1.0
 
 // The list page is used in menus. It has a stack view header and a list view.
 Rectangle {
-    id: list_page
+    id: page
 
     // Dimensions.
     height: app_settings.page_height
@@ -51,7 +51,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: list_page.Stack.view
+        stack_view: page.Stack.view
     }
 
     // Our ListView.
@@ -81,7 +81,7 @@ Rectangle {
         focus: true
 
         // Our parenting stack view.
-        property var _list_page: list_page
+        property var _list_page: page
     }
 
 

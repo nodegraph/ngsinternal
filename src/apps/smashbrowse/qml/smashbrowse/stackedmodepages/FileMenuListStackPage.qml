@@ -13,7 +13,7 @@ import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
 AppStackPage{
-    id: file_menu_stack_page
+    id: page
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
@@ -73,26 +73,26 @@ AppStackPage{
 	}
 
     function on_open_file_list() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/listpages/FileListPage.qml", file_menu_stack_page, {})
-        page.init()
-        page.visible = true
-        stack_view.push_page(page)
+        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/listpages/FileListPage.qml", page, {})
+        push_page.init()
+        push_page.visible = true
+        stack_view.push_page(push_page)
     }
 
     function on_create_file_info() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml", file_menu_stack_page, {})
-        page.visible = true
-        page.create_file = true
-        page.set_title("New File")
-        stack_view.push_page(page)
+        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml", page, {})
+        push_page.visible = true
+        push_page.create_file = true
+        push_page.set_title("New File")
+        stack_view.push_page(push_page)
     }
 
     function on_edit_file_info() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml", file_menu_stack_page, {})
-        page.visible = true
-        page.create_file = false
-        page.set_title("File Info")
-        stack_view.push_page(page)
+        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml", page, {})
+        push_page.visible = true
+        push_page.create_file = false
+        push_page.set_title("File Info")
+        stack_view.push_page(push_page)
     }
     
 }

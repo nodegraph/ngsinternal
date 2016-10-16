@@ -16,9 +16,9 @@ import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
 BaseListPage {
-    id: data_page
+    id: page
 
     // Our settings.
-    show_back_button: data_page.Stack.view && (data_page.Stack.view.depth > 1)
+    show_back_button: page.Stack.view && (page.Stack.view.depth > 1)
     delegate: DataListDelegate{}
 }

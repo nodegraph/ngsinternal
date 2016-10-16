@@ -15,5 +15,5 @@ import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
 BaseListPage {
-    id: web_action_page
+    id: page
 }

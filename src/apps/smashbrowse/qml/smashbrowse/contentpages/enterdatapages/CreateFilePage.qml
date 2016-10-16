@@ -125,9 +125,9 @@ Rectangle {
 
                     // Set values.
                     if (create_file == true) {
-                    	file_menu_stack_page.on_create_graph_info(info)
+                    	file_menu_list_stack_page.on_create_graph_info(info)
                     } else {
-                        file_menu_stack_page.on_update_current_graph_info(info)
+                        file_menu_list_stack_page.on_update_current_graph_info(info)
                     }
                 }
             }
