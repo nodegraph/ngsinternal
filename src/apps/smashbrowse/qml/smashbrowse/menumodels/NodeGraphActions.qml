@@ -30,7 +30,7 @@ ListModel {
         image_url: "qrc:///icons/ic_build_white_48dp.png"
         title: "Create..."
         description: "Create a new node."
-        script: "push_by_names('Create', 'NodeActionPage', 'CreateNodeActions')"
+        script: "push_by_names('Create', 'NGMenuListPage', 'CreateNodeActions')"
     }
 
     ListElement {
@@ -45,28 +45,28 @@ ListModel {
         image_url: "qrc:///icons/ic_crop_free_white_48dp.png"
         title: "Frame..."
         description: "Frame nodes so that they fill the screen."
-        script: "push_by_names('Frame', 'NodeActionPage', 'FrameNodeActions')"
+        script: "push_by_names('Frame', 'NGMenuListPage', 'FrameNodeActions')"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_select_all_white_48dp.png"
         title: "Select..."
         description: "Select or deselect all nodes."
-        script: "push_by_names('Select', 'NodeActionPage', 'SelectNodeActions')"
+        script: "push_by_names('Select', 'NGMenuListPage', 'SelectNodeActions')"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_content_copy_white_48dp.png"
         title: "Copy and Paste..."
         description: "Copy, cut, and paste nodes."
-        script: "push_by_names('Copy and Paste', 'NodeActionPage', 'CopyPasteNodeActions')"
+        script: "push_by_names('Copy and Paste', 'NGMenuListPage', 'CopyPasteNodeActions')"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_zoom_out_map_white_48dp.png"
         title: "Explode and Collapse..."
         description: "Explode group nodes or collapse some nodes."
-        script: "push_by_names('Explode and Collapse', 'NodeActionPage', 'ExplodeCollapseNodeActions')"
+        script: "push_by_names('Explode and Collapse', 'NGMenuListPage', 'ExplodeCollapseNodeActions')"
     }
 
 }

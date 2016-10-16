@@ -4,7 +4,6 @@ AppStackViewHeader 1.0 AppStackViewHeader.qml
 AppStackView 1.0 AppStackView.qml
 AppScrollView 1.0 AppScrollView.qml
 
-AppListPage 1.0 AppListPage.qml
 AppStackPage 1.0 AppStackPage.qml
 
 AppImageButton 1.0 AppImageButton.qml

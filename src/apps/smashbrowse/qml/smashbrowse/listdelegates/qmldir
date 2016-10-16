@@ -1,4 +1,4 @@
-module delegates
+module listdelegates
 
 BaseListDelegate 1.0 BaseListDelegate.qml
 DataListDelegate 1.0 DataListDelegate.qml

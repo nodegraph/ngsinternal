@@ -8,13 +8,14 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackedpages 1.0
+import smashbrowse.stackviewpages 1.0
 import smashbrowse.pages 1.0
-import smashbrowse.delegates 1.0
+import smashbrowse.listpages 1.0
+import smashbrowse.listdelegates 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.menumodels 1.0
 
-AppListPage {
+BaseListPage {
     id: file_page
 
     // Setttings.

@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackedpages 1.0
+import smashbrowse.stackviewpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.menumodels 1.0
 
@@ -19,7 +19,7 @@ AppStackPage{
     function on_switch_to_mode(mode) {
         if (mode == app_settings.file_mode) {
             visible = true;
-            stack_view.push_by_names("File Menu", "FileMenuPage", "FileMenuActions")
+            stack_view.push_by_names("File Menu", "FileMenuListPage", "FileMenuActions")
         } else {
             visible = false;
             stack_view.clear_pages()
@@ -73,14 +73,14 @@ AppStackPage{
 	}
 
     function on_open_file_list() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/FileListPage.qml", file_menu_stack_page, {})
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/listpages/FileListPage.qml", file_menu_stack_page, {})
         page.init()
         page.visible = true
         stack_view.push_page(page)
     }
 
     function on_create_file_info() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/CreateFilePage.qml", file_menu_stack_page, {})
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/CreateFilePage.qml", file_menu_stack_page, {})
         page.visible = true
         page.create_file = true
         page.set_title("New File")
@@ -88,7 +88,7 @@ AppStackPage{
     }
 
     function on_edit_file_info() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/CreateFilePage.qml", file_menu_stack_page, {})
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/CreateFilePage.qml", file_menu_stack_page, {})
         page.visible = true
         page.create_file = false
         page.set_title("File Info")

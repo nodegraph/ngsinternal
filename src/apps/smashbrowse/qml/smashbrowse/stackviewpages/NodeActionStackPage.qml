@@ -9,7 +9,7 @@ import QtQuick.Controls.Private 1.0
 
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackedpages 1.0
+import smashbrowse.stackviewpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.menumodels 1.0
 
@@ -34,7 +34,7 @@ AppStackPage{
     // -------------------------------------------------------------------------------------------
 
     function show_busy_page() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/ProcessingPage.qml", node_action_stack_page, {})
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/ProcessingPage.qml", node_action_stack_page, {})
         page.visible = true
         page.set_title("Processing Nodes")
         stack_view.push_page(page)
@@ -47,7 +47,7 @@ AppStackPage{
         if (web_worker.is_busy_cleaning()) {
             show_busy_page()
         } else {
-        	stack_view.push_by_names("Node Options", "NodeActionPage", "NodeActions")
+        	stack_view.push_by_names("Node Options", "NGMenuListPage", "NodeActions")
         }
         visible = true
     }
@@ -59,7 +59,7 @@ AppStackPage{
         if (web_worker.is_busy_cleaning()) {
             show_busy_page()
         } else {
-            stack_view.push_by_names("Group Node Options", "NodeActionPage", "GroupNodeActions")
+            stack_view.push_by_names("Group Node Options", "NGMenuListPage", "GroupNodeActions")
         }
         visible = true
     }
@@ -71,7 +71,7 @@ AppStackPage{
         if (web_worker.is_busy_cleaning()) {
             show_busy_page()
         } else {
-            stack_view.push_by_names("Node Graph Options", "NodeActionPage", "NodeGraphActions")
+            stack_view.push_by_names("Node Graph Options", "NGMenuListPage", "NodeGraphActions")
         }
         visible = true
     }
@@ -83,7 +83,7 @@ AppStackPage{
         if (web_worker.is_busy_cleaning()) {
             show_busy_page()
         } else {
-            stack_view.push_by_names("Options", "NodeActionPage", model_name)
+            stack_view.push_by_names("Options", "NGMenuListPage", model_name)
         }
     }
 

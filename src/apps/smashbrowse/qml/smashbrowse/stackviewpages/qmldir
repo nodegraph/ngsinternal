@@ -1,18 +1,16 @@
-module stackedpages
+module stackviewpages
 
 NodeActionStackPage 1.0 NodeActionStackPage.qml
-NodeActionPage 1.0 NodeActionPage.qml
+
 
 DataStackPage 1.0 DataStackPage.qml
-DataPage 1.0 DataPage.qml
 
 FileMenuStackPage 1.0 FileMenuStackPage.qml
-FileListPage 1.0 FileListPage.qml
-FileMenuPage 1.0 FileMenuPage.qml
+
 
 WebActionBusyPage 1.0 WebActionBusyPage.qml
 WebActionStackPage 1.0 WebActionStackPage.qml
-WebActionPage 1.0 WebActionPage.qml
+WebMenuListPage 1.0 WebMenuListPage.qml
 
 CreateFilePage 1.0 CreateFilePage.qml
 EditStringPage 1.0 EditStringPage.qml

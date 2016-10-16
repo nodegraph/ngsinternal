@@ -63,7 +63,7 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Perform Scroll"
         description: "Scroll along a direction."
-        script: "push_by_names('Scroll', 'WebActionPage', 'WebActionsPerformScroll')"
+        script: "push_by_names('Scroll', 'WebMenuListPage', 'WebActionsPerformScroll')"
     }
 
 

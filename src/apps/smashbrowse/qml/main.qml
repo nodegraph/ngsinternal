@@ -9,7 +9,8 @@ import QtQuick.Controls.Styles 1.4
 //import NodeGraphRendering 1.0
 import smashbrowse.actionbars 1.0
 import smashbrowse.pages 1.0
-import smashbrowse.stackedpages 1.0
+import smashbrowse.stackviewpages 1.0
+import smashbrowse.listpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.appconfig 1.0
 import smashbrowse.menumodels 1.0
@@ -139,7 +140,7 @@ Rectangle {
         visible: false
     }
 
-    PostsPage {
+    PostListPage {
         id: posts_page
         visible: false
     }

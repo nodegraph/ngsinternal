@@ -9,7 +9,7 @@ import QtQuick.Controls.Private 1.0
 
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackedpages 1.0
+import smashbrowse.stackviewpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.menumodels 1.0
 
@@ -34,19 +34,19 @@ AppStackPage{
     function on_show_web_action_menu() {
         app_settings.vibrate()
         stack_view.clear_pages()
-        stack_view.push_by_names("Web Actions", "WebActionPage", "WebActions")
+        stack_view.push_by_names("Web Actions", "WebMenuListPage", "WebActions")
         visible = true
     }
 
     function on_show_iframe_menu() {
         app_settings.vibrate()
         stack_view.clear_pages()
-        stack_view.push_by_names("IFrame Switch", "WebActionPage", "IFrameActions")
+        stack_view.push_by_names("IFrame Switch", "WebMenuListPage", "IFrameActions")
         visible = true
     }
 
     function on_url_entry() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EnterStringPage.qml", web_action_stack_page, {})
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/EnterStringPage.qml", web_action_stack_page, {})
         page.visible = true
         page.set_value("www.")
         page.set_title("Enter URL")
@@ -56,7 +56,7 @@ AppStackPage{
     }
 
     function on_type_text() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EnterStringPage.qml", web_action_stack_page, {})
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/EnterStringPage.qml", web_action_stack_page, {})
         page.visible = true
         page.set_value("")
         page.set_title("Type Text")
@@ -71,7 +71,7 @@ AppStackPage{
     
     // Receive option texts from the app worker.
     function on_select_option_texts(option_texts) {
-    	var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/SelectDropdownPage.qml", web_action_stack_page, {})
+    	var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/SelectDropdownPage.qml", web_action_stack_page, {})
         page.visible = true
         page.set_value("")
         page.set_title("Select from Dropdown")
@@ -82,7 +82,7 @@ AppStackPage{
     }
 
     function on_busy() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/WebActionBusyPage.qml", edit_node_page, {})
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/WebActionBusyPage.qml", edit_node_page, {})
         page.visible = true
         page.set_title("Busy")
         stack_view.push_page(page)

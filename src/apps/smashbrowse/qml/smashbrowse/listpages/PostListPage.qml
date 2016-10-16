@@ -8,15 +8,16 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackedpages 1.0
+import smashbrowse.stackviewpages 1.0
 import smashbrowse.pages 1.0
-import smashbrowse.delegates 1.0
+import smashbrowse.listpages 1.0
+import smashbrowse.listdelegates 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.menumodels 1.0
 
 // The max node posts is specified in app_settings.max_node_posts.
 
-AppListPage {
+BaseListPage {
     id: posts_page
 
     // Dimensions.

@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackedpages 1.0
+import smashbrowse.stackviewpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.menumodels 1.0
 
@@ -132,7 +132,7 @@ AppStackPage{
 
     // Push next model on the stack.
     function push_by_model(title, model) {
-        var page = stack_view.create_page("DataPage")
+        var page = stack_view.create_page("DataListPage")
         stack_view.push_by_components(title, page, model)
     }
 

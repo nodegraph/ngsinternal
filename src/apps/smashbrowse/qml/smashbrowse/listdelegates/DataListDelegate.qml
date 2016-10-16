@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackedpages 1.0
+import smashbrowse.stackviewpages 1.0
 import smashbrowse.pages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.menumodels 1.0
@@ -50,7 +50,7 @@ BaseListDelegate {
         switch(value_type) {
         case js_enum.kString:
             if (stack_page._allow_edits) {
-                var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EditStringPage.qml", edit_node_page, {})
+                var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/EditStringPage.qml", edit_node_page, {})
                 page.set_value(value)
                 page.set_title(name)
                 stack_view.push_page(page)
@@ -58,7 +58,7 @@ BaseListDelegate {
             break
         case js_enum.kBoolean:
             if (stack_page._allow_edits) {
-                var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EditBooleanPage.qml", edit_node_page, {})
+                var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/EditBooleanPage.qml", edit_node_page, {})
                 page.set_value(value)
                 page.set_title(name)
                 stack_view.push_page(page)
@@ -66,7 +66,7 @@ BaseListDelegate {
             break
         case js_enum.kNumber:
             if (stack_page._allow_edits) {
-                var page = app_loader.load_component("qrc:///qml/smashbrowse/stackedpages/EditNumberPage.qml", edit_node_page, {})
+                var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/EditNumberPage.qml", edit_node_page, {})
                 page.set_value(value)
                 page.set_title(name)
                 stack_view.push_page(page)
