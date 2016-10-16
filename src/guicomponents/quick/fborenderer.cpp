@@ -166,6 +166,9 @@ void FBORenderer::draw() {
 
 void FBORenderer::render() {
   external();
+  if (!_ng_canvas->get_current_interaction()) {
+    return;
+  }
   const ViewportParams& p = _ng_canvas->get_current_interaction()->get_viewport_params();
   if (p.is_empty()) {
     return;

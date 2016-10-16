@@ -100,10 +100,10 @@ QtObject {
                     // Objects have string indexes.
                     index = path[i]
                 } else {
-                    console.log("Error: DataStackPage::set_value was expecting an object or an array 333.")
+                    console.log("Error: DataListStackPage::set_value was expecting an object or an array 333.")
                 }
             } else {
-                console.log("Error: DataStackPage::set_value was expecting an object or an array 4444.")
+                console.log("Error: DataListStackPage::set_value was expecting an object or an array 4444.")
                 return
             }
             // Determine if this is the last element of the path.

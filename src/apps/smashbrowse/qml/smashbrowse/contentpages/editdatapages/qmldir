@@ -1,0 +1,7 @@
+module editdatapages
+
+EditStringPage 1.0 EditStringPage.qml
+EditBooleanPage 1.0 EditBooleanPage.qml
+EditNumberPage 1.0 EditNumberPage.qml
+EditEnumPage 1.0 EditEnumPage.qml
+

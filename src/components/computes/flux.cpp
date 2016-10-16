@@ -74,6 +74,10 @@ bool Flux<Traits>::wires_are_up_to_date() {
 
   // Make sure all the exposed are actually exposed.
   for (auto iter: _exposed) {
+    // If an input has disappeared then we're not up to date.
+    if (!iter.second) {
+      return false;
+    }
     if (!iter.second->is_exposed()) {
       return false;
     }
@@ -81,6 +85,10 @@ bool Flux<Traits>::wires_are_up_to_date() {
 
   // Make sure all the hidden are actually hidden.
   for (auto iter: _hidden) {
+    // If an input has disappeared then we're not up to date.
+    if (!iter.second) {
+      return false;
+    }
     if (iter.second->is_exposed()) {
       return false;
     }

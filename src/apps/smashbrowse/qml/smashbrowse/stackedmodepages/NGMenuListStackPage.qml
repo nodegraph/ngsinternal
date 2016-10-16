@@ -9,9 +9,9 @@ import QtQuick.Controls.Private 1.0
 
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackviewpages 1.0
+import smashbrowse.stackedmodepages 1.0
 import smashbrowse.appwidgets 1.0
-import smashbrowse.menumodels 1.0
+import smashbrowse.contentpages.listmodels 1.0
 
 
 AppStackPage{
@@ -34,7 +34,7 @@ AppStackPage{
     // -------------------------------------------------------------------------------------------
 
     function show_busy_page() {
-        var page = app_loader.load_component("qrc:///qml/smashbrowse/stackviewpages/ProcessingPage.qml", node_action_stack_page, {})
+        var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/ProcessingPage.qml", node_action_stack_page, {})
         page.visible = true
         page.set_title("Processing Nodes")
         stack_view.push_page(page)

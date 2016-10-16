@@ -8,12 +8,13 @@ import QtQuick.Controls.Styles 1.4
 
 //import NodeGraphRendering 1.0
 import smashbrowse.actionbars 1.0
-import smashbrowse.pages 1.0
-import smashbrowse.stackviewpages 1.0
-import smashbrowse.listpages 1.0
+import smashbrowse.fullpages 1.0
+import smashbrowse.modepages 1.0
+import smashbrowse.stackedmodepages 1.0
+import smashbrowse.contentpages.listpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.appconfig 1.0
-import smashbrowse.menumodels 1.0
+import smashbrowse.contentpages.listmodels 1.0
 
 Rectangle {
     id: app_window
@@ -135,7 +136,7 @@ Rectangle {
         visible: false
     }
 
-    FileMenuStackPage {
+    FileMenuListStackPage {
         id: file_menu_stack_page
         visible: false
     }
@@ -150,13 +151,13 @@ Rectangle {
         visible: false
     }
 
-    DataStackPage {
+    DataListStackPage {
         id: edit_node_page
         visible: false
         _allow_edits: true
     }
 
-    DataStackPage {
+    DataListStackPage {
         id: view_node_page
         visible: false
         _allow_edits: false
@@ -177,12 +178,12 @@ Rectangle {
         visible: false
     }
 
-    NodeActionStackPage {
+    NGMenuListStackPage {
         id: node_action_stack_page
         visible: false
     }
 
-    WebActionStackPage {
+    WebMenuListStackPage {
         id: web_action_stack_page
         visible: false
     }

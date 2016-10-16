@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
-import smashbrowse.stackviewpages 1.0
+import smashbrowse.stackedmodepages 1.0
 import smashbrowse.appwidgets 1.0
 
 Rectangle {

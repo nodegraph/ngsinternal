@@ -231,7 +231,7 @@ int main(int argc, char *argv[]) {
 
     if (first_instance) {
       // Show our splash page, while loading the real qml app.
-      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/pages/SplashPage.qml")));
+      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPage.qml")));
       view->rootObject()->setProperty("ngs_version", NGS_VERSION);
       view->show();
       view->update();
@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
       app_root->embed_node_graph();
     } else {
       // Show page with warning about multiple instances.
-      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/pages/AlreadyRunningPage.qml")));
+      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/AlreadyRunningPage.qml")));
       view->rootObject()->setProperty("ngs_version", NGS_VERSION);
       view->show();
       view->update();

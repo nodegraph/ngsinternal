@@ -1,0 +1,4 @@
+module warningpages
+
+WebActionBusyPage 1.0 WebActionBusyPage.qml
+ProcessingPage 1.0 ProcessingPage.qml

@@ -1,4 +1,4 @@
-module pages
+module fullpages
 
 LicensePage 1.0 LicensePage.qml
 CreatePasswordPage 1.0 CreatePasswordPage.qml
@@ -7,9 +7,7 @@ CheckPasswordPage 1.0 CheckPasswordPage.qml
 AlreadyRunningPage 1.0 AlreadyRunningPage.qml
 SplashPage 1.0 SplashPage.qml
 
-NodeGraphPage 1.0 NodeGraphPage.qml
 LimitPage 1.0 LimitPage.qml
-SettingsPage 1.0 SettingsPage.qml
 
 
 

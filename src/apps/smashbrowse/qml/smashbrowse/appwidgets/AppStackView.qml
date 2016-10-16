@@ -9,10 +9,10 @@ import QtQuick.Controls.Private 1.0
 
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackviewpages 1.0
-import smashbrowse.pages 1.0
+import smashbrowse.stackedmodepages 1.0
+import smashbrowse.fullpages 1.0
 import smashbrowse.appwidgets 1.0
-import smashbrowse.menumodels 1.0
+import smashbrowse.contentpages.listmodels 1.0
 
 // The Stack View.
 StackView {
@@ -137,13 +137,13 @@ StackView {
     }
 
     function create_page(page_name) {
-        var page_url = "qrc:///qml/smashbrowse/listpages/" + page_name + ".qml"
+        var page_url = "qrc:///qml/smashbrowse/contentpages/listpages/" + page_name + ".qml"
         var page = create_component(page_url)
         return page
     }
 
     function create_model(model_name) {
-        var model_url = "qrc:///qml/smashbrowse/menumodels/" + model_name + ".qml"
+        var model_url = "qrc:///qml/smashbrowse/contentpages/listmodels/" + model_name + ".qml"
         var model = create_component(model_url)
         return model
     }

@@ -9,9 +9,9 @@ import QtQuick.Controls.Private 1.0
 
 
 import smashbrowse.appconfig 1.0
-import smashbrowse.stackviewpages 1.0
+import smashbrowse.stackedmodepages 1.0
 import smashbrowse.appwidgets 1.0
-import smashbrowse.menumodels 1.0
+import smashbrowse.contentpages.listmodels 1.0
 
 
 // This class basically just holds an AppStackView.

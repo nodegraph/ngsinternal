@@ -1,0 +1,8 @@
+module modepages
+
+NodeGraphPage 1.0 NodeGraphPage.qml
+SettingsPage 1.0 SettingsPage.qml
+
+
+
+

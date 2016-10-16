@@ -15,40 +15,49 @@
         <file>qml/smashbrowse/actionbars/CopyPasteBar.qml</file>
         <file>qml/smashbrowse/actionbars/Splitter.qml</file>
         
-        <!-- Stacked Pages -->
-        <file>qml/smashbrowse/stackviewpages/qmldir</file>
-        <file>qml/smashbrowse/stackviewpages/NodeActionStackPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/DataStackPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/FileMenuStackPage.qml</file>
+        <!-- Edit Data Pages -->
+        <file>qml/smashbrowse/contentpages/editdatapages/qmldir</file>
+        <file>qml/smashbrowse/contentpages/editdatapages/EditStringPage.qml</file>
+        <file>qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml</file>
+        <file>qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml</file>
+        <file>qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml</file>
         
-        <file>qml/smashbrowse/stackviewpages/CreateFilePage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/EditStringPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/EditBooleanPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/EditNumberPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/EditEnumPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/WebActionBusyPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/WebActionStackPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/EnterStringPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/SelectDropdownPage.qml</file>
-        <file>qml/smashbrowse/stackviewpages/ProcessingPage.qml</file>
+        <!-- Enter Data Pages -->
+        <file>qml/smashbrowse/contentpages/enterdatapages/qmldir</file>
+        <file>qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml</file>
+        <file>qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml</file>
+        <file>qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml</file>
+        
+        <!-- Warning Pages -->
+        <file>qml/smashbrowse/contentpages/warningpages/qmldir</file>
+        <file>qml/smashbrowse/contentpages/warningpages/ProcessingPage.qml</file>
+        <file>qml/smashbrowse/contentpages/warningpages/WebActionBusyPage.qml</file>
+        
+        <!-- Stacked Pages -->
+        <file>qml/smashbrowse/stackedmodepages/qmldir</file>
+        <file>qml/smashbrowse/stackedmodepages/NGMenuListStackPage.qml</file>
+        <file>qml/smashbrowse/stackedmodepages/DataListStackPage.qml</file>
+        <file>qml/smashbrowse/stackedmodepages/FileMenuListStackPage.qml</file>
+        <file>qml/smashbrowse/stackedmodepages/WebMenuListStackPage.qml</file>
+        
         
         <!-- ListPages -->
-        <file>qml/smashbrowse/listpages/qmldir</file>
-        <file>qml/smashbrowse/listpages/BaseListPage.qml</file>
-        <file>qml/smashbrowse/listpages/PostListPage.qml</file>
-        <file>qml/smashbrowse/listpages/DataListPage.qml</file>
-        <file>qml/smashbrowse/listpages/FileListPage.qml</file>
-        <file>qml/smashbrowse/listpages/FileMenuListPage.qml</file>
-        <file>qml/smashbrowse/listpages/NGMenuListPage.qml</file>
-        <file>qml/smashbrowse/listpages/WebMenuListPage.qml</file>
+        <file>qml/smashbrowse/contentpages/listpages/qmldir</file>
+        <file>qml/smashbrowse/contentpages/listpages/BaseListPage.qml</file>
+        <file>qml/smashbrowse/contentpages/listpages/PostListPage.qml</file>
+        <file>qml/smashbrowse/contentpages/listpages/DataListPage.qml</file>
+        <file>qml/smashbrowse/contentpages/listpages/FileListPage.qml</file>
+        <file>qml/smashbrowse/contentpages/listpages/FileMenuListPage.qml</file>
+        <file>qml/smashbrowse/contentpages/listpages/NGMenuListPage.qml</file>
+        <file>qml/smashbrowse/contentpages/listpages/WebMenuListPage.qml</file>
         
         <!-- Delegates -->
-        <file>qml/smashbrowse/listdelegates/qmldir</file>
-        <file>qml/smashbrowse/listdelegates/BaseListDelegate.qml</file>
-        <file>qml/smashbrowse/listdelegates/DataListDelegate.qml</file>
-        <file>qml/smashbrowse/listdelegates/MenuItemListDelegate.qml</file>
-        <file>qml/smashbrowse/listdelegates/FileListDelegate.qml</file>
-        <file>qml/smashbrowse/listdelegates/PostListDelegate.qml</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/qmldir</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/BaseListDelegate.qml</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/DataListDelegate.qml</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/MenuItemListDelegate.qml</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/FileListDelegate.qml</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/PostListDelegate.qml</file>
         
         <!-- AppWidgets -->
         <file>qml/smashbrowse/appwidgets/qmldir</file>
@@ -71,34 +80,34 @@
         <file>qml/smashbrowse/appwidgets/AppComboBox.qml</file>
         
         <!-- MenuModels -->
-        <file>qml/smashbrowse/menumodels/qmldir</file>
-        <file>qml/smashbrowse/menumodels/CreateNodeActions.qml</file>
-        <file>qml/smashbrowse/menumodels/NodeActions.qml</file>
-        <file>qml/smashbrowse/menumodels/GroupNodeActions.qml</file>
-        <file>qml/smashbrowse/menumodels/NodeGraphActions.qml</file>
-        <file>qml/smashbrowse/menumodels/FrameNodeActions.qml</file>
-        <file>qml/smashbrowse/menumodels/SelectNodeActions.qml</file>
-        <file>qml/smashbrowse/menumodels/CopyPasteNodeActions.qml</file>
-        <file>qml/smashbrowse/menumodels/ExplodeCollapseNodeActions.qml</file>
-        <file>qml/smashbrowse/menumodels/IFrameActions.qml</file>
-        <file>qml/smashbrowse/menumodels/FileMenuActions.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActions.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsTest.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsNavigate.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsCreateByMatchingValues.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsCreateFromWrapType.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsShift.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsShiftToText.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsShiftToImages.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsShiftToInputs.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsShiftToSelects.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsShiftToIFrames.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsExpand.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsMark.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsShrink.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsShrinkAgainstMarked.qml</file>
-        <file>qml/smashbrowse/menumodels/WebActionsPerformAction.qml</file>
-		<file>qml/smashbrowse/menumodels/WebActionsPerformScroll.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/qmldir</file>
+        <file>qml/smashbrowse/contentpages/listmodels/CreateNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/NodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/GroupNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/NodeGraphActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/FrameNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/SelectNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/CopyPasteNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/ExplodeCollapseNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/IFrameActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/FileMenuActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsTest.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsCreateByMatchingValues.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsCreateFromWrapType.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShift.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToText.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToImages.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToInputs.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToSelects.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToIFrames.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsExpand.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsMark.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShrink.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShrinkAgainstMarked.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformAction.qml</file>
+		<file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformScroll.qml</file>
         
         <!-- AppConfig -->
         <file>qml/smashbrowse/appconfig/qmldir</file>
@@ -108,16 +117,18 @@
         <file>qml/smashbrowse/appconfig/AppEnums.qml</file>
         
         <!-- Pages -->
-        <file>qml/smashbrowse/pages/qmldir</file>
-        <file>qml/smashbrowse/pages/LicensePage.qml</file>
-        <file>qml/smashbrowse/pages/CreatePasswordPage.qml</file>
-        <file>qml/smashbrowse/pages/CheckPasswordPage.qml</file>
-        <file>qml/smashbrowse/pages/NodeGraphPage.qml</file>
+        <file>qml/smashbrowse/fullpages/qmldir</file>
+        <file>qml/smashbrowse/fullpages/LicensePage.qml</file>
+        <file>qml/smashbrowse/fullpages/CreatePasswordPage.qml</file>
+        <file>qml/smashbrowse/fullpages/CheckPasswordPage.qml</file>
+        <file>qml/smashbrowse/fullpages/LimitPage.qml</file>
+        <file>qml/smashbrowse/fullpages/AlreadyRunningPage.qml</file>
+        <file>qml/smashbrowse/fullpages/SplashPage.qml</file>
         
-        <file>qml/smashbrowse/pages/LimitPage.qml</file>
-        <file>qml/smashbrowse/pages/SettingsPage.qml</file>
-        <file>qml/smashbrowse/pages/AlreadyRunningPage.qml</file>
-        <file>qml/smashbrowse/pages/SplashPage.qml</file>
+        <!-- Mode Pages -->
+        <file>qml/smashbrowse/modepages/qmldir</file>
+        <file>qml/smashbrowse/modepages/NodeGraphPage.qml</file>
+        <file>qml/smashbrowse/modepages/SettingsPage.qml</file>
         
         <!-- Tree View Icons. -->
         <file alias="icons/ic_add_circle_outline_black_48dp.png">../../external/icons/ic_add_circle_outline_black_48dp.png</file>
