@@ -82,6 +82,13 @@ Rectangle {
         property int kWrapType: 6
         property int kDirectionType: 7
     }
+    
+    QtObject {
+        id: hint_type // an enumeration of enumerations
+        property int kEnum: 0
+        property int kMin: 1
+        property int kMax: 2
+    }
 
 
     // Global App Objects.

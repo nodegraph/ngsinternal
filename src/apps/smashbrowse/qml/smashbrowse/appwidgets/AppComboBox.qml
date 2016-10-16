@@ -44,7 +44,7 @@ ComboBox {
             horizontalAlignment: Text.AlignHCenter
             font.pointSize: app_settings.font_point_size
             font.family: "Arial"
-            font.capitalization: Font.SmallCaps
+            font.capitalization: Font.MixedCase
             color: "white"
             text: control.currentText
         }
@@ -67,7 +67,7 @@ ComboBox {
                 horizontalAlignment: Text.AlignHRight // These don't seem to work in a delegate.
                 font.pointSize: app_settings.font_point_size
                 font.family: "Arial"
-                font.capitalization: Font.SmallCaps
+                font.capitalization: Font.MixedCase
                 color: styleData.selected ? "white" : "white"
                 text: styleData.text
             }

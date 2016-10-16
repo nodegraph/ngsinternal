@@ -729,7 +729,7 @@ void NodeGraphQuickItem::edit_node() {
     test.insert("subarray", sublist);
 
     QVariantMap hints;
-    hints[Hint::get_as_string(HintType::kEnum)] = to_underlying(EnumHint::kWrapType);
+    hints[QString::number(to_underlying(HintType::kEnum))] = to_underlying(EnumHint::kWrapType);
     QVariantMap all_hints;
     all_hints.insert("number", hints);
 

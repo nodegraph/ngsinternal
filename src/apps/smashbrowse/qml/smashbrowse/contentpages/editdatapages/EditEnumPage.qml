@@ -27,16 +27,16 @@ Rectangle {
 
     // Our Methods.
     function set_enum_type(type) {
-        if (type == app_enums.EnumHint.kMouseActionType) {
-            check_box.set_options(app_enums.mouse_action_types)
-        } else if (type == app_enums.EnumHint.kTextActionType) {
-            check_box.set_options(app_enums.text_action_types)
-        } else if (type == app_enums.EnumHint.kElementActionType) {
-            check_box.set_options(app_enums.element_action_types)
-        } else if (type == app_enums.EnumHint.kWrapType) {
-            check_box.set_options(app_enums.wrap_types)
-        } else if (type == app_enums.EnumHint.kDirectionType) {
-            check_box.set_options(app_enums.direction_types)
+        if (type == msg_enum_enum.kMouseActionType) {
+            combo_box.set_option_texts(app_enums.mouse_action_type_text)
+        } else if (type == msg_enum_enum.kTextActionType) {
+            combo_box.set_option_texts(app_enums.text_action_type_text)
+        } else if (type == msg_enum_enum.kElementActionType) {
+            combo_box.set_option_texts(app_enums.element_action_type_text)
+        } else if (type == msg_enum_enum.kWrapType) {
+            combo_box.set_option_texts(app_enums.wrap_type_text)
+        } else if (type == msg_enum_enum.kDirectionType) {
+            combo_box.set_option_texts(app_enums.direction_type_text)
         } else {
             console.log('Error: attempt to edit an enum with invalid type.')
             console.log(new Error().stack);

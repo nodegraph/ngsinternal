@@ -33,6 +33,11 @@ BaseListDelegate {
         var path = get_stack_view().get_title_path(1, depth_index+1)
         path.push(name)
         var value = get_stack_page().get_value(path)
+        var hints = get_stack_page().get_hints(path)
+        
+        if (hints && hints.hasOwnProperty(hint_type.kEnum)) {
+        	return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
+        }
         return get_stack_page().get_string_for_value(value)
     }
 
@@ -45,6 +50,7 @@ BaseListDelegate {
         var path = stack_view.get_title_path(1, depth_index+1)
         path.push(name)
         var value = stack_page.get_value(path)
+        var hints = stack_page.get_hints(path)
         var value_type = app_enums.get_js_enum(value)
 
         // Push a different page depending on the value type.
@@ -67,10 +73,18 @@ BaseListDelegate {
             break
         case js_enum.kNumber:
             if (stack_page._allow_edits) {
-                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml", edit_data_list_stack_page, {})
-                page.set_value(value)
-                page.set_title(name)
-                stack_view.push_page(page)
+            	if (hints.hasOwnProperty(hint_type.kEnum)) {
+            		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
+            		page.set_enum_type(hints[hint_type.kEnum])
+	                page.set_value(value)
+	                page.set_title(name)
+	                stack_view.push_page(page)
+            	} else {
+	                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml", edit_data_list_stack_page, {})
+	                page.set_value(value)
+	                page.set_title(name)
+	                stack_view.push_page(page)
+                }
             }
             break
         case js_enum.kObject:
