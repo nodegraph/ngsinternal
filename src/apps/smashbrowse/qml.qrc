@@ -36,12 +36,16 @@
         <file>qml/smashbrowse/stackedpages/SelectDropdownPage.qml</file>
         <file>qml/smashbrowse/stackedpages/ProcessingPage.qml</file>
         
+        <!-- Delegates -->
+        <file>qml/smashbrowse/delegates/qmldir</file>
+        <file>qml/smashbrowse/delegates/BaseListDelegate.qml</file>
+        <file>qml/smashbrowse/delegates/DataListDelegate.qml</file>
+        <file>qml/smashbrowse/delegates/MenuItemListDelegate.qml</file>
+        <file>qml/smashbrowse/delegates/FileListDelegate.qml</file>
+        <file>qml/smashbrowse/delegates/PostListDelegate.qml</file>
+        
         <!-- AppWidgets -->
         <file>qml/smashbrowse/appwidgets/qmldir</file>
-        <file>qml/smashbrowse/appwidgets/AppDataDelegate.qml</file>
-        <file>qml/smashbrowse/appwidgets/AppMenuItemDelegate.qml</file>
-        <file>qml/smashbrowse/appwidgets/AppFileDelegate.qml</file>
-        <file>qml/smashbrowse/appwidgets/AppPostDelegate.qml</file>
         
         <file>qml/smashbrowse/appwidgets/AppStackViewHeader.qml</file>
         <file>qml/smashbrowse/appwidgets/AppStackView.qml</file>

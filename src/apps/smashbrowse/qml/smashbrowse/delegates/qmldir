@@ -1,0 +1,8 @@
+module delegates
+
+BaseListDelegate 1.0 BaseListDelegate.qml
+DataListDelegate 1.0 DataListDelegate.qml
+MenuItemListDelegate 1.0 MenuItemListDelegate.qml
+FileListDelegate 1.0 FileListDelegate.qml
+PostListDelegate 1.0 PostListDelegate.qml
+

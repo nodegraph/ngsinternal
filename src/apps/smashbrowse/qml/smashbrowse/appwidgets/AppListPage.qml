@@ -10,6 +10,7 @@ import QtQuick.Controls.Private 1.0
 import smashbrowse.appconfig 1.0
 import smashbrowse.stackedpages 1.0
 import smashbrowse.pages 1.0
+import smashbrowse.delegates 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.menumodels 1.0
 
@@ -71,7 +72,7 @@ Rectangle {
         model: ListModel {}
         property bool model_is_dynamic: false
         
-        delegate: AppMenuItemDelegate{}
+        delegate: MenuItemListDelegate{}
         currentIndex: -1
 
         // Appearance.
