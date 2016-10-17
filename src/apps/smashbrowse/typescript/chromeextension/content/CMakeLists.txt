@@ -3,13 +3,13 @@
 get_tsconfig_files(cnt_ts)
 message("content files are: ${cnt_ts}")
 
-# Form cnt_js by adding our build dir prefix.
+# Add our build dir prefix to the ts filenames.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" cnt_js "${cnt_ts}")
 
-# Form cnt_js by changing .ts suffix to .js.
+# Change the .ts suffix to .js in our ts filenames.
 string(REGEX REPLACE "(\\.ts)" ".js" cnt_js "${cnt_js}")
 
-# The merged result.
+# The name of the merged result. This is currently not used.
 set(cnt_js_merged ${CMAKE_CURRENT_BINARY_DIR}/content.js)
 
 # The merged and minified result.
@@ -17,7 +17,7 @@ set(cnt_js_min ${CMAKE_CURRENT_BINARY_DIR}/cnt.js)
 
 # Custom build command.
 add_custom_command(
-    OUTPUT ${cnt_js} ${cnt_js_merged} ${cnt_js_min}
+    OUTPUT ${cnt_js} ${cnt_js_min}
     
     COMMAND tsc
     ARGS --project ${CMAKE_CURRENT_SOURCE_DIR} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${cnt_js_merged}
@@ -33,7 +33,7 @@ add_custom_command(
     DEPENDS ${cnt_ts} tsconfig.json ${msg_js_lib}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-add_custom_target(chrome_ext_content ALL DEPENDS ${cnt_js} ${cnt_js_merged} ${cnt_js_min})
+add_custom_target(chrome_ext_content ALL DEPENDS ${cnt_js} ${cnt_js_min})
 
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 

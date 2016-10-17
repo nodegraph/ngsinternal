@@ -19,7 +19,7 @@ set(ch_js_min_map ${CMAKE_CURRENT_BINARY_DIR}/ch_map.js)
 
 # Custom build command.
 add_custom_command(
-    OUTPUT ${ch_js} ${ch_js_merged} ${ch_js_min}
+    OUTPUT ${ch_js_merged} ${ch_js_min}
     
     COMMAND tsc
     ARGS --project ${CMAKE_CURRENT_SOURCE_DIR} 
@@ -41,11 +41,10 @@ add_custom_command(
     DEPENDS ${ch_ts} tsconfig.json msg_js ${msg_js_lib}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-add_custom_target(commhub ALL DEPENDS ${ch_js} ${ch_js_merged} ${ch_js_min})
+add_custom_target(commhub ALL DEPENDS ${ch_js_merged} ${ch_js_min})
 
 INSTALL(FILES 
             ${ch_js_min}
-            ${ch_js_min_map}
             cert.pem # certs for https server
             key.pem # certs for https server
             chb.js # commhub bootstrap file

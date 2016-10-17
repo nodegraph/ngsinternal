@@ -2,13 +2,13 @@
 # Note that for cmake to pick up changes in tsconfig.json you need to touch this file.
 get_tsconfig_files(bg_ts)
 
-# Form bg_js by adding our build dir prefix.
+# Add our build dir prefix to the ts filenames.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" bg_js "${bg_ts}")
 
-# Form bg_js by changing .ts suffix to .js.
+# Change the .ts suffix to .js in our ts filenames.
 string(REGEX REPLACE "(\\.ts)" ".js" bg_js "${bg_js}")
 
-# The merged result.
+# The name of the merged result. This is currently not used.
 set(bg_js_merged ${CMAKE_CURRENT_BINARY_DIR}/background.js)
 
 # The merged and minified result.
@@ -16,7 +16,7 @@ set(bg_js_min ${CMAKE_CURRENT_BINARY_DIR}/bg.js)
 
 # Custom build command.
 add_custom_command(
-    OUTPUT ${bg_js} ${bg_js_merged} ${bg_js_min}
+    OUTPUT ${bg_js} ${bg_js_min}
     
     COMMAND tsc
     ARGS --project ${CMAKE_CURRENT_SOURCE_DIR} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${bg_js_merged}
@@ -32,7 +32,7 @@ add_custom_command(
     DEPENDS ${bg_ts} tsconfig.json ${msg_js_lib}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-add_custom_target(chrome_ext_bg ALL DEPENDS ${bg_js} ${bg_js_merged} ${bg_js_min})
+add_custom_target(chrome_ext_bg ALL DEPENDS ${bg_js} ${bg_js_min})
 
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 

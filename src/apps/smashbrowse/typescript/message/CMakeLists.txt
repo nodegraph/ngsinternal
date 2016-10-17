@@ -2,13 +2,13 @@
 # Note that for cmake to pick up changes in tsconfig.json you need to touch this file.
 get_tsconfig_files(msg_ts)
 
-# Form msg_js by adding our build dir prefix.
+# Add our build dir prefix to the ts filenames.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" msg_js "${msg_ts}")
 
-# Form msg_js by changing .ts suffix to .js.
+# Change the .ts suffix to .js in our ts filenames.
 string(REGEX REPLACE "(\\.ts)" ".js" msg_js "${msg_js}")
 
-# The merged result.
+# The name of the merged result. This is currently not used.
 set(msg_js_merged ${CMAKE_CURRENT_BINARY_DIR}/msg.js)
 
 # The merged and minified result.
@@ -20,7 +20,7 @@ set(msg_js_lib ${CMAKE_CURRENT_BINARY_DIR}/message.js PARENT_SCOPE)
 
 # Custom build command.
 add_custom_command(
-    OUTPUT ${msg_js} ${msg_js_merged} ${msg_js_min}
+    OUTPUT ${msg_js} ${msg_js_min}
     
     COMMAND tsc
     ARGS --project ${CMAKE_CURRENT_SOURCE_DIR} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${msg_js_merged}
@@ -36,4 +36,4 @@ add_custom_command(
     DEPENDS ${msg_ts} tsconfig.json
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-add_custom_target(msg_js ALL DEPENDS ${msg_js} ${msg_js_merged} ${msg_js_min})
+add_custom_target(msg_js ALL DEPENDS ${msg_js} ${msg_js_min})
