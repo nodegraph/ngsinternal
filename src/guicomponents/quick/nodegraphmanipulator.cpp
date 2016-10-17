@@ -199,7 +199,13 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
   Dep<NodeShape> ns = get_dep<NodeShape>(entity);
   ns->show_clean_marker(clean);
   _ng_quick->update();
-  qApp->processEvents();
+
+  // Make sure not to call qApp->processEvents() here.
+  // Because this causes problems when destroying entities.
+  // When components get destroyed they will destroy their Dep<> objects,
+  // which dirties objects. However the process events will generally
+  // have events to update the display which will actually start cleaning
+  // components. But now it is cleaning in a bad state.
 }
 
 Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
