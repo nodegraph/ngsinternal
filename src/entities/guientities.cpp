@@ -51,6 +51,7 @@
 #include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/webrecorder.h>
 #include <guicomponents/comms/licensechecker.h>
+#include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
@@ -116,6 +117,7 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff WebWorker(this);
   new_ff WebRecorder(this);
   new_ff LicenseChecker(this);
+  new_ff CryptoLogic(this);
 }
 
 void QMLAppEntity::init_view(QSurfaceFormat& format) {

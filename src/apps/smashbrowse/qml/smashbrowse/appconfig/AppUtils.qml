@@ -57,8 +57,7 @@ QtObject {
         file_model.load_graph()
         node_graph_item.update()
         // Frame everything.
-        node_graph_item.frame_all()
-        node_graph_item.update()
+        frame_all_on_idle()
     }
     
     function frame_all() {

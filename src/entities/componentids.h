@@ -50,6 +50,7 @@ enum class ComponentIID : size_t {
   kIWebRecorder,
   kITaskScheduler,
   kILicenseChecker,
+  kICryptoLogic,
   kILinkGroup,
   kINodeSelection,
   kIOutputPlug,
@@ -139,6 +140,7 @@ COMPONENT_ENTRY1(WebWorker)\
 COMPONENT_ENTRY1(WebRecorder)\
 COMPONENT_ENTRY1(TaskScheduler)\
 COMPONENT_ENTRY1(LicenseChecker)\
+COMPONENT_ENTRY1(CryptoLogic)\
 /* -- */\
 COMPONENT_ENTRY1(NodeSelection)\
 COMPONENT_ENTRY1(Resources)\

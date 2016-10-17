@@ -59,7 +59,10 @@ add_definitions("-DRELEASE_TYPE=${krelease}")
 add_definitions("-DDEBUG_OBJECT_MODEL")
 add_definitions("-DDEBUG_MEMORY_ALLOCATION")
 add_definitions("-DMULTITHREAD_COMPONENTS")
-add_definitions("-DSKIP_LICENSE_CHECK")
+# skip license check and skip encryption should be enabled/disabled together, 
+# because skipping license check also skips password entry in qml.
+add_definitions("-DSKIP_LICENSE_CHECK") 
+add_definitions("-DSKIP_ENCRYPTION")
 
 
 # Debug binaries will not have d as a postfix, because this makes our scripts have special cases.

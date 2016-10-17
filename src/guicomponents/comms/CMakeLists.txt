@@ -10,6 +10,7 @@ set(sources
     webworker.cpp
     webrecorder.cpp
     licensechecker.cpp
+    cryptologic.cpp
     grouptraits.cpp
     webgrouptraits.cpp
     )
@@ -18,6 +19,7 @@ set(headers
     taskscheduler.h
     grouptraits.h
     webgrouptraits.h
+    cryptologic.h
 )
     
 set(moc_headers

@@ -54,6 +54,7 @@
 #include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/webrecorder.h>
 #include <guicomponents/comms/licensechecker.h>
+#include <guicomponents/comms/cryptologic.h>
 #include <gui/widget/nodegrapheditor.h>
 #include <guicomponents/computes/webgroupnodecompute.h>
 

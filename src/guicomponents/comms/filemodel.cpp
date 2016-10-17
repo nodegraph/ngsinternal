@@ -12,6 +12,7 @@
 #include <guicomponents/comms/appconfig.h>
 #include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/filemodel.h>
+#include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 
 #include <entities/entityids.h>
@@ -32,30 +33,16 @@
 
 namespace ngs {
 
-const QString FileModel::kCryptoFile = "app_init.dat"; // Stores info about our encryption.
 const QString FileModel::kAppFile = "app_data.dat"; // Stores the mapping between displayed filename and actual filename.
-const QString FileModel::kAppDir = "app_data";
 
 FileModel::FileModel(Entity* app_root)
     : QStandardItemModel(),
       Component(app_root, kIID(), kDID()),
+      _crypto_logic(this),
       _graph_builder(this),
-      _working_row(-1),
-      _use_encryption(false){
+      _working_row(-1) {
+  get_dep_loader()->register_fixed_dep(_crypto_logic, Path({}));
   get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
-
-  // Make sure the data dir exists.
-  QString data_dir = AppConfig::get_user_data_dir();
-  if (!QDir(data_dir).exists()) {
-    QDir().mkpath(data_dir);
-  }
-
-  // Make sure the app data dir exists.
-  _app_dir = data_dir + "/" + kAppDir;
-  QFileInfo info(_app_dir);
-  if (!info.exists()) {
-    QDir().mkpath(_app_dir);
-  }
 
   // Set our role names.
   _roles[kTitleRole] = "title";
@@ -92,10 +79,6 @@ FileModel::FileModel(Entity* app_root)
 FileModel::~FileModel() {
 }
 
-bool FileModel::is_encrypted() const {
-  return _use_encryption;
-}
-
 bool FileModel::get_hide_passwords() const {
   return get_work_setting(FileModel::kHidePasswordsRole).toBool();
 }
@@ -121,89 +104,43 @@ void FileModel::on_item_changed(QStandardItem* item) {
 
 QString FileModel::get_edition() const {
   external();
-  return _edition.c_str();
+  return _crypto_logic->get_edition();
 }
 
 QString FileModel::get_license() const {
   external();
-  return _license.c_str();
+  return _crypto_logic->get_license();
 }
 
 void FileModel::set_license(const QString& edition, const QString& license) {
   external();
-  _edition = edition.toStdString();
-  _license = license.toStdString();
+  return _crypto_logic->set_license(edition, license);
 }
 
 void FileModel::create_crypto(const QString& chosen_password) {
   external();
-  assert(_nonce.empty());
-  assert(_key.empty());
-
-  _nonce = Crypto::generate_nonce();
-  _salt = Crypto::generate_salt();
-  _hashed_password = Crypto::generate_hashed_password(chosen_password.toStdString());
-  _key = Crypto::generate_private_key(chosen_password.toStdString(), _salt); // The key is never saved.
+  _crypto_logic->create_crypto(chosen_password);
 }
 
 void FileModel::save_crypto() const{
   external();
-  // Save out the crypto config.
-  {
-    std::stringstream ss;
-    SimpleSaver saver(ss);
-    saver.save(_nonce);
-    saver.save(_salt);
-    saver.save(_hashed_password);
-    saver.save(_edition);
-    saver.save(_license);
-    write_file(kCryptoFile, ss.str());
-  }
+  _crypto_logic->save_crypto();
 }
 
 bool FileModel::crypto_exists() const {
   external();
-  if (file_exists(kCryptoFile)) {
-    return true;
-  }
-  return false;
+  return _crypto_logic->crypto_exists();
 }
 
 void FileModel::load_crypto() {
-  if (!_use_encryption) {
-    _edition = "pro";
-    _license = "";
-    return;
-  }
-
   external();
-  if (!file_exists(kCryptoFile)) {
-    return;
-  }
-
-  // Load the crypto file.
-  QByteArray contents = load_file(kCryptoFile, false);
-  Bits* bits = create_bits_from_raw(contents.data(), contents.size());
-  SimpleLoader loader(bits);
-
-  // Extract the nonce and salt.
-  loader.load(_nonce);
-  loader.load(_salt);
-  loader.load(_hashed_password);
-  loader.load(_edition);
-  loader.load(_license);
+  _crypto_logic->load_crypto();
 }
 
 bool FileModel::check_password(const QString& password) {
   external();
-  if (!Crypto::check_password(password.toStdString(), _hashed_password)) {
-    return false;
-  }
-  // Generate the private key.
-  _key = Crypto::generate_private_key(password.toStdString(), _salt);
-  return true;
+  return _crypto_logic->check_password(password);
 }
-
 
 void FileModel::sort_files() {
   external();
@@ -310,82 +247,6 @@ void FileModel::set_work_setting(const QString& role_name, const QVariant& value
   set_setting(row, role_name, value);
 }
 
-QString FileModel::get_prefixed_file(const QString& file) const {
-  external();
-  return _app_dir + "/" + file;
-}
-
-// Data operations.
-std::string FileModel::encrypt_data(const std::string& data) const {
-  external();
-  return Crypto::encrypt(data, _key, _nonce);
-}
-
-std::string FileModel::decrypt_data(const std::string& encrypted_data) const {
-  external();
-  return Crypto::decrypt(encrypted_data, _key, _nonce);
-}
-
-void FileModel::write_file(const QString& filename, const std::string& data, bool encrypt) const {
-  external();
-  QString full_name = get_prefixed_file(filename);
-  //std::cerr << "saving to file: " << full_name.toStdString() << "\n";
-
-  QFile file(full_name);
-  file.open(QIODevice::WriteOnly);
-
-  // Encrypt the data.
-  if (encrypt) {
-    std::string cipher_text = encrypt_data(data);
-    file.write(cipher_text.c_str(), cipher_text.size());
-
-    // test
-    {
-      QByteArray test(cipher_text.c_str(), static_cast<int>(cipher_text.size()));
-      std::string test2(test.data(), test.size());
-      std::string decrypted = decrypt_data(test2);
-      assert(decrypted == data);
-    }
-  } else {
-    file.write(data.c_str(), data.size());
-  }
-  file.close();
-}
-
-QByteArray FileModel::load_file(const QString& filename, bool decrypt) const {
-  external();
-  QString full_name = get_prefixed_file(filename);
-  //std::cerr << "loading from file: " << full_name.toStdString() << "\n";
-
-  // If this file doesn't exist there is nothing to load.
-  if (!QFileInfo::exists(full_name)) {
-    return QByteArray();
-  }
-
-  // Read all the bytes from the file.
-  QFile file(full_name);
-  file.open(QIODevice::ReadOnly);
-  QByteArray contents = file.readAll();
-
-  // Decrypt the data.
-  if (decrypt) {
-    std::string cipher_text(contents.data(), contents.size());
-    std::string decrypted = decrypt_data(cipher_text);
-    QByteArray contents2(&decrypted[0], static_cast<int>(decrypted.size()));
-    return contents2;
-  }
-
-  return contents;
-}
-
-void FileModel::destroy_file(const QString& filename) const {
-  external();
-  QString full_name = get_prefixed_file(filename);
-  // Erase the file.
-  QFile file(full_name);
-  file.remove();
-}
-
 bool FileModel::title_exists(const QString& title) const {
   external();
   for (int i=0; i<rowCount(); ++i) {
@@ -426,43 +287,9 @@ QString FileModel::make_title_unique(const QString& title) const {
   return "error";
 }
 
-bool FileModel::file_exists(const QString& filename) const {
-  external();
-  QString full = get_prefixed_file(filename);
-  QFileInfo info(full);
-  if (info.exists()) {
-    return true;
-  }
-  return false;
-}
-
-QString FileModel::make_filename_unique(const QString& filename) const {
-  external();
-  std::string name = filename.toStdString();
-  size_t last_index = name.find_last_not_of("0123456789");
-  std::string suffix = name.substr(last_index + 1);
-  std::string prefix = name.substr(0,last_index+1);
-  size_t number=0;
-  try {
-    number = boost::lexical_cast<size_t>(suffix);
-  } catch (...) {
-    number = 1;
-  }
-
-  bool exists = true;
-  while(exists) {
-    name = prefix + boost::lexical_cast<std::string>(number);
-    if (!file_exists(name.c_str())) {
-      return name.c_str();
-    }
-    number+=1;
-  }
-  return "error";
-}
-
 void FileModel::load_model() {
   external();
-  QByteArray contents = load_file(kAppFile, _use_encryption);
+  QByteArray contents = _crypto_logic->load_file(kAppFile);
   if (contents.size()==0) {
     return;
   }
@@ -552,7 +379,7 @@ void FileModel::save_model() {
   }
 
   // Save the data.
-  write_file(kAppFile, ss.str(), _use_encryption);
+  _crypto_logic->write_file(kAppFile, ss.str());
 
   // Update qml.
   emit hide_passwords_changed();
@@ -591,7 +418,7 @@ void FileModel::load_graph(int row) {
 
   // Load the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
-  QByteArray contents = load_file(graph_file, _use_encryption);
+  QByteArray contents = _crypto_logic->load_file(graph_file);
 
   // Now load the data into the app root entity.
   Bits* bits = create_bits_from_raw(contents.data(),contents.size());
@@ -658,7 +485,7 @@ void FileModel::save_graph(int row) {
 
   // Write the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
-  write_file(graph_file, ss.str(), _use_encryption);
+  _crypto_logic->write_file(graph_file, ss.str());
 }
 
 void FileModel::destroy_graph() {
@@ -681,7 +508,7 @@ void FileModel::create_graph(const QVariantMap& arg) {
   _working_row = rowCount() -1;
 
   // Create a unique filename.
-  QString filename = make_filename_unique();
+  QString filename = _crypto_logic->make_filename_unique();
 
   // Make sure the title is unique.
   QString title;
@@ -733,7 +560,7 @@ void FileModel::destroy_graph(int row) {
 
   // Get the filename at row.
   QString filename = data(index(row,0), kFilenameRole).toString();
-  destroy_file(filename);
+  _crypto_logic->destroy_file(filename);
 
   // Remove the row.
   removeRows(row,1);

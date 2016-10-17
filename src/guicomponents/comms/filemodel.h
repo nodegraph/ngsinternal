@@ -8,15 +8,14 @@
 
 namespace ngs {
 
+class CryptoLogic;
 class GraphBuilder;
 
 class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   Q_OBJECT
  public:
 
-  static const QString kCryptoFile;
   static const QString kAppFile;
-  static const QString kAppDir;
 
   COMPONENT_ID(FileModel, FileModel)
 
@@ -35,8 +34,6 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
 
   FileModel(Entity* app_root);
   virtual ~FileModel();
-
-  Q_INVOKABLE bool is_encrypted() const;
 
   // Properties that can be bound in QML.
   Q_PROPERTY(bool hide_passwords READ get_hide_passwords WRITE set_hide_passwords NOTIFY hide_passwords_changed)
@@ -115,19 +112,6 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
    void max_node_posts_changed();
 
  private:
-  QString get_prefixed_file(const QString& file) const;
-
-  // Cipher operations.
-  std::string encrypt_data(const std::string& data) const;
-  std::string decrypt_data(const std::string& cipher_text) const;
-
-  // File operations.
-  void write_file(const QString& filename, const std::string& data, bool encrypt = false) const;
-  QByteArray load_file(const QString& filename, bool decrypt = false) const;
-  void destroy_file(const QString& filename) const;
-  bool file_exists(const QString& filename) const;
-  QString make_filename_unique(const QString& filename=QString("graph1")) const;
-
   // Title.
   bool title_exists(const QString& title) const;
 
@@ -139,22 +123,11 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   void update_qml() const;
 
   // Our Dependencies.
+  Dep<CryptoLogic> _crypto_logic;
   Dep<GraphBuilder> _graph_builder;
 
   // Caches.
-  QString _app_dir;
   int _working_row;
-
-  // Crypto.
-  bool _use_encryption;
-  std::string _nonce;
-  std::string _salt;
-  std::string _hashed_password;
-  std::string _key;
-
-  // License Key for Application Usage.
-  std::string _edition; // The edition of the app: currently "pro" or "lite"
-  std::string _license;
 
   // Our roles.
   QHash<int, QByteArray> _roles;
