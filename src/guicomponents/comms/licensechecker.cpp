@@ -54,7 +54,8 @@ LicenseChecker::LicenseChecker(Entity *parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
       _network_manager(new_ff QNetworkAccessManager(this)),
-      _license_is_valid(false){
+      _license_is_valid(false),
+      _date_regex("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)") {
   assert(QSslSocket::supportsSsl());
   connect(_network_manager, SIGNAL(finished(QNetworkReply*)), SLOT(on_reply_from_web(QNetworkReply*)));
   //check_license("lite", "3AA4B57A-B8EC4445-B0D2437B-11568F59");
@@ -81,6 +82,8 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
 #else
 
 void LicenseChecker::check_license(const QString& edition, const QString& license) {
+  _check_edition = edition;
+
   // Create our request.
   QNetworkRequest request(QUrl("https://api.gumroad.com/v2/licenses/verify"));
   QSslConfiguration config = QSslConfiguration::defaultConfiguration();
@@ -112,7 +115,9 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
   }
 
   // Construct an object from the json string.
-  QJsonObject obj = QJsonDocument::fromJson(reply->readAll()).object();
+  QByteArray bytes = reply->readAll();
+  QJsonDocument doc = QJsonDocument::fromJson(bytes);
+  QJsonObject obj = doc.object();
 
   // Check the success property.
   if (obj["success"] == QJsonValue::Undefined || !obj["success"].toBool()) {
@@ -139,7 +144,29 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
     return;
   }
 
-  //std::cerr << "license check success: " << reply->readAll().toStdString() << "\n";
+  // Check if the trial/lite software has expired.
+  if (_check_edition == "lite") {
+    if (purchase["created_at"] == QJsonValue::Undefined) {
+      emit license_checked(false);
+      return;
+    }
+    int pos = _date_regex.indexIn(purchase["created_at"].toString());
+    if (pos >= 0) {
+      QStringList list = _date_regex.capturedTexts();
+      assert(list.size() == 4);
+      // list[0] contains the full match. The other elements contain the submatches.
+      int year = list[1].toInt();
+      int month = list[2].toInt();
+      int day = list[3].toInt();
+      QDate install_date(year,month,day);
+      QDate current_date = QDate::currentDate();
+      qint64 num_days_used = current_date.toJulianDay() - install_date.toJulianDay();
+      if (num_days_used > num_trial_days) {
+        emit license_checked(false);
+        return;
+      }
+    }
+  }
 
   // Cache the valid license state.
   _license_is_valid = true;

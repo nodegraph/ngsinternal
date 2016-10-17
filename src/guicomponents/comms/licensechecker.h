@@ -14,6 +14,8 @@ class COMMS_EXPORT LicenseChecker : public QObject, public Component{
 Q_OBJECT
  public:
 
+  static const long long num_trial_days = 15;
+
   COMPONENT_ID(LicenseChecker, LicenseChecker)
 
   explicit LicenseChecker(Entity* parent);
@@ -32,6 +34,9 @@ Q_OBJECT
  private:
   QNetworkAccessManager *_network_manager;
   bool _license_is_valid;
+
+  QString _check_edition;
+  QRegExp _date_regex;
 };
 
 }
