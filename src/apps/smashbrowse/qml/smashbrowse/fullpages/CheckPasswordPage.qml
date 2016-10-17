@@ -23,10 +23,6 @@ Rectangle {
     // Properties.
     color: app_settings.menu_stack_bg_color
 
-    function on_nodejs_connected() {
-
-    }
-
     function on_license_checked(valid) {
     	// Invalid License.
     	if (!valid) {

@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import smashbrowse.appwidgets 1.0
 
 Rectangle {
-    id: edit_enum_page
+    id: page
 
     // Dimensions.
     height: app_settings.page_height
@@ -68,7 +68,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: edit_enum_page.Stack.view
+        stack_view: page.Stack.view
     }
 
     ColumnLayout {
@@ -94,9 +94,9 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    var path = edit_enum_page.Stack.view.get_title_path(1, edit_enum_page.Stack.view.depth)
-                    edit_enum_page.Stack.view._stack_page.set_value(path, get_value())
-                    edit_enum_page.Stack.view.pop_page()
+                    var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
+                    page.Stack.view._stack_page.set_value(path, get_value())
+                    page.Stack.view.pop_page()
                 }
             }
             Rectangle {
@@ -107,7 +107,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    edit_enum_page.Stack.view.pop_page()
+                    page.Stack.view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}
