@@ -59,6 +59,7 @@ add_definitions("-DRELEASE_TYPE=${krelease}")
 add_definitions("-DDEBUG_OBJECT_MODEL")
 add_definitions("-DDEBUG_MEMORY_ALLOCATION")
 add_definitions("-DMULTITHREAD_COMPONENTS")
+add_definitions("-DSKIP_LICENSE_CHECK")
 
 
 # Debug binaries will not have d as a postfix, because this makes our scripts have special cases.

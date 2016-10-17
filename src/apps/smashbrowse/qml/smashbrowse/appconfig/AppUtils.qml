@@ -1,3 +1,4 @@
+import QtQml 2.2
 import QtQuick 2.6
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Private 1.0
@@ -13,6 +14,13 @@ import QtQuick.Controls.Styles 1.4
 QtObject {
     id: app_utils
     property var license_check_callback
+
+	property Timer timer: Timer {
+        interval: 0 
+        running: false 
+        repeat: false
+        onTriggered: app_utils.frame_all()
+    }
 
     function dump_stack_trace() {
         console.log(new Error().stack);
@@ -52,6 +60,15 @@ QtObject {
         node_graph_item.frame_all()
         node_graph_item.update()
     }
+    
+    function frame_all() {
+    	node_graph_item.frame_all()
+        node_graph_item.update()
+    }
+    
+    function frame_all_on_idle() {
+    	timer.restart()
+    }
 
     // Extracts a sub object using a path, which is an array of strings.
     function get_sub_object(obj, path) {
@@ -67,13 +84,13 @@ QtObject {
                     data = data[Number(path[i])]
                 } else if (Object.getPrototypeOf(data) === Object.prototype){
                     data = data[path[i]]
-                }  else {
+                } else {
                     console.log("Error: app_utils::get_sub_object was expecting an object or an array.")
                     return {}
                 }
             } else {
-                 console.log("Error: app_utils::get_sub_object was expecting an object or an array: " + JSON.stringify(data) + " path: " + path)
-                 dump_stack_trace()
+                //console.log("Error: app_utils::get_sub_object was expecting an object or an array: " + JSON.stringify(data) + " path: " + path)
+                //dump_stack_trace()
                 return {}
             }
         }

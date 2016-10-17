@@ -1,5 +1,6 @@
 #include <base/memoryallocator/taggednew.h>
 #include <guicomponents/comms/licensechecker.h>
+
 #include <cstddef>
 #include <cassert>
 
@@ -56,14 +57,28 @@ LicenseChecker::LicenseChecker(Entity *parent)
       _license_is_valid(false){
   assert(QSslSocket::supportsSsl());
   connect(_network_manager, SIGNAL(finished(QNetworkReply*)), SLOT(on_reply_from_web(QNetworkReply*)));
-
   //check_license("lite", "3AA4B57A-B8EC4445-B0D2437B-11568F59");
+
+#ifdef SKIP_LICENSE_CHECK
+  _license_is_valid = true;
+#endif
 }
 
 LicenseChecker::~LicenseChecker() {
   delete_ff(_network_manager);
 }
 
+#ifdef SKIP_LICENSE_CHECK
+
+void LicenseChecker::check_license(const QString& edition, const QString& license) {
+  _license_is_valid = true;
+  emit license_checked(true);
+}
+
+void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
+}
+
+#else
 
 void LicenseChecker::check_license(const QString& edition, const QString& license) {
   // Create our request.
@@ -130,5 +145,6 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
   _license_is_valid = true;
   emit license_checked(true);
 }
+#endif
 
 }

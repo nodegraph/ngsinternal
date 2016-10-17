@@ -73,7 +73,7 @@ BaseListDelegate {
             break
         case js_enum.kNumber:
             if (stack_page._allow_edits) {
-            	if (hints.hasOwnProperty(hint_type.kEnum)) {
+            	if (hints && hints.hasOwnProperty(hint_type.kEnum)) {
             		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
             		page.set_enum_type(hints[hint_type.kEnum])
 	                page.set_value(value)

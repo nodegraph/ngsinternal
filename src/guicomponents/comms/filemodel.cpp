@@ -41,7 +41,7 @@ FileModel::FileModel(Entity* app_root)
       Component(app_root, kIID(), kDID()),
       _graph_builder(this),
       _working_row(-1),
-      _use_encryption(true){
+      _use_encryption(false){
   get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
 
   // Make sure the data dir exists.
@@ -90,6 +90,10 @@ FileModel::FileModel(Entity* app_root)
 }
 
 FileModel::~FileModel() {
+}
+
+bool FileModel::is_encrypted() const {
+  return _use_encryption;
 }
 
 bool FileModel::get_hide_passwords() const {
@@ -166,13 +170,19 @@ bool FileModel::crypto_exists() const {
 }
 
 void FileModel::load_crypto() {
+  if (!_use_encryption) {
+    _edition = "pro";
+    _license = "";
+    return;
+  }
+
   external();
   if (!file_exists(kCryptoFile)) {
     return;
   }
 
   // Load the crypto file.
-  QByteArray contents = load_file(kCryptoFile);
+  QByteArray contents = load_file(kCryptoFile, false);
   Bits* bits = create_bits_from_raw(contents.data(), contents.size());
   SimpleLoader loader(bits);
 
@@ -452,7 +462,7 @@ QString FileModel::make_filename_unique(const QString& filename) const {
 
 void FileModel::load_model() {
   external();
-  QByteArray contents = load_file(kAppFile, true);
+  QByteArray contents = load_file(kAppFile, _use_encryption);
   if (contents.size()==0) {
     return;
   }
@@ -581,7 +591,7 @@ void FileModel::load_graph(int row) {
 
   // Load the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
-  QByteArray contents = load_file(graph_file, true);
+  QByteArray contents = load_file(graph_file, _use_encryption);
 
   // Now load the data into the app root entity.
   Bits* bits = create_bits_from_raw(contents.data(),contents.size());
@@ -604,20 +614,22 @@ void FileModel::load_graph(int row) {
   std::string name;
   loader.load(name);
 
+  std::cerr << "starting load process\n";
+
   //get_root_group()->destroy_all_children();
   get_root_group()->load(loader);
 
-  std::cerr << "done loading graph -  aaaa\n";
+  std::cerr << "finished loading components\n";
 
   // Although everything down from the root group is updated by the load.
   // Everything from the app root is not updated. So we update it here.
   get_root_group()->initialize_wires();
 
-  std::cerr << "done loading graph -  bbbb\n";
+  std::cerr << "finished initializing wires\n";
 
   get_app_root()->clean_wires();
 
-  std::cerr << "done loading graph\n";
+  std::cerr << "finished cleaning wires\n";
 
   // Save the model with the latest row.
   save_model();

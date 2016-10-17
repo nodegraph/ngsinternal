@@ -226,11 +226,18 @@ Rectangle {
         // Connection to bring up the copy paste menu on android.
         Qt.inputMethod.visibleChanged.connect(copy_paste_bar.on_virtual_keyboard_visibility_changed)
 
-        // Present password pages.
-        if (file_model.crypto_exists()) {
+		// Determine the next page to show.
+		if (license_checker.license_is_valid()) {
+			// Skip right to the node graph.
+			main_bar.switch_to_mode(app_settings.node_graph_mode)
+			app_utils.load_last_graph()
+			app_utils.frame_all_on_idle()
+		} else if (file_model.crypto_exists()) {
+			// Go to the check password page.
             file_model.load_crypto()
             check_password_page.visible = true
         } else {
+        	// Go to the create a new password page.
             create_password_page.visible = true
         }
 
@@ -240,8 +247,6 @@ Rectangle {
         // Node viewing and editing.
         node_graph_item.view_node_outputs.connect(view_data_list_stack_page.on_show_data)
         node_graph_item.edit_node_params.connect(edit_data_list_stack_page.on_show_data)
-        
-
     }
 
 //    // Prevent the android hardware back from closing the app.

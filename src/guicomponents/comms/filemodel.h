@@ -36,6 +36,8 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   FileModel(Entity* app_root);
   virtual ~FileModel();
 
+  Q_INVOKABLE bool is_encrypted() const;
+
   // Properties that can be bound in QML.
   Q_PROPERTY(bool hide_passwords READ get_hide_passwords WRITE set_hide_passwords NOTIFY hide_passwords_changed)
   Q_PROPERTY(int max_node_posts READ get_max_node_posts WRITE set_max_node_posts NOTIFY max_node_posts_changed)
