@@ -35,6 +35,7 @@
         
         <!-- Stacked Pages -->
         <file>qml/smashbrowse/stackedmodepages/qmldir</file>
+        <file>qml/smashbrowse/stackedmodepages/BaseStackPage.qml</file>
         <file>qml/smashbrowse/stackedmodepages/NGMenuListStackPage.qml</file>
         <file>qml/smashbrowse/stackedmodepages/DataListStackPage.qml</file>
         <file>qml/smashbrowse/stackedmodepages/FileMenuListStackPage.qml</file>
@@ -61,12 +62,9 @@
         
         <!-- AppWidgets -->
         <file>qml/smashbrowse/appwidgets/qmldir</file>
-        
         <file>qml/smashbrowse/appwidgets/AppStackViewHeader.qml</file>
         <file>qml/smashbrowse/appwidgets/AppStackView.qml</file>
         <file>qml/smashbrowse/appwidgets/AppScrollView.qml</file>
-        <file>qml/smashbrowse/appwidgets/AppStackPage.qml</file>
-        
         <file>qml/smashbrowse/appwidgets/AppImageButton.qml</file>
         <file>qml/smashbrowse/appwidgets/AppTextField.qml</file>
         <file>qml/smashbrowse/appwidgets/AppPasswordField.qml</file>

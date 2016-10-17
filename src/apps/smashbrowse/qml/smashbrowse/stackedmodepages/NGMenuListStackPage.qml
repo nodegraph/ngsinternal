@@ -14,7 +14,7 @@ import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
 
-AppStackPage{
+BaseStackPage{
     id: page
 
     // Our Properties.
@@ -22,11 +22,8 @@ AppStackPage{
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.settings_mode) {
-            visible = true;
-        } else {
-            visible = false;
-        }
+    	// We always hide ourself, as there isn't actually a mode for us.
+        visible = false;
     }
 
     // -------------------------------------------------------------------------------------------

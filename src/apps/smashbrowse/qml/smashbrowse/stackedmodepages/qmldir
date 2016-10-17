@@ -1,5 +1,6 @@
 module stackedmodepages
 
+BaseStackPage 1.0 BaseStackPage.qml
 NGMenuListStackPage 1.0 NGMenuListStackPage.qml
 DataListStackPage 1.0 DataListStackPage.qml
 FileMenuListStackPage 1.0 FileMenuListStackPage.qml
