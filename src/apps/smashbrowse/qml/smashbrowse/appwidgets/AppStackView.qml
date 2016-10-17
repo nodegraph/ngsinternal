@@ -152,8 +152,6 @@ StackView {
     function push_by_components(title, page, model) {
         // Update the model.
         var props={}
-        props.edition = file_model.get_edition()
-        props.node_limit_reached = (props.edition != "pro") && (node_graph_item.get_num_nodes() >= 10)
         if (model.update) {
             model.update(props)
         }

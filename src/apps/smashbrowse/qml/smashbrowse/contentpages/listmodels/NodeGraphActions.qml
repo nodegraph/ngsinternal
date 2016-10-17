@@ -5,17 +5,6 @@ import QtQuick 2.6
 ListModel {
 
     function update(props) {
-        var script = "var page = app_loader.load_component('qrc:///qml/smashbrowse/fullpages/LimitPage.qml', ng_menu_list_stack_page, {})
-                      stack_view.push_page(page);"
-
-        if (props.edition == "lite") {
-            get(5).script = script
-            get(6).script = script
-        }
-
-        if (props.node_limit_reached) {
-            get(1).script = script
-        }
     }
 
     ListElement {
