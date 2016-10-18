@@ -23,6 +23,7 @@ enum class ParamType: int {
 
 enum class HintType: int {
   kEnum,
+  kDescription,
   kMin,
   kMax,
 };

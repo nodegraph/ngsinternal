@@ -78,6 +78,9 @@ BaseListDelegate {
             		page.set_enum_type(hints[hint_type.kEnum])
 	                page.set_value(value)
 	                page.set_title(name)
+	                if (hints.hasOwnProperty(hint_type.kDescription)) {
+	                	page.description = hints[hint_type.kDescription]
+	                }
 	                stack_view.push_page(page)
             	} else {
 	                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml", edit_data_list_stack_page, {})

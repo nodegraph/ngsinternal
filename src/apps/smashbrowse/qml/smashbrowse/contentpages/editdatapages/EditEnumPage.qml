@@ -21,9 +21,8 @@ Rectangle {
 
     // Appearance.
     color: app_settings.menu_stack_bg_color
-
-    // This is set when added to the app stack view.
-    property string enum_type
+    
+    property string description: ""
 
     // Our Methods.
     function set_enum_type(type) {
@@ -41,9 +40,6 @@ Rectangle {
             console.log('Error: attempt to edit an enum with invalid type.')
             console.log(new Error().stack);
         }
-    }
-    function get_enum_type() {
-        return enum_type
     }
 
     // Note the enum type should be set before this.
@@ -64,6 +60,10 @@ Rectangle {
     function get_title() {
         return stack_view_header.title_text
     }
+    
+    function set_description_label(text) {
+    	description_label.text = text
+    }
 
     // The stack view header.
     AppStackViewHeader {
@@ -82,6 +82,27 @@ Rectangle {
             height: app_settings.column_layout_spacing
             width: app_settings.menu_page_width
             color: "transparent"
+        }
+        
+        Text  {
+            id: description_label
+            width: app_settings.page_width
+            anchors {
+                //left: parent.left
+                //right: parent.right
+                //leftMargin: app_settings.page_left_margin
+                //rightMargin: app_settings.page_right_margin
+                //horizontalCenter: parent.horizontalCenter
+            }
+            
+            //anchors.horizontalCenter: parent.horizontalCenter
+            text: description
+            font.pointSize: app_settings.large_font_point_size
+            font.bold: false
+            font.italic: false
+            color: "white"
+            wrapMode: Text.WordWrap
+            
         }
 
         AppComboBox {
