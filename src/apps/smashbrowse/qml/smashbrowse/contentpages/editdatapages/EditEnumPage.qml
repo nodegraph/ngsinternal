@@ -78,6 +78,8 @@ Rectangle {
         width: app_settings.menu_page_width
         spacing: app_settings.column_layout_spacing
 
+        Layout.maximumWidth: app_settings.menu_page_width
+
         Rectangle {
             height: app_settings.column_layout_spacing
             width: app_settings.menu_page_width
@@ -87,26 +89,39 @@ Rectangle {
         Text  {
             id: description_label
             width: app_settings.page_width
+            maximumLineCount: 5
+            elide: Text.ElideLeft
+            clip: true
             anchors {
-                //left: parent.left
-                //right: parent.right
-                //leftMargin: app_settings.page_left_margin
-                //rightMargin: app_settings.page_right_margin
-                //horizontalCenter: parent.horizontalCenter
+                left: parent.left
+                right: parent.right
+                leftMargin: app_settings.page_left_margin
+                rightMargin: app_settings.page_right_margin
             }
-            
-            //anchors.horizontalCenter: parent.horizontalCenter
+            Layout.maximumWidth: parent.width
+	        
             text: description
             font.pointSize: app_settings.large_font_point_size
             font.bold: false
             font.italic: false
             color: "white"
             wrapMode: Text.WordWrap
-            
+        }
+        
+        Rectangle {
+            height: app_settings.column_layout_spacing
+            width: app_settings.menu_page_width
+            color: "transparent"
         }
 
         AppComboBox {
             id: combo_box
+        }
+        
+        Rectangle {
+            height: app_settings.column_layout_spacing
+            width: app_settings.menu_page_width
+            color: "transparent"
         }
 
         // Buttons.

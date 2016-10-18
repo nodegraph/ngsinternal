@@ -730,7 +730,7 @@ void NodeGraphQuickItem::edit_node() {
 
     QVariantMap hints;
     hints[QString::number(to_underlying(HintType::kEnum))] = to_underlying(EnumHint::kWrapType);
-    hints[QString::number(to_underlying(HintType::kDescription))] = "this is a bogus parameter for a bogus set of hints do asdfj asfkdj werkj sdkfj";
+    hints[QString::number(to_underlying(HintType::kDescription))] = "this is a bogus parameter for a bogus set of hints do asdfj asfkdj werkj sdkfj asfd asfd wlekrj afnkj weroiu  afslkdj  wer lk sfd werlkj w sdlfkj  flakjsd f wlekrj wler a fsdlkjas dflk woer we r af alskdjf a f wler wler l f aslkdjflksjdf  we rlwkejr s df owiueroi sdfs dlfkjs dlf weor sldjf ";
     QVariantMap all_hints;
     all_hints.insert("number", hints);
 
