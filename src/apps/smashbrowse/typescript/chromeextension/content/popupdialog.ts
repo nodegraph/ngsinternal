@@ -102,7 +102,7 @@ class WaitPopup extends BasePopup {
 
 class InputPopup extends BasePopup {
     // Layout Elements.
-    private center: HTMLBlockElement
+    private center: HTMLElement
     private label: HTMLParagraphElement
     private input_div: HTMLDivElement
     private button_group: HTMLParagraphElement

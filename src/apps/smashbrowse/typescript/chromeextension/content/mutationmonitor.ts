@@ -151,32 +151,32 @@ class MutationMonitor {
     // Flattens out iframes.
     // Flattening iframes can destroy the functionality of things embedded inside. For example video players.
     // Otherwise we could always flatten out the web page and never worry about which iframe webdriver should control.
-    flatten_iframes() {
-        //var iframes = document.querySelectorAll('iframe');
-        let iframes = document.getElementsByTagName('iframe');
-        let recurse = false
-        if (iframes.length) {
-            recurse = true
-            this.start_mutation_timer()
-        }
-        console.log('num iframes: ' + iframes.length)
-        for (let i = 0; i < iframes.length; i++) {
-            let iframe = iframes[i]
-            let body = iframe.contentDocument.body
-            let parent = iframe.parentNode
-            let div = document.createElement('div')
-            parent.replaceChild(div, iframe)
-            let children = body.childNodes
-            for (let j=0; j<children.length; j++) {
-                div.appendChild(children[i])
-            }
-            iframe.childNodes.length = 0
-        }
-        // Recursively flatten deeper nested iframes.
-        if (recurse) {
-            this.flatten_iframes()
-        }
-    }
+    // flatten_iframes() {
+    //     //var iframes = document.querySelectorAll('iframe');
+    //     let iframes = document.getElementsByTagName('iframe');
+    //     let recurse = false
+    //     if (iframes.length) {
+    //         recurse = true
+    //         this.start_mutation_timer()
+    //     }
+    //     console.log('num iframes: ' + iframes.length)
+    //     for (let i = 0; i < iframes.length; i++) {
+    //         let iframe = iframes[i]
+    //         let body = iframe.contentDocument.body
+    //         let parent = iframe.parentNode
+    //         let div = document.createElement('div')
+    //         parent.replaceChild(div, iframe)
+    //         let children = body.childNodes
+    //         for (let j=0; j<children.length; j++) {
+    //             div.appendChild(children[i])
+    //         }
+    //         iframe.childNodes.length = 0
+    //     }
+    //     // Recursively flatten deeper nested iframes.
+    //     if (recurse) {
+    //         this.flatten_iframes()
+    //     }
+    // }
 
     // Disables hover behavior on the page.
     disable_hover() {

@@ -1,0 +1,11 @@
+- We upgraded from typescript 1.8.10 to 2.0.3, because Visual Studio Code has now officially updated to 2.0.3.
+- We unstalled the previous typescript as follows: npm uninstall typescript -g
+- We installed typescript 2.0.3 as follows:  npm install typescript@2.0.3 -g
+
+- After doing this we get a lot of errors in one of the DefinitelyTyped files, MediaStream.d.ts, which we don't use directly but seemingly indirectly
+  through another *.d.ts file. This resides inside the webrtc dir in DefinitelyTyped.
+- In order to fix this we installed @types/webrtc as follows: npm install @types/webrtc -g
+- Then we moved the DefinitelyTyped webrtc folder to webrtc-original.
+- Then we copied the webrtc folder from @types/webrtc to the DefinitelyTyped folder.
+- This gets rid of the error messages.
+- This solution was described here in github: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/10678
