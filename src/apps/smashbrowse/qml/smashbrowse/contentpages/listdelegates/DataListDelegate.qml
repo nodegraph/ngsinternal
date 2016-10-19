@@ -52,6 +52,7 @@ BaseListDelegate {
         var value = stack_page.get_value(path)
         var hints = stack_page.get_hints(path)
         var value_type = app_enums.get_js_enum(value)
+        console.log('hints: ' + JSON.stringify(hints))
 
         // Push a different page depending on the value type.
         switch(value_type) {
@@ -60,6 +61,9 @@ BaseListDelegate {
                 var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditStringPage.qml", edit_data_list_stack_page, {})
                 page.set_value(value)
                 page.set_title(name)
+                if (hints && hints.hasOwnProperty(hint_type.kDescription)) {
+                    page.set_description(hints[hint_type.kDescription])
+                }
                 stack_view.push_page(page)
             }
             break
@@ -68,26 +72,48 @@ BaseListDelegate {
                 var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml", edit_data_list_stack_page, {})
                 page.set_value(value)
                 page.set_title(name)
+                if (hints && hints.hasOwnProperty(hint_type.kDescription)) {
+                    page.set_description(hints[hint_type.kDescription])
+                }
                 stack_view.push_page(page)
             }
             break
         case js_enum.kNumber:
             if (stack_page._allow_edits) {
             	if (hints && hints.hasOwnProperty(hint_type.kEnum)) {
+                    console.log('111')
             		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
-            		page.set_enum_type(hints[hint_type.kEnum])
+                    console.log('222')
+                    page.set_enum_type(hints[hint_type.kEnum])
+                    console.log('333')
 	                page.set_value(value)
+                    console.log('444')
 	                page.set_title(name)
+                    console.log('555')
 	                if (hints.hasOwnProperty(hint_type.kDescription)) {
-	                	page.description = hints[hint_type.kDescription]
+                        console.log('666')
+	                	page.set_description(hints[hint_type.kDescription])
+                        console.log('777')
 	                }
+                    console.log('888')
 	                stack_view.push_page(page)
+                    console.log('999')
             	} else {
 	                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml", edit_data_list_stack_page, {})
 	                page.set_value(value)
 	                page.set_title(name)
+                    if (hints && hints.hasOwnProperty(hint_type.kDescription)) {
+                        page.set_description(hints[hint_type.kDescription])
+                    }
 	                stack_view.push_page(page)
                 }
+            } else {
+//            	if (hints && hints.hasOwnProperty(hint_type.kDescription) {
+//            		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/ViewDescriptionPage.qml", edit_data_list_stack_page, {})
+//	                page.set_title(name)
+//	                page.description = hints[hint_type.kDescription]
+//	                stack_view.push_page(page)
+//            	}
             }
             break
         case js_enum.kObject:

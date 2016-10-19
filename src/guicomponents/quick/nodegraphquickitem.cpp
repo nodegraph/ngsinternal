@@ -734,8 +734,19 @@ void NodeGraphQuickItem::edit_node() {
     QVariantMap all_hints;
     all_hints.insert("number", hints);
 
-    //emit edit_node_params(compute->our_entity()->get_name().c_str(), compute->get_hidden_inputs());
-    emit edit_node_params(compute->our_entity()->get_name().c_str(), test, all_hints);
+    std::cerr << "hints size: " << compute->get_hints().size() << "\n";
+    QVariantMap test2 = compute->get_hints();
+    for(QVariantMap::const_iterator iter = test2.begin(); iter != test2.end(); ++iter) {
+      qDebug() << "name: " << iter.key();
+      QVariantMap map = iter.value().toMap();
+      for(QVariantMap::const_iterator iter2 = map.begin(); iter2 != map.end(); ++iter2) {
+        qDebug() << iter2.key() << iter2.value();
+      }
+    }
+
+
+    emit edit_node_params(compute->our_entity()->get_name().c_str(), compute->get_hidden_inputs(), test2);
+    //emit edit_node_params(compute->our_entity()->get_name().c_str(), test, all_hints);
 
     // Update our node graph selection object which also tracks and edit and view nodes.
     get_current_interaction()->edit(_last_pressed_node);

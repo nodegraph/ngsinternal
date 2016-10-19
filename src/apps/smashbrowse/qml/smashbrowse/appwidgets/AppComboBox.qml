@@ -74,7 +74,7 @@ ComboBox {
                 color: styleData.selected ? "white" : "white"
                 text: styleData.text
                 width: combo_box.width - app_settings.page_right_margin
-                Layout.maximumWidth: combo_box.width - app_settings.page_right_margin
+                Layout.maximumWidth: parent.width
             }
 
             // Background Overlay.

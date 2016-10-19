@@ -8,6 +8,7 @@ AppScrollView 1.0 AppScrollView.qml
 
 AppImageButton 1.0 AppImageButton.qml
 AppMenu 1.0 AppMenu.qml
+AppText 1.0 AppText.qml
 AppTextField 1.0 AppTextField.qml
 AppPasswordField 1.0 AppPasswordField.qml
 AppTooltip 1.0 AppTooltip.qml

@@ -21,20 +21,24 @@ Rectangle {
 
     // Appearance.
     color: app_settings.menu_stack_bg_color
-    
     property string description: ""
 
     // Our Methods.
     function set_enum_type(type) {
         if (type == msg_enum_enum.kMouseActionType) {
+            console.log('edit setting options: ' + app_enums.mouse_action_type_text)
             combo_box.set_option_texts(app_enums.mouse_action_type_text)
         } else if (type == msg_enum_enum.kTextActionType) {
+            console.log('edit setting options: ' + app_enums.text_action_type_text)
             combo_box.set_option_texts(app_enums.text_action_type_text)
         } else if (type == msg_enum_enum.kElementActionType) {
+            console.log('edit setting options: ' + app_enums.element_action_type_text)
             combo_box.set_option_texts(app_enums.element_action_type_text)
         } else if (type == msg_enum_enum.kWrapType) {
+            console.log('edit setting options: ' + app_enums.wrap_type_text)
             combo_box.set_option_texts(app_enums.wrap_type_text)
         } else if (type == msg_enum_enum.kDirectionType) {
+            console.log('edit setting options: ' + app_enums.direction_type_text)
             combo_box.set_option_texts(app_enums.direction_type_text)
         } else {
             console.log('Error: attempt to edit an enum with invalid type.')
@@ -62,7 +66,11 @@ Rectangle {
     }
     
     function set_description_label(text) {
-    	description_label.text = text
+        description_label.text = text
+    }
+
+    function set_description(desc) {
+        description_label.text = desc
     }
 
     // The stack view header.
@@ -78,7 +86,12 @@ Rectangle {
         width: app_settings.menu_page_width
         spacing: app_settings.column_layout_spacing
 
-        Layout.maximumWidth: app_settings.menu_page_width
+        anchors {
+            left: parent.left
+            right: parent.right
+            leftMargin: app_settings.page_left_margin
+            rightMargin: app_settings.page_right_margin
+        }
 
         Rectangle {
             height: app_settings.column_layout_spacing
@@ -86,26 +99,10 @@ Rectangle {
             color: "transparent"
         }
         
-        Text  {
+        AppText  {
             id: description_label
-            width: app_settings.page_width
-            maximumLineCount: 5
-            elide: Text.ElideLeft
-            clip: true
-            anchors {
-                left: parent.left
-                right: parent.right
-                leftMargin: app_settings.page_left_margin
-                rightMargin: app_settings.page_right_margin
-            }
+            anchors.horizontalCenter: parent.horizontalCenter // used when the text is actually a single line
             Layout.maximumWidth: parent.width
-	        
-            text: description
-            font.pointSize: app_settings.large_font_point_size
-            font.bold: false
-            font.italic: false
-            color: "white"
-            wrapMode: Text.WordWrap
         }
         
         Rectangle {
@@ -116,6 +113,10 @@ Rectangle {
 
         AppComboBox {
             id: combo_box
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
         }
         
         Rectangle {
@@ -126,6 +127,8 @@ Rectangle {
 
         // Buttons.
         RowLayout {
+        	Layout.maximumWidth: parent.width
+        	
             Item {Layout.fillWidth: true}
             AppLabelButton {
                 text: "accept"

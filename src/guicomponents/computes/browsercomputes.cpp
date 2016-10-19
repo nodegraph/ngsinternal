@@ -28,7 +28,6 @@ BrowserCompute::~BrowserCompute() {
 void BrowserCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-
   create_input("in");
   create_output("out");
 }
@@ -111,9 +110,14 @@ bool ResizeBrowserCompute::update_state(){
 void NavigateToCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kURL, ParamType::kString, false);
-  add_hint(Message::kURL, HintType::kDescription, "The url the browser should to navigate to.");
+}
+
+const QVariantMap NavigateToCompute::_hints = NavigateToCompute::init_hints();
+QVariantMap NavigateToCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kURL, HintType::kDescription, "The url the browser should to navigate to.");
+  return m;
 }
 
 bool NavigateToCompute::update_state() {
@@ -142,9 +146,15 @@ bool NavigateRefreshCompute::update_state() {
 void SwitchToIFrameCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kIFrame, ParamType::kString, false);
-  add_hint(Message::kIFrame, HintType::kDescription, "The path to the iframe that subsequent actions shall act on.");
+}
+
+const QVariantMap SwitchToIFrameCompute::_hints = SwitchToIFrameCompute::init_hints();
+QVariantMap SwitchToIFrameCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kIFrame, HintType::kDescription,
+           "The path to the iframe that subsequent nodes shall act on. IFrame paths are made up of iframe indexes separated by a forward slash. For example: 1/2/3");
+  return m;
 }
 
 bool SwitchToIFrameCompute::update_state() {
@@ -161,17 +171,21 @@ bool SwitchToIFrameCompute::update_state() {
 void CreateSetFromValuesCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kWrapType, ParamType::kInt, false);
-  add_hint(Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
-  add_hint(Message::kWrapType, HintType::kDescription, "The element type to use when creating the set.");
-
   create_input(Message::kTextValues, ParamType::kStringList, false);
-  add_hint(Message::kTextValues, HintType::kDescription, "The set of text values used to find text elements.");
-
   create_input(Message::kImageValues, ParamType::kStringList, false);
-  add_hint(Message::kImageValues, HintType::kDescription, "The set of overlapping images used to find image elements.");
 }
+
+const QVariantMap CreateSetFromValuesCompute::_hints = CreateSetFromValuesCompute::init_hints();
+QVariantMap CreateSetFromValuesCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
+  add_hint(m, Message::kWrapType, HintType::kDescription, "The element type to use when creating the set.");
+  add_hint(m, Message::kTextValues, HintType::kDescription, "The set of text values used to find text elements.");
+  add_hint(m, Message::kImageValues, HintType::kDescription, "The set of overlapping images used to find image elements.");
+  return m;
+}
+
 
 bool CreateSetFromValuesCompute::update_state() {
   internal();
@@ -189,8 +203,15 @@ void CreateSetFromTypeCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
 
   create_input(Message::kWrapType, ParamType::kInt, false);
-  add_hint(Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
-  add_hint(Message::kWrapType, HintType::kDescription, "The element type to use when creating the set.");
+
+}
+
+const QVariantMap CreateSetFromTypeCompute::_hints = CreateSetFromTypeCompute::init_hints();
+QVariantMap CreateSetFromTypeCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
+  add_hint(m, Message::kWrapType, HintType::kDescription, "The element type to use when creating the set.");
+  return m;
 }
 
 bool CreateSetFromTypeCompute::update_state() {
@@ -207,9 +228,14 @@ bool CreateSetFromTypeCompute::update_state() {
 void DeleteSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to delete.");
+}
+
+const QVariantMap DeleteSetCompute::_hints = DeleteSetCompute::init_hints();
+QVariantMap DeleteSetCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to delete.");
+  return m;
 }
 
 bool DeleteSetCompute::update_state() {
@@ -226,17 +252,20 @@ bool DeleteSetCompute::update_state() {
 void ShiftSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to shift.");
-
   create_input(Message::kDirection, ParamType::kInt, false);
-  add_hint(Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
-  add_hint(Message::kSetIndex, HintType::kDescription, "The direction in which to shift the set elements to.");
-
   create_input(Message::kWrapType, ParamType::kInt, false);
-  add_hint(Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
-  add_hint(Message::kWrapType, HintType::kDescription, "The type of elements to shift to.");
+}
+
+const QVariantMap ShiftSetCompute::_hints = ShiftSetCompute::init_hints();
+QVariantMap ShiftSetCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to shift.");
+  add_hint(m, Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
+  add_hint(m, Message::kDirection, HintType::kDescription, "The direction in which to shift the set elements to.");
+  add_hint(m, Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
+  add_hint(m, Message::kWrapType, HintType::kDescription, "The type of elements to shift to.");
+  return m;
 }
 
 bool ShiftSetCompute::update_state() {
@@ -253,19 +282,21 @@ bool ShiftSetCompute::update_state() {
 void MouseActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set which contains the element to act on.");
-
   create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  add_hint(Message::kOverlayIndex, HintType::kDescription, "The 0 based index that identifies the element to act on inside the set.");
-
   create_input(Message::kOverlayRelClickPos, ParamType::kMap, false);
-  add_hint(Message::kOverlayRelClickPos, HintType::kDescription, "The position to perform our action at, relative to the element itself.");
-
   create_input(Message::kMouseAction, ParamType::kInt, false);
-  add_hint(Message::kMouseAction, HintType::kEnum, to_underlying(EnumHint::kMouseActionType));
-  add_hint(Message::kMouseAction, HintType::kDescription, "The type of mouse mouse action to perform.");
+}
+
+const QVariantMap MouseActionCompute::_hints = MouseActionCompute::init_hints();
+QVariantMap MouseActionCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set which contains the element to act on.");
+  add_hint(m, Message::kOverlayIndex, HintType::kDescription, "The 0 based index that identifies the element to act on inside the set.");
+  add_hint(m, Message::kOverlayRelClickPos, HintType::kDescription, "The position to perform our action at, relative to the element itself.");
+  add_hint(m, Message::kMouseAction, HintType::kEnum, to_underlying(EnumHint::kMouseActionType));
+  add_hint(m, Message::kMouseAction, HintType::kDescription, "The type of mouse mouse action to perform.");
+  return m;
 }
 
 bool MouseActionCompute::update_state() {
@@ -282,15 +313,18 @@ bool MouseActionCompute::update_state() {
 void StartMouseHoverActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set which contains the element to act on.");
-
   create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  add_hint(Message::kOverlayIndex, HintType::kDescription, "The 0 based index that identifies the element to hover on inside the set.");
-
   create_input(Message::kOverlayRelClickPos, ParamType::kMap, false);
-  add_hint(Message::kOverlayRelClickPos, HintType::kDescription, "The position to perform our hover at, relative to the element itself.");
+}
+
+const QVariantMap StartMouseHoverActionCompute::_hints = StartMouseHoverActionCompute::init_hints();
+QVariantMap StartMouseHoverActionCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set which contains the element to act on.");
+  add_hint(m, Message::kOverlayIndex, HintType::kDescription, "The 0 based index that identifies the element to hover on inside the set.");
+  add_hint(m, Message::kOverlayRelClickPos, HintType::kDescription, "The position to perform our hover at, relative to the element itself.");
+  return m;
 }
 
 bool StartMouseHoverActionCompute::update_state() {
@@ -319,17 +353,20 @@ void TextActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set which contains the element to type on.");
-
   create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  add_hint(Message::kOverlayIndex, HintType::kDescription, "The 0 based index that identifies the element to type on inside the set.");
-
   create_input(Message::kTextAction, ParamType::kInt, false);
-  add_hint(Message::kTextAction, HintType::kEnum, to_underlying(EnumHint::kTextActionType));
-  add_hint(Message::kTextAction, HintType::kDescription, "The type of text action to perform.");
-
   create_input(Message::kText, ParamType::kString, false); // Only used when the text action is set to send text.
-  add_hint(Message::kText, HintType::kDescription, "The text to type.");
+}
+
+const QVariantMap TextActionCompute::_hints = TextActionCompute::init_hints();
+QVariantMap TextActionCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set which contains the element to type on.");
+  add_hint(m, Message::kOverlayIndex, HintType::kDescription, "The 0 based index that identifies the element to type on inside the set.");
+  add_hint(m, Message::kTextAction, HintType::kEnum, to_underlying(EnumHint::kTextActionType));
+  add_hint(m, Message::kTextAction, HintType::kDescription, "The type of text action to perform.");
+  add_hint(m, Message::kText, HintType::kDescription, "The text to type.");
+  return m;
 }
 
 bool TextActionCompute::update_state() {
@@ -346,23 +383,24 @@ bool TextActionCompute::update_state() {
 void ElementActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set which contains the element to act on.");
-
   create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  add_hint(Message::kOverlayIndex, HintType::kDescription, "The 0 based index that identifies the element to act on inside the set.");
-
   create_input(Message::kElementAction, ParamType::kInt, false);
-  add_hint(Message::kElementAction, HintType::kEnum, to_underlying(EnumHint::kElementActionType));
-  add_hint(Message::kElementAction, HintType::kDescription, "The type of element action to perform.");
-
   create_input(Message::kOptionText, ParamType::kString, false); // Only used when the element action is set to select option from dropdown.
-  add_hint(Message::kOptionText, HintType::kDescription, "The text to select from dropdowns.");
-
   create_input(Message::kDirection, ParamType::kInt, false); // Only used when the element action is set to scroll.
-  add_hint(Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
-  add_hint(Message::kDirection, HintType::kDescription, "The direction to scroll.");
+}
+
+const QVariantMap ElementActionCompute::_hints = ElementActionCompute::init_hints();
+QVariantMap ElementActionCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set which contains the element to act on.");
+  add_hint(m, Message::kOverlayIndex, HintType::kDescription, "The 0 based index that identifies the element to act on inside the set.");
+  add_hint(m, Message::kElementAction, HintType::kEnum, to_underlying(EnumHint::kElementActionType));
+  add_hint(m, Message::kElementAction, HintType::kDescription, "The type of element action to perform.");
+  add_hint(m, Message::kOptionText, HintType::kDescription, "The text to select from dropdowns.");
+  add_hint(m, Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
+  add_hint(m, Message::kDirection, HintType::kDescription, "The direction to scroll.");
+  return m;
 }
 
 bool ElementActionCompute::update_state() {
@@ -379,16 +417,19 @@ bool ElementActionCompute::update_state() {
 void ExpandSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to expand.");
-
   create_input(Message::kDirection, ParamType::kInt, false); // Only used when the element action is set to scroll.
-  add_hint(Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
-  add_hint(Message::kDirection, HintType::kDescription, "The direction in which to expand the set.");
-
   create_input(Message::kMatchCriteria, ParamType::kMap, false);
-  add_hint(Message::kMatchCriteria, HintType::kDescription, "The match criteria used when expanding the set.");
+}
+
+const QVariantMap ExpandSetCompute::_hints = ExpandSetCompute::init_hints();
+QVariantMap ExpandSetCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to expand.");
+  add_hint(m, Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
+  add_hint(m, Message::kDirection, HintType::kDescription, "The direction in which to expand the set.");
+  add_hint(m, Message::kMatchCriteria, HintType::kDescription, "The match criteria used when expanding the set.");
+  return m;
 }
 
 bool ExpandSetCompute::update_state() {
@@ -405,9 +446,14 @@ bool ExpandSetCompute::update_state() {
 void MarkSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to mark.");
+}
+
+const QVariantMap MarkSetCompute::_hints = MarkSetCompute::init_hints();
+QVariantMap MarkSetCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to mark.");
+  return m;
 }
 
 bool MarkSetCompute::update_state() {
@@ -424,9 +470,14 @@ bool MarkSetCompute::update_state() {
 void UnmarkSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to unmark.");
+}
+
+const QVariantMap UnmarkSetCompute::_hints = UnmarkSetCompute::init_hints();
+QVariantMap UnmarkSetCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to unmark.");
+  return m;
 }
 
 bool UnmarkSetCompute::update_state() {
@@ -454,13 +505,17 @@ bool MergeSetsCompute::update_state() {
 void ShrinkSetToSideCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to shrink on one side.");
-
   create_input(Message::kDirection, ParamType::kInt, false);
-  add_hint(Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
-  add_hint(Message::kDirection, HintType::kDescription, "The side of the set from which to perform the shrink.");
+}
+
+const QVariantMap ShrinkSetToSideCompute::_hints = ShrinkSetToSideCompute::init_hints();
+QVariantMap ShrinkSetToSideCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to shrink on one side.");
+  add_hint(m, Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
+  add_hint(m, Message::kDirection, HintType::kDescription, "The side of the set from which to perform the shrink.");
+  return m;
 }
 
 bool ShrinkSetToSideCompute::update_state() {
@@ -477,13 +532,17 @@ bool ShrinkSetToSideCompute::update_state() {
 void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-
   create_input(Message::kSetIndex, ParamType::kInt, false);
-  add_hint(Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to shrink against.");
-
   create_input(Message::kDirections, ParamType::kIntList, false);
-  add_hint(Message::kDirections, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
-  add_hint(Message::kDirections, HintType::kDescription, "The sides of the marked sets used to intersect the set index, identified by set_index.");
+}
+
+const QVariantMap ShrinkAgainstMarkedCompute::_hints = ShrinkAgainstMarkedCompute::init_hints();
+QVariantMap ShrinkAgainstMarkedCompute::init_hints() {
+  QVariantMap m;
+  add_hint(m, Message::kSetIndex, HintType::kDescription, "The 0 based index that identifies the element set to shrink against.");
+  add_hint(m, Message::kDirections, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
+  add_hint(m, Message::kDirections, HintType::kDescription, "The sides of the marked sets used to intersect the set index, identified by set_index.");
+  return m;
 }
 
 bool ShrinkAgainstMarkedCompute::update_state() {

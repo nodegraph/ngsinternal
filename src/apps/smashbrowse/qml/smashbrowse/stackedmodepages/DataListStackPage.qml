@@ -52,6 +52,9 @@ BaseStackPage{
         // Show the next object.
         _values = values
         _hints = hints
+        
+        console.log("showing data hints: " + JSON.stringify(_hints))
+        
         view_object(name, _values)
     }
 

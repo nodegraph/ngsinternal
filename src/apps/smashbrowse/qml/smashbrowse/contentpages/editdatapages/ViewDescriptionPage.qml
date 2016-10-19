@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import smashbrowse.appwidgets 1.0
 
 Rectangle {
-    id: edit_boolean_page
+    id: page
 
     // Dimensions.
     height: app_settings.page_height
@@ -23,15 +23,6 @@ Rectangle {
     color: app_settings.menu_stack_bg_color
     property string description: ""
 
-    // Our Methods.
-    function set_value(value) {
-        check_box.checked = value
-    }
-
-    function get_value(value) {
-        return check_box.checked
-    }
-
     function set_title(title) {
         stack_view_header.title_text = title
     }
@@ -39,14 +30,14 @@ Rectangle {
         return stack_view_header.title_text
     }
     
-    function set_description(desc) {
+    function set_description_label(desc) {
     	description_label.text = desc
     }
 
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: edit_boolean_page.Stack.view
+        stack_view: page.Stack.view
     }
 
     ColumnLayout {
@@ -56,7 +47,7 @@ Rectangle {
         width: app_settings.menu_page_width
         spacing: app_settings.column_layout_spacing
 
-        anchors {
+		anchors {
             left: parent.left
             right: parent.right
             leftMargin: app_settings.page_left_margin
@@ -81,47 +72,6 @@ Rectangle {
             color: "transparent"
         }
 
-        // Check Box.
-        AppCheckBox {
-            id: check_box
-            checked: true
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-            }
-        }
-        
-        Rectangle {
-            height: app_settings.column_layout_spacing
-            width: app_settings.menu_page_width
-            color: "transparent"
-        }
-
-        // Buttons.
-        RowLayout {
-        	Layout.maximumWidth: parent.width
-        
-            Item {Layout.fillWidth: true}
-            AppLabelButton {
-                text: "accept"
-                onClicked: {
-                    var path = edit_boolean_page.Stack.view.get_title_path(1, edit_boolean_page.Stack.view.depth)
-                    edit_boolean_page.Stack.view._stack_page.set_value(path, get_value())
-                    edit_boolean_page.Stack.view.pop_page()
-                }
-            }
-            Rectangle {
-                color: "transparent"
-                height: app_settings.action_bar_height
-                width: app_settings.button_spacing
-            }
-            AppLabelButton {
-                text: "cancel"
-                onClicked: {
-                    edit_boolean_page.Stack.view.pop_page()
-                }
-            }
-            Item {Layout.fillWidth: true}
-        }
     }
 }
 

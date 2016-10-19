@@ -234,6 +234,8 @@ Rectangle {
 
         // Buttons.
         RowLayout {
+        	Layout.maximumWidth: parent.width
+        	
             Item {Layout.fillWidth: true}
             AppLabelButton {
                 text: "accept"

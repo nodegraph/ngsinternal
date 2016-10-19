@@ -87,7 +87,7 @@ Rectangle {
                 font.pointSize: app_settings.menu_page_description_point_size
                 font.italic: false
                 color: "white"
-                wrapMode: Text.WordWrap
+                wrapMode: Text.Wrap
             }
         }
     }

@@ -15,6 +15,7 @@ struct InputComputeComparator {
 };
 
 const QVariant Compute::_empty_variant;
+const QVariantMap Compute::_hints;
 
 Compute::Compute(Entity* entity, ComponentDID derived_id)
     : Component(entity, kIID(), derived_id),
@@ -203,12 +204,13 @@ Entity* Compute::get_outputs_space() {
   return our_entity()->get_child("outputs");
 }
 
-void Compute::add_hint(const std::string& name, HintType hint_type, const QVariant& value) {
-  _hints[name.c_str()].toMap()[QString::number(to_underlying(hint_type))] = value;
-}
-
-const QVariantMap& Compute::get_hints() const {
-  return _hints;
+void Compute::add_hint(QVariantMap& map,
+                       const std::string& name,
+                       HintType hint_type,
+                       const QVariant& value) {
+  QVariantMap hints = map[name.c_str()].toMap();
+  hints[QString::number(to_underlying(hint_type))] = value;
+  map[name.c_str()] = hints;
 }
 
 }

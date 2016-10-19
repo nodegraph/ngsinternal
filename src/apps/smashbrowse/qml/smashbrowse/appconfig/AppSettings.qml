@@ -39,6 +39,9 @@ Item{
     
     property int page_left_margin:  app_units.dp(30)
     property int page_right_margin: app_units.dp(30)
+    property int page_content_width: page_width - page_left_margin - page_right_margin
+    property int page_content_left: page_left_margin
+    property int page_content_right: page_width - page_right_margin
     
     property int action_bar_height: app_units.dp(60)
     property int action_bar_width: parent.width

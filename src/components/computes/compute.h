@@ -43,8 +43,12 @@ class COMPUTES_EXPORT Compute: public Component {
   QVariantMap get_exposed_inputs() const; // These are the linkable inputs of the node.
   void set_params(const QVariantMap& inputs);
 
+  // Our outputs.
   virtual const QVariantMap& get_outputs() const;
   virtual QVariant get_output(const std::string& name) const;
+
+  // Our hints.
+  virtual const QVariantMap& get_hints() const {return _hints;}
 
  protected:
   // Our state.
@@ -63,8 +67,12 @@ class COMPUTES_EXPORT Compute: public Component {
   Entity* get_inputs_space();
   Entity* get_outputs_space();
 
-  void add_hint(const std::string& name, HintType hint_type, const QVariant& value);
-  const QVariantMap& get_hints() const;
+  // Used by derived classes.
+  static void add_hint(QVariantMap& map,
+                       const std::string& name,
+                       HintType hint_type,
+                       const QVariant& value);
+
 
  protected:
   Dep<Inputs> _inputs;
@@ -79,7 +87,7 @@ class COMPUTES_EXPORT Compute: public Component {
   // Note this maps the input name to hints.
   // Hints are encoded by a key which is the string of the number representing the HintType.
   // The value is a QVariant holding an int representing an enum or another type.
-  QVariantMap _hints;
+  static const QVariantMap _hints;
 };
 
 }

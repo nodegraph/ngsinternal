@@ -21,6 +21,7 @@ Rectangle {
 
     // Appearance.
     color: app_settings.menu_stack_bg_color
+    property string description: ""
     
     // Our Methods.
     function set_value(value) {
@@ -37,6 +38,10 @@ Rectangle {
     function get_title() {
         return stack_view_header.title_text
     }
+    
+    function set_description(desc) {
+    	description_label.text = desc
+    }
 
     // The stack view header.
     AppStackViewHeader {
@@ -45,12 +50,31 @@ Rectangle {
     }
 
     ColumnLayout {
+        id: column_layout
         y: app_settings.action_bar_height
-
         //height: app_settings.menu_page_height
         width: app_settings.menu_page_width
         spacing: app_settings.column_layout_spacing
 
+        anchors {
+            left: parent.left
+            right: parent.right
+            leftMargin: app_settings.page_left_margin
+            rightMargin: app_settings.page_right_margin
+        }
+
+        Rectangle {
+            height: app_settings.column_layout_spacing
+            width: app_settings.menu_page_width
+            color: "transparent"
+        }
+        
+        AppText  {
+            id: description_label
+            anchors.horizontalCenter: parent.horizontalCenter // used when the text is actually a single line
+            Layout.maximumWidth: parent.width
+        }
+        
         Rectangle {
             height: app_settings.column_layout_spacing
             width: app_settings.menu_page_width
@@ -63,15 +87,21 @@ Rectangle {
             tool_bar: copy_paste_bar
             text: "untitled"
             anchors {
-		        left: parent.left
-		        right: parent.right
-		        leftMargin: app_settings.page_left_margin
-		        rightMargin: app_settings.page_right_margin
-		    }
+                left: parent.left
+                right: parent.right
+            }
+        }
+        
+        Rectangle {
+            height: app_settings.column_layout_spacing
+            width: app_settings.menu_page_width
+            color: "transparent"
         }
 
         // Buttons.
         RowLayout {
+        	Layout.maximumWidth: parent.width
+
             Item {Layout.fillWidth: true}
             AppLabelButton {
                 text: "accept"
