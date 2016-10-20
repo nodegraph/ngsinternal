@@ -21,9 +21,21 @@ enum class ParamType: int {
   kBooleanList,
 };
 
+enum class JSType: int {
+  kUndefined,
+  kNull,
+  kObject,
+  kArray,
+  kString,
+  kNumber,
+  kBoolean,
+};
+
 enum class HintType: int {
-  kEnum,
-  kDescription,
+  kEnum, // Whether an int represents some type of enum.
+  kJSType, // This is used for array/object types and describes the JS type of elements inside the array/object.
+  kDescription, // A description of the parameter.
+  kResizable, // Whether an array or object parameter is adjustable in terms of the number of elements it contains.
   kMin,
   kMax,
 };

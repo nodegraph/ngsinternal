@@ -88,6 +88,8 @@ Rectangle {
                 font.italic: false
                 color: "white"
                 wrapMode: Text.Wrap
+                maximumLineCount: 2
+                width: app_settings.page_width - app_settings.list_item_height_large - app_settings.list_item_border_width - app_settings.page_right_margin
             }
         }
     }

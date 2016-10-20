@@ -86,9 +86,11 @@ Rectangle {
     QtObject {
         id: hint_type // an enumeration of enumerations
         property int kEnum: 0
-        property int kDescription: 1
-        property int kMin: 2
-        property int kMax: 3
+        property int kJSType: 1
+        property int kDescription: 2
+        property int kResizable: 3
+        property int kMin: 4
+        property int kMax: 5
     }
 
 

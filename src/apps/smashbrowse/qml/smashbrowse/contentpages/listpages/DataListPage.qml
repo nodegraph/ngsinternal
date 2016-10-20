@@ -21,4 +21,76 @@ BaseListPage {
     // Our settings.
     show_back_button: page.Stack.view && (page.Stack.view.depth > 1)
     delegate: DataListDelegate{}
+    list_view.height: app_settings.menu_page_height - edit_bar.height
+    
+    property var resizable: false
+    
+    function get_stack_view() {
+    	return Stack.view
+    }
+    
+    function get_stack_page() {
+    	return Stack.view._stack_page
+    }
+    
+    function on_add() {
+    	get_stack_page().on_add_element()
+	}
+	
+	function on_edit() {
+		var name = list_view.model.get(list_view.currentIndex).name
+		get_stack_page().on_push_edit_page(name)
+	}
+	
+	function on_remove() {
+		var name = list_view.model.get(list_view.currentIndex).name
+		get_stack_page().on_remove_element(name)
+	}
+	
+	// Buttons.
+    RowLayout {
+    	id: edit_bar
+    	Layout.maximumWidth: list_view.width
+    	
+    	anchors {
+            left: list_view.left
+            right: list_view.right
+            bottom: parent.bottom
+        }
+
+        Item {Layout.fillWidth: true}
+        AppLabelButton {
+            text: "add"
+            visible: page.resizable
+            onClicked: {
+                var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
+                on_add(path)
+            }
+        }
+        Rectangle {
+            color: "transparent"
+            height: app_settings.action_bar_height
+            width: app_settings.button_spacing
+        }
+        AppLabelButton {
+            text: "edit"
+            onClicked: {
+                on_edit()
+            }
+        }
+        Rectangle {
+            color: "transparent"
+            height: app_settings.action_bar_height
+            width: app_settings.button_spacing
+        }
+        AppLabelButton {
+            text: "remove"
+            visible: page.resizable
+            onClicked: {
+                var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
+                on_remove(path)
+            }
+        }
+        Item {Layout.fillWidth: true}
+    }
 }

@@ -84,8 +84,4 @@ Rectangle {
         property var _list_page: page
     }
 
-
-
-
-
 }

@@ -14,7 +14,7 @@ import smashbrowse.contentpages.listmodels 1.0
 
 
 BaseStackPage{
-    id: page
+    id: stack_page
 
     // Settings.
     property var _allow_edits: false
@@ -45,7 +45,7 @@ BaseStackPage{
     }
 
     // Show data values with hints on how to show it.
-    function on_show_data(name, values, hints) {
+    function on_show_data(node_name, values, hints) {
         app_settings.vibrate()
         stack_view.clear_pages()
 
@@ -55,7 +55,190 @@ BaseStackPage{
         
         console.log("showing data hints: " + JSON.stringify(_hints))
         
-        view_object(name, _values)
+        var path = []
+        view_object(node_name, path)
+    }
+    
+    function on_add_element() {
+        // Push a page to get a string name or an array index to insert at in the object in or array respectively.
+        // Then call __on_add_element with the result ... not you can set the call on the EnterStringPage for example.
+
+    }
+
+    // The element_name is a string when adding to an object.
+    // The element_name is an index to insert at when adding to an array. Use -1 is you want to add at the end.
+    function __on_add_element(element_name) {
+    	var path = stack_view.get_title_path(1, stack_view.depth)
+    	
+    	// Get value info.
+    	var value = stack_page.get_value(path)
+    	var value_type = app_enums.get_js_enum(value)
+    
+    	// Hints are mandatory on objects or arrays.
+        var hints = stack_page.get_hints(path)
+        if (!hints) {
+        	return
+        }
+        
+        // A resizable hint is needed to be resizable.
+        var resizable = hints[hint_type.kResizable]
+        if (!resizable) {
+        	return
+        }
+        
+        // A js type hint is needed to be resizable.
+        var js_type = hints[hint_type.kJSType]
+        if (js_type === undefined) {
+        	return
+        }
+        
+        // Only arrays and objects can be resized.
+        if (!(value_type == js_type.kArray || value_type == js_type.kObject)) {
+        	return
+        } 
+        
+        // Add a new element.
+        if (value_type == js_type.kArray) {
+        	// Add an array element.
+	        if (js_type == js_type.kString) {
+                value.splice(element_name, 0, '');
+	        } else if (js_type == js_type.kNumber) {
+                value.splice(element_name, 0, 0);
+	        } else if (js_type == js_type.kBoolean) {
+                value.splice(element_name, 0, false);
+	        }
+        } else if (value_type == js_type.kObject) {
+        	// Add an object element.
+        	if (js_type == js_type.kString) {
+                value[element_name] = ''
+	        } else if (js_type == js_type.kNumber) {
+                value[element_name] = 0
+	        } else if (js_type == js_type.kBoolean) {
+                value[element_name] = false
+	        }
+        }
+        
+        // Record the new value.
+        stack_page.set_value(path, value)
+        
+        // Refresh the page to show the new value.
+        var tail_name = path[path.length-1]
+        stack_view.pop_page()
+        on_push_edit_page(tail_name)
+
+//        if (value_type == js_enum.kObject) {
+//       		var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
+//        	push_page.visible = true
+//        	push_page.set_value("unnamed")
+//        	push_page.set_title("Name for New Element.")
+//        	push_page.callback = stack_page.on_add_element_with_name
+//        	stack_view.push_page(push_page)
+//        } else if (value_type == js_enum.kArray) {
+//        	var value = app_utils.get_sub_object(_values, path)
+//        	var name = path[path.length-1]
+//        	value.length += 1
+//        	stack_view.pop_page()
+//        	on_push_edit_page(name)
+//        }
+        
+    }
+    
+    function on_remove_element(name) {
+    
+    }
+    
+    function on_push_edit_page(name) {
+        // Get our current value and type.
+        var path = stack_view.get_title_path(1, stack_view.depth)
+        path.push(name)
+        var value = stack_page.get_value(path)
+        var hints = stack_page.get_hints(path)
+        var value_type = app_enums.get_js_enum(value)
+        console.log('hints: ' + JSON.stringify(hints))
+
+        // Push a different page depending on the value type.
+        switch(value_type) {
+        case js_enum.kString:
+            if (stack_page._allow_edits) {
+                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditStringPage.qml", edit_data_list_stack_page, {})
+                page.set_value(value)
+                page.set_title(name)
+                if (hints) { 
+                	if (hints.hasOwnProperty(hint_type.kDescription)) {
+                		console.log('setting description: ' + hints[hint_type.kDescription])
+                    	page.set_description(hints[hint_type.kDescription])
+                	}
+                	if (hints.hasOwnProperty(hint_type.kResizable)) {
+                		console.log('setting resizable: true')
+                    	page.resizable = true
+                	}
+                }
+                stack_view.push_page(page)
+            }
+            break
+        case js_enum.kBoolean:
+            if (stack_page._allow_edits) {
+                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml", edit_data_list_stack_page, {})
+                page.set_value(value)
+                page.set_title(name)
+                if (hints) {
+                	if (hints.hasOwnProperty(hint_type.kDescription)) {
+                    	page.set_description(hints[hint_type.kDescription])
+                    }
+                    if (hints.hasOwnProperty(hint_type.kResizable)) {
+                    	page.resizable = true
+                	}
+                }
+                stack_view.push_page(page)
+            }
+            break
+        case js_enum.kNumber:
+            if (stack_page._allow_edits) {
+            	if (hints && hints.hasOwnProperty(hint_type.kEnum)) {
+            		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
+                    page.set_enum_type(hints[hint_type.kEnum])
+	                page.set_value(value)
+	                page.set_title(name)
+	                if (hints && hints.hasOwnProperty(hint_type.kDescription)) {
+	                	page.set_description(hints[hint_type.kDescription])
+	                }
+	                if (hints && hints.hasOwnProperty(hint_type.kResizable)) {
+                    	page.resizable = true
+                	}
+	                stack_view.push_page(page)
+            	} else {
+	                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml", edit_data_list_stack_page, {})
+	                page.set_value(value)
+	                page.set_title(name)
+                    if (hints && hints.hasOwnProperty(hint_type.kDescription)) {
+                        page.set_description(hints[hint_type.kDescription])
+                    }
+                    if (hints && hints.hasOwnProperty(hint_type.kResizable)) {
+                    	page.resizable = true
+                	}
+	                stack_view.push_page(page)
+                }
+            } else {
+//            	if (hints && hints.hasOwnProperty(hint_type.kDescription) {
+//            		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/ViewDescriptionPage.qml", edit_data_list_stack_page, {})
+//	                page.set_title(name)
+//	                page.description = hints[hint_type.kDescription]
+//	                stack_view.push_page(page)
+//            	}
+            }
+            break
+        case js_enum.kObject:
+        	console.log('----- object')
+            stack_page.view_object(path[path.length-1], path);
+            break
+        case js_enum.kArray:
+        	console.log('----- array')
+            stack_page.view_array(path[path.length-1], path);
+            break
+        default:
+            console.log("Error: DataListDelegate::onDoubleClicked encountered unknown type: " + value_type)
+            break
+        }
     }
 
     // --------------------------------------------------------------------------------------------------
@@ -79,10 +262,23 @@ BaseStackPage{
     function get_value(path) {
         return app_utils.get_sub_object(_values, path)
     }
-
+    
     // Get a string which represents the value's type or actual value.
-    function get_string_for_value(value) {
-        var value_type = app_enums.get_js_enum(value)
+    function get_string_for_value(path) {
+    	var value = get_value(path)
+    	var value_type = app_enums.get_js_enum(value)
+    	var hints = get_hints(path)
+    	
+    	// Use the hints to get a more descriptive string representation.
+    	if (hints) {
+    		if (hints.hasOwnProperty(hint_type.kEnum)) {
+        		return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
+        	} else if (hints.hasOwnProperty(hint_type.kDescription) && (value_type == js_enum.kObject || value_type == js_enum.kArray)) {
+        		return hints[hint_type.kDescription]
+        	}
+        }
+    	
+        // Use the raw values if the hints don't help.
         switch(value_type) {
         case js_enum.kString:
         case js_enum.kBoolean:
@@ -134,9 +330,12 @@ BaseStackPage{
 
 
     // Push next model on the stack.
-    function push_by_model(title, model) {
-        var data_list = stack_view.create_page("DataListPage")
-        stack_view.push_by_components(title, data_list, model)
+    function push_by_model(title, model, hints) {
+        var list_page = stack_view.create_page("DataListPage")
+        if (hints && hints.hasOwnProperty(hint_type.kResizable)) {
+        	list_page.resizable = true
+        }
+        stack_view.push_by_components(title, list_page, model)
     }
 
     // Create a list model.
@@ -145,27 +344,32 @@ BaseStackPage{
                 import QtQuick 2.6;
                 ListModel {
                 } "
-        return Qt.createQmlObject(script, page, "view_node_dynamic_content")
+        return Qt.createQmlObject(script, stack_page, "view_node_dynamic_content")
     }
 
     // Display the contents of a dict.
-    function view_object(name, obj) {
+    function view_object(title, path) {
+    	var obj = get_value(path)
+    	var hints = get_hints(path)
         var model = create_list_model()
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop)) {
                 model.append({name: prop, depth_index: stack_view.depth})
             }
         }
-        push_by_model(name, model)
+        console.log('pushing: ' + title + ' hints: ' + JSON.stringify(hints))
+        push_by_model(title, model, hints)
     }
 
     // Display the contents of an array.
-    function view_array(name, arr) {
+    function view_array(title, path) {
+    	var arr = get_value(path)
+    	var hints = get_hints(path)
         var model = create_list_model()
         for (var i=0; i<arr.length; i++) {
             model.append({name: i.toString(), depth_index: stack_view.depth})
         }
-        push_by_model(name, model)
+        console.log('pushing arr: ' + title + ' hints: ' + JSON.stringify(hints))
+        push_by_model(title, model, hints)
     }
-
 }

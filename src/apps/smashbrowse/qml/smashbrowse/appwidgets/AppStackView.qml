@@ -22,6 +22,7 @@ StackView {
     anchors.fill: parent
 
     // Get the current path of the data displayed on the top stack page.
+    // Note that end_index is one past the last element to be included in the path.
     function get_title_path(begin_index, end_index) {
         var path = []
         for (var i=begin_index; (i<stack_view.depth && i<end_index); i++) {
