@@ -17,43 +17,4 @@ import smashbrowse.contentpages.listmodels 1.0
 BaseListPage {
     id: page
     
-        // Buttons.
-    RowLayout {
-    	Layout.maximumWidth: parent.width
-    	anchors.bottom: parent.bottom
-
-        Item {Layout.fillWidth: true}
-        AppLabelButton {
-            text: "add"
-            onClicked: {
-                var path = edit_string_page.Stack.view.get_title_path(1, edit_string_page.Stack.view.depth)
-                on_add(path)
-            }
-        }
-        Rectangle {
-            color: "transparent"
-            height: app_settings.action_bar_height
-            width: app_settings.button_spacing
-        }
-        AppLabelButton {
-            text: "edit"
-            onClicked: {
-            	var path = edit_string_page.Stack.view.get_title_path(1, edit_string_page.Stack.view.depth)
-                on_edit(path)
-            }
-        }
-        Rectangle {
-            color: "transparent"
-            height: app_settings.action_bar_height
-            width: app_settings.button_spacing
-        }
-        AppLabelButton {
-            text: "remove"
-            onClicked: {
-                var path = edit_string_page.Stack.view.get_title_path(1, edit_string_page.Stack.view.depth)
-                on_remove(path)
-            }
-        }
-        Item {Layout.fillWidth: true}
-    }
 }
