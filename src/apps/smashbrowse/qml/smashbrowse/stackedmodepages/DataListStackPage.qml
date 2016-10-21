@@ -134,7 +134,21 @@ BaseStackPage{
     }
     
     function on_remove_element(name) {
-    
+        var path = stack_view.get_title_path(1, stack_view.depth)
+        var value = get_value(path)
+        var hints = get_hints(path)
+
+        if (hints[hint_type.kJSType] == js_type.kObject) {
+            delete value[name]
+            set_value(path, value)
+        } else if (hints[hint_type.kJSType] == js_type.kArray) {
+            value.splice(Number(name),1)
+            set_value(path, value)
+        }
+
+        var tail_name = path[path.length-1]
+        stack_view.pop_page()
+        on_edit_element(tail_name)
     }
 
     // --------------------------------------------------------------------------------------------------
@@ -165,9 +179,6 @@ BaseStackPage{
     // The element_name is an index to insert at when adding to an array. 
     // Use a number greater than the last element if you want to add at the end.
     function add_element(element_name) {
-        // Pop the page which grabbed the element_name from the user.
-        //stack_view.pop_page()
-
         console.log('adding element with name: ' + element_name)
         var path = stack_view.get_title_path(1, stack_view.depth)
 
