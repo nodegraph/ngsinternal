@@ -4,23 +4,6 @@
 
 namespace ngs {
 
-enum class ParamType: int {
-  kMap,
-  kList,
-
-  kString,
-  kStringList,
-
-  kInt,
-  kIntList,
-
-  kDouble,
-  kDoubleList,
-
-  kBoolean,
-  kBooleanList,
-};
-
 enum class JSType: int {
   kUndefined,
   kNull,

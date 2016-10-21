@@ -43,7 +43,7 @@ void ScriptNodeCompute::create_inputs_outputs() {
   Compute::create_inputs_outputs();
   create_input("in");
   create_output("out");
-  create_input("script", ParamType::kString, false);
+  create_input("script", JSType::kString, false);
 }
 
 const QVariantMap ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();

@@ -16,8 +16,8 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   virtual void create_inputs_outputs() {external();}
 
   // Our data type.
-  void set_param_type(ParamType param_type);
-  ParamType get_param_type() const;
+  void set_param_type(JSType param_type);
+  JSType get_param_type() const;
 
   // Exposure.
   void set_exposed(bool exposed);
@@ -38,7 +38,7 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   Dep<Compute> _node_compute;
 
   // Our data type.
-  ParamType _param_type;
+  JSType _param_type;
 
   // Exposure.
   bool _exposed;

@@ -110,7 +110,7 @@ bool ResizeBrowserCompute::update_state(){
 void NavigateToCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kURL, ParamType::kString, false);
+  create_input(Message::kURL, JSType::kString, false);
 }
 
 const QVariantMap NavigateToCompute::_hints = NavigateToCompute::init_hints();
@@ -147,7 +147,7 @@ bool NavigateRefreshCompute::update_state() {
 void SwitchToIFrameCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kIFrame, ParamType::kString, false);
+  create_input(Message::kIFrame, JSType::kString, false);
 }
 
 const QVariantMap SwitchToIFrameCompute::_hints = SwitchToIFrameCompute::init_hints();
@@ -173,9 +173,9 @@ bool SwitchToIFrameCompute::update_state() {
 void CreateSetFromValuesCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kWrapType, ParamType::kInt, false);
-  create_input(Message::kTextValues, ParamType::kStringList, false);
-  create_input(Message::kImageValues, ParamType::kStringList, false);
+  create_input(Message::kWrapType, JSType::kNumber, false);
+  create_input(Message::kTextValues, JSType::kArray, false);
+  create_input(Message::kImageValues, JSType::kArray, false);
 }
 
 const QVariantMap CreateSetFromValuesCompute::_hints = CreateSetFromValuesCompute::init_hints();
@@ -213,7 +213,7 @@ void CreateSetFromTypeCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
 
-  create_input(Message::kWrapType, ParamType::kInt, false);
+  create_input(Message::kWrapType, JSType::kNumber, false);
 
 }
 
@@ -240,7 +240,7 @@ bool CreateSetFromTypeCompute::update_state() {
 void DeleteSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
+  create_input(Message::kSetIndex, JSType::kNumber, false);
 }
 
 const QVariantMap DeleteSetCompute::_hints = DeleteSetCompute::init_hints();
@@ -265,9 +265,9 @@ bool DeleteSetCompute::update_state() {
 void ShiftSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
-  create_input(Message::kDirection, ParamType::kInt, false);
-  create_input(Message::kWrapType, ParamType::kInt, false);
+  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kDirection, JSType::kNumber, false);
+  create_input(Message::kWrapType, JSType::kNumber, false);
 }
 
 const QVariantMap ShiftSetCompute::_hints = ShiftSetCompute::init_hints();
@@ -301,10 +301,10 @@ bool ShiftSetCompute::update_state() {
 void MouseActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
-  create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  create_input(Message::kOverlayRelClickPos, ParamType::kMap, false);
-  create_input(Message::kMouseAction, ParamType::kInt, false);
+  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kOverlayIndex, JSType::kNumber, false);
+  create_input(Message::kOverlayRelClickPos, JSType::kObject, false);
+  create_input(Message::kMouseAction, JSType::kNumber, false);
 }
 
 const QVariantMap MouseActionCompute::_hints = MouseActionCompute::init_hints();
@@ -340,9 +340,9 @@ bool MouseActionCompute::update_state() {
 void StartMouseHoverActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
-  create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  create_input(Message::kOverlayRelClickPos, ParamType::kMap, false);
+  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kOverlayIndex, JSType::kNumber, false);
+  create_input(Message::kOverlayRelClickPos, JSType::kObject, false);
 }
 
 const QVariantMap StartMouseHoverActionCompute::_hints = StartMouseHoverActionCompute::init_hints();
@@ -385,10 +385,10 @@ bool StopMouseHoverActionCompute::update_state() {
 void TextActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
-  create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  create_input(Message::kTextAction, ParamType::kInt, false);
-  create_input(Message::kText, ParamType::kString, false); // Only used when the text action is set to send text.
+  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kOverlayIndex, JSType::kNumber, false);
+  create_input(Message::kTextAction, JSType::kNumber, false);
+  create_input(Message::kText, JSType::kString, false); // Only used when the text action is set to send text.
 }
 
 const QVariantMap TextActionCompute::_hints = TextActionCompute::init_hints();
@@ -424,11 +424,11 @@ bool TextActionCompute::update_state() {
 void ElementActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
-  create_input(Message::kOverlayIndex, ParamType::kInt, false);
-  create_input(Message::kElementAction, ParamType::kInt, false);
-  create_input(Message::kOptionText, ParamType::kString, false); // Only used when the element action is set to select option from dropdown.
-  create_input(Message::kDirection, ParamType::kInt, false); // Only used when the element action is set to scroll.
+  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kOverlayIndex, JSType::kNumber, false);
+  create_input(Message::kElementAction, JSType::kNumber, false);
+  create_input(Message::kOptionText, JSType::kString, false); // Only used when the element action is set to select option from dropdown.
+  create_input(Message::kDirection, JSType::kNumber, false); // Only used when the element action is set to scroll.
 }
 
 const QVariantMap ElementActionCompute::_hints = ElementActionCompute::init_hints();
@@ -468,9 +468,9 @@ bool ElementActionCompute::update_state() {
 void ExpandSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
-  create_input(Message::kDirection, ParamType::kInt, false); // Only used when the element action is set to scroll.
-  create_input(Message::kMatchCriteria, ParamType::kMap, false);
+  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kDirection, JSType::kNumber, false); // Only used when the element action is set to scroll.
+  create_input(Message::kMatchCriteria, JSType::kObject, false);
 }
 
 const QVariantMap ExpandSetCompute::_hints = ExpandSetCompute::init_hints();
@@ -503,7 +503,7 @@ bool ExpandSetCompute::update_state() {
 void MarkSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
+  create_input(Message::kSetIndex, JSType::kNumber, false);
 }
 
 const QVariantMap MarkSetCompute::_hints = MarkSetCompute::init_hints();
@@ -528,7 +528,7 @@ bool MarkSetCompute::update_state() {
 void UnmarkSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
+  create_input(Message::kSetIndex, JSType::kNumber, false);
 }
 
 const QVariantMap UnmarkSetCompute::_hints = UnmarkSetCompute::init_hints();
@@ -564,8 +564,8 @@ bool MergeSetsCompute::update_state() {
 void ShrinkSetToSideCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
-  create_input(Message::kDirection, ParamType::kInt, false);
+  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kDirection, JSType::kNumber, false);
 }
 
 const QVariantMap ShrinkSetToSideCompute::_hints = ShrinkSetToSideCompute::init_hints();
@@ -594,8 +594,8 @@ bool ShrinkSetToSideCompute::update_state() {
 void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, ParamType::kInt, false);
-  create_input(Message::kDirections, ParamType::kIntList, false);
+  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kDirections, JSType::kArray, false);
 }
 
 const QVariantMap ShrinkAgainstMarkedCompute::_hints = ShrinkAgainstMarkedCompute::init_hints();

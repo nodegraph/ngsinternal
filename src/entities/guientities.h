@@ -8,7 +8,7 @@ class QSurfaceFormat;
 
 namespace ngs {
 
-enum class ParamType;
+enum class JSType;
 
 class FileModel;
 class AppComm;
@@ -100,7 +100,7 @@ class ENTITIES_EXPORT InputEntity : public Entity {
   ENTITY_ID(InputEntity, "input")
   InputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-  virtual void set_param_type(ParamType param_type);
+  virtual void set_param_type(JSType param_type);
   virtual void set_exposed(bool expose);
 };
 
@@ -116,7 +116,7 @@ class ENTITIES_EXPORT OutputEntity : public Entity {
   ENTITY_ID(OutputEntity, "output param")
   OutputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-  virtual void set_param_type(ParamType param_type);
+  virtual void set_param_type(JSType param_type);
   virtual void set_exposed(bool expose);
 };
 

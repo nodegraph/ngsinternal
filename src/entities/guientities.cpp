@@ -408,8 +408,8 @@ void InputEntity::create_internals(const std::vector<size_t>& ids) {
   }
 }
 
-void InputEntity::set_param_type(ParamType param_type) {
-  get<InputCompute>()->set_param_type(param_type);
+void InputEntity::set_param_type(JSType param_type) {
+  get<InputCompute>()->set_type(param_type);
 }
 
 void InputEntity::set_exposed(bool expose) {
@@ -434,7 +434,7 @@ void OutputEntity::create_internals(const std::vector<size_t>& ids) {
   }
 }
 
-void OutputEntity::set_param_type(ParamType param_type) {
+void OutputEntity::set_param_type(JSType param_type) {
   get<OutputCompute>()->set_param_type(param_type);
 }
 

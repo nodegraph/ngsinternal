@@ -24,8 +24,8 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
   QVariant get_value() const;
 
   // Our data type.
-  void set_param_type(ParamType param_type);
-  ParamType get_param_type() const;
+  void set_type(JSType type);
+  JSType get_type() const;
 
   // Exposure.
   void set_exposed(bool exposed);
@@ -57,10 +57,15 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
   QVariant _param_value;
 
   // Our data type.
-  ParamType _param_type;
+  JSType _type;
 
   // Whether we are exposed in the node graph as a plug on a node.
   bool _exposed;
+
+  // Expression.
+
+  bool _use_expression;
+  QString _expression;
 };
 
 

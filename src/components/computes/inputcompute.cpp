@@ -15,7 +15,7 @@ namespace ngs {
 
 InputCompute::InputCompute(Entity* entity)
     : Compute(entity, kDID()),
-      _param_type(ParamType::kMap),
+      _type(JSType::kObject),
       _output(this),
       _exposed(true) {
 	get_dep_loader()->register_dynamic_dep(_output);
@@ -51,14 +51,14 @@ QVariant InputCompute::get_value() const {
   return get_output("out");
 }
 
-void InputCompute::set_param_type(ParamType param_type) {
+void InputCompute::set_type(JSType type) {
   external();
-  _param_type = param_type;
+  _type = type;
 }
 
-ParamType InputCompute::get_param_type() const {
+JSType InputCompute::get_type() const {
   external();
-  return _param_type;
+  return _type;
 }
 
 void InputCompute::set_exposed(bool exposed) {
@@ -114,7 +114,7 @@ void InputCompute::save(SimpleSaver& saver) const {
   Compute::save(saver);
 
   // Serialize the param type.
-  size_t type = static_cast<size_t>(_param_type);
+  size_t type = static_cast<size_t>(_type);
   saver.save(type);
 
   // Serialize the exposed value.
@@ -136,7 +136,7 @@ void InputCompute::load(SimpleLoader& loader) {
   // Load the param type.
   size_t type;
   loader.load(type);
-  _param_type = static_cast<ParamType>(type);
+  _type = static_cast<JSType>(type);
 
   // Load the exposed value.
   loader.load(_exposed);

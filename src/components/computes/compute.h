@@ -61,8 +61,8 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void set_output(const std::string& name, const QVariant& value);
 
   // Plugs.
-  Entity* create_input(const std::string& name, ParamType type = ParamType::kMap, bool exposed = true);
-  Entity* create_output(const std::string& name, ParamType type = ParamType::kMap, bool exposed = true);
+  Entity* create_input(const std::string& name, JSType type = JSType::kObject, bool exposed = true);
+  Entity* create_output(const std::string& name, JSType type = JSType::kObject, bool exposed = true);
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
   Entity* get_outputs_space();

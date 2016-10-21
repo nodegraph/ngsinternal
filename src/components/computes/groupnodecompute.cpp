@@ -78,7 +78,7 @@ void GroupNodeCompute::update_wires() {
       }
       InputEntity* in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, child_name, EntityDID::kInputEntity));
       in->create_internals();
-      in->set_param_type(ParamType::kMap);
+      in->set_param_type(JSType::kObject);
       in->set_exposed(true);
       in->initialize_wires();
       changed = true;
@@ -88,7 +88,7 @@ void GroupNodeCompute::update_wires() {
       }
       OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, child_name, EntityDID::kOutputEntity));
       out->create_internals();
-      out->set_param_type(ParamType::kMap);
+      out->set_param_type(JSType::kObject);
       out->set_exposed(true);
       out->initialize_wires();
       changed = true;

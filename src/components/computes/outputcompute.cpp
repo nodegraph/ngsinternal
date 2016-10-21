@@ -29,12 +29,12 @@ bool OutputCompute::update_state() {
   return true;
 }
 
-void OutputCompute::set_param_type(ParamType param_type) {
+void OutputCompute::set_param_type(JSType param_type) {
   external();
   _param_type = param_type;
 }
 
-ParamType OutputCompute::get_param_type() const {
+JSType OutputCompute::get_param_type() const {
   external();
   return _param_type;
 }
@@ -68,7 +68,7 @@ void OutputCompute::load(SimpleLoader& loader) {
   // Load the param type.
   size_t type;
   loader.load(type);
-  _param_type = static_cast<ParamType>(type);
+  _param_type = static_cast<JSType>(type);
 
   // Load the exposed value.
   loader.load(_exposed);

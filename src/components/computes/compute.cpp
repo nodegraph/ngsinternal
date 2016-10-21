@@ -164,7 +164,7 @@ bool Compute::check_variant_is_map(const QVariant& value, const std::string& mes
   return false;
 }
 
-Entity* Compute::create_input(const std::string& name, ParamType type, bool exposed) {
+Entity* Compute::create_input(const std::string& name, JSType type, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
@@ -175,7 +175,7 @@ Entity* Compute::create_input(const std::string& name, ParamType type, bool expo
   return input;
 }
 
-Entity* Compute::create_output(const std::string& name, ParamType type, bool exposed) {
+Entity* Compute::create_output(const std::string& name, JSType type, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* outputs_space = get_outputs_space();
