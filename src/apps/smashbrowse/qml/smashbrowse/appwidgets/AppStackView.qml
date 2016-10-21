@@ -88,7 +88,6 @@ StackView {
 
             // The model in the page is manually created, and so must be manually destroyed as well.
             var model = null
-            console.log('model is dynamic: ' + page.model_is_dynamic)
             if (page.model_is_dynamic) {
                 model = page.model
             }

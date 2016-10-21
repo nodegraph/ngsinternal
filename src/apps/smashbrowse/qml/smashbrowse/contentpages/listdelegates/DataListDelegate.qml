@@ -36,7 +36,7 @@ BaseListDelegate {
     }
 
     function on_double_clicked() {
-    	get_stack_page().on_push_edit_page(name)
+    	get_stack_page().on_edit_element(name)
     }
     
 }

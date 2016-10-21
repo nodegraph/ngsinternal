@@ -1,5 +1,7 @@
 module enterdatapages
 
-CreateFilePage 1.0 CreateFilePage.qml
 EnterStringPage 1.0 EnterStringPage.qml
+EnterNumberPage 1.0 EnterNumberPage.qml
+
+CreateFilePage 1.0 CreateFilePage.qml
 SelectDropdownPage 1.0 SelectDropdownPage.qml

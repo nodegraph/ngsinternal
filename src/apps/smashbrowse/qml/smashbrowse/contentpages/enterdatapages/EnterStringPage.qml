@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import smashbrowse.appwidgets 1.0
 
 Rectangle {
-    id: enter_string_page
+    id: page
 
     // Dimensions.
     height: app_settings.page_height
@@ -40,11 +40,15 @@ Rectangle {
     function get_title() {
         return stack_view_header.title_text
     }
+    
+    function set_description(desc) {
+        description.text = desc
+    }
 
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: enter_string_page.Stack.view
+        stack_view: page.Stack.view
     }
 
     ColumnLayout {
@@ -53,12 +57,23 @@ Rectangle {
         //height: app_settings.menu_page_height
         width: app_settings.menu_page_width
         spacing: app_settings.column_layout_spacing
-
-        Rectangle {
-            height: app_settings.column_layout_spacing
-            width: app_settings.menu_page_width
-            color: "transparent"
+        
+        anchors {
+	        left: parent.left
+	        right: parent.right
+	        leftMargin: app_settings.page_left_margin
+	        rightMargin: app_settings.page_right_margin
         }
+
+        AppSpacer {}
+        
+        AppText  {
+            id: description
+            anchors.horizontalCenter: parent.horizontalCenter // used when the text is actually a single line
+            Layout.maximumWidth: parent.width
+        }
+        
+        AppSpacer {}
 
         // Text Field.
         AppTextField {
@@ -68,10 +83,10 @@ Rectangle {
             anchors {
                 left: parent.left
                 right: parent.right
-                leftMargin: app_settings.page_left_margin
-                rightMargin: app_settings.page_right_margin
             }
         }
+        
+        AppSpacer {}
 
         // Buttons.
         RowLayout {
@@ -81,10 +96,11 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    enter_string_page.callback(text_field.text)
-                    enter_string_page.Stack.view.pop_page()
-                    main_bar.switch_to_current_mode()
-                    node_graph_item.update()
+                	page.Stack.view.pop_page()
+                    page.callback(get_value())
+                    //page.Stack.view.pop_page()
+                    //main_bar.switch_to_current_mode()
+                    //node_graph_item.update()
                 }
             }
             Rectangle {
@@ -95,7 +111,7 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    enter_string_page.Stack.view.pop_page()
+                    page.Stack.view.pop_page()
                 }
             }
             Item {Layout.fillWidth: true}

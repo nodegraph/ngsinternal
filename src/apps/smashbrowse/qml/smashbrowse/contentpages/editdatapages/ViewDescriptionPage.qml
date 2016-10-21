@@ -30,8 +30,8 @@ Rectangle {
         return stack_view_header.title_text
     }
     
-    function set_description_label(desc) {
-    	description_label.text = desc
+    function set_description(desc) {
+    	description.text = desc
     }
 
     // The stack view header.
@@ -54,23 +54,15 @@ Rectangle {
             rightMargin: app_settings.page_right_margin
         }
 
-        Rectangle {
-            height: app_settings.column_layout_spacing
-            width: app_settings.menu_page_width
-            color: "transparent"
-        }
+        AppSpacer {}
         
         AppText  {
-            id: description_label
+            id: description
             anchors.horizontalCenter: parent.horizontalCenter // used when the text is actually a single line
             Layout.maximumWidth: parent.width
         }
         
-        Rectangle {
-            height: app_settings.column_layout_spacing
-            width: app_settings.menu_page_width
-            color: "transparent"
-        }
+        AppSpacer {}
 
     }
 }

@@ -61,7 +61,7 @@ Rectangle {
 
     // Enums.
     QtObject {
-        id: js_enum
+        id: js_type
         property int kUndefined: 0
         property int kNull: 1
         property int kObject: 2
@@ -85,12 +85,14 @@ Rectangle {
     
     QtObject {
         id: hint_type // an enumeration of enumerations
-        property int kEnum: 0
-        property int kJSType: 1
-        property int kDescription: 2
-        property int kResizable: 3
-        property int kMin: 4
-        property int kMax: 5
+        property int kJSType: 0
+        property int kEnum: 1
+        property int kElementJSType: 2
+        property int kElementEnum: 3
+        property int kDescription: 4
+        property int kResizable: 5
+        property int kMin: 6
+        property int kMax: 7
     }
 
 

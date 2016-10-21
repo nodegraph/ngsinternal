@@ -32,9 +32,11 @@ enum class JSType: int {
 };
 
 enum class HintType: int {
-  kEnum, // Whether an int represents some type of enum.
-  kJSType, // This is used for array/object types and describes the JS type of elements inside the array/object.
-  kDescription, // A description of the parameter.
+  kJSType, // This represents the base javascript type of the parameter and is required for all parameters.
+  kEnum, // This represents the type of enum represented by an number javascript type.
+  kElementJSType, // This represents the javascript type of elements inside an array/object.
+  kElementEnum, // This represents the type of enum represented by number elements inside an array/object.
+  kDescription, // A helpful description of the parameter.
   kResizable, // Whether an array or object parameter is adjustable in terms of the number of elements it contains.
   kMin,
   kMax,

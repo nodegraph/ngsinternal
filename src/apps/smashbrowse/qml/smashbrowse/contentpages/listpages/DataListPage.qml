@@ -39,7 +39,7 @@ BaseListPage {
 	
 	function on_edit() {
 		var name = list_view.model.get(list_view.currentIndex).name
-		get_stack_page().on_push_edit_page(name)
+		get_stack_page().on_edit_element(name)
 	}
 	
 	function on_remove() {

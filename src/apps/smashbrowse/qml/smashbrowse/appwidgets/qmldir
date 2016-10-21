@@ -1,5 +1,6 @@
 module appwidgets
 
+AppSpacer 1.0 AppSpacer.qml
 AppStackViewHeader 1.0 AppStackViewHeader.qml
 AppStackView 1.0 AppStackView.qml
 AppScrollView 1.0 AppScrollView.qml

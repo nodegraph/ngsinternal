@@ -50,15 +50,13 @@ Rectangle {
         width: app_settings.menu_page_width
         spacing: app_settings.column_layout_spacing
 
-        Rectangle {
-            height: app_settings.column_layout_spacing
-            width: app_settings.menu_page_width
-            color: "transparent"
-        }
+        AppSpacer {}
 
         AppComboBox {
             id: combo_box
         }
+        
+        AppSpacer {}
 
         // Buttons.
         RowLayout {

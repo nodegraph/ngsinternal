@@ -24,7 +24,7 @@ BaseStackPage{
     property var _hints
 
     // --------------------------------------------------------------------------------------------------
-    // Methods.
+    // Public Methods.
     // --------------------------------------------------------------------------------------------------
 
     // Framework Methods.
@@ -58,199 +58,233 @@ BaseStackPage{
         var path = []
         view_object(node_name, path)
     }
-    
+
     function on_add_element() {
         // Push a page to get a string name or an array index to insert at in the object in or array respectively.
         // Then call __on_add_element with the result ... not you can set the call on the EnterStringPage for example.
+        var path = stack_view.get_title_path(1, stack_view.depth)
 
+        // Get value info.
+        var value = stack_page.get_value(path)
+        var value_type = app_enums.get_js_enum(value)
+
+		// Push a page to get the name or index of the element to add.
+        if (value_type == js_type.kObject) {
+            var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", stack_page, {})
+            push_page.visible = true
+            push_page.set_value("unnamed")
+            push_page.set_title("Add Element to Object.")
+            push_page.set_description("Enter the name of the new element to add.")
+            push_page.callback = stack_page.add_element.bind(stack_page)
+            stack_view.push_page(push_page)
+        } else if (value_type == js_type.kArray) {
+            var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterNumberPage.qml", stack_page, {})
+            push_page.visible = true
+            push_page.set_value(0)
+            push_page.set_title("Add Element to Array.")
+            push_page.set_description("Enter the index at which to insert the new element.")
+            push_page.callback = stack_page.add_element.bind(stack_page)
+            stack_view.push_page(push_page)
+        }
     }
 
-    // The element_name is a string when adding to an object.
-    // The element_name is an index to insert at when adding to an array. Use -1 is you want to add at the end.
-    function __on_add_element(element_name) {
-    	var path = stack_view.get_title_path(1, stack_view.depth)
-    	
-    	// Get value info.
-    	var value = stack_page.get_value(path)
-    	var value_type = app_enums.get_js_enum(value)
-    
-    	// Hints are mandatory on objects or arrays.
-        var hints = stack_page.get_hints(path)
-        if (!hints) {
-        	return
+    function on_edit_element(name) {
+        if (!stack_page._allow_edits) {
+            return
         }
-        
-        // A resizable hint is needed to be resizable.
-        var resizable = hints[hint_type.kResizable]
-        if (!resizable) {
-        	return
-        }
-        
-        // A js type hint is needed to be resizable.
-        var js_type = hints[hint_type.kJSType]
-        if (js_type === undefined) {
-        	return
-        }
-        
-        // Only arrays and objects can be resized.
-        if (!(value_type == js_type.kArray || value_type == js_type.kObject)) {
-        	return
-        } 
-        
-        // Add a new element.
-        if (value_type == js_type.kArray) {
-        	// Add an array element.
-	        if (js_type == js_type.kString) {
-                value.splice(element_name, 0, '');
-	        } else if (js_type == js_type.kNumber) {
-                value.splice(element_name, 0, 0);
-	        } else if (js_type == js_type.kBoolean) {
-                value.splice(element_name, 0, false);
-	        }
-        } else if (value_type == js_type.kObject) {
-        	// Add an object element.
-        	if (js_type == js_type.kString) {
-                value[element_name] = ''
-	        } else if (js_type == js_type.kNumber) {
-                value[element_name] = 0
-	        } else if (js_type == js_type.kBoolean) {
-                value[element_name] = false
-	        }
-        }
-        
-        // Record the new value.
-        stack_page.set_value(path, value)
-        
-        // Refresh the page to show the new value.
-        var tail_name = path[path.length-1]
-        stack_view.pop_page()
-        on_push_edit_page(tail_name)
 
-//        if (value_type == js_enum.kObject) {
-//       		var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
-//        	push_page.visible = true
-//        	push_page.set_value("unnamed")
-//        	push_page.set_title("Name for New Element.")
-//        	push_page.callback = stack_page.on_add_element_with_name
-//        	stack_view.push_page(push_page)
-//        } else if (value_type == js_enum.kArray) {
-//        	var value = app_utils.get_sub_object(_values, path)
-//        	var name = path[path.length-1]
-//        	value.length += 1
-//        	stack_view.pop_page()
-//        	on_push_edit_page(name)
-//        }
-        
+        var child_path = stack_view.get_title_path(1, stack_view.depth)
+        child_path.push(name)
+        var child_hints = get_hints(child_path)
+
+        // Push an edit page according to the js type.
+        var child_value = stack_page.get_value(child_path)
+        switch(child_hints[hint_type.kJSType]) {
+        case js_type.kString:
+            var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditStringPage.qml", edit_data_list_stack_page, {})
+            setup_edit_page(page, name, child_value, child_hints)
+            stack_view.push_page(page)
+            break
+        case js_type.kBoolean:
+            var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml", edit_data_list_stack_page, {})
+            setup_edit_page(page, name, child_value, child_hints)
+            stack_view.push_page(page)
+            break
+        case js_type.kNumber:
+            if (child_hints.hasOwnProperty(hint_type.kEnum)) {
+                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
+                setup_edit_page(page, name, child_value, child_hints)
+                stack_view.push_page(page)
+            } else {
+                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml", edit_data_list_stack_page, {})
+                setup_edit_page(page, name, child_value, child_hints)
+                stack_view.push_page(page)
+            }
+            break
+        case js_type.kObject:
+            stack_page.view_object(child_path[child_path.length-1], child_path);
+            break
+        case js_type.kArray:
+            stack_page.view_array(child_path[child_path.length-1], child_path);
+            break
+        default:
+            console.error("Error: DataListStackPage::on_edit_element encountered unknown js type:" + child_hints[hint_type.kJSType])
+            break
+        }
     }
     
     function on_remove_element(name) {
     
     }
-    
-    function on_push_edit_page(name) {
-        // Get our current value and type.
-        var path = stack_view.get_title_path(1, stack_view.depth)
-        path.push(name)
-        var value = stack_page.get_value(path)
-        var hints = stack_page.get_hints(path)
-        var value_type = app_enums.get_js_enum(value)
-        console.log('hints: ' + JSON.stringify(hints))
-
-        // Push a different page depending on the value type.
-        switch(value_type) {
-        case js_enum.kString:
-            if (stack_page._allow_edits) {
-                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditStringPage.qml", edit_data_list_stack_page, {})
-                page.set_value(value)
-                page.set_title(name)
-                if (hints) { 
-                	if (hints.hasOwnProperty(hint_type.kDescription)) {
-                		console.log('setting description: ' + hints[hint_type.kDescription])
-                    	page.set_description(hints[hint_type.kDescription])
-                	}
-                	if (hints.hasOwnProperty(hint_type.kResizable)) {
-                		console.log('setting resizable: true')
-                    	page.resizable = true
-                	}
-                }
-                stack_view.push_page(page)
-            }
-            break
-        case js_enum.kBoolean:
-            if (stack_page._allow_edits) {
-                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml", edit_data_list_stack_page, {})
-                page.set_value(value)
-                page.set_title(name)
-                if (hints) {
-                	if (hints.hasOwnProperty(hint_type.kDescription)) {
-                    	page.set_description(hints[hint_type.kDescription])
-                    }
-                    if (hints.hasOwnProperty(hint_type.kResizable)) {
-                    	page.resizable = true
-                	}
-                }
-                stack_view.push_page(page)
-            }
-            break
-        case js_enum.kNumber:
-            if (stack_page._allow_edits) {
-            	if (hints && hints.hasOwnProperty(hint_type.kEnum)) {
-            		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
-                    page.set_enum_type(hints[hint_type.kEnum])
-	                page.set_value(value)
-	                page.set_title(name)
-	                if (hints && hints.hasOwnProperty(hint_type.kDescription)) {
-	                	page.set_description(hints[hint_type.kDescription])
-	                }
-	                if (hints && hints.hasOwnProperty(hint_type.kResizable)) {
-                    	page.resizable = true
-                	}
-	                stack_view.push_page(page)
-            	} else {
-	                var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml", edit_data_list_stack_page, {})
-	                page.set_value(value)
-	                page.set_title(name)
-                    if (hints && hints.hasOwnProperty(hint_type.kDescription)) {
-                        page.set_description(hints[hint_type.kDescription])
-                    }
-                    if (hints && hints.hasOwnProperty(hint_type.kResizable)) {
-                    	page.resizable = true
-                	}
-	                stack_view.push_page(page)
-                }
-            } else {
-//            	if (hints && hints.hasOwnProperty(hint_type.kDescription) {
-//            		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/ViewDescriptionPage.qml", edit_data_list_stack_page, {})
-//	                page.set_title(name)
-//	                page.description = hints[hint_type.kDescription]
-//	                stack_view.push_page(page)
-//            	}
-            }
-            break
-        case js_enum.kObject:
-        	console.log('----- object')
-            stack_page.view_object(path[path.length-1], path);
-            break
-        case js_enum.kArray:
-        	console.log('----- array')
-            stack_page.view_array(path[path.length-1], path);
-            break
-        default:
-            console.log("Error: DataListDelegate::onDoubleClicked encountered unknown type: " + value_type)
-            break
-        }
-    }
 
     // --------------------------------------------------------------------------------------------------
-    // Hints.
+    // Internal Methods.
+    // --------------------------------------------------------------------------------------------------
+
+    // Setup an editor page before pushing onto the stack view.
+    function setup_edit_page(page, title, child_value, child_hints) {
+        if (child_hints) {
+            if (child_hints.hasOwnProperty(hint_type.kEnum)) {
+                page.set_enum_type(child_hints[hint_type.kEnum])
+            }
+            if (child_hints.hasOwnProperty(hint_type.kResizable)) {
+                page.resizable = true
+            }
+            if (child_hints.hasOwnProperty(hint_type.kDescription)) {
+                page.set_description(child_hints[hint_type.kDescription])
+            } else {
+                // If there is not description, then we're editing an element of an object or array parameter.
+                page.set_description("Edit the value for this element.")
+            }
+        }
+        page.set_title(title)
+        page.set_value(child_value)
+    }
+    
+    // The element_name is a string when adding to an object.
+    // The element_name is an index to insert at when adding to an array. 
+    // Use a number greater than the last element if you want to add at the end.
+    function add_element(element_name) {
+        // Pop the page which grabbed the element_name from the user.
+        //stack_view.pop_page()
+
+        console.log('adding element with name: ' + element_name)
+        var path = stack_view.get_title_path(1, stack_view.depth)
+
+        // Get value info.
+        var value = stack_page.get_value(path)
+
+        // Hints are mandatory on objects or arrays.
+        var hints = stack_page.get_hints(path)
+        if (!hints) {
+            console.error('Error: add_element requires hints')
+            return
+        }
+
+        // A resizable hint is needed to be resizable.
+        var resizable = hints[hint_type.kResizable]
+        if (!resizable) {
+            console.error('Error: add_element requires resizable hints')
+            return
+        }
+
+        // All parameters should have a js type.
+        var value_type = hints[hint_type.kJSType]
+        if (value_type === undefined) {
+            console.error('Error: add_element requires js type hints')
+            return
+        }
+
+        // Arrays and Objects should have an element js type.
+        var element_value_type = hints[hint_type.kElementJSType]
+        if (element_value_type === undefined) {
+            console.error('Error: add_element requires element js type hints')
+            return
+        }
+
+        // Only arrays and objects can be resized.
+        if ((value_type != js_type.kArray) && (value_type != js_type.kObject)) {
+            console.error('Error: add_element requires an array or an object')
+            return
+        }
+
+        // Add a new element.
+        if (value_type == js_type.kArray) {
+            // Add an array element.
+            if (element_value_type == js_type.kString) {
+                value.splice(element_name, 0, '');
+            } else if (element_value_type == js_type.kNumber) {
+                value.splice(element_name, 0, 0);
+            } else if (element_value_type == js_type.kBoolean) {
+                value.splice(element_name, 0, false);
+            }
+        } else if (value_type == js_type.kObject) {
+            // Make sure the element_name is unique.
+            var unique_name = element_name
+            if (value.hasOwnProperty(unique_name)) {
+                var count = 1
+                unique_name = element_name + count.toString()
+                while (value.hasOwnProperty(unique_name)) {
+                    count++
+                    unique_name = element_name + count.toString()
+                }
+            }
+
+            // Add an object element.
+            if (element_value_type == js_type.kString) {
+                value[unique_name] = ''
+            } else if (element_value_type == js_type.kNumber) {
+                value[unique_name] = 0
+            } else if (element_value_type == js_type.kBoolean) {
+                value[unique_name] = false
+            }
+        }
+
+        // Record the new value.
+        stack_page.set_value(path, value)
+
+        // Refresh the page to show the new value.
+        var tail_name = path[path.length-1]
+        stack_view.pop_page()
+        on_edit_element(tail_name)
+    }
+
+
+    // --------------------------------------------------------------------------------------------------
+    // Extract from our Hints. Hints cannot be modified.
     // --------------------------------------------------------------------------------------------------
 
     function get_hints(path) {
-        return app_utils.get_sub_object(_hints, path)
+        // Child path.
+        var child_path = path
+
+        // Parent path.
+        var parent_path = child_path.slice()
+        parent_path.pop()
+
+        // Parent hints.
+        var parent_hints = app_utils.get_sub_object(_hints, parent_path)
+
+        // Determine the child hints.
+        // If the parent hints contains child element hints then we must use those
+        // exclusively instead of the hints at the child. The child will generally
+        // not have any hints in this case.
+        var child_hints = {}
+        if (parent_hints.hasOwnProperty(hint_type.kElementJSType)) {
+            child_hints[hint_type.kJSType] = parent_hints[hint_type.kElementJSType]
+            // Check for other child element hints.
+            if (parent_hints.hasOwnProperty(hint_type.kElementEnum)) {
+                child_hints[hint_type.kEnum] = parent_hints[hint_type.kElementEnum]
+            }
+        } else {
+            // Otherwise we grab the child hints using the child path.
+            child_hints = app_utils.get_sub_object(_hints, child_path)
+        }
+        return child_hints
     }
 
     // --------------------------------------------------------------------------------------------------
-    // Values.
+    // Get and Set Values.
     // --------------------------------------------------------------------------------------------------
 
     // Set the value at the given path in _values.
@@ -273,24 +307,24 @@ BaseStackPage{
     	if (hints) {
     		if (hints.hasOwnProperty(hint_type.kEnum)) {
         		return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
-        	} else if (hints.hasOwnProperty(hint_type.kDescription) && (value_type == js_enum.kObject || value_type == js_enum.kArray)) {
+        	} else if (hints.hasOwnProperty(hint_type.kDescription) && (value_type == js_type.kObject || value_type == js_type.kArray)) {
         		return hints[hint_type.kDescription]
         	}
         }
     	
         // Use the raw values if the hints don't help.
         switch(value_type) {
-        case js_enum.kString:
-        case js_enum.kBoolean:
-        case js_enum.kNumber:
+        case js_type.kString:
+        case js_type.kBoolean:
+        case js_type.kNumber:
             return value.toString()
-        case js_enum.kObject:
+        case js_type.kObject:
             return "folder of values"
-        case js_enum.kArray:
+        case js_type.kArray:
             return "array of values"
-        case js_enum.kUndefined:
+        case js_type.kUndefined:
             return "undefined"
-        case js_enum.kNull:
+        case js_type.kNull:
             return "null"
         default:
             console.log("Error: DataStackPage::get_string_for_value encountered unknown type: " + value_type + " for value: " + value)
@@ -303,19 +337,19 @@ BaseStackPage{
     function get_image_for_value(value) {
         var value_type = app_enums.get_js_enum(value)
         switch(value_type) {
-        case js_enum.kString:
+        case js_type.kString:
             return 'qrc:///icons/ic_font_download_white_48dp.png'
-        case js_enum.kBoolean:
+        case js_type.kBoolean:
             return 'qrc:///icons/ic_check_box_white_24dp.png'
-        case js_enum.kNumber:
+        case js_type.kNumber:
             return 'qrc:///icons/ic_looks_3_white_48dp.png'
-        case js_enum.kObject:
+        case js_type.kObject:
             return 'qrc:///icons/ic_folder_white_48dp.png'
-        case js_enum.kArray:
+        case js_type.kArray:
             return 'qrc:///icons/ic_folder_white_48dp.png'
-        case js_enum.kUndefined:
+        case js_type.kUndefined:
             return 'qrc:///icons/ic_warning_white_48dp.png'
-        case js_enum.kNull:
+        case js_type.kNull:
             return 'qrc:///icons/ic_warning_white_48dp.png'
         default:
             console.log("Error: DataStackPage::get_image_for_value encountered unknown type.")
@@ -325,7 +359,7 @@ BaseStackPage{
     }
 
     // --------------------------------------------------------------------------------------------------
-    // Methods used to push and pop pages onto this stack view.
+    // Push Objects or Arrays onto our Stack View.
     // --------------------------------------------------------------------------------------------------
 
 

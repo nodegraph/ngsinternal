@@ -40,7 +40,7 @@ Rectangle {
     }
     
     function set_description(desc) {
-    	description_label.text = desc
+    	description.text = desc
     }
 
     // The stack view header.
@@ -63,23 +63,15 @@ Rectangle {
             rightMargin: app_settings.page_right_margin
         }
 
-        Rectangle {
-            height: app_settings.column_layout_spacing
-            width: app_settings.menu_page_width
-            color: "transparent"
-        }
+        AppSpacer {}
         
         AppText  {
-            id: description_label
+            id: description
             anchors.horizontalCenter: parent.horizontalCenter // used when the text is actually a single line
             Layout.maximumWidth: parent.width
         }
         
-        Rectangle {
-            height: app_settings.column_layout_spacing
-            width: app_settings.menu_page_width
-            color: "transparent"
-        }
+        AppSpacer {}
 
         // Title Field.
         AppTextField {
@@ -90,13 +82,12 @@ Rectangle {
                 left: parent.left
                 right: parent.right
             }
+            validator: IntValidator {
+            				bottom: 0
+            			}
         }
         
-        Rectangle {
-            height: app_settings.column_layout_spacing
-            width: app_settings.menu_page_width
-            color: "transparent"
-        }
+        AppSpacer {}
 
         // Buttons.
         RowLayout {

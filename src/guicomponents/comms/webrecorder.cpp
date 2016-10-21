@@ -565,6 +565,7 @@ void WebRecorder::record_shrink_above_of_marked() {
   dirs.append(to_underlying(DirectionType::up));
   QVariantMap args;
   args[Message::kDirections] = dirs;
+  _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
@@ -577,6 +578,7 @@ void WebRecorder::record_shrink_below_of_marked() {
   dirs.append(to_underlying(DirectionType::down));
   QVariantMap args;
   args[Message::kDirections] = dirs;
+  _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
@@ -590,6 +592,7 @@ void WebRecorder::record_shrink_above_and_below_of_marked() {
   dirs.append(to_underlying(DirectionType::down));
   QVariantMap args;
   args[Message::kDirections] = dirs;
+  _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
@@ -602,6 +605,7 @@ void WebRecorder::record_shrink_left_of_marked() {
   dirs.append(to_underlying(DirectionType::left));
   QVariantMap args;
   args[Message::kDirections] = dirs;
+  _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
@@ -614,6 +618,7 @@ void WebRecorder::record_shrink_right_of_marked() {
   dirs.append(to_underlying(DirectionType::right));
   QVariantMap args;
   args[Message::kDirections] = dirs;
+  _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }
@@ -627,6 +632,7 @@ void WebRecorder::record_shrink_left_and_right_of_marked() {
   dirs.append(to_underlying(DirectionType::right));
   QVariantMap args;
   args[Message::kDirections] = dirs;
+  _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
 }

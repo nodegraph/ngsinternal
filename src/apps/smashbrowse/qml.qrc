@@ -25,8 +25,9 @@
         
         <!-- Enter Data Pages -->
         <file>qml/smashbrowse/contentpages/enterdatapages/qmldir</file>
-        <file>qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml</file>
+        <file>qml/smashbrowse/contentpages/enterdatapages/EnterNumberPage.qml</file>
+        <file>qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml</file>
         
         <!-- Warning Pages -->
@@ -63,6 +64,7 @@
         
         <!-- AppWidgets -->
         <file>qml/smashbrowse/appwidgets/qmldir</file>
+        <file>qml/smashbrowse/appwidgets/AppSpacer.qml</file>
         <file>qml/smashbrowse/appwidgets/AppStackViewHeader.qml</file>
         <file>qml/smashbrowse/appwidgets/AppStackView.qml</file>
         <file>qml/smashbrowse/appwidgets/AppScrollView.qml</file>

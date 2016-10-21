@@ -21,43 +21,19 @@ Rectangle {
 
     // Appearance.
     color: app_settings.menu_stack_bg_color
-    property string description: ""
+
+    // Callback will be called with the entered text.
+    property var callback
 
     // Our Methods.
-    function set_enum_type(type) {
-        if (type == msg_enum_enum.kMouseActionType) {
-            console.log('edit setting options: ' + app_enums.mouse_action_type_text)
-            combo_box.set_option_texts(app_enums.mouse_action_type_text)
-        } else if (type == msg_enum_enum.kTextActionType) {
-            console.log('edit setting options: ' + app_enums.text_action_type_text)
-            combo_box.set_option_texts(app_enums.text_action_type_text)
-        } else if (type == msg_enum_enum.kElementActionType) {
-            console.log('edit setting options: ' + app_enums.element_action_type_text)
-            combo_box.set_option_texts(app_enums.element_action_type_text)
-        } else if (type == msg_enum_enum.kWrapType) {
-            console.log('edit setting options: ' + app_enums.wrap_type_text)
-            combo_box.set_option_texts(app_enums.wrap_type_text)
-        } else if (type == msg_enum_enum.kDirectionType) {
-            console.log('edit setting options: ' + app_enums.direction_type_text)
-            combo_box.set_option_texts(app_enums.direction_type_text)
-        } else {
-            console.log('Error: attempt to edit an enum with invalid type.')
-            console.log(new Error().stack);
-        }
-    }
-
-    // Note the enum type should be set before this.
     function set_value(value) {
-        if (value >= combo_box.count || value < 0) {
-            console.log('Error: attempt to set a value that is out of range for this enum type.')
-            console.log(new Error().stack);
-        }
-        combo_box.currentIndex = value
-    }
-    function get_value(value) {
-        return combo_box.currentIndex
+        text_field.text = value.toString()
     }
 
+	function get_value() {
+		return Number(text_field.text)
+	}
+    
     function set_title(title) {
         stack_view_header.title_text = title
     }
@@ -81,12 +57,12 @@ Rectangle {
         //height: app_settings.menu_page_height
         width: app_settings.menu_page_width
         spacing: app_settings.column_layout_spacing
-
+        
         anchors {
-            left: parent.left
-            right: parent.right
-            leftMargin: app_settings.page_left_margin
-            rightMargin: app_settings.page_right_margin
+	        left: parent.left
+	        right: parent.right
+	        leftMargin: app_settings.page_left_margin
+	        rightMargin: app_settings.page_right_margin
         }
 
         AppSpacer {}
@@ -99,12 +75,18 @@ Rectangle {
         
         AppSpacer {}
 
-        AppComboBox {
-            id: combo_box
+        // Text Field.
+        AppTextField {
+            id: text_field
+            tool_bar: copy_paste_bar
+            text: "untitled"
             anchors {
                 left: parent.left
                 right: parent.right
             }
+            validator: IntValidator {
+            				bottom: 0
+            			}
         }
         
         AppSpacer {}
@@ -117,9 +99,11 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
-                    page.Stack.view._stack_page.set_value(path, get_value())
-                    page.Stack.view.pop_page()
+                	page.Stack.view.pop_page()
+                    page.callback(get_value())
+                    //page.Stack.view.pop_page()
+                    //main_bar.switch_to_current_mode()
+                    //node_graph_item.update()
                 }
             }
             Rectangle {

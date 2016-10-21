@@ -71,6 +71,11 @@ QtObject {
 
     // Extracts a sub object using a path, which is an array of strings.
     function get_sub_object(obj, path) {
+        if (typeof obj !== 'object') {
+            console.error("Error: get_sub_object requires an object.")
+            return undefined
+        }
+
         if (path.length <=0) {
             return obj
         }
@@ -98,6 +103,11 @@ QtObject {
 
     // Set the value inside an object at the given path, which is an array of strings.
     function set_sub_object(obj, path, value) {
+        if (typeof obj !== 'object') {
+            console.error("Error: set_sub_object requires an object.")
+            return
+        }
+
         if (path.length <=0) {
             obj = value
             return

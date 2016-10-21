@@ -19,28 +19,28 @@ Item{
     // Get the value type at the given path in _values.
     function get_js_enum(value) {
         if (value === undefined) {
-            return js_enum.kUndefined
+            return js_type.kUndefined
         } else if (value === null) {
-            return js_enum.kNull
+            return js_type.kNull
         }else if (typeof value === 'string') {
             // String.
-            return js_enum.kString
+            return js_type.kString
         } else if (typeof value === 'boolean') {
             // Boolean.
-            return js_enum.kBoolean
+            return js_type.kBoolean
         } else if (typeof value === 'number'){
             // Number.
-            return js_enum.kNumber
+            return js_type.kNumber
         } else if (typeof value === 'object') {
             if (Object.getPrototypeOf(value) === Object.prototype) {
                 // Object.
-                return js_enum.kObject
+                return js_type.kObject
             } else if (Object.getPrototypeOf(value) === Array.prototype) {
                 // Array.
-                return js_enum.kArray
+                return js_type.kArray
             }
         }
-        return js_enum.kUndefined
+        return js_type.kUndefined
     }
 
     // --------------------------------------------------------------------------------------
