@@ -78,11 +78,11 @@ class ENTITIES_EXPORT BaseOutputEntity : public Entity {
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };
 
-class ENTITIES_EXPORT BaseScriptNodeEntity : public Entity {
- public:
-  ENTITY_ID(BaseScriptNodeEntity, "base compute")
-  BaseScriptNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-};
+//class ENTITIES_EXPORT BaseScriptNodeEntity : public Entity {
+// public:
+//  ENTITY_ID(BaseScriptNodeEntity, "base compute")
+//  BaseScriptNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+//  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
+//};
 
 }

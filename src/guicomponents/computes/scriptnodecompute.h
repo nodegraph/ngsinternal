@@ -1,9 +1,9 @@
 #pragma once
 #include <guicomponents/computes/guicomputes_export.h>
 #include <components/computes/compute.h>
+#include <base/objectmodel/dep.h>
 
 namespace ngs {
-
 
 class GUICOMPUTES_EXPORT ScriptNodeCompute: public Compute  {
  public:
@@ -12,6 +12,10 @@ class GUICOMPUTES_EXPORT ScriptNodeCompute: public Compute  {
   virtual ~ScriptNodeCompute();
 
   virtual void create_inputs_outputs();
+
+  static QVariantMap init_hints();
+  static const QVariantMap _hints;
+  virtual const QVariantMap& get_hints() const {return _hints;}
 
 protected:
   // Our state.

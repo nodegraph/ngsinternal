@@ -14,7 +14,7 @@
 #include <components/computes/outputnodecompute.h>
 #include <entities/factory.h>
 #include <entities/nonguientities.h>
-#include <guicomponents/computes/scriptnodecompute.h>
+//#include <guicomponents/computes/scriptnodecompute.h>
 
 namespace ngs {
 
@@ -54,10 +54,10 @@ void BaseMockNodeEntity::create_internals(const std::vector<size_t>& ids) {
   (new_ff MockNodeCompute(this))->create_inputs_outputs();
 }
 
-void BaseScriptNodeEntity::create_internals(const std::vector<size_t>& ids) {
-  // Our components.
-  (new_ff ScriptNodeCompute(this))->create_inputs_outputs();
-}
+//void BaseScriptNodeEntity::create_internals(const std::vector<size_t>& ids) {
+//  // Our components.
+//  (new_ff ScriptNodeCompute(this))->create_inputs_outputs();
+//}
 
 void BaseInputEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.

@@ -53,7 +53,7 @@ ENTITY_ENTRY1(BaseOutputNodeEntity)\
 ENTITY_ENTRY1(BaseDotNodeEntity)\
 /* Other Nodes. */\
 ENTITY_ENTRY1(BaseMockNodeEntity)\
-ENTITY_ENTRY1(BaseScriptNodeEntity)\
+/*ENTITY_ENTRY1(BaseScriptNodeEntity)*/\
 /* ------------------------------ */\
 /* Gui Based Entities. */\
 /* ------------------------------ */\
