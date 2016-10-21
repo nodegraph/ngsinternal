@@ -63,8 +63,7 @@ BaseListPage {
             text: "add"
             visible: page.resizable
             onClicked: {
-                var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
-                on_add(path)
+                on_add()
             }
         }
         Rectangle {
@@ -87,8 +86,7 @@ BaseListPage {
             text: "remove"
             visible: page.resizable
             onClicked: {
-                var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
-                on_remove(path)
+                on_remove()
             }
         }
         Item {Layout.fillWidth: true}
