@@ -14,8 +14,8 @@ MockNodeCompute::~MockNodeCompute() {
 void MockNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("a");
-  create_input("b");
+  create_input("a", QVariantMap());
+  create_input("b", QVariantMap());
   create_output("c");
   create_output("d");
 }

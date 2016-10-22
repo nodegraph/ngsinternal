@@ -101,6 +101,7 @@ class ENTITIES_EXPORT InputEntity : public Entity {
   InputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
   virtual void set_param_type(JSType param_type);
+  virtual void set_param_value(QVariant value);
   virtual void set_exposed(bool expose);
 };
 

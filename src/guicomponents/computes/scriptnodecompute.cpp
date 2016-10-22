@@ -41,9 +41,10 @@ ScriptNodeCompute::~ScriptNodeCompute() {
 void ScriptNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in");
+  create_input("in", QVariantMap());
   create_output("out");
-  create_input("script", JSType::kString, false);
+  create_input("use_script", false, JSType::kBoolean, false);
+  create_input("script", "", JSType::kString, false);
 }
 
 const QVariantMap ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();

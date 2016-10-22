@@ -62,10 +62,6 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
   // Whether we are exposed in the node graph as a plug on a node.
   bool _exposed;
 
-  // Expression.
-
-  bool _use_expression;
-  QString _expression;
 };
 
 

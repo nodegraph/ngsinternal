@@ -9,6 +9,7 @@
 #include <string>
 
 // QT
+#include <QtCore/QObject>
 #include <QtCore/QVariant>
 
 namespace ngs {
@@ -22,7 +23,8 @@ namespace ngs {
 class InputCompute;
 class BaseNodeGraphManipulator;
 
-class COMPUTES_EXPORT Compute: public Component {
+class COMPUTES_EXPORT Compute: public QObject, public Component {
+  Q_OBJECT
  public:
 
   static const QVariant _empty_variant;
@@ -43,6 +45,9 @@ class COMPUTES_EXPORT Compute: public Component {
   QVariantMap get_exposed_inputs() const; // These are the linkable inputs of the node.
   void set_params(const QVariantMap& inputs);
 
+  Q_INVOKABLE QVariant get_input(const QString& name) const;
+  Q_INVOKABLE void set_input(const QString& name, const QVariant& value);
+
   // Our outputs.
   virtual const QVariantMap& get_outputs() const;
   virtual QVariant get_output(const std::string& name) const;
@@ -61,7 +66,7 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void set_output(const std::string& name, const QVariant& value);
 
   // Plugs.
-  Entity* create_input(const std::string& name, JSType type = JSType::kObject, bool exposed = true);
+  Entity* create_input(const std::string& name, const QVariant& value, JSType type = JSType::kObject, bool exposed = true);
   Entity* create_output(const std::string& name, JSType type = JSType::kObject, bool exposed = true);
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
@@ -73,6 +78,7 @@ class COMPUTES_EXPORT Compute: public Component {
                        HintType hint_type,
                        const QVariant& value);
 
+  void evaluate_script();
 
  protected:
   Dep<Inputs> _inputs;

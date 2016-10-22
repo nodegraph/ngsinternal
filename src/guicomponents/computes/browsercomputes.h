@@ -20,6 +20,9 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   virtual void create_inputs_outputs();
 
   virtual void on_get_outputs(const QVariantMap& outputs);
+
+  static void init_hints(QVariantMap& m);
+
  protected:
   // Our state.
   virtual void pre_update_state(TaskContext& tc);

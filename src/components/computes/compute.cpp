@@ -6,6 +6,10 @@
 #include <entities/entityinstancer.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlContext>
+#include <QtQml/QQmlExpression>
+
 namespace ngs {
 
 struct InputComputeComparator {
@@ -18,7 +22,8 @@ const QVariant Compute::_empty_variant;
 const QVariantMap Compute::_hints;
 
 Compute::Compute(Entity* entity, ComponentDID derived_id)
-    : Component(entity, kIID(), derived_id),
+    : QObject(NULL),
+      Component(entity, kIID(), derived_id),
       _inputs(this),
       _ng_manipulator(this) {
   // Note this only exists for node computes and not for plug computes.
@@ -55,6 +60,17 @@ bool Compute::update_state() {
   if (_ng_manipulator) {
     _ng_manipulator->set_processing_node(our_entity());
   }
+
+  // If the script is enabled then run it.
+  if (_inputs) {
+    const std::unordered_map<std::string, Dep<InputCompute> > &inputs = _inputs->get_all();
+    if (inputs.count("use_script")) {
+      if (inputs.at("use_script")->get_output("out").toBool()) {
+        evaluate_script();
+      }
+    }
+  }
+
   return true;
 }
 
@@ -106,6 +122,23 @@ void Compute::set_params(const QVariantMap& params) {
       _inputs->get_hidden().at(iter.key().toStdString())->set_param_value(iter.value());
     }
   }
+}
+
+QVariant Compute::get_input(const QString& name) const {
+  const std::unordered_map<std::string, Dep<InputCompute> >& inputs =_inputs->get_all();
+  if (inputs.count(name.toStdString()) == 0) {
+    return QVariant();
+  }
+  return inputs.at(name.toStdString())->get_output("out");
+}
+
+void Compute::set_input(const QString& name, const QVariant& value) {
+  const std::unordered_map<std::string, Dep<InputCompute> >& inputs =_inputs->get_all();
+  if (inputs.count(name.toStdString()) == 0) {
+    return;
+  }
+  inputs.at(name.toStdString())->set_param_value(value);
+  inputs.at(name.toStdString())->clean_state();
 }
 
 const QVariantMap& Compute::get_outputs() const {
@@ -164,7 +197,7 @@ bool Compute::check_variant_is_map(const QVariant& value, const std::string& mes
   return false;
 }
 
-Entity* Compute::create_input(const std::string& name, JSType type, bool exposed) {
+Entity* Compute::create_input(const std::string& name, const QVariant& value, JSType type, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
@@ -172,6 +205,7 @@ Entity* Compute::create_input(const std::string& name, JSType type, bool exposed
   input->create_internals();
   input->set_param_type(type);
   input->set_exposed(exposed);
+  input->set_param_value(value);
   return input;
 }
 
@@ -211,6 +245,19 @@ void Compute::add_hint(QVariantMap& map,
   QVariantMap hints = map[name.c_str()].toMap();
   hints[QString::number(to_underlying(hint_type))] = value;
   map[name.c_str()] = hints;
+}
+
+void Compute::evaluate_script() {
+  internal();
+  QQmlEngine engine;
+  // Create a new context to run our javascript expression.
+  QQmlContext eval_context(engine.rootContext());
+  // Set ourself as the context object, so all our methods will be available to qml.
+  eval_context.setContextObject(this);
+  // Create the expression.
+  QQmlExpression expr(&eval_context, NULL, get_input("script").toString());
+  // Run the expression. We only care about the side effects and not the return value.
+  QVariant result = expr.evaluate();
 }
 
 }

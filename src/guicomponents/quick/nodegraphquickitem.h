@@ -60,6 +60,8 @@ Q_OBJECT
   Q_INVOKABLE void dirty_node();
   Q_INVOKABLE void clean_node();
 
+  Q_INVOKABLE void set_node_params(const QVariantMap& params);
+
   // Group Navigation.
   Q_INVOKABLE void dive();
   Q_INVOKABLE void surface();

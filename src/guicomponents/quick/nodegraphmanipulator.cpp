@@ -197,8 +197,10 @@ void NodeGraphManipulatorImp::clear_error_node() {
 
 void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
   Dep<NodeShape> ns = get_dep<NodeShape>(entity);
-  ns->show_clean_marker(clean);
-  _ng_quick->update();
+  if (ns) {
+	  ns->show_clean_marker(clean);
+	  _ng_quick->update();
+  }
 
   // Make sure not to call qApp->processEvents() here.
   // Because this causes problems when destroying entities.

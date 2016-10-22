@@ -301,6 +301,7 @@ BaseStackPage{
     // Set the value at the given path in _values.
     function set_value(path, value) {
         app_utils.set_sub_object(_values, path, value)
+        node_graph_item.set_node_params(_values)
     }
 
     // Get the value at the given path in _values.

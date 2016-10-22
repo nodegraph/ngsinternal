@@ -13,6 +13,7 @@ set(sources
     )
     
 set(moc_headers
+    compute.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})
@@ -21,7 +22,6 @@ list(APPEND sources ${moc_imps})
 set(headers
     paramtypes.h
     flux.h
-	compute.h
 	dotnodecompute.h
 	groupnodecompute.h
 	inputcompute.h
@@ -38,6 +38,7 @@ target_link_libraries(ngs_computes
 	ngs_objectmodel 
 	ngs_memoryallocator
 	ngs_compshapes
+	Qt5::Quick
 	)
 
 qt5_use_modules(ngs_computes Core)

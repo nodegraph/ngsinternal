@@ -19,7 +19,7 @@ OutputNodeCompute::~OutputNodeCompute() {
 void OutputNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in");
+  create_input("in", QVariantMap());
 }
 
 bool OutputNodeCompute::update_state() {

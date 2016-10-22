@@ -16,7 +16,7 @@ DotNodeCompute::~DotNodeCompute() {
 void DotNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in");
+  create_input("in", QVariantMap());
   create_output("out");
 }
 

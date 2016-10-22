@@ -756,6 +756,13 @@ void NodeGraphQuickItem::edit_node() {
   }
 }
 
+void NodeGraphQuickItem::set_node_params(const QVariantMap& params) {
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  if(compute) {
+    compute->set_params(params);
+  }
+}
+
 void NodeGraphQuickItem::destroy_selection() {
   external();
   _selection->destroy_selection();

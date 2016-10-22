@@ -28,8 +28,17 @@ BrowserCompute::~BrowserCompute() {
 void BrowserCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in");
+  create_input("in", QVariantMap());
   create_output("out");
+  create_input("use_script", false, JSType::kBoolean, false);
+  create_input("script", "", JSType::kString, false);
+}
+
+void BrowserCompute::init_hints(QVariantMap& m) {
+  add_hint(m, "use_script", HintType::kJSType, to_underlying(JSType::kBoolean));
+  add_hint(m, "use_script", HintType::kDescription, "Whether to use a script to modify the input parameters on this node.");
+  add_hint(m, "script", HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, "script", HintType::kDescription, "The script to modify the input parameters on this node.");
 }
 
 void BrowserCompute::dump_map(const QVariantMap& inputs) const {
@@ -110,12 +119,14 @@ bool ResizeBrowserCompute::update_state(){
 void NavigateToCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kURL, JSType::kString, false);
+  create_input(Message::kURL, "", JSType::kString, false);
 }
 
 const QVariantMap NavigateToCompute::_hints = NavigateToCompute::init_hints();
 QVariantMap NavigateToCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kURL, HintType::kJSType, to_underlying(JSType::kString));
   add_hint(m, Message::kURL, HintType::kDescription, "The url the browser should to navigate to.");
   return m;
@@ -147,12 +158,14 @@ bool NavigateRefreshCompute::update_state() {
 void SwitchToIFrameCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kIFrame, JSType::kString, false);
+  create_input(Message::kIFrame, "", JSType::kString, false);
 }
 
 const QVariantMap SwitchToIFrameCompute::_hints = SwitchToIFrameCompute::init_hints();
 QVariantMap SwitchToIFrameCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kIFrame, HintType::kJSType, to_underlying(JSType::kString));
   add_hint(m, Message::kIFrame, HintType::kDescription,
            "The path to the iframe that subsequent nodes shall act on. IFrame paths are made up of iframe indexes separated by a forward slash. For example: 1/2/3");
@@ -173,14 +186,16 @@ bool SwitchToIFrameCompute::update_state() {
 void CreateSetFromValuesCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kWrapType, JSType::kNumber, false);
-  create_input(Message::kTextValues, JSType::kArray, false);
-  create_input(Message::kImageValues, JSType::kArray, false);
+  create_input(Message::kWrapType, 0, JSType::kNumber, false);
+  create_input(Message::kTextValues, QStringList(), JSType::kArray, false);
+  create_input(Message::kImageValues, QStringList(), JSType::kArray, false);
 }
 
 const QVariantMap CreateSetFromValuesCompute::_hints = CreateSetFromValuesCompute::init_hints();
 QVariantMap CreateSetFromValuesCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kWrapType, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
   add_hint(m, Message::kWrapType, HintType::kDescription, "The element type to use when creating the set.");
@@ -213,13 +228,15 @@ void CreateSetFromTypeCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
 
-  create_input(Message::kWrapType, JSType::kNumber, false);
+  create_input(Message::kWrapType, 0, JSType::kNumber, false);
 
 }
 
 const QVariantMap CreateSetFromTypeCompute::_hints = CreateSetFromTypeCompute::init_hints();
 QVariantMap CreateSetFromTypeCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kWrapType, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kWrapType, HintType::kEnum, to_underlying(EnumHint::kWrapType));
   add_hint(m, Message::kWrapType, HintType::kDescription, "The element type to use when creating the set.");
@@ -240,12 +257,14 @@ bool CreateSetFromTypeCompute::update_state() {
 void DeleteSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
 }
 
 const QVariantMap DeleteSetCompute::_hints = DeleteSetCompute::init_hints();
 QVariantMap DeleteSetCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set to delete.");
   return m;
@@ -265,14 +284,15 @@ bool DeleteSetCompute::update_state() {
 void ShiftSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
-  create_input(Message::kDirection, JSType::kNumber, false);
-  create_input(Message::kWrapType, JSType::kNumber, false);
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
+  create_input(Message::kDirection, 0, JSType::kNumber, false);
+  create_input(Message::kWrapType, 0, JSType::kNumber, false);
 }
 
 const QVariantMap ShiftSetCompute::_hints = ShiftSetCompute::init_hints();
 QVariantMap ShiftSetCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set to shift.");
@@ -301,15 +321,20 @@ bool ShiftSetCompute::update_state() {
 void MouseActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
-  create_input(Message::kOverlayIndex, JSType::kNumber, false);
-  create_input(Message::kOverlayRelClickPos, JSType::kObject, false);
-  create_input(Message::kMouseAction, JSType::kNumber, false);
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
+  create_input(Message::kOverlayIndex, 0, JSType::kNumber, false);
+  create_input(Message::kMouseAction, 0, JSType::kNumber, false);
+  QVariantMap pos;
+  pos["x"] = 0;
+  pos["y"] = 0;
+  create_input(Message::kOverlayRelClickPos, pos, JSType::kObject, false);
 }
 
 const QVariantMap MouseActionCompute::_hints = MouseActionCompute::init_hints();
 QVariantMap MouseActionCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set which contains the element to act on.");
 
@@ -340,14 +365,19 @@ bool MouseActionCompute::update_state() {
 void StartMouseHoverActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
-  create_input(Message::kOverlayIndex, JSType::kNumber, false);
-  create_input(Message::kOverlayRelClickPos, JSType::kObject, false);
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
+  create_input(Message::kOverlayIndex, 0, JSType::kNumber, false);
+  QVariantMap pos;
+  pos["x"] = 0;
+  pos["y"] = 0;
+  create_input(Message::kOverlayRelClickPos, pos, JSType::kObject, false);
 }
 
 const QVariantMap StartMouseHoverActionCompute::_hints = StartMouseHoverActionCompute::init_hints();
 QVariantMap StartMouseHoverActionCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set which contains the element to act on.");
 
@@ -385,15 +415,16 @@ bool StopMouseHoverActionCompute::update_state() {
 void TextActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
-  create_input(Message::kOverlayIndex, JSType::kNumber, false);
-  create_input(Message::kTextAction, JSType::kNumber, false);
-  create_input(Message::kText, JSType::kString, false); // Only used when the text action is set to send text.
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
+  create_input(Message::kOverlayIndex, 0, JSType::kNumber, false);
+  create_input(Message::kTextAction, 0, JSType::kNumber, false);
+  create_input(Message::kText, "", JSType::kString, false); // Only used when the text action is set to send text.
 }
 
 const QVariantMap TextActionCompute::_hints = TextActionCompute::init_hints();
 QVariantMap TextActionCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set which contains the element to type on.");
@@ -424,16 +455,17 @@ bool TextActionCompute::update_state() {
 void ElementActionCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
-  create_input(Message::kOverlayIndex, JSType::kNumber, false);
-  create_input(Message::kElementAction, JSType::kNumber, false);
-  create_input(Message::kOptionText, JSType::kString, false); // Only used when the element action is set to select option from dropdown.
-  create_input(Message::kDirection, JSType::kNumber, false); // Only used when the element action is set to scroll.
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
+  create_input(Message::kOverlayIndex, 0, JSType::kNumber, false);
+  create_input(Message::kElementAction, 0, JSType::kNumber, false);
+  create_input(Message::kOptionText, "", JSType::kString, false); // Only used when the element action is set to select option from dropdown.
+  create_input(Message::kDirection, 0, JSType::kNumber, false); // Only used when the element action is set to scroll.
 }
 
 const QVariantMap ElementActionCompute::_hints = ElementActionCompute::init_hints();
 QVariantMap ElementActionCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set which contains the element to act on.");
@@ -468,14 +500,22 @@ bool ElementActionCompute::update_state() {
 void ExpandSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
-  create_input(Message::kDirection, JSType::kNumber, false); // Only used when the element action is set to scroll.
-  create_input(Message::kMatchCriteria, JSType::kObject, false);
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
+  create_input(Message::kDirection, 0, JSType::kNumber, false); // Only used when the element action is set to scroll.
+  QVariantMap match_criteria;
+  match_criteria[Message::kMatchLeft] = true;
+  match_criteria[Message::kMatchRight] = false;
+  match_criteria[Message::kMatchTop] = false;
+  match_criteria[Message::kMatchBottom] = false;
+  match_criteria[Message::kMatchFont] = true;
+  match_criteria[Message::kMatchFontSize] = true;
+  create_input(Message::kMatchCriteria, match_criteria, JSType::kObject, false);
 }
 
 const QVariantMap ExpandSetCompute::_hints = ExpandSetCompute::init_hints();
 QVariantMap ExpandSetCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set to expand.");
@@ -503,12 +543,14 @@ bool ExpandSetCompute::update_state() {
 void MarkSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
 }
 
 const QVariantMap MarkSetCompute::_hints = MarkSetCompute::init_hints();
 QVariantMap MarkSetCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set to mark.");
   return m;
@@ -528,12 +570,14 @@ bool MarkSetCompute::update_state() {
 void UnmarkSetCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
 }
 
 const QVariantMap UnmarkSetCompute::_hints = UnmarkSetCompute::init_hints();
 QVariantMap UnmarkSetCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set to unmark.");
   return m;
@@ -564,13 +608,15 @@ bool MergeSetsCompute::update_state() {
 void ShrinkSetToSideCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
-  create_input(Message::kDirection, JSType::kNumber, false);
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
+  create_input(Message::kDirection, 0, JSType::kNumber, false);
 }
 
 const QVariantMap ShrinkSetToSideCompute::_hints = ShrinkSetToSideCompute::init_hints();
 QVariantMap ShrinkSetToSideCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set to shrink on one side.");
 
@@ -594,13 +640,15 @@ bool ShrinkSetToSideCompute::update_state() {
 void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, JSType::kNumber, false);
-  create_input(Message::kDirections, JSType::kArray, false);
+  create_input(Message::kSetIndex, 0, JSType::kNumber, false);
+  create_input(Message::kDirections, QVariantList(), JSType::kArray, false);
 }
 
 const QVariantMap ShrinkAgainstMarkedCompute::_hints = ShrinkAgainstMarkedCompute::init_hints();
 QVariantMap ShrinkAgainstMarkedCompute::init_hints() {
   QVariantMap m;
+  BrowserCompute::init_hints(m);
+
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintType::kDescription, "The zero based index that identifies the element set to shrink against.");
 

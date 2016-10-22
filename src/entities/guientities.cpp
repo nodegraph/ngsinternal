@@ -412,6 +412,10 @@ void InputEntity::set_param_type(JSType param_type) {
   get<InputCompute>()->set_type(param_type);
 }
 
+void InputEntity::set_param_value(QVariant value) {
+  get<InputCompute>()->set_param_value(value);
+}
+
 void InputEntity::set_exposed(bool expose) {
   get<InputCompute>()->set_exposed(expose);
 }
