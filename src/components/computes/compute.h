@@ -39,7 +39,12 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
   virtual void create_inputs_outputs();
   virtual void set_self_dirty(bool dirty);
 
+
+  virtual void clean_input_flux();
+
   // Get and set input values.
+  // Note these are the param values.
+  // If the input is connected the actually output value comes from the connected incoming compute.
   QVariantMap get_input_values() const;
   QVariantMap get_hidden_input_values() const; // These are the params of the node.
   QVariantMap get_exposed_input_values() const; // These are the linkable inputs of the node.
@@ -59,8 +64,8 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
   virtual const QVariantMap& get_hints() const {return _hints;}
 
   // Get and Set our exposed settings.
-  virtual QVariantMap get_exposed_settings() const;
-  virtual void set_exposed_settings(const QVariantMap& settings);
+  virtual QVariantMap get_input_exposure() const;
+  virtual void set_input_exposure(const QVariantMap& settings);
 
  protected:
   // Our state.

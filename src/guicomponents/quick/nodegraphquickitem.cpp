@@ -251,6 +251,9 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
     return;
   }
+  if (!get_current_interaction()) {
+    return;
+  }
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
   update();
 }
@@ -258,6 +261,9 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
 void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
   internal();
   if (!_license_checker->license_is_valid()) {
+    return;
+  }
+  if (!get_current_interaction()) {
     return;
   }
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
@@ -270,6 +276,9 @@ void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
   if (!_license_checker->license_is_valid()) {
     return;
   }
+  if (!get_current_interaction()) {
+    return;
+  }
   MouseInfo info = get_hover_info(event);
   get_current_interaction()->moved(info);
   update();
@@ -278,6 +287,9 @@ void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
 void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
   internal();
   if (!_license_checker->license_is_valid()) {
+    return;
+  }
+  if (!get_current_interaction()) {
     return;
   }
   _long_press_timer.start();
@@ -312,6 +324,9 @@ void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
   if (!_license_checker->license_is_valid()) {
     return;
   }
+  if (!get_current_interaction()) {
+    return;
+  }
 
   // Stop the long press timer if
   if (_long_press_timer.isActive()) {
@@ -329,6 +344,9 @@ void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
   if (!_license_checker->license_is_valid()) {
     return;
   }
+  if (!get_current_interaction()) {
+    return;
+  }
   WheelInfo info = get_wheel_info(event);
   get_current_interaction()->wheel_rolled(info);
   update();
@@ -340,6 +358,9 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
   if (!_license_checker->license_is_valid()) {
     return;
   }
+  if (!get_current_interaction()) {
+    return;
+  }
   KeyInfo info = get_key_info_qt(event);
   update();
 }
@@ -349,6 +370,9 @@ void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
   if (!_license_checker->license_is_valid()) {
     return;
   }
+  if (!get_current_interaction()) {
+    return;
+  }
   KeyInfo info = get_key_info_qt(event);
   update();
 }
@@ -356,6 +380,9 @@ void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
 void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
   internal();
   if (!_license_checker->license_is_valid()) {
+    return;
+  }
+  if (!get_current_interaction()) {
     return;
   }
   switch (event->type()) {
@@ -734,18 +761,21 @@ void NodeGraphQuickItem::edit_node() {
     QVariantMap all_hints;
     all_hints.insert("number", hints);
 
-    std::cerr << "hints size: " << compute->get_hints().size() << "\n";
-    QVariantMap test2 = compute->get_hints();
-    for(QVariantMap::const_iterator iter = test2.begin(); iter != test2.end(); ++iter) {
-      qDebug() << "name: " << iter.key();
-      QVariantMap map = iter.value().toMap();
-      for(QVariantMap::const_iterator iter2 = map.begin(); iter2 != map.end(); ++iter2) {
-        qDebug() << iter2.key() << iter2.value();
-      }
-    }
+//    std::cerr << "hints size: " << compute->get_hints().size() << "\n";
+//    QVariantMap test2 = compute->get_hints();
+//    for(QVariantMap::const_iterator iter = test2.begin(); iter != test2.end(); ++iter) {
+//      qDebug() << "name: " << iter.key();
+//      QVariantMap map = iter.value().toMap();
+//      for(QVariantMap::const_iterator iter2 = map.begin(); iter2 != map.end(); ++iter2) {
+//        qDebug() << iter2.key() << iter2.value();
+//      }
+//    }
 
-
-    emit edit_node_params(compute->our_entity()->get_name().c_str(), compute->get_hidden_input_values(), test2);
+    compute->clean_input_flux();
+    emit edit_node_params(compute->our_entity()->get_name().c_str(),
+                          compute->get_input_values(),
+                          compute->get_hints(),
+                          compute->get_input_exposure());
     //emit edit_node_params(compute->our_entity()->get_name().c_str(), test, all_hints);
 
     // Update our node graph selection object which also tracks and edit and view nodes.
@@ -756,13 +786,27 @@ void NodeGraphQuickItem::edit_node() {
   }
 }
 
-void NodeGraphQuickItem::set_node_params(const QVariantMap& params) {
+void NodeGraphQuickItem::set_input_values(const QVariantMap& values) {
   if (!_last_pressed_node) {
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
-    compute->set_input_values(params);
+    compute->set_input_values(values);
+  }
+}
+
+void NodeGraphQuickItem::set_input_exposure(const QVariantMap& values) {
+  if (!_last_pressed_node) {
+    return;
+  }
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  if(compute) {
+    compute->set_input_exposure(values);
+    _factory->get_current_group()->clean_wires();
+    _factory->get_current_group()->clean_dead_entities();
+    _canvas->clean_state();
+    update();
   }
 }
 

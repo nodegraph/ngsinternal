@@ -25,8 +25,7 @@ BaseListDelegate {
     function get_image_for_value() {
         var path = get_stack_view().get_title_path(1, depth_index+1)
         path.push(name)
-        var value = get_stack_page().get_value(path)
-        return get_stack_page().get_image_for_value(value)
+        return get_stack_page().get_image_for_value(path)
     }
 
     function get_string_for_value() {

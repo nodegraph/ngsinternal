@@ -35,8 +35,12 @@ void BrowserCompute::create_inputs_outputs() {
 }
 
 void BrowserCompute::init_hints(QVariantMap& m) {
+  add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintType::kDescription, "The main data object that flows through this node. This cannot be set manually.");
+
   add_hint(m, "use_script", HintType::kJSType, to_underlying(JSType::kBoolean));
   add_hint(m, "use_script", HintType::kDescription, "Whether to use a script to modify the input parameters on this node.");
+
   add_hint(m, "script", HintType::kJSType, to_underlying(JSType::kString));
   add_hint(m, "script", HintType::kDescription, "The script to modify the input parameters on this node.");
 }

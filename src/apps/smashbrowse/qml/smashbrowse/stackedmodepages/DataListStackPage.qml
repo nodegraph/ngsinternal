@@ -22,6 +22,7 @@ BaseStackPage{
     // Internal Properties.
     property var _values
     property var _hints
+    property var _exposure
 
     // --------------------------------------------------------------------------------------------------
     // Public Methods.
@@ -45,13 +46,14 @@ BaseStackPage{
     }
 
     // Show data values with hints on how to show it.
-    function on_show_data(node_name, values, hints) {
+    function on_show_data(node_name, values, hints, exposure) {
         app_settings.vibrate()
         stack_view.clear_pages()
-
+        
         // Show the next object.
         _values = values
         _hints = hints
+        _exposure = exposure
         
         console.log("showing data hints: " + JSON.stringify(_hints))
         
@@ -66,7 +68,8 @@ BaseStackPage{
 
         // Get value info.
         var value = stack_page.get_value(path)
-        var value_type = app_enums.get_js_enum(value)
+        var hints = stack_page.get_hints(path)
+        var value_type = hints[hint_type.kJSType]
 
 		// Push a page to get the name or index of the element to add.
         if (value_type == js_type.kObject) {
@@ -99,25 +102,26 @@ BaseStackPage{
 
         // Push an edit page according to the js type.
         var child_value = stack_page.get_value(child_path)
+        var exposed = stack_page.get_exposed(child_path)
         switch(child_hints[hint_type.kJSType]) {
         case js_type.kString:
             var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditStringPage.qml", edit_data_list_stack_page, {})
-            setup_edit_page(page, name, child_value, child_hints)
+            setup_edit_page(page, name, child_value, child_hints, exposed)
             stack_view.push_page(page)
             break
         case js_type.kBoolean:
             var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml", edit_data_list_stack_page, {})
-            setup_edit_page(page, name, child_value, child_hints)
+            setup_edit_page(page, name, child_value, child_hints, exposed)
             stack_view.push_page(page)
             break
         case js_type.kNumber:
             if (child_hints.hasOwnProperty(hint_type.kEnum)) {
                 var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
-                setup_edit_page(page, name, child_value, child_hints)
+                setup_edit_page(page, name, child_value, child_hints, exposed)
                 stack_view.push_page(page)
             } else {
                 var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml", edit_data_list_stack_page, {})
-                setup_edit_page(page, name, child_value, child_hints)
+                setup_edit_page(page, name, child_value, child_hints, exposed)
                 stack_view.push_page(page)
             }
             break
@@ -156,7 +160,7 @@ BaseStackPage{
     // --------------------------------------------------------------------------------------------------
 
     // Setup an editor page before pushing onto the stack view.
-    function setup_edit_page(page, title, child_value, child_hints) {
+    function setup_edit_page(page, title, child_value, child_hints, exposed) {
         if (child_hints) {
             if (child_hints.hasOwnProperty(hint_type.kEnum)) {
                 page.set_enum_type(child_hints[hint_type.kEnum])
@@ -173,6 +177,7 @@ BaseStackPage{
         }
         page.set_title(title)
         page.set_value(child_value)
+        page.set_exposed(exposed)
     }
     
     // The element_name is a string when adding to an object.
@@ -293,6 +298,19 @@ BaseStackPage{
         }
         return child_hints
     }
+    
+    // --------------------------------------------------------------------------------------------------
+    // Get and Set Exposed Setting.
+    // --------------------------------------------------------------------------------------------------
+	
+	function get_exposed(path) {
+		return app_utils.get_sub_object(_exposure, path)
+	}
+	
+	function set_exposed(path, value) {
+		app_utils.set_sub_object(_exposure, path, value)
+        node_graph_item.set_input_exposure(_exposure)
+	}
 
     // --------------------------------------------------------------------------------------------------
     // Get and Set Values.
@@ -301,7 +319,7 @@ BaseStackPage{
     // Set the value at the given path in _values.
     function set_value(path, value) {
         app_utils.set_sub_object(_values, path, value)
-        node_graph_item.set_node_params(_values)
+        node_graph_item.set_input_values(_values)
     }
 
     // Get the value at the given path in _values.
@@ -312,19 +330,18 @@ BaseStackPage{
     // Get a string which represents the value's type or actual value.
     function get_string_for_value(path) {
     	var value = get_value(path)
-    	var value_type = app_enums.get_js_enum(value)
     	var hints = get_hints(path)
+    	var value_type = hints[hint_type.kJSType]
     	
     	// Use the hints to get a more descriptive string representation.
-    	if (hints) {
-    		if (hints.hasOwnProperty(hint_type.kEnum)) {
-        		return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
-        	} else if (hints.hasOwnProperty(hint_type.kDescription) && (value_type == js_type.kObject || value_type == js_type.kArray)) {
-        		return hints[hint_type.kDescription]
-        	}
-        }
-    	
-        // Use the raw values if the hints don't help.
+		if (hints.hasOwnProperty(hint_type.kEnum)) {
+    		return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
+    	} else if (hints.hasOwnProperty(hint_type.kDescription) && 
+    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
+    		return hints[hint_type.kDescription]
+    	}
+        
+        // Use the js type if the hints don't help.
         switch(value_type) {
         case js_type.kString:
         case js_type.kBoolean:
@@ -346,8 +363,11 @@ BaseStackPage{
     }
 
     // Get an image which represents the value's type.
-    function get_image_for_value(value) {
-        var value_type = app_enums.get_js_enum(value)
+    function get_image_for_value(path) {
+        var value = get_value(path)
+    	var hints = get_hints(path)
+    	var value_type = hints[hint_type.kJSType]
+    	
         switch(value_type) {
         case js_type.kString:
             return 'qrc:///icons/ic_font_download_white_48dp.png'

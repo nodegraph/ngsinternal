@@ -102,6 +102,7 @@ void Flux<Traits>::gather() {
   internal();
   _hidden.clear();
   _exposed.clear();
+  _exposed_ordering.clear();
 
   std::vector<std::string> exposed_names;
 

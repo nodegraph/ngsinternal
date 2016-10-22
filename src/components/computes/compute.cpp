@@ -85,11 +85,15 @@ bool Compute::clean_finalize() {
   return true;
 }
 
+void Compute::clean_input_flux() {
+  _inputs->clean_state();
+}
+
 QVariantMap Compute::get_input_values() const {
   external();
   QVariantMap map;
   for (auto iter: _inputs->get_all()) {
-    map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
+    map[QString::fromStdString(iter.first)] = iter.second->get_param_value();
   }
   return map;
 }
@@ -98,7 +102,7 @@ QVariantMap Compute::get_hidden_input_values() const {
   QVariantMap map;
   for (auto iter: _inputs->get_hidden()) {
     iter.second->clean_state();
-    map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
+    map[QString::fromStdString(iter.first)] = iter.second->get_param_value();
   }
   return map;
 }
@@ -106,7 +110,7 @@ QVariantMap Compute::get_hidden_input_values() const {
 QVariantMap Compute::get_exposed_input_values() const {
   QVariantMap map;
   for (auto iter: _inputs->get_exposed()) {
-    map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
+    map[QString::fromStdString(iter.first)] = iter.second->get_param_value();
   }
   return map;
 }
@@ -116,7 +120,10 @@ void Compute::set_input_values(const QVariantMap& values) {
   const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
   for (iter = values.begin(); iter != values.end(); ++iter) {
     if (inputs.count(iter.key().toStdString())) {
-      inputs.at(iter.key().toStdString())->set_param_value(iter.value());
+      const Dep<InputCompute> &c = inputs.at(iter.key().toStdString());
+      if (c) {
+        c->set_param_value(iter.value());
+      }
     }
   }
 }
@@ -126,7 +133,10 @@ void Compute::set_hidden_input_values(const QVariantMap& values) {
   const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_hidden();
   for (iter = values.begin(); iter != values.end(); ++iter) {
     if (inputs.count(iter.key().toStdString())) {
-      inputs.at(iter.key().toStdString())->set_param_value(iter.value());
+      const Dep<InputCompute> &c = inputs.at(iter.key().toStdString());
+      if (c) {
+        c->set_param_value(iter.value());
+      }
     }
   }
 }
@@ -136,7 +146,10 @@ void Compute::set_exposed_input_values(const QVariantMap& values) {
   const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_exposed();
   for (iter = values.begin(); iter != values.end(); ++iter) {
     if (inputs.count(iter.key().toStdString())) {
-      inputs.at(iter.key().toStdString())->set_param_value(iter.value());
+      const Dep<InputCompute> &c = inputs.at(iter.key().toStdString());
+      if (c) {
+        c->set_param_value(iter.value());
+      }
     }
   }
 }
@@ -181,21 +194,25 @@ void Compute::set_output(const std::string& name, const QVariant& value) {
   _outputs.insert(name.c_str(), value);
 }
 
-QVariantMap Compute::get_exposed_settings() const {
+QVariantMap Compute::get_input_exposure() const {
   external();
   QVariantMap map;
   for (auto iter: _inputs->get_all()) {
-    map[QString::fromStdString(iter.first)] = iter.second->is_state_dirty();
+    if (!iter.second) {
+      continue;
+    }
+    map[QString::fromStdString(iter.first)] = iter.second->is_exposed();
   }
   return map;
 }
 
-void Compute::set_exposed_settings(const QVariantMap& settings) {
+void Compute::set_input_exposure(const QVariantMap& settings) {
   QVariantMap::const_iterator iter;
   const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
   for (iter = settings.begin(); iter != settings.end(); ++iter) {
     if (inputs.count(iter.key().toStdString())) {
-      inputs.at(iter.key().toStdString())->set_exposed(iter.value().toBool());
+      const Dep<InputCompute> &c = inputs.at(iter.key().toStdString());
+      c->set_exposed(iter.value().toBool());
     }
   }
 }

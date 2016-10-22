@@ -31,10 +31,19 @@ Rectangle {
     function get_value(value) {
         return check_box.checked
     }
+    
+    function set_exposed(exposed) {
+    	exposed_check_box.checked = exposed
+    }
+    
+    function get_exposed() {
+    	return exposed_check_box.checked
+    }
 
     function set_title(title) {
         stack_view_header.title_text = title
     }
+    
     function get_title() {
         return stack_view_header.title_text
     }
@@ -73,16 +82,45 @@ Rectangle {
         
         AppSpacer {}
 
-        // Check Box.
-        AppCheckBox {
-            id: check_box
-            checked: true
-            anchors {
-                horizontalCenter: parent.horizontalCenter
+        RowLayout {
+        	Layout.maximumWidth: parent.width
+        	Item {Layout.fillWidth: true}
+        	AppLabel {
+        		text: qsTr("true (checked) or false (unchecked)")
+        	}
+        	Rectangle {
+                color: "transparent"
+                height: app_settings.action_bar_height
+                width: app_settings.button_spacing
             }
+	        AppCheckBox {
+	            id: check_box
+	            checked: false
+	        }
+	        Item {Layout.fillWidth: true}
         }
         
         AppSpacer {}
+        
+        RowLayout {
+        	Layout.maximumWidth: parent.width
+        	Item {Layout.fillWidth: true}
+        	AppLabel {
+        		text: qsTr("expose as a plug in the node graph")
+        	}
+        	Rectangle {
+                color: "transparent"
+                height: app_settings.action_bar_height
+                width: app_settings.button_spacing
+            }
+	        AppCheckBox {
+	            id: exposed_check_box
+	            checked: false
+	        }
+	        Item {Layout.fillWidth: true}
+        }
+
+		AppSpacer {}
 
         // Buttons.
         RowLayout {
@@ -94,6 +132,7 @@ Rectangle {
                 onClicked: {
                     var path = edit_boolean_page.Stack.view.get_title_path(1, edit_boolean_page.Stack.view.depth)
                     edit_boolean_page.Stack.view._stack_page.set_value(path, get_value())
+                    edit_boolean_page.Stack.view._stack_page.set_exposed(path, get_exposed())
                     edit_boolean_page.Stack.view.pop_page()
                 }
             }

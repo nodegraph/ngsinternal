@@ -17,7 +17,7 @@ Item{
     // --------------------------------------------------------------------------------------
 
     // Get the value type at the given path in _values.
-    function get_js_enum(value) {
+    function determine_js_type(value) {
         if (value === undefined) {
             return js_type.kUndefined
         } else if (value === null) {

@@ -54,13 +54,23 @@ Rectangle {
         }
         combo_box.currentIndex = value
     }
+    
     function get_value(value) {
         return combo_box.currentIndex
+    }
+
+	function set_exposed(exposed) {
+    	exposed_check_box.checked = exposed
+    }
+    
+    function get_exposed() {
+    	return exposed_check_box.checked
     }
 
     function set_title(title) {
         stack_view_header.title_text = title
     }
+    
     function get_title() {
         return stack_view_header.title_text
     }
@@ -108,6 +118,26 @@ Rectangle {
         }
         
         AppSpacer {}
+        
+        RowLayout {
+        	Layout.maximumWidth: parent.width
+        	Item {Layout.fillWidth: true}
+        	AppLabel {
+        		text: qsTr("expose as a plug in the node graph")
+        	}
+        	Rectangle {
+                color: "transparent"
+                height: app_settings.action_bar_height
+                width: app_settings.button_spacing
+            }
+	        AppCheckBox {
+	            id: exposed_check_box
+	            checked: false
+	        }
+	        Item {Layout.fillWidth: true}
+        }
+
+		AppSpacer {}
 
         // Buttons.
         RowLayout {
@@ -119,6 +149,7 @@ Rectangle {
                 onClicked: {
                     var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
                     page.Stack.view._stack_page.set_value(path, get_value())
+                    page.Stack.view._stack_page.set_exposed(path, get_exposed())
                     page.Stack.view.pop_page()
                 }
             }

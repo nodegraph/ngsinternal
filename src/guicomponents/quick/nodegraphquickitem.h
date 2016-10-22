@@ -60,7 +60,8 @@ Q_OBJECT
   Q_INVOKABLE void dirty_node();
   Q_INVOKABLE void clean_node();
 
-  Q_INVOKABLE void set_node_params(const QVariantMap& params);
+  Q_INVOKABLE void set_input_values(const QVariantMap& values);
+  Q_INVOKABLE void set_input_exposure(const QVariantMap& values);
 
   // Group Navigation.
   Q_INVOKABLE void dive();
@@ -113,7 +114,7 @@ Q_OBJECT
  void node_context_menu_requested();
 
  void view_node_outputs(const QString& name, const QVariantMap& results);
- void edit_node_params(const QString& name, const QVariantMap& params, const QVariantMap& hints);
+ void edit_node_params(const QString& name, const QVariantMap& values, const QVariantMap& hints, const QVariantMap& exposed_settings);
 
  void mark_progress();
 

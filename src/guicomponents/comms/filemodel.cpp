@@ -535,6 +535,11 @@ void FileModel::create_graph(const QVariantMap& arg) {
   // Except for the "inputs", "outputs", and "links" namespace entities. So we recreated them here.
   get_dep<Compute>(get_root_group())->create_inputs_outputs();
 
+  // Although everything down from the root group is updated.
+  // Everything from the app root is not updated. So we update it here.
+  get_root_group()->initialize_wires();
+  get_app_root()->clean_wires();
+
   // Now sort everyting.
   sort_files();
   save_model();
