@@ -50,7 +50,7 @@ void BrowserCompute::dump_map(const QVariantMap& inputs) const {
 
 void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
-  QVariantMap inputs = get_inputs();
+  QVariantMap inputs = get_input_values();
   _web_worker->queue_merge_chain_state(tc, inputs);
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.

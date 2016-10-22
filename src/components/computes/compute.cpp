@@ -6,6 +6,7 @@
 #include <entities/entityinstancer.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
+#include <QtCore/QDebug>
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlExpression>
@@ -84,19 +85,16 @@ bool Compute::clean_finalize() {
   return true;
 }
 
-QVariantMap Compute::get_inputs() const {
+QVariantMap Compute::get_input_values() const {
   external();
   QVariantMap map;
-  for (auto iter: _inputs->get_exposed()) {
-    map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
-  }
-  for (auto iter: _inputs->get_hidden()) {
+  for (auto iter: _inputs->get_all()) {
     map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
   }
   return map;
 }
 
-QVariantMap Compute::get_hidden_inputs() const {
+QVariantMap Compute::get_hidden_input_values() const {
   QVariantMap map;
   for (auto iter: _inputs->get_hidden()) {
     iter.second->clean_state();
@@ -105,7 +103,7 @@ QVariantMap Compute::get_hidden_inputs() const {
   return map;
 }
 
-QVariantMap Compute::get_exposed_inputs() const {
+QVariantMap Compute::get_exposed_input_values() const {
   QVariantMap map;
   for (auto iter: _inputs->get_exposed()) {
     map[QString::fromStdString(iter.first)] = iter.second->get_output("out");
@@ -113,18 +111,37 @@ QVariantMap Compute::get_exposed_inputs() const {
   return map;
 }
 
-void Compute::set_params(const QVariantMap& params) {
+void Compute::set_input_values(const QVariantMap& values) {
   QVariantMap::const_iterator iter;
-  for (iter = params.begin(); iter != params.end(); ++iter) {
-    if (_inputs->get_exposed().count(iter.key().toStdString())) {
-      _inputs->get_exposed().at(iter.key().toStdString())->set_param_value(iter.value());
-    } else if (_inputs->get_hidden().count(iter.key().toStdString())) {
-      _inputs->get_hidden().at(iter.key().toStdString())->set_param_value(iter.value());
+  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
+  for (iter = values.begin(); iter != values.end(); ++iter) {
+    if (inputs.count(iter.key().toStdString())) {
+      inputs.at(iter.key().toStdString())->set_param_value(iter.value());
     }
   }
 }
 
-QVariant Compute::get_input(const QString& name) const {
+void Compute::set_hidden_input_values(const QVariantMap& values) {
+  QVariantMap::const_iterator iter;
+  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_hidden();
+  for (iter = values.begin(); iter != values.end(); ++iter) {
+    if (inputs.count(iter.key().toStdString())) {
+      inputs.at(iter.key().toStdString())->set_param_value(iter.value());
+    }
+  }
+}
+
+void Compute::set_exposed_input_values(const QVariantMap& values) {
+  QVariantMap::const_iterator iter;
+  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_exposed();
+  for (iter = values.begin(); iter != values.end(); ++iter) {
+    if (inputs.count(iter.key().toStdString())) {
+      inputs.at(iter.key().toStdString())->set_param_value(iter.value());
+    }
+  }
+}
+
+QVariant Compute::get_input_value(const QString& name) const {
   const std::unordered_map<std::string, Dep<InputCompute> >& inputs =_inputs->get_all();
   if (inputs.count(name.toStdString()) == 0) {
     return QVariant();
@@ -132,7 +149,7 @@ QVariant Compute::get_input(const QString& name) const {
   return inputs.at(name.toStdString())->get_output("out");
 }
 
-void Compute::set_input(const QString& name, const QVariant& value) {
+void Compute::set_input_value(const QString& name, const QVariant& value) {
   const std::unordered_map<std::string, Dep<InputCompute> >& inputs =_inputs->get_all();
   if (inputs.count(name.toStdString()) == 0) {
     return;
@@ -162,6 +179,25 @@ QVariant Compute::get_output(const std::string& name) const{
 void Compute::set_output(const std::string& name, const QVariant& value) {
   internal();
   _outputs.insert(name.c_str(), value);
+}
+
+QVariantMap Compute::get_exposed_settings() const {
+  external();
+  QVariantMap map;
+  for (auto iter: _inputs->get_all()) {
+    map[QString::fromStdString(iter.first)] = iter.second->is_state_dirty();
+  }
+  return map;
+}
+
+void Compute::set_exposed_settings(const QVariantMap& settings) {
+  QVariantMap::const_iterator iter;
+  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
+  for (iter = settings.begin(); iter != settings.end(); ++iter) {
+    if (inputs.count(iter.key().toStdString())) {
+      inputs.at(iter.key().toStdString())->set_exposed(iter.value().toBool());
+    }
+  }
 }
 
 bool Compute::check_variant_is_bool_and_true(const QVariant& value, const std::string& message) {
@@ -255,9 +291,12 @@ void Compute::evaluate_script() {
   // Set ourself as the context object, so all our methods will be available to qml.
   eval_context.setContextObject(this);
   // Create the expression.
-  QQmlExpression expr(&eval_context, NULL, get_input("script").toString());
+  QQmlExpression expr(&eval_context, NULL, get_input_value("script").toString());
   // Run the expression. We only care about the side effects and not the return value.
   QVariant result = expr.evaluate();
+  if (expr.hasError()) {
+    qDebug() << "Error: expression has an error: " << expr.error().toString() << "\n";
+  }
 }
 
 }

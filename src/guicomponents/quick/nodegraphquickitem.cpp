@@ -745,7 +745,7 @@ void NodeGraphQuickItem::edit_node() {
     }
 
 
-    emit edit_node_params(compute->our_entity()->get_name().c_str(), compute->get_hidden_inputs(), test2);
+    emit edit_node_params(compute->our_entity()->get_name().c_str(), compute->get_hidden_input_values(), test2);
     //emit edit_node_params(compute->our_entity()->get_name().c_str(), test, all_hints);
 
     // Update our node graph selection object which also tracks and edit and view nodes.
@@ -757,9 +757,12 @@ void NodeGraphQuickItem::edit_node() {
 }
 
 void NodeGraphQuickItem::set_node_params(const QVariantMap& params) {
+  if (!_last_pressed_node) {
+    return;
+  }
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
-    compute->set_params(params);
+    compute->set_input_values(params);
   }
 }
 

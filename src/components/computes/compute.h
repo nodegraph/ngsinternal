@@ -39,21 +39,28 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
   virtual void create_inputs_outputs();
   virtual void set_self_dirty(bool dirty);
 
-  // Our inputs.
-  QVariantMap get_inputs() const;
-  QVariantMap get_hidden_inputs() const; // These are the params of the node.
-  QVariantMap get_exposed_inputs() const; // These are the linkable inputs of the node.
-  void set_params(const QVariantMap& inputs);
+  // Get and set input values.
+  QVariantMap get_input_values() const;
+  QVariantMap get_hidden_input_values() const; // These are the params of the node.
+  QVariantMap get_exposed_input_values() const; // These are the linkable inputs of the node.
+  void set_input_values(const QVariantMap& inputs);
+  void set_hidden_input_values(const QVariantMap& inputs);
+  void set_exposed_input_values(const QVariantMap& inputs);
 
-  Q_INVOKABLE QVariant get_input(const QString& name) const;
-  Q_INVOKABLE void set_input(const QString& name, const QVariant& value);
+  // Get and set single input value.
+  Q_INVOKABLE QVariant get_input_value(const QString& name) const;
+  Q_INVOKABLE void set_input_value(const QString& name, const QVariant& value);
 
-  // Our outputs.
+  // Get our outputs.
   virtual const QVariantMap& get_outputs() const;
   virtual QVariant get_output(const std::string& name) const;
 
-  // Our hints.
+  // Get our hints.
   virtual const QVariantMap& get_hints() const {return _hints;}
+
+  // Get and Set our exposed settings.
+  virtual QVariantMap get_exposed_settings() const;
+  virtual void set_exposed_settings(const QVariantMap& settings);
 
  protected:
   // Our state.
