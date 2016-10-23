@@ -5,13 +5,13 @@
 namespace ngs {
 
 enum class JSType: int {
-  kUndefined,
-  kNull,
   kObject,
   kArray,
   kString,
   kNumber,
   kBoolean,
+  kNull,
+  kUndefined,
 };
 
 enum class HintType: int {
@@ -43,6 +43,7 @@ enum class EnumHint: int {
   kElementActionType,
   kWrapType,
   kDirectionType,
+  kJSType,
 };
 
 }

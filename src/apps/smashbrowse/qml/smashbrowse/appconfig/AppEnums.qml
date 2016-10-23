@@ -59,6 +59,8 @@ Item{
             return wrap_type_text[index]
         } else if (msg_ee == msg_enum_enum.kDirectionType) {
             return direction_type_text[index]
+        } else if (msg_ee == msg_enum_enum.kJSType) {
+        	return js_type_text[index]
         } else {
             console.log('Error: attempt to get text for an enum with invalid type.')
             console.log(new Error().stack);
@@ -95,6 +97,14 @@ Item{
         'right',
         'up',
         'down'
+    ]
+    
+    property var js_type_text: [
+  		'object',
+  		'array',
+  		'string',
+  		'number',
+  		'boolean',
     ]
 
 }

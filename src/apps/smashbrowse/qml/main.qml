@@ -62,13 +62,13 @@ Rectangle {
     // Enums.
     QtObject {
         id: js_type
-        property int kUndefined: 0
-        property int kNull: 1
-        property int kObject: 2
-        property int kArray: 3
-        property int kString: 4
-        property int kNumber: 5
-        property int kBoolean: 6
+        property int kObject: 0
+        property int kArray: 1
+        property int kString: 2
+        property int kNumber: 3
+        property int kBoolean: 4
+        property int kNull: 5
+        property int kUndefined: 6
     }
 
     QtObject {
@@ -81,6 +81,7 @@ Rectangle {
         property int kElementActionType: 5
         property int kWrapType: 6
         property int kDirectionType: 7
+        property int kJSType: 8
     }
     
     QtObject {

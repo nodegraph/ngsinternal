@@ -85,8 +85,8 @@ bool Compute::clean_finalize() {
   return true;
 }
 
-void Compute::clean_input_flux() {
-  _inputs->clean_state();
+void Compute::update_input_flux() {
+  _inputs->clean_wires();
 }
 
 QVariantMap Compute::get_input_values() const {

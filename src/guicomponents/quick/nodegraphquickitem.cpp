@@ -771,7 +771,7 @@ void NodeGraphQuickItem::edit_node() {
 //      }
 //    }
 
-    compute->clean_input_flux();
+    compute->update_input_flux();
     emit edit_node_params(compute->our_entity()->get_name().c_str(),
                           compute->get_input_values(),
                           compute->get_hints(),
@@ -805,7 +805,6 @@ void NodeGraphQuickItem::set_input_exposure(const QVariantMap& values) {
     compute->set_input_exposure(values);
     _factory->get_current_group()->clean_wires();
     _factory->get_current_group()->clean_dead_entities();
-    _canvas->clean_state();
     update();
   }
 }

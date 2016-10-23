@@ -40,6 +40,9 @@ Rectangle {
         } else if (type == msg_enum_enum.kDirectionType) {
             console.log('edit setting options: ' + app_enums.direction_type_text)
             combo_box.set_option_texts(app_enums.direction_type_text)
+        } else if (type == msg_enum_enum.kJSType) {
+        	console.log('edit setting options: ' + app_enums.js_type_text)
+            combo_box.set_option_texts(app_enums.js_type_text)
         } else {
             console.log('Error: attempt to edit an enum with invalid type.')
             console.log(new Error().stack);

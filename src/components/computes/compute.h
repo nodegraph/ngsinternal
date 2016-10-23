@@ -40,7 +40,7 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
   virtual void set_self_dirty(bool dirty);
 
 
-  virtual void clean_input_flux();
+  virtual void update_input_flux();
 
   // Get and set input values.
   // Note these are the param values.

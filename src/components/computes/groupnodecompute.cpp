@@ -66,6 +66,9 @@ void GroupNodeCompute::update_wires() {
   Entity* inputs_space = get_entity(Path({".","inputs"}));
   Entity* outputs_space = get_entity(Path({".","outputs"}));
 
+  std::unordered_set<std::string> exposed_inputs;
+  std::unordered_set<std::string> exposed_outputs;
+
   // Make sure all the input/outputs nodes in this group are represented by inputs/outputs.
   const Entity::NameToChildMap& children = our_entity()->get_children();
   for (auto &iter : children) {
@@ -73,9 +76,19 @@ void GroupNodeCompute::update_wires() {
     Entity* child = iter.second;
     EntityDID did = child->get_did();
     if (did == EntityDID::kInputNodeEntity) {
+      // Make sure the input node wants to be exposed on the group.
+      Dep<InputNodeCompute> c = get_dep<InputNodeCompute>(child);
+      c->update_input_flux();
+      if (!c->expose_on_group()) {
+        continue;
+      }
+      // Update the set of exposed_inputs.
+      exposed_inputs.insert(child_name);
+      // If we already have an input plug corresponding to the input node, then continue.
       if (inputs_space->has_child_name(child_name)) {
         continue;
       }
+      // Otherwise we create an input plug.
       InputEntity* in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, child_name, EntityDID::kInputEntity));
       in->create_internals();
       in->set_param_type(JSType::kObject);
@@ -83,9 +96,13 @@ void GroupNodeCompute::update_wires() {
       in->initialize_wires();
       changed = true;
     } else if (did == EntityDID::kOutputNodeEntity) {
+      // If we already have an output plug corresponding to the output node, then continue.
       if (outputs_space->has_child_name(child_name)) {
         continue;
       }
+      // Output nodes are currently always exposed.
+      exposed_outputs.insert(child_name);
+      // Otherwise we create an output plug.
       OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, child_name, EntityDID::kOutputEntity));
       out->create_internals();
       out->set_param_type(JSType::kObject);
@@ -100,14 +117,14 @@ void GroupNodeCompute::update_wires() {
     std::vector<Entity*> _inputs_to_destroy;
     for (auto &iter : inputs_space->get_children()) {
       const std::string& child_name = iter.first;
-      if (!our_entity()->has_child_name(child_name)) {
+      if (!exposed_inputs.count(child_name)) {
         _inputs_to_destroy.push_back(iter.second);
       }
     }
     std::vector<Entity*> _outputs_to_destroy;
     for (auto &iter : outputs_space->get_children()) {
       const std::string& child_name = iter.first;
-      if (!our_entity()->has_child_name(child_name)) {
+      if (!exposed_outputs.count(child_name)) {
         _outputs_to_destroy.push_back(iter.second);
       }
     }
