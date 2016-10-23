@@ -42,6 +42,10 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
 
+  virtual void destroy_link(Entity* input_entity);
+  virtual Entity* create_link();
+  virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
+
  protected:
   virtual void initialize_wires();
 

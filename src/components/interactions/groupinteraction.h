@@ -30,6 +30,7 @@ class WheelInfo;
 class OutputCompute;
 class InputCompute;
 class BaseFactory;
+class BaseNodeGraphManipulator;
 
 enum class EntityDID : size_t;
 
@@ -165,6 +166,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   Dep<BaseFactory> _factory;
   Dep<NodeSelection> _selection;
   Dep<CompShapeCollective> _shape_collective;
+  Dep<BaseNodeGraphManipulator> _ng_manipulator;
 
   // Interactive dragging state.
   Dep<LinkShape> _link_shape; // The link that we're dragging out.

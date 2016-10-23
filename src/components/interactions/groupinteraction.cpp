@@ -10,6 +10,8 @@
 #include <base/device/transforms/viewparams.h>
 #include <base/device/transforms/wheelinfo.h>
 
+#include <guicomponents/quick/basenodegraphmanipulator.h>
+
 #include <components/compshapes/compshapecollective.h>
 #include <components/compshapes/linkshape.h>
 #include <components/compshapes/inputlabelshape.h>
@@ -36,6 +38,7 @@ GroupInteraction::GroupInteraction(Entity* entity)
       _factory(this),
       _selection(this),
       _shape_collective(this),
+      _ng_manipulator(this),
       _link_shape(this),
       _links_folder(NULL),
       _mouse_is_down(false),
@@ -45,6 +48,7 @@ GroupInteraction::GroupInteraction(Entity* entity)
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
   get_dep_loader()->register_fixed_dep(_selection, Path({}));
   get_dep_loader()->register_fixed_dep(_shape_collective, Path({"."}));
+  get_dep_loader()->register_fixed_dep(_ng_manipulator, Path({}));
 }
 
 GroupInteraction::~GroupInteraction(){
@@ -115,16 +119,11 @@ void GroupInteraction::toggle_selection_under_press(const Dep<NodeShape>& hit_sh
 
 Dep<LinkShape> GroupInteraction::create_link() {
   external();
-
-  Entity* link = _factory->instance_entity(_links_folder, "link", EntityDID::kLinkEntity);
-  link->create_internals();
-
-  Dep<LinkShape> dep = get_dep<LinkShape>(link);
-  dep->start_moving(); // This prevents the link from getting destroyed.
-
+  Entity* link = _ng_manipulator->create_link();
+  Dep<LinkShape> link_shape = get_dep<LinkShape>(link);
   // New link created, so we need to clean the wires. (Note a wire is differnt from a link. See Component.h)
   update_shape_collective();
-  return dep;
+  return link_shape;
 }
 
 void GroupInteraction::destroy_link(Entity* link) {
@@ -140,15 +139,6 @@ bool GroupInteraction::has_link(Entity* entity) const {
   }
   return false;
 }
-
-//Dep<LinkShape> GroupInteraction::find_link(const Dep<InputShape>& input_shape) {
-//  std::vector<Entity*> dependants = input_shape->get_dependants_by_did(kICompShape, kLinkShape);
-//  assert(dependants.size() <= 1);
-//  if (dependants.size()>0) {
-//    return get_dep<LinkShape>(*dependants.begin());
-//  }
-//  return Dep<LinkShape>(NULL);
-//}
 
 void GroupInteraction::reset_state() {
   external();
@@ -1016,32 +1006,8 @@ Entity* GroupInteraction::create_node(EntityDID did) {
 }
 
 void GroupInteraction::link(Entity* upstream, Entity* downstream) {
-  Dep<InputCompute> input_compute = get_dep<InputCompute>(downstream);
-  Dep<InputShape> input_shape = get_dep<InputShape>(downstream);
-  Dep<OutputCompute> output_compute = get_dep<OutputCompute>(upstream);
-  Dep<OutputShape> output_shape = get_dep<OutputShape>(upstream);
-
-  // Remove any existing link shapes on this input.
-  // There is only one link per input.
-  Entity* old_link_entity = input_shape->find_link_entity();
-  if (old_link_entity) {
-    // Remove any existing compute connection on this input compute.
-    input_compute->unlink_output_compute();
-    // Destroy the link.
-    delete_ff(old_link_entity);
-  }
-
-  // Try to connect the input and output computes.
-  if (!input_compute->link_output_compute(output_compute)) {
-    // Otherwise destroy the link and selection.
-    assert(false);
-  }
-
-  // Link the output shape.
-  _link_shape = create_link();
-  _link_shape->link_input_shape(input_shape);
-  _link_shape->link_output_shape(output_shape);
-  _link_shape->finished_moving();
+  Entity* link = _ng_manipulator->connect_plugs(downstream, upstream);
+  _link_shape = get_dep<LinkShape>(link);
 
   // Transition to default state.
   _state = kNodeSelectionAndDragging;

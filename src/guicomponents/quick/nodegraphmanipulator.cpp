@@ -65,6 +65,10 @@ class NodeGraphManipulatorImp: public Component {
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
 
+  // Modify links..
+  virtual void destroy_link(Entity* input_entity);
+  virtual Entity* create_link();
+  virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
  private:
   Entity* build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state);
   void link(Entity* downstream);
@@ -321,6 +325,60 @@ void NodeGraphManipulatorImp::link(Entity* downstream) {
   _factory->get_current_group()->clean_wires();
 }
 
+void NodeGraphManipulatorImp::destroy_link(Entity* input_entity) {
+  // Unlink the computes.
+  Dep<InputCompute> input_compute = get_dep<InputCompute>(input_entity);
+  input_compute->unlink_output_compute();
+
+  // Unlink the gui shapes.
+  Dep<InputShape> input_shape = get_dep<InputShape>(input_entity);
+  Entity* link_entity = input_shape->find_link_entity();
+  assert(link_entity);
+  delete_ff(link_entity);
+}
+
+Entity* NodeGraphManipulatorImp::create_link() {
+  Entity* group = _factory->get_current_group();
+  Entity* links_folder = group->get_entity(Path({".","links"}));
+  Entity* link = _factory->instance_entity(links_folder, "link", EntityDID::kLinkEntity);
+  link->create_internals();
+
+  Dep<LinkShape> dep = get_dep<LinkShape>(link);
+  dep->start_moving(); // This prevents the link from getting destroyed.
+  return link;
+}
+
+Entity* NodeGraphManipulatorImp::connect_plugs(Entity* input_entity, Entity* output_entity) {
+  Dep<InputCompute> input_compute = get_dep<InputCompute>(input_entity);
+  Dep<InputShape> input_shape = get_dep<InputShape>(input_entity);
+  Dep<OutputCompute> output_compute = get_dep<OutputCompute>(output_entity);
+  Dep<OutputShape> output_shape = get_dep<OutputShape>(output_entity);
+
+  // Remove any existing link shapes on this input.
+  // There is only one link per input.
+  Entity* old_link_entity = input_shape->find_link_entity();
+  if (old_link_entity) {
+    // Remove any existing compute connection on this input compute.
+    input_compute->unlink_output_compute();
+    // Destroy the link.
+    delete_ff(old_link_entity);
+  }
+
+  // Try to connect the input and output computes.
+  if (!input_compute->link_output_compute(output_compute)) {
+    // Otherwise destroy the link and selection.
+    assert(false);
+  }
+
+  // Link the output shape.
+  Entity* link = create_link();
+  Dep<LinkShape> link_shape = get_dep<LinkShape>(link);
+  link_shape->link_input_shape(input_shape);
+  link_shape->link_output_shape(output_shape);
+  link_shape->finished_moving();
+  return link;
+}
+
 // -----------------------------------------------------------------------------------
 // The NodeGraphManipulator.
 // -----------------------------------------------------------------------------------
@@ -386,6 +444,18 @@ void NodeGraphManipulator::set_input_topology(Entity* entity, const std::unorder
 
 void NodeGraphManipulator::set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
   _imp->set_output_topology(entity, ordering);
+}
+
+void NodeGraphManipulator::destroy_link(Entity* input_entity) {
+  _imp->destroy_link(input_entity);
+}
+
+Entity* NodeGraphManipulator::create_link() {
+  return _imp->create_link();
+}
+
+Entity* NodeGraphManipulator::connect_plugs(Entity* input_entity, Entity* output_entity) {
+  return _imp->connect_plugs(input_entity, output_entity);
 }
 
 }

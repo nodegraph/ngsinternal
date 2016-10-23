@@ -37,7 +37,9 @@ class BaseNodeGraphManipulator: public Component {
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
 
-
+  virtual void destroy_link(Entity* input_entity) = 0;
+  virtual Entity* create_link() = 0;
+  virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity) = 0; // Returns the entity for the link.
 };
 
 }
