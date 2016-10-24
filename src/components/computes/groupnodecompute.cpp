@@ -39,23 +39,6 @@ void GroupNodeCompute::create_inputs_outputs() {
   create_namespace("links");
 }
 
-//void GroupNodeCompute::dirty_web_groups() {
-//  const Entity::NameToChildMap& children = our_entity()->get_children();
-//  for (auto &iter : children) {
-//    const std::string& child_name = iter.first;
-//    Entity* child = iter.second;
-//    EntityDID did = child->get_did();
-//    if (child->has_comp(ComponentIID::kIGroupInteraction)) {
-//      Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(child);
-//      c->dirty_web_computes();
-//      c->dirty_web_groups();
-//    }
-//  }
-//}
-//
-//void GroupNodeCompute::dirty_web_computes() {
-//}
-
 void GroupNodeCompute::update_wires() {
   internal();
 
@@ -136,6 +119,35 @@ void GroupNodeCompute::update_wires() {
   Compute::update_wires();
 }
 
+void GroupNodeCompute::synchronize_internal_dirtiness() {
+  // Update the group's dirtiness from our internals.
+  dirty_group_from_internals();
+  dirty_internals_from_group();
+}
+
+void GroupNodeCompute::dirty_internals_from_group() {
+  if (is_state_dirty()) {
+    dirty_all_node_computes();
+  }
+}
+
+void GroupNodeCompute::dirty_group_from_internals() {
+  // Dirty the computes on all nodes in this group.
+  const Entity::NameToChildMap& children = our_entity()->get_children();
+  for (auto &iter : children) {
+    const std::string& child_name = iter.first;
+    Entity* child = iter.second;
+    EntityDID did = child->get_did();
+    if (did != EntityDID::kBaseNamespaceEntity) {
+      Dep<Compute> compute = get_dep<Compute>(child);
+      if (compute->is_state_dirty()) {
+        dirty_state();
+        return;
+      }
+    }
+  }
+}
+
 void GroupNodeCompute::dirty_all_node_computes() {
   // Dirty the computes on all nodes in this group.
   const Entity::NameToChildMap& children = our_entity()->get_children();
@@ -172,6 +184,10 @@ void GroupNodeCompute::dirty_input_node_computes() {
   }
 }
 
+void GroupNodeCompute::propagate_dirtiness(Component* dirty_source) {
+  Component::propagate_dirtiness(dirty_source);
+}
+
 void GroupNodeCompute::set_self_dirty(bool dirty) {
   Compute::set_self_dirty(dirty);
 }
@@ -201,7 +217,7 @@ bool GroupNodeCompute::clean_inputs() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (input_node_compute->get_output("out") != input->get_output("out")) {
+      if (input_node_compute->get_override() != input->get_output("out")) {
         input_node_compute->set_override(input->get_output("out"));
       }
     }
@@ -229,7 +245,7 @@ bool GroupNodeCompute::update_state() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (input_node_compute->get_output("out") != input->get_output("out")) {
+      if (input_node_compute->get_override() != input->get_output("out")) {
         input_node_compute->set_override(input->get_output("out"));
       }
     }

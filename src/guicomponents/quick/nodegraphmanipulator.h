@@ -46,6 +46,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual Entity* create_link();
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
 
+  virtual void synchronize_group_internal_dirtiness(Entity* entity);
+
  protected:
   virtual void initialize_wires();
 

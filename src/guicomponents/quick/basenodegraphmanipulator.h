@@ -40,6 +40,8 @@ class BaseNodeGraphManipulator: public Component {
   virtual void destroy_link(Entity* input_entity) = 0;
   virtual Entity* create_link() = 0;
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity) = 0; // Returns the entity for the link.
+
+  virtual void synchronize_group_internal_dirtiness(Entity* entity) = 0;
 };
 
 }

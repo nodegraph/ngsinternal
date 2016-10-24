@@ -70,8 +70,11 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
 
 void BrowserCompute::on_get_outputs(const QVariantMap& outputs) {
   internal();
-  set_outputs(outputs);
+  //set_outputs(outputs);
   clean_finalize();
+
+  QVariant up = _inputs->get_all().at("in")->get_output("out");
+  set_output("out", up);
 }
 
 //--------------------------------------------------------------------------------

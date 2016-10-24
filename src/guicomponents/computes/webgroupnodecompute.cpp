@@ -22,8 +22,4 @@ bool WebGroupNodeCompute::update_state() {
   return done;
 }
 
-//void WebGroupNodeCompute::dirty_web_computes() {
-//  dirty_all_node_computes();
-//}
-
 }

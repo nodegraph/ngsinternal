@@ -69,6 +69,9 @@ class NodeGraphManipulatorImp: public Component {
   virtual void destroy_link(Entity* input_entity);
   virtual Entity* create_link();
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
+
+  virtual void synchronize_group_internal_dirtiness(Entity* entity);
+
  private:
   Entity* build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state);
   void link(Entity* downstream);
@@ -122,16 +125,14 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_sta
     return;
   }
 
-  // If the ultimate target is outside a web group, we dirty the contents of all
-  // web groups. The logic is that when we are inside a web group, we assume we are
-  // interactively building a web script.
-  Entity* parent = entity->get_parent();
-  Dep<BaseGroupTraits> t = get_dep<BaseGroupTraits>(parent);
-  if (t->get_group_type() == GroupType::DataGroup) {
-    Entity* root_entity = _app_root->get_child("root");
-    Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(root_entity);
-    //c->dirty_web_groups();
-  }
+  // Synchronize the dirtiness of all groups with the internal contents.
+  // This is needed because a group maintains it's own dirtiness separately from the internal nodes,
+  // and the user can manually change the dirtiness of the internal nodes or the group.
+  // This consolidates those dirtiness states, so the we perform the compute properly.
+  // Note that nodes in the currently are not dirtied because the user is likely adding/editing nodes
+  // and we don't want to have to keep recomputing all the upstream nodes in this case.
+  // All other groups get their dirtiness synchronized.
+  synchronize_group_internal_dirtiness(_app_root);
 
   // Clear the error marker on nodes.
   _node_selection->clear_error_node();
@@ -142,10 +143,10 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_sta
   }
   // Set and try cleaning the ultimate target.
   _ultimate_target = get_dep<Compute>(entity);
-  if (_ultimate_target->clean_state()) {
-    // Reset the ultimate target if we can clean it right away.
-    _ultimate_target.reset();
-  }
+
+  _app_root->clean_wires();
+
+  continue_cleaning_to_ultimate_target();
 }
 
 void NodeGraphManipulatorImp::clear_ultimate_target() {
@@ -156,14 +157,42 @@ void NodeGraphManipulatorImp::clear_ultimate_target() {
 
 void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_target() {
   external();
+
+  // Return if there is no ultimate target set.
   if (!_ultimate_target) {
     return;
   }
+
+  // Return if the ultimate target is already clean, and wipe out the ultimate target.
   if (!_ultimate_target->is_state_dirty()) {
     _ultimate_target.reset();
     return;
   }
-  _ultimate_target->clean_state();
+
+  // Clean all the inputs on all the groups down to the ultimate target.
+  // The target path holds the path down to the immediately surrounding group of the target.
+  Path target_path = _ultimate_target->our_entity()->get_path();
+  target_path.pop_back();
+  Path path({});
+
+  do {
+    path.push_back(target_path.front());
+    target_path.pop_front();
+    std::cerr << "working on group inputs: " << path.get_as_string() << "\n";
+
+    Entity* e = _app_root->get_entity(path);
+    Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(e);
+    if (!c->clean_inputs()) {
+      return;
+    }
+  } while (target_path.size());
+
+  // If we get here the inputs on our surrounding group and our input nodes
+  // now have appropriate values to perform the compute.
+  if (_ultimate_target->clean_state()) {
+    // Reset the ultimate target if we can clean it right away.
+    _ultimate_target.reset();
+  }
 }
 
 bool NodeGraphManipulatorImp::is_busy_cleaning() {
@@ -379,6 +408,27 @@ Entity* NodeGraphManipulatorImp::connect_plugs(Entity* input_entity, Entity* out
   return link;
 }
 
+void NodeGraphManipulatorImp::synchronize_group_internal_dirtiness(Entity* entity) {
+  const Entity::NameToChildMap& children = entity->get_children();
+  for (auto &iter : children) {
+    const std::string& child_name = iter.first;
+    Entity* child = iter.second;
+
+    EntityDID did = child->get_did();
+    if (child->has_comp(ComponentIID::kIGroupInteraction)) {
+      Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(child);
+
+      // Skip our current group, because the user is likely incremently adding nodes
+      // and we don't want to recompute everything upstream over and over.
+      if (child != _factory->get_current_group()) {
+        c->synchronize_internal_dirtiness();
+      }
+
+      synchronize_group_internal_dirtiness(child);
+    }
+  }
+}
+
 // -----------------------------------------------------------------------------------
 // The NodeGraphManipulator.
 // -----------------------------------------------------------------------------------
@@ -456,6 +506,10 @@ Entity* NodeGraphManipulator::create_link() {
 
 Entity* NodeGraphManipulator::connect_plugs(Entity* input_entity, Entity* output_entity) {
   return _imp->connect_plugs(input_entity, output_entity);
+}
+
+void NodeGraphManipulator::synchronize_group_internal_dirtiness(Entity* entity) {
+  _imp->synchronize_group_internal_dirtiness(entity);
 }
 
 }

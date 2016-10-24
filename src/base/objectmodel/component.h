@@ -143,7 +143,7 @@ class OBJECTMODEL_EXPORT Component {
   virtual bool clean_finalize();
   void gather_dirty_components(std::vector<Component*>& comps); // Rectursively gather dirty components in order of execution needed to clean them.
   bool propagate_cleanliness();
-  void propagate_dirtiness(Component* dependency);
+  virtual void propagate_dirtiness(Component* dependency);
   virtual void set_self_dirty(bool dirty);
 
   // Serialization.

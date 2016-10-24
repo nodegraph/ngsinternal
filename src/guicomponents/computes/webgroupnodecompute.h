@@ -13,9 +13,6 @@ class GUICOMPUTES_EXPORT WebGroupNodeCompute: public GroupNodeCompute {
   WebGroupNodeCompute(Entity* entity);
   virtual ~WebGroupNodeCompute();
 
-
-  //virtual void dirty_web_computes();
-
  protected:
 
   // Our state.

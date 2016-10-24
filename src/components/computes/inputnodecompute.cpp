@@ -40,7 +40,7 @@ bool InputNodeCompute::update_state() {
   Compute::update_state();
 
   // If we have a valid override, let's use that.
-  if (_override.isValid()) {
+  if (_override.isValid() && (!_override.toMap().isEmpty())) {
     set_output("out", _override);
     return true;
   }
