@@ -32,11 +32,12 @@ bool InputCompute::update_state() {
   // Merge in information from the default unconnected value.
   if (_unconnected_value.isValid()) {
     if (variant_is_map(_unconnected_value)) {
-      // If the unconnected value is a map, merge the values in.
-      QVariantMap map = _unconnected_value.toMap();
-      for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
-        output.insert(iter.key(), iter.value());
-      }
+//      // If the unconnected value is a map, merge the values in.
+//      QVariantMap map = _unconnected_value.toMap();
+//      for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+//        output.insert(iter.key(), iter.value());
+//      }
+      output = _unconnected_value.toMap();
     } else {
       output["value"] = _unconnected_value;
     }
