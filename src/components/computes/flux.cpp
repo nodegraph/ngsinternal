@@ -9,7 +9,12 @@
 namespace ngs {
 
 const char* InputTraits::folder_name = "inputs";
+const char* InputTraits::iid_name = "Inputs";
+const char* InputTraits::did_name = "Inputs";
+
 const char* OutputTraits::folder_name = "outputs";
+const char* OutputTraits::iid_name = "Outputs";
+const char* OutputTraits::did_name = "Outputs";
 
 
 template<class Traits>

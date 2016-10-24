@@ -249,7 +249,9 @@ bool Component::dep_creates_cycle(const Component* dependency) const {
   if (dependency->is_recursive_dependency(this, &path)) {
     std::cerr << "Warning the requested component would have created a cycle so a null reference is likely being returned.\n";
     for (size_t i=path.size()-1; i>=0; --i) {
-      std::cerr << "entity named: " << path[i]->get_name() << " with component did: " << (size_t)path[i]->get_did() << " depend on following\n";
+      ComponentDID did = path[i]->get_did();
+      std::string did_name = path[i]->get_did_name();
+      std::cerr << "entity named: " << path[i]->get_name() << " with component did: " << did_name << " (" << (size_t)did << ") depend on following\n";
     }
     assert(false);
     return true;

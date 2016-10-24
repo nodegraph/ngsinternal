@@ -119,6 +119,9 @@ class OBJECTMODEL_EXPORT Component {
   virtual ComponentIID get_iid() const;
   virtual ComponentDID get_did() const;
 
+  virtual const char* get_iid_name() const {return "unknown iid";}
+  virtual const char* get_did_name() const {return "unknown did";}
+
   // Wires. Propagates clean wires through dependency traversal.
   // Note: This is differnt from Entity::clean_wires as it traverses
   //       through dependencies and through entity hierarchy visitation.

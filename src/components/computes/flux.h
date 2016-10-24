@@ -18,6 +18,8 @@ struct InputTraits {
   static const ComponentIID FluxIID = ComponentIID::kIInputs;
   static const ComponentDID FluxDID = ComponentDID::kInputs;
   static const char* folder_name;
+  static const char* iid_name;
+  static const char* did_name;
 };
 
 struct OutputTraits {
@@ -26,6 +28,8 @@ struct OutputTraits {
   static const ComponentIID FluxIID = ComponentIID::kIOutputs;
   static const ComponentDID FluxDID = ComponentDID::kOutputs;
   static const char* folder_name;
+  static const char* iid_name;
+  static const char* did_name;
 };
 
 template <class Traits>
@@ -36,6 +40,12 @@ class COMPUTES_EXPORT Flux: public Component {
   }
   static ComponentDID kDID() {
     return Traits::FluxDID;
+  }
+  const char* get_iid_name() const {
+    return Traits::iid_name;
+  }
+  const char* get_did_name() const {
+    return Traits::did_name;
   }
 
   Flux(Entity* entity);
