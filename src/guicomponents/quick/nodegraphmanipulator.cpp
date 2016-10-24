@@ -130,7 +130,7 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_sta
   if (t->get_group_type() == GroupType::DataGroup) {
     Entity* root_entity = _app_root->get_child("root");
     Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(root_entity);
-    c->dirty_web_groups();
+    //c->dirty_web_groups();
   }
 
   // Clear the error marker on nodes.

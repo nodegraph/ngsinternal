@@ -21,8 +21,8 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   // assume we are interactively building a web recording and we only want the
   // latest added node to execute.
   // This should be called from the app root.
-  virtual void dirty_web_groups();
-  virtual void dirty_web_computes();
+//  virtual void dirty_web_groups();
+//  virtual void dirty_web_computes();
 
   virtual void dirty_all_node_computes();
   virtual void dirty_input_node_computes();

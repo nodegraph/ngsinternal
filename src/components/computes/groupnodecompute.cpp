@@ -39,22 +39,22 @@ void GroupNodeCompute::create_inputs_outputs() {
   create_namespace("links");
 }
 
-void GroupNodeCompute::dirty_web_groups() {
-  const Entity::NameToChildMap& children = our_entity()->get_children();
-  for (auto &iter : children) {
-    const std::string& child_name = iter.first;
-    Entity* child = iter.second;
-    EntityDID did = child->get_did();
-    if (child->has_comp(ComponentIID::kIGroupInteraction)) {
-      Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(child);
-      c->dirty_web_computes();
-      c->dirty_web_groups();
-    }
-  }
-}
-
-void GroupNodeCompute::dirty_web_computes() {
-}
+//void GroupNodeCompute::dirty_web_groups() {
+//  const Entity::NameToChildMap& children = our_entity()->get_children();
+//  for (auto &iter : children) {
+//    const std::string& child_name = iter.first;
+//    Entity* child = iter.second;
+//    EntityDID did = child->get_did();
+//    if (child->has_comp(ComponentIID::kIGroupInteraction)) {
+//      Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(child);
+//      c->dirty_web_computes();
+//      c->dirty_web_groups();
+//    }
+//  }
+//}
+//
+//void GroupNodeCompute::dirty_web_computes() {
+//}
 
 void GroupNodeCompute::update_wires() {
   internal();
