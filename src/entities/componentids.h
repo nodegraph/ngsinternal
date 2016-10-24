@@ -14,7 +14,11 @@ namespace ngs {
   { return ComponentIID::kI##base; }\
   \
   static ComponentDID kDID()\
-  { return ComponentDID::k##derived; }
+  { return ComponentDID::k##derived; }\
+  virtual const char* get_did_name() const\
+  {return #derived;}\
+  virtual const char* get_iid_name() const\
+  {return #base;}
 
 // Component Interface IDs.
 enum class ComponentIID : size_t {
@@ -146,22 +150,13 @@ COMPONENT_ENTRY1(NodeSelection)\
 COMPONENT_ENTRY1(Resources)\
 COMPONENT_ENTRY1(ShapeCanvas)\
 
-
-
-
-
-
-
-
-
-
-
-
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()
 };
 
 
 ENTITIES_EXPORT const char* get_component_did_name(ComponentDID did);
+
+
 
 }
