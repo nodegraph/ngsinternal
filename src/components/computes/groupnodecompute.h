@@ -27,6 +27,8 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   virtual void dirty_all_node_computes();
   virtual void dirty_input_node_computes();
 
+  virtual bool clean_inputs();
+
  protected:
 
   // Our state.

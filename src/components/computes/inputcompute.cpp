@@ -15,10 +15,9 @@ namespace ngs {
 
 InputCompute::InputCompute(Entity* entity)
     : Compute(entity, kDID()),
-      _type(JSType::kObject),
-      _output(this),
+      _upstream(this),
       _exposed(true) {
-	get_dep_loader()->register_dynamic_dep(_output);
+	get_dep_loader()->register_dynamic_dep(_upstream);
 }
 
 InputCompute::~InputCompute() {
@@ -28,37 +27,68 @@ bool InputCompute::update_state() {
   internal();
   Compute::update_state();
 
-  if (_output) {
-    set_output("out", _output->get_output("out"));
-  } else {
-    set_output("out", _param_value);
+  QVariantMap output;
+
+  // Merge in information from the default unconnected value.
+  if (_unconnected_value.isValid()) {
+    if (variant_is_map(_unconnected_value)) {
+      // If the unconnected value is a map, merge the values in.
+      QVariantMap map = _unconnected_value.toMap();
+      for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+        output.insert(iter.key(), iter.value());
+      }
+    } else {
+      output["value"] = _unconnected_value;
+    }
   }
+
+  // Merge in information from the upstream output.
+  if (_upstream) {
+    QVariant upstream_out = _upstream->get_output("out");
+    assert(variant_is_map(upstream_out));
+
+    QVariantMap map = upstream_out.toMap();
+    for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+      output.insert(iter.key(), iter.value());
+    }
+  }
+
+  // Cache the result in our outputs.
+  set_output("out", output);
   return true;
+
+//  // Note! The InputCompute is the only compute which can output something
+//  // other than a javascript object type. It can output other types like
+//  // arrays, strings and numbers.
+//  if (_upstream) {
+//    QVariant up = _upstream->get_output("out");
+//    // Only js object are allowed to pass through links in the node graph.
+//    assert(variant_is_map(up));
+//    QVariantMap map = up.toMap();
+//    // If there is only entry in the map, then we use that as our output.
+//    if (map.size() == 1) {
+//      set_output("out", map.begin().value());
+//    } else if ((map.size() > 1) && (map.count("value"))){
+//      // Otherwise if there is an entry named "value" we that.
+//      set_output("out", map["value"]);
+//    } else {
+//      // Otherwise we use our unconnected value.
+//      set_output("out", _unconnected_value);
+//    }
+//  } else {
+//    set_output("out", _unconnected_value);
+//  }
+//  return true;
 }
 
-void InputCompute::set_param_value(const QVariant& value) {
+void InputCompute::set_unconnected_value(const QVariant& value) {
   external();
-  _param_value = value;
+  _unconnected_value = value;
 }
 
-QVariant InputCompute::get_param_value() const {
+QVariant InputCompute::get_unconnected_value() const {
   external();
-  return _param_value;
-}
-
-QVariant InputCompute::get_value() const {
-  external();
-  return get_output("out");
-}
-
-void InputCompute::set_type(JSType type) {
-  external();
-  _type = type;
-}
-
-JSType InputCompute::get_type() const {
-  external();
-  return _type;
+  return _unconnected_value;
 }
 
 void InputCompute::set_exposed(bool exposed) {
@@ -85,12 +115,12 @@ bool InputCompute::link_output_compute(Dep<OutputCompute>& output) {
   assert(output);
 
   // Make sure to be disconnected before connecting.
-  if (!_output && output) {
+  if (!_upstream && output) {
     unlink_output_compute();
   }
   // Now connect.
-  _output = output;
-  if (_output) {
+  _upstream = output;
+  if (_upstream) {
     return true;
   }
   // Linking was unsuccessful.
@@ -99,13 +129,13 @@ bool InputCompute::link_output_compute(Dep<OutputCompute>& output) {
 
 Dep<OutputCompute> InputCompute::get_output_compute() const {
   external();
-  return _output;
+  return _upstream;
 }
 
 void InputCompute::unlink_output_compute() {
   external();
-  if (_output) {
-    _output.reset();
+  if (_upstream) {
+    _upstream.reset();
   }
 }
 
@@ -113,17 +143,13 @@ void InputCompute::save(SimpleSaver& saver) const {
   external();
   Compute::save(saver);
 
-  // Serialize the param type.
-  size_t type = static_cast<size_t>(_type);
-  saver.save(type);
-
   // Serialize the exposed value.
   saver.save(_exposed);
 
   // Serialize the param value.
   QByteArray data;
   QDataStream ds(&data,QIODevice::WriteOnly);
-  ds << _param_value;
+  ds << _unconnected_value;
   int num_bytes = data.size();
   saver.save(num_bytes);
   saver.save_raw(data.data(), num_bytes);
@@ -132,11 +158,6 @@ void InputCompute::save(SimpleSaver& saver) const {
 void InputCompute::load(SimpleLoader& loader) {
   external();
   Compute::load(loader);
-
-  // Load the param type.
-  size_t type;
-  loader.load(type);
-  _type = static_cast<JSType>(type);
 
   // Load the exposed value.
   loader.load(_exposed);
@@ -150,7 +171,7 @@ void InputCompute::load(SimpleLoader& loader) {
   data.resize(num_bytes);
   loader.load_raw(data.data(), num_bytes);
   QDataStream ds(&data,QIODevice::ReadOnly);
-  ds >> _param_value;
+  ds >> _unconnected_value;
 }
 
 }

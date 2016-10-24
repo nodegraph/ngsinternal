@@ -76,12 +76,6 @@ void GroupNodeCompute::update_wires() {
     Entity* child = iter.second;
     EntityDID did = child->get_did();
     if (did == EntityDID::kInputNodeEntity) {
-      // Make sure the input node wants to be exposed on the group.
-      Dep<InputNodeCompute> c = get_dep<InputNodeCompute>(child);
-      c->update_input_flux();
-      if (!c->expose_on_group()) {
-        continue;
-      }
       // Update the set of exposed_inputs.
       exposed_inputs.insert(child_name);
       // If we already have an input plug corresponding to the input node, then continue.
@@ -91,21 +85,19 @@ void GroupNodeCompute::update_wires() {
       // Otherwise we create an input plug.
       InputEntity* in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, child_name, EntityDID::kInputEntity));
       in->create_internals();
-      in->set_param_type(JSType::kObject);
       in->set_exposed(true);
       in->initialize_wires();
       changed = true;
     } else if (did == EntityDID::kOutputNodeEntity) {
+      // Update the set of exposed_outputs.
+      exposed_outputs.insert(child_name);
       // If we already have an output plug corresponding to the output node, then continue.
       if (outputs_space->has_child_name(child_name)) {
         continue;
       }
-      // Output nodes are currently always exposed.
-      exposed_outputs.insert(child_name);
       // Otherwise we create an output plug.
       OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, child_name, EntityDID::kOutputEntity));
       out->create_internals();
-      out->set_param_type(JSType::kObject);
       out->set_exposed(true);
       out->initialize_wires();
       changed = true;
@@ -184,6 +176,39 @@ void GroupNodeCompute::set_self_dirty(bool dirty) {
   Compute::set_self_dirty(dirty);
 }
 
+bool GroupNodeCompute::clean_inputs() {
+  // Clean each input on this group node.
+  for (auto &iter: _inputs->get_all()) {
+    const Dep<InputCompute>& input = iter.second;
+    if (!input->clean_state()) {
+      return false;
+    }
+  }
+
+  // Copy the input values onto the input nodes inside this group node.
+  for (auto &iter: _inputs->get_all()) {
+    const Dep<InputCompute>& input = iter.second;
+    const std::string& input_name = input->get_name();
+    // Find the input node inside this group with the same name as the input.
+    Entity* input_node = our_entity()->get_child(input_name);
+    // Make sure we have an input node.
+    if (!input_node) {
+      assert(false);
+      continue;
+    }
+    // Copy the input value to the input node, but only if they're different,
+    // because this compute will get called multiple times as part of asynchronous updating
+    // especially when the group contains asynchronous web action nodes.
+    Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
+    if (input_node_compute) {
+      if (input_node_compute->get_output("out") != input->get_output("out")) {
+        input_node_compute->set_override(input->get_output("out"));
+      }
+    }
+  }
+  return true;
+}
+
 bool GroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
@@ -204,8 +229,8 @@ bool GroupNodeCompute::update_state() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (input_node_compute->get_value() != input->get_value()) {
-        input_node_compute->set_value(input->get_output("out"));
+      if (input_node_compute->get_output("out") != input->get_output("out")) {
+        input_node_compute->set_override(input->get_output("out"));
       }
     }
   }

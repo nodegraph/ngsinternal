@@ -45,15 +45,17 @@ Rectangle {
             more_menu_button.visible = false;
         } else if (m == app_settings.view_node_mode) {
             view_node_button.lit = true
-            action_bar_title.text = "Node Outputs"
+            action_bar_title.text = "View Node Outputs"
             more_menu_button.visible = false;
+            node_graph_item.view_node_poke();
         } else if (m == app_settings.edit_node_mode) {
             edit_node_button.lit = true
-            action_bar_title.text = "Node Parameters"
+            action_bar_title.text = "Edit Node Parameters"
             more_menu_button.visible = false;
+            node_graph_item.edit_node_poke();
         } else if (m == app_settings.posts_mode) {
             posts_button.lit = true
-            action_bar_title.text = "Node Posts"
+            action_bar_title.text = "Posts from Nodes"
             more_menu_button.visible = false;
         } else if (m == app_settings.settings_mode) {
             settings_button.lit = true
@@ -175,8 +177,8 @@ Rectangle {
     		rightMargin: app_settings.action_bar_right_margin
       	}
         
-        image_url: "qrc:///icons/ic_looks_3_white_48dp.png"
-        tooltip_text: "Node Outputs"
+        image_url: "qrc:///icons/ic_visibility_white_48dp.png"
+        tooltip_text: "View Node Outputs"
         
         onClicked: {
             on_switch_to_mode(app_settings.view_node_mode)
@@ -195,7 +197,7 @@ Rectangle {
     	}
         
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
-        tooltip_text: "Node Parameters"
+        tooltip_text: "Edit Node Parameters"
         
         onClicked: {
             on_switch_to_mode(app_settings.edit_node_mode)
@@ -214,7 +216,7 @@ Rectangle {
     	}
         
         image_url: "qrc:///icons/ic_whatshot_white_48dp.png"
-        tooltip_text: "Node Posts"
+        tooltip_text: "Posts from Nodes"
         
         onClicked: {
             on_switch_to_mode(app_settings.posts_mode)

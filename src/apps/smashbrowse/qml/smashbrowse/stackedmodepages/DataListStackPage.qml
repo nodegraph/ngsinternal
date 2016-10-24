@@ -44,6 +44,18 @@ BaseStackPage{
             }
         }
     }
+    
+    function on_view_outputs(node_name, values) {
+        app_settings.vibrate()
+        stack_view.clear_pages()
+        
+    	_values = values
+    	_hints = {}
+    	_exposure = {}
+    	
+    	var path = []
+        view_object(node_name, path)
+    }
 
     // Show data values with hints on how to show it.
     function on_show_data(node_name, values, hints, exposure) {
@@ -55,10 +67,8 @@ BaseStackPage{
         _hints = hints
         _exposure = exposure
         
-        console.log("showing data hints: " + JSON.stringify(_hints))
-        
         var path = []
-        view_object(node_name, path)
+        edit_object(node_name, path)
     }
 
     function on_add_element() {
@@ -88,6 +98,31 @@ BaseStackPage{
             push_page.set_description("Enter the index at which to insert the new element.")
             push_page.callback = stack_page.add_element.bind(stack_page)
             stack_view.push_page(push_page)
+        }
+    }
+    
+    function on_view_element(name) {
+        var child_path = stack_view.get_title_path(1, stack_view.depth)
+        child_path.push(name)
+        var child_value = stack_page.get_value(child_path)
+        var child_value_type = app_enums.determine_js_type(child_value)
+        
+        switch(child_value_type) {
+        case js_type.kString:
+        case js_type.kBoolean:
+        case js_type.kNumber: {
+        		// Can't do anything further.
+            }
+            break
+        case js_type.kObject:
+            stack_page.view_object(child_path[child_path.length-1], child_path);
+            break
+        case js_type.kArray:
+            stack_page.view_array(child_path[child_path.length-1], child_path);
+            break
+        default:
+            console.error("Error: DataListStackPage::on_view_element encountered unknown js type:" + child_value_type)
+            break
         }
     }
 
@@ -126,10 +161,10 @@ BaseStackPage{
             }
             break
         case js_type.kObject:
-            stack_page.view_object(child_path[child_path.length-1], child_path);
+            stack_page.edit_object(child_path[child_path.length-1], child_path);
             break
         case js_type.kArray:
-            stack_page.view_array(child_path[child_path.length-1], child_path);
+            stack_page.edit_array(child_path[child_path.length-1], child_path);
             break
         default:
             console.error("Error: DataListStackPage::on_edit_element encountered unknown js type:" + child_hints[hint_type.kJSType])
@@ -286,7 +321,7 @@ BaseStackPage{
         // exclusively instead of the hints at the child. The child will generally
         // not have any hints in this case.
         var child_hints = {}
-        if (parent_hints.hasOwnProperty(hint_type.kElementJSType)) {
+        if (parent_hints && parent_hints.hasOwnProperty(hint_type.kElementJSType)) {
             child_hints[hint_type.kJSType] = parent_hints[hint_type.kElementJSType]
             // Check for other child element hints.
             if (parent_hints.hasOwnProperty(hint_type.kElementEnum)) {
@@ -330,16 +365,23 @@ BaseStackPage{
     // Get a string which represents the value's type or actual value.
     function get_string_for_value(path) {
     	var value = get_value(path)
-    	var hints = get_hints(path)
-    	var value_type = hints[hint_type.kJSType]
+    	var value_type;
     	
-    	// Use the hints to get a more descriptive string representation.
-		if (hints.hasOwnProperty(hint_type.kEnum)) {
-    		return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
-    	} else if (hints.hasOwnProperty(hint_type.kDescription) && 
-    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
-    		return hints[hint_type.kDescription]
+    	if (_allow_edits) {
+    		var hints = get_hints(path)
+    		value_type = hints[hint_type.kJSType]
+    		
+    		// Use the hints to get a more descriptive string representation.
+			if (hints.hasOwnProperty(hint_type.kEnum)) {
+	    		return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
+	    	} else if (hints.hasOwnProperty(hint_type.kDescription) && 
+	    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
+	    		return hints[hint_type.kDescription]
+	    	}
+    	} else {
+    		value_type = app_enums.determine_js_type(value)
     	}
+
         
         // Use the js type if the hints don't help.
         switch(value_type) {
@@ -365,8 +407,14 @@ BaseStackPage{
     // Get an image which represents the value's type.
     function get_image_for_value(path) {
         var value = get_value(path)
-    	var hints = get_hints(path)
-    	var value_type = hints[hint_type.kJSType]
+    	var value_type;
+    	
+    	if (_allow_edits) {
+    		var hints = get_hints(path)
+    		value_type = hints[hint_type.kJSType]
+    	} else {
+    		value_type = app_enums.determine_js_type(value)
+    	}
     	
         switch(value_type) {
         case js_type.kString:
@@ -413,8 +461,8 @@ BaseStackPage{
         return Qt.createQmlObject(script, stack_page, "view_node_dynamic_content")
     }
 
-    // Display the contents of a dict.
-    function view_object(title, path) {
+	// Used to bring up editable properties list of an object.
+    function edit_object(title, path) {
     	var obj = get_value(path)
     	var hints = get_hints(path)
         var model = create_list_model()
@@ -427,8 +475,8 @@ BaseStackPage{
         push_by_model(title, model, hints)
     }
 
-    // Display the contents of an array.
-    function view_array(title, path) {
+	// Used to bring up editable properties list of an array.
+    function edit_array(title, path) {
     	var arr = get_value(path)
     	var hints = get_hints(path)
         var model = create_list_model()
@@ -437,5 +485,27 @@ BaseStackPage{
         }
         console.log('pushing arr: ' + title + ' hints: ' + JSON.stringify(hints))
         push_by_model(title, model, hints)
+    }
+    
+    // Used to bring up non-editable properties list of an object.
+    function view_object(title, path) {
+       	var obj = get_value(path)
+        var model = create_list_model()
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                model.append({name: prop, depth_index: stack_view.depth})
+            }
+        }
+        push_by_model(title, model, {})
+    }
+    
+    // Used to bring up non-editable properties list of an array.
+    function view_array(title, path) {
+    	var arr = get_value(path)
+        var model = create_list_model()
+        for (var i=0; i<arr.length; i++) {
+            model.append({name: i.toString(), depth_index: stack_view.depth})
+        }
+        push_by_model(title, model, {})
     }
 }

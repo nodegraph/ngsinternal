@@ -64,10 +64,6 @@ void BaseInputEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputCompute(this);
 }
 
-void BaseInputEntity::set_param_type(JSType param_type) {
-  get<InputCompute>()->set_type(param_type);
-}
-
 void BaseOutputEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff OutputCompute(this);

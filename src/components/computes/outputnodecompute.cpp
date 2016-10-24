@@ -22,6 +22,16 @@ void OutputNodeCompute::create_inputs_outputs() {
   create_input("in", QVariantMap());
 }
 
+const QVariantMap OutputNodeCompute::_hints = OutputNodeCompute::init_hints();
+QVariantMap OutputNodeCompute::init_hints() {
+  QVariantMap m;
+
+  add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
+
+  return m;
+}
+
 bool OutputNodeCompute::update_state() {
   internal();
   Compute::update_state();

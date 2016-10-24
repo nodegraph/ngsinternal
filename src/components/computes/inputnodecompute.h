@@ -11,19 +11,27 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   InputNodeCompute(Entity* entity);
   virtual ~InputNodeCompute();
 
+  // Our topology.
+  virtual void create_inputs_outputs();
+
+  // Our hints.
   static QVariantMap init_hints();
   static const QVariantMap _hints;
   virtual const QVariantMap& get_hints() const {return _hints;}
 
-  virtual void create_inputs_outputs();
+  // Set and get the "json" parameter programmatically.
+  virtual void set_override(const QVariant& override);
+  virtual QVariant get_override() const;
+  virtual void clear_override();
 
-  virtual void set_value(const QVariant& value);
-  virtual QVariant get_value() const;
+ protected:
+  // Our state.
+  virtual bool update_state();
 
-  virtual bool expose_on_group() const;
-
-  // Our data is always set on us from the group.
-  // So we don't need to serialize any extra state.
+  // This is a runtime override on this node's output value.
+  // This is not serialized.
+  // The "json" parameter holds the initial output value for this node.
+  QVariant _override;
 };
 
 }

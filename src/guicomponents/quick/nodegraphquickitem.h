@@ -48,6 +48,7 @@ Q_OBJECT
   // Node Creation.
   Q_INVOKABLE void create_group_node(bool centered);
   Q_INVOKABLE void create_web_group_node(bool centered);
+  Q_INVOKABLE void create_data_node(bool centered);
   Q_INVOKABLE void create_input_node(bool centered);
   Q_INVOKABLE void create_output_node(bool centered);
   Q_INVOKABLE void create_dot_node(bool centered);
@@ -97,6 +98,10 @@ Q_OBJECT
   Q_INVOKABLE void lock_links(bool locked);
   Q_INVOKABLE bool links_are_locked() const;
 
+
+  Q_INVOKABLE void view_node_poke();
+  Q_INVOKABLE void edit_node_poke();
+
  public Q_SLOTS:
   void cleanup();
 
@@ -114,7 +119,7 @@ Q_OBJECT
  void node_context_menu_requested();
 
  void view_node_outputs(const QString& name, const QVariantMap& results);
- void edit_node_params(const QString& name, const QVariantMap& values, const QVariantMap& hints, const QVariantMap& exposed_settings);
+ void edit_node_inputs(const QString& name, const QVariantMap& values, const QVariantMap& hints, const QVariantMap& exposed_settings);
 
  void mark_progress();
 

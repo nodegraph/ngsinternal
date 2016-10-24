@@ -603,6 +603,12 @@ void NodeGraphQuickItem::create_web_group_node(bool centered) {
   finish_creating_node(e, centered);
 }
 
+void NodeGraphQuickItem::create_data_node(bool centered) {
+  external();
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "data", EntityDID::kDataNodeEntity);
+  finish_creating_node(e, centered);
+}
+
 void NodeGraphQuickItem::create_input_node(bool centered) {
   external();
   Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "input", EntityDID::kInputNodeEntity);
@@ -772,11 +778,11 @@ void NodeGraphQuickItem::edit_node() {
 //    }
 
     compute->update_input_flux();
-    emit edit_node_params(compute->our_entity()->get_name().c_str(),
+    emit edit_node_inputs(compute->our_entity()->get_name().c_str(),
                           compute->get_input_values(),
                           compute->get_hints(),
                           compute->get_input_exposure());
-    //emit edit_node_params(compute->our_entity()->get_name().c_str(), test, all_hints);
+    //emit edit_node_inputs(compute->our_entity()->get_name().c_str(), test, all_hints);
 
     // Update our node graph selection object which also tracks and edit and view nodes.
     get_current_interaction()->edit(_last_pressed_node);
@@ -1003,6 +1009,26 @@ bool NodeGraphQuickItem::links_are_locked() const {
   return _link_locked;
 }
 
+void NodeGraphQuickItem::view_node_poke() {
+  _last_pressed_node = _selection->get_view_node();
+  if (!_last_pressed_node) {
+    emit view_node_outputs("no view node selected", QVariantMap());
+    return;
+  }
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_outputs());
+}
+
+void NodeGraphQuickItem::edit_node_poke() {
+  _last_pressed_node = _selection->get_edit_node();
+  if (!_last_pressed_node) {
+    emit edit_node_inputs("no edit node selected", QVariantMap(), QVariantMap(), QVariantMap());
+    return;
+  }
+  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  compute->update_input_flux();
+  emit edit_node_inputs(compute->our_entity()->get_name().c_str(), compute->get_input_values(), compute->get_hints(), compute->get_input_exposure());
+}
 
 }
 

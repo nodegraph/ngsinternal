@@ -259,7 +259,7 @@ Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, co
 
     std::cerr << "setting name: " << iter.key().toStdString() << " value: " << iter.value().toString().toStdString() << " type: " << iter.value().type()
               << " usertype: " << iter.value().userType() << "\n";
-    compute->set_param_value(iter.value());
+    compute->set_unconnected_value(iter.value());
   }
 
   return _node;

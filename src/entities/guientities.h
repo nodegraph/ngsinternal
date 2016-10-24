@@ -81,6 +81,13 @@ class ENTITIES_EXPORT DotNodeEntity : public Entity {
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };
 
+class ENTITIES_EXPORT DataNodeEntity : public Entity {
+ public:
+  ENTITY_ID(DataNodeEntity, "input")
+ DataNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
+};
+
 class ENTITIES_EXPORT InputNodeEntity : public Entity {
  public:
   ENTITY_ID(InputNodeEntity, "input")
@@ -100,8 +107,7 @@ class ENTITIES_EXPORT InputEntity : public Entity {
   ENTITY_ID(InputEntity, "input")
   InputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-  virtual void set_param_type(JSType param_type);
-  virtual void set_param_value(QVariant value);
+  virtual void set_value(QVariant value);
   virtual void set_exposed(bool expose);
 };
 
@@ -117,7 +123,6 @@ class ENTITIES_EXPORT OutputEntity : public Entity {
   ENTITY_ID(OutputEntity, "output param")
   OutputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-  virtual void set_param_type(JSType param_type);
   virtual void set_exposed(bool expose);
 };
 

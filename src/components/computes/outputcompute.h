@@ -15,10 +15,6 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   // We override to stop creating the inputs and outputs namespace.
   virtual void create_inputs_outputs() {external();}
 
-  // Our data type.
-  void set_param_type(JSType param_type);
-  JSType get_param_type() const;
-
   // Exposure.
   void set_exposed(bool exposed);
   bool is_exposed() const;
@@ -36,9 +32,6 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
  private:
   // Our fixed deps.
   Dep<Compute> _node_compute;
-
-  // Our data type.
-  JSType _param_type;
 
   // Exposure.
   bool _exposed;

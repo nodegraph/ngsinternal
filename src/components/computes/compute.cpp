@@ -93,7 +93,7 @@ QVariantMap Compute::get_input_values() const {
   external();
   QVariantMap map;
   for (auto iter: _inputs->get_all()) {
-    map[QString::fromStdString(iter.first)] = iter.second->get_param_value();
+    map[QString::fromStdString(iter.first)] = iter.second->get_unconnected_value();
   }
   return map;
 }
@@ -102,7 +102,7 @@ QVariantMap Compute::get_hidden_input_values() const {
   QVariantMap map;
   for (auto iter: _inputs->get_hidden()) {
     iter.second->clean_state();
-    map[QString::fromStdString(iter.first)] = iter.second->get_param_value();
+    map[QString::fromStdString(iter.first)] = iter.second->get_unconnected_value();
   }
   return map;
 }
@@ -110,7 +110,7 @@ QVariantMap Compute::get_hidden_input_values() const {
 QVariantMap Compute::get_exposed_input_values() const {
   QVariantMap map;
   for (auto iter: _inputs->get_exposed()) {
-    map[QString::fromStdString(iter.first)] = iter.second->get_param_value();
+    map[QString::fromStdString(iter.first)] = iter.second->get_unconnected_value();
   }
   return map;
 }
@@ -122,7 +122,7 @@ void Compute::set_input_values(const QVariantMap& values) {
     if (inputs.count(iter.key().toStdString())) {
       const Dep<InputCompute> &c = inputs.at(iter.key().toStdString());
       if (c) {
-        c->set_param_value(iter.value());
+        c->set_unconnected_value(iter.value());
       }
     }
   }
@@ -135,7 +135,7 @@ void Compute::set_hidden_input_values(const QVariantMap& values) {
     if (inputs.count(iter.key().toStdString())) {
       const Dep<InputCompute> &c = inputs.at(iter.key().toStdString());
       if (c) {
-        c->set_param_value(iter.value());
+        c->set_unconnected_value(iter.value());
       }
     }
   }
@@ -148,7 +148,7 @@ void Compute::set_exposed_input_values(const QVariantMap& values) {
     if (inputs.count(iter.key().toStdString())) {
       const Dep<InputCompute> &c = inputs.at(iter.key().toStdString());
       if (c) {
-        c->set_param_value(iter.value());
+        c->set_unconnected_value(iter.value());
       }
     }
   }
@@ -167,7 +167,7 @@ void Compute::set_input_value(const QString& name, const QVariant& value) {
   if (inputs.count(name.toStdString()) == 0) {
     return;
   }
-  inputs.at(name.toStdString())->set_param_value(value);
+  inputs.at(name.toStdString())->set_unconnected_value(value);
   inputs.at(name.toStdString())->clean_state();
 }
 
@@ -217,58 +217,49 @@ void Compute::set_input_exposure(const QVariantMap& settings) {
   }
 }
 
-bool Compute::check_variant_is_bool_and_true(const QVariant& value, const std::string& message) {
+bool Compute::variant_is_bool(const QVariant& value) {
   is_static();
-  if (value.userType() != QMetaType::Bool) {
-    std::cerr << "Error: " << "variant is not a bool: " << message << "\n";
-    return false;
+  if (value.userType() == QMetaType::Bool) {
+    return true;
   }
-  if (!value.toBool()) {
-    std::cerr << "Error: " << message << "\n";
-    return false;
-  }
-  return true;
+  return false;
 }
 
-bool Compute::check_variant_is_list(const QVariant& value, const std::string& message) {
+bool Compute::variant_is_list(const QVariant& value) {
   is_static();
   // For some reason the value.userType() call returns 1119 which doesn't match
   // QMetaType::QVariantList or QMetaType::QStringList. So we use canConvert instead.
   if (value.canConvert(QMetaType::QVariantList)) {
     return true;
   }
-  std::cerr << "Error: " << message << "\n";
   return false;
 }
 
-bool Compute::check_variant_is_map(const QVariant& value, const std::string& message) {
+bool Compute::variant_is_map(const QVariant& value) {
   is_static();
   if (value.userType() == QMetaType::QVariantMap) {
     return true;
   }
-  std::cerr << "Error: " << message << "\n";
   return false;
 }
 
-Entity* Compute::create_input(const std::string& name, const QVariant& value, JSType type, bool exposed) {
+Entity* Compute::create_input(const std::string& name, const QVariant& value, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
   InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, name, EntityDID::kInputEntity));
   input->create_internals();
-  input->set_param_type(type);
   input->set_exposed(exposed);
-  input->set_param_value(value);
+  input->set_value(value);
   return input;
 }
 
-Entity* Compute::create_output(const std::string& name, JSType type, bool exposed) {
+Entity* Compute::create_output(const std::string& name, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* outputs_space = get_outputs_space();
   OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, name, EntityDID::kOutputEntity));
   output->create_internals();
-  output->set_param_type(type);
   output->set_exposed(exposed);
   return output;
 }

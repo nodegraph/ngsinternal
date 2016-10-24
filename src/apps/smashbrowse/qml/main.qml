@@ -251,8 +251,8 @@ Rectangle {
         quick_view.closing.connect(app_window.on_closing)
 
         // Node viewing and editing.
-        node_graph_item.view_node_outputs.connect(view_data_list_stack_page.on_show_data)
-        node_graph_item.edit_node_params.connect(edit_data_list_stack_page.on_show_data)
+        node_graph_item.view_node_outputs.connect(view_data_list_stack_page.on_view_outputs)
+        node_graph_item.edit_node_inputs.connect(edit_data_list_stack_page.on_show_data)
     }
 
 //    // Prevent the android hardware back from closing the app.

@@ -35,7 +35,11 @@ BaseListDelegate {
     }
 
     function on_double_clicked() {
-    	get_stack_page().on_edit_element(name)
+    	if (get_stack_page()._allow_edits) {
+    		get_stack_page().on_edit_element(name)
+    	} else {
+    		get_stack_page().on_view_element(name)
+    	}
     }
     
 }

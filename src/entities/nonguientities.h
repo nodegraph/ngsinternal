@@ -68,7 +68,6 @@ class ENTITIES_EXPORT BaseInputEntity : public Entity {
   ENTITY_ID(BaseInputEntity, "base input param")
   BaseInputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-  virtual void set_param_type(JSType param_type);
 };
 
 class ENTITIES_EXPORT BaseOutputEntity : public Entity {

@@ -43,13 +43,15 @@ void ScriptNodeCompute::create_inputs_outputs() {
   Compute::create_inputs_outputs();
   create_input("in", QVariantMap());
   create_output("out");
-  create_input("use_script", false, JSType::kBoolean, false);
-  create_input("script", "", JSType::kString, false);
+  create_input("script", "", false);
 }
 
 const QVariantMap ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();
 QVariantMap ScriptNodeCompute::init_hints() {
   QVariantMap m;
+  add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
+
   add_hint(m, "script", HintType::kJSType, to_underlying(JSType::kString));
   add_hint(m, "script", HintType::kDescription, "The script which performs the work for this node.");
   return m;

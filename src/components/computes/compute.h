@@ -28,9 +28,9 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
  public:
 
   static const QVariant _empty_variant;
-  static bool check_variant_is_bool_and_true(const QVariant& value, const std::string& message);
-  static bool check_variant_is_list(const QVariant& value, const std::string& message);
-  static bool check_variant_is_map(const QVariant& value, const std::string& message);
+  static bool variant_is_bool(const QVariant& value);
+  static bool variant_is_list(const QVariant& value);
+  static bool variant_is_map(const QVariant& value);
 
   COMPONENT_ID(Compute, InvalidComponent);
   Compute(Entity* entity, ComponentDID derived_id);
@@ -78,8 +78,8 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
   virtual void set_output(const std::string& name, const QVariant& value);
 
   // Plugs.
-  Entity* create_input(const std::string& name, const QVariant& value, JSType type = JSType::kObject, bool exposed = true);
-  Entity* create_output(const std::string& name, JSType type = JSType::kObject, bool exposed = true);
+  Entity* create_input(const std::string& name, const QVariant& value, bool exposed = true);
+  Entity* create_output(const std::string& name, bool exposed = true);
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
   Entity* get_outputs_space();

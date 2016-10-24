@@ -25,18 +25,8 @@ bool OutputCompute::update_state() {
 
   // Using our name we query our nodes compute results.
   const std::string& our_name = our_entity()->get_name();
-  set_output("out", _node_compute->get_output("our_name"));
+  set_output("out", _node_compute->get_output(our_name));
   return true;
-}
-
-void OutputCompute::set_param_type(JSType param_type) {
-  external();
-  _param_type = param_type;
-}
-
-JSType OutputCompute::get_param_type() const {
-  external();
-  return _param_type;
 }
 
 void OutputCompute::set_exposed(bool exposed) {
@@ -53,10 +43,6 @@ void OutputCompute::save(SimpleSaver& saver) const {
   external();
   Compute::save(saver);
 
-  // Serialize the param type.
-  size_t type = static_cast<size_t>(_param_type);
-  saver.save(type);
-
   // Serialize the exposed value.
   saver.save(_exposed);
 }
@@ -64,11 +50,6 @@ void OutputCompute::save(SimpleSaver& saver) const {
 void OutputCompute::load(SimpleLoader& loader) {
   external();
   Compute::load(loader);
-
-  // Load the param type.
-  size_t type;
-  loader.load(type);
-  _param_type = static_cast<JSType>(type);
 
   // Load the exposed value.
   loader.load(_exposed);

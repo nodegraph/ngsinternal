@@ -359,6 +359,17 @@ void DotNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff OutputTopology(this);
 }
 
+void DataNodeEntity::create_internals(const std::vector<size_t>& ids) {
+  // Our components.
+  (new_ff InputNodeCompute(this))->create_inputs_outputs();
+  // Gui components.
+  new_ff InputNodeShape(this);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
+}
+
 void InputNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff InputNodeCompute(this))->create_inputs_outputs();
@@ -408,12 +419,8 @@ void InputEntity::create_internals(const std::vector<size_t>& ids) {
   }
 }
 
-void InputEntity::set_param_type(JSType param_type) {
-  get<InputCompute>()->set_type(param_type);
-}
-
-void InputEntity::set_param_value(QVariant value) {
-  get<InputCompute>()->set_param_value(value);
+void InputEntity::set_value(QVariant value) {
+  get<InputCompute>()->set_unconnected_value(value);
 }
 
 void InputEntity::set_exposed(bool expose) {
@@ -436,10 +443,6 @@ void OutputEntity::create_internals(const std::vector<size_t>& ids) {
     Entity* label = new_ff OutputLabelEntity(this, "label");
     label->create_internals();
   }
-}
-
-void OutputEntity::set_param_type(JSType param_type) {
-  get<OutputCompute>()->set_param_type(param_type);
 }
 
 void OutputEntity::set_exposed(bool expose) {

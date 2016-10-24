@@ -2,6 +2,10 @@
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/inputcompute.h>
 
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonValue>
+
 namespace ngs {
 
 // Input Nodes don't have input plugs, but they are associated
@@ -18,8 +22,7 @@ InputNodeCompute::~InputNodeCompute() {
 void InputNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("data_type", 0, JSType::kNumber, false);
-  create_input("expose_on_group", true, JSType::kBoolean, false);
+  create_input("json", "{\"value\": 0}", false);
   create_output("out");
 }
 
@@ -27,35 +30,62 @@ const QVariantMap InputNodeCompute::_hints = InputNodeCompute::init_hints();
 QVariantMap InputNodeCompute::init_hints() {
   QVariantMap m;
 
-  add_hint(m, "data_type", HintType::kJSType, to_underlying(JSType::kNumber));
-  add_hint(m, "data_type", HintType::kEnum, to_underlying(EnumHint::kJSType));
-  add_hint(m, "data_type", HintType::kDescription, "The type of data that will pass through this node.");
-
-  add_hint(m, "expose_on_group", HintType::kJSType, to_underlying(JSType::kBoolean));
-  add_hint(m, "expose_on_group", HintType::kDescription, "Whether to expose this as an input plug on our encompassing group.");
+  add_hint(m, "json", HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, "json", HintType::kDescription, "The json representation of the value that will be output by this node, if our encompassing group doesn't override it.");
 
   return m;
 }
 
+bool InputNodeCompute::update_state() {
+  Compute::update_state();
 
-void InputNodeCompute::set_value(const QVariant& value) {
-  external();
-  set_output("out", value);
-}
-
-QVariant InputNodeCompute::get_value() const {
-  return get_output("out");
-}
-
-bool InputNodeCompute::expose_on_group() const {
-  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
-  if (inputs.count("expose_on_group")) {
-	  return inputs.at("expose_on_group")->get_param_value().toBool();
-  } else {
-    std::cerr << "Error: The expose_on_group parameter is missing.\n";
-    assert(false);
+  // If we have a valid override, let's use that.
+  if (_override.isValid()) {
+    set_output("out", _override);
+    return true;
   }
-  return false;
+
+  // Otherwise use the json parameter for the output value.
+
+  // Get the json string from the json parameter.
+  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
+  assert(inputs.count("json"));
+
+  QVariantMap upstream = inputs.at("json")->get_output("out").toMap();
+  QString text("");
+
+  if (upstream.count("value")) {
+    text = upstream.find("value").value().toString();
+  }
+
+  // Create a variant map from the json string.'
+  QJsonParseError err;
+  QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8(), &err);
+  QVariantMap map;
+  if (err.error != QJsonParseError::NoError) {
+    map["value"] = (QString("parse error: ") + err.errorString());
+  } else if (!doc.isObject()) {
+    map["value"] = "parse error: the json string must represent an object.";
+  } else {
+    QJsonObject obj = doc.object();
+    map = obj.toVariantMap();
+  }
+  set_output("out", map);
+  return true;
+}
+
+void InputNodeCompute::set_override(const QVariant& override) {
+  external();
+  _override = override;
+}
+
+QVariant InputNodeCompute::get_override() const {
+  external();
+  return _override;
+}
+
+void InputNodeCompute::clear_override() {
+  _override.clear();
 }
 
 }

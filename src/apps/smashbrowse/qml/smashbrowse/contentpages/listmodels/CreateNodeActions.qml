@@ -23,6 +23,13 @@ ListModel {
     }
     ListElement {
         image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Data Node"
+        description: "A node which emits user specified data from its output plug."
+        script: "node_graph_item.create_data_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
         title: "Input Node"
         description: "A node which relays data from outside a group to inside the group."
         script: "node_graph_item.create_input_node(center_new_nodes);

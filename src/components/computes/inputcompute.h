@@ -16,16 +16,9 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
   // We override to stop creating the inputs and outputs namespace.
   virtual void create_inputs_outputs() {}
 
-  // Our parameter.
-  void set_param_value(const QVariant& value);
-  QVariant get_param_value() const;
-
-  // Our value.
-  QVariant get_value() const;
-
-  // Our data type.
-  void set_type(JSType type);
-  JSType get_type() const;
+  // The unconnected value.
+  void set_unconnected_value(const QVariant& value);
+  QVariant get_unconnected_value() const;
 
   // Exposure.
   void set_exposed(bool exposed);
@@ -48,20 +41,16 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
  private:
 
   // Our dynamic deps.
-  Dep<OutputCompute> _output;
+  Dep<OutputCompute> _upstream;
 
   // Our data.
   // Usually stores the value directly.
   // If it has a string starting with "data." then it's
   // an expression which pulls a value from the data tree flowing through the graph.
-  QVariant _param_value;
-
-  // Our data type.
-  JSType _type;
+  QVariant _unconnected_value;
 
   // Whether we are exposed in the node graph as a plug on a node.
   bool _exposed;
-
 };
 
 
