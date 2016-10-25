@@ -20,6 +20,16 @@ void DotNodeCompute::create_inputs_outputs() {
   create_output("out");
 }
 
+const QVariantMap DotNodeCompute::_hints = DotNodeCompute::init_hints();
+QVariantMap DotNodeCompute::init_hints() {
+  QVariantMap m;
+
+  add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
+
+  return m;
+}
+
 bool DotNodeCompute::update_state() {
   internal();
   Compute::update_state();

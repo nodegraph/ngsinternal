@@ -26,6 +26,7 @@
 
 #include <components/computes/compute.h>
 #include <components/computes/groupnodecompute.h>
+#include <components/computes/datanodecompute.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/mocknodecompute.h>
 #include <components/computes/outputnodecompute.h>

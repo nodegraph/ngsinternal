@@ -193,6 +193,13 @@ bool Compute::variant_is_map(const QVariant& value) {
   return false;
 }
 
+void Compute::merge_maps(QVariantMap& receiver, const QVariantMap& giver) {
+  is_static();
+  for (QVariantMap::const_iterator iter = giver.constBegin(); iter != giver.constEnd(); ++iter) {
+    receiver.insert(iter.key(), iter.value());
+  }
+}
+
 Entity* Compute::create_input(const std::string& name, const QVariant& value, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));

@@ -6,6 +6,7 @@ set(sources
 	dotnodecompute.cpp
 	groupnodecompute.cpp
 	inputcompute.cpp
+	datanodecompute.cpp
 	inputnodecompute.cpp
     mocknodecompute.cpp
     outputcompute.cpp
@@ -24,8 +25,8 @@ set(headers
     compute.h
 	dotnodecompute.h
 	groupnodecompute.h
-	
 	inputcompute.h
+	datanodecompute.h
 	inputnodecompute.h
 	mocknodecompute.h
 	outputcompute.h

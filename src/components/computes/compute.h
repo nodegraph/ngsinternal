@@ -30,6 +30,7 @@ class COMPUTES_EXPORT Compute: public Component {
   static bool variant_is_bool(const QVariant& value);
   static bool variant_is_list(const QVariant& value);
   static bool variant_is_map(const QVariant& value);
+  static void merge_maps(QVariantMap& receiver, const QVariantMap& giver);
 
   COMPONENT_ID(Compute, InvalidComponent);
   Compute(Entity* entity, ComponentDID derived_id);

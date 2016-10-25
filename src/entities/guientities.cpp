@@ -36,6 +36,7 @@
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/groupnodecompute.h>
 #include <components/computes/inputcompute.h>
+#include <components/computes/datanodecompute.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/mocknodecompute.h>
 #include <components/computes/outputcompute.h>
@@ -376,7 +377,7 @@ void DotNodeEntity::create_internals(const std::vector<size_t>& ids) {
 
 void DataNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
-  (new_ff InputNodeCompute(this))->create_inputs_outputs();
+  (new_ff DataNodeCompute(this))->create_inputs_outputs();
   // Gui components.
   new_ff InputNodeShape(this);
   new_ff Inputs(this);
