@@ -5,6 +5,7 @@ set(sources
 	compute.cpp
 	dotnodecompute.cpp
 	groupnodecompute.cpp
+	expgroupnodecompute.cpp
 	inputcompute.cpp
 	inputnodecompute.cpp
     mocknodecompute.cpp
@@ -13,7 +14,7 @@ set(sources
     )
     
 set(moc_headers
-    compute.h
+    expgroupnodecompute.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})
@@ -22,8 +23,10 @@ list(APPEND sources ${moc_imps})
 set(headers
     paramtypes.h
     flux.h
+    compute.h
 	dotnodecompute.h
 	groupnodecompute.h
+	
 	inputcompute.h
 	inputnodecompute.h
 	mocknodecompute.h

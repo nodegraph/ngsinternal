@@ -7,6 +7,7 @@ namespace ngs {
 enum class GroupType {
   DataGroup,
   WebGroup,
+  ExpGroup,
 };
 
 class BaseGroupTraits: public Component {

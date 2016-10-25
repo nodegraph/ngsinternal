@@ -23,8 +23,7 @@ const QVariant Compute::_empty_variant;
 const QVariantMap Compute::_hints;
 
 Compute::Compute(Entity* entity, ComponentDID derived_id)
-    : QObject(NULL),
-      Component(entity, kIID(), derived_id),
+    : Component(entity, kIID(), derived_id),
       _inputs(this),
       _ng_manipulator(this) {
   // Note this only exists for node computes and not for plug computes.
@@ -120,23 +119,6 @@ QVariantMap Compute::get_input_values() const {
       map[QString::fromStdString(iter.first)] = iter.second->get_output("out").toMap()["value"];
   }
   return map;
-}
-
-QVariant Compute::get_input_value(const QString& name) const {
-  const std::unordered_map<std::string, Dep<InputCompute> >& inputs =_inputs->get_all();
-  if (inputs.count(name.toStdString()) == 0) {
-    return QVariant();
-  }
-  return inputs.at(name.toStdString())->get_output("out");
-}
-
-void Compute::set_input_value(const QString& name, const QVariant& value) {
-  const std::unordered_map<std::string, Dep<InputCompute> >& inputs =_inputs->get_all();
-  if (inputs.count(name.toStdString()) == 0) {
-    return;
-  }
-  inputs.at(name.toStdString())->set_unconnected_value(value);
-  inputs.at(name.toStdString())->clean_state();
 }
 
 const QVariantMap& Compute::get_outputs() const {
@@ -259,20 +241,6 @@ void Compute::add_hint(QVariantMap& map,
   map[name.c_str()] = hints;
 }
 
-//void Compute::evaluate_script() {
-//  internal();
-//  QQmlEngine engine;
-//  // Create a new context to run our javascript expression.
-//  QQmlContext eval_context(engine.rootContext());
-//  // Set ourself as the context object, so all our methods will be available to qml.
-//  eval_context.setContextObject(this);
-//  // Create the expression.
-//  QQmlExpression expr(&eval_context, NULL, get_input_value("script").toString());
-//  // Run the expression. We only care about the side effects and not the return value.
-//  QVariant result = expr.evaluate();
-//  if (expr.hasError()) {
-//    qDebug() << "Error: expression has an error: " << expr.error().toString() << "\n";
-//  }
-//}
+
 
 }

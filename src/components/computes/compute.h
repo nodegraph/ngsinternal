@@ -23,8 +23,7 @@ namespace ngs {
 class InputCompute;
 class BaseNodeGraphManipulator;
 
-class COMPUTES_EXPORT Compute: public QObject, public Component {
-  Q_OBJECT
+class COMPUTES_EXPORT Compute: public Component {
  public:
 
   static const QVariant _empty_variant;
@@ -48,10 +47,6 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
 
   // Get our current input values.
   QVariantMap get_input_values() const;
-
-  // Get and set single input value.
-  Q_INVOKABLE QVariant get_input_value(const QString& name) const;
-  Q_INVOKABLE void set_input_value(const QString& name, const QVariant& value);
 
   // Get our outputs.
   virtual const QVariantMap& get_outputs() const;
@@ -86,8 +81,6 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
                        const std::string& name,
                        HintType hint_type,
                        const QVariant& value);
-
-//  void evaluate_script();
 
  protected:
   Dep<Inputs> _inputs;

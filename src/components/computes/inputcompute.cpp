@@ -28,7 +28,6 @@ bool InputCompute::update_state() {
   Compute::update_state();
 
   QVariantMap output;
-  output["value"] = 0;
 
   // Merge in information from the default unconnected value.
   if (_unconnected_value.isValid()) {
