@@ -62,15 +62,15 @@ bool Compute::update_state() {
     _ng_manipulator->set_processing_node(our_entity());
   }
 
-  // If the script is enabled then run it.
-  if (_inputs) {
-    const std::unordered_map<std::string, Dep<InputCompute> > &inputs = _inputs->get_all();
-    if (inputs.count("use_script")) {
-      if (inputs.at("use_script")->get_output("out").toBool()) {
-        evaluate_script();
-      }
-    }
-  }
+//  // If the script is enabled then run it.
+//  if (_inputs) {
+//    const std::unordered_map<std::string, Dep<InputCompute> > &inputs = _inputs->get_all();
+//    if (inputs.count("use_script")) {
+//      if (inputs.at("use_script")->get_output("out").toBool()) {
+//        evaluate_script();
+//      }
+//    }
+//  }
 
   return true;
 }
@@ -89,33 +89,18 @@ void Compute::update_input_flux() {
   _inputs->clean_wires();
 }
 
-QVariantMap Compute::get_input_values() const {
+QVariantMap Compute::get_editable_inputs() const {
   external();
   QVariantMap map;
   for (auto iter: _inputs->get_all()) {
-    map[QString::fromStdString(iter.first)] = iter.second->get_unconnected_value();
+    if (!iter.second->is_connected()) {
+      map[QString::fromStdString(iter.first)] = iter.second->get_unconnected_value();
+    }
   }
   return map;
 }
 
-QVariantMap Compute::get_hidden_input_values() const {
-  QVariantMap map;
-  for (auto iter: _inputs->get_hidden()) {
-    iter.second->clean_state();
-    map[QString::fromStdString(iter.first)] = iter.second->get_unconnected_value();
-  }
-  return map;
-}
-
-QVariantMap Compute::get_exposed_input_values() const {
-  QVariantMap map;
-  for (auto iter: _inputs->get_exposed()) {
-    map[QString::fromStdString(iter.first)] = iter.second->get_unconnected_value();
-  }
-  return map;
-}
-
-void Compute::set_input_values(const QVariantMap& values) {
+void Compute::set_editable_inputs(const QVariantMap& values) {
   QVariantMap::const_iterator iter;
   const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
   for (iter = values.begin(); iter != values.end(); ++iter) {
@@ -128,30 +113,13 @@ void Compute::set_input_values(const QVariantMap& values) {
   }
 }
 
-void Compute::set_hidden_input_values(const QVariantMap& values) {
-  QVariantMap::const_iterator iter;
-  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_hidden();
-  for (iter = values.begin(); iter != values.end(); ++iter) {
-    if (inputs.count(iter.key().toStdString())) {
-      const Dep<InputCompute> &c = inputs.at(iter.key().toStdString());
-      if (c) {
-        c->set_unconnected_value(iter.value());
-      }
-    }
+QVariantMap Compute::get_input_values() const {
+  external();
+  QVariantMap map;
+  for (auto iter: _inputs->get_all()) {
+      map[QString::fromStdString(iter.first)] = iter.second->get_output("out").toMap()["value"];
   }
-}
-
-void Compute::set_exposed_input_values(const QVariantMap& values) {
-  QVariantMap::const_iterator iter;
-  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_exposed();
-  for (iter = values.begin(); iter != values.end(); ++iter) {
-    if (inputs.count(iter.key().toStdString())) {
-      const Dep<InputCompute> &c = inputs.at(iter.key().toStdString());
-      if (c) {
-        c->set_unconnected_value(iter.value());
-      }
-    }
-  }
+  return map;
 }
 
 QVariant Compute::get_input_value(const QString& name) const {
@@ -291,20 +259,20 @@ void Compute::add_hint(QVariantMap& map,
   map[name.c_str()] = hints;
 }
 
-void Compute::evaluate_script() {
-  internal();
-  QQmlEngine engine;
-  // Create a new context to run our javascript expression.
-  QQmlContext eval_context(engine.rootContext());
-  // Set ourself as the context object, so all our methods will be available to qml.
-  eval_context.setContextObject(this);
-  // Create the expression.
-  QQmlExpression expr(&eval_context, NULL, get_input_value("script").toString());
-  // Run the expression. We only care about the side effects and not the return value.
-  QVariant result = expr.evaluate();
-  if (expr.hasError()) {
-    qDebug() << "Error: expression has an error: " << expr.error().toString() << "\n";
-  }
-}
+//void Compute::evaluate_script() {
+//  internal();
+//  QQmlEngine engine;
+//  // Create a new context to run our javascript expression.
+//  QQmlContext eval_context(engine.rootContext());
+//  // Set ourself as the context object, so all our methods will be available to qml.
+//  eval_context.setContextObject(this);
+//  // Create the expression.
+//  QQmlExpression expr(&eval_context, NULL, get_input_value("script").toString());
+//  // Run the expression. We only care about the side effects and not the return value.
+//  QVariant result = expr.evaluate();
+//  if (expr.hasError()) {
+//    qDebug() << "Error: expression has an error: " << expr.error().toString() << "\n";
+//  }
+//}
 
 }

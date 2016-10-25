@@ -348,10 +348,16 @@ void WebWorker::queue_emit_option_texts(TaskContext& tc) {
 // ------------------------------------------------------------------------
 
 void WebWorker::handle_response(const Message& msg) {
-  // Merge the values into the chain_state.
-  QVariantMap &value = msg[Message::kValue].toMap();
-  for (QVariantMap::const_iterator iter = value.constBegin(); iter != value.constEnd(); ++iter) {
-    _chain_state.insert(iter.key(), iter.value());
+  QVariant value = msg[Message::kValue];
+
+  if (Compute::variant_is_map(value)) {
+    // Merge the values into the chain_state.
+    QVariantMap &value = msg[Message::kValue].toMap();
+    for (QVariantMap::const_iterator iter = value.constBegin(); iter != value.constEnd(); ++iter) {
+      _chain_state.insert(iter.key(), iter.value());
+    }
+  } else if (value.isValid()) {
+    _chain_state["value"] = value;
   }
 
   _last_response_success = msg[Message::kSuccess].toBool();
@@ -402,7 +408,7 @@ void WebWorker::merge_chain_state_task(const QVariantMap& map) {
 }
 
 void WebWorker::get_outputs_task(std::function<void(const QVariantMap&)> on_get_outputs) {
-  on_get_outputs(_chain_state["outputs"].toMap());
+  on_get_outputs(_chain_state);
   _task_sheduler->run_next_task();
 }
 

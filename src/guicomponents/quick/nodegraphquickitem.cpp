@@ -779,7 +779,7 @@ void NodeGraphQuickItem::edit_node() {
 
     compute->update_input_flux();
     emit edit_node_inputs(compute->our_entity()->get_name().c_str(),
-                          compute->get_input_values(),
+                          compute->get_editable_inputs(),
                           compute->get_hints(),
                           compute->get_input_exposure());
     //emit edit_node_inputs(compute->our_entity()->get_name().c_str(), test, all_hints);
@@ -792,13 +792,13 @@ void NodeGraphQuickItem::edit_node() {
   }
 }
 
-void NodeGraphQuickItem::set_input_values(const QVariantMap& values) {
+void NodeGraphQuickItem::set_editable_inputs(const QVariantMap& values) {
   if (!_last_pressed_node) {
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
-    compute->set_input_values(values);
+    compute->set_editable_inputs(values);
   }
 }
 
@@ -1027,7 +1027,7 @@ void NodeGraphQuickItem::edit_node_poke() {
   }
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   compute->update_input_flux();
-  emit edit_node_inputs(compute->our_entity()->get_name().c_str(), compute->get_input_values(), compute->get_hints(), compute->get_input_exposure());
+  emit edit_node_inputs(compute->our_entity()->get_name().c_str(), compute->get_editable_inputs(), compute->get_hints(), compute->get_input_exposure());
 }
 
 }

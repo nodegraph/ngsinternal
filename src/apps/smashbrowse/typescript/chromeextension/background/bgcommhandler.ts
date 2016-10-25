@@ -56,7 +56,7 @@ class BgCommHandler {
             case RequestType.kGetZoom: {
                 let done_get_zoom = (zoom: number) => {
                     // Send response to nodejs.
-                    let response = new ResponseMessage(req.id, "-1", true, zoom)
+                    let response = new ResponseMessage(req.id, "-1", true, {'zoom': zoom})
                     this.bg_comm.send_to_nodejs(response)
                 }
                 BrowserWrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom);

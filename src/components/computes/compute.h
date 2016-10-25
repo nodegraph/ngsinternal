@@ -42,15 +42,12 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
 
   virtual void update_input_flux();
 
-  // Get and set input values.
-  // Note these are the param values.
-  // If the input is connected the actually output value comes from the connected incoming compute.
+  // Get and set editable inputs. (These are the unconnected inputs.)
+  QVariantMap get_editable_inputs() const;
+  void set_editable_inputs(const QVariantMap& inputs);
+
+  // Get our current input values.
   QVariantMap get_input_values() const;
-  QVariantMap get_hidden_input_values() const; // These are the params of the node.
-  QVariantMap get_exposed_input_values() const; // These are the linkable inputs of the node.
-  void set_input_values(const QVariantMap& inputs);
-  void set_hidden_input_values(const QVariantMap& inputs);
-  void set_exposed_input_values(const QVariantMap& inputs);
 
   // Get and set single input value.
   Q_INVOKABLE QVariant get_input_value(const QString& name) const;
@@ -90,7 +87,7 @@ class COMPUTES_EXPORT Compute: public QObject, public Component {
                        HintType hint_type,
                        const QVariant& value);
 
-  void evaluate_script();
+//  void evaluate_script();
 
  protected:
   Dep<Inputs> _inputs;

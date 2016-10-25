@@ -28,16 +28,16 @@ bool InputCompute::update_state() {
   Compute::update_state();
 
   QVariantMap output;
+  output["value"] = 0;
 
   // Merge in information from the default unconnected value.
   if (_unconnected_value.isValid()) {
     if (variant_is_map(_unconnected_value)) {
-//      // If the unconnected value is a map, merge the values in.
-//      QVariantMap map = _unconnected_value.toMap();
-//      for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
-//        output.insert(iter.key(), iter.value());
-//      }
-      output = _unconnected_value.toMap();
+      // If the unconnected value is a map, merge the values in.
+      QVariantMap map = _unconnected_value.toMap();
+      for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+        output.insert(iter.key(), iter.value());
+      }
     } else {
       output["value"] = _unconnected_value;
     }
@@ -128,9 +128,16 @@ bool InputCompute::link_output_compute(Dep<OutputCompute>& output) {
   return false;
 }
 
-Dep<OutputCompute> InputCompute::get_output_compute() const {
+const Dep<OutputCompute>& InputCompute::get_output_compute() const {
   external();
   return _upstream;
+}
+
+bool InputCompute::is_connected() const {
+  if (_upstream) {
+    return true;
+  }
+  return false;
 }
 
 void InputCompute::unlink_output_compute() {

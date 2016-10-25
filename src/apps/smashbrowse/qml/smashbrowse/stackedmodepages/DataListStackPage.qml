@@ -354,7 +354,7 @@ BaseStackPage{
     // Set the value at the given path in _values.
     function set_value(path, value) {
         app_utils.set_sub_object(_values, path, value)
-        node_graph_item.set_input_values(_values)
+        node_graph_item.set_editable_inputs(_values)
     }
 
     // Get the value at the given path in _values.
@@ -369,6 +369,9 @@ BaseStackPage{
     	
     	if (_allow_edits) {
     		var hints = get_hints(path)
+    		if (hints === undefined) {
+    			console.error('error: no hints for: ' + path)
+    		}
     		value_type = hints[hint_type.kJSType]
     		
     		// Use the hints to get a more descriptive string representation.
@@ -411,6 +414,9 @@ BaseStackPage{
     	
     	if (_allow_edits) {
     		var hints = get_hints(path)
+    		if (hints === undefined) {
+    			console.error('error: no hints for: ' + path)
+    		}
     		value_type = hints[hint_type.kJSType]
     	} else {
     		value_type = app_enums.determine_js_type(value)

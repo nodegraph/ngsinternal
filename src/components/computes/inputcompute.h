@@ -28,7 +28,8 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
   bool can_link_output_compute(const Dep<OutputCompute>& output) const;
   bool link_output_compute(Dep<OutputCompute>& output);
   void unlink_output_compute();
-  Dep<OutputCompute> get_output_compute() const;
+  const Dep<OutputCompute>& get_output_compute() const;
+  bool is_connected() const;
 
   // Serialization.
   virtual void save(SimpleSaver& saver) const;

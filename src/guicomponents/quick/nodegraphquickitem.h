@@ -61,7 +61,7 @@ Q_OBJECT
   Q_INVOKABLE void dirty_node();
   Q_INVOKABLE void clean_node();
 
-  Q_INVOKABLE void set_input_values(const QVariantMap& values);
+  Q_INVOKABLE void set_editable_inputs(const QVariantMap& values);
   Q_INVOKABLE void set_input_exposure(const QVariantMap& values);
 
   // Group Navigation.

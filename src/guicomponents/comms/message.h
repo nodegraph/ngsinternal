@@ -151,6 +151,8 @@ class COMMS_EXPORT Message: public QVariantMap {
   static const char* kSetIndex;
   static const char* kOverlayIndex;
 
+  static const char* kTextDataName;
+
   static const char* kText;
   static const char* kOptionText;
   static const char* kPosition;

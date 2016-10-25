@@ -33,6 +33,8 @@ const char* Message::kElementAction = "element_action";
 const char* Message::kSetIndex = "set_index";
 const char* Message::kOverlayIndex = "overlay_index";
 
+const char* Message::kTextDataName = "text_data_name";
+
 const char* Message::kText = "text";
 const char* Message::kOptionText = "option_text";
 const char* Message::kPosition = "position";
