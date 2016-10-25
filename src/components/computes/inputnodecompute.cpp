@@ -22,7 +22,7 @@ InputNodeCompute::~InputNodeCompute() {
 void InputNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("json", "{\"value\": 0}", false);
+  create_input("json", "{\n\t\"value\": 0\n}", false);
   create_output("out");
 }
 
@@ -31,6 +31,7 @@ QVariantMap InputNodeCompute::init_hints() {
   QVariantMap m;
 
   add_hint(m, "json", HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, "json", HintType::kMultiLineEdit, true);
   add_hint(m, "json", HintType::kDescription, "The object that will be output by this node, if the corresponding input plug on this group is not connected. This must be specified in JSON format and must represent an object.");
 
   return m;

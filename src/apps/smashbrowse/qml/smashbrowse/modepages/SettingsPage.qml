@@ -118,7 +118,7 @@ Rectangle {
             }
 
             // Title Field.
-            AppTextField {
+            AppLineEdit {
                 id: browser_width_text_field
                 text: '1024'
                 tool_bar: copy_paste_bar
@@ -144,7 +144,7 @@ Rectangle {
             }
 
             // Title Field.
-            AppTextField {
+            AppLineEdit {
                 id: browser_height_text_field
                 text: '1150'
                 tool_bar: copy_paste_bar
@@ -170,7 +170,7 @@ Rectangle {
             }
 
             // Title Field.
-            AppTextField {
+            AppLineEdit {
                 id: max_node_posts_text_field
                 text: '1000'
                 tool_bar: copy_paste_bar
@@ -218,7 +218,7 @@ Rectangle {
             }
 
             // Title Field.
-            AppTextField {
+            AppLineEdit {
                 id: auto_run_interval_text_field
                 tool_bar: copy_paste_bar
                 text: '60'

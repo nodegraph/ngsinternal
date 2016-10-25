@@ -78,7 +78,7 @@ Rectangle {
         }
 
         // License field.
-        AppTextField {
+        AppLineEdit {
             id: license_text_field
             anchors {
                 left: parent.left

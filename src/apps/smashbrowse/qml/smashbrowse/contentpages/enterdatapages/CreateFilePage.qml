@@ -71,7 +71,7 @@ Rectangle {
             }
 
             // Title Field.
-            AppTextField {
+            AppLineEdit {
                 id: title_field
                 tool_bar: copy_paste_bar
                 text: create_file ? file_model.get_default_settings().title : file_model.get_current_title()
@@ -99,7 +99,7 @@ Rectangle {
             }
 
             // Description Field.
-            AppTextField {
+            AppLineEdit {
                 id: description_field
                 tool_bar: copy_paste_bar
                 text: create_file ? file_model.get_default_settings().description : file_model.get_current_description()

@@ -92,8 +92,9 @@ Rectangle {
         property int kElementEnum: 3
         property int kDescription: 4
         property int kResizable: 5
-        property int kMin: 6
-        property int kMax: 7
+        property int kMultiLineEdit: 6
+        property int kMin: 7
+        property int kMax: 8
     }
 
 

@@ -21,6 +21,7 @@ enum class HintType: int {
   kElementEnum, // This represents the type of enum represented by number elements inside an array/object.
   kDescription, // A helpful description of the parameter.
   kResizable, // Whether an array or object parameter is adjustable in terms of the number of elements it contains.
+  kMultiLineEdit, // Whether to use a single of multiline editor.
   kMin,
   kMax,
 };

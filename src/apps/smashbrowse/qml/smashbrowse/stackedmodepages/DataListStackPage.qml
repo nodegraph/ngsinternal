@@ -140,9 +140,15 @@ BaseStackPage{
         var exposed = stack_page.get_exposed(child_path)
         switch(child_hints[hint_type.kJSType]) {
         case js_type.kString:
-            var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditStringPage.qml", edit_data_list_stack_page, {})
-            setup_edit_page(page, name, child_value, child_hints, exposed)
-            stack_view.push_page(page)
+        	if (child_hints.hasOwnProperty(hint_type.kMultiLineEdit)) {
+        		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditMultiLinePage.qml", edit_data_list_stack_page, {})
+	            setup_edit_page(page, name, child_value, child_hints, exposed)
+	            stack_view.push_page(page)
+        	} else {
+	            var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditLinePage.qml", edit_data_list_stack_page, {})
+	            setup_edit_page(page, name, child_value, child_hints, exposed)
+	            stack_view.push_page(page)
+            }
             break
         case js_type.kBoolean:
             var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml", edit_data_list_stack_page, {})

@@ -76,7 +76,7 @@ Rectangle {
         AppSpacer {}
 
         // Text Field.
-        AppTextField {
+        AppLineEdit {
             id: text_field
             tool_bar: copy_paste_bar
             text: "untitled"

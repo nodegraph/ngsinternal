@@ -28,13 +28,14 @@ ScriptGroupNodeCompute::~ScriptGroupNodeCompute() {
 void ScriptGroupNodeCompute::create_inputs_outputs() {
   external();
   GroupNodeCompute::create_inputs_outputs();
-  create_input("script", "set_output_value(\"output\", input.value + 1)", false);
+  create_input("script", "var delta = 99;\nset_output_value(\"output\", input.value + delta);\n", false);
 }
 
 const QVariantMap ScriptGroupNodeCompute::_hints = ScriptGroupNodeCompute::init_hints();
 QVariantMap ScriptGroupNodeCompute::init_hints() {
   QVariantMap m;
   add_hint(m, "script", HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, "script", HintType::kMultiLineEdit, true);
   add_hint(m, "script", HintType::kDescription, "The script which computes the output values of this group. All the input values are made available under their names. Use \"set_output_value(...)\" to set an output value.");
   return m;
 }

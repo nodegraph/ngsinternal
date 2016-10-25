@@ -17,7 +17,8 @@
         
         <!-- Edit Data Pages -->
         <file>qml/smashbrowse/contentpages/editdatapages/qmldir</file>
-        <file>qml/smashbrowse/contentpages/editdatapages/EditStringPage.qml</file>
+        <file>qml/smashbrowse/contentpages/editdatapages/EditMultiLinePage.qml</file>
+        <file>qml/smashbrowse/contentpages/editdatapages/EditLinePage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml</file>
@@ -70,7 +71,8 @@
         <file>qml/smashbrowse/appwidgets/AppScrollView.qml</file>
         <file>qml/smashbrowse/appwidgets/AppImageButton.qml</file>
         <file>qml/smashbrowse/appwidgets/AppText.qml</file>
-        <file>qml/smashbrowse/appwidgets/AppTextField.qml</file>
+        <file>qml/smashbrowse/appwidgets/AppMultiLineEdit.qml</file>
+        <file>qml/smashbrowse/appwidgets/AppLineEdit.qml</file>
         <file>qml/smashbrowse/appwidgets/AppPasswordField.qml</file>
         <file>qml/smashbrowse/appwidgets/AppTooltip.qml</file>
         <file>qml/smashbrowse/appwidgets/AppMenu.qml</file>
