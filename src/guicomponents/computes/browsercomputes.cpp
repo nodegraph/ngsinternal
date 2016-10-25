@@ -30,19 +30,11 @@ void BrowserCompute::create_inputs_outputs() {
   Compute::create_inputs_outputs();
   create_input("in", QVariantMap());
   create_output("out");
-  create_input("use_script", false, false);
-  create_input("script", "", false);
 }
 
 void BrowserCompute::init_hints(QVariantMap& m) {
   add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
   add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
-
-  add_hint(m, "use_script", HintType::kJSType, to_underlying(JSType::kBoolean));
-  add_hint(m, "use_script", HintType::kDescription, "Whether to use a script to modify the input parameters on this node.");
-
-  add_hint(m, "script", HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, "script", HintType::kDescription, "The script to modify the input parameters on this node.");
 }
 
 void BrowserCompute::dump_map(const QVariantMap& inputs) const {
@@ -68,13 +60,14 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
   _web_worker->queue_get_outputs(tc, on_get_outputs_bound);
 }
 
-void BrowserCompute::on_get_outputs(const QVariantMap& outputs) {
+void BrowserCompute::on_get_outputs(const QVariantMap& chain_state) {
   internal();
-  //set_outputs(outputs);
   clean_finalize();
 
-  QVariant up = _inputs->get_all().at("in")->get_output("out");
-  set_output("out", up);
+  // This copies the incoming data, to our output.
+  // Derived classes will in add in extra data, extracted from the web.
+  QVariant upstream = _inputs->get_all().at("in")->get_output("out");
+  set_output("out", upstream);
 }
 
 //--------------------------------------------------------------------------------
@@ -467,6 +460,7 @@ void ElementActionCompute::create_inputs_outputs() {
   create_input(Message::kElementAction, 0, false);
   create_input(Message::kOptionText, "", false); // Only used when the element action is set to select option from dropdown.
   create_input(Message::kDirection, 0, false); // Only used when the element action is set to scroll.
+  create_input(Message::kTextDataName, "extracted_text", false); // Only used when the element action is set to get_text.
 }
 
 const QVariantMap ElementActionCompute::_hints = ElementActionCompute::init_hints();
@@ -490,7 +484,23 @@ QVariantMap ElementActionCompute::init_hints() {
   add_hint(m, Message::kDirection, HintType::kJSType, to_underlying(JSType::kNumber));
   add_hint(m, Message::kDirection, HintType::kEnum, to_underlying(EnumHint::kDirectionType));
   add_hint(m, Message::kDirection, HintType::kDescription, "The direction to scroll.");
+
+  add_hint(m, Message::kTextDataName, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kTextDataName, HintType::kDescription, "The name used to reference the extracted text data.");
+
   return m;
+}
+
+void ElementActionCompute::on_get_outputs(const QVariantMap& chain_state) {
+  internal();
+  clean_finalize();
+
+  // This copies the incoming data, to our output.
+  // Derived classes will in add in extra data, extracted from the web.
+  QVariantMap upstream = _inputs->get_all().at("in")->get_output("out").toMap();
+  QString text_data_name = _inputs->get_all().at(Message::kTextDataName)->get_output("out").toMap()["value"].toString();
+  upstream[text_data_name] = chain_state["value"];
+  set_output("out", upstream);
 }
 
 bool ElementActionCompute::update_state() {

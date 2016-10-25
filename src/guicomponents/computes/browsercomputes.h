@@ -19,7 +19,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   virtual void create_inputs_outputs();
 
-  virtual void on_get_outputs(const QVariantMap& outputs);
+  virtual void on_get_outputs(const QVariantMap& chain_state);
 
   static void init_hints(QVariantMap& m);
 
@@ -209,6 +209,9 @@ class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
   static QVariantMap init_hints();
   static const QVariantMap _hints;
   virtual const QVariantMap& get_hints() const {return _hints;}
+
+  virtual void on_get_outputs(const QVariantMap& chain_state);
+
  protected:
   virtual bool update_state();
 };
