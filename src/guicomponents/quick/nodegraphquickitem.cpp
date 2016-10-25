@@ -593,7 +593,13 @@ void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
 
 void NodeGraphQuickItem::create_group_node(bool centered) {
   external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "group", EntityDID::kGroupNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "data group", EntityDID::kGroupNodeEntity);
+  finish_creating_node(e, centered);
+}
+
+void NodeGraphQuickItem::create_script_group_node(bool centered) {
+  external();
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "script group", EntityDID::kScriptGroupNodeEntity);
   finish_creating_node(e, centered);
 }
 

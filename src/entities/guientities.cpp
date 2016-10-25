@@ -55,6 +55,7 @@
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
+#include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <guicomponents/computes/webgroupnodecompute.h>
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
@@ -326,6 +327,20 @@ void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>
         e->save(saver);
       }
     }
+}
+
+void ScriptGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
+  // Our components.
+  (new_ff ScriptGroupNodeCompute(this))->create_inputs_outputs();
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  new_ff GroupTraits(this);
+  // Gui related.
+  new_ff GroupInteraction(this);
+  new_ff CompShapeCollective(this);
+  new_ff GroupNodeShape(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
 }
 
 void WebGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {

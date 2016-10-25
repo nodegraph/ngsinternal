@@ -1,7 +1,8 @@
 #pragma once
-#include <components/computes/computes_export.h>
+#include <guicomponents/computes/guicomputes_export.h>
 #include <components/computes/groupnodecompute.h>
 #include <entities/componentids.h>
+#include <guicomponents/comms/message.h>
 
 // QT
 #include <QtCore/QObject>
@@ -11,12 +12,12 @@ namespace ngs {
 
 class BaseGroupTraits;
 
-class COMPUTES_EXPORT ExpGroupNodeCompute: public QObject, public GroupNodeCompute {
+class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNodeCompute {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, ExpGroupNodeCompute);
-  ExpGroupNodeCompute(Entity* entity);
-  virtual ~ExpGroupNodeCompute();
+  COMPONENT_ID(Compute, ScriptGroupNodeCompute);
+  ScriptGroupNodeCompute(Entity* entity);
+  virtual ~ScriptGroupNodeCompute();
 
   // Inputs and Outputs.
   virtual void create_inputs_outputs();
@@ -34,7 +35,7 @@ class COMPUTES_EXPORT ExpGroupNodeCompute: public QObject, public GroupNodeCompu
   // Our state.
   virtual bool update_state();
 
-  virtual void evaluate_script();
+  virtual bool evaluate_script();
 
  private:
   Dep<BaseGroupTraits> _group_traits;

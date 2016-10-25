@@ -9,18 +9,28 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
-        title: "Web Group Node"
-        description: "A node which groups a number of nodes inside of itself."
-        script: "node_graph_item.create_web_group_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
-    }
-    ListElement {
-        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
-        title: "Group Node"
-        description: "A node which groups a number of nodes inside of itself."
+        title: "Data Group Node"
+        description: "A node which groups data processing nodes inside of itself."
         script: "node_graph_item.create_group_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
+        title: "Script Group Node"
+        description: "A node which uses a script to compute its outputs. Input and Output nodes define the interface to the script."
+        script: "node_graph_item.create_script_group_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
+        title: "Web Group Node"
+        description: "A node which groups web browser action nodes inside of itself."
+        script: "node_graph_item.create_web_group_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+
     ListElement {
         image_url: "qrc:///icons/ic_details_white_48dp.png"
         title: "Data Node"

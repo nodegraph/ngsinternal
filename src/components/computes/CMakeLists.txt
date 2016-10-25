@@ -5,7 +5,6 @@ set(sources
 	compute.cpp
 	dotnodecompute.cpp
 	groupnodecompute.cpp
-	expgroupnodecompute.cpp
 	inputcompute.cpp
 	inputnodecompute.cpp
     mocknodecompute.cpp
@@ -14,7 +13,6 @@ set(sources
     )
     
 set(moc_headers
-    expgroupnodecompute.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})
@@ -41,7 +39,6 @@ target_link_libraries(ngs_computes
 	ngs_objectmodel 
 	ngs_memoryallocator
 	ngs_compshapes
-	Qt5::Quick
 	)
 
 qt5_use_modules(ngs_computes Core)

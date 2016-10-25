@@ -26,7 +26,6 @@
 
 #include <components/computes/compute.h>
 #include <components/computes/groupnodecompute.h>
-#include <components/computes/expgroupnodecompute.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/mocknodecompute.h>
 #include <components/computes/outputnodecompute.h>
@@ -57,6 +56,7 @@
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <gui/widget/nodegrapheditor.h>
+#include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <guicomponents/computes/webgroupnodecompute.h>
 
 

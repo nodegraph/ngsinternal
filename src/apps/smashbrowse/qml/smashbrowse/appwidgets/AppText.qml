@@ -19,5 +19,5 @@ Text  {
     
     // Wrapping.
     wrapMode: Text.Wrap
-    maximumLineCount: 5 // The maximum number of lines to show.
+    maximumLineCount: 6 // The maximum number of lines to show.
 }

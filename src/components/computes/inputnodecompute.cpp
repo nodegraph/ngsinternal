@@ -31,7 +31,7 @@ QVariantMap InputNodeCompute::init_hints() {
   QVariantMap m;
 
   add_hint(m, "json", HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, "json", HintType::kDescription, "The json representation of the value that will be output by this node, if our encompassing group doesn't override it.");
+  add_hint(m, "json", HintType::kDescription, "The object that will be output by this node, if the corresponding input plug on this group is not connected. This must be specified in JSON format and must represent an object.");
 
   return m;
 }

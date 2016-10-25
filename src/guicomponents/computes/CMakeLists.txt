@@ -1,19 +1,21 @@
 
 set(sources
-    browsercomputes.cpp
     webgroupnodecompute.cpp
+    scriptgroupnodecompute.cpp
     scriptnodecompute.cpp
+    browsercomputes.cpp
+    
     )
    
 set(headers
-    browsercomputes.h
     webgroupnodecompute.h
     scriptnodecompute.h
-)
+    browsercomputes.h
+    )
 
     
 set(moc_headers
-    
+    scriptgroupnodecompute.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})

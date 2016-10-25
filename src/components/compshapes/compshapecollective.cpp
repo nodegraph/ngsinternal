@@ -5,6 +5,7 @@
 #include <base/utils/threadpool.h>
 
 #include <entities/entityids.h>
+#include <entities/componentids.h>
 
 #include <components/compshapes/compshape.h>
 #include <components/compshapes/topology.h>
@@ -97,9 +98,9 @@ void CompShapeCollective::collect_comp_shapes(Entity* entity) {
     }
   }
 
-  // If it's a group node we don't dive into it.
-  // We show its inputs and outputs.
-  if (entity->get_did() == EntityDID::kGroupNodeEntity || entity->get_did() == EntityDID::kWebGroupNodeEntity) {
+  // If it's some type of group node we don't dive into it.
+  // We only show its inputs and outputs.
+  if (entity->has_comp(ComponentIID::kIGroupInteraction)) {
     collect_comp_shapes(entity->get_entity(Path({".","inputs"})));
     collect_comp_shapes(entity->get_entity(Path({".","outputs"})));
     return;

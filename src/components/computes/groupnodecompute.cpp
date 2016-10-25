@@ -92,7 +92,7 @@ void GroupNodeCompute::update_wires() {
     std::vector<Entity*> _inputs_to_destroy;
     for (auto &iter : inputs_space->get_children()) {
       const std::string& child_name = iter.first;
-      if (!exposed_inputs.count(child_name)) {
+      if (!exposed_inputs.count(child_name) && !_on_group_inputs.count(child_name)) {
         _inputs_to_destroy.push_back(iter.second);
       }
     }
@@ -207,9 +207,9 @@ bool GroupNodeCompute::clean_inputs() {
     const std::string& input_name = input->get_name();
     // Find the input node inside this group with the same name as the input.
     Entity* input_node = our_entity()->get_child(input_name);
-    // Make sure we have an input node.
+    // Not all the inputs on a group are associated with input nodes inside the group.
+    // Some are just params directly on the group.
     if (!input_node) {
-      assert(false);
       continue;
     }
     // Copy the input value to the input node, but only if they're different,
@@ -235,9 +235,9 @@ bool GroupNodeCompute::update_state() {
     const std::string& input_name = input->get_name();
     // Find the input node inside this group with the same name as the input.
     Entity* input_node = our_entity()->get_child(input_name);
-    // Make sure we have an input node.
+    // Not all the inputs on a group are associated with input nodes inside the group.
+    // Some are just params directly on the group.
     if (!input_node) {
-      assert(false);
       continue;
     }
     // Copy the input value to the input node, but only if they're different,
@@ -260,6 +260,7 @@ bool GroupNodeCompute::update_state() {
     // Find an output node in this group with the same name as the output.
     Entity* output_node = our_entity()->get_child(output_name);
     // Make sure we have an output node.
+    // All outputs on a group should have an associated output node inside the group at the moment.
     if (!output_node) {
       assert(false);
       continue;

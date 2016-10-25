@@ -93,7 +93,7 @@ COMPONENT_ENTRY1(DotNodeCompute)\
 COMPONENT_ENTRY1(InputCompute)\
 COMPONENT_ENTRY1(OutputCompute)\
 COMPONENT_ENTRY1(GroupNodeCompute)\
-COMPONENT_ENTRY1(ExpGroupNodeCompute)\
+COMPONENT_ENTRY1(ScriptGroupNodeCompute)\
 COMPONENT_ENTRY1(WebGroupNodeCompute)\
 COMPONENT_ENTRY1(InputNodeCompute)\
 COMPONENT_ENTRY1(OutputNodeCompute)\
