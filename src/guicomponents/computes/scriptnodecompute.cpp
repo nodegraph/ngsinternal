@@ -66,7 +66,7 @@ bool ScriptNodeCompute::update_state() {
   for (auto &in: _inputs->get_all()) {
     Dep<InputCompute> op = in.second;
     const std::string& input_name = in.first;
-    const QVariant& input_value = op->get_output("out");
+    const QVariantMap& input_value = op->get_output("out");
     inputs_obj.insert(input_name.c_str(), input_value);
   }
 

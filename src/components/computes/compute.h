@@ -27,6 +27,7 @@ class COMPUTES_EXPORT Compute: public Component {
  public:
 
   static const QVariant _empty_variant;
+  static const QVariantMap _empty_map;
   static bool variant_is_bool(const QVariant& value);
   static bool variant_is_list(const QVariant& value);
   static bool variant_is_map(const QVariant& value);
@@ -46,12 +47,16 @@ class COMPUTES_EXPORT Compute: public Component {
   QVariantMap get_editable_inputs() const;
   void set_editable_inputs(const QVariantMap& inputs);
 
-  // Get our current input values.
-  QVariantMap get_input_values() const;
+  // Gather up a named property from our current input values.
+  QVariantMap get_input_value_elements(const std::string& element_name="value") const;
+
+  // Get an input value.
+  QVariantMap get_input_value(const std::string& name) const;
+  QVariant get_input_value_element(const std::string& name, const std::string& element_name="value") const;
 
   // Get our outputs.
   virtual const QVariantMap& get_outputs() const;
-  virtual QVariant get_output(const std::string& name) const;
+  virtual QVariantMap get_output(const std::string& name) const;
 
   // Get our hints.
   virtual const QVariantMap& get_hints() const {return _hints;}
@@ -68,7 +73,7 @@ class COMPUTES_EXPORT Compute: public Component {
 
   // Our outputs. These are called during cleaning, so they don't dirty the instance's state.
   virtual void set_outputs(const QVariantMap& outputs);
-  virtual void set_output(const std::string& name, const QVariant& value);
+  virtual void set_output(const std::string& name, const QVariantMap& value);
 
   // Plugs.
   Entity* create_input(const std::string& name, const QVariant& value, bool exposed = true);

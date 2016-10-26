@@ -25,8 +25,14 @@ bool MockNodeCompute::update_state() {
   Compute::update_state();
 
   ++_counter;
-  set_output("c", _counter);
-  set_output("d", _counter+1);
+
+  QVariantMap c;
+  c["value"] = _counter;
+  set_output("c", c);
+
+  QVariantMap d;
+  d["value"] = _counter+1;
+  set_output("d", d);
   return true;
 }
 

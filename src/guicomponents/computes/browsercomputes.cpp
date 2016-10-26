@@ -46,7 +46,7 @@ void BrowserCompute::dump_map(const QVariantMap& inputs) const {
 
 void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
-  QVariantMap inputs = get_input_values();
+  QVariantMap inputs = get_input_value_elements();
   _web_worker->queue_merge_chain_state(tc, inputs);
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.
@@ -66,8 +66,8 @@ void BrowserCompute::on_get_outputs(const QVariantMap& chain_state) {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QVariant upstream = _inputs->get_all().at("in")->get_output("out");
-  set_output("out", upstream);
+  QVariantMap incoming = get_input_value("in");
+  set_output("out", incoming);
 }
 
 //--------------------------------------------------------------------------------
@@ -497,10 +497,10 @@ void ElementActionCompute::on_get_outputs(const QVariantMap& chain_state) {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QVariantMap upstream = _inputs->get_all().at("in")->get_output("out").toMap();
-  QString text_data_name = _inputs->get_all().at(Message::kTextDataName)->get_output("out").toMap()["value"].toString();
-  upstream[text_data_name] = chain_state["value"];
-  set_output("out", upstream);
+  QVariantMap incoming = get_input_value("in");
+  QString text_data_name = get_input_value_element(Message::kTextDataName).toString();
+  incoming[text_data_name] = chain_state["value"];
+  set_output("out", incoming);
 }
 
 bool ElementActionCompute::update_state() {

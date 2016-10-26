@@ -14,7 +14,8 @@ namespace ngs {
 // The InputComputer mainly passes these calls onto its parent group node.
 
 DataNodeCompute::DataNodeCompute(Entity* entity):
-    Compute(entity, kDID()){
+    Compute(entity, kDID()),
+    _use_override(false) {
 }
 
 DataNodeCompute::~DataNodeCompute() {
@@ -45,33 +46,33 @@ QVariantMap DataNodeCompute::init_hints() {
 
 bool DataNodeCompute::update_state() {
   Compute::update_state();
+
+  // If _use_override is enabled, we use the _override value
+  // exclusively even if its empty.
+  if (_use_override) {
+    set_output("out", _override);
+    return true;
+  }
+
   QVariantMap output;
   bool error_occurred = false;
 
   // If we're connected start with that value.
   const Dep<InputCompute> &c = _inputs->get_all().at("in");
   if (c->is_connected()) {
-    Compute::merge_maps(output, c->get_output("out").toMap());
+    Compute::merge_maps(output, c->get_output("out"));
   }
 
   // Merge in the json data value.
 
   // Get the json text from the json parameter.
-  QString text("");
-  {
-    const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
-    assert(inputs.count("json"));
-    QVariantMap json_param = inputs.at("json")->get_output("out").toMap();
-    if (json_param.count("value")) {
-      text = json_param.find("value").value().toString();
-    }
-  }
+  QString text = get_input_value_element("json").toString();
 
-  // Create a variant map from the json string.'
+  // Evaluate the json string.
   QJsonParseError err;
   QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8(), &err);
   if (err.error != QJsonParseError::NoError) {
-    output["error"] = (err.errorString());
+    output["error"] = err.errorString();
     error_occurred = true;
   } else if (!doc.isObject()) {
     output["error"] = "the json string must represent an object.";
@@ -79,11 +80,6 @@ bool DataNodeCompute::update_state() {
   } else {
     QJsonObject obj = doc.object();
     Compute::merge_maps(output,obj.toVariantMap());
-  }
-
-  // Finally if we have a valid override, let's merge that in.
-  if (_override.isValid() && (!_override.toMap().isEmpty())) {
-    Compute::merge_maps(output, _override.toMap());
   }
 
   set_output("out", output);
@@ -96,18 +92,20 @@ bool DataNodeCompute::update_state() {
   return true;
 }
 
-void DataNodeCompute::set_override(const QVariant& override) {
+void DataNodeCompute::set_override(const QVariantMap& override) {
   external();
   _override = override;
+  _use_override = true;
 }
 
-QVariant DataNodeCompute::get_override() const {
+QVariantMap DataNodeCompute::get_override() const {
   external();
   return _override;
 }
 
 void DataNodeCompute::clear_override() {
   _override.clear();
+  _use_override = false;
 }
 
 }

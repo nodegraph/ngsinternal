@@ -435,7 +435,7 @@ void InputEntity::create_internals(const std::vector<size_t>& ids) {
   }
 }
 
-void InputEntity::set_value(QVariant value) {
+void InputEntity::set_unconnected_value(QVariant value) {
   get<InputCompute>()->set_unconnected_value(value);
 }
 

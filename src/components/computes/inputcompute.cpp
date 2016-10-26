@@ -44,10 +44,7 @@ bool InputCompute::update_state() {
 
   // Merge in information from the upstream output.
   if (_upstream) {
-    QVariant upstream_out = _upstream->get_output("out");
-    assert(variant_is_map(upstream_out));
-
-    QVariantMap map = upstream_out.toMap();
+    QVariantMap map = _upstream->get_output("out");
     for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
       output.insert(iter.key(), iter.value());
     }
@@ -56,29 +53,6 @@ bool InputCompute::update_state() {
   // Cache the result in our outputs.
   set_output("out", output);
   return true;
-
-//  // Note! The InputCompute is the only compute which can output something
-//  // other than a javascript object type. It can output other types like
-//  // arrays, strings and numbers.
-//  if (_upstream) {
-//    QVariant up = _upstream->get_output("out");
-//    // Only js object are allowed to pass through links in the node graph.
-//    assert(variant_is_map(up));
-//    QVariantMap map = up.toMap();
-//    // If there is only entry in the map, then we use that as our output.
-//    if (map.size() == 1) {
-//      set_output("out", map.begin().value());
-//    } else if ((map.size() > 1) && (map.count("value"))){
-//      // Otherwise if there is an entry named "value" we that.
-//      set_output("out", map["value"]);
-//    } else {
-//      // Otherwise we use our unconnected value.
-//      set_output("out", _unconnected_value);
-//    }
-//  } else {
-//    set_output("out", _unconnected_value);
-//  }
-//  return true;
 }
 
 void InputCompute::set_unconnected_value(const QVariant& value) {

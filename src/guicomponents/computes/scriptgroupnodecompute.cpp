@@ -40,12 +40,23 @@ QVariantMap ScriptGroupNodeCompute::init_hints() {
   return m;
 }
 
-void ScriptGroupNodeCompute::set_output_value(const QString& name, const QVariant& value) {
-  if (Compute::variant_is_map(value)) {
-    _outputs[name] = value;
+void ScriptGroupNodeCompute::set_output_value(const QString name, const QVariant value) {
+  // Depending which variable is sent back from the js side, the QVariant may be a QJSValue type.
+  // In this case we need to convert to a pure QVariant qt type, becuase a QJSValue will reference
+  // values from the js engine context/environment.
+  QVariant non_js_value;
+  if (value.userType() == qMetaTypeId<QJSValue>()) {
+    non_js_value = qvariant_cast<QJSValue>(value).toVariant();
+  } else {
+    non_js_value = value;
+  }
+
+  // We wrap the value inside a map, if it's not already inside a map.
+  if (Compute::variant_is_map(non_js_value)) {
+    _outputs[name] = non_js_value;
   } else {
     QVariantMap map;
-    map["value"] = value;
+    map["value"] = non_js_value;
     _outputs[name] = map;
   }
 }
@@ -64,15 +75,14 @@ bool ScriptGroupNodeCompute::evaluate_script() {
   // Add the input values into the context.
   for (auto &iter: _inputs->get_all()) {
     const Dep<InputCompute>& input = iter.second;
-    QVariantMap map = input->get_output("out").toMap();
+    QVariantMap map = input->get_output("out");
     const std::string& input_name = input->get_name();
     eval_context.setContextProperty(input_name.c_str(), map);
   }
 
   // Create the expression.
-  const Dep<InputCompute>& input = _inputs->get_all().at("script");
-  QVariantMap map = input->get_output("out").toMap();
-  QQmlExpression expr(&eval_context, NULL, map["value"].toString());
+  QVariant script = get_input_value_element("script");
+  QQmlExpression expr(&eval_context, NULL, script.toString());
 
   // Wipe out our current outputs.
   _outputs.clear();

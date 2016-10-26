@@ -17,6 +17,12 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
   virtual void create_inputs_outputs() {}
 
   // The unconnected value.
+  // **Note** the unconnected value doesn't have to be a map.
+  // In fact as a parameter for node computes, it's usually a primitive
+  // like a number, string or boolean.
+  // This makes the gui editors easier to implement with typing info.
+  // This is pretty much the only place in our interface where
+  // a QVariantMap is not used.
   void set_unconnected_value(const QVariant& value);
   QVariant get_unconnected_value() const;
 

@@ -28,7 +28,9 @@ class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNod
   virtual const QVariantMap& get_hints() const {return _hints;}
 
   // Scripting API.
-  Q_INVOKABLE void set_output_value(const QString& name, const QVariant& value);
+  // Note most of our apis deal with QVariantMap but we allow QVariants with
+  // primitive liks numbers, strings, and boolean for ease of use.
+  Q_INVOKABLE void set_output_value(const QString name, const QVariant value);
 
  protected:
 

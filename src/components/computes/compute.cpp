@@ -20,6 +20,7 @@ struct InputComputeComparator {
 };
 
 const QVariant Compute::_empty_variant;
+const QVariantMap Compute::_empty_map;
 const QVariantMap Compute::_hints;
 
 Compute::Compute(Entity* entity, ComponentDID derived_id)
@@ -60,16 +61,6 @@ bool Compute::update_state() {
   if (_ng_manipulator) {
     _ng_manipulator->set_processing_node(our_entity());
   }
-
-//  // If the script is enabled then run it.
-//  if (_inputs) {
-//    const std::unordered_map<std::string, Dep<InputCompute> > &inputs = _inputs->get_all();
-//    if (inputs.count("use_script")) {
-//      if (inputs.at("use_script")->get_output("out").toBool()) {
-//        evaluate_script();
-//      }
-//    }
-//  }
 
   return true;
 }
@@ -112,13 +103,32 @@ void Compute::set_editable_inputs(const QVariantMap& values) {
   }
 }
 
-QVariantMap Compute::get_input_values() const {
+QVariantMap Compute::get_input_value_elements(const std::string& element_name) const {
   external();
   QVariantMap map;
   for (auto iter: _inputs->get_all()) {
-      map[QString::fromStdString(iter.first)] = iter.second->get_output("out").toMap()["value"];
+      map[QString::fromStdString(iter.first)] = iter.second->get_output("out")[element_name.c_str()];
   }
   return map;
+}
+
+
+QVariantMap Compute::get_input_value(const std::string& name) const {
+  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
+  if (!inputs.count(name)) {
+    assert(false);
+    return QVariantMap();
+  }
+  return inputs.at(name)->get_output("out");
+}
+
+QVariant Compute::get_input_value_element(const std::string& name, const std::string& element_name) const {
+  QVariantMap value = get_input_value(name);
+  if (!value.count(element_name.c_str())) {
+    assert(false);
+    return QVariant();
+  }
+  return value.find(element_name.c_str()).value();
 }
 
 const QVariantMap& Compute::get_outputs() const {
@@ -131,15 +141,15 @@ void Compute::set_outputs(const QVariantMap& outputs) {
   _outputs = outputs;
 }
 
-QVariant Compute::get_output(const std::string& name) const{
+QVariantMap Compute::get_output(const std::string& name) const{
   external();
   if (!_outputs.count(name.c_str())) {
-    return _empty_variant;
+    return _empty_map;
   }
-  return _outputs[name.c_str()];
+  return _outputs[name.c_str()].toMap();
 }
 
-void Compute::set_output(const std::string& name, const QVariant& value) {
+void Compute::set_output(const std::string& name, const QVariantMap& value) {
   internal();
   _outputs.insert(name.c_str(), value);
 }
@@ -207,7 +217,7 @@ Entity* Compute::create_input(const std::string& name, const QVariant& value, bo
   InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, name, EntityDID::kInputEntity));
   input->create_internals();
   input->set_exposed(exposed);
-  input->set_value(value);
+  input->set_unconnected_value(value);
   return input;
 }
 

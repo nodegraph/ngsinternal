@@ -114,7 +114,7 @@ class ENTITIES_EXPORT InputEntity : public Entity {
   ENTITY_ID(InputEntity, "input")
   InputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
-  virtual void set_value(QVariant value);
+  virtual void set_unconnected_value(QVariant value);
   virtual void set_exposed(bool expose);
 };
 

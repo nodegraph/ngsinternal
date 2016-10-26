@@ -20,8 +20,8 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   virtual const QVariantMap& get_hints() const {return _hints;}
 
   // Set and get the "json" parameter programmatically.
-  virtual void set_override(const QVariant& override);
-  virtual QVariant get_override() const;
+  virtual void set_override(const QVariantMap& override);
+  virtual QVariantMap get_override() const;
   virtual void clear_override();
 
  protected:
@@ -31,7 +31,8 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   // This is a runtime override on this node's output value.
   // This is not serialized.
   // The "json" parameter holds the initial output value for this node.
-  QVariant _override;
+  QVariantMap _override;
+  bool _use_override;
 };
 
 }
