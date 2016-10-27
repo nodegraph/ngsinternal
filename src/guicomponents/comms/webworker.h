@@ -6,6 +6,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
 #include <QtCore/QMap>
+#include <QtQml/QJSValue>
 
 namespace ngs {
 
@@ -57,9 +58,9 @@ Q_OBJECT
   // Queue Framework Tasks.
   void queue_get_xpath(TaskContext& tc);
   void queue_get_crosshair_info(TaskContext& tc);
-  void queue_merge_chain_state(TaskContext& tc, const QVariantMap& map);
+  void queue_merge_chain_state(TaskContext& tc, const QJSValue& map);
   void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did);
-  void queue_get_outputs(TaskContext& tc, std::function<void(const QVariantMap&)> on_get_outputs);
+  void queue_get_outputs(TaskContext& tc, std::function<void(const QJSValue&)> on_get_outputs);
 
   // Queue Cookie Tasks.
   void queue_get_all_cookies(TaskContext& tc);
@@ -132,8 +133,8 @@ signals:
   // Infrastructure Tasks.
   void get_crosshair_info_task();
   void get_xpath_task();
-  void merge_chain_state_task(const QVariantMap& map);
-  void get_outputs_task(std::function<void(const QVariantMap&)> on_finished_sequence);
+  void merge_chain_state_task(const QJSValue& map);
+  void get_outputs_task(std::function<void(const QJSValue&)> on_finished_sequence);
   void start_sequence_task();
   void finished_sequence_task(std::function<void()> on_finished_sequence);
   void build_compute_node_task(ComponentDID compute_did);
@@ -199,16 +200,16 @@ signals:
 
   // State to bring up the web actions menu, and handle menu activations.
   QString _iframe_to_switch_to;
-  QVariantMap _browser_click_pos;
+  QJSValue _browser_click_pos;
 
   // State for hovering.
   bool _hovering;
-  QVariantMap _hover_state;
+  QJSValue _hover_state;
   static const int kJitterSize;
   int _jitter;
 
   // The 'value' value from responses will get merged into this state overriding previous values.
-  QVariantMap _chain_state;
+  QJSValue _chain_state;
 
   // The success value of the last response.
   // Note that "success" is overview/cumulative value denoting whether the task completed its task successfully.

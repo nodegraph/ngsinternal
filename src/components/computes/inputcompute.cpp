@@ -8,6 +8,7 @@
 
 #include <components/compshapes/linkshape.h>
 
+#include <QtCore/QVariant>
 #include <QtCore/QIODevice>
 #include <QtCore/QDataStream>
 
@@ -27,27 +28,16 @@ bool InputCompute::update_state() {
   internal();
   Compute::update_state();
 
-  QVariantMap output;
+  // This will hold our final output value.
+  QJSValue output;
 
-  // Merge in information from the default unconnected value.
-  if (_unconnected_value.isValid()) {
-    if (variant_is_map(_unconnected_value)) {
-      // If the unconnected value is a map, merge the values in.
-      QVariantMap map = _unconnected_value.toMap();
-      for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
-        output.insert(iter.key(), iter.value());
-      }
-    } else {
-      output["value"] = _unconnected_value;
-    }
-  }
+  // Start with our unconnected value.
+  output = _unconnected_value;
 
   // Merge in information from the upstream output.
   if (_upstream) {
-    QVariantMap map = _upstream->get_output("out");
-    for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
-      output.insert(iter.key(), iter.value());
-    }
+    QJSValue out = _upstream->get_output("out");
+    output = deep_merge(output, out);
   }
 
   // Cache the result in our outputs.
@@ -55,12 +45,12 @@ bool InputCompute::update_state() {
   return true;
 }
 
-void InputCompute::set_unconnected_value(const QVariant& value) {
+void InputCompute::set_unconnected_value(const QJSValue& value) {
   external();
   _unconnected_value = value;
 }
 
-QVariant InputCompute::get_unconnected_value() const {
+const QJSValue& InputCompute::get_unconnected_value() const {
   external();
   return _unconnected_value;
 }
@@ -130,7 +120,8 @@ void InputCompute::save(SimpleSaver& saver) const {
   // Serialize the param value.
   QByteArray data;
   QDataStream ds(&data,QIODevice::WriteOnly);
-  ds << _unconnected_value;
+  QVariant v = _unconnected_value.toVariant();
+  ds << v;
   int num_bytes = data.size();
   saver.save(num_bytes);
   saver.save_raw(data.data(), num_bytes);
@@ -152,7 +143,9 @@ void InputCompute::load(SimpleLoader& loader) {
   data.resize(num_bytes);
   loader.load_raw(data.data(), num_bytes);
   QDataStream ds(&data,QIODevice::ReadOnly);
-  ds >> _unconnected_value;
+  QVariant v;
+  ds >> v;
+  _unconnected_value = v.value<QJSValue>();
 }
 
 }

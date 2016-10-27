@@ -217,7 +217,7 @@ bool GroupNodeCompute::clean_inputs() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (input_node_compute->get_override() != input->get_output("out")) {
+      if (!input_node_compute->get_override().strictlyEquals(input->get_output("out"))) {
         input_node_compute->set_override(input->get_output("out"));
       }
     }
@@ -245,7 +245,7 @@ bool GroupNodeCompute::update_state() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (input_node_compute->get_override() != input->get_output("out")) {
+      if (!input_node_compute->get_override().strictlyEquals(input->get_output("out"))) {
         input_node_compute->set_override(input->get_output("out"));
       }
     }

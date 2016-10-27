@@ -698,28 +698,28 @@ void NodeGraphQuickItem::view_node() {
     qDebug() << "performing compute! \n";
     //_ng_manipulator->set_ultimate_target(compute->our_entity(), true);
 
-    QVariantMap submap;
-    submap.insert("xxnumber int", 123);
-    submap.insert("xxstring", "booya man");
-    submap.insert("xxnumber float", 234.545);
-    submap.insert("xxboolean", true);
-    submap.insert("xxboolean2", false);
-
-    QVariantList sublist;
-    sublist.push_back(123);
-    sublist.push_back("hello");
-    sublist.push_back(434.523);
-    sublist.push_back(true);
-    sublist.push_back(false);
-
-    QVariantMap test;
-    test.insert("number int", 123);
-    test.insert("string", "booya man");
-    test.insert("number float", 234.545);
-    test.insert("boolean", true);
-    test.insert("boolean2", false);
-    test.insert("submap", submap);
-    test.insert("subarray", sublist);
+//    QVariantMap submap;
+//    submap.insert("xxnumber int", 123);
+//    submap.insert("xxstring", "booya man");
+//    submap.insert("xxnumber float", 234.545);
+//    submap.insert("xxboolean", true);
+//    submap.insert("xxboolean2", false);
+//
+//    QVariantList sublist;
+//    sublist.push_back(123);
+//    sublist.push_back("hello");
+//    sublist.push_back(434.523);
+//    sublist.push_back(true);
+//    sublist.push_back(false);
+//
+//    QVariantMap test;
+//    test.insert("number int", 123);
+//    test.insert("string", "booya man");
+//    test.insert("number float", 234.545);
+//    test.insert("boolean", true);
+//    test.insert("boolean2", false);
+//    test.insert("submap", submap);
+//    test.insert("subarray", sublist);
 
 
     emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_outputs());
@@ -744,34 +744,34 @@ void NodeGraphQuickItem::edit_node() {
     qDebug() << "performing compute! \n";
     //compute->propagate_cleanliness();
 
-    QVariantMap submap;
-    submap.insert("xxnumber int", 123);
-    submap.insert("xxstring", "booya man");
-    submap.insert("xxnumber float", 234.545);
-    submap.insert("xxboolean", true);
-    submap.insert("xxboolean2", false);
-
-    QVariantList sublist;
-    sublist.push_back(123);
-    sublist.push_back("hello");
-    sublist.push_back(434.523);
-    sublist.push_back(true);
-    sublist.push_back(false);
-
-    QVariantMap test;
-    test.insert("number", 1);
-    test.insert("string", "booya man");
-    test.insert("number float", 234.545);
-    test.insert("boolean", true);
-    test.insert("boolean2", false);
-    test.insert("submap", submap);
-    test.insert("subarray", sublist);
-
-    QVariantMap hints;
-    hints[QString::number(to_underlying(HintType::kEnum))] = to_underlying(EnumHint::kWrapType);
-    hints[QString::number(to_underlying(HintType::kDescription))] = "this is a bogus parameter for a bogus set of hints do asdfj asfkdj werkj sdkfj asfd asfd wlekrj afnkj weroiu  afslkdj  wer lk sfd werlkj w sdlfkj  flakjsd f wlekrj wler a fsdlkjas dflk woer we r af alskdjf a f wler wler l f aslkdjflksjdf  we rlwkejr s df owiueroi sdfs dlfkjs dlf weor sldjf ";
-    QVariantMap all_hints;
-    all_hints.insert("number", hints);
+//    QVariantMap submap;
+//    submap.insert("xxnumber int", 123);
+//    submap.insert("xxstring", "booya man");
+//    submap.insert("xxnumber float", 234.545);
+//    submap.insert("xxboolean", true);
+//    submap.insert("xxboolean2", false);
+//
+//    QVariantList sublist;
+//    sublist.push_back(123);
+//    sublist.push_back("hello");
+//    sublist.push_back(434.523);
+//    sublist.push_back(true);
+//    sublist.push_back(false);
+//
+//    QVariantMap test;
+//    test.insert("number", 1);
+//    test.insert("string", "booya man");
+//    test.insert("number float", 234.545);
+//    test.insert("boolean", true);
+//    test.insert("boolean2", false);
+//    test.insert("submap", submap);
+//    test.insert("subarray", sublist);
+//
+//    QVariantMap hints;
+//    hints[QString::number(to_underlying(HintType::kEnum))] = to_underlying(EnumHint::kWrapType);
+//    hints[QString::number(to_underlying(HintType::kDescription))] = "this is a bogus parameter for a bogus set of hints do asdfj asfkdj werkj sdkfj asfd asfd wlekrj afnkj weroiu  afslkdj  wer lk sfd werlkj w sdlfkj  flakjsd f wlekrj wler a fsdlkjas dflk woer we r af alskdjf a f wler wler l f aslkdjflksjdf  we rlwkejr s df owiueroi sdfs dlfkjs dlf weor sldjf ";
+//    QVariantMap all_hints;
+//    all_hints.insert("number", hints);
 
 //    std::cerr << "hints size: " << compute->get_hints().size() << "\n";
 //    QVariantMap test2 = compute->get_hints();
@@ -798,7 +798,7 @@ void NodeGraphQuickItem::edit_node() {
   }
 }
 
-void NodeGraphQuickItem::set_editable_inputs(const QVariantMap& values) {
+void NodeGraphQuickItem::set_editable_inputs(const QJSValue& values) {
   if (!_last_pressed_node) {
     return;
   }
@@ -808,7 +808,7 @@ void NodeGraphQuickItem::set_editable_inputs(const QVariantMap& values) {
   }
 }
 
-void NodeGraphQuickItem::set_input_exposure(const QVariantMap& values) {
+void NodeGraphQuickItem::set_input_exposure(const QJSValue& values) {
   if (!_last_pressed_node) {
     return;
   }
@@ -1018,7 +1018,7 @@ bool NodeGraphQuickItem::links_are_locked() const {
 void NodeGraphQuickItem::view_node_poke() {
   _last_pressed_node = _selection->get_view_node();
   if (!_last_pressed_node) {
-    emit view_node_outputs("no view node selected", QVariantMap());
+    emit view_node_outputs("no view node selected", QJSValue());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
@@ -1028,7 +1028,7 @@ void NodeGraphQuickItem::view_node_poke() {
 void NodeGraphQuickItem::edit_node_poke() {
   _last_pressed_node = _selection->get_edit_node();
   if (!_last_pressed_node) {
-    emit edit_node_inputs("no edit node selected", QVariantMap(), QVariantMap(), QVariantMap());
+    emit edit_node_inputs("no edit node selected", QJSValue(), QJSValue(), QJSValue());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());

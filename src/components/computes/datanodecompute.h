@@ -15,23 +15,24 @@ class COMPUTES_EXPORT DataNodeCompute: public Compute {
   virtual void create_inputs_outputs();
 
   // Our hints.
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
 
-  // Set and get the "json" parameter programmatically.
-  virtual void set_override(const QVariantMap& override);
-  virtual QVariantMap get_override() const;
+  // Our overrides.
+  virtual void set_override(const QJSValue& override);
+  virtual const QJSValue& get_override() const;
   virtual void clear_override();
 
  protected:
   // Our state.
   virtual bool update_state();
 
+
   // This is a runtime override on this node's output value.
   // This is not serialized.
-  // The "json" parameter holds the initial output value for this node.
-  QVariantMap _override;
+  // The "default_value" parameter holds the initial/default output value for this node.
+  QJSValue _override;
   bool _use_override;
 };
 

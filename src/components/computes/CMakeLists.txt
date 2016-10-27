@@ -40,6 +40,7 @@ target_link_libraries(ngs_computes
 	ngs_objectmodel 
 	ngs_memoryallocator
 	ngs_compshapes
+	Qt5::Quick
 	)
 
 qt5_use_modules(ngs_computes Core)

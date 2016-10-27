@@ -15,6 +15,9 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QUrl>
 
+#include <QtQml/QJSValue>
+#include <QtQml/QJSValueIterator>
+
 namespace ngs {
 
 const int WebWorker::kPollInterval = 1000;
@@ -105,11 +108,11 @@ void WebWorker::stop_polling() {
 
 void WebWorker::reset_state() {
     // State for message queuing.
-    _chain_state.clear();
+    _chain_state = QJSValue();
 
     // State for hovering.
     _hovering = false;
-    _hover_state.clear();
+    _hover_state = QJSValue();
     _jitter = kJitterSize;
 }
 
@@ -147,7 +150,7 @@ void WebWorker::queue_get_crosshair_info(TaskContext& tc) {
   _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::get_crosshair_info_task,this), "queue_get_crosshair_info");
 }
 
-void WebWorker::queue_merge_chain_state(TaskContext& tc, const QVariantMap& map) {
+void WebWorker::queue_merge_chain_state(TaskContext& tc, const QJSValue& map) {
   _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::merge_chain_state_task,this, map), "queue_merge_chain_state");
 }
 
@@ -157,7 +160,7 @@ void WebWorker::queue_build_compute_node(TaskContext& tc, ComponentDID compute_d
   _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::build_compute_node_task,this, compute_did), ss.str());
 }
 
-void WebWorker::queue_get_outputs(TaskContext& tc, std::function<void(const QVariantMap&)> on_get_outputs) {
+void WebWorker::queue_get_outputs(TaskContext& tc, std::function<void(const QJSValue&)> on_get_outputs) {
   _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::get_outputs_task,this,on_get_outputs), "queue_get_outputs");
 }
 
@@ -348,28 +351,30 @@ void WebWorker::queue_emit_option_texts(TaskContext& tc) {
 // ------------------------------------------------------------------------
 
 void WebWorker::handle_response(const Message& msg) {
-  QVariant value = msg[Message::kValue];
+  QJSValue value = msg.property(Message::kValue);
 
-  if (Compute::variant_is_map(value)) {
+  if (value.isObject()) {
     // Merge the values into the chain_state.
-    QVariantMap &value = msg[Message::kValue].toMap();
-    for (QVariantMap::const_iterator iter = value.constBegin(); iter != value.constEnd(); ++iter) {
-      _chain_state.insert(iter.key(), iter.value());
+    QJSValue &value = msg.property(Message::kValue);
+    QJSValueIterator iter(value);
+    while (iter.hasNext()) {
+      iter.next();
+      _chain_state.setProperty(iter.name(), iter.value());
     }
-  } else if (value.isValid()) {
-    _chain_state["value"] = value;
+  } else if (!value.isUndefined()) {
+    _chain_state.setProperty("value", value);
   }
 
-  _last_response_success = msg[Message::kSuccess].toBool();
+  _last_response_success = msg.property(Message::kSuccess).toBool();
 }
 
 void WebWorker::handle_info(const Message& msg) {
   std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
-  if (msg[Message::kInfo] == to_underlying(InfoType::kShowWebActionMenu)) {
-    _browser_click_pos = msg[Message::kValue].toMap()[Message::kClickPos].toMap();
-    _iframe_to_switch_to = msg[Message::kIFrame].toString();
-    if (msg[Message::kValue].toMap().count(Message::kPrevIFrame)) {
-      QString prev_iframe = msg[Message::kValue].toMap().value(Message::kPrevIFrame).toString();
+  if (msg.property(Message::kInfo).toInt() == to_underlying(InfoType::kShowWebActionMenu)) {
+    _browser_click_pos = msg.property(Message::kValue).property(Message::kClickPos);
+    _iframe_to_switch_to = msg.property(Message::kIFrame).toString();
+    if (msg.property(Message::kValue).hasProperty(Message::kPrevIFrame)) {
+      QString prev_iframe = msg.property(Message::kValue).property(Message::kPrevIFrame).toString();
       emit show_iframe_menu();
     } else {
       emit show_web_action_menu();
@@ -384,30 +389,32 @@ void WebWorker::handle_info(const Message& msg) {
 // ------------------------------------------------------------------------
 
 void WebWorker::get_crosshair_info_task() {
-  QVariantMap args;
-  args[Message::kClickPos] = _browser_click_pos;
+  QJSValue args;
+  args.setProperty(Message::kClickPos, _browser_click_pos);
   Message req(RequestType::kGetCrosshairInfo,args);
   _task_sheduler->send_msg_task(req);
 }
 
 // Should be run after a response message like get_crosshair_info_task that has set_index and overlay_index.
 void WebWorker::get_xpath_task() {
-  QVariantMap args;
-  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
-  args[Message::kOverlayIndex] = _chain_state[Message::kOverlayIndex];
+  QJSValue args;
+  args.setProperty(Message::kSetIndex, _chain_state.property(Message::kSetIndex));
+  args.setProperty(Message::kOverlayIndex, _chain_state.property(Message::kOverlayIndex));
   Message req(RequestType::kGetXPath,args);
   _task_sheduler->send_msg_task(req);
 }
 
-void WebWorker::merge_chain_state_task(const QVariantMap& map) {
+void WebWorker::merge_chain_state_task(const QJSValue& map) {
   // Merge the values into the chain_state.
-  for (QVariantMap::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
-    _chain_state.insert(iter.key(), iter.value());
+  QJSValueIterator iter(map);
+  while (iter.hasNext()) {
+    iter.next();
+    _chain_state.setProperty(iter.name(), iter.value());
   }
   _task_sheduler->run_next_task();
 }
 
-void WebWorker::get_outputs_task(std::function<void(const QVariantMap&)> on_get_outputs) {
+void WebWorker::get_outputs_task(std::function<void(const QJSValue&)> on_get_outputs) {
   on_get_outputs(_chain_state);
   _task_sheduler->run_next_task();
 }
@@ -458,12 +465,12 @@ void WebWorker::open_browser_task() {
 }
 
 void WebWorker::resize_browser_task() {
-  QVariantMap args;
-  args[Message::kWidth] = _chain_state[Message::kWidth];
-  args[Message::kHeight] = _chain_state[Message::kHeight];
+  QJSValue args;
+  args.setProperty(Message::kWidth,_chain_state.property(Message::kWidth));
+  args.setProperty(Message::kHeight, _chain_state.property(Message::kHeight));
 
   Message req(RequestType::kResizeBrowser);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
@@ -513,8 +520,8 @@ void WebWorker::reset_browser_task() {
 // ------------------------------------------------------------------------
 
 void WebWorker::navigate_to_task() {
-  QVariantMap args;
-  args[Message::kURL] = _chain_state[Message::kURL];
+  QJSValue args;
+  args.setProperty(Message::kURL, _chain_state.property(Message::kURL));
   Message req(RequestType::kNavigateTo, args);
   _task_sheduler->send_msg_task(req);
 }
@@ -525,8 +532,8 @@ void WebWorker::navigate_refresh_task() {
 }
 
 void WebWorker::switch_to_iframe_task() {
-  QVariantMap args;
-  args[Message::kIFrame] = _chain_state[Message::kIFrame];
+  QJSValue args;
+  args.setProperty(Message::kIFrame, _chain_state.property(Message::kIFrame));
   Message req(RequestType::kSwitchIFrame, args);
   _task_sheduler->send_msg_task(req);
 }
@@ -541,71 +548,71 @@ void WebWorker::update_overlays_task() {
 }
 
 void WebWorker::create_set_by_matching_values_task() {
-  QVariantMap args;
-  args[Message::kWrapType] = _chain_state[Message::kWrapType];
-  args[Message::kTextValues] = _chain_state[Message::kTextValues];
-  args[Message::kImageValues] = _chain_state[Message::kImageValues];
+  QJSValue args;
+  args.setProperty(Message::kWrapType, _chain_state.property(Message::kWrapType));
+  args.setProperty(Message::kTextValues, _chain_state.property(Message::kTextValues));
+  args.setProperty(Message::kImageValues, _chain_state.property(Message::kImageValues));
 
   Message req(RequestType::kCreateSetFromMatchValues);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::create_set_by_matching_type_task() {
-  QVariantMap args;
-  args[Message::kWrapType] = _chain_state[Message::kWrapType];
+  QJSValue args;
+  args.setProperty(Message::kWrapType, _chain_state.property(Message::kWrapType));
 
   Message req(RequestType::kCreateSetFromWrapType);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::delete_set_task() {
-  QVariantMap args;
-  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
+  QJSValue args;
+  args.setProperty(Message::kSetIndex, _chain_state.property(Message::kSetIndex));
 
   Message req(RequestType::kDeleteSet);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::shift_set_task() {
-  QVariantMap args;
-  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
-  args[Message::kDirection] = _chain_state[Message::kDirection];
-  args[Message::kWrapType] = _chain_state[Message::kWrapType];
+  QJSValue args;
+  args.setProperty(Message::kSetIndex, _chain_state.property(Message::kSetIndex));
+  args.setProperty(Message::kDirection, _chain_state.property(Message::kDirection));
+  args.setProperty(Message::kWrapType, _chain_state.property(Message::kWrapType));
 
   Message req(RequestType::kShiftSet);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::expand_set_task() {
-  QVariantMap args;
-  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
-  args[Message::kDirection] = _chain_state[Message::kDirection];
-  args[Message::kMatchCriteria] = _chain_state[Message::kMatchCriteria];
+  QJSValue args;
+  args.setProperty(Message::kSetIndex, _chain_state.property(Message::kSetIndex));
+  args.setProperty(Message::kDirection, _chain_state.property(Message::kDirection));
+  args.setProperty(Message::kMatchCriteria, _chain_state.property(Message::kMatchCriteria));
 
   Message req(RequestType::kExpandSet);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::mark_set_task() {
-  QVariantMap args;
-  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
+  QJSValue args;
+  args.setProperty(Message::kSetIndex, _chain_state.property(Message::kSetIndex));
 
   Message req(RequestType::kMarkSet);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::unmark_set_task() {
-  QVariantMap args;
-  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
+  QJSValue args;
+  args.setProperty(Message::kSetIndex, _chain_state.property(Message::kSetIndex));
 
   Message req(RequestType::kUnmarkSet);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
@@ -615,67 +622,67 @@ void WebWorker::merge_sets_task() {
 }
 
 void WebWorker::shrink_set_to_side_task() {
-  QVariantMap args;
-  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
-  args[Message::kDirection] = _chain_state[Message::kDirection];
+  QJSValue args;
+  args.setProperty(Message::kSetIndex, _chain_state.property(Message::kSetIndex));
+  args.setProperty(Message::kDirection, _chain_state.property(Message::kDirection));
 
   Message req(RequestType::kShrinkSet);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::shrink_against_marked_task() {
-  QVariantMap args;
-  args[Message::kSetIndex] = _chain_state[Message::kSetIndex];
-  args[Message::kDirections] = _chain_state[Message::kDirections];
+  QJSValue args;
+  args.setProperty(Message::kSetIndex, _chain_state.property(Message::kSetIndex));
+  args.setProperty(Message::kDirections, _chain_state.property(Message::kDirections));
 
   Message req(RequestType::kShrinkSetToMarked);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::perform_mouse_action_task() {
-  QVariantMap args;
-  args[Message::kMouseAction] = _chain_state[Message::kMouseAction];
-  args[Message::kXPath] = _chain_state[Message::kXPath];
-  args[Message::kOverlayRelClickPos] = _chain_state[Message::kOverlayRelClickPos];
+  QJSValue args;
+  args.setProperty(Message::kMouseAction, _chain_state.property(Message::kMouseAction));
+  args.setProperty(Message::kXPath, _chain_state.property(Message::kXPath));
+  args.setProperty(Message::kOverlayRelClickPos, _chain_state.property(Message::kOverlayRelClickPos));
 
   Message req(RequestType::kPerformMouseAction);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::perform_hover_action_task() {
-  QVariantMap args;
-  args[Message::kMouseAction] = to_underlying(MouseActionType::kMouseOver);
-  args[Message::kXPath] = _hover_state[Message::kXPath];
-  args[Message::kOverlayRelClickPos] = _hover_state[Message::kOverlayRelClickPos];
+  QJSValue args;
+  args.setProperty(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
+  args.setProperty(Message::kXPath, _hover_state.property(Message::kXPath));
+  args.setProperty(Message::kOverlayRelClickPos, _hover_state.property(Message::kOverlayRelClickPos));
 
   Message req(RequestType::kPerformMouseAction);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::perform_text_action_task() {
-  QVariantMap args;
-  args[Message::kTextAction] = _chain_state[Message::kTextAction];
-  args[Message::kXPath] = _chain_state[Message::kXPath];
-  args[Message::kText] = _chain_state[Message::kText];
+  QJSValue args;
+  args.setProperty(Message::kTextAction, _chain_state.property(Message::kTextAction));
+  args.setProperty(Message::kXPath, _chain_state.property(Message::kXPath));
+  args.setProperty(Message::kText, _chain_state.property(Message::kText));
 
   Message req(RequestType::kPerformTextAction);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
 void WebWorker::perform_element_action_task() {
-  QVariantMap args;
-  args[Message::kElementAction] = _chain_state[Message::kElementAction];
-  args[Message::kXPath] = _chain_state[Message::kXPath];
-  args[Message::kOptionText] = _chain_state[Message::kOptionText]; // Used for selecting element from dropdowns.
-  args[Message::kDirection] = _chain_state[Message::kDirection]; // Used for the scrolling directions.
+  QJSValue args;
+  args.setProperty(Message::kElementAction, _chain_state.property(Message::kElementAction));
+  args.setProperty(Message::kXPath, _chain_state.property(Message::kXPath));
+  args.setProperty(Message::kOptionText, _chain_state.property(Message::kOptionText)); // Used for selecting element from dropdowns.
+  args.setProperty(Message::kDirection, _chain_state.property(Message::kDirection)); // Used for the scrolling directions.
 
   Message req(RequestType::kPerformElementAction);
-  req[Message::kArgs] = args;
+  req.setProperty(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
 }
 
@@ -692,17 +699,17 @@ void WebWorker::stop_mouse_hover_task() {
 
 void WebWorker::mouse_hover_task() {
   // Jitter the hover position back and forth by one.
-  int x = _hover_state[Message::kOverlayRelClickPos].toMap()["x"].toInt();
-  int y = _hover_state[Message::kOverlayRelClickPos].toMap()["y"].toInt();
+  int x = _hover_state.property(Message::kOverlayRelClickPos).property("x").toInt();
+  int y = _hover_state.property(Message::kOverlayRelClickPos).property("y").toInt();
   x += _jitter;
   y += _jitter;
   _jitter *= -1;
 
   // Lock in the jitter.
-  QVariantMap pos;
-  pos["x"] = x;
-  pos["y"] = y;
-  _hover_state[Message::kOverlayRelClickPos] = pos;
+  QJSValue pos;
+  pos.setProperty("x", x);
+  pos.setProperty("y", y);
+  _hover_state.setProperty(Message::kOverlayRelClickPos, pos);
 
   // Queue the tasks.
   TaskContext tc(_task_sheduler);
@@ -717,7 +724,7 @@ void WebWorker::mouse_hover_task() {
 void WebWorker::post_hover_task() {
   // Stop hovering if the last hover fails.
   // This happens if the element we're hovering over disappears or webdriver switches to another iframe.
-  bool success = _task_sheduler->get_last_response()[Message::kSuccess].toBool();
+  bool success = _task_sheduler->get_last_response().property(Message::kSuccess).toBool();
   if (!success) {
     _hovering = false;
   }
@@ -725,8 +732,13 @@ void WebWorker::post_hover_task() {
 }
 
 void WebWorker::emit_option_texts_task() {
-  QStringList ot = _chain_state[Message::kOptionTexts].toStringList();
-  emit select_option_texts(ot);
+  QJSValueIterator iter(_chain_state.property(Message::kOptionTexts));
+  QStringList options;
+  while (iter.hasNext()) {
+    iter.next();
+    options.push_back(iter.value().toString());
+  }
+  emit select_option_texts(options);
   _task_sheduler->run_next_task();
 }
 

@@ -9,8 +9,7 @@
 #include <string>
 
 // QT
-#include <QtCore/QObject>
-#include <QtCore/QVariant>
+#include <QtQml/QJSValue>
 
 namespace ngs {
 
@@ -26,12 +25,7 @@ class BaseNodeGraphManipulator;
 class COMPUTES_EXPORT Compute: public Component {
  public:
 
-  static const QVariant _empty_variant;
-  static const QVariantMap _empty_map;
-  static bool variant_is_bool(const QVariant& value);
-  static bool variant_is_list(const QVariant& value);
-  static bool variant_is_map(const QVariant& value);
-  static void merge_maps(QVariantMap& receiver, const QVariantMap& giver);
+  static QJSValue deep_merge(const QJSValue& target, const QJSValue& source);
 
   COMPONENT_ID(Compute, InvalidComponent);
   Compute(Entity* entity, ComponentDID derived_id);
@@ -44,26 +38,29 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void update_input_flux();
 
   // Get and set editable inputs. (These are the unconnected inputs.)
-  QVariantMap get_editable_inputs() const;
-  void set_editable_inputs(const QVariantMap& inputs);
+  QJSValue get_editable_inputs() const;
+  void set_editable_inputs(const QJSValue& inputs);
 
-  // Gather up a named property from our current input values.
-  QVariantMap get_input_value_elements(const std::string& element_name="value") const;
+  // Access inputs.
+  const Dep<InputCompute>* get_input(const std::string& name) const;
+  QJSValue get_input_value(const std::string& input_name, const std::string& output_port_name="out") const;
+  QJSValue get_input_values(const std::string& output_port_name="out") const;
 
-  // Get an input value.
-  QVariantMap get_input_value(const std::string& name) const;
-  QVariant get_input_value_element(const std::string& name, const std::string& element_name="value") const;
-
-  // Get our outputs.
-  virtual const QVariantMap& get_outputs() const;
-  virtual QVariantMap get_output(const std::string& name) const;
+  // Access outputs.
+  virtual const QJSValue& get_outputs() const;
+  virtual QJSValue get_output(const std::string& name) const;
 
   // Get our hints.
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  virtual const QJSValue& get_hints() const {return _hints;}
 
   // Get and Set our exposed settings.
-  virtual QVariantMap get_input_exposure() const;
-  virtual void set_input_exposure(const QVariantMap& settings);
+  virtual QJSValue get_input_exposure() const;
+  virtual void set_input_exposure(const QJSValue& settings);
+
+  bool evaluate_expression_js(const QString& text, QJSValue& result, QString& error) const;
+  bool evaluate_expression_qml(const QString& text, QJSValue& result, QString& error) const;
+
+  void on_error();
 
  protected:
   // Our state.
@@ -72,36 +69,35 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual bool clean_finalize();
 
   // Our outputs. These are called during cleaning, so they don't dirty the instance's state.
-  virtual void set_outputs(const QVariantMap& outputs);
-  virtual void set_output(const std::string& name, const QVariantMap& value);
+  virtual void set_outputs(const QJSValue& outputs);
+  virtual void set_output(const std::string& name, const QJSValue& value);
 
   // Plugs.
-  Entity* create_input(const std::string& name, const QVariant& value, bool exposed = true);
+  Entity* create_input(const std::string& name, const QJSValue& value, bool exposed = true);
   Entity* create_output(const std::string& name, bool exposed = true);
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
   Entity* get_outputs_space();
 
   // Used by derived classes.
-  static void add_hint(QVariantMap& map,
+  static void add_hint(QJSValue& map,
                        const std::string& name,
                        HintType hint_type,
-                       const QVariant& value);
+                       const QJSValue& value);
 
  protected:
   Dep<Inputs> _inputs;
   Dep<BaseNodeGraphManipulator> _ng_manipulator;
 
-  // Map from output plug names to results.
-  // QVariantMap is a typedef for QMap<QString, QVariant>.
-  QVariantMap _outputs;
+  // Our outputs.
+  QJSValue _outputs;
 
-  // Hints are generally used for the hidden inputs (params) of a node.
+  // Hints are generally used for all inputs on a node.
   // They are used to display customized guis for the input.
   // Note this maps the input name to hints.
   // Hints are encoded by a key which is the string of the number representing the HintType.
-  // The value is a QVariant holding an int representing an enum or another type.
-  static const QVariantMap _hints;
+  // The value is a QJSValue holding an int representing an enum or another type.
+  static const QJSValue _hints;
 };
 
 }

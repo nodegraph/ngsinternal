@@ -137,7 +137,7 @@ void TaskScheduler::run_next_task() {
 
 void TaskScheduler::handle_response(const Message& msg) {
   // Get the response id. This is supposed to match with the request id.
-  int resp_id = msg[Message::kID].toInt();
+  int resp_id = msg.property(Message::kID).toInt();
 
   // Determine the request id.
   int req_id = _next_msg_id -1;
@@ -166,7 +166,7 @@ void TaskScheduler::handle_response(const Message& msg) {
   _waiting_for_response = false;
 
   // If the response indicates an un-continuable error has occured, we reset the stack.
-  if (!_last_response[Message::kSuccess].toBool()) {
+  if (!_last_response.property(Message::kSuccess).toBool()) {
     force_stack_reset();
     // Also show the error marker on the node.
     _ng_manipulator->set_error_node();
@@ -186,7 +186,7 @@ void TaskScheduler::handle_info(const Message& msg) {
 
 void TaskScheduler::send_msg_task(Message msg) {
   // Tag the request with an id. We expect a response with the same id.
-  msg[Message::kID] = _next_msg_id;
+  msg.setProperty(Message::kID, _next_msg_id);
 
   std::cerr << "app --> comhub: " << msg.to_string().toStdString() << "\n";
 

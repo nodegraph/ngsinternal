@@ -6,7 +6,8 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QObject>
-#include <QtCore/QVariant>
+
+#include <QtQml/QJSValue>
 
 namespace ngs {
 
@@ -119,7 +120,7 @@ enum class DirectionType : int {
 };
 //Q_DECLARE_METATYPE(DirectionType);
 
-class COMMS_EXPORT Message: public QVariantMap {
+class COMMS_EXPORT Message: public QJSValue {
  public:
 
   static const char* kRequest;
@@ -182,16 +183,16 @@ class COMMS_EXPORT Message: public QVariantMap {
 
   Message();
   Message(const QString& json); // Initialize from a json string typcially coming from another process outside the native app.
-  Message(const QVariantMap& other);
+  Message(const QJSValue& other);
 
   // Initializes a request message.
-  Message(RequestType rt, const QVariantMap& args = QVariantMap());
+  Message(RequestType rt, const QJSValue& args = QJSValue());
   // Initializes a response message.
   // The success arg is whether the app should continue sending more requests in this sequence.
   // False means some unrecoverable error has occured.
-  Message(bool success, const QVariant& value = QVariant());
+  Message(bool success, const QJSValue& value = QJSValue());
   // Initializes an info message.
-  Message(InfoType it, const QVariant& value = QVariant());
+  Message(InfoType it, const QJSValue& value = QJSValue());
 
   virtual ~Message();
 

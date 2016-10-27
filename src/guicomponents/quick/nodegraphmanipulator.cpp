@@ -25,6 +25,9 @@
 #include <components/compshapes/outputshape.h>
 #include <components/compshapes/compshapecollective.h>
 
+#include <QtQml/QJSValue>
+#include <QtQml/QJSValueIterator>
+
 namespace ngs {
 
 // This is the implementation class for the NodeGraphManipulator.
@@ -59,7 +62,7 @@ class NodeGraphManipulatorImp: public Component {
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
-  Entity* build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state);
+  Entity* build_and_link_compute_node(ComponentDID compute_did, const QJSValue& chain_state);
 
   // Update inputs and outputs configuration for the gui side.
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
@@ -73,7 +76,7 @@ class NodeGraphManipulatorImp: public Component {
   virtual void synchronize_group_internal_dirtiness(Entity* entity);
 
  private:
-  Entity* build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state);
+  Entity* build_compute_node(ComponentDID compute_did, const QJSValue& chain_state);
   void link(Entity* downstream);
 
   Entity* _app_root;
@@ -243,7 +246,7 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
   // components. But now it is cleaning in a bad state.
 }
 
-Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QJSValue& chain_state) {
   Entity* node = build_compute_node(compute_did, chain_state);
   link(node);
   return node;
@@ -259,7 +262,7 @@ void NodeGraphManipulatorImp::set_output_topology(Entity* entity, const std::uno
   topo->set_topology(ordering);
 }
 
-Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, const QJSValue& chain_state) {
   // Create the node.
   Entity* group = _factory->get_current_group();
   Entity* _node = _factory->create_compute_node(group, compute_did);
@@ -269,11 +272,12 @@ Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, co
   group->clean_wires();
 
   // Set the values on all the inputs from the chain_state.
-  QVariantMap::const_iterator iter;
-  for (iter = chain_state.begin(); iter != chain_state.end(); ++iter) {
+  QJSValueIterator iter(chain_state);
+  while (iter.hasNext()) {
+    iter.next();
     // Find the input entity.
     Path path( { ".", "inputs" });
-    path.push_back(iter.key().toStdString());
+    path.push_back(iter.name().toStdString());
     Entity* input_entity = _node->has_entity(path);
     // Skip this key if the entity doesn't exist.
     if (!input_entity) {
@@ -286,8 +290,7 @@ Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, co
       continue;
     }
 
-    std::cerr << "setting name: " << iter.key().toStdString() << " value: " << iter.value().toString().toStdString() << " type: " << iter.value().type()
-              << " usertype: " << iter.value().userType() << "\n";
+    std::cerr << "setting name: " << iter.name().toStdString() << " value: " << iter.value().toString().toStdString() << "\n";
     compute->set_unconnected_value(iter.value());
   }
 
@@ -484,7 +487,7 @@ void NodeGraphManipulator::update_clean_marker(Entity* entity, bool clean) {
   _imp->update_clean_marker(entity, clean);
 }
 
-Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QVariantMap& chain_state) {
+Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QJSValue& chain_state) {
   return _imp->build_and_link_compute_node(compute_did, chain_state);
 }
 

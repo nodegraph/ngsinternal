@@ -23,14 +23,12 @@ class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNod
   virtual void create_inputs_outputs();
 
   // Hints.
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
 
   // Scripting API.
-  // Note most of our apis deal with QVariantMap but we allow QVariants with
-  // primitive liks numbers, strings, and boolean for ease of use.
-  Q_INVOKABLE void set_output_value(const QString name, const QVariant value);
+  Q_INVOKABLE void set_output_value(const QString& name, const QJSValue& value);
 
  protected:
 

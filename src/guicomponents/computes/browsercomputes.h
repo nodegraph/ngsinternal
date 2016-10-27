@@ -19,16 +19,16 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   virtual void create_inputs_outputs();
 
-  virtual void on_get_outputs(const QVariantMap& chain_state);
+  virtual void on_get_outputs(const QJSValue& chain_state);
 
-  static void init_hints(QVariantMap& m);
+  static void init_hints(QJSValue& m);
 
  protected:
   // Our state.
   virtual void pre_update_state(TaskContext& tc);
   virtual void post_update_state(TaskContext& tc);
 
-  void dump_map(const QVariantMap& inputs) const;
+  void dump_map(const QJSValue& inputs) const;
 
   Dep<WebWorker> _web_worker;
   Dep<TaskScheduler> _task_scheduler;
@@ -72,9 +72,9 @@ class GUICOMPUTES_EXPORT NavigateToCompute: public BrowserCompute {
   NavigateToCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 
@@ -94,9 +94,9 @@ class GUICOMPUTES_EXPORT SwitchToIFrameCompute: public BrowserCompute {
   SwitchToIFrameCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -107,9 +107,9 @@ class GUICOMPUTES_EXPORT CreateSetFromValuesCompute: public BrowserCompute {
   CreateSetFromValuesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -120,9 +120,9 @@ class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public BrowserCompute {
   CreateSetFromTypeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -133,9 +133,9 @@ class GUICOMPUTES_EXPORT DeleteSetCompute: public BrowserCompute {
   DeleteSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -146,9 +146,9 @@ class GUICOMPUTES_EXPORT ShiftSetCompute: public BrowserCompute {
   ShiftSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -159,9 +159,9 @@ class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
   MouseActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -172,9 +172,9 @@ class GUICOMPUTES_EXPORT StartMouseHoverActionCompute: public BrowserCompute {
   StartMouseHoverActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -193,9 +193,9 @@ class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
   TextActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -206,11 +206,11 @@ class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
   ElementActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
 
-  virtual void on_get_outputs(const QVariantMap& chain_state);
+  virtual void on_get_outputs(const QJSValue& chain_state);
 
  protected:
   virtual bool update_state();
@@ -222,9 +222,9 @@ class GUICOMPUTES_EXPORT ExpandSetCompute: public BrowserCompute {
   ExpandSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -235,9 +235,9 @@ class GUICOMPUTES_EXPORT MarkSetCompute: public BrowserCompute {
   MarkSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -248,9 +248,9 @@ class GUICOMPUTES_EXPORT UnmarkSetCompute: public BrowserCompute {
   UnmarkSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -269,9 +269,9 @@ class GUICOMPUTES_EXPORT ShrinkSetToSideCompute: public BrowserCompute {
   ShrinkSetToSideCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -282,9 +282,9 @@ class GUICOMPUTES_EXPORT ShrinkAgainstMarkedCompute: public BrowserCompute {
   ShrinkAgainstMarkedCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
-  static QVariantMap init_hints();
-  static const QVariantMap _hints;
-  virtual const QVariantMap& get_hints() const {return _hints;}
+  static QJSValue init_hints();
+  static const QJSValue _hints;
+  virtual const QJSValue& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };

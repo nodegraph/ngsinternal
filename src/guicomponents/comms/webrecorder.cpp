@@ -70,12 +70,12 @@ void WebRecorder::record_check_browser_size() {
   int width = _file_model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
   int height = _file_model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
 
-  QVariantMap dims;
-  dims[Message::kWidth] = width;
-  dims[Message::kHeight] = height;
+  QJSValue dims;
+  dims.setProperty(Message::kWidth, width);
+  dims.setProperty(Message::kHeight, height);
 
-  QVariantMap args;
-  args[Message::kDimensions] = dims;
+  QJSValue args;
+  args.setProperty(Message::kDimensions, dims);
 
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kResizeBrowserCompute);
@@ -90,8 +90,8 @@ void WebRecorder::record_navigate_to(const QString& url) {
   check_busy()
   QString decorated_url = get_proper_url(url).toString();
 
-  QVariantMap args;
-  args[Message::kURL] = decorated_url;
+  QJSValue args;
+  args.setProperty(Message::kURL, decorated_url);
 
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kNavigateToCompute);
@@ -100,8 +100,8 @@ void WebRecorder::record_navigate_to(const QString& url) {
 
 void WebRecorder::record_switch_to_iframe() {
   check_busy()
-  QVariantMap args;
-  args[Message::kIFrame]= _web_worker->get_iframe_to_switch_to();
+  QJSValue args;
+  args.setProperty(Message::kIFrame, _web_worker->get_iframe_to_switch_to());
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute);
   finish();
@@ -120,8 +120,8 @@ void WebRecorder::record_navigate_refresh() {
 void WebRecorder::record_create_set_by_matching_text_values() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType]= to_underlying(WrapType::text);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::text));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromValuesCompute);
   finish();
@@ -130,8 +130,8 @@ void WebRecorder::record_create_set_by_matching_text_values() {
 void WebRecorder::record_create_set_by_matching_image_values() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::image);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::image));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromValuesCompute);
   finish();
@@ -143,8 +143,8 @@ void WebRecorder::record_create_set_by_matching_image_values() {
 
 void WebRecorder::record_create_set_of_inputs() {
   check_busy()
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::input);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::input));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute);
   finish();
@@ -152,8 +152,8 @@ void WebRecorder::record_create_set_of_inputs() {
 
 void WebRecorder::record_create_set_of_selects() {
   check_busy()
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::select);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::select));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute);
   finish();
@@ -161,8 +161,8 @@ void WebRecorder::record_create_set_of_selects() {
 
 void WebRecorder::record_create_set_of_images() {
   check_busy()
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::image);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::image));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute);
   finish();
@@ -170,8 +170,8 @@ void WebRecorder::record_create_set_of_images() {
 
 void WebRecorder::record_create_set_of_text() {
   check_busy()
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::text);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::text));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromTypeCompute);
   finish();
@@ -195,9 +195,9 @@ void WebRecorder::record_delete_set() {
 void WebRecorder::record_shift_to_text_above() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::text);
-  args[Message::kDirection] = to_underlying(DirectionType::up);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::text));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::up));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -205,9 +205,9 @@ void WebRecorder::record_shift_to_text_above() {
 void WebRecorder::record_shift_to_text_below() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::text);
-  args[Message::kDirection] = to_underlying(DirectionType::down);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::text));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::down));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -215,9 +215,9 @@ void WebRecorder::record_shift_to_text_below() {
 void WebRecorder::record_shift_to_text_on_left() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::text);
-  args[Message::kDirection] = to_underlying(DirectionType::left);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::text));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::left));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -225,9 +225,9 @@ void WebRecorder::record_shift_to_text_on_left() {
 void WebRecorder::record_shift_to_text_on_right() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::text);
-  args[Message::kDirection] = to_underlying(DirectionType::right);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::text));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::right));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -236,9 +236,9 @@ void WebRecorder::record_shift_to_text_on_right() {
 void WebRecorder::record_shift_to_images_above() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::image);
-  args[Message::kDirection] = to_underlying(DirectionType::up);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::image));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::up));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -246,9 +246,9 @@ void WebRecorder::record_shift_to_images_above() {
 void WebRecorder::record_shift_to_images_below() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::image);
-  args[Message::kDirection] = to_underlying(DirectionType::down);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::image));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::down));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -256,9 +256,9 @@ void WebRecorder::record_shift_to_images_below() {
 void WebRecorder::record_shift_to_images_on_left() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::image);
-  args[Message::kDirection] = to_underlying(DirectionType::left);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::image));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::left));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -266,9 +266,9 @@ void WebRecorder::record_shift_to_images_on_left() {
 void WebRecorder::record_shift_to_images_on_right() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::image);
-  args[Message::kDirection] = to_underlying(DirectionType::right);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::image));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::right));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -277,9 +277,9 @@ void WebRecorder::record_shift_to_images_on_right() {
 void WebRecorder::record_shift_to_inputs_above() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::input);
-  args[Message::kDirection] = to_underlying(DirectionType::up);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::input));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::up));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -287,9 +287,9 @@ void WebRecorder::record_shift_to_inputs_above() {
 void WebRecorder::record_shift_to_inputs_below() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::input);
-  args[Message::kDirection] = to_underlying(DirectionType::down);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::input));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::down));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -297,9 +297,9 @@ void WebRecorder::record_shift_to_inputs_below() {
 void WebRecorder::record_shift_to_inputs_on_left() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::input);
-  args[Message::kDirection] = to_underlying(DirectionType::left);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::input));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::left));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -307,9 +307,9 @@ void WebRecorder::record_shift_to_inputs_on_left() {
 void WebRecorder::record_shift_to_inputs_on_right() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::input);
-  args[Message::kDirection] = to_underlying(DirectionType::right);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::input));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::right));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -318,9 +318,9 @@ void WebRecorder::record_shift_to_inputs_on_right() {
 void WebRecorder::record_shift_to_selects_above() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::select);
-  args[Message::kDirection] = to_underlying(DirectionType::up);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::select));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::up));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -328,9 +328,9 @@ void WebRecorder::record_shift_to_selects_above() {
 void WebRecorder::record_shift_to_selects_below() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::select);
-  args[Message::kDirection] = to_underlying(DirectionType::down);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::select));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::down));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -338,9 +338,9 @@ void WebRecorder::record_shift_to_selects_below() {
 void WebRecorder::record_shift_to_selects_on_left() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::select);
-  args[Message::kDirection] = to_underlying(DirectionType::left);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::select));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::left));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -348,9 +348,9 @@ void WebRecorder::record_shift_to_selects_on_left() {
 void WebRecorder::record_shift_to_selects_on_right() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::select);
-  args[Message::kDirection] = to_underlying(DirectionType::right);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::select));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::right));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -359,9 +359,9 @@ void WebRecorder::record_shift_to_selects_on_right() {
 void WebRecorder::record_shift_to_iframes_above() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::iframe);
-  args[Message::kDirection] = to_underlying(DirectionType::up);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::iframe));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::up));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -369,9 +369,9 @@ void WebRecorder::record_shift_to_iframes_above() {
 void WebRecorder::record_shift_to_iframes_below() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::iframe);
-  args[Message::kDirection] = to_underlying(DirectionType::down);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::iframe));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::down));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -379,9 +379,9 @@ void WebRecorder::record_shift_to_iframes_below() {
 void WebRecorder::record_shift_to_iframes_on_left() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::iframe);
-  args[Message::kDirection] = to_underlying(DirectionType::left);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::iframe));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::left));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -389,9 +389,9 @@ void WebRecorder::record_shift_to_iframes_on_left() {
 void WebRecorder::record_shift_to_iframes_on_right() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
-  QVariantMap args;
-  args[Message::kWrapType] = to_underlying(WrapType::iframe);
-  args[Message::kDirection] = to_underlying(DirectionType::right);
+  QJSValue args;
+  args.setProperty(Message::kWrapType, to_underlying(WrapType::iframe));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::right));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
   finish();
@@ -405,17 +405,17 @@ void WebRecorder::record_expand_above() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap match_criteria;
-  match_criteria[Message::kMatchLeft] = true;
-  match_criteria[Message::kMatchRight] = false;
-  match_criteria[Message::kMatchTop] = false;
-  match_criteria[Message::kMatchBottom] = false;
-  match_criteria[Message::kMatchFont] = true;
-  match_criteria[Message::kMatchFontSize] = true;
+  QJSValue match_criteria;
+  match_criteria.setProperty(Message::kMatchLeft, true);
+  match_criteria.setProperty(Message::kMatchRight, false);
+  match_criteria.setProperty(Message::kMatchTop, false);
+  match_criteria.setProperty(Message::kMatchBottom, false);
+  match_criteria.setProperty(Message::kMatchFont, true);
+  match_criteria.setProperty(Message::kMatchFontSize, true);
 
-  QVariantMap args;
-  args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = to_underlying(DirectionType::up);
+  QJSValue args;
+  args.setProperty(Message::kMatchCriteria, match_criteria);
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::up));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
@@ -425,17 +425,17 @@ void WebRecorder::record_expand_below() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap match_criteria;
-  match_criteria[Message::kMatchLeft] = true;
-  match_criteria[Message::kMatchRight] = false;
-  match_criteria[Message::kMatchTop] = false;
-  match_criteria[Message::kMatchBottom] = false;
-  match_criteria[Message::kMatchFont] = true;
-  match_criteria[Message::kMatchFontSize] = true;
+  QJSValue match_criteria;
+  match_criteria.setProperty(Message::kMatchLeft, true);
+  match_criteria.setProperty(Message::kMatchRight, false);
+  match_criteria.setProperty(Message::kMatchTop, false);
+  match_criteria.setProperty(Message::kMatchBottom, false);
+  match_criteria.setProperty(Message::kMatchFont, true);
+  match_criteria.setProperty(Message::kMatchFontSize, true);
 
-  QVariantMap args;
-  args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = to_underlying(DirectionType::down);
+  QJSValue args;
+  args.setProperty(Message::kMatchCriteria, match_criteria);
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::down));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
@@ -445,17 +445,17 @@ void WebRecorder::record_expand_left() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap match_criteria;
-  match_criteria[Message::kMatchLeft] = false;
-  match_criteria[Message::kMatchRight] = false;
-  match_criteria[Message::kMatchTop] = true;
-  match_criteria[Message::kMatchBottom] = false;
-  match_criteria[Message::kMatchFont] = true;
-  match_criteria[Message::kMatchFontSize] = true;
+  QJSValue match_criteria;
+  match_criteria.setProperty(Message::kMatchLeft, false);
+  match_criteria.setProperty(Message::kMatchRight, false);
+  match_criteria.setProperty(Message::kMatchTop, true);
+  match_criteria.setProperty(Message::kMatchBottom, false);
+  match_criteria.setProperty(Message::kMatchFont, true);
+  match_criteria.setProperty(Message::kMatchFontSize, true);
 
-  QVariantMap args;
-  args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = to_underlying(DirectionType::left);
+  QJSValue args;
+  args.setProperty(Message::kMatchCriteria, match_criteria);
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::left));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
@@ -465,17 +465,17 @@ void WebRecorder::record_expand_right() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap match_criteria;
-  match_criteria[Message::kMatchLeft] = false;
-  match_criteria[Message::kMatchRight] = false;
-  match_criteria[Message::kMatchTop] = true;
-  match_criteria[Message::kMatchBottom] = false;
-  match_criteria[Message::kMatchFont] = true;
-  match_criteria[Message::kMatchFontSize] = true;
+  QJSValue match_criteria;
+  match_criteria.setProperty(Message::kMatchLeft, false);
+  match_criteria.setProperty(Message::kMatchRight, false);
+  match_criteria.setProperty(Message::kMatchTop, true);
+  match_criteria.setProperty(Message::kMatchBottom, false);
+  match_criteria.setProperty(Message::kMatchFont, true);
+  match_criteria.setProperty(Message::kMatchFontSize, true);
 
-  QVariantMap args;
-  args[Message::kMatchCriteria] = match_criteria;
-  args[Message::kDirection] = to_underlying(DirectionType::right);
+  QJSValue args;
+  args.setProperty(Message::kMatchCriteria, match_criteria);
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::right));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
   finish();
@@ -513,8 +513,8 @@ void WebRecorder::record_shrink_set_to_topmost() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kDirection] = to_underlying(DirectionType::up);
+  QJSValue args;
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::up));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
@@ -524,8 +524,8 @@ void WebRecorder::record_shrink_set_to_bottommost() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kDirection] = to_underlying(DirectionType::down);
+  QJSValue args;
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::down));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
@@ -535,8 +535,8 @@ void WebRecorder::record_shrink_set_to_leftmost() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kDirection] = to_underlying(DirectionType::left);
+  QJSValue args;
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::left));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
@@ -546,8 +546,8 @@ void WebRecorder::record_shrink_set_to_rightmost() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kDirection] = to_underlying(DirectionType::right);
+  QJSValue args;
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::right));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
   finish();
@@ -561,10 +561,10 @@ void WebRecorder::record_shrink_above_of_marked() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantList dirs;
-  dirs.append(to_underlying(DirectionType::up));
-  QVariantMap args;
-  args[Message::kDirections] = dirs;
+  QJSValue dirs;
+  dirs.setProperty(0, to_underlying(DirectionType::up));
+  QJSValue args;
+  args.setProperty(Message::kDirections, dirs);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
@@ -574,10 +574,10 @@ void WebRecorder::record_shrink_below_of_marked() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantList dirs;
-  dirs.append(to_underlying(DirectionType::down));
-  QVariantMap args;
-  args[Message::kDirections] = dirs;
+  QJSValue dirs;
+  dirs.setProperty(0, to_underlying(DirectionType::down));
+  QJSValue args;
+  args.setProperty(Message::kDirections, dirs);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
@@ -587,11 +587,11 @@ void WebRecorder::record_shrink_above_and_below_of_marked() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantList dirs;
-  dirs.append(to_underlying(DirectionType::up));
-  dirs.append(to_underlying(DirectionType::down));
-  QVariantMap args;
-  args[Message::kDirections] = dirs;
+  QJSValue dirs;
+  dirs.setProperty(0, to_underlying(DirectionType::up));
+  dirs.setProperty(1, to_underlying(DirectionType::down));
+  QJSValue args;
+  args.setProperty(Message::kDirections, dirs);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
@@ -601,10 +601,10 @@ void WebRecorder::record_shrink_left_of_marked() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantList dirs;
-  dirs.append(to_underlying(DirectionType::left));
-  QVariantMap args;
-  args[Message::kDirections] = dirs;
+  QJSValue dirs;
+  dirs.setProperty(0, to_underlying(DirectionType::left));
+  QJSValue args;
+  args.setProperty(Message::kDirections, dirs);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
@@ -614,10 +614,10 @@ void WebRecorder::record_shrink_right_of_marked() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantList dirs;
-  dirs.append(to_underlying(DirectionType::right));
-  QVariantMap args;
-  args[Message::kDirections] = dirs;
+  QJSValue dirs;
+  dirs.setProperty(0, to_underlying(DirectionType::right));
+  QJSValue args;
+  args.setProperty(Message::kDirections, dirs);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
@@ -627,11 +627,11 @@ void WebRecorder::record_shrink_left_and_right_of_marked() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantList dirs;
-  dirs.append(to_underlying(DirectionType::left));
-  dirs.append(to_underlying(DirectionType::right));
-  QVariantMap args;
-  args[Message::kDirections] = dirs;
+  QJSValue dirs;
+  dirs.setProperty(0, to_underlying(DirectionType::left));
+  dirs.setProperty(1, to_underlying(DirectionType::right));
+  QJSValue args;
+  args.setProperty(Message::kDirections, dirs);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
   finish();
@@ -645,8 +645,8 @@ void WebRecorder::record_click() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kMouseAction] = to_underlying(MouseActionType::kSendClick);
+  QJSValue args;
+  args.setProperty(Message::kMouseAction, to_underlying(MouseActionType::kSendClick));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
   finish();
@@ -656,8 +656,8 @@ void WebRecorder::record_mouse_over() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kMouseAction] = to_underlying(MouseActionType::kMouseOver);
+  QJSValue args;
+  args.setProperty(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
   finish();
@@ -684,9 +684,9 @@ void WebRecorder::record_type_text(const QString& text) {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kText] = text;
-  args[Message::kTextAction] = to_underlying(TextActionType::kSendText);
+  QJSValue args;
+  args.setProperty(Message::kText, text);
+  args.setProperty(Message::kTextAction, to_underlying(TextActionType::kSendText));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kTextActionCompute);
   finish();
@@ -696,8 +696,8 @@ void WebRecorder::record_type_enter() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kTextAction] = to_underlying(TextActionType::kSendEnter);
+  QJSValue args;
+  args.setProperty(Message::kTextAction, to_underlying(TextActionType::kSendEnter));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kTextActionCompute);
   finish();
@@ -711,8 +711,8 @@ void WebRecorder::record_extract_text() {
   check_busy()
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kElementAction] = to_underlying(ElementActionType::kGetText);
+  QJSValue args;
+  args.setProperty(Message::kElementAction, to_underlying(ElementActionType::kGetText));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -722,9 +722,9 @@ void WebRecorder::record_select_from_dropdown(const QString& option_text) {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kElementAction] = to_underlying(ElementActionType::kSelectOption);
-  args[Message::kOptionText] = option_text;
+  QJSValue args;
+  args.setProperty(Message::kElementAction, to_underlying(ElementActionType::kSelectOption));
+  args.setProperty(Message::kOptionText, option_text);
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -734,9 +734,9 @@ void WebRecorder::record_scroll_down() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
-  args[Message::kDirection] = to_underlying(DirectionType::down);
+  QJSValue args;
+  args.setProperty(Message::kElementAction, to_underlying(ElementActionType::kScroll));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::down));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -746,9 +746,9 @@ void WebRecorder::record_scroll_up() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
-  args[Message::kDirection] = to_underlying(DirectionType::up);
+  QJSValue args;
+  args.setProperty(Message::kElementAction, to_underlying(ElementActionType::kScroll));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::up));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -758,9 +758,9 @@ void WebRecorder::record_scroll_right() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
-  args[Message::kDirection] = to_underlying(DirectionType::right);
+  QJSValue args;
+  args.setProperty(Message::kElementAction, to_underlying(ElementActionType::kScroll));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::right));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -770,9 +770,9 @@ void WebRecorder::record_scroll_left() {
   check_busy();
   _web_worker->queue_get_crosshair_info(tc);
 
-  QVariantMap args;
-  args[Message::kElementAction] = to_underlying(ElementActionType::kScroll);
-  args[Message::kDirection] = to_underlying(DirectionType::left);
+  QJSValue args;
+  args.setProperty(Message::kElementAction, to_underlying(ElementActionType::kScroll));
+  args.setProperty(Message::kDirection, to_underlying(DirectionType::left));
   _web_worker->queue_merge_chain_state(tc, args);
   _web_worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
