@@ -692,38 +692,9 @@ void NodeGraphQuickItem::view_node() {
   if (!_last_pressed_node) {
     return;
   }
-
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
-    qDebug() << "performing compute! \n";
-    //_ng_manipulator->set_ultimate_target(compute->our_entity(), true);
-
-//    QVariantMap submap;
-//    submap.insert("xxnumber int", 123);
-//    submap.insert("xxstring", "booya man");
-//    submap.insert("xxnumber float", 234.545);
-//    submap.insert("xxboolean", true);
-//    submap.insert("xxboolean2", false);
-//
-//    QVariantList sublist;
-//    sublist.push_back(123);
-//    sublist.push_back("hello");
-//    sublist.push_back(434.523);
-//    sublist.push_back(true);
-//    sublist.push_back(false);
-//
-//    QVariantMap test;
-//    test.insert("number int", 123);
-//    test.insert("string", "booya man");
-//    test.insert("number float", 234.545);
-//    test.insert("boolean", true);
-//    test.insert("boolean2", false);
-//    test.insert("submap", submap);
-//    test.insert("subarray", sublist);
-
-
     emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_outputs());
-
     // Update our node graph selection object which also tracks and edit and view nodes.
     get_current_interaction()->view(_last_pressed_node);
     update();
@@ -738,58 +709,14 @@ void NodeGraphQuickItem::edit_node() {
   if (!_last_pressed_node) {
     return;
   }
-
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
     qDebug() << "performing compute! \n";
-    //compute->propagate_cleanliness();
-
-//    QVariantMap submap;
-//    submap.insert("xxnumber int", 123);
-//    submap.insert("xxstring", "booya man");
-//    submap.insert("xxnumber float", 234.545);
-//    submap.insert("xxboolean", true);
-//    submap.insert("xxboolean2", false);
-//
-//    QVariantList sublist;
-//    sublist.push_back(123);
-//    sublist.push_back("hello");
-//    sublist.push_back(434.523);
-//    sublist.push_back(true);
-//    sublist.push_back(false);
-//
-//    QVariantMap test;
-//    test.insert("number", 1);
-//    test.insert("string", "booya man");
-//    test.insert("number float", 234.545);
-//    test.insert("boolean", true);
-//    test.insert("boolean2", false);
-//    test.insert("submap", submap);
-//    test.insert("subarray", sublist);
-//
-//    QVariantMap hints;
-//    hints[QString::number(to_underlying(HintType::kEnum))] = to_underlying(EnumHint::kWrapType);
-//    hints[QString::number(to_underlying(HintType::kDescription))] = "this is a bogus parameter for a bogus set of hints do asdfj asfkdj werkj sdkfj asfd asfd wlekrj afnkj weroiu  afslkdj  wer lk sfd werlkj w sdlfkj  flakjsd f wlekrj wler a fsdlkjas dflk woer we r af alskdjf a f wler wler l f aslkdjflksjdf  we rlwkejr s df owiueroi sdfs dlfkjs dlf weor sldjf ";
-//    QVariantMap all_hints;
-//    all_hints.insert("number", hints);
-
-//    std::cerr << "hints size: " << compute->get_hints().size() << "\n";
-//    QVariantMap test2 = compute->get_hints();
-//    for(QVariantMap::const_iterator iter = test2.begin(); iter != test2.end(); ++iter) {
-//      qDebug() << "name: " << iter.key();
-//      QVariantMap map = iter.value().toMap();
-//      for(QVariantMap::const_iterator iter2 = map.begin(); iter2 != map.end(); ++iter2) {
-//        qDebug() << iter2.key() << iter2.value();
-//      }
-//    }
-
     compute->update_input_flux();
     emit edit_node_inputs(compute->our_entity()->get_name().c_str(),
                           compute->get_editable_inputs(),
                           compute->get_hints(),
                           compute->get_input_exposure());
-    //emit edit_node_inputs(compute->our_entity()->get_name().c_str(), test, all_hints);
-
     // Update our node graph selection object which also tracks and edit and view nodes.
     get_current_interaction()->edit(_last_pressed_node);
     update();

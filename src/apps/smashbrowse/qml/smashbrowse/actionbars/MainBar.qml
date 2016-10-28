@@ -38,29 +38,27 @@ Rectangle {
         if (m == app_settings.file_mode) {
             file_button.lit = true
             action_bar_title.text = "Node Files"
-            more_menu_button.visible = false;
+            more_menu_button.visible = false
         } else if (m == app_settings.node_graph_mode) {
             node_graph_button.lit = true
             action_bar_title.text = "Node Graph"
-            more_menu_button.visible = false;
+            more_menu_button.visible = false
         } else if (m == app_settings.view_node_mode) {
             view_node_button.lit = true
             action_bar_title.text = "View Node Outputs"
-            more_menu_button.visible = false;
-            node_graph_item.view_node_poke();
+            more_menu_button.visible = false
         } else if (m == app_settings.edit_node_mode) {
             edit_node_button.lit = true
             action_bar_title.text = "Edit Node Parameters"
-            more_menu_button.visible = false;
-            node_graph_item.edit_node_poke();
+            more_menu_button.visible = false
         } else if (m == app_settings.posts_mode) {
             posts_button.lit = true
             action_bar_title.text = "Posts from Nodes"
-            more_menu_button.visible = false;
+            more_menu_button.visible = false
         } else if (m == app_settings.settings_mode) {
             settings_button.lit = true
             action_bar_title.text = "Node Graph Settings"
-            more_menu_button.visible = false;
+            more_menu_button.visible = false
         }
         switch_to_mode(m)
         // Update our current and last modes.
@@ -181,6 +179,7 @@ Rectangle {
         tooltip_text: "View Node Outputs"
         
         onClicked: {
+        	node_graph_item.view_node_poke();
             on_switch_to_mode(app_settings.view_node_mode)
         }
     }
@@ -200,6 +199,7 @@ Rectangle {
         tooltip_text: "Edit Node Parameters"
         
         onClicked: {
+        	node_graph_item.edit_node_poke();
             on_switch_to_mode(app_settings.edit_node_mode)
         }
     }

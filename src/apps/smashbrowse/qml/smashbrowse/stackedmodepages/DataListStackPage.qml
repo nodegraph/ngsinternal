@@ -55,10 +55,11 @@ BaseStackPage{
     	
     	var path = []
         view_object(node_name, path)
+        main_bar.on_switch_to_mode(app_settings.view_node_mode)
     }
 
     // Show data values with hints on how to show it.
-    function on_show_data(node_name, values, hints, exposure) {
+    function on_edit_inputs(node_name, values, hints, exposure) {
         app_settings.vibrate()
         stack_view.clear_pages()
         
@@ -74,6 +75,7 @@ BaseStackPage{
         
         var path = []
         edit_object(node_name, path)
+        main_bar.on_switch_to_mode(app_settings.edit_node_mode)
     }
 
     function on_add_element() {
