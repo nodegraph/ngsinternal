@@ -253,16 +253,16 @@ class AppConnection extends BaseConnection {
 
 class BaseSocketServer {
     // This can easily be upgraded to handle non ssl http as well.
-    // let http_server: HttpServer.Server
-    // http_server = HttpServer.createServer(dummy_handler)
+    // let http_server: Http.Server
+    // http_server = Http.createServer(dummy_handler)
 
-    static ssl = true
-    static ssl_key = './key.pem'
-    static ssl_cert = './cert.pem'
+    private use_ssl: boolean
+    private ssl_key: string
+    private ssl_cert: string
 
     public port: number
-    private https_server: Https.Server
-    private server: ws.Server
+    private web_server: Https.Server | Http.Server
+    private socket_server: ws.Server
     private connections: BaseConnection[]
 
     webdriverwrap: WebDriverWrap
@@ -270,12 +270,15 @@ class BaseSocketServer {
     constructor(webdriverwrap: WebDriverWrap) {
         this.webdriverwrap = webdriverwrap
         this.port = 8093
-        this.https_server = null
-        this.server = null
+        this.web_server = null
+        this.socket_server = null
         this.connections = []
+        this.use_ssl = true
+        this.ssl_key = './key.pem'
+        this.ssl_cert = './cert.pem'
     }
 
-    protected on_https_server_error(error: NodeJS.ErrnoException): void {
+    protected on_web_server_error(error: NodeJS.ErrnoException): void {
         if (error.code === 'EADDRINUSE') {
             // The current config port number is in use.
             // So we increment it and recurse.
@@ -290,15 +293,15 @@ class BaseSocketServer {
     protected on_https_server_listening<C extends BaseConnection>(ConnConstructor: { new (wdw: WebDriverWrap): C; }): void {
         // Create the socket server.
         // The following options variable should have type ws.IServerOptions but DefinitelyTyped seems to have a bug with internal server type.
-        let options: any = { server: this.https_server }
-        this.server = new ws.Server(options)
+        let options: any = { server: this.web_server }
+        this.socket_server = new ws.Server(options)
         let on_connection = (socket: ws) => {
             let conn: C = new ConnConstructor(this.webdriverwrap);
             conn.set_socket(socket)
             socket.on('message', (json: string) => { conn.receive_json(json) })
             this.connections.push(conn)
         }
-        this.server.on('connection', on_connection)
+        this.socket_server.on('connection', on_connection)
         // Now call the callback.
         this.on_built()
     }
@@ -311,18 +314,22 @@ class BaseSocketServer {
         }
 
         // Create the http/s server.
-        this.https_server = Https.createServer({
-            key: FSWrap.read_from_file(BaseSocketServer.ssl_key),
-            cert: FSWrap.read_from_file(BaseSocketServer.ssl_cert)
-        }, dummy_handler)
+        if (this.use_ssl) {
+            this.web_server = Https.createServer({
+                key: FSWrap.read_from_file(this.ssl_key),
+                cert: FSWrap.read_from_file(this.ssl_cert)
+            }, dummy_handler)
+        } else {
+             this.web_server = Http.createServer(dummy_handler)
+        }
 
         // Once the https server reports an error, we try to create the https server on a different port.
-        this.https_server.once('error', (error: NodeJS.ErrnoException) => { this.on_https_server_error(error) })
+        this.web_server.once('error', (error: NodeJS.ErrnoException) => { this.on_web_server_error(error) })
 
         // Once the https server is listening, we try to create the WebSocket server.
-        this.https_server.once('listening', (): void => { this.on_https_server_listening(ConnConstructor) })
+        this.web_server.once('listening', (): void => { this.on_https_server_listening(ConnConstructor) })
 
-        this.https_server.listen(this.port)
+        this.web_server.listen(this.port)
     }
 
     // These should be overridden in derived classes.

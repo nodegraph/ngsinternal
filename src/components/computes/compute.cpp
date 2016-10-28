@@ -82,7 +82,7 @@ bool Compute::clean_finalize() {
 }
 
 void Compute::update_input_flux() {
-  _inputs->clean_wires();
+  //_inputs->clean_wires();
 }
 
 QJsonObject Compute::get_editable_inputs() const {

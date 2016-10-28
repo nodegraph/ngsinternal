@@ -53,11 +53,19 @@ export class WebDriverWrap {
 
             let url = "https://www.google.com/?" + get_ext_server_port()
             chromeOptions.addArguments(url)
+
+            // chromeOptions.addArguments("--ssl-version-min tls1.2")
+            // chromeOptions.addArguments("--ssl-version-max tls1.2")
+            // chromeOptions.addArguments("--allow-insecure-localhost")
+            // chromeOptions.addArguments("--ignore-certificate-errors")
+            // chromeOptions.addArguments("--dns-prefetch-disable")
+
             chromeOptions.addArguments("--load-extension=" + FSWrap.get_chrome_ext_dir())
             chromeOptions.addArguments("--ignore-certificate-errors")
             chromeOptions.addArguments("--disable-web-security")
             chromeOptions.addArguments("--user-data-dir=" + this.fswrap.get_chrome_user_data_dir())
             chromeOptions.addArguments("--first-run")
+            
             //chromeOptions.addArguments("--app=file:///"+url)
 
             // "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir --app=https://www.google.com
@@ -70,7 +78,8 @@ export class WebDriverWrap {
             this.flow = webdriver.promise.controlFlow()
 
             // Set default settings.
-            this.driver.manage().timeouts().pageLoadTimeout(60000);
+            this.driver.manage().timeouts().setScriptTimeout(180000); // 3 mins
+            this.driver.manage().timeouts().pageLoadTimeout(180000); // 3 mins
 
             webdriver.promise.controlFlow().on('uncaughtException', function(e: Error) {
                 console.error('Unhandled error: ' + e);
@@ -246,6 +255,7 @@ export class WebDriverWrap {
     click_on_element(xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<void> {
         return this.get_element(xpath).then(
             (element: webdriver.WebElement) => {
+                //console.log('xpath: ' + xpath)
                 //return element.click()
                 return this.driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).click().perform()
             },
