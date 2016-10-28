@@ -34,7 +34,7 @@
         <!-- Warning Pages -->
         <file>qml/smashbrowse/contentpages/warningpages/qmldir</file>
         <file>qml/smashbrowse/contentpages/warningpages/ProcessingPage.qml</file>
-        <file>qml/smashbrowse/contentpages/warningpages/WebActionBusyPage.qml</file>
+        <file>qml/smashbrowse/contentpages/warningpages/IgnoredActionPage.qml</file>
         
         <!-- Stacked Pages -->
         <file>qml/smashbrowse/stackedmodepages/qmldir</file>

@@ -30,56 +30,42 @@ BaseStackPage{
     // Create/Remove Pages.
     // -------------------------------------------------------------------------------------------
 
-    function show_busy_page() {
-        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/ProcessingPage.qml", ng_menu_list_stack_page, {})
-        push_page.visible = true
-        push_page.set_title("Processing Nodes")
-        stack_view.push_page(push_page)
-    }
-
     function on_node_context_menu() {
         app_settings.vibrate()
         center_new_nodes = false
-        stack_view.clear_pages()
-        if (web_worker.is_busy_cleaning()) {
-            show_busy_page()
-        } else {
+        visible = true
+        if (!show_busy_page()) {
+        	stack_view.clear_pages()
         	stack_view.push_by_names("Node Options", "NGMenuListPage", "NodeActions")
         }
-        visible = true
     }
 
     function on_group_node_context_menu(){
         app_settings.vibrate()
         center_new_nodes = false
-        stack_view.clear_pages()
-        if (web_worker.is_busy_cleaning()) {
-            show_busy_page()
-        } else {
+       	visible = true
+        if (!show_busy_page()) {
+        	stack_view.clear_pages()
             stack_view.push_by_names("Group Node Options", "NGMenuListPage", "GroupNodeActions")
         }
-        visible = true
     }
 
     function on_node_graph_context_menu() {
         app_settings.vibrate()
         center_new_nodes = false
-        stack_view.clear_pages()
-        if (web_worker.is_busy_cleaning()) {
-            show_busy_page()
-        } else {
+        visible = true
+        if (!show_busy_page()) {
+        	stack_view.clear_pages()
             stack_view.push_by_names("Node Graph Options", "NGMenuListPage", "NodeGraphActions")
         }
-        visible = true
     }
 
     function show_options(model_name) {
-        center_new_nodes = true
+		app_settings.vibrate()
+		center_new_nodes = true
         visible = true
-        stack_view.clear_pages()
-        if (web_worker.is_busy_cleaning()) {
-            show_busy_page()
-        } else {
+        if (!show_busy_page()) {
+        	stack_view.clear_pages()
             stack_view.push_by_names("Options", "NGMenuListPage", model_name)
         }
     }

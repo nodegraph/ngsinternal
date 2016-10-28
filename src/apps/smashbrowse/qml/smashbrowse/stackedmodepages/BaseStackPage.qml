@@ -30,6 +30,34 @@ Rectangle{
 
     // Our internal objects.
     property alias stack_view: stack_view
+    
+    // Whether we are busy computing something in asynchronous fashion.
+    // Currently this only pertains to whether the web_worker is busy cleaning asynchronously.
+    // The other computes in the nodes currently all happen synchronously.
+    function is_busy() {
+    	if (web_worker.is_busy_cleaning()) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    function show_busy_page() {
+    	if (is_busy()) {
+	        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/ProcessingPage.qml", ng_menu_list_stack_page, {})
+	        push_page.set_title("Processing Nodes")
+	        stack_view.push_page(push_page)
+	        push_page.visible = true
+	        return true;
+        }
+        return false;
+    }
+    
+    function on_action_ignored() {
+        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/IgnoredActionPage.qml", edit_data_list_stack_page, {})
+        push_page.visible = true
+        push_page.set_title("Busy")
+        stack_view.push_page(push_page)
+    }
 
     // The main stack view.
     AppStackView{

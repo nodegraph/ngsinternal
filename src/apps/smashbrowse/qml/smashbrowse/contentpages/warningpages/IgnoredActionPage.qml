@@ -52,7 +52,7 @@ Rectangle {
         AppLabel {
             id: wait_label
             color: 'yellow'
-            text: "Pease wait for previous action to complete."
+            text: "Action was ignored due to unfinshed processing. Try again later."
             anchors {
                 //leftMargin: app_settings.page_left_margin
                 //rightMargin: app_settings.page_right_margin
