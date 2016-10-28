@@ -98,7 +98,7 @@ NodeShape::NodeShape(Entity* entity, ComponentDID did)
   get_dep_loader()->register_fixed_dep(_resources, Path( { }));
   _edit_marker.set_letter("E");
   _edit_marker.set_bg_color( { 255, 255, 255, 255 });
-  _edit_marker.set_fg_color( { 100, 221, 23, 255 });
+  _edit_marker.set_fg_color( {251, 192, 45, 255}); //( { 100, 221, 23, 255 });
 
   _view_marker.set_letter("V");
   _view_marker.set_bg_color( { 255, 255, 255, 255 });
