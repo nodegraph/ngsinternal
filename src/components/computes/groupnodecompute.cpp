@@ -119,71 +119,6 @@ void GroupNodeCompute::update_wires() {
   Compute::update_wires();
 }
 
-void GroupNodeCompute::synchronize_internal_dirtiness() {
-  // Update the group's dirtiness from our internals.
-  dirty_group_from_internals();
-  dirty_internals_from_group();
-}
-
-void GroupNodeCompute::dirty_internals_from_group() {
-  if (is_state_dirty()) {
-    dirty_all_node_computes();
-  }
-}
-
-void GroupNodeCompute::dirty_group_from_internals() {
-  // Dirty the computes on all nodes in this group.
-  const Entity::NameToChildMap& children = our_entity()->get_children();
-  for (auto &iter : children) {
-    const std::string& child_name = iter.first;
-    Entity* child = iter.second;
-    EntityDID did = child->get_did();
-    if (did != EntityDID::kBaseNamespaceEntity) {
-      Dep<Compute> compute = get_dep<Compute>(child);
-      if (compute->is_state_dirty()) {
-        dirty_state();
-        return;
-      }
-    }
-  }
-}
-
-void GroupNodeCompute::dirty_all_node_computes() {
-  // Dirty the computes on all nodes in this group.
-  const Entity::NameToChildMap& children = our_entity()->get_children();
-  for (auto &iter : children) {
-    const std::string& child_name = iter.first;
-    Entity* child = iter.second;
-    EntityDID did = child->get_did();
-    if (did != EntityDID::kBaseNamespaceEntity) {
-      Dep<Compute> compute = get_dep<Compute>(child);
-      if (compute) {
-        compute->dirty_state();
-      }
-    }
-  }
-}
-
-void GroupNodeCompute::dirty_input_node_computes() {
-  // For each input on this group if there is an associated input node, we set data on the input node.
-  for (auto &iter : _inputs->get_all()) {
-    const Dep<InputCompute>& input = iter.second;
-    const std::string& input_name = input->get_name();
-    // Find the input node inside this group with the same name as the input.
-    Entity* input_node = our_entity()->get_child(input_name);
-    // Make sure we have an input node.
-    if (!input_node) {
-      assert(false);
-      continue;
-    }
-    // Dirty all the input compute nodes.
-    Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
-    if (input_node_compute) {
-      input_node_compute->dirty_state();
-    }
-  }
-}
-
 void GroupNodeCompute::propagate_dirtiness(Component* dirty_source) {
   Component::propagate_dirtiness(dirty_source);
 }
@@ -220,7 +155,6 @@ bool GroupNodeCompute::clean_inputs() {
       if (input_node_compute->get_override() != input->get_output("out")) {
         input_node_compute->set_override(input->get_output("out"));
       }
-      input_node_compute->clean_state();
     }
   }
   return true;

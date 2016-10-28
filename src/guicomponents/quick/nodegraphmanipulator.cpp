@@ -71,7 +71,10 @@ class NodeGraphManipulatorImp: public Component {
   virtual Entity* create_link();
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
 
-  virtual void synchronize_group_internal_dirtiness(Entity* entity);
+  virtual void synchronize_graph_dirtiness(Entity* group_entity);
+  virtual void synchronize_group_dirtiness(Entity* group_entity);
+  virtual void dirty_group_from_internals(Entity* group_entity);
+  virtual void dirty_internals_from_group(Entity* group_entity);
 
  private:
   Entity* build_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
@@ -133,7 +136,7 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_sta
   // Note that nodes in the currently are not dirtied because the user is likely adding/editing nodes
   // and we don't want to have to keep recomputing all the upstream nodes in this case.
   // All other groups get their dirtiness synchronized.
-  synchronize_group_internal_dirtiness(_app_root);
+  synchronize_graph_dirtiness(_app_root);
 
   // Clear the error marker on nodes.
   _node_selection->clear_error_node();
@@ -407,23 +410,73 @@ Entity* NodeGraphManipulatorImp::connect_plugs(Entity* input_entity, Entity* out
   return link;
 }
 
-void NodeGraphManipulatorImp::synchronize_group_internal_dirtiness(Entity* entity) {
-  const Entity::NameToChildMap& children = entity->get_children();
+void NodeGraphManipulatorImp::synchronize_graph_dirtiness(Entity* group_entity) {
+  const Entity::NameToChildMap& children = group_entity->get_children();
   for (auto &iter : children) {
     const std::string& child_name = iter.first;
     Entity* child = iter.second;
 
     EntityDID did = child->get_did();
     if (child->has_comp(ComponentIID::kIGroupInteraction)) {
-      Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(child);
-
       // Skip our current group, because the user is likely incremently adding nodes
       // and we don't want to recompute everything upstream over and over.
       if (child != _factory->get_current_group()) {
-        c->synchronize_internal_dirtiness();
+        synchronize_group_dirtiness(child);
       }
+      synchronize_graph_dirtiness(child);
+    }
+  }
+}
 
-      synchronize_group_internal_dirtiness(child);
+void NodeGraphManipulatorImp::synchronize_group_dirtiness(Entity* group_entity) {
+  // Update the group's dirtiness from our internals.
+  dirty_group_from_internals(group_entity);
+  dirty_internals_from_group(group_entity);
+}
+
+void NodeGraphManipulatorImp::dirty_group_from_internals(Entity* group_entity) {
+  // Grab the group compute.
+  Dep<Compute> group_compute = get_dep<Compute>(group_entity);
+
+  // Loop over the group's children.
+  const Entity::NameToChildMap& children = group_entity->get_children();
+  for (auto &iter : children) {
+    const std::string& child_name = iter.first;
+    Entity* child = iter.second;
+    EntityDID did = child->get_did();
+    // Anythings that's not a namespace will be a child node.
+    if (did != EntityDID::kBaseNamespaceEntity) {
+      // If a child node is dirty, then we set the group dirty.
+      Dep<Compute> compute = get_dep<Compute>(child);
+      if (compute->is_state_dirty()) {
+        group_compute->dirty_state();
+        return;
+      }
+    }
+  }
+}
+
+void NodeGraphManipulatorImp::dirty_internals_from_group(Entity* group_entity) {
+  // Grab the group compute.
+  Dep<Compute> group_compute = get_dep<Compute>(group_entity);
+  // If the group is clean then we can return right away.
+  if (!group_compute->is_state_dirty()) {
+    return;
+  }
+
+  // Otherwise we loop over the group's children.
+  const Entity::NameToChildMap& children = group_entity->get_children();
+  for (auto &iter : children) {
+    const std::string& child_name = iter.first;
+    Entity* child = iter.second;
+    EntityDID did = child->get_did();
+    // Anythings that's not a namespace will be a child node.
+    if (did != EntityDID::kBaseNamespaceEntity) {
+      // Make sure all the child nodes are dirty.
+      Dep<Compute> compute = get_dep<Compute>(child);
+      if (compute) {
+        compute->dirty_state();
+      }
     }
   }
 }
@@ -507,8 +560,8 @@ Entity* NodeGraphManipulator::connect_plugs(Entity* input_entity, Entity* output
   return _imp->connect_plugs(input_entity, output_entity);
 }
 
-void NodeGraphManipulator::synchronize_group_internal_dirtiness(Entity* entity) {
-  _imp->synchronize_group_internal_dirtiness(entity);
+void NodeGraphManipulator::synchronize_graph_dirtiness(Entity* group_entity) {
+  _imp->synchronize_graph_dirtiness(group_entity);
 }
 
 }

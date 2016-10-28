@@ -16,15 +16,6 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
 
   virtual void create_inputs_outputs();
 
-  // Group dirtiness synchronization.
-  virtual void synchronize_internal_dirtiness();
-  virtual void dirty_internals_from_group();
-  virtual void dirty_group_from_internals();
-
-  // Dirty internal nodes.
-  virtual void dirty_all_node_computes();
-  virtual void dirty_input_node_computes();
-
   // Clean the group interface.
   virtual bool clean_inputs();
 
