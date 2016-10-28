@@ -11,6 +11,8 @@
 #include <QtCore/QVariant>
 #include <QtCore/QIODevice>
 #include <QtCore/QDataStream>
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonDocument>
 
 namespace ngs {
 
@@ -29,14 +31,14 @@ bool InputCompute::update_state() {
   Compute::update_state();
 
   // This will hold our final output value.
-  QJSValue output;
+  QJsonValue output;
 
   // Start with our unconnected value.
   output = _unconnected_value;
 
   // Merge in information from the upstream output.
   if (_upstream) {
-    QJSValue out = _upstream->get_output("out");
+    QJsonValue out = _upstream->get_output("out");
     output = deep_merge(output, out);
   }
 
@@ -45,12 +47,12 @@ bool InputCompute::update_state() {
   return true;
 }
 
-void InputCompute::set_unconnected_value(const QJSValue& value) {
+void InputCompute::set_unconnected_value(const QJsonValue& value) {
   external();
   _unconnected_value = value;
 }
 
-const QJSValue& InputCompute::get_unconnected_value() const {
+const QJsonValue& InputCompute::get_unconnected_value() const {
   external();
   return _unconnected_value;
 }
@@ -117,11 +119,14 @@ void InputCompute::save(SimpleSaver& saver) const {
   // Serialize the exposed value.
   saver.save(_exposed);
 
-  // Serialize the param value.
-  QByteArray data;
-  QDataStream ds(&data,QIODevice::WriteOnly);
-  QVariant v = _unconnected_value.toVariant();
-  ds << v;
+  // Serialize the value.
+  // We create a dummy array to shove the value into, as QJsonDocument won't take a non-array or non-object.
+  // However the newer json specs allow storing singular values, this feature may be coming soon.
+  QJsonArray arr;
+  arr.push_back(_unconnected_value);
+  QJsonDocument doc;
+  doc.setArray(arr);
+  QByteArray data = doc.toJson();
   int num_bytes = data.size();
   saver.save(num_bytes);
   saver.save_raw(data.data(), num_bytes);
@@ -142,10 +147,11 @@ void InputCompute::load(SimpleLoader& loader) {
   QByteArray data;
   data.resize(num_bytes);
   loader.load_raw(data.data(), num_bytes);
-  QDataStream ds(&data,QIODevice::ReadOnly);
-  QVariant v;
-  ds >> v;
-  _unconnected_value = v.value<QJSValue>();
+  QJsonParseError error;
+  QJsonDocument doc = QJsonDocument::fromJson(data, &error);
+  assert(error.error == QJsonParseError::NoError);
+  QJsonArray arr = doc.array();
+  _unconnected_value = arr.at(0);
 }
 
 }

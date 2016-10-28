@@ -34,7 +34,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void update_clean_marker(Entity* entity, bool clean);
 
   // Build and link a compute node.
-  virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJSValue& chain_state);
+  virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
 
   // Update inputs and outputs configuration for the gui side.
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);

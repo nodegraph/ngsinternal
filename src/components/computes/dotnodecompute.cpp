@@ -16,13 +16,13 @@ DotNodeCompute::~DotNodeCompute() {
 void DotNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in", QJSValue());
+  create_input("in", QJsonValue());
   create_output("out");
 }
 
-const QJSValue DotNodeCompute::_hints = DotNodeCompute::init_hints();
-QJSValue DotNodeCompute::init_hints() {
-  QJSValue m;
+const QJsonObject DotNodeCompute::_hints = DotNodeCompute::init_hints();
+QJsonObject DotNodeCompute::init_hints() {
+  QJsonObject m;
 
   add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
   add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
@@ -33,7 +33,7 @@ QJSValue DotNodeCompute::init_hints() {
 bool DotNodeCompute::update_state() {
   internal();
   Compute::update_state();
-  set_output("out", get_input_value("in"));
+  set_output("out", _inputs->get_input_value("in"));
   return true;
 }
 

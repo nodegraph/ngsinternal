@@ -62,6 +62,11 @@ BaseStackPage{
         app_settings.vibrate()
         stack_view.clear_pages()
         
+        console.log('node name: ' + node_name)
+        console.log('values: ' + JSON.stringify(values))
+        console.log('hints: ' + JSON.stringify(hints))
+        console.log('exposure: ' + JSON.stringify(exposure))
+        
         // Show the next object.
         _values = values
         _hints = hints
@@ -371,24 +376,20 @@ BaseStackPage{
     // Get a string which represents the value's type or actual value.
     function get_string_for_value(path) {
     	var value = get_value(path)
-    	var value_type;
+    	var value_type = app_enums.determine_js_type(value)
     	
     	if (_allow_edits) {
     		var hints = get_hints(path)
-    		if (hints === undefined) {
-    			console.error('error: no hints for: ' + path)
+    		if (hints) {
+    			value_type = hints[hint_type.kJSType]
+    			// Use the hints to get a more descriptive string representation.
+				if (hints.hasOwnProperty(hint_type.kEnum)) {
+		    		return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
+		    	} else if (hints.hasOwnProperty(hint_type.kDescription) && 
+		    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
+		    		return hints[hint_type.kDescription]
+		    	}
     		}
-    		value_type = hints[hint_type.kJSType]
-    		
-    		// Use the hints to get a more descriptive string representation.
-			if (hints.hasOwnProperty(hint_type.kEnum)) {
-	    		return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
-	    	} else if (hints.hasOwnProperty(hint_type.kDescription) && 
-	    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
-	    		return hints[hint_type.kDescription]
-	    	}
-    	} else {
-    		value_type = app_enums.determine_js_type(value)
     	}
 
         
@@ -416,16 +417,13 @@ BaseStackPage{
     // Get an image which represents the value's type.
     function get_image_for_value(path) {
         var value = get_value(path)
-    	var value_type;
+    	var value_type = app_enums.determine_js_type(value)
     	
     	if (_allow_edits) {
     		var hints = get_hints(path)
-    		if (hints === undefined) {
-    			console.error('error: no hints for: ' + path)
-    		}
+    		if (hints) {
     		value_type = hints[hint_type.kJSType]
-    	} else {
-    		value_type = app_enums.determine_js_type(value)
+    		}
     	}
     	
         switch(value_type) {

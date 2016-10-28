@@ -2,6 +2,8 @@
 set(sources
     paramtypes.cpp
 	flux.cpp
+	inputs.cpp
+	outputs.cpp
 	compute.cpp
 	dotnodecompute.cpp
 	groupnodecompute.cpp
@@ -22,6 +24,8 @@ list(APPEND sources ${moc_imps})
 set(headers
     paramtypes.h
     flux.h
+    inputs.h
+    outputs.h
     compute.h
 	dotnodecompute.h
 	groupnodecompute.h

@@ -1,6 +1,8 @@
 #pragma once
-#include <base/objectmodel/component.h>
 #include <components/computes/computes_export.h>
+#include <base/objectmodel/component.h>
+#include <base/objectmodel/dep.h>
+
 #include <entities/componentids.h>
 #include <entities/entityids.h>
 
@@ -32,6 +34,11 @@ struct OutputTraits {
   static const char* did_name;
 };
 
+//--------------------------------------------------------------------------
+// The Flux base class maintains a record of either the inputs or outputs of
+// a nodal compute.
+//--------------------------------------------------------------------------
+
 template <class Traits>
 class COMPUTES_EXPORT Flux: public Component {
  public:
@@ -61,14 +68,16 @@ class COMPUTES_EXPORT Flux: public Component {
   virtual const std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& get_exposed() const;
   virtual const std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& get_all() const;
 
+  virtual bool has(const std::string& name) const;
+  virtual const Dep<typename Traits::IOCompute>& get(const std::string& name) const;
+
  protected:
   // Our state.
   virtual void update_wires();
-
- private:
   virtual bool wires_are_up_to_date();
   virtual void gather();
 
+  Dep<typename Traits::IOCompute> _null;
   Dep<BaseNodeGraphManipulator> _ng_manipulator;
 
   // Alphabetical ordering of exposed inputs/outputs.
@@ -78,7 +87,5 @@ class COMPUTES_EXPORT Flux: public Component {
   std::unordered_map<std::string, Dep<typename Traits::IOCompute> > _all;
 };
 
-typedef Flux<InputTraits> Inputs;
-typedef Flux<OutputTraits> Outputs;
 
 }

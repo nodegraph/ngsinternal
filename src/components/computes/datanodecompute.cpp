@@ -24,14 +24,14 @@ DataNodeCompute::~DataNodeCompute() {
 void DataNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in", QJSValue());
+  create_input("in", QJsonValue());
   create_input("default_value", "3 * 9 + 3", false);
   create_output("out");
 }
 
-const QJSValue DataNodeCompute::_hints = DataNodeCompute::init_hints();
-QJSValue DataNodeCompute::init_hints() {
-  QJSValue m;
+const QJsonObject DataNodeCompute::_hints = DataNodeCompute::init_hints();
+QJsonObject DataNodeCompute::init_hints() {
+  QJsonObject m;
 
   add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
   add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
@@ -47,52 +47,50 @@ QJSValue DataNodeCompute::init_hints() {
 bool DataNodeCompute::update_state() {
   Compute::update_state();
 
-  // If _use_override is enabled, we use the _override value
-  // exclusively even if its empty.
-  if (_use_override) {
-    set_output("out", _override);
-    return true;
-  }
-
   // This will hold our final output.
-  QJSValue output;
+  QJsonValue output;
 
   // Start with our data value.
-  QString text = get_input_value("default_value").toString();
+  QString text = _inputs->get_input_value("default_value").toString();
   std::cerr << "expression is: " << text.toStdString() << "\n";
-  QJSValue result;
+  QJsonValue expr_result;
   QString error;
-  if (!evaluate_expression_js(text, result, error)) {
-    set_output("out", result); // result contains info about the error as properties.
+  if (!evaluate_expression_js(text, expr_result, error)) {
+    set_output("out", expr_result); // result contains info about the error as properties.
     on_error();
     return false;
   } else {
-    output = deep_merge(output, result);
+    output = deep_merge(output, expr_result);
   }
 
   // If our input is connected, we merge that value in.
-  const Dep<InputCompute>* c = get_input("in");
-  if ((*c)->is_connected()) {
-    output = deep_merge(output, (*c)->get_output("out"));
+  const Dep<InputCompute>& c = _inputs->get("in");
+  if (c->is_connected()) {
+    output = deep_merge(output, c->get_output("out"));
+  }
+
+  // If there is an override then merge that in.
+  if (_use_override) {
+    output = deep_merge(output, _override);
   }
 
   set_output("out", output);
   return true;
 }
 
-void DataNodeCompute::set_override(const QJSValue& override) {
+void DataNodeCompute::set_override(const QJsonValue& override) {
   external();
   _override = override;
   _use_override = true;
 }
 
-const QJSValue& DataNodeCompute::get_override() const {
+const QJsonValue& DataNodeCompute::get_override() const {
   external();
   return _override;
 }
 
 void DataNodeCompute::clear_override() {
-  _override = QJSValue();
+  _override = QJsonValue();
   _use_override = false;
 }
 

@@ -9,12 +9,13 @@
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlExpression>
-#include <QtQml/QJSValueIterator>
 
 #include <QtCore/QDebug>
 #include <QtCore/QJsonDocument>
-#include <QtCore/QJsonObject>
+
 #include <QtCore/QJsonValue>
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonObject>
 
 #include <sstream>
 
@@ -26,7 +27,7 @@ struct InputComputeComparator {
   }
 };
 
-const QJSValue Compute::_hints;
+const QJsonObject Compute::_hints;
 
 Compute::Compute(Entity* entity, ComponentDID derived_id)
     : Component(entity, kIID(), derived_id),
@@ -84,140 +85,79 @@ void Compute::update_input_flux() {
   _inputs->clean_wires();
 }
 
-QJSValue Compute::get_editable_inputs() const {
-  external();
-  QJSValue values;
-  for (auto iter: _inputs->get_all()) {
-    if (!iter.second->is_connected()) {
-      values.setProperty(QString::fromStdString(iter.first), iter.second->get_unconnected_value());
-    }
-  }
-  return values;
+QJsonObject Compute::get_editable_inputs() const {
+  return _inputs->get_editable_inputs();
 }
 
-void Compute::set_editable_inputs(const QJSValue& values) {
-  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
-  QJSValueIterator values_iter(values);
-  while (values_iter.hasNext()) {
-    values_iter.next();
-    QString name = values_iter.name();
-    if (inputs.count(name.toStdString())) {
-          const Dep<InputCompute> *c = get_input(name.toStdString());
-          if (c) {
-            (*c)->set_unconnected_value(values_iter.value());
-          }
-        }
-  }
+void Compute::set_editable_inputs(const QJsonObject& inputs) {
+  _inputs->set_editable_inputs(inputs);
 }
 
-const Dep<InputCompute>* Compute::get_input(const std::string& name) const {
-  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
-  if (!inputs.count(name)) {
-    return NULL;
-  }
-  return &inputs.at(name);
+QJsonObject Compute::get_input_exposure() const {
+  return _inputs->get_exposure();
 }
 
-QJSValue Compute::get_input_value(const std::string& input_name, const std::string& output_port_name) const {
-  const Dep<InputCompute>* input = get_input(input_name);
-  if (!input) {
-    return QJSValue();
-  }
-  return (*input)->get_output(output_port_name);
+void Compute::set_input_exposure(const QJsonObject& settings) {
+  _inputs->set_exposure(settings);
 }
 
-QJSValue Compute::get_input_values(const std::string& output_port_name) const {
-  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
-  QJSValue result;
-  for (auto &iter: inputs) {
-    result.setProperty(QString::fromStdString(iter.first), iter.second->get_output(output_port_name));
-  }
-  return result;
-}
-
-const QJSValue& Compute::get_outputs() const {
+const QJsonObject& Compute::get_outputs() const {
   external();
   return _outputs;
 }
 
-void Compute::set_outputs(const QJSValue& outputs) {
+void Compute::set_outputs(const QJsonObject& outputs) {
   internal();
   _outputs = outputs;
 }
 
-QJSValue Compute::get_output(const std::string& name) const{
+QJsonValue Compute::get_output(const std::string& name) const{
   external();
-  if (!_outputs.hasOwnProperty(name.c_str())) {
-    return QJSValue();
+  if (!_outputs.contains(name.c_str())) {
+    return QJsonValue();
   }
-  return _outputs.property(name.c_str());
+  return _outputs.value(name.c_str());
 }
 
-void Compute::set_output(const std::string& name, const QJSValue& value) {
+void Compute::set_output(const std::string& name, const QJsonValue& value) {
   internal();
-  _outputs.setProperty(name.c_str(), value);
+  _outputs.insert(name.c_str(), value);
 }
 
-QJSValue Compute::get_input_exposure() const {
-  external();
-  QJSValue results;
-  for (auto iter: _inputs->get_all()) {
-    if (!iter.second) {
-      continue;
-    }
-    results.setProperty(iter.first.c_str(), iter.second->is_exposed());
-  }
-  return results;
-}
-
-void Compute::set_input_exposure(const QJSValue& settings) {
-  const std::unordered_map<std::string, Dep<InputCompute> >& inputs = _inputs->get_all();
-  QJSValueIterator settings_iter(settings);
-  while (settings_iter.hasNext()) {
-    settings_iter.next();
-    std::string name = settings_iter.name().toStdString();
-    if (inputs.count(name)) {
-      const Dep<InputCompute> *c = get_input(name);
-      (*c)->set_exposed(settings_iter.value().toBool());
-    }
-  }
-}
-
-
-
-QJSValue Compute::deep_merge(const QJSValue& target, const QJSValue& source) {
-  if (target.isObject()) {
+QJsonValue Compute::deep_merge(const QJsonValue& target, const QJsonValue& source) {
+  if (source.isNull()) {
+    return target;
+  } else if (source.isUndefined()) {
+    return target;
+  }else if (target.isObject()) {
     if (source.isObject()) {
-      QJSValue object = target;
-      QJSValueIterator source_iter(source);
-      while (source_iter.hasNext()) {
-        source_iter.next();
-        QString name = source_iter.name();
-        if (target.hasProperty(name)) {
-          object.setProperty(name, deep_merge(target.property(name), source_iter.value()));
+      QJsonObject tobj = target.toObject();
+      QJsonObject sobj = source.toObject();
+      for (QJsonObject::const_iterator siter = sobj.constBegin(); siter != sobj.constEnd(); ++siter) {
+        QString name = siter.key();
+        if (tobj.contains(name)) {
+          tobj.insert(name, deep_merge(tobj[name], siter.value()));
         } else {
-          object.setProperty(name, source_iter.value());
+          tobj.insert(name, siter.value());
         }
       }
-      return object;
+      return tobj;
     } else {
       // Otherwise source data doesn't make it into the target.
       return target;
     }
   } else if (target.isArray()) {
     if (source.isArray()) {
+      QJsonArray tarr = target.toArray();
+      QJsonArray sarr = source.toArray();
       // The first element of the target list acts as a prototype if present.
-      QJSValue proto;
-      QJSValueIterator target_iter(target);
-      if (target_iter.hasNext()) {
-        target_iter.next();
-        proto = target_iter.value();
+      QJsonValue proto;
+      if (!tarr.empty()) {
+        proto = tarr.at(0);
       }
-      QJSValue result;
-      QJSValueIterator source_iter(source);
-      while(source_iter.hasNext()) {
-        source_iter.next();
-        result.setProperty(source_iter.name(), deep_merge(proto, source_iter.value()));
+      QJsonArray result;
+      for (int i = 0; i < sarr.size(); ++i) {
+        result[i] = deep_merge(proto, sarr.at(i));
       }
       return result;
     } else {
@@ -228,19 +168,29 @@ QJSValue Compute::deep_merge(const QJSValue& target, const QJSValue& source) {
     return source;
   } else if (target.isUndefined()) {
     return source;
-  } else {
-    if (target.isBool()) {
-      return source.toBool();
-    } else if (target.isNumber()) {
-      return target.toNumber();
-    } else if (target.isString()) {
-      return target.toString();
+  } else if (target.isBool()) {
+    if (source.isBool()) {
+      return source;
+    } else {
+      return target;
+    }
+  } else if (target.isDouble()) {
+    if (source.isDouble()) {
+      return source;
+    } else {
+      return target;
+    }
+  } else if (target.isString()) {
+    if (source.isString()) {
+      return source;
+    } else {
+      return target;
     }
   }
   return target;
 }
 
-Entity* Compute::create_input(const std::string& name, const QJSValue& value, bool exposed) {
+Entity* Compute::create_input(const std::string& name, const QJsonValue& value, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
@@ -279,39 +229,45 @@ Entity* Compute::get_outputs_space() {
   return our_entity()->get_child("outputs");
 }
 
-void Compute::add_hint(QJSValue& map,
+void Compute::add_hint(QJsonObject& map,
                        const std::string& name,
                        HintType hint_type,
-                       const QJSValue& value) {
-  QJSValue hints = map.property(name.c_str());
-  hints.setProperty(QString::number(to_underlying(hint_type)), value);
-  map.setProperty(name.c_str(),  hints);
+                       const QJsonValue& value) {
+  QJsonObject hints = map.value(name.c_str()).toObject();
+  hints.insert(QString::number(to_underlying(hint_type)), value);
+  map.insert(name.c_str(),  hints);
 }
 
-bool Compute::evaluate_expression_js(const QString& text, QJSValue& result, QString& error) const {
+bool Compute::evaluate_expression_js(const QString& text, QJsonValue& result, QString& error) const {
   internal();
   QJSEngine engine;
 
   // Add the input values into the context.
   for (auto &iter: _inputs->get_all()) {
     const Dep<InputCompute>& input = iter.second;
-    QJSValue value = input->get_output("out");
+    QJsonValue value = input->get_output("out");
     const std::string& input_name = input->get_name();
-    engine.globalObject().setProperty(QString::fromStdString(input_name), value);
+    QJSValue jsvalue = engine.toScriptValue(value);
+    engine.globalObject().setProperty(QString::fromStdString(input_name), jsvalue);
   }
 
   // Evaluate the expression.
-  result = engine.evaluate(text, "expression", 0);
-  if (result.isError()) {
+  QJSValue jsresult;
+  jsresult = engine.evaluate(text, "expression", 0);
+  if (jsresult.isError()) {
     // Update the error string.
     std::stringstream ss;
-    ss << "Uncaught exception at line: " << result.property("lineNumber").toInt() << "\n";
-    ss << "name: " << result.property("name").toString().toStdString() << "\n";
-    ss << "message: " << result.property("message").toString().toStdString() << "\n";
-    ss << "stack: " << result.property("stack").toString().toStdString() << "\n";
+    ss << "Uncaught exception at line: " << jsresult.property("lineNumber").toInt() << "\n";
+    ss << "name: " << jsresult.property("name").toString().toStdString() << "\n";
+    ss << "message: " << jsresult.property("message").toString().toStdString() << "\n";
+    ss << "stack: " << jsresult.property("stack").toString().toStdString() << "\n";
     error = ss.str().c_str();
+    std::cerr << ss.str() << "\n";
     return false;
   }
+
+  result = engine.fromScriptValue<QJsonValue>(jsresult);
+  std::cerr << "js result is: " << jsresult.toVariant().toString().toStdString() << "\n";
   std::cerr << "expression result is: " << result.toString().toStdString() << "\n";
   return true;
 }

@@ -205,7 +205,7 @@ bool GroupNodeCompute::clean_inputs() {
   for (auto &iter: _inputs->get_all()) {
     const Dep<InputCompute>& input = iter.second;
     const std::string& input_name = input->get_name();
-    // Find the input node inside this group with the same name as the input.
+    // Try to find the input node inside this group with the same name as the input.
     Entity* input_node = our_entity()->get_child(input_name);
     // Not all the inputs on a group are associated with input nodes inside the group.
     // Some are just params directly on the group.
@@ -217,9 +217,10 @@ bool GroupNodeCompute::clean_inputs() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (!input_node_compute->get_override().strictlyEquals(input->get_output("out"))) {
+      if (input_node_compute->get_override() != input->get_output("out")) {
         input_node_compute->set_override(input->get_output("out"));
       }
+      input_node_compute->clean_state();
     }
   }
   return true;
@@ -245,9 +246,10 @@ bool GroupNodeCompute::update_state() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (!input_node_compute->get_override().strictlyEquals(input->get_output("out"))) {
+      if (input_node_compute->get_override() != input->get_output("out")) {
         input_node_compute->set_override(input->get_output("out"));
       }
+      // We let the output nodes propagate cleanliness up to us when needed.
     }
   }
 
@@ -284,6 +286,18 @@ bool GroupNodeCompute::update_state() {
   }
 
   return true;
+}
+
+QJsonObject GroupNodeCompute::get_editable_inputs() const {
+  external();
+  QJsonObject values;
+  for (auto &name : _on_group_inputs) {
+    const Dep<InputCompute>& c = _inputs->get(name);
+    if (!c->is_connected()) {
+      values.insert(name.c_str(), c->get_unconnected_value());
+    }
+  }
+  return values;
 }
 
 }

@@ -28,6 +28,10 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   // Clean the group interface.
   virtual bool clean_inputs();
 
+  // Inputs.
+  virtual QJsonObject get_editable_inputs() const;
+
+
  protected:
 
   // Our state.

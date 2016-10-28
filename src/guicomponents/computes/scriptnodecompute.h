@@ -13,9 +13,9 @@ class GUICOMPUTES_EXPORT ScriptNodeCompute: public Compute  {
 
   virtual void create_inputs_outputs();
 
-  static QJSValue init_hints();
-  static const QJSValue _hints;
-  virtual const QJSValue& get_hints() const {return _hints;}
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
 
 protected:
   // Our state.

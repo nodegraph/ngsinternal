@@ -23,12 +23,12 @@ class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNod
   virtual void create_inputs_outputs();
 
   // Hints.
-  static QJSValue init_hints();
-  static const QJSValue _hints;
-  virtual const QJSValue& get_hints() const {return _hints;}
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
 
   // Scripting API.
-  Q_INVOKABLE void set_output_value(const QString& name, const QJSValue& value);
+  Q_INVOKABLE void set_output_value(const QString& name, const QJsonValue& value);
 
  protected:
 

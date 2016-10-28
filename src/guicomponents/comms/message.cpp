@@ -2,8 +2,6 @@
 #include <iostream>
 #include <cassert>
 
-#include <QtQml/QJSEngine>
-
 namespace ngs {
 
 const char* Message::kRequest = "request";
@@ -64,52 +62,51 @@ const char* Message::kAppIFramePath = "-1";
 const char* Message::kID = "id";
 
 Message::Message()
-    : QJSValue() {
+    : QJsonObject() {
 }
 
 Message::Message(const QString& json) {
   QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
   QJsonObject obj = doc.object();
-  QJSEngine engine;
-  *this = engine.toScriptValue(obj);
+  *this = obj;
   assert(check_contents());
 }
 
-Message::Message(RequestType rt, const QJSValue& args) {
-  setProperty(Message::kID, -1);
-  setProperty(Message::kIFrame, Message::kAppIFramePath);
-  setProperty(Message::kMessageType, static_cast<int>(MessageType::kRequestMessage));
+Message::Message(RequestType rt, const QJsonObject& args) {
+  insert(Message::kID, -1);
+  insert(Message::kIFrame, Message::kAppIFramePath);
+  insert(Message::kMessageType, static_cast<int>(MessageType::kRequestMessage));
 
-  setProperty(Message::kRequest, static_cast<int>(rt));
-  setProperty(Message::kArgs, args);
-
-  assert(check_contents());
-}
-
-Message::Message(bool success, const QJSValue& value) {
-  setProperty(Message::kID, -1);
-  setProperty(Message::kIFrame, Message::kAppIFramePath);
-  setProperty(Message::kMessageType, static_cast<int>(MessageType::kResponseMessage));
-
-  setProperty(Message::kSuccess, success);
-  setProperty(Message::kValue, value);
+  insert(Message::kRequest, static_cast<int>(rt));
+  insert(Message::kArgs, args);
 
   assert(check_contents());
 }
 
-Message::Message(InfoType it, const QJSValue& value) {
-  setProperty(Message::kID, -1);
-  setProperty(Message::kIFrame, Message::kAppIFramePath);
-  setProperty(Message::kMessageType, static_cast<int>(MessageType::kResponseMessage));
+Message::Message(bool success, const QJsonValue& value) {
+  insert(Message::kID, -1);
+  insert(Message::kIFrame, Message::kAppIFramePath);
+  insert(Message::kMessageType, static_cast<int>(MessageType::kResponseMessage));
 
-  setProperty(Message::kInfo, static_cast<int>(it));
-  setProperty(Message::kValue, value);
+  insert(Message::kSuccess, success);
+  insert(Message::kValue, value);
 
   assert(check_contents());
 }
 
-Message::Message(const QJSValue& other) {
-  QJSValue* me = this;
+Message::Message(InfoType it, const QJsonValue& value) {
+  insert(Message::kID, -1);
+  insert(Message::kIFrame, Message::kAppIFramePath);
+  insert(Message::kMessageType, static_cast<int>(MessageType::kResponseMessage));
+
+  insert(Message::kInfo, static_cast<int>(it));
+  insert(Message::kValue, value);
+
+  assert(check_contents());
+}
+
+Message::Message(const QJsonObject& other) {
+  QJsonObject* me = this;
   *me = other;
   assert(check_contents());
 }
@@ -118,45 +115,45 @@ Message::~Message() {
 }
 
 bool Message::check_contents() {
-  if (!hasProperty(Message::kID)) {
+  if (!contains(Message::kID)) {
     std::cerr << "Error: message is missing id.\n";
     return false;
   }
-  if (!hasProperty(Message::kIFrame)) {
+  if (!contains(Message::kIFrame)) {
     std::cerr << "Error: message is missing iframe.\n";
     return false;
   }
-  if (!hasProperty(Message::kMessageType)) {
+  if (!contains(Message::kMessageType)) {
     std::cerr << "Error: message is missing msg_type.\n";
     return false;
   }
 
-  MessageType msg_type = static_cast<MessageType>(property(Message::kMessageType).toInt());
+  MessageType msg_type = static_cast<MessageType>(value(Message::kMessageType).toInt());
   switch(msg_type) {
     case MessageType::kUnformedMessage:
       break;
     case MessageType::kRequestMessage:
-      if (!hasProperty(Message::kRequest)) {
+      if (!contains(Message::kRequest)) {
         std::cerr << "Error: request message is missing request.\n";
         return false;
       }
-      if (!hasProperty(Message::kArgs)) {
+      if (!contains(Message::kArgs)) {
         std::cerr << "Error: request message is missing args.\n";
         return false;
       }
       break;
     case MessageType::kResponseMessage:
-      if (!hasProperty(Message::kSuccess)) {
+      if (!contains(Message::kSuccess)) {
         std::cerr << "Error: response message is missing success.\n";
         return false;
       }
-      if (!hasProperty(Message::kValue)) {
+      if (!contains(Message::kValue)) {
         std::cerr << "Error: response message is missing value.\n";
         return false;
       }
       break;
     case MessageType::kInfoMessage:
-      if (!hasProperty(Message::kInfo)) {
+      if (!contains(Message::kInfo)) {
         std::cerr << "Error: info message is missing info.\n";
         return false;
       }
@@ -167,14 +164,13 @@ bool Message::check_contents() {
 
 QString Message::to_string() const {
   QJsonDocument doc;
-  QJsonObject obj = QJsonObject::fromVariantMap(toVariant().toMap());
-  doc.setObject(obj);
+  doc.setObject(*this);
   QByteArray bytes = doc.toJson(QJsonDocument::Compact);
   return QString(bytes);
 }
 
 MessageType Message::get_msg_type() const {
-  return static_cast<MessageType>(property(Message::kMessageType).toInt());
+  return static_cast<MessageType>(value(Message::kMessageType).toInt());
 }
 
 }

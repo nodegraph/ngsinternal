@@ -3,7 +3,7 @@
 #include <base/objectmodel/component.h>
 #include <entities/componentids.h>
 
-class QJSValue;
+class QJsonObject;
 
 namespace ngs {
 
@@ -31,7 +31,7 @@ class BaseNodeGraphManipulator: public Component {
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
-  virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJSValue& chain_state) = 0;
+  virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) = 0;
 
   // Update inputs and outputs configuration for the gui side.
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;

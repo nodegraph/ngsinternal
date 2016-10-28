@@ -15,13 +15,13 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   virtual void create_inputs_outputs();
 
   // Our hints.
-  static QJSValue init_hints();
-  static const QJSValue _hints;
-  virtual const QJSValue& get_hints() const {return _hints;}
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
 
   // Our overrides.
-  virtual void set_override(const QJSValue& override);
-  virtual const QJSValue& get_override() const;
+  virtual void set_override(const QJsonValue& override);
+  virtual const QJsonValue& get_override() const;
   virtual void clear_override();
 
  protected:
@@ -31,7 +31,7 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   // This is a runtime override on this node's output value.
   // This is not serialized.
   // The "default_value" parameter holds the initial/default output value for this node.
-  QJSValue _override;
+  QJsonValue _override;
   bool _use_override;
 };
 

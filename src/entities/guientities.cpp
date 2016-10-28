@@ -41,6 +41,8 @@
 #include <components/computes/mocknodecompute.h>
 #include <components/computes/outputcompute.h>
 #include <components/computes/outputnodecompute.h>
+#include <components/computes/inputs.h>
+#include <components/computes/outputs.h>
 
 #include <gui/widget/nodegrapheditor.h>
 
@@ -435,7 +437,7 @@ void InputEntity::create_internals(const std::vector<size_t>& ids) {
   }
 }
 
-void InputEntity::set_unconnected_value(const QJSValue& value) {
+void InputEntity::set_unconnected_value(const QJsonValue& value) {
   get<InputCompute>()->set_unconnected_value(value);
 }
 

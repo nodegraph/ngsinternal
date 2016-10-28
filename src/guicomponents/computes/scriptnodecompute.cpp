@@ -41,14 +41,14 @@ ScriptNodeCompute::~ScriptNodeCompute() {
 void ScriptNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in", QJSValue());
+  create_input("in", QJsonValue());
   create_output("out");
   create_input("script", "", false);
 }
 
-const QJSValue ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();
-QJSValue ScriptNodeCompute::init_hints() {
-  QJSValue m;
+const QJsonObject ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();
+QJsonObject ScriptNodeCompute::init_hints() {
+  QJsonObject m;
   add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
   add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
 
@@ -62,12 +62,12 @@ bool ScriptNodeCompute::update_state() {
   Compute::update_state();
 
   // Accumulate all of our inputs into a map.
-  QJSValue inputs_obj;
+  QJsonObject inputs_obj;
   for (auto &in: _inputs->get_all()) {
     Dep<InputCompute> op = in.second;
     const std::string& input_name = in.first;
-    QJSValue out = op->get_output("out");
-    inputs_obj.setProperty(input_name.c_str(), out);
+    QJsonValue out = op->get_output("out");
+    inputs_obj.insert(input_name.c_str(), out);
   }
 
   {
@@ -76,19 +76,19 @@ bool ScriptNodeCompute::update_state() {
     QQmlContext eval_context(engine.rootContext());
     // Add the above inputs into the context.
     // The script will reference the inputs as inputs.in etc.
-    eval_context.setContextProperty("inputs", inputs_obj.toVariant());
+    eval_context.setContextProperty("inputs", inputs_obj);
     // Create the expression.
     QQmlExpression expr(&eval_context, NULL, _script);
     // Replace the results.
     QVariant var = expr.evaluate();
-    _outputs = var.value<QJSValue>();
+    _outputs = var.toJsonObject();
   }
 
   // Make sure we have enough result data for each of our outputs.
   Entity* outputs = get_entity(Path({".","outputs"}));
   for (auto &out: outputs->get_children()) {
     const std::string& output_name = out.first;
-    if (!_outputs.hasProperty(output_name.c_str())) {
+    if (!_outputs.contains(output_name.c_str())) {
       std::cerr << "Error: ScripNodeCompute did not produce enough data for its outputs: " << output_name << "\n";
     }
   }

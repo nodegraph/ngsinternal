@@ -33,6 +33,9 @@
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
+#include <components/computes/inputs.h>
+#include <components/computes/outputs.h>
+
 #include <entities/componentinstancer.h>
 #include <components/interactions/viewcontrols.h>
 #include <components/interactions/graphbuilder.h>

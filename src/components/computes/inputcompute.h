@@ -3,7 +3,7 @@
 #include <components/computes/compute.h>
 #include <components/computes/paramtypes.h>
 
-#include <QtQml/QJSValue>
+#include <QtCore/QJsonValue>
 
 namespace ngs {
 
@@ -19,8 +19,8 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
   virtual void create_inputs_outputs() {}
 
   // The unconnected value.
-  void set_unconnected_value(const QJSValue& value);
-  const QJSValue& get_unconnected_value() const;
+  void set_unconnected_value(const QJsonValue& value);
+  const QJsonValue& get_unconnected_value() const;
 
   // Exposure.
   void set_exposed(bool exposed);
@@ -47,10 +47,7 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
   Dep<OutputCompute> _upstream;
 
   // Our data.
-  // Usually stores the value directly.
-  // If it has a string starting with "data." then it's
-  // an expression which pulls a value from the data tree flowing through the graph.
-  QJSValue _unconnected_value;
+  QJsonValue _unconnected_value;
 
   // Whether we are exposed in the node graph as a plug on a node.
   bool _exposed;

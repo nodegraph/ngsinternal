@@ -27,7 +27,6 @@ enum class HintType: int {
 };
 
 // These the strings associated with HintTypes.
-// These are used in QJSValue's as the keys (strings).
 struct COMPUTES_EXPORT Hint {
   static const char* get_as_string(HintType type);
   static const char* kEnum;

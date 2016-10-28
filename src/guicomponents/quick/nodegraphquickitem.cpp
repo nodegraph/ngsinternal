@@ -798,7 +798,7 @@ void NodeGraphQuickItem::edit_node() {
   }
 }
 
-void NodeGraphQuickItem::set_editable_inputs(const QJSValue& values) {
+void NodeGraphQuickItem::set_editable_inputs(const QJsonObject& values) {
   if (!_last_pressed_node) {
     return;
   }
@@ -808,7 +808,7 @@ void NodeGraphQuickItem::set_editable_inputs(const QJSValue& values) {
   }
 }
 
-void NodeGraphQuickItem::set_input_exposure(const QJSValue& values) {
+void NodeGraphQuickItem::set_input_exposure(const QJsonObject& values) {
   if (!_last_pressed_node) {
     return;
   }
@@ -1018,7 +1018,7 @@ bool NodeGraphQuickItem::links_are_locked() const {
 void NodeGraphQuickItem::view_node_poke() {
   _last_pressed_node = _selection->get_view_node();
   if (!_last_pressed_node) {
-    emit view_node_outputs("no view node selected", QJSValue());
+    emit view_node_outputs("no view node selected", QJsonObject());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
@@ -1028,7 +1028,7 @@ void NodeGraphQuickItem::view_node_poke() {
 void NodeGraphQuickItem::edit_node_poke() {
   _last_pressed_node = _selection->get_edit_node();
   if (!_last_pressed_node) {
-    emit edit_node_inputs("no edit node selected", QJSValue(), QJSValue(), QJSValue());
+    emit edit_node_inputs("no edit node selected", QJsonObject(), QJsonObject(), QJsonObject());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());

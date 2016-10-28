@@ -65,7 +65,7 @@ Rectangle {
              focus: true
              wrapMode: TextEdit.WrapAnywhere
              onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
-             selectByMouse: false
+             selectByMouse: true
 
              // Text.
              text: "hello"

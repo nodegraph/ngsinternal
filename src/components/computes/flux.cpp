@@ -20,7 +20,8 @@ const char* OutputTraits::did_name = "Outputs";
 template<class Traits>
 Flux<Traits>::Flux(Entity* entity)
     : Component(entity, kIID(), kDID()),
-      _ng_manipulator(this) {
+      _ng_manipulator(this),
+      _null(this) {
   get_dep_loader()->register_fixed_dep(_ng_manipulator, Path({}));
 }
 
@@ -186,6 +187,31 @@ const std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& Flux<Tr
   external();
   return _all;
 }
+
+template<class Traits>
+bool Flux<Traits>::has(const std::string& name) const {
+  external();
+  if (_all.count(name)) {
+    return true;
+  }
+  return false;
+}
+
+template<class Traits>
+const Dep<typename Traits::IOCompute>& Flux<Traits>::get(const std::string& name) const {
+  external();
+  if (_all.count(name)) {
+    return _all.at(name);
+  }
+  return _null;
+}
+
+
+
+
+// -------------------------------------------------------------------------------------------------------------------
+// Explicit Template Initialization.
+// -------------------------------------------------------------------------------------------------------------------
 
 template class Flux<InputTraits>;
 template class Flux<OutputTraits>;

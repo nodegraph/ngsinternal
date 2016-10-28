@@ -19,12 +19,12 @@ OutputNodeCompute::~OutputNodeCompute() {
 void OutputNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in", QJSValue());
+  create_input("in", QJsonValue());
 }
 
-const QJSValue OutputNodeCompute::_hints = OutputNodeCompute::init_hints();
-QJSValue OutputNodeCompute::init_hints() {
-  QJSValue m;
+const QJsonObject OutputNodeCompute::_hints = OutputNodeCompute::init_hints();
+QJsonObject OutputNodeCompute::init_hints() {
+  QJsonObject m;
 
   add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
   add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");

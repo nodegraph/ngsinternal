@@ -14,8 +14,8 @@ MockNodeCompute::~MockNodeCompute() {
 void MockNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("a", QJSValue());
-  create_input("b", QJSValue());
+  create_input("a", QJsonValue());
+  create_input("b", QJsonValue());
   create_output("c");
   create_output("d");
 }
@@ -26,10 +26,10 @@ bool MockNodeCompute::update_state() {
 
   ++_counter;
 
-  QJSValue c(_counter);
+  QJsonValue c((double)_counter);
   set_output("c", c);
 
-  QJSValue d(_counter+1);
+  QJsonValue d((double)_counter+1);
   set_output("d", d);
   return true;
 }

@@ -28,9 +28,9 @@ void InputNodeCompute::create_inputs_outputs() {
   create_output("out");
 }
 
-const QJSValue InputNodeCompute::_hints = InputNodeCompute::init_hints();
-QJSValue InputNodeCompute::init_hints() {
-  QJSValue m;
+const QJsonObject InputNodeCompute::_hints = InputNodeCompute::init_hints();
+QJsonObject InputNodeCompute::init_hints() {
+  QJsonObject m;
 
   add_hint(m, "default_value", HintType::kJSType, to_underlying(JSType::kString));
   add_hint(m, "default_value", HintType::kMultiLineEdit, true);
@@ -42,45 +42,43 @@ QJSValue InputNodeCompute::init_hints() {
 bool InputNodeCompute::update_state() {
   Compute::update_state();
 
-  // The override takes the highest priority.
-  if (_use_override) {
-    set_output("out", _override);
-    return true;
-  }
-
   // This will hold our final output.
-  QJSValue output;
+  QJsonValue output;
 
   // Start with our data value.
-  QString text = get_input_value("default_value").toString();
-  QJSValue result;
+  QString text = _inputs->get_input_value("default_value").toString();
+  QJsonValue expr_result;
   QString error;
-  if (!evaluate_expression_js(text, result, error)) {
-    QJSValue map;
-    set_output("out", result); // result will contain info about the error as properties
+  if (!evaluate_expression_js(text, expr_result, error)) {
+    set_output("out", expr_result); // result will contain info about the error as properties
     on_error();
     return false;
   } else {
-    output = deep_merge(output, result);
+    output = deep_merge(output, expr_result);
+  }
+
+  // If there is an override then merge that in.
+  if (_use_override) {
+    output = deep_merge(output, _override);
   }
 
   set_output("out", output);
   return true;
 }
 
-void InputNodeCompute::set_override(const QJSValue& override) {
+void InputNodeCompute::set_override(const QJsonValue& override) {
   external();
   _override = override;
   _use_override = true;
 }
 
-const QJSValue& InputNodeCompute::get_override() const {
+const QJsonValue& InputNodeCompute::get_override() const {
   external();
   return _override;
 }
 
 void InputNodeCompute::clear_override() {
-  _override = QJSValue();
+  _override = QJsonValue();
   _use_override = false;
 }
 

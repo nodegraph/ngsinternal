@@ -10,9 +10,6 @@
 
 #include <functional>
 
-#include <QtQml/QJSValue>
-#include <QtQml/QJSValueIterator>
-
 namespace ngs {
 
 //--------------------------------------------------------------------------------
@@ -31,26 +28,24 @@ BrowserCompute::~BrowserCompute() {
 void BrowserCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in", QJSValue());
+  create_input("in", QJsonValue());
   create_output("out");
 }
 
-void BrowserCompute::init_hints(QJSValue& m) {
+void BrowserCompute::init_hints(QJsonObject& m) {
   add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
   add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
 }
 
-void BrowserCompute::dump_map(const QJSValue& inputs) const {
-  QJSValueIterator iter(inputs);
-  while (iter.hasNext()) {
-    iter.next();
-    std::cerr << iter.name().toStdString() << " : " << iter.value().toString().toStdString() << "\n";
+void BrowserCompute::dump_map(const QJsonObject& inputs) const {
+  for(QJsonObject::const_iterator iter = inputs.begin(); iter != inputs.end(); ++iter) {
+    std::cerr << iter.key().toStdString() << " : " << iter.value().toString().toStdString() << "\n";
   }
 }
 
 void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
-  QJSValue inputs = get_input_values();
+  QJsonObject inputs = _inputs->get_input_values();
   _web_worker->queue_merge_chain_state(tc, inputs);
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.
@@ -60,17 +55,17 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
 
 void BrowserCompute::post_update_state(TaskContext& tc) {
   internal();
-  std::function<void(const QJSValue&)> on_get_outputs_bound = std::bind(&BrowserCompute::on_get_outputs,this,std::placeholders::_1);
+  std::function<void(const QJsonObject&)> on_get_outputs_bound = std::bind(&BrowserCompute::on_get_outputs,this,std::placeholders::_1);
   _web_worker->queue_get_outputs(tc, on_get_outputs_bound);
 }
 
-void BrowserCompute::on_get_outputs(const QJSValue& chain_state) {
+void BrowserCompute::on_get_outputs(const QJsonObject& chain_state) {
   internal();
   clean_finalize();
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJSValue incoming = get_input_value("in");
+  QJsonValue incoming = _inputs->get_input_value("in");
   set_output("out", incoming);
 }
 
@@ -126,9 +121,9 @@ void NavigateToCompute::create_inputs_outputs() {
   create_input(Message::kURL, "", false);
 }
 
-const QJSValue NavigateToCompute::_hints = NavigateToCompute::init_hints();
-QJSValue NavigateToCompute::init_hints() {
-  QJSValue m;
+const QJsonObject NavigateToCompute::_hints = NavigateToCompute::init_hints();
+QJsonObject NavigateToCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kURL, HintType::kJSType, to_underlying(JSType::kString));
@@ -165,9 +160,9 @@ void SwitchToIFrameCompute::create_inputs_outputs() {
   create_input(Message::kIFrame, "", false);
 }
 
-const QJSValue SwitchToIFrameCompute::_hints = SwitchToIFrameCompute::init_hints();
-QJSValue SwitchToIFrameCompute::init_hints() {
-  QJSValue m;
+const QJsonObject SwitchToIFrameCompute::_hints = SwitchToIFrameCompute::init_hints();
+QJsonObject SwitchToIFrameCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kIFrame, HintType::kJSType, to_underlying(JSType::kString));
@@ -191,15 +186,15 @@ void CreateSetFromValuesCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kWrapType, 0, false);
-  QJSValue string_list;
-  string_list.setProperty(0, "example");
-  create_input(Message::kTextValues, string_list, false);
-  create_input(Message::kImageValues, string_list, false);
+  QJsonArray string_arr;
+  string_arr.push_back("example");
+  create_input(Message::kTextValues, string_arr, false);
+  create_input(Message::kImageValues, string_arr, false);
 }
 
-const QJSValue CreateSetFromValuesCompute::_hints = CreateSetFromValuesCompute::init_hints();
-QJSValue CreateSetFromValuesCompute::init_hints() {
-  QJSValue m;
+const QJsonObject CreateSetFromValuesCompute::_hints = CreateSetFromValuesCompute::init_hints();
+QJsonObject CreateSetFromValuesCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kWrapType, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -238,9 +233,9 @@ void CreateSetFromTypeCompute::create_inputs_outputs() {
 
 }
 
-const QJSValue CreateSetFromTypeCompute::_hints = CreateSetFromTypeCompute::init_hints();
-QJSValue CreateSetFromTypeCompute::init_hints() {
-  QJSValue m;
+const QJsonObject CreateSetFromTypeCompute::_hints = CreateSetFromTypeCompute::init_hints();
+QJsonObject CreateSetFromTypeCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kWrapType, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -266,9 +261,9 @@ void DeleteSetCompute::create_inputs_outputs() {
   create_input(Message::kSetIndex, 0, false);
 }
 
-const QJSValue DeleteSetCompute::_hints = DeleteSetCompute::init_hints();
-QJSValue DeleteSetCompute::init_hints() {
-  QJSValue m;
+const QJsonObject DeleteSetCompute::_hints = DeleteSetCompute::init_hints();
+QJsonObject DeleteSetCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -295,9 +290,9 @@ void ShiftSetCompute::create_inputs_outputs() {
   create_input(Message::kWrapType, 0, false);
 }
 
-const QJSValue ShiftSetCompute::_hints = ShiftSetCompute::init_hints();
-QJSValue ShiftSetCompute::init_hints() {
-  QJSValue m;
+const QJsonObject ShiftSetCompute::_hints = ShiftSetCompute::init_hints();
+QJsonObject ShiftSetCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -330,15 +325,15 @@ void MouseActionCompute::create_inputs_outputs() {
   create_input(Message::kSetIndex, 0, false);
   create_input(Message::kOverlayIndex, 0, false);
   create_input(Message::kMouseAction, 0, false);
-  QJSValue pos;
-  pos.setProperty("x", 0);
-  pos.setProperty("y", 0);
+  QJsonObject pos;
+  pos.insert("x", 0);
+  pos.insert("y", 0);
   create_input(Message::kOverlayRelClickPos, pos, false);
 }
 
-const QJSValue MouseActionCompute::_hints = MouseActionCompute::init_hints();
-QJSValue MouseActionCompute::init_hints() {
-  QJSValue m;
+const QJsonObject MouseActionCompute::_hints = MouseActionCompute::init_hints();
+QJsonObject MouseActionCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -373,15 +368,15 @@ void StartMouseHoverActionCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, 0, false);
   create_input(Message::kOverlayIndex, 0, false);
-  QJSValue pos;
-  pos.setProperty("x", 0);
-  pos.setProperty("y", 0);
+  QJsonObject pos;
+  pos.insert("x", 0);
+  pos.insert("y", 0);
   create_input(Message::kOverlayRelClickPos, pos, false);
 }
 
-const QJSValue StartMouseHoverActionCompute::_hints = StartMouseHoverActionCompute::init_hints();
-QJSValue StartMouseHoverActionCompute::init_hints() {
-  QJSValue m;
+const QJsonObject StartMouseHoverActionCompute::_hints = StartMouseHoverActionCompute::init_hints();
+QJsonObject StartMouseHoverActionCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -427,9 +422,9 @@ void TextActionCompute::create_inputs_outputs() {
   create_input(Message::kText, "", false); // Only used when the text action is set to send text.
 }
 
-const QJSValue TextActionCompute::_hints = TextActionCompute::init_hints();
-QJSValue TextActionCompute::init_hints() {
-  QJSValue m;
+const QJsonObject TextActionCompute::_hints = TextActionCompute::init_hints();
+QJsonObject TextActionCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -469,9 +464,9 @@ void ElementActionCompute::create_inputs_outputs() {
   create_input(Message::kTextDataName, "extracted_text", false); // Only used when the element action is set to get_text.
 }
 
-const QJSValue ElementActionCompute::_hints = ElementActionCompute::init_hints();
-QJSValue ElementActionCompute::init_hints() {
-  QJSValue m;
+const QJsonObject ElementActionCompute::_hints = ElementActionCompute::init_hints();
+QJsonObject ElementActionCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -497,18 +492,21 @@ QJSValue ElementActionCompute::init_hints() {
   return m;
 }
 
-void ElementActionCompute::on_get_outputs(const QJSValue& chain_state) {
+void ElementActionCompute::on_get_outputs(const QJsonObject& chain_state) {
   internal();
   clean_finalize();
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJSValue incoming = get_input_value("in");
-  QString text_data_name = get_input_value(Message::kTextDataName).toString();
+  QJsonValue incoming = _inputs->get_input_value("in");
+  QString text_data_name = _inputs->get_input_value(Message::kTextDataName).toString();
   if (incoming.isObject()) {
-    incoming.setProperty(text_data_name, chain_state.property("value"));
+    QJsonObject obj = incoming.toObject();
+    obj.insert(text_data_name, chain_state.value("value"));
+    set_output("out", obj);
+  } else {
+    set_output("out", incoming);
   }
-  set_output("out", incoming);
 }
 
 bool ElementActionCompute::update_state() {
@@ -527,19 +525,19 @@ void ExpandSetCompute::create_inputs_outputs() {
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, 0, false);
   create_input(Message::kDirection, 0, false); // Only used when the element action is set to scroll.
-  QJSValue match_criteria;
-  match_criteria.setProperty(Message::kMatchLeft, true);
-  match_criteria.setProperty(Message::kMatchRight, false);
-  match_criteria.setProperty(Message::kMatchTop, false);
-  match_criteria.setProperty(Message::kMatchBottom, false);
-  match_criteria.setProperty(Message::kMatchFont, true);
-  match_criteria.setProperty(Message::kMatchFontSize, true);
+  QJsonObject match_criteria;
+  match_criteria.insert(Message::kMatchLeft, true);
+  match_criteria.insert(Message::kMatchRight, false);
+  match_criteria.insert(Message::kMatchTop, false);
+  match_criteria.insert(Message::kMatchBottom, false);
+  match_criteria.insert(Message::kMatchFont, true);
+  match_criteria.insert(Message::kMatchFontSize, true);
   create_input(Message::kMatchCriteria, match_criteria, false);
 }
 
-const QJSValue ExpandSetCompute::_hints = ExpandSetCompute::init_hints();
-QJSValue ExpandSetCompute::init_hints() {
-  QJSValue m;
+const QJsonObject ExpandSetCompute::_hints = ExpandSetCompute::init_hints();
+QJsonObject ExpandSetCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -571,9 +569,9 @@ void MarkSetCompute::create_inputs_outputs() {
   create_input(Message::kSetIndex, 0, false);
 }
 
-const QJSValue MarkSetCompute::_hints = MarkSetCompute::init_hints();
-QJSValue MarkSetCompute::init_hints() {
-  QJSValue m;
+const QJsonObject MarkSetCompute::_hints = MarkSetCompute::init_hints();
+QJsonObject MarkSetCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -598,9 +596,9 @@ void UnmarkSetCompute::create_inputs_outputs() {
   create_input(Message::kSetIndex, 0, false);
 }
 
-const QJSValue UnmarkSetCompute::_hints = UnmarkSetCompute::init_hints();
-QJSValue UnmarkSetCompute::init_hints() {
-  QJSValue m;
+const QJsonObject UnmarkSetCompute::_hints = UnmarkSetCompute::init_hints();
+QJsonObject UnmarkSetCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -637,9 +635,9 @@ void ShrinkSetToSideCompute::create_inputs_outputs() {
   create_input(Message::kDirection, 0, false);
 }
 
-const QJSValue ShrinkSetToSideCompute::_hints = ShrinkSetToSideCompute::init_hints();
-QJSValue ShrinkSetToSideCompute::init_hints() {
-  QJSValue m;
+const QJsonObject ShrinkSetToSideCompute::_hints = ShrinkSetToSideCompute::init_hints();
+QJsonObject ShrinkSetToSideCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
@@ -666,14 +664,14 @@ void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
   external();
   BrowserCompute::create_inputs_outputs();
   create_input(Message::kSetIndex, 0, false);
-  QJSValue number_list;
-  number_list.setProperty(0, 0);
-  create_input(Message::kDirections, number_list, false);
+  QJsonArray number_arr;
+  number_arr.push_back(0);
+  create_input(Message::kDirections, number_arr, false);
 }
 
-const QJSValue ShrinkAgainstMarkedCompute::_hints = ShrinkAgainstMarkedCompute::init_hints();
-QJSValue ShrinkAgainstMarkedCompute::init_hints() {
-  QJSValue m;
+const QJsonObject ShrinkAgainstMarkedCompute::_hints = ShrinkAgainstMarkedCompute::init_hints();
+QJsonObject ShrinkAgainstMarkedCompute::init_hints() {
+  QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kSetIndex, HintType::kJSType, to_underlying(JSType::kNumber));
