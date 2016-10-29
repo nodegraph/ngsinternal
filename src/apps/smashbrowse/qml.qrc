@@ -96,7 +96,6 @@
         <file>qml/smashbrowse/contentpages/listmodels/IFrameActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/FileMenuActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActions.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsTest.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsCreateByMatchingValues.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsCreateFromWrapType.qml</file>

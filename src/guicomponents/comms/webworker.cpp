@@ -354,6 +354,7 @@ void WebWorker::handle_response(const Message& msg) {
     // Merge the values into the chain_state.
     QJsonObject obj = value.toObject();
     for (QJsonObject::const_iterator iter = obj.constBegin(); iter != obj.constEnd(); ++iter) {
+      std::cerr << "inserting into chain: " << iter.key().toStdString() << " value: " << iter.value().toString().toStdString() << "\n";
       _chain_state.insert(iter.key(), iter.value());
     }
   } else if (!value.isUndefined()) {
@@ -725,10 +726,10 @@ void WebWorker::post_hover_task() {
 }
 
 void WebWorker::emit_option_texts_task() {
-  QJsonObject vals = _chain_state.value(Message::kOptionTexts).toObject();
+  QJsonArray vals = _chain_state.value(Message::kOptionTexts).toArray();
   QStringList options;
-  for (QJsonObject::const_iterator iter = vals.constBegin(); iter != vals.constEnd(); ++iter) {
-    options.push_back(iter.value().toString());
+  for (QJsonArray::const_iterator iter = vals.constBegin(); iter != vals.constEnd(); ++iter) {
+    options.push_back(iter->toString());
   }
   emit select_option_texts(options);
   _task_sheduler->run_next_task();

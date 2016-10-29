@@ -11,28 +11,32 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Of Images"
         description: "Create set of image elements."
-        script: "web_recorder.record_create_set_of_images()"
+        script: "web_recorder.record_create_set_of_images();
+        		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Of Text"
         description: "Create set of text elements."
-        script: "web_recorder.record_create_set_of_text()"
+        script: "web_recorder.record_create_set_of_text();
+        		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Of Text Inputs"
         description: "Create set of text input elements."
-        script: "web_recorder.record_create_set_of_inputs()"
+        script: "web_recorder.record_create_set_of_inputs();
+        		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Of Dropdowns"
         description: "Create set of select/dropdown elements."
-        script: "web_recorder.record_create_set_of_selects()"
+        script: "web_recorder.record_create_set_of_selects();
+        		main_bar.switch_to_current_mode();"
     }
 
 }

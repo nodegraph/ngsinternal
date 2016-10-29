@@ -12,7 +12,7 @@ ListModel {
         title: "By Matching Text"
         description: "Create set from text under crosshair."
         script: "web_recorder.record_create_set_by_matching_text_values();
-        		 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+        		 main_bar.switch_to_current_mode();"
     }
 
     ListElement {
@@ -20,7 +20,7 @@ ListModel {
         title: "By Matching Images"
         description: "Create set from images under crosshair."
         script: "web_recorder.record_create_set_by_matching_image_values()
-        		 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+        		 main_bar.switch_to_current_mode();"
     }
 
 }

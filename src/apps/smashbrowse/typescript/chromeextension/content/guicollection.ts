@@ -126,7 +126,7 @@ class GUICollection {
         let option_texts: string[] = []
         if (set_index >= 0) {
             let oset = this.overlay_sets.get_set(set_index)
-            let element = oset.get_overlay(0).get_elem_wrap().get_element()
+            let element = oset.get_overlay(overlay_index).get_elem_wrap().get_element()
             if (element instanceof HTMLSelectElement) {
                 let select: HTMLSelectElement = <HTMLSelectElement>element
                 for (let i = 0; i < element.options.length; i++) {

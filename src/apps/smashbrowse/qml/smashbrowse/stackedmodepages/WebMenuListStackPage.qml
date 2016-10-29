@@ -18,11 +18,8 @@ BaseStackPage{
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.web_actions_mode) {
-            visible = true;
-        } else {
-            visible = false;
-        }
+    	// We always hide ourself, as there isn't actually a mode for us.
+        visible = false;
     }
 
     // -------------------------------------------------------------------------------------------
@@ -52,7 +49,10 @@ BaseStackPage{
         push_page.visible = true
         push_page.set_value("www.")
         push_page.set_title("Enter URL")
-        push_page.callback = web_recorder.record_navigate_to.bind(web_worker)
+        push_page.callback = function(url) {
+        		web_recorder.record_navigate_to(url)
+        		main_bar.switch_to_current_mode()
+        	}
         stack_view.push_page(push_page)
         visible = true
     }
@@ -62,7 +62,10 @@ BaseStackPage{
         push_page.visible = true
         push_page.set_value("")
         push_page.set_title("Type Text")
-        push_page.callback = web_recorder.record_type_text.bind(web_worker)
+        push_page.callback = function(text) {
+        		web_recorder.record_type_text(text)
+        		main_bar.switch_to_current_mode()
+        	}
         stack_view.push_page(push_page)
         visible = true
     }
@@ -73,10 +76,14 @@ BaseStackPage{
     
     // Receive option texts from the app worker.
     function on_select_option_texts(option_texts) {
+    	console.log('got option texts: ' + option_texts)
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
         push_page.visible = true
         push_page.set_title("Select from Dropdown")
-        push_page.callback = web_recorder.record_select_from_dropdown.bind(web_worker)
+        push_page.callback = function(option_text) {
+        		web_recorder.record_select_from_dropdown(option_text)
+        		main_bar.switch_to_current_mode()
+        	}
         push_page.set_option_texts(option_texts)
         stack_view.push_page(push_page)
         visible = true

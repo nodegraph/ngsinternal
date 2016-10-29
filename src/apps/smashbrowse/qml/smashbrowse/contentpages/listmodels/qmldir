@@ -10,7 +10,6 @@ ExplodeCollapseNodeActions 1.0 ExplodeCollapseNodeActions.qml
 FileMenuActions 1.0 FileMenuActions.qml
 IFrameActions 1.0 IFrameActions.qml
 WebActions 1.0 WebActions.qml
-WebActionsTest 1.0 WebActionsTest.qml
 WebActionsNavigate 1.0 WebActionsNavigate.qml
 WebActionsCreateByMatchingValues 1.0 WebActionsCreateByMatchingValues.qml
 WebActionsCreateFromWrapType 1.0 WebActionsCreateFromWrapType.qml

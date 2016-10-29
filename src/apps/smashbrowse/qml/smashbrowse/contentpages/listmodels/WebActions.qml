@@ -8,13 +8,6 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-        title: "Test..."
-        description: "Test Features."
-        script: "push_by_names('Test Features', 'WebMenuListPage', 'WebActionsTest')"
-    }
-
-    ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Navigate..."
         description: "Navigate to a url."
@@ -74,7 +67,8 @@ ListModel {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "Delete Set"
         description: "Delete set under crosshair."
-        script: "web_recorder.record_delete_set()"
+        script: "web_recorder.record_delete_set();
+        		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
