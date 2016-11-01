@@ -1,3 +1,8 @@
+# Setting up config.toml file which should live in the gitlab_ci multi runner dir beside the multi runner binary. This is usually automatically created but needs to be manually adjusted.
+# Make sure to the location of bash (installed as part of git) to the SYSTEM level paths not user level. Otherwise the runner doesn't seem to find bash.
+#shell = "bash"
+
+
 
 # Note you need to make sure adb server is not running on CI build machines 
 # at the beginning of these runs, because adb will lock on build dirs.
