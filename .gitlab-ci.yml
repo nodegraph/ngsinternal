@@ -1,5 +1,5 @@
 
-# Note you need to make adb server is not running on CI build machines 
+# Note you need to make sure adb server is not running on CI build machines 
 # at the beginning of these runs, because adb will lock on build dirs.
 # To kill adb just issue the command: adb kill-server
 # The after_script runs it so in most cases you won't need to do this.
