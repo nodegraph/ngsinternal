@@ -8,10 +8,14 @@ class Component;
 
 class ENTITIES_EXPORT ComponentInstancer: public BaseComponentInstancer {
  public:
+  static Component* instance_imp(Entity* entity, ComponentDID did);
+
   ComponentInstancer(){}
   virtual ~ComponentInstancer(){}
   virtual Component* instance(Entity* entity, ComponentDID did) const;
   virtual ComponentIID get_iid_for_did(ComponentDID did) const;
+  virtual const char* get_compute_name(ComponentDID compute_did) const;
+
 };
 
 }

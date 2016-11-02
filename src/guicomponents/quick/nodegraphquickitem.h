@@ -45,15 +45,20 @@ Q_OBJECT
   Q_INVOKABLE QString get_ngs_version() const;
   Q_INVOKABLE size_t get_num_nodes() const;
 
-  // Node Creation.
+  // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);
   Q_INVOKABLE void create_script_group_node(bool centered);
   Q_INVOKABLE void create_web_group_node(bool centered);
+
+  // Special Data Compute Nodes Creation.
   Q_INVOKABLE void create_data_node(bool centered);
   Q_INVOKABLE void create_input_node(bool centered);
   Q_INVOKABLE void create_output_node(bool centered);
   Q_INVOKABLE void create_dot_node(bool centered);
-  Q_INVOKABLE void create_compute_node(bool centered, ComponentDID did);
+
+  // Data Compute Nodes Creation.
+  Q_INVOKABLE void create_compute_node(bool centered, ComponentDID compute_did);
+  Q_INVOKABLE void create_merge_node(bool centered);
 
   // View and Edit.
   Q_INVOKABLE void view_node();

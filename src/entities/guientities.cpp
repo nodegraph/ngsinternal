@@ -1,6 +1,7 @@
 #include <entities/guientities.h>
 #include <entities/nonguientities.h>
 #include <entities/factory.h>
+#include <entities/componentinstancer.h>
 
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/component.h>
@@ -412,13 +413,19 @@ void OutputNodeEntity::create_internals(const std::vector<size_t>& ids) {
 
 void ComputeNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
-  // The compute component must be added in later.
+  // The compute component::did must be set with a call to set_compute_did before calling this method.
+  Compute* c = static_cast<Compute*>(ComponentInstancer::instance_imp(this,_did));
+  c->create_inputs_outputs();
   // Gui components.
   new_ff RectNodeShape(this);
   new_ff Inputs(this);
   new_ff Outputs(this);
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
+}
+
+void ComputeNodeEntity::set_compute_did(ComponentDID did) {
+  _did = did;
 }
 
 Compute* ComputeNodeEntity::get_compute() {

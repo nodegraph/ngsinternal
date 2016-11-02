@@ -41,7 +41,7 @@ ScriptNodeCompute::~ScriptNodeCompute() {
 void ScriptNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("in", QJsonValue());
+  create_input("in", QJsonObject());
   create_output("out");
   create_input("script", "", false);
 }

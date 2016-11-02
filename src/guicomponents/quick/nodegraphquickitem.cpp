@@ -4,6 +4,7 @@
 #include <ngsversion.h>
 
 #include <entities/entityids.h>
+#include <entities/guientities.h>
 #include <components/computes/compute.h>
 #include <components/resources/resources.h>
 #include <components/interactions/shapecanvas.h>
@@ -635,8 +636,13 @@ void NodeGraphQuickItem::create_dot_node(bool centered) {
 
 void NodeGraphQuickItem::create_compute_node(bool centered, ComponentDID compute_did) {
   external();
-  Entity* e = _factory->create_compute_node(get_current_interaction()->our_entity(), compute_did);
+  Entity* e = _factory->instance_compute_node(get_current_interaction()->our_entity(), compute_did);
   finish_creating_node(e, centered);
+}
+
+void NodeGraphQuickItem::create_merge_node(bool centered) {
+  external();
+  create_compute_node(centered, ComponentDID::kMergeNodeCompute);
 }
 
 void NodeGraphQuickItem::process_node() {

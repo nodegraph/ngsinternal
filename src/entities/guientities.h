@@ -144,9 +144,12 @@ class ENTITIES_EXPORT OutputLabelEntity : public Entity {
 class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
  public:
   ENTITY_ID(ComputeNodeEntity, "compute")
- ComputeNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+ ComputeNodeEntity(Entity* parent, const std::string& name):Entity(parent, name), _did(ComponentDID::kInvalidComponent){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
+  void set_compute_did(ComponentDID did);
   Compute* get_compute();
+ private:
+  ComponentDID _did;
 };
 
 }

@@ -96,6 +96,7 @@ COMPONENT_ENTRY1(GroupNodeCompute)\
 COMPONENT_ENTRY1(ScriptGroupNodeCompute)\
 COMPONENT_ENTRY1(WebGroupNodeCompute)\
 COMPONENT_ENTRY1(DataNodeCompute)\
+COMPONENT_ENTRY1(MergeNodeCompute)\
 COMPONENT_ENTRY1(InputNodeCompute)\
 COMPONENT_ENTRY1(OutputNodeCompute)\
 COMPONENT_ENTRY1(ScriptNodeCompute)\
@@ -158,7 +159,5 @@ enum class ComponentDID : size_t {
 
 
 ENTITIES_EXPORT const char* get_component_did_name(ComponentDID did);
-
-
-
+ENTITIES_EXPORT const char* get_compute_name(ComponentDID compute_did);
 }

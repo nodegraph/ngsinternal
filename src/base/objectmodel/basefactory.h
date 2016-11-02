@@ -21,6 +21,7 @@ class OBJECTMODEL_EXPORT BaseComponentInstancer {
   virtual ~BaseComponentInstancer();
   virtual Component* instance(Entity* entity, ComponentDID did) const = 0;
   virtual ComponentIID get_iid_for_did(ComponentDID did) const = 0;
+  virtual const char* get_compute_name(ComponentDID compute_did) const = 0;
 };
 
 class OBJECTMODEL_EXPORT BaseFactory: public Component {
@@ -40,7 +41,10 @@ class OBJECTMODEL_EXPORT BaseFactory: public Component {
   virtual Entity* create_entity(Entity* parent, const std::string& name, EntityDID did) const;
   virtual Component* create_component(Entity* entity, ComponentDID did) const;
 
-  virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const = 0;
+  virtual const char* get_compute_name(ComponentDID compute_did) const;
+
+  virtual Entity* instance_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const = 0;
+  virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const;
 
   // Group navigation management.
   virtual void push_group(Entity* group);

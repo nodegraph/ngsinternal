@@ -39,6 +39,16 @@ Component* BaseFactory::create_component(Entity* entity, ComponentDID did) const
   return c;
 }
 
+const char* BaseFactory::get_compute_name(ComponentDID compute_did) const {
+  return _component_instancer->get_compute_name(compute_did);
+}
+
+Entity* BaseFactory::create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name) const {
+  Entity* e = instance_compute_node(parent, compute_did, name);
+  e->create_internals();
+  return e;
+}
+
 void BaseFactory::push_group(Entity* group) {
   internal();
   _group_stack.push_back(group);
