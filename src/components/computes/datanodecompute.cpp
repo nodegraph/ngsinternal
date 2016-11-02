@@ -24,7 +24,7 @@ DataNodeCompute::~DataNodeCompute() {
 void DataNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("default_value", "3 * 9 + 3", false);
+  create_input("value", "{\"alpha\": 1, \"beta\": 2, \"gamma\": 3}", false);
   create_output("out");
 }
 
@@ -32,9 +32,9 @@ const QJsonObject DataNodeCompute::_hints = DataNodeCompute::init_hints();
 QJsonObject DataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "default_value", HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, "default_value", HintType::kMultiLineEdit, true);
-  add_hint(m, "default_value", HintType::kDescription, "The object that will be output by this node, if the corresponding input plug on this group is not connected. This must be a proper javascript expression.");
+  add_hint(m, "value", HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, "value", HintType::kMultiLineEdit, true);
+  add_hint(m, "value", HintType::kDescription, "The object that will be output by this node, if the corresponding input plug on this group is not connected. This must be a proper javascript expression.");
 
   return m;
 }
@@ -46,7 +46,7 @@ bool DataNodeCompute::update_state() {
   QJsonValue output;
 
   // Start with our data value.
-  QString text = _inputs->get_input_value("default_value").toString();
+  QString text = _inputs->get_input_value("value").toString();
   QJsonValue expr_result;
   QString error;
   if (!evaluate_expression_js(text, expr_result, error)) {

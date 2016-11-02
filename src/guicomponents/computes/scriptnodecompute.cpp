@@ -42,8 +42,8 @@ void ScriptNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
   create_input("in", QJsonObject());
-  create_output("out");
   create_input("script", "", false);
+  create_output("out");
 }
 
 const QJsonObject ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();
