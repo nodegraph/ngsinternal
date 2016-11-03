@@ -19,7 +19,7 @@ set(o2_WITH_QT5 ON)
 
 set(o2_LIB_SUFFIX "" CACHE STRING "Suffix for install 'lib' directory, e.g. 64 for lib64")
 
-set(o2_SHOW_TRACE OFF)
+set(o2_SHOW_TRACE ON)
 if(NOT o2_SHOW_TRACE)
   add_definitions(-DQT_NO_DEBUG_OUTPUT=1)
 endif()

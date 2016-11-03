@@ -9,7 +9,7 @@ static quint64 getHash(const QString &encryptionKey) {
 
 O0SettingsStore::O0SettingsStore(const QString &encryptionKey, QObject *parent):
     O0AbstractStore(parent), crypt_(getHash(encryptionKey)) {
-    settings_ = new QSettings(this);
+    settings_ = new QSettings("ngs", "smashbrowse", this);
 }
 
 O0SettingsStore::O0SettingsStore(QSettings *settings, const QString &encryptionKey, QObject *parent):
