@@ -38,7 +38,7 @@ void Tweeter::doOAuth() {
     connect(o1Twitter_, SIGNAL(closeBrowser()), this, SLOT(onCloseBrowser()));
 
     qDebug() << "Starting OAuth...";
-    o1Twitter_->unlink();  // For the sake of this demo
+    //o1Twitter_->unlink();  // For the sake of this demo
     o1Twitter_->link();
 }
 
