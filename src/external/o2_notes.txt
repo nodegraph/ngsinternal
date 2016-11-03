@@ -1,0 +1,5 @@
+The following changes were made to the project.
+- only the src dir was copied here
+- but the top CMakeLists.txt and LICENSE file were also copied
+- in the top CMakeLists.txt file ---> all options(...) were changed to set(...)
+- in cpp files, o2globals.h doesn't exist so change references to that to o0globals.h
