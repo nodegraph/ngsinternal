@@ -46,6 +46,13 @@ declare const enum RequestType {
 
     // Info Request.
     kGetCrosshairInfo,
+
+    // Firebase.
+    kFirebaseSignIn,
+    kFirebaseSignOut,
+    kFirebaseWriteData,
+    kFirebaseReadData,
+    kFirebaseListenToChanges
 }
 
 declare const enum MouseActionType {
@@ -70,7 +77,8 @@ declare const enum InfoType {
     kPageIsLoading,
     kPageIsReady,
     kBgIsConnected,
-    kShowWebActionMenu
+    kShowWebActionMenu,
+    kFirebaseChanged,
 }
 
 declare const enum MessageType {

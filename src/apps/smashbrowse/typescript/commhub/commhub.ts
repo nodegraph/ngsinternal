@@ -4,6 +4,8 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\selenium-webdriver\selenium-webdriver.d.ts"/>
 /// <reference path="..\message\message.d.ts"/>
 
+/// <reference path="D:\installs\srcdeps\ngsexternal\nodejs2\node_modules\firebase\firebase.d.ts"/>
+
 //------------------------------------------------------------------------------------------------
 //Globals.
 //------------------------------------------------------------------------------------------------
@@ -14,11 +16,13 @@ import Http = require('http')
 import Https = require('https')
 import Request = require('request');
 import Path = require('path')
+import firebase = require("firebase");
 
 // Our own modules.
 import {FSWrap} from './fswrap'
 import {WebDriverWrap, Key} from './webdriverwrap'
 import {DebugUtils} from './debugutils'
+import {FirebaseWrap} from './firebasewrap'
 
 // Secure web socket to communicate with chrome extension.
 let ext_server: ChromeSocketServer = null
@@ -242,6 +246,89 @@ class AppConnection extends BaseConnection {
                     }
                 }
             } break
+            case RequestType.kFirebaseSignIn: {
+                firebase.auth().signInWithEmailAndPassword(req.args.email, req.args.password).then(
+                    (a: any) => {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                    },
+                    (error: Error) => {
+                        // The user account may not exist yet if this is the first time trying to sign in.
+                        // So we try to create an account.
+                        firebase.auth().createUserWithEmailAndPassword(req.args.email, req.args.password).then(
+                            function(a: any) {
+                                send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                            },
+                            function(error: Error) {
+                                send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
+                            }
+                        )
+                    } 
+                )
+            } break
+            case RequestType.kFirebaseSignOut: {
+                firebase.auth().signOut().then(
+                    () => {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                    }, 
+                    (error: Error) => {
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
+                });
+            } break
+            case RequestType.kFirebaseWriteData: {
+                let userId = firebase.auth().currentUser.uid
+                let path = 'users/' + userId;
+                if (req.args.path.length) {
+                    if (req.args.path.charAt(0) == '/') {
+                        path = path + req.args.path
+                    } else {
+                        path = path + '/' + req.args.path
+                    }
+                }
+                firebase.database().ref(path).set(req.args.value).then(
+                    (a: any) => {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                    },
+                    (error: Error) => {
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
+                    }
+                )
+            } break
+            case RequestType.kFirebaseReadData: {
+                var userId = firebase.auth().currentUser.uid;
+                let path = 'users/' + userId;
+                if (req.args.path.length) {
+                    if (req.args.path.charAt(0) == '/') {
+                        path = path + req.args.path
+                    } else {
+                        path = path + '/' + req.args.path
+                    }
+                }
+                firebase.database().ref(path).once('value').then(
+                    (data: firebase.database.DataSnapshot) => {
+                        console.log('got value: ' + JSON.stringify(data.exportVal()))
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, data.exportVal()))
+                    },
+                    (error: Error) => {
+                        console.log('got error: ' + error.message)
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
+                    }
+                )
+            } break
+            case RequestType.kFirebaseListenToChanges: {
+                var userId = firebase.auth().currentUser.uid;
+                let path = 'users/' + userId;
+                if (req.args.path.length) {
+                    if (req.args.path.charAt(0) == '/') {
+                        path = path + req.args.path
+                    } else {
+                        path = path + '/' + req.args.path
+                    }
+                }
+                firebase.database().ref(path).on('value', (data: firebase.database.DataSnapshot) => {
+                    send_msg_to_app(new InfoMessage(msg.id, "-1", InfoType.kFirebaseChanged, data.exportVal()))
+                })
+                send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+            } break
             default: {
                 // By default we send requests to the extension. 
                 // (It goes through bg script, and then into content script.)
@@ -356,7 +443,7 @@ class BaseSocketServer {
 
 
         if (this.connections.length != 1) {
-            console.error('Error: base socket server was expecting just one connection')
+            console.error('Error: base socket server was expecting just one connection instead of: ' + this.connections.length)
         }
 
         // Send the msg through all connections which are alive.
@@ -408,6 +495,9 @@ let fswrap: FSWrap = new FSWrap()
 
 // Our webdriver wrapper.
 let webdriverwrap: WebDriverWrap = new WebDriverWrap(fswrap)
+
+// Our firebase wrapper.
+let firebasewrap: FirebaseWrap = new FirebaseWrap()
 
 // Secure web socket to communicate with chrome extension.
 ext_server = new ChromeSocketServer(webdriverwrap)

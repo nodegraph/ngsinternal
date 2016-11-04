@@ -343,6 +343,31 @@ void WebWorker::queue_emit_option_texts(TaskContext& tc) {
   _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::emit_option_texts_task,this), "select_from_dropdown3");
 }
 
+// ---------------------------------------------------------------------------------
+// Queue firebase actions.
+// ---------------------------------------------------------------------------------
+
+void WebWorker::queue_firebase_sign_in(TaskContext& tc) {
+  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::firebase_sign_in_task,this), "queue_firebase_sign_in");
+}
+
+void WebWorker::queue_firebase_sign_out(TaskContext& tc) {
+  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::firebase_sign_out_task,this), "queue_firebase_sign_out");
+}
+
+void WebWorker::queue_firebase_write_data(TaskContext& tc) {
+  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::firebase_write_data_task,this), "queue_firebase_write_data");
+}
+
+void WebWorker::queue_firebase_read_data(TaskContext& tc) {
+  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::firebase_read_data_task,this), "queue_firebase_read_data");
+}
+
+void WebWorker::queue_firebase_listen_to_changes(TaskContext& tc) {
+  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::firebase_listen_to_changes_task,this), "queue_firebase_listen_to_changes");
+}
+
+
 // ------------------------------------------------------------------------
 // Handle Incoming Messages.
 // ------------------------------------------------------------------------
@@ -741,5 +766,49 @@ void WebWorker::reset_task() {
   queue_open_browser(tc);
 }
 
+void WebWorker::firebase_sign_in_task() {
+  QJsonObject args;
+  args.insert(Message::kEmail, _chain_state.value(Message::kEmail));
+  args.insert(Message::kPassword, _chain_state.value(Message::kPassword));
+
+  Message req(RequestType::kFirebaseSignIn);
+  req.insert(Message::kArgs, args);
+  _task_sheduler->send_msg_task(req);
+}
+
+void WebWorker::firebase_sign_out_task() {
+  QJsonObject args;
+  Message req(RequestType::kFirebaseSignOut);
+  req.insert(Message::kArgs, args);
+  _task_sheduler->send_msg_task(req);
+}
+
+void WebWorker::firebase_write_data_task() {
+  QJsonObject args;
+  args.insert(Message::kPath, _chain_state.value(Message::kPath));
+  args.insert(Message::kValue, _chain_state.value(Message::kValue));
+
+  Message req(RequestType::kFirebaseWriteData);
+  req.insert(Message::kArgs, args);
+  _task_sheduler->send_msg_task(req);
+}
+
+void WebWorker::firebase_read_data_task() {
+  QJsonObject args;
+  args.insert(Message::kPath, _chain_state.value(Message::kPath));
+
+  Message req(RequestType::kFirebaseReadData);
+  req.insert(Message::kArgs, args);
+  _task_sheduler->send_msg_task(req);
+}
+
+void WebWorker::firebase_listen_to_changes_task() {
+  QJsonObject args;
+  args.insert(Message::kPath, _chain_state.value(Message::kPath));
+
+  Message req(RequestType::kFirebaseListenToChanges);
+  req.insert(Message::kArgs, args);
+  _task_sheduler->send_msg_task(req);
+}
 
 }

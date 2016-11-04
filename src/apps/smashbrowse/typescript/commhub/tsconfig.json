@@ -11,6 +11,7 @@
         "debugutils.ts",
         "fswrap.ts",
         "webdriverwrap.ts",
-        "commhub.ts"
+        "commhub.ts",
+        "firebasewrap.ts"
     ]
 }

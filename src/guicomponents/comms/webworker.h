@@ -111,6 +111,12 @@ Q_OBJECT
   void queue_stop_mouse_hover(TaskContext& tc);
   void queue_emit_option_texts(TaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
 
+  void queue_firebase_sign_in(TaskContext& tc);
+  void queue_firebase_sign_out(TaskContext& tc);
+  void queue_firebase_write_data(TaskContext& tc);
+  void queue_firebase_read_data(TaskContext& tc);
+  void queue_firebase_listen_to_changes(TaskContext& tc);
+
 signals:
   void show_web_action_menu();
   void show_iframe_menu();
@@ -191,6 +197,12 @@ signals:
 
   void emit_option_texts_task();
   void reset_task();
+
+  void firebase_sign_in_task();
+  void firebase_sign_out_task();
+  void firebase_write_data_task();
+  void firebase_read_data_task();
+  void firebase_listen_to_changes_task();
 
   // Our fixed dependencies.
   Dep<TaskScheduler> _task_sheduler;

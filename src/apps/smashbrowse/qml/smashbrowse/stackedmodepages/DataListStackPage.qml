@@ -424,7 +424,9 @@ BaseStackPage{
     	if (_allow_edits) {
     		var hints = get_hints(path)
     		if (hints) {
-    		value_type = hints[hint_type.kJSType]
+    			console.log("xxxxxxxxxxxxxxxxxxxxxxx: " + JSON.stringify(hints))
+    			value_type = hints[hint_type.kJSType]
+    			console.log("value type: " + value_type)
     		}
     	}
     	
@@ -444,7 +446,7 @@ BaseStackPage{
         case js_type.kNull:
             return 'qrc:///icons/ic_warning_white_48dp.png'
         default:
-            console.log("Error: DataStackPage::get_image_for_value encountered unknown type.")
+            console.log("Error: DataStackPage::get_image_for_value encountered unknown type at: " + path)
             console.log(new Error().stack);
         }
         return ""

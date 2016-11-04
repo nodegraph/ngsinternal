@@ -61,6 +61,11 @@ const char* Message::kAppIFramePath = "-1";
 
 const char* Message::kID = "id";
 
+const char* Message::kPath = "path";
+const char* Message::kEmail = "email";
+const char* Message::kPassword = "password";
+const char* Message::kDataName = "data_name";
+
 Message::Message()
     : QJsonObject() {
 }

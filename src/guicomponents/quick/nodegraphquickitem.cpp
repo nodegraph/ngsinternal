@@ -645,6 +645,31 @@ void NodeGraphQuickItem::create_merge_node(bool centered) {
   create_compute_node(centered, ComponentDID::kMergeNodeCompute);
 }
 
+void NodeGraphQuickItem::create_firebase_sign_in_node(bool centered) {
+  external();
+  create_compute_node(centered, ComponentDID::kFirebaseSignInCompute);
+}
+
+void NodeGraphQuickItem::create_firebase_sign_out_node(bool centered) {
+  external();
+  create_compute_node(centered, ComponentDID::kFirebaseSignOutCompute);
+}
+
+void NodeGraphQuickItem::create_firebase_write_data_node(bool centered) {
+  external();
+  create_compute_node(centered, ComponentDID::kFirebaseWriteDataCompute);
+}
+
+void NodeGraphQuickItem::create_firebase_read_data_node(bool centered) {
+  external();
+  create_compute_node(centered, ComponentDID::kFirebaseReadDataCompute);
+}
+
+void NodeGraphQuickItem::create_firebase_listen_to_changes_node(bool centered) {
+  external();
+  create_compute_node(centered, ComponentDID::kFirebaseListenToChangesCompute);
+}
+
 void NodeGraphQuickItem::process_node() {
   external();
   // Return if don't have a last pressed shape.

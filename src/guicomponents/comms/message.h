@@ -64,6 +64,13 @@ enum class RequestType : int {
 
   // Info Request.
   kGetCrosshairInfo,
+
+  // Firebase.
+  kFirebaseSignIn,
+  kFirebaseSignOut,
+  kFirebaseWriteData,
+  kFirebaseReadData,
+  kFirebaseListenToChanges
 };
 //Q_DECLARE_METATYPE(RequestType);
 
@@ -92,7 +99,8 @@ enum class InfoType : int {
   kPageIsLoading,
   kPageIsReady,
   kBgIsConnected,
-  kShowWebActionMenu
+  kShowWebActionMenu,
+  kFirebaseChanged,
 };
 //Q_DECLARE_METATYPE(InfoType);
 
@@ -181,6 +189,11 @@ class COMMS_EXPORT Message: public QJsonObject {
 
   static const char* kAppIFramePath;
   static const char* kID;
+
+  static const char* kPath;
+  static const char* kEmail;
+  static const char* kPassword;
+  static const char* kDataName;
 
   Message();
   Message(const QString& json); // Initialize from a json string typcially coming from another process outside the native app.
