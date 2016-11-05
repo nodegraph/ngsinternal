@@ -28,7 +28,7 @@ class COMPSHAPES_EXPORT DotNodeShape: public NodeShape {
   virtual const glm::vec2& get_pos() const;
 
   // Hit testing.
-  virtual const Polygon& get_bounds() const;
+  virtual const CompPolyBounds& get_bounds() const;
 
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
@@ -63,7 +63,7 @@ class COMPSHAPES_EXPORT DotNodeShape: public NodeShape {
   ShapeInstance _fg_circle;
 
   // Our bounds.
-  Polygon _bounds;
+  CompPolyBounds _bounds;
 };
 
 

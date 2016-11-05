@@ -53,9 +53,9 @@ bool InputShape::is_exposed() const {
 HitRegion InputShape::hit_test(const glm::vec2& point) const {
   external();
   if (simple_hit_test(point)) {
-    return kInputShapeRegion;
+    return HitRegion::kInputShapeRegion;
   }
-  return kMissed;
+  return HitRegion::kMissedRegion;
 }
 
 bool InputShape::update_state() {
@@ -72,7 +72,7 @@ bool InputShape::update_state() {
   ShapeInstance* fg = &_quads[1];
 
   // Get the node bounds.
-  const Polygon& bounds = _node_shape->get_bounds();
+  const CompPolyBounds& bounds = _node_shape->get_bounds();
 
   // Get the node aa bounds.
   glm::vec2 node_min, node_max;
@@ -90,7 +90,7 @@ bool InputShape::update_state() {
   _origin = glm::vec2 (start + exposed_index * delta, node_max.y + plug_offset + plug_size.y / 2.0f);
 
   // Update our bounds.
-  std::vector<glm::vec2>& verts = _bounds.vertices;
+  std::vector<glm::vec2>& verts = _bounds.poly_bound_map[HitRegion::kInputShapeRegion].vertices;
   verts.resize(4);
   verts[0] = glm::vec2(start + exposed_index * delta - plug_size.x / 2.0f, node_max.y + plug_offset);
   verts[1] = verts[0] + glm::vec2(plug_size.x, 0);
@@ -122,7 +122,7 @@ bool InputShape::update_state() {
   return true;
 }
 
-const Polygon& InputShape::get_bounds() const {
+const CompPolyBounds& InputShape::get_bounds() const {
   external();
   return _bounds;
 }

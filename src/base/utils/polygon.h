@@ -1,14 +1,16 @@
 #pragma once
 #include <base/device/transforms/glmhelper.h>
 #include <base/utils/utils_export.h>
+#include <components/compshapes/hittypes.h>
 
 #include <vector>
+#include <unordered_map>
 
 namespace ngs {
 
-class UTILS_EXPORT Polygon {
+class UTILS_EXPORT PolyBounds {
 public:
-  Polygon(){}
+  PolyBounds(){}
   // The vertices should contain the points on the border of the polygon.
   // They should be in counter-clockwise order and should only contain one loop.
   // The last/first point on the loop should not be repeated.
@@ -25,6 +27,23 @@ public:
   // Getters.
   glm::vec2 get_center() const;
   void get_aa_bounds(glm::vec2& min, glm::vec2& max) const; // gets the min and max of an axis aligned box around this polygon.
+};
+
+
+class UTILS_EXPORT CompPolyBounds {
+public:
+
+  static void CompPolyBounds::update_extremes(const glm::vec2& low, const glm::vec2& hight, bool& first, glm::vec2& min, glm::vec2& max);
+  static void coalesce_bounds(const std::vector<CompPolyBounds>& bounds, glm::vec2& min, glm::vec2& max);
+
+  CompPolyBounds(){}
+  bool contains(const glm::vec2& point) const;
+  void get_aa_bounds(glm::vec2& min, glm::vec2& max) const;
+  HitRegion hit_test(const glm::vec2& point) const;
+
+  std::unordered_map<HitRegion, PolyBounds, HitRegionHash> poly_bound_map;
+
+
 };
 
 }

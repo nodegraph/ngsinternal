@@ -70,15 +70,22 @@ class ENTITIES_EXPORT GroupNodeEntity : public Entity {
 
 class ENTITIES_EXPORT ScriptGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(ScriptGroupNodeEntity, "group")
+  ENTITY_ID(ScriptGroupNodeEntity, "script group")
  ScriptGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };
 
 class ENTITIES_EXPORT WebGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(GroupNodeEntity, "group")
+  ENTITY_ID(GroupNodeEntity, "web group")
   WebGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
+  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
+};
+
+class ENTITIES_EXPORT FirebaseGroupNodeEntity : public GroupNodeEntity {
+ public:
+  ENTITY_ID(GroupNodeEntity, "firebase group")
+ FirebaseGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };
 

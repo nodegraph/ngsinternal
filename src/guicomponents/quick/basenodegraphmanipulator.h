@@ -29,6 +29,8 @@ class BaseNodeGraphManipulator: public Component {
   virtual void clear_error_node() = 0;
   virtual void update_clean_marker(Entity* entity, bool clean) = 0;
 
+  virtual void dive_into_group(const std::string& child_group_name) = 0;
+
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
   virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) = 0;

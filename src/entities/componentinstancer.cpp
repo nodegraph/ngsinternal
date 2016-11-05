@@ -44,6 +44,8 @@
 #include <entities/factory.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
+#include <guicomponents/computes/firebasegroupnodecompute.h>
+
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
@@ -60,6 +62,8 @@
 #include <guicomponents/comms/webrecorder.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
+#include <guicomponents/comms/firebasegrouptraits.h>
+
 #include <gui/widget/nodegrapheditor.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <guicomponents/computes/webgroupnodecompute.h>

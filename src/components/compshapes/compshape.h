@@ -9,7 +9,7 @@
 
 namespace ngs {
 
-class Polygon;
+class CompPolyBounds;
 class SelectableShape;
 class NodeShape;
 
@@ -32,7 +32,7 @@ class COMPSHAPES_EXPORT CompShape: public Component{
   virtual bool is_pannable() const;
 
   // Hit testing.
-  virtual const Polygon& get_bounds() const;
+  virtual const CompPolyBounds& get_bounds() const;
   virtual HitRegion hit_test(const glm::vec2& point) const;
   virtual bool simple_hit_test(const glm::vec2& point) const;
 

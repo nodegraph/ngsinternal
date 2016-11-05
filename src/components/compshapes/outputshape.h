@@ -33,7 +33,7 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
   virtual HitRegion hit_test(const glm::vec2& point) const;
 
   // Our bounds.
-  virtual const Polygon& get_bounds() const;
+  virtual const CompPolyBounds& get_bounds() const;
 
   // Our shape instances.
   virtual const std::vector<ShapeInstance>* get_tri_instances() const;
@@ -58,7 +58,7 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
   std::vector<ShapeInstance> _tris;
 
   // Our bounds.
-  Polygon _bounds;
+  CompPolyBounds _bounds;
   glm::vec2 _origin; // The center of the input shape. Can be derived from _bg_bounds, but cached for speed.
 
 };

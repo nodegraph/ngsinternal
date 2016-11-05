@@ -78,7 +78,7 @@ const glm::vec2& RectNodeShape::get_pos() const {
   return _pos;
 }
 
-const Polygon& RectNodeShape::get_bounds() const {
+const CompPolyBounds& RectNodeShape::get_bounds() const {
   external();
   return _bg_bounds;
 }
@@ -125,7 +125,7 @@ void RectNodeShape::update_node_quads() {
 
   // Update our bounds.
   {
-    std::vector<glm::vec2>& verts = _bg_bounds.vertices;
+    std::vector<glm::vec2>& verts = _bg_bounds.poly_bound_map[HitRegion::kNodeShapeRegion].vertices;
     verts.resize(4);
     verts[0] = bg_min;
     verts[1] = verts[0] + glm::vec2(bg_dim.x,0);

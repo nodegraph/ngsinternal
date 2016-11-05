@@ -59,6 +59,8 @@ Q_OBJECT
   // Data Compute Nodes Creation.
   Q_INVOKABLE void create_compute_node(bool centered, ComponentDID compute_did);
   Q_INVOKABLE void create_merge_node(bool centered);
+
+  Q_INVOKABLE void create_firebase_group_node(bool centered);
   Q_INVOKABLE void create_firebase_sign_in_node(bool centered);
   Q_INVOKABLE void create_firebase_sign_out_node(bool centered);
   Q_INVOKABLE void create_firebase_write_data_node(bool centered);
@@ -77,6 +79,7 @@ Q_OBJECT
   Q_INVOKABLE void set_input_exposure(const QJsonObject& values);
 
   // Group Navigation.
+  void dive(const std::string& child_group_name);
   Q_INVOKABLE void dive();
   Q_INVOKABLE void surface();
   Q_INVOKABLE void surface_to_root();

@@ -13,12 +13,14 @@ set(sources
     cryptologic.cpp
     grouptraits.cpp
     webgrouptraits.cpp
+    firebasegrouptraits.cpp
     )
    
 set(headers
     taskscheduler.h
     grouptraits.h
     webgrouptraits.h
+    firebasegrouptraits.h
     cryptologic.h
 )
     

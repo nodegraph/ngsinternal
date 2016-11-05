@@ -46,17 +46,19 @@ class NodeGraphManipulatorImp: public Component {
   virtual void initialize_wires();
   
   // Asynchronous Component Cleaning.
-  void set_ultimate_target(Entity* entity, bool force_stack_reset = false);
-  void clear_ultimate_target();
-  void continue_cleaning_to_ultimate_target();
-  bool is_busy_cleaning();
+  virtual void set_ultimate_target(Entity* entity, bool force_stack_reset = false);
+  virtual void clear_ultimate_target();
+  virtual void continue_cleaning_to_ultimate_target();
+  virtual bool is_busy_cleaning();
 
   // Update current compute markers on nodes.
-  void set_processing_node(Entity* entity);
-  void clear_processing_node();
-  void set_error_node();
-  void clear_error_node();
-  void update_clean_marker(Entity* entity, bool clean);
+  virtual void set_processing_node(Entity* entity);
+  virtual void clear_processing_node();
+  virtual void set_error_node();
+  virtual void clear_error_node();
+  virtual void update_clean_marker(Entity* entity, bool clean);
+
+  virtual void dive_into_group(const std::string& child_group_name);
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
@@ -245,6 +247,10 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
   // which dirties objects. However the process events will generally
   // have events to update the display which will actually start cleaning
   // components. But now it is cleaning in a bad state.
+}
+
+void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
+  _ng_quick->dive(child_group_name);
 }
 
 Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
@@ -534,6 +540,10 @@ void NodeGraphManipulator::clear_error_node() {
 
 void NodeGraphManipulator::update_clean_marker(Entity* entity, bool clean) {
   _imp->update_clean_marker(entity, clean);
+}
+
+void NodeGraphManipulator::dive_into_group(const std::string& child_group_name) {
+  _imp->dive_into_group(child_group_name);
 }
 
 Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {

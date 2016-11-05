@@ -1,4 +1,5 @@
 #include "outputnodeshape.h"
+#include <base/utils/polygon.h>
 
 namespace ngs {
 
@@ -26,8 +27,10 @@ bool OutputNodeShape::update_state() {
   internal();
   RectNodeShape::update_state();
 
-  const Polygon& bounds = get_bounds();
-  glm::vec2 center = 0.5f * (bounds.vertices[0] + bounds.vertices[3]) - glm::vec2(indicator_offset, 0);
+  const CompPolyBounds& bounds = get_bounds();
+  const PolyBounds& poly_bound = bounds.poly_bound_map.at(HitRegion::kNodeShapeRegion);
+  const std::vector<glm::vec2> &vertices = poly_bound.vertices;
+  glm::vec2 center = 0.5f * (vertices[0] + vertices[3]) - glm::vec2(indicator_offset, 0);
   glm::vec2 pos = center - 0.5f * indicator_size;
 
   // Update our bg quad.

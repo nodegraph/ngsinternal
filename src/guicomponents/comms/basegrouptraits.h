@@ -18,8 +18,9 @@ class BaseGroupTraits: public Component {
 
   virtual GroupType get_group_type() const = 0;
 
-  virtual void on_enter() = 0; // called when we enter this group
-  virtual void on_exit() = 0; // called when we exit this group
+  virtual bool ok_to_dive() const {return true;}
+  virtual void on_enter() {}; // called when we enter this group
+  virtual void on_exit() {}; // called when we exit this group
 
 //  virtual bool node_type_is_permitted(EntityDID did) const = 0;
 //  virtual const std::unordered_set<EntityDID>& get_permitted_node_types() = 0;

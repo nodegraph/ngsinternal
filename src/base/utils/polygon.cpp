@@ -5,13 +5,13 @@
 
 namespace ngs {
 
-void Polygon::offset(const glm::vec2& offset) {
+void PolyBounds::offset(const glm::vec2& offset) {
   for (size_t i=0; i< vertices.size(); ++i) {
     vertices[i] += offset;
   }
 }
 
-void Polygon::rotate(const glm::vec2& origin, float angle) {
+void PolyBounds::rotate(const glm::vec2& origin, float angle) {
   for (size_t i = 0; i<vertices.size(); ++i) {
     glm::vec2 delta = vertices[i]-origin;
     float rx = cos(angle)*delta.x - sin(angle)*delta.y;
@@ -21,7 +21,7 @@ void Polygon::rotate(const glm::vec2& origin, float angle) {
   }
 }
 
-void Polygon::scale(const glm::vec2& origin, float scale) {
+void PolyBounds::scale(const glm::vec2& origin, float scale) {
   for (size_t i = 0; i<vertices.size(); ++i) {
     glm::vec2 &pos = vertices[i];
 
@@ -35,7 +35,7 @@ void Polygon::scale(const glm::vec2& origin, float scale) {
   }
 }
 
-bool Polygon::contains(const glm::vec2& point) const
+bool PolyBounds::contains(const glm::vec2& point) const
 {
   bool inside = false;
   int next(0);
@@ -53,7 +53,7 @@ bool Polygon::contains(const glm::vec2& point) const
   return inside;
 }
 
-glm::vec2 Polygon::get_center() const
+glm::vec2 PolyBounds::get_center() const
 {
   glm::vec2 sum;
   if (vertices.empty()) {
@@ -67,7 +67,7 @@ glm::vec2 Polygon::get_center() const
 
 }
 
-void Polygon::get_aa_bounds(glm::vec2& min, glm::vec2& max)const{
+void PolyBounds::get_aa_bounds(glm::vec2& min, glm::vec2& max)const{
   if (vertices.size()) {
     min = vertices[0];
     max = vertices[0];
@@ -89,6 +89,86 @@ void Polygon::get_aa_bounds(glm::vec2& min, glm::vec2& max)const{
       max.y = vert.y;
     }
   }
+}
+
+// ------------------------------------------------------------------------
+// CompPolyBounds.
+// ------------------------------------------------------------------------
+
+bool CompPolyBounds::contains(const glm::vec2& point) const {
+  for (auto &iter: poly_bound_map) {
+    if (iter.second.contains(point)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void CompPolyBounds::get_aa_bounds(glm::vec2& min, glm::vec2& max) const {
+  // Initialize return value.
+  min=glm::vec2(0,0);
+  max=glm::vec2(0,0);
+
+  // Loop over the poly bounds.
+  bool first = true;
+  for (auto &iter : poly_bound_map) {
+    glm::vec2 low;
+    glm::vec2 high;
+    iter.second.get_aa_bounds(low, high);
+    update_extremes(low, high, first, min, max);
+  }
+}
+
+void CompPolyBounds::update_extremes(const glm::vec2& low, const glm::vec2& high, bool& first, glm::vec2& min, glm::vec2& max) {
+  // Skip empty poly bounds.
+  if (low == high) {
+    return;
+  }
+
+  // If this is the first one, we initialize min and max with it.
+  if (first) {
+    min = low;
+    max = high;
+    first = false;
+  } else {
+    // Otherwise, we update the extremes of the aa bound.
+    if (low.x < min.x) {
+      min.x = low.x;
+    }
+    if (low.y < min.y) {
+      min.y = low.y;
+    }
+    if (high.x > max.x) {
+      max.x = high.x;
+    }
+    if (high.y > max.y) {
+      max.y = high.y;
+    }
+  }
+}
+
+void CompPolyBounds::coalesce_bounds(const std::vector<CompPolyBounds>& bounds, glm::vec2& min, glm::vec2& max) {
+  // Static Method.
+  min=glm::vec2(0,0);
+  max=glm::vec2(0,0);
+
+  bool first = true;
+  for (size_t i=0; i<bounds.size(); ++i) {
+    // Handle the nodes.
+    glm::vec2 low;
+    glm::vec2 high;
+    bounds[i].get_aa_bounds(low,high);
+    update_extremes(low, high, first, min, max);
+  }
+}
+
+HitRegion CompPolyBounds::hit_test(const glm::vec2& point) const {
+  for (auto & iter: poly_bound_map) {
+    if (iter.second.contains(point)) {
+      return iter.first;
+    }
+  }
+  return HitRegion::kMissedRegion;
 }
 
 }

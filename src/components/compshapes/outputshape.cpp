@@ -51,9 +51,9 @@ bool OutputShape::is_exposed() const {
 HitRegion OutputShape::hit_test(const glm::vec2& point) const {
   external();
   if (simple_hit_test(point)) {
-    return kOutputShapeRegion;
+    return HitRegion::kOutputShapeRegion;
   }
-  return kMissed;
+  return HitRegion::kMissedRegion;
 }
 
 bool OutputShape::update_state() {
@@ -72,7 +72,7 @@ bool OutputShape::update_state() {
   size_t exposed_index = _outputs->get_exposed_index(get_name());
 
   // Get the node bounds.
-  const Polygon& bounds = _node_shape->get_bounds();
+  const CompPolyBounds& bounds = _node_shape->get_bounds();
 
   // Get the node aa bounds.
   glm::vec2 node_min, node_max;
@@ -90,7 +90,7 @@ bool OutputShape::update_state() {
   _origin = glm::vec2(start + exposed_index * delta, node_min.y - plug_offset - plug_size.y/2.0f );
 
   // Update our bounds.
-  std::vector<glm::vec2>& verts = _bounds.vertices;
+  std::vector<glm::vec2>& verts = _bounds.poly_bound_map[HitRegion::kOutputShapeRegion].vertices;
   verts.resize(3);
   verts[0] = glm::vec2(_origin.x, _origin.y - plug_size.y/2.0f );
   verts[1] = verts[0] + glm::vec2(-plug_size.x/2.0f, plug_size.y);
@@ -125,7 +125,7 @@ bool OutputShape::update_state() {
   return true;
 }
 
-const Polygon& OutputShape::get_bounds() const {
+const CompPolyBounds& OutputShape::get_bounds() const {
   external();
   return _bounds;
 }

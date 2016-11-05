@@ -22,7 +22,7 @@ import firebase = require("firebase");
 import {FSWrap} from './fswrap'
 import {WebDriverWrap, Key} from './webdriverwrap'
 import {DebugUtils} from './debugutils'
-import {FirebaseWrap} from './firebasewrap'
+import {FirebaseWraps} from './firebasewrap'
 
 // Secure web socket to communicate with chrome extension.
 let ext_server: ChromeSocketServer = null
@@ -246,90 +246,12 @@ class AppConnection extends BaseConnection {
                     }
                 }
             } break
-            case RequestType.kFirebaseSignIn: {
-                firebase.auth().signInWithEmailAndPassword(req.args.email, req.args.password).then(
-                    (a: any) => {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
-                    },
-                    (error: Error) => {
-                        // The user account may not exist yet if this is the first time trying to sign in.
-                        // So we try to create an account.
-                        firebase.auth().createUserWithEmailAndPassword(req.args.email, req.args.password).then(
-                            function(a: any) {
-                                send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
-                            },
-                            function(error: Error) {
-                                send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
-                            }
-                        )
-                    } 
-                )
-            } break
-            case RequestType.kFirebaseSignOut: {
-                firebase.auth().signOut().then(
-                    () => {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
-                    }, 
-                    (error: Error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
-                });
-            } break
-            case RequestType.kFirebaseWriteData: {
-                let userId = firebase.auth().currentUser.uid
-                let path = 'users/' + userId;
-                if (req.args.path.length) {
-                    if (req.args.path.charAt(0) == '/') {
-                        path = path + req.args.path
-                    } else {
-                        path = path + '/' + req.args.path
-                    }
-                }
-                firebase.database().ref(path).set(req.args.value).then(
-                    (a: any) => {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
-                    },
-                    (error: Error) => {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
-                    }
-                )
-            } break
-            case RequestType.kFirebaseReadData: {
-                var userId = firebase.auth().currentUser.uid;
-                let path = 'users/' + userId;
-                if (req.args.path.length) {
-                    if (req.args.path.charAt(0) == '/') {
-                        path = path + req.args.path
-                    } else {
-                        path = path + '/' + req.args.path
-                    }
-                }
-                firebase.database().ref(path).once('value').then(
-                    (data: firebase.database.DataSnapshot) => {
-                        console.log('got value: ' + JSON.stringify(data.exportVal()))
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, data.exportVal()))
-                    },
-                    (error: Error) => {
-                        console.log('got error: ' + error.message)
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
-                    }
-                )
-            } break
-            case RequestType.kFirebaseListenToChanges: {
-                var userId = firebase.auth().currentUser.uid;
-                let path = 'users/' + userId;
-                if (req.args.path.length) {
-                    if (req.args.path.charAt(0) == '/') {
-                        path = path + req.args.path
-                    } else {
-                        path = path + '/' + req.args.path
-                    }
-                }
-                firebase.database().ref(path).on('value', (data: firebase.database.DataSnapshot) => {
-                    send_msg_to_app(new InfoMessage(msg.id, "-1", InfoType.kFirebaseChanged, data.exportVal()))
-                })
-                send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
-            } break
             default: {
+                console.log('checking if firebase can handle request')
+                if (firebasewraps.handle_request(req)) {
+                    console.log('yup it can')
+                    return
+                }
                 // By default we send requests to the extension. 
                 // (It goes through bg script, and then into content script.)
                 send_msg_to_ext(req)
@@ -475,7 +397,7 @@ class ChromeSocketServer extends BaseSocketServer {
     }
 }
 
-class AppSocketServer extends BaseSocketServer {
+export class AppSocketServer extends BaseSocketServer {
     constructor(public webdriverwrap: WebDriverWrap) {
         super(webdriverwrap)
         this.port = 8094
@@ -495,9 +417,6 @@ let fswrap: FSWrap = new FSWrap()
 
 // Our webdriver wrapper.
 let webdriverwrap: WebDriverWrap = new WebDriverWrap(fswrap)
-
-// Our firebase wrapper.
-let firebasewrap: FirebaseWrap = new FirebaseWrap()
 
 // Secure web socket to communicate with chrome extension.
 ext_server = new ChromeSocketServer(webdriverwrap)
@@ -523,3 +442,6 @@ export function send_msg_to_ext(msg: BaseMessage) {
     ext_server.send_msg(msg)
 } 
 
+
+// Our firebase wrapper.
+let firebasewraps: FirebaseWraps = new FirebaseWraps(app_server)

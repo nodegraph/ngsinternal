@@ -48,6 +48,7 @@ declare const enum RequestType {
     kGetCrosshairInfo,
 
     // Firebase.
+    kFirebaseInit,
     kFirebaseSignIn,
     kFirebaseSignOut,
     kFirebaseWriteData,

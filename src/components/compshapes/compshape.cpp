@@ -29,18 +29,18 @@ bool CompShape::is_pannable() const {
   return _pannable;
 }
 
-const Polygon& CompShape::get_bounds() const {
+const CompPolyBounds& CompShape::get_bounds() const {
   external();
-  static const Polygon dummy;
+  static const CompPolyBounds dummy;
   return dummy;
 }
 
 HitRegion CompShape::hit_test(const glm::vec2& point) const {
   external();
   if (simple_hit_test(point)) {
-    return kShape;
+    return HitRegion::kShape;
   }
-  return kMissed;
+  return HitRegion::kMissedRegion;
 }
 
 bool CompShape::simple_hit_test(const glm::vec2& point) const {

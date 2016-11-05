@@ -17,17 +17,25 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
+        title: "Web Group Node"
+        description: "Encapsulates web browser manipulation logic."
+        script: "node_graph_item.create_web_group_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
         title: "Script Group Node"
-        description: "Evaluates a script to compute its outputs. Input and Output nodes define the interface to the script."
+        description: "Evaluates a script to compute the groups outputs. Input and Output nodes define the interface to the script."
         script: "node_graph_item.create_script_group_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
-        title: "Web Group Node"
-        description: "Encapsulates web browser manipulation logic."
-        script: "node_graph_item.create_web_group_node(center_new_nodes);
+        title: "Firebase Group Node"
+        description: "Provides an environment where you manipulate Firebase databases. Info about the Firebase data is specified on the group."
+        script: "node_graph_item.create_firebase_group_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
 

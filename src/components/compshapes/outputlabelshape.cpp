@@ -97,9 +97,9 @@ bool OutputLabelShape::update_state() {
                                                            _text_max);
   } else {
     // Otherwise we display the text along the link.
-    const Polygon &bound = min_link->get_bounds();
+    const CompPolyBounds &bound = min_link->get_bounds();
     float vector_angle = min_link->get_angle();
-    glm::vec2 origin = bound.vertices[5];
+    glm::vec2 origin = bound.poly_bound_map.at(HitRegion::kLinkTailRegion).vertices[2];
     float pi2 = boost::math::constants::pi<float>()*0.5f;
     // Note the range of the angle goes from -pi to pi.
     if ((vector_angle <= -pi2) || (vector_angle >= pi2)) {

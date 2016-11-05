@@ -1,5 +1,6 @@
 import QtQuick 2.6
-//import NodeGraphRendering 1.0
+
+import smashbrowse.appwidgets 1.0
 
 Rectangle {
     id: node_graph_page
@@ -33,5 +34,14 @@ Rectangle {
             visible = false
         }
     }
+    
+    // Error Popup.
+    //AppText  {
+    //    id: test
+    //    anchors.horizontalCenter: parent.horizontalCenter // used when the text is actually a single line
+    //    anchors.bottom: node_graph_page.bottom
+    //    
+    //    text: 'test is a test'
+    //}
 }
 

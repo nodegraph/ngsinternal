@@ -41,7 +41,7 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
   virtual const glm::vec2& get_pos() const;
 
   // Hit testing.
-  virtual const Polygon& get_bounds() const;
+  virtual const CompPolyBounds& get_bounds() const;
   //virtual HitRegion hit_test(const glm::vec2& point) const;
 
   // Serialization.
@@ -69,7 +69,7 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
   std::array<unsigned char, 4> _color;
 
   // Our quad bounds.
-  Polygon _bg_bounds;
+  CompPolyBounds _bg_bounds;
 
   // Our text bounds.
   glm::vec2 _text_min;

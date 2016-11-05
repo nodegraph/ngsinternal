@@ -57,10 +57,14 @@
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/comms/filemodel.h>
+#include <guicomponents/comms/firebasegrouptraits.h>
+
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <guicomponents/computes/webgroupnodecompute.h>
+#include <guicomponents/computes/firebasegroupnodecompute.h>
+
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
@@ -353,6 +357,20 @@ void WebGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff Inputs(this);
   new_ff Outputs(this);
   new_ff WebGroupTraits(this);
+  // Gui related.
+  new_ff GroupInteraction(this);
+  new_ff CompShapeCollective(this);
+  new_ff GroupNodeShape(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
+}
+
+void FirebaseGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
+  // Our components.
+  (new_ff FirebaseGroupNodeCompute(this))->create_inputs_outputs();
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  new_ff FirebaseGroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);

@@ -14,6 +14,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QUrl>
+#include <QtCore/QDebug>
 
 namespace ngs {
 
@@ -89,6 +90,58 @@ bool WebWorker::is_busy_cleaning() {
 void WebWorker::queue_emit_option_texts() {
   TaskContext tc(_task_sheduler);
   queue_emit_option_texts(tc);
+}
+
+void WebWorker::dive_into_firebase_group(const std::string& child_group_name, const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket, const QString& email, const QString& password) {
+  TaskContext tc(_task_sheduler);
+  // Initialize the firebase wrapper.
+  {
+    QJsonObject args;
+    args.insert(Message::kApiKey, api_key);
+    args.insert(Message::kAuthDomain, auth_domain);
+    args.insert(Message::kDatabaseURL, database_url);
+    args.insert(Message::kStorageBucket, storage_bucket);
+    queue_merge_chain_state(tc, args);
+    queue_firebase_init(tc);
+  }
+  // Sign into a firebase account.
+  {
+    QJsonObject args;
+    args.insert(Message::kEmail, email);
+    args.insert(Message::kPassword, password);
+    queue_merge_chain_state(tc, args);
+    queue_firebase_sign_in(tc);
+  }
+  // Now dive into the group.
+  // If any of the above steps fail, we won't be able to dive into the group, which is what we want.
+  {
+    queue_dive_into_group(tc, child_group_name);
+  }
+}
+
+void WebWorker::firebase_init(const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket) {
+  TaskContext tc(_task_sheduler);
+  QJsonObject args;
+  args.insert(Message::kApiKey, api_key);
+  args.insert(Message::kAuthDomain, auth_domain);
+  args.insert(Message::kDatabaseURL, database_url);
+  args.insert(Message::kStorageBucket, storage_bucket);
+  queue_merge_chain_state(tc, args);
+  queue_firebase_init(tc);
+}
+
+void WebWorker::firebase_sign_in(const QString& email, const QString& password) {
+  TaskContext tc(_task_sheduler);
+  QJsonObject args;
+  args.insert(Message::kEmail, email);
+  args.insert(Message::kPassword, password);
+  queue_merge_chain_state(tc, args);
+  queue_firebase_sign_in(tc);
+}
+
+void WebWorker::dive_into_group(const std::string& child_group_name) {
+  TaskContext tc(_task_sheduler);
+  queue_dive_into_group(tc, child_group_name);
 }
 
 bool WebWorker::is_polling() {
@@ -347,6 +400,10 @@ void WebWorker::queue_emit_option_texts(TaskContext& tc) {
 // Queue firebase actions.
 // ---------------------------------------------------------------------------------
 
+void WebWorker::queue_firebase_init(TaskContext& tc) {
+  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::firebase_init_task,this), "queue_firebase_init");
+}
+
 void WebWorker::queue_firebase_sign_in(TaskContext& tc) {
   _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::firebase_sign_in_task,this), "queue_firebase_sign_in");
 }
@@ -367,6 +424,9 @@ void WebWorker::queue_firebase_listen_to_changes(TaskContext& tc) {
   _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::firebase_listen_to_changes_task,this), "queue_firebase_listen_to_changes");
 }
 
+void WebWorker::queue_dive_into_group(TaskContext& tc, const std::string& child_group_name) {
+  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::dive_into_group_task,this, child_group_name), "queue_firebase_sign_in");
+}
 
 // ------------------------------------------------------------------------
 // Handle Incoming Messages.
@@ -766,6 +826,18 @@ void WebWorker::reset_task() {
   queue_open_browser(tc);
 }
 
+void WebWorker::firebase_init_task() {
+  QJsonObject args;
+  args.insert(Message::kApiKey, _chain_state.value(Message::kApiKey));
+  args.insert(Message::kAuthDomain, _chain_state.value(Message::kAuthDomain));
+  args.insert(Message::kDatabaseURL, _chain_state.value(Message::kDatabaseURL));
+  args.insert(Message::kStorageBucket, _chain_state.value(Message::kStorageBucket));
+
+  Message req(RequestType::kFirebaseInit);
+  req.insert(Message::kArgs, args);
+  _task_sheduler->send_msg_task(req);
+}
+
 void WebWorker::firebase_sign_in_task() {
   QJsonObject args;
   args.insert(Message::kEmail, _chain_state.value(Message::kEmail));
@@ -809,6 +881,10 @@ void WebWorker::firebase_listen_to_changes_task() {
   Message req(RequestType::kFirebaseListenToChanges);
   req.insert(Message::kArgs, args);
   _task_sheduler->send_msg_task(req);
+}
+
+void WebWorker::dive_into_group_task(const std::string& child_group_name) {
+  _ng_manipulator->dive_into_group(child_group_name);
 }
 
 }

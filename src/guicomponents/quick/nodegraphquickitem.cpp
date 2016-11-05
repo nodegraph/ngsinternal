@@ -645,6 +645,12 @@ void NodeGraphQuickItem::create_merge_node(bool centered) {
   create_compute_node(centered, ComponentDID::kMergeNodeCompute);
 }
 
+void NodeGraphQuickItem::create_firebase_group_node(bool centered) {
+  external();
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "firebase group", EntityDID::kFirebaseGroupNodeEntity);
+  finish_creating_node(e, centered);
+}
+
 void NodeGraphQuickItem::create_firebase_sign_in_node(bool centered) {
   external();
   create_compute_node(centered, ComponentDID::kFirebaseSignInCompute);
@@ -786,6 +792,27 @@ void NodeGraphQuickItem::destroy_selection() {
   update();
 }
 
+void NodeGraphQuickItem::dive(const std::string& child_group_name) {
+  // Find the child group.
+  Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
+  if (!group_entity) {
+	  std::cerr << "Warning: could't find group to dive into: " << child_group_name << "\n";
+	  return;
+  }
+
+  // If the child group doesn't exist, then return.
+  if (!get_dep<GroupInteraction>(group_entity)) {
+    return;
+  }
+
+  _canvas->dive(group_entity);
+
+  // We clear the selection because we don't allow inter-group selections.
+  _selection->clear_selection();
+  frame_all();
+  update();
+}
+
 void NodeGraphQuickItem::dive() {
   external();
   // Return if don't have a last pressed shape.
@@ -793,18 +820,25 @@ void NodeGraphQuickItem::dive() {
     return;
   }
 
-  // Let the group traits performs its transition behavior.
+  // Find the group node to dive into.
   Entity* group_entity = _last_pressed_node->our_entity();
+
+  // Mark the child group as being processed.
+  _selection->set_processing_node_entity(group_entity);
+
+  // Let the group traits performs its transition behavior.
   Dep<BaseGroupTraits> t = get_dep<BaseGroupTraits>(group_entity);
   t->on_enter();
 
-  // Switch to the next group on the canvas.
-  _canvas->dive(group_entity);
+  if (t->ok_to_dive()) {
+    // Switch to the next group on the canvas.
+    _canvas->dive(group_entity);
 
-  // We clear the selection because we don't allow inter-group selections.
-  _selection->clear_selection();
-  frame_all();
-  update();
+    // We clear the selection because we don't allow inter-group selections.
+    _selection->clear_selection();
+    frame_all();
+    update();
+  }
 }
 
 void NodeGraphQuickItem::surface() {

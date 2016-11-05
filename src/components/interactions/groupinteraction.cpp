@@ -43,7 +43,7 @@ GroupInteraction::GroupInteraction(Entity* entity)
       _links_folder(NULL),
       _mouse_is_down(false),
       _state(kNodeSelectionAndDragging),
-      _hit_region(kMissed),
+      _hit_region(HitRegion::kMissedRegion),
       _panning_selection(false) {
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
   get_dep_loader()->register_fixed_dep(_selection, Path({}));
@@ -184,7 +184,7 @@ bool GroupInteraction::node_hit(const MouseInfo& info) const {
   if (!e) {
     return false;
   }
-  if (region == kNodeShapeRegion) {
+  if (region == HitRegion::kNodeShapeRegion) {
     return true;
   }
   return false;
@@ -283,9 +283,9 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
       } else if (comp_shape->is_linkable()) {
         is_node = true;
       } else if (comp_shape->get_did() == LinkShape::kDID()) {
-        if (region == kLinkHead) {
+        if (region == HitRegion::kLinkHeadRegion) {
           is_link_head = true;
-        } else if (region == kLinkTail) {
+        } else if (region == HitRegion::kLinkTailRegion) {
           is_link_tail = true;
         }
       }
@@ -533,7 +533,7 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
       } else if (comp_shape->is_linkable()) {
         is_node = true;
       } else if (comp_shape->get_did() == LinkShape::kDID()) {
-        if (region == kLinkHead) {
+        if (region == HitRegion::kLinkHeadRegion) {
           is_link_head = true;
         } else {
           is_link_tail = true;

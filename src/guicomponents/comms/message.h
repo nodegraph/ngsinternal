@@ -66,6 +66,7 @@ enum class RequestType : int {
   kGetCrosshairInfo,
 
   // Firebase.
+  kFirebaseInit,
   kFirebaseSignIn,
   kFirebaseSignOut,
   kFirebaseWriteData,
@@ -194,6 +195,12 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kEmail;
   static const char* kPassword;
   static const char* kDataName;
+
+  static const char* kApiKey;
+  static const char* kAuthDomain;
+  static const char* kDatabaseURL;
+  static const char* kStorageBucket;
+
 
   Message();
   Message(const QString& json); // Initialize from a json string typcially coming from another process outside the native app.

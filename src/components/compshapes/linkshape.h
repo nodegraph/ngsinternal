@@ -43,7 +43,7 @@ class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
   virtual const Dep<OutputShape>& get_output_shape() const;
 
   // Our bounds.
-  virtual const Polygon& get_bounds() const;
+  virtual const CompPolyBounds& get_bounds() const;
   HitRegion hit_test(const glm::vec2& point) const;
 
   // Our head position when not linked to an input shape.
@@ -92,9 +92,7 @@ class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
   ShapeInstance* _fg_tri;
 
   // Our quad bounds.
-  Polygon _bounds;
-  Polygon _head_bounds;
-  Polygon _tail_bounds;
+  CompPolyBounds _bounds;
 
   // Our head and tail positions when we're not connected to an input or an output.
   glm::vec2 _head_pos;

@@ -128,58 +128,58 @@ void LinkShape::update_positioning_helper(const glm::vec2& head_pos, const glm::
   _body_length = _full_length - tri_size.y;
   _angle = atan2(_dir.y, _dir.x);
 
-  // Update our bounds.
-  std::vector<glm::vec2>& verts = _bounds.vertices;
-  verts.resize(7);
-  verts[0] = front - tri_size.y * _dir - tri_size.x/2.0f * _perp;
-  verts[1] = front;
-  verts[2] = verts[0]+ tri_size.x * _perp;
-  verts[3] = verts[2] - (tri_size.x - body_height)/2.0f * _perp;
-  verts[4] = verts[3] - _body_length * _dir;
-  verts[5] = verts[4] - body_height * _perp;
-  verts[6] = verts[5] + _body_length * _dir;
+//  // Update our bounds.
+//  std::vector<glm::vec2>& verts = _bounds.vertices;
+//  verts.resize(7);
+//  verts[0] = front - tri_size.y * _dir - tri_size.x/2.0f * _perp;
+//  verts[1] = front;
+//  verts[2] = verts[0]+ tri_size.x * _perp;
+//  verts[3] = verts[2] - (tri_size.x - body_height)/2.0f * _perp;
+//  verts[4] = verts[3] - _body_length * _dir;
+//  verts[5] = verts[4] - body_height * _perp;
+//  verts[6] = verts[5] + _body_length * _dir;
 
   // Update our head and tail bounds.
-  {
-    std::vector<glm::vec2>& hb = _head_bounds.vertices;
+
+    std::vector<glm::vec2>& hb = _bounds.poly_bound_map[HitRegion::kLinkHeadRegion].vertices;
     hb.resize(7);
-    hb[0] = verts[0];
-    hb[1] = verts[1];
-    hb[2] = verts[2];
-    hb[3] = verts[3];
+    hb[0] = front - tri_size.y * _dir - tri_size.x/2.0f * _perp;
+    hb[1] = front;
+    hb[2] = hb[0]+ tri_size.x * _perp;
+    hb[3] = hb[2] - (tri_size.x - body_height)/2.0f * _perp;
     hb[4] = hb[3] - 0.5f * _body_length * _dir;
     hb[5] = hb[4] - body_height * _perp;
     hb[6] = hb[5] + 0.5f * _body_length * _dir;
-    std::vector<glm::vec2>& tb = _tail_bounds.vertices;
+    std::vector<glm::vec2>& tb = _bounds.poly_bound_map[HitRegion::kLinkTailRegion].vertices;
     tb.resize(4);
     tb[0] = hb [4];
     tb[1] = tb [0] - 0.5f* _body_length * _dir;
     tb[2] = tb [1] - body_height * _perp;
     tb[3] = hb [2] + 0.5f * _body_length * _dir;
-  }
+
 
   // Update our triangle.
   _bg_tri->set_scale(tri_size);
   _bg_tri->set_rotate(_angle + boost::math::constants::pi<float>() - boost::math::constants::pi<float>()/2.0f);
-  _bg_tri->set_translate(verts[1], bg_depth);
+  _bg_tri->set_translate(hb[1], bg_depth);
   _bg_tri->set_color(bg_color);
 
   // h' = h - 3*border_width
   // w' = w - 2*sqrt(3)*border_width
   _fg_tri->set_scale(tri_size - glm::vec2(2 * sqrt(3.0f) * border_width, 3.0f * border_width));
   _fg_tri->set_rotate(_bg_tri->rotate);
-  _fg_tri->set_translate(verts[1] - 2.0f*border_width*_dir, fg_depth);
+  _fg_tri->set_translate(hb[1] - 2.0f*border_width*_dir, fg_depth);
   _fg_tri->set_color(fg_color);
 
   // Update our body.
   _bg_quad->set_scale(_body_length, body_height);
   _bg_quad->set_rotate(_angle + boost::math::constants::pi<float>());
-  _bg_quad->set_translate(verts[3], bg_depth);
+  _bg_quad->set_translate(hb[3], bg_depth);
   _bg_quad->set_color(bg_color);
 
   _fg_quad->set_scale(_body_length, body_height - 2.0f * border_width);
   _fg_quad->set_rotate(_bg_quad->rotate);
-  _fg_quad->set_translate(verts[3] + border_width * _dir - border_width * _perp, fg_depth);
+  _fg_quad->set_translate(hb[3] + border_width * _dir - border_width * _perp, fg_depth);
   _fg_quad->set_color(fg_color);
 
 }
@@ -210,7 +210,7 @@ void LinkShape::update_state_helper() {
   }
 }
 
-const Polygon& LinkShape::get_bounds() const {
+const CompPolyBounds& LinkShape::get_bounds() const {
   external();
   return _bounds;
 }
@@ -227,16 +227,7 @@ const std::vector<ShapeInstance>* LinkShape::get_quad_instances() const {
 
 HitRegion LinkShape::hit_test(const glm::vec2& point) const {
   external();
-  if (!simple_hit_test(point)) {
-    return kMissed;
-  }
-  if (_head_bounds.contains(point)) {
-    return kLinkHead;
-  }
-  if (_tail_bounds.contains(point)) {
-    return kLinkTail;
-  }
-  return kShape;
+  return _bounds.hit_test(point);
 }
 
 void LinkShape::select(bool selected) {
