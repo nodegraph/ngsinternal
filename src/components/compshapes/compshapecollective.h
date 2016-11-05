@@ -1,7 +1,7 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
 #include <entities/componentids.h>
-#include <components/compshapes/hittypes.h>
+#include <components/compshapes/hitregion.h>
 #include <base/device/geometry/instancevertexattribute.h>
 #include <base/device/geometry/objectvertexattribute.h>
 #include <base/device/transforms/glmhelper.h>
@@ -18,14 +18,13 @@ namespace ngs {
 
 class CompShape;
 class NodeShape;
-class CompPolyBounds;
+class CompPolyBorder;
 
 class DotNode;
 
 class COMPSHAPES_EXPORT CompShapeCollective: public Component {
  public:
 
-  //static void coalesce_bounds(const std::vector<CompPolyBounds>& bounds, glm::vec2& min, glm::vec2& max);
   static void get_aa_bounds(const DepUSet<CompShape>& shapes, glm::vec2& min, glm::vec2& max);
   static void get_aa_bounds(const DepUSet<NodeShape>& shapes, glm::vec2& min, glm::vec2& max);
 

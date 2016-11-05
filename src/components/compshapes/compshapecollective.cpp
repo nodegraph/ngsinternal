@@ -189,60 +189,24 @@ void CompShapeCollective::get_aa_bounds(glm::vec2& min, glm::vec2& max) const {
   get_aa_bounds(_comp_shapes, min, max);
 }
 
-//void CompShapeCollective::coalesce_bounds(const std::vector<CompPolyBounds>& bounds, glm::vec2& min, glm::vec2& max) {
-//  // Static Method.
-//  min=glm::vec2(0,0);
-//  max=glm::vec2(0,0);
-//
-//  bool first = true;
-//  for (size_t i=0; i<bounds.size(); ++i) {
-//    // Handle the nodes.
-//    glm::vec2 low;
-//    glm::vec2 high;
-//    bounds[i].get_aa_bounds(low,high);
-//
-//    if (low != high) {
-//      if (first) {
-//        // If this is the first one, we initialize min and max with it.
-//        min = low;
-//        max = high;
-//        first = false;
-//      } else {
-//        if (low.x < min.x) {
-//          min.x = low.x;
-//        }
-//        if (low.y < min.y) {
-//          min.y = low.y;
-//        }
-//        if (high.x > max.x) {
-//          max.x = high.x;
-//        }
-//        if (high.y > max.y) {
-//          max.y = high.y;
-//        }
-//      }
-//    }
-//  }
-//}
-
 void CompShapeCollective::get_aa_bounds(const DepUSet<CompShape>& comp_shapes, glm::vec2& min, glm::vec2& max) {
   // Static Method.
-  std::vector<CompPolyBounds> bounds;
+  std::vector<CompPolyBorder> bounds;
   for(Dep<CompShape> c: comp_shapes){
 	  if (c) {
-		  bounds.push_back(c->get_bounds());
+		  bounds.push_back(c->get_border());
 	  }
   }
-  CompPolyBounds::coalesce_bounds(bounds, min, max);
+  CompPolyBorder::coalesce_bounds(bounds, min, max);
 }
 
 void CompShapeCollective::get_aa_bounds(const DepUSet<NodeShape>& comp_shapes, glm::vec2& min, glm::vec2& max) {
   // Static Method.
-  std::vector<CompPolyBounds> bounds;
+  std::vector<CompPolyBorder> bounds;
   for(Dep<NodeShape> c: comp_shapes){
-    bounds.push_back(c->get_bounds());
+    bounds.push_back(c->get_border());
   }
-  CompPolyBounds::coalesce_bounds(bounds, min, max);
+  CompPolyBorder::coalesce_bounds(bounds, min, max);
 }
 
 //void tessellator(const std::vector<DepLinkPtr>& dependencies, std::pair<size_t, size_t>& range) {

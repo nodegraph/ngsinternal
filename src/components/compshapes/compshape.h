@@ -4,12 +4,12 @@
 #include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
 
-#include <components/compshapes/hittypes.h>
+#include <components/compshapes/hitregion.h>
 #include <base/device/geometry/instancevertexattribute.h>
 
 namespace ngs {
 
-class CompPolyBounds;
+class CompPolyBorder;
 class SelectableShape;
 class NodeShape;
 
@@ -32,9 +32,8 @@ class COMPSHAPES_EXPORT CompShape: public Component{
   virtual bool is_pannable() const;
 
   // Hit testing.
-  virtual const CompPolyBounds& get_bounds() const;
+  virtual const CompPolyBorder& get_border() const;
   virtual HitRegion hit_test(const glm::vec2& point) const;
-  virtual bool simple_hit_test(const glm::vec2& point) const;
 
   // Our primitive instances.
   virtual const std::vector<ShapeInstance>* get_tri_instances() const;

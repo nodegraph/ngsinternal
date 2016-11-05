@@ -29,11 +29,12 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   // Update current compute markers on nodes.
   virtual void set_processing_node(Entity* entity);
   virtual void clear_processing_node();
-  virtual void set_error_node(); // Show error marker on the current compute node.
+  virtual void set_error_node(const QString& error_message); // Show error marker on the current compute node.
   virtual void clear_error_node();
   virtual void update_clean_marker(Entity* entity, bool clean);
 
   virtual void dive_into_group(const std::string& child_group_name);
+  virtual void clean_firebase_group(const std::string& child_group_name);
 
   // Build and link a compute node.
   virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);

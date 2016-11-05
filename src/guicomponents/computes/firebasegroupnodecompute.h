@@ -26,6 +26,8 @@ class GUICOMPUTES_EXPORT FirebaseGroupNodeCompute: public GroupNodeCompute {
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
 
+  virtual bool update_state2();
+
  protected:
   // Our state.
   virtual bool update_state();

@@ -48,7 +48,7 @@ class COMPUTES_EXPORT Compute: public Component {
   bool evaluate_expression_js(const QString& text, QJsonValue& result, QString& error) const;
   bool evaluate_expression_qml(const QString& text, QJsonValue& result, QString& error) const;
 
-  void on_error();
+  void on_error(const QString& error_message);
 
  protected:
   // Our state.

@@ -32,7 +32,7 @@ bool DotNodeShape::update_state() {
   internal();
   // Update our bounds.
   {
-    std::vector<glm::vec2> &verts = _bounds.poly_bound_map[HitRegion::kNodeShapeRegion].vertices;
+    std::vector<glm::vec2> &verts = _border.poly_bound_map[HitRegion::kNodeRegion].vertices;
     verts = Circle::get_samples(Circle::num_samples, radius, _pos);
   }
 
@@ -67,11 +67,6 @@ void DotNodeShape::set_pos(const glm::vec2& anchor) {
 const glm::vec2& DotNodeShape::get_pos() const {
   external();
   return _pos;
-}
-
-const CompPolyBounds& DotNodeShape::get_bounds() const {
-  external();
-  return _bounds;
 }
 
 void DotNodeShape::select(bool selected) {

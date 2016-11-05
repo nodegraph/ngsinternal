@@ -54,11 +54,12 @@ class NodeGraphManipulatorImp: public Component {
   // Update current compute markers on nodes.
   virtual void set_processing_node(Entity* entity);
   virtual void clear_processing_node();
-  virtual void set_error_node();
+  virtual void set_error_node(const QString& error_message);
   virtual void clear_error_node();
   virtual void update_clean_marker(Entity* entity, bool clean);
 
   virtual void dive_into_group(const std::string& child_group_name);
+  virtual void clean_firebase_group(const std::string& child_group_name);
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
@@ -219,14 +220,8 @@ void NodeGraphManipulatorImp::clear_processing_node() {
   _ng_quick->update();
 }
 
-void NodeGraphManipulatorImp::set_error_node() {
-  Dep<NodeShape> compute_node = _node_selection->get_processing_node();
-  if (compute_node) {
-    // Show the error marker on the node.
-    _node_selection->set_error_node(compute_node);
-    // Update the gui.
-    _ng_quick->update();
-  }
+void NodeGraphManipulatorImp::set_error_node(const QString& error_message) {
+  _ng_quick->set_error_node(error_message);
 }
 
 void NodeGraphManipulatorImp::clear_error_node() {
@@ -251,6 +246,10 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
 
 void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
   _ng_quick->dive(child_group_name);
+}
+
+void NodeGraphManipulatorImp::clean_firebase_group(const std::string& child_group_name) {
+  _ng_quick->clean_firebase_group(child_group_name);
 }
 
 Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
@@ -530,8 +529,8 @@ void NodeGraphManipulator::clear_processing_node() {
   _imp->clear_processing_node();
 }
 
-void NodeGraphManipulator::set_error_node() {
-  _imp->set_error_node();
+void NodeGraphManipulator::set_error_node(const QString& error_message) {
+  _imp->set_error_node(error_message);
 }
 
 void NodeGraphManipulator::clear_error_node() {
@@ -544,6 +543,10 @@ void NodeGraphManipulator::update_clean_marker(Entity* entity, bool clean) {
 
 void NodeGraphManipulator::dive_into_group(const std::string& child_group_name) {
   _imp->dive_into_group(child_group_name);
+}
+
+void NodeGraphManipulator::clean_firebase_group(const std::string& child_group_name) {
+  _imp->clean_firebase_group(child_group_name);
 }
 
 Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {

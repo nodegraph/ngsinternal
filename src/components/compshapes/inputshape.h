@@ -1,7 +1,7 @@
 #pragma once
+#include <base/utils/polyborder.h>
 #include <components/compshapes/compshapes_export.h>
 #include <components/compshapes/compshape.h>
-#include <base/utils/polygon.h>
 
 namespace ngs {
 
@@ -33,7 +33,7 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
   virtual HitRegion hit_test(const glm::vec2& point) const;
 
   // Our bounds.
-  virtual const CompPolyBounds& get_bounds() const;
+  virtual const CompPolyBorder& get_border() const;
 
   // Our shape instances.
   virtual const std::vector<ShapeInstance>* get_quad_instances() const;
@@ -61,7 +61,7 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
   std::vector<ShapeInstance> _quads;
 
   // Our quad bounds.
-  CompPolyBounds _bounds;
+  CompPolyBorder _border;
   glm::vec2 _origin; // The center of the input shape. Can be derived from _bg_bounds, but cached for speed.
 };
 

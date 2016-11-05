@@ -39,6 +39,7 @@
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/quick/texturedisplaynode.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
+#include <guicomponents/computes/firebasegroupnodecompute.h>
 
 
 #include <QtQuick/QQuickWindow>
@@ -297,12 +298,14 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
   _last_press = get_mouse_info(event, _device_pixel_ratio);
   get_current_interaction()->update_mouse_info(_last_press);
 
+  HitRegion region;
+
   if (_link_locked && _last_press.left_button) {
     // We only allow the press to go through if a node is pressed
     // or the background is pressed.
     if (get_current_interaction()->node_hit(_last_press) ||
         get_current_interaction()->bg_hit(_last_press)) {
-      _last_pressed_node = get_current_interaction()->pressed(_last_press);
+      _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
     }
   } else {
     if (_last_press.middle_button) {
@@ -310,14 +313,37 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
       get_current_interaction()->accumulate_select(_last_press, _last_press);
     } else if (_last_press.right_button) {
       // Simulate a long press touch.
-      _last_pressed_node = get_current_interaction()->pressed(_last_press);
+      _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
       _long_press_timer.stop();
       popup_context_menu();
     } else {
-      _last_pressed_node = get_current_interaction()->pressed(_last_press);
+      _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
     }
   }
   update();
+
+  switch(region) {
+    case HitRegion::kEditMarkerRegion: {
+      edit_node();
+      break;
+    }
+    case HitRegion::kViewMarkerRegion: {
+      view_node();
+      break;
+    }
+    case HitRegion::kProcessingMarkerRegion: {
+      // do nothing.
+      break;
+    }
+    case HitRegion::kCleanMarkerRegion: {
+      view_node();
+      break;
+    }
+    case HitRegion::kErrorMarkerRegion: {
+      emit show_error_page();
+      break;
+    }
+  }
 }
 
 void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
@@ -402,15 +428,16 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
           _last_press = get_mouse_info(event, _device_pixel_ratio);
           get_current_interaction()->update_mouse_info(_last_press);
 
+          HitRegion region;
           if (_link_locked) {
             // We only allow the press to go through if a node is pressed
             // or the background is pressed.
             if (get_current_interaction()->node_hit(_last_press) ||
                 get_current_interaction()->bg_hit(_last_press)) {
-              _last_pressed_node = get_current_interaction()->pressed(_last_press);
+              _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
             }
           } else {
-            _last_pressed_node = get_current_interaction()->pressed(_last_press);
+            _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
           }
           update();
         } else if (state&Qt::TouchPointReleased) {
@@ -762,6 +789,23 @@ void NodeGraphQuickItem::edit_node() {
   }
 }
 
+void NodeGraphQuickItem::set_error_node(const QString& error_message) {
+  Dep<NodeShape> compute_node = _selection->get_processing_node();
+  if (!compute_node) {
+    std::cerr << "Warning: could not find the error node\n";
+  }
+  if (compute_node) {
+    // Show the error marker on the node.
+    _selection->set_error_node(compute_node);
+    // Update the gui.
+    update();
+
+    // Emit messages to the qml side.
+    emit set_error_message(error_message);
+    emit show_error_page();
+  }
+}
+
 void NodeGraphQuickItem::set_editable_inputs(const QJsonObject& values) {
   if (!_last_pressed_node) {
     return;
@@ -811,6 +855,23 @@ void NodeGraphQuickItem::dive(const std::string& child_group_name) {
   _selection->clear_selection();
   frame_all();
   update();
+}
+
+void NodeGraphQuickItem::clean_firebase_group(const std::string& child_group_name) {
+  // Find the child group.
+  Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
+  if (!group_entity) {
+    std::cerr << "Warning: could't find group to dive into: " << child_group_name << "\n";
+    return;
+  }
+
+  // If the child group doesn't exist, then return.
+  if (!get_dep<GroupInteraction>(group_entity)) {
+    return;
+  }
+
+  Dep<FirebaseGroupNodeCompute> compute = get_dep<FirebaseGroupNodeCompute>(group_entity);
+  compute->update_state2();
 }
 
 void NodeGraphQuickItem::dive() {

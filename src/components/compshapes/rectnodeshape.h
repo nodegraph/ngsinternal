@@ -1,6 +1,6 @@
 #pragma once
+#include <base/utils/polyborder.h>
 #include <components/compshapes/compshapes_export.h>
-#include <base/utils/polygon.h>
 #include <components/compshapes/nodeshape.h>
 
 
@@ -40,10 +40,6 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
   virtual void set_pos(const glm::vec2& pos);
   virtual const glm::vec2& get_pos() const;
 
-  // Hit testing.
-  virtual const CompPolyBounds& get_bounds() const;
-  //virtual HitRegion hit_test(const glm::vec2& point) const;
-
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
   virtual void load(SimpleLoader& loader);
@@ -67,9 +63,6 @@ class COMPSHAPES_EXPORT RectNodeShape: public NodeShape {
 
   // Our main color.
   std::array<unsigned char, 4> _color;
-
-  // Our quad bounds.
-  CompPolyBounds _bg_bounds;
 
   // Our text bounds.
   glm::vec2 _text_min;

@@ -1,6 +1,6 @@
 #pragma once
+#include <base/utils/polyborder.h>
 #include <components/compshapes/compshapes_export.h>
-#include <base/utils/polygon.h>
 #include <components/compshapes/nodeshape.h>
 
 namespace ngs {
@@ -26,9 +26,6 @@ class COMPSHAPES_EXPORT DotNodeShape: public NodeShape {
   // Positioning.
   virtual void set_pos(const glm::vec2& anchor);
   virtual const glm::vec2& get_pos() const;
-
-  // Hit testing.
-  virtual const CompPolyBounds& get_bounds() const;
 
   // Serialization.
   virtual void save(SimpleSaver& saver) const;
@@ -61,9 +58,6 @@ class COMPSHAPES_EXPORT DotNodeShape: public NodeShape {
   // Our shape instances.
   ShapeInstance _bg_circle;
   ShapeInstance _fg_circle;
-
-  // Our bounds.
-  CompPolyBounds _bounds;
 };
 
 

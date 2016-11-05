@@ -167,10 +167,13 @@ void TaskScheduler::handle_response(const Message& msg) {
 
   // If the response indicates an un-continuable error has occured, we reset the stack.
   if (!_last_response.value(Message::kSuccess).toBool()) {
-    force_stack_reset();
     // Also show the error marker on the node.
-    _ng_manipulator->set_error_node();
+    std::cerr << "handling response with error: " << _last_response.value(Message::kValue).toString().toStdString() << "\n";
+    _ng_manipulator->set_error_node(_last_response.value(Message::kValue).toString());
     _ng_manipulator->clear_ultimate_target();
+
+    // Reset our stack.
+    force_stack_reset();
   }
 
   // Run the next task.

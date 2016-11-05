@@ -5,7 +5,7 @@
 #include <base/objectmodel/dep.h>
 #include <base/device/devicebasictypesgl.h>
 
-#include <components/compshapes/hittypes.h>
+#include <components/compshapes/hitregion.h>
 #include <components/interactions/viewcontrols.h>
 
 #include <base/device/transforms/glmhelper.h>
@@ -67,7 +67,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   // -----------------------------------------------------------------------
 
   // Mouse Presses.
-  virtual Dep<NodeShape> pressed(const MouseInfo& mouse_info);
+  virtual Dep<NodeShape> pressed(const MouseInfo& mouse_info, HitRegion& region);
   virtual void accumulate_select(const MouseInfo& a, const MouseInfo& b);
   virtual void reset_state();
   virtual bool bg_hit(const MouseInfo& info) const;

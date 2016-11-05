@@ -11,7 +11,7 @@ set(sources
 	functionobjects.cpp
 	idgenerator.cpp
 	path.cpp
-	polygon.cpp
+	polyborder.cpp
 	signal.cpp
 	simpleloader.cpp
 	simplesaver.cpp
@@ -29,7 +29,7 @@ set(headers
 	idgenerator.h
 	path.h
 	permit.h
-	polygon.h
+	polyborder.h
 	signal.h
 	simpleloader.h
 	simplesaver.h

@@ -142,6 +142,10 @@ bool GroupInteraction::has_link(Entity* entity) const {
 
 void GroupInteraction::reset_state() {
   external();
+
+  // Links may need to be cleaned up.
+  get_app_root()->clean_dead_entities();
+
   // Reset our finite state machine
   if (_link_shape) {
     Entity* e = _link_shape->our_entity();
@@ -184,7 +188,7 @@ bool GroupInteraction::node_hit(const MouseInfo& info) const {
   if (!e) {
     return false;
   }
-  if (region == HitRegion::kNodeShapeRegion) {
+  if (region == HitRegion::kNodeRegion) {
     return true;
   }
   return false;
@@ -224,7 +228,7 @@ void GroupInteraction::accumulate_select(const MouseInfo& a, const MouseInfo& b)
   }
 }
 
-Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
+Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info, HitRegion& region) {
   external();
   // Record the selection state, before anything changes.
   _preselection = _selection->get_selected();
@@ -234,7 +238,7 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
   _view_controls.update_coord_spaces(updated_mouse_info);
 
   // Do a hit test.
-  HitRegion region;
+  region = HitRegion::kMissedRegion;
   Dep<CompShape> comp_shape(this);
   {
     Entity* e = _shape_collective->hit_test(updated_mouse_info.object_space_pos.xy(), region);
@@ -268,181 +272,166 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info) {
    _mouse_over_info = updated_mouse_info;
 
     Entity* comp_shape_entity = NULL;
-    bool is_input_param = false;
-    bool is_output_param = false;
-    bool is_node = false;
-    bool is_link_head = false;
-    bool is_link_tail = false;
-
     if (comp_shape) {
       comp_shape_entity = comp_shape->our_entity();
-      if (comp_shape_entity->get_did() == EntityDID::kInputEntity) {
-        is_input_param = true;
-      } else if (comp_shape_entity->get_did() == EntityDID::kOutputEntity) {
-        is_output_param = true;
-      } else if (comp_shape->is_linkable()) {
-        is_node = true;
-      } else if (comp_shape->get_did() == LinkShape::kDID()) {
-        if (region == HitRegion::kLinkHeadRegion) {
-          is_link_head = true;
-        } else if (region == HitRegion::kLinkTailRegion) {
-          is_link_tail = true;
-        }
-      }
     }
 
-    if (is_input_param) {
+    switch (region) {
+      case HitRegion::kInputRegion: {
+        if ((_state != kDraggingLinkHead) && (_state != kTwoClickOutputToInput) && (_state != kDraggingLinkTail) && (_state != kTwoClickInputToOutput)) {
+          // Get the input compute.
+          Dep<InputCompute> input_compute = get_dep<InputCompute>(comp_shape_entity);
+          Dep<InputShape> input_shape = get_dep<InputShape>(comp_shape_entity);
 
-      if ( (_state!=kDraggingLinkHead) && (_state!=kTwoClickOutputToInput) && (_state!=kDraggingLinkTail) && (_state!=kTwoClickInputToOutput) ) {
-        // Get the input compute.
-        Dep<InputCompute> input_compute = get_dep<InputCompute>(comp_shape_entity);
-        Dep<InputShape> input_shape = get_dep<InputShape>(comp_shape_entity);
+          // Unlink the input compute from its output compute.
+          input_compute->unlink_output_compute();
 
-        // Unlink the input compute from its output compute.
-        input_compute->unlink_output_compute();
+          // Unlink the link shapes from its input compute.
+          Entity* link_entity = input_shape->find_link_entity();
+          if (link_entity) {
+            _link_shape = get_dep<LinkShape>(link_entity);
+            _link_shape->start_moving();
+            // Clear the output shape but leave the input shape linked.
+            _link_shape->unlink_output_shape();
+          } else {
+            _link_shape = create_link();
+            // Link the output shape.
+            _link_shape->link_input_shape(input_shape);
+          }
 
-        // Unlink the link shapes from its input compute.
-        Entity* link_entity = input_shape->find_link_entity();
-        if (link_entity) {
-          _link_shape = get_dep<LinkShape>(link_entity);
-          _link_shape->start_moving();
-          // Clear the output shape but leave the input shape linked.
-          _link_shape->unlink_output_shape();
-        } else {
-          _link_shape = create_link();
-          // Link the output shape.
-          _link_shape->link_input_shape(input_shape);
-        }
+          // Update all deps.
+          //get_app_root()->initialize_wires();
 
-        // Update all deps.
-        //get_app_root()->initialize_wires();
+          // Set the initial tail pos.
+          const glm::vec2& plug_center = input_shape->get_origin();
+          glm::vec2 tail_pos = plug_center + glm::vec2(0, 1);
+          _link_shape->set_tail_pos(tail_pos);
 
-        // Set the initial tail pos.
-        const glm::vec2& plug_center = input_shape->get_origin();
-        glm::vec2 tail_pos = plug_center + glm::vec2(0,1);
-        _link_shape->set_tail_pos(tail_pos);
+          // Transition to tail dragging mode.
+          _state = kDraggingLinkTail;
 
-        // Transition to tail dragging mode.
-        _state=kDraggingLinkTail;
-
-        // Clear any existing selections.
-        _selection->clear_selection();
-        _mouse_down_node_positions.clear();
-      }
-
-    } else if (is_output_param) {
-
-      if ( (_state!=kDraggingLinkTail) && (_state!=kTwoClickInputToOutput) && (_state!=kDraggingLinkHead) && (_state!=kTwoClickOutputToInput)) {
-        // Get the output compute.
-        Dep<OutputShape> output_shape = get_dep<OutputShape>(comp_shape_entity);
-
-        // We always create a new link when clicking on output plugs, because output plugs can have multiple links (unlike input links).
-        _link_shape = create_link();
-        _link_shape->link_output_shape(output_shape);
-
-        // Set the intial head pos.
-        const glm::vec2 &plug_center = output_shape->get_origin();
-        glm::vec2 head_pos = plug_center+glm::vec2(0,-1);
-        _link_shape->set_head_pos(head_pos);
-
-        // Transition to head dragging mode.
-        _state = kDraggingLinkHead;
-
-        // Clear any existing selections.
-        _selection->clear_selection();
-        _mouse_down_node_positions.clear();
-      }
-
-    } else if (is_node) {
-      // Otherwise if we have any node that is selected.
-
-      if (_state==kNodeSelectionAndDragging) {
-        Dep<NodeShape> node_shape = get_dep<NodeShape>(comp_shape->our_entity());
-        // If the node is not already selected, then make it the sole selection.
-        if (!_selection->is_selected(node_shape)) {
-          // Clear out the current selection.
+          // Clear any existing selections.
           _selection->clear_selection();
           _mouse_down_node_positions.clear();
+        }
+        break;
+      }
+      case HitRegion::kOutputRegion: {
+        if ((_state != kDraggingLinkTail) && (_state != kTwoClickInputToOutput) && (_state != kDraggingLinkHead) && (_state != kTwoClickOutputToInput)) {
+          // Get the output compute.
+          Dep<OutputShape> output_shape = get_dep<OutputShape>(comp_shape_entity);
 
-          // Add this to the selection.
-          _selection->select(node_shape);
-          _mouse_down_node_positions[node_shape] = comp_shape->get_pos();
+          // We always create a new link when clicking on output plugs, because output plugs can have multiple links (unlike input links).
+          _link_shape = create_link();
+          _link_shape->link_output_shape(output_shape);
+
+          // Set the intial head pos.
+          const glm::vec2 &plug_center = output_shape->get_origin();
+          glm::vec2 head_pos = plug_center + glm::vec2(0, -1);
+          _link_shape->set_head_pos(head_pos);
+
+          // Transition to head dragging mode.
+          _state = kDraggingLinkHead;
+
+          // Clear any existing selections.
+          _selection->clear_selection();
+          _mouse_down_node_positions.clear();
+        }
+        break;
+      }
+      case HitRegion::kNodeRegion: {
+        // Otherwise if we have any node that is selected.
+        if (_state == kNodeSelectionAndDragging) {
+          Dep<NodeShape> node_shape = get_dep<NodeShape>(comp_shape->our_entity());
+          // If the node is not already selected, then make it the sole selection.
+          if (!_selection->is_selected(node_shape)) {
+            // Clear out the current selection.
+            _selection->clear_selection();
+            _mouse_down_node_positions.clear();
+
+            // Add this to the selection.
+            _selection->select(node_shape);
+            _mouse_down_node_positions[node_shape] = comp_shape->get_pos();
+          }
+
+          // Record all selected node positions.
+          const DepUSet<NodeShape>& selected = _selection->get_selected();
+          for (const Dep<NodeShape>& d : selected) {
+            _mouse_down_node_positions[d] = d->get_pos();
+          }
+        }
+        if (_state == kNodeSelectionAndDragging) {
+          // We get here if we might be starting to pan some nodes.
+          _panning_selection = true;
+          // Set the trackball's pivot and start tracking.
+          _view_controls.track_ball.set_pivot(updated_mouse_info.object_space_pos);
+          _view_controls.start_tracking(updated_mouse_info);
+          _mouse_over_info = updated_mouse_info;
+        }
+        break;
+      }
+      case HitRegion::kLinkHeadRegion: {
+        if (_state == kNodeSelectionAndDragging) {
+          _link_shape = get_dep<LinkShape>(comp_shape_entity);
+          Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
+
+          // Break the link.
+          input_compute->unlink_output_compute();
+
+          // Put the link in interactive mode.
+          _link_shape->start_moving();
+          _link_shape->unlink_input_shape();
+
+          // Transition.
+          _state = kDraggingLinkHead;
+
+          // Clear any existing selections.
+          _selection->clear_selection();
+          _mouse_down_node_positions.clear();
+        }
+        break;
+      }
+      case HitRegion::kLinkTailRegion: {
+        if (_state == kNodeSelectionAndDragging) {
+          _link_shape = get_dep<LinkShape>(comp_shape_entity);
+          Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
+
+          // Break the link.
+          input_compute->unlink_output_compute();
+
+          // Put the link in interactive mode.
+          _link_shape->start_moving();
+          _link_shape->unlink_output_shape();
+
+          // Transition.
+          _state = kDraggingLinkTail;
+
+          // Clear any existing selections.
+          _selection->clear_selection();
+          _mouse_down_node_positions.clear();
+        }
+        break;
+      }
+      case HitRegion::kMissedRegion: {
+        // Clear our selection.
+        //_ng_state->clear_selection();
+        //_mouse_down_node_positions.clear();
+
+        // Reset our finite state machine
+        if (_link_shape) {
+          Entity* e = _link_shape->our_entity();
+          delete_ff(e);
         }
 
-        // Record all selected node positions.
-        const DepUSet<NodeShape>& selected = _selection->get_selected();
-        for(const Dep<NodeShape>& d: selected) {
-          _mouse_down_node_positions[d] = d->get_pos();
-        }
+        // Reset our interactive dragging state.
+        _link_shape.reset();
+
+        _state = kNodeSelectionAndDragging;
+        break;
       }
-      if (_state == kNodeSelectionAndDragging) {
-        // We get here if we might be starting to pan some nodes.
-        _panning_selection = true;
-        // Set the trackball's pivot and start tracking.
-        _view_controls.track_ball.set_pivot(updated_mouse_info.object_space_pos);
-        _view_controls.start_tracking(updated_mouse_info);
-        _mouse_over_info = updated_mouse_info;
-      }
-    } else if (is_link_head) {
-      if (_state == kNodeSelectionAndDragging) {
-        _link_shape = get_dep<LinkShape>(comp_shape_entity);
-        Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
-
-        // Break the link.
-        input_compute->unlink_output_compute();
-
-        // Put the link in interactive mode.
-        _link_shape->start_moving();
-        _link_shape->unlink_input_shape();
-
-        // Transition.
-        _state=kDraggingLinkHead;
-
-        // Clear any existing selections.
-        _selection->clear_selection();
-        _mouse_down_node_positions.clear();
-      }
-
-    } else if (is_link_tail) {
-      if (_state == kNodeSelectionAndDragging) {
-        _link_shape = get_dep<LinkShape>(comp_shape_entity);
-        Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
-
-        // Break the link.
-        input_compute->unlink_output_compute();
-
-        // Put the link in interactive mode.
-        _link_shape->start_moving();
-        _link_shape->unlink_output_shape();
-
-        // Transition.
-        _state=kDraggingLinkTail;
-
-        // Clear any existing selections.
-        _selection->clear_selection();
-        _mouse_down_node_positions.clear();
-      }
-
-    } else {
-
-      // Clear our selection.
-      //_ng_state->clear_selection();
-      //_mouse_down_node_positions.clear();
-
-      // Reset our finite state machine
-      if (_link_shape) {
-        Entity* e = _link_shape->our_entity();
-        delete_ff(e);
-      }
-
-      // Reset our interactive dragging state.
-      _link_shape.reset();
-
-      _state = kNodeSelectionAndDragging;
     }
-
   } else if (updated_mouse_info.right_button) {
-    
+
 //    Entity* comp_shape_entity;
 //    if (comp_shape) {
 //      comp_shape_entity = comp_shape->our_entity();
@@ -507,7 +496,7 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
       return;
     }
 
-    HitRegion region;
+    HitRegion region = HitRegion::kMissedRegion;
     Dep<CompShape> comp_shape(this);
     {
       Entity* e = _shape_collective->hit_test(updated_mouse_info.object_space_pos.xy(), region);
@@ -517,127 +506,114 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
     }
 
     Entity* comp_shape_entity = NULL;
-    bool is_input_param = false;
-    bool is_output_param = false;
-    bool is_node = false;
-    bool is_link_head = false;
-    bool is_link_tail = false;
 
     if (comp_shape) {
       comp_shape_entity = comp_shape->our_entity();
-
-      if (comp_shape_entity->get_did() == EntityDID::kInputEntity) {
-        is_input_param = true;
-      } else if (comp_shape_entity->get_did() == EntityDID::kOutputEntity) {
-        is_output_param = true;
-      } else if (comp_shape->is_linkable()) {
-        is_node = true;
-      } else if (comp_shape->get_did() == LinkShape::kDID()) {
-        if (region == HitRegion::kLinkHeadRegion) {
-          is_link_head = true;
-        } else {
-          is_link_tail = true;
-        }
-      }
     }
 
-    if (is_input_param) {
-      if ( (_state==kDraggingLinkHead) || (_state==kTwoClickOutputToInput) ) {
-        Dep<InputCompute> input_compute = get_dep<InputCompute>(comp_shape_entity);
-        Dep<InputShape> input_shape = get_dep<InputShape>(comp_shape_entity);
-        Dep<OutputCompute> output_compute = get_dep<OutputCompute>(_link_shape->get_output_shape()->our_entity());
+    switch (region) {
+      case HitRegion::kInputRegion: {
+        if ((_state == kDraggingLinkHead) || (_state == kTwoClickOutputToInput)) {
+          Dep<InputCompute> input_compute = get_dep<InputCompute>(comp_shape_entity);
+          Dep<InputShape> input_shape = get_dep<InputShape>(comp_shape_entity);
+          Dep<OutputCompute> output_compute = get_dep<OutputCompute>(_link_shape->get_output_shape()->our_entity());
 
-        // Remove any existing link shapes on this input.
-        // There is only one link per input.
-        Entity* old_link_entity = input_shape->find_link_entity();
-        if (old_link_entity) {
-          // Remove any existing compute connection on this input compute.
-          input_compute->unlink_output_compute();
-          // Destroy the link.
-          delete_ff(old_link_entity);
+          // Remove any existing link shapes on this input.
+          // There is only one link per input.
+          Entity* old_link_entity = input_shape->find_link_entity();
+          if (old_link_entity) {
+            // Remove any existing compute connection on this input compute.
+            input_compute->unlink_output_compute();
+            // Destroy the link.
+            delete_ff(old_link_entity);
+          }
+
+          // Try to connect the input and output computes.
+          if (!input_compute->link_output_compute(output_compute)) {
+            // Otherwise destroy the link and selection.
+            reset_state();
+          }
+
+          // Update the link shape's input shape.
+          _link_shape->link_input_shape(input_shape);
+          _link_shape->finished_moving();
+
+          // Transition to default state.
+          _state = kNodeSelectionAndDragging;
+
+          // Reset our interactive dragging state.
+          _link_shape.reset();
+
+        } else if (_state == kDraggingLinkTail) {
+
+          // Here we've pressed and released the mouse on the same input plug.
+          // Transition to the two click input to output state.
+          _state = kTwoClickInputToOutput;
+
         }
+        break;
+      }
+      case HitRegion::kOutputRegion: {
+        if ((_state == kDraggingLinkTail) || (_state == kTwoClickInputToOutput)) {
+          Dep<OutputCompute> output_compute = get_dep<OutputCompute>(comp_shape_entity);
+          Dep<OutputShape> output_shape = get_dep<OutputShape>(comp_shape_entity);
+          Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
 
-        // Try to connect the input and output computes.
-        if (!input_compute->link_output_compute(output_compute)) {
-          // Otherwise destroy the link and selection.
-          goto clear_selection;
+          // Try to connect the input and output computes.
+          if (!input_compute->link_output_compute(output_compute)) {
+            // Otherwise destroy the link and selection.
+            reset_state();
+          }
+
+          // Update the link shape's output shape.
+          _link_shape->link_output_shape(output_shape);
+          _link_shape->finished_moving();
+
+          // Transition to the default state.
+          _state = kNodeSelectionAndDragging;
+
+          // Reset our interactive dragging state.
+          _link_shape.reset();
+
+        } else if (_state == kDraggingLinkHead) {
+          // Here we've pressed and released the mouse on the same output plug.
+          // Transition to the two click output to input state.
+          _state = kTwoClickOutputToInput;
         }
-
-        // Update the link shape's input shape.
-        _link_shape->link_input_shape(input_shape);
-        _link_shape->finished_moving();
-
-        // Transition to default state.
-        _state = kNodeSelectionAndDragging;
-
-        // Reset our interactive dragging state.
-        _link_shape.reset();
-
-      } else if (_state==kDraggingLinkTail) {
-
-        // Here we've pressed and released the mouse on the same input plug.
-        // Transition to the two click input to output state.
-        _state = kTwoClickInputToOutput;
-
+        break;
       }
-
-    } else if (is_output_param) {
-
-      if ( (_state==kDraggingLinkTail) || (_state==kTwoClickInputToOutput) ) {
-        Dep<OutputCompute> output_compute = get_dep<OutputCompute>(comp_shape_entity);
-        Dep<OutputShape> output_shape = get_dep<OutputShape>(comp_shape_entity);
-        Dep<InputCompute> input_compute = get_dep<InputCompute>(_link_shape->get_input_shape()->our_entity());
-
-        // Try to connect the input and output computes.
-        if (!input_compute->link_output_compute(output_compute)) {
-          // Otherwise destroy the link and selection.
-          goto clear_selection;
+      case HitRegion::kNodeRegion: {  // This is supposed to find nodes.
+        if (_state == kDraggingLinkTail) {
+          _state = kTwoClickInputToOutput;
+        } else if (_state == kDraggingLinkHead) {
+          _state = kTwoClickOutputToInput;
         }
-
-        // Update the link shape's output shape.
-        _link_shape->link_output_shape(output_shape);
-        _link_shape->finished_moving();
-
-        // Transition to the default state.
-        _state = kNodeSelectionAndDragging;
-
-        // Reset our interactive dragging state.
-        _link_shape.reset();
-
-      } else if (_state==kDraggingLinkHead) {
-        // Here we've pressed and released the mouse on the same output plug.
-        // Transition to the two click output to input state.
-        _state=kTwoClickOutputToInput;
+        break;
       }
-
-    } else if (is_node) { // This is supposed to find nodes.
-      if (_state==kDraggingLinkTail) {
-        _state=kTwoClickInputToOutput;
-      }else if (_state==kDraggingLinkHead) {
-        _state=kTwoClickOutputToInput;
+      case HitRegion::kLinkHeadRegion: {
+        if (_state == kDraggingLinkHead) {
+          _state = kTwoClickOutputToInput;
+        } else if (_state == kTwoClickOutputToInput) {
+          reset_state();
+        }
+        break;
       }
-    } else if (is_link_head) {
-      if (_state==kDraggingLinkHead) {
-        _state=kTwoClickOutputToInput;
-      }else if (_state==kTwoClickOutputToInput) {
-        goto clear_selection;
+      case HitRegion::kLinkTailRegion: {
+        if (_state == kDraggingLinkTail) {
+          _state = kTwoClickInputToOutput;
+        } else if (_state == kTwoClickInputToOutput) {
+          reset_state();
+        }
+        break;
       }
-    } else if (is_link_tail) {
-      if (_state==kDraggingLinkTail) {
-        _state=kTwoClickInputToOutput;
+      case HitRegion::kMissedRegion: {
+        if ((_state == kDraggingLinkHead) || (_state == kTwoClickOutputToInput) || (_state == kDraggingLinkTail) || (_state == kTwoClickInputToOutput)) {
+          reset_state();
+        }
+        // Stop the tracking.
+        _view_controls.track_ball.stop_tracking();
+        break;
       }
-      else if (_state==kTwoClickInputToOutput) {
-        goto clear_selection;
-      }
-    } else {
-      if ( (_state==kDraggingLinkHead) || (_state==kTwoClickOutputToInput) || (_state==kDraggingLinkTail) || (_state==kTwoClickInputToOutput) ) {
-        clear_selection:
-        // Links may need to be cleaned up.
-        get_app_root()->clean_dead_entities();
-        reset_state();
-      }
-      // Stop the tracking.
-      _view_controls.track_ball.stop_tracking();
     }
   }
   //our_entity()->clean_dead_entities();
@@ -891,7 +867,7 @@ void GroupInteraction::explode(const Dep<NodeShape>& cs) {
   external();
   // Determine the exploding center.
   glm::vec2 min, max;
-  cs->get_bounds().get_aa_bounds(min, max);
+  cs->get_border().get_aa_bounds(min, max);
   glm::vec2 exploding_center = 0.5f * (min + max);
 
   Entity* cs_entity = cs->our_entity();

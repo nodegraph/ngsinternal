@@ -1,7 +1,7 @@
 #pragma once
+#include <base/utils/polyborder.h>
 #include <components/compshapes/compshapes_export.h>
 #include <components/compshapes/selectableshape.h>
-#include <base/utils/polygon.h>
 
 namespace ngs {
 
@@ -18,6 +18,7 @@ class NodeMarker {
   NodeMarker();
   ~NodeMarker();
 
+  void set_hit_region(HitRegion hr);
   void set_bg_color(const std::array<unsigned char,4>& bg_color);
   void set_fg_color(const std::array<unsigned char,4>& fg_color);
   void set_letter(const std::string& letter);
@@ -26,7 +27,7 @@ class NodeMarker {
   bool is_showing() const {return _show_marker;}
 
   void set_state(unsigned char state);
-  void update_quads(glm::vec2& start);
+  void update_quads(glm::vec2& start, CompPolyBorder& b);
   void update_quads_cache(std::vector<ShapeInstance>& quads_cache);
   void update_chars(Resources* resources, unsigned char state);
   void update_chars_cache(std::vector<CharInstance>& chars_cache);
@@ -41,6 +42,8 @@ class NodeMarker {
   ShapeInstance _bg_quad;
   ShapeInstance _fg_quad;
   std::vector<CharInstance> _chars;
+
+  HitRegion _hit_region;
 };
 
 class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
@@ -49,6 +52,9 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
 
   NodeShape(Entity* entity, ComponentDID did);
   virtual ~NodeShape();
+
+  // Hit testing.
+  virtual const CompPolyBorder& get_border() const;
 
   // Our sub interfaces.
   virtual bool is_linkable() const {return true;}
@@ -101,6 +107,9 @@ class COMPSHAPES_EXPORT NodeShape: public SelectableShape {
   std::vector<ShapeInstance> _quads_cache;
   std::vector<CharInstance> _chars_cache;
   std::vector<ShapeInstance> _circles_cache;
+
+  // Our comp bound.
+  CompPolyBorder _border;
 
  private:
 

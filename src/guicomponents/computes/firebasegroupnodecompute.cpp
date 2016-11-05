@@ -66,10 +66,18 @@ QJsonObject FirebaseGroupNodeCompute::init_hints() {
 }
 
 bool FirebaseGroupNodeCompute::update_state() {
-  _group_traits->on_enter();
+  // Need to call this to set the processing so that we can catch processing errors.
+  Compute::update_state();
+  _group_traits->on_clean();
+  return false;
+}
+
+bool FirebaseGroupNodeCompute:: update_state2() {
+  // Now call our base compute's update state.
   bool done = GroupNodeCompute::update_state();
   if (done) {
     _group_traits->on_exit();
+    clean_finalize();
   }
   return done;
 }

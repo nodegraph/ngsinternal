@@ -1,5 +1,5 @@
+#include <base/utils/polyborder.h>
 #include <components/compshapes/compshape.h>
-#include <base/utils/polygon.h>
 
 namespace ngs {
 
@@ -29,23 +29,15 @@ bool CompShape::is_pannable() const {
   return _pannable;
 }
 
-const CompPolyBounds& CompShape::get_bounds() const {
+const CompPolyBorder& CompShape::get_border() const {
   external();
-  static const CompPolyBounds dummy;
+  static const CompPolyBorder dummy;
   return dummy;
 }
 
 HitRegion CompShape::hit_test(const glm::vec2& point) const {
   external();
-  if (simple_hit_test(point)) {
-    return HitRegion::kShape;
-  }
   return HitRegion::kMissedRegion;
-}
-
-bool CompShape::simple_hit_test(const glm::vec2& point) const {
-  external();
-  return get_bounds().contains(point);
 }
 
 const std::vector<ShapeInstance>* CompShape::get_tri_instances() const {

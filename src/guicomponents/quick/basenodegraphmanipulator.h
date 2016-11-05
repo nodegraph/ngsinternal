@@ -4,6 +4,7 @@
 #include <entities/componentids.h>
 
 class QJsonObject;
+class QString;
 
 namespace ngs {
 
@@ -25,11 +26,12 @@ class BaseNodeGraphManipulator: public Component {
   // Show the processing marker on a node.
   virtual void set_processing_node(Entity* entity) = 0;
   virtual void clear_processing_node() = 0;
-  virtual void set_error_node() = 0; // Show error marker on the current compute node.
+  virtual void set_error_node(const QString& error_message) = 0; // Show error marker on the current compute node.
   virtual void clear_error_node() = 0;
   virtual void update_clean_marker(Entity* entity, bool clean) = 0;
 
   virtual void dive_into_group(const std::string& child_group_name) = 0;
+  virtual void clean_firebase_group(const std::string& child_group_name) = 0;
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.

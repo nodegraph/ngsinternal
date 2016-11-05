@@ -149,6 +149,11 @@ Rectangle {
         id: node_graph_page
         visible: false
     }
+    
+    ErrorPage {
+    	id: error_page
+    	visible: false
+    }
 
     FileMenuListStackPage {
         id: file_menu_list_stack_page
@@ -254,6 +259,8 @@ Rectangle {
         // Node viewing and editing.
         node_graph_item.view_node_outputs.connect(view_data_list_stack_page.on_view_outputs)
         node_graph_item.edit_node_inputs.connect(edit_data_list_stack_page.on_edit_inputs)
+        node_graph_item.set_error_message.connect(error_page.set_error_message)
+        node_graph_item.show_error_page.connect(error_page.show_page)
     }
 
 //    // Prevent the android hardware back from closing the app.

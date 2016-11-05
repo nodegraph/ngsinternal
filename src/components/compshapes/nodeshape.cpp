@@ -14,13 +14,18 @@ const float NodeMarker::_bg_depth = 10.0f;
 const float NodeMarker::_fg_depth = 11.0f;
 const glm::vec2 NodeMarker::_border_size = glm::vec2(10.0f, 10.0f);
 
-NodeMarker::NodeMarker():
-  _show_marker(false) {
+NodeMarker::NodeMarker()
+    : _show_marker(false),
+      _hit_region(HitRegion::kUnknownRegion) {
   _bg_quad.state = 0;
   _fg_quad.state = 0;
 }
 
 NodeMarker::~NodeMarker() {
+}
+
+void NodeMarker::set_hit_region(HitRegion hr) {
+  _hit_region = hr;
 }
 
 void NodeMarker::set_bg_color(const std::array<unsigned char,4>& bg_color) {
@@ -45,7 +50,7 @@ void NodeMarker::set_state(unsigned char state) {
   }
 }
 
-void NodeMarker::update_quads(glm::vec2& start) {
+void NodeMarker::update_quads(glm::vec2& start, CompPolyBorder& b) {
   if (_show_marker) {
     glm::vec2 size(150, 150);
     _bg_quad.set_scale(size);
@@ -58,8 +63,21 @@ void NodeMarker::update_quads(glm::vec2& start) {
     _fg_quad.set_translate(start + _border_size, _fg_depth);
     _fg_quad.set_color(_fg_color);
 
+    // Update the bounds.
+    {
+      std::vector<glm::vec2>& verts = b.poly_bound_map[_hit_region].vertices;
+      verts.resize(4);
+      verts[0] = start;
+      verts[1] = verts[0] + glm::vec2(150,0);
+      verts[2] = verts[1] + glm::vec2(0, 150);
+      verts[3] = verts[2] + glm::vec2(-150, 0);
+    }
+
     // Update the start pos.
     start.x += 160;
+  } else {
+    // Update the bounds.
+    b.poly_bound_map[_hit_region].vertices.clear();
   }
 }
 
@@ -96,22 +114,27 @@ NodeShape::NodeShape(Entity* entity, ComponentDID did)
       _resources(this),
       _shared_state(0) {
   get_dep_loader()->register_fixed_dep(_resources, Path( { }));
+  _edit_marker.set_hit_region(HitRegion::kEditMarkerRegion);
   _edit_marker.set_letter("E");
   _edit_marker.set_bg_color( { 255, 255, 255, 255 });
   _edit_marker.set_fg_color( {251, 192, 45, 255}); //( { 100, 221, 23, 255 });
 
+  _view_marker.set_hit_region(HitRegion::kViewMarkerRegion);
   _view_marker.set_letter("V");
   _view_marker.set_bg_color( { 255, 255, 255, 255 });
   _view_marker.set_fg_color( { 224, 64, 251, 255 });
 
+  _processing_marker.set_hit_region(HitRegion::kProcessingMarkerRegion);
   _processing_marker.set_letter("P");
   _processing_marker.set_bg_color( { 255, 255, 255, 255 });
   _processing_marker.set_fg_color( { 239, 108, 0, 255 });
 
+  _clean_marker.set_hit_region(HitRegion::kCleanMarkerRegion);
   _clean_marker.set_letter("C");
   _clean_marker.set_bg_color( { 255, 255, 255, 255 });
   _clean_marker.set_fg_color( { 100, 221, 23, 255 });
 
+  _error_marker.set_hit_region(HitRegion::kErrorMarkerRegion);
   _error_marker.set_letter("X");
   _error_marker.set_bg_color( { 255, 255, 255, 255 });
   _error_marker.set_fg_color( { 183, 28, 28, 255 });
@@ -120,12 +143,15 @@ NodeShape::NodeShape(Entity* entity, ComponentDID did)
 NodeShape::~NodeShape() {
 }
 
+const CompPolyBorder& NodeShape::get_border() const {
+  external();
+  return _border;
+}
+
+
 HitRegion NodeShape::hit_test(const glm::vec2& point) const {
   external();
-  if (!simple_hit_test(point)) {
-    return HitRegion::kMissedRegion;
-  }
-  return HitRegion::kNodeShapeRegion;
+  return _border.hit_test(point);
 }
 
 void NodeShape::select(bool selected) {
@@ -192,11 +218,11 @@ bool NodeShape::error_marker_is_showing() const {
 
 void NodeShape::update_quads(const glm::vec2& pen) {
   glm::vec2 start = pen;
-  _edit_marker.update_quads(start);
-  _view_marker.update_quads(start);
-  _processing_marker.update_quads(start);
-  _clean_marker.update_quads(start);
-  _error_marker.update_quads(start);
+  _edit_marker.update_quads(start, _border);
+  _view_marker.update_quads(start, _border);
+  _processing_marker.update_quads(start, _border);
+  _clean_marker.update_quads(start, _border);
+  _error_marker.update_quads(start, _border);
 }
 
 void NodeShape::update_quads_cache() {

@@ -118,6 +118,32 @@ void WebWorker::dive_into_firebase_group(const std::string& child_group_name, co
     queue_dive_into_group(tc, child_group_name);
   }
 }
+void WebWorker::clean_firebase_group(const std::string& child_group_name, const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket, const QString& email, const QString& password) {
+  TaskContext tc(_task_sheduler);
+  // Initialize the firebase wrapper.
+  {
+    QJsonObject args;
+    args.insert(Message::kApiKey, api_key);
+    args.insert(Message::kAuthDomain, auth_domain);
+    args.insert(Message::kDatabaseURL, database_url);
+    args.insert(Message::kStorageBucket, storage_bucket);
+    queue_merge_chain_state(tc, args);
+    queue_firebase_init(tc);
+  }
+  // Sign into a firebase account.
+  {
+    QJsonObject args;
+    args.insert(Message::kEmail, email);
+    args.insert(Message::kPassword, password);
+    queue_merge_chain_state(tc, args);
+    queue_firebase_sign_in(tc);
+  }
+  // Now clean the group.
+  {
+    queue_clean_group(tc, child_group_name);
+  }
+}
+
 
 void WebWorker::firebase_init(const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket) {
   TaskContext tc(_task_sheduler);
@@ -425,7 +451,11 @@ void WebWorker::queue_firebase_listen_to_changes(TaskContext& tc) {
 }
 
 void WebWorker::queue_dive_into_group(TaskContext& tc, const std::string& child_group_name) {
-  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::dive_into_group_task,this, child_group_name), "queue_firebase_sign_in");
+  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::dive_into_group_task,this, child_group_name), "queue_dive_into_group");
+}
+
+void WebWorker::queue_clean_group(TaskContext& tc, const std::string& child_group_name) {
+  _task_sheduler->queue_task(tc, (Task)std::bind(&WebWorker::clean_firebase_group_task,this, child_group_name), "queue_clean_group");
 }
 
 // ------------------------------------------------------------------------
@@ -885,6 +915,10 @@ void WebWorker::firebase_listen_to_changes_task() {
 
 void WebWorker::dive_into_group_task(const std::string& child_group_name) {
   _ng_manipulator->dive_into_group(child_group_name);
+}
+
+void WebWorker::clean_firebase_group_task(const std::string& child_group_name) {
+  _ng_manipulator->clean_firebase_group(child_group_name);
 }
 
 }

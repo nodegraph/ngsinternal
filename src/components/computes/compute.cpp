@@ -272,8 +272,8 @@ bool Compute::evaluate_expression_js(const QString& text, QJsonValue& result, QS
   return true;
 }
 
-void Compute::on_error() {
-  _ng_manipulator->set_error_node();
+void Compute::on_error(const QString& error_message) {
+  _ng_manipulator->set_error_node(error_message);
   _ng_manipulator->clear_ultimate_target();
 }
 

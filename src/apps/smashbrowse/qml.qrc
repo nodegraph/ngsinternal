@@ -132,6 +132,7 @@
         <file>qml/smashbrowse/modepages/qmldir</file>
         <file>qml/smashbrowse/modepages/NodeGraphPage.qml</file>
         <file>qml/smashbrowse/modepages/SettingsPage.qml</file>
+        <file>qml/smashbrowse/modepages/ErrorPage.qml</file>
         
         <!-- Tree View Icons. -->
         <file alias="icons/ic_add_circle_outline_black_48dp.png">../../external/icons/ic_add_circle_outline_black_48dp.png</file>

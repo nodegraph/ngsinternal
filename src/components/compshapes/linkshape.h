@@ -1,7 +1,7 @@
 #pragma once
+#include <base/utils/polyborder.h>
 #include <components/compshapes/compshapes_export.h>
 #include <components/compshapes/selectableshape.h>
-#include <base/utils/polygon.h>
 
 namespace ngs {
 
@@ -43,7 +43,7 @@ class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
   virtual const Dep<OutputShape>& get_output_shape() const;
 
   // Our bounds.
-  virtual const CompPolyBounds& get_bounds() const;
+  virtual const CompPolyBorder& get_border() const;
   HitRegion hit_test(const glm::vec2& point) const;
 
   // Our head position when not linked to an input shape.
@@ -92,7 +92,7 @@ class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
   ShapeInstance* _fg_tri;
 
   // Our quad bounds.
-  CompPolyBounds _bounds;
+  CompPolyBorder _border;
 
   // Our head and tail positions when we're not connected to an input or an output.
   glm::vec2 _head_pos;

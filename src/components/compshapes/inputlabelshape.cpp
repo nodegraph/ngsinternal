@@ -83,7 +83,7 @@ bool InputLabelShape::update_state() {
                                                            _text_max);
   } else {
     // Otherwise we display the text along the link.
-    const CompPolyBounds &bound = _link_shape->get_bounds();
+    const CompPolyBorder &bound = _link_shape->get_border();
     float vector_angle = _link_shape->get_angle();
     glm::vec2 origin = bound.poly_bound_map.at(HitRegion::kLinkHeadRegion).vertices[3];
     float pi2 = boost::math::constants::pi<float>()*0.5f;

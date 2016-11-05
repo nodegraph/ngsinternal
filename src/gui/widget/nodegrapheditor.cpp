@@ -147,7 +147,8 @@ void NodeGraphEditor::draw_canvas_gl() {
 
 void NodeGraphEditor::mousePressEvent(QMouseEvent *event) {
   MouseInfo info = get_mouse_info(event);
-  _canvas->get_current_interaction()->pressed(info);
+  HitRegion region;
+  _canvas->get_current_interaction()->pressed(info, region);
   update();
 }
 

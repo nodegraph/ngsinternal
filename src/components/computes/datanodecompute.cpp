@@ -51,7 +51,7 @@ bool DataNodeCompute::update_state() {
   QString error;
   if (!evaluate_expression_js(text, expr_result, error)) {
     set_output("out", expr_result); // result contains info about the error as properties.
-    on_error();
+    on_error(error);
     return false;
   } else {
     output = deep_merge(output, expr_result);

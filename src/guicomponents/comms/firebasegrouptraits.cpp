@@ -33,6 +33,21 @@ void FirebaseGroupTraits::on_enter() {
   _web_worker->dive_into_firebase_group(get_name(), apiKey, authDomain, databaseURL, storageBucket, email, password);
 }
 
+void FirebaseGroupTraits::on_clean() {
+  _inputs->propagate_cleanliness();
+  QJsonObject inputs = _inputs->get_input_values();
+
+  QString apiKey = inputs.value(Message::kApiKey).toString();
+  QString authDomain = inputs.value(Message::kAuthDomain).toString();
+  QString databaseURL = inputs.value(Message::kDatabaseURL).toString();
+  QString storageBucket = inputs.value(Message::kStorageBucket).toString();
+
+  QString email = inputs.value(Message::kEmail).toString();
+  QString password = inputs.value(Message::kPassword).toString();
+
+  _web_worker->clean_firebase_group(get_name(), apiKey, authDomain, databaseURL, storageBucket, email, password);
+}
+
 void FirebaseGroupTraits::on_exit() {
   // We don't sign out because there may be nodes in the group that are
   // listening to paths/locations in the firebase database.

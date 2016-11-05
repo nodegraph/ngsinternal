@@ -38,6 +38,7 @@ target_link_libraries(ngs_quick
 	ngs_interactions
 	ngs_glewhelper
 	ngs_comms
+	ngs_guicomputes
 	Qt5::OpenGL
     Qt5::Core
 	Qt5::Quick

@@ -40,8 +40,8 @@ bool GroupNodeShape::update_state() {
   RectNodeShape::update_state();
 
   // The following updates the marker shapes.
-  const CompPolyBounds& bounds = get_bounds();
-  const PolyBounds& poly_bound = bounds.poly_bound_map.at(HitRegion::kNodeShapeRegion);
+  const CompPolyBorder& bounds = get_border();
+  const PolyBorder& poly_bound = bounds.poly_bound_map.at(HitRegion::kNodeRegion);
   glm::vec2 target_center = 0.5f * (poly_bound.vertices[0] + poly_bound.vertices[3]) - glm::vec2(indicator_offset, 0);
   glm::vec2 translate = target_center - glm::vec2(0, sqrt(2.0f)*indicator_size.x/2.0f);
 

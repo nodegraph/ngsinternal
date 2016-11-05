@@ -24,7 +24,7 @@ set(headers
     compshapecollective.h
     dotnodeshape.h
     groupnodeshape.h
-    hittypes.h
+    hitregion.h
     inputlabelshape.h
     inputnodeshape.h
     inputshape.h

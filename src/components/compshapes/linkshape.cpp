@@ -141,7 +141,7 @@ void LinkShape::update_positioning_helper(const glm::vec2& head_pos, const glm::
 
   // Update our head and tail bounds.
 
-    std::vector<glm::vec2>& hb = _bounds.poly_bound_map[HitRegion::kLinkHeadRegion].vertices;
+    std::vector<glm::vec2>& hb = _border.poly_bound_map[HitRegion::kLinkHeadRegion].vertices;
     hb.resize(7);
     hb[0] = front - tri_size.y * _dir - tri_size.x/2.0f * _perp;
     hb[1] = front;
@@ -150,7 +150,7 @@ void LinkShape::update_positioning_helper(const glm::vec2& head_pos, const glm::
     hb[4] = hb[3] - 0.5f * _body_length * _dir;
     hb[5] = hb[4] - body_height * _perp;
     hb[6] = hb[5] + 0.5f * _body_length * _dir;
-    std::vector<glm::vec2>& tb = _bounds.poly_bound_map[HitRegion::kLinkTailRegion].vertices;
+    std::vector<glm::vec2>& tb = _border.poly_bound_map[HitRegion::kLinkTailRegion].vertices;
     tb.resize(4);
     tb[0] = hb [4];
     tb[1] = tb [0] - 0.5f* _body_length * _dir;
@@ -210,9 +210,9 @@ void LinkShape::update_state_helper() {
   }
 }
 
-const CompPolyBounds& LinkShape::get_bounds() const {
+const CompPolyBorder& LinkShape::get_border() const {
   external();
-  return _bounds;
+  return _border;
 }
 
 const std::vector<ShapeInstance>* LinkShape::get_tri_instances() const {
@@ -227,7 +227,7 @@ const std::vector<ShapeInstance>* LinkShape::get_quad_instances() const {
 
 HitRegion LinkShape::hit_test(const glm::vec2& point) const {
   external();
-  return _bounds.hit_test(point);
+  return _border.hit_test(point);
 }
 
 void LinkShape::select(bool selected) {

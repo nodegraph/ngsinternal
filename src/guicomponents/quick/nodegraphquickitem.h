@@ -75,11 +75,15 @@ Q_OBJECT
   Q_INVOKABLE void dirty_node();
   Q_INVOKABLE void clean_node();
 
+  void set_error_node(const QString& error_message);
+
   Q_INVOKABLE void set_editable_inputs(const QJsonObject& values);
   Q_INVOKABLE void set_input_exposure(const QJsonObject& values);
 
   // Group Navigation.
   void dive(const std::string& child_group_name);
+  void clean_firebase_group(const std::string& child_group_name);
+
   Q_INVOKABLE void dive();
   Q_INVOKABLE void surface();
   Q_INVOKABLE void surface_to_root();
@@ -137,6 +141,9 @@ Q_OBJECT
  void edit_node_inputs(const QString& name, const QJsonObject& values, const QJsonObject& hints, const QJsonObject& exposed_settings);
 
  void mark_progress();
+
+ void set_error_message(const QString& message);
+ void show_error_page();
 
  protected:
  // Our state.

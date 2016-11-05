@@ -52,10 +52,7 @@ bool InputShape::is_exposed() const {
 
 HitRegion InputShape::hit_test(const glm::vec2& point) const {
   external();
-  if (simple_hit_test(point)) {
-    return HitRegion::kInputShapeRegion;
-  }
-  return HitRegion::kMissedRegion;
+  return _border.hit_test(point);
 }
 
 bool InputShape::update_state() {
@@ -72,11 +69,12 @@ bool InputShape::update_state() {
   ShapeInstance* fg = &_quads[1];
 
   // Get the node bounds.
-  const CompPolyBounds& bounds = _node_shape->get_bounds();
+  const CompPolyBorder& bounds = _node_shape->get_border();
+  const PolyBorder& poly = bounds.poly_bound_map.at(HitRegion::kNodeRegion);
 
   // Get the node aa bounds.
   glm::vec2 node_min, node_max;
-  bounds.get_aa_bounds(node_min, node_max);
+  poly.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
   size_t num_exposed = _inputs->get_num_exposed();
@@ -90,7 +88,7 @@ bool InputShape::update_state() {
   _origin = glm::vec2 (start + exposed_index * delta, node_max.y + plug_offset + plug_size.y / 2.0f);
 
   // Update our bounds.
-  std::vector<glm::vec2>& verts = _bounds.poly_bound_map[HitRegion::kInputShapeRegion].vertices;
+  std::vector<glm::vec2>& verts = _border.poly_bound_map[HitRegion::kInputRegion].vertices;
   verts.resize(4);
   verts[0] = glm::vec2(start + exposed_index * delta - plug_size.x / 2.0f, node_max.y + plug_offset);
   verts[1] = verts[0] + glm::vec2(plug_size.x, 0);
@@ -122,9 +120,9 @@ bool InputShape::update_state() {
   return true;
 }
 
-const CompPolyBounds& InputShape::get_bounds() const {
+const CompPolyBorder& InputShape::get_border() const {
   external();
-  return _bounds;
+  return _border;
 }
 
 const std::vector<ShapeInstance>* InputShape::get_quad_instances() const {
