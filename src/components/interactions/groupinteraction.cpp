@@ -62,12 +62,12 @@ bool GroupInteraction::update_state() {
 
 void GroupInteraction::update_shape_collective() {
   internal(); // Wire cleaning is kept orthogonal from dependency dirtiness propagation.
-  _shape_collective.get()->clean_local_wires();
+  our_entity()->clean_wires(); // We need to clean_wires in order for the input and output labels to update their angle/orientation.
 }
 
 void GroupInteraction::clean_dead_links() {
   internal(); // Wire cleaning is kept orthogonal from dependency dirtiness propagation.
-  _shape_collective->our_entity()->clean_dead_entities();
+  our_entity()->clean_dead_entities();
 }
 
 glm::vec2 GroupInteraction::get_drag_delta() const {
