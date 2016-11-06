@@ -15,7 +15,8 @@ namespace ngs {
 
 FirebaseGroupNodeCompute::FirebaseGroupNodeCompute(Entity* entity):
     GroupNodeCompute(entity, kDID()),
-    _group_traits(this) {
+    _group_traits(this),
+    _initialized(false){
   get_dep_loader()->register_fixed_dep(_group_traits, Path({"."}));
 
   _on_group_inputs.insert(Message::kApiKey);
@@ -65,19 +66,31 @@ QJsonObject FirebaseGroupNodeCompute::init_hints() {
   return m;
 }
 
+void FirebaseGroupNodeCompute::set_self_dirty(bool dirty) {
+  Compute::set_self_dirty(dirty);
+  if (dirty) {
+    _initialized = false;
+  }
+
+}
+
 bool FirebaseGroupNodeCompute::update_state() {
   // Need to call this to set the processing so that we can catch processing errors.
-  Compute::update_state();
-  _group_traits->on_clean();
-  return false;
+  if (!_initialized) {
+    Compute::update_state();
+    _group_traits->on_clean();
+    return false;
+  }
+  update_state2();
 }
 
 bool FirebaseGroupNodeCompute:: update_state2() {
+  _initialized = true;
   // Now call our base compute's update state.
   bool done = GroupNodeCompute::update_state();
   if (done) {
     _group_traits->on_exit();
-    clean_finalize();
+    //clean_finalize();
   }
   return done;
 }

@@ -18,6 +18,8 @@ class GUICOMPUTES_EXPORT FirebaseGroupNodeCompute: public GroupNodeCompute {
   FirebaseGroupNodeCompute(Entity* entity);
   virtual ~FirebaseGroupNodeCompute();
 
+  virtual void set_self_dirty(bool dirty);
+
   // Inputs and Outputs.
   virtual void create_inputs_outputs();
 
@@ -34,6 +36,7 @@ class GUICOMPUTES_EXPORT FirebaseGroupNodeCompute: public GroupNodeCompute {
 
  private:
   Dep<BaseGroupTraits> _group_traits;
+  bool _initialized;
 };
 
 }

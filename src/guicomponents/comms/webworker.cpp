@@ -915,10 +915,12 @@ void WebWorker::firebase_listen_to_changes_task() {
 
 void WebWorker::dive_into_group_task(const std::string& child_group_name) {
   _ng_manipulator->dive_into_group(child_group_name);
+  _task_sheduler->run_next_task();
 }
 
 void WebWorker::clean_firebase_group_task(const std::string& child_group_name) {
   _ng_manipulator->clean_firebase_group(child_group_name);
+  _task_sheduler->run_next_task();
 }
 
 }
