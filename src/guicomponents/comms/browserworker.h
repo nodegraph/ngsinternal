@@ -2,6 +2,7 @@
 #include <guicomponents/comms/comms_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
+#include <guicomponents/comms/message.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
@@ -13,6 +14,7 @@
 namespace ngs {
 
 class Message;
+class MessageSender;
 class TaskScheduler;
 class TaskContext;
 class Compute;
@@ -20,13 +22,13 @@ class BaseFactory;
 class BaseNodeGraphManipulator;
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT WebWorker : public QObject, public Component {
+class COMMS_EXPORT BrowserWorker : public QObject, public Component {
 Q_OBJECT
  public:
-  COMPONENT_ID(WebWorker, WebWorker)
+  COMPONENT_ID(BrowserWorker, BrowserWorker)
 
-  explicit WebWorker(Entity* parent);
-  virtual ~WebWorker();
+  explicit BrowserWorker(Entity* parent);
+  virtual ~BrowserWorker();
 
   Q_INVOKABLE void open();
   Q_INVOKABLE void close();
@@ -52,6 +54,7 @@ Q_OBJECT
   // Handle Incoming messages. Note the same messages are also handled by the AppTaskQueue.
   void handle_response(const Message& sm);
   void handle_info(const Message& msg);
+  const Message& get_last_response() const{external(); return _last_response;}
 
   // Polling Control.
   // Polling is used to ensure that the browser is open and of the expected dimensions.
@@ -150,6 +153,9 @@ signals:
   // the queue processing alive.
   // -----------------------------------------------------------------------------
 
+  // Socket Messaging Tasks.
+  void send_msg_task(Message& msg);
+
   // Infrastructure Tasks.
   void get_crosshair_info_task();
   void get_xpath_task();
@@ -221,8 +227,10 @@ signals:
   void clean_firebase_group_task(const std::string& child_group_name);
 
   // Our fixed dependencies.
-  Dep<TaskScheduler> _task_sheduler;
-  Dep<BaseNodeGraphManipulator> _ng_manipulator;
+  Dep<MessageSender> _msg_sender;
+  Dep<TaskScheduler> _scheduler;
+  Dep<BaseNodeGraphManipulator> _manipulator;
+
 
   // Poll timer.
   QTimer _poll_timer;
@@ -241,10 +249,8 @@ signals:
   // The 'value' value from responses will get merged into this state overriding previous values.
   QJsonObject _chain_state;
 
-  // The success value of the last response.
-  // Note that "success" is overview/cumulative value denoting whether the task completed its task successfully.
-  // More detailed values are in the "value" part of the message.
-  bool _last_response_success;
+  // The last response we got.
+  Message _last_response;
 };
 
 

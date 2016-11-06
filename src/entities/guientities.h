@@ -13,8 +13,8 @@ enum class JSType;
 
 class FileModel;
 class AppComm;
-class WebWorker;
-class WebRecorder;
+class BrowserWorker;
+class BrowserRecorder;
 class LicenseChecker;
 class NodeGraphQuickItem;
 class GraphBuilder;
@@ -31,8 +31,8 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   void embed_node_graph();
 
   FileModel* get_file_model();
-  WebWorker* get_app_worker();
-  WebRecorder* get_app_recorder();
+  BrowserWorker* get_app_worker();
+  BrowserRecorder* get_app_recorder();
   LicenseChecker* get_license_checker();
   NodeGraphQuickItem* get_node_graph_quick_item();
   GraphBuilder* get_graph_builder();
@@ -75,16 +75,16 @@ class ENTITIES_EXPORT ScriptGroupNodeEntity : public GroupNodeEntity {
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };
 
-class ENTITIES_EXPORT WebGroupNodeEntity : public GroupNodeEntity {
+class ENTITIES_EXPORT BrowserGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(GroupNodeEntity, "web group")
-  WebGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
+  ENTITY_ID(BrowserGroupNodeEntity, "browser group")
+  BrowserGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };
 
 class ENTITIES_EXPORT FirebaseGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(GroupNodeEntity, "firebase group")
+  ENTITY_ID(FirebaseGroupNodeEntity, "firebase group")
  FirebaseGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };

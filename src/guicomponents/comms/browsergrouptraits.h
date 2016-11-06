@@ -6,13 +6,13 @@
 
 namespace ngs {
 
-class WebWorker;
+class BrowserWorker;
 
-class COMMS_EXPORT WebGroupTraits: public BaseGroupTraits {
+class COMMS_EXPORT BrowserGroupTraits: public BaseGroupTraits {
  public:
-  COMPONENT_ID(BaseGroupTraits, WebGroupTraits);
-  WebGroupTraits(Entity* entity);
-  virtual ~WebGroupTraits();
+  COMPONENT_ID(BaseGroupTraits, BrowserGroupTraits);
+  BrowserGroupTraits(Entity* entity);
+  virtual ~BrowserGroupTraits();
 
   virtual GroupType get_group_type() const {return GroupType::WebGroup;}
 
@@ -23,7 +23,7 @@ class COMMS_EXPORT WebGroupTraits: public BaseGroupTraits {
 //  virtual const std::unordered_set<EntityDID>& get_permitted_node_types();
 
  private:
-  Dep<WebWorker> _web_worker;
+  Dep<BrowserWorker> _worker;
 
 };
 

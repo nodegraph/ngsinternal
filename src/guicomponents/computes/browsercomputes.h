@@ -7,7 +7,7 @@
 namespace ngs {
 
 class Entity;
-class WebWorker;
+class BrowserWorker;
 class TaskScheduler;
 class TaskContext;
 
@@ -30,7 +30,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   void dump_map(const QJsonObject& inputs) const;
 
-  Dep<WebWorker> _web_worker;
+  Dep<BrowserWorker> _web_worker;
   Dep<TaskScheduler> _task_scheduler;
 };
 

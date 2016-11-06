@@ -10,7 +10,6 @@
 #include <components/interactions/graphbuilder.h>
 
 #include <guicomponents/comms/appconfig.h>
-#include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
@@ -22,6 +21,7 @@
 #include <sstream>
 
 #include <boost/lexical_cast.hpp>
+#include <guicomponents/comms/browserworker.h>
 
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDir>

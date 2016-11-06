@@ -10,7 +10,6 @@
 #include <components/interactions/graphbuilder.h>
 
 #include <guicomponents/comms/appconfig.h>
-#include <guicomponents/comms/webworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 
 #include <entities/entityids.h>
@@ -20,6 +19,7 @@
 #include <sstream>
 
 #include <boost/lexical_cast.hpp>
+#include <guicomponents/comms/browserworker.h>
 #include <guicomponents/comms/cryptologic.h>
 
 #include <QtCore/QStandardPaths>

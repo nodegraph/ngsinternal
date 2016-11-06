@@ -1,28 +1,28 @@
-#include <guicomponents/comms/webgrouptraits.h>
 #include <base/objectmodel/deploader.h>
-#include <guicomponents/comms/webworker.h>
+#include <guicomponents/comms/browsergrouptraits.h>
+#include <guicomponents/comms/browserworker.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
 namespace ngs {
 
-WebGroupTraits::WebGroupTraits(Entity* entity)
+BrowserGroupTraits::BrowserGroupTraits(Entity* entity)
     : BaseGroupTraits(entity, kDID()),
-      _web_worker(this) {
-  get_dep_loader()->register_fixed_dep(_web_worker, Path({}));
+      _worker(this) {
+  get_dep_loader()->register_fixed_dep(_worker, Path({}));
 }
 
-WebGroupTraits::~WebGroupTraits() {
+BrowserGroupTraits::~BrowserGroupTraits() {
 
 }
 
-void WebGroupTraits::on_enter() {
+void BrowserGroupTraits::on_enter() {
   std::cerr << "Web group traits on enter\n";
-  _web_worker->open_browser();
+  _worker->open_browser();
 }
 
-void WebGroupTraits::on_exit() {
+void BrowserGroupTraits::on_exit() {
   std::cerr << "Web group traits on exit\n";
-  _web_worker->close_browser();
+  _worker->close_browser();
 }
 
 //bool GroupTraits::node_type_is_permitted(EntityDID did) const {

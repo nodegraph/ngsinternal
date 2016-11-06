@@ -50,8 +50,9 @@ enum class ComponentIID : size_t {
   kIMessageReceiver,
   kIAppConfig,
   //kIAppComm,
-  kIWebWorker,
-  kIWebRecorder,
+  kIBrowserWorker,
+  kIHTTPWorker,
+  kIBrowserRecorder,
   kITaskScheduler,
   kILicenseChecker,
   kICryptoLogic,
@@ -94,7 +95,7 @@ COMPONENT_ENTRY1(InputCompute)\
 COMPONENT_ENTRY1(OutputCompute)\
 COMPONENT_ENTRY1(GroupNodeCompute)\
 COMPONENT_ENTRY1(ScriptGroupNodeCompute)\
-COMPONENT_ENTRY1(WebGroupNodeCompute)\
+COMPONENT_ENTRY1(BrowserGroupNodeCompute)\
 COMPONENT_ENTRY1(FirebaseGroupNodeCompute)\
 COMPONENT_ENTRY1(DataNodeCompute)\
 COMPONENT_ENTRY1(MergeNodeCompute)\
@@ -135,7 +136,7 @@ COMPONENT_ENTRY1(FBOWorker)\
 COMPONENT_ENTRY1(GraphBuilder)\
 /* Interactions. */\
 COMPONENT_ENTRY1(GroupTraits)\
-COMPONENT_ENTRY1(WebGroupTraits)\
+COMPONENT_ENTRY1(BrowserGroupTraits)\
 COMPONENT_ENTRY1(FirebaseGroupTraits)\
 COMPONENT_ENTRY1(GroupInteraction)\
 /* -- */\
@@ -150,8 +151,9 @@ COMPONENT_ENTRY1(MessageSender)\
 COMPONENT_ENTRY1(MessageReceiver)\
 COMPONENT_ENTRY1(AppConfig)\
 /*COMPONENT_ENTRY1(AppComm)\*/\
-COMPONENT_ENTRY1(WebWorker)\
-COMPONENT_ENTRY1(WebRecorder)\
+COMPONENT_ENTRY1(BrowserWorker)\
+COMPONENT_ENTRY1(HTTPWorker)\
+COMPONENT_ENTRY1(BrowserRecorder)\
 COMPONENT_ENTRY1(TaskScheduler)\
 COMPONENT_ENTRY1(LicenseChecker)\
 COMPONENT_ENTRY1(CryptoLogic)\

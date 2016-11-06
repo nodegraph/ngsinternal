@@ -6,7 +6,7 @@
 
 namespace ngs {
 
-class WebWorker;
+class BrowserWorker;
 class Inputs;
 
 class COMMS_EXPORT FirebaseGroupTraits: public BaseGroupTraits {
@@ -26,7 +26,7 @@ class COMMS_EXPORT FirebaseGroupTraits: public BaseGroupTraits {
 //  virtual const std::unordered_set<EntityDID>& get_permitted_node_types();
 
  private:
-  Dep<WebWorker> _web_worker;
+  Dep<BrowserWorker> _web_worker;
   Dep<Inputs> _inputs;
 };
 

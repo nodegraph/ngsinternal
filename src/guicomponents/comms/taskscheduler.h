@@ -1,10 +1,11 @@
 #pragma once
 #include <guicomponents/comms/comms_export.h>
 #include <base/objectmodel/component.h>
-#include <guicomponents/comms/message.h>
 
 #include <functional>
 #include <deque>
+
+class QString;
 
 namespace ngs {
 
@@ -12,6 +13,7 @@ class MessageSender;
 class BaseNodeGraphManipulator;
 
 class TaskContext;
+class Message;
 
 typedef std::function<void()> Task;
 
@@ -22,24 +24,19 @@ class COMMS_EXPORT TaskScheduler : public Component {
   explicit TaskScheduler(Entity* parent);
   virtual ~TaskScheduler();
 
-  void open();
-  void close();
-  bool is_open() const;
   bool is_waiting_for_response() const {return _waiting_for_response;}
 
   void force_stack_reset();
 
   void queue_task(TaskContext& tc, Task task, const std::string& about);
   void run_next_task();
-  void send_msg_task(Message msg);
+
+  // Pause the queue to allow our users to wait for some type of asynchronous compute to return.
+  int wait_for_response();
+  void done_waiting_for_response(int resp_id, const QString& error);
 
   // Task queue info.
   bool is_busy() const {external(); return !_stack.empty();}
-  const Message& get_last_response() const{external(); return _last_response;}
-
-  // Handle incoming messages.
-  void handle_response(const Message& sm);
-  void handle_info(const Message& msg);
 
  private:
   typedef std::deque<Task> Queue;
@@ -57,7 +54,6 @@ class COMMS_EXPORT TaskScheduler : public Component {
   void finished_sequence_task();
 
   // Our fixed dependencies.
-  Dep<MessageSender> _msg_sender;
   Dep<BaseNodeGraphManipulator> _ng_manipulator;
 
   // A stack of queues.
@@ -70,9 +66,6 @@ class COMMS_EXPORT TaskScheduler : public Component {
   // Used after resetting the queue, as the response for a request with this id may still be outstanding.
   bool _ignore_outstanding_response;
   int _outstanding_response_id;
-
-  // The last response we got.
-  Message _last_response;
 
   // Whether we're connected for receiving text messages from the socket.
   bool _connected;

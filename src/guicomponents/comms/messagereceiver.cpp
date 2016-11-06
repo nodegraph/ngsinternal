@@ -1,13 +1,11 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
+#include <guicomponents/comms/browserworker.h>
 
 #include <guicomponents/comms/message.h>
 #include <guicomponents/comms/messagesender.h>
 #include <guicomponents/comms/messagereceiver.h>
 #include <guicomponents/comms/taskscheduler.h>
-#include <guicomponents/comms/webworker.h>
-
-
 #include <openssl/aes.h>
 #include <QtWebSockets/QWebSocket>
 
@@ -66,10 +64,8 @@ void MessageReceiver::on_text_received(const QString & text) {
     assert(false);
   } else if (type == MessageType::kResponseMessage) {
     _app_worker->handle_response(msg);
-    _task_queue->handle_response(msg);
   } else if (type == MessageType::kInfoMessage) {
     _app_worker->handle_info(msg);
-    _task_queue->handle_info(msg);
   } else {
     std::cerr << "Error: Got message of unknown type!\n";
   }

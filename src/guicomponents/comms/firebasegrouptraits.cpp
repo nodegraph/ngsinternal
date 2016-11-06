@@ -1,9 +1,9 @@
 #include <guicomponents/comms/firebasegrouptraits.h>
 #include <base/objectmodel/deploader.h>
-#include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/message.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <components/computes/inputs.h>
+#include <guicomponents/comms/browserworker.h>
 
 namespace ngs {
 

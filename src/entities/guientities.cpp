@@ -15,8 +15,6 @@
 #include <components/interactions/graphbuilder.h>
 #include <components/interactions/viewcontrols.h>
 #include <guicomponents/comms/grouptraits.h>
-#include <guicomponents/comms/webgrouptraits.h>
-
 #include <components/resources/resources.h>
 
 #include <components/compshapes/compshapecollective.h>
@@ -51,18 +49,19 @@
 #include <guicomponents/comms/messagesender.h>
 #include <guicomponents/comms/messagereceiver.h>
 #include <guicomponents/comms/appconfig.h>
+#include <guicomponents/comms/browsergrouptraits.h>
+#include <guicomponents/comms/browserrecorder.h>
+#include <guicomponents/comms/browserworker.h>
 #include <guicomponents/comms/taskscheduler.h>
-#include <guicomponents/comms/webworker.h>
-#include <guicomponents/comms/webrecorder.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/comms/firebasegrouptraits.h>
 
 #include <guicomponents/computes/browsercomputes.h>
+#include <guicomponents/computes/browsergroupnodecompute.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
-#include <guicomponents/computes/webgroupnodecompute.h>
 #include <guicomponents/computes/firebasegroupnodecompute.h>
 
 #include <guicomponents/quick/fborenderer.h>
@@ -123,8 +122,8 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff AppConfig(this);
   new_ff TaskScheduler(this);
   //new_ff AppComm(this);
-  new_ff WebWorker(this);
-  new_ff WebRecorder(this);
+  new_ff BrowserWorker(this);
+  new_ff BrowserRecorder(this);
   new_ff LicenseChecker(this);
   new_ff CryptoLogic(this);
 }
@@ -158,8 +157,8 @@ void QMLAppEntity::expose_to_qml() {
   // Grab some components without using Deps.
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
-  WebWorker* web_worker = get_app_worker();
-  WebRecorder* web_recorder = get_app_recorder();
+  BrowserWorker* web_worker = get_app_worker();
+  BrowserRecorder* web_recorder = get_app_recorder();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
 
@@ -221,12 +220,12 @@ FileModel* QMLAppEntity::get_file_model() {
   return get<FileModel>();
 }
 
-WebWorker* QMLAppEntity::get_app_worker() {
-  return get<WebWorker>();
+BrowserWorker* QMLAppEntity::get_app_worker() {
+  return get<BrowserWorker>();
 }
 
-WebRecorder* QMLAppEntity::get_app_recorder() {
-  return get<WebRecorder>();
+BrowserRecorder* QMLAppEntity::get_app_recorder() {
+  return get<BrowserRecorder>();
 }
 
 LicenseChecker* QMLAppEntity::get_license_checker() {
@@ -351,12 +350,12 @@ void ScriptGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff OutputTopology(this);
 }
 
-void WebGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
+void BrowserGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
-  (new_ff WebGroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff BrowserGroupNodeCompute(this))->create_inputs_outputs();
   new_ff Inputs(this);
   new_ff Outputs(this);
-  new_ff WebGroupTraits(this);
+  new_ff BrowserGroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);

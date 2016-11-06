@@ -7,11 +7,11 @@ namespace ngs {
 
 class BaseGroupTraits;
 
-class GUICOMPUTES_EXPORT WebGroupNodeCompute: public GroupNodeCompute {
+class GUICOMPUTES_EXPORT BrowserGroupNodeCompute: public GroupNodeCompute {
  public:
-  COMPONENT_ID(Compute, WebGroupNodeCompute);
-  WebGroupNodeCompute(Entity* entity);
-  virtual ~WebGroupNodeCompute();
+  COMPONENT_ID(Compute, BrowserGroupNodeCompute);
+  BrowserGroupNodeCompute(Entity* entity);
+  virtual ~BrowserGroupNodeCompute();
 
  protected:
 

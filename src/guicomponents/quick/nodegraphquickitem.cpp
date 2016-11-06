@@ -631,9 +631,15 @@ void NodeGraphQuickItem::create_script_group_node(bool centered) {
   finish_creating_node(e, centered);
 }
 
-void NodeGraphQuickItem::create_web_group_node(bool centered) {
+void NodeGraphQuickItem::create_browser_group_node(bool centered) {
   external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "web group", EntityDID::kWebGroupNodeEntity);
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "browser group", EntityDID::kBrowserGroupNodeEntity);
+  finish_creating_node(e, centered);
+}
+
+void NodeGraphQuickItem::create_firebase_group_node(bool centered) {
+  external();
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "firebase group", EntityDID::kFirebaseGroupNodeEntity);
   finish_creating_node(e, centered);
 }
 
@@ -670,12 +676,6 @@ void NodeGraphQuickItem::create_compute_node(bool centered, ComponentDID compute
 void NodeGraphQuickItem::create_merge_node(bool centered) {
   external();
   create_compute_node(centered, ComponentDID::kMergeNodeCompute);
-}
-
-void NodeGraphQuickItem::create_firebase_group_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "firebase group", EntityDID::kFirebaseGroupNodeEntity);
-  finish_creating_node(e, centered);
 }
 
 void NodeGraphQuickItem::create_firebase_sign_in_node(bool centered) {

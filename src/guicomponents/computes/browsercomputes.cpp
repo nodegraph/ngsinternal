@@ -3,8 +3,8 @@
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
+#include <guicomponents/comms/browserworker.h>
 
-#include <guicomponents/comms/webworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/browsercomputes.h>
 

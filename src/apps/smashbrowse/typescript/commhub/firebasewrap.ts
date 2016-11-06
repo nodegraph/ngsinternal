@@ -166,10 +166,25 @@ export class FirebaseWraps {
     private wraps: any
     private app_server: AppSocketServer
     private current_config: any
+    private request_ids: Array<RequestType>
 
     constructor(app_server: AppSocketServer) {
         this.app_server = app_server
         this.clear()
+        this.request_ids = [
+            RequestType.kFirebaseInit,
+            RequestType.kFirebaseSignIn,
+            RequestType.kFirebaseSignOut,
+            RequestType.kFirebaseWriteData,
+            RequestType.kFirebaseReadData,
+            RequestType.kFirebaseListenToChanges]
+    }
+
+    can_handle_request(type: RequestType): boolean {
+        if (type in this.request_ids) {
+            return true
+        }
+        return false
     }
 
     // Clear our existing wraps.
@@ -220,6 +235,11 @@ export class FirebaseWraps {
     }
 
     handle_request(req: RequestMessage): boolean {
+        // Return right away if we can't handle this request type.
+        if (!this.can_handle_request(req.request)) {
+            return false
+        }
+
         if (req.request == RequestType.kFirebaseInit) {
             let config: any = {}
             config.apiKey = req.args.apiKey

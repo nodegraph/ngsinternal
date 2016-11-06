@@ -1,18 +1,19 @@
 
 set(sources
-    webgroupnodecompute.cpp
+    browsergroupnodecompute.cpp
     scriptgroupnodecompute.cpp
     firebasegroupnodecompute.cpp
     scriptnodecompute.cpp
     browsercomputes.cpp
-    
+    httpcomputes.cpp
     )
    
 set(headers
-    webgroupnodecompute.h
+    browsergroupnodecompute.h
     scriptnodecompute.h
     firebasegroupnodecompute.h
     browsercomputes.h
+    httpcomputes.h
     )
 
     

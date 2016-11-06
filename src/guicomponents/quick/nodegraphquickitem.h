@@ -48,7 +48,8 @@ Q_OBJECT
   // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);
   Q_INVOKABLE void create_script_group_node(bool centered);
-  Q_INVOKABLE void create_web_group_node(bool centered);
+  Q_INVOKABLE void create_browser_group_node(bool centered);
+  Q_INVOKABLE void create_firebase_group_node(bool centered);
 
   // Special Data Compute Nodes Creation.
   Q_INVOKABLE void create_data_node(bool centered);
@@ -60,7 +61,7 @@ Q_OBJECT
   Q_INVOKABLE void create_compute_node(bool centered, ComponentDID compute_did);
   Q_INVOKABLE void create_merge_node(bool centered);
 
-  Q_INVOKABLE void create_firebase_group_node(bool centered);
+
   Q_INVOKABLE void create_firebase_sign_in_node(bool centered);
   Q_INVOKABLE void create_firebase_sign_out_node(bool centered);
   Q_INVOKABLE void create_firebase_write_data_node(bool centered);

@@ -3,7 +3,10 @@
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/messagesender.h>
+#include <guicomponents/comms/message.h>
+
 #include <guicomponents/quick/basenodegraphmanipulator.h>
+
 
 #include <QtCore/QCoreApplication>
 
@@ -11,33 +14,16 @@ namespace ngs {
 
 TaskScheduler::TaskScheduler(Entity* parent)
     : Component(parent, kIID(), kDID()),
-      _msg_sender(this),
       _ng_manipulator(this),
       _waiting_for_response(false),
       _next_msg_id(0),
       _ignore_outstanding_response(false),
       _outstanding_response_id(-1),
       _connected(false) {
-  get_dep_loader()->register_fixed_dep(_msg_sender, Path({}));
   get_dep_loader()->register_fixed_dep(_ng_manipulator, Path({}));
 }
 
 TaskScheduler::~TaskScheduler() {
-}
-
-void TaskScheduler::open() {
-  external();
-  _msg_sender->open();
-}
-
-void TaskScheduler::close() {
-  external();
-  _msg_sender->close();
-}
-
-bool TaskScheduler::is_open() const {
-  external();
-  return _msg_sender->is_open();
 }
 
 void TaskScheduler::force_stack_reset() {
@@ -47,14 +33,17 @@ void TaskScheduler::force_stack_reset() {
   _stack.clear();
 
   // An outstanding response to be sent back to us later.
-  // Record state to ignore it.
+  // Record state to ignore it. Note we are only storing one outstanding.
+  // Theoretically there could be many outstanding ids, with many of them returning back to us,
+  // but this would be extremely inprobable.
   _ignore_outstanding_response = true;
   _outstanding_response_id = _next_msg_id -1;
 
   // Now reset our other members.
   _waiting_for_response = false;
-  _next_msg_id = 0;
-  _last_response = Message();
+
+  // Note we don't reset the _next_msg_id because it may accidentally overlap the outstanding_response_id.
+  // This way the ids have to loop through all the integers before overlapping.
 }
 
 // ---------------------------------------------------------------------------------
@@ -131,14 +120,22 @@ void TaskScheduler::run_next_task() {
   task();
 }
 
-// ------------------------------------------------------------------------
-// Incoming Message Handlers.
-// ------------------------------------------------------------------------
+// Returns the task id that the caller should return to us after receiving a response.
+int TaskScheduler::wait_for_response() {
+  // Cache a task id to return. We expect to be called later with this same id to start the queue processing again.
+  int id = _next_msg_id;
 
-void TaskScheduler::handle_response(const Message& msg) {
-  // Get the response id. This is supposed to match with the request id.
-  int resp_id = msg.value(Message::kID).toInt();
+  // Increment the counter. Note we're ok with this overflowing and looping around.
+  _next_msg_id += 1;
 
+  // Record the fact that we are now waiting for a response.
+  _waiting_for_response = true;
+
+  // Return the task id that the caller should use
+  return id;
+}
+
+void TaskScheduler::done_waiting_for_response(int resp_id, const QString& error) {
   // Determine the request id.
   int req_id = _next_msg_id -1;
 
@@ -159,17 +156,14 @@ void TaskScheduler::handle_response(const Message& msg) {
     }
   }
 
-  // Update the last message.
-  _last_response = msg;
-
   // Record the fact that we've received our response.
   _waiting_for_response = false;
 
-  // If the response indicates an un-continuable error has occured, we reset the stack.
-  if (!_last_response.value(Message::kSuccess).toBool()) {
+  // If an error has occured, we reset the stack.
+  if (!error.isEmpty()) {
     // Also show the error marker on the node.
-    std::cerr << "handling response with error: " << _last_response.value(Message::kValue).toString().toStdString() << "\n";
-    _ng_manipulator->set_error_node(_last_response.value(Message::kValue).toString());
+    std::cerr << "handling response with error: " << error.toStdString() << "\n";
+    _ng_manipulator->set_error_node(error);
     _ng_manipulator->clear_ultimate_target();
 
     // Reset our stack.
@@ -180,28 +174,9 @@ void TaskScheduler::handle_response(const Message& msg) {
   run_next_task();
 }
 
-void TaskScheduler::handle_info(const Message& msg) {
-}
-
 // ------------------------------------------------------------------------
 // Infrastructure Tasks.
 // ------------------------------------------------------------------------
-
-void TaskScheduler::send_msg_task(Message msg) {
-  // Tag the request with an id. We expect a response with the same id.
-  msg.insert(Message::kID, _next_msg_id);
-
-  std::cerr << "app --> comhub: " << msg.to_string().toStdString() << "\n";
-
-  // Increment the counter. Note we're ok with this overflowing and looping around.
-  _next_msg_id += 1;
-
-  // Record the fact that we are now waiting for a response.
-  _waiting_for_response = true;
-
-  // Send the request to nodejs.
-  _msg_sender->send_msg(msg);
-}
 
 void TaskScheduler::start_sequence_task() {
   // Make sure that we are the first task in the queue.

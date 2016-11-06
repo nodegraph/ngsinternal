@@ -7,19 +7,20 @@ set(sources
     messagereceiver.cpp
     appconfig.cpp
     taskscheduler.cpp
-    webworker.cpp
-    webrecorder.cpp
+    browserworker.cpp
+    httpworker.cpp
+    browserrecorder.cpp
     licensechecker.cpp
     cryptologic.cpp
     grouptraits.cpp
-    webgrouptraits.cpp
+    browsergrouptraits.cpp
     firebasegrouptraits.cpp
     )
    
 set(headers
     taskscheduler.h
     grouptraits.h
-    webgrouptraits.h
+    browsergrouptraits.h
     firebasegrouptraits.h
     cryptologic.h
 )
@@ -31,8 +32,9 @@ set(moc_headers
     messagesender.h
     messagereceiver.h
     appconfig.h
-    webworker.h
-    webrecorder.h
+    browserworker.h
+    httpworker.h
+    browserrecorder.h
     licensechecker.h
     )
     

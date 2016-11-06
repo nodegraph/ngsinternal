@@ -1,19 +1,19 @@
 #include <guicomponents/comms/basegrouptraits.h>
 #include <base/objectmodel/deploader.h>
-#include <guicomponents/computes/webgroupnodecompute.h>
+#include <guicomponents/computes/browsergroupnodecompute.h>
 
 namespace ngs {
 
-WebGroupNodeCompute::WebGroupNodeCompute(Entity* entity):
+BrowserGroupNodeCompute::BrowserGroupNodeCompute(Entity* entity):
     GroupNodeCompute(entity, kDID()),
     _group_traits(this) {
   get_dep_loader()->register_fixed_dep(_group_traits, Path({"."}));
 }
 
-WebGroupNodeCompute::~WebGroupNodeCompute() {
+BrowserGroupNodeCompute::~BrowserGroupNodeCompute() {
 }
 
-bool WebGroupNodeCompute::update_state() {
+bool BrowserGroupNodeCompute::update_state() {
   _group_traits->on_enter();
   bool done = GroupNodeCompute::update_state();
   if (done) {

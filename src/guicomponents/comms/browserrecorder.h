@@ -9,17 +9,17 @@ namespace ngs {
 class FileModel;
 class Compute;
 class BaseFactory;
-class WebWorker;
+class BrowserWorker;
 class TaskScheduler;
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT WebRecorder : public QObject, public Component {
+class COMMS_EXPORT BrowserRecorder : public QObject, public Component {
 Q_OBJECT
  public:
-  COMPONENT_ID(WebRecorder, WebRecorder)
+  COMPONENT_ID(BrowserRecorder, BrowserRecorder)
 
-  explicit WebRecorder(Entity* parent);
-  virtual ~WebRecorder();
+  explicit BrowserRecorder(Entity* parent);
+  virtual ~BrowserRecorder();
 
   // ---------------------------------------------------------------------------------
   // Record Actions.
@@ -129,9 +129,9 @@ Q_OBJECT
     void build_web_node(ComponentDID compute_did, const QVariantMap& chain_state);
 
   // Our fixed dependencies.
-  Dep<WebWorker> _web_worker;
-  Dep<TaskScheduler> _task_scheduler;
-  Dep<FileModel> _file_model;
+  Dep<BrowserWorker> _worker;
+  Dep<TaskScheduler> _scheduler;
+  Dep<FileModel> _model;
 };
 
 }

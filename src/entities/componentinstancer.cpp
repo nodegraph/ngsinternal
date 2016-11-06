@@ -8,8 +8,6 @@
 #include <components/interactions/shapecanvas.h>
 #include <components/interactions/groupinteraction.h>
 #include <guicomponents/comms/grouptraits.h>
-#include <guicomponents/comms/webgrouptraits.h>
-
 #include <components/resources/resources.h>
 
 #include <base/utils/simpleloader.h>
@@ -58,17 +56,17 @@
 #include <guicomponents/comms/messagereceiver.h>
 #include <guicomponents/comms/appconfig.h>
 #include <guicomponents/comms/taskscheduler.h>
-#include <guicomponents/comms/webworker.h>
-#include <guicomponents/comms/webrecorder.h>
+#include <guicomponents/comms/httpworker.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/comms/firebasegrouptraits.h>
 
 #include <gui/widget/nodegrapheditor.h>
+#include <guicomponents/comms/browsergrouptraits.h>
+#include <guicomponents/comms/browserrecorder.h>
+#include <guicomponents/comms/browserworker.h>
+#include <guicomponents/computes/browsergroupnodecompute.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
-#include <guicomponents/computes/webgroupnodecompute.h>
-
-
 #include <iostream>
 #include <cassert>
 
