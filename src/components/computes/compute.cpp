@@ -124,6 +124,76 @@ void Compute::set_output(const std::string& name, const QJsonValue& value) {
   _outputs.insert(name.c_str(), value);
 }
 
+QString Compute::value_to_json(QJsonValue value) {
+  QJsonDocument doc;
+  if (value.isArray()) {
+    doc.setArray(value.toArray());
+  } else if (value.isObject()) {
+    doc.setObject(value.toObject());
+  }
+  return doc.toJson();
+}
+
+bool Compute::eval_json(const QString& json, QJsonValue& result, QString& error) {
+  error.clear();
+
+  QJsonParseError parse_error;
+  QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parse_error);
+
+  if (parse_error.error == QJsonParseError::NoError) {
+    result = QJsonValue(); // undefined.
+    error = parse_error.errorString();
+    return false;
+  }
+
+  if (doc.isObject()) {
+    result = doc.object();
+    return true;
+  } else if (doc.isArray()) {
+    result = doc.array();
+    return true;
+  }
+
+  return false;
+}
+
+void Compute::shallow_object_merge(QJsonObject& target, const QJsonObject& source) {
+  for (QJsonObject::const_iterator iter = source.constBegin(); iter != source.constEnd(); ++iter) {
+    target.insert(iter.key(), iter.value());
+  }
+}
+
+void Compute::prep_source_for_merge(const QJsonValue& target, QJsonValue& source) {
+  if (source.isString()) {
+    QJsonValue value = eval_js2(source.toString());
+    if (target.isObject()) {
+      if (value.isObject()) {
+        // Conver the source from a string to an object.
+        source = value;
+        return;
+      }
+    } else if (target.isArray()) {
+      if (value.isArray()) {
+        // Convert the source from a string to an array.
+        source = value;
+        return;
+      }
+    }
+  } else if (source.isObject()) {
+    if (target.isString()) {
+      // Convert the source from an object to a string.
+      QString json = value_to_json(source);
+      source = QJsonValue(json);
+    }
+  } else if (source.isArray()) {
+    if (target.isString()) {
+      // Conver the source from an array to a string.
+      QString json = value_to_json(source);
+      source = QJsonValue(json);
+    }
+  }
+}
+
 QJsonValue Compute::deep_merge(const QJsonValue& target, const QJsonValue& source) {
   if (source.isNull()) {
     return target;
@@ -251,15 +321,30 @@ bool Compute::eval_js_with_inputs(const QString& text, QJsonValue& result, QStri
     engine.globalObject().setProperty(QString::fromStdString(input_name), jsvalue);
   }
 
-  return eval_js(engine, text, result,error);
+  return eval_js_in_context(engine, text, result,error);
 }
 
-bool Compute::eval_js(QJSEngine& engine, const QString& text, QJsonValue& result, QString& error) {
+bool Compute::eval_js(const QString& expr, QJsonValue& result, QString& error) {
+  is_static();
+  QJSEngine engine;
+  return eval_js_in_context(engine, expr, result, error);
+}
+
+QJsonValue Compute::eval_js2(const QString& expr) {
+  is_static();
+  QJSEngine engine;
+  QJsonValue result;
+  QString error;
+  eval_js_in_context(engine, expr, result, error);
+  return result;
+}
+
+bool Compute::eval_js_in_context(QJSEngine& engine, const QString& expr, QJsonValue& result, QString& error) {
   is_static();
 
   // Evaluate the expression.
   QJSValue jsresult;
-  jsresult = engine.evaluate(text, "expression", 0);
+  jsresult = engine.evaluate(expr, "expression", 0);
   if (jsresult.isError()) {
     // Update the error string.
     std::stringstream ss;

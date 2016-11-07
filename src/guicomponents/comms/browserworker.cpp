@@ -491,10 +491,7 @@ void BrowserWorker::handle_response(const Message& msg) {
   if (value.isObject()) {
     // Merge the values into the chain_state.
     QJsonObject obj = value.toObject();
-    for (QJsonObject::const_iterator iter = obj.constBegin(); iter != obj.constEnd(); ++iter) {
-      std::cerr << "inserting into chain: " << iter.key().toStdString() << " value: " << iter.value().toString().toStdString() << "\n";
-      _chain_state.insert(iter.key(), iter.value());
-    }
+    Compute::shallow_object_merge(_chain_state, obj);
   } else if (!value.isUndefined()) {
     _chain_state.insert("value", value);
   }
@@ -557,9 +554,7 @@ void BrowserWorker::get_xpath_task() {
 
 void BrowserWorker::merge_chain_state_task(const QJsonObject& map) {
   // Merge the values into the chain_state.
-  for (QJsonObject::const_iterator iter = map.constBegin(); iter != map.constEnd(); ++iter) {
-    _chain_state.insert(iter.key(), iter.value());
-  }
+  Compute::shallow_object_merge(_chain_state, map);
   _scheduler->run_next_task();
 }
 

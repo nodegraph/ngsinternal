@@ -22,8 +22,20 @@ class BaseNodeGraphManipulator;
 class COMPUTES_EXPORT Compute: public Component {
  public:
 
+  // Various merges and overrides.
+  // Merges the properties from source into target.
+  static void shallow_object_merge(QJsonObject& target, const QJsonObject& source);
+  // Changes the source from a js/json string to an object or array or vice versa in order to match the target.
+  static void prep_source_for_merge(const QJsonValue& target, QJsonValue& source);
+  // Merges the properties from source into target recursively, where the property types match.
   static QJsonValue deep_merge(const QJsonValue& target, const QJsonValue& source);
-  static bool eval_js(QJSEngine& engine, const QString& text, QJsonValue& result, QString& error);
+
+  // Evaluate strings into values.
+  static QString value_to_json(QJsonValue);
+  static bool eval_json(const QString& json, QJsonValue& result, QString& error);
+  static bool eval_js(const QString& expr, QJsonValue& result, QString& error);
+  static QJsonValue eval_js2(const QString& expr);
+  static bool eval_js_in_context(QJSEngine& engine, const QString& expr, QJsonValue& result, QString& error);
 
   COMPONENT_ID(Compute, InvalidComponent);
   Compute(Entity* entity, ComponentDID derived_id);

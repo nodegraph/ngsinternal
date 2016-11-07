@@ -68,6 +68,8 @@ Q_OBJECT
   Q_INVOKABLE void create_firebase_read_data_node(bool centered);
   Q_INVOKABLE void create_firebase_listen_to_changes_node(bool centered);
 
+  Q_INVOKABLE void create_http_node(bool centered);
+
 
   // View and Edit.
   Q_INVOKABLE void view_node();

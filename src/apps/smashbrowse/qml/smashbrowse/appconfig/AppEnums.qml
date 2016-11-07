@@ -49,6 +49,8 @@ Item{
     // --------------------------------------------------------------------------------------
 
     function get_msg_enum_text(msg_ee, index) {
+    	console.log('msg_ee: ' + msg_ee)
+    
         if (msg_ee == msg_enum_enum.kMouseActionType) {
             return mouse_action_type_text[index]
         } else if (msg_ee == msg_enum_enum.kTextActionType) {
@@ -60,7 +62,7 @@ Item{
         } else if (msg_ee == msg_enum_enum.kDirectionType) {
             return direction_type_text[index]
         } else if (msg_ee == msg_enum_enum.kHTTPSendType) {
-        	return http_sent_type[index]
+        	return http_send_type_text[index]
         } else if (msg_ee == msg_enum_enum.kJSType) {
         	return js_type_text[index]
         } else {
@@ -101,9 +103,10 @@ Item{
         'down'
     ]
     
-    property var http_send_type: [
+    property var http_send_type_text: [
+      'get',
 	  'post',
-	  'put,
+	  'put',
 	  'delete',
 	  'patch'
     ]

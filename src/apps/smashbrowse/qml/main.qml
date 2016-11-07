@@ -81,7 +81,8 @@ Rectangle {
         property int kElementActionType: 5
         property int kWrapType: 6
         property int kDirectionType: 7
-        property int kJSType: 8
+        property int kHTTPSendType: 8
+        property int kJSType: 9
     }
     
     QtObject {

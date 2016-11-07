@@ -81,7 +81,7 @@ bool FirebaseGroupNodeCompute::update_state() {
     _group_traits->on_clean();
     return false;
   }
-  update_state2();
+  return update_state2();
 }
 
 bool FirebaseGroupNodeCompute:: update_state2() {

@@ -703,6 +703,11 @@ void NodeGraphQuickItem::create_firebase_listen_to_changes_node(bool centered) {
   create_compute_node(centered, ComponentDID::kFirebaseListenToChangesCompute);
 }
 
+void NodeGraphQuickItem::create_http_node(bool centered) {
+  external();
+  create_compute_node(centered, ComponentDID::kHTTPCompute);
+}
+
 void NodeGraphQuickItem::process_node() {
   external();
   // Return if don't have a last pressed shape.

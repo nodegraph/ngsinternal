@@ -133,8 +133,7 @@ COMPONENT_ENTRY1(FirebaseWriteDataCompute)\
 COMPONENT_ENTRY1(FirebaseReadDataCompute)\
 COMPONENT_ENTRY1(FirebaseListenToChangesCompute)\
 \
-COMPONENT_ENTRY1(HTTPSendCompute)\
-COMPONENT_ENTRY1(HTTPGetCompute)\
+COMPONENT_ENTRY1(HTTPCompute)\
 /* -- */\
 COMPONENT_ENTRY1(FBORenderer)\
 COMPONENT_ENTRY1(FBOWorker)\

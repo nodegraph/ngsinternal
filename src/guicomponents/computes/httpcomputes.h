@@ -11,11 +11,11 @@ class HTTPWorker;
 class TaskScheduler;
 class TaskContext;
 
-class GUICOMPUTES_EXPORT HTTPCompute: public Compute {
+class GUICOMPUTES_EXPORT BaseHTTPCompute: public Compute {
  public:
   COMPONENT_ID(Compute, InvalidComponent);
-  HTTPCompute(Entity* entity, ComponentDID did);
-  virtual ~HTTPCompute();
+  BaseHTTPCompute(Entity* entity, ComponentDID did);
+  virtual ~BaseHTTPCompute();
 
   virtual void create_inputs_outputs();
 
@@ -34,24 +34,10 @@ class GUICOMPUTES_EXPORT HTTPCompute: public Compute {
   Dep<TaskScheduler> _scheduler;
 };
 
-class GUICOMPUTES_EXPORT HTTPSendCompute: public HTTPCompute {
+class GUICOMPUTES_EXPORT HTTPCompute: public BaseHTTPCompute {
  public:
-  COMPONENT_ID(Compute, HTTPSendCompute);
-  HTTPSendCompute(Entity* entity): HTTPCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
-
-  // Hints.
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT HTTPGetCompute: public HTTPCompute {
- public:
-  COMPONENT_ID(Compute, HTTPGetCompute);
-  HTTPGetCompute(Entity* entity): HTTPCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, HTTPCompute);
+  HTTPCompute(Entity* entity): BaseHTTPCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
   // Hints.
@@ -59,7 +45,7 @@ class GUICOMPUTES_EXPORT HTTPGetCompute: public HTTPCompute {
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
 
-  // Extract values.
+  // Extract values from the chain_state coming from the HTTP worker.
   virtual void on_get_outputs(const QJsonObject& chain_state);
  protected:
   virtual bool update_state();

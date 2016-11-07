@@ -108,21 +108,22 @@ enum class MessageType : int {
 };
 
 enum class WrapType : int {
-    text,
-    image,
-    input,
-    select,
-    iframe
+  text,
+  image,
+  input,
+  select,
+  iframe
 };
 
 enum class DirectionType : int {
-    left,
-    right,
-    up,
-    down
+  left,
+  right,
+  up,
+  down
 };
 
-enum class HTTPSendType : int {
+enum class HTTPSendType: int {
+  kGet,
   kPost,
   kPut,
   kDelete,
