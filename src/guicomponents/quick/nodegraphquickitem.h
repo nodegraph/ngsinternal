@@ -194,7 +194,7 @@ Q_OBJECT
   Dep<BaseFactory> _factory;
   Dep<FileModel> _file_model;
   Dep<LicenseChecker> _license_checker;
-  Dep<BaseNodeGraphManipulator> _ng_manipulator;
+  Dep<BaseNodeGraphManipulator> _manipulator;
 
   // Used to detect long press.
   QTimer _long_press_timer;

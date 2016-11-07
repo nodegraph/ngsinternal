@@ -54,7 +54,7 @@ class COMMS_EXPORT TaskScheduler : public Component {
   void finished_sequence_task();
 
   // Our fixed dependencies.
-  Dep<BaseNodeGraphManipulator> _ng_manipulator;
+  Dep<BaseNodeGraphManipulator> _manipulator;
 
   // A stack of queues.
   QueueStack _stack;

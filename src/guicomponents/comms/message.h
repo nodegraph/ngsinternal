@@ -201,7 +201,9 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kDatabaseURL;
   static const char* kStorageBucket;
 
-  static const char* kHTTPRequestType;
+  static const char* kHTTPRequestMethod;
+  static const char* kPayload;
+  static const char* kOutputPropertyName;
 
 
   Message();

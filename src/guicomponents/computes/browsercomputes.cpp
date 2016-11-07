@@ -16,10 +16,10 @@ namespace ngs {
 
 BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
-      _web_worker(this),
-      _task_scheduler(this) {
-  get_dep_loader()->register_fixed_dep(_web_worker, Path({}));
-  get_dep_loader()->register_fixed_dep(_task_scheduler, Path({}));
+      _worker(this),
+      _scheduler(this) {
+  get_dep_loader()->register_fixed_dep(_worker, Path({}));
+  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
 }
 
 BrowserCompute::~BrowserCompute() {
@@ -46,17 +46,17 @@ void BrowserCompute::dump_map(const QJsonObject& inputs) const {
 void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
   QJsonObject inputs = _inputs->get_input_values();
-  _web_worker->queue_merge_chain_state(tc, inputs);
+  _worker->queue_merge_chain_state(tc, inputs);
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.
   // For examples ads may rotate and flip content.
-  _web_worker->queue_wait_until_loaded(tc);
+  _worker->queue_wait_until_loaded(tc);
 }
 
 void BrowserCompute::post_update_state(TaskContext& tc) {
   internal();
   std::function<void(const QJsonObject&)> on_get_outputs_bound = std::bind(&BrowserCompute::on_get_outputs,this,std::placeholders::_1);
-  _web_worker->queue_get_outputs(tc, on_get_outputs_bound);
+  _worker->queue_get_outputs(tc, on_get_outputs_bound);
 }
 
 void BrowserCompute::on_get_outputs(const QJsonObject& chain_state) {
@@ -75,9 +75,9 @@ bool OpenBrowserCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_open_browser(tc);
+  _worker->queue_open_browser(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -86,9 +86,9 @@ bool CloseBrowserCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_close_browser(tc);
+  _worker->queue_close_browser(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -97,9 +97,9 @@ bool IsBrowserOpenCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_is_browser_open(tc);
+  _worker->queue_is_browser_open(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -108,9 +108,9 @@ bool ResizeBrowserCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_resize_browser(tc);
+  _worker->queue_resize_browser(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -135,10 +135,10 @@ bool NavigateToCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_navigate_to(tc);
-  _web_worker->queue_wait_until_loaded(tc);
+  _worker->queue_navigate_to(tc);
+  _worker->queue_wait_until_loaded(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -147,9 +147,9 @@ bool NavigateRefreshCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_navigate_refresh(tc);
+  _worker->queue_navigate_refresh(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -175,9 +175,9 @@ bool SwitchToIFrameCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_switch_to_iframe(tc);
+  _worker->queue_switch_to_iframe(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -218,9 +218,9 @@ bool CreateSetFromValuesCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_create_set_by_matching_values(tc);
+  _worker->queue_create_set_by_matching_values(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -248,9 +248,9 @@ bool CreateSetFromTypeCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_create_set_by_matching_type(tc);
+  _worker->queue_create_set_by_matching_type(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -275,9 +275,9 @@ bool DeleteSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_delete_set(tc);
+  _worker->queue_delete_set(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -312,9 +312,9 @@ bool ShiftSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_shift_set(tc);
+  _worker->queue_shift_set(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -356,9 +356,9 @@ bool MouseActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_perform_mouse_action(tc);
+  _worker->queue_perform_mouse_action(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -395,9 +395,9 @@ bool StartMouseHoverActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_start_mouse_hover(tc);
+  _worker->queue_start_mouse_hover(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -406,9 +406,9 @@ bool StopMouseHoverActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_stop_mouse_hover(tc);
+  _worker->queue_stop_mouse_hover(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -446,9 +446,9 @@ bool TextActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_perform_text_action(tc);
+  _worker->queue_perform_text_action(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -513,9 +513,9 @@ bool ElementActionCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_perform_element_action(tc);
+  _worker->queue_perform_element_action(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -556,9 +556,9 @@ bool ExpandSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_expand_set(tc);
+  _worker->queue_expand_set(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -583,9 +583,9 @@ bool MarkSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_mark_set(tc);
+  _worker->queue_mark_set(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -610,9 +610,9 @@ bool UnmarkSetCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_unmark_set(tc);
+  _worker->queue_unmark_set(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -621,9 +621,9 @@ bool MergeSetsCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_merge_sets(tc);
+  _worker->queue_merge_sets(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -653,9 +653,9 @@ bool ShrinkSetToSideCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_shrink_set_to_side(tc);
+  _worker->queue_shrink_set_to_side(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -689,9 +689,9 @@ bool ShrinkAgainstMarkedCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _web_worker->queue_shrink_against_marked(tc);
+  _worker->queue_shrink_against_marked(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -725,12 +725,12 @@ bool FirebaseSignInCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   //BrowserCompute::pre_update_state(tc);
   QJsonObject inputs = _inputs->get_input_values();
-  _web_worker->queue_merge_chain_state(tc, inputs);
+  _worker->queue_merge_chain_state(tc, inputs);
 
-  _web_worker->queue_firebase_sign_in(tc);
+  _worker->queue_firebase_sign_in(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -739,12 +739,12 @@ bool FirebaseSignOutCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   //BrowserCompute::pre_update_state(tc);
   QJsonObject inputs = _inputs->get_input_values();
-  _web_worker->queue_merge_chain_state(tc, inputs);
+  _worker->queue_merge_chain_state(tc, inputs);
 
-  _web_worker->queue_firebase_sign_out(tc);
+  _worker->queue_firebase_sign_out(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -774,12 +774,12 @@ bool FirebaseWriteDataCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   //BrowserCompute::pre_update_state(tc);
   QJsonObject inputs = _inputs->get_input_values();
-  _web_worker->queue_merge_chain_state(tc, inputs);
+  _worker->queue_merge_chain_state(tc, inputs);
 
-  _web_worker->queue_firebase_write_data(tc);
+  _worker->queue_firebase_write_data(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -826,12 +826,12 @@ bool FirebaseReadDataCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   //BrowserCompute::pre_update_state(tc);
   QJsonObject inputs = _inputs->get_input_values();
-  _web_worker->queue_merge_chain_state(tc, inputs);
+  _worker->queue_merge_chain_state(tc, inputs);
 
-  _web_worker->queue_firebase_read_data(tc);
+  _worker->queue_firebase_read_data(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -857,12 +857,12 @@ bool FirebaseListenToChangesCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
-  TaskContext tc(_task_scheduler);
+  TaskContext tc(_scheduler);
   //BrowserCompute::pre_update_state(tc);
   QJsonObject inputs = _inputs->get_input_values();
-  _web_worker->queue_merge_chain_state(tc, inputs);
+  _worker->queue_merge_chain_state(tc, inputs);
 
-  _web_worker->queue_firebase_listen_to_changes(tc);
+  _worker->queue_firebase_listen_to_changes(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }

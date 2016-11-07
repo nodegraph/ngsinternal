@@ -89,7 +89,7 @@ class COMPUTES_EXPORT Compute: public Component {
 
  protected:
   Dep<Inputs> _inputs;
-  Dep<BaseNodeGraphManipulator> _ng_manipulator;
+  Dep<BaseNodeGraphManipulator> _manipulator;
 
   // Our outputs.
   QJsonObject _outputs;

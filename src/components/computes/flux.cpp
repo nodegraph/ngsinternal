@@ -20,9 +20,9 @@ const char* OutputTraits::did_name = "Outputs";
 template<class Traits>
 Flux<Traits>::Flux(Entity* entity)
     : Component(entity, kIID(), kDID()),
-      _ng_manipulator(this),
+      _manipulator(this),
       _null(this) {
-  get_dep_loader()->register_fixed_dep(_ng_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
 }
 
 template<class Traits>
@@ -35,9 +35,9 @@ void Flux<Traits>::update_wires() {
   if (!wires_are_up_to_date()) {
     gather();
     if (Traits::FluxDID == ComponentDID::kOutputs) {
-      _ng_manipulator->set_output_topology(our_entity(), _exposed_ordering);
+      _manipulator->set_output_topology(our_entity(), _exposed_ordering);
     } else if (Traits::FluxDID == ComponentDID::kInputs) {
-      _ng_manipulator->set_input_topology(our_entity(), _exposed_ordering);
+      _manipulator->set_input_topology(our_entity(), _exposed_ordering);
     }
   }
 }

@@ -26,7 +26,7 @@ class COMMS_EXPORT FirebaseGroupTraits: public BaseGroupTraits {
 //  virtual const std::unordered_set<EntityDID>& get_permitted_node_types();
 
  private:
-  Dep<BrowserWorker> _web_worker;
+  Dep<BrowserWorker> _worker;
   Dep<Inputs> _inputs;
 };
 

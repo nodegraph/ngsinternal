@@ -14,13 +14,13 @@ namespace ngs {
 
 TaskScheduler::TaskScheduler(Entity* parent)
     : Component(parent, kIID(), kDID()),
-      _ng_manipulator(this),
+      _manipulator(this),
       _waiting_for_response(false),
       _next_msg_id(0),
       _ignore_outstanding_response(false),
       _outstanding_response_id(-1),
       _connected(false) {
-  get_dep_loader()->register_fixed_dep(_ng_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
 }
 
 TaskScheduler::~TaskScheduler() {
@@ -105,7 +105,7 @@ void TaskScheduler::run_next_task() {
   }
 
   if (_stack.empty()) {
-    _ng_manipulator->continue_cleaning_to_ultimate_target();
+    _manipulator->continue_cleaning_to_ultimate_target();
     return;
   }
 
@@ -163,8 +163,8 @@ void TaskScheduler::done_waiting_for_response(int resp_id, const QString& error)
   if (!error.isEmpty()) {
     // Also show the error marker on the node.
     std::cerr << "handling response with error: " << error.toStdString() << "\n";
-    _ng_manipulator->set_error_node(error);
-    _ng_manipulator->clear_ultimate_target();
+    _manipulator->set_error_node(error);
+    _manipulator->clear_ultimate_target();
 
     // Reset our stack.
     force_stack_reset();

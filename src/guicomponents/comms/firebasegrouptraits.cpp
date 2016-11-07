@@ -9,9 +9,9 @@ namespace ngs {
 
 FirebaseGroupTraits::FirebaseGroupTraits(Entity* entity)
     : BaseGroupTraits(entity, kDID()),
-      _web_worker(this),
+      _worker(this),
       _inputs(this){
-  get_dep_loader()->register_fixed_dep(_web_worker, Path({}));
+  get_dep_loader()->register_fixed_dep(_worker, Path({}));
   get_dep_loader()->register_fixed_dep(_inputs, Path({"."}));
 }
 
@@ -30,7 +30,7 @@ void FirebaseGroupTraits::on_enter() {
   QString email = inputs.value(Message::kEmail).toString();
   QString password = inputs.value(Message::kPassword).toString();
 
-  _web_worker->dive_into_firebase_group(get_name(), apiKey, authDomain, databaseURL, storageBucket, email, password);
+  _worker->dive_into_firebase_group(get_name(), apiKey, authDomain, databaseURL, storageBucket, email, password);
 }
 
 void FirebaseGroupTraits::on_clean() {
@@ -45,7 +45,7 @@ void FirebaseGroupTraits::on_clean() {
   QString email = inputs.value(Message::kEmail).toString();
   QString password = inputs.value(Message::kPassword).toString();
 
-  _web_worker->clean_firebase_group(get_name(), apiKey, authDomain, databaseURL, storageBucket, email, password);
+  _worker->clean_firebase_group(get_name(), apiKey, authDomain, databaseURL, storageBucket, email, password);
 }
 
 void FirebaseGroupTraits::on_exit() {

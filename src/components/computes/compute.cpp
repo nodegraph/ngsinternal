@@ -32,10 +32,10 @@ const QJsonObject Compute::_hints;
 Compute::Compute(Entity* entity, ComponentDID derived_id)
     : Component(entity, kIID(), derived_id),
       _inputs(this),
-      _ng_manipulator(this) {
+      _manipulator(this) {
   // Note this only exists for node computes and not for plug computes.
   get_dep_loader()->register_fixed_dep(_inputs, Path({"."}));
-  // We only grab the _ng_manipulator for non input/output computes, to avoid cycles.
+  // We only grab the manipulator for non input/output computes, to avoid cycles.
 }
 
 Compute::~Compute() {
@@ -49,23 +49,23 @@ void Compute::create_inputs_outputs() {
 
 void Compute::set_self_dirty(bool dirty) {
   Component::set_self_dirty(dirty);
-  if (_ng_manipulator) {
-      _ng_manipulator->update_clean_marker(our_entity(), !is_state_dirty());
+  if (_manipulator) {
+      _manipulator->update_clean_marker(our_entity(), !is_state_dirty());
   }
 }
 
 void Compute::initialize_wires() {
   Component::initialize_wires();
   if ((get_did() != ComponentDID::kInputCompute) && (get_did() != ComponentDID::kOutputCompute)) {
-    _ng_manipulator = get_dep<BaseNodeGraphManipulator>(get_app_root());
+    _manipulator = get_dep<BaseNodeGraphManipulator>(get_app_root());
   }
 }
 
 bool Compute::update_state() {
   internal();
   // Notify the gui side that a computation is now processing on the compute side.
-  if (_ng_manipulator) {
-    _ng_manipulator->set_processing_node(our_entity());
+  if (_manipulator) {
+    _manipulator->set_processing_node(our_entity());
   }
 
   return true;
@@ -75,8 +75,8 @@ bool Compute::clean_finalize() {
   internal();
   Component::clean_finalize();
   // Notify the gui side that a computation is now processing on the compute side.
-  if (_ng_manipulator) {
-    _ng_manipulator->clear_processing_node();
+  if (_manipulator) {
+    _manipulator->clear_processing_node();
   }
   return true;
 }
@@ -364,8 +364,8 @@ bool Compute::eval_js_in_context(QJSEngine& engine, const QString& expr, QJsonVa
 }
 
 void Compute::on_error(const QString& error_message) {
-  _ng_manipulator->set_error_node(error_message);
-  _ng_manipulator->clear_ultimate_target();
+  _manipulator->set_error_node(error_message);
+  _manipulator->clear_ultimate_target();
 }
 
 }

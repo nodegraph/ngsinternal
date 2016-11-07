@@ -87,7 +87,7 @@ class NodeGraphManipulatorImp: public Component {
   Dep<BaseFactory> _factory;
   Dep<NodeSelection> _node_selection;
   Dep<NodeGraphQuickItem> _ng_quick;
-  Dep<TaskScheduler> _task_scheduler;
+  Dep<TaskScheduler> _scheduler;
 
   // The ultimate compute (of a node) that we are trying to clean.
   // Note that there maybe many asynchronous computes which cause each cleaning pass over the dependencies
@@ -112,7 +112,7 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
       _factory(this),
       _node_selection(this),
       _ng_quick(this),
-      _task_scheduler(this),
+      _scheduler(this),
       _ultimate_target(this) {
 }
 
@@ -122,7 +122,7 @@ void NodeGraphManipulatorImp::initialize_wires() {
   _factory = get_dep<BaseFactory>(_app_root);
   _node_selection = get_dep<NodeSelection>(_app_root);
   _ng_quick = get_dep<NodeGraphQuickItem>(_app_root);
-  _task_scheduler = get_dep<TaskScheduler>(_app_root);
+  _scheduler = get_dep<TaskScheduler>(_app_root);
 }
 
 void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_stack_reset) {
@@ -146,7 +146,7 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_sta
   // This may be called while we are already trying to clean another ultimate target.
   // Hence we force a stack reset to clear out any pre-existing tasks.
   if (force_stack_reset) {
-    _task_scheduler->force_stack_reset();
+    _scheduler->force_stack_reset();
   }
   // Set and try cleaning the ultimate target.
   _ultimate_target = get_dep<Compute>(entity);

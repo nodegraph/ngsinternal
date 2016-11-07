@@ -166,7 +166,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   Dep<BaseFactory> _factory;
   Dep<NodeSelection> _selection;
   Dep<CompShapeCollective> _shape_collective;
-  Dep<BaseNodeGraphManipulator> _ng_manipulator;
+  Dep<BaseNodeGraphManipulator> _manipulator;
 
   // Interactive dragging state.
   Dep<LinkShape> _link_shape; // The link that we're dragging out.

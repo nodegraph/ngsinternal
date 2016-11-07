@@ -101,8 +101,8 @@ void HTTPWorker::get_outputs_task(std::function<void(const QJsonObject&)> on_get
 
 void HTTPWorker::http_request_task() {
   QUrl url = _chain_state.value(Message::kURL).toString();
-  QString json = _chain_state.value(Message::kValue).toString();
-  HTTPSendType http_send_type = static_cast<HTTPSendType>(_chain_state.value(Message::kHTTPRequestType).toInt());
+  QString json = _chain_state.value(Message::kPayload).toString();
+  HTTPSendType http_send_type = static_cast<HTTPSendType>(_chain_state.value(Message::kHTTPRequestMethod).toInt());
 
   switch (http_send_type) {
     case HTTPSendType::kGet: {

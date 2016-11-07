@@ -78,7 +78,7 @@ class COMPUTES_EXPORT Flux: public Component {
   virtual void gather();
 
   Dep<typename Traits::IOCompute> _null;
-  Dep<BaseNodeGraphManipulator> _ng_manipulator;
+  Dep<BaseNodeGraphManipulator> _manipulator;
 
   // Alphabetical ordering of exposed inputs/outputs.
   std::unordered_map<std::string, size_t> _exposed_ordering;

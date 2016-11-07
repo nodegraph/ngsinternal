@@ -71,9 +71,9 @@ void HTTPCompute::create_inputs_outputs() {
   external();
   BaseHTTPCompute::create_inputs_outputs();
   create_input(Message::kURL, "http://httpbin.org/get", false);
-  create_input(Message::kValue, "{\"alpha\": 1, \"beta\": 2}", false);
-  create_input(Message::kHTTPRequestType, 0, false);
-  create_input(Message::kDataName, "data", false);
+  create_input(Message::kPayload, "{\"alpha\": 1, \"beta\": 2}", false);
+  create_input(Message::kHTTPRequestMethod, 0, false);
+  create_input(Message::kOutputPropertyName, "reply", false);
 }
 
 const QJsonObject HTTPCompute::_hints = HTTPCompute::init_hints();
@@ -85,17 +85,17 @@ QJsonObject HTTPCompute::init_hints() {
   add_hint(m, Message::kURL, HintType::kDescription,
            "The URL to send the HTTP request to.");
 
-  add_hint(m, Message::kValue, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kValue, HintType::kDescription,
+  add_hint(m, Message::kPayload, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kPayload, HintType::kDescription,
            "The value to send with the HTTP request. This should be an expression in javascript.");
 
-  add_hint(m, Message::kHTTPRequestType, HintType::kJSType, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kHTTPRequestType, HintType::kEnum, to_underlying(EnumHint::kHTTPSendType));
-  add_hint(m, Message::kHTTPRequestType, HintType::kDescription,
+  add_hint(m, Message::kHTTPRequestMethod, HintType::kJSType, to_underlying(JSType::kNumber));
+  add_hint(m, Message::kHTTPRequestMethod, HintType::kEnum, to_underlying(EnumHint::kHTTPSendType));
+  add_hint(m, Message::kHTTPRequestMethod, HintType::kDescription,
            "The value to send with the HTTP request. This should be an expression in javascript.");
 
-  add_hint(m, Message::kDataName, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kDataName, HintType::kDescription,
+  add_hint(m, Message::kOutputPropertyName, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kOutputPropertyName, HintType::kDescription,
            "The return value from the GET request will be placed in property under this name.");
 
   return m;
@@ -108,10 +108,10 @@ void HTTPCompute::on_get_outputs(const QJsonObject& chain_state) {
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
   QJsonValue incoming = _inputs->get_input_value("in");
-  QString data_name = _inputs->get_input_value(Message::kDataName).toString();
+  QString prop_name = _inputs->get_input_value(Message::kOutputPropertyName).toString();
   if (incoming.isObject()) {
     QJsonObject obj = incoming.toObject();
-    obj.insert(data_name, chain_state.value("value"));
+    obj.insert(prop_name, chain_state.value("value"));
     set_output("out", obj);
   } else {
     set_output("out", incoming);

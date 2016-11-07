@@ -38,7 +38,7 @@ GroupInteraction::GroupInteraction(Entity* entity)
       _factory(this),
       _selection(this),
       _shape_collective(this),
-      _ng_manipulator(this),
+      _manipulator(this),
       _link_shape(this),
       _links_folder(NULL),
       _mouse_is_down(false),
@@ -48,7 +48,7 @@ GroupInteraction::GroupInteraction(Entity* entity)
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
   get_dep_loader()->register_fixed_dep(_selection, Path({}));
   get_dep_loader()->register_fixed_dep(_shape_collective, Path({"."}));
-  get_dep_loader()->register_fixed_dep(_ng_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
 }
 
 GroupInteraction::~GroupInteraction(){
@@ -119,7 +119,7 @@ void GroupInteraction::toggle_selection_under_press(const Dep<NodeShape>& hit_sh
 
 Dep<LinkShape> GroupInteraction::create_link() {
   external();
-  Entity* link = _ng_manipulator->create_link();
+  Entity* link = _manipulator->create_link();
   Dep<LinkShape> link_shape = get_dep<LinkShape>(link);
   // New link created, so we need to clean the wires. (Note a wire is differnt from a link. See Component.h)
   update_shape_collective();
@@ -982,7 +982,7 @@ Entity* GroupInteraction::create_node(EntityDID did) {
 }
 
 void GroupInteraction::link(Entity* upstream, Entity* downstream) {
-  Entity* link = _ng_manipulator->connect_plugs(downstream, upstream);
+  Entity* link = _manipulator->connect_plugs(downstream, upstream);
   _link_shape = get_dep<LinkShape>(link);
 
   // Transition to default state.

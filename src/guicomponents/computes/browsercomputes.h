@@ -30,8 +30,8 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   void dump_map(const QJsonObject& inputs) const;
 
-  Dep<BrowserWorker> _web_worker;
-  Dep<TaskScheduler> _task_scheduler;
+  Dep<BrowserWorker> _worker;
+  Dep<TaskScheduler> _scheduler;
 };
 
 class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {
