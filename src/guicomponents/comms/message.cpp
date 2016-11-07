@@ -71,6 +71,8 @@ const char* Message::kAuthDomain = "authDomain";
 const char* Message::kDatabaseURL = "databaseURL";
 const char* Message::kStorageBucket = "storageBucket";
 
+const char* Message::kHTTPRequestType = "request_type";
+
 Message::Message()
     : QJsonObject() {
 }

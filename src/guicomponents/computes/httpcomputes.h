@@ -30,24 +30,39 @@ class GUICOMPUTES_EXPORT HTTPCompute: public Compute {
 
   void dump_map(const QJsonObject& inputs) const;
 
-  Dep<HTTPWorker> _http_worker;
-  Dep<TaskScheduler> _task_scheduler;
+  Dep<HTTPWorker> _worker;
+  Dep<TaskScheduler> _scheduler;
 };
 
-//class GUICOMPUTES_EXPORT HTTPSendCompute: public HTTPCompute {
-// public:
-//  COMPONENT_ID(Compute, OpenBrowserCompute);
-//  OpenBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-// protected:
-//  virtual bool update_state();
-//};
-//
-//class GUICOMPUTES_EXPORT HTTPReceiveCompute: public HTTPCompute {
-// public:
-//  COMPONENT_ID(Compute, OpenBrowserCompute);
-//  OpenBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-// protected:
-//  virtual bool update_state();
-//};
+class GUICOMPUTES_EXPORT HTTPSendCompute: public HTTPCompute {
+ public:
+  COMPONENT_ID(Compute, HTTPSendCompute);
+  HTTPSendCompute(Entity* entity): HTTPCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
+
+  // Hints.
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
+  virtual bool update_state();
+};
+
+class GUICOMPUTES_EXPORT HTTPGetCompute: public HTTPCompute {
+ public:
+  COMPONENT_ID(Compute, HTTPGetCompute);
+  HTTPGetCompute(Entity* entity): HTTPCompute(entity, kDID()){}
+  virtual void create_inputs_outputs();
+
+  // Hints.
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+
+  // Extract values.
+  virtual void on_get_outputs(const QJsonObject& chain_state);
+ protected:
+  virtual bool update_state();
+};
 
 }

@@ -59,6 +59,8 @@ Item{
             return wrap_type_text[index]
         } else if (msg_ee == msg_enum_enum.kDirectionType) {
             return direction_type_text[index]
+        } else if (msg_ee == msg_enum_enum.kHTTPSendType) {
+        	return http_sent_type[index]
         } else if (msg_ee == msg_enum_enum.kJSType) {
         	return js_type_text[index]
         } else {
@@ -97,6 +99,13 @@ Item{
         'right',
         'up',
         'down'
+    ]
+    
+    property var http_send_type: [
+	  'post',
+	  'put,
+	  'delete',
+	  'patch'
     ]
     
     property var js_type_text: [

@@ -12,6 +12,8 @@
 #include <QtCore/QJsonValue>
 #include <QtCore/QJsonObject>
 
+class QJSEngine;
+
 namespace ngs {
 
 class InputCompute;
@@ -21,6 +23,7 @@ class COMPUTES_EXPORT Compute: public Component {
  public:
 
   static QJsonValue deep_merge(const QJsonValue& target, const QJsonValue& source);
+  static bool eval_js(QJSEngine& engine, const QString& text, QJsonValue& result, QString& error);
 
   COMPONENT_ID(Compute, InvalidComponent);
   Compute(Entity* entity, ComponentDID derived_id);
@@ -45,8 +48,7 @@ class COMPUTES_EXPORT Compute: public Component {
   // Get our hints.
   virtual const QJsonObject& get_hints() const {return _hints;}
 
-  bool evaluate_expression_js(const QString& text, QJsonValue& result, QString& error) const;
-  bool evaluate_expression_qml(const QString& text, QJsonValue& result, QString& error) const;
+  bool eval_js_with_inputs(const QString& text, QJsonValue& result, QString& error) const;
 
   void on_error(const QString& error_message);
 

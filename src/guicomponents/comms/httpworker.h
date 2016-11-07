@@ -32,6 +32,9 @@ Q_OBJECT
   virtual ~HTTPWorker();
 
   void queue_get_outputs(TaskContext& tc, std::function<void(const QJsonObject&)> on_get_outputs);
+  void queue_http_send(TaskContext& tc);
+  void queue_http_get(TaskContext& tc);
+
 
   void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
   void queue_send_get_request(TaskContext& tc, const QUrl& url);
@@ -47,6 +50,9 @@ Q_OBJECT
   static QByteArray get_value_as_bytes(const QVariant &value);
   void merge_chain_state_task(const QJsonObject& map);
   void get_outputs_task(std::function<void(const QJsonObject&)> on_finished_sequence);
+
+  void http_send_task();
+  void http_get_task();
 
   void send_get_request_task(const QUrl& url);
   void send_post_request_task(const QUrl& url, const QVariant& value);

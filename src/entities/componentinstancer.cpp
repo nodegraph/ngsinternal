@@ -41,6 +41,7 @@
 
 #include <entities/factory.h>
 #include <guicomponents/computes/browsercomputes.h>
+#include <guicomponents/computes/httpcomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/firebasegroupnodecompute.h>
 

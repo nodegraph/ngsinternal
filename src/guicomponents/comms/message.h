@@ -73,7 +73,6 @@ enum class RequestType : int {
   kFirebaseReadData,
   kFirebaseListenToChanges
 };
-//Q_DECLARE_METATYPE(RequestType);
 
 enum class MouseActionType : int {
   kSendClick,
@@ -81,20 +80,17 @@ enum class MouseActionType : int {
   kStartMouseHover,
   kStopMouseHover,
 };
-//Q_DECLARE_METATYPE(MouseActionType);
 
 enum class TextActionType : int {
   kSendText,
   kSendEnter,
 };
-//Q_DECLARE_METATYPE(TextActionType);
 
 enum class ElementActionType : int {
   kGetText,
   kSelectOption,
   kScroll
 };
-//Q_DECLARE_METATYPE(ElementActionType);
 
 enum class InfoType : int {
   kPageIsLoading,
@@ -103,7 +99,6 @@ enum class InfoType : int {
   kShowWebActionMenu,
   kFirebaseChanged,
 };
-//Q_DECLARE_METATYPE(InfoType);
 
 enum class MessageType : int {
   kUnformedMessage,
@@ -111,7 +106,6 @@ enum class MessageType : int {
   kResponseMessage,
   kInfoMessage
 };
-//Q_DECLARE_METATYPE(MessageType);
 
 enum class WrapType : int {
     text,
@@ -120,7 +114,6 @@ enum class WrapType : int {
     select,
     iframe
 };
-//Q_DECLARE_METATYPE(WrapType);
 
 enum class DirectionType : int {
     left,
@@ -128,7 +121,13 @@ enum class DirectionType : int {
     up,
     down
 };
-//Q_DECLARE_METATYPE(DirectionType);
+
+enum class HTTPSendType : int {
+  kPost,
+  kPut,
+  kDelete,
+  kPatch
+};
 
 class COMMS_EXPORT Message: public QJsonObject {
  public:
@@ -200,6 +199,8 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kAuthDomain;
   static const char* kDatabaseURL;
   static const char* kStorageBucket;
+
+  static const char* kHTTPRequestType;
 
 
   Message();

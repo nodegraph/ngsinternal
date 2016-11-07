@@ -15,6 +15,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
+#include <QtQml/QQmlEngine>
 
 #include <QtNetwork/qnetworkrequest.h>
 #include <QtNetwork/qnetworkreply.h>
@@ -36,6 +37,17 @@ HTTPWorker::~HTTPWorker() {
 void HTTPWorker::queue_get_outputs(TaskContext& tc, std::function<void(const QJsonObject&)> on_get_outputs) {
   _task_scheduler->queue_task(tc, (Task)std::bind(&HTTPWorker::get_outputs_task,this,on_get_outputs), "queue_get_outputs");
 }
+
+void HTTPWorker::queue_http_send(TaskContext& tc) {
+
+}
+
+void HTTPWorker::queue_http_get(TaskContext& tc) {
+
+}
+
+
+
 
 
 void HTTPWorker::queue_merge_chain_state(TaskContext& tc, const QJsonObject& map) {
@@ -90,6 +102,46 @@ void HTTPWorker::merge_chain_state_task(const QJsonObject& map) {
 void HTTPWorker::get_outputs_task(std::function<void(const QJsonObject&)> on_get_outputs) {
   on_get_outputs(_chain_state);
   _task_scheduler->run_next_task();
+}
+
+void HTTPWorker::http_send_task() {
+  QUrl url = _chain_state.value(Message::kURL).toString();
+  QString expr = _chain_state.value(Message::kValue).toString();
+  HTTPSendType http_send_type = static_cast<HTTPSendType>(_chain_state.value(Message::kHTTPRequestType).toInt());
+
+  QJSEngine engine;
+  QJsonValue value;
+  QString error;
+  if (Compute::eval_js(engine, expr, value, error)) {
+    switch(http_send_type) {
+      case HTTPSendType::kPost: {
+        send_post_request_task(url, value);
+        break;
+      }
+      case HTTPSendType::kPut: {
+        send_put_request_task(url, value);
+        break;
+      }
+      case HTTPSendType::kDelete: {
+        send_delete_request_task(url);
+        break;
+      }
+      case HTTPSendType::kPatch: {
+        send_patch_request_task(url, value);
+        break;
+      }
+      default: {
+        std::cerr << "Unknown HTTPSendType encountered.\n";
+        break;
+      }
+    }
+  }
+}
+
+void HTTPWorker::http_get_task() {
+  QUrl url = _chain_state.value(Message::kURL).toString();
+  QString data_name = _chain_state.value(Message::kDataName).toString();
+  send_get_request_task(url);
 }
 
 

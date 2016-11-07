@@ -103,6 +103,7 @@ COMPONENT_ENTRY1(InputNodeCompute)\
 COMPONENT_ENTRY1(OutputNodeCompute)\
 COMPONENT_ENTRY1(ScriptNodeCompute)\
 COMPONENT_ENTRY1(MockNodeCompute)\
+\
 COMPONENT_ENTRY1(OpenBrowserCompute)\
 COMPONENT_ENTRY1(CloseBrowserCompute)\
 COMPONENT_ENTRY1(IsBrowserOpenCompute)\
@@ -125,11 +126,15 @@ COMPONENT_ENTRY1(UnmarkSetCompute)\
 COMPONENT_ENTRY1(MergeSetsCompute)\
 COMPONENT_ENTRY1(ShrinkSetToSideCompute)\
 COMPONENT_ENTRY1(ShrinkAgainstMarkedCompute)\
+\
 COMPONENT_ENTRY1(FirebaseSignInCompute)\
 COMPONENT_ENTRY1(FirebaseSignOutCompute)\
 COMPONENT_ENTRY1(FirebaseWriteDataCompute)\
 COMPONENT_ENTRY1(FirebaseReadDataCompute)\
 COMPONENT_ENTRY1(FirebaseListenToChangesCompute)\
+\
+COMPONENT_ENTRY1(HTTPSendCompute)\
+COMPONENT_ENTRY1(HTTPGetCompute)\
 /* -- */\
 COMPONENT_ENTRY1(FBORenderer)\
 COMPONENT_ENTRY1(FBOWorker)\

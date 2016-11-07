@@ -49,7 +49,7 @@ bool InputNodeCompute::update_state() {
   QString text = _inputs->get_input_value("default_value").toString();
   QJsonValue expr_result;
   QString error;
-  if (!evaluate_expression_js(text, expr_result, error)) {
+  if (!eval_js_with_inputs(text, expr_result, error)) {
     set_output("out", expr_result); // result will contain info about the error as properties
     on_error(error);
     return false;

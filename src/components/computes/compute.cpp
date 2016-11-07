@@ -238,7 +238,7 @@ void Compute::add_hint(QJsonObject& map,
   map.insert(name.c_str(),  hints);
 }
 
-bool Compute::evaluate_expression_js(const QString& text, QJsonValue& result, QString& error) const {
+bool Compute::eval_js_with_inputs(const QString& text, QJsonValue& result, QString& error) const {
   internal();
   QJSEngine engine;
 
@@ -250,6 +250,12 @@ bool Compute::evaluate_expression_js(const QString& text, QJsonValue& result, QS
     QJSValue jsvalue = engine.toScriptValue(value);
     engine.globalObject().setProperty(QString::fromStdString(input_name), jsvalue);
   }
+
+  return eval_js(engine, text, result,error);
+}
+
+bool Compute::eval_js(QJSEngine& engine, const QString& text, QJsonValue& result, QString& error) {
+  is_static();
 
   // Evaluate the expression.
   QJSValue jsresult;

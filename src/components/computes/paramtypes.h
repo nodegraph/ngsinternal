@@ -43,6 +43,7 @@ enum class EnumHint: int {
   kElementActionType,
   kWrapType,
   kDirectionType,
+  kHTTPSentType,
   kJSType,
 };
 
