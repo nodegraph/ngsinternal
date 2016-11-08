@@ -1,0 +1,26 @@
+To run this text you'll need to set up an MQTT broker.
+We use mosquitto.
+
+Follow published web instruction on how to install mosquitto.
+Note that only the 1_0_2 version of OpenSSL has the libeay32.dll and ssleay32.dll files.
+In more recent versions they may have been renamed and so won't work.
+
+Now since we're on windows, we found that we cannot use the msys2 shell to run the mosquitto username/password commands properly.
+So we'll use the windows command shell.
+
+-- Create a password file:
+mosquitto_passwd.exe -c D:\installs\srcdeps\publishing\mosquitto_config\passwords tester
+
+-- The above line will prompt you for a password. Enter it.
+
+-- Now copy the mosquitto.conf file from the windows install location (program files (x86)), to D:\installs\srcdeps\publishing\mosquitto_config.
+-- Modify if as follows:
+allow_anonymous false
+password_file D:\installs\srcdeps\publishing\mosquitto_config\passwords 
+
+
+-- Now run mosquitto as:
+mosquitto -c D:\installs\srcdeps\publishing\mosquitto_config\mosquitto.conf
+
+-- If you don't want to enable the username/password authentication then you can just mosquitto from the msys2 shell.
+   The path has been modified in the msys2 setup scripts to find mosquitto.
