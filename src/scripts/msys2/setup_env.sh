@@ -53,6 +53,9 @@ PATH="/c/Program Files/Git/bin":${PATH}
 # GitLab CI
 PATH=/d/installs/windowsunpack/gitlab_ci:${PATH}
 
+# Path for Mosquitto
+PATH="/c/Program Files (x86)/mosquitto":${PATH}
+
 # Java home
 # This is the 32 bit version of the jdk which was installed by Qt
 # and is need by androiddeployqt.

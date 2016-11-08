@@ -1,0 +1,8 @@
+The upstream git repo is: https://github.com/emqtt/qmqtt.git
+
+I took the files in the src dir and copied them here.
+Some files were left out like .pro, .pri and qmqtt_global.h.
+
+qmqtt_global.h is actually their export header file.
+We make our own qmatt_global.h through cmake's export header system.
+See the CMakeLists.txt file for details.
