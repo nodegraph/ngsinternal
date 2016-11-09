@@ -53,8 +53,13 @@ PATH="/c/Program Files/Git/bin":${PATH}
 # GitLab CI
 PATH=/d/installs/windowsunpack/gitlab_ci:${PATH}
 
+# Node installed modules, top level npm dir..
+PATH=/C/Users/Shingo/AppData/Roaming/npm:${PATH}
+
 # Path for Mosquitto
 PATH="/c/Program Files (x86)/mosquitto":${PATH}
+
+
 
 # Java home
 # This is the 32 bit version of the jdk which was installed by Qt
