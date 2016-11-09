@@ -26,9 +26,9 @@ Q_OBJECT
       setUsername(USERNAME);
       setPassword(PASSWORD);
     }
-    connect(this, &Publisher::connected, this, &Publisher::onConnected);
-    connect(&_timer, &QTimer::timeout, this, &Publisher::onTimeout);
-    connect(this, &Publisher::disconnected, this, &Publisher::onDisconnected);
+    connect(this, &Publisher::connected, this, &Publisher::on_connected);
+    connect(&_timer, &QTimer::timeout, this, &Publisher::on_timeout);
+    connect(this, &Publisher::disconnected, this, &Publisher::on_disconnected);
   }
   virtual ~Publisher() {
   }
@@ -37,13 +37,13 @@ Q_OBJECT
   quint16 _number;
 
  public slots:
-  void onConnected() {
+  void on_connected() {
     std::cerr << "publisher connected\n";
     subscribe(EXAMPLE_TOPIC, 0);
     _timer.start(1000);
   }
 
-  void onTimeout() {
+  void on_timeout() {
     std::cerr << "publisher pulse work\n";
     QMQTT::Message message(_number, EXAMPLE_TOPIC, QString("Number is %1").arg(_number).toUtf8());
     publish(message);
@@ -54,7 +54,7 @@ Q_OBJECT
     }
   }
 
-  void onDisconnected() {
+  void on_disconnected() {
     std::cerr << "publisher disconnected\n";
     QTimer::singleShot(0, qApp, &QCoreApplication::quit);
   }
@@ -69,24 +69,24 @@ Q_OBJECT
       setUsername(USERNAME);
       setPassword(PASSWORD);
     }
-    connect(this, &Subscriber::connected, this, &Subscriber::onConnected);
-    connect(this, &Subscriber::subscribed, this, &Subscriber::onSubscribed);
-    connect(this, &Subscriber::received, this, &Subscriber::onReceived);
+    connect(this, &Subscriber::connected, this, &Subscriber::on_connected);
+    connect(this, &Subscriber::subscribed, this, &Subscriber::on_subscribed);
+    connect(this, &Subscriber::received, this, &Subscriber::on_received);
   }
   virtual ~Subscriber() {
   }
 
  public slots:
-  void onConnected() {
+  void on_connected() {
     std::cerr << "subscriber connected" << "\n";
     subscribe(EXAMPLE_TOPIC, 0);
   }
 
-  void onSubscribed(const QString& topic) {
+  void on_subscribed(const QString& topic) {
     std::cerr << "subscriber subscribed to topic: " << topic.toStdString() << "\n";
   }
 
-  void onReceived(const QMQTT::Message& message) {
+  void on_received(const QMQTT::Message& message) {
     std::cerr << "publisher received: \"" << QString::fromUtf8(message.payload()).toStdString() << "\"" << "\n";
   }
 };
