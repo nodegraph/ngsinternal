@@ -4,11 +4,34 @@ import firebase = require("firebase");
 
 import {AppSocketServer} from './commhub'
 
+// There is one firebase wrap per firebase node in the node graph.
 export class FirebaseWrap {
 
     private firebase_app: firebase.app.App
     private app_server: AppSocketServer
     private signed_in: boolean
+    
+    private db_path: string // path to the location in the db we're listening to
+    private node_path: string // path to our associated node in the node graph
+    private listener: (a: firebase.database.DataSnapshot, b?: string) => any // the listener which gets call when the db changes at db_path
+
+    
+    // Each firebase node in the node graph, can only have one listener and only listen to one location in the firebase database.
+    // The listeners member mays the node's path to the listener function
+    private listeners: any
+
+    static js_to_value(js: string): any {
+        try {
+            let expr = 'unique_variable_to_eval_js = ' + js
+            return eval(expr) 
+        } catch (error) {
+            return js
+        }
+    }
+
+    static value_to_js(value: any): string {
+        return JSON.parse(value)
+    }
 
     // let config = {
     //     apiKey: "AIzaSyCXGNlyRf5uk8Xk1bvKXUcA53TC6Lc3I-A",
@@ -99,7 +122,7 @@ export class FirebaseWrap {
                 path = path + '/' + req.args.path
             }
         }
-        this.firebase_app.database().ref(path).set(req.args.value).then(
+        this.firebase_app.database().ref(path).set(FirebaseWrap.js_to_value(req.args.value)).then(
             (a: any) => {
                 this.app_server.send_msg(new ResponseMessage(req.id, '-1', true))
             },
@@ -153,9 +176,13 @@ export class FirebaseWrap {
                 path = path + '/' + req.args.path
             }
         }
-        this.firebase_app.database().ref(path).on('value', (data: firebase.database.DataSnapshot) => {
-            this.app_server.send_msg(new InfoMessage(req.id, "-1", InfoType.kFirebaseChanged, data.exportVal()))
-        })
+        this.listener =  (data: firebase.database.DataSnapshot) => {
+            let info: any = {}
+            info.entity_path = this.node_path
+            info.value = data.exportVal()
+            this.app_server.send_msg(new InfoMessage(req.id, "-1", InfoType.kFirebaseChanged, info))
+        }
+        this.firebase_app.database().ref(path).on('value', this.listener)
         this.app_server.send_msg(new ResponseMessage(req.id, '-1', true))
     }
 
@@ -181,7 +208,7 @@ export class FirebaseWraps {
     }
 
     can_handle_request(type: RequestType): boolean {
-        if (type in this.request_ids) {
+        if (this.request_ids.indexOf(type) >= 0) {
             return true
         }
         return false
