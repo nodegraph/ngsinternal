@@ -29,7 +29,6 @@ BrowserWorker::BrowserWorker(Entity* parent)
       _msg_sender(this),
       _scheduler(this),
       _manipulator(this),
-      _show_browser(false),
       _hovering(false),
       _jitter(kJitterSize)
 
@@ -205,16 +204,6 @@ void BrowserWorker::reset_state() {
 // -----------------------------------------------------------------
 
 void BrowserWorker::on_poll() {
-  if (_show_browser) {
-    if (!_scheduler->is_busy()) {
-      TaskContext tc(_scheduler);
-      queue_open_browser(tc);
-      //queue_resize_browser(tc);
-      // Debugging. - this makes the browser only come up once.
-      _show_browser = false;
-    }
-  }
-
   if (_hovering) {
     if (!_scheduler->is_busy()) {
       mouse_hover_task();

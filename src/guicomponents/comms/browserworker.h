@@ -59,11 +59,9 @@ Q_OBJECT
   // Polling Control.
   // Polling is used to ensure that the browser is open and of the expected dimensions.
   static const int kPollInterval;
-  Q_INVOKABLE bool is_polling();
-  Q_INVOKABLE void start_polling();
-  Q_INVOKABLE void stop_polling();
-  Q_INVOKABLE void show_browser() {_show_browser = true;}
-  Q_INVOKABLE void hide_browser() {_show_browser = false;}
+  bool is_polling();
+  void start_polling();
+  void stop_polling();
 
   // ---------------------------------------------------------------------------------
   // Queue Tasks.
@@ -231,10 +229,8 @@ signals:
   Dep<TaskScheduler> _scheduler;
   Dep<BaseNodeGraphManipulator> _manipulator;
 
-
   // Poll timer.
   QTimer _poll_timer;
-  bool _show_browser;
 
   // State to bring up the web actions menu, and handle menu activations.
   QString _iframe_to_switch_to;
