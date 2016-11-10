@@ -127,8 +127,8 @@ Q_OBJECT
   void queue_firebase_write_data(TaskContext& tc);
   void queue_firebase_read_data(TaskContext& tc);
   void queue_firebase_listen_to_changes(TaskContext& tc);
-  void queue_dive_into_group(TaskContext& tc, const std::string& child_group_name);
-  void queue_clean_group(TaskContext& tc, const std::string& child_group_name);
+  void queue_dive_into_lockable_group(TaskContext& tc, const std::string& child_group_name);
+  void queue_clean_lockable_group(TaskContext& tc, const std::string& child_group_name);
 
 signals:
   void show_web_action_menu();
@@ -221,8 +221,8 @@ signals:
   void firebase_read_data_task();
   void firebase_listen_to_changes_task();
 
-  void dive_into_group_task(const std::string& child_group_name);
-  void clean_firebase_group_task(const std::string& child_group_name);
+  void dive_into_lockable_group_task(const std::string& child_group_name);
+  void clean_lockable_group_task(const std::string& child_group_name);
 
   // Our fixed dependencies.
   Dep<MessageSender> _msg_sender;

@@ -12,9 +12,6 @@ set(moc_headers
 qt5_wrap_cpp(moc_imps ${moc_headers})
 list(APPEND sources ${moc_imps})
 
-include_directories("${PROJECT_SOURCE_DIR}/external/qmqtt")
-include_directories("${PROJECT_BINARY_DIR}/external/qmqtt")
-    
 # Add the executable object.
 add_executable(testqmqtt ${sources} ${headers})
 

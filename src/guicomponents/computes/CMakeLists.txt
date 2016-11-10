@@ -3,22 +3,30 @@ set(sources
     browsergroupnodecompute.cpp
     scriptgroupnodecompute.cpp
     firebasegroupnodecompute.cpp
+    mqttgroupnodecompute.cpp
     scriptnodecompute.cpp
     browsercomputes.cpp
     httpcomputes.cpp
+    mqttcomputes.cpp
+    mqttworker.cpp
+    mqttgrouptraits.cpp
     )
    
 set(headers
     browsergroupnodecompute.h
     scriptnodecompute.h
     firebasegroupnodecompute.h
+    mqttgroupnodecompute.h
     browsercomputes.h
     httpcomputes.h
+    mqttcomputes.h
+    mqttgrouptraits.h
     )
 
     
 set(moc_headers
     scriptgroupnodecompute.h
+    mqttworker.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})

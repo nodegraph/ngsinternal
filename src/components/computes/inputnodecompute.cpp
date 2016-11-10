@@ -78,6 +78,7 @@ const QJsonValue& InputNodeCompute::get_override() const {
 }
 
 void InputNodeCompute::clear_override() {
+  internal();
   _override = QJsonValue();
   _use_override = false;
 }

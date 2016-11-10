@@ -708,6 +708,22 @@ void NodeGraphQuickItem::create_http_node(bool centered) {
   create_compute_node(centered, ComponentDID::kHTTPCompute);
 }
 
+void NodeGraphQuickItem::create_mqtt_group_node(bool centered) {
+  external();
+  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "mqtt group", EntityDID::kMQTTGroupNodeEntity);
+  finish_creating_node(e, centered);
+}
+
+void NodeGraphQuickItem::create_mqtt_publish_node(bool centered) {
+  external();
+  create_compute_node(centered, ComponentDID::kMQTTPublishCompute);
+}
+
+void NodeGraphQuickItem::create_mqtt_subscribe_node(bool centered) {
+  external();
+  create_compute_node(centered, ComponentDID::kMQTTSubscribeCompute);
+}
+
 void NodeGraphQuickItem::process_node() {
   external();
   // Return if don't have a last pressed shape.
@@ -841,7 +857,7 @@ void NodeGraphQuickItem::destroy_selection() {
   update();
 }
 
-void NodeGraphQuickItem::dive(const std::string& child_group_name) {
+void NodeGraphQuickItem::dive_into_lockable_group(const std::string& child_group_name) {
   // Find the child group.
   Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
   if (!group_entity) {
@@ -858,11 +874,12 @@ void NodeGraphQuickItem::dive(const std::string& child_group_name) {
 
   // We clear the selection because we don't allow inter-group selections.
   _selection->clear_selection();
+  _selection->clear_error_node();
   frame_all();
   update();
 }
 
-void NodeGraphQuickItem::clean_firebase_group(const std::string& child_group_name) {
+void NodeGraphQuickItem::clean_lockable_group(const std::string& child_group_name) {
   // Find the child group.
   Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
   if (!group_entity) {
@@ -875,8 +892,8 @@ void NodeGraphQuickItem::clean_firebase_group(const std::string& child_group_nam
     return;
   }
 
-  Dep<FirebaseGroupNodeCompute> compute = get_dep<FirebaseGroupNodeCompute>(group_entity);
-  compute->update_state2();
+  Dep<Compute> compute = get_dep<Compute>(group_entity);
+  compute->update_unlocked_group();
 }
 
 void NodeGraphQuickItem::dive() {

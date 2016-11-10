@@ -34,8 +34,16 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
         title: "Firebase Group Node"
-        description: "Provides an environment where you manipulate Firebase databases. Info about the Firebase data is specified on the group."
+        description: "Provides an environment where you manipulate Firebase databases."
         script: "node_graph_item.create_firebase_group_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
+        title: "MQTT Group Node"
+        description: "Provides an environment where you can publish and subscribe to MQTT topis and messages."
+        script: "node_graph_item.create_mqtt_group_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
 
@@ -114,6 +122,22 @@ ListModel {
         title: "HTTP"
         description: "Make an HTTP request."
         script: "node_graph_item.create_http_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_gesture_white_48dp.png"
+        title: "MQTT Publish"
+        description: "Publish a message to a certain topic."
+        script: "node_graph_item.create_mqtt_publish_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_gesture_white_48dp.png"
+        title: "MQTT Subscribe"
+        description: "Subscribe to a topic."
+        script: "node_graph_item.create_mqtt_subscribe_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
 

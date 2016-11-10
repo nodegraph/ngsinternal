@@ -12,11 +12,11 @@ namespace ngs {
 
 class BaseGroupTraits;
 
-class GUICOMPUTES_EXPORT FirebaseGroupNodeCompute: public GroupNodeCompute {
+class GUICOMPUTES_EXPORT MQTTGroupNodeCompute: public GroupNodeCompute {
  public:
-  COMPONENT_ID(Compute, FirebaseGroupNodeCompute);
-  FirebaseGroupNodeCompute(Entity* entity);
-  virtual ~FirebaseGroupNodeCompute();
+  COMPONENT_ID(Compute, MQTTGroupNodeCompute);
+  MQTTGroupNodeCompute(Entity* entity);
+  virtual ~MQTTGroupNodeCompute();
 
   virtual void set_self_dirty(bool dirty);
 
@@ -36,7 +36,7 @@ class GUICOMPUTES_EXPORT FirebaseGroupNodeCompute: public GroupNodeCompute {
 
  private:
   Dep<BaseGroupTraits> _group_traits;
-  bool _initialized;
+  bool _unlocked;
 };
 
 }

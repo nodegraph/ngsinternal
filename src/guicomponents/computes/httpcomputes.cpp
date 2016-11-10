@@ -96,7 +96,7 @@ QJsonObject HTTPCompute::init_hints() {
 
   add_hint(m, Message::kOutputPropertyName, HintType::kJSType, to_underlying(JSType::kString));
   add_hint(m, Message::kOutputPropertyName, HintType::kDescription,
-           "The return value from the GET request will be placed in property under this name.");
+           "The name of the property in the output which will get the HTTP reply.");
 
   return m;
 }

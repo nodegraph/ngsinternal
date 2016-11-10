@@ -75,6 +75,13 @@ const char* Message::kHTTPRequestMethod = "request_method";
 const char* Message::kPayload = "payload";
 const char* Message::kOutputPropertyName = "output_property_name";
 
+const char* Message::kTopic = "topic";
+const char* Message::kMessage = "message";
+
+const char* Message::kUsername = "username";
+const char* Message::kHostAddress = "host_address";
+const char* Message::kPort = "port";
+
 Message::Message()
     : QJsonObject() {
 }

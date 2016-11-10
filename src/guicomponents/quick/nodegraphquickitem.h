@@ -50,6 +50,7 @@ Q_OBJECT
   Q_INVOKABLE void create_script_group_node(bool centered);
   Q_INVOKABLE void create_browser_group_node(bool centered);
   Q_INVOKABLE void create_firebase_group_node(bool centered);
+  Q_INVOKABLE void create_mqtt_group_node(bool centered);
 
   // Special Data Compute Nodes Creation.
   Q_INVOKABLE void create_data_node(bool centered);
@@ -70,6 +71,8 @@ Q_OBJECT
 
   Q_INVOKABLE void create_http_node(bool centered);
 
+  Q_INVOKABLE void create_mqtt_publish_node(bool centered);
+  Q_INVOKABLE void create_mqtt_subscribe_node(bool centered);
 
   // View and Edit.
   Q_INVOKABLE void view_node();
@@ -84,8 +87,8 @@ Q_OBJECT
   Q_INVOKABLE void set_input_exposure(const QJsonObject& values);
 
   // Group Navigation.
-  void dive(const std::string& child_group_name);
-  void clean_firebase_group(const std::string& child_group_name);
+  void dive_into_lockable_group(const std::string& child_group_name);
+  void clean_lockable_group(const std::string& child_group_name);
 
   Q_INVOKABLE void dive();
   Q_INVOKABLE void surface();

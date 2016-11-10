@@ -78,6 +78,7 @@ const QJsonValue& DataNodeCompute::get_override() const {
 }
 
 void DataNodeCompute::clear_override() {
+  internal();
   _override = QJsonValue();
   _use_override = false;
 }

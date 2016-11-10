@@ -57,6 +57,7 @@ target_link_libraries(ngs_comms
 	Qt5::WebSockets
 	#libeay32
 	#ssleay32
+	ngs_qmqtt
 ) 
  
 # Install.

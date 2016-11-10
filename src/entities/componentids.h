@@ -52,6 +52,7 @@ enum class ComponentIID : size_t {
   //kIAppComm,
   kIBrowserWorker,
   kIHTTPWorker,
+  kIMQTTWorker,
   kIBrowserRecorder,
   kITaskScheduler,
   kILicenseChecker,
@@ -97,6 +98,7 @@ COMPONENT_ENTRY1(GroupNodeCompute)\
 COMPONENT_ENTRY1(ScriptGroupNodeCompute)\
 COMPONENT_ENTRY1(BrowserGroupNodeCompute)\
 COMPONENT_ENTRY1(FirebaseGroupNodeCompute)\
+COMPONENT_ENTRY1(MQTTGroupNodeCompute)\
 COMPONENT_ENTRY1(DataNodeCompute)\
 COMPONENT_ENTRY1(MergeNodeCompute)\
 COMPONENT_ENTRY1(InputNodeCompute)\
@@ -134,6 +136,8 @@ COMPONENT_ENTRY1(FirebaseReadDataCompute)\
 COMPONENT_ENTRY1(FirebaseListenToChangesCompute)\
 \
 COMPONENT_ENTRY1(HTTPCompute)\
+COMPONENT_ENTRY1(MQTTPublishCompute)\
+COMPONENT_ENTRY1(MQTTSubscribeCompute)\
 /* -- */\
 COMPONENT_ENTRY1(FBORenderer)\
 COMPONENT_ENTRY1(FBOWorker)\
@@ -142,6 +146,7 @@ COMPONENT_ENTRY1(GraphBuilder)\
 COMPONENT_ENTRY1(GroupTraits)\
 COMPONENT_ENTRY1(BrowserGroupTraits)\
 COMPONENT_ENTRY1(FirebaseGroupTraits)\
+COMPONENT_ENTRY1(MQTTGroupTraits)\
 COMPONENT_ENTRY1(GroupInteraction)\
 /* -- */\
 COMPONENT_ENTRY1(NodeGraphEditor)\
@@ -157,6 +162,7 @@ COMPONENT_ENTRY1(AppConfig)\
 /*COMPONENT_ENTRY1(AppComm)\*/\
 COMPONENT_ENTRY1(BrowserWorker)\
 COMPONENT_ENTRY1(HTTPWorker)\
+COMPONENT_ENTRY1(MQTTWorker)\
 COMPONENT_ENTRY1(BrowserRecorder)\
 COMPONENT_ENTRY1(TaskScheduler)\
 COMPONENT_ENTRY1(LicenseChecker)\

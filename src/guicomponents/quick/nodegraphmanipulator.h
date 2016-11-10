@@ -33,8 +33,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void clear_error_node();
   virtual void update_clean_marker(Entity* entity, bool clean);
 
-  virtual void dive_into_group(const std::string& child_group_name);
-  virtual void clean_firebase_group(const std::string& child_group_name);
+  virtual void dive_into_lockable_group(const std::string& child_group_name);
+  virtual void clean_lockable_group(const std::string& child_group_name);
 
   // Build and link a compute node.
   virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
@@ -49,6 +49,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
 
   virtual void synchronize_graph_dirtiness(Entity* group_entity);
 
+  virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
  protected:
   virtual void initialize_wires();
 

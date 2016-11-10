@@ -75,16 +75,15 @@ void FirebaseGroupNodeCompute::set_self_dirty(bool dirty) {
 }
 
 bool FirebaseGroupNodeCompute::update_state() {
-  // Need to call this to set the processing so that we can catch processing errors.
   if (!_initialized) {
-    Compute::update_state();
+    Compute::update_state(); // Need to call this to set the processing marker so that we can catch processing errors.
     _group_traits->on_clean();
     return false;
   }
-  return update_state2();
+  return update_unlocked_group();
 }
 
-bool FirebaseGroupNodeCompute:: update_state2() {
+bool FirebaseGroupNodeCompute:: update_unlocked_group() {
   _initialized = true;
   // Now call our base compute's update state.
   bool done = GroupNodeCompute::update_state();

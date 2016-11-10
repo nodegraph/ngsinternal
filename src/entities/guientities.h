@@ -89,6 +89,13 @@ class ENTITIES_EXPORT FirebaseGroupNodeEntity : public GroupNodeEntity {
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
 };
 
+class ENTITIES_EXPORT MQTTGroupNodeEntity : public GroupNodeEntity {
+ public:
+  ENTITY_ID(MQTTGroupNodeEntity, "firebase group")
+ MQTTGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
+  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
+};
+
 class ENTITIES_EXPORT DotNodeEntity : public Entity {
  public:
   ENTITY_ID(DotNodeEntity, "dot")

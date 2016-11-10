@@ -3,6 +3,7 @@
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/basegrouptraits.h>
+#include <guicomponents/computes/mqttcomputes.h>
 
 // ObjectModel.
 #include <base/memoryallocator/taggednew.h>
@@ -58,8 +59,8 @@ class NodeGraphManipulatorImp: public Component {
   virtual void clear_error_node();
   virtual void update_clean_marker(Entity* entity, bool clean);
 
-  virtual void dive_into_group(const std::string& child_group_name);
-  virtual void clean_firebase_group(const std::string& child_group_name);
+  virtual void dive_into_lockable_group(const std::string& child_group_name);
+  virtual void clean_lockable_group(const std::string& child_group_name);
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
@@ -78,6 +79,8 @@ class NodeGraphManipulatorImp: public Component {
   virtual void synchronize_group_dirtiness(Entity* group_entity);
   virtual void dirty_group_from_internals(Entity* group_entity);
   virtual void dirty_internals_from_group(Entity* group_entity);
+
+  virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
 
  private:
   Entity* build_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
@@ -244,12 +247,12 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
   // components. But now it is cleaning in a bad state.
 }
 
-void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
-  _ng_quick->dive(child_group_name);
+void NodeGraphManipulatorImp::dive_into_lockable_group(const std::string& child_group_name) {
+  _ng_quick->dive_into_lockable_group(child_group_name);
 }
 
-void NodeGraphManipulatorImp::clean_firebase_group(const std::string& child_group_name) {
-  _ng_quick->clean_firebase_group(child_group_name);
+void NodeGraphManipulatorImp::clean_lockable_group(const std::string& child_group_name) {
+  _ng_quick->clean_lockable_group(child_group_name);
 }
 
 Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
@@ -486,6 +489,16 @@ void NodeGraphManipulatorImp::dirty_internals_from_group(Entity* group_entity) {
   }
 }
 
+void NodeGraphManipulatorImp::set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) {
+  Entity* entity = _app_root->has_entity(node_path);
+  if (!entity) {
+    return;
+  }
+
+  Dep<MQTTSubscribeCompute> compute = get_dep<MQTTSubscribeCompute>(entity);
+  compute->set_override(topic, payload);
+}
+
 // -----------------------------------------------------------------------------------
 // The NodeGraphManipulator.
 // -----------------------------------------------------------------------------------
@@ -541,12 +554,12 @@ void NodeGraphManipulator::update_clean_marker(Entity* entity, bool clean) {
   _imp->update_clean_marker(entity, clean);
 }
 
-void NodeGraphManipulator::dive_into_group(const std::string& child_group_name) {
-  _imp->dive_into_group(child_group_name);
+void NodeGraphManipulator::dive_into_lockable_group(const std::string& child_group_name) {
+  _imp->dive_into_lockable_group(child_group_name);
 }
 
-void NodeGraphManipulator::clean_firebase_group(const std::string& child_group_name) {
-  _imp->clean_firebase_group(child_group_name);
+void NodeGraphManipulator::clean_lockable_group(const std::string& child_group_name) {
+  _imp->clean_lockable_group(child_group_name);
 }
 
 Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
@@ -575,6 +588,10 @@ Entity* NodeGraphManipulator::connect_plugs(Entity* input_entity, Entity* output
 
 void NodeGraphManipulator::synchronize_graph_dirtiness(Entity* group_entity) {
   _imp->synchronize_graph_dirtiness(group_entity);
+}
+
+void NodeGraphManipulator::set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) {
+  _imp->set_mqtt_override(node_path, topic, payload);
 }
 
 }

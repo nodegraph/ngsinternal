@@ -205,6 +205,12 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kPayload;
   static const char* kOutputPropertyName;
 
+  static const char* kTopic;
+  static const char* kMessage;
+
+  static const char* kUsername;
+  static const char* kHostAddress;
+  static const char* kPort;
 
   Message();
   Message(const QString& json); // Initialize from a json string typcially coming from another process outside the native app.

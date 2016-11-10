@@ -27,12 +27,14 @@ Rectangle {
 
     // Clean up routine.
     function on_closing(close) {
-        if (web_worker.is_polling()) {
-            // Make sure the polling is stopped.
-            web_worker.stop_polling()
-            close.accepted = false
-            close_timer.start()
-        } else if (!tried_closing_browser) {
+        //if (web_worker.is_polling()) {
+        //    // Make sure the polling is stopped.
+        //    web_worker.stop_polling()
+        //    close.accepted = false
+        //    close_timer.start()
+        //} else 
+        
+        if (!tried_closing_browser) {
         	// Force close the browser.
         	web_worker.force_close_browser()
         	tried_closing_browser = true

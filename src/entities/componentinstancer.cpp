@@ -44,6 +44,8 @@
 #include <guicomponents/computes/httpcomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/firebasegroupnodecompute.h>
+#include <guicomponents/computes/mqttgroupnodecompute.h>
+#include <guicomponents/computes/mqttcomputes.h>
 
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
@@ -58,9 +60,11 @@
 #include <guicomponents/comms/appconfig.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/httpworker.h>
+#include <guicomponents/computes/mqttworker.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/comms/firebasegrouptraits.h>
+#include <guicomponents/computes/mqttgrouptraits.h>
 
 #include <gui/widget/nodegrapheditor.h>
 #include <guicomponents/comms/browsergrouptraits.h>

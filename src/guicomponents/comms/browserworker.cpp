@@ -122,7 +122,7 @@ void BrowserWorker::dive_into_firebase_group(const std::string& child_group_name
   // Now dive into the group.
   // If any of the above steps fail, we won't be able to dive into the group, which is what we want.
   {
-    queue_dive_into_group(tc, child_group_name);
+    queue_dive_into_lockable_group(tc, child_group_name);
   }
 }
 void BrowserWorker::clean_firebase_group(const std::string& child_group_name, const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket, const QString& email, const QString& password) {
@@ -147,7 +147,7 @@ void BrowserWorker::clean_firebase_group(const std::string& child_group_name, co
   }
   // Now clean the group.
   {
-    queue_clean_group(tc, child_group_name);
+    queue_clean_lockable_group(tc, child_group_name);
   }
 }
 
@@ -174,7 +174,7 @@ void BrowserWorker::firebase_sign_in(const QString& email, const QString& passwo
 
 void BrowserWorker::dive_into_group(const std::string& child_group_name) {
   TaskContext tc(_scheduler);
-  queue_dive_into_group(tc, child_group_name);
+  queue_dive_into_lockable_group(tc, child_group_name);
 }
 
 bool BrowserWorker::is_polling() {
@@ -459,12 +459,12 @@ void BrowserWorker::queue_firebase_listen_to_changes(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::firebase_listen_to_changes_task,this), "queue_firebase_listen_to_changes");
 }
 
-void BrowserWorker::queue_dive_into_group(TaskContext& tc, const std::string& child_group_name) {
-  _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::dive_into_group_task,this, child_group_name), "queue_dive_into_group");
+void BrowserWorker::queue_dive_into_lockable_group(TaskContext& tc, const std::string& child_group_name) {
+  _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::dive_into_lockable_group_task,this, child_group_name), "queue_dive_into_group");
 }
 
-void BrowserWorker::queue_clean_group(TaskContext& tc, const std::string& child_group_name) {
-  _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::clean_firebase_group_task,this, child_group_name), "queue_clean_group");
+void BrowserWorker::queue_clean_lockable_group(TaskContext& tc, const std::string& child_group_name) {
+  _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::clean_lockable_group_task,this, child_group_name), "queue_clean_group");
 }
 
 // ------------------------------------------------------------------------
@@ -937,13 +937,13 @@ void BrowserWorker::firebase_listen_to_changes_task() {
   send_msg_task(req);
 }
 
-void BrowserWorker::dive_into_group_task(const std::string& child_group_name) {
-  _manipulator->dive_into_group(child_group_name);
+void BrowserWorker::dive_into_lockable_group_task(const std::string& child_group_name) {
+  _manipulator->dive_into_lockable_group(child_group_name);
   _scheduler->run_next_task();
 }
 
-void BrowserWorker::clean_firebase_group_task(const std::string& child_group_name) {
-  _manipulator->clean_firebase_group(child_group_name);
+void BrowserWorker::clean_lockable_group_task(const std::string& child_group_name) {
+  _manipulator->clean_lockable_group(child_group_name);
   _scheduler->run_next_task();
 }
 

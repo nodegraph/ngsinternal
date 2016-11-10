@@ -64,10 +64,13 @@ class COMPUTES_EXPORT Compute: public Component {
 
   void on_error(const QString& error_message);
 
+  virtual bool update_unlocked_group() {return true;}
+
  protected:
   // Our state.
   virtual void initialize_wires();
   virtual bool update_state();
+
   virtual bool clean_finalize();
 
   // Our outputs. These are called during cleaning, so they don't dirty the instance's state.

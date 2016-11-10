@@ -39,25 +39,16 @@ set(sources
 qt5_wrap_cpp(moc_imps ${public_headers} ${private_headers})
 list(APPEND sources ${moc_imps})
 
-include_directories("${PROJECT_SOURCE_DIR}/external/qmqtt")
-include_directories("${PROJECT_BINARY_DIR}/external/qmqtt")
-
-#add_definitions("-DQT_NO_CAST_TO_ASCII")
-#add_definitions("-DQT_NO_CAST_FROM_ASCII")
 
 add_library(ngs_qmqtt  ${sources})
 generate_export_header(ngs_qmqtt EXPORT_MACRO_NAME Q_MQTT_EXPORT EXPORT_FILE_NAME qmqtt_global.h)
+target_include_directories(ngs_qmqtt PUBLIC ${PROJECT_BINARY_DIR}/external/qmqtt)
+
+
 target_link_libraries(ngs_qmqtt ngs_memoryallocator)
  
 target_link_libraries(ngs_qmqtt 
-	ngs_objectmodel
-	ngs_device
-	ngs_interactions
-	ngs_glewhelper
-	ngs_comms
-	Qt5::OpenGL
     Qt5::Core
-	Qt5::Quick
 	Qt5::Network
 	Qt5::WebSockets
 	libeay32

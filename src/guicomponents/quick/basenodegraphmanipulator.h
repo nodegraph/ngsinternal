@@ -30,8 +30,8 @@ class BaseNodeGraphManipulator: public Component {
   virtual void clear_error_node() = 0;
   virtual void update_clean_marker(Entity* entity, bool clean) = 0;
 
-  virtual void dive_into_group(const std::string& child_group_name) = 0;
-  virtual void clean_firebase_group(const std::string& child_group_name) = 0;
+  virtual void dive_into_lockable_group(const std::string& child_group_name) = 0;
+  virtual void clean_lockable_group(const std::string& child_group_name) = 0;
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
@@ -46,6 +46,8 @@ class BaseNodeGraphManipulator: public Component {
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity) = 0; // Returns the entity for the link.
 
   virtual void synchronize_graph_dirtiness(Entity* group_entity) = 0;
+
+  virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) = 0;
 };
 
 }

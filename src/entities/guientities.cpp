@@ -53,17 +53,20 @@
 #include <guicomponents/comms/browserrecorder.h>
 #include <guicomponents/comms/browserworker.h>
 #include <guicomponents/comms/httpworker.h>
+#include <guicomponents/computes/mqttworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/comms/firebasegrouptraits.h>
+#include <guicomponents/computes/mqttgrouptraits.h>
 
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/browsergroupnodecompute.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <guicomponents/computes/firebasegroupnodecompute.h>
+#include <guicomponents/computes/mqttgroupnodecompute.h>
 
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
@@ -126,6 +129,7 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff BrowserWorker(this);
   new_ff BrowserRecorder(this);
   new_ff HTTPWorker(this);
+  new_ff MQTTWorker(this);
   new_ff LicenseChecker(this);
   new_ff CryptoLogic(this);
 }
@@ -372,6 +376,20 @@ void FirebaseGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff Inputs(this);
   new_ff Outputs(this);
   new_ff FirebaseGroupTraits(this);
+  // Gui related.
+  new_ff GroupInteraction(this);
+  new_ff CompShapeCollective(this);
+  new_ff GroupNodeShape(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
+}
+
+void MQTTGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
+  // Our components.
+  (new_ff MQTTGroupNodeCompute(this))->create_inputs_outputs();
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  new_ff MQTTGroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);

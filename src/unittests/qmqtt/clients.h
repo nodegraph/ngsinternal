@@ -14,7 +14,7 @@ const quint16 EXAMPLE_PORT = 1883;
 const QString EXAMPLE_TOPIC = "testing_mqtt/testing";
 const QString USERNAME = "tester";
 const QString PASSWORD = "booya";
-const bool USE_AUTHENTICATION = false;
+const bool USE_AUTHENTICATION = true;
 
 class Publisher : public QMQTT::Client {
 Q_OBJECT
@@ -26,6 +26,7 @@ Q_OBJECT
       setUsername(USERNAME);
       setPassword(PASSWORD);
     }
+    connect(this, &Publisher::error, this, &Publisher::on_error);
     connect(this, &Publisher::connected, this, &Publisher::on_connected);
     connect(&_timer, &QTimer::timeout, this, &Publisher::on_timeout);
     connect(this, &Publisher::disconnected, this, &Publisher::on_disconnected);
@@ -37,8 +38,11 @@ Q_OBJECT
   quint16 _number;
 
  public slots:
+  void on_error(const QMQTT::ClientError error) {
+    std::cerr << "got an error: " << error << "\n";
+  }
   void on_connected() {
-    std::cerr << "publisher connected\n";
+    std::cerr << "publisher connected: " << isConnectedToHost() << "\n";
     subscribe(EXAMPLE_TOPIC, 0);
     _timer.start(1000);
   }
@@ -69,7 +73,9 @@ Q_OBJECT
       setUsername(USERNAME);
       setPassword(PASSWORD);
     }
+    connect(this, &Subscriber::error, this, &Subscriber::on_error);
     connect(this, &Subscriber::connected, this, &Subscriber::on_connected);
+    connect(this, &Subscriber::disconnected, this, &Subscriber::on_disconnected);
     connect(this, &Subscriber::subscribed, this, &Subscriber::on_subscribed);
     connect(this, &Subscriber::received, this, &Subscriber::on_received);
   }
@@ -77,9 +83,17 @@ Q_OBJECT
   }
 
  public slots:
+  void on_error(const QMQTT::ClientError error) {
+    std::cerr << "got an error: " << error << "\n";
+  }
   void on_connected() {
-    std::cerr << "subscriber connected" << "\n";
+    std::cerr << "subscriber connected" << isConnectedToHost() << "\n";
     subscribe(EXAMPLE_TOPIC, 0);
+  }
+
+  void on_disconnected() {
+    std::cerr << "subscriber disconnected\n";
+    QTimer::singleShot(0, qApp, &QCoreApplication::quit);
   }
 
   void on_subscribed(const QString& topic) {

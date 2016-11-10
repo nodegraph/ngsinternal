@@ -72,6 +72,7 @@ ENTITY_ENTRY1(GroupNodeEntity)\
 ENTITY_ENTRY1(ScriptGroupNodeEntity)\
 ENTITY_ENTRY1(BrowserGroupNodeEntity)\
 ENTITY_ENTRY1(FirebaseGroupNodeEntity)\
+ENTITY_ENTRY1(MQTTGroupNodeEntity)\
 ENTITY_ENTRY1(DataNodeEntity)\
 ENTITY_ENTRY1(InputNodeEntity)\
 ENTITY_ENTRY1(OutputNodeEntity)\
