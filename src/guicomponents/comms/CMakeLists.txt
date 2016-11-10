@@ -7,21 +7,17 @@ set(sources
     messagereceiver.cpp
     appconfig.cpp
     taskscheduler.cpp
-    browserworker.cpp
-    httpworker.cpp
-    browserrecorder.cpp
     licensechecker.cpp
     cryptologic.cpp
     grouptraits.cpp
-    browsergrouptraits.cpp
-    firebasegrouptraits.cpp
+    browserworker.cpp
+    mqttworker.cpp
+    httpworker.cpp
     )
    
 set(headers
     taskscheduler.h
     grouptraits.h
-    browsergrouptraits.h
-    firebasegrouptraits.h
     cryptologic.h
 )
     
@@ -32,10 +28,10 @@ set(moc_headers
     messagesender.h
     messagereceiver.h
     appconfig.h
-    browserworker.h
-    httpworker.h
-    browserrecorder.h
     licensechecker.h
+    browserworker.h
+    mqttworker.h
+    httpworker.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})

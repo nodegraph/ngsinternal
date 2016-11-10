@@ -1,5 +1,5 @@
 #include <base/objectmodel/deploader.h>
-#include <guicomponents/comms/browsergrouptraits.h>
+#include <guicomponents/computes/browsergrouptraits.h>
 #include <guicomponents/comms/browserworker.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 

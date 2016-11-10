@@ -1,4 +1,4 @@
-#include <guicomponents/comms/firebasegrouptraits.h>
+#include <guicomponents/computes/firebasegrouptraits.h>
 #include <base/objectmodel/deploader.h>
 #include <guicomponents/comms/message.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>

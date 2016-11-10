@@ -3,7 +3,7 @@
 #include <base/objectmodel/basefactory.h>
 
 #include <components/computes/compute.h>
-#include <guicomponents/comms/browserrecorder.h>
+#include <guicomponents/computes/browserrecorder.h>
 #include <guicomponents/comms/browserworker.h>
 
 #include <guicomponents/comms/taskscheduler.h>

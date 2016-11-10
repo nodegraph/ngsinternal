@@ -4,7 +4,7 @@
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
 
-#include <guicomponents/computes/mqttworker.h>
+#include <guicomponents/comms/mqttworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/mqttcomputes.h>
 

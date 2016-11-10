@@ -1,5 +1,5 @@
 #pragma once
-#include <guicomponents/comms/comms_export.h>
+#include <guicomponents/computes/guicomputes_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
 #include <guicomponents/comms/message.h>
@@ -13,7 +13,7 @@ class BrowserWorker;
 class TaskScheduler;
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT BrowserRecorder : public QObject, public Component {
+class GUICOMPUTES_EXPORT BrowserRecorder : public QObject, public Component {
 Q_OBJECT
  public:
   COMPONENT_ID(BrowserRecorder, BrowserRecorder)

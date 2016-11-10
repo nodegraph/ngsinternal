@@ -1,5 +1,5 @@
 #pragma once
-#include <guicomponents/computes/guicomputes_export.h>
+#include <guicomponents/comms/comms_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
 
@@ -29,7 +29,7 @@ class BaseNodeGraphManipulator;
 class BaseMQTTCompute;
 
 // This class implements the computes of the MQTT related nodes.
-class GUICOMPUTES_EXPORT MQTTWorker : public QObject, public Component {
+class COMMS_EXPORT MQTTWorker : public QObject, public Component {
 Q_OBJECT
  public:
   COMPONENT_ID(MQTTWorker, MQTTWorker)

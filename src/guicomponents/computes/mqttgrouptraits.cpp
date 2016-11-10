@@ -3,7 +3,7 @@
 #include <guicomponents/comms/message.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <components/computes/inputs.h>
-#include <guicomponents/computes/mqttworker.h>
+#include <guicomponents/comms/mqttworker.h>
 
 namespace ngs {
 

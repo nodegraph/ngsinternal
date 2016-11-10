@@ -8,8 +8,10 @@ set(sources
     browsercomputes.cpp
     httpcomputes.cpp
     mqttcomputes.cpp
-    mqttworker.cpp
     mqttgrouptraits.cpp
+    browserrecorder.cpp
+    browsergrouptraits.cpp
+    firebasegrouptraits.cpp
     )
    
 set(headers
@@ -21,12 +23,14 @@ set(headers
     httpcomputes.h
     mqttcomputes.h
     mqttgrouptraits.h
+    browsergrouptraits.h
+    firebasegrouptraits.h
     )
 
     
 set(moc_headers
     scriptgroupnodecompute.h
-    mqttworker.h
+    browserrecorder.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})

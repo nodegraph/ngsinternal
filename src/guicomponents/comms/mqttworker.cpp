@@ -1,7 +1,7 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
 
-#include <guicomponents/computes/mqttworker.h>
+#include <guicomponents/comms/mqttworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
 #include <components/computes/compute.h>
