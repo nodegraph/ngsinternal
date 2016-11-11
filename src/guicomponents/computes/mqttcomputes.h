@@ -23,7 +23,7 @@ class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
   static void init_hints(QJsonObject& m);
 
  protected:
-  virtual void post_update_state(TaskContext& tc);
+  virtual void finish_update_state(TaskContext& tc);
 
   Dep<MQTTWorker> _worker;
   Dep<TaskScheduler> _scheduler;

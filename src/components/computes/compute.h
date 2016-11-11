@@ -13,6 +13,7 @@
 #include <QtCore/QJsonObject>
 
 class QJSEngine;
+class QTimer;
 
 namespace ngs {
 
@@ -46,6 +47,7 @@ class COMPUTES_EXPORT Compute: public Component {
 
   // Do we still need this? verify.
   virtual void update_input_flux();
+  virtual const Dep<Inputs>& get_inputs() {return _inputs;}
 
   // Inputs.
   virtual QJsonObject get_editable_inputs() const;
@@ -63,6 +65,7 @@ class COMPUTES_EXPORT Compute: public Component {
   bool eval_js_with_inputs(const QString& text, QJsonValue& result, QString& error) const;
 
   void on_error(const QString& error_message);
+
 
   virtual bool update_unlocked_group() {return true;}
 
@@ -90,6 +93,7 @@ class COMPUTES_EXPORT Compute: public Component {
                        HintType hint_type,
                        const QJsonValue& value);
 
+
  protected:
   Dep<Inputs> _inputs;
   Dep<BaseNodeGraphManipulator> _manipulator;
@@ -103,6 +107,7 @@ class COMPUTES_EXPORT Compute: public Component {
   // The key is the string of the number representing the HintType.
   // The value is a QJsonValue holding an int representing an enum or another type.
   static const QJsonObject _hints;
+
 };
 
 }

@@ -208,7 +208,7 @@ void HTTPWorker::finished_request() {
     std::cerr << "Error: http get request failed: " << reply->errorString().toStdString() << "\n";
     error = reply->errorString();
     _manipulator->set_error_node(reply->errorString());
-    _manipulator->clear_ultimate_target();
+    _manipulator->clear_ultimate_targets();
     // Reset our stack.
     _scheduler->force_stack_reset();
   }

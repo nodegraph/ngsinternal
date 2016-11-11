@@ -86,7 +86,7 @@ void BrowserWorker::force_close_browser() {
 }
 
 void BrowserWorker::force_stack_reset() {
-  _manipulator->clear_ultimate_target();
+  _manipulator->clear_ultimate_targets();
   _scheduler->force_stack_reset();
 }
 
@@ -554,7 +554,7 @@ void BrowserWorker::get_outputs_task(std::function<void(const QJsonObject&)> on_
 
 void BrowserWorker::build_compute_node_task(ComponentDID compute_did) {
   Entity* node = _manipulator->build_and_link_compute_node(compute_did, _chain_state);
-  _manipulator->set_ultimate_target(node, false);
+  _manipulator->set_ultimate_targets(node, false);
 }
 
 
@@ -943,7 +943,7 @@ void BrowserWorker::dive_into_lockable_group_task(const std::string& child_group
 }
 
 void BrowserWorker::clean_lockable_group_task(const std::string& child_group_name) {
-  _manipulator->clean_lockable_group(child_group_name);
+  //_manipulator->clean_lockable_group(child_group_name);
   _scheduler->run_next_task();
 }
 

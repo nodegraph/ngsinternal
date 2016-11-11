@@ -105,7 +105,7 @@ void TaskScheduler::run_next_task() {
   }
 
   if (_stack.empty()) {
-    _manipulator->continue_cleaning_to_ultimate_target();
+    _manipulator->continue_cleaning_to_ultimate_targets();
     return;
   }
 
@@ -164,7 +164,7 @@ void TaskScheduler::done_waiting_for_response(int resp_id, const QString& error)
     // Also show the error marker on the node.
     std::cerr << "handling response with error: " << error.toStdString() << "\n";
     _manipulator->set_error_node(error);
-    _manipulator->clear_ultimate_target();
+    _manipulator->clear_ultimate_targets();
 
     // Reset our stack.
     force_stack_reset();

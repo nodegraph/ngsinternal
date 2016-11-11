@@ -17,6 +17,7 @@ class BrowserWorker;
 class BrowserRecorder;
 class LicenseChecker;
 class NodeGraphQuickItem;
+class NodeGraphController;
 class GraphBuilder;
 class NodeGraphView;
 
@@ -35,6 +36,7 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   BrowserRecorder* get_app_recorder();
   LicenseChecker* get_license_checker();
   NodeGraphQuickItem* get_node_graph_quick_item();
+  NodeGraphController* get_node_graph_controller();
   GraphBuilder* get_graph_builder();
   NodeGraphView* get_node_graph_view();
 };

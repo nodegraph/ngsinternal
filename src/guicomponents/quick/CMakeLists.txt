@@ -14,7 +14,7 @@ set(quick_headers
     eventtoinfo.h
     fborenderer.h
     basenodegraphmanipulator.h
-    nodegraphmanipulator.h
+   
 )
     
 set(moc_quick
@@ -23,6 +23,7 @@ set(moc_quick
     fboworker.h
     texturedisplaynode.h
     nodegraphview.h
+     nodegraphmanipulator.h
     )
     
 qt5_wrap_cpp(quick_imps ${moc_quick})

@@ -230,7 +230,10 @@ export class FirebaseWraps {
         //     authDomain: "test-project-91c10.firebaseapp.com",
         //     databaseURL: "https://test-project-91c10.firebaseio.com/",
         //     storageBucket: "gs://test-project-91c10.appspot.com",
-        let key = config.apiKey + config.authDomain + config.databaseURL + config.storageBucket
+        //     email:
+        //     password:
+        let demark = '??'
+        let key = config.apiKey + demark + config.authDomain + demark + config.databaseURL + demark + config.storageBucket + demark + config.email + demark + config.password
         return key
     }
 
@@ -273,6 +276,8 @@ export class FirebaseWraps {
             config.authDomain = req.args.authDomain
             config.databaseURL = req.args.databaseURL
             config.storageBucket = req.args.storageBucket
+            config.email = req.args.email
+            config.password = req.args.password
             console.log('setting current firebase config: ' + JSON.stringify(config))
             // Make sure the wrap is created.
             this.get_wrap(config)

@@ -46,6 +46,9 @@
 #include <guicomponents/computes/firebasegroupnodecompute.h>
 #include <guicomponents/computes/mqttgroupnodecompute.h>
 #include <guicomponents/computes/mqttcomputes.h>
+#include <guicomponents/computes/grouplock.h>
+#include <guicomponents/computes/mqttgrouplock.h>
+#include <guicomponents/computes/firebasegrouplock.h>
 
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>

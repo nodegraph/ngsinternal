@@ -23,6 +23,23 @@ class BaseFactory;
 class BaseEntityInstancer;
 class LicenseChecker;
 class BaseNodeGraphManipulator;
+class NodeGraphQuickItem;
+
+class QUICK_EXPORT NodeGraphController : public QObject, public Component {
+Q_OBJECT
+ public:
+  COMPONENT_ID(NodeGraphController, NodeGraphController)
+  NodeGraphController(Entity* parent);
+  virtual ~NodeGraphController();
+
+  Q_INVOKABLE void dive();
+  Q_INVOKABLE void dive(const QString& group_node_name);
+  void dive(const std::string& group_node_name);
+
+ private:
+  Dep<BaseNodeGraphManipulator> _manipulator;
+  Dep<NodeGraphQuickItem> _ng_quick;
+};
 
 
 class QUICK_EXPORT NodeGraphQuickItem : public QQuickItem, public Component
@@ -44,6 +61,8 @@ Q_OBJECT
 
   Q_INVOKABLE QString get_ngs_version() const;
   Q_INVOKABLE size_t get_num_nodes() const;
+
+  const Dep<NodeShape>& get_last_pressed() const {return _last_pressed_node;};
 
   // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);
@@ -88,9 +107,9 @@ Q_OBJECT
 
   // Group Navigation.
   void dive_into_lockable_group(const std::string& child_group_name);
-  void clean_lockable_group(const std::string& child_group_name);
+  //void clean_lockable_group(const std::string& child_group_name);
 
-  Q_INVOKABLE void dive();
+  //Q_INVOKABLE void dive();
   Q_INVOKABLE void surface();
   Q_INVOKABLE void surface_to_root();
 

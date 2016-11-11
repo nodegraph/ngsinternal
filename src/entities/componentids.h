@@ -38,10 +38,12 @@ enum class ComponentIID : size_t {
   kIUpperHierarchyChange,
   kIInputPlug,
   kIBaseGroupTraits,
+  kIGroupLock,
   kIGroupInteraction,
   kINodeGraphEditor,
   kIBaseNodeGraphManipulator,
   kINodeGraphQuickItem,
+  kINodeGraphController,
   kINodeGraphRenderer,
   kINodeGraphView,
   kIFileModel,
@@ -146,12 +148,15 @@ COMPONENT_ENTRY1(GraphBuilder)\
 COMPONENT_ENTRY1(GroupTraits)\
 COMPONENT_ENTRY1(BrowserGroupTraits)\
 COMPONENT_ENTRY1(FirebaseGroupTraits)\
-COMPONENT_ENTRY1(MQTTGroupTraits)\
+COMPONENT_ENTRY1(GroupLock)\
+COMPONENT_ENTRY1(MQTTGroupLock)\
+COMPONENT_ENTRY1(FirebaseGroupLock)\
 COMPONENT_ENTRY1(GroupInteraction)\
 /* -- */\
 COMPONENT_ENTRY1(NodeGraphEditor)\
 COMPONENT_ENTRY1(NodeGraphManipulator)\
 COMPONENT_ENTRY1(NodeGraphQuickItem)\
+COMPONENT_ENTRY1(NodeGraphController)\
 COMPONENT_ENTRY1(NodeGraphRenderer)\
 COMPONENT_ENTRY1(NodeGraphView)\
 COMPONENT_ENTRY1(FileModel)\

@@ -116,6 +116,7 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff FBORenderer(this);
   new_ff FBOWorker(this);
   new_ff NodeGraphQuickItem(this);
+  new_ff NodeGraphController(this);
   new_ff NodeGraphView(this);
   new_ff NodeGraphManipulator(this);
   // Qt Releated Components.
@@ -163,6 +164,7 @@ void QMLAppEntity::expose_to_qml() {
   // Grab some components without using Deps.
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
+  NodeGraphController* ng_controller = get_node_graph_controller();
   BrowserWorker* web_worker = get_app_worker();
   BrowserRecorder* web_recorder = get_app_recorder();
   NodeGraphView* view = get_node_graph_view();
@@ -188,6 +190,7 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("web_worker"), web_worker);
   context->setContextProperty(QStringLiteral("web_recorder"), web_recorder);
   context->setContextProperty(QStringLiteral("license_checker"), license_checker);
+  context->setContextProperty(QStringLiteral("ng_controller"), ng_controller);
 
   // Expose other useful objects to qml.
   context->setContextProperty("pdpi", QGuiApplication::primaryScreen()->physicalDotsPerInch());
@@ -241,6 +244,11 @@ LicenseChecker* QMLAppEntity::get_license_checker() {
 NodeGraphQuickItem* QMLAppEntity::get_node_graph_quick_item() {
   return get<NodeGraphQuickItem>();
 }
+
+NodeGraphController* QMLAppEntity::get_node_graph_controller() {
+  return get<NodeGraphController>();
+}
+
 
 GraphBuilder* QMLAppEntity::get_graph_builder() {
   return get<GraphBuilder>();
@@ -389,7 +397,7 @@ void MQTTGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   (new_ff MQTTGroupNodeCompute(this))->create_inputs_outputs();
   new_ff Inputs(this);
   new_ff Outputs(this);
-  new_ff MQTTGroupTraits(this);
+  //new_ff MQTTGroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);

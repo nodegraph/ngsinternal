@@ -22,6 +22,12 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   // Inputs.
   virtual QJsonObject get_editable_inputs() const;
 
+  // Group locking.
+  virtual bool group_is_unlocked() const {return false;}
+  virtual void unlock_group(){} // Starts an synchronous task.
+  virtual void unlock_group_and_dive(){} // Starts an synchronous task.
+  virtual void lock_group(){} // Starts an synchronous task.
+  virtual void lock_group_and_surface(){} // Starts an synchronous task.
 
  protected:
 

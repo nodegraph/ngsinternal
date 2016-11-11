@@ -1,23 +1,18 @@
-#include <guicomponents/comms/basegrouptraits.h>
-#include <base/objectmodel/deploader.h>
 #include <guicomponents/computes/mqttgroupnodecompute.h>
-#include <components/computes/inputcompute.h>
-#include <components/computes/inputnodecompute.h>
-#include <components/computes/outputnodecompute.h>
-#include <guicomponents/quick/basenodegraphmanipulator.h>
+#include <base/objectmodel/deploader.h>
 
-#include <QtCore/QDebug>
-#include <QtQml/QQmlEngine>
-#include <QtQml/QQmlContext>
-#include <QtQml/QQmlExpression>
+#include <guicomponents/comms/taskscheduler.h>
+#include <guicomponents/comms/mqttworker.h>
 
 namespace ngs {
 
 MQTTGroupNodeCompute::MQTTGroupNodeCompute(Entity* entity):
     GroupNodeCompute(entity, kDID()),
-    _group_traits(this),
+    _scheduler(this),
+    _worker(this),
     _unlocked(false){
-  get_dep_loader()->register_fixed_dep(_group_traits, Path({"."}));
+  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
+  get_dep_loader()->register_fixed_dep(_worker, Path({}));
 
   _on_group_inputs.insert(Message::kHostAddress);
   _on_group_inputs.insert(Message::kPort);
@@ -26,6 +21,16 @@ MQTTGroupNodeCompute::MQTTGroupNodeCompute(Entity* entity):
 }
 
 MQTTGroupNodeCompute::~MQTTGroupNodeCompute() {
+}
+
+void MQTTGroupNodeCompute::get_inputs(QHostAddress& host_address, int& port, QString& username, QString& password) const {
+  QJsonObject inputs = _inputs->get_input_values();
+
+  QString address = inputs.value(Message::kHostAddress).toString();
+  host_address = QHostAddress(address);
+  port = inputs.value(Message::kPort).toInt();
+  username = inputs.value(Message::kUsername).toString();
+  password = inputs.value(Message::kPassword).toString();
 }
 
 void MQTTGroupNodeCompute::create_inputs_outputs() {
@@ -56,31 +61,53 @@ QJsonObject MQTTGroupNodeCompute::init_hints() {
   return m;
 }
 
-void MQTTGroupNodeCompute::set_self_dirty(bool dirty) {
-  Compute::set_self_dirty(dirty);
-  if (dirty) {
-    _unlocked = false;
-  }
-}
-
 bool MQTTGroupNodeCompute::update_state() {
   if (!_unlocked) {
     Compute::update_state(); // Need to call this to set the processing marker so that we can catch processing errors.
-    _group_traits->on_clean();
+    unlock_group();
     return false;
   }
   return update_unlocked_group();
 }
 
-bool MQTTGroupNodeCompute:: update_unlocked_group() {
-  _unlocked = true;
+bool MQTTGroupNodeCompute::group_is_unlocked() const {
+  QHostAddress host_address;
+  int port;
+  QString username;
+  QString password;
+  get_inputs(host_address, port, username, password);
+
+  return _worker->is_connected(host_address, port, username, password);
+}
+
+void MQTTGroupNodeCompute::unlock_group() {
+  QHostAddress host_address; int port; QString username; QString password;
+  get_inputs(host_address, port, username, password);
+
+  TaskContext tc(_scheduler);
+  _worker->queue_connect_task(tc, host_address, port, username, password);
+}
+
+void MQTTGroupNodeCompute::unlock_group_and_dive() {
+  QHostAddress host_address; int port; QString username; QString password;
+  get_inputs(host_address, port, username, password);
+
+  TaskContext tc(_scheduler);
+  _worker->queue_connect_task(tc, host_address, port, username, password);
+  _worker->queue_dive_into_lockable_group(tc, get_name());
+}
+
+void MQTTGroupNodeCompute::lock_group() {
+}
+
+void MQTTGroupNodeCompute::lock_group_and_surface() {
+  TaskContext tc(_scheduler);
+  _worker->queue_surface_from_lockable_group(tc);
+}
+
+bool MQTTGroupNodeCompute::update_unlocked_group() {
   // Now call our base compute's update state.
-  bool done = GroupNodeCompute::update_state();
-  if (done) {
-    _group_traits->on_exit();
-    //clean_finalize();
-  }
-  return done;
+  return GroupNodeCompute::update_state();
 }
 
 }

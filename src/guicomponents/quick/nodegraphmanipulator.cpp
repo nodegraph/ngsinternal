@@ -29,78 +29,6 @@
 
 namespace ngs {
 
-// This is the implementation class for the NodeGraphManipulator.
-// It is held by a raw pointer in NodeGraphManipulator to avoid dependency cycles.
-// This allows us to call this from the non-gui side (eg computes) at arbitrary
-// locations to update the gui side to reflect non-gui side changes.
-class NodeGraphManipulatorImp: public Component {
- public:
-  // Note that components with and IID of kIInvalidComponent, should not be
-  // created with the app root as its parent as there may be other invalid components
-  // which also get created later resulting in collisions.
-  // Invalid components are always created under a null entity.
-  // Note that an invalid component usually needs a reference to the app root entity
-  // in order create Dep<>s to other components.
-  COMPONENT_ID(InvalidComponent, InvalidComponent);
-  NodeGraphManipulatorImp(Entity* app_root);
-
-  virtual void initialize_wires();
-  
-  // Asynchronous Component Cleaning.
-  virtual void set_ultimate_target(Entity* entity, bool force_stack_reset = false);
-  virtual void clear_ultimate_target();
-  virtual void continue_cleaning_to_ultimate_target();
-  virtual bool is_busy_cleaning();
-
-  // Update current compute markers on nodes.
-  virtual void set_processing_node(Entity* entity);
-  virtual void clear_processing_node();
-  virtual void set_error_node(const QString& error_message);
-  virtual void clear_error_node();
-  virtual void update_clean_marker(Entity* entity, bool clean);
-
-  virtual void dive_into_lockable_group(const std::string& child_group_name);
-  virtual void clean_lockable_group(const std::string& child_group_name);
-
-  // Builds and positions a compute node under the lowest node in the node graph.
-  // If possible it will also link the latest node with the lowest.
-  Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
-
-  // Update inputs and outputs configuration for the gui side.
-  virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
-  virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
-
-  // Modify links..
-  virtual void destroy_link(Entity* input_entity);
-  virtual Entity* create_link();
-  virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
-
-  virtual void synchronize_graph_dirtiness(Entity* group_entity);
-  virtual void synchronize_group_dirtiness(Entity* group_entity);
-  virtual void dirty_group_from_internals(Entity* group_entity);
-  virtual void dirty_internals_from_group(Entity* group_entity);
-
-  virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
-
- private:
-  Entity* build_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
-  void link(Entity* downstream);
-
-  Entity* _app_root;
-  Dep<BaseFactory> _factory;
-  Dep<NodeSelection> _node_selection;
-  Dep<NodeGraphQuickItem> _ng_quick;
-  Dep<TaskScheduler> _scheduler;
-
-  // The ultimate compute (of a node) that we are trying to clean.
-  // Note that there maybe many asynchronous computes which cause each cleaning pass over the dependencies
-  // to finish early (returning false). Holding this reference to the ultimate component we want to clean
-  // allows us to restart the cleaning process once other asynchronous cleaning processes finish.
-  Dep<Compute> _ultimate_target;
-};
-
-
-
 // -----------------------------------------------------------------------------------
 // NodeGraphManipulatorImp.
 // -----------------------------------------------------------------------------------
@@ -110,14 +38,43 @@ class NodeGraphManipulatorImp: public Component {
 // Because it has no parent, you must explicitly hold a pointer to this when
 // allocated so that you can manipulate it and delete it.
 NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
-    : Component(NULL, kIID(), kDID()),
+    : QObject(),
+      Component(NULL, kIID(), kDID()),
       _app_root(app_root),
       _factory(this),
       _node_selection(this),
       _ng_quick(this),
-      _scheduler(this),
-      _ultimate_target(this) {
+      _scheduler(this) {
+
+
+  // Timer setup.
+  _condition_timer.setSingleShot(false);
+  _condition_timer.setInterval(0); // We allow 1 second to wait to connect.
+  connect(&_condition_timer,SIGNAL(timeout()),this,SLOT(on_condition_timer()));
 }
+
+bool NodeGraphManipulatorImp::start_waiting(std::function<void()> on_clean_inputs) {
+  if (_condition_timer.isActive()) {
+    // We already waiting for something.
+    return false;
+  }
+  _on_clean_inputs = on_clean_inputs;
+  _condition_timer.start();
+  return true;
+}
+
+void NodeGraphManipulatorImp::stop_waiting() {
+  _condition_timer.stop();
+}
+
+void NodeGraphManipulatorImp::on_condition_timer() {
+  if (!is_busy_cleaning()) {
+    _condition_timer.stop();
+    std::cerr << "performing work now that inputs are clean\n";
+    _on_clean_inputs();
+  }
+}
+
 
 void NodeGraphManipulatorImp::initialize_wires() {
   Component::initialize_wires();
@@ -128,10 +85,22 @@ void NodeGraphManipulatorImp::initialize_wires() {
   _scheduler = get_dep<TaskScheduler>(_app_root);
 }
 
-void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_stack_reset) {
+void NodeGraphManipulatorImp::set_ultimate_targets(Entity* entity, bool force_stack_reset) {
   external();
+  std::unordered_set<Entity*> entities;
+  entities.insert(entity);
+  set_ultimate_targets(entities, force_stack_reset);
+}
 
-  if (!get_dep<Compute>(entity)->is_state_dirty()) {
+void NodeGraphManipulatorImp::set_ultimate_targets(const std::unordered_set<Entity*>& entities, bool force_stack_reset) {
+  DepUSet<Compute> computes;
+  for (Entity* entity: entities) {
+    Dep<Compute> c = get_dep<Compute>(entity);
+    if (c->is_state_dirty()) {
+      computes.insert(c);
+    }
+  }
+  if (computes.empty()) {
     return;
   }
 
@@ -142,7 +111,7 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_sta
   // Note that nodes in the currently are not dirtied because the user is likely adding/editing nodes
   // and we don't want to have to keep recomputing all the upstream nodes in this case.
   // All other groups get their dirtiness synchronized.
-  synchronize_graph_dirtiness(_app_root);
+  bubble_group_dirtiness();
 
   // Clear the error marker on nodes.
   _node_selection->clear_error_node();
@@ -152,62 +121,103 @@ void NodeGraphManipulatorImp::set_ultimate_target(Entity* entity, bool force_sta
     _scheduler->force_stack_reset();
   }
   // Set and try cleaning the ultimate target.
-  _ultimate_target = get_dep<Compute>(entity);
+  _ultimate_targets = computes;
 
   _app_root->clean_wires();
 
-  continue_cleaning_to_ultimate_target();
+  continue_cleaning_to_ultimate_targets();
 }
 
-void NodeGraphManipulatorImp::clear_ultimate_target() {
-  external();
-  std::cerr << "clearing ultimate target\n";
-  _ultimate_target.reset();
+void NodeGraphManipulatorImp::set_inputs_as_ultimate_targets(Entity* node_entity) {
+  Dep<Compute> compute = get_dep<Compute>(node_entity);
+  const Dep<Inputs>& inputs = compute->get_inputs();
+  const std::unordered_map<std::string, Dep<InputCompute> >& input_computes = inputs->get_all();
+  std::unordered_set<Entity*> entities;
+  for (auto &iter: input_computes) {
+    entities.insert(iter.second->our_entity());
+  }
+  set_ultimate_targets(entities);
 }
 
-void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_target() {
+void NodeGraphManipulatorImp::clear_ultimate_targets() {
   external();
+  _ultimate_targets.clear();
+}
+
+void NodeGraphManipulatorImp::prune_clean_or_dead() {
+  // Remove any ultimate targets that are already clean.
+  DepUSet<Compute>::iterator iter = _ultimate_targets.begin();
+  while(iter != _ultimate_targets.end()) {
+    if (!(*iter)) {
+      // If the compute has been destoryed, then we erase it.
+      iter = _ultimate_targets.erase(iter);
+      continue;
+    } else {
+      // If the compute is now clean, then we erase it.
+      if (!(*iter)->is_state_dirty()) {
+        iter = _ultimate_targets.erase(iter);
+		continue;
+	  }
+    }
+    // Otherwise we continue to the next compute.
+    ++iter;
+  }
+}
+
+void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
+  external();
+
+  // Make sure the ulimate targets have been pruned of dead or cleaned computes.
+  prune_clean_or_dead();
 
   // Return if there is no ultimate target set.
-  if (!_ultimate_target) {
+  if (_ultimate_targets.empty()) {
     return;
   }
 
-  // Return if the ultimate target is already clean, and wipe out the ultimate target.
-  if (!_ultimate_target->is_state_dirty()) {
-    _ultimate_target.reset();
-    return;
-  }
+  // Lets continue each target of our ultimate targets.
+  while(!_ultimate_targets.empty()) {
+    const Dep<Compute> &compute = *_ultimate_targets.begin();
 
-  // Clean all the inputs on all the groups down to the ultimate target.
-  // The target path holds the path down to the immediately surrounding group of the target.
-  Path target_path = _ultimate_target->our_entity()->get_path();
-  target_path.pop_back();
-  Path path({});
+    // Clean all the inputs on all the groups down to the ultimate target.
+    // We need to do this because there is no direct dependency link between the group's inputs
+    // and the input nodes inside the group.
 
-  do {
-    path.push_back(target_path.front());
-    target_path.pop_front();
-    std::cerr << "working on group inputs: " << path.get_as_string() << "\n";
+    // The target path holds the path down to the immediately surrounding group of the target.
+    Path target_path = compute->our_entity()->get_path();
+    target_path.pop_back();
 
-    Entity* e = _app_root->get_entity(path);
-    Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(e);
-    if (!c->clean_inputs()) {
-      return;
+    // Starting from the root group we dive one by one to the target group.
+    Path path({});
+    do {
+      path.push_back(target_path.front());
+      target_path.pop_front();
+      std::cerr << "working on group inputs: " << path.get_as_string() << "\n";
+
+      Entity* e = _app_root->get_entity(path);
+      Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(e);
+      if (!c) {
+        // If the ultimate target is an input on a node, then we may iterate thruough a node.
+        // In this case the GroupNodeCompute dep will be null.
+        continue;
+      }
+      if (!c->clean_inputs()) {
+        return;
+      }
+    } while (target_path.size());
+
+    // If we get here the inputs on our surrounding group and our input nodes
+    // now have appropriate values to perform the compute.
+    if (compute->clean_state()) {
+      // We need to clean any clean computes right away, otherwise the app will think it's still processing..
+      prune_clean_or_dead();
     }
-  } while (target_path.size());
-
-  // If we get here the inputs on our surrounding group and our input nodes
-  // now have appropriate values to perform the compute.
-  if (_ultimate_target->clean_state()) {
-    // Reset the ultimate target if we can clean it right away.
-    _ultimate_target.reset();
   }
 }
 
 bool NodeGraphManipulatorImp::is_busy_cleaning() {
   external();
-  if (_ultimate_target) {
+  if (_ultimate_targets.size()) {
     return true;
   }
   return false;
@@ -233,6 +243,7 @@ void NodeGraphManipulatorImp::clear_error_node() {
 }
 
 void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
+  std::cerr << "updating clean marker for: " << entity->get_path().get_as_string() << " : " << clean << "\n";
   Dep<NodeShape> ns = get_dep<NodeShape>(entity);
   if (ns) {
 	  ns->show_clean_marker(clean);
@@ -248,12 +259,23 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
 }
 
 void NodeGraphManipulatorImp::dive_into_lockable_group(const std::string& child_group_name) {
-  _ng_quick->dive_into_lockable_group(child_group_name);
+  // Make sure the inputs to the group are clean.
+  Entity* entity =_factory->get_current_group()->get_child(child_group_name);
+  set_inputs_as_ultimate_targets(entity);
+
+  std::function<void()> func = [this, child_group_name](){
+    this->_ng_quick->dive_into_lockable_group(child_group_name);
+  };
+  start_waiting(func);
 }
 
-void NodeGraphManipulatorImp::clean_lockable_group(const std::string& child_group_name) {
-  _ng_quick->clean_lockable_group(child_group_name);
+void NodeGraphManipulatorImp::surface_from_lockable_group() {
+  _ng_quick->surface();
 }
+
+//void NodeGraphManipulatorImp::clean_lockable_group(const std::string& child_group_name) {
+//  _ng_quick->clean_lockable_group(child_group_name);
+//}
 
 Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
   Entity* node = build_compute_node(compute_did, chain_state);
@@ -418,6 +440,10 @@ Entity* NodeGraphManipulatorImp::connect_plugs(Entity* input_entity, Entity* out
   return link;
 }
 
+void NodeGraphManipulatorImp::bubble_group_dirtiness() {
+  synchronize_graph_dirtiness(_app_root);
+}
+
 void NodeGraphManipulatorImp::synchronize_graph_dirtiness(Entity* group_entity) {
   const Entity::NameToChildMap& children = group_entity->get_children();
   for (auto &iter : children) {
@@ -495,8 +521,12 @@ void NodeGraphManipulatorImp::set_mqtt_override(const Path& node_path, const QSt
     return;
   }
 
+  // Set the override.
   Dep<MQTTSubscribeCompute> compute = get_dep<MQTTSubscribeCompute>(entity);
   compute->set_override(topic, payload);
+
+  // Bubble dirtiness through the group hierarchies.
+  bubble_group_dirtiness();
 }
 
 // -----------------------------------------------------------------------------------
@@ -518,16 +548,24 @@ void NodeGraphManipulator::initialize_wires() {
   _imp->initialize_wires();
 }
 
-void NodeGraphManipulator::set_ultimate_target(Entity* entity, bool force_stack_reset) {
-  _imp->set_ultimate_target(entity, force_stack_reset);
+void NodeGraphManipulator::set_ultimate_targets(Entity* entity, bool force_stack_reset) {
+  _imp->set_ultimate_targets(entity, force_stack_reset);
 }
 
-void NodeGraphManipulator::clear_ultimate_target() {
-  _imp->clear_ultimate_target();
+void NodeGraphManipulator::set_ultimate_targets(const std::unordered_set<Entity*>& entities, bool force_stack_reset) {
+  _imp->set_ultimate_targets(entities, force_stack_reset);
 }
 
-void NodeGraphManipulator::continue_cleaning_to_ultimate_target() {
-  _imp->continue_cleaning_to_ultimate_target();
+void NodeGraphManipulator::set_inputs_as_ultimate_targets(Entity* node_entity) {
+  _imp->set_inputs_as_ultimate_targets(node_entity);
+}
+
+void NodeGraphManipulator::clear_ultimate_targets() {
+  _imp->clear_ultimate_targets();
+}
+
+void NodeGraphManipulator::continue_cleaning_to_ultimate_targets() {
+  _imp->continue_cleaning_to_ultimate_targets();
 }
 
 bool NodeGraphManipulator::is_busy_cleaning() {
@@ -558,9 +596,13 @@ void NodeGraphManipulator::dive_into_lockable_group(const std::string& child_gro
   _imp->dive_into_lockable_group(child_group_name);
 }
 
-void NodeGraphManipulator::clean_lockable_group(const std::string& child_group_name) {
-  _imp->clean_lockable_group(child_group_name);
+void NodeGraphManipulator::surface_from_lockable_group() {
+  _imp->surface_from_lockable_group();
 }
+
+//void NodeGraphManipulator::clean_lockable_group(const std::string& child_group_name) {
+//  _imp->clean_lockable_group(child_group_name);
+//}
 
 Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
   return _imp->build_and_link_compute_node(compute_did, chain_state);
@@ -584,6 +626,10 @@ Entity* NodeGraphManipulator::create_link() {
 
 Entity* NodeGraphManipulator::connect_plugs(Entity* input_entity, Entity* output_entity) {
   return _imp->connect_plugs(input_entity, output_entity);
+}
+
+void NodeGraphManipulator::bubble_group_dirtiness() {
+  _imp->bubble_group_dirtiness();
 }
 
 void NodeGraphManipulator::synchronize_graph_dirtiness(Entity* group_entity) {

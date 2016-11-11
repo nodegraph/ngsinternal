@@ -58,6 +58,36 @@
 
 namespace ngs {
 
+NodeGraphController::NodeGraphController(Entity* parent)
+    : QObject(NULL),
+      Component(parent, kIID(), kDID()),
+      _manipulator(this),
+      _ng_quick(this) {
+  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_ng_quick, Path({}));
+}
+
+NodeGraphController::~NodeGraphController() {
+
+}
+
+void NodeGraphController::dive() {
+  const Dep<NodeShape>& node_shape = _ng_quick->get_last_pressed();
+  dive(node_shape->get_name());
+}
+
+void NodeGraphController::dive(const QString& group_node_name) {
+  dive(group_node_name.toStdString());
+}
+
+void NodeGraphController::dive(const std::string& group_node_name) {
+  _manipulator->dive_into_lockable_group(group_node_name);
+}
+
+
+// -----------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------
 
 
 const int NodeGraphQuickItem::kLongPressTimeThreshold = 10000; //400; // in milli seconds.
@@ -765,7 +795,7 @@ void NodeGraphQuickItem::clean_node() {
   Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
   if(compute) {
     // Update our node graph selection object which also tracks and edit and view nodes.
-    _manipulator->set_ultimate_target(compute->our_entity(), true);
+    _manipulator->set_ultimate_targets(compute->our_entity(), true);
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
   }
@@ -858,6 +888,8 @@ void NodeGraphQuickItem::destroy_selection() {
 }
 
 void NodeGraphQuickItem::dive_into_lockable_group(const std::string& child_group_name) {
+  std::cerr << "ng quick is trying to dive in now.\n";
+
   // Find the child group.
   Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
   if (!group_entity) {
@@ -865,72 +897,94 @@ void NodeGraphQuickItem::dive_into_lockable_group(const std::string& child_group
 	  return;
   }
 
-  // If the child group doesn't exist, then return.
+  std::cerr << "111\n";
+
+  // If the child isn't a group or doesn't exist, then return.
   if (!get_dep<GroupInteraction>(group_entity)) {
     return;
   }
 
+  std::cerr << "222\n";
+
+  // If the group is locked then return.
+  Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(group_entity);
+  if (!compute->group_is_unlocked()) {
+    return;
+  }
+
+  std::cerr << "333\n";
+
+  // Dive into the group.
   _canvas->dive(group_entity);
+
+  std::cerr << "444\n";
 
   // We clear the selection because we don't allow inter-group selections.
   _selection->clear_selection();
   _selection->clear_error_node();
   frame_all();
   update();
+
+  std::cerr << "555\n";
 }
 
-void NodeGraphQuickItem::clean_lockable_group(const std::string& child_group_name) {
-  // Find the child group.
-  Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
-  if (!group_entity) {
-    std::cerr << "Warning: could't find group to dive into: " << child_group_name << "\n";
-    return;
-  }
+//void NodeGraphQuickItem::clean_lockable_group(const std::string& child_group_name) {
+//  // Find the child group.
+//  Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
+//  if (!group_entity) {
+//    std::cerr << "Warning: could't find group to dive into: " << child_group_name << "\n";
+//    return;
+//  }
+//
+//  std::cerr << "bbbbbbbbbbbbbbbbbbbb\n";
+//
+//  // If the child group doesn't exist, then return.
+//  if (!get_dep<GroupInteraction>(group_entity)) {
+//    std::cerr << "ccccccccccccc\n";
+//    return;
+//  }
+//
+//  std::cerr << "ddddddddddddddddddddd\n";
+//
+//  Dep<Compute> compute = get_dep<Compute>(group_entity);
+//  compute->update_unlocked_group();
+//}
 
-  // If the child group doesn't exist, then return.
-  if (!get_dep<GroupInteraction>(group_entity)) {
-    return;
-  }
-
-  Dep<Compute> compute = get_dep<Compute>(group_entity);
-  compute->update_unlocked_group();
-}
-
-void NodeGraphQuickItem::dive() {
-  external();
-  // Return if don't have a last pressed shape.
-  if (!_last_pressed_node) {
-    return;
-  }
-
-  // Find the group node to dive into.
-  Entity* group_entity = _last_pressed_node->our_entity();
-
-  // Mark the child group as being processed.
-  _selection->set_processing_node_entity(group_entity);
-
-  // Let the group traits performs its transition behavior.
-  Dep<BaseGroupTraits> t = get_dep<BaseGroupTraits>(group_entity);
-  t->on_enter();
-
-  if (t->ok_to_dive()) {
-    // Switch to the next group on the canvas.
-    _canvas->dive(group_entity);
-
-    // We clear the selection because we don't allow inter-group selections.
-    _selection->clear_selection();
-    frame_all();
-    update();
-  }
-}
+//void NodeGraphQuickItem::dive() {
+//  external();
+//  // Return if don't have a last pressed shape.
+//  if (!_last_pressed_node) {
+//    return;
+//  }
+//
+//  // Find the group node to dive into.
+//  Entity* group_entity = _last_pressed_node->our_entity();
+//
+//  // Mark the child group as being processed.
+//  _selection->set_processing_node_entity(group_entity);
+//
+//  // Let the group traits performs its transition behavior.
+//  Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(group_entity);
+//  if (!compute->group_is_unlocked()) {
+//    compute->unlock_group_and_dive();
+//  } else {
+//    // Switch to the next group on the canvas.
+//    _canvas->dive(group_entity);
+//
+//    // We clear the selection because we don't allow inter-group selections.
+//    _selection->clear_selection();
+//    frame_all();
+//    update();
+//  }
+//}
 
 void NodeGraphQuickItem::surface() {
   external();
 
   // Let the group traits performs its transition behavior.
   Entity* group_entity = _factory->get_current_group();
-  Dep<BaseGroupTraits> t = get_dep<BaseGroupTraits>(group_entity);
-  t->on_exit();
+  Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(group_entity);
+  compute->lock_group();
 
   // Switch to the next group on the canvas.
   _canvas->surface();

@@ -36,13 +36,15 @@ Q_OBJECT
   MQTTWorker(Entity* parent);
   virtual ~MQTTWorker();
 
+  bool is_connected(const QHostAddress& host_address, quint16 port, const QString& username, const QString& password);
   bool is_subscribed(const Compute* compute, const std::string& topic) const;
+
 
   // Helpers which call multiple queue methods internally.
   void dive_into_lockable_group(const std::string& child_group_name, const QHostAddress& host_address, const quint16 port,
                             const QString& username, const QString& password);
-  void clean_lockable_group(const std::string& child_group_name, const QHostAddress& host_address, const quint16 port,
-                            const QString& username, const QString& password);
+//  void clean_lockable_group(const std::string& child_group_name, const QHostAddress& host_address, const quint16 port,
+//                            const QString& username, const QString& password);
 
   // Queue task to perform at a later time.
   void queue_connect_task(TaskContext& tc, const QHostAddress& host_address, quint16 port,
@@ -53,7 +55,9 @@ Q_OBJECT
 
   // Group Logic.
   void queue_dive_into_lockable_group(TaskContext& tc, const std::string& child_group_name);
-  void queue_clean_lockable_group(TaskContext& tc, const std::string& child_group_name);
+  void queue_surface_from_lockable_group(TaskContext& tc);
+
+//  void queue_clean_lockable_group(TaskContext& tc, const std::string& child_group_name);
 
   // Compute Logic.
   void queue_finished_compute(TaskContext& tc, BaseMQTTCompute* compute);
@@ -70,8 +74,8 @@ Q_OBJECT
  private:
 
   // Client Management.
-  std::string get_key(const QHostAddress& host_address, const quint16 port);
-  QMQTT::Client* get_client(const QHostAddress& host_address, const quint16 port);
+  std::string get_key(const QHostAddress& host_address, const quint16 port, const QString& username, const QString& password);
+  QMQTT::Client* get_client(const QHostAddress& host_address, const quint16 port, const QString& username, const QString& password);
 
   // Task which perform the work directly.
   void connect_task(const QHostAddress& host_address, quint16 port, const QString& username, const QString& password);
@@ -81,7 +85,8 @@ Q_OBJECT
 
   // Group Logic.
   void dive_into_lockable_group_task(const std::string& child_group_name);
-  void clean_lockable_group_task(const std::string& child_group_name);
+  void surface_from_lockable_group_task();
+//  void clean_lockable_group_task(const std::string& child_group_name);
 
   // Compute Logic.
   void finished_compute_task(BaseMQTTCompute* compute);
@@ -102,7 +107,7 @@ Q_OBJECT
   // There is one client per mqtt group node.
   std::unordered_map<std::string, QMQTT::Client*> _clients;
 
-  // Poll timer.
+  // Timer to timeout the connection request.
   QTimer _timer;
 };
 

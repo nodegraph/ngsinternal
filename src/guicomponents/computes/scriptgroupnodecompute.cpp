@@ -86,7 +86,7 @@ bool ScriptGroupNodeCompute::evaluate_script() {
     qDebug() << "Error: expression has an error: " << expr.error().toString() << "\n";
     // Also show the error marker on the node.
     _manipulator->set_error_node(expr.error().toString());
-    _manipulator->clear_ultimate_target();
+    _manipulator->clear_ultimate_targets();
     return false;
   }
   return true;

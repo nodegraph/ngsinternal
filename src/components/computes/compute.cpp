@@ -16,8 +16,10 @@
 #include <QtCore/QJsonValue>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonObject>
+#include <QtCore/QTimer>
 
 #include <sstream>
+
 
 namespace ngs {
 
@@ -365,7 +367,7 @@ bool Compute::eval_js_in_context(QJSEngine& engine, const QString& expr, QJsonVa
 
 void Compute::on_error(const QString& error_message) {
   _manipulator->set_error_node(error_message);
-  _manipulator->clear_ultimate_target();
+  _manipulator->clear_ultimate_targets();
 }
 
 }

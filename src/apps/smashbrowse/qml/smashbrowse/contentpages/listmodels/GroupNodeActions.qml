@@ -11,7 +11,7 @@ ListModel {
         image_url: "qrc:///icons/ic_arrow_downward_white_48dp.png"
         title: "Dive"
         description: "Dive into the group node."
-        script: "node_graph_item.dive();
+        script: "ng_controller.dive();
                  main_bar.switch_to_current_mode();"
     }
 

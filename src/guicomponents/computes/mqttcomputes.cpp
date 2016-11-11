@@ -37,7 +37,7 @@ void BaseMQTTCompute::init_hints(QJsonObject& m) {
   add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
 }
 
-void BaseMQTTCompute::post_update_state(TaskContext& tc) {
+void BaseMQTTCompute::finish_update_state(TaskContext& tc) {
   internal();
   _worker->queue_finished_compute(tc, this);
 }
@@ -84,7 +84,7 @@ bool MQTTPublishCompute::update_state() {
 
   TaskContext tc(_scheduler);
   _worker->queue_publish_task(tc, topic, message);
-  post_update_state(tc);
+  finish_update_state(tc);
   return false;
 }
 
@@ -156,13 +156,12 @@ bool MQTTSubscribeCompute::update_state() {
   internal();
   BaseMQTTCompute::update_state();
   QString topic = _inputs->get_input_value(Message::kTopic).toString();
-  QString message = _inputs->get_input_value(Message::kMessage).toString();
 
   TaskContext tc(_scheduler);
   if (!_worker->is_subscribed(this, topic.toStdString())) {
     _worker->queue_subscribe_task(tc, topic, our_entity()->get_path());
   }
-  post_update_state(tc);
+  finish_update_state(tc);
   return true;
 }
 
