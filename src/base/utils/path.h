@@ -30,6 +30,7 @@ class UTILS_EXPORT Path {
 
   static std::deque<std::string> split_string(const std::string& path);
 
+  Path();
   Path(const std::deque<std::string>& elements);
   Path(const Path& other);
   ~Path();

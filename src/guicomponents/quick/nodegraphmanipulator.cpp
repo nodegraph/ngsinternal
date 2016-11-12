@@ -1,9 +1,12 @@
 #include <guicomponents/quick/nodegraphmanipulator.h>
-#include <components/compshapes/nodeselection.h>
+
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/basegrouptraits.h>
 #include <guicomponents/computes/mqttcomputes.h>
+
+#include <components/compshapes/nodeselection.h>
+#include <components/interactions/groupinteraction.h>
 
 // ObjectModel.
 #include <base/memoryallocator/taggednew.h>
@@ -42,10 +45,9 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
       Component(NULL, kIID(), kDID()),
       _app_root(app_root),
       _factory(this),
-      _node_selection(this),
+      _selection(this),
       _ng_quick(this),
       _scheduler(this) {
-
 
   // Timer setup.
   _condition_timer.setSingleShot(false);
@@ -75,12 +77,11 @@ void NodeGraphManipulatorImp::on_condition_timer() {
   }
 }
 
-
 void NodeGraphManipulatorImp::initialize_wires() {
   Component::initialize_wires();
 
   _factory = get_dep<BaseFactory>(_app_root);
-  _node_selection = get_dep<NodeSelection>(_app_root);
+  _selection = get_dep<NodeSelection>(_app_root);
   _ng_quick = get_dep<NodeGraphQuickItem>(_app_root);
   _scheduler = get_dep<TaskScheduler>(_app_root);
 }
@@ -114,7 +115,7 @@ void NodeGraphManipulatorImp::set_ultimate_targets(const std::unordered_set<Enti
   bubble_group_dirtiness();
 
   // Clear the error marker on nodes.
-  _node_selection->clear_error_node();
+  _selection->clear_error_node();
   // This may be called while we are already trying to clean another ultimate target.
   // Hence we force a stack reset to clear out any pre-existing tasks.
   if (force_stack_reset) {
@@ -129,13 +130,27 @@ void NodeGraphManipulatorImp::set_ultimate_targets(const std::unordered_set<Enti
 }
 
 void NodeGraphManipulatorImp::set_inputs_as_ultimate_targets(Entity* node_entity) {
+  std::unordered_set<Entity*> entities;
+
+  // If the entity has a compute, we add its inputs into the ultimate targets.
   Dep<Compute> compute = get_dep<Compute>(node_entity);
   const Dep<Inputs>& inputs = compute->get_inputs();
   const std::unordered_map<std::string, Dep<InputCompute> >& input_computes = inputs->get_all();
-  std::unordered_set<Entity*> entities;
   for (auto &iter: input_computes) {
     entities.insert(iter.second->our_entity());
   }
+
+  // Show the processing marker on the node_entity;
+  set_processing_node(node_entity);
+
+  // If the entity is a group node and has a group lock, we add the group lock as well.
+  if (node_entity->has<GroupInteraction>()) {
+    Entity* child = node_entity->get_child("group_settings");
+    if (child) {
+      entities.insert(child);
+    }
+  }
+
   set_ultimate_targets(entities);
 }
 
@@ -147,7 +162,7 @@ void NodeGraphManipulatorImp::clear_ultimate_targets() {
 void NodeGraphManipulatorImp::prune_clean_or_dead() {
   // Remove any ultimate targets that are already clean.
   DepUSet<Compute>::iterator iter = _ultimate_targets.begin();
-  while(iter != _ultimate_targets.end()) {
+  while (iter != _ultimate_targets.end()) {
     if (!(*iter)) {
       // If the compute has been destoryed, then we erase it.
       iter = _ultimate_targets.erase(iter);
@@ -156,8 +171,8 @@ void NodeGraphManipulatorImp::prune_clean_or_dead() {
       // If the compute is now clean, then we erase it.
       if (!(*iter)->is_state_dirty()) {
         iter = _ultimate_targets.erase(iter);
-		continue;
-	  }
+        continue;
+      }
     }
     // Otherwise we continue to the next compute.
     ++iter;
@@ -199,18 +214,24 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
       if (!c) {
         // If the ultimate target is an input on a node, then we may iterate thruough a node.
         // In this case the GroupNodeCompute dep will be null.
+        std::cerr << "aaaaaaaaaaaaaaaaaaa\n";
         continue;
       }
+      std::cerr << "bbbbbbbbbbbbbbbbbb\n";
       if (!c->clean_inputs()) {
+        std::cerr << "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: " << c->get_name() << "\n";
         return;
       }
     } while (target_path.size());
+    std::cerr << "cccccccccccccccc\n";
 
     // If we get here the inputs on our surrounding group and our input nodes
     // now have appropriate values to perform the compute.
     if (compute->clean_state()) {
       // We need to clean any clean computes right away, otherwise the app will think it's still processing..
       prune_clean_or_dead();
+    } else {
+      return;
     }
   }
 }
@@ -224,21 +245,34 @@ bool NodeGraphManipulatorImp::is_busy_cleaning() {
 }
 
 void NodeGraphManipulatorImp::set_processing_node(Entity* entity) {
-  _node_selection->set_processing_node_entity(entity);
+  _selection->set_processing_node_entity(entity);
   _ng_quick->update();
 }
 
 void NodeGraphManipulatorImp::clear_processing_node() {
-  _node_selection->clear_processing_node();
+  _selection->clear_processing_node();
   _ng_quick->update();
 }
 
 void NodeGraphManipulatorImp::set_error_node(const QString& error_message) {
-  _ng_quick->set_error_node(error_message);
+  Dep<NodeShape> ns = _selection->get_last_processing_node();
+  if (!ns) {
+    std::cerr << "Warning: could not find the error node\n";
+  }
+  if (ns) {
+    // Show the error marker on the node.
+    _selection->set_error_node(ns);
+    // Update the gui.
+    _ng_quick->update();
+  }
+
+  // Emit messages to the qml side.
+  emit _ng_quick->set_error_message(error_message);
+  emit _ng_quick->show_error_page();
 }
 
 void NodeGraphManipulatorImp::clear_error_node() {
-  _node_selection->clear_error_node();
+  _selection->clear_error_node();
   _ng_quick->update();
 }
 
@@ -285,12 +319,18 @@ Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID comput
 
 void NodeGraphManipulatorImp::set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
   Dep<InputTopology> topo = get_dep<InputTopology>(entity);
-  topo->set_topology(ordering);
+  // If the entity doesn't have a gui, then the topo with be null.
+  if (topo) {
+    topo->set_topology(ordering);
+  }
 }
 
 void NodeGraphManipulatorImp::set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
   Dep<OutputTopology> topo = get_dep<OutputTopology>(entity);
-  topo->set_topology(ordering);
+  // If the entity doesn't have a gui, then the topo with be null.
+  if (topo) {
+    topo->set_topology(ordering);
+  }
 }
 
 Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
@@ -459,6 +499,14 @@ void NodeGraphManipulatorImp::synchronize_graph_dirtiness(Entity* group_entity) 
       }
       synchronize_graph_dirtiness(child);
     }
+  }
+}
+
+void NodeGraphManipulatorImp::dirty_compute(const Path& path) {
+  Entity* entity = _app_root->get_entity(path);
+  Dep<Compute> compute = get_dep<Compute>(entity);
+  if (compute) {
+    compute->dirty_state();
   }
 }
 
@@ -634,6 +682,10 @@ void NodeGraphManipulator::bubble_group_dirtiness() {
 
 void NodeGraphManipulator::synchronize_graph_dirtiness(Entity* group_entity) {
   _imp->synchronize_graph_dirtiness(group_entity);
+}
+
+void NodeGraphManipulator::dirty_compute(const Path& path) {
+  _imp->dirty_compute(path);
 }
 
 void NodeGraphManipulator::set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) {

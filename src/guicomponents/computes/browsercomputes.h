@@ -19,7 +19,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   virtual void create_inputs_outputs();
 
-  virtual void on_get_outputs(const QJsonObject& chain_state);
+  virtual void receive_chain_state(const QJsonObject& chain_state);
 
   static void init_hints(QJsonObject& m);
 
@@ -210,7 +210,7 @@ class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
 
-  virtual void on_get_outputs(const QJsonObject& chain_state);
+  virtual void receive_chain_state(const QJsonObject& chain_state);
 
  protected:
   virtual bool update_state();
@@ -337,7 +337,7 @@ class GUICOMPUTES_EXPORT FirebaseReadDataCompute: public BrowserCompute {
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
 
-  virtual void on_get_outputs(const QJsonObject& chain_state);
+  virtual void receive_chain_state(const QJsonObject& chain_state);
  protected:
   virtual bool update_state();
 };

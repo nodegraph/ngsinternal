@@ -60,6 +60,10 @@
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/firebasegrouptraits.h>
 #include <guicomponents/computes/mqttgrouptraits.h>
+#include <guicomponents/computes/grouplock.h>
+#include <guicomponents/computes/browsergrouplock.h>
+#include <guicomponents/computes/firebasegrouplock.h>
+#include <guicomponents/computes/mqttgrouplock.h>
 
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/browsergroupnodecompute.h>
@@ -283,13 +287,17 @@ void GroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   (new_ff GroupNodeCompute(this))->create_inputs_outputs();
   new_ff Inputs(this);
   new_ff Outputs(this);
-  new_ff GroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);
   new_ff GroupNodeShape(this);
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
+  // Sub Components.
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
+  sub->set_compute_did(ComponentDID::kGroupLock);
+  sub->set_visible(false);
+  sub->create_internals();
 }
 
 void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const {
@@ -355,55 +363,71 @@ void ScriptGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   (new_ff ScriptGroupNodeCompute(this))->create_inputs_outputs();
   new_ff Inputs(this);
   new_ff Outputs(this);
-  new_ff GroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);
   new_ff GroupNodeShape(this);
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
+  // Sub Components.
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
+  sub->set_compute_did(ComponentDID::kGroupLock);
+  sub->set_visible(false);
+  sub->create_internals();
 }
 
 void BrowserGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
-  (new_ff BrowserGroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
   new_ff Inputs(this);
   new_ff Outputs(this);
-  new_ff BrowserGroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);
   new_ff GroupNodeShape(this);
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
+  // Sub Components.
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
+  sub->set_compute_did(ComponentDID::kBrowserGroupLock);
+  sub->set_visible(false);
+  sub->create_internals();
 }
 
 void FirebaseGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
-  (new_ff FirebaseGroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
   new_ff Inputs(this);
   new_ff Outputs(this);
-  new_ff FirebaseGroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);
   new_ff GroupNodeShape(this);
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
+  // Sub Components.
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
+  sub->set_compute_did(ComponentDID::kFirebaseGroupLock);
+  sub->set_visible(false);
+  sub->create_internals();
 }
 
 void MQTTGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
-  (new_ff MQTTGroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
   new_ff Inputs(this);
   new_ff Outputs(this);
-  //new_ff MQTTGroupTraits(this);
   // Gui related.
   new_ff GroupInteraction(this);
   new_ff CompShapeCollective(this);
   new_ff GroupNodeShape(this);
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
+  // Sub Components.
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
+  sub->set_compute_did(ComponentDID::kMQTTGroupLock);
+  sub->set_visible(false);
+  sub->create_internals();
 }
 
 void LinkEntity::create_internals(const std::vector<size_t>& ids) {
@@ -461,10 +485,14 @@ void ComputeNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // The compute component::did must be set with a call to set_compute_did before calling this method.
   Compute* c = static_cast<Compute*>(ComponentInstancer::instance_imp(this,_did));
   c->create_inputs_outputs();
-  // Gui components.
-  new_ff RectNodeShape(this);
+
+  // Input and output gatherers.
   new_ff Inputs(this);
   new_ff Outputs(this);
+
+  // Gui components.
+  RectNodeShape* r = new_ff RectNodeShape(this);
+  r->set_visible(_visible);
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
 }

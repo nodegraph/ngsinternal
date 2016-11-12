@@ -239,13 +239,7 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info, HitRegion&
 
   // Do a hit test.
   region = HitRegion::kMissedRegion;
-  Dep<CompShape> comp_shape(this);
-  {
-    Entity* e = _shape_collective->hit_test(updated_mouse_info.object_space_pos.xy(), region);
-    if (e) {
-      comp_shape = get_dep<CompShape>(e);
-    }
-  }
+  Entity* comp_shape_entity = _shape_collective->hit_test(updated_mouse_info.object_space_pos.xy(), region);
 
   // Record the mouse down position.
   _mouse_down_pos = updated_mouse_info.object_space_pos.xy();
@@ -270,11 +264,6 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info, HitRegion&
    _view_controls.track_ball.set_pivot(updated_mouse_info.object_space_pos);
    _view_controls.start_tracking(updated_mouse_info);
    _mouse_over_info = updated_mouse_info;
-
-    Entity* comp_shape_entity = NULL;
-    if (comp_shape) {
-      comp_shape_entity = comp_shape->our_entity();
-    }
 
     switch (region) {
       case HitRegion::kInputRegion: {
@@ -342,7 +331,7 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info, HitRegion&
       case HitRegion::kNodeRegion: {
         // Otherwise if we have any node that is selected.
         if (_state == kNodeSelectionAndDragging) {
-          Dep<NodeShape> node_shape = get_dep<NodeShape>(comp_shape->our_entity());
+          Dep<NodeShape> node_shape = get_dep<NodeShape>(comp_shape_entity);
           // If the node is not already selected, then make it the sole selection.
           if (!_selection->is_selected(node_shape)) {
             // Clear out the current selection.
@@ -351,7 +340,7 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info, HitRegion&
 
             // Add this to the selection.
             _selection->select(node_shape);
-            _mouse_down_node_positions[node_shape] = comp_shape->get_pos();
+            _mouse_down_node_positions[node_shape] = node_shape->get_pos();
           }
 
           // Record all selected node positions.
@@ -359,6 +348,7 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info, HitRegion&
           for (const Dep<NodeShape>& d : selected) {
             _mouse_down_node_positions[d] = d->get_pos();
           }
+          return node_shape;
         }
         if (_state == kNodeSelectionAndDragging) {
           // We get here if we might be starting to pan some nodes.
@@ -432,6 +422,10 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info, HitRegion&
     }
   } else if (updated_mouse_info.right_button) {
 
+    if (region == HitRegion::kNodeRegion) {
+      Dep<NodeShape> shape = get_dep<NodeShape>(comp_shape_entity);
+      return shape;
+    }
 //    Entity* comp_shape_entity;
 //    if (comp_shape) {
 //      comp_shape_entity = comp_shape->our_entity();
@@ -444,9 +438,6 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info, HitRegion&
 //    }
   }
 
-  if (comp_shape && comp_shape->is_linkable()) {
-    return get_dep<NodeShape>(comp_shape->our_entity());
-  }
   return Dep<NodeShape>(NULL);
 }
 

@@ -80,6 +80,7 @@ Q_OBJECT
   // Link Manipulation.
   virtual void bubble_group_dirtiness();
   virtual void synchronize_graph_dirtiness(Entity* group_entity);
+  virtual void dirty_compute(const Path& path);
 
   // Specialized Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
@@ -99,7 +100,7 @@ private slots:
 
   Entity* _app_root;
   Dep<BaseFactory> _factory;
-  Dep<NodeSelection> _node_selection;
+  Dep<NodeSelection> _selection;
   Dep<NodeGraphQuickItem> _ng_quick;
   Dep<TaskScheduler> _scheduler;
 
@@ -164,6 +165,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
 
   virtual void bubble_group_dirtiness();
   virtual void synchronize_graph_dirtiness(Entity* group_entity);
+  virtual void dirty_compute(const Path& path);
 
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
  protected:

@@ -33,7 +33,9 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   void set_processing_node_entity(Entity* node);
   void set_processing_node(const Dep<NodeShape>& node);
   const Dep<NodeShape>& get_processing_node() const;
+  const Dep<NodeShape>& get_last_processing_node() const;
   void clear_processing_node();
+
 
   // Tracks the node currently having an error with its compute.
   void set_error_node_entity(Entity* node);
@@ -74,13 +76,16 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
 
   // Our dynamic deps. These are not serialized.
   // Our edit and view nodes.
-  Dep<NodeShape> _edit_node_shape;
-  Dep<NodeShape> _view_node_shape;
-  Dep<NodeShape> _compute_node_shape;
-  Dep<NodeShape> _error_node_shape;
+  Dep<NodeShape> _edit_node;
+  Dep<NodeShape> _view_node;
+  Dep<NodeShape> _processing_node;
+  Dep<NodeShape> _error_node;
+
+  // The last processing entity is used to set the error marker.
+  Dep<NodeShape> _last_processing_node;
 
   // The current selection.
-  DepUSet<NodeShape> _selected_node_shapes;
+  DepUSet<NodeShape> _selected_nodes;
 
   // Our copied nodes.
   std::string _raw_copy;

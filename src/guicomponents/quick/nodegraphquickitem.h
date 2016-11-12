@@ -62,7 +62,7 @@ Q_OBJECT
   Q_INVOKABLE QString get_ngs_version() const;
   Q_INVOKABLE size_t get_num_nodes() const;
 
-  const Dep<NodeShape>& get_last_pressed() const {return _last_pressed_node;};
+  const Dep<NodeShape>& get_last_pressed() const {return _last_node_shape;};
 
   // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);
@@ -96,14 +96,14 @@ Q_OBJECT
   // View and Edit.
   Q_INVOKABLE void view_node();
   Q_INVOKABLE void edit_node();
-  Q_INVOKABLE void process_node();
+  //Q_INVOKABLE void process_node();
   Q_INVOKABLE void dirty_node();
   Q_INVOKABLE void clean_node();
 
-  void set_error_node(const QString& error_message);
+  //void set_error_node(const QString& error_message);
 
-  Q_INVOKABLE void set_editable_inputs(const QJsonObject& values);
-  Q_INVOKABLE void set_input_exposure(const QJsonObject& values);
+  Q_INVOKABLE void set_editable_inputs(const QStringList& path_list, const QJsonObject& values);
+  Q_INVOKABLE void set_input_exposure(const QStringList& path_list, const QJsonObject& values);
 
   // Group Navigation.
   void dive_into_lockable_group(const std::string& child_group_name);
@@ -162,8 +162,8 @@ Q_OBJECT
  void group_node_context_menu_requested();
  void node_context_menu_requested();
 
- void view_node_outputs(const QString& name, const QJsonObject& results);
- void edit_node_inputs(const QString& name, const QJsonObject& values, const QJsonObject& hints, const QJsonObject& exposed_settings);
+ void view_node_outputs(const QStringList& path_list, const QJsonObject& results);
+ void edit_node_inputs(const QStringList& path_list, const QJsonObject& values, const QJsonObject& hints, const QJsonObject& exposed_settings);
 
  void mark_progress();
 
@@ -223,7 +223,7 @@ Q_OBJECT
 
   // Info about our last press, used when handling long presses.
   MouseInfo _last_press;
-  Dep<NodeShape> _last_pressed_node;
+  Dep<NodeShape> _last_node_shape;
 
   // Pinch Zoom.
   glm::vec2 _original_pinch_center;

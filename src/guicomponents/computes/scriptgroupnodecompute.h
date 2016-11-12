@@ -10,8 +10,6 @@
 
 namespace ngs {
 
-class BaseGroupTraits;
-
 class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNodeCompute {
   Q_OBJECT
  public:
@@ -38,7 +36,6 @@ class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNod
   virtual bool evaluate_script();
 
  private:
-  Dep<BaseGroupTraits> _group_traits;
 };
 
 }

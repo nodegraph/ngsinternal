@@ -49,6 +49,7 @@
 #include <guicomponents/computes/grouplock.h>
 #include <guicomponents/computes/mqttgrouplock.h>
 #include <guicomponents/computes/firebasegrouplock.h>
+#include <guicomponents/computes/browsergrouplock.h>
 
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>

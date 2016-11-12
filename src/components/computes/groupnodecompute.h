@@ -37,10 +37,6 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   virtual void propagate_dirtiness(Component* dependency);
   virtual void set_self_dirty(bool dirty);
 
-  // These are the names of any inputs (params) directly on the group node,
-  // instead of the inputs/outputs created from input/output nodes inside the group.
-  std::unordered_set<std::string> _on_group_inputs;
-
  private:
   Dep<BaseFactory> _factory;
 };

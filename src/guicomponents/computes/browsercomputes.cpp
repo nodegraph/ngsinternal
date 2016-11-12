@@ -55,11 +55,11 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
 
 void BrowserCompute::post_update_state(TaskContext& tc) {
   internal();
-  std::function<void(const QJsonObject&)> on_get_outputs_bound = std::bind(&BrowserCompute::on_get_outputs,this,std::placeholders::_1);
-  _worker->queue_get_outputs(tc, on_get_outputs_bound);
+  std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::receive_chain_state,this,std::placeholders::_1);
+  _worker->queue_receive_chain_state(tc, callback);
 }
 
-void BrowserCompute::on_get_outputs(const QJsonObject& chain_state) {
+void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
   internal();
   clean_finalize();
 
@@ -492,7 +492,7 @@ QJsonObject ElementActionCompute::init_hints() {
   return m;
 }
 
-void ElementActionCompute::on_get_outputs(const QJsonObject& chain_state) {
+void ElementActionCompute::receive_chain_state(const QJsonObject& chain_state) {
   internal();
   clean_finalize();
 
@@ -805,7 +805,7 @@ QJsonObject FirebaseReadDataCompute::init_hints() {
   return m;
 }
 
-void FirebaseReadDataCompute::on_get_outputs(const QJsonObject& chain_state) {
+void FirebaseReadDataCompute::receive_chain_state(const QJsonObject& chain_state) {
   internal();
   clean_finalize();
 

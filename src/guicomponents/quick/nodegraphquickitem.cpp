@@ -6,6 +6,7 @@
 #include <entities/entityids.h>
 #include <entities/guientities.h>
 #include <components/computes/compute.h>
+#include <components/computes/groupnodecompute.h>
 #include <components/resources/resources.h>
 #include <components/interactions/shapecanvas.h>
 #include <components/interactions/groupinteraction.h>
@@ -32,6 +33,7 @@
 #include <components/interactions/viewcontrols.h>
 #include <guicomponents/comms/basegrouptraits.h>
 
+#include <guicomponents/comms/commutils.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/quick/eventtoinfo.h>
 #include <guicomponents/quick/fborenderer.h>
@@ -119,7 +121,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
       _file_model(this),
       _license_checker(this),
       _manipulator(this),
-      _last_pressed_node(this),
+      _last_node_shape(this),
       _link_locked(false) {
 
   get_dep_loader()->register_fixed_dep(_fbo_worker, Path({}));
@@ -335,7 +337,7 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
     // or the background is pressed.
     if (get_current_interaction()->node_hit(_last_press) ||
         get_current_interaction()->bg_hit(_last_press)) {
-      _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
+      _last_node_shape = get_current_interaction()->pressed(_last_press, region);
     }
   } else {
     if (_last_press.middle_button) {
@@ -343,11 +345,11 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
       get_current_interaction()->accumulate_select(_last_press, _last_press);
     } else if (_last_press.right_button) {
       // Simulate a long press touch.
-      _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
+      _last_node_shape = get_current_interaction()->pressed(_last_press, region);
       _long_press_timer.stop();
       popup_context_menu();
     } else {
-      _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
+      _last_node_shape = get_current_interaction()->pressed(_last_press, region);
     }
   }
   update();
@@ -464,10 +466,10 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
             // or the background is pressed.
             if (get_current_interaction()->node_hit(_last_press) ||
                 get_current_interaction()->bg_hit(_last_press)) {
-              _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
+              _last_node_shape = get_current_interaction()->pressed(_last_press, region);
             }
           } else {
-            _last_pressed_node = get_current_interaction()->pressed(_last_press, region);
+            _last_node_shape = get_current_interaction()->pressed(_last_press, region);
           }
           update();
         } else if (state&Qt::TouchPointReleased) {
@@ -569,8 +571,8 @@ void NodeGraphQuickItem::popup_context_menu() {
   // Depending on the entity type that the long press is over, we emit
   // signals to request different types of context menus.
   {
-    if (_last_pressed_node) {
-      Entity* e = _last_pressed_node->our_entity();
+    if (_last_node_shape) {
+      Entity* e = _last_node_shape->our_entity();
       EntityDID did = e->get_did();
       // Send out context menu request signals.
       if (e->has<GroupInteraction>()) {
@@ -609,10 +611,10 @@ const Dep<GroupInteraction>& NodeGraphQuickItem::get_current_interaction() const
 
 void NodeGraphQuickItem::toggle_selection_under_long_press() {
   external();
-  if (!_last_pressed_node) {
+  if (!_last_node_shape) {
     return;
   }
-  get_current_interaction()->toggle_selection_under_press(_last_pressed_node);
+  get_current_interaction()->toggle_selection_under_press(_last_node_shape);
   update();
 }
 
@@ -754,29 +756,29 @@ void NodeGraphQuickItem::create_mqtt_subscribe_node(bool centered) {
   create_compute_node(centered, ComponentDID::kMQTTSubscribeCompute);
 }
 
-void NodeGraphQuickItem::process_node() {
-  external();
-  // Return if don't have a last pressed shape.
-  if (!_last_pressed_node) {
-    return;
-  }
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
-  if(compute) {
-    // Update our node graph selection object which also tracks and edit and view nodes.
-    get_current_interaction()->process(_last_pressed_node);
-    update();
-  }else {
-    qDebug() << "Error: could not find compute to perform. \n";
-  }
-}
+//void NodeGraphQuickItem::process_node() {
+//  external();
+//  // Return if don't have a last pressed shape.
+//  if (!_last_pressed_node) {
+//    return;
+//  }
+//  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+//  if(compute) {
+//    // Update our node graph selection object which also tracks and edit and view nodes.
+//    get_current_interaction()->process(_last_pressed_node);
+//    update();
+//  }else {
+//    qDebug() << "Error: could not find compute to perform. \n";
+//  }
+//}
 
 void NodeGraphQuickItem::dirty_node() {
   external();
   // Return if don't have a last pressed shape.
-  if (!_last_pressed_node) {
+  if (!_last_node_shape) {
     return;
   }
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
   if(compute) {
     // Update our node graph selection object which also tracks and edit and view nodes.
     compute->dirty_state();
@@ -789,10 +791,10 @@ void NodeGraphQuickItem::dirty_node() {
 void NodeGraphQuickItem::clean_node() {
   external();
   // Return if don't have a last pressed shape.
-  if (!_last_pressed_node) {
+  if (!_last_node_shape) {
     return;
   }
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
   if(compute) {
     // Update our node graph selection object which also tracks and edit and view nodes.
     _manipulator->set_ultimate_targets(compute->our_entity(), true);
@@ -804,14 +806,15 @@ void NodeGraphQuickItem::clean_node() {
 void NodeGraphQuickItem::view_node() {
   external();
   // Return if don't have a last pressed shape.
-  if (!_last_pressed_node) {
+  if (!_last_node_shape) {
     return;
   }
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
   if(compute) {
-    emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_outputs());
+    QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
+    emit view_node_outputs(path_list, compute->get_outputs());
     // Update our node graph selection object which also tracks and edit and view nodes.
-    get_current_interaction()->view(_last_pressed_node);
+    get_current_interaction()->view(_last_node_shape);
     update();
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
@@ -821,57 +824,63 @@ void NodeGraphQuickItem::view_node() {
 void NodeGraphQuickItem::edit_node() {
   external();
   // Return if don't have a last pressed shape.
-  if (!_last_pressed_node) {
+  if (!_last_node_shape) {
     return;
   }
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+
+  Entity* entity = _last_node_shape->our_entity();
+  Dep<Compute> compute(this);
+  if (entity->has<GroupInteraction>()) {
+    Entity* child = entity->get_child("group_settings");
+    compute = get_dep<Compute>(child);
+  } else {
+    compute = get_dep<Compute>(entity);
+  }
+
   if(compute) {
-    qDebug() << "performing compute! \n";
-    compute->update_input_flux();
-    emit edit_node_inputs(compute->our_entity()->get_name().c_str(),
+    QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
+    emit edit_node_inputs(path_list,
                           compute->get_editable_inputs(),
                           compute->get_hints(),
                           compute->get_input_exposure());
     // Update our node graph selection object which also tracks and edit and view nodes.
-    get_current_interaction()->edit(_last_pressed_node);
+    get_current_interaction()->edit(_last_node_shape);
     update();
-  }else {
-    qDebug() << "Error: could not find compute to perform. \n";
   }
 }
 
-void NodeGraphQuickItem::set_error_node(const QString& error_message) {
-  Dep<NodeShape> compute_node = _selection->get_processing_node();
-  if (!compute_node) {
-    std::cerr << "Warning: could not find the error node\n";
-  }
-  if (compute_node) {
-    // Show the error marker on the node.
-    _selection->set_error_node(compute_node);
-    // Update the gui.
-    update();
+//void NodeGraphQuickItem::set_error_node(const QString& error_message) {
+//  Dep<NodeShape> compute_node = _selection->get_processing_node();
+//  if (!compute_node) {
+//    std::cerr << "Warning: could not find the error node\n";
+//  }
+//  if (compute_node) {
+//    // Show the error marker on the node.
+//    _selection->set_error_node(compute_node);
+//    // Update the gui.
+//    update();
+//  }
+//
+//  // Emit messages to the qml side.
+//  emit set_error_message(error_message);
+//  emit show_error_page();
+//}
 
-    // Emit messages to the qml side.
-    emit set_error_message(error_message);
-    emit show_error_page();
-  }
-}
-
-void NodeGraphQuickItem::set_editable_inputs(const QJsonObject& values) {
-  if (!_last_pressed_node) {
-    return;
-  }
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+void NodeGraphQuickItem::set_editable_inputs(const QStringList& path_list, const QJsonObject& values) {
+  Path path = string_list_to_path(path_list);
+  std::cerr << "NodeGraphQuickItem::set_editable_inputs on path: " << path.get_as_string() << "\n";
+  Entity* entity = get_app_root()->get_entity(path);
+  Dep<Compute> compute = get_dep<Compute>(entity);
   if(compute) {
     compute->set_editable_inputs(values);
   }
 }
 
-void NodeGraphQuickItem::set_input_exposure(const QJsonObject& values) {
-  if (!_last_pressed_node) {
-    return;
-  }
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+void NodeGraphQuickItem::set_input_exposure(const QStringList& path_list, const QJsonObject& values) {
+  Path path = string_list_to_path(path_list);
+  std::cerr << "NodeGraphQuickItem::set_editable_inputs on path: " << path.get_as_string() << "\n";
+  Entity* entity = get_app_root()->get_entity(path);
+  Dep<Compute> compute = get_dep<Compute>(entity);
   if(compute) {
     compute->set_input_exposure(values);
     _factory->get_current_group()->clean_wires();
@@ -909,7 +918,8 @@ void NodeGraphQuickItem::dive_into_lockable_group(const std::string& child_group
   // If the group is locked then return.
   Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(group_entity);
   if (!compute->group_is_unlocked()) {
-    return;
+    std::cerr << "Warning: can't dive into group as its locked\n";
+    //return;
   }
 
   std::cerr << "333\n";
@@ -1002,13 +1012,13 @@ void NodeGraphQuickItem::surface_to_root() {
 
 void NodeGraphQuickItem::select_last_press() {
   external();
-  get_current_interaction()->select(_last_pressed_node);
+  get_current_interaction()->select(_last_node_shape);
   update();
 }
 
 void NodeGraphQuickItem::deselect_last_press() {
   external();
-  get_current_interaction()->deselect(_last_pressed_node);
+  get_current_interaction()->deselect(_last_node_shape);
   update();
 }
 
@@ -1145,24 +1155,26 @@ bool NodeGraphQuickItem::links_are_locked() const {
 }
 
 void NodeGraphQuickItem::view_node_poke() {
-  _last_pressed_node = _selection->get_view_node();
-  if (!_last_pressed_node) {
-    emit view_node_outputs("no view node selected", QJsonObject());
+  _last_node_shape = _selection->get_view_node();
+  if (!_last_node_shape) {
+    emit view_node_outputs(QStringList("no view node selected"), QJsonObject());
     return;
   }
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
-  emit view_node_outputs(compute->our_entity()->get_name().c_str(), compute->get_outputs());
+  Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
+  QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
+  emit view_node_outputs(path_list, compute->get_outputs());
 }
 
 void NodeGraphQuickItem::edit_node_poke() {
-  _last_pressed_node = _selection->get_edit_node();
-  if (!_last_pressed_node) {
-    emit edit_node_inputs("no edit node selected", QJsonObject(), QJsonObject(), QJsonObject());
+  _last_node_shape = _selection->get_edit_node();
+  if (!_last_node_shape) {
+    emit edit_node_inputs(QStringList("no edit node selected"), QJsonObject(), QJsonObject(), QJsonObject());
     return;
   }
-  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
+  Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
   compute->update_input_flux();
-  emit edit_node_inputs(compute->our_entity()->get_name().c_str(), compute->get_editable_inputs(), compute->get_hints(), compute->get_input_exposure());
+  QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
+  emit edit_node_inputs(path_list, compute->get_editable_inputs(), compute->get_hints(), compute->get_input_exposure());
 }
 
 }

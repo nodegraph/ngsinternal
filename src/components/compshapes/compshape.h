@@ -24,6 +24,10 @@ class COMPSHAPES_EXPORT CompShape: public Component{
   CompShape(Entity* entity, ComponentDID did);
   virtual ~CompShape();
 
+  // Visibility.
+  bool is_visible() {return _visible;}
+  void set_visible(bool visible) {_visible = visible;}
+
   // Positioning.
   virtual void set_pos(const glm::vec2& anchor);
   virtual const glm::vec2& get_pos() const;
@@ -46,11 +50,16 @@ class COMPSHAPES_EXPORT CompShape: public Component{
   virtual bool is_selectable() const {return false;}
   virtual bool is_linkable() const {return false;}
 
+  // Serialization.
+  virtual void save(SimpleSaver& saver) const;
+  virtual void load(SimpleLoader& loader);
+
  protected:
   virtual void set_pannable(bool pannable);
 
  private:
   bool _pannable;
+  bool _visible;
 };
 
 }

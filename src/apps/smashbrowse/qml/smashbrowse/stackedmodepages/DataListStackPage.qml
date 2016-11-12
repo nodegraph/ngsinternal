@@ -23,7 +23,8 @@ BaseStackPage{
     property var _values
     property var _hints
     property var _exposure
-
+    property var _node_path
+    
     // --------------------------------------------------------------------------------------------------
     // Public Methods.
     // --------------------------------------------------------------------------------------------------
@@ -45,25 +46,26 @@ BaseStackPage{
         }
     }
     
-    function on_view_outputs(node_name, values) {
+    function on_view_outputs(node_path, values) {
         app_settings.vibrate()
         stack_view.clear_pages()
         
     	_values = values
     	_hints = {}
     	_exposure = {}
+    	_node_path = node_path
     	
-    	var path = []
-        view_object(node_name, path)
+    	var data_path = []
+        view_object(node_path[node_path.length-1], data_path)
         main_bar.on_switch_to_mode(app_settings.view_node_mode)
     }
 
     // Show data values with hints on how to show it.
-    function on_edit_inputs(node_name, values, hints, exposure) {
+    function on_edit_inputs(node_path, values, hints, exposure) {
         app_settings.vibrate()
         stack_view.clear_pages()
         
-        console.log('node name: ' + node_name)
+        console.log('node path: ' + node_path)
         console.log('values: ' + JSON.stringify(values))
         console.log('hints: ' + JSON.stringify(hints))
         console.log('exposure: ' + JSON.stringify(exposure))
@@ -72,9 +74,10 @@ BaseStackPage{
         _values = values
         _hints = hints
         _exposure = exposure
+        _node_path = node_path
         
-        var path = []
-        edit_object(node_name, path)
+        var data_path = []
+        edit_object(node_path[node_path.length-1], data_path)
         main_bar.on_switch_to_mode(app_settings.edit_node_mode)
     }
 
@@ -355,9 +358,9 @@ BaseStackPage{
 		return app_utils.get_sub_object(_exposure, path)
 	}
 	
-	function set_exposed(path, value) {
-		app_utils.set_sub_object(_exposure, path, value)
-        node_graph_item.set_input_exposure(_exposure)
+	function set_exposed(path, exposed) {
+		app_utils.set_sub_object(_exposure, path, exposed)
+        node_graph_item.set_input_exposure(_node_path, _exposure)
 	}
 
     // --------------------------------------------------------------------------------------------------
@@ -366,8 +369,11 @@ BaseStackPage{
 
     // Set the value at the given path in _values.
     function set_value(path, value) {
+    	console.log("setting value at path: " + value + ", " + path)
+    	console.log("_values: " + JSON.stringify(_values))
         app_utils.set_sub_object(_values, path, value)
-        node_graph_item.set_editable_inputs(_values)
+        console.log("_values2: " + JSON.stringify(_values))
+        node_graph_item.set_editable_inputs(_node_path, _values)
     }
 
     // Get the value at the given path in _values.

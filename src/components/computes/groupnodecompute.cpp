@@ -92,7 +92,7 @@ void GroupNodeCompute::update_wires() {
     std::vector<Entity*> _inputs_to_destroy;
     for (auto &iter : inputs_space->get_children()) {
       const std::string& child_name = iter.first;
-      if (!exposed_inputs.count(child_name) && !_on_group_inputs.count(child_name)) {
+      if (!exposed_inputs.count(child_name)) {
         _inputs_to_destroy.push_back(iter.second);
       }
     }
@@ -225,12 +225,6 @@ bool GroupNodeCompute::update_state() {
 QJsonObject GroupNodeCompute::get_editable_inputs() const {
   external();
   QJsonObject values;
-  for (auto &name : _on_group_inputs) {
-    const Dep<InputCompute>& c = _inputs->get(name);
-    if (!c->is_connected()) {
-      values.insert(name.c_str(), c->get_unconnected_value());
-    }
-  }
   return values;
 }
 

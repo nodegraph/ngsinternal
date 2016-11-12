@@ -15,11 +15,8 @@ namespace ngs {
 
 ScriptGroupNodeCompute::ScriptGroupNodeCompute(Entity* entity):
     QObject(NULL),
-    GroupNodeCompute(entity, kDID()),
-    _group_traits(this) {
-  get_dep_loader()->register_fixed_dep(_group_traits, Path({"."}));
-
-  _on_group_inputs.insert("script");
+    GroupNodeCompute(entity, kDID()) {
+  //_on_group_inputs.insert("script");
 }
 
 ScriptGroupNodeCompute::~ScriptGroupNodeCompute() {

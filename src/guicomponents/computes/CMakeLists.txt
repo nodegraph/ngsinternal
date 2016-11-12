@@ -15,6 +15,7 @@ set(sources
     grouplock.cpp
     mqttgrouplock.cpp
     firebasegrouplock.cpp
+    browsergrouplock.cpp
     )
    
 set(headers
@@ -31,6 +32,7 @@ set(headers
     grouplock.h
     mqttgrouplock.h
     firebasegrouplock.h
+    browsergrouplock.h
     )
 
     

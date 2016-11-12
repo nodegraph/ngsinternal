@@ -104,6 +104,7 @@ bool RectNodeShape::update_state() {
 
 void RectNodeShape::update_node_quads() {
   internal();
+
   // Bg Quad.
   glm::vec2 text_dim = _text_max - _text_min;
   glm::vec2 bg_min = _pos-glm::vec2(70,40);
@@ -134,6 +135,10 @@ void RectNodeShape::update_node_quads() {
 
 void RectNodeShape::update_quads_cache() {
   internal();
+  if (!is_visible()) {
+    return;
+  }
+
   NodeShape::update_quads_cache();
   _quads_cache.insert(_quads_cache.end(), _node_quad_bg);
   _quads_cache.insert(_quads_cache.end(), _node_quad_fg);
@@ -148,6 +153,10 @@ void RectNodeShape::update_text() {
 
 void RectNodeShape::update_chars_cache() {
   internal();
+  if (!is_visible()) {
+    return;
+  }
+
   NodeShape::update_chars_cache();
   _chars_cache.insert(_chars_cache.end(), _node_name_chars.begin(), _node_name_chars.end());
 }

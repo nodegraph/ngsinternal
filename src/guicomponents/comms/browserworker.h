@@ -72,7 +72,7 @@ Q_OBJECT
   void queue_get_crosshair_info(TaskContext& tc);
   void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
   void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did);
-  void queue_get_outputs(TaskContext& tc, std::function<void(const QJsonObject&)> on_get_outputs);
+  void queue_receive_chain_state(TaskContext& tc, std::function<void(const QJsonObject&)> receive_chain_state);
 
   // Queue Cookie Tasks.
   void queue_get_all_cookies(TaskContext& tc);
@@ -158,7 +158,7 @@ signals:
   void get_crosshair_info_task();
   void get_xpath_task();
   void merge_chain_state_task(const QJsonObject& map);
-  void get_outputs_task(std::function<void(const QJsonObject&)> on_finished_sequence);
+  void receive_chain_state_task(std::function<void(const QJsonObject&)> on_finished_sequence);
   void start_sequence_task();
   void finished_sequence_task(std::function<void()> on_finished_sequence);
   void build_compute_node_task(ComponentDID compute_did);

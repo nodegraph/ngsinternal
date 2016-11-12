@@ -2,20 +2,28 @@
 #include <base/objectmodel/dep.h>
 #include <base/objectmodel/deploader.h>
 #include <components/computes/inputs.h>
-#include <guicomponents/comms/mqttworker.h>
+#include <guicomponents/comms/browserworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
 
 #include <QtNetwork/QHostAddress>
-#include <QtCore/QString>
+
+#include <QtCore/QObject>
+#include <QtCore/QTimer>
+#include <QtCore/QMap>
+#include <QtCore/QJsonValue>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonArray>
+
 
 namespace ngs {
 
 FirebaseGroupLock::FirebaseGroupLock(Entity* entity)
-    : GroupLock(entity, kIID(), kDID()),
+    : GroupLock(entity, kDID()),
       _scheduler(this),
       _worker(this),
-      _lock(true){
+      _lock(true),
+      _current(true){
   get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
   get_dep_loader()->register_fixed_dep(_worker, Path({}));
 }
@@ -33,43 +41,79 @@ void FirebaseGroupLock::set_lock_setting(bool lock) {
   _lock = lock;
 }
 
-bool FirebaseGroupLock::update_state() {
-//  internal();
-//  InputValues values;
-//  get_inputs(values);
-//  if (!_lock) {
-//    if (_worker->is_(host_address, port, username, password)) {
-//      return true;
-//    }
-//    // Otherwise we start an asynchronous task.
-//    TaskContext tc(_scheduler);
-//    _worker->queue_connect_task(tc, host_address, port, username, password);
-//    return false;
-//  } else {
-//    if (!_worker->is_connected(host_address, port, username, password)) {
-//      return true;
-//    }
-//    // Otherwise we usually disconnect, but with mqtt groups we may have listeners attached,
-//    // so we don't disconnect.
-//    return true;
-//  }
+void FirebaseGroupLock::set_self_dirty(bool dirty) {
+  GroupLock::set_self_dirty(dirty);
+  // Whenever we become dirty, we dirty ourself.
+  if (dirty) {
+    _lock = true;
+  }
 }
 
-void FirebaseGroupLock::get_inputs(InputValues& values) const {
+bool FirebaseGroupLock::update_state() {
+  internal();
+  if (!_lock && _current) {
+    queue_unlock();
+    return false;
+  } else if (_lock && !_current){
+    // Otherwise we usually disconnect, but with mqtt groups we may have listeners attached,
+    // so we don't disconnect.
+    return true;
+  }
+  // Otherwise our _lock and _current states already match up.
+  return true;
+}
+
+
+
+FirebaseGroupLock::InputValues FirebaseGroupLock::get_inputs() const {
   external();
   QJsonObject inputs = _inputs->get_input_values();
 
-  values.apiKey = inputs.value(Message::kApiKey).toString();
-  values.authDomain = inputs.value(Message::kAuthDomain).toString();
-  values.databaseURL = inputs.value(Message::kDatabaseURL).toString();
-  values.storageBucket = inputs.value(Message::kStorageBucket).toString();
+  InputValues values;
+  values.api_key = inputs.value(Message::kApiKey).toString();
+  values.auth_domain = inputs.value(Message::kAuthDomain).toString();
+  values.database_url = inputs.value(Message::kDatabaseURL).toString();
+  values.storage_bucket = inputs.value(Message::kStorageBucket).toString();
 
   values.email = inputs.value(Message::kEmail).toString();
   values.password = inputs.value(Message::kPassword).toString();
+  return values;
 }
 
+void FirebaseGroupLock::queue_unlock() {
+  InputValues values = get_inputs();
+  TaskContext tc(_scheduler);
+  // Initialize the firebase wrapper.
+  {
+    QJsonObject args;
+    args.insert(Message::kApiKey, values.api_key);
+    args.insert(Message::kAuthDomain, values.auth_domain);
+    args.insert(Message::kDatabaseURL, values.database_url);
+    args.insert(Message::kStorageBucket, values.storage_bucket);
+    args.insert(Message::kEmail, values.email);
+    args.insert(Message::kPassword, values.password);
+    _worker->queue_merge_chain_state(tc, args);
+    _worker->queue_firebase_init(tc);
+  }
+  // Sign into a firebase account.
+  {
+    QJsonObject args;
+    args.insert(Message::kEmail, values.email);
+    args.insert(Message::kPassword, values.password);
+    _worker->queue_merge_chain_state(tc, args);
+    _worker->queue_firebase_sign_in(tc);
+  }
+  // Grab result.
+  {
+    std::function<void(const QJsonObject&)> callback = std::bind(&FirebaseGroupLock::receive_chain_state, this, std::placeholders::_1);
+    _worker->queue_receive_chain_state(tc, callback);
+  }
+}
 
-
+void FirebaseGroupLock::receive_chain_state(const QJsonObject& chain_state) {
+  _current = chain_state.value("value").toBool();
+  std::cerr << "FirebaseGroup is now with locked state: " << _current << "\n";
+}
 
 
 }

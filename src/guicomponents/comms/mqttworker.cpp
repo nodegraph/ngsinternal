@@ -26,26 +26,26 @@ MQTTWorker::~MQTTWorker() {
   // Qt should destroy our mqtt clients, as we parented them underneath us.
 }
 
-bool MQTTWorker::is_connected(const QHostAddress& host_address, quint16 port, const QString& username, const QString& password) {
-  QMQTT::Client* client = get_client(host_address, port, username, password);
+bool MQTTWorker::is_connected(const Config& config) {
+  QMQTT::Client* client = get_client(config);
   return client->isConnectedToHost();
 }
 
 bool MQTTWorker::is_subscribed(const Compute* compute, const std::string& topic) const {
-  if (!_listeners.count(topic)) {
+  if (!_subscribers.count(topic)) {
     return false;
   }
   Path node_path = compute->our_entity()->get_path();
-  const std::unordered_set<Path, PathHasher>& paths = _listeners.at(topic);
+  const std::unordered_set<Path, PathHasher>& paths = _subscribers.at(topic);
   if (paths.count(node_path)) {
     return true;
   }
   return false;
 }
 
-void MQTTWorker::dive_into_lockable_group(const std::string& child_group_name, const QHostAddress& host_address, const quint16 port, const QString& username, const QString& password) {
+void MQTTWorker::dive_into_lockable_group(const std::string& child_group_name, const Config& config) {
   TaskContext tc(_scheduler);
-  queue_connect_task(tc, host_address, port, username, password);
+  queue_connect_task(tc, config);
   queue_dive_into_lockable_group(tc, child_group_name);
 }
 
@@ -55,9 +55,8 @@ void MQTTWorker::dive_into_lockable_group(const std::string& child_group_name, c
 //  queue_clean_lockable_group(tc, child_group_name);
 //}
 
-void MQTTWorker::queue_connect_task(TaskContext& tc, const QHostAddress& host_address, quint16 port,
-                                    const QString& username, const QString& password) {
-  _scheduler->queue_task(tc, (Task) std::bind(&MQTTWorker::connect_task, this, host_address, port, username, password), "queue_connect_task");
+void MQTTWorker::queue_connect_task(TaskContext& tc, const Config& config) {
+  _scheduler->queue_task(tc, (Task) std::bind(&MQTTWorker::connect_task, this, config), "queue_connect_task");
 }
 
 void MQTTWorker::queue_publish_task(TaskContext& tc, const QString& topic, const QString& message) {
@@ -92,22 +91,29 @@ void MQTTWorker::queue_finished_compute(TaskContext& tc, BaseMQTTCompute* comput
 // Client Management.
 // ------------------------------------------------------------------------------------------
 
-std::string MQTTWorker::get_key(const QHostAddress& host_address, const quint16 port, const QString& username, const QString& password) {
+std::string MQTTWorker::get_key(const Config& config) {
   QString demark = "??";
-  QString key = host_address.toString() + demark + QString::number(port) + demark + username + demark + password;
+  QString key = config.host_address.toString() + demark + QString::number(config.port) + demark + config.username + demark + config.password;
   return key.toStdString();
 }
 
-QMQTT::Client* MQTTWorker::get_client(const QHostAddress& host_address, const quint16 port, const QString& username, const QString& password) {
-  std::string key = get_key(host_address, port, username, password);
+void MQTTWorker::register_group_lock(const Config& config, const Path& path) {
+  std::string key = get_key(config);
+  _group_locks[key].insert(path);
+}
+
+void MQTTWorker::unregister_group_lock(const Path& path) {
+  for (auto &iter: _group_locks) {
+    iter.second.erase(path);
+  }
+}
+
+QMQTT::Client* MQTTWorker::get_client(const Config& config) {
+  std::string key = get_key(config);
   if (_clients.count(key)) {
     return _clients.at(key);
   }
-  std::cerr << "host address: " << host_address.toString().toStdString() << "\n";
-  std::cerr << "port: " << port << "\n";
-  std::cerr << "username: " << username.toStdString() << "\n";
-  std::cerr << "password: " << password.toStdString() << "\n";
-  QMQTT::Client* client = new_ff QMQTT::Client(host_address, port, NULL);
+  QMQTT::Client* client = new_ff QMQTT::Client(config.host_address, config.port, NULL);
   client->setWillRetain(true);
   connect(client, SIGNAL(connected()), this, SLOT(on_connected()));
   connect(client, SIGNAL(disconnected()), this, SLOT(on_disconnected()));
@@ -127,12 +133,12 @@ QMQTT::Client* MQTTWorker::get_client(const QHostAddress& host_address, const qu
 // This method has connects the mqtt client to the broker.
 // However it also has an extra job which is to set the current mqtt client.
 // Even if the client is already connected to the broker, it makes sure to set the current client.
-void MQTTWorker::connect_task(const QHostAddress& host_address, quint16 port, const QString& username, const QString& password) {
-  _current_client = get_client(host_address, port, username, password); //QHostAddress::LocalHost
+void MQTTWorker::connect_task(const Config& config) {
+  _current_client = get_client(config); //QHostAddress::LocalHost
   assert(_current_client);
-  if (!username.isEmpty()) {
-    _current_client->setUsername(username);
-    _current_client->setPassword(password);
+  if (!config.username.isEmpty()) {
+    _current_client->setUsername(config.username);
+    _current_client->setPassword(config.password);
   } else {
     _current_client->setUsername("");
     _current_client->setPassword("");
@@ -155,7 +161,7 @@ void MQTTWorker::publish_task(const QString& topic, const QString& message) {
 }
 
 void MQTTWorker::subscribe_task(const QString& topic, const Path& node_path) {
-  _listeners[topic.toStdString()].insert(node_path);
+  _subscribers[topic.toStdString()].insert(node_path);
   _current_task_id = _scheduler->wait_for_response();
   _current_client->subscribe(topic, 0);
 }
@@ -179,8 +185,30 @@ void MQTTWorker::on_connected() {
 }
 
 void MQTTWorker::on_disconnected() {
+  std::cerr << "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n";
   std::cerr << "mqtt worker on_disconnected\n";
+
   _timer.stop();
+
+  // Get the sender.
+  QObject* sender = QObject::sender();
+  QMQTT::Client* client = dynamic_cast<QMQTT::Client*>(sender);
+
+  // Get the key.
+  Config config;
+  config.host_address = client->host();
+  config.port = client->port();
+  config.username = client->username();
+  config.password = client->password();
+  std::string key = get_key(config);
+
+  // Dirty all the group locks connected to this config.
+  {
+    for (auto& path: _group_locks.at(key)) {
+      _manipulator->dirty_compute(path);
+    }
+  }
+
   QString error = "Disconnected from MQTT broker. Make sure the host address, username or password is correct on the group.";
   _scheduler->done_waiting_for_response(_current_task_id, error);
 }
@@ -208,8 +236,8 @@ void MQTTWorker::on_received(const QMQTT::Message& message) {
   // Merge the payload of the message into the chain state.
   QString payload = QString::fromUtf8(message.payload());
   QString topic = message.topic();
-  if (_listeners.count(topic.toStdString())) {
-    const std::unordered_set<Path, PathHasher>& paths = _listeners.at(topic.toStdString());
+  if (_subscribers.count(topic.toStdString())) {
+    const std::unordered_set<Path, PathHasher>& paths = _subscribers.at(topic.toStdString());
     std::unordered_set<Path, PathHasher>::const_iterator iter;
     for (iter = paths.begin(); iter != paths.end(); ++iter) {
       const Path& node_path = *iter;

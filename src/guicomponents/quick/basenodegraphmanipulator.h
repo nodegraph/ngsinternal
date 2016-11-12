@@ -54,6 +54,7 @@ class BaseNodeGraphManipulator: public Component {
   // Graph Dirtiness.
   virtual void bubble_group_dirtiness() = 0;
   virtual void synchronize_graph_dirtiness(Entity* group_entity) = 0;
+  virtual void dirty_compute(const Path& path) = 0;
 
   // Specialized Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) = 0;

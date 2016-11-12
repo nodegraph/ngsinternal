@@ -1,11 +1,15 @@
 #include <base/utils/polyborder.h>
 #include <components/compshapes/compshape.h>
 
+#include <base/utils/simplesaver.h>
+#include <base/utils/simpleloader.h>
+
 namespace ngs {
 
 CompShape::CompShape(Entity* entity, ComponentDID did)
     : Component(entity, kIID(), did),
-      _pannable(false){
+      _pannable(false),
+      _visible(true){
 }
 
 CompShape::~CompShape(){
@@ -54,6 +58,18 @@ const std::vector<ShapeInstance>* CompShape::get_quad_instances() const {
 
 const std::vector<CharInstance> * CompShape::get_char_instances() const {
   return NULL;
+}
+
+void CompShape::save(SimpleSaver& saver) const {
+  external();
+  Component::save(saver);
+  saver.save(_visible);
+}
+
+void CompShape::load(SimpleLoader& loader) {
+  external();
+  Component::load(loader);
+  loader.load(_visible);
 }
 
 }

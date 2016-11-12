@@ -2,6 +2,7 @@
 #include <guicomponents/comms/comms_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
+#include <base/utils/path.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
@@ -32,23 +33,33 @@ class BaseMQTTCompute;
 class COMMS_EXPORT MQTTWorker : public QObject, public Component {
 Q_OBJECT
  public:
+  struct Config {
+    QHostAddress host_address;
+    quint16 port;
+    QString username;
+    QString password;
+  };
+
+
+
   COMPONENT_ID(MQTTWorker, MQTTWorker)
   MQTTWorker(Entity* parent);
   virtual ~MQTTWorker();
 
-  bool is_connected(const QHostAddress& host_address, quint16 port, const QString& username, const QString& password);
+  bool is_connected(const Config& config);
   bool is_subscribed(const Compute* compute, const std::string& topic) const;
 
+  // Register the group lock so that it can get dirtied if the connection is disconnected.
+  void register_group_lock(const Config& config, const Path& path);
+  void unregister_group_lock(const Path& path);
 
   // Helpers which call multiple queue methods internally.
-  void dive_into_lockable_group(const std::string& child_group_name, const QHostAddress& host_address, const quint16 port,
-                            const QString& username, const QString& password);
+  void dive_into_lockable_group(const std::string& child_group_name, const Config& config);
 //  void clean_lockable_group(const std::string& child_group_name, const QHostAddress& host_address, const quint16 port,
 //                            const QString& username, const QString& password);
 
   // Queue task to perform at a later time.
-  void queue_connect_task(TaskContext& tc, const QHostAddress& host_address, quint16 port,
-                          const QString& username, const QString& password);
+  void queue_connect_task(TaskContext& tc, const Config& config);
   void queue_publish_task(TaskContext& tc, const QString& topic, const QString& message);
   void queue_subscribe_task(TaskContext& tc, const QString& topic, const Path& node_path);
   void queue_unsubscribe_task(TaskContext& tc, const QString& topic);
@@ -74,11 +85,12 @@ Q_OBJECT
  private:
 
   // Client Management.
-  std::string get_key(const QHostAddress& host_address, const quint16 port, const QString& username, const QString& password);
-  QMQTT::Client* get_client(const QHostAddress& host_address, const quint16 port, const QString& username, const QString& password);
+  std::string get_key(const Config& config);
+
+  QMQTT::Client* get_client(const Config& config);
 
   // Task which perform the work directly.
-  void connect_task(const QHostAddress& host_address, quint16 port, const QString& username, const QString& password);
+  void connect_task(const Config& config);
   void publish_task(const QString& topic, const QString& message);
   void subscribe_task(const QString& topic, const Path& node_path);
   void unsubscribe_task(const QString& topic);
@@ -96,16 +108,22 @@ Q_OBJECT
   Dep<BaseNodeGraphManipulator> _manipulator;
 
   // List of computes listening to changes on certain topics.
-  // The topic is the key. The value is the path to the entity which has a MQTTSubscribeCompute.
+  // The topic is the key.
+  // The value is the path to the entity which has a MQTTSubscribeCompute.
   // Entities should remove their path when from this list when destroyed.
-  std::unordered_map<std::string, std::unordered_set<Path, PathHasher> > _listeners;
+  std::unordered_map<std::string, std::unordered_set<Path, PathHasher> > _subscribers;
 
   // The current client, we're working with.
   QMQTT::Client* _current_client;
   int _current_task_id;
 
-  // There is one client per mqtt group node.
+  // Our mqtt client objects. There is one client per mqtt group node.
+  // The key can be obtain by calling get_key(...).
   std::unordered_map<std::string, QMQTT::Client*> _clients;
+
+  // Our invisible mqtt group lock nodes.
+  // The key can be obtain by calling get_key(...).
+  std::unordered_map<std::string, std::unordered_set<Path, PathHasher> > _group_locks;
 
   // Timer to timeout the connection request.
   QTimer _timer;

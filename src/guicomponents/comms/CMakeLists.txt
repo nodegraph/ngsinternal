@@ -1,5 +1,6 @@
 
 set(sources
+    commutils.cpp
     filemodel.cpp
     message.cpp
     nodejsprocess.cpp
@@ -16,6 +17,7 @@ set(sources
     )
    
 set(headers
+    commutils.h
     taskscheduler.h
     grouptraits.h
     cryptologic.h

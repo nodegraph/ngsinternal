@@ -245,8 +245,8 @@ void BrowserWorker::queue_build_compute_node(TaskContext& tc, ComponentDID compu
   _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::build_compute_node_task,this, compute_did), ss.str());
 }
 
-void BrowserWorker::queue_get_outputs(TaskContext& tc, std::function<void(const QJsonObject&)> on_get_outputs) {
-  _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::get_outputs_task,this,on_get_outputs), "queue_get_outputs");
+void BrowserWorker::queue_receive_chain_state(TaskContext& tc, std::function<void(const QJsonObject&)> receive_chain_state) {
+  _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::receive_chain_state_task,this,receive_chain_state), "queue_get_outputs");
 }
 
 // ---------------------------------------------------------------------------------
@@ -547,8 +547,8 @@ void BrowserWorker::merge_chain_state_task(const QJsonObject& map) {
   _scheduler->run_next_task();
 }
 
-void BrowserWorker::get_outputs_task(std::function<void(const QJsonObject&)> on_get_outputs) {
-  on_get_outputs(_chain_state);
+void BrowserWorker::receive_chain_state_task(std::function<void(const QJsonObject&)> receive_chain_state) {
+  receive_chain_state(_chain_state);
   _scheduler->run_next_task();
 }
 
