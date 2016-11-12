@@ -12,10 +12,10 @@ set(sources
     browserrecorder.cpp
     browsergrouptraits.cpp
     firebasegrouptraits.cpp
-    grouplock.cpp
-    mqttgrouplock.cpp
-    firebasegrouplock.cpp
-    browsergrouplock.cpp
+    entergroupcompute.cpp
+    entermqttgroupcompute.cpp
+    enterfirebasegroupcompute.cpp
+    enterbrowsergroupcompute.cpp
     )
    
 set(headers
@@ -29,10 +29,10 @@ set(headers
     mqttgrouptraits.h
     browsergrouptraits.h
     firebasegrouptraits.h
-    grouplock.h
-    mqttgrouplock.h
-    firebasegrouplock.h
-    browsergrouplock.h
+    entergroupcompute.h
+    entermqttgroupcompute.h
+    enterfirebasegroupcompute.h
+    enterbrowsergroupcompute.h
     )
 
     

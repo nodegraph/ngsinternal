@@ -1,6 +1,6 @@
 #pragma once
 #include <guicomponents/computes/guicomputes_export.h>
-#include <guicomponents/computes/grouplock.h>
+#include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/comms/mqttworker.h>
 
 #include <QtNetwork/QHostAddress>
@@ -12,11 +12,11 @@ class TaskScheduler;
 class MQTTWorker;
 class Inputs;
 
-class GUICOMPUTES_EXPORT MQTTGroupLock: public GroupLock {
+class GUICOMPUTES_EXPORT EnterMQTTGroupCompute: public EnterGroupCompute {
  public:
-  COMPONENT_ID(Compute, MQTTGroupLock);
-  MQTTGroupLock(Entity* entity);
-  virtual ~MQTTGroupLock();
+  COMPONENT_ID(Compute, EnterMQTTGroupCompute);
+  EnterMQTTGroupCompute(Entity* entity);
+  virtual ~EnterMQTTGroupCompute();
 
   // Inputs and Outputs.
   virtual void create_inputs_outputs();
@@ -41,7 +41,7 @@ class GUICOMPUTES_EXPORT MQTTGroupLock: public GroupLock {
     QString password;
   };
 
-  MQTTWorker::Config MQTTGroupLock::get_inputs() const;
+  MQTTWorker::Config EnterMQTTGroupCompute::get_inputs() const;
 
   Dep<TaskScheduler> _scheduler;
   Dep<MQTTWorker> _worker;

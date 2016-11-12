@@ -830,12 +830,7 @@ void NodeGraphQuickItem::edit_node() {
 
   Entity* entity = _last_node_shape->our_entity();
   Dep<Compute> compute(this);
-  if (entity->has<GroupInteraction>()) {
-    Entity* child = entity->get_child("group_settings");
-    compute = get_dep<Compute>(child);
-  } else {
-    compute = get_dep<Compute>(entity);
-  }
+  compute = get_dep<Compute>(entity);
 
   if(compute) {
     QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
@@ -906,36 +901,19 @@ void NodeGraphQuickItem::dive_into_lockable_group(const std::string& child_group
 	  return;
   }
 
-  std::cerr << "111\n";
-
   // If the child isn't a group or doesn't exist, then return.
   if (!get_dep<GroupInteraction>(group_entity)) {
     return;
   }
 
-  std::cerr << "222\n";
-
-  // If the group is locked then return.
-  Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(group_entity);
-  if (!compute->group_is_unlocked()) {
-    std::cerr << "Warning: can't dive into group as its locked\n";
-    //return;
-  }
-
-  std::cerr << "333\n";
-
   // Dive into the group.
   _canvas->dive(group_entity);
-
-  std::cerr << "444\n";
 
   // We clear the selection because we don't allow inter-group selections.
   _selection->clear_selection();
   _selection->clear_error_node();
   frame_all();
   update();
-
-  std::cerr << "555\n";
 }
 
 //void NodeGraphQuickItem::clean_lockable_group(const std::string& child_group_name) {
@@ -990,11 +968,14 @@ void NodeGraphQuickItem::dive_into_lockable_group(const std::string& child_group
 
 void NodeGraphQuickItem::surface() {
   external();
-
-  // Let the group traits performs its transition behavior.
   Entity* group_entity = _factory->get_current_group();
-  Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(group_entity);
-  compute->lock_group();
+
+  // Update the group context node.
+//  Entity* group_context = group_entity->get_child("group_context");
+//  if (group_context) {
+//    Dep<GroupLock> compute = get_dep<GroupLock>(group_entity);
+//    compute->set_lock_setting(false);
+//  }
 
   // Switch to the next group on the canvas.
   _canvas->surface();
@@ -1172,7 +1153,6 @@ void NodeGraphQuickItem::edit_node_poke() {
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
-  compute->update_input_flux();
   QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
   emit edit_node_inputs(path_list, compute->get_editable_inputs(), compute->get_hints(), compute->get_input_exposure());
 }

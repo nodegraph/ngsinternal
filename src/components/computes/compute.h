@@ -45,8 +45,6 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void create_inputs_outputs();
   virtual void set_self_dirty(bool dirty);
 
-  // Do we still need this? verify.
-  virtual void update_input_flux();
   virtual const Dep<Inputs>& get_inputs() {return _inputs;}
 
   // Inputs.

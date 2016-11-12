@@ -1,4 +1,4 @@
-#include <guicomponents/computes/mqttgrouplock.h>
+#include <guicomponents/computes/entermqttgroupcompute.h>
 #include <base/objectmodel/dep.h>
 #include <base/objectmodel/deploader.h>
 #include <components/computes/inputs.h>
@@ -9,8 +9,8 @@
 
 namespace ngs {
 
-MQTTGroupLock::MQTTGroupLock(Entity* entity)
-    : GroupLock(entity, kDID()),
+EnterMQTTGroupCompute::EnterMQTTGroupCompute(Entity* entity)
+    : EnterGroupCompute(entity, kDID()),
       _scheduler(this),
       _worker(this),
       _lock(false){
@@ -18,21 +18,21 @@ MQTTGroupLock::MQTTGroupLock(Entity* entity)
   get_dep_loader()->register_fixed_dep(_worker, Path({}));
 }
 
-MQTTGroupLock::~MQTTGroupLock() {
+EnterMQTTGroupCompute::~EnterMQTTGroupCompute() {
   _worker->unregister_group_lock(our_entity()->get_path());
 }
 
-void MQTTGroupLock::create_inputs_outputs() {
+void EnterMQTTGroupCompute::create_inputs_outputs() {
   external();
-  GroupLock::create_inputs_outputs();
+  EnterGroupCompute::create_inputs_outputs();
   create_input(Message::kHostAddress, "127.0.0.1", false);
   create_input(Message::kPort, 1883, false);
   create_input(Message::kUsername, "", false);
   create_input(Message::kPassword, "", false);
 }
 
-const QJsonObject MQTTGroupLock::_hints = MQTTGroupLock::init_hints();
-QJsonObject MQTTGroupLock::init_hints() {
+const QJsonObject EnterMQTTGroupCompute::_hints = EnterMQTTGroupCompute::init_hints();
+QJsonObject EnterMQTTGroupCompute::init_hints() {
   QJsonObject m;
 
   add_hint(m, Message::kHostAddress, HintType::kJSType, to_underlying(JSType::kString));
@@ -50,19 +50,19 @@ QJsonObject MQTTGroupLock::init_hints() {
   return m;
 }
 
-bool MQTTGroupLock::get_lock_setting() const{
+bool EnterMQTTGroupCompute::get_lock_setting() const{
   external();
   return _lock;
 }
 
-void MQTTGroupLock::set_lock_setting(bool lock) {
+void EnterMQTTGroupCompute::set_lock_setting(bool lock) {
   external();
   _lock = lock;
 }
 
-bool MQTTGroupLock::update_state() {
+bool EnterMQTTGroupCompute::update_state() {
   internal();
-  GroupLock::update_state();
+  EnterGroupCompute::update_state();
 
   std::cerr << "MQTTGroupLock::update_state \n";
 
@@ -90,7 +90,7 @@ bool MQTTGroupLock::update_state() {
   }
 }
 
-MQTTWorker::Config MQTTGroupLock::get_inputs() const {
+MQTTWorker::Config EnterMQTTGroupCompute::get_inputs() const {
   external();
   QJsonObject inputs = _inputs->get_input_values();
 

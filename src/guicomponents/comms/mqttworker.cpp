@@ -20,6 +20,11 @@ MQTTWorker::MQTTWorker(Entity* parent)
       _current_task_id(-1){
   get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
   get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
+
+  // Timer setup.
+  _timer.setSingleShot(true);
+  _timer.setInterval(1000); // We allow 1 second to wait to connect.
+  connect(&_timer,SIGNAL(timeout()),this,SLOT(on_time_out()));
 }
 
 MQTTWorker::~MQTTWorker() {

@@ -83,10 +83,6 @@ bool Compute::clean_finalize() {
   return true;
 }
 
-void Compute::update_input_flux() {
-  //_inputs->clean_wires();
-}
-
 QJsonObject Compute::get_editable_inputs() const {
   return _inputs->get_editable_inputs();
 }

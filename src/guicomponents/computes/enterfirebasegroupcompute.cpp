@@ -1,4 +1,4 @@
-#include <guicomponents/computes/firebasegrouplock.h>
+#include <guicomponents/computes/enterfirebasegroupcompute.h>
 #include <base/objectmodel/dep.h>
 #include <base/objectmodel/deploader.h>
 #include <components/computes/inputs.h>
@@ -18,8 +18,8 @@
 
 namespace ngs {
 
-FirebaseGroupLock::FirebaseGroupLock(Entity* entity)
-    : GroupLock(entity, kDID()),
+EnterFirebaseGroupCompute::EnterFirebaseGroupCompute(Entity* entity)
+    : EnterGroupCompute(entity, kDID()),
       _scheduler(this),
       _worker(this),
       _lock(true),
@@ -28,28 +28,28 @@ FirebaseGroupLock::FirebaseGroupLock(Entity* entity)
   get_dep_loader()->register_fixed_dep(_worker, Path({}));
 }
 
-FirebaseGroupLock::~FirebaseGroupLock() {
+EnterFirebaseGroupCompute::~EnterFirebaseGroupCompute() {
 }
 
-bool FirebaseGroupLock::get_lock_setting() const{
+bool EnterFirebaseGroupCompute::get_lock_setting() const{
   external();
   return _lock;
 }
 
-void FirebaseGroupLock::set_lock_setting(bool lock) {
+void EnterFirebaseGroupCompute::set_lock_setting(bool lock) {
   external();
   _lock = lock;
 }
 
-void FirebaseGroupLock::set_self_dirty(bool dirty) {
-  GroupLock::set_self_dirty(dirty);
+void EnterFirebaseGroupCompute::set_self_dirty(bool dirty) {
+  EnterGroupCompute::set_self_dirty(dirty);
   // Whenever we become dirty, we dirty ourself.
   if (dirty) {
     _lock = true;
   }
 }
 
-bool FirebaseGroupLock::update_state() {
+bool EnterFirebaseGroupCompute::update_state() {
   internal();
   if (!_lock && _current) {
     queue_unlock();
@@ -65,7 +65,7 @@ bool FirebaseGroupLock::update_state() {
 
 
 
-FirebaseGroupLock::InputValues FirebaseGroupLock::get_inputs() const {
+EnterFirebaseGroupCompute::InputValues EnterFirebaseGroupCompute::get_inputs() const {
   external();
   QJsonObject inputs = _inputs->get_input_values();
 
@@ -80,7 +80,7 @@ FirebaseGroupLock::InputValues FirebaseGroupLock::get_inputs() const {
   return values;
 }
 
-void FirebaseGroupLock::queue_unlock() {
+void EnterFirebaseGroupCompute::queue_unlock() {
   InputValues values = get_inputs();
   TaskContext tc(_scheduler);
   // Initialize the firebase wrapper.
@@ -105,12 +105,12 @@ void FirebaseGroupLock::queue_unlock() {
   }
   // Grab result.
   {
-    std::function<void(const QJsonObject&)> callback = std::bind(&FirebaseGroupLock::receive_chain_state, this, std::placeholders::_1);
+    std::function<void(const QJsonObject&)> callback = std::bind(&EnterFirebaseGroupCompute::receive_chain_state, this, std::placeholders::_1);
     _worker->queue_receive_chain_state(tc, callback);
   }
 }
 
-void FirebaseGroupLock::receive_chain_state(const QJsonObject& chain_state) {
+void EnterFirebaseGroupCompute::receive_chain_state(const QJsonObject& chain_state) {
   _current = chain_state.value("value").toBool();
   std::cerr << "FirebaseGroup is now with locked state: " << _current << "\n";
 }

@@ -60,10 +60,10 @@
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/firebasegrouptraits.h>
 #include <guicomponents/computes/mqttgrouptraits.h>
-#include <guicomponents/computes/grouplock.h>
-#include <guicomponents/computes/browsergrouplock.h>
-#include <guicomponents/computes/firebasegrouplock.h>
-#include <guicomponents/computes/mqttgrouplock.h>
+#include <guicomponents/computes/entergroupcompute.h>
+#include <guicomponents/computes/enterbrowsergroupcompute.h>
+#include <guicomponents/computes/enterfirebasegroupcompute.h>
+#include <guicomponents/computes/entermqttgroupcompute.h>
 
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/browsergroupnodecompute.h>
@@ -294,9 +294,9 @@ void GroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
-  sub->set_compute_did(ComponentDID::kGroupLock);
-  sub->set_visible(false);
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
+  sub->set_compute_did(ComponentDID::kEnterGroupCompute);
+  sub->set_visible(true);
   sub->create_internals();
 }
 
@@ -370,9 +370,9 @@ void ScriptGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
-  sub->set_compute_did(ComponentDID::kGroupLock);
-  sub->set_visible(false);
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
+  sub->set_compute_did(ComponentDID::kEnterGroupCompute);
+  sub->set_visible(true);
   sub->create_internals();
 }
 
@@ -388,9 +388,9 @@ void BrowserGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
-  sub->set_compute_did(ComponentDID::kBrowserGroupLock);
-  sub->set_visible(false);
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
+  sub->set_compute_did(ComponentDID::kEnterBrowserGroupCompute);
+  sub->set_visible(true);
   sub->create_internals();
 }
 
@@ -406,9 +406,9 @@ void FirebaseGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
-  sub->set_compute_did(ComponentDID::kFirebaseGroupLock);
-  sub->set_visible(false);
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
+  sub->set_compute_did(ComponentDID::kEnterFirebaseGroupCompute);
+  sub->set_visible(true);
   sub->create_internals();
 }
 
@@ -424,9 +424,9 @@ void MQTTGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_settings");
-  sub->set_compute_did(ComponentDID::kMQTTGroupLock);
-  sub->set_visible(false);
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
+  sub->set_compute_did(ComponentDID::kEnterMQTTGroupCompute);
+  sub->set_visible(true);
   sub->create_internals();
 }
 

@@ -37,7 +37,6 @@ enum class ComponentIID : size_t {
   kILowerHierarchyChange,
   kIUpperHierarchyChange,
   kIInputPlug,
-  kIGroupLock,
   kIGroupInteraction,
   kINodeGraphEditor,
   kIBaseNodeGraphManipulator,
@@ -127,6 +126,13 @@ COMPONENT_ENTRY1(MergeSetsCompute)\
 COMPONENT_ENTRY1(ShrinkSetToSideCompute)\
 COMPONENT_ENTRY1(ShrinkAgainstMarkedCompute)\
 \
+COMPONENT_ENTRY1(EnterGroupCompute)\
+COMPONENT_ENTRY1(EnterMQTTGroupCompute)\
+COMPONENT_ENTRY1(EnterFirebaseGroupCompute)\
+COMPONENT_ENTRY1(EnterBrowserGroupCompute)\
+\
+COMPONENT_ENTRY1(ExitGroupCompute)\
+\
 COMPONENT_ENTRY1(FirebaseSignInCompute)\
 COMPONENT_ENTRY1(FirebaseSignOutCompute)\
 COMPONENT_ENTRY1(FirebaseWriteDataCompute)\
@@ -141,10 +147,6 @@ COMPONENT_ENTRY1(FBORenderer)\
 COMPONENT_ENTRY1(FBOWorker)\
 COMPONENT_ENTRY1(GraphBuilder)\
 /* Interactions. */\
-COMPONENT_ENTRY1(GroupLock)\
-COMPONENT_ENTRY1(MQTTGroupLock)\
-COMPONENT_ENTRY1(FirebaseGroupLock)\
-COMPONENT_ENTRY1(BrowserGroupLock)\
 COMPONENT_ENTRY1(GroupInteraction)\
 /* -- */\
 COMPONENT_ENTRY1(NodeGraphEditor)\

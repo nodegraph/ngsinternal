@@ -8,21 +8,16 @@ namespace ngs {
 
 class Inputs;
 
-class GUICOMPUTES_EXPORT GroupLock: public Compute  {
+class GUICOMPUTES_EXPORT EnterGroupCompute: public Compute  {
  public:
-  COMPONENT_ID(Compute, GroupLock);
-  GroupLock(Entity* entity, ComponentDID did = kDID());
-  virtual ~GroupLock();
+  COMPONENT_ID(Compute, EnterGroupCompute);
+  EnterGroupCompute(Entity* entity, ComponentDID did = kDID());
+  virtual ~EnterGroupCompute();
 
   virtual bool get_lock_setting() const {return false;}
   virtual void set_lock_setting(bool lock) {}
 
-  // Overrides.
-  virtual void set_self_dirty(bool dirty);
-
  protected:
-  // Overrides.
-  virtual bool update_state();
 
   // Note: Since we're grabbing all the inputs on the group,
   // if anything changes on the group we'll become dirty.
@@ -32,6 +27,13 @@ class GUICOMPUTES_EXPORT GroupLock: public Compute  {
   // Because of this cache, in order to clean itself again it basically
   // does nothing.
   Dep<Inputs> _inputs;
+};
+
+class GUICOMPUTES_EXPORT ExitGroupCompute: public Compute  {
+ public:
+  COMPONENT_ID(Compute, ExitGroupCompute);
+  ExitGroupCompute(Entity* entity, ComponentDID did = kDID());
+  virtual ~ExitGroupCompute();
 };
 
 }

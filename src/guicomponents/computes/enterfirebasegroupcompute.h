@@ -1,6 +1,6 @@
 #pragma once
 #include <guicomponents/computes/guicomputes_export.h>
-#include <guicomponents/computes/grouplock.h>
+#include <guicomponents/computes/entergroupcompute.h>
 
 #include <QtCore/QString>
 
@@ -13,7 +13,7 @@ class TaskScheduler;
 class BrowserWorker;
 
 
-class GUICOMPUTES_EXPORT BrowserGroupLock: public GroupLock {
+class GUICOMPUTES_EXPORT EnterFirebaseGroupCompute: public EnterGroupCompute {
  public:
 
   struct InputValues {
@@ -26,12 +26,15 @@ class GUICOMPUTES_EXPORT BrowserGroupLock: public GroupLock {
   };
 
 
-  COMPONENT_ID(Compute, BrowserGroupLock);
-  BrowserGroupLock(Entity* entity);
-  virtual ~BrowserGroupLock();
+  COMPONENT_ID(Compute, EnterFirebaseGroupCompute);
+  EnterFirebaseGroupCompute(Entity* entity);
+  virtual ~EnterFirebaseGroupCompute();
 
   virtual bool get_lock_setting() const;
   virtual void set_lock_setting(bool lock);
+
+  // Override.
+  virtual void set_self_dirty(bool dirty);
 
  protected:
   virtual bool update_state();
@@ -45,7 +48,7 @@ class GUICOMPUTES_EXPORT BrowserGroupLock: public GroupLock {
   Dep<BrowserWorker> _worker;
 
   bool _lock; // state desired
-  bool _up_to_date; // current state
+  bool _current; // current state
 
 };
 

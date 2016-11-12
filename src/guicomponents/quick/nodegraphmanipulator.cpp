@@ -140,17 +140,6 @@ void NodeGraphManipulatorImp::set_inputs_as_ultimate_targets(Entity* node_entity
     entities.insert(iter.second->our_entity());
   }
 
-  // Show the processing marker on the node_entity;
-  set_processing_node(node_entity);
-
-  // If the entity is a group node and has a group lock, we add the group lock as well.
-  if (node_entity->has<GroupInteraction>()) {
-    Entity* child = node_entity->get_child("group_settings");
-    if (child) {
-      entities.insert(child);
-    }
-  }
-
   set_ultimate_targets(entities);
 }
 
@@ -214,16 +203,12 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
       if (!c) {
         // If the ultimate target is an input on a node, then we may iterate thruough a node.
         // In this case the GroupNodeCompute dep will be null.
-        std::cerr << "aaaaaaaaaaaaaaaaaaa\n";
         continue;
       }
-      std::cerr << "bbbbbbbbbbbbbbbbbb\n";
       if (!c->clean_inputs()) {
-        std::cerr << "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: " << c->get_name() << "\n";
         return;
       }
     } while (target_path.size());
-    std::cerr << "cccccccccccccccc\n";
 
     // If we get here the inputs on our surrounding group and our input nodes
     // now have appropriate values to perform the compute.
