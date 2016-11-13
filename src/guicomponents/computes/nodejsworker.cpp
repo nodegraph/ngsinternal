@@ -3,7 +3,6 @@
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
-#include <guicomponents/comms/commutils.h>
 
 #include <guicomponents/computes/firebasecomputes.h>
 
@@ -460,10 +459,10 @@ void NodeJSWorker::handle_info(const Message& msg) {
       return;
     }
     QJsonObject obj = msg.value(Message::kValue).toObject();
-    QVariantList var_list = obj.value(Message::kNodePath).toArray().toVariantList();
-    Path node_path = var_list_to_path(var_list);
     QString data_path = obj.value(Message::kDataPath).toString();
     QJsonValue value = obj.value(Message::kValue);
+    QString node_path_str = obj.value(Message::kNodePath).toString();
+    Path node_path = Path::string_to_path(node_path_str.toStdString());
     _manipulator->set_firebase_override(node_path, data_path, value);
   } else {
       std::cerr << "comm->app: received info: " << msg.to_string().toStdString() << "\n";

@@ -46,6 +46,11 @@ BaseStackPage{
         }
     }
     
+    function get_node_path_tail() {
+        var node_path_splits = _node_path.split('/')
+        return node_path_splits[node_path_splits.length-1]
+    }
+    
     function on_view_outputs(node_path, values) {
         app_settings.vibrate()
         stack_view.clear_pages()
@@ -56,7 +61,8 @@ BaseStackPage{
     	_node_path = node_path
     	
     	var data_path = []
-        view_object(node_path[node_path.length-1], data_path)
+    	var node_path_tail = get_node_path_tail()
+        view_object(node_path_tail, data_path)
         main_bar.on_switch_to_mode(app_settings.view_node_mode)
     }
 
@@ -77,7 +83,8 @@ BaseStackPage{
         _node_path = node_path
         
         var data_path = []
-        edit_object(node_path[node_path.length-1], data_path)
+        var node_path_tail = get_node_path_tail()
+        edit_object(node_path_tail, data_path)
         main_bar.on_switch_to_mode(app_settings.edit_node_mode)
     }
 

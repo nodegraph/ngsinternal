@@ -22,6 +22,10 @@ std::deque<std::string> Path::split_string(const std::string& path) {
   return elements;
 }
 
+Path Path::string_to_path(const std::string& path) {
+  return Path(Path::split_string(path));
+}
+
 Path::Path() {
 }
 

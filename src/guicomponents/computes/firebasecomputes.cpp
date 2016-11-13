@@ -4,7 +4,6 @@
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
 #include <guicomponents/computes/nodejsworker.h>
-#include <guicomponents/comms/commutils.h>
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/firebasecomputes.h>
@@ -52,9 +51,8 @@ void FirebaseCompute::prepend_tasks(TaskContext& tc) {
   QJsonObject inputs = _inputs->get_input_values();
 
   // Add our path.
-  QStringList list = path_to_string_list(get_path());
-  QJsonArray arr = QJsonArray::fromStringList(list);
-  inputs.insert(Message::kNodePath, arr);
+  QString node_path = get_path_as_string().c_str();
+  inputs.insert(Message::kNodePath, node_path);
 
   // Queue up a merge chain state task.
   _worker->queue_merge_chain_state(tc, inputs);

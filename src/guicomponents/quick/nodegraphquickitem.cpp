@@ -32,7 +32,6 @@
 #include <components/compshapes/nodeshape.h>
 #include <components/interactions/viewcontrols.h>
 
-#include <guicomponents/comms/commutils.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/quick/eventtoinfo.h>
 #include <guicomponents/quick/fborenderer.h>
@@ -778,8 +777,8 @@ void NodeGraphQuickItem::view_node() {
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
   if(compute) {
-    QStringList path_list = path_to_string_list(compute->get_path());
-    emit view_node_outputs(path_list, compute->get_outputs());
+    QString node_path = compute->get_path_as_string().c_str();
+    emit view_node_outputs(node_path, compute->get_outputs());
     // Update our node graph selection object which also tracks and edit and view nodes.
     get_current_interaction()->view(_last_node_shape);
     update();
@@ -800,8 +799,8 @@ void NodeGraphQuickItem::edit_node() {
   compute = get_dep<Compute>(entity);
 
   if(compute) {
-    QStringList path_list = path_to_string_list(compute->get_path());
-    emit edit_node_inputs(path_list,
+    QString node_path = compute->get_path_as_string().c_str();
+    emit edit_node_inputs(node_path,
                           compute->get_editable_inputs(),
                           compute->get_hints(),
                           compute->get_input_exposure());
@@ -811,8 +810,8 @@ void NodeGraphQuickItem::edit_node() {
   }
 }
 
-void NodeGraphQuickItem::set_editable_inputs(const QStringList& path_list, const QJsonObject& values) {
-  Path path = string_list_to_path(path_list);
+void NodeGraphQuickItem::set_editable_inputs(const QString& node_path, const QJsonObject& values) {
+  Path path = Path::string_to_path(node_path.toStdString());
   std::cerr << "NodeGraphQuickItem::set_editable_inputs on path: " << path.get_as_string() << "\n";
   Entity* entity = get_app_root()->get_entity(path);
   Dep<Compute> compute = get_dep<Compute>(entity);
@@ -821,8 +820,8 @@ void NodeGraphQuickItem::set_editable_inputs(const QStringList& path_list, const
   }
 }
 
-void NodeGraphQuickItem::set_input_exposure(const QStringList& path_list, const QJsonObject& values) {
-  Path path = string_list_to_path(path_list);
+void NodeGraphQuickItem::set_input_exposure(const QString& node_path, const QJsonObject& values) {
+  Path path = Path::string_to_path(node_path.toStdString());
   std::cerr << "NodeGraphQuickItem::set_editable_inputs on path: " << path.get_as_string() << "\n";
   Entity* entity = get_app_root()->get_entity(path);
   Dep<Compute> compute = get_dep<Compute>(entity);
@@ -1038,23 +1037,23 @@ bool NodeGraphQuickItem::links_are_locked() const {
 void NodeGraphQuickItem::view_node_poke() {
   _last_node_shape = _selection->get_view_node();
   if (!_last_node_shape) {
-    emit view_node_outputs(QStringList("no view node selected"), QJsonObject());
+    emit view_node_outputs(QString("no view node selected"), QJsonObject());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
-  QStringList path_list = path_to_string_list(compute->get_path());
-  emit view_node_outputs(path_list, compute->get_outputs());
+  QString node_path = compute->get_path_as_string().c_str();
+  emit view_node_outputs(node_path, compute->get_outputs());
 }
 
 void NodeGraphQuickItem::edit_node_poke() {
   _last_node_shape = _selection->get_edit_node();
   if (!_last_node_shape) {
-    emit edit_node_inputs(QStringList("no edit node selected"), QJsonObject(), QJsonObject(), QJsonObject());
+    emit edit_node_inputs(QString("no edit node selected"), QJsonObject(), QJsonObject(), QJsonObject());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
-  QStringList path_list = path_to_string_list(compute->get_path());
-  emit edit_node_inputs(path_list, compute->get_editable_inputs(), compute->get_hints(), compute->get_input_exposure());
+  QString node_path = compute->get_path_as_string().c_str();
+  emit edit_node_inputs(node_path, compute->get_editable_inputs(), compute->get_hints(), compute->get_input_exposure());
 }
 
 }

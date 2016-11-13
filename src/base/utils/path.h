@@ -30,7 +30,10 @@ class UTILS_EXPORT Path {
 
   // Note splitting strings can be very time consuming in inner loops.
   static std::deque<std::string> split_string(const std::string& path);
+  static Path string_to_path(const std::string& path);
 
+  // Note we don't have a constructor that automatically splits strings to
+  // help emphasize the slowness of splitting strings.
   Path();
   Path(const std::deque<std::string>& elements);
   Path(const Path& other);

@@ -11,8 +11,6 @@ export class FirebaseWrap {
     private app_server: AppSocketServer
     private signed_in: boolean
     
-    private db_path: string // path to the location in the db we're listening to
-    private node_path: string // path to our associated node in the node graph
     private listener: (a: firebase.database.DataSnapshot, b?: string) => any // the listener which gets call when the db changes at db_path
 
     

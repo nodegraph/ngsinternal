@@ -96,8 +96,8 @@ Q_OBJECT
   Q_INVOKABLE void dirty_node();
   Q_INVOKABLE void clean_node();
 
-  Q_INVOKABLE void set_editable_inputs(const QStringList& path_list, const QJsonObject& values);
-  Q_INVOKABLE void set_input_exposure(const QStringList& path_list, const QJsonObject& values);
+  Q_INVOKABLE void set_editable_inputs(const QString& node_path, const QJsonObject& values);
+  Q_INVOKABLE void set_input_exposure(const QString& node_path, const QJsonObject& values);
 
   // Group Navigation.
   void dive_into_group(const std::string& child_group_name);
@@ -153,8 +153,8 @@ Q_OBJECT
  void group_node_context_menu_requested();
  void node_context_menu_requested();
 
- void view_node_outputs(const QStringList& path_list, const QJsonObject& results);
- void edit_node_inputs(const QStringList& path_list, const QJsonObject& values, const QJsonObject& hints, const QJsonObject& exposed_settings);
+ void view_node_outputs(const QString& node_path, const QJsonObject& results);
+ void edit_node_inputs(const QString& node_path, const QJsonObject& values, const QJsonObject& hints, const QJsonObject& exposed_settings);
 
  void mark_progress();
 
