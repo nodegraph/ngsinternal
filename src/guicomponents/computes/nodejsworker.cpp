@@ -400,8 +400,12 @@ void NodeJSWorker::queue_firebase_read_data(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::firebase_read_data_task,this), "queue_firebase_read_data");
 }
 
-void NodeJSWorker::queue_firebase_listen_to_changes(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::firebase_listen_to_changes_task,this), "queue_firebase_listen_to_changes");
+void NodeJSWorker::queue_firebase_subscribe(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::firebase_subscribe_task,this), "queue_firebase_subscribe");
+}
+
+void NodeJSWorker::queue_firebase_unsubscribe(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::firebase_unsubscribe_task,this), "queue_firebase_unsubscribe");
 }
 
 // ------------------------------------------------------------------------
@@ -877,12 +881,22 @@ void NodeJSWorker::firebase_read_data_task() {
   send_msg_task(req);
 }
 
-void NodeJSWorker::firebase_listen_to_changes_task() {
+void NodeJSWorker::firebase_subscribe_task() {
   QJsonObject args;
   args.insert(Message::kDataPath, _chain_state.value(Message::kDataPath));
   args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
-  Message req(RequestType::kFirebaseListenToChanges);
+  Message req(RequestType::kFirebaseSubscribe);
+  req.insert(Message::kArgs, args);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::firebase_unsubscribe_task() {
+  QJsonObject args;
+  args.insert(Message::kDataPath, _chain_state.value(Message::kDataPath));
+  args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
+
+  Message req(RequestType::kFirebaseUnsubscribe);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }

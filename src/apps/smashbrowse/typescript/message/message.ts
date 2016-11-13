@@ -54,7 +54,8 @@ const enum RequestType {
     kFirebaseSignOut,
     kFirebaseWriteData,
     kFirebaseReadData,
-    kFirebaseListenToChanges
+    kFirebaseSubscribe,
+    kFirebaseUnsubscribe
 }
 
 declare const enum MouseActionType {

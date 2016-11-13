@@ -11,11 +11,7 @@ export class FirebaseWrap {
     private app_server: AppSocketServer
     private signed_in: boolean
     
-    private listener: (a: firebase.database.DataSnapshot, b?: string) => any // the listener which gets call when the db changes at db_path
-
-    
-    // Each firebase node in the node graph, can only have one listener and only listen to one location in the firebase database.
-    // The listeners member mays the node's path to the listener function
+    // Maps node_path to its listener.
     private listeners: any
 
     static js_to_value(js: string): any {
@@ -41,6 +37,7 @@ export class FirebaseWrap {
         this.firebase_app = firebase.initializeApp(config, config_key); 
         this.app_server = app_server
         this.signed_in = false
+        this.listeners = {}
 
         console.log('firebase app initialized with config: ' + JSON.stringify(config))
     }
@@ -60,8 +57,11 @@ export class FirebaseWrap {
             case RequestType.kFirebaseReadData: {
                 this.read_data(req)
             } break
-            case RequestType.kFirebaseListenToChanges: {
-                this.listen_for_changes(req)
+            case RequestType.kFirebaseSubscribe: {
+                this.subscribe(req)
+            } break
+            case RequestType.kFirebaseUnsubscribe: {
+                this.unsubscribe(req)
             } break
             default: {
                 return false
@@ -158,21 +158,47 @@ export class FirebaseWrap {
     }
 
     // Listen to changes.
-    listen_for_changes(req: RequestMessage): void {
+    subscribe(req: RequestMessage): void {
         if (!this.signed_in) {
             this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
             return
         }
         let full_data_path = this.get_full_data_path(req.args.data_path)
-        this.listener =  (data: firebase.database.DataSnapshot) => {
+
+        // Remove previous listener under the node path.
+        this.remove_listener(req.args.node_path, req.args.data_path)
+
+        // Cache our next listener under the node path.
+        this.listeners[req.args.node_path] =  (data: firebase.database.DataSnapshot) => {
             let info: any = {}
             info.node_path = req.args.node_path
             info.data_path = req.args.data_path
             info.value = data.exportVal()
             this.app_server.send_msg(new InfoMessage(req.id, "-1", InfoType.kFirebaseChanged, info))
         }
-        this.firebase_app.database().ref(full_data_path).on('value', this.listener)
+
+        // Attach the listener.
+        this.firebase_app.database().ref(full_data_path).on('value', this.listeners[req.args.node_path])
+        // Send our response.
         this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+    }
+
+    unsubscribe(req: RequestMessage): void {
+        if (!this.signed_in) {
+            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
+            return
+        }
+        this.remove_listener(req.args.node_path, req.args.data_path)
+        // Send our response.
+        this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+    }
+
+    remove_listener(node_path: string, data_path: string):void {
+        let full_data_path = this.get_full_data_path(data_path)
+        // Use the node path to get the cached listener. Use it to remove the listener.
+        this.firebase_app.database().ref(full_data_path).off('value', this.listeners[node_path])
+        // Destroy the listener under the node path.
+        delete this.listeners[node_path]
     }
 
 }
@@ -193,7 +219,8 @@ export class FirebaseWraps {
             RequestType.kFirebaseSignOut,
             RequestType.kFirebaseWriteData,
             RequestType.kFirebaseReadData,
-            RequestType.kFirebaseListenToChanges]
+            RequestType.kFirebaseSubscribe,
+            RequestType.kFirebaseUnsubscribe]
     }
 
     can_handle_request(type: RequestType): boolean {

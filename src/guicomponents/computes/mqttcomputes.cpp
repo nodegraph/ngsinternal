@@ -170,6 +170,8 @@ bool MQTTSubscribeCompute::update_state() {
 }
 
 bool MQTTSubscribeCompute::destroy_state() {
+  // Note we can't launch any computes that require multiple cleaning passes.
+  // We can only use cached values here to launch one task, and we can't wait for it.
   internal();
   TaskContext tc(_scheduler);
   if (!_worker->is_subscribed(this, _topic.toStdString())) {

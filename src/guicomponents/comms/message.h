@@ -71,7 +71,8 @@ enum class RequestType : int {
   kFirebaseSignOut,
   kFirebaseWriteData,
   kFirebaseReadData,
-  kFirebaseListenToChanges
+  kFirebaseSubscribe,
+  kFirebaseUnsubscribe
 };
 
 enum class MouseActionType : int {

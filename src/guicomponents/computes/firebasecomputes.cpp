@@ -180,10 +180,31 @@ bool FirebaseReadDataCompute::update_state() {
   // Perform our compute.
   TaskContext tc(_scheduler);
   FirebaseCompute::prepend_tasks(tc);
-  _worker->queue_firebase_listen_to_changes(tc);
+  _worker->queue_firebase_subscribe(tc);
   _worker->queue_firebase_read_data(tc);
   FirebaseCompute::append_tasks(tc);
   return false;
+}
+
+bool FirebaseReadDataCompute::destroy_state() {
+  internal();
+  // Note we can't launch any computes that require multiple cleaning passes.
+  // We can only use cached values here to launch one task, and we can't wait for it.
+
+  QJsonObject inputs;
+
+  // Add our path.
+  QString node_path = get_path_as_string().c_str();
+  inputs.insert(Message::kNodePath, node_path);
+
+  // Add our data path.
+  inputs.insert(Message::kDataPath, _data_path);
+
+  // Queue up a merge chain state task.
+  TaskContext tc(_scheduler);
+  _worker->queue_merge_chain_state(tc, inputs);
+  _worker->queue_firebase_unsubscribe(tc);
+  return true;
 }
 
 // -------------------------------------------------------------------------------------------------------------------------

@@ -68,6 +68,7 @@ class GUICOMPUTES_EXPORT FirebaseReadDataCompute: public FirebaseCompute {
  protected:
   virtual void receive_chain_state(const QJsonObject& chain_state);
   virtual bool update_state();
+  virtual bool destroy_state();
 
  private:
   // This override value is not really used, because when we clean/update_state the current value
