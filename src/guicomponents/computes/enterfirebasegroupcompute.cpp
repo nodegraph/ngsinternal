@@ -21,9 +21,7 @@ namespace ngs {
 EnterFirebaseGroupCompute::EnterFirebaseGroupCompute(Entity* entity)
     : EnterGroupCompute(entity, kDID()),
       _scheduler(this),
-      _worker(this),
-      _lock(true),
-      _current(true){
+      _worker(this) {
   get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
   get_dep_loader()->register_fixed_dep(_worker, Path({}));
 }
@@ -31,39 +29,49 @@ EnterFirebaseGroupCompute::EnterFirebaseGroupCompute(Entity* entity)
 EnterFirebaseGroupCompute::~EnterFirebaseGroupCompute() {
 }
 
-bool EnterFirebaseGroupCompute::get_lock_setting() const{
+void EnterFirebaseGroupCompute::create_inputs_outputs() {
   external();
-  return _lock;
+  EnterGroupCompute::create_inputs_outputs();
+  create_input(Message::kApiKey, "AIzaSyCXGNlyRf5uk8Xk1bvKXUcA53TC6Lc3I-A", false);
+  create_input(Message::kAuthDomain, "test-project-91c10.firebaseapp.com", false);
+  create_input(Message::kDatabaseURL, "https://test-project-91c10.firebaseio.com/", false);
+  create_input(Message::kStorageBucket, "gs://test-project-91c10.appspot.com", false);
+  create_input(Message::kEmail, "your_email@some_place.com", false);
+  create_input(Message::kPassword, "your_password", false);
 }
 
-void EnterFirebaseGroupCompute::set_lock_setting(bool lock) {
-  external();
-  _lock = lock;
-}
+const QJsonObject EnterFirebaseGroupCompute::_hints = EnterFirebaseGroupCompute::init_hints();
+QJsonObject EnterFirebaseGroupCompute::init_hints() {
+  QJsonObject m;
 
-void EnterFirebaseGroupCompute::set_self_dirty(bool dirty) {
-  EnterGroupCompute::set_self_dirty(dirty);
-  // Whenever we become dirty, we dirty ourself.
-  if (dirty) {
-    _lock = true;
-  }
+  add_hint(m, Message::kApiKey, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kApiKey, HintType::kDescription, "The Firebase api key.");
+
+  add_hint(m, Message::kAuthDomain, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kAuthDomain, HintType::kDescription, "The Firebase authentication domain.");
+
+  add_hint(m, Message::kDatabaseURL, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kDatabaseURL, HintType::kDescription, "The Firebase realtime database url.");
+
+  add_hint(m, Message::kStorageBucket, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kStorageBucket, HintType::kDescription, "The Firebase storage bucket url.");
+
+  add_hint(m, Message::kEmail, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kEmail, HintType::kDescription, "The email to sign in to Firebase. You must enable email/password authentication on your database.");
+
+  add_hint(m, Message::kPassword, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kPassword, HintType::kDescription, "The password to sign in to Firebase. You must enable email/password authentication on your database.");
+
+  return m;
 }
 
 bool EnterFirebaseGroupCompute::update_state() {
   internal();
-  if (!_lock && _current) {
-    queue_unlock();
-    return false;
-  } else if (_lock && !_current){
-    // Otherwise we usually disconnect, but with mqtt groups we may have listeners attached,
-    // so we don't disconnect.
-    return true;
-  }
-  // Otherwise our _lock and _current states already match up.
-  return true;
+  EnterGroupCompute::update_state();
+
+  queue_sign_in();
+  return false;
 }
-
-
 
 EnterFirebaseGroupCompute::InputValues EnterFirebaseGroupCompute::get_inputs() const {
   external();
@@ -80,7 +88,7 @@ EnterFirebaseGroupCompute::InputValues EnterFirebaseGroupCompute::get_inputs() c
   return values;
 }
 
-void EnterFirebaseGroupCompute::queue_unlock() {
+void EnterFirebaseGroupCompute::queue_sign_in() {
   InputValues values = get_inputs();
   TaskContext tc(_scheduler);
   // Initialize the firebase wrapper.
@@ -111,8 +119,11 @@ void EnterFirebaseGroupCompute::queue_unlock() {
 }
 
 void EnterFirebaseGroupCompute::receive_chain_state(const QJsonObject& chain_state) {
-  _current = chain_state.value("value").toBool();
-  std::cerr << "FirebaseGroup is now with locked state: " << _current << "\n";
+  internal();
+  bool signed_in = chain_state.value("value").toBool();
+  if (signed_in) {
+    clean_finalize();
+  }
 }
 
 

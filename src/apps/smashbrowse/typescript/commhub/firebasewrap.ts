@@ -75,31 +75,35 @@ export class FirebaseWrap {
     // Attempts to sign into account. This will create an account if one does not exist for the given email.
     sign_in(req: RequestMessage): void {
         console.log('got sign in request')
-        this.firebase_app.auth().signInWithEmailAndPassword(req.args.email, req.args.password).then(
-            (a: any) => {
-                this.signed_in = true
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true))
-            },
-            (error: Error) => {
-                // The user account may not exist yet if this is the first time trying to sign in.
-                // So we try to create an account.
-                this.firebase_app.auth().createUserWithEmailAndPassword(req.args.email, req.args.password).then(
-                    (a: any) => {
-                        this.app_server.send_msg(new ResponseMessage(req.id, '-1', true))
-                    },
-                    (error: Error) => {
-                        this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
-                    }
-                )
-            } 
-        )
+        try {
+            this.firebase_app.auth().signInWithEmailAndPassword(req.args.email, req.args.password).then(
+                (a: any) => {
+                    this.signed_in = true
+                    this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                },
+                (error: Error) => {
+                    // The user account may not exist yet if this is the first time trying to sign in.
+                    // So we try to create an account.
+                    this.firebase_app.auth().createUserWithEmailAndPassword(req.args.email, req.args.password).then(
+                        (a: any) => {
+                            this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                        },
+                        (error: Error) => {
+                            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
+                        }
+                    )
+                } 
+            )
+        } catch (e) {
+            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, e.message))
+        }
     }
 
     // Sign out.
     sign_out(req: RequestMessage): void {
         this.firebase_app.auth().signOut().then(
             () => {
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true))
+                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
             }, 
             (error: Error) => {
             this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
@@ -124,7 +128,7 @@ export class FirebaseWrap {
         }
         this.firebase_app.database().ref(path).set(FirebaseWrap.js_to_value(req.args.value)).then(
             (a: any) => {
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true))
+                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
             },
             (error: Error) => {
                 this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
@@ -183,7 +187,7 @@ export class FirebaseWrap {
             this.app_server.send_msg(new InfoMessage(req.id, "-1", InfoType.kFirebaseChanged, info))
         }
         this.firebase_app.database().ref(path).on('value', this.listener)
-        this.app_server.send_msg(new ResponseMessage(req.id, '-1', true))
+        this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
     }
 
 }
@@ -284,7 +288,7 @@ export class FirebaseWraps {
             // Record the current config.
             this.set_current_config(config)
             // Send back a response.
-            this.app_server.send_msg(new ResponseMessage(req.id, '-1', true))
+            this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
             return true
         }
 

@@ -131,6 +131,8 @@ COMPONENT_ENTRY1(EnterMQTTGroupCompute)\
 COMPONENT_ENTRY1(EnterFirebaseGroupCompute)\
 COMPONENT_ENTRY1(EnterBrowserGroupCompute)\
 \
+COMPONENT_ENTRY1(ExitBrowserGroupCompute)\
+\
 COMPONENT_ENTRY1(ExitGroupCompute)\
 \
 COMPONENT_ENTRY1(FirebaseSignInCompute)\

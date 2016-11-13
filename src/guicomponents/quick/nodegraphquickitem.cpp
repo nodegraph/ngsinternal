@@ -31,7 +31,6 @@
 #include <components/compshapes/nodeselection.h>
 #include <components/compshapes/nodeshape.h>
 #include <components/interactions/viewcontrols.h>
-#include <guicomponents/comms/basegrouptraits.h>
 
 #include <guicomponents/comms/commutils.h>
 #include <guicomponents/comms/licensechecker.h>
@@ -41,8 +40,7 @@
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/quick/texturedisplaynode.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/computes/firebasegroupnodecompute.h>
-
+#include <guicomponents/computes/entergroupcompute.h>
 
 #include <QtQuick/QQuickWindow>
 #include <QtCore/QStandardPaths>
@@ -83,7 +81,7 @@ void NodeGraphController::dive(const QString& group_node_name) {
 }
 
 void NodeGraphController::dive(const std::string& group_node_name) {
-  _manipulator->dive_into_lockable_group(group_node_name);
+  _manipulator->dive_into_group(group_node_name);
 }
 
 
@@ -756,22 +754,6 @@ void NodeGraphQuickItem::create_mqtt_subscribe_node(bool centered) {
   create_compute_node(centered, ComponentDID::kMQTTSubscribeCompute);
 }
 
-//void NodeGraphQuickItem::process_node() {
-//  external();
-//  // Return if don't have a last pressed shape.
-//  if (!_last_pressed_node) {
-//    return;
-//  }
-//  Dep<Compute> compute = get_dep<Compute>(_last_pressed_node->our_entity());
-//  if(compute) {
-//    // Update our node graph selection object which also tracks and edit and view nodes.
-//    get_current_interaction()->process(_last_pressed_node);
-//    update();
-//  }else {
-//    qDebug() << "Error: could not find compute to perform. \n";
-//  }
-//}
-
 void NodeGraphQuickItem::dirty_node() {
   external();
   // Return if don't have a last pressed shape.
@@ -844,23 +826,6 @@ void NodeGraphQuickItem::edit_node() {
   }
 }
 
-//void NodeGraphQuickItem::set_error_node(const QString& error_message) {
-//  Dep<NodeShape> compute_node = _selection->get_processing_node();
-//  if (!compute_node) {
-//    std::cerr << "Warning: could not find the error node\n";
-//  }
-//  if (compute_node) {
-//    // Show the error marker on the node.
-//    _selection->set_error_node(compute_node);
-//    // Update the gui.
-//    update();
-//  }
-//
-//  // Emit messages to the qml side.
-//  emit set_error_message(error_message);
-//  emit show_error_page();
-//}
-
 void NodeGraphQuickItem::set_editable_inputs(const QStringList& path_list, const QJsonObject& values) {
   Path path = string_list_to_path(path_list);
   std::cerr << "NodeGraphQuickItem::set_editable_inputs on path: " << path.get_as_string() << "\n";
@@ -891,7 +856,7 @@ void NodeGraphQuickItem::destroy_selection() {
   update();
 }
 
-void NodeGraphQuickItem::dive_into_lockable_group(const std::string& child_group_name) {
+void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
   std::cerr << "ng quick is trying to dive in now.\n";
 
   // Find the child group.
@@ -906,6 +871,13 @@ void NodeGraphQuickItem::dive_into_lockable_group(const std::string& child_group
     return;
   }
 
+  // If the child group has an group context node, then make it dirty.
+  Entity* child = group_entity->get_child("group_context");
+  if (child) {
+    Dep<EnterGroupCompute> enter = get_dep<EnterGroupCompute>(child);
+    enter->dirty_state();
+  }
+
   // Dive into the group.
   _canvas->dive(group_entity);
 
@@ -916,66 +888,18 @@ void NodeGraphQuickItem::dive_into_lockable_group(const std::string& child_group
   update();
 }
 
-//void NodeGraphQuickItem::clean_lockable_group(const std::string& child_group_name) {
-//  // Find the child group.
-//  Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
-//  if (!group_entity) {
-//    std::cerr << "Warning: could't find group to dive into: " << child_group_name << "\n";
-//    return;
-//  }
-//
-//  std::cerr << "bbbbbbbbbbbbbbbbbbbb\n";
-//
-//  // If the child group doesn't exist, then return.
-//  if (!get_dep<GroupInteraction>(group_entity)) {
-//    std::cerr << "ccccccccccccc\n";
-//    return;
-//  }
-//
-//  std::cerr << "ddddddddddddddddddddd\n";
-//
-//  Dep<Compute> compute = get_dep<Compute>(group_entity);
-//  compute->update_unlocked_group();
-//}
-
-//void NodeGraphQuickItem::dive() {
-//  external();
-//  // Return if don't have a last pressed shape.
-//  if (!_last_pressed_node) {
-//    return;
-//  }
-//
-//  // Find the group node to dive into.
-//  Entity* group_entity = _last_pressed_node->our_entity();
-//
-//  // Mark the child group as being processed.
-//  _selection->set_processing_node_entity(group_entity);
-//
-//  // Let the group traits performs its transition behavior.
-//  Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(group_entity);
-//  if (!compute->group_is_unlocked()) {
-//    compute->unlock_group_and_dive();
-//  } else {
-//    // Switch to the next group on the canvas.
-//    _canvas->dive(group_entity);
-//
-//    // We clear the selection because we don't allow inter-group selections.
-//    _selection->clear_selection();
-//    frame_all();
-//    update();
-//  }
-//}
-
 void NodeGraphQuickItem::surface() {
   external();
   Entity* group_entity = _factory->get_current_group();
 
-  // Update the group context node.
-//  Entity* group_context = group_entity->get_child("group_context");
-//  if (group_context) {
-//    Dep<GroupLock> compute = get_dep<GroupLock>(group_entity);
-//    compute->set_lock_setting(false);
-//  }
+  // If this group has an exit group node, then make it dirty and clean it.
+  Entity* child = group_entity->get_child("exit_group_context");
+  if (child) {
+    // We expect the exit compute to not have to wait for an asynchronous response.
+    Dep<ExitGroupCompute> exit = get_dep<ExitGroupCompute>(child);
+    exit->dirty_state();
+    exit->clean_state();
+  }
 
   // Switch to the next group on the canvas.
   _canvas->surface();

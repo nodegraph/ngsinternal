@@ -2,7 +2,6 @@
 
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/comms/taskscheduler.h>
-#include <guicomponents/comms/basegrouptraits.h>
 #include <guicomponents/computes/mqttcomputes.h>
 
 #include <components/compshapes/nodeselection.h>
@@ -277,24 +276,13 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
   // components. But now it is cleaning in a bad state.
 }
 
-void NodeGraphManipulatorImp::dive_into_lockable_group(const std::string& child_group_name) {
-  // Make sure the inputs to the group are clean.
-  Entity* entity =_factory->get_current_group()->get_child(child_group_name);
-  set_inputs_as_ultimate_targets(entity);
-
-  std::function<void()> func = [this, child_group_name](){
-    this->_ng_quick->dive_into_lockable_group(child_group_name);
-  };
-  start_waiting(func);
+void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
+  _ng_quick->dive_into_group(child_group_name);
 }
 
-void NodeGraphManipulatorImp::surface_from_lockable_group() {
+void NodeGraphManipulatorImp::surface_from_group() {
   _ng_quick->surface();
 }
-
-//void NodeGraphManipulatorImp::clean_lockable_group(const std::string& child_group_name) {
-//  _ng_quick->clean_lockable_group(child_group_name);
-//}
 
 Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
   Entity* node = build_compute_node(compute_did, chain_state);
@@ -625,17 +613,13 @@ void NodeGraphManipulator::update_clean_marker(Entity* entity, bool clean) {
   _imp->update_clean_marker(entity, clean);
 }
 
-void NodeGraphManipulator::dive_into_lockable_group(const std::string& child_group_name) {
-  _imp->dive_into_lockable_group(child_group_name);
+void NodeGraphManipulator::dive_into_group(const std::string& child_group_name) {
+  _imp->dive_into_group(child_group_name);
 }
 
-void NodeGraphManipulator::surface_from_lockable_group() {
-  _imp->surface_from_lockable_group();
+void NodeGraphManipulator::surface_from_group() {
+  _imp->surface_from_group();
 }
-
-//void NodeGraphManipulator::clean_lockable_group(const std::string& child_group_name) {
-//  _imp->clean_lockable_group(child_group_name);
-//}
 
 Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
   return _imp->build_and_link_compute_node(compute_did, chain_state);

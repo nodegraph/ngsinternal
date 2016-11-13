@@ -1,17 +1,11 @@
 
 set(sources
-    browsergroupnodecompute.cpp
     scriptgroupnodecompute.cpp
-    firebasegroupnodecompute.cpp
-    mqttgroupnodecompute.cpp
     scriptnodecompute.cpp
     browsercomputes.cpp
     httpcomputes.cpp
     mqttcomputes.cpp
-    mqttgrouptraits.cpp
     browserrecorder.cpp
-    browsergrouptraits.cpp
-    firebasegrouptraits.cpp
     entergroupcompute.cpp
     entermqttgroupcompute.cpp
     enterfirebasegroupcompute.cpp
@@ -19,16 +13,10 @@ set(sources
     )
    
 set(headers
-    browsergroupnodecompute.h
     scriptnodecompute.h
-    firebasegroupnodecompute.h
-    mqttgroupnodecompute.h
     browsercomputes.h
     httpcomputes.h
     mqttcomputes.h
-    mqttgrouptraits.h
-    browsergrouptraits.h
-    firebasegrouptraits.h
     entergroupcompute.h
     entermqttgroupcompute.h
     enterfirebasegroupcompute.h

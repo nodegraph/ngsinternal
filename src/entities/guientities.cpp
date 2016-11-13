@@ -14,7 +14,6 @@
 #include <components/interactions/groupinteraction.h>
 #include <components/interactions/graphbuilder.h>
 #include <components/interactions/viewcontrols.h>
-#include <guicomponents/comms/grouptraits.h>
 #include <components/resources/resources.h>
 
 #include <components/compshapes/compshapecollective.h>
@@ -49,7 +48,6 @@
 #include <guicomponents/comms/messagesender.h>
 #include <guicomponents/comms/messagereceiver.h>
 #include <guicomponents/comms/appconfig.h>
-#include <guicomponents/computes/browsergrouptraits.h>
 #include <guicomponents/computes/browserrecorder.h>
 #include <guicomponents/comms/browserworker.h>
 #include <guicomponents/comms/httpworker.h>
@@ -58,19 +56,14 @@
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/comms/filemodel.h>
-#include <guicomponents/computes/firebasegrouptraits.h>
-#include <guicomponents/computes/mqttgrouptraits.h>
 #include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/enterfirebasegroupcompute.h>
 #include <guicomponents/computes/entermqttgroupcompute.h>
 
 #include <guicomponents/computes/browsercomputes.h>
-#include <guicomponents/computes/browsergroupnodecompute.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
-#include <guicomponents/computes/firebasegroupnodecompute.h>
-#include <guicomponents/computes/mqttgroupnodecompute.h>
 
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
@@ -294,10 +287,14 @@ void GroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
-  sub->set_compute_did(ComponentDID::kEnterGroupCompute);
-  sub->set_visible(true);
-  sub->create_internals();
+  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "group_context");
+  enter->set_compute_did(ComponentDID::kEnterGroupCompute);
+  enter->set_visible(true);
+  enter->create_internals();
+  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
+  exit->set_compute_did(ComponentDID::kExitGroupCompute);
+  exit->set_visible(false);
+  exit->create_internals();
 }
 
 void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const {
@@ -374,6 +371,10 @@ void ScriptGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   sub->set_compute_did(ComponentDID::kEnterGroupCompute);
   sub->set_visible(true);
   sub->create_internals();
+  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
+  exit->set_compute_did(ComponentDID::kExitGroupCompute);
+  exit->set_visible(false);
+  exit->create_internals();
 }
 
 void BrowserGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -392,6 +393,10 @@ void BrowserGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   sub->set_compute_did(ComponentDID::kEnterBrowserGroupCompute);
   sub->set_visible(true);
   sub->create_internals();
+  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
+  exit->set_compute_did(ComponentDID::kExitBrowserGroupCompute);
+  exit->set_visible(false);
+  exit->create_internals();
 }
 
 void FirebaseGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -410,6 +415,10 @@ void FirebaseGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   sub->set_compute_did(ComponentDID::kEnterFirebaseGroupCompute);
   sub->set_visible(true);
   sub->create_internals();
+  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
+  exit->set_compute_did(ComponentDID::kExitGroupCompute);
+  exit->set_visible(false);
+  exit->create_internals();
 }
 
 void MQTTGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -428,6 +437,10 @@ void MQTTGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   sub->set_compute_did(ComponentDID::kEnterMQTTGroupCompute);
   sub->set_visible(true);
   sub->create_internals();
+  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
+  exit->set_compute_did(ComponentDID::kExitGroupCompute);
+  exit->set_visible(false);
+  exit->create_internals();
 }
 
 void LinkEntity::create_internals(const std::vector<size_t>& ids) {

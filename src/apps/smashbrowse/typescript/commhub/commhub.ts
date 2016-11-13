@@ -112,7 +112,7 @@ class AppConnection extends BaseConnection {
                 let on_response = (open: boolean) => {
                     if (!open) {
                         if (!this.webdriverwrap.open_browser()) {
-                            send_msg_to_app(new ResponseMessage(msg.id, '-1', false))
+                            send_msg_to_app(new ResponseMessage(msg.id, '-1', false, false))
                             return
                         }
                         // Now convert this request to navigate to a default url with a port number.
@@ -120,15 +120,15 @@ class AppConnection extends BaseConnection {
                         let relay = new RequestMessage(msg.id, '-1', RequestType.kNavigateTo, { url: url })
                         this.receive_json(relay.to_string())
                     } else {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true))
                     }
                 }
                 this.webdriverwrap.browser_is_open(on_response)
             } break
             case RequestType.kResizeBrowser: {
                 this.webdriverwrap.resize_browser(req.args.width, req.args.height).then(
-                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
-                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) }
+                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true)) },
+                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false, false)) }
                     )
             } break
             case RequestType.kIsBrowserOpen: {
@@ -146,11 +146,11 @@ class AppConnection extends BaseConnection {
                 ext_server.clear_connections()
                 let on_response = (open: boolean) => {
                     if (!open) {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true))
+                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true))
                     } else {
                         this.webdriverwrap.close_browser().then(
-                            () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true)) },
-                            () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false)) })
+                            () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true)) },
+                            () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false, false)) })
                     }
                 }
                 this.webdriverwrap.browser_is_open(on_response)

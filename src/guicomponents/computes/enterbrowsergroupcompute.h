@@ -30,9 +30,6 @@ class GUICOMPUTES_EXPORT EnterBrowserGroupCompute: public EnterGroupCompute {
   EnterBrowserGroupCompute(Entity* entity);
   virtual ~EnterBrowserGroupCompute();
 
-  virtual bool get_lock_setting() const;
-  virtual void set_lock_setting(bool lock);
-
  protected:
   virtual bool update_state();
 
@@ -43,10 +40,23 @@ class GUICOMPUTES_EXPORT EnterBrowserGroupCompute: public EnterGroupCompute {
 
   Dep<TaskScheduler> _scheduler;
   Dep<BrowserWorker> _worker;
+};
 
-  bool _lock; // state desired
-  bool _up_to_date; // current state
+class GUICOMPUTES_EXPORT ExitBrowserGroupCompute: public ExitGroupCompute {
+ public:
+  COMPONENT_ID(Compute, ExitBrowserGroupCompute);
+  ExitBrowserGroupCompute(Entity* entity);
+  virtual ~ExitBrowserGroupCompute();
 
+ protected:
+  virtual bool update_state();
+
+ private:
+  void queue_unlock();
+  void receive_chain_state(const QJsonObject& chain_state);
+
+  Dep<TaskScheduler> _scheduler;
+  Dep<BrowserWorker> _worker;
 };
 
 }

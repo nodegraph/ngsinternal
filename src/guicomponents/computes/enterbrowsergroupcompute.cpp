@@ -18,12 +18,15 @@
 
 namespace ngs {
 
+
+// ----------------------------------------------------------------------------------------
+// Enter.
+// ----------------------------------------------------------------------------------------
+
 EnterBrowserGroupCompute::EnterBrowserGroupCompute(Entity* entity)
     : EnterGroupCompute(entity, kDID()),
       _scheduler(this),
-      _worker(this),
-      _lock(true),
-      _up_to_date(true){
+      _worker(this) {
   get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
   get_dep_loader()->register_fixed_dep(_worker, Path({}));
 }
@@ -31,36 +34,57 @@ EnterBrowserGroupCompute::EnterBrowserGroupCompute(Entity* entity)
 EnterBrowserGroupCompute::~EnterBrowserGroupCompute() {
 }
 
-bool EnterBrowserGroupCompute::get_lock_setting() const{
-  external();
-  return _lock;
-}
-
-void EnterBrowserGroupCompute::set_lock_setting(bool lock) {
-  external();
-  _lock = lock;
-}
-
 bool EnterBrowserGroupCompute::update_state() {
   internal();
-  if (!_lock) {
-    TaskContext tc(_scheduler);
-    _worker->queue_open_browser(tc);
-    std::function<void(const QJsonObject&)> callback = std::bind(&EnterBrowserGroupCompute::receive_chain_state, this, std::placeholders::_1);
-    _worker->queue_receive_chain_state(tc, callback);
-    return false;
-  } else {
-    TaskContext tc(_scheduler);
-    _worker->queue_close_browser(tc);
-    std::function<void(const QJsonObject&)> callback = std::bind(&EnterBrowserGroupCompute::receive_chain_state, this, std::placeholders::_1);
-    _worker->queue_receive_chain_state(tc, callback);
-    return false;
-  }
+  EnterGroupCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  _worker->queue_open_browser(tc);
+  std::function<void(const QJsonObject&)> callback = std::bind(&EnterBrowserGroupCompute::receive_chain_state, this, std::placeholders::_1);
+  _worker->queue_receive_chain_state(tc, callback);
+  return false;
 }
 
 void EnterBrowserGroupCompute::receive_chain_state(const QJsonObject& chain_state) {
-  _up_to_date = chain_state.value("value").toBool();
+  internal();
+  // If the browser successfully, then we call clean_finalize directly here.
+  // Note that our update_state() always returns false, so the app will continuously try to clean it until it returns true.
+  // The other way to stop it is to call clean_finalize(), which marks ourself as clean, so the next cleaning wave will skip us.
+  bool opened = chain_state.value("value").toBool();
+  if (opened) {
+    clean_finalize();
+  }
 }
 
+// ----------------------------------------------------------------------------------------
+// Exit.
+// ----------------------------------------------------------------------------------------
+
+
+ExitBrowserGroupCompute::ExitBrowserGroupCompute(Entity* entity)
+    : ExitGroupCompute(entity, kDID()),
+      _scheduler(this),
+      _worker(this) {
+  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
+  get_dep_loader()->register_fixed_dep(_worker, Path({}));
+}
+
+ExitBrowserGroupCompute::~ExitBrowserGroupCompute() {
+}
+
+bool ExitBrowserGroupCompute::update_state() {
+  TaskContext tc(_scheduler);
+  _worker->queue_close_browser(tc);
+  std::function<void(const QJsonObject&)> callback = std::bind(&ExitBrowserGroupCompute::receive_chain_state, this, std::placeholders::_1);
+  _worker->queue_receive_chain_state(tc, callback);
+  return false;
+}
+
+void ExitBrowserGroupCompute::receive_chain_state(const QJsonObject& chain_state) {
+  bool closed = chain_state.value("value").toBool();
+  if (closed) {
+    clean_finalize();
+  }
+}
 
 }

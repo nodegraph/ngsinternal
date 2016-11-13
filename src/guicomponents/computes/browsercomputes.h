@@ -10,6 +10,7 @@ class Entity;
 class BrowserWorker;
 class TaskScheduler;
 class TaskContext;
+class EnterBrowserGroupCompute;
 
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  public:
@@ -32,6 +33,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   Dep<BrowserWorker> _worker;
   Dep<TaskScheduler> _scheduler;
+  Dep<EnterBrowserGroupCompute> _enter; // We hold this dep so that this compute (open/close browser) will happen before us.
 };
 
 class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {

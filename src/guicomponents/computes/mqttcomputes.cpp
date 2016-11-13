@@ -37,12 +37,13 @@ void BaseMQTTCompute::init_hints(QJsonObject& m) {
   add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
 }
 
-void BaseMQTTCompute::finish_update_state(TaskContext& tc) {
+void BaseMQTTCompute::append_callback_tasks(TaskContext& tc) {
   internal();
-  _worker->queue_finished_compute(tc, this);
+  std::function<void()> done = std::bind(&BaseMQTTCompute::on_finished_task, this);
+  _worker->queue_finished_task(tc, done);
 }
 
-void BaseMQTTCompute::on_finished_compute() {
+void BaseMQTTCompute::on_finished_task() {
   internal();
   clean_finalize();
 
@@ -84,7 +85,7 @@ bool MQTTPublishCompute::update_state() {
 
   TaskContext tc(_scheduler);
   _worker->queue_publish_task(tc, topic, message);
-  finish_update_state(tc);
+  append_callback_tasks(tc);
   return false;
 }
 
@@ -97,7 +98,7 @@ void MQTTSubscribeCompute::create_inputs_outputs() {
   create_input(Message::kOutputPropertyName, "message", false);
 }
 
-void MQTTSubscribeCompute::on_finished_compute() {
+void MQTTSubscribeCompute::on_finished_task() {
   internal();
   clean_finalize();
 
@@ -161,7 +162,7 @@ bool MQTTSubscribeCompute::update_state() {
   if (!_worker->is_subscribed(this, topic.toStdString())) {
     _worker->queue_subscribe_task(tc, topic, our_entity()->get_path());
   }
-  finish_update_state(tc);
+  append_callback_tasks(tc);
   return true;
 }
 

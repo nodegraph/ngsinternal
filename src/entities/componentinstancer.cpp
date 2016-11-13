@@ -7,7 +7,6 @@
 #include <components/interactions/canvas.h>
 #include <components/interactions/shapecanvas.h>
 #include <components/interactions/groupinteraction.h>
-#include <guicomponents/comms/grouptraits.h>
 #include <components/resources/resources.h>
 
 #include <base/utils/simpleloader.h>
@@ -43,8 +42,6 @@
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/httpcomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
-#include <guicomponents/computes/firebasegroupnodecompute.h>
-#include <guicomponents/computes/mqttgroupnodecompute.h>
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/entermqttgroupcompute.h>
@@ -67,14 +64,10 @@
 #include <guicomponents/comms/mqttworker.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
-#include <guicomponents/computes/firebasegrouptraits.h>
-#include <guicomponents/computes/mqttgrouptraits.h>
 
 #include <gui/widget/nodegrapheditor.h>
-#include <guicomponents/computes/browsergrouptraits.h>
 #include <guicomponents/computes/browserrecorder.h>
 #include <guicomponents/comms/browserworker.h>
-#include <guicomponents/computes/browsergroupnodecompute.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <iostream>
 #include <cassert>

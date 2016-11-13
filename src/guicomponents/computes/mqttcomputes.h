@@ -18,12 +18,12 @@ class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
   virtual ~BaseMQTTCompute();
 
   virtual void create_inputs_outputs();
-  virtual void on_finished_compute();
+  virtual void on_finished_task();
 
   static void init_hints(QJsonObject& m);
 
  protected:
-  virtual void finish_update_state(TaskContext& tc);
+  virtual void append_callback_tasks(TaskContext& tc);
 
   Dep<MQTTWorker> _worker;
   Dep<TaskScheduler> _scheduler;
@@ -49,7 +49,7 @@ class GUICOMPUTES_EXPORT MQTTSubscribeCompute: public BaseMQTTCompute {
   COMPONENT_ID(Compute, MQTTSubscribeCompute);
   MQTTSubscribeCompute(Entity* entity): BaseMQTTCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
-  virtual void on_finished_compute();
+  virtual void on_finished_task();
 
   // Hints.
   static QJsonObject init_hints();

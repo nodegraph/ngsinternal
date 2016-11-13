@@ -151,6 +151,9 @@ const CompPolyBorder& NodeShape::get_border() const {
 
 HitRegion NodeShape::hit_test(const glm::vec2& point) const {
   external();
+  if(!is_visible()) {
+    return HitRegion::kMissedRegion;
+  }
   return _border.hit_test(point);
 }
 

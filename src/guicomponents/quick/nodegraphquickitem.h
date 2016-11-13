@@ -96,20 +96,14 @@ Q_OBJECT
   // View and Edit.
   Q_INVOKABLE void view_node();
   Q_INVOKABLE void edit_node();
-  //Q_INVOKABLE void process_node();
   Q_INVOKABLE void dirty_node();
   Q_INVOKABLE void clean_node();
-
-  //void set_error_node(const QString& error_message);
 
   Q_INVOKABLE void set_editable_inputs(const QStringList& path_list, const QJsonObject& values);
   Q_INVOKABLE void set_input_exposure(const QStringList& path_list, const QJsonObject& values);
 
   // Group Navigation.
-  void dive_into_lockable_group(const std::string& child_group_name);
-  //void clean_lockable_group(const std::string& child_group_name);
-
-  //Q_INVOKABLE void dive();
+  void dive_into_group(const std::string& child_group_name);
   Q_INVOKABLE void surface();
   Q_INVOKABLE void surface_to_root();
 

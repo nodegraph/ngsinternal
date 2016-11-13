@@ -40,14 +40,9 @@ Q_OBJECT
   Q_INVOKABLE bool is_busy_cleaning();
   Q_INVOKABLE void queue_emit_option_texts();
 
-  // Firebase.
-  void dive_into_firebase_group(const std::string& child_group_name, const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket, const QString& email, const QString& password);
-  void clean_firebase_group(const std::string& child_group_name, const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket, const QString& email, const QString& password);
-
 
   void firebase_init(const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket);
   void firebase_sign_in(const QString& email, const QString& password);
-  void dive_into_group(const std::string& child_group_name);
 
   const QString& get_iframe_to_switch_to() {return _iframe_to_switch_to;}
 
@@ -127,8 +122,6 @@ Q_OBJECT
   void queue_firebase_write_data(TaskContext& tc);
   void queue_firebase_read_data(TaskContext& tc);
   void queue_firebase_listen_to_changes(TaskContext& tc);
-  void queue_dive_into_lockable_group(TaskContext& tc, const std::string& child_group_name);
-  void queue_clean_lockable_group(TaskContext& tc, const std::string& child_group_name);
 
 signals:
   void show_web_action_menu();
@@ -220,9 +213,6 @@ signals:
   void firebase_write_data_task();
   void firebase_read_data_task();
   void firebase_listen_to_changes_task();
-
-  void dive_into_lockable_group_task(const std::string& child_group_name);
-  void clean_lockable_group_task(const std::string& child_group_name);
 
   // Our fixed dependencies.
   Dep<MessageSender> _msg_sender;

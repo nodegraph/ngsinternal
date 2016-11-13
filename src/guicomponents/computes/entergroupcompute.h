@@ -14,11 +14,7 @@ class GUICOMPUTES_EXPORT EnterGroupCompute: public Compute  {
   EnterGroupCompute(Entity* entity, ComponentDID did = kDID());
   virtual ~EnterGroupCompute();
 
-  virtual bool get_lock_setting() const {return false;}
-  virtual void set_lock_setting(bool lock) {}
-
  protected:
-
   // Note: Since we're grabbing all the inputs on the group,
   // if anything changes on the group we'll become dirty.
   // However most of our derive group lock components will cache whether

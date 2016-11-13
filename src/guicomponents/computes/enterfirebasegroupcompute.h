@@ -30,26 +30,24 @@ class GUICOMPUTES_EXPORT EnterFirebaseGroupCompute: public EnterGroupCompute {
   EnterFirebaseGroupCompute(Entity* entity);
   virtual ~EnterFirebaseGroupCompute();
 
-  virtual bool get_lock_setting() const;
-  virtual void set_lock_setting(bool lock);
+  // Inputs and Outputs.
+  virtual void create_inputs_outputs();
 
-  // Override.
-  virtual void set_self_dirty(bool dirty);
+  // Hints.
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const { return _hints; }
 
  protected:
   virtual bool update_state();
 
  private:
   InputValues get_inputs() const;
-  void queue_unlock();
+  void queue_sign_in();
   void receive_chain_state(const QJsonObject& chain_state);
 
   Dep<TaskScheduler> _scheduler;
   Dep<BrowserWorker> _worker;
-
-  bool _lock; // state desired
-  bool _current; // current state
-
 };
 
 }

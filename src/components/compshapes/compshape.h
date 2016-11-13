@@ -25,7 +25,7 @@ class COMPSHAPES_EXPORT CompShape: public Component{
   virtual ~CompShape();
 
   // Visibility.
-  bool is_visible() {return _visible;}
+  bool is_visible() const {return _visible;}
   void set_visible(bool visible) {_visible = visible;}
 
   // Positioning.

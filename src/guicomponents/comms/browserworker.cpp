@@ -99,59 +99,6 @@ void BrowserWorker::queue_emit_option_texts() {
   queue_emit_option_texts(tc);
 }
 
-void BrowserWorker::dive_into_firebase_group(const std::string& child_group_name, const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket, const QString& email, const QString& password) {
-  TaskContext tc(_scheduler);
-  // Initialize the firebase wrapper.
-  {
-    QJsonObject args;
-    args.insert(Message::kApiKey, api_key);
-    args.insert(Message::kAuthDomain, auth_domain);
-    args.insert(Message::kDatabaseURL, database_url);
-    args.insert(Message::kStorageBucket, storage_bucket);
-    queue_merge_chain_state(tc, args);
-    queue_firebase_init(tc);
-  }
-  // Sign into a firebase account.
-  {
-    QJsonObject args;
-    args.insert(Message::kEmail, email);
-    args.insert(Message::kPassword, password);
-    queue_merge_chain_state(tc, args);
-    queue_firebase_sign_in(tc);
-  }
-  // Now dive into the group.
-  // If any of the above steps fail, we won't be able to dive into the group, which is what we want.
-  {
-    queue_dive_into_lockable_group(tc, child_group_name);
-  }
-}
-void BrowserWorker::clean_firebase_group(const std::string& child_group_name, const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket, const QString& email, const QString& password) {
-  TaskContext tc(_scheduler);
-  // Initialize the firebase wrapper.
-  {
-    QJsonObject args;
-    args.insert(Message::kApiKey, api_key);
-    args.insert(Message::kAuthDomain, auth_domain);
-    args.insert(Message::kDatabaseURL, database_url);
-    args.insert(Message::kStorageBucket, storage_bucket);
-    queue_merge_chain_state(tc, args);
-    queue_firebase_init(tc);
-  }
-  // Sign into a firebase account.
-  {
-    QJsonObject args;
-    args.insert(Message::kEmail, email);
-    args.insert(Message::kPassword, password);
-    queue_merge_chain_state(tc, args);
-    queue_firebase_sign_in(tc);
-  }
-  // Now clean the group.
-  {
-    queue_clean_lockable_group(tc, child_group_name);
-  }
-}
-
-
 void BrowserWorker::firebase_init(const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket) {
   TaskContext tc(_scheduler);
   QJsonObject args;
@@ -170,11 +117,6 @@ void BrowserWorker::firebase_sign_in(const QString& email, const QString& passwo
   args.insert(Message::kPassword, password);
   queue_merge_chain_state(tc, args);
   queue_firebase_sign_in(tc);
-}
-
-void BrowserWorker::dive_into_group(const std::string& child_group_name) {
-  TaskContext tc(_scheduler);
-  queue_dive_into_lockable_group(tc, child_group_name);
 }
 
 bool BrowserWorker::is_polling() {
@@ -457,14 +399,6 @@ void BrowserWorker::queue_firebase_read_data(TaskContext& tc) {
 
 void BrowserWorker::queue_firebase_listen_to_changes(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::firebase_listen_to_changes_task,this), "queue_firebase_listen_to_changes");
-}
-
-void BrowserWorker::queue_dive_into_lockable_group(TaskContext& tc, const std::string& child_group_name) {
-  _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::dive_into_lockable_group_task,this, child_group_name), "queue_dive_into_group");
-}
-
-void BrowserWorker::queue_clean_lockable_group(TaskContext& tc, const std::string& child_group_name) {
-  _scheduler->queue_task(tc, (Task)std::bind(&BrowserWorker::clean_lockable_group_task,this, child_group_name), "queue_clean_group");
 }
 
 // ------------------------------------------------------------------------
@@ -935,16 +869,6 @@ void BrowserWorker::firebase_listen_to_changes_task() {
   Message req(RequestType::kFirebaseListenToChanges);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
-}
-
-void BrowserWorker::dive_into_lockable_group_task(const std::string& child_group_name) {
-  _manipulator->dive_into_lockable_group(child_group_name);
-  _scheduler->run_next_task();
-}
-
-void BrowserWorker::clean_lockable_group_task(const std::string& child_group_name) {
-  //_manipulator->clean_lockable_group(child_group_name);
-  _scheduler->run_next_task();
 }
 
 }

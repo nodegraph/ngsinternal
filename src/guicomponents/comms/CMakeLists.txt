@@ -10,7 +10,6 @@ set(sources
     taskscheduler.cpp
     licensechecker.cpp
     cryptologic.cpp
-    grouptraits.cpp
     browserworker.cpp
     mqttworker.cpp
     httpworker.cpp
@@ -19,7 +18,6 @@ set(sources
 set(headers
     commutils.h
     taskscheduler.h
-    grouptraits.h
     cryptologic.h
 )
     

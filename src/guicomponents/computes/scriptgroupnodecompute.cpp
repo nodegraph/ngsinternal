@@ -1,4 +1,3 @@
-#include <guicomponents/comms/basegrouptraits.h>
 #include <base/objectmodel/deploader.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <components/computes/inputcompute.h>

@@ -20,12 +20,11 @@ EnterGroupCompute::~EnterGroupCompute() {
 
 // ----------------------------------------------------------------------------
 
-ExitGroupCompute::ExitGroupCompute(Entity* entity, ComponentDID did):
-  Compute(entity, did){
+ExitGroupCompute::ExitGroupCompute(Entity* entity, ComponentDID did)
+    : Compute(entity, did) {
 }
 
 ExitGroupCompute::~ExitGroupCompute() {
-
 }
 
 }

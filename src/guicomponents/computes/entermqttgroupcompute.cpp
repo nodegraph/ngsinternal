@@ -12,8 +12,7 @@ namespace ngs {
 EnterMQTTGroupCompute::EnterMQTTGroupCompute(Entity* entity)
     : EnterGroupCompute(entity, kDID()),
       _scheduler(this),
-      _worker(this),
-      _lock(false){
+      _worker(this) {
   get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
   get_dep_loader()->register_fixed_dep(_worker, Path({}));
 }
@@ -50,44 +49,30 @@ QJsonObject EnterMQTTGroupCompute::init_hints() {
   return m;
 }
 
-bool EnterMQTTGroupCompute::get_lock_setting() const{
-  external();
-  return _lock;
-}
-
-void EnterMQTTGroupCompute::set_lock_setting(bool lock) {
-  external();
-  _lock = lock;
+void EnterMQTTGroupCompute::on_finished_connect_task() {
+  internal();
 }
 
 bool EnterMQTTGroupCompute::update_state() {
   internal();
   EnterGroupCompute::update_state();
 
-  std::cerr << "MQTTGroupLock::update_state \n";
-
   MQTTWorker::Config config = get_inputs();
-  if (!_lock) {
-    if (_worker->is_connected(config)) {
-      std::cerr << "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC connected to mqtt broker !!!!!!!!!!!\n";
-      return true;
-    }
-
-    // Register ourself for mqtt disconnects.
-    _worker->register_group_lock(config, our_entity()->get_path());
-
-    // Otherwise we start an asynchronous task.
-    TaskContext tc(_scheduler);
-    _worker->queue_connect_task(tc, config);
-    return false;
-  } else {
-    if (!_worker->is_connected(config)) {
-      return true;
-    }
-    // Otherwise we usually disconnect, but with mqtt groups we may have listeners attached,
-    // so we don't disconnect.
+  if (_worker->is_connected(config)) {
     return true;
   }
+
+  // Register ourself for mqtt disconnects.
+  _worker->register_group_lock(config, our_entity()->get_path());
+
+  // Otherwise queue up the connect task.
+  TaskContext tc(_scheduler);
+  _worker->queue_connect_task(tc, config);
+
+  // Queue up to receive a callback when the above tasks are done.
+  std::function<void()> done = std::bind(&EnterMQTTGroupCompute::on_finished_connect_task,this);
+  _worker->queue_finished_task(tc, done);
+  return false;
 }
 
 MQTTWorker::Config EnterMQTTGroupCompute::get_inputs() const {

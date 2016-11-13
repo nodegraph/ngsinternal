@@ -348,15 +348,15 @@ Dep<NodeShape> GroupInteraction::pressed(const MouseInfo& mouse_info, HitRegion&
           for (const Dep<NodeShape>& d : selected) {
             _mouse_down_node_positions[d] = d->get_pos();
           }
-          return node_shape;
-        }
-        if (_state == kNodeSelectionAndDragging) {
+
           // We get here if we might be starting to pan some nodes.
           _panning_selection = true;
           // Set the trackball's pivot and start tracking.
           _view_controls.track_ball.set_pivot(updated_mouse_info.object_space_pos);
           _view_controls.start_tracking(updated_mouse_info);
           _mouse_over_info = updated_mouse_info;
+
+          return node_shape;
         }
         break;
       }

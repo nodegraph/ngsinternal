@@ -35,8 +35,8 @@ class BaseNodeGraphManipulator: public Component {
   virtual void update_clean_marker(Entity* entity, bool clean) = 0;
 
   // Lockable Groups.
-  virtual void dive_into_lockable_group(const std::string& child_group_name) = 0;
-  virtual void surface_from_lockable_group() = 0;
+  virtual void dive_into_group(const std::string& child_group_name) = 0;
+  virtual void surface_from_group() = 0;
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.

@@ -53,25 +53,14 @@ Q_OBJECT
   void register_group_lock(const Config& config, const Path& path);
   void unregister_group_lock(const Path& path);
 
-  // Helpers which call multiple queue methods internally.
-  void dive_into_lockable_group(const std::string& child_group_name, const Config& config);
-//  void clean_lockable_group(const std::string& child_group_name, const QHostAddress& host_address, const quint16 port,
-//                            const QString& username, const QString& password);
-
   // Queue task to perform at a later time.
   void queue_connect_task(TaskContext& tc, const Config& config);
   void queue_publish_task(TaskContext& tc, const QString& topic, const QString& message);
   void queue_subscribe_task(TaskContext& tc, const QString& topic, const Path& node_path);
   void queue_unsubscribe_task(TaskContext& tc, const QString& topic);
 
-  // Group Logic.
-  void queue_dive_into_lockable_group(TaskContext& tc, const std::string& child_group_name);
-  void queue_surface_from_lockable_group(TaskContext& tc);
-
-//  void queue_clean_lockable_group(TaskContext& tc, const std::string& child_group_name);
-
   // Compute Logic.
-  void queue_finished_compute(TaskContext& tc, BaseMQTTCompute* compute);
+  void queue_finished_task(TaskContext& tc, std::function<void()> done);
 
  private slots:
   void on_time_out();
@@ -95,13 +84,8 @@ Q_OBJECT
   void subscribe_task(const QString& topic, const Path& node_path);
   void unsubscribe_task(const QString& topic);
 
-  // Group Logic.
-  void dive_into_lockable_group_task(const std::string& child_group_name);
-  void surface_from_lockable_group_task();
-//  void clean_lockable_group_task(const std::string& child_group_name);
-
   // Compute Logic.
-  void finished_compute_task(BaseMQTTCompute* compute);
+  void finished_compute_task(std::function<void()> done);
 
   // Our fixed dependencies.
   Dep<TaskScheduler> _scheduler;

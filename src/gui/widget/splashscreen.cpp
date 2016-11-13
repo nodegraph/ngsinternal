@@ -86,17 +86,11 @@ void SplashScreen::mark_progress() {
 
   showMessage(message, Qt::AlignBottom|Qt::AlignHCenter, Qt::white);
 
-  qDebug() << "aaaaaaaaaaaa";
-
   repaint();
 
-  qDebug() << "bbbbbbbbbbbbbbbb";
-
   if (percentage == 100) {
-    qDebug() << "ccccccccccccccccccc";
     deleteLater();
   }
-  qDebug() << "dddddddddddddddddddd";
 }
 
 size_t SplashScreen::get_progress() {

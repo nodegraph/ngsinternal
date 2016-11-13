@@ -48,18 +48,6 @@ bool MQTTWorker::is_subscribed(const Compute* compute, const std::string& topic)
   return false;
 }
 
-void MQTTWorker::dive_into_lockable_group(const std::string& child_group_name, const Config& config) {
-  TaskContext tc(_scheduler);
-  queue_connect_task(tc, config);
-  queue_dive_into_lockable_group(tc, child_group_name);
-}
-
-//void MQTTWorker::clean_lockable_group(const std::string& child_group_name, const QHostAddress& host_address, const quint16 port, const QString& username, const QString& password) {
-//  TaskContext tc(_scheduler);
-//  queue_connect_task(tc, host_address, port, username, password);
-//  queue_clean_lockable_group(tc, child_group_name);
-//}
-
 void MQTTWorker::queue_connect_task(TaskContext& tc, const Config& config) {
   _scheduler->queue_task(tc, (Task) std::bind(&MQTTWorker::connect_task, this, config), "queue_connect_task");
 }
@@ -76,20 +64,8 @@ void MQTTWorker::queue_unsubscribe_task(TaskContext& tc, const QString& topic) {
   _scheduler->queue_task(tc, (Task) std::bind(&MQTTWorker::unsubscribe_task, this, topic), "queue_send_delete_request");
 }
 
-void MQTTWorker::queue_dive_into_lockable_group(TaskContext& tc, const std::string& child_group_name) {
-  _scheduler->queue_task(tc, (Task)std::bind(&MQTTWorker::dive_into_lockable_group_task, this, child_group_name), "queue_dive_into_lockable_group");
-}
-
-void MQTTWorker::queue_surface_from_lockable_group(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&MQTTWorker::surface_from_lockable_group_task, this), "queue_surface_from_lockable_group");
-}
-
-//void MQTTWorker::queue_clean_lockable_group(TaskContext& tc, const std::string& child_group_name) {
-//  _scheduler->queue_task(tc, (Task)std::bind(&MQTTWorker::clean_lockable_group_task, this, child_group_name), "queue_clean_lockable_group");
-//}
-
-void MQTTWorker::queue_finished_compute(TaskContext& tc, BaseMQTTCompute* compute) {
-  _scheduler->queue_task(tc, (Task)std::bind(&MQTTWorker::finished_compute_task, this, compute), "queue_finished_compute");
+void MQTTWorker::queue_finished_task(TaskContext& tc, std::function<void()> done) {
+  _scheduler->queue_task(tc, (Task)std::bind(&MQTTWorker::finished_compute_task, this, done), "queue_finished_compute");
 }
 
 // ------------------------------------------------------------------------------------------
@@ -151,7 +127,6 @@ void MQTTWorker::connect_task(const Config& config) {
   if (!_current_client->isConnectedToHost()) {
     _current_task_id = _scheduler->wait_for_response();
     _current_client->connectToHost();
-    std::cerr << "trying to connect to host\n";
     // Start timer.
     _timer.start();
   } else {
@@ -177,22 +152,17 @@ void MQTTWorker::unsubscribe_task(const QString& topic) {
 }
 
 void MQTTWorker::on_time_out() {
-  std::cerr << "mqtt worker on_time_out\n";
   QString error = "Unable to connect to MQTT broker. Make sure the host address, username or password is correct on the group.";
   _scheduler->done_waiting_for_response(_current_task_id, error);
 }
 
 void MQTTWorker::on_connected() {
-  std::cerr << "mqtt worker on_connected\n";
   _timer.stop();
   QString error;
   _scheduler->done_waiting_for_response(_current_task_id, error);
 }
 
 void MQTTWorker::on_disconnected() {
-  std::cerr << "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n";
-  std::cerr << "mqtt worker on_disconnected\n";
-
   _timer.stop();
 
   // Get the sender.
@@ -219,25 +189,21 @@ void MQTTWorker::on_disconnected() {
 }
 
 void MQTTWorker::on_published(const QMQTT::Message& message) {
-  std::cerr << "mqtt worker on_published\n";
   QString error;
   _scheduler->done_waiting_for_response(_current_task_id, error);
 }
 
 void MQTTWorker::on_subscribed(const QString& topic) {
-  std::cerr << "mqtt worker on_subscribed\n";
   QString error;
   _scheduler->done_waiting_for_response(_current_task_id, error);
 }
 
 void MQTTWorker::on_unsubscribed(const QString& topic) {
-  std::cerr << "mqtt worker on_unsubscribed\n";
   QString error;
   _scheduler->done_waiting_for_response(_current_task_id, error);
 }
 
 void MQTTWorker::on_received(const QMQTT::Message& message) {
-  std::cerr << "mqtt worker on_received\n";
   // Merge the payload of the message into the chain state.
   QString payload = QString::fromUtf8(message.payload());
   QString topic = message.topic();
@@ -246,32 +212,14 @@ void MQTTWorker::on_received(const QMQTT::Message& message) {
     std::unordered_set<Path, PathHasher>::const_iterator iter;
     for (iter = paths.begin(); iter != paths.end(); ++iter) {
       const Path& node_path = *iter;
-      std::cerr << "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGot OOOOOOOOOOOOOOOOverride\n";
       _manipulator->set_mqtt_override(node_path, topic, payload);
     }
   }
 }
 
-void MQTTWorker::dive_into_lockable_group_task(const std::string& child_group_name) {
-  std::cerr << "dive_into_lockable_group_task\n";
-  _manipulator->dive_into_lockable_group(child_group_name);
+void MQTTWorker::finished_compute_task(std::function<void()> done) {
+  done();
   _scheduler->run_next_task();
-}
-
-void MQTTWorker::surface_from_lockable_group_task() {
-  std::cerr << "dive_into_lockable_group_task\n";
-  _manipulator->surface_from_lockable_group();
-  _scheduler->run_next_task();
-}
-
-//void MQTTWorker::clean_lockable_group_task(const std::string& child_group_name) {
-//  std::cerr << "clean lockable group task\n";
-//  _manipulator->clean_lockable_group(child_group_name);
-//  _scheduler->run_next_task();
-//}
-
-void MQTTWorker::finished_compute_task(BaseMQTTCompute* compute) {
-  compute->on_finished_compute();
 }
 
 }

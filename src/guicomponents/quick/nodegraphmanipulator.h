@@ -60,8 +60,8 @@ Q_OBJECT
   virtual void update_clean_marker(Entity* entity, bool clean);
 
   // Lockable Groups.
-  virtual void dive_into_lockable_group(const std::string& child_group_name);
-  virtual void surface_from_lockable_group();
+  virtual void dive_into_group(const std::string& child_group_name);
+  virtual void surface_from_group();
   //virtual void clean_lockable_group(const std::string& child_group_name);
 
   // Builds and positions a compute node under the lowest node in the node graph.
@@ -148,9 +148,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void update_clean_marker(Entity* entity, bool clean);
 
   // Lockable Groups.
-  virtual void dive_into_lockable_group(const std::string& child_group_name);
-  virtual void surface_from_lockable_group();
-  //virtual void clean_lockable_group(const std::string& child_group_name);
+  virtual void dive_into_group(const std::string& child_group_name);
+  virtual void surface_from_group();
 
   // Build and link a compute node.
   virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
