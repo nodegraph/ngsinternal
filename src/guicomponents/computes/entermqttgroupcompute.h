@@ -1,7 +1,7 @@
 #pragma once
 #include <guicomponents/computes/guicomputes_export.h>
 #include <guicomponents/computes/entergroupcompute.h>
-#include <guicomponents/comms/mqttworker.h>
+#include <guicomponents/computes/mqttworker.h>
 
 #include <QtNetwork/QHostAddress>
 #include <QtCore/QString>

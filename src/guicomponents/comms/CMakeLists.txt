@@ -5,14 +5,10 @@ set(sources
     message.cpp
     nodejsprocess.cpp
     messagesender.cpp
-    messagereceiver.cpp
     appconfig.cpp
     taskscheduler.cpp
     licensechecker.cpp
     cryptologic.cpp
-    nodejsworker.cpp
-    mqttworker.cpp
-    httpworker.cpp
     )
    
 set(headers
@@ -26,12 +22,8 @@ set(moc_headers
     message.h
     nodejsprocess.h
     messagesender.h
-    messagereceiver.h
     appconfig.h
     licensechecker.h
-    nodejsworker.h
-    mqttworker.h
-    httpworker.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})

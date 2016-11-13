@@ -110,23 +110,27 @@ export class FirebaseWrap {
         });
     }
 
+    get_full_data_path(data_path: string) {
+        let currentUser = this.firebase_app.auth().currentUser
+        let full_data_path = 'users/' + currentUser.uid;
+        if (data_path.length) {
+            if (data_path.charAt(0) == '/') {
+                full_data_path = full_data_path + data_path
+            } else {
+                full_data_path = full_data_path + '/' + data_path
+            }
+        }
+        return full_data_path
+    }
+
     // Write data.
     write_data(req: RequestMessage): void {
         if (!this.signed_in) {
             this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
             return
         }
-        let currentUser = this.firebase_app.auth().currentUser
-        let userId = currentUser.uid
-        let path = 'users/' + userId;
-        if (req.args.path.length) {
-            if (req.args.path.charAt(0) == '/') {
-                path = path + req.args.path
-            } else {
-                path = path + '/' + req.args.path
-            }
-        }
-        this.firebase_app.database().ref(path).set(FirebaseWrap.js_to_value(req.args.value)).then(
+        let full_data_path = this.get_full_data_path(req.args.data_path)
+        this.firebase_app.database().ref(full_data_path).set(FirebaseWrap.js_to_value(req.args.value)).then(
             (a: any) => {
                 this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
             },
@@ -142,17 +146,8 @@ export class FirebaseWrap {
             this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
             return
         }
-        let currentUser = this.firebase_app.auth().currentUser
-        let userId = currentUser.uid
-        let path = 'users/' + userId;
-        if (req.args.path.length) {
-            if (req.args.path.charAt(0) == '/') {
-                path = path + req.args.path
-            } else {
-                path = path + '/' + req.args.path
-            }
-        }
-        this.firebase_app.database().ref(path).once('value').then(
+        let full_data_path = this.get_full_data_path(req.args.data_path)
+        this.firebase_app.database().ref(full_data_path).once('value').then(
             (data: firebase.database.DataSnapshot) => {
                 console.log('got value: ' + JSON.stringify(data.exportVal()))
                 this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, data.exportVal()))
@@ -170,23 +165,15 @@ export class FirebaseWrap {
             this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
             return
         }
-        let currentUser = this.firebase_app.auth().currentUser
-        let userId = currentUser.uid
-        let path = 'users/' + userId;
-        if (req.args.path.length) {
-            if (req.args.path.charAt(0) == '/') {
-                path = path + req.args.path
-            } else {
-                path = path + '/' + req.args.path
-            }
-        }
+        let full_data_path = this.get_full_data_path(req.args.data_path)
         this.listener =  (data: firebase.database.DataSnapshot) => {
             let info: any = {}
-            info.entity_path = this.node_path
+            info.node_path = req.args.node_path
+            info.data_path = req.args.data_path
             info.value = data.exportVal()
             this.app_server.send_msg(new InfoMessage(req.id, "-1", InfoType.kFirebaseChanged, info))
         }
-        this.firebase_app.database().ref(path).on('value', this.listener)
+        this.firebase_app.database().ref(full_data_path).on('value', this.listener)
         this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
     }
 

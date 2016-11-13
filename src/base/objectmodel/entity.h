@@ -235,7 +235,8 @@ class OBJECTMODEL_EXPORT Entity {
   const std::unordered_set<Entity*>& get_last_pasted();
   void clear_last_pasted();
 
-  bool has_comp(ComponentIID iid) const;
+  bool has_comp_with_iid(ComponentIID iid) const;
+  bool has_comp_with_did(ComponentIID iid, ComponentDID did) const;
  protected:
   Component* get(ComponentIID iid) const;
 

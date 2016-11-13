@@ -19,7 +19,7 @@
 #include <sstream>
 
 #include <boost/lexical_cast.hpp>
-#include <guicomponents/comms/nodejsworker.h>
+#include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/comms/cryptologic.h>
 
 #include <QtCore/QStandardPaths>

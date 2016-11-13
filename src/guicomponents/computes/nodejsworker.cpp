@@ -3,12 +3,16 @@
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
+#include <guicomponents/comms/commutils.h>
+
+#include <guicomponents/computes/firebasecomputes.h>
+
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
 #include <base/objectmodel/basefactory.h>
 #include <components/computes/inputcompute.h>
 
-#include <guicomponents/comms/nodejsworker.h>
+#include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/comms/messagesender.h>
 
 #include <iostream>
@@ -441,7 +445,8 @@ void NodeJSWorker::handle_response(const Message& msg) {
 
 void NodeJSWorker::handle_info(const Message& msg) {
   std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
-  if (msg.value(Message::kInfo).toInt() == to_underlying(InfoType::kShowWebActionMenu)) {
+  int info_type = msg.value(Message::kInfo).toInt();
+  if (info_type == to_underlying(InfoType::kShowWebActionMenu)) {
     _browser_click_pos = msg.value(Message::kValue).toObject().value(Message::kClickPos).toObject();
     _iframe_to_switch_to = msg.value(Message::kIFrame).toString();
     if (msg.value(Message::kValue).toObject().contains(Message::kPrevIFrame)) {
@@ -450,6 +455,16 @@ void NodeJSWorker::handle_info(const Message& msg) {
     } else {
       emit show_web_action_menu();
     }
+  } else if (info_type == to_underlying(InfoType::kFirebaseChanged)) {
+    if (!msg.value(Message::kValue).isObject()) {
+      return;
+    }
+    QJsonObject obj = msg.value(Message::kValue).toObject();
+    QVariantList var_list = obj.value(Message::kNodePath).toArray().toVariantList();
+    Path node_path = var_list_to_path(var_list);
+    QString data_path = obj.value(Message::kDataPath).toString();
+    QJsonValue value = obj.value(Message::kValue);
+    _manipulator->set_firebase_override(node_path, data_path, value);
   } else {
       std::cerr << "comm->app: received info: " << msg.to_string().toStdString() << "\n";
   }
@@ -845,7 +860,7 @@ void NodeJSWorker::firebase_sign_out_task() {
 
 void NodeJSWorker::firebase_write_data_task() {
   QJsonObject args;
-  args.insert(Message::kPath, _chain_state.value(Message::kPath));
+  args.insert(Message::kDataPath, _chain_state.value(Message::kDataPath));
   args.insert(Message::kValue, _chain_state.value(Message::kValue));
 
   Message req(RequestType::kFirebaseWriteData);
@@ -855,7 +870,8 @@ void NodeJSWorker::firebase_write_data_task() {
 
 void NodeJSWorker::firebase_read_data_task() {
   QJsonObject args;
-  args.insert(Message::kPath, _chain_state.value(Message::kPath));
+  args.insert(Message::kDataPath, _chain_state.value(Message::kDataPath));
+  args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
   Message req(RequestType::kFirebaseReadData);
   req.insert(Message::kArgs, args);
@@ -864,7 +880,8 @@ void NodeJSWorker::firebase_read_data_task() {
 
 void NodeJSWorker::firebase_listen_to_changes_task() {
   QJsonObject args;
-  args.insert(Message::kPath, _chain_state.value(Message::kPath));
+  args.insert(Message::kDataPath, _chain_state.value(Message::kDataPath));
+  args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
   Message req(RequestType::kFirebaseListenToChanges);
   req.insert(Message::kArgs, args);

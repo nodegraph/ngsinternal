@@ -191,7 +191,10 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kAppIFramePath;
   static const char* kID;
 
-  static const char* kPath;
+  static const char* kDataPath;
+  static const char* kNodePath;
+  static const char* kListenForChanges;
+
   static const char* kEmail;
   static const char* kPassword;
   static const char* kDataName;

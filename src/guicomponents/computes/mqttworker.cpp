@@ -1,7 +1,7 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
 
-#include <guicomponents/comms/mqttworker.h>
+#include <guicomponents/computes/mqttworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
 #include <components/computes/compute.h>
@@ -60,8 +60,8 @@ void MQTTWorker::queue_subscribe_task(TaskContext& tc, const QString& topic, con
   _scheduler->queue_task(tc, (Task) std::bind(&MQTTWorker::subscribe_task, this, topic, node_path), "queue_subscribe_task");
 }
 
-void MQTTWorker::queue_unsubscribe_task(TaskContext& tc, const QString& topic) {
-  _scheduler->queue_task(tc, (Task) std::bind(&MQTTWorker::unsubscribe_task, this, topic), "queue_send_delete_request");
+void MQTTWorker::queue_unsubscribe_task(TaskContext& tc, const QString& topic, const Path& node_path) {
+  _scheduler->queue_task(tc, (Task) std::bind(&MQTTWorker::unsubscribe_task, this, topic, node_path), "queue_send_delete_request");
 }
 
 void MQTTWorker::queue_finished_task(TaskContext& tc, std::function<void()> done) {
@@ -141,14 +141,25 @@ void MQTTWorker::publish_task(const QString& topic, const QString& message) {
 }
 
 void MQTTWorker::subscribe_task(const QString& topic, const Path& node_path) {
+  bool first = (_subscribers.count(topic.toStdString()) == 0);
   _subscribers[topic.toStdString()].insert(node_path);
   _current_task_id = _scheduler->wait_for_response();
-  _current_client->subscribe(topic, 0);
+  if (first) {
+    _current_client->subscribe(topic, 0);
+  }
 }
 
-void MQTTWorker::unsubscribe_task(const QString& topic) {
-  _current_task_id = _scheduler->wait_for_response();
-  _current_client->unsubscribe(topic);
+void MQTTWorker::unsubscribe_task(const QString& topic, const Path& node_path) {
+  // Remove the path from the subscribers for this topic..
+  _subscribers[topic.toStdString()].erase(node_path);
+  // If there no more paths for this topic, then unsubscribe from the topic.
+  if (_subscribers[topic.toStdString()].empty()) {
+    _subscribers.erase(topic.toStdString());
+    _current_task_id = _scheduler->wait_for_response();
+    _current_client->unsubscribe(topic);
+  } else {
+    _scheduler->run_next_task();
+  }
 }
 
 void MQTTWorker::on_time_out() {

@@ -1,5 +1,5 @@
 #pragma once
-#include <guicomponents/comms/comms_export.h>
+#include <guicomponents/computes/guicomputes_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
 
@@ -23,7 +23,7 @@ class BaseFactory;
 class BaseNodeGraphManipulator;
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT HTTPWorker : public QObject, public Component {
+class GUICOMPUTES_EXPORT HTTPWorker : public QObject, public Component {
 Q_OBJECT
  public:
   COMPONENT_ID(HTTPWorker, HTTPWorker)

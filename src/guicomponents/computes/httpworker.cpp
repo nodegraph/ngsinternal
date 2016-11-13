@@ -7,7 +7,7 @@
 
 #include <base/objectmodel/basefactory.h>
 #include <components/computes/inputcompute.h>
-#include <guicomponents/comms/httpworker.h>
+#include <guicomponents/computes/httpworker.h>
 
 #include <iostream>
 #include <sstream>

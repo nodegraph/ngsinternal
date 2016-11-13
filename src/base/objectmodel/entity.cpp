@@ -24,12 +24,20 @@ Entity::Entity(Entity* parent, const std::string& name)
 }
 
 Entity::~Entity() {
+
+
   // The order of deletion of child entities is random.
   destroy_all_children();
 
-  // The order of deletion of components within an entity is random.
+  // Let each of components do some cleanup, before destruction.
+  for (auto &iter: _components) {
+    iter.second->destroy_state();
+  }
+
+  // The order of deletion of components within an entity is essentially random.
   // 1) Components should not destroy any sibling components.
-  // 2) Components should not to use any sibling components during destruction.
+  // 2) Components should not to use any sibling components during destruction,
+  //    instead any cleanup work should be done in Component::destroy_state().
   IIDToComponentMap copy = _components;
   for (auto &iter: copy) {
     delete_ff(iter.second);
@@ -67,8 +75,19 @@ void Entity::remove(Component* c) {
   c->_entity = NULL;
 }
 
-bool Entity::has_comp(ComponentIID iid) const {
+bool Entity::has_comp_with_iid(ComponentIID iid) const {
   if (get(iid)) {
+    return true;
+  }
+  return false;
+}
+
+bool Entity::has_comp_with_did(ComponentIID iid, ComponentDID did) const {
+  Component* c = get(iid);
+  if (!c) {
+    return false;
+  }
+  if (c->get_did() == did) {
     return true;
   }
   return false;
@@ -339,6 +358,7 @@ void Entity::load_components(SimpleLoader& loader) {
       //assert(false);
       std::cerr << "warning: replacing a component with did: " << (int)c->get_did()
           << "with another with did: " << (int)derived_id << "at entity path: " << get_path().get_as_string() << "\n";
+      c->destroy_state();
       delete_ff(c);
     }
     // Otherwise we create one.

@@ -1,5 +1,5 @@
 #pragma once
-#include <guicomponents/comms/comms_export.h>
+#include <guicomponents/computes/guicomputes_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
 #include <base/utils/path.h>
@@ -30,7 +30,7 @@ class BaseNodeGraphManipulator;
 class BaseMQTTCompute;
 
 // This class implements the computes of the MQTT related nodes.
-class COMMS_EXPORT MQTTWorker : public QObject, public Component {
+class GUICOMPUTES_EXPORT MQTTWorker : public QObject, public Component {
 Q_OBJECT
  public:
   struct Config {
@@ -57,7 +57,7 @@ Q_OBJECT
   void queue_connect_task(TaskContext& tc, const Config& config);
   void queue_publish_task(TaskContext& tc, const QString& topic, const QString& message);
   void queue_subscribe_task(TaskContext& tc, const QString& topic, const Path& node_path);
-  void queue_unsubscribe_task(TaskContext& tc, const QString& topic);
+  void queue_unsubscribe_task(TaskContext& tc, const QString& topic, const Path& node_path);
 
   // Compute Logic.
   void queue_finished_task(TaskContext& tc, std::function<void()> done);
@@ -82,7 +82,7 @@ Q_OBJECT
   void connect_task(const Config& config);
   void publish_task(const QString& topic, const QString& message);
   void subscribe_task(const QString& topic, const Path& node_path);
-  void unsubscribe_task(const QString& topic);
+  void unsubscribe_task(const QString& topic, const Path& node_path);
 
   // Compute Logic.
   void finished_compute_task(std::function<void()> done);

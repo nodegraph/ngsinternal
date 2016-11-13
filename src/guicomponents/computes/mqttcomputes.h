@@ -66,7 +66,11 @@ class GUICOMPUTES_EXPORT MQTTSubscribeCompute: public BaseMQTTCompute {
 
  protected:
   virtual bool update_state();
+  virtual bool destroy_state();
   QJsonValue _override;
+
+  // Cached value of our topic. Use especially for destruction.
+  QString _topic;
 };
 
 }

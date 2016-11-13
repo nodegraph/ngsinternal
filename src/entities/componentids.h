@@ -135,11 +135,8 @@ COMPONENT_ENTRY1(ExitBrowserGroupCompute)\
 \
 COMPONENT_ENTRY1(ExitGroupCompute)\
 \
-COMPONENT_ENTRY1(FirebaseSignInCompute)\
-COMPONENT_ENTRY1(FirebaseSignOutCompute)\
 COMPONENT_ENTRY1(FirebaseWriteDataCompute)\
 COMPONENT_ENTRY1(FirebaseReadDataCompute)\
-COMPONENT_ENTRY1(FirebaseListenToChangesCompute)\
 \
 COMPONENT_ENTRY1(HTTPCompute)\
 COMPONENT_ENTRY1(MQTTPublishCompute)\

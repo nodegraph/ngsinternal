@@ -46,12 +46,12 @@
 
 #include <guicomponents/comms/nodejsprocess.h>
 #include <guicomponents/comms/messagesender.h>
-#include <guicomponents/comms/messagereceiver.h>
+#include <guicomponents/computes/messagereceiver.h>
 #include <guicomponents/comms/appconfig.h>
 #include <guicomponents/computes/browserrecorder.h>
-#include <guicomponents/comms/nodejsworker.h>
-#include <guicomponents/comms/httpworker.h>
-#include <guicomponents/comms/mqttworker.h>
+#include <guicomponents/computes/nodejsworker.h>
+#include <guicomponents/computes/httpworker.h>
+#include <guicomponents/computes/mqttworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>

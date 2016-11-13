@@ -61,7 +61,10 @@ const char* Message::kAppIFramePath = "-1";
 
 const char* Message::kID = "id";
 
-const char* Message::kPath = "path";
+const char* Message::kDataPath = "data_path";
+const char* Message::kNodePath = "node_path";
+const char* Message::kListenForChanges = "listen_for_changes";
+
 const char* Message::kEmail = "email";
 const char* Message::kPassword = "password";
 const char* Message::kDataName = "data_name";

@@ -84,6 +84,7 @@ Q_OBJECT
 
   // Specialized Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
+  virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
 
 private slots:
   void on_condition_timer();
@@ -167,6 +168,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void dirty_compute(const Path& path);
 
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
+  virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
  protected:
   virtual void initialize_wires();
 

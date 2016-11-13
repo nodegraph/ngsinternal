@@ -26,8 +26,8 @@ class GUICOMPUTES_EXPORT FirebaseCompute: public Compute {
 
  protected:
   // Our state.
-  virtual void pre_update_state(TaskContext& tc);
-  virtual void post_update_state(TaskContext& tc);
+  virtual void prepend_tasks(TaskContext& tc);
+  virtual void append_tasks(TaskContext& tc);
 
   void dump_map(const QJsonObject& inputs) const;
 
@@ -35,27 +35,6 @@ class GUICOMPUTES_EXPORT FirebaseCompute: public Compute {
   Dep<TaskScheduler> _scheduler;
   // This enter dep makes sure the group context node computes before us.
   Dep<EnterFirebaseGroupCompute> _enter;
-};
-
-class GUICOMPUTES_EXPORT FirebaseSignInCompute: public FirebaseCompute {
- public:
-  COMPONENT_ID(Compute, FirebaseSignInCompute);
-  FirebaseSignInCompute(Entity* entity): FirebaseCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT FirebaseSignOutCompute: public FirebaseCompute {
- public:
-  COMPONENT_ID(Compute, FirebaseSignOutCompute);
-  FirebaseSignOutCompute(Entity* entity): FirebaseCompute(entity, kDID()){}
- protected:
-  virtual bool update_state();
 };
 
 class GUICOMPUTES_EXPORT FirebaseWriteDataCompute: public FirebaseCompute {
@@ -81,22 +60,23 @@ class GUICOMPUTES_EXPORT FirebaseReadDataCompute: public FirebaseCompute {
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
 
+  // Our overrides.
+  virtual void set_override(const QString& data_path, const QJsonValue& value);
+  virtual const QJsonValue& get_override() const;
+  virtual void clear_override();
+
+ protected:
   virtual void receive_chain_state(const QJsonObject& chain_state);
- protected:
   virtual bool update_state();
-};
 
-class GUICOMPUTES_EXPORT FirebaseListenToChangesCompute: public FirebaseCompute {
- public:
-  COMPONENT_ID(Compute, FirebaseListenToChangesCompute);
-  FirebaseListenToChangesCompute(Entity* entity): FirebaseCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+ private:
+  // This override value is not really used, because when we clean/update_state the current value
+  // is always retrieved directly. However when the firebase database changes our set_override()
+  // method gets called and sets this value.
+  QJsonValue _dummy_override;
 
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
+  // Cached value of our data_path.
+  QString _data_path;
 };
 
 }

@@ -28,4 +28,12 @@ Path string_list_to_path(const QStringList& list) {
   return path;
 }
 
+Path var_list_to_path(const QVariantList& list) {
+  Path path;
+  for (int i=0; i<list.size(); ++i) {
+    path.push_back(list[i].toString().toStdString());
+  }
+  return path;
+}
+
 }

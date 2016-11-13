@@ -3,7 +3,7 @@
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
-#include <guicomponents/comms/nodejsworker.h>
+#include <guicomponents/computes/nodejsworker.h>
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/browsercomputes.h>

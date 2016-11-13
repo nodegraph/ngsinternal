@@ -28,6 +28,7 @@ class UTILS_EXPORT Path {
   static const std::string kCurrentDir;
   static const std::string kParentDir;
 
+  // Note splitting strings can be very time consuming in inner loops.
   static std::deque<std::string> split_string(const std::string& path);
 
   Path();

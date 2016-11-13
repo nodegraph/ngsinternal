@@ -1,5 +1,5 @@
 #pragma once
-#include <guicomponents/comms/comms_export.h>
+#include <guicomponents/computes/guicomputes_export.h>
 #include <base/objectmodel/component.h>
 #include <entities/componentids.h>
 #include <base/objectmodel/dep.h>
@@ -17,7 +17,7 @@ class NodeJSWorker;
 class TaskScheduler;
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT MessageReceiver : public QObject, public Component {
+class GUICOMPUTES_EXPORT MessageReceiver : public QObject, public Component {
 Q_OBJECT
  public:
   COMPONENT_ID(MessageReceiver, MessageReceiver)

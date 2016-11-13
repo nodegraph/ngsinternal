@@ -4,6 +4,7 @@
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/entergroupcompute.h>
+#include <guicomponents/computes/firebasecomputes.h>
 
 #include <components/compshapes/nodeselection.h>
 #include <components/interactions/groupinteraction.h>
@@ -476,7 +477,7 @@ void NodeGraphManipulatorImp::synchronize_graph_dirtiness(Entity* group_entity) 
     Entity* child = iter.second;
 
     EntityDID did = child->get_did();
-    if (child->has_comp(ComponentIID::kIGroupInteraction)) {
+    if (child->has_comp_with_iid(ComponentIID::kIGroupInteraction)) {
       // Skip our current group, because the user is likely incremently adding nodes
       // and we don't want to recompute everything upstream over and over.
       if (child != _factory->get_current_group()) {
@@ -549,14 +550,40 @@ void NodeGraphManipulatorImp::dirty_internals_from_group(Entity* group_entity) {
 }
 
 void NodeGraphManipulatorImp::set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) {
+  // Find the entity.
   Entity* entity = _app_root->has_entity(node_path);
   if (!entity) {
+    return;
+  }
+
+  // Make sure we have the right compute.
+  if (!entity->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kMQTTSubscribeCompute)) {
     return;
   }
 
   // Set the override.
   Dep<MQTTSubscribeCompute> compute = get_dep<MQTTSubscribeCompute>(entity);
   compute->set_override(topic, payload);
+
+  // Bubble dirtiness through the group hierarchies.
+  bubble_group_dirtiness();
+}
+
+void NodeGraphManipulatorImp::set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) {
+  // Find the entity.
+  Entity* entity = _app_root->has_entity(node_path);
+  if (!entity) {
+    return;
+  }
+
+  // Make sure we have the right compute.
+  if (!entity->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kFirebaseReadDataCompute)) {
+    return;
+  }
+
+  // Set the override.
+  Dep<FirebaseReadDataCompute> compute = get_dep<FirebaseReadDataCompute>(entity);
+  compute->set_override(data_path, value);
 
   // Bubble dirtiness through the group hierarchies.
   bubble_group_dirtiness();
@@ -671,6 +698,10 @@ void NodeGraphManipulator::dirty_compute(const Path& path) {
 
 void NodeGraphManipulator::set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) {
   _imp->set_mqtt_override(node_path, topic, payload);
+}
+
+void NodeGraphManipulator::set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) {
+  _imp->set_firebase_override(node_path, data_path, value);
 }
 
 }

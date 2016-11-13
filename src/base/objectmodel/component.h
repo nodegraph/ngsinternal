@@ -112,6 +112,7 @@ class OBJECTMODEL_EXPORT Component {
   void destroy_entity(const Path& path) const;
   Entity* get_app_root() const;
   Entity* get_root_group() const;
+  Path get_path() const;
   std::string get_path_as_string() const;
   const std::string& get_name() const;
 
@@ -265,6 +266,9 @@ class OBJECTMODEL_EXPORT Component {
   // Returning false implies the compute is asynchronously happening somewhere off the main thread.
   // In this case there is logic to trigger the update_state at a later time.
   virtual bool update_state() {return true;}
+  // This method should not perform any possibly asynchronous computes.
+  // This means that any values that it needs to perform its cleanup must be cached during the call to Component::update_state().
+  virtual bool destroy_state() {return true;}
   virtual void finalize_state() {}
 
   // ----------------------------------------------------------------------------------------------------------

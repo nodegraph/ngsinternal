@@ -82,11 +82,8 @@ Q_OBJECT
   Q_INVOKABLE void create_merge_node(bool centered);
 
 
-  Q_INVOKABLE void create_firebase_sign_in_node(bool centered);
-  Q_INVOKABLE void create_firebase_sign_out_node(bool centered);
   Q_INVOKABLE void create_firebase_write_data_node(bool centered);
   Q_INVOKABLE void create_firebase_read_data_node(bool centered);
-  Q_INVOKABLE void create_firebase_listen_to_changes_node(bool centered);
 
   Q_INVOKABLE void create_http_node(bool centered);
 

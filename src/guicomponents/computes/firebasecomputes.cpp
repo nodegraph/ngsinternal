@@ -3,7 +3,7 @@
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
-#include <guicomponents/comms/nodejsworker.h>
+#include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/comms/commutils.h>
 
 #include <guicomponents/comms/taskscheduler.h>
@@ -14,7 +14,7 @@
 
 namespace ngs {
 
-//--------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------------------------------
 
 FirebaseCompute::FirebaseCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
@@ -47,17 +47,20 @@ void FirebaseCompute::dump_map(const QJsonObject& inputs) const {
   }
 }
 
-void FirebaseCompute::pre_update_state(TaskContext& tc) {
+void FirebaseCompute::prepend_tasks(TaskContext& tc) {
   internal();
   QJsonObject inputs = _inputs->get_input_values();
+
+  // Add our path.
+  QStringList list = path_to_string_list(our_entity()->get_path());
+  QJsonArray arr = QJsonArray::fromStringList(list);
+  inputs.insert(Message::kNodePath, arr);
+
+  // Queue up a merge chain state task.
   _worker->queue_merge_chain_state(tc, inputs);
-  // Make sure nothing is loading right now.
-  // Note in general a page may start loading content at random times.
-  // For examples ads may rotate and flip content.
-  _worker->queue_wait_until_loaded(tc);
 }
 
-void FirebaseCompute::post_update_state(TaskContext& tc) {
+void FirebaseCompute::append_tasks(TaskContext& tc) {
   internal();
   std::function<void(const QJsonObject&)> callback = std::bind(&FirebaseCompute::receive_chain_state,this,std::placeholders::_1);
   _worker->queue_receive_chain_state(tc, callback);
@@ -74,62 +77,11 @@ void FirebaseCompute::receive_chain_state(const QJsonObject& chain_state) {
 }
 
 // -------------------------------------------------------------------------------------------------------------------------
-// Firebase
-// -------------------------------------------------------------------------------------------------------------------------
-
-void FirebaseSignInCompute::create_inputs_outputs() {
-  external();
-  FirebaseCompute::create_inputs_outputs();
-  create_input(Message::kEmail, "user@user.com", false);
-  create_input(Message::kPassword, "password", false);
-}
-
-const QJsonObject FirebaseSignInCompute::_hints = FirebaseSignInCompute::init_hints();
-QJsonObject FirebaseSignInCompute::init_hints() {
-  QJsonObject m;
-  FirebaseCompute::init_hints(m);
-
-  add_hint(m, Message::kEmail, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kEmail, HintType::kDescription, "Email address for firebase authentication.");
-
-  add_hint(m, Message::kPassword, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kPassword, HintType::kDescription, "Password for firebase authentication.");
-
-  return m;
-}
-
-bool FirebaseSignInCompute::update_state() {
-  internal();
-  FirebaseCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  //FirebaseCompute::pre_update_state(tc);
-  QJsonObject inputs = _inputs->get_input_values();
-  _worker->queue_merge_chain_state(tc, inputs);
-
-  _worker->queue_firebase_sign_in(tc);
-  FirebaseCompute::post_update_state(tc);
-  return false;
-}
-
-bool FirebaseSignOutCompute::update_state() {
-  internal();
-  FirebaseCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  //FirebaseCompute::pre_update_state(tc);
-  QJsonObject inputs = _inputs->get_input_values();
-  _worker->queue_merge_chain_state(tc, inputs);
-
-  _worker->queue_firebase_sign_out(tc);
-  FirebaseCompute::post_update_state(tc);
-  return false;
-}
 
 void FirebaseWriteDataCompute::create_inputs_outputs() {
   external();
   FirebaseCompute::create_inputs_outputs();
-  create_input(Message::kPath, "some/path", false);
+  create_input(Message::kDataPath, "some/path", false);
   create_input(Message::kValue, "hello there", false);
 }
 
@@ -138,8 +90,8 @@ QJsonObject FirebaseWriteDataCompute::init_hints() {
   QJsonObject m;
   FirebaseCompute::init_hints(m);
 
-  add_hint(m, Message::kPath, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kPath, HintType::kDescription, "Firebase data path.");
+  add_hint(m, Message::kDataPath, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kDataPath, HintType::kDescription, "Firebase data path.");
 
   add_hint(m, Message::kValue, HintType::kJSType, to_underlying(JSType::kString));
   add_hint(m, Message::kValue, HintType::kDescription, "The data to write at the path.");
@@ -152,20 +104,20 @@ bool FirebaseWriteDataCompute::update_state() {
   FirebaseCompute::update_state();
 
   TaskContext tc(_scheduler);
-  //FirebaseCompute::pre_update_state(tc);
-  QJsonObject inputs = _inputs->get_input_values();
-  _worker->queue_merge_chain_state(tc, inputs);
-
+  FirebaseCompute::prepend_tasks(tc);
   _worker->queue_firebase_write_data(tc);
-  FirebaseCompute::post_update_state(tc);
+  FirebaseCompute::append_tasks(tc);
   return false;
 }
+
+// -------------------------------------------------------------------------------------------------------------------------
 
 void FirebaseReadDataCompute::create_inputs_outputs() {
   external();
   FirebaseCompute::create_inputs_outputs();
-  create_input(Message::kPath, "some/path", false);
+  create_input(Message::kDataPath, "some/path", false);
   create_input(Message::kDataName, "data", false);
+  create_input(Message::kListenForChanges, true, false);
 }
 
 const QJsonObject FirebaseReadDataCompute::_hints = FirebaseReadDataCompute::init_hints();
@@ -173,13 +125,34 @@ QJsonObject FirebaseReadDataCompute::init_hints() {
   QJsonObject m;
   FirebaseCompute::init_hints(m);
 
-  add_hint(m, Message::kPath, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kPath, HintType::kDescription, "Firebase data path.");
+  add_hint(m, Message::kDataPath, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kDataPath, HintType::kDescription, "Firebase data path.");
 
   add_hint(m, Message::kDataName, HintType::kJSType, to_underlying(JSType::kString));
   add_hint(m, Message::kDataName, HintType::kDescription, "The name given to the data read from Firebase. This will be merged into the data flowing through \"in\".");
 
+  add_hint(m, Message::kListenForChanges, HintType::kJSType, to_underlying(JSType::kBoolean));
+  add_hint(m, Message::kListenForChanges, HintType::kDescription, "When enabled, this node will be updated when there are any changes to the value.");
+
   return m;
+}
+
+void FirebaseReadDataCompute::set_override(const QString& data_path, const QJsonValue& value) {
+  external();
+  if (_data_path != data_path) {
+    return;
+  }
+  _dummy_override = value;
+}
+
+const QJsonValue& FirebaseReadDataCompute::get_override() const {
+  external();
+  return _dummy_override;
+}
+
+void FirebaseReadDataCompute::clear_override() {
+  internal();
+  _dummy_override = QJsonValue();
 }
 
 void FirebaseReadDataCompute::receive_chain_state(const QJsonObject& chain_state) {
@@ -203,49 +176,18 @@ bool FirebaseReadDataCompute::update_state() {
   internal();
   FirebaseCompute::update_state();
 
+  // Cache the data path value.
+  _data_path = _inputs->get_input_value(Message::kDataPath).toString();
+
+  // Perform our compute.
   TaskContext tc(_scheduler);
-  //FirebaseCompute::pre_update_state(tc);
-  QJsonObject inputs = _inputs->get_input_values();
-  _worker->queue_merge_chain_state(tc, inputs);
-
-  _worker->queue_firebase_read_data(tc);
-  FirebaseCompute::post_update_state(tc);
-  return false;
-}
-
-void FirebaseListenToChangesCompute::create_inputs_outputs() {
-  external();
-  FirebaseCompute::create_inputs_outputs();
-  create_input(Message::kPath, "some/path", false);
-}
-
-const QJsonObject FirebaseListenToChangesCompute::_hints = FirebaseListenToChangesCompute::init_hints();
-QJsonObject FirebaseListenToChangesCompute::init_hints() {
-  QJsonObject m;
-  FirebaseCompute::init_hints(m);
-
-  add_hint(m, Message::kPath, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kPath, HintType::kDescription, "Firebase data path.");
-
-  return m;
-}
-
-bool FirebaseListenToChangesCompute::update_state() {
-  internal();
-  FirebaseCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  //FirebaseCompute::pre_update_state(tc);
-  QJsonObject inputs = _inputs->get_input_values();
-  //Add our path.
-  QStringList list = path_to_string_list(our_entity()->get_path());
-  QJsonArray arr = QJsonArray::fromStringList(list);
-  inputs.insert("node_path", arr);
-  _worker->queue_merge_chain_state(tc, inputs);
-
+  FirebaseCompute::prepend_tasks(tc);
   _worker->queue_firebase_listen_to_changes(tc);
-  FirebaseCompute::post_update_state(tc);
+  _worker->queue_firebase_read_data(tc);
+  FirebaseCompute::append_tasks(tc);
   return false;
 }
+
+// -------------------------------------------------------------------------------------------------------------------------
 
 }

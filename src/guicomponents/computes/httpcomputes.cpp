@@ -4,7 +4,7 @@
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
 
-#include <guicomponents/comms/httpworker.h>
+#include <guicomponents/computes/httpworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/httpcomputes.h>
 

@@ -128,8 +128,12 @@ ComponentDID Component::get_did() const {
   return _did;
 }
 
+Path Component::get_path() const {
+  return our_entity()->get_path();
+}
+
 std::string Component::get_path_as_string() const {
-  return our_entity()->get_path().get_as_string();
+  return get_path().get_as_string();
 }
 
 void Component::pre_save(SimpleSaver& saver) const {

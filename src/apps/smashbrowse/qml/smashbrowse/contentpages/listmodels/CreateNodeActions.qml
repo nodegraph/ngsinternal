@@ -84,20 +84,6 @@ ListModel {
     }
     ListElement {
         image_url: "qrc:///icons/ic_gesture_white_48dp.png"
-        title: "Firebase Sign In"
-        description: "Merges data from two inputs and outputs it."
-        script: "node_graph_item.create_firebase_sign_in_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
-    }
-    ListElement {
-        image_url: "qrc:///icons/ic_gesture_white_48dp.png"
-        title: "Firebase Sign Out"
-        description: "Merges data from two inputs and outputs it."
-        script: "node_graph_item.create_firebase_sign_out_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
-    }
-    ListElement {
-        image_url: "qrc:///icons/ic_gesture_white_48dp.png"
         title: "Firebase Write Data"
         description: "Merges data from two inputs and outputs it."
         script: "node_graph_item.create_firebase_write_data_node(center_new_nodes);
@@ -108,13 +94,6 @@ ListModel {
         title: "Firebase Read Data"
         description: "Merges data from two inputs and outputs it."
         script: "node_graph_item.create_firebase_read_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
-    }
-    ListElement {
-        image_url: "qrc:///icons/ic_gesture_white_48dp.png"
-        title: "Firebase Listen To Changes"
-        description: "Merges data from two inputs and outputs it."
-        script: "node_graph_item.create_firebase_listen_to_changes_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
 	ListElement {

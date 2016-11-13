@@ -100,7 +100,7 @@ void CompShapeCollective::collect_comp_shapes(Entity* entity) {
 
   // If it's some type of group node we don't dive into it.
   // We only show its inputs and outputs.
-  if (entity->has_comp(ComponentIID::kIGroupInteraction)) {
+  if (entity->has_comp_with_iid(ComponentIID::kIGroupInteraction)) {
     collect_comp_shapes(entity->get_entity(Path({".","inputs"})));
     collect_comp_shapes(entity->get_entity(Path({".","outputs"})));
     return;

@@ -4,7 +4,7 @@
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
 
-#include <guicomponents/comms/mqttworker.h>
+#include <guicomponents/computes/mqttworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/entermqttgroupcompute.h>
@@ -139,8 +139,7 @@ QJsonObject MQTTSubscribeCompute::init_hints() {
 
 void MQTTSubscribeCompute::set_override(const QString& topic, const QString& payload) {
   external();
-  QString our_topic = _inputs->get_input_value(Message::kTopic).toString();
-  if (topic != our_topic) {
+  if (_topic != topic) {
     return;
   }
   _override = payload;
@@ -152,20 +151,30 @@ const QJsonValue& MQTTSubscribeCompute::get_override() const {
 }
 
 void MQTTSubscribeCompute::clear_override() {
-  internal();
+  external();
   _override = QJsonValue();
 }
 
 bool MQTTSubscribeCompute::update_state() {
   internal();
   BaseMQTTCompute::update_state();
-  QString topic = _inputs->get_input_value(Message::kTopic).toString();
+  _topic = _inputs->get_input_value(Message::kTopic).toString();
 
   TaskContext tc(_scheduler);
-  if (!_worker->is_subscribed(this, topic.toStdString())) {
-    _worker->queue_subscribe_task(tc, topic, our_entity()->get_path());
+  if (!_worker->is_subscribed(this, _topic.toStdString())) {
+    _worker->queue_subscribe_task(tc, _topic, our_entity()->get_path());
   }
+  // Let on_finished_task() handle setting our final output value.
   append_callback_tasks(tc);
+  return true;
+}
+
+bool MQTTSubscribeCompute::destroy_state() {
+  internal();
+  TaskContext tc(_scheduler);
+  if (!_worker->is_subscribed(this, _topic.toStdString())) {
+    _worker->queue_unsubscribe_task(tc, _topic, our_entity()->get_path());
+  }
   return true;
 }
 

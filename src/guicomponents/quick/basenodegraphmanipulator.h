@@ -4,6 +4,7 @@
 #include <entities/componentids.h>
 
 class QJsonObject;
+class QJsonValue;
 class QString;
 
 namespace ngs {
@@ -58,6 +59,7 @@ class BaseNodeGraphManipulator: public Component {
 
   // Specialized Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) = 0;
+  virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) = 0;
 };
 
 }
