@@ -3,6 +3,7 @@
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/mqttcomputes.h>
+#include <guicomponents/computes/entergroupcompute.h>
 
 #include <components/compshapes/nodeselection.h>
 #include <components/interactions/groupinteraction.h>
@@ -278,6 +279,17 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
 
 void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
   _ng_quick->dive_into_group(child_group_name);
+
+  // Graph the entity for the group context node.
+  Entity* node =_factory->get_current_group()->get_child("group_context");
+  if (!node) {
+    return;
+  }
+  // Dirty the group context node.
+  Dep<EnterGroupCompute> enter = get_dep<EnterGroupCompute>(node);
+  enter->dirty_state();
+  // Now we it as the ultimate target to clean to.
+  set_ultimate_targets(node);
 }
 
 void NodeGraphManipulatorImp::surface_from_group() {

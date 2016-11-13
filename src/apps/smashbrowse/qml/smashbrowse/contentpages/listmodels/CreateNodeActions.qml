@@ -17,7 +17,7 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
-        title: "Web Group Node"
+        title: "Browser Group Node"
         description: "Encapsulates web browser manipulation logic."
         script: "node_graph_item.create_browser_group_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"

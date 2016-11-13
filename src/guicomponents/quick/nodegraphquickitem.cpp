@@ -857,8 +857,6 @@ void NodeGraphQuickItem::destroy_selection() {
 }
 
 void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
-  std::cerr << "ng quick is trying to dive in now.\n";
-
   // Find the child group.
   Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
   if (!group_entity) {
