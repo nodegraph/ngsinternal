@@ -189,7 +189,7 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
     // and the input nodes inside the group.
 
     // The target path holds the path down to the immediately surrounding group of the target.
-    Path target_path = compute->our_entity()->get_path();
+    Path target_path = compute->get_path();
     target_path.pop_back();
 
     // Starting from the root group we dive one by one to the target group.

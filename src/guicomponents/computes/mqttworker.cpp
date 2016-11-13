@@ -40,7 +40,7 @@ bool MQTTWorker::is_subscribed(const Compute* compute, const std::string& topic)
   if (!_subscribers.count(topic)) {
     return false;
   }
-  Path node_path = compute->our_entity()->get_path();
+  Path node_path = compute->get_path();
   const std::unordered_set<Path, PathHasher>& paths = _subscribers.at(topic);
   if (paths.count(node_path)) {
     return true;

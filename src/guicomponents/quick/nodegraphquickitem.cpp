@@ -778,7 +778,7 @@ void NodeGraphQuickItem::view_node() {
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
   if(compute) {
-    QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
+    QStringList path_list = path_to_string_list(compute->get_path());
     emit view_node_outputs(path_list, compute->get_outputs());
     // Update our node graph selection object which also tracks and edit and view nodes.
     get_current_interaction()->view(_last_node_shape);
@@ -800,7 +800,7 @@ void NodeGraphQuickItem::edit_node() {
   compute = get_dep<Compute>(entity);
 
   if(compute) {
-    QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
+    QStringList path_list = path_to_string_list(compute->get_path());
     emit edit_node_inputs(path_list,
                           compute->get_editable_inputs(),
                           compute->get_hints(),
@@ -1042,7 +1042,7 @@ void NodeGraphQuickItem::view_node_poke() {
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
-  QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
+  QStringList path_list = path_to_string_list(compute->get_path());
   emit view_node_outputs(path_list, compute->get_outputs());
 }
 
@@ -1053,7 +1053,7 @@ void NodeGraphQuickItem::edit_node_poke() {
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
-  QStringList path_list = path_to_string_list(compute->our_entity()->get_path());
+  QStringList path_list = path_to_string_list(compute->get_path());
   emit edit_node_inputs(path_list, compute->get_editable_inputs(), compute->get_hints(), compute->get_input_exposure());
 }
 

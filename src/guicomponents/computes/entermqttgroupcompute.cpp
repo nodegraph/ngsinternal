@@ -18,7 +18,7 @@ EnterMQTTGroupCompute::EnterMQTTGroupCompute(Entity* entity)
 }
 
 EnterMQTTGroupCompute::~EnterMQTTGroupCompute() {
-  _worker->unregister_group_lock(our_entity()->get_path());
+  _worker->unregister_group_lock(get_path());
 }
 
 void EnterMQTTGroupCompute::create_inputs_outputs() {
@@ -63,7 +63,7 @@ bool EnterMQTTGroupCompute::update_state() {
   }
 
   // Register ourself for mqtt disconnects.
-  _worker->register_group_lock(config, our_entity()->get_path());
+  _worker->register_group_lock(config, get_path());
 
   // Otherwise queue up the connect task.
   TaskContext tc(_scheduler);

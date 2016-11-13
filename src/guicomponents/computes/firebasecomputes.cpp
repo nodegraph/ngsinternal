@@ -52,7 +52,7 @@ void FirebaseCompute::prepend_tasks(TaskContext& tc) {
   QJsonObject inputs = _inputs->get_input_values();
 
   // Add our path.
-  QStringList list = path_to_string_list(our_entity()->get_path());
+  QStringList list = path_to_string_list(get_path());
   QJsonArray arr = QJsonArray::fromStringList(list);
   inputs.insert(Message::kNodePath, arr);
 

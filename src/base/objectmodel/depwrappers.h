@@ -54,8 +54,8 @@ class DynamicDepUSetWrapper: public PathedDep {
     for (iter = _deps->begin(); iter != _deps->end(); ++iter) {
       if (*iter) {
         Dep<T> dep = *iter;
-        _paths[count] = dep.get()->our_entity()->get_path();
-        Path owner_path = dep->_fixed_dependant->our_entity()->get_path();
+        _paths[count] = dep.get()->get_path();
+        Path owner_path = dep->_fixed_dependant->get_path();
         _paths[count].make_relative_to(owner_path);
       } else {
         _paths[count].invalidate();
@@ -96,8 +96,8 @@ class DynamicDepWrapper : public PathedDep {
   }
   virtual void bake_path() const{
     if (*_dep) {
-      _path = _dep->get()->our_entity()->get_path();
-      Path owner_path = _dep->_fixed_dependant->our_entity()->get_path();
+      _path = _dep->get()->get_path();
+      Path owner_path = _dep->_fixed_dependant->get_path();
       _path.make_relative_to(owner_path);
     } else {
       _path.invalidate();

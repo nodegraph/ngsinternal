@@ -162,7 +162,7 @@ bool MQTTSubscribeCompute::update_state() {
 
   TaskContext tc(_scheduler);
   if (!_worker->is_subscribed(this, _topic.toStdString())) {
-    _worker->queue_subscribe_task(tc, _topic, our_entity()->get_path());
+    _worker->queue_subscribe_task(tc, _topic, get_path());
   }
   // Let on_finished_task() handle setting our final output value.
   append_callback_tasks(tc);
@@ -173,7 +173,7 @@ bool MQTTSubscribeCompute::destroy_state() {
   internal();
   TaskContext tc(_scheduler);
   if (!_worker->is_subscribed(this, _topic.toStdString())) {
-    _worker->queue_unsubscribe_task(tc, _topic, our_entity()->get_path());
+    _worker->queue_unsubscribe_task(tc, _topic, get_path());
   }
   return true;
 }
