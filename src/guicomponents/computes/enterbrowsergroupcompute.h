@@ -10,7 +10,7 @@ class QJsonObject;
 namespace ngs {
 
 class TaskScheduler;
-class BrowserWorker;
+class NodeJSWorker;
 
 
 class GUICOMPUTES_EXPORT EnterBrowserGroupCompute: public EnterGroupCompute {
@@ -39,7 +39,7 @@ class GUICOMPUTES_EXPORT EnterBrowserGroupCompute: public EnterGroupCompute {
   void receive_chain_state(const QJsonObject& chain_state);
 
   Dep<TaskScheduler> _scheduler;
-  Dep<BrowserWorker> _worker;
+  Dep<NodeJSWorker> _worker;
 };
 
 class GUICOMPUTES_EXPORT ExitBrowserGroupCompute: public ExitGroupCompute {
@@ -56,7 +56,7 @@ class GUICOMPUTES_EXPORT ExitBrowserGroupCompute: public ExitGroupCompute {
   void receive_chain_state(const QJsonObject& chain_state);
 
   Dep<TaskScheduler> _scheduler;
-  Dep<BrowserWorker> _worker;
+  Dep<NodeJSWorker> _worker;
 };
 
 }

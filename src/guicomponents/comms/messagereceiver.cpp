@@ -1,6 +1,6 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
-#include <guicomponents/comms/browserworker.h>
+#include <guicomponents/comms/nodejsworker.h>
 
 #include <guicomponents/comms/message.h>
 #include <guicomponents/comms/messagesender.h>

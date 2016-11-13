@@ -10,7 +10,7 @@ set(sources
     taskscheduler.cpp
     licensechecker.cpp
     cryptologic.cpp
-    browserworker.cpp
+    nodejsworker.cpp
     mqttworker.cpp
     httpworker.cpp
     )
@@ -29,7 +29,7 @@ set(moc_headers
     messagereceiver.h
     appconfig.h
     licensechecker.h
-    browserworker.h
+    nodejsworker.h
     mqttworker.h
     httpworker.h
     )

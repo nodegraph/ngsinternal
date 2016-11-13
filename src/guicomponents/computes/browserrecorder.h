@@ -9,7 +9,7 @@ namespace ngs {
 class FileModel;
 class Compute;
 class BaseFactory;
-class BrowserWorker;
+class NodeJSWorker;
 class TaskScheduler;
 
 // This class communicates with the nodejs process.
@@ -129,7 +129,7 @@ Q_OBJECT
     void build_web_node(ComponentDID compute_did, const QVariantMap& chain_state);
 
   // Our fixed dependencies.
-  Dep<BrowserWorker> _worker;
+  Dep<NodeJSWorker> _worker;
   Dep<TaskScheduler> _scheduler;
   Dep<FileModel> _model;
 };

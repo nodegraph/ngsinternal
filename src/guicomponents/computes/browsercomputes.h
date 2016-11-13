@@ -7,7 +7,7 @@
 namespace ngs {
 
 class Entity;
-class BrowserWorker;
+class NodeJSWorker;
 class TaskScheduler;
 class TaskContext;
 class EnterBrowserGroupCompute;
@@ -31,7 +31,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   void dump_map(const QJsonObject& inputs) const;
 
-  Dep<BrowserWorker> _worker;
+  Dep<NodeJSWorker> _worker;
   Dep<TaskScheduler> _scheduler;
   // This enter dep makes sure the group context node computes before us.
   Dep<EnterBrowserGroupCompute> _enter;
@@ -283,72 +283,6 @@ class GUICOMPUTES_EXPORT ShrinkAgainstMarkedCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, ShrinkAgainstMarkedCompute);
   ShrinkAgainstMarkedCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-// -------------------------------------------------------------------------------------------------------------------------
-// Firebase
-// -------------------------------------------------------------------------------------------------------------------------
-
-class GUICOMPUTES_EXPORT FirebaseSignInCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, FirebaseSignInCompute);
-  FirebaseSignInCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT FirebaseSignOutCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, FirebaseSignOutCompute);
-  FirebaseSignOutCompute(Entity* entity): BrowserCompute(entity, kDID()){}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT FirebaseWriteDataCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, FirebaseWriteDataCompute);
-  FirebaseWriteDataCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT FirebaseReadDataCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, FirebaseReadDataCompute);
-  FirebaseReadDataCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
-
-  virtual void receive_chain_state(const QJsonObject& chain_state);
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT FirebaseListenToChangesCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, FirebaseListenToChangesCompute);
-  FirebaseListenToChangesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs();
 
   static QJsonObject init_hints();

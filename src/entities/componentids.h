@@ -50,7 +50,7 @@ enum class ComponentIID : size_t {
   kIMessageReceiver,
   kIAppConfig,
   //kIAppComm,
-  kIBrowserWorker,
+  kINodeJSWorker,
   kIHTTPWorker,
   kIMQTTWorker,
   kIBrowserRecorder,
@@ -163,7 +163,7 @@ COMPONENT_ENTRY1(MessageSender)\
 COMPONENT_ENTRY1(MessageReceiver)\
 COMPONENT_ENTRY1(AppConfig)\
 /*COMPONENT_ENTRY1(AppComm)\*/\
-COMPONENT_ENTRY1(BrowserWorker)\
+COMPONENT_ENTRY1(NodeJSWorker)\
 COMPONENT_ENTRY1(HTTPWorker)\
 COMPONENT_ENTRY1(MQTTWorker)\
 COMPONENT_ENTRY1(BrowserRecorder)\

@@ -40,6 +40,7 @@
 
 #include <entities/factory.h>
 #include <guicomponents/computes/browsercomputes.h>
+#include <guicomponents/computes/firebasecomputes.h>
 #include <guicomponents/computes/httpcomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/mqttcomputes.h>
@@ -67,7 +68,7 @@
 
 #include <gui/widget/nodegrapheditor.h>
 #include <guicomponents/computes/browserrecorder.h>
-#include <guicomponents/comms/browserworker.h>
+#include <guicomponents/comms/nodejsworker.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <iostream>
 #include <cassert>

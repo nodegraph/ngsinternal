@@ -22,13 +22,13 @@ class BaseFactory;
 class BaseNodeGraphManipulator;
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT BrowserWorker : public QObject, public Component {
+class COMMS_EXPORT NodeJSWorker : public QObject, public Component {
 Q_OBJECT
  public:
-  COMPONENT_ID(BrowserWorker, BrowserWorker)
+  COMPONENT_ID(NodeJSWorker, NodeJSWorker)
 
-  explicit BrowserWorker(Entity* parent);
-  virtual ~BrowserWorker();
+  explicit NodeJSWorker(Entity* parent);
+  virtual ~NodeJSWorker();
 
   Q_INVOKABLE void open();
   Q_INVOKABLE void close();

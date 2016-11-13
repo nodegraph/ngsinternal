@@ -49,7 +49,7 @@
 #include <guicomponents/comms/messagereceiver.h>
 #include <guicomponents/comms/appconfig.h>
 #include <guicomponents/computes/browserrecorder.h>
-#include <guicomponents/comms/browserworker.h>
+#include <guicomponents/comms/nodejsworker.h>
 #include <guicomponents/comms/httpworker.h>
 #include <guicomponents/comms/mqttworker.h>
 #include <guicomponents/comms/taskscheduler.h>
@@ -124,7 +124,7 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff AppConfig(this);
   new_ff TaskScheduler(this);
   //new_ff AppComm(this);
-  new_ff BrowserWorker(this);
+  new_ff NodeJSWorker(this);
   new_ff BrowserRecorder(this);
   new_ff HTTPWorker(this);
   new_ff MQTTWorker(this);
@@ -162,7 +162,7 @@ void QMLAppEntity::expose_to_qml() {
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
   NodeGraphController* ng_controller = get_node_graph_controller();
-  BrowserWorker* web_worker = get_app_worker();
+  NodeJSWorker* web_worker = get_app_worker();
   BrowserRecorder* web_recorder = get_app_recorder();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
@@ -226,8 +226,8 @@ FileModel* QMLAppEntity::get_file_model() {
   return get<FileModel>();
 }
 
-BrowserWorker* QMLAppEntity::get_app_worker() {
-  return get<BrowserWorker>();
+NodeJSWorker* QMLAppEntity::get_app_worker() {
+  return get<NodeJSWorker>();
 }
 
 BrowserRecorder* QMLAppEntity::get_app_recorder() {

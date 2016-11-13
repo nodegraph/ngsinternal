@@ -2,7 +2,7 @@
 #include <base/objectmodel/dep.h>
 #include <base/objectmodel/deploader.h>
 #include <components/computes/inputs.h>
-#include <guicomponents/comms/browserworker.h>
+#include <guicomponents/comms/nodejsworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
 

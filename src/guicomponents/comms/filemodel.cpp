@@ -21,7 +21,7 @@
 #include <sstream>
 
 #include <boost/lexical_cast.hpp>
-#include <guicomponents/comms/browserworker.h>
+#include <guicomponents/comms/nodejsworker.h>
 
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDir>

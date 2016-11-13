@@ -13,7 +13,7 @@ class QWebSocket;
 
 namespace ngs {
 
-class BrowserWorker;
+class NodeJSWorker;
 class TaskScheduler;
 
 // This class communicates with the nodejs process.
@@ -37,7 +37,7 @@ Q_OBJECT
   void separate_messages(const QString& text);
 
   // Our fixed dependencies.
-  Dep<BrowserWorker> _app_worker;
+  Dep<NodeJSWorker> _app_worker;
   Dep<TaskScheduler> _task_queue; // The node js process we want to connect to.
 
   QWebSocket* _web_socket; // Borrowed reference.

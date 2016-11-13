@@ -3,6 +3,7 @@ set(sources
     scriptgroupnodecompute.cpp
     scriptnodecompute.cpp
     browsercomputes.cpp
+    firebasecomputes.cpp
     httpcomputes.cpp
     mqttcomputes.cpp
     browserrecorder.cpp
@@ -15,6 +16,7 @@ set(sources
 set(headers
     scriptnodecompute.h
     browsercomputes.h
+    firebasecomputes.h
     httpcomputes.h
     mqttcomputes.h
     entergroupcompute.h
