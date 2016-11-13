@@ -869,13 +869,6 @@ void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
     return;
   }
 
-  // If the child group has an group context node, then make it dirty.
-  Entity* child = group_entity->get_child("group_context");
-  if (child) {
-    Dep<EnterGroupCompute> enter = get_dep<EnterGroupCompute>(child);
-    enter->dirty_state();
-  }
-
   // Dive into the group.
   _canvas->dive(group_entity);
 

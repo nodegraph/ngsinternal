@@ -33,7 +33,8 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   Dep<BrowserWorker> _worker;
   Dep<TaskScheduler> _scheduler;
-  Dep<EnterBrowserGroupCompute> _enter; // We hold this dep so that this compute (open/close browser) will happen before us.
+  // This enter dep makes sure the group context node computes before us.
+  Dep<EnterBrowserGroupCompute> _enter;
 };
 
 class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {

@@ -10,6 +10,7 @@ class Entity;
 class MQTTWorker;
 class TaskScheduler;
 class TaskContext;
+class EnterMQTTGroupCompute;
 
 class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
  public:
@@ -27,6 +28,8 @@ class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
 
   Dep<MQTTWorker> _worker;
   Dep<TaskScheduler> _scheduler;
+  // This enter dep makes sure the group context node computes before us.
+  Dep<EnterMQTTGroupCompute> _enter;
 };
 
 class GUICOMPUTES_EXPORT MQTTPublishCompute: public BaseMQTTCompute {
