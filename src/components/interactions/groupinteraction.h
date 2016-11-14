@@ -144,8 +144,6 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
     _view_controls.update_coord_spaces(info);
   }
 
-  Entity* create_node(EntityDID did);
-
   void link(Entity* upstream, Entity* downstream);
 
  protected:

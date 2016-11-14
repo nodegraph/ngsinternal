@@ -1,5 +1,6 @@
 #pragma once
 #include <entities/entities_export.h>
+#include <string>
 
 namespace ngs {
 
@@ -187,8 +188,10 @@ enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()
 };
 
-
+// Returns the derived class name as a string.
 ENTITIES_EXPORT const char* get_component_did_name(ComponentDID did);
 
-
+// Returns a more user friendly name for the derived class.
+ENTITIES_EXPORT std::string get_user_friendly_name(const std::string& name);
+ENTITIES_EXPORT std::string get_component_user_did_name(ComponentDID did);
 }

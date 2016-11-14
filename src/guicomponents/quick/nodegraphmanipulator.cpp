@@ -335,56 +335,8 @@ void NodeGraphManipulatorImp::finish_creating_node(Entity* entity, bool centered
   _ng_quick->update();
 }
 
-//void NodeGraphManipulatorImp::create_node(bool centered, EntityDID entity_did) {
-//
-//}
-//
-//void NodeGraphManipulatorImp::create_compute_node(bool centered, ComponentDID compute_did) {
-//
-//}
-
-void NodeGraphManipulatorImp::create_group_node(bool centered) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), "data group", EntityDID::kGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphManipulatorImp::create_script_group_node(bool centered) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), "script group", EntityDID::kScriptGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphManipulatorImp::create_browser_group_node(bool centered) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), "browser group", EntityDID::kBrowserGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphManipulatorImp::create_firebase_group_node(bool centered) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), "firebase group", EntityDID::kFirebaseGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphManipulatorImp::create_mqtt_group_node(bool centered) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), "mqtt group", EntityDID::kMQTTGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphManipulatorImp::create_input_node(bool centered) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), "input", EntityDID::kInputNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphManipulatorImp::create_output_node(bool centered) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), "output", EntityDID::kOutputNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphManipulatorImp::create_data_node(bool centered) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), "data", EntityDID::kDataNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphManipulatorImp::create_dot_node(bool centered) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), "dot", EntityDID::kDotNodeEntity);
+void NodeGraphManipulatorImp::create_node(bool centered, EntityDID entity_did) {
+  Entity* e = _factory->instance_entity(_factory->get_current_group(), entity_did);
   finish_creating_node(e, centered);
 }
 
@@ -392,31 +344,6 @@ void NodeGraphManipulatorImp::create_compute_node(bool centered, ComponentDID co
   Entity* e = _factory->instance_compute_node(_factory->get_current_group(), compute_did);
   finish_creating_node(e, centered);
 }
-
-void NodeGraphManipulatorImp::create_merge_node(bool centered) {
-  create_compute_node(centered, ComponentDID::kMergeNodeCompute);
-}
-
-void NodeGraphManipulatorImp::create_firebase_write_data_node(bool centered) {
-  create_compute_node(centered, ComponentDID::kFirebaseWriteDataCompute);
-}
-
-void NodeGraphManipulatorImp::create_firebase_read_data_node(bool centered) {
-  create_compute_node(centered, ComponentDID::kFirebaseReadDataCompute);
-}
-
-void NodeGraphManipulatorImp::create_http_node(bool centered) {
-  create_compute_node(centered, ComponentDID::kHTTPCompute);
-}
-
-void NodeGraphManipulatorImp::create_mqtt_publish_node(bool centered) {
-  create_compute_node(centered, ComponentDID::kMQTTPublishCompute);
-}
-
-void NodeGraphManipulatorImp::create_mqtt_subscribe_node(bool centered) {
-  create_compute_node(centered, ComponentDID::kMQTTSubscribeCompute);
-}
-
 
 Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
   // Create the node.
@@ -494,7 +421,7 @@ void NodeGraphManipulatorImp::link(Entity* downstream) {
 
     // Create a link.
     Entity* links_folder = current_group->get_entity(Path( { ".", "links" }));
-    Entity* link = factory->instance_entity(links_folder, "link", EntityDID::kLinkEntity);
+    Entity* link = factory->instance_entity(links_folder, EntityDID::kLinkEntity, "link");
     link->create_internals();
 
     // Link the link, input and output shapes.
@@ -526,7 +453,7 @@ void NodeGraphManipulatorImp::destroy_link(Entity* input_entity) {
 Entity* NodeGraphManipulatorImp::create_link() {
   Entity* group = _factory->get_current_group();
   Entity* links_folder = group->get_entity(Path({".","links"}));
-  Entity* link = _factory->instance_entity(links_folder, "link", EntityDID::kLinkEntity);
+  Entity* link = _factory->instance_entity(links_folder, EntityDID::kLinkEntity, "link");
   link->create_internals();
 
   Dep<LinkShape> dep = get_dep<LinkShape>(link);
@@ -771,68 +698,12 @@ void NodeGraphManipulator::set_output_topology(Entity* entity, const std::unorde
   _imp->set_output_topology(entity, ordering);
 }
 
-void NodeGraphManipulator::create_group_node(bool centered) {
-  _imp->create_group_node(centered);
-}
-
-void NodeGraphManipulator::create_script_group_node(bool centered) {
-  _imp->create_script_group_node(centered);
-}
-
-void NodeGraphManipulator::create_browser_group_node(bool centered) {
-  _imp->create_browser_group_node(centered);
-}
-
-void NodeGraphManipulator::create_firebase_group_node(bool centered) {
-  _imp->create_firebase_group_node(centered);
-}
-
-void NodeGraphManipulator::create_mqtt_group_node(bool centered) {
-  _imp->create_mqtt_group_node(centered);
-}
-
-void NodeGraphManipulator::create_input_node(bool centered) {
-  _imp->create_input_node(centered);
-}
-
-void NodeGraphManipulator::create_output_node(bool centered) {
-  _imp->create_output_node(centered);
-}
-
-void NodeGraphManipulator::create_data_node(bool centered) {
-  _imp->create_data_node(centered);
-}
-
-void NodeGraphManipulator::create_dot_node(bool centered) {
-  _imp->create_dot_node(centered);
+void NodeGraphManipulator::create_node(bool centered, EntityDID entity_did) {
+  _imp->create_node(centered, entity_did);
 }
 
 void NodeGraphManipulator::create_compute_node(bool centered, ComponentDID compute_did) {
   _imp->create_compute_node(centered, compute_did);
-}
-
-void NodeGraphManipulator::create_merge_node(bool centered) {
-  _imp->create_merge_node(centered);
-}
-
-void NodeGraphManipulator::create_firebase_write_data_node(bool centered) {
-  _imp->create_firebase_write_data_node(centered);
-}
-
-void NodeGraphManipulator::create_firebase_read_data_node(bool centered) {
-  _imp->create_firebase_read_data_node(centered);
-}
-
-void NodeGraphManipulator::create_http_node(bool centered) {
-  _imp->create_http_node(centered);
-}
-
-void NodeGraphManipulator::create_mqtt_publish_node(bool centered) {
-  _imp->create_mqtt_publish_node(centered);
-}
-
-void NodeGraphManipulator::create_mqtt_subscribe_node(bool centered) {
-  _imp->create_mqtt_subscribe_node(centered);
 }
 
 void NodeGraphManipulator::destroy_link(Entity* input_entity) {

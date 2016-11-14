@@ -156,7 +156,11 @@ void MQTTWorker::unsubscribe_task(const QString& topic, const Path& node_path) {
   if (_subscribers[topic.toStdString()].empty()) {
     _subscribers.erase(topic.toStdString());
     _current_task_id = _scheduler->wait_for_response();
-    _current_client->unsubscribe(topic);
+    // The current client will be null when closing down the app,
+    // but during the normal operation of the app it won't be null.
+    if (_current_client) {
+      _current_client->unsubscribe(topic);
+    }
   } else {
     _scheduler->run_next_task();
   }

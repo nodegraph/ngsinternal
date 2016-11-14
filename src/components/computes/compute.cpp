@@ -262,7 +262,7 @@ Entity* Compute::create_input(const std::string& name, const QJsonValue& value, 
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
-  InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, name, EntityDID::kInputEntity));
+  InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, EntityDID::kInputEntity, name));
   input->create_internals();
   input->set_exposed(exposed);
   input->set_unconnected_value(value);
@@ -273,7 +273,7 @@ Entity* Compute::create_output(const std::string& name, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* outputs_space = get_outputs_space();
-  OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, name, EntityDID::kOutputEntity));
+  OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, EntityDID::kOutputEntity, name));
   output->create_internals();
   output->set_exposed(exposed);
   return output;
@@ -282,7 +282,7 @@ Entity* Compute::create_output(const std::string& name, bool exposed) {
 Entity* Compute::create_namespace(const std::string& name) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
-  Entity* space = static_cast<BaseNamespaceEntity*>(factory->instance_entity(our_entity(), name, EntityDID::kBaseNamespaceEntity));
+  Entity* space = static_cast<BaseNamespaceEntity*>(factory->instance_entity(our_entity(), EntityDID::kBaseNamespaceEntity, name));
   space->create_internals();
   return space;
 }

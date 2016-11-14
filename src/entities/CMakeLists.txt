@@ -2,6 +2,7 @@
 set(sources
     componentids.cpp
 	componentinstancer.cpp
+	entityids.cpp
     entityinstancer.cpp
     factory.cpp
     guientities.cpp

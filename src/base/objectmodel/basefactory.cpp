@@ -12,24 +12,20 @@ BaseFactory::BaseFactory(Entity* entity, ComponentDID did)
     : Component(entity, kIID(), did) {
 }
 
-Entity* BaseFactory::instance_entity(Entity* parent, const std::string& name, EntityDID derived_id) const {
-  return _entity_instancer->instance(parent, name, derived_id);
+Entity* BaseFactory::instance_entity(Entity* parent, EntityDID derived_id, const std::string& name) const {
+  return _entity_instancer->instance(parent, derived_id, name);
 }
 
 Component* BaseFactory::instance_component(Entity* entity, ComponentDID derived_id) const {
   return _component_instancer->instance(entity, derived_id);
 }
 
-const char* BaseFactory::get_entity_name_for_did(EntityDID derived_id) const {
-  return _entity_instancer->get_name_for_did(derived_id);
-}
-
 ComponentIID BaseFactory::get_component_iid(ComponentDID did) const {
   return _component_instancer->get_iid_for_did(did);
 }
 
-Entity* BaseFactory::create_entity(Entity* parent, const std::string& name, EntityDID did) const {
-  Entity* e = instance_entity(parent, name, did);
+Entity* BaseFactory::create_entity(Entity* parent, EntityDID did, const std::string& name) const {
+  Entity* e = instance_entity(parent, did, name);
   e->create_internals();
   return e;
 }
@@ -37,10 +33,6 @@ Entity* BaseFactory::create_entity(Entity* parent, const std::string& name, Enti
 Component* BaseFactory::create_component(Entity* entity, ComponentDID did) const {
   Component* c = instance_component(entity, did);
   return c;
-}
-
-const char* BaseFactory::get_compute_name(ComponentDID compute_did) const {
-  return _component_instancer->get_compute_name(compute_did);
 }
 
 Entity* BaseFactory::create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name) const {

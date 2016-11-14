@@ -83,6 +83,64 @@ void NodeGraphController::dive(const std::string& group_node_name) {
   _manipulator->dive_into_group(group_node_name);
 }
 
+// Group Nodes Creation.
+void NodeGraphController::create_group_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kGroupNodeEntity);
+}
+void NodeGraphController::create_script_group_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kScriptGroupNodeEntity);
+}
+void NodeGraphController::create_browser_group_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kBrowserGroupNodeEntity);
+}
+void NodeGraphController::create_firebase_group_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kFirebaseGroupNodeEntity);
+}
+void NodeGraphController::create_mqtt_group_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kMQTTGroupNodeEntity);
+}
+
+// Create interface nodes.
+void NodeGraphController::create_input_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kInputNodeEntity);
+}
+void NodeGraphController::create_output_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kOutputNodeEntity);
+}
+
+// Create data nodes.
+void NodeGraphController::create_data_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kDataNodeEntity);
+}
+void NodeGraphController::create_dot_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kDotNodeEntity);
+}
+
+// Data compute nodes.
+void NodeGraphController::create_merge_node(bool centered) {
+  _manipulator->create_compute_node(centered, ComponentDID::kMergeNodeCompute);
+}
+
+// Firebase compute nodes.
+void NodeGraphController::create_firebase_write_data_node(bool centered) {
+  _manipulator->create_compute_node(centered, ComponentDID::kFirebaseWriteDataCompute);
+}
+void NodeGraphController::create_firebase_read_data_node(bool centered) {
+  _manipulator->create_compute_node(centered, ComponentDID::kFirebaseReadDataCompute);
+}
+
+// Http compute nodes.
+void NodeGraphController::create_http_node(bool centered) {
+  _manipulator->create_compute_node(centered, ComponentDID::kHTTPCompute);
+}
+
+// MQTT compute nodes.
+void NodeGraphController::create_mqtt_publish_node(bool centered) {
+  _manipulator->create_compute_node(centered, ComponentDID::kMQTTPublishCompute);
+}
+void NodeGraphController::create_mqtt_subscribe_node(bool centered) {
+  _manipulator->create_compute_node(centered, ComponentDID::kMQTTSubscribeCompute);
+}
 
 // -----------------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------------
@@ -646,96 +704,6 @@ void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
   // they appear with their input and outplugs not showing.
   our_entity()->clean_wires();
   update();
-}
-
-void NodeGraphQuickItem::create_group_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "data group", EntityDID::kGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_script_group_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "script group", EntityDID::kScriptGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_browser_group_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "browser group", EntityDID::kBrowserGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_firebase_group_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "firebase group", EntityDID::kFirebaseGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_data_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "data", EntityDID::kDataNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_input_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "input", EntityDID::kInputNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_output_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "output", EntityDID::kOutputNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_dot_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "dot", EntityDID::kDotNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_compute_node(bool centered, ComponentDID compute_did) {
-  external();
-  Entity* e = _factory->instance_compute_node(get_current_interaction()->our_entity(), compute_did);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_merge_node(bool centered) {
-  external();
-  create_compute_node(centered, ComponentDID::kMergeNodeCompute);
-}
-
-void NodeGraphQuickItem::create_firebase_write_data_node(bool centered) {
-  external();
-  create_compute_node(centered, ComponentDID::kFirebaseWriteDataCompute);
-}
-
-void NodeGraphQuickItem::create_firebase_read_data_node(bool centered) {
-  external();
-  create_compute_node(centered, ComponentDID::kFirebaseReadDataCompute);
-}
-
-void NodeGraphQuickItem::create_http_node(bool centered) {
-  external();
-  create_compute_node(centered, ComponentDID::kHTTPCompute);
-}
-
-void NodeGraphQuickItem::create_mqtt_group_node(bool centered) {
-  external();
-  Entity* e = _factory->instance_entity(get_current_interaction()->our_entity(), "mqtt group", EntityDID::kMQTTGroupNodeEntity);
-  finish_creating_node(e, centered);
-}
-
-void NodeGraphQuickItem::create_mqtt_publish_node(bool centered) {
-  external();
-  create_compute_node(centered, ComponentDID::kMQTTPublishCompute);
-}
-
-void NodeGraphQuickItem::create_mqtt_subscribe_node(bool centered) {
-  external();
-  create_compute_node(centered, ComponentDID::kMQTTSubscribeCompute);
 }
 
 void NodeGraphQuickItem::dirty_node() {

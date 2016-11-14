@@ -11,9 +11,8 @@ class Compute;
 class OBJECTMODEL_EXPORT BaseEntityInstancer {
  public:
   virtual ~BaseEntityInstancer();
-  virtual Entity* instance(Entity* parent, const std::string& name, EntityDID did) const = 0;
-  virtual EntityIID get_iid(EntityDID did) const = 0;
-  virtual const char* get_name_for_did(EntityDID did) const = 0;
+  virtual Entity* instance(Entity* parent, EntityDID did, const std::string& name="") const = 0;
+  virtual EntityIID get_iid_for_did(EntityDID did) const = 0;
 };
 
 class OBJECTMODEL_EXPORT BaseComponentInstancer {
@@ -21,7 +20,6 @@ class OBJECTMODEL_EXPORT BaseComponentInstancer {
   virtual ~BaseComponentInstancer();
   virtual Component* instance(Entity* entity, ComponentDID did) const = 0;
   virtual ComponentIID get_iid_for_did(ComponentDID did) const = 0;
-  virtual const char* get_compute_name(ComponentDID compute_did) const = 0;
 };
 
 class OBJECTMODEL_EXPORT BaseFactory: public Component {
@@ -32,16 +30,13 @@ class OBJECTMODEL_EXPORT BaseFactory: public Component {
   BaseFactory(Entity* entity, ComponentDID did);
   virtual ~BaseFactory() {}
 
-  virtual Entity* instance_entity(Entity* parent, const std::string& name, EntityDID did) const;
+  virtual Entity* instance_entity(Entity* parent, EntityDID did, const std::string& name="") const;
   virtual Component* instance_component(Entity* entity, ComponentDID did) const;
 
-  virtual const char* get_entity_name_for_did(EntityDID did) const;
   virtual ComponentIID get_component_iid(ComponentDID did) const;
 
-  virtual Entity* create_entity(Entity* parent, const std::string& name, EntityDID did) const;
+  virtual Entity* create_entity(Entity* parent, EntityDID did, const std::string& name="") const;
   virtual Component* create_component(Entity* entity, ComponentDID did) const;
-
-  virtual const char* get_compute_name(ComponentDID compute_did) const;
 
   virtual Entity* instance_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const = 0;
   virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const;

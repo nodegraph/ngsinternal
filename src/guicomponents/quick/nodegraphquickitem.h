@@ -36,6 +36,35 @@ Q_OBJECT
   Q_INVOKABLE void dive(const QString& group_node_name);
   void dive(const std::string& group_node_name);
 
+  // Group Nodes Creation.
+  Q_INVOKABLE void create_group_node(bool centered);
+  Q_INVOKABLE void create_script_group_node(bool centered);
+  Q_INVOKABLE void create_browser_group_node(bool centered);
+  Q_INVOKABLE void create_firebase_group_node(bool centered);
+  Q_INVOKABLE void create_mqtt_group_node(bool centered);
+
+  // Create interface nodes.
+  Q_INVOKABLE void create_input_node(bool centered);
+  Q_INVOKABLE void create_output_node(bool centered);
+
+  // Create data nodes.
+  Q_INVOKABLE void create_data_node(bool centered);
+  Q_INVOKABLE void create_dot_node(bool centered);
+
+  // Data compute nodes.
+  Q_INVOKABLE void create_merge_node(bool centered);
+
+  // Firebase compute nodes.
+  Q_INVOKABLE void create_firebase_write_data_node(bool centered);
+  Q_INVOKABLE void create_firebase_read_data_node(bool centered);
+
+  // Http compute nodes.
+  Q_INVOKABLE void create_http_node(bool centered);
+
+  // MQTT compute nodes.
+  Q_INVOKABLE void create_mqtt_publish_node(bool centered);
+  Q_INVOKABLE void create_mqtt_subscribe_node(bool centered);
+
  private:
   Dep<BaseNodeGraphManipulator> _manipulator;
   Dep<NodeGraphQuickItem> _ng_quick;
@@ -65,33 +94,6 @@ Q_OBJECT
   const Dep<NodeShape>& get_last_pressed() const {return _last_node_shape;}
   const MouseInfo& get_last_press_info() const { return _last_press;}
   const Dep<GroupInteraction>& get_current_interaction() const;
-
-
-  // Group Nodes Creation.
-  Q_INVOKABLE void create_group_node(bool centered);
-  Q_INVOKABLE void create_script_group_node(bool centered);
-  Q_INVOKABLE void create_browser_group_node(bool centered);
-  Q_INVOKABLE void create_firebase_group_node(bool centered);
-  Q_INVOKABLE void create_mqtt_group_node(bool centered);
-
-  // Special Data Compute Nodes Creation.
-  Q_INVOKABLE void create_data_node(bool centered);
-  Q_INVOKABLE void create_input_node(bool centered);
-  Q_INVOKABLE void create_output_node(bool centered);
-  Q_INVOKABLE void create_dot_node(bool centered);
-
-  // Data Compute Nodes Creation.
-  Q_INVOKABLE void create_compute_node(bool centered, ComponentDID compute_did);
-  Q_INVOKABLE void create_merge_node(bool centered);
-
-
-  Q_INVOKABLE void create_firebase_write_data_node(bool centered);
-  Q_INVOKABLE void create_firebase_read_data_node(bool centered);
-
-  Q_INVOKABLE void create_http_node(bool centered);
-
-  Q_INVOKABLE void create_mqtt_publish_node(bool centered);
-  Q_INVOKABLE void create_mqtt_subscribe_node(bool centered);
 
   // View and Edit.
   Q_INVOKABLE void view_node();

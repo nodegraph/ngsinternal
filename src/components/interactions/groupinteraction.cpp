@@ -815,7 +815,7 @@ void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
   std::string raw_copy = our_entity()->copy_to_string(selected_entities);
 
   // Create a group node to hold the collapsed nodes.
-  Entity* collapsed_node = _factory->instance_entity(our_entity(), "collapsed", EntityDID::kGroupNodeEntity);
+  Entity* collapsed_node = _factory->instance_entity(our_entity(), EntityDID::kGroupNodeEntity, "collapsed");
   collapsed_node->create_internals();
   collapsed_node->initialize_wires();
 
@@ -943,32 +943,6 @@ glm::mat4 GroupInteraction::get_model_view_project() const{
 glm::mat4 GroupInteraction::get_last_model_view_project() const{
   external();
   return _view_controls.get_last_model_view_project();
-}
-
-Entity* GroupInteraction::create_node(EntityDID did) {
-  external();
-
-  // Determine the initial name for the new node.
-  std::string node_name = _factory->get_entity_name_for_did(did);
-
-  // Create the node.
-  Entity* node = _factory->instance_entity(our_entity(), node_name, did);
-
-  // Position the node to the center of the screen.
-  // Get the center in post perspective space.
-  glm::vec4 center(0,0,0,1);
-
-  // Calculate the position.
-  glm::mat4 PM = _view_controls.lens.get_projection() * _view_controls.track_ball.get_model_view();
-  glm::vec4 position = glm::inverse(PM) * center;
-
-  Dep<NodeShape> cs = get_dep<NodeShape>(node);
-  cs->set_pos(position.xy());
-
-  // Select the newly created node.
-  _selection->clear_selection();
-  _selection->select(cs);
-  return node;
 }
 
 void GroupInteraction::link(Entity* upstream, Entity* downstream) {

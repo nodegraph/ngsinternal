@@ -66,7 +66,7 @@ void GroupNodeCompute::update_wires() {
         continue;
       }
       // Otherwise we create an input plug.
-      InputEntity* in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, child_name, EntityDID::kInputEntity));
+      InputEntity* in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
       in->create_internals();
       in->set_exposed(true);
       in->initialize_wires();
@@ -79,7 +79,7 @@ void GroupNodeCompute::update_wires() {
         continue;
       }
       // Otherwise we create an output plug.
-      OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, child_name, EntityDID::kOutputEntity));
+      OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, EntityDID::kOutputEntity, child_name));
       out->create_internals();
       out->set_exposed(true);
       out->initialize_wires();

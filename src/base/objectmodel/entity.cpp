@@ -647,7 +647,7 @@ Entity* Entity::paste_entity_with_merging(SimpleLoader& loader) {
 
   // If the entity is missing, create one.
   if (!entity) {
-    entity = get_app_root()->get<BaseFactory>()->instance_entity(this, name, did);
+    entity = get_app_root()->get<BaseFactory>()->instance_entity(this, did, name);
   }
   entity->load_helper(loader);
 

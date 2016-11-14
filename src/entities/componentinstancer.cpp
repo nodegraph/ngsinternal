@@ -32,12 +32,13 @@
 #include <components/computes/outputcompute.h>
 #include <components/computes/inputs.h>
 #include <components/computes/outputs.h>
-
-#include <entities/componentinstancer.h>
 #include <components/interactions/viewcontrols.h>
 #include <components/interactions/graphbuilder.h>
 
 #include <entities/factory.h>
+#include <entities/componentids.h>
+#include <entities/componentinstancer.h>
+
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/firebasecomputes.h>
 #include <guicomponents/computes/httpcomputes.h>
@@ -89,7 +90,6 @@ Component* ComponentInstancer::instance_imp(Entity* entity, ComponentDID did) {
   return NULL;
 }
 
-
 Component* ComponentInstancer::instance(Entity* entity, ComponentDID did) const{
   return instance_imp(entity, did);
 }
@@ -107,70 +107,6 @@ ComponentIID ComponentInstancer::get_iid_for_did(ComponentDID did) const {
   return ComponentIID::kIInvalidComponent;
 }
 
-const char* ComponentInstancer::get_compute_name(ComponentDID compute_did) const {
-  if (compute_did == ComponentDID::kDotNodeCompute) {
-    return "dot";
-  } else if (compute_did == ComponentDID::kInputCompute) {
-    return "input internal";
-  } else if (compute_did == ComponentDID::kOutputCompute) {
-    return "output internal";
-  } else if (compute_did == ComponentDID::kGroupNodeCompute) {
-    return "group";
-  } else if (compute_did == ComponentDID::kInputNodeCompute) {
-    return "input";
-  } else if (compute_did == ComponentDID::kOutputNodeCompute) {
-    return "output";
-  } else if (compute_did == ComponentDID::kScriptNodeCompute) {
-    return "script";
-  } else if (compute_did == ComponentDID::kMockNodeCompute) {
-    return "mock";
-  } else if (compute_did == ComponentDID::kOpenBrowserCompute) {
-    return "open browser";
-  } else if (compute_did == ComponentDID::kCloseBrowserCompute) {
-    return "close browser";
-  } else if (compute_did == ComponentDID::kIsBrowserOpenCompute) {
-    return "is browser open";
-  } else if (compute_did == ComponentDID::kResizeBrowserCompute) {
-    return "resize browser";
-  } else if (compute_did == ComponentDID::kNavigateToCompute) {
-    return "navigate to";
-  } else if (compute_did == ComponentDID::kNavigateRefreshCompute) {
-    return "navigate refresh";
-  } else if (compute_did == ComponentDID::kSwitchToIFrameCompute) {
-    return "switch to iframe";
-  } else if (compute_did == ComponentDID::kCreateSetFromValuesCompute) {
-    return "create set from values";
-  } else if (compute_did == ComponentDID::kCreateSetFromTypeCompute) {
-    return "create set from types";
-  } else if (compute_did == ComponentDID::kDeleteSetCompute) {
-    return "delete set";
-  } else if (compute_did == ComponentDID::kShiftSetCompute) {
-    return "shift set";
-  } else if (compute_did == ComponentDID::kMouseActionCompute) {
-    return "mouse action";
-  } else if (compute_did == ComponentDID::kStartMouseHoverActionCompute) {
-    return "start hover";
-  } else if (compute_did == ComponentDID::kStopMouseHoverActionCompute) {
-    return "stop hover";
-  } else if (compute_did == ComponentDID::kTextActionCompute) {
-    return "text action";
-  } else if (compute_did == ComponentDID::kElementActionCompute) {
-    return "element action";
-  } else if (compute_did == ComponentDID::kExpandSetCompute) {
-    return "expand set";
-  } else if (compute_did == ComponentDID::kMarkSetCompute) {
-    return "mark set";
-  } else if (compute_did == ComponentDID::kUnmarkSetCompute) {
-    return "unmark set";
-  } else if (compute_did == ComponentDID::kMergeSetsCompute) {
-    return "merge sets";
-  } else if (compute_did == ComponentDID::kShrinkSetToSideCompute) {
-    return "shrink set to side";
-  } else if (compute_did == ComponentDID::kShrinkAgainstMarkedCompute) {
-    return "shrink set against marked";
-  }
-  return "unknown node";
-}
 
 }
 

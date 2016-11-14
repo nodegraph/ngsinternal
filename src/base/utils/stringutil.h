@@ -20,5 +20,10 @@ UTILS_EXPORT std::string replace_by_regex(const std::string &src, const std::str
 
 UTILS_EXPORT std::string join(const std::vector<std::string> & parts, const std::string & delimiter);
 
+UTILS_EXPORT std::vector<std::string> split_on_capitals(const std::string& source);
+
+UTILS_EXPORT std::string to_lower_case(const std::string& source);
+
+UTILS_EXPORT std::string concatenate(const std::vector<std::string>& splits, const std::string& glue);
 }
 

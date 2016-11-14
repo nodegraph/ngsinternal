@@ -14,7 +14,7 @@ class ENTITIES_EXPORT ComponentInstancer: public BaseComponentInstancer {
   virtual ~ComponentInstancer(){}
   virtual Component* instance(Entity* entity, ComponentDID did) const;
   virtual ComponentIID get_iid_for_did(ComponentDID did) const;
-  virtual const char* get_compute_name(ComponentDID compute_did) const;
+//  virtual std::string get_compute_name(ComponentDID compute_did) const;
 
 };
 

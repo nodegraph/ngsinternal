@@ -12,9 +12,8 @@ class ENTITIES_EXPORT EntityInstancer: public BaseEntityInstancer {
  public:
   EntityInstancer() {}
   virtual ~EntityInstancer() {}
-  virtual Entity* instance(Entity* parent, const std::string& name, EntityDID derived_id) const;
-  virtual EntityIID get_iid(EntityDID derived_id) const;
-  virtual const char* get_name_for_did(EntityDID derived_id) const;
+  virtual Entity* instance(Entity* parent, EntityDID derived_id, const std::string& name="") const;
+  virtual EntityIID get_iid_for_did(EntityDID derived_id) const;
 };
 
 }
