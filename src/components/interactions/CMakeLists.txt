@@ -2,7 +2,6 @@
 set(sources
 	graphbuilder.cpp
     groupinteraction.cpp
-    canvas.cpp
     shapecanvas.cpp
     viewcontrols.cpp
     )
@@ -10,7 +9,6 @@ set(sources
 set(headers
 	graphbuilder.h
     groupinteraction.h
-    canvas.h
     shapecanvas.h
     viewcontrols.h
     )

@@ -4,7 +4,6 @@
 #include <components/compshapes/rectnodeshape.h>
 #include <components/compshapes/outputnodeshape.h>
 #include <components/compshapes/compshapecollective.h>
-#include <components/interactions/canvas.h>
 #include <components/interactions/shapecanvas.h>
 #include <components/interactions/groupinteraction.h>
 #include <components/resources/resources.h>

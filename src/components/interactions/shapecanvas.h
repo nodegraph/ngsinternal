@@ -1,6 +1,5 @@
 #pragma once
 #include <components/interactions/interactions_export.h>
-#include <components/interactions/canvas.h>
 #include <components/resources/resources.h>
 #include <base/device/transforms/glmhelper.h>
 #include <base/device/program/defaultuniforminfo.h>

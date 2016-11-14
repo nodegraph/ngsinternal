@@ -9,16 +9,27 @@ namespace ngs {
 
 // We allows derived Components to form interfaces,
 // or to implement other interfaces.
-#define COMPONENT_ID(base,derived)\
+#define COMPONENT_ID(base, derived)\
   static ComponentIID kIID()\
   { return ComponentIID::kI##base; }\
+  virtual ComponentIID get_iid() const\
+  { return kIID(); }\
   \
   static ComponentDID kDID()\
   { return ComponentDID::k##derived; }\
-  virtual const char* get_did_name() const\
-  {return #derived;}\
+  virtual ComponentDID get_did() const\
+  { return kDID(); }\
+  \
+  static const char* kIIDName()\
+  { return #base; }\
   virtual const char* get_iid_name() const\
-  {return #base;}
+  {return kIIDName();}\
+  \
+  static const char* kDIDName()\
+  { return #derived; }\
+  virtual const char* get_did_name() const\
+  {return kDIDName(); }\
+
 
 // Component Interface IDs.
 enum class ComponentIID : size_t {
@@ -178,5 +189,6 @@ enum class ComponentDID : size_t {
 
 
 ENTITIES_EXPORT const char* get_component_did_name(ComponentDID did);
-ENTITIES_EXPORT const char* get_compute_name(ComponentDID compute_did);
+
+
 }

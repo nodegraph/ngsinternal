@@ -3,7 +3,6 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/entity.h>
 #include <components/interactions/groupinteraction.h>
-#include <components/interactions/canvas.h>
 
 #include <base/utils/path.h>
 #include <base/utils/permit.h>

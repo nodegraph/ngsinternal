@@ -1,5 +1,4 @@
 #include <components/interactions/groupinteraction.h>
-#include <components/interactions/canvas.h>
 #include <components/interactions/shapecanvas.h>
 #include <entities/entityids.h>
 

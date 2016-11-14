@@ -13,7 +13,7 @@ class Entity;
 
 class BaseNodeGraphManipulator: public Component {
  public:
-  COMPONENT_ID(BaseNodeGraphManipulator, InvalidComponent);
+  COMPONENT_ID(BaseNodeGraphManipulator, InvalidComponent, "base manipulator");
 
   BaseNodeGraphManipulator(Entity* entity, ComponentDID did):Component(entity, kIID(), did){}
   virtual ~BaseNodeGraphManipulator(){}
@@ -47,8 +47,40 @@ class BaseNodeGraphManipulator: public Component {
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
 
-  virtual void create_input_node(const std::string& name, bool centered) = 0;
-  virtual void create_output_node(const std::string& name, bool centered) = 0;
+
+
+
+  // Group Nodes Creation.
+  virtual void create_group_node(bool centered) = 0;
+  virtual void create_script_group_node(bool centered) = 0;
+  virtual void create_browser_group_node(bool centered) = 0;
+  virtual void create_firebase_group_node(bool centered) = 0;
+  virtual void create_mqtt_group_node(bool centered) = 0;
+
+  // Create interface nodes.
+  virtual void create_input_node(bool centered) = 0;
+  virtual void create_output_node(bool centered) = 0;
+
+  // Create data nodes.
+  virtual void create_data_node(bool centered) = 0;
+  virtual void create_dot_node(bool centered) = 0;
+
+  // Data Compute Nodes Creation.
+  virtual void create_compute_node(bool centered, ComponentDID compute_did) = 0;
+  virtual void create_merge_node(bool centered) = 0;
+
+  // Firebase nodes.
+  virtual void create_firebase_write_data_node(bool centered) = 0;
+  virtual void create_firebase_read_data_node(bool centered) = 0;
+
+  // Http nodes.
+  virtual void create_http_node(bool centered) = 0;
+
+  // MQTT nodes.
+  virtual void create_mqtt_publish_node(bool centered) = 0;
+  virtual void create_mqtt_subscribe_node(bool centered) = 0;
+
+
 
   // Link Manipulation.
   virtual void destroy_link(Entity* input_entity) = 0;
