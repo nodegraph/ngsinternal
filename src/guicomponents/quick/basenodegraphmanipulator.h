@@ -47,6 +47,9 @@ class BaseNodeGraphManipulator: public Component {
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
 
+  virtual void create_input_node(const std::string& name, bool centered) = 0;
+  virtual void create_output_node(const std::string& name, bool centered) = 0;
+
   // Link Manipulation.
   virtual void destroy_link(Entity* input_entity) = 0;
   virtual Entity* create_link() = 0;
@@ -57,7 +60,7 @@ class BaseNodeGraphManipulator: public Component {
   virtual void synchronize_graph_dirtiness(Entity* group_entity) = 0;
   virtual void dirty_compute(const Path& path) = 0;
 
-  // Specialized Overrides.
+  // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) = 0;
   virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) = 0;
 };

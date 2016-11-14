@@ -319,6 +319,38 @@ void NodeGraphManipulatorImp::set_output_topology(Entity* entity, const std::uno
   }
 }
 
+void NodeGraphManipulatorImp::finish_creating_node(Entity* entity, bool centered) {
+  external();
+  entity->create_internals();
+  entity->initialize_wires();
+  Dep<NodeShape> cs = get_dep<NodeShape>(entity);
+  if (centered) {
+    _ng_quick->get_current_interaction()->centralize(cs);
+  } else {
+    cs->set_pos(_ng_quick->get_last_press_info().object_space_pos.xy());
+  }
+  // The parenting group node needs to update its inputs and outputs.
+  //get_app_root()->update_wires();
+  _selection->clear_selection();
+  _selection->select(cs);
+
+  // A little overkill, but we clean the wires on everything in this group.
+  // Otherwise after creating nodes like mock or input or output nodes,
+  // they appear with their input and outplugs not showing.
+  _factory->get_current_group()->clean_wires();
+  _ng_quick->update();
+}
+
+void NodeGraphManipulatorImp::create_input_node(const std::string& name, bool centered) {
+  Entity* e = _factory->instance_entity(_factory->get_current_group(), "input", EntityDID::kInputNodeEntity);
+  finish_creating_node(e, centered);
+}
+
+void NodeGraphManipulatorImp::create_output_node(const std::string& name, bool centered) {
+  Entity* e = _factory->instance_entity(_factory->get_current_group(), "output", EntityDID::kOutputNodeEntity);
+  finish_creating_node(e, centered);
+}
+
 Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
   // Create the node.
   Entity* group = _factory->get_current_group();
@@ -670,6 +702,14 @@ void NodeGraphManipulator::set_input_topology(Entity* entity, const std::unorder
 
 void NodeGraphManipulator::set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
   _imp->set_output_topology(entity, ordering);
+}
+
+void NodeGraphManipulator::create_input_node(const std::string& name, bool centered) {
+  _imp->create_input_node(name, centered);
+}
+
+void NodeGraphManipulator::create_output_node(const std::string& name, bool centered) {
+  _imp->create_input_node(name, centered);
 }
 
 void NodeGraphManipulator::destroy_link(Entity* input_entity) {

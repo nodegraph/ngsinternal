@@ -72,17 +72,21 @@ Q_OBJECT
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
 
-  // Modify links..
+  // Interface nodes.
+  virtual void create_input_node(const std::string& name, bool centered);
+  virtual void create_output_node(const std::string& name, bool centered);
+
+  // Modify links.
   virtual void destroy_link(Entity* input_entity);
   virtual Entity* create_link();
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
 
-  // Link Manipulation.
+  // Graph Dirtiness.
   virtual void bubble_group_dirtiness();
   virtual void synchronize_graph_dirtiness(Entity* group_entity);
   virtual void dirty_compute(const Path& path);
 
-  // Specialized Overrides.
+  // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
   virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
 
@@ -93,6 +97,8 @@ private slots:
   virtual void synchronize_group_dirtiness(Entity* group_entity);
   virtual void dirty_group_from_internals(Entity* group_entity);
   virtual void dirty_internals_from_group(Entity* group_entity);
+
+  virtual void finish_creating_node(Entity* entity, bool centered);
 
   void prune_clean_or_dead();
 
@@ -159,14 +165,21 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
 
+  // Interface nodes.
+  virtual void create_input_node(const std::string& name, bool centered);
+  virtual void create_output_node(const std::string& name, bool centered);
+
+  // Modify links.
   virtual void destroy_link(Entity* input_entity);
   virtual Entity* create_link();
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
 
+  // Graph Dirtiness.
   virtual void bubble_group_dirtiness();
   virtual void synchronize_graph_dirtiness(Entity* group_entity);
   virtual void dirty_compute(const Path& path);
 
+  // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
   virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
  protected:

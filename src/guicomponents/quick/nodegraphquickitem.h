@@ -62,7 +62,10 @@ Q_OBJECT
   Q_INVOKABLE QString get_ngs_version() const;
   Q_INVOKABLE size_t get_num_nodes() const;
 
-  const Dep<NodeShape>& get_last_pressed() const {return _last_node_shape;};
+  const Dep<NodeShape>& get_last_pressed() const {return _last_node_shape;}
+  const MouseInfo& get_last_press_info() const { return _last_press;}
+  const Dep<GroupInteraction>& get_current_interaction() const;
+
 
   // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);
@@ -198,7 +201,7 @@ Q_OBJECT
   void finish_creating_node(Entity* e, bool centered);
 
 
-  const Dep<GroupInteraction>& get_current_interaction() const;
+
 
   // Our fixed deps.
   Dep<FBOWorker> _fbo_worker;

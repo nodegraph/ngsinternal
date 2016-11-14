@@ -45,7 +45,9 @@ QWebSocket* MessageSender::get_web_socket() const {
 void MessageSender::send_msg(const Message& msg) const {
   external();
   size_t num_bytes = _web_socket->sendTextMessage(msg.to_string());
-  assert(num_bytes);
+  if(num_bytes == 0) {
+    std::cerr << "Error: Unable to send msg from app to commhub. The commhub process may have terminated.\n";
+  }
 }
 
 void MessageSender::on_connected() {
