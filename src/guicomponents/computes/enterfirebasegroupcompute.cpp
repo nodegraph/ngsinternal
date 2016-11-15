@@ -68,9 +68,14 @@ QJsonObject EnterFirebaseGroupCompute::init_hints() {
 bool EnterFirebaseGroupCompute::update_state() {
   internal();
   EnterGroupCompute::update_state();
-
   queue_sign_in();
   return false;
+}
+
+bool EnterFirebaseGroupCompute::destroy_state() {
+  internal();
+  queue_destroy();
+  return true;
 }
 
 EnterFirebaseGroupCompute::InputValues EnterFirebaseGroupCompute::get_inputs() const {
@@ -90,6 +95,7 @@ EnterFirebaseGroupCompute::InputValues EnterFirebaseGroupCompute::get_inputs() c
 
 void EnterFirebaseGroupCompute::queue_sign_in() {
   InputValues values = get_inputs();
+  QString node_path = get_path_as_string().c_str();
   TaskContext tc(_scheduler);
   // Initialize the firebase wrapper.
   {
@@ -100,6 +106,7 @@ void EnterFirebaseGroupCompute::queue_sign_in() {
     args.insert(Message::kStorageBucket, values.storage_bucket);
     args.insert(Message::kEmail, values.email);
     args.insert(Message::kPassword, values.password);
+    args.insert(Message::kNodePath, node_path);
     _worker->queue_merge_chain_state(tc, args);
     _worker->queue_firebase_init(tc);
   }
@@ -108,6 +115,7 @@ void EnterFirebaseGroupCompute::queue_sign_in() {
     QJsonObject args;
     args.insert(Message::kEmail, values.email);
     args.insert(Message::kPassword, values.password);
+    args.insert(Message::kNodePath, node_path);
     _worker->queue_merge_chain_state(tc, args);
     _worker->queue_firebase_sign_in(tc);
   }
@@ -116,6 +124,15 @@ void EnterFirebaseGroupCompute::queue_sign_in() {
     std::function<void(const QJsonObject&)> callback = std::bind(&EnterFirebaseGroupCompute::receive_chain_state, this, std::placeholders::_1);
     _worker->queue_receive_chain_state(tc, callback);
   }
+}
+
+void EnterFirebaseGroupCompute::queue_destroy() {
+  QJsonObject args;
+  QString node_path = get_path_as_string().c_str();
+  args.insert(Message::kNodePath, node_path);
+  TaskContext tc(_scheduler);
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_firebase_destroy(tc);
 }
 
 void EnterFirebaseGroupCompute::receive_chain_state(const QJsonObject& chain_state) {

@@ -40,10 +40,12 @@ class GUICOMPUTES_EXPORT EnterFirebaseGroupCompute: public EnterGroupCompute {
 
  protected:
   virtual bool update_state();
+  virtual bool destroy_state();
 
  private:
   InputValues get_inputs() const;
   void queue_sign_in();
+  void queue_destroy();
   void receive_chain_state(const QJsonObject& chain_state);
 
   Dep<TaskScheduler> _scheduler;

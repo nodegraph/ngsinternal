@@ -384,6 +384,10 @@ void NodeJSWorker::queue_firebase_init(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::firebase_init_task,this), "queue_firebase_init");
 }
 
+void NodeJSWorker::queue_firebase_destroy(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::firebase_destroy_task,this), "queue_firebase_destroy");
+}
+
 void NodeJSWorker::queue_firebase_sign_in(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::firebase_sign_in_task,this), "queue_firebase_sign_in");
 }
@@ -838,8 +842,18 @@ void NodeJSWorker::firebase_init_task() {
   args.insert(Message::kAuthDomain, _chain_state.value(Message::kAuthDomain));
   args.insert(Message::kDatabaseURL, _chain_state.value(Message::kDatabaseURL));
   args.insert(Message::kStorageBucket, _chain_state.value(Message::kStorageBucket));
+  args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
   Message req(RequestType::kFirebaseInit);
+  req.insert(Message::kArgs, args);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::firebase_destroy_task() {
+  QJsonObject args;
+  args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
+
+  Message req(RequestType::kFirebaseDestroy);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -848,6 +862,7 @@ void NodeJSWorker::firebase_sign_in_task() {
   QJsonObject args;
   args.insert(Message::kEmail, _chain_state.value(Message::kEmail));
   args.insert(Message::kPassword, _chain_state.value(Message::kPassword));
+  args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
   Message req(RequestType::kFirebaseSignIn);
   req.insert(Message::kArgs, args);
@@ -856,6 +871,8 @@ void NodeJSWorker::firebase_sign_in_task() {
 
 void NodeJSWorker::firebase_sign_out_task() {
   QJsonObject args;
+  args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
+
   Message req(RequestType::kFirebaseSignOut);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
@@ -865,6 +882,7 @@ void NodeJSWorker::firebase_write_data_task() {
   QJsonObject args;
   args.insert(Message::kDataPath, _chain_state.value(Message::kDataPath));
   args.insert(Message::kValue, _chain_state.value(Message::kValue));
+  args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
   Message req(RequestType::kFirebaseWriteData);
   req.insert(Message::kArgs, args);

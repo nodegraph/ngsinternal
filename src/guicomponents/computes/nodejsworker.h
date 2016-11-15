@@ -117,6 +117,7 @@ Q_OBJECT
   void queue_emit_option_texts(TaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
 
   void queue_firebase_init(TaskContext& tc);
+  void queue_firebase_destroy(TaskContext& tc);
   void queue_firebase_sign_in(TaskContext& tc);
   void queue_firebase_sign_out(TaskContext& tc);
   void queue_firebase_write_data(TaskContext& tc);
@@ -209,6 +210,7 @@ signals:
   void reset_task();
 
   void firebase_init_task();
+  void firebase_destroy_task();
   void firebase_sign_in_task();
   void firebase_sign_out_task();
   void firebase_write_data_task();

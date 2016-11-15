@@ -50,6 +50,7 @@ const enum RequestType {
 
     // Firebase.
     kFirebaseInit,
+    kFirebaseDestroy,
     kFirebaseSignIn,
     kFirebaseSignOut,
     kFirebaseWriteData,

@@ -67,6 +67,7 @@ enum class RequestType : int {
 
   // Firebase.
   kFirebaseInit,
+  kFirebaseDestroy,
   kFirebaseSignIn,
   kFirebaseSignOut,
   kFirebaseWriteData,

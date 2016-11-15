@@ -207,7 +207,6 @@ export class FirebaseWrap {
 export class FirebaseWraps {
     private wraps: any
     private app_server: AppSocketServer
-    private current_config: any
     private request_ids: Array<RequestType>
 
     constructor(app_server: AppSocketServer) {
@@ -235,49 +234,31 @@ export class FirebaseWraps {
         this.wraps = {}
     }
 
-    private set_current_config(firebase_config: any) {
-        this.current_config = firebase_config
-    }
-
-    // The key which represents the firebase config.
-    private create_key(config: any) {
-        // We form the key by adding the following fields of the config into a giant string.
-        //     apiKey: "AIzaSyCXGNlyRf5uk8Xk1bvKXUcA53TC6Lc3I-A",
-        //     authDomain: "test-project-91c10.firebaseapp.com",
-        //     databaseURL: "https://test-project-91c10.firebaseio.com/",
-        //     storageBucket: "gs://test-project-91c10.appspot.com",
-        //     email:
-        //     password:
-        let demark = '??'
-        let key = config.apiKey + demark + config.authDomain + demark + config.databaseURL + demark + config.storageBucket + demark + config.email + demark + config.password
-        return key
+    private get_group_path(node_path: string) {
+        let splits = node_path.split('/')
+        splits.pop()
+        return splits.join('/')
     }
 
     // Creates a firebase wrap and caches it under its key for easy access at a later time.
-    private create_wrap(config: any) {
-        let key = this.create_key(config)
-        let wrap = new FirebaseWrap(config, key, this.app_server)
-        this.wraps[key] = wrap
+    private create_wrap(group_path: string, config: any) {
+        let wrap = new FirebaseWrap(config, group_path, this.app_server)
+        this.wraps[group_path] = wrap
     }
 
     // Checks to see if a wrap exists for certain config.
-    private wrap_exists(config: any) {
-        let key = this.create_key(config)
-        if (this.wraps.hasOwnProperty(key)) {
+    private wrap_exists(group_path: string) {
+        if (this.wraps.hasOwnProperty(group_path)) {
             return true
         }
         return false
     }
 
-    // Attempts to get a firebase wrap. If it doesn't exist, it will try to create one.
-    private get_wrap(config: any) {
-        let key = this.create_key(config)
-        if (this.wrap_exists(config)) {
-            return this.wraps[key]
+    private get_wrap(group_path: string) {
+        if (this.wrap_exists(group_path)) {
+            return this.wraps[group_path]
         }
-        // Otherwise create a wrap.
-        this.create_wrap(config)
-        return this.wraps[key]
+        return undefined
     }
 
     handle_request(req: RequestMessage): boolean {
@@ -286,6 +267,10 @@ export class FirebaseWraps {
             return false
         }
 
+        // Get the group path which surrounds the node making the request.
+        let group_path = this.get_group_path(req.args.node_path)
+
+        // Handle creating the firebase wrapper.
         if (req.request == RequestType.kFirebaseInit) {
             let config: any = {}
             config.apiKey = req.args.apiKey
@@ -296,16 +281,19 @@ export class FirebaseWraps {
             config.password = req.args.password
             console.log('setting current firebase config: ' + JSON.stringify(config))
             // Make sure the wrap is created.
-            this.get_wrap(config)
-            // Record the current config.
-            this.set_current_config(config)
+            if (!this.wrap_exists(group_path)) {
+                this.create_wrap(group_path, config)
+            }
             // Send back a response.
             this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
             return true
+        } else if (req.request == RequestType.kFirebaseDestroy) {
+            console.log('firebase destroy called')
+            delete this.wraps[group_path]
         }
 
-        // Otherwise we let the firebase base try to handle it.
-        let wrap = this.get_wrap(this.current_config)
+        // Otherwise we let the existing firebase wrap try to handle it.
+        let wrap = this.get_wrap(group_path)
         return wrap.handle_request(req)
     }
 }
