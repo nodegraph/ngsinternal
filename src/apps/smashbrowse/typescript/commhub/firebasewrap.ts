@@ -2,7 +2,30 @@
 
 import firebase = require("firebase");
 
-import {AppSocketServer} from './commhub'
+import { AppSocketServer } from './commhub'
+
+// Structure which keeps track of listeners for one node.
+export class NodeListenerTracker {
+    private listeners: { [s: string]: (a: firebase.database.DataSnapshot, b?: string) => any }
+    constructor() {
+        this.listeners = {}
+    }
+    add_listener(data_path: string, listener: (a: firebase.database.DataSnapshot, b?: string) => any) {
+        this.listeners[data_path] = listener
+    }
+    get_listener(data_path: string) {
+        if (this.listeners.hasOwnProperty(data_path)) {
+            return this.listeners[data_path]
+        }
+        return undefined
+    }
+    remove_listener(data_path: string) {
+        delete this.listeners[data_path]
+    }
+    clear() {
+        this.listeners = {}
+    }
+}
 
 // There is one firebase wrap per firebase node in the node graph.
 export class FirebaseWrap {
@@ -10,14 +33,14 @@ export class FirebaseWrap {
     private firebase_app: firebase.app.App
     private app_server: AppSocketServer
     private signed_in: boolean
-    
+
     // Maps node_path to its listener.
-    private listeners: any
+    private node_trackers: { [s: string] : NodeListenerTracker }
 
     static js_to_value(js: string): any {
         try {
             let expr = 'unique_variable_to_eval_js = ' + js
-            return eval(expr) 
+            return eval(expr)
         } catch (error) {
             return js
         }
@@ -27,19 +50,18 @@ export class FirebaseWrap {
         return JSON.parse(value)
     }
 
-    // let config = {
-    //     apiKey: "AIzaSyCXGNlyRf5uk8Xk1bvKXUcA53TC6Lc3I-A",
-    //     authDomain: "test-project-91c10.firebaseapp.com",
-    //     databaseURL: "https://test-project-91c10.firebaseio.com/",
-    //     storageBucket: "gs://test-project-91c10.appspot.com",
-    // };
-    constructor(config: any, config_key: string, app_server: AppSocketServer) {
-        this.firebase_app = firebase.initializeApp(config, config_key); 
+    constructor(config: any, group_path: string, app_server: AppSocketServer) {
+        // Create our firebase app.
+        this.firebase_app = firebase.initializeApp(config, group_path);
         this.app_server = app_server
         this.signed_in = false
-        this.listeners = {}
-
+        this.node_trackers = {} // the key is the data_path, the value is 
         console.log('firebase app initialized with config: ' + JSON.stringify(config))
+    }
+
+    destroy() {
+        this.firebase_app.delete()
+        this.signed_in = false
     }
 
     // Returns true if the request type matches something we can handle.
@@ -90,7 +112,7 @@ export class FirebaseWrap {
                             this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
                         }
                     )
-                } 
+                }
             )
         } catch (e) {
             this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, e.message))
@@ -102,10 +124,10 @@ export class FirebaseWrap {
         this.firebase_app.auth().signOut().then(
             () => {
                 this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
-            }, 
+            },
             (error: Error) => {
-            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
-        });
+                this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
+            });
     }
 
     get_full_data_path(data_path: string) {
@@ -168,17 +190,9 @@ export class FirebaseWrap {
         // Remove previous listener under the node path.
         this.remove_listener(req.args.node_path, req.args.data_path)
 
-        // Cache our next listener under the node path.
-        this.listeners[req.args.node_path] =  (data: firebase.database.DataSnapshot) => {
-            let info: any = {}
-            info.node_path = req.args.node_path
-            info.data_path = req.args.data_path
-            info.value = data.exportVal()
-            this.app_server.send_msg(new InfoMessage(req.id, "-1", InfoType.kFirebaseChanged, info))
-        }
+        // Add our next listener under the node path.
+        this.add_listener(req.args.node_path, req.args.data_path)
 
-        // Attach the listener.
-        this.firebase_app.database().ref(full_data_path).on('value', this.listeners[req.args.node_path])
         // Send our response.
         this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
     }
@@ -189,37 +203,74 @@ export class FirebaseWrap {
             return
         }
         this.remove_listener(req.args.node_path, req.args.data_path)
+        
         // Send our response.
         this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
     }
 
-    remove_listener(node_path: string, data_path: string):void {
+    add_listener(node_path: string, data_path: string) {
+        let l = (data: firebase.database.DataSnapshot) => {
+            let info: any = {}
+            info.node_path = node_path
+            info.data_path = data_path
+            info.value = data.exportVal()
+            this.app_server.send_msg(new InfoMessage(-1, "-1", InfoType.kFirebaseChanged, info))
+        }
+
+        // Make sure a tracker exists at node_path.
+        if (!this.node_trackers.hasOwnProperty(node_path)) {
+            this.node_trackers[node_path] = new NodeListenerTracker()
+        }
+
+        // Grab some references.
+        let tracker = this.node_trackers[node_path]
         let full_data_path = this.get_full_data_path(data_path)
-        // Use the node path to get the cached listener. Use it to remove the listener.
-        this.firebase_app.database().ref(full_data_path).off('value', this.listeners[node_path])
-        // Destroy the listener under the node path.
-        delete this.listeners[node_path]
+
+        // Attach the listener to the database location.
+        this.firebase_app.database().ref(full_data_path).on('value', l)
+
+        // Add the listener to the node tracker.
+        tracker.add_listener(full_data_path, l)
+    }
+
+    remove_listener(node_path: string, data_path: string): void {
+        // If there is no tracker for the node_path then return.
+        if (!this.node_trackers.hasOwnProperty(node_path)) {
+            return
+        }
+
+        // Grab some references.
+        let tracker = this.node_trackers[node_path]
+        let full_data_path = this.get_full_data_path(data_path)
+
+        // Detach the listener from the firebase location.
+        let l = tracker.get_listener(full_data_path)
+        this.firebase_app.database().ref(full_data_path).off('value', l)
+
+        // Remove the listener from the node tracker.
+        tracker.remove_listener(full_data_path)
     }
 
 }
 
 
 export class FirebaseWraps {
-    private wraps: any
     private app_server: AppSocketServer
     private request_ids: Array<RequestType>
+    private wraps: any
 
     constructor(app_server: AppSocketServer) {
         this.app_server = app_server
-        this.clear()
         this.request_ids = [
             RequestType.kFirebaseInit,
+            RequestType.kFirebaseDestroy,
             RequestType.kFirebaseSignIn,
             RequestType.kFirebaseSignOut,
             RequestType.kFirebaseWriteData,
             RequestType.kFirebaseReadData,
             RequestType.kFirebaseSubscribe,
             RequestType.kFirebaseUnsubscribe]
+        this.wraps = {}
     }
 
     can_handle_request(type: RequestType): boolean {
@@ -229,11 +280,6 @@ export class FirebaseWraps {
         return false
     }
 
-    // Clear our existing wraps.
-    private clear() {
-        this.wraps = {}
-    }
-
     private get_group_path(node_path: string) {
         let splits = node_path.split('/')
         splits.pop()
@@ -241,22 +287,38 @@ export class FirebaseWraps {
     }
 
     // Creates a firebase wrap and caches it under its key for easy access at a later time.
-    private create_wrap(group_path: string, config: any) {
-        let wrap = new FirebaseWrap(config, group_path, this.app_server)
-        this.wraps[group_path] = wrap
+    private create_firebase_wrap(group_path: string, config: any) {
+        this.wraps[group_path] = new FirebaseWrap(config, group_path, this.app_server)
     }
 
-    // Checks to see if a wrap exists for certain config.
-    private wrap_exists(group_path: string) {
+    private firebase_wrap_exists(group_path: string): boolean {
         if (this.wraps.hasOwnProperty(group_path)) {
             return true
+        }
+        return true
+    }
+
+    private get_firebase_wrap(group_path: string): FirebaseWrap {
+        if (this.firebase_wrap_exists(group_path)) {
+            return this.wraps[group_path]
+        }
+        return undefined
+    }
+
+    private firebase_app_exists(group_path: string): boolean {
+        for (let i = 0; i < firebase.apps.length; i++) {
+            if (firebase.apps[i].name == group_path) {
+                return true
+            }
         }
         return false
     }
 
-    private get_wrap(group_path: string) {
-        if (this.wrap_exists(group_path)) {
-            return this.wraps[group_path]
+    private get_firebase_app(group_path: string): firebase.app.App {
+        for (let i = 0; i < firebase.apps.length; i++) {
+            if (firebase.apps[i].name == group_path) {
+                return firebase.apps[i]
+            }
         }
         return undefined
     }
@@ -270,7 +332,7 @@ export class FirebaseWraps {
         // Get the group path which surrounds the node making the request.
         let group_path = this.get_group_path(req.args.node_path)
 
-        // Handle creating the firebase wrapper.
+        // Handle creating and destroying the firebase wrapper.
         if (req.request == RequestType.kFirebaseInit) {
             let config: any = {}
             config.apiKey = req.args.apiKey
@@ -280,20 +342,81 @@ export class FirebaseWraps {
             config.email = req.args.email
             config.password = req.args.password
             console.log('setting current firebase config: ' + JSON.stringify(config))
-            // Make sure the wrap is created.
-            if (!this.wrap_exists(group_path)) {
-                this.create_wrap(group_path, config)
+
+            // Whether we really need to create a wrap.
+            let need_to_create = true
+
+            // Does the firebase wrapper already exist with the right config.
+            if (this.firebase_app_exists(group_path) && this.firebase_wrap_exists(group_path)) {
+                let app = this.get_firebase_app(group_path)
+                let c = app.options
+                if (c == config) {
+                    need_to_create = false
+                }
+            }
+
+            // Create the wrapper.
+            if (!need_to_create) {
+                // If we don't need to create a wrapper, then we're done.
+                // Send back a response.
+                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                return true
+            } else {
+                // Try to find an existing app under the group_path.
+                let existing_app: firebase.app.App = undefined
+                for (let i = 0; i < firebase.apps.length; i++) {
+                    if (firebase.apps[i].name == group_path) {
+                        existing_app = firebase.apps[i]
+                    }
+                }
+                // If there is an existing firebase app at the group_path, we need to destroy it.
+                if (existing_app) {
+                    existing_app.delete().then(
+                        (a: any) => {
+                            // Now we just need to create a wrapper.
+                            this.create_firebase_wrap(group_path, config)
+                            // And we're done.
+                            this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                            return true
+                        },
+                        (error: Error) => {
+                            console.log('got error: ' + error.message)
+                            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
+                            return true
+                        })
+                } else {
+                    // Otherwise we just create a wrapper.
+                    this.create_firebase_wrap(group_path, config)
+                    // Send back a response.
+                    this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                    return true
+                }
+            }
+        } else if (req.request == RequestType.kFirebaseDestroy) {
+            console.log('firebase destroy called')
+            // Try to find an existing app under the group_path.
+            let existing_app: firebase.app.App = undefined
+            for (let i = 0; i < firebase.apps.length; i++) {
+                if (firebase.apps[i].name == group_path) {
+                    existing_app = firebase.apps[i]
+                }
+            }
+            // If there is an existing firebase app at the group_path, we need to destroy it.
+            if (existing_app) {
+                existing_app.delete() // Note we don't wait for the promise.
             }
             // Send back a response.
             this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
             return true
-        } else if (req.request == RequestType.kFirebaseDestroy) {
-            console.log('firebase destroy called')
-            delete this.wraps[group_path]
         }
 
         // Otherwise we let the existing firebase wrap try to handle it.
-        let wrap = this.get_wrap(group_path)
+        let wrap = this.get_firebase_wrap(group_path)
+        if (wrap) {
+            console.log('wrap is not null')
+        } else {
+            console.log('wrap is null')
+        }
         return wrap.handle_request(req)
     }
 }
