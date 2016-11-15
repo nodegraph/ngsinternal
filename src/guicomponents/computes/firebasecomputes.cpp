@@ -114,7 +114,7 @@ void FirebaseReadDataCompute::create_inputs_outputs() {
   external();
   FirebaseCompute::create_inputs_outputs();
   create_input(Message::kDataPath, "some/path", false);
-  create_input(Message::kDataName, "data", false);
+  create_input(Message::kOutputPropertyName, "data", false);
   create_input(Message::kListenForChanges, true, false);
 }
 
@@ -126,8 +126,8 @@ QJsonObject FirebaseReadDataCompute::init_hints() {
   add_hint(m, Message::kDataPath, HintType::kJSType, to_underlying(JSType::kString));
   add_hint(m, Message::kDataPath, HintType::kDescription, "Firebase data path.");
 
-  add_hint(m, Message::kDataName, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kDataName, HintType::kDescription, "The name given to the data read from Firebase. This will be merged into the data flowing through \"in\".");
+  add_hint(m, Message::kOutputPropertyName, HintType::kJSType, to_underlying(JSType::kString));
+  add_hint(m, Message::kOutputPropertyName, HintType::kDescription, "The name of the property to add to our output. The value of the property will be the latest value from Firebase.");
 
   add_hint(m, Message::kListenForChanges, HintType::kJSType, to_underlying(JSType::kBoolean));
   add_hint(m, Message::kListenForChanges, HintType::kDescription, "When enabled, this node will be updated when there are any changes to the value.");
@@ -160,10 +160,10 @@ void FirebaseReadDataCompute::receive_chain_state(const QJsonObject& chain_state
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
   QJsonValue incoming = _inputs->get_input_value("in");
-  QString data_name = _inputs->get_input_value(Message::kDataName).toString();
+  QString prop_name = _inputs->get_input_value(Message::kOutputPropertyName).toString();
   if (incoming.isObject()) {
     QJsonObject obj = incoming.toObject();
-    obj.insert(data_name, chain_state.value("value"));
+    obj.insert(prop_name, chain_state.value("value"));
     set_output("out", obj);
   } else {
     set_output("out", incoming);

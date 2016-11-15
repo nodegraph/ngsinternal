@@ -67,7 +67,6 @@ const char* Message::kListenForChanges = "listen_for_changes";
 
 const char* Message::kEmail = "email";
 const char* Message::kPassword = "password";
-const char* Message::kDataName = "data_name";
 
 const char* Message::kApiKey = "apiKey";
 const char* Message::kAuthDomain = "authDomain";

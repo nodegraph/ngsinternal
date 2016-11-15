@@ -199,7 +199,6 @@ class COMMS_EXPORT Message: public QJsonObject {
 
   static const char* kEmail;
   static const char* kPassword;
-  static const char* kDataName;
 
   static const char* kApiKey;
   static const char* kAuthDomain;
