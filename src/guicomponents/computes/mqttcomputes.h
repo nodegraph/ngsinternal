@@ -7,7 +7,6 @@
 namespace ngs {
 
 class Entity;
-class MQTTWorker;
 class TaskScheduler;
 class TaskContext;
 class EnterMQTTGroupCompute;
@@ -26,10 +25,8 @@ class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
  protected:
   virtual void append_callback_tasks(TaskContext& tc);
 
-  Dep<MQTTWorker> _worker;
   Dep<TaskScheduler> _scheduler;
-  // This enter dep makes sure the group context node computes before us.
-  Dep<EnterMQTTGroupCompute> _enter;
+  Dep<EnterMQTTGroupCompute> _group_context;
 };
 
 class GUICOMPUTES_EXPORT MQTTPublishCompute: public BaseMQTTCompute {

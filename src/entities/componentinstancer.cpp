@@ -62,7 +62,6 @@
 #include <guicomponents/comms/appconfig.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/httpworker.h>
-#include <guicomponents/computes/mqttworker.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
 

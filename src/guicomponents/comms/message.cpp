@@ -82,8 +82,10 @@ const char* Message::kTopic = "topic";
 const char* Message::kMessage = "message";
 
 const char* Message::kUsername = "username";
+const char* Message::kHostName = "host_name";
 const char* Message::kHostAddress = "host_address";
 const char* Message::kPort = "port";
+const char* Message::kClientID = "client_id";
 
 Message::Message()
     : QJsonObject() {

@@ -51,7 +51,6 @@
 #include <guicomponents/computes/browserrecorder.h>
 #include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/computes/httpworker.h>
-#include <guicomponents/computes/mqttworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
@@ -127,7 +126,6 @@ void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff NodeJSWorker(this);
   new_ff BrowserRecorder(this);
   new_ff HTTPWorker(this);
-  new_ff MQTTWorker(this);
   new_ff LicenseChecker(this);
   new_ff CryptoLogic(this);
 }

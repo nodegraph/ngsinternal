@@ -4,7 +4,6 @@
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
 
-#include <guicomponents/computes/mqttworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/entermqttgroupcompute.h>
@@ -17,12 +16,10 @@ namespace ngs {
 
 BaseMQTTCompute::BaseMQTTCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
-      _worker(this),
       _scheduler(this),
-      _enter(this) {
-  get_dep_loader()->register_fixed_dep(_worker, Path({}));
+      _group_context(this) {
   get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
-  get_dep_loader()->register_fixed_dep(_enter, Path({"..","group_context"}));
+  get_dep_loader()->register_fixed_dep(_group_context, Path({"..","group_context"}));
 }
 
 BaseMQTTCompute::~BaseMQTTCompute() {
@@ -43,7 +40,7 @@ void BaseMQTTCompute::init_hints(QJsonObject& m) {
 void BaseMQTTCompute::append_callback_tasks(TaskContext& tc) {
   internal();
   std::function<void()> done = std::bind(&BaseMQTTCompute::on_finished_task, this);
-  _worker->queue_finished_task(tc, done);
+  _group_context->queue_finished_task(tc, done);
 }
 
 void BaseMQTTCompute::on_finished_task() {
@@ -87,7 +84,7 @@ bool MQTTPublishCompute::update_state() {
   QString message = _inputs->get_input_value(Message::kMessage).toString();
 
   TaskContext tc(_scheduler);
-  _worker->queue_publish_task(tc, topic, message);
+  _group_context->queue_publish_task(tc, topic, message);
   append_callback_tasks(tc);
   return false;
 }
@@ -161,8 +158,8 @@ bool MQTTSubscribeCompute::update_state() {
   _topic = _inputs->get_input_value(Message::kTopic).toString();
 
   TaskContext tc(_scheduler);
-  if (!_worker->is_subscribed(this, _topic.toStdString())) {
-    _worker->queue_subscribe_task(tc, _topic, get_path());
+  if (!_group_context->is_subscribed(this, _topic.toStdString())) {
+    _group_context->queue_subscribe_task(tc, _topic, get_path());
   }
   // Let on_finished_task() handle setting our final output value.
   append_callback_tasks(tc);
@@ -174,8 +171,12 @@ bool MQTTSubscribeCompute::destroy_state() {
   // We can only use cached values here to launch one task, and we can't wait for it.
   internal();
   TaskContext tc(_scheduler);
-  if (!_worker->is_subscribed(this, _topic.toStdString())) {
-    _worker->queue_unsubscribe_task(tc, _topic, get_path());
+  // Note the context is usually not null when we're working within our group,
+  // however during destruction of our surrounding node
+  // the context may be null as the deletion order of nodes within in a group is random.
+  // The context is just another node in our group.
+  if (_group_context) {
+    _group_context->queue_unsubscribe_task(tc, _topic, get_path());
   }
   return true;
 }

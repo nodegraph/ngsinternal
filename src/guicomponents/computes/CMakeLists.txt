@@ -4,7 +4,6 @@ set(sources
     scriptgroupnodecompute.cpp
     scriptnodecompute.cpp
     nodejsworker.cpp
-    mqttworker.cpp
     httpworker.cpp
     browsercomputes.cpp
     firebasecomputes.cpp
@@ -24,7 +23,6 @@ set(headers
     httpcomputes.h
     mqttcomputes.h
     entergroupcompute.h
-    entermqttgroupcompute.h
     enterfirebasegroupcompute.h
     enterbrowsergroupcompute.h
     )
@@ -33,10 +31,10 @@ set(headers
 set(moc_headers
     messagereceiver.h
     nodejsworker.h
-    mqttworker.h
     httpworker.h
     scriptgroupnodecompute.h
     browserrecorder.h
+    entermqttgroupcompute.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})
