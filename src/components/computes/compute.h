@@ -1,7 +1,7 @@
 #pragma once
 #include <base/objectmodel/component.h>
 #include <components/computes/computes_export.h>
-#include <components/computes/paramtypes.h>
+#include <guicomponents/comms/hintkeys.h>
 #include <components/computes/inputs.h>
 
 #include <entities/componentids.h>
@@ -86,11 +86,8 @@ class COMPUTES_EXPORT Compute: public Component {
   Entity* get_outputs_space();
 
   // Used by derived classes.
-  static void add_hint(QJsonObject& map,
-                       const std::string& name,
-                       HintType hint_type,
-                       const QJsonValue& value);
-
+  static void add_hint(QJsonObject& map, const std::string& name, HintKey hint_type, const QJsonValue& value);
+  static void remove_hint(QJsonObject& node_hints, const std::string& name);
 
  protected:
   Dep<Inputs> _inputs;

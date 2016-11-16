@@ -1,6 +1,5 @@
 
 set(sources
-    paramtypes.cpp
 	flux.cpp
 	inputs.cpp
 	outputs.cpp
@@ -23,7 +22,6 @@ qt5_wrap_cpp(moc_imps ${moc_headers})
 list(APPEND sources ${moc_imps})
     
 set(headers
-    paramtypes.h
     flux.h
     inputs.h
     outputs.h

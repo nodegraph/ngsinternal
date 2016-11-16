@@ -6,6 +6,7 @@
 #include <components/computes/inputcompute.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/comms/message.h>
+#include <guicomponents/comms/commtypes.h>
 
 //#include <QtCore/QVariant>
 #include <QtQml/QQmlEngine>
@@ -49,11 +50,11 @@ void ScriptNodeCompute::create_inputs_outputs() {
 const QJsonObject ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();
 QJsonObject ScriptNodeCompute::init_hints() {
   QJsonObject m;
-  add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
-  add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 
-  add_hint(m, "script", HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, "script", HintType::kDescription, "The script which performs the work for this node.");
+  add_hint(m, "script", HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, "script", HintKey::kDescriptionHint, "The script which performs the work for this node.");
   return m;
 }
 

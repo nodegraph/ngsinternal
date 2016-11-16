@@ -2,6 +2,7 @@
 #include <components/computes/datanodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
+#include <guicomponents/comms/commtypes.h>
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -32,9 +33,9 @@ const QJsonObject DataNodeCompute::_hints = DataNodeCompute::init_hints();
 QJsonObject DataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "value", HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, "value", HintType::kMultiLineEdit, true);
-  add_hint(m, "value", HintType::kDescription, "The object that will be output by this node, if the corresponding input plug on this group is not connected. This must be a proper javascript expression.");
+  add_hint(m, "value", HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, "value", HintKey::kMultiLineHint, true);
+  add_hint(m, "value", HintKey::kDescriptionHint, "The object that will be output by this node, if the corresponding input plug on this group is not connected. This must be a proper javascript expression.");
 
   return m;
 }

@@ -5,6 +5,7 @@
 #include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
+#include <guicomponents/comms/commtypes.h>
 
 #include <QtNetwork/QHostAddress>
 
@@ -44,23 +45,23 @@ const QJsonObject EnterFirebaseGroupCompute::_hints = EnterFirebaseGroupCompute:
 QJsonObject EnterFirebaseGroupCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, Message::kApiKey, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kApiKey, HintType::kDescription, "The Firebase api key.");
+  add_hint(m, Message::kApiKey, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kApiKey, HintKey::kDescriptionHint, "The Firebase api key.");
 
-  add_hint(m, Message::kAuthDomain, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kAuthDomain, HintType::kDescription, "The Firebase authentication domain.");
+  add_hint(m, Message::kAuthDomain, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kAuthDomain, HintKey::kDescriptionHint, "The Firebase authentication domain.");
 
-  add_hint(m, Message::kDatabaseURL, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kDatabaseURL, HintType::kDescription, "The Firebase realtime database url.");
+  add_hint(m, Message::kDatabaseURL, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kDatabaseURL, HintKey::kDescriptionHint, "The Firebase realtime database url.");
 
-  add_hint(m, Message::kStorageBucket, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kStorageBucket, HintType::kDescription, "The Firebase storage bucket url.");
+  add_hint(m, Message::kStorageBucket, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kStorageBucket, HintKey::kDescriptionHint, "The Firebase storage bucket url.");
 
-  add_hint(m, Message::kEmail, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kEmail, HintType::kDescription, "The email to sign in to Firebase. You must enable email/password authentication on your database.");
+  add_hint(m, Message::kEmail, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kEmail, HintKey::kDescriptionHint, "The email to sign in to Firebase. You must enable email/password authentication on your database.");
 
-  add_hint(m, Message::kPassword, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kPassword, HintType::kDescription, "The password to sign in to Firebase. You must enable email/password authentication on your database.");
+  add_hint(m, Message::kPassword, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kPassword, HintKey::kDescriptionHint, "The password to sign in to Firebase. You must enable email/password authentication on your database.");
 
   return m;
 }

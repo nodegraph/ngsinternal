@@ -39,10 +39,16 @@ void GroupNodeCompute::create_inputs_outputs() {
   create_namespace("links");
 }
 
+void GroupNodeCompute::add_param_hints(const std::string& name, const QJsonValue& param_hints) {
+  _node_hints.insert(name.c_str(), param_hints);
+}
+
+void GroupNodeCompute::remove_param_hints(const std::string& name) {
+  Compute::remove_hint(_node_hints, name);
+}
+
 void GroupNodeCompute::update_wires() {
   internal();
-
-  bool changed = false;
 
   // Make sure the inputs and outputs on this group match up
   // with the input and output nodes inside this group.
@@ -61,16 +67,36 @@ void GroupNodeCompute::update_wires() {
     if (did == EntityDID::kInputNodeEntity) {
       // Update the set of exposed_inputs.
       exposed_inputs.insert(child_name);
+      // Get our input entity.
+      InputEntity* in = NULL;
       // If we already have an input plug corresponding to the input node, then continue.
       if (inputs_space->has_child_name(child_name)) {
-        continue;
+        in = static_cast<InputEntity*>(inputs_space->get_child(child_name));
+        // Grab the computes on the input and the input node inside the group.
+        Dep<InputCompute> outer = get_dep<InputCompute>(in);
+        Dep<InputNodeCompute> inner = get_dep<InputNodeCompute>(child);
+        // Note we don't change the existing value on the input plug.
+        // But we make sure the hints match.
+        const QJsonObject& inner_node_hints = inner->get_hints();
+        add_param_hints(child_name, inner_node_hints.value("default_value"));
+      } else {
+        // Otherwise we create an input plug.
+        in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
+        in->create_internals();
+        in->set_exposed(true);
+        in->initialize_wires();
+        // Grab the computes on the input and the input node inside the group.
+        Dep<InputCompute> outer = get_dep<InputCompute>(in);
+        Dep<InputNodeCompute> inner = get_dep<InputNodeCompute>(child);
+        // Note an input node's input is not connected to anything and cleaning it won't start any asynchronous processed.
+        inner->get_inputs()->clean_wires();
+        inner->get_inputs()->clean_state();
+        // Set the unconnected value;
+        outer->set_unconnected_value(inner->get_inputs()->get_input_value("default_value"));
+        // Make sure the hints match.
+        const QJsonObject& inner_node_hints = inner->get_hints();
+        add_param_hints(child_name, inner_node_hints.value("default_value"));
       }
-      // Otherwise we create an input plug.
-      InputEntity* in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
-      in->create_internals();
-      in->set_exposed(true);
-      in->initialize_wires();
-      changed = true;
     } else if (did == EntityDID::kOutputNodeEntity) {
       // Update the set of exposed_outputs.
       exposed_outputs.insert(child_name);
@@ -83,7 +109,6 @@ void GroupNodeCompute::update_wires() {
       out->create_internals();
       out->set_exposed(true);
       out->initialize_wires();
-      changed = true;
     }
   }
 
@@ -94,6 +119,7 @@ void GroupNodeCompute::update_wires() {
       const std::string& child_name = iter.first;
       if (!exposed_inputs.count(child_name)) {
         _inputs_to_destroy.push_back(iter.second);
+        remove_param_hints(child_name);
       }
     }
     std::vector<Entity*> _outputs_to_destroy;
@@ -106,12 +132,10 @@ void GroupNodeCompute::update_wires() {
     for (Entity* e : _inputs_to_destroy) {
       // This can leave dangling link shapes, which are cleaned up by subsequest passes of update_hierarchy().
       delete_ff(e);
-      changed = true;
     }
     for (Entity* e : _outputs_to_destroy) {
       // This can leave dangling link shapes, which are cleaned up by subsequest passes of update_hierarchy().
       delete_ff(e);
-      changed = true;
     }
   }
 
@@ -181,6 +205,7 @@ bool GroupNodeCompute::update_state() {
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
       if (input_node_compute->get_override() != input->get_output("out")) {
+        std::cerr << "setting override: " << input->get_output("out").toString().toStdString() << "\n";
         input_node_compute->set_override(input->get_output("out"));
       }
       // We let the output nodes propagate cleanliness up to us when needed.
@@ -220,12 +245,6 @@ bool GroupNodeCompute::update_state() {
   }
 
   return true;
-}
-
-QJsonObject GroupNodeCompute::get_editable_inputs() const {
-  external();
-  QJsonObject values;
-  return values;
 }
 
 }

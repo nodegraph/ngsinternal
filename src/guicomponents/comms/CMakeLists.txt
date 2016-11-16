@@ -1,5 +1,7 @@
 
 set(sources
+    commtypes.cpp
+    hintkeys.cpp
     filemodel.cpp
     message.cpp
     nodejsprocess.cpp
@@ -11,6 +13,8 @@ set(sources
     )
    
 set(headers
+    commtypes.h
+    hintkeys.h
     taskscheduler.h
     cryptologic.h
 )

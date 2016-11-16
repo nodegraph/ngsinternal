@@ -8,6 +8,7 @@
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/firebasecomputes.h>
 #include <guicomponents/computes/enterfirebasegroupcompute.h>
+#include <guicomponents/comms/commtypes.h>
 
 #include <functional>
 
@@ -36,8 +37,8 @@ void FirebaseCompute::create_inputs_outputs() {
 }
 
 void FirebaseCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
-  add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 }
 
 void FirebaseCompute::dump_map(const QJsonObject& inputs) const {
@@ -88,11 +89,11 @@ QJsonObject FirebaseWriteDataCompute::init_hints() {
   QJsonObject m;
   FirebaseCompute::init_hints(m);
 
-  add_hint(m, Message::kDataPath, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kDataPath, HintType::kDescription, "Firebase data path.");
+  add_hint(m, Message::kDataPath, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kDataPath, HintKey::kDescriptionHint, "Firebase data path.");
 
-  add_hint(m, Message::kValue, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kValue, HintType::kDescription, "The data to write at the path.");
+  add_hint(m, Message::kValue, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kValue, HintKey::kDescriptionHint, "The data to write at the path.");
 
   return m;
 }
@@ -123,14 +124,14 @@ QJsonObject FirebaseReadDataCompute::init_hints() {
   QJsonObject m;
   FirebaseCompute::init_hints(m);
 
-  add_hint(m, Message::kDataPath, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kDataPath, HintType::kDescription, "Firebase data path.");
+  add_hint(m, Message::kDataPath, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kDataPath, HintKey::kDescriptionHint, "Firebase data path.");
 
-  add_hint(m, Message::kOutputPropertyName, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kOutputPropertyName, HintType::kDescription, "The name of the property to add to our output. The value of the property will be the latest value from Firebase.");
+  add_hint(m, Message::kOutputPropertyName, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kOutputPropertyName, HintKey::kDescriptionHint, "The name of the property to add to our output. The value of the property will be the latest value from Firebase.");
 
-  add_hint(m, Message::kListenForChanges, HintType::kJSType, to_underlying(JSType::kBoolean));
-  add_hint(m, Message::kListenForChanges, HintType::kDescription, "When enabled, this node will be updated when there are any changes to the value.");
+  add_hint(m, Message::kListenForChanges, HintKey::kJSTypeHint, to_underlying(JSType::kBoolean));
+  add_hint(m, Message::kListenForChanges, HintKey::kDescriptionHint, "When enabled, this node will be updated when there are any changes to the value.");
 
   return m;
 }

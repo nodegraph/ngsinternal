@@ -6,6 +6,7 @@
 
 #include <guicomponents/computes/httpworker.h>
 #include <guicomponents/comms/taskscheduler.h>
+#include <guicomponents/comms/commtypes.h>
 #include <guicomponents/computes/httpcomputes.h>
 
 #include <functional>
@@ -33,8 +34,8 @@ void BaseHTTPCompute::create_inputs_outputs() {
 }
 
 void BaseHTTPCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
-  add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 }
 
 void BaseHTTPCompute::dump_map(const QJsonObject& inputs) const {
@@ -81,21 +82,21 @@ QJsonObject HTTPCompute::init_hints() {
   QJsonObject m;
   BaseHTTPCompute::init_hints(m);
 
-  add_hint(m, Message::kURL, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kURL, HintType::kDescription,
+  add_hint(m, Message::kURL, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kURL, HintKey::kDescriptionHint,
            "The URL to send the HTTP request to.");
 
-  add_hint(m, Message::kPayload, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kPayload, HintType::kDescription,
+  add_hint(m, Message::kPayload, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kPayload, HintKey::kDescriptionHint,
            "The value to send with the HTTP request. This should be an expression in javascript.");
 
-  add_hint(m, Message::kHTTPRequestMethod, HintType::kJSType, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kHTTPRequestMethod, HintType::kEnum, to_underlying(EnumHint::kHTTPSendType));
-  add_hint(m, Message::kHTTPRequestMethod, HintType::kDescription,
+  add_hint(m, Message::kHTTPRequestMethod, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
+  add_hint(m, Message::kHTTPRequestMethod, HintKey::kEnumHint, to_underlying(EnumHintValue::kHTTPSendType));
+  add_hint(m, Message::kHTTPRequestMethod, HintKey::kDescriptionHint,
            "The value to send with the HTTP request. This should be an expression in javascript.");
 
-  add_hint(m, Message::kOutputPropertyName, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kOutputPropertyName, HintType::kDescription,
+  add_hint(m, Message::kOutputPropertyName, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kOutputPropertyName, HintKey::kDescriptionHint,
            "The name of the property to add to our output. The value of the property will be the HTTP reply.");
 
   return m;

@@ -52,6 +52,7 @@ QJsonObject Inputs::get_editable_inputs() const {
   QJsonObject values;
   for (auto iter: _all) {
     if (!iter.second->is_connected()) {
+      std::cerr << "aaaaaaa: " << iter.second->get_unconnected_value().toString().toStdString() << "\n";
       values.insert(iter.first.c_str(), iter.second->get_unconnected_value());
     }
   }
@@ -71,6 +72,7 @@ void Inputs::set_editable_inputs(const QJsonObject& values) {
 QJsonValue Inputs::get_input_value(const std::string& input_name, const std::string& port_name) const {
   const Dep<InputCompute>& input = get(input_name);
   if (!input) {
+    std::cerr << "Warning: couldn't find input: " << input_name << "\n";
     return QJsonValue();
   }
   return input->get_output(port_name);

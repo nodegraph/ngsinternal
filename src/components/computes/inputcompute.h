@@ -1,7 +1,7 @@
 #pragma once
 #include <components/computes/computes_export.h>
 #include <components/computes/compute.h>
-#include <components/computes/paramtypes.h>
+#include <guicomponents/comms/hintkeys.h>
 
 #include <QtCore/QJsonValue>
 

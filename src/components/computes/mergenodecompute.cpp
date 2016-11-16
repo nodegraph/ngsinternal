@@ -2,6 +2,7 @@
 #include <components/computes/mergenodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
+#include <guicomponents/comms/commtypes.h>
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -28,12 +29,12 @@ const QJsonObject MergeNodeCompute::_hints = MergeNodeCompute::init_hints();
 QJsonObject MergeNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
-  add_hint(m, "in", HintType::kDescription, "This object will get data from the \"layer\" input merged into it.");
+  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintKey::kDescriptionHint, "This object will get data from the \"layer\" input merged into it.");
 
 
-  add_hint(m, "layer", HintType::kJSType, to_underlying(JSType::kObject));
-  add_hint(m, "layer", HintType::kDescription, "The object will layer over the data from the \"in\" input.");
+  add_hint(m, "layer", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "layer", HintKey::kDescriptionHint, "The object will layer over the data from the \"in\" input.");
 
   return m;
 }

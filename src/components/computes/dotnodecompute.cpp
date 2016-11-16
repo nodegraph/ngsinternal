@@ -1,6 +1,7 @@
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
+#include <guicomponents/comms/commtypes.h>
 
 #include <base/objectmodel/deploader.h>
 
@@ -24,8 +25,8 @@ const QJsonObject DotNodeCompute::_hints = DotNodeCompute::init_hints();
 QJsonObject DotNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintType::kJSType, to_underlying(JSType::kObject));
-  add_hint(m, "in", HintType::kDescription, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 
   return m;
 }

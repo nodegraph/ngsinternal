@@ -19,8 +19,10 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   // Clean the group interface.
   virtual bool clean_inputs();
 
-  // Inputs.
-  virtual QJsonObject get_editable_inputs() const;
+  // Manage hints for the inputs on the group.
+  virtual const QJsonObject& get_hints() const {return _node_hints;}
+  virtual void add_param_hints(const std::string& name, const QJsonValue& param_hints);
+  virtual void remove_param_hints(const std::string& name);
 
  protected:
 
@@ -32,6 +34,7 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
 
  private:
   Dep<BaseFactory> _factory;
+  QJsonObject _node_hints;
 };
 
 }

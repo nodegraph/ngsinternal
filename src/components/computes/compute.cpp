@@ -297,13 +297,14 @@ Entity* Compute::get_outputs_space() {
   return our_entity()->get_child("outputs");
 }
 
-void Compute::add_hint(QJsonObject& map,
-                       const std::string& name,
-                       HintType hint_type,
-                       const QJsonValue& value) {
-  QJsonObject hints = map.value(name.c_str()).toObject();
-  hints.insert(QString::number(to_underlying(hint_type)), value);
-  map.insert(name.c_str(),  hints);
+void Compute::add_hint(QJsonObject& node_hints, const std::string& name, HintKey hint_type, const QJsonValue& value) {
+  QJsonObject param_hints = node_hints.value(name.c_str()).toObject();
+  param_hints.insert(QString::number(to_underlying(hint_type)), value);
+  node_hints.insert(name.c_str(),  param_hints);
+}
+
+void Compute::remove_hint(QJsonObject& node_hints, const std::string& name) {
+  node_hints.remove(name.c_str());
 }
 
 bool Compute::eval_js_with_inputs(const QString& text, QJsonValue& result, QString& error) const {

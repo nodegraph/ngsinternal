@@ -5,6 +5,7 @@
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
+#include <guicomponents/comms/commtypes.h>
 
 
 namespace ngs {
@@ -51,23 +52,23 @@ const QJsonObject EnterMQTTGroupCompute::_hints = EnterMQTTGroupCompute::init_hi
 QJsonObject EnterMQTTGroupCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, Message::kHostName, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kHostName, HintType::kDescription, "The host name of the MQTT broker. When set this takes precedence over host_address.");
+  add_hint(m, Message::kHostName, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kHostName, HintKey::kDescriptionHint, "The host name of the MQTT broker. When set this takes precedence over host_address.");
 
-  add_hint(m, Message::kHostAddress, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kHostAddress, HintType::kDescription, "The ip address of the MQTT broker.");
+  add_hint(m, Message::kHostAddress, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kHostAddress, HintKey::kDescriptionHint, "The ip address of the MQTT broker.");
 
-  add_hint(m, Message::kPort, HintType::kJSType, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kPort, HintType::kDescription, "The port number of the MQTT broker.");
+  add_hint(m, Message::kPort, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
+  add_hint(m, Message::kPort, HintKey::kDescriptionHint, "The port number of the MQTT broker.");
 
-  add_hint(m, Message::kUsername, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kUsername, HintType::kDescription, "The username to use if the MQTT broker uses authentication.");
+  add_hint(m, Message::kUsername, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kUsername, HintKey::kDescriptionHint, "The username to use if the MQTT broker uses authentication.");
 
-  add_hint(m, Message::kPassword, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kPassword, HintType::kDescription, "The password to use if the MQTT broker uses authentication.");
+  add_hint(m, Message::kPassword, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kPassword, HintKey::kDescriptionHint, "The password to use if the MQTT broker uses authentication.");
 
-  add_hint(m, Message::kClientID, HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, Message::kClientID, HintType::kDescription, "The client id to use to identify your connection with the MQTT broker.");
+  add_hint(m, Message::kClientID, HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kClientID, HintKey::kDescriptionHint, "The client id to use to identify your connection with the MQTT broker.");
 
   return m;
 }

@@ -2,6 +2,7 @@
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
+#include <guicomponents/comms/commtypes.h>
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -25,6 +26,7 @@ void InputNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
   create_input("default_value", "{\n\t\"value\": 0\n}", false);
+  create_input("type", (int)JSType::kNumber, false);
   create_output("out");
 }
 
@@ -32,9 +34,13 @@ const QJsonObject InputNodeCompute::_hints = InputNodeCompute::init_hints();
 QJsonObject InputNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "default_value", HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, "default_value", HintType::kMultiLineEdit, true);
-  add_hint(m, "default_value", HintType::kDescription, "The object that will be output by this node, if the corresponding input plug on this group is not connected. This must be specified in JSON format and must represent an object.");
+  add_hint(m, "default_value", HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, "default_value", HintKey::kMultiLineHint, true);
+  add_hint(m, "default_value", HintKey::kDescriptionHint, "The value to be output by this node when its associated input plug on the group is not connected.");
+
+  add_hint(m, "type", HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
+  add_hint(m, "type", HintKey::kEnumHint, to_underlying(EnumHintValue::kJSType));
+  add_hint(m, "type", HintKey::kDescriptionHint, "The type of the value to be output by this node.");
 
   return m;
 }
@@ -68,7 +74,15 @@ bool InputNodeCompute::update_state() {
 
 void InputNodeCompute::set_override(const QJsonValue& override) {
   external();
-  _override = override;
+  if (override.isString()) {
+    QJsonValue expr_result;
+    QString error;
+    if (!eval_js_with_inputs(override.toString(), expr_result, error)) {
+      _override = override;
+    } else {
+      _override = expr_result;
+    }
+  }
   _use_override = true;
 }
 

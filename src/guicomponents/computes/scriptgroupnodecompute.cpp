@@ -4,6 +4,7 @@
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/outputnodecompute.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
+#include <guicomponents/comms/commtypes.h>
 
 #include <QtCore/QDebug>
 #include <QtQml/QQmlEngine>
@@ -30,9 +31,9 @@ void ScriptGroupNodeCompute::create_inputs_outputs() {
 const QJsonObject ScriptGroupNodeCompute::_hints = ScriptGroupNodeCompute::init_hints();
 QJsonObject ScriptGroupNodeCompute::init_hints() {
   QJsonObject m;
-  add_hint(m, "script", HintType::kJSType, to_underlying(JSType::kString));
-  add_hint(m, "script", HintType::kMultiLineEdit, true);
-  add_hint(m, "script", HintType::kDescription, "The script which computes the output values of this group. All the input values are made available under their names. Use \"set_output_value(...)\" to set an output value.");
+  add_hint(m, "script", HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, "script", HintKey::kMultiLineHint, true);
+  add_hint(m, "script", HintKey::kDescriptionHint, "The script which computes the output values of this group. All the input values are made available under their names. Use \"set_output_value(...)\" to set an output value.");
   return m;
 }
 
