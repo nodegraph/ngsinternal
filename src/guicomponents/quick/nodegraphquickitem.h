@@ -7,6 +7,8 @@
 #include <entities/componentids.h>
 #include <base/device/transforms/mouseinfo.h>
 #include <guicomponents/comms/filemodel.h>
+#include <guicomponents/comms/qmltypes.h>
+
 #include <QtQuick/QQuickItem>
 //#include <QtCore/QThread>
 #include <QtCore/QTime>
@@ -35,6 +37,11 @@ Q_OBJECT
   Q_INVOKABLE void dive();
   Q_INVOKABLE void dive(const QString& group_node_name);
   void dive(const std::string& group_node_name);
+
+  // Objects which hold type info for use from the qml side.
+  JSTypeWrap js_type_wrap;
+  HintKeyWrap hint_key_wrap;
+  EnumHintValueWrap enum_hint_value_wrap;
 
   // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);
@@ -202,9 +209,6 @@ Q_OBJECT
   void popup_context_menu();
   void finish_creating_node(Entity* e, bool centered);
 
-
-
-
   // Our fixed deps.
   Dep<FBOWorker> _fbo_worker;
   Dep<NodeSelection> _selection;
@@ -231,6 +235,8 @@ Q_OBJECT
 
   // Whether the node graph is locked.
   bool _link_locked;
+
+
 };
 
 }

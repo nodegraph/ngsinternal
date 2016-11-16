@@ -25,25 +25,25 @@ Rectangle {
 
     // Our Methods.
     function set_enum_type(type) {
-        if (type == msg_enum_enum.kMouseActionType) {
+        if (type == enum_hint_value.kMouseActionType) {
             console.log('edit setting options: ' + app_enums.mouse_action_type_text)
             combo_box.set_option_texts(app_enums.mouse_action_type_text)
-        } else if (type == msg_enum_enum.kTextActionType) {
+        } else if (type == enum_hint_value.kTextActionType) {
             console.log('edit setting options: ' + app_enums.text_action_type_text)
             combo_box.set_option_texts(app_enums.text_action_type_text)
-        } else if (type == msg_enum_enum.kElementActionType) {
+        } else if (type == enum_hint_value.kElementActionType) {
             console.log('edit setting options: ' + app_enums.element_action_type_text)
             combo_box.set_option_texts(app_enums.element_action_type_text)
-        } else if (type == msg_enum_enum.kWrapType) {
+        } else if (type == enum_hint_value.kWrapType) {
             console.log('edit setting options: ' + app_enums.wrap_type_text)
             combo_box.set_option_texts(app_enums.wrap_type_text)
-        } else if (type == msg_enum_enum.kDirectionType) {
+        } else if (type == enum_hint_value.kDirectionType) {
             console.log('edit setting options: ' + app_enums.direction_type_text)
             combo_box.set_option_texts(app_enums.direction_type_text)
-        } else if (type == msg_enum_enum.kHTTPSendType) {
+        } else if (type == enum_hint_value.kHTTPSendType) {
             console.log('edit setting options: ' + app_enums.http_send_type_text)
             combo_box.set_option_texts(app_enums.http_send_type_text)
-        } else if (type == msg_enum_enum.kJSType) {
+        } else if (type == enum_hint_value.kJSType) {
         	console.log('edit setting options: ' + app_enums.js_type_text)
             combo_box.set_option_texts(app_enums.js_type_text)
         } else {

@@ -26,6 +26,7 @@ set(moc_headers
     messagesender.h
     appconfig.h
     licensechecker.h
+    qmltypes.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})

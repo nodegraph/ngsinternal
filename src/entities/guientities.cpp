@@ -186,6 +186,9 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("web_recorder"), web_recorder);
   context->setContextProperty(QStringLiteral("license_checker"), license_checker);
   context->setContextProperty(QStringLiteral("ng_controller"), ng_controller);
+  context->setContextProperty(QStringLiteral("js_type"), &ng_controller->js_type_wrap);
+  context->setContextProperty(QStringLiteral("hint_key"), &ng_controller->hint_key_wrap);
+  context->setContextProperty(QStringLiteral("enum_hint_value"), &ng_controller->enum_hint_value_wrap);
 
   // Expose other useful objects to qml.
   context->setContextProperty("pdpi", QGuiApplication::primaryScreen()->physicalDotsPerInch());

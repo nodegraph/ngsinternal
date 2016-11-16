@@ -96,7 +96,7 @@ BaseStackPage{
         // Get value info.
         var value = stack_page.get_value(path)
         var hints = stack_page.get_hints(path)
-        var value_type = hints[hint_type.kJSType]
+        var value_type = hints[hint_key.kJSTypeHint]
 
 		// Push a page to get the name or index of the element to add.
         if (value_type == js_type.kObject) {
@@ -155,9 +155,9 @@ BaseStackPage{
         // Push an edit page according to the js type.
         var child_value = stack_page.get_value(child_path)
         var exposed = stack_page.get_exposed(child_path)
-        switch(child_hints[hint_type.kJSType]) {
+        switch(child_hints[hint_key.kJSTypeHint]) {
         case js_type.kString:
-        	if (child_hints.hasOwnProperty(hint_type.kMultiLineEdit)) {
+        	if (child_hints.hasOwnProperty(hint_key.kMultiLineHint)) {
         		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditMultiLinePage.qml", edit_data_list_stack_page, {})
 	            setup_edit_page(page, name, child_value, child_hints, exposed)
 	            stack_view.push_page(page)
@@ -173,7 +173,7 @@ BaseStackPage{
             stack_view.push_page(page)
             break
         case js_type.kNumber:
-            if (child_hints.hasOwnProperty(hint_type.kEnum)) {
+            if (child_hints.hasOwnProperty(hint_key.kEnumHint)) {
                 var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
                 setup_edit_page(page, name, child_value, child_hints, exposed)
                 stack_view.push_page(page)
@@ -190,7 +190,7 @@ BaseStackPage{
             stack_page.edit_array(child_path[child_path.length-1], child_path);
             break
         default:
-            console.error("Error: DataListStackPage::on_edit_element encountered unknown js type:" + child_hints[hint_type.kJSType])
+            console.error("Error: DataListStackPage::on_edit_element encountered unknown js type:" + child_hints[hint_key.kJSTypeHint])
             break
         }
     }
@@ -200,10 +200,10 @@ BaseStackPage{
         var value = get_value(path)
         var hints = get_hints(path)
 
-        if (hints[hint_type.kJSType] == js_type.kObject) {
+        if (hints[hint_key.kJSTypeHint] == js_type.kObject) {
             delete value[name]
             set_value(path, value)
-        } else if (hints[hint_type.kJSType] == js_type.kArray) {
+        } else if (hints[hint_key.kJSTypeHint] == js_type.kArray) {
             value.splice(Number(name),1)
             set_value(path, value)
         }
@@ -220,14 +220,14 @@ BaseStackPage{
     // Setup an editor page before pushing onto the stack view.
     function setup_edit_page(page, title, child_value, child_hints, exposed) {
         if (child_hints) {
-            if (child_hints.hasOwnProperty(hint_type.kEnum)) {
-                page.set_enum_type(child_hints[hint_type.kEnum])
+            if (child_hints.hasOwnProperty(hint_key.kEnumHint)) {
+                page.set_enum_type(child_hints[hint_key.kEnumHint])
             }
-            if (child_hints.hasOwnProperty(hint_type.kResizable)) {
+            if (child_hints.hasOwnProperty(hint_key.kElementResizableHint)) {
                 page.resizable = true
             }
-            if (child_hints.hasOwnProperty(hint_type.kDescription)) {
-                page.set_description(child_hints[hint_type.kDescription])
+            if (child_hints.hasOwnProperty(hint_key.kDescriptionHint)) {
+                page.set_description(child_hints[hint_key.kDescriptionHint])
             } else {
                 // If there is not description, then we're editing an element of an object or array parameter.
                 page.set_description("Edit the value for this element.")
@@ -256,21 +256,21 @@ BaseStackPage{
         }
 
         // A resizable hint is needed to be resizable.
-        var resizable = hints[hint_type.kResizable]
+        var resizable = hints[hint_key.kElementResizableHint]
         if (!resizable) {
             console.error('Error: add_element requires resizable hints')
             return
         }
 
         // All parameters should have a js type.
-        var value_type = hints[hint_type.kJSType]
+        var value_type = hints[hint_key.kJSTypeHint]
         if (value_type === undefined) {
             console.error('Error: add_element requires js type hints')
             return
         }
 
         // Arrays and Objects should have an element js type.
-        var element_value_type = hints[hint_type.kElementJSType]
+        var element_value_type = hints[hint_key.kElementJSTypeHint]
         if (element_value_type === undefined) {
             console.error('Error: add_element requires element js type hints')
             return
@@ -344,11 +344,11 @@ BaseStackPage{
         // exclusively instead of the hints at the child. The child will generally
         // not have any hints in this case.
         var child_hints = {}
-        if (parent_hints && parent_hints.hasOwnProperty(hint_type.kElementJSType)) {
-            child_hints[hint_type.kJSType] = parent_hints[hint_type.kElementJSType]
+        if (parent_hints && parent_hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
+            child_hints[hint_key.kJSTypeHint] = parent_hints[hint_key.kElementJSTypeHint]
             // Check for other child element hints.
-            if (parent_hints.hasOwnProperty(hint_type.kElementEnum)) {
-                child_hints[hint_type.kEnum] = parent_hints[hint_type.kElementEnum]
+            if (parent_hints.hasOwnProperty(hint_key.kElementEnumHint)) {
+                child_hints[hint_key.kEnumHint] = parent_hints[hint_key.kElementEnumHint]
             }
         } else {
             // Otherwise we grab the child hints using the child path.
@@ -396,13 +396,13 @@ BaseStackPage{
     	if (_allow_edits) {
     		var hints = get_hints(path)
     		if (hints) {
-    			value_type = hints[hint_type.kJSType]
+    			value_type = hints[hint_key.kJSTypeHint]
     			// Use the hints to get a more descriptive string representation.
-				if (hints.hasOwnProperty(hint_type.kEnum)) {
-		    		return app_enums.get_msg_enum_text(hints[hint_type.kEnum], value)
-		    	} else if (hints.hasOwnProperty(hint_type.kDescription) && 
+				if (hints.hasOwnProperty(hint_key.kEnumHint)) {
+		    		return app_enums.get_msg_enum_text(hints[hint_key.kEnumHint], value)
+		    	} else if (hints.hasOwnProperty(hint_key.kDescriptionHint) && 
 		    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
-		    		return hints[hint_type.kDescription]
+		    		return hints[hint_key.kDescriptionHint]
 		    	}
     		}
     	}
@@ -438,7 +438,7 @@ BaseStackPage{
     		var hints = get_hints(path)
     		if (hints) {
     			console.log("xxxxxxxxxxxxxxxxxxxxxxx: " + JSON.stringify(hints))
-    			value_type = hints[hint_type.kJSType]
+    			value_type = hints[hint_key.kJSTypeHint]
     			console.log("value type: " + value_type)
     		}
     	}
@@ -473,7 +473,7 @@ BaseStackPage{
     // Push next model on the stack.
     function push_by_model(title, model, hints) {
         var list_page = stack_view.create_page("DataListPage")
-        if (hints && hints.hasOwnProperty(hint_type.kResizable)) {
+        if (hints && hints.hasOwnProperty(hint_key.kElementResizableHint)) {
         	list_page.resizable = true
         }
         stack_view.push_by_components(title, list_page, model)

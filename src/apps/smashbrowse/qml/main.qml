@@ -61,46 +61,6 @@ Rectangle {
         onTriggered: quick_view.close()
     }
 
-    // Enums.
-    QtObject {
-        id: js_type
-        property int kObject: 0
-        property int kArray: 1
-        property int kString: 2
-        property int kNumber: 3
-        property int kBoolean: 4
-        property int kNull: 5
-        property int kUndefined: 6
-    }
-
-    QtObject {
-        id: msg_enum_enum // an enumeration of enumerations
-        property int kNotEnumType: 0
-        property int kMessageType: 1
-        property int kInfoType: 2
-        property int kMouseActionType: 3
-        property int kTextActionType: 4
-        property int kElementActionType: 5
-        property int kWrapType: 6
-        property int kDirectionType: 7
-        property int kHTTPSendType: 8
-        property int kJSType: 9
-    }
-    
-    QtObject {
-        id: hint_type // an enumeration of enumerations
-        property int kJSType: 0
-        property int kEnum: 1
-        property int kElementJSType: 2
-        property int kElementEnum: 3
-        property int kDescription: 4
-        property int kResizable: 5
-        property int kMultiLineEdit: 6
-        property int kMin: 7
-        property int kMax: 8
-    }
-
-
     // Global App Objects.
 
     AppEnums {

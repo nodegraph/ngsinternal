@@ -3,26 +3,27 @@
 
 namespace ngs {
 
-//const char* Hint::kEnum = "enum";
-//const char* Hint::kMin = "min";
-//const char* Hint::kMax = "max";
-//
-//const char* Hint::get_as_string(HintType type) {
-//  switch(type) {
-//    case HintType::kEnum: {
-//      return Hint::kEnum;
-//    }
-//    case HintType::kMin: {
-//      return Hint::kMin;
-//    }
-//    case HintType::kMax: {
-//      return Hint::kMax;
-//    }
-//    default: {
-//      std::cerr << "Error: Attempt to convert unknown hint type to string.\n";
-//      return "";
-//    }
-//  }
-//}
+const char* hint_key_to_string(HintKey x) {
+#undef COMPONENT_ENTRY1
+#undef COMPONENT_ENTRY2
+#define COMPONENT_ENTRY1(NAME) case HintKey::k##NAME: return #NAME;
+#define COMPONENT_ENTRY2(NAME, VALUE) COMPONENT_ENTRY1(NAME)
+  switch (x) {
+    HINTKEY_ENTRIES()
+  }
+  return "unknown hint key";
+}
+
+const char* enum_hint_value_to_string(EnumHintValue x) {
+#undef COMPONENT_ENTRY1
+#undef COMPONENT_ENTRY2
+#define COMPONENT_ENTRY1(NAME) case EnumHintValue::k##NAME: return #NAME;
+#define COMPONENT_ENTRY2(NAME, VALUE) COMPONENT_ENTRY1(NAME)
+  switch (x) {
+    ENUMHINTVALUE_ENTRIES()
+  }
+  return "unknown enum hint value";
+}
+
 
 }
