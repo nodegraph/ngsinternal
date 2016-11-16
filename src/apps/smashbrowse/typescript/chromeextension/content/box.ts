@@ -1,12 +1,12 @@
 //import {Point} from "./point"
 
-// DirectionType.
-const enum DirectionType {
-    left,
-    right,
-    up,
-    down
-}
+// // DirectionType.
+// const enum DirectionType {
+//     left,
+//     right,
+//     up,
+//     down
+// }
 
 //This interface represents the data shape for box.
 interface BoxInterface {

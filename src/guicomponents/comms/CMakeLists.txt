@@ -14,6 +14,7 @@ set(sources
    
 set(headers
     commtypes.h
+    messagetypes.h
     hintkeys.h
     taskscheduler.h
     cryptologic.h

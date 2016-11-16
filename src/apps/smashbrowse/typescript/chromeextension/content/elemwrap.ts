@@ -1,12 +1,12 @@
 
-//Wrap type.
-const enum WrapType {
-    text,
-    image,
-    input,
-    select,
-    iframe
-}
+// //Wrap type.
+// const enum WrapType {
+//     text,
+//     image,
+//     input,
+//     select,
+//     iframe
+// }
 
 // This class wraps the dom element with extra functionality.
 class ElemWrap {

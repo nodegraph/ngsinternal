@@ -18,6 +18,18 @@ set(msg_js_min ${CMAKE_CURRENT_BINARY_DIR}/m.js)
 # Make msg_js_merged available to other dirs besides the message dir.
 set(msg_js_lib ${CMAKE_CURRENT_BINARY_DIR}/message.js PARENT_SCOPE)
 
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/generator.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/generator.cmake"
+    IMMEDIATE @ONLY)
+
+add_custom_command(
+    OUTPUT "messagetypes.ts" "messagetypes.d.ts"
+    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/generator.cmake"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
 # Custom build command.
 add_custom_command(
     OUTPUT ${msg_js} ${msg_js_min}

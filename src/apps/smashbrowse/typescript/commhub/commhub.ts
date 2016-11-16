@@ -3,6 +3,7 @@
 /// <reference path="D:\dev\windows\DefinitelyTyped\request\request.d.ts"/>
 /// <reference path="D:\dev\windows\DefinitelyTyped\selenium-webdriver\selenium-webdriver.d.ts"/>
 /// <reference path="..\message\message.d.ts"/>
+/// <reference path="..\message\messagetypes.d.ts"/>
 
 /// <reference path="D:\installs\srcdeps\ngsexternal\nodejs2\node_modules\firebase\firebase.d.ts"/>
 
