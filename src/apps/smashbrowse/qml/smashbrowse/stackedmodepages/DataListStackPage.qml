@@ -100,11 +100,15 @@ BaseStackPage{
 
 		// Push a page to get the name or index of the element to add.
         if (value_type == js_type.kObject) {
-            var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", stack_page, {})
+            var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringAndDropdownPage.qml", stack_page, {})
             push_page.visible = true
             push_page.set_value("unnamed")
             push_page.set_title("Add Element to Object.")
-            push_page.set_description("Enter the name of the new element to add.")
+            push_page.set_description("Enter the name and type of the new value to add.")
+            push_page.set_option_texts(['string','number','boolean'])
+            push_page.set_option_ids([2,3,4])
+            
+            
             push_page.callback = stack_page.add_element.bind(stack_page)
             stack_view.push_page(push_page)
         } else if (value_type == js_type.kArray) {
@@ -113,7 +117,9 @@ BaseStackPage{
             push_page.set_value(0)
             push_page.set_title("Add Element to Array.")
             push_page.set_description("Enter the index at which to insert the new element.")
-            push_page.callback = stack_page.add_element.bind(stack_page)
+            
+            var element_type = hints[hint_key.kJSElementTypeHint]
+            push_page.callback = stack_page.add_element.bind(stack_page, element_type)
             stack_view.push_page(push_page)
         }
     }
@@ -241,81 +247,82 @@ BaseStackPage{
     // The element_name is a string when adding to an object.
     // The element_name is an index to insert at when adding to an array. 
     // Use a number greater than the last element if you want to add at the end.
-    function add_element(element_name) {
+    function add_element(element_type, element_name) {
         console.log('adding element with name: ' + element_name)
         var path = stack_view.get_title_path(1, stack_view.depth)
 
         // Get value info.
-        var value = stack_page.get_value(path)
+        var parent_value = stack_page.get_value(path)
+        var parent_type = app_enums.determine_js_type(parent_value)
 
         // Hints are mandatory on objects or arrays.
-        var hints = stack_page.get_hints(path)
-        if (!hints) {
-            console.error('Error: add_element requires hints')
-            return
-        }
+        //var hints = stack_page.get_hints(path)
+        //if (!hints) {
+        //    console.error('Error: add_element requires hints')
+        //    return
+        //}
 
         // A resizable hint is needed to be resizable.
-        var resizable = hints[hint_key.kElementResizableHint]
-        if (!resizable) {
-            console.error('Error: add_element requires resizable hints')
-            return
-        }
+        //var resizable = hints[hint_key.kElementResizableHint]
+        //if (!resizable) {
+        //    console.error('Error: add_element requires resizable hints')
+        //    return
+        //}
 
         // All parameters should have a js type.
-        var value_type = hints[hint_key.kJSTypeHint]
-        if (value_type === undefined) {
-            console.error('Error: add_element requires js type hints')
-            return
-        }
+        //var value_type = hints[hint_key.kJSTypeHint]
+        //if (value_type === undefined) {
+        //    console.error('Error: add_element requires js type hints')
+        //    return
+        //}
 
         // Arrays and Objects should have an element js type.
-        var element_value_type = hints[hint_key.kElementJSTypeHint]
-        if (element_value_type === undefined) {
-            console.error('Error: add_element requires element js type hints')
-            return
-        }
+        //var element_value_type = hints[hint_key.kElementJSTypeHint]
+        //if (element_value_type === undefined) {
+        //    console.error('Error: add_element requires element js type hints')
+        //    return
+        //}
 
         // Only arrays and objects can be resized.
-        if ((value_type != js_type.kArray) && (value_type != js_type.kObject)) {
-            console.error('Error: add_element requires an array or an object')
-            return
-        }
+        //if ((value_type != js_type.kArray) && (value_type != js_type.kObject)) {
+        //    console.error('Error: add_element requires an array or an object')
+        //    return
+        //}
 
         // Add a new element.
-        if (value_type == js_type.kArray) {
+        if (parent_type == js_type.kArray) {
             // Add an array element.
-            if (element_value_type == js_type.kString) {
-                value.splice(element_name, 0, '');
-            } else if (element_value_type == js_type.kNumber) {
-                value.splice(element_name, 0, 0);
-            } else if (element_value_type == js_type.kBoolean) {
-                value.splice(element_name, 0, false);
+            if (element_type == js_type.kString) {
+                parent_value.splice(element_name, 0, '');
+            } else if (element_type == js_type.kNumber) {
+                parent_value.splice(element_name, 0, 0);
+            } else if (element_type == js_type.kBoolean) {
+                parent_value.splice(element_name, 0, false);
             }
-        } else if (value_type == js_type.kObject) {
+        } else if (parent_type == js_type.kObject) {
             // Make sure the element_name is unique.
             var unique_name = element_name
-            if (value.hasOwnProperty(unique_name)) {
+            if (parent_value.hasOwnProperty(unique_name)) {
                 var count = 1
                 unique_name = element_name + count.toString()
-                while (value.hasOwnProperty(unique_name)) {
+                while (parent_value.hasOwnProperty(unique_name)) {
                     count++
                     unique_name = element_name + count.toString()
                 }
             }
 
             // Add an object element.
-            if (element_value_type == js_type.kString) {
-                value[unique_name] = ''
-            } else if (element_value_type == js_type.kNumber) {
-                value[unique_name] = 0
-            } else if (element_value_type == js_type.kBoolean) {
-                value[unique_name] = false
+            if (element_type == js_type.kString) {
+                parent_value[unique_name] = ''
+            } else if (element_type == js_type.kNumber) {
+                parent_value[unique_name] = 0
+            } else if (element_type == js_type.kBoolean) {
+                parent_value[unique_name] = false
             }
         }
 
         // Record the new value.
-        stack_page.set_value(path, value)
+        stack_page.set_value(path, parent_value)
 
         // Refresh the page to show the new value.
         var tail_name = path[path.length-1]
@@ -353,6 +360,13 @@ BaseStackPage{
         } else {
             // Otherwise we grab the child hints using the child path.
             child_hints = app_utils.get_sub_object(_hints, child_path)
+        }
+        
+        // If we don't have child hints, then we add in add least the js type.
+        if (!child_hints) {
+        	var value = get_value(path)
+        	child_hints = {}
+        	child_hints[hint_key.kJSTypeHint] = app_enums.determine_js_type(value)
         }
         return child_hints
     }
