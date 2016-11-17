@@ -25,7 +25,7 @@ InputNodeCompute::~InputNodeCompute() {
 void InputNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("default_value", "{\n\t\"value\": 0\n}", false);
+  create_input("default_value", QJsonObject(), false); //"{\n\t\"value\": 0\n}"
   create_input("type", (int)JSType::kNumber, false);
   create_output("out");
 }
@@ -34,8 +34,8 @@ const QJsonObject InputNodeCompute::_hints = InputNodeCompute::init_hints();
 QJsonObject InputNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "default_value", HintKey::kJSTypeHint, to_underlying(JSType::kString));
-  add_hint(m, "default_value", HintKey::kMultiLineHint, true);
+  add_hint(m, "default_value", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "default_value", HintKey::kElementResizableHint, true);
   add_hint(m, "default_value", HintKey::kDescriptionHint, "The value to be output by this node when its associated input plug on the group is not connected.");
 
   add_hint(m, "type", HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
