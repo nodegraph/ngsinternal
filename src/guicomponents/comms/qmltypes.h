@@ -19,9 +19,13 @@ Q_OBJECT
       : QObject() {
   }
 
-  QString get_string(int type) {
+  QString get_string(int type) const {
     return js_type_to_string((JSType)type);
   }
+
+  static const QStringList _gui_strings;
+  Q_INVOKABLE const QStringList& get_gui_strings() {return _gui_strings;}
+
 
 // Declare properties.
 // Q_PROPERTY(int kObject READ kObject)

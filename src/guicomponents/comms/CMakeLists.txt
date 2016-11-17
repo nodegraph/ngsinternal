@@ -10,6 +10,7 @@ set(sources
     taskscheduler.cpp
     licensechecker.cpp
     cryptologic.cpp
+    qmltypes.cpp
     )
    
 set(headers
