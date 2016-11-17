@@ -399,7 +399,7 @@ BaseStackPage{
     			value_type = hints[hint_key.kJSTypeHint]
     			// Use the hints to get a more descriptive string representation.
 				if (hints.hasOwnProperty(hint_key.kEnumHint)) {
-		    		return app_enums.get_msg_enum_text(hints[hint_key.kEnumHint], value)
+		    		return app_enums.get_enum_hint_value_text(hints[hint_key.kEnumHint], value)
 		    	} else if (hints.hasOwnProperty(hint_key.kDescriptionHint) && 
 		    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
 		    		return hints[hint_key.kDescriptionHint]

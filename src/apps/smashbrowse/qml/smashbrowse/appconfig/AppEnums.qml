@@ -48,22 +48,22 @@ Item{
     // This allows us to display a custom dropdown in the gui for the integer as an enum.
     // --------------------------------------------------------------------------------------
 
-    function get_msg_enum_text(msg_ee, index) {
-    	console.log('msg_ee: ' + msg_ee)
+    function get_enum_hint_value_text(enum_hint_value_type, index) {
+    	console.log('enum_hint_value_type: ' + enum_hint_value_type)
     
-        if (msg_ee == enum_hint_value.kMouseActionType) {
+        if (enum_hint_value_type == enum_hint_value.kMouseActionType) {
             return mouse_action_type_text[index]
-        } else if (msg_ee == enum_hint_value.kTextActionType) {
+        } else if (enum_hint_value_type == enum_hint_value.kTextActionType) {
             return text_action_type_text[index]
-        } else if (msg_ee == enum_hint_value.kElementActionType) {
+        } else if (enum_hint_value_type == enum_hint_value.kElementActionType) {
             return element_action_type_text[index]
-        } else if (msg_ee == enum_hint_value.kWrapType) {
+        } else if (enum_hint_value_type == enum_hint_value.kWrapType) {
             return wrap_type_text[index]
-        } else if (msg_ee == enum_hint_value.kDirectionType) {
+        } else if (enum_hint_value_type == enum_hint_value.kDirectionType) {
             return direction_type_text[index]
-        } else if (msg_ee == enum_hint_value.kHTTPSendType) {
+        } else if (enum_hint_value_type == enum_hint_value.kHTTPSendType) {
         	return http_send_type_text[index]
-        } else if (msg_ee == enum_hint_value.kJSType) {
+        } else if (enum_hint_value_type == enum_hint_value.kJSType) {
         	return js_type_text[index]
         } else {
             console.log('Error: attempt to get text for an enum with invalid type.')
