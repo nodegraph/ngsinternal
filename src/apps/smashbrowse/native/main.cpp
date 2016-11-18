@@ -254,12 +254,18 @@ int main(int argc, char *argv[]) {
       view->update();
     }
 
-    // JSONUtils unit tests.
+//    // Test converting QJsonValues.
 //    JSONUtils::test_convert_to_bool();
 //    JSONUtils::test_convert_to_double();
 //    JSONUtils::test_convert_to_string();
 //    JSONUtils::test_convert_to_object();
 //    JSONUtils::test_convert_to_array();
+//
+//    // Test deep merges of QJsonValues.
+//    JSONUtils::test_deep_merge_object_to_object();
+//    JSONUtils::test_deep_merge_array_to_array();
+//    JSONUtils::test_deep_merge_array_to_object();
+//    JSONUtils::test_deep_merge_object_to_array();
 
     // Run the Qt loop.
     execReturn = app.exec();

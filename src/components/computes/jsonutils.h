@@ -15,34 +15,36 @@ namespace ngs {
 class COMPUTES_EXPORT JSONUtils {
  public:
 
-  // Unit Testing.
+  // Testing QJsonValue conversion routines.
   static void test_convert_to_bool();
   static void test_convert_to_double();
   static void test_convert_to_string();
   static void test_convert_to_object();
   static void test_convert_to_array();
-  static void test_deep_merge();
+
+  // Testing deep merge recursive logic. Note this is just a sanity check.
+  // It doesn't check every possible case.
+  static void test_deep_merge_object_to_object();
+  static void test_deep_merge_array_to_array();
+  static void test_deep_merge_array_to_object();
+  static void test_deep_merge_object_to_array();
 
   // Convert to JSON.
   static QByteArray serialize_json_value(const QJsonValue& value); // Embeds the value as a simgle in an array.
   static QJsonValue deserialize_json_value(const QByteArray& data);
 
-  // Merging JSON values.
+  // QJsonValue conversion routines.
   static bool convert_to_bool(const QJsonValue& source);
   static double convert_to_double(const QJsonValue& source);
   static QString convert_to_string(const QJsonValue& source);
   static QJsonObject convert_to_object(const QJsonValue& source);
   static QJsonArray convert_to_array(const QJsonValue& source);
+
+  // Deep merging of QJsonValues.
   static QJsonValue deep_merge(const QJsonValue& target, const QJsonValue& source);
 
-  // Various merges and overrides.
-  // Merges the properties from source into target.
+  // Shallow merging of Objects.
   static void shallow_object_merge(QJsonObject& target, const QJsonObject& source);
-  // Changes the source from a js/json string to an object or array or vice versa in order to match the target.
-  //static void prep_source_for_merge(const QJsonValue& target, QJsonValue& source);
-  // Merges the properties from source into target recursively, where the property types match.
-  //static QJsonValue deep_merge(const QJsonValue& target, const QJsonValue& source);
-
 
   // Evaluate strings into values.
   static QString value_to_json(QJsonValue);

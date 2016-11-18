@@ -253,8 +253,199 @@ void JSONUtils::test_convert_to_array() {
   std::cerr << "convert_to_array test passed\n";
 }
 
-void JSONUtils::test_deep_merge() {
+void JSONUtils::test_deep_merge_object_to_object() {
+  QJsonObject target;
+  {
+    target.insert("aaa",1);
+    target.insert("bbb", 2);
+    QJsonObject target2;
+    target2.insert("ddd",3);
+    target2.insert("eee",4);
+    target.insert("ccc", target2);
+  }
 
+  QJsonObject source;
+  {
+    source.insert("aaa",11);
+    source.insert("bbb1",22);
+    QJsonObject source2;
+    source2.insert("ddd1",33);
+    source2.insert("eee",44);
+    source.insert("ccc", source2);
+  }
+
+  QJsonObject expected;
+  {
+    expected.insert("aaa",11);
+    expected.insert("bbb",2);
+    expected.insert("bbb1",22);
+    QJsonObject expected2;
+    expected2.insert("ddd",3);
+    expected2.insert("ddd1",33);
+    expected2.insert("eee",44);
+    expected.insert("ccc", expected2);
+  }
+
+//  qDebug() << "target: " << JSONUtils::serialize_json_value(target);
+//  qDebug() << "source: " << JSONUtils::serialize_json_value(source);
+//  qDebug() << "expected: " << JSONUtils::serialize_json_value(expected);
+//  qDebug() << "result: " << JSONUtils::serialize_json_value(deep_merge(target, source));
+
+  assert(QJsonValue(expected) == deep_merge(target, source));
+
+  std::cerr << "deep_merge_object_to_object test passed\n";
+}
+
+void JSONUtils::test_deep_merge_array_to_array() {
+  QJsonArray target;
+  {
+    target.push_back(1);
+    target.push_back(2);
+    target.push_back(3);
+    QJsonArray target2;
+    target2.push_back(4);
+    target2.push_back(5);
+    target2.push_back(6);
+    target.push_back(target2);
+  }
+
+  QJsonArray source;
+  {
+    source.push_back(11);
+    source.push_back(22);
+    source.push_back(33);
+    QJsonArray source2;
+    source2.push_back(44);
+    source2.push_back(55);
+    source.push_back(source2);
+    source.push_back(66);
+  }
+
+  QJsonArray expected;
+  {
+    expected.push_back(11);
+    expected.push_back(22);
+    expected.push_back(33);
+    QJsonArray expected2;
+    expected2.push_back(44);
+    expected2.push_back(55);
+    expected.push_back(expected2);
+    expected.push_back(66);
+  }
+
+//  qDebug() << "target: " << JSONUtils::serialize_json_value(target);
+//  qDebug() << "source: " << JSONUtils::serialize_json_value(source);
+//  qDebug() << "expected: " << JSONUtils::serialize_json_value(expected);
+//  qDebug() << "result: " << JSONUtils::serialize_json_value(deep_merge(target, source));
+
+  assert(QJsonValue(expected) == deep_merge(target, source));
+
+  std::cerr << "deep_merge_array_to_array test passed\n";
+}
+
+void JSONUtils::test_deep_merge_array_to_object() {
+  QJsonObject target;
+  {
+    target.insert("0", 0);
+    target.insert("1", 1);
+    target.insert("2", 2);
+    target.insert("value", "aaa");
+    QJsonObject target2;
+    target2.insert("0", 0);
+    target2.insert("1", 1);
+    target2.insert("2", 2);
+    target2.insert("value", "bbb");
+    target.insert("3", target2);
+  }
+
+  QJsonArray source;
+  {
+    source.push_back(0);
+    source.push_back(11);
+    source.push_back(22);
+    QJsonArray source2;
+    source2.push_back(0);
+    source2.push_back(44);
+    source2.push_back(55);
+    source.push_back(source2);
+  }
+
+  QJsonObject expected;
+  {
+    expected.insert("0", 0);
+    expected.insert("1", 11);
+    expected.insert("2", 22);
+    expected.insert("value", "aaa");
+    QJsonObject expected2;
+    expected2.insert("0", 0);
+    expected2.insert("1", 44);
+    expected2.insert("2", 55);
+    expected2.insert("value", "bbb");
+    expected.insert("3", expected2);
+  }
+
+//  qDebug() << "target: " << JSONUtils::serialize_json_value(target);
+//  qDebug() << "source: " << JSONUtils::serialize_json_value(source);
+//  qDebug() << "expected: " << JSONUtils::serialize_json_value(expected);
+//  qDebug() << "result: " << JSONUtils::serialize_json_value(deep_merge(target, source));
+
+  assert(QJsonValue(expected) == deep_merge(target, source));
+
+  std::cerr << "deep_merge_array_to_object test passed\n";
+}
+
+void JSONUtils::test_deep_merge_object_to_array() {
+  QJsonArray target;
+  {
+    target.push_back(0);
+    target.push_back(1);
+    target.push_back(2);
+    QJsonArray target2;
+    target2.push_back(0);
+    target2.push_back(1);
+    target2.push_back(2);
+    target.push_back(target2);
+    target.push_back(target2);
+  }
+
+  QJsonObject source;
+  {
+    source.insert("a", 0);
+    source.insert("aaa", 11);
+    source.insert("bbb", 22);
+    QJsonObject source2;
+    source2.insert("a", 0);
+    source2.insert("aaa", 11);
+    source2.insert("bbb", 22);
+    source2.insert("ccc", 33);
+    source.insert("ccc", source2);
+    source.insert("ddd", 44);
+  }
+
+  QJsonArray expected;
+  {
+    expected.push_back(0);
+    expected.push_back(11);
+    expected.push_back(22);
+    QJsonArray expected2;
+    expected2.push_back(0);
+    expected2.push_back(11);
+    expected2.push_back(22);
+    expected2.push_back(33);
+    expected.push_back(expected2);
+    QJsonArray expected3;
+    expected3.push_back(44);
+    expected.push_back(expected3);
+  }
+
+//  qDebug() << "target: " << JSONUtils::serialize_json_value(target);
+//  qDebug() << "source: " << JSONUtils::serialize_json_value(source);
+//  qDebug() << "expected: " << JSONUtils::serialize_json_value(expected);
+//  qDebug() << "result: " << JSONUtils::serialize_json_value(deep_merge(target, source));
+
+  assert(QJsonValue(expected) == deep_merge(target, source));
+
+  std::cerr << "deep_merge_object_to_array test passed\n";
 }
 
 QByteArray JSONUtils::serialize_json_value(const QJsonValue& value) {
@@ -620,7 +811,7 @@ QJsonValue JSONUtils::deep_merge(const QJsonValue& target, const QJsonValue& sou
       // For objects we merge in the properties from the source into the target.
       QJsonObject target_obj = target.toObject();
       QJsonObject source_obj = convert_to_object(source);
-      QJsonObject result;
+      QJsonObject result = target_obj;
       QJsonObject::iterator source_iter;
       for (source_iter = source_obj.begin(); source_iter != source_obj.end(); ++source_iter) {
         QString key = source_iter.key();
@@ -643,109 +834,6 @@ void JSONUtils::shallow_object_merge(QJsonObject& target, const QJsonObject& sou
     target.insert(iter.key(), iter.value());
   }
 }
-
-//void JSONUtils::prep_source_for_merge(const QJsonValue& target, QJsonValue& source) {
-//  if (source.isString()) {
-//    QJsonValue value = eval_js2(source.toString());
-//    if (target.isObject()) {
-//      if (value.isObject()) {
-//        // Conver the source from a string to an object.
-//        source = value;
-//        return;
-//      }
-//    } else if (target.isArray()) {
-//      if (value.isArray()) {
-//        // Convert the source from a string to an array.
-//        source = value;
-//        return;
-//      }
-//    }
-//  } else if (source.isObject()) {
-//    if (target.isString()) {
-//      // Convert the source from an object to a string.
-//      QString json = value_to_json(source);
-//      source = QJsonValue(json);
-//    }
-//  } else if (source.isArray()) {
-//    if (target.isString()) {
-//      // Conver the source from an array to a string.
-//      QString json = value_to_json(source);
-//      source = QJsonValue(json);
-//    }
-//  }
-//}
-
-
-
-//QJsonValue JSONUtils::deep_merge(const QJsonValue& target, const QJsonValue& source) {
-//  if (source.isNull()) {
-//    return target;
-//  } else if (source.isUndefined()) {
-//    return target;
-//  }else if (target.isObject()) {
-//    if (source.isObject()) {
-//      QJsonObject tobj = target.toObject();
-//      QJsonObject sobj = source.toObject();
-//      for (QJsonObject::const_iterator siter = sobj.constBegin(); siter != sobj.constEnd(); ++siter) {
-//        QString name = siter.key();
-//        if (tobj.contains(name)) {
-//          tobj.insert(name, deep_merge(tobj[name], siter.value()));
-//        } else {
-//          tobj.insert(name, siter.value());
-//        }
-//      }
-//      return tobj;
-//    } else {
-//      // Otherwise source data doesn't make it into the target.
-//      return target;
-//    }
-//  } else if (target.isArray()) {
-//    if (source.isArray()) {
-//      QJsonArray tarr = target.toArray();
-//      QJsonArray sarr = source.toArray();
-//      // The first element of the target list acts as a prototype if present.
-//      QJsonValue proto;
-//      if (!tarr.empty()) {
-//        proto = tarr.at(0);
-//      }
-//      QJsonArray result;
-//      for (int i = 0; i < sarr.size(); ++i) {
-//        result[i] = deep_merge(proto, sarr.at(i));
-//      }
-//      return result;
-//    } else {
-//      // Otherwise source data doesn't make it into the target.
-//      return target;
-//    }
-//  } else if (target.isNull()) {
-//    return source;
-//  } else if (target.isUndefined()) {
-//    return source;
-//  } else if (target.isBool()) {
-//    if (source.isBool()) {
-//      return source;
-//    } else {
-//      return target;
-//    }
-//  } else if (target.isDouble()) {
-//    if (source.isDouble()) {
-//      return source;
-//    } else {
-//      return target;
-//    }
-//  } else if (target.isString()) {
-//    if (source.isString()) {
-//      return source;
-//    } else {
-//      return target;
-//    }
-//  }
-//  return target;
-//}
-
-
-
-
 
 QString JSONUtils::value_to_json(QJsonValue value) {
   QJsonDocument doc;
