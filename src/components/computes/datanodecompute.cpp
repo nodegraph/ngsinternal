@@ -43,28 +43,8 @@ QJsonObject DataNodeCompute::init_hints() {
 
 bool DataNodeCompute::update_state() {
   Compute::update_state();
-
-  // This will hold our final output.
-  QJsonValue output;
-
-  // Start with our data value.
-  QString text = _inputs->get_input_value("value").toString();
-  QJsonValue expr_result;
-  QString error;
-  if (!eval_js_with_inputs(text, expr_result, error)) {
-    set_output("out", expr_result); // result contains info about the error as properties.
-    on_error(error);
-    return false;
-  } else {
-    output = JSONUtils::deep_merge(output, expr_result);
-  }
-
-//  // If there is an override then merge that in.
-//  if (_use_override) {
-//    output = JSONUtils::deep_merge(output, _override);
-//  }
-
-  set_output("out", output);
+  QJsonValue value = _inputs->get_input_value("value");
+  set_output("out", value);
   return true;
 }
 
