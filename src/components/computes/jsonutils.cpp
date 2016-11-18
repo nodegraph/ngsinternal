@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <cassert>
 
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlContext>
@@ -20,18 +21,254 @@
 
 namespace ngs {
 
-QJsonValue JSONUtils::convert_to_bool(const QJsonValue& source) {
+void JSONUtils::test_convert_to_bool() {
+  // Convert elemental types.
+  assert(convert_to_bool(QJsonValue::Null) == false);
+  assert(convert_to_bool(QJsonValue::Undefined) == false);
+  assert(convert_to_bool(false) == false);
+  assert(convert_to_bool(true) == true);
+  assert(convert_to_bool(0.0) == false);
+  assert(convert_to_bool(1.0) == true);
+  assert(convert_to_bool("") == false);
+  assert(convert_to_bool("test") == true);
+
+  // Convert array types.
+  QJsonArray arr;
+  // Check empty array.
+  assert(convert_to_bool(arr) == false);
+  // Check recursion on single element array for one type (numbers).
+  arr.push_back(0);
+  assert(convert_to_bool(arr) == false);
+  arr.pop_back();
+  arr.push_back(1);
+  assert(convert_to_bool(arr) == true);
+
+  // Convert object types.
+  QJsonObject obj;
+  // Check empty object.
+  assert(convert_to_bool(obj) == false);
+  // Check recursion on single element obj for one type (numbers).
+  obj.insert("a", 0);
+  assert(convert_to_bool(obj) == false);
+  // Check recursion on multi-element obj for one type (numbers).
+  obj.insert("value", 1);
+  assert(convert_to_bool(obj) == true);
+
+  std::cerr << "convert_to_bool test passed\n";
+}
+
+void JSONUtils::test_convert_to_double() {
+  // Convert elemental types.
+  assert(convert_to_double(QJsonValue::Null) == 0.0);
+  assert(convert_to_double(QJsonValue::Undefined) == 0.0);
+  assert(convert_to_double(false) == 0.0);
+  assert(convert_to_double(true) == 1.0);
+  assert(convert_to_double(0.0) == 0.0);
+  assert(convert_to_double(1.0) == 1.0);
+  assert(convert_to_double("") == 0.0);
+  assert(convert_to_double("test") == 0.0);
+  assert(convert_to_double("123") == 123.0);
+
+  // Convert array types.
+  QJsonArray arr;
+  // Check empty array.
+  assert(convert_to_double(arr) == 0.0);
+  // Check recursion on single element array for one type (numbers).
+  arr.push_back(0);
+  assert(convert_to_double(arr) == 0.0);
+  arr.pop_back();
+  arr.push_back(1);
+  assert(convert_to_double(arr) == 1.0);
+
+  // Convert object types.
+  QJsonObject obj;
+  // Check empty object.
+  assert(convert_to_double(obj) == 0.0);
+  // Check recursion on single element obj for one type (numbers).
+  obj.insert("a", 0);
+  assert(convert_to_double(obj) == 0.0);
+  obj.insert("a", 1);
+  assert(convert_to_double(obj) == 1.0);
+  // Check recursion on multi-element obj for one type (numbers).
+  obj.insert("value", 0);
+  assert(convert_to_double(obj) == 0.0);
+  obj.insert("value", 1);
+  assert(convert_to_double(obj) == 1.0);
+
+  std::cerr << "convert_to_double test passed\n";
+}
+
+void JSONUtils::test_convert_to_string() {
+  // Convert elemental types.
+  assert(convert_to_string(QJsonValue::Null) == "");
+  assert(convert_to_string(QJsonValue::Undefined) == "");
+  assert(convert_to_string(false) == "false");
+  assert(convert_to_string(true) == "true");
+  assert(convert_to_string(0.0) == "0");
+  assert(convert_to_string(123.0) == "123");
+  assert(convert_to_string("") == "");
+  assert(convert_to_string("test") == "test");
+
+  // Convert array types.
+  QJsonArray arr;
+  // Check empty array.
+  assert(convert_to_string(arr) == "");
+  // Check recursion on single element array for one type (numbers).
+  arr.push_back(0);
+  assert(convert_to_string(arr) == "0");
+  arr.pop_back();
+  arr.push_back(1);
+  assert(convert_to_string(arr) == "1");
+
+  // Convert object types.
+  QJsonObject obj;
+  // Check empty object.
+  assert(convert_to_string(obj) == "");
+  // Check recursion on single element obj for one type (numbers).
+  obj.insert("a", 0);
+  assert(convert_to_string(obj) == "0");
+  obj.insert("a", 1);
+  assert(convert_to_string(obj) == "1");
+  // Check recursion on multi-element obj for one type (numbers).
+  obj.insert("value", 0);
+  assert(convert_to_string(obj) == "0");
+  obj.insert("value", 1);
+  assert(convert_to_string(obj) == "1");
+
+  std::cerr << "convert_to_string test passed\n";
+}
+
+void JSONUtils::test_convert_to_object() {
+  // Convert elemental types.
+  assert(convert_to_object(QJsonValue::Null) == QJsonObject());
+  assert(convert_to_object(QJsonValue::Undefined) == QJsonObject());
+  {
+    QJsonObject expected;
+    expected.insert("value", false);
+    assert(convert_to_object(false) == expected);
+    expected.insert("value", true);
+    assert(convert_to_object(true) == expected);
+    expected.insert("value", 0);
+    assert(convert_to_object(0.0) == expected);
+    expected.insert("value", 123);
+    assert(convert_to_object(123.0) == expected);
+    expected.insert("value", "");
+    assert(convert_to_object("") == expected);
+    expected.insert("value", "test");
+    assert(convert_to_object("test") == expected);
+  }
+
+  // Convert array types.
+  {
+    QJsonArray arr;
+    QJsonObject expected;
+    // Check empty array.
+    assert(convert_to_object(arr) == QJsonObject());
+    // Check recursion on single element array for one type (numbers).
+    arr.push_back(0);
+    expected.insert("0", 0);
+    assert(convert_to_object(arr) == expected);
+    arr.push_back(1);
+    expected.insert("1", 1);
+    assert(convert_to_object(arr) == expected);
+
+    // Convert object types.
+    QJsonObject obj;
+    expected = QJsonObject();
+    // Check empty object.
+    assert(convert_to_object(obj) == QJsonObject());
+    // Check recursion on single element obj for one type (numbers).
+    obj.insert("a", 0);
+    expected.insert("a", 0);
+    assert(convert_to_object(obj) == expected);
+    // Check recursion on multi-element obj for one type (numbers).
+    obj.insert("value", 1);
+    expected.insert("value", 1);
+    assert(convert_to_object(obj) == expected);
+  }
+
+  std::cerr << "convert_to_object test passed\n";
+}
+
+void JSONUtils::test_convert_to_array() {
+  // Convert elemental types.
+  assert(convert_to_array(QJsonValue::Null) == QJsonArray());
+  assert(convert_to_array(QJsonValue::Undefined) == QJsonArray());
+  {
+    QJsonArray expected;
+    expected.push_back(false);
+    assert(convert_to_array(false) == expected);
+    expected.pop_back();
+    expected.push_back(true);
+    assert(convert_to_array(true) == expected);
+    expected.pop_back();
+    expected.push_back(0);
+    assert(convert_to_array(0.0) == expected);
+    expected.pop_back();
+    expected.push_back(123);
+    assert(convert_to_array(123.0) == expected);
+    expected.pop_back();
+    expected.push_back("");
+    assert(convert_to_array("") == expected);
+    expected.pop_back();
+    expected.push_back("test");
+    assert(convert_to_array("test") == expected);
+  }
+
+  // Convert array types.
+  {
+    QJsonArray arr;
+    QJsonArray expected;
+    // Check empty array.
+    assert(convert_to_array(arr) == QJsonArray());
+    // Check recursion on single element array for one type (numbers).
+    arr.push_back(0);
+    expected.push_back(0);
+    assert(convert_to_array(arr) == expected);
+    arr.push_back(1);
+    expected.push_back(1);
+    assert(convert_to_array(arr) == expected);
+
+    // Convert object types.
+    QJsonObject obj;
+    expected = QJsonArray();
+    // Check empty object.
+    assert(convert_to_array(obj) == QJsonArray());
+    // Check recursion on single element obj for one type (numbers).
+    obj.insert("bbb", 222);
+    expected.push_back(222);
+    assert(convert_to_array(obj) == expected);
+    // Check recursion on multi-element obj for one type (numbers).
+    obj.insert("aaa", 111);
+    // Note the resulting array will the source object's property value in alphabetized key order.
+    expected.pop_back();
+    expected.push_back(111);
+    expected.push_back(222);
+    assert(convert_to_array(obj) == expected);
+    obj.insert("ccc", 333);
+    expected.push_back(333);
+    assert(convert_to_array(obj) == expected);
+  }
+
+  std::cerr << "convert_to_array test passed\n";
+}
+
+void JSONUtils::test_deep_merge() {
+
+}
+
+bool JSONUtils::convert_to_bool(const QJsonValue& source) {
   switch (source.type()) {
     case QJsonValue::Null: {
-      return QJsonValue();
+      return false;
       break;
     }
     case QJsonValue::Undefined: {
-      return QJsonValue();
+      return false;
       break;
     }
     case QJsonValue::Bool: {
-      return source;
+      return source.toBool();
       break;
     }
     case QJsonValue::Double: {
@@ -85,14 +322,14 @@ QJsonValue JSONUtils::convert_to_bool(const QJsonValue& source) {
   return false;
 }
 
-QJsonValue JSONUtils::convert_to_double(const QJsonValue& source) {
+double JSONUtils::convert_to_double(const QJsonValue& source) {
   switch (source.type()) {
     case QJsonValue::Null: {
-      return QJsonValue();
+      return 0.0;
       break;
     }
     case QJsonValue::Undefined: {
-      return QJsonValue();
+      return 0.0;
       break;
     }
     case QJsonValue::Bool: {
@@ -104,7 +341,7 @@ QJsonValue JSONUtils::convert_to_double(const QJsonValue& source) {
       break;
     }
     case QJsonValue::Double: {
-      return source;
+      return source.toDouble();
       break;
     }
     case QJsonValue::String: {
@@ -156,14 +393,14 @@ QJsonValue JSONUtils::convert_to_double(const QJsonValue& source) {
   return 0.0;
 }
 
-QJsonValue JSONUtils::convert_to_string(const QJsonValue& source) {
+QString JSONUtils::convert_to_string(const QJsonValue& source) {
   switch (source.type()) {
     case QJsonValue::Null: {
-      return QJsonValue();
+      return "";
       break;
     }
     case QJsonValue::Undefined: {
-      return QJsonValue();
+      return "";
       break;
     }
     case QJsonValue::Bool: {
@@ -179,7 +416,7 @@ QJsonValue JSONUtils::convert_to_string(const QJsonValue& source) {
       break;
     }
     case QJsonValue::String: {
-      return source;
+      return source.toString();
       break;
     }
     case QJsonValue::Array: {

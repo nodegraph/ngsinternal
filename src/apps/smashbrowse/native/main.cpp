@@ -27,6 +27,7 @@
 #include <base/objectmodel/entity.h>
 
 #include <components/computes/inputcompute.h>
+#include <components/computes/jsonutils.h>
 
 #include <entities/guientities.h>
 #include <components/interactions/graphbuilder.h>
@@ -252,6 +253,13 @@ int main(int argc, char *argv[]) {
       view->show();
       view->update();
     }
+
+    // JSONUtils unit tests.
+//    JSONUtils::test_convert_to_bool();
+//    JSONUtils::test_convert_to_double();
+//    JSONUtils::test_convert_to_string();
+//    JSONUtils::test_convert_to_object();
+//    JSONUtils::test_convert_to_array();
 
     // Run the Qt loop.
     execReturn = app.exec();

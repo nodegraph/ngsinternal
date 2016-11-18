@@ -13,9 +13,20 @@ namespace ngs {
 
 class COMPUTES_EXPORT JSONUtils {
  public:
-  static QJsonValue convert_to_bool(const QJsonValue& source);
-  static QJsonValue convert_to_double(const QJsonValue& source);
-  static QJsonValue convert_to_string(const QJsonValue& source);
+
+  // Unit Testing.
+  static void test_convert_to_bool();
+  static void test_convert_to_double();
+  static void test_convert_to_string();
+  static void test_convert_to_object();
+  static void test_convert_to_array();
+  static void test_deep_merge();
+
+
+  // Merging JSON values.
+  static bool convert_to_bool(const QJsonValue& source);
+  static double convert_to_double(const QJsonValue& source);
+  static QString convert_to_string(const QJsonValue& source);
   static QJsonObject convert_to_object(const QJsonValue& source);
   static QJsonArray convert_to_array(const QJsonValue& source);
   static QJsonValue deep_merge(const QJsonValue& target, const QJsonValue& source);
@@ -35,6 +46,7 @@ class COMPUTES_EXPORT JSONUtils {
   static bool eval_js(const QString& expr, QJsonValue& result, QString& error);
   static QJsonValue eval_js2(const QString& expr);
   static bool eval_js_in_context(QJSEngine& engine, const QString& expr, QJsonValue& result, QString& error);
+
 };
 
 }
