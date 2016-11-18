@@ -32,7 +32,6 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   // This is not serialized.
   // The "default_value" parameter holds the initial/default output value for this node.
   QJsonValue _override;
-  bool _use_override;
 };
 
 }

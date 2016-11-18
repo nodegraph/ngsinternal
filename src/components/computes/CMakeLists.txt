@@ -13,6 +13,7 @@ set(sources
     mocknodecompute.cpp
     outputcompute.cpp
     outputnodecompute.cpp
+    jsonutils.cpp
     )
     
 set(moc_headers
@@ -35,6 +36,7 @@ set(headers
 	mocknodecompute.h
 	outputcompute.h
 	outputnodecompute.h
+	jsonutils.h
     )
     
 add_library(ngs_computes  ${sources} ${headers})

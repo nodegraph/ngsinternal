@@ -1,6 +1,7 @@
 #include <base/objectmodel/entity.h>
 #include <components/computes/mergenodecompute.h>
 #include <components/computes/inputcompute.h>
+#include <components/computes/jsonutils.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <guicomponents/comms/commtypes.h>
 
@@ -49,7 +50,7 @@ bool MergeNodeCompute::update_state() {
   {
     const Dep<InputCompute>& c = _inputs->get("in");
     if (c->is_connected()) {
-      output = deep_merge(output, c->get_output("out"));
+      output = JSONUtils::deep_merge(output, c->get_output("out"));
     }
   }
 
@@ -57,7 +58,7 @@ bool MergeNodeCompute::update_state() {
   {
     const Dep<InputCompute>& c = _inputs->get("layer");
     if (c->is_connected()) {
-      output = deep_merge(output, c->get_output("out"));
+      output = JSONUtils::deep_merge(output, c->get_output("out"));
     }
   }
 

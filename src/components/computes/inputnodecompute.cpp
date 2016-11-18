@@ -1,6 +1,7 @@
 #include <base/objectmodel/entity.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/inputcompute.h>
+#include <components/computes/jsonutils.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <guicomponents/comms/commtypes.h>
 
@@ -15,8 +16,7 @@ namespace ngs {
 // The InputComputer mainly passes these calls onto its parent group node.
 
 InputNodeCompute::InputNodeCompute(Entity* entity):
-    Compute(entity, kDID()),
-    _use_override(false) {
+    Compute(entity, kDID()) {
 }
 
 InputNodeCompute::~InputNodeCompute() {
@@ -51,21 +51,13 @@ bool InputNodeCompute::update_state() {
   // This will hold our final output.
   QJsonValue output;
 
-  // Start with our data value.
-  QString text = _inputs->get_input_value("default_value").toString();
-  QJsonValue expr_result;
-  QString error;
-  if (!eval_js_with_inputs(text, expr_result, error)) {
-    set_output("out", expr_result); // result will contain info about the error as properties
-    on_error(error);
-    return false;
-  } else {
-    output = deep_merge(output, expr_result);
-  }
+  // Start with our default value.
+  QJsonValue default_value = _inputs->get_input_value("default_value");
+  output = JSONUtils::deep_merge(output, default_value);
 
   // If there is an override then merge that in.
-  if (_use_override) {
-    output = deep_merge(output, _override);
+  if (!_override.isNull() && !_override.isUndefined()) {
+    output = JSONUtils::deep_merge(output, _override);
   }
 
   set_output("out", output);
@@ -74,16 +66,16 @@ bool InputNodeCompute::update_state() {
 
 void InputNodeCompute::set_override(const QJsonValue& override) {
   external();
-  if (override.isString()) {
-    QJsonValue expr_result;
-    QString error;
-    if (!eval_js_with_inputs(override.toString(), expr_result, error)) {
-      _override = override;
-    } else {
-      _override = expr_result;
-    }
-  }
-  _use_override = true;
+//  if (override.isString()) {
+//    QJsonValue expr_result;
+//    QString error;
+//    if (!eval_js_with_inputs(override.toString(), expr_result, error)) {
+//      _override = override;
+//    } else {
+//      _override = expr_result;
+//    }
+//  }
+  _override = override;
 }
 
 const QJsonValue& InputNodeCompute::get_override() const {
@@ -94,7 +86,6 @@ const QJsonValue& InputNodeCompute::get_override() const {
 void InputNodeCompute::clear_override() {
   internal();
   _override = QJsonValue();
-  _use_override = false;
 }
 
 }

@@ -1,6 +1,8 @@
 #include <components/computes/compute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
+#include <components/computes/jsonutils.h>
+
 #include <base/objectmodel/deploader.h>
 #include <entities/entityids.h>
 #include <entities/entityinstancer.h>
@@ -122,142 +124,6 @@ void Compute::set_output(const std::string& name, const QJsonValue& value) {
   _outputs.insert(name.c_str(), value);
 }
 
-QString Compute::value_to_json(QJsonValue value) {
-  QJsonDocument doc;
-  if (value.isArray()) {
-    doc.setArray(value.toArray());
-  } else if (value.isObject()) {
-    doc.setObject(value.toObject());
-  }
-  return doc.toJson();
-}
-
-bool Compute::eval_json(const QString& json, QJsonValue& result, QString& error) {
-  error.clear();
-
-  QJsonParseError parse_error;
-  QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parse_error);
-
-  if (parse_error.error == QJsonParseError::NoError) {
-    result = QJsonValue(); // undefined.
-    error = parse_error.errorString();
-    return false;
-  }
-
-  if (doc.isObject()) {
-    result = doc.object();
-    return true;
-  } else if (doc.isArray()) {
-    result = doc.array();
-    return true;
-  }
-
-  return false;
-}
-
-void Compute::shallow_object_merge(QJsonObject& target, const QJsonObject& source) {
-  for (QJsonObject::const_iterator iter = source.constBegin(); iter != source.constEnd(); ++iter) {
-    target.insert(iter.key(), iter.value());
-  }
-}
-
-void Compute::prep_source_for_merge(const QJsonValue& target, QJsonValue& source) {
-  if (source.isString()) {
-    QJsonValue value = eval_js2(source.toString());
-    if (target.isObject()) {
-      if (value.isObject()) {
-        // Conver the source from a string to an object.
-        source = value;
-        return;
-      }
-    } else if (target.isArray()) {
-      if (value.isArray()) {
-        // Convert the source from a string to an array.
-        source = value;
-        return;
-      }
-    }
-  } else if (source.isObject()) {
-    if (target.isString()) {
-      // Convert the source from an object to a string.
-      QString json = value_to_json(source);
-      source = QJsonValue(json);
-    }
-  } else if (source.isArray()) {
-    if (target.isString()) {
-      // Conver the source from an array to a string.
-      QString json = value_to_json(source);
-      source = QJsonValue(json);
-    }
-  }
-}
-
-QJsonValue Compute::deep_merge(const QJsonValue& target, const QJsonValue& source) {
-  if (source.isNull()) {
-    return target;
-  } else if (source.isUndefined()) {
-    return target;
-  }else if (target.isObject()) {
-    if (source.isObject()) {
-      QJsonObject tobj = target.toObject();
-      QJsonObject sobj = source.toObject();
-      for (QJsonObject::const_iterator siter = sobj.constBegin(); siter != sobj.constEnd(); ++siter) {
-        QString name = siter.key();
-        if (tobj.contains(name)) {
-          tobj.insert(name, deep_merge(tobj[name], siter.value()));
-        } else {
-          tobj.insert(name, siter.value());
-        }
-      }
-      return tobj;
-    } else {
-      // Otherwise source data doesn't make it into the target.
-      return target;
-    }
-  } else if (target.isArray()) {
-    if (source.isArray()) {
-      QJsonArray tarr = target.toArray();
-      QJsonArray sarr = source.toArray();
-      // The first element of the target list acts as a prototype if present.
-      QJsonValue proto;
-      if (!tarr.empty()) {
-        proto = tarr.at(0);
-      }
-      QJsonArray result;
-      for (int i = 0; i < sarr.size(); ++i) {
-        result[i] = deep_merge(proto, sarr.at(i));
-      }
-      return result;
-    } else {
-      // Otherwise source data doesn't make it into the target.
-      return target;
-    }
-  } else if (target.isNull()) {
-    return source;
-  } else if (target.isUndefined()) {
-    return source;
-  } else if (target.isBool()) {
-    if (source.isBool()) {
-      return source;
-    } else {
-      return target;
-    }
-  } else if (target.isDouble()) {
-    if (source.isDouble()) {
-      return source;
-    } else {
-      return target;
-    }
-  } else if (target.isString()) {
-    if (source.isString()) {
-      return source;
-    } else {
-      return target;
-    }
-  }
-  return target;
-}
-
 Entity* Compute::create_input(const std::string& name, const QJsonValue& value, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
@@ -307,6 +173,11 @@ void Compute::remove_hint(QJsonObject& node_hints, const std::string& name) {
   node_hints.remove(name.c_str());
 }
 
+void Compute::on_error(const QString& error_message) {
+  _manipulator->set_error_node(error_message);
+  _manipulator->clear_ultimate_targets();
+}
+
 bool Compute::eval_js_with_inputs(const QString& text, QJsonValue& result, QString& error) const {
   internal();
   QJSEngine engine;
@@ -320,51 +191,7 @@ bool Compute::eval_js_with_inputs(const QString& text, QJsonValue& result, QStri
     engine.globalObject().setProperty(QString::fromStdString(input_name), jsvalue);
   }
 
-  return eval_js_in_context(engine, text, result,error);
-}
-
-bool Compute::eval_js(const QString& expr, QJsonValue& result, QString& error) {
-  is_static();
-  QJSEngine engine;
-  return eval_js_in_context(engine, expr, result, error);
-}
-
-QJsonValue Compute::eval_js2(const QString& expr) {
-  is_static();
-  QJSEngine engine;
-  QJsonValue result;
-  QString error;
-  eval_js_in_context(engine, expr, result, error);
-  return result;
-}
-
-bool Compute::eval_js_in_context(QJSEngine& engine, const QString& expr, QJsonValue& result, QString& error) {
-  is_static();
-
-  // Evaluate the expression.
-  QJSValue jsresult;
-  jsresult = engine.evaluate(expr, "expression", 0);
-  if (jsresult.isError()) {
-    // Update the error string.
-    std::stringstream ss;
-    ss << "Uncaught exception at line: " << jsresult.property("lineNumber").toInt() << "\n";
-    ss << "name: " << jsresult.property("name").toString().toStdString() << "\n";
-    ss << "message: " << jsresult.property("message").toString().toStdString() << "\n";
-    ss << "stack: " << jsresult.property("stack").toString().toStdString() << "\n";
-    error = ss.str().c_str();
-    std::cerr << ss.str() << "\n";
-    return false;
-  }
-
-  result = engine.fromScriptValue<QJsonValue>(jsresult);
-  std::cerr << "js result is: " << jsresult.toVariant().toString().toStdString() << "\n";
-  std::cerr << "expression result is: " << result.toString().toStdString() << "\n";
-  return true;
-}
-
-void Compute::on_error(const QString& error_message) {
-  _manipulator->set_error_node(error_message);
-  _manipulator->clear_ultimate_targets();
+  return JSONUtils::eval_js_in_context(engine, text, result,error);
 }
 
 }

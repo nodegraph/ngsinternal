@@ -4,6 +4,8 @@
 
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
+#include <components/computes/jsonutils.h>
+
 #include <entities/componentids.h>
 
 #include <components/compshapes/linkshape.h>
@@ -39,12 +41,7 @@ bool InputCompute::update_state() {
   // Merge in information from the upstream output.
   if (_upstream) {
     QJsonValue out = _upstream->get_output("out");
-
-    // The input compute is special in that we allow data types from upstream to change.
-    // This is because input computes are the only computes that actually get linked.
-    // The type changes that we allow are from js/json strings to objects and arrays and vice versa.
-    Compute::prep_source_for_merge(output, out);
-    output = deep_merge(output, out);
+    output = JSONUtils::deep_merge(output, out);
   }
 
   // Cache the result in our outputs.

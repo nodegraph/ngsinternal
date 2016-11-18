@@ -7,6 +7,8 @@
 
 #include <base/objectmodel/basefactory.h>
 #include <components/computes/inputcompute.h>
+#include <components/computes/jsonutils.h>
+
 #include <guicomponents/computes/httpworker.h>
 
 #include <iostream>
@@ -90,7 +92,7 @@ QByteArray HTTPWorker::get_value_as_bytes(const QVariant &value)
 
 void HTTPWorker::merge_chain_state_task(const QJsonObject& map) {
   // Merge the values into the chain_state.
-  Compute::shallow_object_merge(_chain_state, map);
+  JSONUtils::shallow_object_merge(_chain_state, map);
   _scheduler->run_next_task();
 }
 

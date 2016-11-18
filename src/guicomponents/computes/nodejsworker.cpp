@@ -10,6 +10,7 @@
 
 #include <base/objectmodel/basefactory.h>
 #include <components/computes/inputcompute.h>
+#include <components/computes/jsonutils.h>
 
 #include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/comms/messagesender.h>
@@ -425,7 +426,7 @@ void NodeJSWorker::handle_response(const Message& msg) {
   if (value.isObject()) {
     // Merge the values into the chain_state.
     QJsonObject obj = value.toObject();
-    Compute::shallow_object_merge(_chain_state, obj);
+    JSONUtils::shallow_object_merge(_chain_state, obj);
   } else if (!value.isUndefined()) {
     _chain_state.insert("value", value);
   }
@@ -499,7 +500,7 @@ void NodeJSWorker::get_xpath_task() {
 
 void NodeJSWorker::merge_chain_state_task(const QJsonObject& map) {
   // Merge the values into the chain_state.
-  Compute::shallow_object_merge(_chain_state, map);
+  JSONUtils::shallow_object_merge(_chain_state, map);
   _scheduler->run_next_task();
 }
 

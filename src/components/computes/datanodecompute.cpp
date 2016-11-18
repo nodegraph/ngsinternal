@@ -1,6 +1,7 @@
 #include <base/objectmodel/entity.h>
 #include <components/computes/datanodecompute.h>
 #include <components/computes/inputcompute.h>
+#include <components/computes/jsonutils.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <guicomponents/comms/commtypes.h>
 
@@ -14,9 +15,9 @@ namespace ngs {
 // with an input plug on the surrounding group.
 // The InputComputer mainly passes these calls onto its parent group node.
 
-DataNodeCompute::DataNodeCompute(Entity* entity):
-    Compute(entity, kDID()),
-    _use_override(false) {
+DataNodeCompute::DataNodeCompute(Entity* entity)
+    : Compute(entity, kDID())  // , _use_override(false)
+{
 }
 
 DataNodeCompute::~DataNodeCompute() {
@@ -25,7 +26,7 @@ DataNodeCompute::~DataNodeCompute() {
 void DataNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("value", "{\"alpha\": 1, \"beta\": 2, \"gamma\": 3}", false);
+  create_input("value", QJsonObject(), false);
   create_output("out");
 }
 
@@ -33,9 +34,9 @@ const QJsonObject DataNodeCompute::_hints = DataNodeCompute::init_hints();
 QJsonObject DataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "value", HintKey::kJSTypeHint, to_underlying(JSType::kString));
-  add_hint(m, "value", HintKey::kMultiLineHint, true);
-  add_hint(m, "value", HintKey::kDescriptionHint, "The object that will be output by this node, if the corresponding input plug on this group is not connected. This must be a proper javascript expression.");
+  add_hint(m, "value", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "value", HintKey::kElementResizableHint, true);
+  add_hint(m, "value", HintKey::kDescriptionHint, "The value which will be output by this node.");
 
   return m;
 }
@@ -55,34 +56,34 @@ bool DataNodeCompute::update_state() {
     on_error(error);
     return false;
   } else {
-    output = deep_merge(output, expr_result);
+    output = JSONUtils::deep_merge(output, expr_result);
   }
 
-  // If there is an override then merge that in.
-  if (_use_override) {
-    output = deep_merge(output, _override);
-  }
+//  // If there is an override then merge that in.
+//  if (_use_override) {
+//    output = JSONUtils::deep_merge(output, _override);
+//  }
 
   set_output("out", output);
   return true;
 }
 
-void DataNodeCompute::set_override(const QJsonValue& override) {
-  external();
-  _override = override;
-  _use_override = true;
-}
+//void DataNodeCompute::set_override(const QJsonValue& override) {
+//  external();
+//  _override = override;
+//  _use_override = true;
+//}
 
-const QJsonValue& DataNodeCompute::get_override() const {
-  external();
-  return _override;
-}
-
-void DataNodeCompute::clear_override() {
-  internal();
-  _override = QJsonValue();
-  _use_override = false;
-}
+//const QJsonValue& DataNodeCompute::get_override() const {
+//  external();
+//  return _override;
+//}
+//
+//void DataNodeCompute::clear_override() {
+//  internal();
+//  _override = QJsonValue();
+//  _use_override = false;
+//}
 
 }
 
