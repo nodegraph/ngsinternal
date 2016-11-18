@@ -1,24 +1,18 @@
 #include <components/computes/compute.h>
 #include <components/computes/inputcompute.h>
-#include <components/computes/outputcompute.h>
 #include <components/computes/jsonutils.h>
 
 #include <base/objectmodel/deploader.h>
+
 #include <entities/entityids.h>
 #include <entities/entityinstancer.h>
+
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlExpression>
-
-#include <QtCore/QDebug>
-#include <QtCore/QJsonDocument>
-
 #include <QtCore/QJsonValue>
-#include <QtCore/QJsonArray>
-#include <QtCore/QJsonObject>
-#include <QtCore/QTimer>
 
 #include <sstream>
 

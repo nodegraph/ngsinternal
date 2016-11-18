@@ -2,6 +2,8 @@
 #include <iostream>
 #include <cassert>
 
+#include <QtCore/QJsonDocument>
+
 namespace ngs {
 
 const char* Message::kRequest = "request";

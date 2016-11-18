@@ -1,19 +1,19 @@
 #pragma once
-#include <base/objectmodel/component.h>
 #include <components/computes/computes_export.h>
-#include <guicomponents/comms/hintkeys.h>
 #include <components/computes/inputs.h>
-
 #include <entities/componentids.h>
+#include <guicomponents/comms/hintkeys.h>
+
+#include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
+
 #include <string>
 
-// QT
-#include <QtCore/QJsonValue>
 #include <QtCore/QJsonObject>
 
-class QJSEngine;
-class QTimer;
+class QString;
+class QJsonValue;
+class QJsonObject;
 
 namespace ngs {
 

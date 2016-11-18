@@ -10,12 +10,6 @@
 
 #include <components/compshapes/linkshape.h>
 
-#include <QtCore/QVariant>
-#include <QtCore/QIODevice>
-#include <QtCore/QDataStream>
-#include <QtCore/QJsonArray>
-#include <QtCore/QJsonDocument>
-
 namespace ngs {
 
 InputCompute::InputCompute(Entity* entity)
@@ -122,13 +116,7 @@ void InputCompute::save(SimpleSaver& saver) const {
   saver.save(_exposed);
 
   // Serialize the value.
-  // We create a dummy array to shove the value into, as QJsonDocument won't take a non-array or non-object.
-  // However the newer json specs allow storing singular values, this feature may be coming soon.
-  QJsonArray arr;
-  arr.push_back(_unconnected_value);
-  QJsonDocument doc;
-  doc.setArray(arr);
-  QByteArray data = doc.toJson();
+  QByteArray data = JSONUtils::serialize_json_value(_unconnected_value);
   int num_bytes = data.size();
   saver.save(num_bytes);
   saver.save_raw(data.data(), num_bytes);
@@ -149,11 +137,7 @@ void InputCompute::load(SimpleLoader& loader) {
   QByteArray data;
   data.resize(num_bytes);
   loader.load_raw(data.data(), num_bytes);
-  QJsonParseError error;
-  QJsonDocument doc = QJsonDocument::fromJson(data, &error);
-  assert(error.error == QJsonParseError::NoError);
-  QJsonArray arr = doc.array();
-  _unconnected_value = arr.at(0);
+  _unconnected_value = JSONUtils::deserialize_json_value(data);
 }
 
 }

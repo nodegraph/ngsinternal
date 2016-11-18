@@ -257,6 +257,26 @@ void JSONUtils::test_deep_merge() {
 
 }
 
+QByteArray JSONUtils::serialize_json_value(const QJsonValue& value) {
+  // We create a dummy array to shove the value into, as QJsonDocument won't take a non-array or non-object.
+  // However the newer json specs allow storing singular values, this feature may be coming soon.
+  QJsonArray arr;
+  arr.push_back(value);
+  QJsonDocument doc;
+  doc.setArray(arr);
+  QByteArray data = doc.toJson();
+  return data;
+}
+
+QJsonValue JSONUtils::deserialize_json_value(const QByteArray& data) {
+  QJsonParseError error;
+  QJsonDocument doc = QJsonDocument::fromJson(data, &error);
+  assert(error.error == QJsonParseError::NoError);
+  QJsonArray arr = doc.array();
+  assert(arr.size() == 1);
+  return arr.at(0);
+}
+
 bool JSONUtils::convert_to_bool(const QJsonValue& source) {
   switch (source.type()) {
     case QJsonValue::Null: {

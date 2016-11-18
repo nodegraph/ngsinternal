@@ -4,6 +4,8 @@
 #include <base/objectmodel/dep.h>
 #include <guicomponents/comms/message.h>
 
+#include <QtCore/QObject>
+
 namespace ngs {
 
 class FileModel;

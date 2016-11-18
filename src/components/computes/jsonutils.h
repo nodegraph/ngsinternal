@@ -7,6 +7,7 @@ class QJsonValue;
 class QJsonObject;
 class QJsonArray;
 class QJSEngine;
+class QByteArray;
 
 
 namespace ngs {
@@ -22,6 +23,9 @@ class COMPUTES_EXPORT JSONUtils {
   static void test_convert_to_array();
   static void test_deep_merge();
 
+  // Convert to JSON.
+  static QByteArray serialize_json_value(const QJsonValue& value); // Embeds the value as a simgle in an array.
+  static QJsonValue deserialize_json_value(const QByteArray& data);
 
   // Merging JSON values.
   static bool convert_to_bool(const QJsonValue& source);

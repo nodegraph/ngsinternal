@@ -5,19 +5,10 @@
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <guicomponents/comms/commtypes.h>
 
-#include <QtCore/QJsonDocument>
-#include <QtCore/QJsonObject>
-#include <QtCore/QJsonValue>
-
 namespace ngs {
 
-// Input Nodes don't have input plugs, but they are associated
-// with an input plug on the surrounding group.
-// The InputComputer mainly passes these calls onto its parent group node.
-
 DataNodeCompute::DataNodeCompute(Entity* entity)
-    : Compute(entity, kDID())  // , _use_override(false)
-{
+    : Compute(entity, kDID()) {
 }
 
 DataNodeCompute::~DataNodeCompute() {
@@ -47,23 +38,6 @@ bool DataNodeCompute::update_state() {
   set_output("out", value);
   return true;
 }
-
-//void DataNodeCompute::set_override(const QJsonValue& override) {
-//  external();
-//  _override = override;
-//  _use_override = true;
-//}
-
-//const QJsonValue& DataNodeCompute::get_override() const {
-//  external();
-//  return _override;
-//}
-//
-//void DataNodeCompute::clear_override() {
-//  internal();
-//  _override = QJsonValue();
-//  _use_override = false;
-//}
 
 }
 

@@ -16,8 +16,10 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QUrl>
+#include <QtCore/QJsonDocument>
 #include <QtCore/QDebug>
 #include <QtQml/QQmlEngine>
+
 
 #include <QtNetwork/qnetworkrequest.h>
 

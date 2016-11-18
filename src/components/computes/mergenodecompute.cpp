@@ -5,10 +5,6 @@
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <guicomponents/comms/commtypes.h>
 
-#include <QtCore/QJsonDocument>
-#include <QtCore/QJsonObject>
-#include <QtCore/QJsonValue>
-
 namespace ngs {
 
 MergeNodeCompute::MergeNodeCompute(Entity* entity):

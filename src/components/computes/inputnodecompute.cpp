@@ -5,10 +5,6 @@
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <guicomponents/comms/commtypes.h>
 
-#include <QtCore/QJsonDocument>
-#include <QtCore/QJsonObject>
-#include <QtCore/QJsonValue>
-
 namespace ngs {
 
 // Input Nodes don't have input plugs, but they are associated

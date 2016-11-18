@@ -3,13 +3,10 @@
 #include <guicomponents/comms/messagetypes.h>
 #include <base/utils/enumutil.h>
 
-#include <QtCore/QString>
-#include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
-#include <QtCore/QObject>
 
-#include <QtCore/QJsonValue>
-#include <QtCore/QJsonObject>
+class QString;
+class QJsonValue;
 
 namespace ngs {
 

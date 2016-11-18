@@ -15,9 +15,6 @@
 
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
-#include <QtCore/QJsonArray>
-#include <QtCore/QJsonDocument>
-
 namespace ngs {
 
 struct {
@@ -179,16 +176,8 @@ bool GroupNodeCompute::clean_inputs() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      QJsonArray arr;
-      arr.push_back(input_node_compute->get_override());
-      arr.push_back(input->get_output("out"));
-      QJsonDocument doc;
-      doc.setArray(arr);
-      QByteArray data = doc.toJson();
-      std::cerr << "input node override and outer input values: " << data.toStdString() << "\n";
-
       if (input_node_compute->get_override() != input->get_output("out")) {
-        std::cerr << "setting override: " << input->get_output("out").toString().toStdString() << "\n";
+        std::cerr << "group node cleaning inputs: setting override: " << input->get_output("out").toString().toStdString() << "\n";
         input_node_compute->set_override(input->get_output("out"));
       }
     }
@@ -216,17 +205,8 @@ bool GroupNodeCompute::update_state() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      QJsonArray arr;
-      arr.push_back(input_node_compute->get_override());
-      arr.push_back(input->get_output("out"));
-      QJsonDocument doc;
-      doc.setArray(arr);
-      QByteArray data = doc.toJson();
-      std::cerr << "input node override and outer input values: " << data.toStdString() << "\n";
-
-
       if (input_node_compute->get_override() != input->get_output("out")) {
-        std::cerr << "setting override: " << input->get_output("out").toString().toStdString() << "\n";
+        std::cerr << "group node updating state: setting override: " << input->get_output("out").toString().toStdString() << "\n";
         input_node_compute->set_override(input->get_output("out"));
       }
       // We let the output nodes propagate cleanliness up to us when needed.
