@@ -273,11 +273,9 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
   // components. But now it is cleaning in a bad state.
 }
 
-void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
-  _ng_quick->dive_into_group(child_group_name);
-
+void NodeGraphManipulatorImp::clean_enter_group(Entity* group) {
   // Graph the entity for the group context node.
-  Entity* node =_factory->get_current_group()->get_child("group_context");
+  Entity* node = group->get_child("group_context");
   if (!node) {
     return;
   }
@@ -288,7 +286,37 @@ void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_nam
   set_ultimate_targets(node);
 }
 
+void NodeGraphManipulatorImp::clean_exit_group(Entity* group) {
+  // If this group has an exit group node, then make it dirty and clean it.
+  Entity* child = group->get_child("exit_group_context");
+  if (!child) {
+    return;
+  }
+
+  std::cerr << "111\n";
+
+  // We expect the exit compute to not have to wait for an asynchronous response.
+  Dep<ExitGroupCompute> exit = get_dep<ExitGroupCompute>(child);
+  exit->dirty_state();
+  exit->clean_state();
+
+  std::cerr << "222\n";
+}
+
+void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
+  // Graph the entity for the group context node.
+  Entity* group =_factory->get_current_group()->get_child(child_group_name);
+  if (!group) {
+    return;
+  }
+
+  _ng_quick->dive_into_group(child_group_name);
+  clean_enter_group(group);
+}
+
 void NodeGraphManipulatorImp::surface_from_group() {
+  Entity* group_entity = _factory->get_current_group();
+  clean_exit_group(group_entity);
   _ng_quick->surface();
 }
 
@@ -676,6 +704,14 @@ void NodeGraphManipulator::clear_error_node() {
 
 void NodeGraphManipulator::update_clean_marker(Entity* entity, bool clean) {
   _imp->update_clean_marker(entity, clean);
+}
+
+void NodeGraphManipulator::clean_enter_group(Entity* group) {
+  _imp->clean_enter_group(group);
+}
+
+void NodeGraphManipulator::clean_exit_group(Entity* group) {
+  _imp->clean_exit_group(group);
 }
 
 void NodeGraphManipulator::dive_into_group(const std::string& child_group_name) {

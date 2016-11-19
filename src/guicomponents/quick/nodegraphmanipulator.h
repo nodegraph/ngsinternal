@@ -59,10 +59,11 @@ Q_OBJECT
   virtual void clear_error_node();
   virtual void update_clean_marker(Entity* entity, bool clean);
 
-  // Lockable Groups.
+  // Group logic.
+  virtual void clean_enter_group(Entity* group);
+  virtual void clean_exit_group(Entity* group);
   virtual void dive_into_group(const std::string& child_group_name);
   virtual void surface_from_group();
-  //virtual void clean_lockable_group(const std::string& child_group_name);
 
   // Builds and positions a compute node under the lowest node in the node graph.
   // If possible it will also link the latest node with the lowest.
@@ -154,7 +155,9 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void clear_error_node();
   virtual void update_clean_marker(Entity* entity, bool clean);
 
-  // Lockable Groups.
+  // Group logic.
+  virtual void clean_enter_group(Entity* group);
+  virtual void clean_exit_group(Entity* group);
   virtual void dive_into_group(const std::string& child_group_name);
   virtual void surface_from_group();
 

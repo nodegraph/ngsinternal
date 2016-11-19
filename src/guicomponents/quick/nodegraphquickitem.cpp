@@ -83,6 +83,10 @@ void NodeGraphController::dive(const std::string& group_node_name) {
   _manipulator->dive_into_group(group_node_name);
 }
 
+void NodeGraphController::surface_from_group() {
+  _manipulator->surface_from_group();
+}
+
 // Group Nodes Creation.
 void NodeGraphController::create_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kGroupNodeEntity);
@@ -833,16 +837,6 @@ void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
 
 void NodeGraphQuickItem::surface() {
   external();
-  Entity* group_entity = _factory->get_current_group();
-
-  // If this group has an exit group node, then make it dirty and clean it.
-  Entity* child = group_entity->get_child("exit_group_context");
-  if (child) {
-    // We expect the exit compute to not have to wait for an asynchronous response.
-    Dep<ExitGroupCompute> exit = get_dep<ExitGroupCompute>(child);
-    exit->dirty_state();
-    exit->clean_state();
-  }
 
   // Switch to the next group on the canvas.
   _canvas->surface();

@@ -11,7 +11,7 @@ ListModel {
         image_url: "qrc:///icons/ic_arrow_upward_white_48dp.png"
         title: "Surface"
         description: "Surface out of the current group."
-        script: "node_graph_item.surface();
+        script: "ng_controller.surface_from_group();
                  main_bar.switch_to_current_mode();"
     }
 

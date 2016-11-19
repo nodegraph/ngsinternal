@@ -245,6 +245,8 @@ bool GroupNodeCompute::update_state() {
     set_output(output_name, output_node_compute->get_output("out"));
   }
 
+  // Close out the group.
+  _manipulator->clean_exit_group(our_entity());
   return true;
 }
 

@@ -37,6 +37,7 @@ Q_OBJECT
   Q_INVOKABLE void dive();
   Q_INVOKABLE void dive(const QString& group_node_name);
   void dive(const std::string& group_node_name);
+  Q_INVOKABLE void surface_from_group();
 
   // Objects which hold type info for use from the qml side.
   JSTypeWrap js_type_wrap;
@@ -71,6 +72,7 @@ Q_OBJECT
   // MQTT compute nodes.
   Q_INVOKABLE void create_mqtt_publish_node(bool centered);
   Q_INVOKABLE void create_mqtt_subscribe_node(bool centered);
+
 
  private:
   Dep<BaseNodeGraphManipulator> _manipulator;
