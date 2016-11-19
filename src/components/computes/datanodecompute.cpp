@@ -17,7 +17,10 @@ DataNodeCompute::~DataNodeCompute() {
 void DataNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("value", QJsonObject(), false);
+  QJsonObject data;
+  data.insert("value", "example");
+  create_input("in", QJsonObject());
+  create_input("data", data, false);
   create_output("out");
 }
 
@@ -25,17 +28,23 @@ const QJsonObject DataNodeCompute::_hints = DataNodeCompute::init_hints();
 QJsonObject DataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "value", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
-  add_hint(m, "value", HintKey::kElementResizableHint, true);
-  add_hint(m, "value", HintKey::kDescriptionHint, "The value which will be output by this node.");
+  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "in", HintKey::kDescriptionHint, "The target value into which the data value will be merged.");
+
+  add_hint(m, "data", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
+  add_hint(m, "data", HintKey::kElementResizableHint, true);
+  add_hint(m, "data", HintKey::kDescriptionHint, "The source value which will be merged into the target(in) value.");
 
   return m;
 }
 
 bool DataNodeCompute::update_state() {
   Compute::update_state();
-  QJsonValue value = _inputs->get_input_value("value");
-  set_output("out", value);
+  QJsonValue incoming = _inputs->get_input_value("in");
+  QJsonValue value = _inputs->get_input_value("data");
+
+  QJsonValue output = JSONUtils::deep_merge(incoming, value);
+  set_output("out", output);
   return true;
 }
 
