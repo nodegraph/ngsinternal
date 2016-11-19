@@ -21,8 +21,10 @@ InputNodeCompute::~InputNodeCompute() {
 void InputNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
-  create_input("default_value", QJsonObject(), false); //"{\n\t\"value\": 0\n}"
-  create_input("type", (int)JSType::kNumber, false);
+  QJsonObject data;
+  data.insert("value", 123);
+  create_input("default_value", data, false);
+  create_input("description", "", false);
   create_output("out");
 }
 
@@ -34,9 +36,8 @@ QJsonObject InputNodeCompute::init_hints() {
   add_hint(m, "default_value", HintKey::kElementResizableHint, true);
   add_hint(m, "default_value", HintKey::kDescriptionHint, "The value to be output by this node when its associated input plug on the group is not connected.");
 
-  add_hint(m, "type", HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
-  add_hint(m, "type", HintKey::kEnumHint, to_underlying(EnumHintValue::kJSType));
-  add_hint(m, "type", HintKey::kDescriptionHint, "The type of the value to be output by this node.");
+  add_hint(m, "description", HintKey::kJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, "description", HintKey::kDescriptionHint, "A short description of this input value. It will be displayed when editing the surrounding group.");
 
   return m;
 }
@@ -62,15 +63,6 @@ bool InputNodeCompute::update_state() {
 
 void InputNodeCompute::set_override(const QJsonValue& override) {
   external();
-//  if (override.isString()) {
-//    QJsonValue expr_result;
-//    QString error;
-//    if (!eval_js_with_inputs(override.toString(), expr_result, error)) {
-//      _override = override;
-//    } else {
-//      _override = expr_result;
-//    }
-//  }
   _override = override;
 }
 

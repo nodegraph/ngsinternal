@@ -18,7 +18,7 @@ void DataNodeCompute::create_inputs_outputs() {
   external();
   Compute::create_inputs_outputs();
   QJsonObject data;
-  data.insert("value", "example");
+  data.insert("value", 123);
   create_input("in", QJsonObject());
   create_input("data", data, false);
   create_output("out");

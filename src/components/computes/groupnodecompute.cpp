@@ -62,41 +62,36 @@ void GroupNodeCompute::update_wires() {
   const Entity::NameToChildMap& children = our_entity()->get_children();
   for (auto &iter : children) {
     const std::string& child_name = iter.first;
-    Entity* child = iter.second;
-    EntityDID did = child->get_did();
+    Entity* node = iter.second;
+    EntityDID did = node->get_did();
     if (did == EntityDID::kInputNodeEntity) {
       // Update the set of exposed_inputs.
       exposed_inputs.insert(child_name);
-      // Get our input entity.
-      InputEntity* in = NULL;
-      // If we already have an input plug corresponding to the input node, then continue.
-      if (inputs_space->has_child_name(child_name)) {
-        in = static_cast<InputEntity*>(inputs_space->get_child(child_name));
-        // Grab the computes on the input and the input node inside the group.
-        Dep<InputCompute> outer = get_dep<InputCompute>(in);
-        Dep<InputNodeCompute> inner = get_dep<InputNodeCompute>(child);
-        // Note we don't change the existing value on the input plug.
-        // But we make sure the hints match.
-        const QJsonObject& inner_node_hints = inner->get_hints();
-        add_param_hints(child_name, inner_node_hints.value("default_value"));
-      } else {
+      // If we already have an input plug corresponding to the input node, then make sure the hints are synced up.
+      if (!inputs_space->has_child_name(child_name)) {
         // Otherwise we create an input plug.
-        in = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
-        in->create_internals();
-        in->set_exposed(true);
-        in->initialize_wires();
+        InputEntity* input = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
+        input->create_internals();
+        input->set_exposed(true);
+        input->initialize_wires();
         // Grab the computes on the input and the input node inside the group.
-        Dep<InputCompute> outer = get_dep<InputCompute>(in);
-        Dep<InputNodeCompute> inner = get_dep<InputNodeCompute>(child);
+        Dep<InputCompute> outer = get_dep<InputCompute>(input);
+        Dep<InputNodeCompute> inner = get_dep<InputNodeCompute>(node);
         // Note an input node's input is not connected to anything and cleaning it won't start any asynchronous processed.
         inner->get_inputs()->clean_wires();
         inner->get_inputs()->clean_state();
         // Set the unconnected value;
         outer->set_unconnected_value(inner->get_inputs()->get_input_value("default_value"));
-        // Make sure the hints match.
-        const QJsonObject& inner_node_hints = inner->get_hints();
-        add_param_hints(child_name, inner_node_hints.value("default_value"));
       }
+      // Make sure the hints match.
+      Entity* input_node_description = node->get_entity(Path({".","inputs","description"}));
+      Dep<InputCompute> param = get_dep<InputCompute>(input_node_description);
+      QJsonValue description = param->get_unconnected_value();
+
+      Dep<InputNodeCompute> input_node = get_dep<InputNodeCompute>(node);
+      QJsonObject param_hints = input_node->get_hints().value("default_value").toObject();
+      param_hints.insert(QString::number(to_underlying(HintKey::kDescriptionHint)), description);
+      add_param_hints(child_name, param_hints);
     } else if (did == EntityDID::kOutputNodeEntity) {
       // Update the set of exposed_outputs.
       exposed_outputs.insert(child_name);
