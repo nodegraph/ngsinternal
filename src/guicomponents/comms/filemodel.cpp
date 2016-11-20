@@ -441,7 +441,11 @@ void FileModel::load_graph(int row) {
   loader.load(minor);
   loader.load(patch);
   loader.load(tweak);
-  //std::cerr << "version number is: " << major << "." << minor << "." << patch << "." << tweak << "\n";
+  std::cerr << "version number is: " << major << "." << minor << "." << patch << "." << tweak << "\n";
+
+  std::string description;
+  loader.load(description);
+  std::cerr << "description is: " << description << "\n";
 
   // Load off some pre data.
   size_t derived_id;
@@ -470,14 +474,12 @@ void FileModel::load_graph(int row) {
   save_model();
 }
 
-void FileModel::save_graph(int row) {
-  external();
-  _working_row = row;
-
+std::string FileModel::graph_to_string(int row) {
   // Save the graph to a string.
   std::stringstream ss;
   {
     SimpleSaver saver(ss);
+
     // Save the version number.
     size_t major = NGS_VERSION_MAJOR;
     size_t minor = NGS_VERSION_MINOR;
@@ -488,12 +490,28 @@ void FileModel::save_graph(int row) {
     saver.save(minor);
     saver.save(patch);
     saver.save(tweak);
+
+    // Save the description.
+    std::string description = data(index(row,0), kDescriptionRole).toString().toStdString();
+    std::cerr << "saving descriptiong: " << description << "\n";
+    saver.save(description);
+
+    // Save the group contents.
     this->get_root_group()->save(saver);
   }
+  return ss.str();
+}
+
+void FileModel::save_graph(int row) {
+  external();
+  _working_row = row;
+
+  // Save the graph to a string.
+  std::string contents = graph_to_string(row);
 
   // Write the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
-  _crypto_logic->write_file(graph_file, ss.str());
+  _crypto_logic->write_file(graph_file, contents);
 }
 
 void FileModel::publish_graph(int row) {
@@ -501,21 +519,7 @@ void FileModel::publish_graph(int row) {
   _working_row = row;
 
   // Save the graph to a string.
-  std::stringstream ss;
-  {
-    SimpleSaver saver(ss);
-    // Save the version number.
-    size_t major = NGS_VERSION_MAJOR;
-    size_t minor = NGS_VERSION_MINOR;
-    size_t patch = NGS_VERSION_PATCH;
-    size_t tweak = NGS_VERSION_TWEAK;
-
-    saver.save(major);
-    saver.save(minor);
-    saver.save(patch);
-    saver.save(tweak);
-    this->get_root_group()->save(saver);
-  }
+  std::string contents = graph_to_string(row);
 
   // The name of the macro file will be the same as the title of graph used to create it.
   QString macro_file = data(index(row,0), kTitleRole).toString();
@@ -524,7 +528,7 @@ void FileModel::publish_graph(int row) {
   // Write out the file without any encryption.
   QFile file(full_name);
   file.open(QIODevice::WriteOnly);
-  file.write(ss.str().c_str(), ss.str().size());
+  file.write(contents.c_str(), contents.size());
   file.close();
 }
 

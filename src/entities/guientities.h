@@ -177,6 +177,8 @@ class ENTITIES_EXPORT MacroNodeEntity : public Entity {
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
   virtual void save(SimpleSaver& saver) const;
   virtual void load_helper(SimpleLoader& loader);
+
+  virtual void load_internals(const std::string& macro_name);
  private:
   std::string _macro_name;
 };

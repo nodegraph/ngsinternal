@@ -87,8 +87,8 @@ void NodeGraphController::surface_from_group() {
   _manipulator->surface_from_group();
 }
 
-void NodeGraphController::create_macro_node(bool centered) {
-  _manipulator->create_node(centered, EntityDID::kMacroNodeEntity);
+void NodeGraphController::create_macro_node(bool centered, const QString& macro_name) {
+  _manipulator->create_macro_node(centered, macro_name.toStdString());
 }
 
 // Group Nodes Creation.

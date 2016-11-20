@@ -11,6 +11,7 @@ namespace ngs {
 
 const QString AppConfig::kAppDataDir = "app_data";
 const QString AppConfig::kAppMacrosDir = "macros";
+const QString AppConfig::kUserMacrosDir = "macros";
 
 AppConfig::AppConfig(Entity* parent)
     : Component(parent, kIID(), kDID()) {
@@ -49,6 +50,10 @@ QString AppConfig::get_app_data_dir() {
 
 QString AppConfig::get_app_macros_dir() {
   return get_user_app_dir() + "/" + kAppMacrosDir;
+}
+
+QString AppConfig::get_user_macros_dir() {
+  return get_user_app_dir() + "/" + kUserMacrosDir;
 }
 
 QString AppConfig::get_smash_browse_url() {

@@ -31,6 +31,8 @@
 #include <components/compshapes/outputshape.h>
 #include <components/compshapes/compshapecollective.h>
 
+#include <entities/guientities.h>
+
 namespace ngs {
 
 // -----------------------------------------------------------------------------------
@@ -370,6 +372,12 @@ void NodeGraphManipulatorImp::create_node(bool centered, EntityDID entity_did) {
 
 void NodeGraphManipulatorImp::create_compute_node(bool centered, ComponentDID compute_did) {
   Entity* e = _factory->instance_compute_node(_factory->get_current_group(), compute_did);
+  finish_creating_node(e, centered);
+}
+
+void NodeGraphManipulatorImp::create_macro_node(bool centered, const std::string& macro_name) {
+  Entity* e = _factory->instance_entity(_factory->get_current_group(), EntityDID::kMacroNodeEntity);
+  static_cast<MacroNodeEntity*>(e)->load_internals(macro_name);
   finish_creating_node(e, centered);
 }
 
@@ -740,6 +748,10 @@ void NodeGraphManipulator::create_node(bool centered, EntityDID entity_did) {
 
 void NodeGraphManipulator::create_compute_node(bool centered, ComponentDID compute_did) {
   _imp->create_compute_node(centered, compute_did);
+}
+
+void NodeGraphManipulator::create_macro_node(bool centered, const std::string& macro_name) {
+  _imp->create_macro_node(centered, macro_name);
 }
 
 void NodeGraphManipulator::destroy_link(Entity* input_entity) {

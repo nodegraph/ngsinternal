@@ -631,9 +631,14 @@ void MacroNodeEntity::load_helper(SimpleLoader& loader) {
   // Load our inputs and outputs namespace children.
   paste_with_merging(loader);
 
-  // Load our other children from the macro file.
+  // Load our internal child nodes.
   std::string macro_name;
   loader.load(macro_name);
+  load_internals(macro_name);
+}
+
+void MacroNodeEntity::load_internals(const std::string& macro_name) {
+  // Load our other children from the macro file.
   {
     // Read all the bytes from the file.
     std::string filename = AppConfig::get_app_macros_dir().toStdString() + "/" + macro_name;
@@ -656,6 +661,11 @@ void MacroNodeEntity::load_helper(SimpleLoader& loader) {
     loader2.load(minor);
     loader2.load(patch);
     loader2.load(tweak);
+
+    // Read off the description.
+    std::string description;
+    loader2.load(description);
+    std::cerr << "xxxxxxxxxxxxxxxxxxx: " << description << "\n";
 
     // Read off the did and name.
     {
@@ -747,7 +757,5 @@ void MacroNodeEntity::load_helper(SimpleLoader& loader) {
     }
   }
 }
-
-
 
 }

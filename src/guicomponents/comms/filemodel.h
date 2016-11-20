@@ -69,6 +69,8 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   Q_INVOKABLE void destroy_graph();
   Q_INVOKABLE void destroy_graph(int row);
 
+  std::string graph_to_string(int row);
+
   Q_INVOKABLE QVariantMap get_default_settings() {return _default_settings;} // This has to be returned by value, otherwise QML gets 'undefined'.
   Q_INVOKABLE void create_graph(const QVariantMap& info);
 
