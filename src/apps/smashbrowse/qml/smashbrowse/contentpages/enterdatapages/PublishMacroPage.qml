@@ -63,15 +63,22 @@ Rectangle {
                 leftMargin: app_settings.page_left_margin
                 rightMargin: app_settings.page_right_margin
             }
+            
+            AppSpacer {}
 
             AppLabel {
                 id : title_label
                 text: "Macro Name"
                 anchors {
-                    left: parent.left
-                    right: parent.right
+                    //left: parent.left
+                    //right: parent.right
+                    //leftMargin: app_settings.page_left_margin
+                	//rightMargin: app_settings.page_right_margin
+                	horizontalCenter: parent.horizontalCenter
                 }
             }
+            
+            AppSpacer {}
 
             // Title Field.
             AppLineEdit {
@@ -83,6 +90,8 @@ Rectangle {
                     right: parent.right
                 }
             }
+            
+            AppSpacer {}
         }
         
         RowLayout {
