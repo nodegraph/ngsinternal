@@ -897,9 +897,13 @@ void NodeGraphQuickItem::save() {
   _file_model->save_graph();
 }
 
-void NodeGraphQuickItem::publish() {
+bool NodeGraphQuickItem::macro_exists(const QString& macro_name) {
+  return _file_model->macro_exists(macro_name);
+}
+
+void NodeGraphQuickItem::publish(const QString& macro_name) {
   external();
-  _file_model->publish_graph();
+  _file_model->publish_graph(macro_name);
 }
 
 void NodeGraphQuickItem::load() {

@@ -15,6 +15,7 @@ import smashbrowse.contentpages.listpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.appconfig 1.0
 import smashbrowse.contentpages.listmodels 1.0
+import smashbrowse.contentpages.enterdatapages 1.0
 
 Rectangle {
     id: app_window
@@ -157,6 +158,11 @@ Rectangle {
 
     LicensePage {
         id: license_page
+        visible: false
+    }
+
+    PublishMacroPage {
+        id: publish_macro_page
         visible: false
     }
 

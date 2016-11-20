@@ -134,8 +134,11 @@ Q_OBJECT
 
   // Serialization.
   Q_INVOKABLE void save();
-  Q_INVOKABLE void publish();
   Q_INVOKABLE void load();
+
+  // Macros.
+  Q_INVOKABLE bool macro_exists(const QString& macro_name);
+  Q_INVOKABLE void publish(const QString& macro_name);
 
   // Copy and Paste.
   Q_INVOKABLE void copy();

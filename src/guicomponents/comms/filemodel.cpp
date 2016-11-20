@@ -411,12 +411,21 @@ void FileModel::save_graph() {
   save_graph(_working_row);
 }
 
-void FileModel::publish_graph() {
+bool FileModel::macro_exists(const QString& macro_name) {
+  QString full = AppConfig::get_app_macros_dir() + "/" + macro_name;
+  QFileInfo info(full);
+  if (info.exists()) {
+    return true;
+  }
+  return false;
+}
+
+void FileModel::publish_graph(const QString& macro_name) {
   external();
   if (_working_row < 0) {
     return;
   }
-  publish_graph(_working_row);
+  publish_graph(_working_row, macro_name);
 }
 
 void FileModel::load_graph(int row) {
@@ -514,7 +523,7 @@ void FileModel::save_graph(int row) {
   _crypto_logic->write_file(graph_file, contents);
 }
 
-void FileModel::publish_graph(int row) {
+void FileModel::publish_graph(int row, const QString& macro_name) {
   external();
   _working_row = row;
 
@@ -522,8 +531,7 @@ void FileModel::publish_graph(int row) {
   std::string contents = graph_to_string(row);
 
   // The name of the macro file will be the same as the title of graph used to create it.
-  QString macro_file = data(index(row,0), kTitleRole).toString();
-  QString full_name = AppConfig::get_app_macros_dir() + "/" + macro_file;
+  QString full_name = AppConfig::get_app_macros_dir() + "/" + macro_name;
 
   // Write out the file without any encryption.
   QFile file(full_name);

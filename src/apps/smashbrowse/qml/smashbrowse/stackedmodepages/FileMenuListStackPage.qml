@@ -54,8 +54,10 @@ BaseStackPage{
     }
     
     function on_publish_current() {
-    	node_graph_item.publish() 
-    	on_finished_with_menu()
+    	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/PublishMacroPage.qml", page, {})
+        push_page.visible = true
+        push_page.set_title("Publish Macro")
+        stack_view.push_page(push_page)
     }
     
     function on_destroy_current(){
