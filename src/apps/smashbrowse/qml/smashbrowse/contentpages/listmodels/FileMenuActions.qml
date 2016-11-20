@@ -41,5 +41,12 @@ ListModel {
         description: "Delete current graph."
         script: "file_menu_list_stack_page.on_destroy_current();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
+        title: "Publish"
+        description: "Publish the current graph as a macro."
+        script: "file_menu_list_stack_page.on_publish_current();"
+    }
 
 }

@@ -63,7 +63,9 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   Q_INVOKABLE void load_graph();
   Q_INVOKABLE void load_graph(int row);
   Q_INVOKABLE void save_graph();
+  Q_INVOKABLE void publish_graph();
   Q_INVOKABLE void save_graph(int row);
+  Q_INVOKABLE void publish_graph(int row);
   Q_INVOKABLE void destroy_graph();
   Q_INVOKABLE void destroy_graph(int row);
 

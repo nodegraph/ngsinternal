@@ -87,6 +87,10 @@ void NodeGraphController::surface_from_group() {
   _manipulator->surface_from_group();
 }
 
+void NodeGraphController::create_macro_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kMacroNodeEntity);
+}
+
 // Group Nodes Creation.
 void NodeGraphController::create_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kGroupNodeEntity);
@@ -891,6 +895,11 @@ void NodeGraphQuickItem::frame_selected() {
 void NodeGraphQuickItem::save() {
   external();
   _file_model->save_graph();
+}
+
+void NodeGraphQuickItem::publish() {
+  external();
+  _file_model->publish_graph();
 }
 
 void NodeGraphQuickItem::load() {

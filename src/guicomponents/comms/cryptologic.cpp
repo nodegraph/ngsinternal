@@ -9,7 +9,7 @@
 
 #include <components/interactions/graphbuilder.h>
 
-#include <guicomponents/comms/appconfig.h>
+#include <base/objectmodel/appconfig.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 
 #include <entities/entityids.h>
@@ -33,23 +33,11 @@
 namespace ngs {
 
 const QString CryptoLogic::kCryptoFile = "app_init.dat"; // Stores info about our encryption.
-const QString CryptoLogic::kAppDir = "app_data";
 
 CryptoLogic::CryptoLogic(Entity* app_root)
     : Component(app_root, kIID(), kDID()),
       _use_encryption(true) {
-  // Make sure the data dir exists.
-  QString data_dir = AppConfig::get_user_data_dir();
-  if (!QDir(data_dir).exists()) {
-    QDir().mkpath(data_dir);
-  }
-
-  // Make sure the app data dir exists.
-  _app_dir = data_dir + "/" + kAppDir;
-  QFileInfo info(_app_dir);
-  if (!info.exists()) {
-    QDir().mkpath(_app_dir);
-  }
+  _app_dir = AppConfig::get_app_data_dir();
 
 #ifdef SKIP_ENCRYPTION
   _use_encryption = false;

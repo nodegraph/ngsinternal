@@ -47,7 +47,7 @@
 #include <guicomponents/comms/nodejsprocess.h>
 #include <guicomponents/comms/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
-#include <guicomponents/comms/appconfig.h>
+#include <base/objectmodel/appconfig.h>
 #include <guicomponents/computes/browserrecorder.h>
 #include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/computes/httpworker.h>
@@ -566,5 +566,188 @@ void OutputLabelEntity::create_internals(const std::vector<size_t>& ids) {
   // Gui components.
   new_ff OutputLabelShape(this);
 }
+
+void MacroNodeEntity::create_internals(const std::vector<size_t>& ids) {
+  // This was copied from GroupNodeEntity::create_internals().
+
+  // Our components.
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  // Gui related.
+  new_ff GroupInteraction(this);
+  new_ff CompShapeCollective(this);
+  new_ff GroupNodeShape(this);
+  new_ff InputTopology(this);
+  new_ff OutputTopology(this);
+  // Sub Components.
+  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "group_context");
+  enter->set_compute_did(ComponentDID::kEnterGroupCompute);
+  enter->set_visible(true);
+  enter->create_internals();
+  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
+  exit->set_compute_did(ComponentDID::kExitGroupCompute);
+  exit->set_visible(false);
+  exit->create_internals();
+}
+
+void MacroNodeEntity::save(SimpleSaver& saver) const {
+  pre_save(saver);
+  save_components(saver);
+
+  // We only save our inputs and outputs namespace child entities.
+  // The rest of the children will be loaded from the macro file.
+  Entity* inputs = get_child("inputs");
+  Entity* outputs = get_child("outputs");
+
+  // Determine if we have inputs and outputs.
+  size_t num_children = 0;
+  if (inputs) {
+    ++num_children;
+  }
+  if (outputs) {
+    ++num_children;
+  }
+
+  // Save our inputs and outputs namespace children.
+  saver.save(num_children);
+  if (inputs) {
+    inputs->save(saver);
+  }
+  if (outputs) {
+    outputs->save(saver);
+  }
+
+  // Save our macro name.
+  saver.save(_macro_name);
+}
+
+void MacroNodeEntity::load_helper(SimpleLoader& loader) {
+  std::cerr << "calling MacroNodeEntity::load_helper\n";
+
+  // Load components.
+  load_components(loader);
+
+  // Load our inputs and outputs namespace children.
+  paste_with_merging(loader);
+
+  // Load our other children from the macro file.
+  std::string macro_name;
+  loader.load(macro_name);
+  {
+    // Read all the bytes from the file.
+    std::string filename = AppConfig::get_app_macros_dir().toStdString() + "/" + macro_name;
+    QFile file(filename.c_str());
+    file.open(QIODevice::ReadOnly);
+    QByteArray contents = file.readAll();
+    std::cerr << "file size: " << contents.size() << "\n";
+
+    // Now load the data into the app root entity.
+    Bits* bits = create_bits_from_raw(contents.data(),contents.size());
+    SimpleLoader loader2(bits);
+
+    // Read off the version number
+    size_t major;
+    size_t minor;
+    size_t patch;
+    size_t tweak;
+
+    loader2.load(major);
+    loader2.load(minor);
+    loader2.load(patch);
+    loader2.load(tweak);
+
+    // Read off the did and name.
+    {
+      EntityDID did;
+      loader2.load(did);
+      std::string name;
+      loader2.load(name);
+
+      // The top did of the macro should always be a regular group node.
+      assert(did == EntityDID::kGroupNodeEntity);
+
+      std::cerr << "did: " << (int)did << "\n";
+      std::cerr << "name: " << name << "\n";
+    }
+
+    // Skip the components.
+    Entity* dummy = new_ff Entity(get_app_root(), "__dummy_entity_for_loading__");
+    dummy->load_components(loader2);
+    delete_ff(dummy);
+
+    std::cerr << "skipped components\n";
+
+    // Load the children in the macro file except for the inputs and outputs namespace.
+    {
+      // Load the number of entities.
+      size_t num_entities;
+      loader2.load(num_entities);
+      std::cerr << "the number of child entities is: " << num_entities << "\n";
+
+      // Record the set of entities that we've pasted.
+      std::unordered_set<Entity*> entities_loaded;
+
+      // Load the entities.
+      for (size_t i=0; i<num_entities; ++i) {
+        // Peak at the did and name.
+        EntityDID did;
+        loader2.load(did);
+        std::string name;
+        loader2.load(name);
+        loader2.rewind(name);
+        loader2.rewind(did);
+        if (did == EntityDID::kBaseNamespaceEntity) {
+          if (name == "inputs") {
+            Entity* inputs = get_child("inputs");
+            if (inputs) {
+              // Skip the inputs entity.
+              {
+                Entity* dummy = new_ff Entity(get_app_root(), "__dummy_entity_for_loading__");
+                dummy->paste_entity_with_merging(loader2);
+                delete_ff(dummy);
+                std::cerr << "skipped inputs\n";
+              }
+              entities_loaded.insert(inputs);
+              continue;
+            }
+          } else if (name == "outputs") {
+            Entity* outputs = get_child("outputs");
+            if (outputs) {
+              // Skip the outputs entity.
+              {
+                Entity* dummy = new_ff Entity(get_app_root(), "__dummy_entity_for_loading__");
+                dummy->paste_entity_with_merging(loader2);
+                delete_ff(dummy);
+                std::cerr << "skipped outputs\n";
+              }
+              entities_loaded.insert(outputs);
+              continue;
+            }
+          }
+        }
+        Entity* e = paste_entity_with_merging(loader2);
+        entities_loaded.insert(e);
+      }
+
+      // Find and collect any internal nodes which were not specified in the file
+      // and are not used by the inputs and outputs.
+      // Note the input and output nodes share the same namespace as the internal nodes.
+      std::unordered_set<Entity*> entities_to_destroy;
+      for (auto &e: get_children()) {
+        if (entities_loaded.count(e.second) == 0) {
+          entities_to_destroy.insert(e.second);
+        }
+      }
+
+      // Delete nodes not specified in the file.
+      for (Entity* c: entities_to_destroy) {
+        delete_ff(c);
+      }
+    }
+  }
+}
+
+
 
 }

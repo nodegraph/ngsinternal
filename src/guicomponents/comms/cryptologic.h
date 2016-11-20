@@ -14,7 +14,6 @@ class COMMS_EXPORT CryptoLogic: public Component {
  public:
 
   static const QString kCryptoFile;
-  static const QString kAppDir;
 
   COMPONENT_ID(CryptoLogic, CryptoLogic)
 

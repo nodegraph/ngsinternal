@@ -247,7 +247,8 @@ class OBJECTMODEL_EXPORT Entity {
 
   Entity* get_entity_helper(const Path& path) const;
 
- private:
+ public:
+
   // ---------------------------------------------------------------------
   // Copy and Paste related.
   // ---------------------------------------------------------------------
@@ -259,10 +260,12 @@ class OBJECTMODEL_EXPORT Entity {
   virtual void paste_without_merging(SimpleLoader& loader);
   void paste_with_merging(SimpleLoader& loader);
 
+
   // Any name collisions will result in updating the existing node,
   // instead of creating a novel node with a slightly altered name.
   Entity* paste_entity_with_merging(SimpleLoader& loader);
 
+ private:
   // ---------------------------------------------------------------------
   // Entity Hierarchy related members.
   // ---------------------------------------------------------------------

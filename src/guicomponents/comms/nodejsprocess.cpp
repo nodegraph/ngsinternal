@@ -2,7 +2,7 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
 
-#include <guicomponents/comms/appconfig.h>
+#include <base/objectmodel/appconfig.h>
 
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication.h>
@@ -104,7 +104,7 @@ void NodeJSProcess::start_process() {
 
   // Set the arguments.
   QStringList list("chb.js");
-  list.append(AppConfig::get_user_data_dir());
+  list.append(AppConfig::get_user_app_dir());
   _process->setArguments(list);
   _process->start();
 

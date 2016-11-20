@@ -1,7 +1,7 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
 
-#include <guicomponents/comms/appconfig.h>
+#include <base/objectmodel/appconfig.h>
 #include <guicomponents/comms/message.h>
 #include <guicomponents/comms/messagesender.h>
 #include <guicomponents/comms/nodejsprocess.h>

@@ -59,7 +59,7 @@
 #include <guicomponents/comms/nodejsprocess.h>
 #include <guicomponents/comms/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
-#include <guicomponents/comms/appconfig.h>
+#include <base/objectmodel/appconfig.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/httpworker.h>
 #include <guicomponents/comms/licensechecker.h>

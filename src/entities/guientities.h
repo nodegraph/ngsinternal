@@ -170,4 +170,15 @@ class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
   bool _visible;
 };
 
+class ENTITIES_EXPORT MacroNodeEntity : public Entity {
+ public:
+  ENTITY_ID(MacroNodeEntity, "macro");
+  MacroNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){ _macro_name = "untitled"; }
+  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
+  virtual void save(SimpleSaver& saver) const;
+  virtual void load_helper(SimpleLoader& loader);
+ private:
+  std::string _macro_name;
+};
+
 }

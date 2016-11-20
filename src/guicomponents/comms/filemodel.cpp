@@ -9,7 +9,7 @@
 
 #include <components/interactions/graphbuilder.h>
 
-#include <guicomponents/comms/appconfig.h>
+#include <base/objectmodel/appconfig.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
@@ -411,6 +411,14 @@ void FileModel::save_graph() {
   save_graph(_working_row);
 }
 
+void FileModel::publish_graph() {
+  external();
+  if (_working_row < 0) {
+    return;
+  }
+  publish_graph(_working_row);
+}
+
 void FileModel::load_graph(int row) {
   std::cerr << "Starting to load graph at row: " << row << "\n";
   external();
@@ -486,6 +494,38 @@ void FileModel::save_graph(int row) {
   // Write the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
   _crypto_logic->write_file(graph_file, ss.str());
+}
+
+void FileModel::publish_graph(int row) {
+  external();
+  _working_row = row;
+
+  // Save the graph to a string.
+  std::stringstream ss;
+  {
+    SimpleSaver saver(ss);
+    // Save the version number.
+    size_t major = NGS_VERSION_MAJOR;
+    size_t minor = NGS_VERSION_MINOR;
+    size_t patch = NGS_VERSION_PATCH;
+    size_t tweak = NGS_VERSION_TWEAK;
+
+    saver.save(major);
+    saver.save(minor);
+    saver.save(patch);
+    saver.save(tweak);
+    this->get_root_group()->save(saver);
+  }
+
+  // The name of the macro file will be the same as the title of graph used to create it.
+  QString macro_file = data(index(row,0), kTitleRole).toString();
+  QString full_name = AppConfig::get_app_macros_dir() + "/" + macro_file;
+
+  // Write out the file without any encryption.
+  QFile file(full_name);
+  file.open(QIODevice::WriteOnly);
+  file.write(ss.str().c_str(), ss.str().size());
+  file.close();
 }
 
 void FileModel::destroy_graph() {

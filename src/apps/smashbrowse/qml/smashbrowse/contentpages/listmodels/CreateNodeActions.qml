@@ -9,6 +9,14 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
+        title: "Macro Node"
+        description: "Testing."
+        script: "ng_controller.create_macro_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
         title: "Data Group Node"
         description: "Encapsulates data processing logic."
         script: "ng_controller.create_group_node(center_new_nodes);

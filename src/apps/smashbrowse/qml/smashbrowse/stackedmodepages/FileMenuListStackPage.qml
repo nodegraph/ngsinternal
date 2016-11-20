@@ -53,6 +53,11 @@ BaseStackPage{
     	on_finished_with_menu()
     }
     
+    function on_publish_current() {
+    	node_graph_item.publish() 
+    	on_finished_with_menu()
+    }
+    
     function on_destroy_current(){
         // Destroy the graph.
         file_model.destroy_graph()

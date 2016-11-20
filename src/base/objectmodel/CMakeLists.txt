@@ -1,5 +1,6 @@
 
 set(sources
+    appconfig.cpp
 	basefactory.cpp
 	component.cpp
 	deplink.cpp
@@ -9,6 +10,7 @@ set(sources
     )
     
 set(headers
+    appconfig.h
 	basefactory.h
 	component.h
 	deplink.h
@@ -19,7 +21,11 @@ set(headers
 add_library(ngs_objectmodel  ${sources} ${headers})
 generate_export_header(ngs_objectmodel EXPORT_MACRO_NAME OBJECTMODEL_EXPORT EXPORT_FILE_NAME objectmodel_export.h)
 
-target_link_libraries(ngs_objectmodel ngs_memoryallocator ngs_utils)
+target_link_libraries(ngs_objectmodel 
+    ngs_memoryallocator 
+    ngs_utils
+    Qt5::Core
+    )
 
 if (${ARCH} STREQUAL "ARCH_WINDOWS")
     target_link_libraries(ngs_objectmodel)

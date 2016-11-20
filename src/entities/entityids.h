@@ -80,7 +80,10 @@ ENTITY_ENTRY1(OutputNodeEntity)\
 /* Dot Node. */\
 ENTITY_ENTRY1(DotNodeEntity)\
 /* Compute Nodes. */\
-ENTITY_ENTRY1(ComputeNodeEntity)
+ENTITY_ENTRY1(ComputeNodeEntity)\
+/* Macro Node. */\
+ENTITY_ENTRY1(MacroNodeEntity)
+
 
 enum class EntityDID: size_t {
   ENTITY_ENTRIES()
