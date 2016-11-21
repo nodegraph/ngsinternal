@@ -2,6 +2,7 @@
 #include <components/compshapes/compshapes_export.h>
 #include <base/objectmodel/component.h>
 #include <entities/componentids.h>
+#include <entities/entityids.h>
 #include <base/objectmodel/dep.h>
 
 #include <string>
@@ -89,6 +90,10 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
 
   // Our copied nodes.
   std::string _raw_copy;
+
+  // The did of the group from which the copy was performed.
+  // We can only paste to other groups with the same did.
+  EntityDID _copy_group_did;
 
   // Lock nodes and links from being moved.
   bool _locked;

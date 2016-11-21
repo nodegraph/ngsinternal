@@ -30,7 +30,8 @@ NodeSelection::NodeSelection(Entity* entity)
       _error_node(this),
       _last_processing_node(this),
       _locked(false),
-      _accumulate(false){
+      _accumulate(false),
+      _copy_group_did(EntityDID::kInvalidEntity) {
 }
 
 NodeSelection::~NodeSelection() {
@@ -237,6 +238,16 @@ void NodeSelection::destroy_selection() {
       continue;
     }
     Entity* e = cs->our_entity();
+
+    // Skip destroying the enter group nodes.
+    if ( e->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kEnterBrowserGroupCompute) ||
+        e->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kEnterFirebaseGroupCompute) ||
+        e->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kEnterGroupCompute) ||
+        e->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kEnterMQTTGroupCompute) ) {
+      continue;
+    }
+
+    // Otherwise we destroy it.
     delete_ff(e);
   }
   _selected_nodes.clear();
@@ -262,6 +273,9 @@ void NodeSelection::copy() {
   Entity* node = ns->our_entity();
   Entity* group = node->get_parent();
 
+  // Record the copy group did. We will only paste to groups with the same did.
+  _copy_group_did = group->get_did();
+
   // Convert the comp shapes to their entities.
   std::unordered_set<Entity*> selected_entities;
   for (const auto &s: _selected_nodes) {
@@ -277,7 +291,9 @@ void NodeSelection::paste(Entity* group) {
   if (_raw_copy.empty()) {
     return;
   }
-  group->paste_from_string(_raw_copy);
+  if (_copy_group_did == group->get_did()) {
+    group->paste_from_string(_raw_copy);
+  }
 }
 
 }
