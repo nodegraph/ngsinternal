@@ -48,5 +48,12 @@ ListModel {
         description: "Publish the current graph as a macro."
         script: "file_menu_list_stack_page.on_publish_current();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
+        title: "Import"
+        description: "Import a macro."
+        script: "file_menu_list_stack_page.on_import_macro();"
+    }
 
 }

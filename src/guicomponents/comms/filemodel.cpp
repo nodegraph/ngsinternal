@@ -411,7 +411,7 @@ void FileModel::save_graph() {
   save_graph(_working_row);
 }
 
-bool FileModel::macro_exists(const QString& macro_name) {
+bool FileModel::macro_exists(const QString& macro_name) const {
   QString full = AppConfig::get_app_macros_dir() + "/" + macro_name;
   QFileInfo info(full);
   if (info.exists()) {
@@ -538,6 +538,19 @@ void FileModel::publish_graph(int row, const QString& macro_name) {
   file.open(QIODevice::WriteOnly);
   file.write(contents.c_str(), contents.size());
   file.close();
+}
+
+QStringList FileModel::get_macro_names() const {
+  QString app_macros_dir = AppConfig::get_app_macros_dir();
+  QDir dir(app_macros_dir);
+  QFileInfoList list = dir.entryInfoList(QDir::Files,QDir::Name);
+  QStringList filenames;
+  for (int i=0; i<list.size(); ++i) {
+    QString filename = list[i].fileName();
+    std::cerr << "filename is: " << filename.toStdString() << "\n";
+    filenames.push_back(filename);
+  }
+  return filenames;
 }
 
 void FileModel::destroy_graph() {

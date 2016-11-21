@@ -623,8 +623,6 @@ void MacroNodeEntity::save(SimpleSaver& saver) const {
 }
 
 void MacroNodeEntity::load_helper(SimpleLoader& loader) {
-  std::cerr << "calling MacroNodeEntity::load_helper\n";
-
   // Load components.
   load_components(loader);
 
@@ -632,16 +630,16 @@ void MacroNodeEntity::load_helper(SimpleLoader& loader) {
   paste_with_merging(loader);
 
   // Load our internal child nodes.
-  std::string macro_name;
-  loader.load(macro_name);
-  load_internals(macro_name);
+  loader.load(_macro_name);
+  load_internals(_macro_name);
 }
 
 void MacroNodeEntity::load_internals(const std::string& macro_name) {
+  _macro_name = macro_name;
   // Load our other children from the macro file.
   {
     // Read all the bytes from the file.
-    std::string filename = AppConfig::get_app_macros_dir().toStdString() + "/" + macro_name;
+    std::string filename = AppConfig::get_app_macros_dir().toStdString() + "/" + _macro_name;
     QFile file(filename.c_str());
     file.open(QIODevice::ReadOnly);
     QByteArray contents = file.readAll();

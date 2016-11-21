@@ -56,8 +56,22 @@ BaseStackPage{
     function on_publish_current() {
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/PublishMacroPage.qml", page, {})
         push_page.visible = true
-        push_page.set_title("Publish Macro")
+        push_page.set_title("Publish a Macro")
         stack_view.push_page(push_page)
+    }
+    
+    function on_import_macro() {
+    	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
+        push_page.visible = true
+        push_page.set_title("Import a Macro")
+        push_page.callback = function(option_text) {
+        		ng_controller.create_macro_node(true, option_text)
+        		main_bar.switch_to_current_mode()
+        	}
+        var macro_names = node_graph_item.get_macro_names()
+        push_page.set_option_texts(macro_names)
+        stack_view.push_page(push_page)
+        visible = true
     }
     
     function on_destroy_current(){
