@@ -53,22 +53,40 @@ BaseStackPage{
     	on_finished_with_menu()
     }
     
-    function on_publish_current() {
+    function on_publish_user_macro() {
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/PublishMacroPage.qml", page, {})
         push_page.visible = true
         push_page.set_title("Publish a Macro")
         stack_view.push_page(push_page)
     }
     
-    function on_import_macro() {
+    function on_import_user_macro() {
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
         push_page.visible = true
-        push_page.set_title("Import a Macro")
+        push_page.set_title("Import a User Macro")
         push_page.callback = function(option_text) {
-        		ng_controller.create_macro_node(true, option_text)
+        		if (option_text != "") {
+        			ng_controller.create_user_macro_node(true, option_text)
+        		}
         		main_bar.switch_to_current_mode()
         	}
-        var macro_names = node_graph_item.get_macro_names()
+        var macro_names = node_graph_item.get_user_macro_names()
+        push_page.set_option_texts(macro_names)
+        stack_view.push_page(push_page)
+        visible = true
+    }
+    
+    function on_import_app_macro() {
+    	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
+        push_page.visible = true
+        push_page.set_title("Import an App Macro")
+        push_page.callback = function(option_text) {
+        		if (option_text != "") {
+        			ng_controller.create_app_macro_node(true, option_text)
+        		}
+        		main_bar.switch_to_current_mode()
+        	}
+        var macro_names = node_graph_item.get_app_macro_names()
         push_page.set_option_texts(macro_names)
         stack_view.push_page(push_page)
         visible = true

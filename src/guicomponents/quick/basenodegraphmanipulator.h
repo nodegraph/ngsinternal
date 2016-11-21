@@ -53,7 +53,8 @@ class BaseNodeGraphManipulator: public Component {
   // Node creation.
   virtual void create_node(bool centered, EntityDID entity_did) = 0;
   virtual void create_compute_node(bool centered, ComponentDID compute_did) = 0;
-  virtual void create_macro_node(bool centered, const std::string& macro_name) = 0;
+  virtual void create_user_macro_node(bool centered, const std::string& macro_name) = 0;
+  virtual void create_app_macro_node(bool centered, const std::string& macro_name) = 0;
 
   // Link Manipulation.
   virtual void destroy_link(Entity* input_entity) = 0;

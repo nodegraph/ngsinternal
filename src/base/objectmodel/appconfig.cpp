@@ -10,8 +10,8 @@
 namespace ngs {
 
 const QString AppConfig::kAppDataDir = "app_data";
-const QString AppConfig::kAppMacrosDir = "macros";
-const QString AppConfig::kUserMacrosDir = "macros";
+const QString AppConfig::kAppMacrosDir = "app_macros";
+const QString AppConfig::kUserMacrosDir = "user_macros";
 
 AppConfig::AppConfig(Entity* parent)
     : Component(parent, kIID(), kDID()) {
@@ -31,7 +31,14 @@ AppConfig::AppConfig(Entity* parent)
       QDir().mkpath(app_macros_dir);
     }
   }
-
+  // Make sure the user macros dir exists.
+  {
+    QString user_macros_dir = get_user_macros_dir();
+    QFileInfo info(user_macros_dir);
+    if (!info.exists()) {
+      QDir().mkpath(user_macros_dir);
+    }
+  }
 }
 
 AppConfig::~AppConfig() {}

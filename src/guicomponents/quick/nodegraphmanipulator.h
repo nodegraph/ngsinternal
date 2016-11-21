@@ -76,7 +76,9 @@ Q_OBJECT
   // Node creation.
   virtual void create_node(bool centered, EntityDID entity_did);
   virtual void create_compute_node(bool centered, ComponentDID compute_did);
-  virtual void create_macro_node(bool centered, const std::string& macro_name);
+  virtual void create_user_macro_node(bool centered, const std::string& macro_name);
+  virtual void create_app_macro_node(bool centered, const std::string& macro_name);
+
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);
@@ -172,7 +174,9 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   // Node creation.
   virtual void create_node(bool centered, EntityDID entity_did);
   virtual void create_compute_node(bool centered, ComponentDID compute_did);
-  virtual void create_macro_node(bool centered, const std::string& macro_name);
+  virtual void create_user_macro_node(bool centered, const std::string& macro_name);
+  virtual void create_app_macro_node(bool centered, const std::string& macro_name);
+
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);

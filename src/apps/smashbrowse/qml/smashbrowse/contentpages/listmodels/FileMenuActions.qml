@@ -44,16 +44,23 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
-        title: "Publish"
-        description: "Publish the current graph as a macro."
-        script: "file_menu_list_stack_page.on_publish_current();"
+        title: "Publish a User Macro"
+        description: "Publish the current graph as a user macro."
+        script: "file_menu_list_stack_page.on_publish_user_macro();"
     }
     
     ListElement {
         image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
-        title: "Import"
-        description: "Import a macro."
-        script: "file_menu_list_stack_page.on_import_macro();"
+        title: "Import a User Macro"
+        description: "Import a user macro."
+        script: "file_menu_list_stack_page.on_import_user_macro();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
+        title: "Import an App Macro"
+        description: "Import an app macro."
+        script: "file_menu_list_stack_page.on_import_app_macro();"
     }
 
 }

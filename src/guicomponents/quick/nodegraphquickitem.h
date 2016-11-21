@@ -44,7 +44,8 @@ Q_OBJECT
   HintKeyWrap hint_key_wrap;
   EnumHintValueWrap enum_hint_value_wrap;
 
-  Q_INVOKABLE void create_macro_node(bool centered, const QString& macro_name);
+  Q_INVOKABLE void create_user_macro_node(bool centered, const QString& macro_name);
+  Q_INVOKABLE void create_app_macro_node(bool centered, const QString& macro_name);
 
   // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);
@@ -139,7 +140,8 @@ Q_OBJECT
   // Macros.
   Q_INVOKABLE bool macro_exists(const QString& macro_name) const;
   Q_INVOKABLE void publish(const QString& macro_name);
-  Q_INVOKABLE QStringList get_macro_names() const;
+  Q_INVOKABLE QStringList get_user_macro_names() const;
+  Q_INVOKABLE QStringList get_app_macro_names() const;
 
 
   // Copy and Paste.

@@ -375,9 +375,15 @@ void NodeGraphManipulatorImp::create_compute_node(bool centered, ComponentDID co
   finish_creating_node(e, centered);
 }
 
-void NodeGraphManipulatorImp::create_macro_node(bool centered, const std::string& macro_name) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), EntityDID::kMacroNodeEntity);
-  static_cast<MacroNodeEntity*>(e)->load_internals(macro_name);
+void NodeGraphManipulatorImp::create_user_macro_node(bool centered, const std::string& macro_name) {
+  Entity* e = _factory->instance_entity(_factory->get_current_group(), EntityDID::kUserMacroNodeEntity);
+  static_cast<UserMacroNodeEntity*>(e)->load_internals(macro_name);
+  finish_creating_node(e, centered);
+}
+
+void NodeGraphManipulatorImp::create_app_macro_node(bool centered, const std::string& macro_name) {
+  Entity* e = _factory->instance_entity(_factory->get_current_group(), EntityDID::kAppMacroNodeEntity);
+  static_cast<AppMacroNodeEntity*>(e)->load_internals(macro_name);
   finish_creating_node(e, centered);
 }
 
@@ -750,8 +756,12 @@ void NodeGraphManipulator::create_compute_node(bool centered, ComponentDID compu
   _imp->create_compute_node(centered, compute_did);
 }
 
-void NodeGraphManipulator::create_macro_node(bool centered, const std::string& macro_name) {
-  _imp->create_macro_node(centered, macro_name);
+void NodeGraphManipulator::create_user_macro_node(bool centered, const std::string& macro_name) {
+  _imp->create_user_macro_node(centered, macro_name);
+}
+
+void NodeGraphManipulator::create_app_macro_node(bool centered, const std::string& macro_name) {
+  _imp->create_app_macro_node(centered, macro_name);
 }
 
 void NodeGraphManipulator::destroy_link(Entity* input_entity) {

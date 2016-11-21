@@ -170,17 +170,26 @@ class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
   bool _visible;
 };
 
-class ENTITIES_EXPORT MacroNodeEntity : public Entity {
+class ENTITIES_EXPORT UserMacroNodeEntity : public Entity {
  public:
-  ENTITY_ID(MacroNodeEntity, "macro");
-  MacroNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  ENTITY_ID(UserMacroNodeEntity, "user macro");
+  UserMacroNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>());
   virtual void save(SimpleSaver& saver) const;
   virtual void load_helper(SimpleLoader& loader);
 
   virtual void load_internals(const std::string& macro_name);
  private:
+  virtual std::string get_macro_dir() const;
   std::string _macro_name;
+};
+
+class ENTITIES_EXPORT AppMacroNodeEntity : public UserMacroNodeEntity {
+ public:
+  ENTITY_ID(AppMacroNodeEntity, "app macro");
+  AppMacroNodeEntity(Entity* parent, const std::string& name):UserMacroNodeEntity(parent, name){}
+ private:
+  virtual std::string get_macro_dir() const;
 };
 
 }

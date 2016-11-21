@@ -567,7 +567,7 @@ void OutputLabelEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff OutputLabelShape(this);
 }
 
-void MacroNodeEntity::create_internals(const std::vector<size_t>& ids) {
+void UserMacroNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // This was copied from GroupNodeEntity::create_internals().
 
   // Our components.
@@ -591,7 +591,7 @@ void MacroNodeEntity::create_internals(const std::vector<size_t>& ids) {
   exit->create_internals();
 }
 
-void MacroNodeEntity::save(SimpleSaver& saver) const {
+void UserMacroNodeEntity::save(SimpleSaver& saver) const {
   pre_save(saver);
   save_components(saver);
 
@@ -622,7 +622,11 @@ void MacroNodeEntity::save(SimpleSaver& saver) const {
   saver.save(_macro_name);
 }
 
-void MacroNodeEntity::load_helper(SimpleLoader& loader) {
+std::string UserMacroNodeEntity::get_macro_dir() const {
+  return AppConfig::get_user_macros_dir().toStdString();
+}
+
+void UserMacroNodeEntity::load_helper(SimpleLoader& loader) {
   // Load components.
   load_components(loader);
 
@@ -634,12 +638,12 @@ void MacroNodeEntity::load_helper(SimpleLoader& loader) {
   load_internals(_macro_name);
 }
 
-void MacroNodeEntity::load_internals(const std::string& macro_name) {
+void UserMacroNodeEntity::load_internals(const std::string& macro_name) {
   _macro_name = macro_name;
   // Load our other children from the macro file.
   {
     // Read all the bytes from the file.
-    std::string filename = AppConfig::get_app_macros_dir().toStdString() + "/" + _macro_name;
+    std::string filename = get_macro_dir() + "/" + _macro_name;
     QFile file(filename.c_str());
     file.open(QIODevice::ReadOnly);
     QByteArray contents = file.readAll();
@@ -754,6 +758,10 @@ void MacroNodeEntity::load_internals(const std::string& macro_name) {
       }
     }
   }
+}
+
+std::string AppMacroNodeEntity::get_macro_dir() const {
+  return AppConfig::get_app_macros_dir().toStdString();
 }
 
 }

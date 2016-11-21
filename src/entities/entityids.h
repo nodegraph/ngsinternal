@@ -82,7 +82,8 @@ ENTITY_ENTRY1(DotNodeEntity)\
 /* Compute Nodes. */\
 ENTITY_ENTRY1(ComputeNodeEntity)\
 /* Macro Node. */\
-ENTITY_ENTRY1(MacroNodeEntity)
+ENTITY_ENTRY1(UserMacroNodeEntity)\
+ENTITY_ENTRY1(AppMacroNodeEntity)\
 
 
 enum class EntityDID: size_t {

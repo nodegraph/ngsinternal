@@ -411,8 +411,8 @@ void FileModel::save_graph() {
   save_graph(_working_row);
 }
 
-bool FileModel::macro_exists(const QString& macro_name) const {
-  QString full = AppConfig::get_app_macros_dir() + "/" + macro_name;
+bool FileModel::user_macro_exists(const QString& macro_name) const {
+  QString full = AppConfig::get_user_macros_dir() + "/" + macro_name;
   QFileInfo info(full);
   if (info.exists()) {
     return true;
@@ -420,12 +420,12 @@ bool FileModel::macro_exists(const QString& macro_name) const {
   return false;
 }
 
-void FileModel::publish_graph(const QString& macro_name) {
+void FileModel::publish_user_macro(const QString& macro_name) {
   external();
   if (_working_row < 0) {
     return;
   }
-  publish_graph(_working_row, macro_name);
+  publish_user_macro(_working_row, macro_name);
 }
 
 void FileModel::load_graph(int row) {
@@ -523,7 +523,7 @@ void FileModel::save_graph(int row) {
   _crypto_logic->write_file(graph_file, contents);
 }
 
-void FileModel::publish_graph(int row, const QString& macro_name) {
+void FileModel::publish_user_macro(int row, const QString& macro_name) {
   external();
   _working_row = row;
 
@@ -531,7 +531,7 @@ void FileModel::publish_graph(int row, const QString& macro_name) {
   std::string contents = graph_to_string(row);
 
   // The name of the macro file will be the same as the title of graph used to create it.
-  QString full_name = AppConfig::get_app_macros_dir() + "/" + macro_name;
+  QString full_name = AppConfig::get_user_macros_dir() + "/" + macro_name;
 
   // Write out the file without any encryption.
   QFile file(full_name);
@@ -540,17 +540,23 @@ void FileModel::publish_graph(int row, const QString& macro_name) {
   file.close();
 }
 
-QStringList FileModel::get_macro_names() const {
-  QString app_macros_dir = AppConfig::get_app_macros_dir();
-  QDir dir(app_macros_dir);
+QStringList get_files(const QString& dir_path) {
+  QDir dir(dir_path);
   QFileInfoList list = dir.entryInfoList(QDir::Files,QDir::Name);
   QStringList filenames;
   for (int i=0; i<list.size(); ++i) {
     QString filename = list[i].fileName();
-    std::cerr << "filename is: " << filename.toStdString() << "\n";
     filenames.push_back(filename);
   }
   return filenames;
+}
+
+QStringList FileModel::get_user_macro_names() const {
+  return get_files(AppConfig::get_user_macros_dir());
+}
+
+QStringList FileModel::get_app_macro_names() const {
+  return get_files(AppConfig::get_app_macros_dir());
 }
 
 void FileModel::destroy_graph() {

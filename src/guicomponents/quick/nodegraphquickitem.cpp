@@ -87,8 +87,12 @@ void NodeGraphController::surface_from_group() {
   _manipulator->surface_from_group();
 }
 
-void NodeGraphController::create_macro_node(bool centered, const QString& macro_name) {
-  _manipulator->create_macro_node(centered, macro_name.toStdString());
+void NodeGraphController::create_user_macro_node(bool centered, const QString& macro_name) {
+  _manipulator->create_user_macro_node(centered, macro_name.toStdString());
+}
+
+void NodeGraphController::create_app_macro_node(bool centered, const QString& macro_name) {
+  _manipulator->create_app_macro_node(centered, macro_name.toStdString());
 }
 
 // Group Nodes Creation.
@@ -898,17 +902,22 @@ void NodeGraphQuickItem::save() {
 }
 
 bool NodeGraphQuickItem::macro_exists(const QString& macro_name) const{
-  return _file_model->macro_exists(macro_name);
+  return _file_model->user_macro_exists(macro_name);
 }
 
 void NodeGraphQuickItem::publish(const QString& macro_name) {
   external();
-  _file_model->publish_graph(macro_name);
+  _file_model->publish_user_macro(macro_name);
 }
 
-QStringList NodeGraphQuickItem::get_macro_names() const {
+QStringList NodeGraphQuickItem::get_user_macro_names() const {
   external();
-  return _file_model->get_macro_names();
+  return _file_model->get_user_macro_names();
+}
+
+QStringList NodeGraphQuickItem::get_app_macro_names() const {
+  external();
+  return _file_model->get_app_macro_names();
 }
 
 void NodeGraphQuickItem::load() {
