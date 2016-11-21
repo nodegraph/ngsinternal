@@ -73,11 +73,28 @@ ExitBrowserGroupCompute::~ExitBrowserGroupCompute() {
 }
 
 bool ExitBrowserGroupCompute::update_state() {
-  TaskContext tc(_scheduler);
-  _worker->queue_close_browser(tc);
-  std::function<void(const QJsonObject&)> callback = std::bind(&ExitBrowserGroupCompute::receive_chain_state, this, std::placeholders::_1);
-  _worker->queue_receive_chain_state(tc, callback);
-  return false;
+  // If we're embedded inside another browser group, then we don't do anything.
+  // Only the outer most browser group should close the browser.
+
+  Entity* our_group = our_entity()->get_parent();
+  Entity* parent = our_group->get_parent();
+  bool embedded = false;
+  while(parent) {
+    if (parent->get_did() == EntityDID::kBrowserGroupNodeEntity) {
+      embedded = true;
+      break;
+    }
+    parent = parent->get_parent();
+  }
+
+  if (!embedded) {
+    TaskContext tc(_scheduler);
+    _worker->queue_close_browser(tc);
+    std::function<void(const QJsonObject&)> callback = std::bind(&ExitBrowserGroupCompute::receive_chain_state, this, std::placeholders::_1);
+    _worker->queue_receive_chain_state(tc, callback);
+    return false;
+  }
+  return true;
 }
 
 void ExitBrowserGroupCompute::receive_chain_state(const QJsonObject& chain_state) {
