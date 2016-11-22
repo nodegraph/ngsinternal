@@ -40,12 +40,12 @@ EnterMQTTGroupCompute::~EnterMQTTGroupCompute() {
 void EnterMQTTGroupCompute::create_inputs_outputs() {
   external();
   EnterGroupCompute::create_inputs_outputs();
-  create_input(Message::kHostName, "", false);
-  create_input(Message::kHostAddress, "127.0.0.1", false);
-  create_input(Message::kPort, 1883, false);
-  create_input(Message::kUsername, "", false);
-  create_input(Message::kPassword, "", false);
-  create_input(Message::kClientID, "", false);
+  create_input(Message::kHostName, "", true);
+  create_input(Message::kHostAddress, "127.0.0.1", true);
+  create_input(Message::kPort, 1883, true);
+  create_input(Message::kUsername, "", true);
+  create_input(Message::kPassword, "", true);
+  create_input(Message::kClientID, "", true);
 }
 
 const QJsonObject EnterMQTTGroupCompute::_hints = EnterMQTTGroupCompute::init_hints();

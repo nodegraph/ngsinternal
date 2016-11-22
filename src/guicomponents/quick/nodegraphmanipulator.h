@@ -84,6 +84,7 @@ Q_OBJECT
   virtual void destroy_link(Entity* input_entity);
   virtual Entity* create_link(Entity* group);
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
+  virtual void copy_description_to_input_node(Entity* input_entity, Entity* input_node_entity);
 
   // Graph Dirtiness.
   virtual void bubble_group_dirtiness();
@@ -182,6 +183,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void destroy_link(Entity* input_entity);
   virtual Entity* create_link(Entity* group);
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
+  virtual void copy_description_to_input_node(Entity* input_entity, Entity* input_node_entity);
 
   // Graph Dirtiness.
   virtual void bubble_group_dirtiness();

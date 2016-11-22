@@ -36,13 +36,6 @@ LinkShape::LinkShape(Entity* entity)
 
   get_dep_loader()->register_dynamic_dep(_input_shape);
   get_dep_loader()->register_dynamic_dep(_output_shape);
-
-  _quads.resize(2);
-  _bg_quad = &_quads[0];
-  _fg_quad = &_quads[1];
-  _tris.resize(2);
-  _bg_tri = &_tris[0];
-  _fg_tri = &_tris[1];
 }
 
 LinkShape::~LinkShape() {
@@ -117,6 +110,13 @@ const Dep<OutputShape>& LinkShape::get_output_shape() const {
 
 void LinkShape::update_positioning_helper(const glm::vec2& head_pos, const glm::vec2& tail_pos) {
   internal();
+
+  if (!is_visible()) {
+    _quads.clear();
+    _tris.clear();
+    return;
+  }
+
   const glm::vec2 diff = head_pos - tail_pos;
   _dir = glm::normalize(diff);
   _perp = glm::vec2(-_dir.y, _dir.x);  // equivalent to dir rotated 90 degrees using right hand rule
@@ -159,29 +159,36 @@ void LinkShape::update_positioning_helper(const glm::vec2& head_pos, const glm::
 
 
   // Update our triangle.
-  _bg_tri->set_scale(tri_size);
-  _bg_tri->set_rotate(_angle + boost::math::constants::pi<float>() - boost::math::constants::pi<float>()/2.0f);
-  _bg_tri->set_translate(hb[1], bg_depth);
-  _bg_tri->set_color(bg_color);
+  _bg_tri.set_scale(tri_size);
+  _bg_tri.set_rotate(_angle + boost::math::constants::pi<float>() - boost::math::constants::pi<float>()/2.0f);
+  _bg_tri.set_translate(hb[1], bg_depth);
+  _bg_tri.set_color(bg_color);
 
   // h' = h - 3*border_width
   // w' = w - 2*sqrt(3)*border_width
-  _fg_tri->set_scale(tri_size - glm::vec2(2 * sqrt(3.0f) * border_width, 3.0f * border_width));
-  _fg_tri->set_rotate(_bg_tri->rotate);
-  _fg_tri->set_translate(hb[1] - 2.0f*border_width*_dir, fg_depth);
-  _fg_tri->set_color(fg_color);
+  _fg_tri.set_scale(tri_size - glm::vec2(2 * sqrt(3.0f) * border_width, 3.0f * border_width));
+  _fg_tri.set_rotate(_bg_tri.rotate);
+  _fg_tri.set_translate(hb[1] - 2.0f*border_width*_dir, fg_depth);
+  _fg_tri.set_color(fg_color);
 
   // Update our body.
-  _bg_quad->set_scale(_body_length, body_height);
-  _bg_quad->set_rotate(_angle + boost::math::constants::pi<float>());
-  _bg_quad->set_translate(hb[3], bg_depth);
-  _bg_quad->set_color(bg_color);
+  _bg_quad.set_scale(_body_length, body_height);
+  _bg_quad.set_rotate(_angle + boost::math::constants::pi<float>());
+  _bg_quad.set_translate(hb[3], bg_depth);
+  _bg_quad.set_color(bg_color);
 
-  _fg_quad->set_scale(_body_length, body_height - 2.0f * border_width);
-  _fg_quad->set_rotate(_bg_quad->rotate);
-  _fg_quad->set_translate(hb[3] + border_width * _dir - border_width * _perp, fg_depth);
-  _fg_quad->set_color(fg_color);
+  _fg_quad.set_scale(_body_length, body_height - 2.0f * border_width);
+  _fg_quad.set_rotate(_bg_quad.rotate);
+  _fg_quad.set_translate(hb[3] + border_width * _dir - border_width * _perp, fg_depth);
+  _fg_quad.set_color(fg_color);
 
+  _quads.resize(2);
+  _quads[0] = _bg_quad;
+  _quads[1] = _fg_quad;
+
+  _tris.resize(2);
+  _tris[0] = _bg_tri;
+  _tris[1] = _fg_tri;
 }
 
 void LinkShape::update_state_helper() {
@@ -198,15 +205,15 @@ void LinkShape::update_state_helper() {
   set_pannable(pannable);
 
   if (pannable) {
-    _bg_quad->state |= (selected_transform_bitmask);
-    _fg_quad->state |= selected_transform_bitmask;
-    _bg_tri->state |= (selected_transform_bitmask);
-    _fg_tri->state |= selected_transform_bitmask;
+    _bg_quad.state |= (selected_transform_bitmask);
+    _fg_quad.state |= selected_transform_bitmask;
+    _bg_tri.state |= (selected_transform_bitmask);
+    _fg_tri.state |= selected_transform_bitmask;
   } else {
-    _bg_quad->state &= ~(selected_transform_bitmask);
-    _fg_quad->state &= ~selected_transform_bitmask;
-    _bg_tri->state &= ~(selected_transform_bitmask);
-    _fg_tri->state &= ~selected_transform_bitmask;
+    _bg_quad.state &= ~(selected_transform_bitmask);
+    _fg_quad.state &= ~selected_transform_bitmask;
+    _bg_tri.state &= ~(selected_transform_bitmask);
+    _fg_tri.state &= ~selected_transform_bitmask;
   }
 }
 
@@ -227,6 +234,9 @@ const std::vector<ShapeInstance>* LinkShape::get_quad_instances() const {
 
 HitRegion LinkShape::hit_test(const glm::vec2& point) const {
   external();
+  if(!is_visible()) {
+    return HitRegion::kMissedRegion;
+  }
   return _border.hit_test(point);
 }
 
@@ -234,15 +244,15 @@ void LinkShape::select(bool selected) {
   external();
   SelectableShape::select(selected);
   if (selected) {
-    _bg_quad->state |= (selected_transform_bitmask|selected_color_bitmask);
-    _fg_quad->state |= selected_transform_bitmask;
-    _bg_tri->state |= (selected_transform_bitmask|selected_color_bitmask);
-    _fg_tri->state |= selected_transform_bitmask;
+    _bg_quad.state |= (selected_transform_bitmask|selected_color_bitmask);
+    _fg_quad.state |= selected_transform_bitmask;
+    _bg_tri.state |= (selected_transform_bitmask|selected_color_bitmask);
+    _fg_tri.state |= selected_transform_bitmask;
   } else {
-    _bg_quad->state &= ~(selected_transform_bitmask|selected_color_bitmask);
-    _fg_quad->state &= ~selected_transform_bitmask;
-    _bg_tri->state &= ~(selected_transform_bitmask|selected_color_bitmask);
-    _fg_tri->state &= ~selected_transform_bitmask;
+    _bg_quad.state &= ~(selected_transform_bitmask|selected_color_bitmask);
+    _fg_quad.state &= ~selected_transform_bitmask;
+    _bg_tri.state &= ~(selected_transform_bitmask|selected_color_bitmask);
+    _fg_tri.state &= ~selected_transform_bitmask;
   }
 }
 

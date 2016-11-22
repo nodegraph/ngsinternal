@@ -33,6 +33,10 @@
 
 #include <entities/guientities.h>
 
+#include <QtCore/QJsonValue>
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonObject>
+
 namespace ngs {
 
 // -----------------------------------------------------------------------------------
@@ -538,6 +542,18 @@ Entity* NodeGraphManipulatorImp::connect_plugs(Entity* input_entity, Entity* out
   return link;
 }
 
+void NodeGraphManipulatorImp::copy_description_to_input_node(Entity* input_entity, Entity* input_node_entity) {
+  std::string input_name = input_entity->get_name();
+  Dep<Compute> compute = get_dep<Compute>(input_entity->get_parent()->get_parent());
+
+  const QJsonObject& node_hints = compute->get_hints();
+  QJsonObject input_hints = node_hints.value(input_name.c_str()).toObject();
+  QJsonValue description = input_hints.value(QString::number(to_underlying(HintKey::kDescriptionHint))).toString();
+
+  Dep<InputCompute> input_compute = get_dep<InputCompute>(input_node_entity->get_child("inputs")->get_child("description"));
+  input_compute->set_unconnected_value(description);
+}
+
 void NodeGraphManipulatorImp::bubble_group_dirtiness() {
   synchronize_graph_dirtiness(_app_root);
 }
@@ -778,6 +794,10 @@ Entity* NodeGraphManipulator::create_link(Entity* group) {
 
 Entity* NodeGraphManipulator::connect_plugs(Entity* input_entity, Entity* output_entity) {
   return _imp->connect_plugs(input_entity, output_entity);
+}
+
+void NodeGraphManipulator::copy_description_to_input_node(Entity* input_entity, Entity* input_node_entity) {
+  return _imp->copy_description_to_input_node(input_entity, input_node_entity);
 }
 
 void NodeGraphManipulator::bubble_group_dirtiness() {

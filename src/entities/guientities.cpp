@@ -136,11 +136,17 @@ void surround_with_input_nodes(Entity* node) {
   Entity* inputs = node->get_child("inputs");
   const Entity::NameToChildMap& children = inputs->get_children();
   for (auto &iter: children) {
+    // Create the input node.
     InputNodeEntity* input_node = new_ff InputNodeEntity(node->get_parent(), iter.first);
     input_node->create_internals();
+
+    // Connect the input to the output from the input node.
     OutputEntity* output = static_cast<OutputEntity*>(input_node->get_child("outputs")->get_child("out"));
     InputEntity* input = static_cast<InputEntity*>(iter.second);
     manipulator->connect_plugs(input, output);
+
+    // Copy the hint description from the node being surrounded to the input plug.
+    manipulator->copy_description_to_input_node(input, input_node);
   }
 }
 

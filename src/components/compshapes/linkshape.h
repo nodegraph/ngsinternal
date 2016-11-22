@@ -85,11 +85,11 @@ class COMPSHAPES_EXPORT LinkShape: public SelectableShape {
 
   // Our shape instances.
   std::vector<ShapeInstance> _quads;
-  ShapeInstance* _bg_quad;
-  ShapeInstance* _fg_quad;
+  ShapeInstance _bg_quad;
+  ShapeInstance _fg_quad;
   std::vector<ShapeInstance> _tris;
-  ShapeInstance* _bg_tri;
-  ShapeInstance* _fg_tri;
+  ShapeInstance _bg_tri;
+  ShapeInstance _fg_tri;
 
   // Our quad bounds.
   CompPolyBorder _border;
