@@ -100,6 +100,55 @@
 
 namespace ngs {
 
+// -----------------------------------------------------------------------------------------------------------
+// Helpers.
+// -----------------------------------------------------------------------------------------------------------
+
+void create_default_enter(Entity* group) {
+  // The default enter compute does nothing.
+  // This just reserves their namespace to prevent the user from creating other nodes in their place.
+  // Then our code doesn't need check if the enter node is the one we expect.
+  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(group, "group_context");
+  enter->set_compute_did(ComponentDID::kEnterGroupCompute);
+  enter->set_visible(false);
+  enter->create_internals();
+}
+
+void create_default_exit(Entity* group) {
+  // The default exit compute does nothing.
+  // This just reserves their namespace to prevent the user from creating other nodes in their place.
+  // Then our code doesn't need check if the enter node is the one we expect.
+  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(group, "exit_group_context");
+  exit->set_compute_did(ComponentDID::kExitGroupCompute);
+  exit->set_visible(false);
+  exit->create_internals();
+}
+
+void create_default_enter_and_exit(Entity* group) {
+  create_default_enter(group);
+  create_default_exit(group);
+}
+
+// Create and connectd an input node to each input for a node.
+void surround_with_input_nodes(Entity* node) {
+  QMLAppEntity* app_root = static_cast<QMLAppEntity*>(node->get_app_root());
+  BaseNodeGraphManipulator* manipulator = app_root->get_manipulator();
+  Entity* inputs = node->get_child("inputs");
+  const Entity::NameToChildMap& children = inputs->get_children();
+  for (auto &iter: children) {
+    InputNodeEntity* input_node = new_ff InputNodeEntity(node->get_parent(), iter.first);
+    input_node->create_internals();
+    OutputEntity* output = static_cast<OutputEntity*>(input_node->get_child("outputs")->get_child("out"));
+    InputEntity* input = static_cast<InputEntity*>(iter.second);
+    manipulator->connect_plugs(input, output);
+  }
+}
+
+// -----------------------------------------------------------------------------------------------------------
+// Implementations.
+// -----------------------------------------------------------------------------------------------------------
+
+
 void QMLAppEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff Factory(this);
@@ -256,6 +305,10 @@ NodeGraphView* QMLAppEntity::get_node_graph_view() {
   return get<NodeGraphView>();
 }
 
+BaseNodeGraphManipulator* QMLAppEntity::get_manipulator() {
+  return get<BaseNodeGraphManipulator>();
+}
+
 void QtAppEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   new_ff Factory(this);
@@ -276,6 +329,8 @@ void AppEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff ShapeCanvas(this);
 }
 
+
+
 void GroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   // Our components.
   (new_ff GroupNodeCompute(this))->create_inputs_outputs();
@@ -288,14 +343,7 @@ void GroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "group_context");
-  enter->set_compute_did(ComponentDID::kEnterGroupCompute);
-  enter->set_visible(true);
-  enter->create_internals();
-  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
-  exit->set_compute_did(ComponentDID::kExitGroupCompute);
-  exit->set_visible(false);
-  exit->create_internals();
+  create_default_enter_and_exit(this);
 }
 
 void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const {
@@ -368,14 +416,7 @@ void ScriptGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
-  sub->set_compute_did(ComponentDID::kEnterGroupCompute);
-  sub->set_visible(true);
-  sub->create_internals();
-  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
-  exit->set_compute_did(ComponentDID::kExitGroupCompute);
-  exit->set_visible(false);
-  exit->create_internals();
+  create_default_enter_and_exit(this);
 }
 
 void BrowserGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -412,14 +453,13 @@ void FirebaseGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
-  sub->set_compute_did(ComponentDID::kEnterFirebaseGroupCompute);
-  sub->set_visible(true);
-  sub->create_internals();
-  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
-  exit->set_compute_did(ComponentDID::kExitGroupCompute);
-  exit->set_visible(false);
-  exit->create_internals();
+  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "group_context");
+  enter->set_compute_did(ComponentDID::kEnterFirebaseGroupCompute);
+  enter->set_visible(true);
+  enter->create_internals();
+  surround_with_input_nodes(enter);
+
+  create_default_exit(this);
 }
 
 void MQTTGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
@@ -434,14 +474,13 @@ void MQTTGroupNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
-  sub->set_compute_did(ComponentDID::kEnterMQTTGroupCompute);
-  sub->set_visible(true);
-  sub->create_internals();
-  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
-  exit->set_compute_did(ComponentDID::kExitGroupCompute);
-  exit->set_visible(false);
-  exit->create_internals();
+  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "group_context");
+  enter->set_compute_did(ComponentDID::kEnterMQTTGroupCompute);
+  enter->set_visible(true);
+  enter->create_internals();
+  surround_with_input_nodes(enter);
+
+  create_default_exit(this);
 }
 
 void LinkEntity::create_internals(const std::vector<size_t>& ids) {
@@ -581,14 +620,7 @@ void UserMacroNodeEntity::create_internals(const std::vector<size_t>& ids) {
   new_ff InputTopology(this);
   new_ff OutputTopology(this);
   // Sub Components.
-  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "group_context");
-  enter->set_compute_did(ComponentDID::kEnterGroupCompute);
-  enter->set_visible(true);
-  enter->create_internals();
-  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
-  exit->set_compute_did(ComponentDID::kExitGroupCompute);
-  exit->set_visible(false);
-  exit->create_internals();
+  create_default_enter_and_exit(this);
 }
 
 void UserMacroNodeEntity::save(SimpleSaver& saver) const {

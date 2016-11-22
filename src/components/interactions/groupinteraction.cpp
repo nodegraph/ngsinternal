@@ -118,7 +118,8 @@ void GroupInteraction::toggle_selection_under_press(const Dep<NodeShape>& hit_sh
 
 Dep<LinkShape> GroupInteraction::create_link() {
   external();
-  Entity* link = _manipulator->create_link();
+  Entity* group = our_entity();
+  Entity* link = _manipulator->create_link(group);
   Dep<LinkShape> link_shape = get_dep<LinkShape>(link);
   // New link created, so we need to clean the wires. (Note a wire is differnt from a link. See Component.h)
   update_shape_collective();

@@ -122,6 +122,9 @@ Entity* Compute::create_input(const std::string& name, const QJsonValue& value, 
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
+  // Make sure the name doesn't exist already.
+  assert(!inputs_space->get_child(name));
+
   InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, EntityDID::kInputEntity, name));
   input->create_internals();
   input->set_exposed(exposed);
@@ -133,6 +136,9 @@ Entity* Compute::create_output(const std::string& name, bool exposed) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* outputs_space = get_outputs_space();
+  // Make sure the name doesn't exist already.
+  assert(!outputs_space->get_child(name));
+
   OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, EntityDID::kOutputEntity, name));
   output->create_internals();
   output->set_exposed(exposed);

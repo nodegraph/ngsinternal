@@ -33,12 +33,12 @@ EnterFirebaseGroupCompute::~EnterFirebaseGroupCompute() {
 void EnterFirebaseGroupCompute::create_inputs_outputs() {
   external();
   EnterGroupCompute::create_inputs_outputs();
-  create_input(Message::kApiKey, "AIzaSyCXGNlyRf5uk8Xk1bvKXUcA53TC6Lc3I-A", false);
-  create_input(Message::kAuthDomain, "test-project-91c10.firebaseapp.com", false);
-  create_input(Message::kDatabaseURL, "https://test-project-91c10.firebaseio.com/", false);
-  create_input(Message::kStorageBucket, "gs://test-project-91c10.appspot.com", false);
-  create_input(Message::kEmail, "your_email@some_place.com", false);
-  create_input(Message::kPassword, "your_password", false);
+  create_input(Message::kApiKey, "AIzaSyCXGNlyRf5uk8Xk1bvKXUcA53TC6Lc3I-A", true);
+  create_input(Message::kAuthDomain, "test-project-91c10.firebaseapp.com", true);
+  create_input(Message::kDatabaseURL, "https://test-project-91c10.firebaseio.com/", true);
+  create_input(Message::kStorageBucket, "gs://test-project-91c10.appspot.com", true);
+  create_input(Message::kEmail, "your_email@some_place.com", true);
+  create_input(Message::kPassword, "your_password", true);
 }
 
 const QJsonObject EnterFirebaseGroupCompute::_hints = EnterFirebaseGroupCompute::init_hints();

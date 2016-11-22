@@ -82,7 +82,7 @@ Q_OBJECT
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);
-  virtual Entity* create_link();
+  virtual Entity* create_link(Entity* group);
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
 
   // Graph Dirtiness.
@@ -180,7 +180,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);
-  virtual Entity* create_link();
+  virtual Entity* create_link(Entity* group);
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
 
   // Graph Dirtiness.

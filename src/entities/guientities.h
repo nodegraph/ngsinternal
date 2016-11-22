@@ -20,6 +20,7 @@ class NodeGraphQuickItem;
 class NodeGraphController;
 class GraphBuilder;
 class NodeGraphView;
+class BaseNodeGraphManipulator;
 
 class ENTITIES_EXPORT QMLAppEntity : public Entity {
  public:
@@ -39,6 +40,7 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   NodeGraphController* get_node_graph_controller();
   GraphBuilder* get_graph_builder();
   NodeGraphView* get_node_graph_view();
+  BaseNodeGraphManipulator* get_manipulator();
 };
 
 class ENTITIES_EXPORT QtAppEntity : public Entity {

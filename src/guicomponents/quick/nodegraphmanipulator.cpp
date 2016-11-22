@@ -295,14 +295,10 @@ void NodeGraphManipulatorImp::clean_exit_group(Entity* group) {
     return;
   }
 
-  std::cerr << "111\n";
-
   // We expect the exit compute to not have to wait for an asynchronous response.
   Dep<ExitGroupCompute> exit = get_dep<ExitGroupCompute>(child);
   exit->dirty_state();
   exit->clean_state();
-
-  std::cerr << "222\n";
 }
 
 void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
@@ -492,8 +488,7 @@ void NodeGraphManipulatorImp::destroy_link(Entity* input_entity) {
   delete_ff(link_entity);
 }
 
-Entity* NodeGraphManipulatorImp::create_link() {
-  Entity* group = _factory->get_current_group();
+Entity* NodeGraphManipulatorImp::create_link(Entity* group) {
   Entity* links_folder = group->get_entity(Path({".","links"}));
   Entity* link = _factory->instance_entity(links_folder, EntityDID::kLinkEntity, "link");
   link->create_internals();
@@ -508,6 +503,11 @@ Entity* NodeGraphManipulatorImp::connect_plugs(Entity* input_entity, Entity* out
   Dep<InputShape> input_shape = get_dep<InputShape>(input_entity);
   Dep<OutputCompute> output_compute = get_dep<OutputCompute>(output_entity);
   Dep<OutputShape> output_shape = get_dep<OutputShape>(output_entity);
+
+  assert(input_shape);
+  assert(output_shape);
+  assert(input_compute);
+  assert(output_compute);
 
   // Remove any existing link shapes on this input.
   // There is only one link per input.
@@ -526,11 +526,15 @@ Entity* NodeGraphManipulatorImp::connect_plugs(Entity* input_entity, Entity* out
   }
 
   // Link the output shape.
-  Entity* link = create_link();
+  Entity* group = input_entity->get_entity(Path({"..","..",".."}));
+  Entity* link = create_link(group);
   Dep<LinkShape> link_shape = get_dep<LinkShape>(link);
   link_shape->link_input_shape(input_shape);
   link_shape->link_output_shape(output_shape);
   link_shape->finished_moving();
+
+  // We need to bake our dynamic dep paths because initialize_wires may get called later which will try to setup up the dep from an unset path.
+  link_shape->bake_paths();
   return link;
 }
 
@@ -768,8 +772,8 @@ void NodeGraphManipulator::destroy_link(Entity* input_entity) {
   _imp->destroy_link(input_entity);
 }
 
-Entity* NodeGraphManipulator::create_link() {
-  return _imp->create_link();
+Entity* NodeGraphManipulator::create_link(Entity* group) {
+  return _imp->create_link(group);
 }
 
 Entity* NodeGraphManipulator::connect_plugs(Entity* input_entity, Entity* output_entity) {
