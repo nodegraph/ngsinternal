@@ -1,7 +1,7 @@
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/basefactory.h>
 #include <base/objectmodel/deploader.h>
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 #include <entities/guientities.h>
 
 #include <components/computes/groupnodecompute.h>
@@ -71,8 +71,9 @@ void GroupNodeCompute::update_wires() {
       if (!inputs_space->has_child_name(child_name)) {
         // Otherwise we create an input plug.
         InputEntity* input = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
-        input->create_internals();
-        input->set_exposed(true);
+        EntityConfig config;
+        config.expose_plug = true;
+        input->create_internals(config);
         input->initialize_wires();
         // Grab the computes on the input and the input node inside the group.
         Dep<InputCompute> outer = get_dep<InputCompute>(input);
@@ -101,8 +102,9 @@ void GroupNodeCompute::update_wires() {
       }
       // Otherwise we create an output plug.
       OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, EntityDID::kOutputEntity, child_name));
-      out->create_internals();
-      out->set_exposed(true);
+      EntityConfig config;
+      config.expose_plug = true;
+      out->create_internals(config);
       out->initialize_wires();
     }
   }

@@ -3,7 +3,7 @@
 #include <base/glewhelper/glewhelper.h>
 #include <ngsversion.h>
 
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 #include <entities/guientities.h>
 #include <components/computes/compute.h>
 #include <components/computes/groupnodecompute.h>
@@ -114,7 +114,7 @@ void NodeGraphController::create_mqtt_group_node(bool centered) {
 
 // Create interface nodes.
 void NodeGraphController::create_input_node(bool centered) {
-  _manipulator->create_node(centered, EntityDID::kInputNodeEntity);
+  _manipulator->create_input_node(centered, QJsonValue(123));
 }
 void NodeGraphController::create_output_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kOutputNodeEntity);

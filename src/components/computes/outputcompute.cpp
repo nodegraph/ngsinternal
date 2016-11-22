@@ -1,7 +1,7 @@
 #include <components/computes/outputcompute.h>
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/deploader.h>
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 
 namespace ngs {
 

@@ -4,7 +4,7 @@
 
 #include <base/objectmodel/deploader.h>
 
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 #include <entities/entityinstancer.h>
 
 #include <guicomponents/quick/basenodegraphmanipulator.h>
@@ -126,9 +126,10 @@ Entity* Compute::create_input(const std::string& name, const QJsonValue& value, 
   assert(!inputs_space->get_child(name));
 
   InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, EntityDID::kInputEntity, name));
-  input->create_internals();
-  input->set_exposed(exposed);
-  input->set_unconnected_value(value);
+  EntityConfig config;
+  config.expose_plug = exposed;
+  config.unconnected_value = value;
+  input->create_internals(config);
   return input;
 }
 
@@ -140,8 +141,9 @@ Entity* Compute::create_output(const std::string& name, bool exposed) {
   assert(!outputs_space->get_child(name));
 
   OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, EntityDID::kOutputEntity, name));
-  output->create_internals();
-  output->set_exposed(exposed);
+  EntityConfig config;
+  config.expose_plug = exposed;
+  output->create_internals(config);
   return output;
 }
 

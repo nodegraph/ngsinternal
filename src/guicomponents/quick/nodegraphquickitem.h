@@ -4,7 +4,7 @@
 #include <base/device/devicebasictypesgl.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 #include <base/device/transforms/mouseinfo.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/comms/qmltypes.h>

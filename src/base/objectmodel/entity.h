@@ -1,7 +1,7 @@
 #pragma once
 #include <base/objectmodel/objectmodel_export.h>
 #include <base/objectmodel/component.h>
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 //#include <base/utils/path.h>
 
 #include <cassert>
@@ -10,6 +10,8 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+
+#include <QtCore/QJsonValue>
 
 namespace ngs {
 
@@ -50,6 +52,18 @@ class SimpleLoader;
 // A bad example is a LinkHead and LinkTail, which represents the head and tail of
 // a link. When on of these is destroyed, it leaves the node graph in an invalid state.
 
+struct EntityConfig {
+  EntityConfig() {
+    visible = true;
+    expose_plug = true;
+    compute_did = ComponentDID::kInvalidComponent;
+  }
+  bool visible;
+  bool expose_plug;
+  ComponentDID compute_did;
+  QJsonValue unconnected_value;
+};
+
 class OBJECTMODEL_EXPORT Entity {
  public:
 
@@ -87,7 +101,7 @@ class OBJECTMODEL_EXPORT Entity {
 
   // Creates internal components. The ids argument can contain ids for sub entities or components.
   // It is up to the derived entity classes what the ids actually mean.
-  virtual void create_internals(const std::vector<size_t>& ids = std::vector<size_t>()) {}
+  virtual void create_internals(const EntityConfig& configs = EntityConfig()) {}
 
   // Our parent.
   Entity* get_parent() const;

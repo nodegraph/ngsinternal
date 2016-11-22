@@ -24,6 +24,7 @@ BaseListPage {
     list_view.height: app_settings.menu_page_height - edit_bar.height
     
     property var resizable: false
+    property var array_or_object: page.Stack.view && (page.Stack.view.depth > 1)
     
     function get_stack_view() {
     	return Stack.view
@@ -61,7 +62,7 @@ BaseListPage {
         Item {Layout.fillWidth: true}
         AppLabelButton {
             text: "add"
-            visible: page.resizable
+            visible: array_or_object
             onClicked: {
                 on_add()
             }
@@ -84,7 +85,7 @@ BaseListPage {
         }
         AppLabelButton {
             text: "remove"
-            visible: page.resizable
+            visible: array_or_object
             onClicked: {
                 on_remove()
             }

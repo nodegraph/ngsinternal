@@ -36,7 +36,7 @@
 #include <components/interactions/graphbuilder.h>
 
 #include <entities/factory.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 #include <entities/componentinstancer.h>
 
 #include <guicomponents/computes/browsercomputes.h>

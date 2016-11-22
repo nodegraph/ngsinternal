@@ -1,5 +1,5 @@
-#include <entities/entityids.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/entityids.h>
+#include <base/objectmodel/componentids.h>
 
 namespace ngs {
 

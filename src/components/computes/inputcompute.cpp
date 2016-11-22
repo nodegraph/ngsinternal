@@ -1,4 +1,4 @@
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 
 #include <base/objectmodel/deploader.h>
 
@@ -6,7 +6,7 @@
 #include <components/computes/outputcompute.h>
 #include <components/computes/jsonutils.h>
 
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 
 #include <components/compshapes/linkshape.h>
 

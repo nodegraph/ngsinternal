@@ -1,4 +1,4 @@
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 #include <base/utils/stringutil.h>
 
 #include <iostream>

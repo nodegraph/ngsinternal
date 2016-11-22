@@ -1,8 +1,8 @@
 #pragma once
 #include <guicomponents/quick/quick_export.h>
 #include <base/objectmodel/component.h>
-#include <entities/componentids.h>
-#include <entities/entityids.h>
+#include <base/objectmodel/componentids.h>
+#include <base/objectmodel/entityids.h>
 
 class QJsonObject;
 class QJsonValue;
@@ -55,6 +55,7 @@ class BaseNodeGraphManipulator: public Component {
   virtual void create_compute_node(bool centered, ComponentDID compute_did) = 0;
   virtual void create_user_macro_node(bool centered, const std::string& macro_name) = 0;
   virtual void create_app_macro_node(bool centered, const std::string& macro_name) = 0;
+  virtual void create_input_node(bool centered, const QJsonValue& value) = 0;
 
   // Link Manipulation.
   virtual void destroy_link(Entity* input_entity) = 0;

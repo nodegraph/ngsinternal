@@ -1,7 +1,7 @@
 #pragma once
 #include <guicomponents/computes/guicomputes_export.h>
 #include <components/computes/groupnodecompute.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 #include <guicomponents/comms/message.h>
 
 // QT

@@ -2,7 +2,7 @@
 #include <guicomponents/comms/comms_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 
 #include <QtGui/QStandardItemModel>
 

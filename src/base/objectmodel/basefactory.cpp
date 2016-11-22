@@ -36,8 +36,18 @@ Component* BaseFactory::create_component(Entity* entity, ComponentDID did) const
 }
 
 Entity* BaseFactory::create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name) const {
-  Entity* e = instance_compute_node(parent, compute_did, name);
-  e->create_internals();
+  Entity* e = instance_entity(parent, EntityDID::kComputeNodeEntity, name);
+  EntityConfig config;
+  config.compute_did = compute_did;
+  e->create_internals(config);
+  return e;
+}
+
+Entity* BaseFactory::create_input_node(Entity* parent, const QJsonValue& unconnected_value, const std::string& name) const {
+  Entity* e = instance_entity(parent, EntityDID::kInputNodeEntity, name);
+  EntityConfig config;
+  config.unconnected_value = unconnected_value;
+  e->create_internals(config);
   return e;
 }
 

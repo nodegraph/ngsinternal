@@ -1,6 +1,6 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 #include <components/compshapes/hitregion.h>
 #include <base/device/geometry/instancevertexattribute.h>
 #include <base/device/geometry/objectvertexattribute.h>

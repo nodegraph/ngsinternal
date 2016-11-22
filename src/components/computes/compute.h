@@ -1,7 +1,7 @@
 #pragma once
 #include <components/computes/computes_export.h>
 #include <components/computes/inputs.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 #include <guicomponents/comms/hintkeys.h>
 
 #include <base/objectmodel/component.h>

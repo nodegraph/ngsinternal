@@ -4,8 +4,8 @@
 #include <base/utils/permit.h>
 #include <base/utils/threadpool.h>
 
-#include <entities/entityids.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/entityids.h>
+#include <base/objectmodel/componentids.h>
 
 #include <components/compshapes/compshape.h>
 #include <components/compshapes/topology.h>

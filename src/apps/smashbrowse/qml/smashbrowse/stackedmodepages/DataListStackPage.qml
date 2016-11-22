@@ -96,7 +96,7 @@ BaseStackPage{
         // Get value info.
         var value = stack_page.get_value(path)
         var hints = stack_page.get_hints(path)
-        var value_type = hints[hint_key.kJSTypeHint]
+        var value_type = app_enums.determine_js_type(value)
 
 		// Push a page to get the name or index of the element to add.
         if (value_type == js_type.kObject) {
@@ -161,9 +161,10 @@ BaseStackPage{
         // Push an edit page according to the js type.
         var child_value = stack_page.get_value(child_path)
         var exposed = stack_page.get_exposed(child_path)
-        switch(child_hints[hint_key.kJSTypeHint]) {
+        var child_type = app_enums.determine_js_type(child_value)
+        switch(child_type) {
         case js_type.kString:
-        	if (child_hints.hasOwnProperty(hint_key.kMultiLineHint)) {
+        	if (child_hints && child_hints.hasOwnProperty(hint_key.kMultiLineHint)) {
         		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditMultiLinePage.qml", edit_data_list_stack_page, {})
 	            setup_edit_page(page, name, child_value, child_hints, exposed)
 	            stack_view.push_page(page)
@@ -179,7 +180,7 @@ BaseStackPage{
             stack_view.push_page(page)
             break
         case js_type.kNumber:
-            if (child_hints.hasOwnProperty(hint_key.kEnumHint)) {
+            if (child_hints && child_hints.hasOwnProperty(hint_key.kEnumHint)) {
                 var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
                 setup_edit_page(page, name, child_value, child_hints, exposed)
                 stack_view.push_page(page)
@@ -196,7 +197,7 @@ BaseStackPage{
             stack_page.edit_array(child_path[child_path.length-1], child_path);
             break
         default:
-            console.error("Error: DataListStackPage::on_edit_element encountered unknown js type:" + child_hints[hint_key.kJSTypeHint])
+            console.error("Error: DataListStackPage::on_edit_element encountered unknown js type:" + child_type)
             break
         }
     }
@@ -205,11 +206,12 @@ BaseStackPage{
         var path = stack_view.get_title_path(1, stack_view.depth)
         var value = get_value(path)
         var hints = get_hints(path)
+        var value_type = app_enums.determine_js_type(value)
 
-        if (hints[hint_key.kJSTypeHint] == js_type.kObject) {
+        if (value_type == js_type.kObject) {
             delete value[name]
             set_value(path, value)
-        } else if (hints[hint_key.kJSTypeHint] == js_type.kArray) {
+        } else if (value_type == js_type.kArray) {
             value.splice(Number(name),1)
             set_value(path, value)
         }
@@ -229,9 +231,13 @@ BaseStackPage{
             if (child_hints.hasOwnProperty(hint_key.kEnumHint)) {
                 page.set_enum_type(child_hints[hint_key.kEnumHint])
             }
-            if (child_hints.hasOwnProperty(hint_key.kElementResizableHint)) {
-                page.resizable = true
+            var child_type = app_enums.determine_js_type(child_value)
+            if (child_type == js_type.kArray || child_type == js_type.kObject) {
+            	page.resizable = true
             }
+            //if (child_hints.hasOwnProperty(hint_key.kElementResizableHint)) {
+            //    page.resizable = true
+            //}
             if (child_hints.hasOwnProperty(hint_key.kDescriptionHint)) {
                 page.set_description(child_hints[hint_key.kDescriptionHint])
             } else {
@@ -254,40 +260,6 @@ BaseStackPage{
         // Get value info.
         var parent_value = stack_page.get_value(path)
         var parent_type = app_enums.determine_js_type(parent_value)
-
-        // Hints are mandatory on objects or arrays.
-        //var hints = stack_page.get_hints(path)
-        //if (!hints) {
-        //    console.error('Error: add_element requires hints')
-        //    return
-        //}
-
-        // A resizable hint is needed to be resizable.
-        //var resizable = hints[hint_key.kElementResizableHint]
-        //if (!resizable) {
-        //    console.error('Error: add_element requires resizable hints')
-        //    return
-        //}
-
-        // All parameters should have a js type.
-        //var value_type = hints[hint_key.kJSTypeHint]
-        //if (value_type === undefined) {
-        //    console.error('Error: add_element requires js type hints')
-        //    return
-        //}
-
-        // Arrays and Objects should have an element js type.
-        //var element_value_type = hints[hint_key.kElementJSTypeHint]
-        //if (element_value_type === undefined) {
-        //    console.error('Error: add_element requires element js type hints')
-        //    return
-        //}
-
-        // Only arrays and objects can be resized.
-        //if ((value_type != js_type.kArray) && (value_type != js_type.kObject)) {
-        //    console.error('Error: add_element requires an array or an object')
-        //    return
-        //}
 
         // Add a new element.
         if (parent_type == js_type.kArray) {
@@ -336,39 +308,41 @@ BaseStackPage{
     // --------------------------------------------------------------------------------------------------
 
     function get_hints(path) {
-        // Child path.
-        var child_path = path
+    	return app_utils.get_sub_object(_hints, path)
+    
+//        // Child path.
+//        var child_path = path
 
-        // Parent path.
-        var parent_path = child_path.slice()
-        parent_path.pop()
+//        // Parent path.
+//        var parent_path = child_path.slice()
+//        parent_path.pop()
 
-        // Parent hints.
-        var parent_hints = app_utils.get_sub_object(_hints, parent_path)
+//        // Parent hints.
+//        var parent_hints = app_utils.get_sub_object(_hints, parent_path)
 
-        // Determine the child hints.
-        // If the parent hints contains child element hints then we must use those
-        // exclusively instead of the hints at the child. The child will generally
-        // not have any hints in this case.
-        var child_hints = {}
-        if (parent_hints && parent_hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
-            child_hints[hint_key.kJSTypeHint] = parent_hints[hint_key.kElementJSTypeHint]
-            // Check for other child element hints.
-            if (parent_hints.hasOwnProperty(hint_key.kElementEnumHint)) {
-                child_hints[hint_key.kEnumHint] = parent_hints[hint_key.kElementEnumHint]
-            }
-        } else {
-            // Otherwise we grab the child hints using the child path.
-            child_hints = app_utils.get_sub_object(_hints, child_path)
-        }
+//        // Determine the child hints.
+//        // If the parent hints contains child element hints then we must use those
+//        // exclusively instead of the hints at the child. The child will generally
+//        // not have any hints in this case.
+//        var child_hints = {}
+//        if (parent_hints && parent_hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
+//            child_hints[hint_key.kJSTypeHint] = parent_hints[hint_key.kElementJSTypeHint]
+//            // Check for other child element hints.
+//            if (parent_hints.hasOwnProperty(hint_key.kElementEnumHint)) {
+//                child_hints[hint_key.kEnumHint] = parent_hints[hint_key.kElementEnumHint]
+//            }
+//        } else {
+//            // Otherwise we grab the child hints using the child path.
+//            child_hints = app_utils.get_sub_object(_hints, child_path)
+//        }
         
-        // If we don't have child hints, then we add in add least the js type.
-        if (!child_hints) {
-        	var value = get_value(path)
-        	child_hints = {}
-        	child_hints[hint_key.kJSTypeHint] = app_enums.determine_js_type(value)
-        }
-        return child_hints
+//        // If we don't have child hints, then we add in add least the js type.
+//        if (!child_hints) {
+//        	var value = get_value(path)
+//        	child_hints = {}
+//        	child_hints[hint_key.kJSTypeHint] = app_enums.determine_js_type(value)
+//        }
+//        return child_hints
     }
     
     // --------------------------------------------------------------------------------------------------
@@ -410,7 +384,7 @@ BaseStackPage{
     	if (_allow_edits) {
     		var hints = get_hints(path)
     		if (hints) {
-    			value_type = hints[hint_key.kJSTypeHint]
+    			//value_type = hints[hint_key.kJSTypeHint]
     			// Use the hints to get a more descriptive string representation.
 				if (hints.hasOwnProperty(hint_key.kEnumHint)) {
 		    		return app_enums.get_enum_hint_value_text(hints[hint_key.kEnumHint], value)
@@ -448,14 +422,14 @@ BaseStackPage{
         var value = get_value(path)
     	var value_type = app_enums.determine_js_type(value)
     	
-    	if (_allow_edits) {
-    		var hints = get_hints(path)
-    		if (hints) {
-    			console.log("xxxxxxxxxxxxxxxxxxxxxxx: " + JSON.stringify(hints))
-    			value_type = hints[hint_key.kJSTypeHint]
-    			console.log("value type: " + value_type)
-    		}
-    	}
+//    	if (_allow_edits) {
+//    		var hints = get_hints(path)
+//    		if (hints) {
+//    			console.log("xxxxxxxxxxxxxxxxxxxxxxx: " + JSON.stringify(hints))
+//    			value_type = hints[hint_key.kJSTypeHint]
+//    			console.log("value type: " + value_type)
+//    		}
+//    	}
     	
         switch(value_type) {
         case js_type.kString:
@@ -487,9 +461,9 @@ BaseStackPage{
     // Push next model on the stack.
     function push_by_model(title, model, hints) {
         var list_page = stack_view.create_page("DataListPage")
-        if (hints && hints.hasOwnProperty(hint_key.kElementResizableHint)) {
-        	list_page.resizable = true
-        }
+        //if (hints && hints.hasOwnProperty(hint_key.kElementResizableHint)) {
+        //	list_page.resizable = true
+        //}
         stack_view.push_by_components(title, list_page, model)
     }
 

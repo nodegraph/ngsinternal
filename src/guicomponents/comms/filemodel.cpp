@@ -14,7 +14,7 @@
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 #include <entities/guientities.h>
 
 #include <cstddef>

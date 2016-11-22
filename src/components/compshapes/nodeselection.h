@@ -1,8 +1,8 @@
 #pragma once
 #include <components/compshapes/compshapes_export.h>
 #include <base/objectmodel/component.h>
-#include <entities/componentids.h>
-#include <entities/entityids.h>
+#include <base/objectmodel/componentids.h>
+#include <base/objectmodel/entityids.h>
 #include <base/objectmodel/dep.h>
 
 #include <string>

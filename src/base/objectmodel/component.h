@@ -6,7 +6,7 @@
 #include <base/objectmodel/depset.h>
 #include <base/utils/path.h>
 
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 
 #include <unordered_set>
 #include <unordered_map>

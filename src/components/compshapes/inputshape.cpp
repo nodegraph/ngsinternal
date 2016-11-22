@@ -33,9 +33,9 @@ const float InputShape::plug_offset = 10;
 InputShape::InputShape(Entity* entity)
     : CompShape(entity, kDID()),
       _node_shape(this),
-      _inputs(this) {
+      _input_topo(this) {
   get_dep_loader()->register_fixed_dep(_node_shape, Path({"..",".."}));
-  get_dep_loader()->register_fixed_dep(_inputs, Path({"..",".."}));
+  get_dep_loader()->register_fixed_dep(_input_topo, Path({"..",".."}));
 }
 
 InputShape::~InputShape() {
@@ -43,7 +43,7 @@ InputShape::~InputShape() {
 
 bool InputShape::is_exposed() const {
   external();
-  size_t index = _inputs->get_exposed_index(get_name());
+  size_t index = _input_topo->get_exposed_index(get_name());
   if (index == -1) {
     return false;
   }
@@ -57,7 +57,7 @@ HitRegion InputShape::hit_test(const glm::vec2& point) const {
 
 bool InputShape::update_state() {
   internal();
-  size_t exposed_index = _inputs->get_exposed_index(get_name());
+  size_t exposed_index = _input_topo->get_exposed_index(get_name());
   if(exposed_index == -1) {
     _quads.resize(0); // Empty out our quads if we're not visible.
     return true;
@@ -77,7 +77,7 @@ bool InputShape::update_state() {
   poly.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
-  size_t num_exposed = _inputs->get_num_exposed();
+  size_t num_exposed = _input_topo->get_num_exposed();
 
   float min_x(node_min.x);
   float max_x(node_max.x);

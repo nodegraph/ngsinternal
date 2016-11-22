@@ -1,7 +1,7 @@
 #include "groupnodeshape.h"
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/outputshape.h>
 

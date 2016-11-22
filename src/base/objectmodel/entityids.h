@@ -1,5 +1,5 @@
 #pragma once
-#include <entities/entities_export.h>
+#include <base/objectmodel/objectmodel_export.h>
 #include <string>
 
 namespace ngs {
@@ -91,8 +91,8 @@ enum class EntityDID: size_t {
 };
 
 // Returns the derived class name as a string.
-ENTITIES_EXPORT const char* get_entity_did_name(EntityDID did);
+OBJECTMODEL_EXPORT const char* get_entity_did_name(EntityDID did);
 
 // Returns a more user friendly name for the derived class.
-ENTITIES_EXPORT std::string get_entity_user_did_name(EntityDID did);
+OBJECTMODEL_EXPORT std::string get_entity_user_did_name(EntityDID did);
 }

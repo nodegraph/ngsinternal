@@ -1,7 +1,7 @@
 #pragma once
 #include <base/objectmodel/objectmodel_export.h>
 #include <base/objectmodel/component.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 
 #include <QtCore/QString>
 

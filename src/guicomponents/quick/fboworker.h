@@ -5,7 +5,7 @@
 #include <base/objectmodel/dep.h>
 #include <base/objectmodel/deploader.h>
 
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 
 // Qt.
 #include <QtCore/QObject>

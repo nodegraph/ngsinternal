@@ -2,7 +2,7 @@
 #include <components/computes/outputcompute.h>
 #include <base/objectmodel/deploader.h>
 #include <components/computes/flux.h>
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 #include <entities/entityinstancer.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 

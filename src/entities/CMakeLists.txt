@@ -1,8 +1,6 @@
 
 set(sources
-    componentids.cpp
 	componentinstancer.cpp
-	entityids.cpp
     entityinstancer.cpp
     factory.cpp
     guientities.cpp
@@ -10,9 +8,7 @@ set(sources
     )
     
 set(headers
-	componentids.h
 	componentinstancer.h
-	entityids.h
 	entityinstancer.h
 	factory.h
 	guientities.h

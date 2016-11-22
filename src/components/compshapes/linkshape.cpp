@@ -26,16 +26,20 @@ const float LinkShape::border_width = 10;
 
 LinkShape::LinkShape(Entity* entity)
     : SelectableShape(entity, kDID()),
-      //_input_compute(this),
       _input_shape(this),
       _output_shape(this),
       _interactive(false),
       _angle(0),
       _full_length(0),
-      _body_length(0){
+      _body_length(0) {
 
   get_dep_loader()->register_dynamic_dep(_input_shape);
   get_dep_loader()->register_dynamic_dep(_output_shape);
+
+  _bg_quad.state = 0;
+  _fg_quad.state = 0;
+  _bg_tri.state = 0;
+  _fg_tri.state = 0;
 }
 
 LinkShape::~LinkShape() {
@@ -63,8 +67,8 @@ bool LinkShape::update_state() {
   if (_output_shape) {
     _tail_pos = _output_shape->get_origin();
   }
-  update_positioning_helper(_head_pos, _tail_pos);
   update_state_helper();
+  update_positioning_helper(_head_pos, _tail_pos);
   return true;
 }
 
@@ -193,9 +197,9 @@ void LinkShape::update_positioning_helper(const glm::vec2& head_pos, const glm::
 
 void LinkShape::update_state_helper() {
   internal();
-  if (_interactive) {
-    return;
-  }
+//  if (_interactive) {
+//    return;
+//  }
   if ((!_input_shape) || (!_output_shape)) {
     return;
   }
@@ -203,6 +207,8 @@ void LinkShape::update_state_helper() {
   // Update our pannable state.
   bool pannable = _input_shape->is_pannable() && _output_shape->is_pannable();
   set_pannable(pannable);
+
+  std::cerr << "is pannable: " << pannable << "\n";
 
   if (pannable) {
     _bg_quad.state |= (selected_transform_bitmask);
@@ -243,6 +249,8 @@ HitRegion LinkShape::hit_test(const glm::vec2& point) const {
 void LinkShape::select(bool selected) {
   external();
   SelectableShape::select(selected);
+
+  std::cerr << "linkshape selected: " << selected << "\n";
   if (selected) {
     _bg_quad.state |= (selected_transform_bitmask|selected_color_bitmask);
     _fg_quad.state |= selected_transform_bitmask;

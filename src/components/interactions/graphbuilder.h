@@ -2,7 +2,7 @@
 #include <components/interactions/interactions_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 
 namespace ngs {
 

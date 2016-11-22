@@ -80,6 +80,11 @@ const glm::vec2& RectNodeShape::get_pos() const {
 
 bool RectNodeShape::update_state() {
   internal();
+
+  if (!is_visible()) {
+    return true;
+  }
+
   // Update our chars.
   update_text();
 
@@ -104,6 +109,9 @@ bool RectNodeShape::update_state() {
 
 void RectNodeShape::update_node_quads() {
   internal();
+  if (!is_visible()) {
+    return;
+  }
 
   // Bg Quad.
   glm::vec2 text_dim = _text_max - _text_min;

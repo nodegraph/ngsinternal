@@ -2,7 +2,7 @@
 #include <entities/entityinstancer.h>
 #include <entities/guientities.h>
 #include <entities/nonguientities.h>
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 
 namespace ngs {
 
@@ -16,9 +16,13 @@ Entity* EntityInstancer::instance(Entity* parent, EntityDID did, const std::stri
   std::string entity_name;
   if (name.empty()) {
     entity_name = get_entity_user_did_name(did);
+
   } else {
     entity_name = name;
   }
+
+  std::cerr << "entity name is : " << entity_name << "\n";
+
 #undef ENTITY_ENTRY1
 #undef ENTITY_ENTRY2
 #define ENTITY_ENTRY1(NAME) case EntityDID::k##NAME: return new_ff NAME(parent, entity_name);

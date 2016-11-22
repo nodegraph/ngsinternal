@@ -3,7 +3,7 @@
 #include <components/compshapes/outputshape.h>
 #include <components/compshapes/linkshape.h>
 
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/deploader.h>

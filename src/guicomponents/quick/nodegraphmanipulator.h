@@ -2,7 +2,7 @@
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
 #include <guicomponents/quick/quick_export.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 #include <base/objectmodel/dep.h>
 
 #include <guicomponents/quick/basenodegraphmanipulator.h>
@@ -78,6 +78,7 @@ Q_OBJECT
   virtual void create_compute_node(bool centered, ComponentDID compute_did);
   virtual void create_user_macro_node(bool centered, const std::string& macro_name);
   virtual void create_app_macro_node(bool centered, const std::string& macro_name);
+  virtual void create_input_node(bool centered, const QJsonValue& value);
 
 
   // Modify links.
@@ -177,6 +178,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void create_compute_node(bool centered, ComponentDID compute_did);
   virtual void create_user_macro_node(bool centered, const std::string& macro_name);
   virtual void create_app_macro_node(bool centered, const std::string& macro_name);
+  virtual void create_input_node(bool centered, const QJsonValue& value);
 
 
   // Modify links.

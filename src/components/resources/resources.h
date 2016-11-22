@@ -1,7 +1,7 @@
 #pragma once
 #include <base/objectmodel/component.h>
 #include <components/resources/resources_export.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 
 
 namespace ngs {

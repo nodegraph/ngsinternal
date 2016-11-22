@@ -1,7 +1,7 @@
 #pragma once
 #include <guicomponents/quick/quick_export.h>
 #include <base/objectmodel/component.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 #include <base/objectmodel/dep.h>
 
 #include <QtQuick/QQuickView>

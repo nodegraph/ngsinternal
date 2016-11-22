@@ -1,6 +1,6 @@
 #include <components/interactions/groupinteraction.h>
 #include <components/interactions/shapecanvas.h>
-#include <entities/entityids.h>
+#include <base/objectmodel/entityids.h>
 
 #include <base/device/transforms/keyinfo.h>
 #include <base/device/transforms/lens.h>

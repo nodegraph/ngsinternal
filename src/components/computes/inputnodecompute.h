@@ -19,6 +19,9 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
 
+  // Our default value.
+  virtual void set_default_value(const QJsonValue& value);
+
   // Our overrides.
   virtual void set_override(const QJsonValue& override);
   virtual const QJsonValue& get_override() const;

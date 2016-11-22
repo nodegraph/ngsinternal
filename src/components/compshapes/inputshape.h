@@ -55,7 +55,7 @@ class COMPSHAPES_EXPORT InputShape: public CompShape {
 
   // Our fixed deps.
   Dep<NodeShape> _node_shape;
-  Dep<InputTopology> _inputs;
+  Dep<InputTopology> _input_topo;
 
   // Our quad instances.
   std::vector<ShapeInstance> _quads;

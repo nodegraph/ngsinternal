@@ -25,6 +25,10 @@ bool InputNodeShape::update_state() {
   internal();
   RectNodeShape::update_state();
 
+  if (!is_visible()) {
+    return true;
+  }
+
   const CompPolyBorder& bounds = get_border();
   const PolyBorder& poly_bound = bounds.poly_bound_map.at(HitRegion::kNodeRegion);
   const std::vector<glm::vec2>& vertices = poly_bound.vertices;

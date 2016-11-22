@@ -23,8 +23,8 @@
 #include <components/compshapes/inputnodeshape.h>
 #include <components/compshapes/nodeselection.h>
 #include <components/compshapes/outputnodeshape.h>
-#include <entities/entityids.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/entityids.h>
+#include <base/objectmodel/componentids.h>
 #include <components/interactions/viewcontrols.h>
 #include <freetype-gl/texture-atlas.h>
 #include <guicomponents/computes/nodejsworker.h>

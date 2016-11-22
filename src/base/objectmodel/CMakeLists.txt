@@ -1,5 +1,7 @@
 
 set(sources
+    componentids.cpp
+    entityids.cpp
     appconfig.cpp
 	basefactory.cpp
 	component.cpp
@@ -10,6 +12,8 @@ set(sources
     )
     
 set(headers
+    componentids.h
+    entityids.h
     appconfig.h
 	basefactory.h
 	component.h

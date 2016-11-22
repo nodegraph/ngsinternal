@@ -7,7 +7,7 @@
 #include <cassert>
 
 #include <base/utils/simpletypes.h>
-#include <entities/componentids.h>
+#include <base/objectmodel/componentids.h>
 
 namespace ngs {
 
