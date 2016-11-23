@@ -77,15 +77,15 @@ void GraphBuilder::build_test_graph() {
 
   Entity* root_group = get_entity(Path({"root"}));
 
-  Entity* i1 = _factory->create_entity(root_group, EntityDID::kInputNodeEntity, "input one");
-  Entity* o1 = _factory->create_entity(root_group, EntityDID::kOutputNodeEntity, "output one");
+  Entity* i1 = _manipulator->create_input_node(true, 1, "input one", root_group);
+  Entity* o1 = _manipulator->create_node(true, EntityDID::kOutputNodeEntity, "output one", root_group);
 
   Entity* n1 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "middle node", root_group);
   Entity* n2 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "top node", root_group);
   Entity* n3 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "bottom node", root_group);
 
-  Entity* d1 = _factory->create_entity(root_group, EntityDID::kDotNodeEntity, "dot1");
-  Entity* d2 = _factory->create_entity(root_group, EntityDID::kDotNodeEntity, "dot2");
+  Entity* d1 = _manipulator->create_node(true, EntityDID::kDotNodeEntity, "dot1", root_group);
+  Entity* d2 = _manipulator->create_node(true, EntityDID::kDotNodeEntity, "dot2", root_group);
 
   Entity* n1_ipe1 = n1->get_entity(Path({".","inputs","a"}));
   Entity* n1_ipe2 = n1->get_entity(Path({".","inputs","b"}));
@@ -171,9 +171,9 @@ void GraphBuilder::build_test_graph() {
     Entity* n2 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "sub top node", sub_group);
     Entity* n3 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "sub bottom node", sub_group);
     Entity* n4 = _manipulator->create_compute_node(true, ComponentDID::kScriptNodeCompute, "NoOp", sub_group);
-
-    Entity* i1 = _factory->create_entity(sub_group, EntityDID::kInputNodeEntity, "input1");
-    Entity* o1 = _factory->create_entity(sub_group, EntityDID::kOutputNodeEntity, "output1");
+    Entity* i1 = _manipulator->create_input_node(true, 1, "input1", sub_group);
+    Entity* o1 = _manipulator->create_node(true, EntityDID::kOutputNodeEntity, "output1", sub_group);
+    o1->create_internals();
 
     Entity* n1_ipe1 = n1->get_entity(Path({".","inputs","a"}));
     Entity* n1_ipe2 = n1->get_entity(Path({".","inputs","b"}));

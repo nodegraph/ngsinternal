@@ -12,6 +12,8 @@ namespace ngs {
 class Entity;
 class Compute;
 
+
+
 class OBJECTMODEL_EXPORT BaseEntityInstancer {
  public:
   virtual ~BaseEntityInstancer();
@@ -19,12 +21,16 @@ class OBJECTMODEL_EXPORT BaseEntityInstancer {
   virtual EntityIID get_iid_for_did(EntityDID did) const = 0;
 };
 
+
+
 class OBJECTMODEL_EXPORT BaseComponentInstancer {
  public:
   virtual ~BaseComponentInstancer();
   virtual Component* instance(Entity* entity, ComponentDID did) const = 0;
   virtual ComponentIID get_iid_for_did(ComponentDID did) const = 0;
 };
+
+
 
 class OBJECTMODEL_EXPORT BaseFactory: public Component {
  public:
@@ -38,12 +44,6 @@ class OBJECTMODEL_EXPORT BaseFactory: public Component {
   virtual Component* instance_component(Entity* entity, ComponentDID did) const;
 
   virtual ComponentIID get_component_iid(ComponentDID did) const;
-
-  virtual Entity* create_entity(Entity* parent, EntityDID did, const std::string& name="") const;
-  virtual Component* create_component(Entity* entity, ComponentDID did) const;
-
-  //virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const;
-  //virtual Entity* create_input_node(Entity* parent, const QJsonValue& unconnected_value, const std::string& name) const;
 
   // Group navigation management.
   virtual void push_group(Entity* group);

@@ -21,8 +21,6 @@ Entity* EntityInstancer::instance(Entity* parent, EntityDID did, const std::stri
     entity_name = name;
   }
 
-  std::cerr << "entity name is : --" << entity_name << "--\n";
-
 #undef ENTITY_ENTRY1
 #undef ENTITY_ENTRY2
 #define ENTITY_ENTRY1(NAME) case EntityDID::k##NAME: return new_ff NAME(parent, entity_name);
