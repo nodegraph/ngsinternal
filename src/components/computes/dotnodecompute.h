@@ -15,7 +15,7 @@ class COMPUTES_EXPORT DotNodeCompute: public Compute {
   virtual ~DotNodeCompute();
 
   // Input and Outputs.
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   // Our hints.
   static QJsonObject init_hints();

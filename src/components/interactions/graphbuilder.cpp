@@ -13,13 +13,16 @@
 #include <components/interactions/shapecanvas.h>
 
 #include <guicomponents/comms/message.h>
+#include <guicomponents/quick/basenodegraphmanipulator.h>
 
 namespace ngs {
 
 GraphBuilder::GraphBuilder(Entity* entity)
     : Component(entity, kIID(), kDID()),
-      _factory(this) {
+      _factory(this),
+      _manipulator(this) {
   get_dep_loader()->register_fixed_dep(_factory, Path({}));
+  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
 }
 
 GraphBuilder::~GraphBuilder() {
@@ -44,7 +47,7 @@ void GraphBuilder::build_stress_graph() {
       std::string name = boost::lexical_cast<std::string>(num);
 
       // Build a node.
-      Entity* node = _factory->create_compute_node(root_group, ComponentDID::kMockNodeCompute, name);
+      Entity* node = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, name, root_group);
 
       // Position it.
       glm::vec2 pos(x * 300, y * 300);
@@ -77,9 +80,9 @@ void GraphBuilder::build_test_graph() {
   Entity* i1 = _factory->create_entity(root_group, EntityDID::kInputNodeEntity, "input one");
   Entity* o1 = _factory->create_entity(root_group, EntityDID::kOutputNodeEntity, "output one");
 
-  Entity* n1 = _factory->create_compute_node(root_group, ComponentDID::kMockNodeCompute, "middle node");
-  Entity* n2 = _factory->create_compute_node(root_group, ComponentDID::kMockNodeCompute, "top node");
-  Entity* n3 = _factory->create_compute_node(root_group, ComponentDID::kMockNodeCompute, "bottom node");
+  Entity* n1 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "middle node", root_group);
+  Entity* n2 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "top node", root_group);
+  Entity* n3 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "bottom node", root_group);
 
   Entity* d1 = _factory->create_entity(root_group, EntityDID::kDotNodeEntity, "dot1");
   Entity* d2 = _factory->create_entity(root_group, EntityDID::kDotNodeEntity, "dot2");
@@ -164,10 +167,10 @@ void GraphBuilder::build_test_graph() {
     pos.y = 700;
     get_dep<CompShape>(sub_group)->set_pos(pos);
 
-    Entity* n1 = _factory->create_compute_node(sub_group, ComponentDID::kMockNodeCompute, "sub middle node");
-    Entity* n2 = _factory->create_compute_node(sub_group, ComponentDID::kMockNodeCompute, "sub top node");
-    Entity* n3 = _factory->create_compute_node(sub_group, ComponentDID::kMockNodeCompute, "sub bottom node");
-    Entity* n4 = _factory->create_compute_node(sub_group, ComponentDID::kScriptNodeCompute, "NoOp");
+    Entity* n1 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "sub middle node", sub_group);
+    Entity* n2 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "sub top node", sub_group);
+    Entity* n3 = _manipulator->create_compute_node(true, ComponentDID::kMockNodeCompute, "sub bottom node", sub_group);
+    Entity* n4 = _manipulator->create_compute_node(true, ComponentDID::kScriptNodeCompute, "NoOp", sub_group);
 
     Entity* i1 = _factory->create_entity(sub_group, EntityDID::kInputNodeEntity, "input1");
     Entity* o1 = _factory->create_entity(sub_group, EntityDID::kOutputNodeEntity, "output1");

@@ -42,11 +42,8 @@ class OBJECTMODEL_EXPORT BaseFactory: public Component {
   virtual Entity* create_entity(Entity* parent, EntityDID did, const std::string& name="") const;
   virtual Component* create_component(Entity* entity, ComponentDID did) const;
 
-//  virtual Entity* instance_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const = 0;
-//  virtual Entity* instance_input_node(Entity* parent, const QJsonValue& default_value, const std::string& name="") const = 0;
-
-  virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const;
-  virtual Entity* create_input_node(Entity* parent, const QJsonValue& unconnected_value, const std::string& name) const;
+  //virtual Entity* create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name="") const;
+  //virtual Entity* create_input_node(Entity* parent, const QJsonValue& unconnected_value, const std::string& name) const;
 
   // Group navigation management.
   virtual void push_group(Entity* group);

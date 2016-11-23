@@ -11,7 +11,7 @@ class COMPUTES_EXPORT DataNodeCompute: public Compute {
   virtual ~DataNodeCompute();
 
   // Our topology.
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config);
 
   // Our hints.
   static QJsonObject init_hints();

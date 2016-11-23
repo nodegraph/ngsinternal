@@ -2,7 +2,7 @@
 #include <base/objectmodel/objectmodel_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/entityids.h>
-//#include <base/utils/path.h>
+#include <base/objectmodel/entityconfig.h>
 
 #include <cassert>
 #include <string>
@@ -52,17 +52,6 @@ class SimpleLoader;
 // A bad example is a LinkHead and LinkTail, which represents the head and tail of
 // a link. When on of these is destroyed, it leaves the node graph in an invalid state.
 
-struct EntityConfig {
-  EntityConfig() {
-    visible = true;
-    expose_plug = true;
-    compute_did = ComponentDID::kInvalidComponent;
-  }
-  bool visible;
-  bool expose_plug;
-  ComponentDID compute_did;
-  QJsonValue unconnected_value;
-};
 
 class OBJECTMODEL_EXPORT Entity {
  public:

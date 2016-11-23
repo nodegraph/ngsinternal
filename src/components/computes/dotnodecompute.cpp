@@ -14,11 +14,19 @@ DotNodeCompute::DotNodeCompute(Entity* entity)
 DotNodeCompute::~DotNodeCompute() {
 }
 
-void DotNodeCompute::create_inputs_outputs() {
+void DotNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
-  create_input("in", QJsonValue());
-  create_output("out");
+  Compute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = true;
+  c.unconnected_value = QJsonObject();
+
+  // The type of the input and output is set to be an object.
+  // This allows us to connect our input and output to any plug types,
+  // as the input computes will convert values automatically.
+  create_input("in", c);
+  create_output("out", c);
 }
 
 const QJsonObject DotNodeCompute::_hints = DotNodeCompute::init_hints();

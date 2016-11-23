@@ -11,7 +11,7 @@ class COMPUTES_EXPORT OutputNodeCompute: public Compute {
   virtual ~OutputNodeCompute();
 
   // Our topology.
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   // Our hints.
   static QJsonObject init_hints();

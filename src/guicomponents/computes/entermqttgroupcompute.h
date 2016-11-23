@@ -33,7 +33,7 @@ Q_OBJECT
   virtual ~EnterMQTTGroupCompute();
 
   // Inputs and Outputs.
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   // Hints.
   static QJsonObject init_hints();

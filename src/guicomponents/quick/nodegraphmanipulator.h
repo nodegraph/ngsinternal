@@ -65,21 +65,20 @@ Q_OBJECT
   virtual void dive_into_group(const std::string& child_group_name);
   virtual void surface_from_group();
 
-  // Builds and positions a compute node under the lowest node in the node graph.
-  // If possible it will also link the latest node with the lowest.
-  Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
-
   // Update inputs and outputs configuration for the gui side.
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
 
   // Node creation.
-  virtual void create_node(bool centered, EntityDID entity_did);
-  virtual void create_compute_node(bool centered, ComponentDID compute_did);
-  virtual void create_user_macro_node(bool centered, const std::string& macro_name);
-  virtual void create_app_macro_node(bool centered, const std::string& macro_name);
-  virtual void create_input_node(bool centered, const QJsonValue& value);
+  virtual Entity* create_node(bool centered, EntityDID entity_did, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_compute_node(bool centered, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name = "", Entity* group_entity=NULL);
 
+  // Link a node.
+  virtual void link_to_closest_node(Entity* node);
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);
@@ -107,9 +106,6 @@ private slots:
   virtual void finish_creating_node(Entity* entity, bool centered);
 
   void prune_clean_or_dead();
-
-  Entity* build_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
-  void link(Entity* downstream);
 
   Entity* _app_root;
   Dep<BaseFactory> _factory;
@@ -166,20 +162,20 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void dive_into_group(const std::string& child_group_name);
   virtual void surface_from_group();
 
-  // Build and link a compute node.
-  virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state);
-
   // Update inputs and outputs configuration for the gui side.
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering);
 
   // Node creation.
-  virtual void create_node(bool centered, EntityDID entity_did);
-  virtual void create_compute_node(bool centered, ComponentDID compute_did);
-  virtual void create_user_macro_node(bool centered, const std::string& macro_name);
-  virtual void create_app_macro_node(bool centered, const std::string& macro_name);
-  virtual void create_input_node(bool centered, const QJsonValue& value);
+  virtual Entity* create_node(bool centered, EntityDID entity_did, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_compute_node(bool centered, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name = "", Entity* group_entity=NULL);
 
+  // Link a node.
+  virtual void link_to_closest_node(Entity* node);
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);

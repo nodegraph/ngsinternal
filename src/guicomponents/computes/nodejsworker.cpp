@@ -510,7 +510,8 @@ void NodeJSWorker::receive_chain_state_task(std::function<void(const QJsonObject
 }
 
 void NodeJSWorker::build_compute_node_task(ComponentDID compute_did) {
-  Entity* node = _manipulator->build_and_link_compute_node(compute_did, _chain_state);
+  Entity* node = _manipulator->create_browser_node(true, compute_did, _chain_state);
+  _manipulator->link_to_closest_node(node);
   _manipulator->set_ultimate_targets(node, false);
 }
 

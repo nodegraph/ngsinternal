@@ -18,7 +18,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   BrowserCompute(Entity* entity, ComponentDID did);
   virtual ~BrowserCompute();
 
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   virtual void receive_chain_state(const QJsonObject& chain_state);
 
@@ -73,7 +73,7 @@ class GUICOMPUTES_EXPORT NavigateToCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, NavigateToCompute);
   NavigateToCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -95,7 +95,7 @@ class GUICOMPUTES_EXPORT SwitchToIFrameCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, SwitchToIFrameCompute);
   SwitchToIFrameCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -108,7 +108,7 @@ class GUICOMPUTES_EXPORT CreateSetFromValuesCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, CreateSetFromValuesCompute);
   CreateSetFromValuesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -121,7 +121,7 @@ class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, CreateSetFromTypeCompute);
   CreateSetFromTypeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -134,7 +134,7 @@ class GUICOMPUTES_EXPORT DeleteSetCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, DeleteSetCompute);
   DeleteSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -147,7 +147,7 @@ class GUICOMPUTES_EXPORT ShiftSetCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, ShiftSetCompute);
   ShiftSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -160,7 +160,7 @@ class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, MouseActionCompute);
   MouseActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -173,7 +173,7 @@ class GUICOMPUTES_EXPORT StartMouseHoverActionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, StartMouseHoverActionCompute);
   StartMouseHoverActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -194,7 +194,7 @@ class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, TextActionCompute);
   TextActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -207,7 +207,7 @@ class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, ElementActionCompute);
   ElementActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -223,7 +223,7 @@ class GUICOMPUTES_EXPORT ExpandSetCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, ExpandSetCompute);
   ExpandSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -236,7 +236,7 @@ class GUICOMPUTES_EXPORT MarkSetCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, MarkSetCompute);
   MarkSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -249,7 +249,7 @@ class GUICOMPUTES_EXPORT UnmarkSetCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, UnmarkSetCompute);
   UnmarkSetCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -270,7 +270,7 @@ class GUICOMPUTES_EXPORT ShrinkSetToSideCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, ShrinkSetToSideCompute);
   ShrinkSetToSideCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -283,7 +283,7 @@ class GUICOMPUTES_EXPORT ShrinkAgainstMarkedCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, ShrinkAgainstMarkedCompute);
   ShrinkAgainstMarkedCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;

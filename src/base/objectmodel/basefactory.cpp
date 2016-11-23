@@ -35,21 +35,21 @@ Component* BaseFactory::create_component(Entity* entity, ComponentDID did) const
   return c;
 }
 
-Entity* BaseFactory::create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name) const {
-  Entity* e = instance_entity(parent, EntityDID::kComputeNodeEntity, name);
-  EntityConfig config;
-  config.compute_did = compute_did;
-  e->create_internals(config);
-  return e;
-}
+//Entity* BaseFactory::create_compute_node(Entity* parent, ComponentDID compute_did, const std::string& name) const {
+//  Entity* e = instance_entity(parent, EntityDID::kComputeNodeEntity, name);
+//  EntityConfig config;
+//  config.compute_did = compute_did;
+//  e->create_internals(config);
+//  return e;
+//}
 
-Entity* BaseFactory::create_input_node(Entity* parent, const QJsonValue& unconnected_value, const std::string& name) const {
-  Entity* e = instance_entity(parent, EntityDID::kInputNodeEntity, name);
-  EntityConfig config;
-  config.unconnected_value = unconnected_value;
-  e->create_internals(config);
-  return e;
-}
+//Entity* BaseFactory::create_input_node(Entity* parent, const QJsonValue& unconnected_value, const std::string& name) const {
+//  Entity* e = instance_entity(parent, EntityDID::kInputNodeEntity, name);
+//  EntityConfig config;
+//  config.unconnected_value = unconnected_value;
+//  e->create_internals(config);
+//  return e;
+//}
 
 void BaseFactory::push_group(Entity* group) {
   internal();

@@ -26,11 +26,16 @@ BaseHTTPCompute::BaseHTTPCompute(Entity* entity, ComponentDID did)
 BaseHTTPCompute::~BaseHTTPCompute() {
 }
 
-void BaseHTTPCompute::create_inputs_outputs() {
+void BaseHTTPCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
-  create_input("in", QJsonObject());
-  create_output("out");
+  Compute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = true;
+  c.unconnected_value = QJsonObject();
+
+  create_input("in", c);
+  create_output("out", c);
 }
 
 void BaseHTTPCompute::init_hints(QJsonObject& m) {
@@ -68,13 +73,20 @@ void BaseHTTPCompute::on_get_outputs(const QJsonObject& chain_state) {
 
 //--------------------------------------------------------------------------------
 
-void HTTPCompute::create_inputs_outputs() {
+void HTTPCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BaseHTTPCompute::create_inputs_outputs();
-  create_input(Message::kURL, "http://httpbin.org/get", false);
-  create_input(Message::kPayload, "{\"alpha\": 1, \"beta\": 2}", false);
-  create_input(Message::kHTTPRequestMethod, 0, false);
-  create_input(Message::kOutputPropertyName, "reply", false);
+  BaseHTTPCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = "http://httpbin.org/get";
+  create_input(Message::kURL, c);
+  c.unconnected_value = "{\"alpha\": 1, \"beta\": 2}";
+  create_input(Message::kPayload, c);
+  c.unconnected_value = 0;
+  create_input(Message::kHTTPRequestMethod, c);
+  c.unconnected_value = "reply";
+  create_input(Message::kOutputPropertyName, c);
 }
 
 const QJsonObject HTTPCompute::_hints = HTTPCompute::init_hints();

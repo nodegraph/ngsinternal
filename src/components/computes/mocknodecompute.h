@@ -12,7 +12,7 @@ class COMPUTES_EXPORT MockNodeCompute: public Compute {
   MockNodeCompute(Entity* entity);
   virtual ~MockNodeCompute();
 
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
  protected:
 

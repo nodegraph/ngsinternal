@@ -18,7 +18,7 @@ class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNod
   virtual ~ScriptGroupNodeCompute();
 
   // Inputs and Outputs.
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   // Hints.
   static QJsonObject init_hints();

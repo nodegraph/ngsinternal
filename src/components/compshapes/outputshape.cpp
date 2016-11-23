@@ -31,9 +31,9 @@ const float OutputShape::plug_offset = 10.0f;
 OutputShape::OutputShape(Entity* entity)
     : CompShape(entity, kDID()),
       _node_shape(this),
-      _outputs(this){
+      _output_topo(this){
   get_dep_loader()->register_fixed_dep(_node_shape, Path({"..",".."}));
-  get_dep_loader()->register_fixed_dep(_outputs, Path({"..",".."}));
+  get_dep_loader()->register_fixed_dep(_output_topo, Path({"..",".."}));
 }
 
 OutputShape::~OutputShape() {
@@ -41,7 +41,7 @@ OutputShape::~OutputShape() {
 
 bool OutputShape::is_exposed() const {
   external();
-  size_t index = _outputs->get_exposed_index(get_name());
+  size_t index = _output_topo->get_exposed_index(get_name());
   if (index == -1) {
     return false;
   }
@@ -66,7 +66,7 @@ bool OutputShape::update_state() {
   ShapeInstance* bg = &_tris[0];
   ShapeInstance* fg = &_tris[1];
 
-  size_t exposed_index = _outputs->get_exposed_index(get_name());
+  size_t exposed_index = _output_topo->get_exposed_index(get_name());
 
   // Get the node bounds.
   const CompPolyBorder& bounds = _node_shape->get_border();
@@ -77,7 +77,7 @@ bool OutputShape::update_state() {
   poly.get_aa_bounds(node_min, node_max);
 
   // Calculate the positioning.
-  size_t num_exposed = _outputs->get_num_exposed();
+  size_t num_exposed = _output_topo->get_num_exposed();
 
   float min_x(node_min.x);
   float max_x(node_max.x);

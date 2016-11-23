@@ -37,15 +37,23 @@ EnterMQTTGroupCompute::~EnterMQTTGroupCompute() {
   delete_ff(_client);
 }
 
-void EnterMQTTGroupCompute::create_inputs_outputs() {
+void EnterMQTTGroupCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  EnterGroupCompute::create_inputs_outputs();
-  create_input(Message::kHostName, "", false);
-  create_input(Message::kHostAddress, "127.0.0.1", false);
-  create_input(Message::kPort, 1883, false);
-  create_input(Message::kUsername, "", false);
-  create_input(Message::kPassword, "", false);
-  create_input(Message::kClientID, "", false);
+  EnterGroupCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.visible = false;
+  c.expose_plug = false;
+  c.unconnected_value = "";
+  create_input(Message::kHostName, c);
+  c.unconnected_value = "127.0.0.1";
+  create_input(Message::kHostAddress, c);
+  c.unconnected_value = 1883;
+  create_input(Message::kPort, c);
+  c.unconnected_value = "";
+  create_input(Message::kUsername, c);
+  create_input(Message::kPassword, c);
+  create_input(Message::kClientID, c);
 }
 
 const QJsonObject EnterMQTTGroupCompute::_hints = EnterMQTTGroupCompute::init_hints();

@@ -4,6 +4,7 @@
 #include <base/objectmodel/componentids.h>
 #include <guicomponents/comms/hintkeys.h>
 
+#include <base/objectmodel/entityconfig.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
 
@@ -26,7 +27,7 @@ class COMPUTES_EXPORT Compute: public Component {
   Compute(Entity* entity, ComponentDID derived_id);
   virtual ~Compute();
 
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config);
   virtual void set_self_dirty(bool dirty);
 
   virtual const Dep<Inputs>& get_inputs() {return _inputs;}
@@ -63,8 +64,8 @@ class COMPUTES_EXPORT Compute: public Component {
   virtual void set_output(const std::string& name, const QJsonValue& value);
 
   // Plugs.
-  Entity* create_input(const std::string& name, const QJsonValue& value, bool exposed = true);
-  Entity* create_output(const std::string& name, bool exposed = true);
+  Entity* create_input(const std::string& name, const EntityConfig& config);
+  Entity* create_output(const std::string& name, const EntityConfig& config);
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
   Entity* get_outputs_space();

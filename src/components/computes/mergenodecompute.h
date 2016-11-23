@@ -14,7 +14,7 @@ class COMPUTES_EXPORT MergeNodeCompute: public Compute {
   virtual ~MergeNodeCompute();
 
   // Our topology.
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   // Our hints.
   static QJsonObject init_hints();

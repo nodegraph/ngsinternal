@@ -30,15 +30,25 @@ EnterFirebaseGroupCompute::EnterFirebaseGroupCompute(Entity* entity)
 EnterFirebaseGroupCompute::~EnterFirebaseGroupCompute() {
 }
 
-void EnterFirebaseGroupCompute::create_inputs_outputs() {
+void EnterFirebaseGroupCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  EnterGroupCompute::create_inputs_outputs();
-  create_input(Message::kApiKey, "AIzaSyCXGNlyRf5uk8Xk1bvKXUcA53TC6Lc3I-A", false);
-  create_input(Message::kAuthDomain, "test-project-91c10.firebaseapp.com", false);
-  create_input(Message::kDatabaseURL, "https://test-project-91c10.firebaseio.com/", false);
-  create_input(Message::kStorageBucket, "gs://test-project-91c10.appspot.com", false);
-  create_input(Message::kEmail, "your_email@some_place.com", false);
-  create_input(Message::kPassword, "your_password", false);
+  EnterGroupCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.visible = false;
+  c.expose_plug = false;
+  c.unconnected_value = "AIzaSyCXGNlyRf5uk8Xk1bvKXUcA53TC6Lc3I-A";
+  create_input(Message::kApiKey, c);
+  c.unconnected_value = "test-project-91c10.firebaseapp.com";
+  create_input(Message::kAuthDomain, c);
+  c.unconnected_value = "https://test-project-91c10.firebaseio.com/";
+  create_input(Message::kDatabaseURL, c);
+  c.unconnected_value = "gs://test-project-91c10.appspot.com";
+  create_input(Message::kStorageBucket, c);
+  c.unconnected_value = "your_email@some_place.com";
+  create_input(Message::kEmail, c);
+  c.unconnected_value = "your_password";
+  create_input(Message::kPassword, c);
 }
 
 const QJsonObject EnterFirebaseGroupCompute::_hints = EnterFirebaseGroupCompute::init_hints();

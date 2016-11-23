@@ -29,11 +29,16 @@ FirebaseCompute::FirebaseCompute(Entity* entity, ComponentDID did)
 FirebaseCompute::~FirebaseCompute() {
 }
 
-void FirebaseCompute::create_inputs_outputs() {
+void FirebaseCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
-  create_input("in", QJsonObject());
-  create_output("out");
+  Compute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = true;
+  c.unconnected_value = QJsonObject();
+
+  create_input("in", c);
+  create_output("out", c);
 }
 
 void FirebaseCompute::init_hints(QJsonObject& m) {
@@ -77,11 +82,18 @@ void FirebaseCompute::receive_chain_state(const QJsonObject& chain_state) {
 
 // -------------------------------------------------------------------------------------------------------------------------
 
-void FirebaseWriteDataCompute::create_inputs_outputs() {
+void FirebaseWriteDataCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  FirebaseCompute::create_inputs_outputs();
-  create_input(Message::kDataPath, "some/path", false);
-  create_input(Message::kValue, "hello there", false);
+  FirebaseCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = "some/path";
+
+  create_input(Message::kDataPath, c);
+
+  c.unconnected_value = "hello there";
+  create_input(Message::kValue, c);
 }
 
 const QJsonObject FirebaseWriteDataCompute::_hints = FirebaseWriteDataCompute::init_hints();
@@ -111,12 +123,21 @@ bool FirebaseWriteDataCompute::update_state() {
 
 // -------------------------------------------------------------------------------------------------------------------------
 
-void FirebaseReadDataCompute::create_inputs_outputs() {
+void FirebaseReadDataCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  FirebaseCompute::create_inputs_outputs();
-  create_input(Message::kDataPath, "some/path", false);
-  create_input(Message::kOutputPropertyName, "data", false);
-  create_input(Message::kListenForChanges, true, false);
+  FirebaseCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = "some/path";
+
+  create_input(Message::kDataPath, c);
+
+  c.unconnected_value = "data";
+  create_input(Message::kOutputPropertyName, c);
+
+  c.unconnected_value = true;
+  create_input(Message::kListenForChanges, c);
 }
 
 const QJsonObject FirebaseReadDataCompute::_hints = FirebaseReadDataCompute::init_hints();

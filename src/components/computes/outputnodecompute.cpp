@@ -16,10 +16,15 @@ OutputNodeCompute::OutputNodeCompute(Entity* entity):
 OutputNodeCompute::~OutputNodeCompute() {
 }
 
-void OutputNodeCompute::create_inputs_outputs() {
+void OutputNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
-  create_input("in", QJsonValue());
+  Compute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = true;
+  // We take the unconnected value from the config.
+
+  create_input("in", c);
 }
 
 const QJsonObject OutputNodeCompute::_hints = OutputNodeCompute::init_hints();

@@ -52,7 +52,7 @@ class COMPSHAPES_EXPORT OutputShape: public CompShape {
 
   // Our fixed deps.
   Dep<NodeShape> _node_shape;
-  Dep<OutputTopology> _outputs;
+  Dep<OutputTopology> _output_topo;
 
   // Our tri instances.
   std::vector<ShapeInstance> _tris;

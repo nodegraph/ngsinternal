@@ -42,20 +42,20 @@ class BaseNodeGraphManipulator: public Component {
   virtual void dive_into_group(const std::string& child_group_name) = 0;
   virtual void surface_from_group() = 0;
 
-  // Builds and positions a compute node under the lowest node in the node graph.
-  // If possible it will also link the latest node with the lowest.
-  virtual Entity* build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) = 0;
-
   // Update inputs and outputs configuration for the gui side.
   virtual void set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
   virtual void set_output_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) = 0;
 
   // Node creation.
-  virtual void create_node(bool centered, EntityDID entity_did) = 0;
-  virtual void create_compute_node(bool centered, ComponentDID compute_did) = 0;
-  virtual void create_user_macro_node(bool centered, const std::string& macro_name) = 0;
-  virtual void create_app_macro_node(bool centered, const std::string& macro_name) = 0;
-  virtual void create_input_node(bool centered, const QJsonValue& value) = 0;
+  virtual Entity* create_node(bool centered, EntityDID entity_did, const std::string& name = "", Entity* group_entity=NULL) = 0;
+  virtual Entity* create_compute_node(bool centered, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL) = 0;
+  virtual Entity* create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL) = 0;
+  virtual Entity* create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL) = 0;
+  virtual Entity* create_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL) = 0;
+  virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name = "", Entity* group_entity=NULL) = 0;
+
+  // Link a node.
+  virtual void link_to_closest_node(Entity* node) = 0;
 
   // Link Manipulation.
   virtual void destroy_link(Entity* input_entity) = 0;

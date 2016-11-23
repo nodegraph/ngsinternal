@@ -7,7 +7,7 @@
 namespace ngs {
 
 class BaseFactory;
-class Compute;
+class BaseNodeGraphManipulator;
 
 class INTERACTIONS_EXPORT GraphBuilder: public Component {
  public:
@@ -25,6 +25,7 @@ class INTERACTIONS_EXPORT GraphBuilder: public Component {
  private:
   // Our fixed deps.
   Dep<BaseFactory> _factory;
+  Dep<BaseNodeGraphManipulator> _manipulator;
 
 
 };

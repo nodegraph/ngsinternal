@@ -16,7 +16,7 @@ class COMPUTES_EXPORT InputCompute: public Compute  {
   virtual ~InputCompute();
 
   // We override to stop creating the inputs and outputs namespace.
-  virtual void create_inputs_outputs() {}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig()) {}
 
   // The unconnected value.
   void set_unconnected_value(const QJsonValue& value);

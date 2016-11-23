@@ -33,9 +33,9 @@ GroupNodeCompute::GroupNodeCompute(Entity* entity, ComponentDID did):
 GroupNodeCompute::~GroupNodeCompute() {
 }
 
-void GroupNodeCompute::create_inputs_outputs() {
+void GroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
+  Compute::create_inputs_outputs(config);
   create_namespace("links");
 }
 

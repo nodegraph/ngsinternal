@@ -22,10 +22,15 @@ ScriptGroupNodeCompute::ScriptGroupNodeCompute(Entity* entity):
 ScriptGroupNodeCompute::~ScriptGroupNodeCompute() {
 }
 
-void ScriptGroupNodeCompute::create_inputs_outputs() {
+void ScriptGroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  GroupNodeCompute::create_inputs_outputs();
-  create_input("script", "var delta = 99;\nset_output_value(\"output\", input.value + delta);\n", false);
+  GroupNodeCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = "var delta = 99;\nset_output_value(\"output\", input.value + delta);\n";
+
+  create_input("script", c);
 }
 
 const QJsonObject ScriptGroupNodeCompute::_hints = ScriptGroupNodeCompute::init_hints();

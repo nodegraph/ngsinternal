@@ -18,7 +18,7 @@ class GUICOMPUTES_EXPORT FirebaseCompute: public Compute {
   FirebaseCompute(Entity* entity, ComponentDID did);
   virtual ~FirebaseCompute();
 
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   virtual void receive_chain_state(const QJsonObject& chain_state);
 
@@ -41,7 +41,7 @@ class GUICOMPUTES_EXPORT FirebaseWriteDataCompute: public FirebaseCompute {
  public:
   COMPONENT_ID(Compute, FirebaseWriteDataCompute);
   FirebaseWriteDataCompute(Entity* entity): FirebaseCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;
@@ -54,7 +54,7 @@ class GUICOMPUTES_EXPORT FirebaseReadDataCompute: public FirebaseCompute {
  public:
   COMPONENT_ID(Compute, FirebaseReadDataCompute);
   FirebaseReadDataCompute(Entity* entity): FirebaseCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;

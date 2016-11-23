@@ -11,7 +11,7 @@ class GUICOMPUTES_EXPORT ScriptNodeCompute: public Compute  {
   ScriptNodeCompute(Entity* entity);
   virtual ~ScriptNodeCompute();
 
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;

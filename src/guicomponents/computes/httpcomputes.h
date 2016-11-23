@@ -17,7 +17,7 @@ class GUICOMPUTES_EXPORT BaseHTTPCompute: public Compute {
   BaseHTTPCompute(Entity* entity, ComponentDID did);
   virtual ~BaseHTTPCompute();
 
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   virtual void on_get_outputs(const QJsonObject& chain_state);
 
@@ -38,7 +38,7 @@ class GUICOMPUTES_EXPORT HTTPCompute: public BaseHTTPCompute {
  public:
   COMPONENT_ID(Compute, HTTPCompute);
   HTTPCompute(Entity* entity): BaseHTTPCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   // Hints.
   static QJsonObject init_hints();

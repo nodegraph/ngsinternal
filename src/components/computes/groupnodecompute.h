@@ -14,7 +14,7 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   GroupNodeCompute(Entity* entity, ComponentDID did = kDID());
   virtual ~GroupNodeCompute();
 
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   // Clean the group interface.
   virtual bool clean_inputs();

@@ -17,7 +17,7 @@ class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
   BaseMQTTCompute(Entity* entity, ComponentDID did);
   virtual ~BaseMQTTCompute();
 
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
   virtual void on_finished_task();
 
   static void init_hints(QJsonObject& m);
@@ -33,7 +33,7 @@ class GUICOMPUTES_EXPORT MQTTPublishCompute: public BaseMQTTCompute {
  public:
   COMPONENT_ID(Compute, MQTTPublishCompute);
   MQTTPublishCompute(Entity* entity): BaseMQTTCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   // Hints.
   static QJsonObject init_hints();
@@ -48,7 +48,7 @@ class GUICOMPUTES_EXPORT MQTTSubscribeCompute: public BaseMQTTCompute {
  public:
   COMPONENT_ID(Compute, MQTTSubscribeCompute);
   MQTTSubscribeCompute(Entity* entity): BaseMQTTCompute(entity, kDID()){}
-  virtual void create_inputs_outputs();
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
   virtual void on_finished_task();
 
   // Hints.

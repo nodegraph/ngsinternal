@@ -26,11 +26,16 @@ BaseMQTTCompute::BaseMQTTCompute(Entity* entity, ComponentDID did)
 BaseMQTTCompute::~BaseMQTTCompute() {
 }
 
-void BaseMQTTCompute::create_inputs_outputs() {
+void BaseMQTTCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
-  create_input("in", QJsonObject());
-  create_output("out");
+  Compute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = true;
+  c.unconnected_value = QJsonObject();
+
+  create_input("in", c);
+  create_output("out", c);
 }
 
 void BaseMQTTCompute::init_hints(QJsonObject& m) {
@@ -56,11 +61,16 @@ void BaseMQTTCompute::on_finished_task() {
 
 //--------------------------------------------------------------------------------
 
-void MQTTPublishCompute::create_inputs_outputs() {
+void MQTTPublishCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BaseMQTTCompute::create_inputs_outputs();
-  create_input(Message::kTopic, "topic", false);
-  create_input(Message::kMessage, "some message", false);
+  BaseMQTTCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = "topic";
+  create_input(Message::kTopic, c);
+  c.unconnected_value = "some message";
+  create_input(Message::kMessage, c);
 }
 
 const QJsonObject MQTTPublishCompute::_hints = MQTTPublishCompute::init_hints();
@@ -92,11 +102,16 @@ bool MQTTPublishCompute::update_state() {
 
 //--------------------------------------------------------------------------------
 
-void MQTTSubscribeCompute::create_inputs_outputs() {
+void MQTTSubscribeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BaseMQTTCompute::create_inputs_outputs();
-  create_input(Message::kTopic, "topic", false);
-  create_input(Message::kOutputPropertyName, "message", false);
+  BaseMQTTCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = "topic";
+  create_input(Message::kTopic, c);
+  c.unconnected_value = "message";
+  create_input(Message::kOutputPropertyName, c);
 }
 
 void MQTTSubscribeCompute::on_finished_task() {

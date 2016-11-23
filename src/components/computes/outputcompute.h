@@ -13,7 +13,7 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
   virtual ~OutputCompute();
 
   // We override to stop creating the inputs and outputs namespace.
-  virtual void create_inputs_outputs() {external();}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig()) {external();}
 
   // Exposure.
   void set_exposed(bool exposed);

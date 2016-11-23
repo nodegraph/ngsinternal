@@ -34,6 +34,8 @@ void remove_trailing(std::vector<std::string>& splits, const std::vector<std::st
 }
 
 std::string get_user_friendly_name(const std::string& name) {
+  std::cerr << "splitting name: " << name << "\n";
+
   // Split it.
   std::vector<std::string> splits = split_on_capitals(name);
 

@@ -21,7 +21,7 @@ Entity* EntityInstancer::instance(Entity* parent, EntityDID did, const std::stri
     entity_name = name;
   }
 
-  std::cerr << "entity name is : " << entity_name << "\n";
+  std::cerr << "entity name is : --" << entity_name << "--\n";
 
 #undef ENTITY_ENTRY1
 #undef ENTITY_ENTRY2

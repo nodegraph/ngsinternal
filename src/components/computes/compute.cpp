@@ -39,7 +39,7 @@ Compute::Compute(Entity* entity, ComponentDID derived_id)
 Compute::~Compute() {
 }
 
-void Compute::create_inputs_outputs() {
+void Compute::create_inputs_outputs(const EntityConfig& config) {
   external();
   create_namespace("inputs");
   create_namespace("outputs");
@@ -118,31 +118,34 @@ void Compute::set_output(const std::string& name, const QJsonValue& value) {
   _outputs.insert(name.c_str(), value);
 }
 
-Entity* Compute::create_input(const std::string& name, const QJsonValue& value, bool exposed) {
+Entity* Compute::create_input(const std::string& name, const EntityConfig& config) {
   external();
+
+  // Get the inputs namespace.
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* inputs_space = get_inputs_space();
+
   // Make sure the name doesn't exist already.
   assert(!inputs_space->get_child(name));
 
+  // Create the input.
   InputEntity* input = static_cast<InputEntity*>(factory->instance_entity(inputs_space, EntityDID::kInputEntity, name));
-  EntityConfig config;
-  config.expose_plug = exposed;
-  config.unconnected_value = value;
   input->create_internals(config);
   return input;
 }
 
-Entity* Compute::create_output(const std::string& name, bool exposed) {
+Entity* Compute::create_output(const std::string& name, const EntityConfig& config) {
   external();
+
+  // Get the outputs namespace.
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
   Entity* outputs_space = get_outputs_space();
+
   // Make sure the name doesn't exist already.
   assert(!outputs_space->get_child(name));
 
+  // Create the output.
   OutputEntity* output = static_cast<OutputEntity*>(factory->instance_entity(outputs_space, EntityDID::kOutputEntity, name));
-  EntityConfig config;
-  config.expose_plug = exposed;
   output->create_internals(config);
   return output;
 }

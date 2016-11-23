@@ -18,14 +18,26 @@ InputNodeCompute::InputNodeCompute(Entity* entity):
 InputNodeCompute::~InputNodeCompute() {
 }
 
-void InputNodeCompute::create_inputs_outputs() {
+void InputNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
-  QJsonObject data;
-  data.insert("value", 123);
-  create_input("default_value", data, false);
-  create_input("description", "", false);
-  create_output("out");
+  Compute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    // We take the unconnected value from the config.
+    create_input("default_value", c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "";
+    create_input("description", c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = true;
+    create_output("out", config);
+  }
 }
 
 const QJsonObject InputNodeCompute::_hints = InputNodeCompute::init_hints();

@@ -29,11 +29,16 @@ BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
 BrowserCompute::~BrowserCompute() {
 }
 
-void BrowserCompute::create_inputs_outputs() {
+void BrowserCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
-  create_input("in", QJsonObject());
-  create_output("out");
+  Compute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = true;
+  c.unconnected_value = QJsonObject();
+
+  create_input("in", c);
+  create_output("out", c);
 }
 
 void BrowserCompute::init_hints(QJsonObject& m) {
@@ -119,10 +124,14 @@ bool ResizeBrowserCompute::update_state(){
   return false;
 }
 
-void NavigateToCompute::create_inputs_outputs() {
+void NavigateToCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kURL, "", false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = "";
+  create_input(Message::kURL, c);
 }
 
 const QJsonObject NavigateToCompute::_hints = NavigateToCompute::init_hints();
@@ -158,10 +167,14 @@ bool NavigateRefreshCompute::update_state() {
   return false;
 }
 
-void SwitchToIFrameCompute::create_inputs_outputs() {
+void SwitchToIFrameCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kIFrame, "", false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = "";
+  create_input(Message::kIFrame, c);
 }
 
 const QJsonObject SwitchToIFrameCompute::_hints = SwitchToIFrameCompute::init_hints();
@@ -186,14 +199,26 @@ bool SwitchToIFrameCompute::update_state() {
   return false;
 }
 
-void CreateSetFromValuesCompute::create_inputs_outputs() {
+void CreateSetFromValuesCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kWrapType, 0, false);
-  QJsonArray string_arr;
-  string_arr.push_back("example");
-  create_input(Message::kTextValues, string_arr, false);
-  create_input(Message::kImageValues, string_arr, false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kWrapType, c);
+  }
+  {
+    QJsonArray string_arr;
+    string_arr.push_back("example");
+
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = string_arr;
+    create_input(Message::kTextValues, c);
+    create_input(Message::kImageValues, c);
+  }
 }
 
 const QJsonObject CreateSetFromValuesCompute::_hints = CreateSetFromValuesCompute::init_hints();
@@ -229,11 +254,15 @@ bool CreateSetFromValuesCompute::update_state() {
   return false;
 }
 
-void CreateSetFromTypeCompute::create_inputs_outputs() {
+void CreateSetFromTypeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
+  BrowserCompute::create_inputs_outputs(config);
 
-  create_input(Message::kWrapType, 0, false);
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = 0;
+
+  create_input(Message::kWrapType, c);
 
 }
 
@@ -259,10 +288,15 @@ bool CreateSetFromTypeCompute::update_state() {
   return false;
 }
 
-void DeleteSetCompute::create_inputs_outputs() {
+void DeleteSetCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = 0;
+
+  create_input(Message::kSetIndex, c);
 }
 
 const QJsonObject DeleteSetCompute::_hints = DeleteSetCompute::init_hints();
@@ -286,12 +320,17 @@ bool DeleteSetCompute::update_state() {
   return false;
 }
 
-void ShiftSetCompute::create_inputs_outputs() {
+void ShiftSetCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
-  create_input(Message::kDirection, 0, false);
-  create_input(Message::kWrapType, 0, false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = 0;
+
+  create_input(Message::kSetIndex, c);
+  create_input(Message::kDirection, c);
+  create_input(Message::kWrapType, c);
 }
 
 const QJsonObject ShiftSetCompute::_hints = ShiftSetCompute::init_hints();
@@ -323,16 +362,30 @@ bool ShiftSetCompute::update_state() {
   return false;
 }
 
-void MouseActionCompute::create_inputs_outputs() {
+void MouseActionCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
-  create_input(Message::kOverlayIndex, 0, false);
-  create_input(Message::kMouseAction, 0, false);
-  QJsonObject pos;
-  pos.insert("x", 0);
-  pos.insert("y", 0);
-  create_input(Message::kOverlayRelClickPos, pos, false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "";
+
+    create_input(Message::kSetIndex, c);
+    create_input(Message::kOverlayIndex, c);
+    create_input(Message::kMouseAction, c);
+  }
+  {
+    QJsonObject pos;
+    pos.insert("x", 0);
+    pos.insert("y", 0);
+
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = pos;
+
+    create_input(Message::kOverlayRelClickPos, c);
+  }
 }
 
 const QJsonObject MouseActionCompute::_hints = MouseActionCompute::init_hints();
@@ -367,15 +420,29 @@ bool MouseActionCompute::update_state() {
   return false;
 }
 
-void StartMouseHoverActionCompute::create_inputs_outputs() {
+void StartMouseHoverActionCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
-  create_input(Message::kOverlayIndex, 0, false);
-  QJsonObject pos;
-  pos.insert("x", 0);
-  pos.insert("y", 0);
-  create_input(Message::kOverlayRelClickPos, pos, false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+
+    create_input(Message::kSetIndex, c);
+    create_input(Message::kOverlayIndex, c);
+  }
+  {
+    QJsonObject pos;
+    pos.insert("x", 0);
+    pos.insert("y", 0);
+
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = pos;
+
+    create_input(Message::kOverlayRelClickPos, c);
+  }
 }
 
 const QJsonObject StartMouseHoverActionCompute::_hints = StartMouseHoverActionCompute::init_hints();
@@ -417,13 +484,24 @@ bool StopMouseHoverActionCompute::update_state() {
   return false;
 }
 
-void TextActionCompute::create_inputs_outputs() {
+void TextActionCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
-  create_input(Message::kOverlayIndex, 0, false);
-  create_input(Message::kTextAction, 0, false);
-  create_input(Message::kText, "", false); // Only used when the text action is set to send text.
+  BrowserCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+
+    create_input(Message::kSetIndex, c);
+    create_input(Message::kOverlayIndex, c);
+    create_input(Message::kTextAction, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "";
+    create_input(Message::kText, c);  // Only used when the text action is set to send text.
+  }
 }
 
 const QJsonObject TextActionCompute::_hints = TextActionCompute::init_hints();
@@ -457,15 +535,29 @@ bool TextActionCompute::update_state() {
   return false;
 }
 
-void ElementActionCompute::create_inputs_outputs() {
+void ElementActionCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
-  create_input(Message::kOverlayIndex, 0, false);
-  create_input(Message::kElementAction, 0, false);
-  create_input(Message::kOptionText, "", false); // Only used when the element action is set to select option from dropdown.
-  create_input(Message::kDirection, 0, false); // Only used when the element action is set to scroll.
-  create_input(Message::kTextDataName, "extracted_text", false); // Only used when the element action is set to get_text.
+  BrowserCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+
+    create_input(Message::kSetIndex, c);
+    create_input(Message::kOverlayIndex, c);
+    create_input(Message::kElementAction, c);
+    create_input(Message::kDirection, c);  // Only used when the element action is set to scroll.
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "";
+
+    create_input(Message::kOptionText, c); // Only used when the element action is set to select option from dropdown.
+
+    c.unconnected_value = "extracted_text";
+    create_input(Message::kTextDataName, c); // Only used when the element action is set to get_text.
+  }
 }
 
 const QJsonObject ElementActionCompute::_hints = ElementActionCompute::init_hints();
@@ -524,19 +616,32 @@ bool ElementActionCompute::update_state() {
   return false;
 }
 
-void ExpandSetCompute::create_inputs_outputs() {
+void ExpandSetCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
-  create_input(Message::kDirection, 0, false); // Only used when the element action is set to scroll.
-  QJsonObject match_criteria;
-  match_criteria.insert(Message::kMatchLeft, true);
-  match_criteria.insert(Message::kMatchRight, false);
-  match_criteria.insert(Message::kMatchTop, false);
-  match_criteria.insert(Message::kMatchBottom, false);
-  match_criteria.insert(Message::kMatchFont, true);
-  match_criteria.insert(Message::kMatchFontSize, true);
-  create_input(Message::kMatchCriteria, match_criteria, false);
+  BrowserCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+
+    create_input(Message::kSetIndex, c);
+    create_input(Message::kDirection, c);  // Only used when the element action is set to scroll.
+  }
+  {
+    QJsonObject match_criteria;
+    match_criteria.insert(Message::kMatchLeft, true);
+    match_criteria.insert(Message::kMatchRight, false);
+    match_criteria.insert(Message::kMatchTop, false);
+    match_criteria.insert(Message::kMatchBottom, false);
+    match_criteria.insert(Message::kMatchFont, true);
+    match_criteria.insert(Message::kMatchFontSize, true);
+
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = match_criteria;
+
+    create_input(Message::kMatchCriteria, c);
+  }
 }
 
 const QJsonObject ExpandSetCompute::_hints = ExpandSetCompute::init_hints();
@@ -567,10 +672,15 @@ bool ExpandSetCompute::update_state() {
   return false;
 }
 
-void MarkSetCompute::create_inputs_outputs() {
+void MarkSetCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = 0;
+
+  create_input(Message::kSetIndex, c);
 }
 
 const QJsonObject MarkSetCompute::_hints = MarkSetCompute::init_hints();
@@ -594,10 +704,15 @@ bool MarkSetCompute::update_state() {
   return false;
 }
 
-void UnmarkSetCompute::create_inputs_outputs() {
+void UnmarkSetCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = 0;
+
+  create_input(Message::kSetIndex, c);
 }
 
 const QJsonObject UnmarkSetCompute::_hints = UnmarkSetCompute::init_hints();
@@ -632,11 +747,16 @@ bool MergeSetsCompute::update_state() {
   return false;
 }
 
-void ShrinkSetToSideCompute::create_inputs_outputs() {
+void ShrinkSetToSideCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
-  create_input(Message::kDirection, 0, false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = 0;
+
+  create_input(Message::kSetIndex, c);
+  create_input(Message::kDirection, c);
 }
 
 const QJsonObject ShrinkSetToSideCompute::_hints = ShrinkSetToSideCompute::init_hints();
@@ -664,13 +784,27 @@ bool ShrinkSetToSideCompute::update_state() {
   return false;
 }
 
-void ShrinkAgainstMarkedCompute::create_inputs_outputs() {
+void ShrinkAgainstMarkedCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  BrowserCompute::create_inputs_outputs();
-  create_input(Message::kSetIndex, 0, false);
-  QJsonArray number_arr;
-  number_arr.push_back(0);
-  create_input(Message::kDirections, number_arr, false);
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+
+    create_input(Message::kSetIndex, c);
+  }
+  {
+    QJsonArray number_arr;
+    number_arr.push_back(0);
+
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = number_arr;
+
+    create_input(Message::kDirections, c);
+  }
 }
 
 const QJsonObject ShrinkAgainstMarkedCompute::_hints = ShrinkAgainstMarkedCompute::init_hints();

@@ -604,7 +604,7 @@ void FileModel::create_graph(const QVariantMap& arg) {
   // Most of the child entities of the root group entity are nodes.
   get_root_group()->destroy_all_children();
   // Except for the "inputs", "outputs", and "links" namespace entities. So we recreated them here.
-  get_dep<Compute>(get_root_group())->create_inputs_outputs();
+  get_dep<Compute>(get_root_group())->create_inputs_outputs(EntityConfig());
 
   // Although everything down from the root group is updated.
   // Everything from the app root is not updated. So we update it here.

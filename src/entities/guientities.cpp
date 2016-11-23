@@ -111,7 +111,7 @@ void create_default_enter(Entity* group) {
   ComputeNodeEntity* enter = new_ff ComputeNodeEntity(group, "group_context");
   EntityConfig config;
   config.compute_did = ComponentDID::kEnterGroupCompute;
-  config.visible = true;
+  config.visible = false;
   enter->create_internals(config);
 }
 
@@ -122,7 +122,7 @@ void create_default_exit(Entity* group) {
   ComputeNodeEntity* exit = new_ff ComputeNodeEntity(group, "exit_group_context");
   EntityConfig config;
   config.compute_did = ComponentDID::kExitGroupCompute;
-  config.visible = true;
+  config.visible = false;
   exit->create_internals(config);
 }
 
@@ -141,7 +141,7 @@ void surround_with_input_nodes(Entity* node) {
     // Create the input node.
     InputNodeEntity* input_node = new_ff InputNodeEntity(node->get_parent(), iter.first);
     EntityConfig config;
-    config.visible = true;
+    config.visible = false;
     input_node->create_internals(config);
 
     // Connect the input to the output from the input node.
@@ -343,7 +343,7 @@ void AppEntity::create_internals(const EntityConfig& config) {
 
 void GroupNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
   // Gui related.
@@ -416,7 +416,7 @@ void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>
 
 void ScriptGroupNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff ScriptGroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff ScriptGroupNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
   // Gui related.
@@ -431,7 +431,7 @@ void ScriptGroupNodeEntity::create_internals(const EntityConfig& config) {
 
 void BrowserGroupNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
   // Gui related.
@@ -453,7 +453,7 @@ void BrowserGroupNodeEntity::create_internals(const EntityConfig& config) {
 
 void FirebaseGroupNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
   // Gui related.
@@ -475,7 +475,7 @@ void FirebaseGroupNodeEntity::create_internals(const EntityConfig& config) {
 
 void MQTTGroupNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
   // Gui related.
@@ -503,7 +503,7 @@ void LinkEntity::create_internals(const EntityConfig& config) {
 
 void DotNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff DotNodeCompute(this))->create_inputs_outputs();
+  (new_ff DotNodeCompute(this))->create_inputs_outputs(config);
   // Gui components.
   new_ff DotNodeShape(this);
   new_ff Inputs(this);
@@ -514,7 +514,7 @@ void DotNodeEntity::create_internals(const EntityConfig& config) {
 
 void DataNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff DataNodeCompute(this))->create_inputs_outputs();
+  (new_ff DataNodeCompute(this))->create_inputs_outputs(config);
   // Gui components.
   new_ff InputNodeShape(this);
   new_ff Inputs(this);
@@ -526,22 +526,22 @@ void DataNodeEntity::create_internals(const EntityConfig& config) {
 void InputNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
   InputNodeCompute* node_compute = new_ff InputNodeCompute(this);
-  node_compute->create_inputs_outputs();
+  node_compute->create_inputs_outputs(config);
   node_compute->set_default_value(config.unconnected_value);
   new_ff Inputs(this);
   new_ff Outputs(this);
 
   // Gui components.
-  //if (config.visible) {
+  if (config.visible) {
     InputNodeShape* shape = new_ff InputNodeShape(this);
     new_ff InputTopology(this);
     new_ff OutputTopology(this);
-  //}
+  }
 }
 
 void OutputNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff OutputNodeCompute(this))->create_inputs_outputs();
+  (new_ff OutputNodeCompute(this))->create_inputs_outputs(config);
   // Gui components.
   new_ff OutputNodeShape(this);
   new_ff Inputs(this);
@@ -554,18 +554,18 @@ void ComputeNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
   // The compute component::did must be set with a call to set_compute_did before calling this method.
   Compute* c = static_cast<Compute*>(ComponentInstancer::instance_imp(this, config.compute_did));
-  c->create_inputs_outputs();
+  c->create_inputs_outputs(config);
 
   // Input and output gatherers.
   new_ff Inputs(this);
   new_ff Outputs(this);
 
   // Gui components.
-  //if (config.visible) {
-    RectNodeShape* r = new_ff RectNodeShape(this);
+  if (config.visible) {
+    new_ff RectNodeShape(this);
     new_ff InputTopology(this);
     new_ff OutputTopology(this);
-  //}
+  }
 }
 
 Compute* ComputeNodeEntity::get_compute() {
@@ -577,45 +577,55 @@ void InputEntity::create_internals(const EntityConfig& config) {
   InputCompute* ic = new_ff InputCompute(this);
   ic->set_exposed(config.expose_plug);
   ic->set_unconnected_value(config.unconnected_value);
+
   // Gui components.
-  new_ff InputShape(this);
-  // Our sub entities.
-  {
-    InputLabelEntity* label = new_ff InputLabelEntity(this, "label");
-    label->create_internals();
+  if (config.visible) {
+    new_ff InputShape(this);
+    // Our sub entities.
+    {
+      InputLabelEntity* label = new_ff InputLabelEntity(this, "label");
+      label->create_internals();
+    }
   }
 }
 
 void InputLabelEntity::create_internals(const EntityConfig& config) {
   // Our components.
   // Gui components.
-  new_ff InputLabelShape(this);
+  if (config.visible) {
+    new_ff InputLabelShape(this);
+  }
 }
 
 void OutputEntity::create_internals(const EntityConfig& config) {
   // Our components.
   OutputCompute* oc = new_ff OutputCompute(this);
   oc->set_exposed(config.expose_plug);
+
   // Gui components.
-  new_ff OutputShape(this);
-  // Our sub entities.
-  {
-    Entity* label = new_ff OutputLabelEntity(this, "label");
-    label->create_internals();
+  if (config.visible) {
+    new_ff OutputShape(this);
+    // Our sub entities.
+    {
+      Entity* label = new_ff OutputLabelEntity(this, "label");
+      label->create_internals();
+    }
   }
 }
 
 void OutputLabelEntity::create_internals(const EntityConfig& config) {
   // Our components.
   // Gui components.
-  new_ff OutputLabelShape(this);
+  if (config.visible) {
+    new_ff OutputLabelShape(this);
+  }
 }
 
 void UserMacroNodeEntity::create_internals(const EntityConfig& config) {
   // This was copied from GroupNodeEntity::create_internals().
 
   // Our components.
-  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
   // Gui related.

@@ -322,12 +322,6 @@ void NodeGraphManipulatorImp::surface_from_group() {
   _ng_quick->surface();
 }
 
-Entity* NodeGraphManipulatorImp::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
-  Entity* node = build_compute_node(compute_did, chain_state);
-  link(node);
-  return node;
-}
-
 void NodeGraphManipulatorImp::set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
   Dep<InputTopology> topo = get_dep<InputTopology>(entity);
   // If the entity doesn't have a gui, then the topo with be null.
@@ -364,51 +358,82 @@ void NodeGraphManipulatorImp::finish_creating_node(Entity* entity, bool centered
   _ng_quick->update();
 }
 
-void NodeGraphManipulatorImp::create_node(bool centered, EntityDID entity_did) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), entity_did);
+Entity* NodeGraphManipulatorImp::create_node(bool centered, EntityDID entity_did, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
+  Entity* e = _factory->instance_entity(group_entity, entity_did, name);
   e->create_internals();
   finish_creating_node(e, centered);
+  return e;
 }
 
-void NodeGraphManipulatorImp::create_compute_node(bool centered, ComponentDID compute_did) {
-  std::string name = get_component_user_did_name(compute_did);
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), EntityDID::kComputeNodeEntity, name);
+Entity* NodeGraphManipulatorImp::create_compute_node(bool centered, ComponentDID compute_did, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
+  std::string node_name = name;
+  if (node_name.empty()) {
+    node_name = get_component_user_did_name(compute_did);
+  }
+  Entity* e = _factory->instance_entity(group_entity, EntityDID::kComputeNodeEntity, node_name);
   EntityConfig config;
   config.compute_did = compute_did;
   e->create_internals(config);
   finish_creating_node(e, centered);
+  return e;
 }
 
-void NodeGraphManipulatorImp::create_user_macro_node(bool centered, const std::string& macro_name) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), EntityDID::kUserMacroNodeEntity);
+Entity* NodeGraphManipulatorImp::create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
+  Entity* e = _factory->instance_entity(group_entity, EntityDID::kUserMacroNodeEntity, name);
   static_cast<UserMacroNodeEntity*>(e)->load_internals(macro_name);
   e->create_internals();
   finish_creating_node(e, centered);
+  return e;
 }
 
-void NodeGraphManipulatorImp::create_app_macro_node(bool centered, const std::string& macro_name) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), EntityDID::kAppMacroNodeEntity);
+Entity* NodeGraphManipulatorImp::create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
+  Entity* e = _factory->instance_entity(group_entity, EntityDID::kAppMacroNodeEntity, name);
   static_cast<AppMacroNodeEntity*>(e)->load_internals(macro_name);
   e->create_internals();
   finish_creating_node(e, centered);
+  return e;
 }
 
-void NodeGraphManipulatorImp::create_input_node(bool centered, const QJsonValue& unconnected_value) {
-  Entity* e = _factory->instance_entity(_factory->get_current_group(), EntityDID::kInputNodeEntity);
+Entity* NodeGraphManipulatorImp::create_input_node(bool centered, const QJsonValue& unconnected_value, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
+  Entity* e = _factory->instance_entity(group_entity, EntityDID::kInputNodeEntity, name);
   EntityConfig config;
   config.unconnected_value = unconnected_value;
   e->create_internals(config);
   finish_creating_node(e, centered);
+  return e;
 }
 
-Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
+Entity* NodeGraphManipulatorImp::create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
   // Create the node.
-  Entity* group = _factory->get_current_group();
-  Entity* _node = _factory->create_compute_node(group, compute_did);
+  Entity* _node = create_compute_node(centered, compute_did, name, group_entity);
 
   // Initialize and update the wires.
   _node->initialize_wires();
-  group->clean_wires();
+  group_entity->clean_wires();
 
   // Set the values on all the inputs from the chain_state.
   for (QJsonObject::const_iterator iter = chain_state.constBegin(); iter != chain_state.constEnd(); ++iter) {
@@ -426,15 +451,13 @@ Entity* NodeGraphManipulatorImp::build_compute_node(ComponentDID compute_did, co
     if (compute->is_exposed()) {
       continue;
     }
-
-    std::cerr << "setting name: " << iter.key().toStdString() << " value: " << iter.value().toString().toStdString() << "\n";
+    // Set the unconnected value of tne input.
     compute->set_unconnected_value(iter.value());
   }
-
   return _node;
 }
 
-void NodeGraphManipulatorImp::link(Entity* downstream) {
+void NodeGraphManipulatorImp::link_to_closest_node(Entity* downstream) {
   // Get the factory.
   Dep<BaseFactory> factory = get_dep<BaseFactory>(_app_root);
   Entity* current_group = factory->get_current_group();
@@ -518,24 +541,24 @@ Entity* NodeGraphManipulatorImp::create_link(Entity* group) {
 
 Entity* NodeGraphManipulatorImp::connect_plugs(Entity* input_entity, Entity* output_entity) {
   Dep<InputCompute> input_compute = get_dep<InputCompute>(input_entity);
-  Dep<InputShape> input_shape = get_dep<InputShape>(input_entity);
+  //Dep<InputShape> input_shape = get_dep<InputShape>(input_entity);
   Dep<OutputCompute> output_compute = get_dep<OutputCompute>(output_entity);
-  Dep<OutputShape> output_shape = get_dep<OutputShape>(output_entity);
+  //Dep<OutputShape> output_shape = get_dep<OutputShape>(output_entity);
 
-  assert(input_shape);
-  assert(output_shape);
+  //assert(input_shape);
+  //assert(output_shape);
   assert(input_compute);
   assert(output_compute);
 
-  // Remove any existing link shapes on this input.
-  // There is only one link per input.
-  Entity* old_link_entity = input_shape->find_link_entity();
-  if (old_link_entity) {
-    // Remove any existing compute connection on this input compute.
-    input_compute->unlink_output_compute();
-    // Destroy the link.
-    delete_ff(old_link_entity);
-  }
+//  // Remove any existing link shapes on this input.
+//  // There is only one link per input.
+//  Entity* old_link_entity = input_shape->find_link_entity();
+//  if (old_link_entity) {
+//    // Remove any existing compute connection on this input compute.
+//    input_compute->unlink_output_compute();
+//    // Destroy the link.
+//    delete_ff(old_link_entity);
+//  }
 
   // Try to connect the input and output computes.
   if (!input_compute->link_output_compute(output_compute)) {
@@ -782,8 +805,8 @@ void NodeGraphManipulator::surface_from_group() {
   _imp->surface_from_group();
 }
 
-Entity* NodeGraphManipulator::build_and_link_compute_node(ComponentDID compute_did, const QJsonObject& chain_state) {
-  return _imp->build_and_link_compute_node(compute_did, chain_state);
+void NodeGraphManipulator::link_to_closest_node(Entity* downstream_node) {
+  return _imp->link_to_closest_node(downstream_node);
 }
 
 void NodeGraphManipulator::set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
@@ -794,25 +817,30 @@ void NodeGraphManipulator::set_output_topology(Entity* entity, const std::unorde
   _imp->set_output_topology(entity, ordering);
 }
 
-void NodeGraphManipulator::create_node(bool centered, EntityDID entity_did) {
-  _imp->create_node(centered, entity_did);
+Entity* NodeGraphManipulator::create_node(bool centered, EntityDID entity_did, const std::string& name, Entity* group_entity) {
+  return _imp->create_node(centered, entity_did, name, group_entity);
 }
 
-void NodeGraphManipulator::create_compute_node(bool centered, ComponentDID compute_did) {
-  _imp->create_compute_node(centered, compute_did);
+Entity* NodeGraphManipulator::create_compute_node(bool centered, ComponentDID compute_did, const std::string& name, Entity* group_entity) {
+  return _imp->create_compute_node(centered, compute_did, name, group_entity);
 }
 
-void NodeGraphManipulator::create_user_macro_node(bool centered, const std::string& macro_name) {
-  _imp->create_user_macro_node(centered, macro_name);
+Entity* NodeGraphManipulator::create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
+  return _imp->create_user_macro_node(centered, macro_name, name, group_entity);
 }
 
-void NodeGraphManipulator::create_app_macro_node(bool centered, const std::string& macro_name) {
-  _imp->create_app_macro_node(centered, macro_name);
+Entity* NodeGraphManipulator::create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
+  return _imp->create_app_macro_node(centered, macro_name, name, group_entity);
 }
 
-void NodeGraphManipulator::create_input_node(bool centered, const QJsonValue& value) {
-  _imp->create_input_node(centered, value);
+Entity* NodeGraphManipulator::create_input_node(bool centered, const QJsonValue& value, const std::string& name, Entity* group_entity) {
+  return _imp->create_input_node(centered, value, name, group_entity);
 }
+
+Entity* NodeGraphManipulator::create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name, Entity* group_entity) {
+  return _imp->create_browser_node(centered, compute_did, chain_state, name, group_entity);
+}
+
 
 void NodeGraphManipulator::destroy_link(Entity* input_entity) {
   _imp->destroy_link(input_entity);

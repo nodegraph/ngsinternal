@@ -14,12 +14,17 @@ MergeNodeCompute::MergeNodeCompute(Entity* entity):
 MergeNodeCompute::~MergeNodeCompute() {
 }
 
-void MergeNodeCompute::create_inputs_outputs() {
+void MergeNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
-  create_input("in", QJsonObject());
-  create_input("layer", QJsonObject());
-  create_output("out");
+  Compute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = true;
+  c.unconnected_value = QJsonObject();
+
+  create_input("in", c);
+  create_input("layer", c);
+  create_output("out", c);
 }
 
 const QJsonObject MergeNodeCompute::_hints = MergeNodeCompute::init_hints();

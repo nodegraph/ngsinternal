@@ -39,12 +39,27 @@ ScriptNodeCompute::ScriptNodeCompute(Entity* entity):
 ScriptNodeCompute::~ScriptNodeCompute() {
 }
 
-void ScriptNodeCompute::create_inputs_outputs() {
+void ScriptNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs();
-  create_input("in", QJsonObject());
-  create_input("script", "", false);
-  create_output("out");
+  Compute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = true;
+    c.unconnected_value = QJsonObject();
+    create_input("in", c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "";
+    create_input("script", c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = true;
+    create_output("out", c);
+  }
 }
 
 const QJsonObject ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();
