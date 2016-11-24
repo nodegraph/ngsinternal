@@ -18,53 +18,53 @@
 
 namespace ngs {
 
-void BaseNamespaceEntity::create_internals(const EntityConfig& configs) {
+void BaseNamespaceEntity::create_internals(const EntityConfig& config) {
 }
 
-void BaseAppEntity::create_internals(const EntityConfig& configs) {
+void BaseAppEntity::create_internals(const EntityConfig& config) {
   // Our components.
   new_ff Factory(this);
 }
 
-void BaseGroupNodeEntity::create_internals(const EntityConfig& configs) {
+void BaseGroupNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff GroupNodeCompute(this))->create_inputs_outputs();
+  (new_ff GroupNodeCompute(this))->create_inputs_outputs(config);
 }
 
-void BaseLinkEntity::create_internals(const EntityConfig& configs) {
+void BaseLinkEntity::create_internals(const EntityConfig& config) {
 }
 
-void BaseDotNodeEntity::create_internals(const EntityConfig& configs) {
+void BaseDotNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff DotNodeCompute(this))->create_inputs_outputs();
+  (new_ff DotNodeCompute(this))->create_inputs_outputs(config);
 }
 
-void BaseInputNodeEntity::create_internals(const EntityConfig& configs) {
+void BaseInputNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff InputNodeCompute(this))->create_inputs_outputs();
+  (new_ff InputNodeCompute(this))->create_inputs_outputs(config);
 }
 
-void BaseOutputNodeEntity::create_internals(const EntityConfig& configs) {
+void BaseOutputNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff OutputNodeCompute(this))->create_inputs_outputs();
+  (new_ff OutputNodeCompute(this))->create_inputs_outputs(config);
 }
 
-void BaseMockNodeEntity::create_internals(const EntityConfig& configs) {
+void BaseMockNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
-  (new_ff MockNodeCompute(this))->create_inputs_outputs();
+  (new_ff MockNodeCompute(this))->create_inputs_outputs(config);
 }
 
-//void BaseScriptNodeEntity::create_internals(const ConfigMap& configs) {
+//void BaseScriptNodeEntity::create_internals(const ConfigMap& config) {
 //  // Our components.
-//  (new_ff ScriptNodeCompute(this))->create_inputs_outputs();
+//  (new_ff ScriptNodeCompute(this))->create_inputs_outputs(config);
 //}
 
-void BaseInputEntity::create_internals(const EntityConfig& configs) {
+void BaseInputEntity::create_internals(const EntityConfig& config) {
   // Our components.
   new_ff InputCompute(this);
 }
 
-void BaseOutputEntity::create_internals(const EntityConfig& configs) {
+void BaseOutputEntity::create_internals(const EntityConfig& config) {
   // Our components.
   new_ff OutputCompute(this);
 }

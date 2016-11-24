@@ -341,15 +341,19 @@ void NodeGraphManipulatorImp::set_output_topology(Entity* entity, const std::uno
 void NodeGraphManipulatorImp::finish_creating_node(Entity* entity, bool centered) {
   entity->initialize_wires();
   Dep<NodeShape> cs = get_dep<NodeShape>(entity);
-  if (centered) {
-    _ng_quick->get_current_interaction()->centralize(cs);
-  } else {
-    cs->set_pos(_ng_quick->get_last_press_info().object_space_pos.xy());
+
+  // Some nodes won't be visible.
+  if (cs) {
+    if (centered) {
+      _ng_quick->get_current_interaction()->centralize(cs);
+    } else {
+      cs->set_pos(_ng_quick->get_last_press_info().object_space_pos.xy());
+    }
+    // The parenting group node needs to update its inputs and outputs.
+    //get_app_root()->update_wires();
+    _selection->clear_selection();
+    _selection->select(cs);
   }
-  // The parenting group node needs to update its inputs and outputs.
-  //get_app_root()->update_wires();
-  _selection->clear_selection();
-  _selection->select(cs);
 
   // A little overkill, but we clean the wires on everything in this group.
   // Otherwise after creating nodes like mock or input or output nodes,
@@ -418,6 +422,8 @@ Entity* NodeGraphManipulatorImp::create_input_node(bool centered, const QJsonVal
   Entity* e = _factory->instance_entity(group_entity, EntityDID::kInputNodeEntity, name);
   EntityConfig config;
   config.unconnected_value = unconnected_value;
+
+  std::cerr << "creating input node: visible: " << config.visible << "\n";
   e->create_internals(config);
   finish_creating_node(e, centered);
   return e;

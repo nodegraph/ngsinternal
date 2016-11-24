@@ -36,7 +36,7 @@ void InputNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   {
     EntityConfig c = config;
     c.expose_plug = true;
-    create_output("out", config);
+    create_output("out", c);
   }
 }
 
@@ -71,11 +71,6 @@ bool InputNodeCompute::update_state() {
 
   set_output("out", output);
   return true;
-}
-
-void InputNodeCompute::set_default_value(const QJsonValue& value) {
-  Dep<InputCompute> default_value = get_dep<InputCompute>(our_entity()->get_entity(Path({".","inputs","default_value"})));
-  default_value->set_unconnected_value(value);
 }
 
 void InputNodeCompute::set_override(const QJsonValue& override) {
