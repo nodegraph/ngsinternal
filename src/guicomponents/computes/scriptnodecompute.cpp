@@ -65,10 +65,7 @@ void ScriptNodeCompute::create_inputs_outputs(const EntityConfig& config) {
 const QJsonObject ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();
 QJsonObject ScriptNodeCompute::init_hints() {
   QJsonObject m;
-  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
-
-  add_hint(m, "script", HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, "script", HintKey::kDescriptionHint, "The script which performs the work for this node.");
   return m;
 }

@@ -42,7 +42,6 @@ void FirebaseCompute::create_inputs_outputs(const EntityConfig& config) {
 }
 
 void FirebaseCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 }
 
@@ -101,10 +100,7 @@ QJsonObject FirebaseWriteDataCompute::init_hints() {
   QJsonObject m;
   FirebaseCompute::init_hints(m);
 
-  add_hint(m, Message::kDataPath, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kDataPath, HintKey::kDescriptionHint, "Firebase data path.");
-
-  add_hint(m, Message::kValue, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kValue, HintKey::kDescriptionHint, "The data to write at the path.");
 
   return m;
@@ -145,13 +141,8 @@ QJsonObject FirebaseReadDataCompute::init_hints() {
   QJsonObject m;
   FirebaseCompute::init_hints(m);
 
-  add_hint(m, Message::kDataPath, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kDataPath, HintKey::kDescriptionHint, "Firebase data path.");
-
-  add_hint(m, Message::kOutputPropertyName, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kOutputPropertyName, HintKey::kDescriptionHint, "The name of the property to add to our output. The value of the property will be the latest value from Firebase.");
-
-  add_hint(m, Message::kListenForChanges, HintKey::kJSTypeHint, to_underlying(JSType::kBoolean));
   add_hint(m, Message::kListenForChanges, HintKey::kDescriptionHint, "When enabled, this node will be updated when there are any changes to the value.");
 
   return m;

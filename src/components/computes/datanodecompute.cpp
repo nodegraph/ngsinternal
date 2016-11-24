@@ -35,6 +35,7 @@ void DataNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   {
     EntityConfig c = config;
     c.expose_plug = true;
+    c.unconnected_value = QJsonObject();
     create_output("out", c);
   }
 }
@@ -43,10 +44,8 @@ const QJsonObject DataNodeCompute::_hints = DataNodeCompute::init_hints();
 QJsonObject DataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "in", HintKey::kDescriptionHint, "The target value into which the data value will be merged.");
 
-  add_hint(m, "data", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "data", HintKey::kElementResizableHint, true);
   add_hint(m, "data", HintKey::kDescriptionHint, "The source value which will be merged into the target(in) value.");
 

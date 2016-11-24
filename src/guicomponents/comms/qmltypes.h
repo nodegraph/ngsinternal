@@ -94,6 +94,7 @@ Q_OBJECT
 
 // Declare properties.
 // Q_PROPERTY(int kObject READ kObject)
+
 #undef COMPONENT_ENTRY1
 #undef COMPONENT_ENTRY2
 #define COMPONENT_ENTRY1(NAME) Q_PROPERTY(int k##NAME READ k##NAME CONSTANT)
@@ -102,6 +103,7 @@ Q_OBJECT
 
 // Declare read members.
 // int kObject(){return (int)JSType::kObject;}
+
 #undef COMPONENT_ENTRY1
 #undef COMPONENT_ENTRY2
 #define COMPONENT_ENTRY1(NAME) int k##NAME(){return (int)EnumHintValue::k##NAME;}

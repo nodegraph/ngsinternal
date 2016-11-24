@@ -44,11 +44,9 @@ const QJsonObject InputNodeCompute::_hints = InputNodeCompute::init_hints();
 QJsonObject InputNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "default_value", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "default_value", HintKey::kElementResizableHint, true);
   add_hint(m, "default_value", HintKey::kDescriptionHint, "The value to be output by this node when its associated input plug on the group is not connected.");
 
-  add_hint(m, "description", HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, "description", HintKey::kDescriptionHint, "A short description of this input value. It will be displayed when editing the surrounding group.");
 
   return m;

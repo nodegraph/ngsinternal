@@ -36,7 +36,6 @@ void ScriptGroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
 const QJsonObject ScriptGroupNodeCompute::_hints = ScriptGroupNodeCompute::init_hints();
 QJsonObject ScriptGroupNodeCompute::init_hints() {
   QJsonObject m;
-  add_hint(m, "script", HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, "script", HintKey::kMultiLineHint, true);
   add_hint(m, "script", HintKey::kDescriptionHint, "The script which computes the output values of this group. All the input values are made available under their names. Use \"set_output_value(...)\" to set an output value.");
   return m;

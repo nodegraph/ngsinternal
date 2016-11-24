@@ -42,7 +42,6 @@ void BrowserCompute::create_inputs_outputs(const EntityConfig& config) {
 }
 
 void BrowserCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 }
 
@@ -138,8 +137,6 @@ const QJsonObject NavigateToCompute::_hints = NavigateToCompute::init_hints();
 QJsonObject NavigateToCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kURL, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kURL, HintKey::kDescriptionHint, "The url the browser should to navigate to.");
   return m;
 }
@@ -181,8 +178,6 @@ const QJsonObject SwitchToIFrameCompute::_hints = SwitchToIFrameCompute::init_hi
 QJsonObject SwitchToIFrameCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kIFrame, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kIFrame, HintKey::kDescriptionHint,
            "The path to the iframe that subsequent nodes shall act on. IFrame paths are made up of iframe indexes separated by a forward slash. For example: 1/2/3");
   return m;
@@ -226,16 +221,13 @@ QJsonObject CreateSetFromValuesCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kWrapType, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The element type to use when creating the set.");
 
-  add_hint(m, Message::kTextValues, HintKey::kJSTypeHint, to_underlying(JSType::kArray));
   add_hint(m, Message::kTextValues, HintKey::kDescriptionHint, "The set of text values used to find text elements.");
   add_hint(m, Message::kTextValues, HintKey::kElementResizableHint, true);
   add_hint(m, Message::kTextValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
 
-  add_hint(m, Message::kImageValues, HintKey::kJSTypeHint, to_underlying(JSType::kArray));
   add_hint(m, Message::kImageValues, HintKey::kDescriptionHint, "The set of overlapping images used to find image elements.");
   add_hint(m, Message::kImageValues, HintKey::kElementResizableHint, true);
   add_hint(m, Message::kImageValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
@@ -271,7 +263,6 @@ QJsonObject CreateSetFromTypeCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kWrapType, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The element type to use when creating the set.");
   return m;
@@ -304,7 +295,6 @@ QJsonObject DeleteSetCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to delete.");
   return m;
 }
@@ -338,14 +328,11 @@ QJsonObject ShiftSetCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to shift.");
 
-  add_hint(m, Message::kDirection, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
   add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The direction in which to shift the set elements to.");
 
-  add_hint(m, Message::kWrapType, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of elements to shift to.");
   return m;
@@ -393,17 +380,13 @@ QJsonObject MouseActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set which contains the element to act on.");
 
-  add_hint(m, Message::kOverlayIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kOverlayIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element to act on inside the set.");
 
-  add_hint(m, Message::kOverlayRelClickPos, HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, Message::kOverlayRelClickPos, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kOverlayRelClickPos, HintKey::kDescriptionHint, "The position to perform our action at, relative to the element itself.");
 
-  add_hint(m, Message::kMouseAction, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kMouseAction, HintKey::kEnumHint, to_underlying(EnumHintValue::kMouseActionType));
   add_hint(m, Message::kMouseAction, HintKey::kDescriptionHint, "The type of mouse mouse action to perform.");
   return m;
@@ -450,13 +433,10 @@ QJsonObject StartMouseHoverActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set which contains the element to act on.");
 
-  add_hint(m, Message::kOverlayIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kOverlayIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element to hover on inside the set.");
 
-  add_hint(m, Message::kOverlayRelClickPos, HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, Message::kOverlayRelClickPos, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kOverlayRelClickPos, HintKey::kDescriptionHint, "The position to perform our hover at, relative to the element itself.");
   return m;
@@ -509,17 +489,13 @@ QJsonObject TextActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set which contains the element to type on.");
 
-  add_hint(m, Message::kOverlayIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kOverlayIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element to type on inside the set.");
 
-  add_hint(m, Message::kTextAction, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kTextAction, HintKey::kEnumHint, to_underlying(EnumHintValue::kTextActionType));
   add_hint(m, Message::kTextAction, HintKey::kDescriptionHint, "The type of text action to perform.");
 
-  add_hint(m, Message::kText, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kText, HintKey::kDescriptionHint, "The text to type.");
   return m;
 }
@@ -565,24 +541,18 @@ QJsonObject ElementActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set which contains the element to act on.");
 
-  add_hint(m, Message::kOverlayIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kOverlayIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element to act on inside the set.");
 
-  add_hint(m, Message::kElementAction, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kElementAction, HintKey::kEnumHint, to_underlying(EnumHintValue::kElementActionType));
   add_hint(m, Message::kElementAction, HintKey::kDescriptionHint, "The type of element action to perform.");
 
-  add_hint(m, Message::kOptionText, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kOptionText, HintKey::kDescriptionHint, "The text to select from dropdowns.");
 
-  add_hint(m, Message::kDirection, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
   add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The direction to scroll.");
 
-  add_hint(m, Message::kTextDataName, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kTextDataName, HintKey::kDescriptionHint, "The name used to reference the extracted text data.");
 
   return m;
@@ -649,14 +619,11 @@ QJsonObject ExpandSetCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to expand.");
 
-  add_hint(m, Message::kDirection, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
   add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The direction in which to expand the set.");
 
-  add_hint(m, Message::kMatchCriteria, HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, Message::kMatchCriteria, HintKey::kDescriptionHint, "The match criteria used when expanding the set.");
   return m;
 }
@@ -688,7 +655,6 @@ QJsonObject MarkSetCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to mark.");
   return m;
 }
@@ -720,7 +686,6 @@ QJsonObject UnmarkSetCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to unmark.");
   return m;
 }
@@ -764,10 +729,8 @@ QJsonObject ShrinkSetToSideCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to shrink on one side.");
 
-  add_hint(m, Message::kDirection, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
   add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The side of the set from which to perform the shrink.");
   return m;
@@ -812,10 +775,8 @@ QJsonObject ShrinkAgainstMarkedCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to shrink against.");
 
-  add_hint(m, Message::kDirections, HintKey::kJSTypeHint, to_underlying(JSType::kArray));
   add_hint(m, Message::kDirections, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kDirections, HintKey::kElementEnumHint, to_underlying(EnumHintValue::kDirectionType));
   add_hint(m, Message::kDirections, HintKey::kElementResizableHint, true);

@@ -309,40 +309,6 @@ BaseStackPage{
 
     function get_hints(path) {
     	return app_utils.get_sub_object(_hints, path)
-    
-//        // Child path.
-//        var child_path = path
-
-//        // Parent path.
-//        var parent_path = child_path.slice()
-//        parent_path.pop()
-
-//        // Parent hints.
-//        var parent_hints = app_utils.get_sub_object(_hints, parent_path)
-
-//        // Determine the child hints.
-//        // If the parent hints contains child element hints then we must use those
-//        // exclusively instead of the hints at the child. The child will generally
-//        // not have any hints in this case.
-//        var child_hints = {}
-//        if (parent_hints && parent_hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
-//            child_hints[hint_key.kJSTypeHint] = parent_hints[hint_key.kElementJSTypeHint]
-//            // Check for other child element hints.
-//            if (parent_hints.hasOwnProperty(hint_key.kElementEnumHint)) {
-//                child_hints[hint_key.kEnumHint] = parent_hints[hint_key.kElementEnumHint]
-//            }
-//        } else {
-//            // Otherwise we grab the child hints using the child path.
-//            child_hints = app_utils.get_sub_object(_hints, child_path)
-//        }
-        
-//        // If we don't have child hints, then we add in add least the js type.
-//        if (!child_hints) {
-//        	var value = get_value(path)
-//        	child_hints = {}
-//        	child_hints[hint_key.kJSTypeHint] = app_enums.determine_js_type(value)
-//        }
-//        return child_hints
     }
     
     // --------------------------------------------------------------------------------------------------
@@ -384,7 +350,6 @@ BaseStackPage{
     	if (_allow_edits) {
     		var hints = get_hints(path)
     		if (hints) {
-    			//value_type = hints[hint_key.kJSTypeHint]
     			// Use the hints to get a more descriptive string representation.
 				if (hints.hasOwnProperty(hint_key.kEnumHint)) {
 		    		return app_enums.get_enum_hint_value_text(hints[hint_key.kEnumHint], value)
@@ -421,15 +386,6 @@ BaseStackPage{
     function get_image_for_value(path) {
         var value = get_value(path)
     	var value_type = app_enums.determine_js_type(value)
-    	
-//    	if (_allow_edits) {
-//    		var hints = get_hints(path)
-//    		if (hints) {
-//    			console.log("xxxxxxxxxxxxxxxxxxxxxxx: " + JSON.stringify(hints))
-//    			value_type = hints[hint_key.kJSTypeHint]
-//    			console.log("value type: " + value_type)
-//    		}
-//    	}
     	
         switch(value_type) {
         case js_type.kString:

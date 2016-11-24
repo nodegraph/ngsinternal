@@ -8,7 +8,6 @@ namespace ngs {
 #define COMPONENT_ENTRY2(NAME, VALUE) k##NAME = VALUE,
 
 #define HINTKEY_ENTRIES()\
-COMPONENT_ENTRY1(JSTypeHint)\
 COMPONENT_ENTRY1(EnumHint)\
 COMPONENT_ENTRY1(MinHint)\
 COMPONENT_ENTRY1(MaxHint)\
@@ -18,9 +17,6 @@ COMPONENT_ENTRY1(ElementResizableHint)\
 COMPONENT_ENTRY1(DescriptionHint)\
 COMPONENT_ENTRY1(MultiLineHint)\
 
-// Core hints.
-// kJSTypeHint: This represents the base javascript type of the parameter and is required for all parameters.
-//
 // Hints for numbers.
 // kEnumHint: If the js type is a number, then this represents the type of enum represented by an number javascript type.
 // kMinHint

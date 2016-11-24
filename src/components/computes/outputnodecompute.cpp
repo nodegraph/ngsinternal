@@ -31,7 +31,6 @@ const QJsonObject OutputNodeCompute::_hints = OutputNodeCompute::init_hints();
 QJsonObject OutputNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 
   return m;

@@ -39,7 +39,6 @@ void BaseMQTTCompute::create_inputs_outputs(const EntityConfig& config) {
 }
 
 void BaseMQTTCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 }
 
@@ -78,10 +77,7 @@ QJsonObject MQTTPublishCompute::init_hints() {
   QJsonObject m;
   BaseMQTTCompute::init_hints(m);
 
-  add_hint(m, Message::kTopic, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kTopic, HintKey::kDescriptionHint, "The topic to publish the message to.");
-
-  add_hint(m, Message::kMessage, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kMessage, HintKey::kDescriptionHint, "The message to publish.");
 
   return m;
@@ -140,10 +136,7 @@ QJsonObject MQTTSubscribeCompute::init_hints() {
   QJsonObject m;
   BaseMQTTCompute::init_hints(m);
 
-  add_hint(m, Message::kTopic, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kTopic, HintKey::kDescriptionHint, "The topic to subscribe to.");
-
-  add_hint(m, Message::kOutputPropertyName, HintKey::kJSTypeHint, to_underlying(JSType::kString));
   add_hint(m, Message::kOutputPropertyName, HintKey::kDescriptionHint,
            "The name of the property to add to our output. The value of the property will be the latest message.");
 

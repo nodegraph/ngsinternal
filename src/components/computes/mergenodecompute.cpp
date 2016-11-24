@@ -31,11 +31,7 @@ const QJsonObject MergeNodeCompute::_hints = MergeNodeCompute::init_hints();
 QJsonObject MergeNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "in", HintKey::kDescriptionHint, "This object will get data from the \"layer\" input merged into it.");
-
-
-  add_hint(m, "layer", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "layer", HintKey::kDescriptionHint, "The object will layer over the data from the \"in\" input.");
 
   return m;

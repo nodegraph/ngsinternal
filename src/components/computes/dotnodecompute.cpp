@@ -33,7 +33,6 @@ const QJsonObject DotNodeCompute::_hints = DotNodeCompute::init_hints();
 QJsonObject DotNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kJSTypeHint, to_underlying(JSType::kObject));
   add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 
   return m;
