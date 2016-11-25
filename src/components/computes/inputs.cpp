@@ -52,7 +52,6 @@ QJsonObject Inputs::get_editable_inputs() const {
   QJsonObject values;
   for (auto iter: _all) {
     if (!iter.second->is_connected()) {
-      std::cerr << "aaaaaaa: " << iter.second->get_unconnected_value().toString().toStdString() << "\n";
       values.insert(iter.first.c_str(), iter.second->get_unconnected_value());
     }
   }

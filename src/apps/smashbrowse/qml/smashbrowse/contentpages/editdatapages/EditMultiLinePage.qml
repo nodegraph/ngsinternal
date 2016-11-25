@@ -22,6 +22,7 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
     property string description: ""
+    property var exposable: page.Stack.view && (page.Stack.view.depth == 2)
     
     // Our Methods.
     function set_value(value) {
@@ -87,6 +88,7 @@ Rectangle {
         }
 
         RowLayout {
+        	visible: page.exposable
         	Layout.maximumWidth: parent.width
         	Item {Layout.fillWidth: true}
         	AppLabel {
@@ -114,7 +116,9 @@ Rectangle {
                 onClicked: {
                     var path = edit_string_page.Stack.view.get_title_path(1, edit_string_page.Stack.view.depth)
                     edit_string_page.Stack.view._stack_page.set_value(path, get_value())
-                    edit_string_page.Stack.view._stack_page.set_exposed(path, get_exposed())
+                    if (page.exposable) {
+                    	edit_string_page.Stack.view._stack_page.set_exposed(path, get_exposed())
+                    }
                     edit_string_page.Stack.view.pop_page()
                 }
             }

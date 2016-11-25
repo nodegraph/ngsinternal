@@ -22,6 +22,7 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
     property string description: ""
+    property var exposable: page.Stack.view && (page.Stack.view.depth == 2)
 
     // Our Methods.
     function set_enum_type(type) {
@@ -126,6 +127,7 @@ Rectangle {
         AppSpacer {}
         
         RowLayout {
+        	visible: page.exposable
         	Layout.maximumWidth: parent.width
         	Item {Layout.fillWidth: true}
         	AppLabel {
@@ -155,7 +157,9 @@ Rectangle {
                 onClicked: {
                     var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
                     page.Stack.view._stack_page.set_value(path, get_value())
-                    page.Stack.view._stack_page.set_exposed(path, get_exposed())
+                    if (page.exposable) {
+                    	page.Stack.view._stack_page.set_exposed(path, get_exposed())
+                    }
                     page.Stack.view.pop_page()
                 }
             }

@@ -795,7 +795,6 @@ void NodeGraphQuickItem::edit_node() {
 
 void NodeGraphQuickItem::set_editable_inputs(const QString& node_path, const QJsonObject& values) {
   Path path = Path::string_to_path(node_path.toStdString());
-  std::cerr << "NodeGraphQuickItem::set_editable_inputs on path: " << path.get_as_string() << "\n";
   Entity* entity = get_app_root()->get_entity(path);
   Dep<Compute> compute = get_dep<Compute>(entity);
   if(compute) {
@@ -805,7 +804,6 @@ void NodeGraphQuickItem::set_editable_inputs(const QString& node_path, const QJs
 
 void NodeGraphQuickItem::set_input_exposure(const QString& node_path, const QJsonObject& values) {
   Path path = Path::string_to_path(node_path.toStdString());
-  std::cerr << "NodeGraphQuickItem::set_editable_inputs on path: " << path.get_as_string() << "\n";
   Entity* entity = get_app_root()->get_entity(path);
   Dep<Compute> compute = get_dep<Compute>(entity);
   if(compute) {

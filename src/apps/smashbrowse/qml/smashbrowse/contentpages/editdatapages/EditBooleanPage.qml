@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import smashbrowse.appwidgets 1.0
 
 Rectangle {
-    id: edit_boolean_page
+    id: page
 
     // Dimensions.
     height: app_settings.page_height
@@ -22,6 +22,7 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
     property string description: ""
+    property var exposable: page.Stack.view && (page.Stack.view.depth == 2)
 
     // Our Methods.
     function set_value(value) {
@@ -55,7 +56,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: edit_boolean_page.Stack.view
+        stack_view: page.Stack.view
     }
 
     ColumnLayout {
@@ -86,7 +87,7 @@ Rectangle {
         	Layout.maximumWidth: parent.width
         	Item {Layout.fillWidth: true}
         	AppLabel {
-        		text: qsTr("true (checked) or false (unchecked)")
+        		text: qsTr("check if true")
         	}
         	Rectangle {
                 color: "transparent"
@@ -103,6 +104,7 @@ Rectangle {
         AppSpacer {}
         
         RowLayout {
+        	visible: page.exposable
         	Layout.maximumWidth: parent.width
         	Item {Layout.fillWidth: true}
         	AppLabel {
@@ -125,15 +127,18 @@ Rectangle {
         // Buttons.
         RowLayout {
         	Layout.maximumWidth: parent.width
-        
-            Item {Layout.fillWidth: true}
+            Item {
+            	Layout.fillWidth: true
+            }
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    var path = edit_boolean_page.Stack.view.get_title_path(1, edit_boolean_page.Stack.view.depth)
-                    edit_boolean_page.Stack.view._stack_page.set_value(path, get_value())
-                    edit_boolean_page.Stack.view._stack_page.set_exposed(path, get_exposed())
-                    edit_boolean_page.Stack.view.pop_page()
+                    var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
+                    page.Stack.view._stack_page.set_value(path, get_value())
+                    if (page.exposable) {
+                    	page.Stack.view._stack_page.set_exposed(path, get_exposed())
+                    }
+                    page.Stack.view.pop_page()
                 }
             }
             Rectangle {
@@ -144,10 +149,12 @@ Rectangle {
             AppLabelButton {
                 text: "cancel"
                 onClicked: {
-                    edit_boolean_page.Stack.view.pop_page()
+                    page.Stack.view.pop_page()
                 }
             }
-            Item {Layout.fillWidth: true}
+            Item {
+            	Layout.fillWidth: true
+            }
         }
     }
 }

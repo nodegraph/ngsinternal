@@ -624,9 +624,6 @@ void OutputEntity::create_internals(const EntityConfig& config) {
   OutputCompute* oc = new_ff OutputCompute(this);
   oc->set_exposed(config.expose_plug);
 
-  std::cerr << "creating output at: " << get_path().get_as_string() << "\n";
-  std::cerr << "creating output entity: visible: " << config.visible << "\n";
-
   // Gui components.
   if (config.visible) {
     new_ff OutputShape(this);

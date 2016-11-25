@@ -208,8 +208,6 @@ void LinkShape::update_state_helper() {
   bool pannable = _input_shape->is_pannable() && _output_shape->is_pannable();
   set_pannable(pannable);
 
-  std::cerr << "is pannable: " << pannable << "\n";
-
   if (pannable) {
     _bg_quad.state |= (selected_transform_bitmask);
     _fg_quad.state |= selected_transform_bitmask;

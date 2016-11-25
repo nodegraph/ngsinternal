@@ -71,10 +71,10 @@ BaseStackPage{
         app_settings.vibrate()
         stack_view.clear_pages()
         
-        console.log('node path: ' + node_path)
-        console.log('values: ' + JSON.stringify(values))
-        console.log('hints: ' + JSON.stringify(hints))
-        console.log('exposure: ' + JSON.stringify(exposure))
+        //console.log('node path: ' + node_path)
+        //console.log('values: ' + JSON.stringify(values))
+        //console.log('hints: ' + JSON.stringify(hints))
+        //console.log('exposure: ' + JSON.stringify(exposure))
         
         // Show the next object.
         _values = values
@@ -92,7 +92,6 @@ BaseStackPage{
         // Push a page to get a string name or an array index to insert at in the object in or array respectively.
         // Then call __on_add_element with the result ... not you can set the call on the EnterStringPage for example.
         var path = stack_view.get_title_path(1, stack_view.depth)
-        console.log('path is: ' + path)
 
         // Get value info.
         var value = stack_page.get_value(path)
@@ -113,7 +112,6 @@ BaseStackPage{
             push_page.callback = stack_page.add_element.bind(stack_page)
             stack_view.push_page(push_page)
         } else if (value_type == js_type.kArray) {
-        	console.log('hints: ' + JSON.stringify(hints))
         	if (hints && hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
         		var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterNumberPage.qml", stack_page, {})
             	push_page.visible = true
@@ -275,7 +273,6 @@ BaseStackPage{
     // The element_name is an index to insert at when adding to an array. 
     // Use a number greater than the last element if you want to add at the end.
     function add_element(element_type, element_name) {
-        console.log('adding element with name: ' + element_name)
         var path = stack_view.get_title_path(1, stack_view.depth)
 
         // Get value info.
@@ -371,6 +368,7 @@ BaseStackPage{
 	}
 	
 	function set_exposed(path, exposed) {
+		console.log('setting the exposure at path: ' + path + ' to ' + exposed)
 		app_utils.set_sub_object(_exposure, path, exposed)
         node_graph_item.set_input_exposure(_node_path, _exposure)
 	}
@@ -381,10 +379,7 @@ BaseStackPage{
 
     // Set the value at the given path in _values.
     function set_value(path, value) {
-    	console.log("setting value at path: " + value + ", " + path)
-    	console.log("_values: " + JSON.stringify(_values))
         app_utils.set_sub_object(_values, path, value)
-        console.log("_values2: " + JSON.stringify(_values))
         node_graph_item.set_editable_inputs(_node_path, _values)
     }
 
@@ -493,7 +488,6 @@ BaseStackPage{
                 model.append({name: prop, depth_index: stack_view.depth})
             }
         }
-        console.log('pushing: ' + title + ' hints: ' + JSON.stringify(hints))
         push_by_model(title, model, hints)
     }
 
@@ -505,7 +499,6 @@ BaseStackPage{
         for (var i=0; i<arr.length; i++) {
             model.append({name: i.toString(), depth_index: stack_view.depth})
         }
-        console.log('pushing arr: ' + title + ' hints: ' + JSON.stringify(hints))
         push_by_model(title, model, hints)
     }
     

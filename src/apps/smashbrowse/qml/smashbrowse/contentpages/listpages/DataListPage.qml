@@ -48,6 +48,31 @@ BaseListPage {
 		get_stack_page().on_remove_element(name)
 	}
 	
+	RowLayout {
+		anchors {
+            left: list_view.left
+            right: list_view.right
+            bottom: edit_bar.top
+        }
+	
+    	//visible: page.exposable
+    	Layout.maximumWidth: parent.width
+    	Item {Layout.fillWidth: true}
+    	AppLabel {
+    		text: qsTr("expose as a plug in the node graph")
+    	}
+    	Rectangle {
+            color: "transparent"
+            height: app_settings.action_bar_height
+            width: app_settings.button_spacing
+        }
+        AppCheckBox {
+            id: exposed_check_box
+            checked: false
+        }
+        Item {Layout.fillWidth: true}
+    }
+	
 	// Buttons.
     RowLayout {
     	id: edit_bar
