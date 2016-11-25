@@ -92,6 +92,7 @@ BaseStackPage{
         // Push a page to get a string name or an array index to insert at in the object in or array respectively.
         // Then call __on_add_element with the result ... not you can set the call on the EnterStringPage for example.
         var path = stack_view.get_title_path(1, stack_view.depth)
+        console.log('path is: ' + path)
 
         // Get value info.
         var value = stack_page.get_value(path)
@@ -105,22 +106,42 @@ BaseStackPage{
             push_page.set_value("value")
             push_page.set_title("Add Element to Object.")
             push_page.set_description("Enter the name and type of the new value to add.")
-            push_page.set_option_texts(['string','number','boolean'])
-            push_page.set_option_ids([2,3,4])
+            push_page.set_option_texts(['string','number','boolean', 'array', 'object'])
+            push_page.set_option_ids([2, 3, 4, 1, 0])
             
             
             push_page.callback = stack_page.add_element.bind(stack_page)
             stack_view.push_page(push_page)
         } else if (value_type == js_type.kArray) {
-            var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterNumberPage.qml", stack_page, {})
-            push_page.visible = true
-            push_page.set_value(0)
-            push_page.set_title("Add Element to Array.")
-            push_page.set_description("Enter the index at which to insert the new element.")
-            
-            var element_type = hints[hint_key.kJSElementTypeHint]
-            push_page.callback = stack_page.add_element.bind(stack_page, element_type)
-            stack_view.push_page(push_page)
+        	console.log('hints: ' + JSON.stringify(hints))
+        	if (hints && hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
+        		var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterNumberPage.qml", stack_page, {})
+            	push_page.visible = true
+            	push_page.set_value(0)
+            	push_page.set_bottom_value(0)
+            	push_page.set_top_value(value.length)
+            	push_page.set_title("Add Element to Array.")
+            	push_page.set_description("Enter the index at which to insert the new element.")
+            	
+            	
+            	var element_type = hints[hint_key.kElementJSTypeHint]
+	            push_page.callback = stack_page.add_element.bind(stack_page, element_type)
+	            stack_view.push_page(push_page)
+        	} else {
+        		var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterNumberAndDropdownPage.qml", stack_page, {})
+            	push_page.visible = true
+            	push_page.set_value(0)
+            	push_page.set_bottom_value(0)
+            	push_page.set_top_value(value.length)
+            	push_page.set_title("Add Element to Array.")
+            	push_page.set_description("Enter the index at which to insert the new element.")
+            	push_page.set_option_texts(['string','number','boolean', 'array', 'object'])
+            	push_page.set_option_ids([2, 3, 4, 1, 0])
+            	
+            	
+            	push_page.callback = stack_page.add_element.bind(stack_page)
+            	stack_view.push_page(push_page)
+            }
         }
     }
     
@@ -264,12 +285,27 @@ BaseStackPage{
         // Add a new element.
         if (parent_type == js_type.kArray) {
             // Add an array element.
-            if (element_type == js_type.kString) {
-                parent_value.splice(element_name, 0, '');
-            } else if (element_type == js_type.kNumber) {
-                parent_value.splice(element_name, 0, 0);
-            } else if (element_type == js_type.kBoolean) {
-                parent_value.splice(element_name, 0, false);
+            switch(element_type) {
+            	case js_type.kString: {
+            		parent_value.splice(element_name, 0, '');
+            		break;
+            	}
+            	case js_type.kNumber: {
+            		parent_value.splice(element_name, 0, 0);
+            		break;
+            	}
+            	case js_type.kBoolean: {
+            		parent_value.splice(element_name, 0, false);
+            		break;
+            	}
+            	case js_type.kArray: {
+            		parent_value.splice(element_name, 0, []);
+            		break;
+            	}
+            	case js_type.kObject: {
+            		parent_value.splice(element_name, 0, {});
+            		break;
+            	}
             }
         } else if (parent_type == js_type.kObject) {
             // Make sure the element_name is unique.
@@ -284,13 +320,28 @@ BaseStackPage{
             }
 
             // Add an object element.
-            if (element_type == js_type.kString) {
-                parent_value[unique_name] = ''
-            } else if (element_type == js_type.kNumber) {
-                parent_value[unique_name] = 0
-            } else if (element_type == js_type.kBoolean) {
-                parent_value[unique_name] = false
-            }
+        	switch(element_type) {
+        		case js_type.kString: {
+        			parent_value[unique_name] = ''
+        			break
+        			}
+        		case js_type.kNumber: {
+        			parent_value[unique_name] = 0
+        			break
+        		}
+        		case js_type.kBoolean: {
+        			parent_value[unique_name] = false
+        			break
+        		}
+        		case js_type.kArray: {
+        			parent_value[unique_name] = []
+        			break
+        		}
+        		case js_type.kObject: {
+        			parent_value[unique_name] = {}
+        			break
+        		}
+        	}
         }
 
         // Record the new value.

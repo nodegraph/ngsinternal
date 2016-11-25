@@ -423,7 +423,20 @@ Entity* NodeGraphManipulatorImp::create_input_node(bool centered, const QJsonVal
   EntityConfig config;
   config.unconnected_value = unconnected_value;
 
-  std::cerr << "creating input node: visible: " << config.visible << "\n";
+  e->create_internals(config);
+  finish_creating_node(e, centered);
+  return e;
+}
+
+Entity* NodeGraphManipulatorImp::create_data_node(bool centered, const QJsonValue& unconnected_value, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
+  Entity* e = _factory->instance_entity(group_entity, EntityDID::kDataNodeEntity, name);
+  EntityConfig config;
+  config.unconnected_value = unconnected_value;
+
   e->create_internals(config);
   finish_creating_node(e, centered);
   return e;
@@ -841,6 +854,10 @@ Entity* NodeGraphManipulator::create_app_macro_node(bool centered, const std::st
 
 Entity* NodeGraphManipulator::create_input_node(bool centered, const QJsonValue& value, const std::string& name, Entity* group_entity) {
   return _imp->create_input_node(centered, value, name, group_entity);
+}
+
+Entity* NodeGraphManipulator::create_data_node(bool centered, const QJsonValue& value, const std::string& name, Entity* group_entity) {
+  return _imp->create_data_node(centered, value, name, group_entity);
 }
 
 Entity* NodeGraphManipulator::create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name, Entity* group_entity) {

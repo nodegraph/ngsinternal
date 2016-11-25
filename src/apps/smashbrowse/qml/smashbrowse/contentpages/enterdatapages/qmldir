@@ -2,6 +2,7 @@ module enterdatapages
 
 PublishMacroPage 1.0 PublishMacroPage.qml
 EnterStringAndDropdownPage 1.0 EnterStringAndDropdownPage.qml
+EnterNumberAndDropdownPage 1.0 EnterNumberAndDropdownPage.qml
 EnterStringPage 1.0 EnterStringPage.qml
 EnterNumberPage 1.0 EnterNumberPage.qml
 

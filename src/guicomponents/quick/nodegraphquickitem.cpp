@@ -42,9 +42,12 @@
 #include <guicomponents/computes/entergroupcompute.h>
 
 #include <QtQuick/QQuickWindow>
+
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
 #include <QtCore/QRunnable>
+#include <QtCore/QJsonArray>
+
 #include <QtGui/QGuiApplication>
 #include <QtGui/QScreen>
 
@@ -122,7 +125,7 @@ void NodeGraphController::create_output_node(bool centered) {
 
 // Create data nodes.
 void NodeGraphController::create_data_node(bool centered) {
-  _manipulator->create_node(centered, EntityDID::kDataNodeEntity);
+  _manipulator->create_data_node(centered, QJsonArray());
 }
 void NodeGraphController::create_dot_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kDotNodeEntity);

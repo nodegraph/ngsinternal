@@ -27,6 +27,7 @@
         <!-- Enter Data Pages -->
         <file>qml/smashbrowse/contentpages/enterdatapages/qmldir</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/PublishMacroPage.qml</file>
+        <file>qml/smashbrowse/contentpages/enterdatapages/EnterNumberAndDropdownPage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/EnterStringAndDropdownPage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/EnterNumberPage.qml</file>

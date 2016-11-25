@@ -25,6 +25,8 @@ Rectangle {
     // Callback will be called with the entered text.
     property var callback
 
+	property var option_ids
+
     // Our Methods.
     function set_bottom_value(bottom) {
     	text_field.validator.bottom = bottom
@@ -51,6 +53,14 @@ Rectangle {
     
     function set_description(desc) {
         description.text = desc
+    }
+    
+    function set_option_texts(otexts) {
+        combo_box.set_option_texts(otexts);
+    }
+    
+    function set_option_ids(ids) {
+    	option_ids = ids
     }
 
     // The stack view header.
@@ -98,6 +108,12 @@ Rectangle {
         }
         
         AppSpacer {}
+        
+        AppComboBox {
+            id: combo_box
+        }
+        
+        AppSpacer {}
 
         // Buttons.
         RowLayout {
@@ -108,7 +124,7 @@ Rectangle {
                 text: "accept"
                 onClicked: {
                 	page.Stack.view.pop_page()
-                    page.callback(get_value())
+                    page.callback(option_ids[combo_box.currentIndex], get_value())
                     //page.Stack.view.pop_page()
                     //main_bar.switch_to_current_mode()
                     //node_graph_item.update()

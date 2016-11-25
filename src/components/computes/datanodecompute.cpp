@@ -46,6 +46,9 @@ QJsonObject DataNodeCompute::init_hints() {
 
   add_hint(m, "in", HintKey::kDescriptionHint, "The target value into which the data value will be merged.");
 
+  // testing
+  //add_hint(m, "data", HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
+
   add_hint(m, "data", HintKey::kElementResizableHint, true);
   add_hint(m, "data", HintKey::kDescriptionHint, "The source value which will be merged into the target(in) value.");
 
