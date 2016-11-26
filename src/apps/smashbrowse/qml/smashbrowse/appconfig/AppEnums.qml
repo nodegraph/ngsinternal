@@ -64,7 +64,7 @@ Item{
         } else if (enum_hint_value_type == enum_hint_value.kJSType) {
         	return js_type_text[index]
         } else {
-            console.log('Error: attempt to get text for an enum with invalid type.')
+            console.log('Error: attempt to get text for an enum with invalid type: ' + enum_hint_value_type)
             console.log(new Error().stack);
         }
     }

@@ -364,14 +364,21 @@ BaseStackPage{
     // Extract from our Hints. Hints cannot be modified.
     // --------------------------------------------------------------------------------------------------
 
+	// Note there are hints only for paths of length 1 and 2.
+	// For paths of length 2, the hints actually come from the parent path of length 1.
     function get_hints(path) {
-    	var hints = app_utils.get_sub_object(_hints, path)
-    	// Make a deep copy.
-    	hints = JSON.parse(JSON.stringify(hints));
+    	// The hints are expected to be a flat list of hints.
     	
-    	// Inherit some hints from parent.
-    	if (path.length > 0) {
-    		// Pop off the tail element of the path.
+    	var hints = {}
+    	
+    	if (path.length == 0) {
+    		return hints
+    	} else if (path.length == 1) {
+    		app_utils.get_sub_object(_hints, path)
+    		// Make a deep copy.
+    		hints = JSON.parse(JSON.stringify(hints));
+    	} else {
+    		// Some hints propagate from the parent to the child for one level only.
 			var parent_path = get_parent_path(path)
 			
     		// Merge hints from the parent.
@@ -440,6 +447,10 @@ BaseStackPage{
     		
     		// If we have an enum hint, return the respective text.
     		if (hints.hasOwnProperty(hint_key.kEnumHint)) {
+    			console.log('path is: ' + JSON.stringify(path))
+    			console.log('all hints: ' + JSON.stringify(_hints))
+    			console.log('hint keys: ' + JSON.stringify(hints))
+    			console.log('hint key enum: ' + JSON.stringify(hints[hint_key.kEnumHint]))
     			return app_enums.get_enum_hint_value_text(hints[hint_key.kEnumHint], value)
     		}
     		
