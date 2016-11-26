@@ -19,7 +19,6 @@ BaseListPage {
     id: page
 
     // Setttings.
-    show_back_button: page.Stack.view && (page.Stack.view.depth > 1)
     model: file_model
     model_is_dynamic: false
     delegate: FileListDelegate{}

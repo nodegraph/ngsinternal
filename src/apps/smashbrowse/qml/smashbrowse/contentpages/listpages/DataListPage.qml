@@ -19,7 +19,6 @@ BaseListPage {
     id: page
 
     // Our settings.
-    show_back_button: page.Stack.view && (page.Stack.view.depth > 1)
     delegate: DataListDelegate{}
     list_view.height: exposable ? app_settings.menu_page_height - edit_bar.height - expose_plug_check_box.height : app_settings.menu_page_height - edit_bar.height
     

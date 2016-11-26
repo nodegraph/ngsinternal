@@ -16,5 +16,4 @@ import smashbrowse.contentpages.listmodels 1.0
 
 BaseListPage {
     id: page
-    show_back_button: false
 }

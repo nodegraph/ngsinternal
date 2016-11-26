@@ -40,6 +40,5 @@ BaseListPage {
     }
 
     // Our settings.
-    show_back_button: false
     delegate: PostListDelegate{}
 }
