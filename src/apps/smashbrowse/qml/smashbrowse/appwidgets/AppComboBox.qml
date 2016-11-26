@@ -15,12 +15,12 @@ ComboBox {
     id: combo_box
 	editable: false
 	
-    anchors {
-        left: parent.left
-        right: parent.right
-        leftMargin: app_settings.page_left_margin
-        rightMargin: app_settings.page_right_margin
-    }
+//    anchors {
+//        left: parent.left
+//        right: parent.right
+//        leftMargin: app_settings.page_left_margin
+//        rightMargin: app_settings.page_right_margin
+//    }
     
     function set_option_texts(otexts) {
         combo_box_model.clear()

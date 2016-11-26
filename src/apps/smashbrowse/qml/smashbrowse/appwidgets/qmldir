@@ -20,3 +20,4 @@ AppLabel 1.0 AppLabel.qml
 AppCheckBox 1.0 AppCheckBox.qml
 AppRadioButton 1.0 AppRadioButton.qml
 AppComboBox 1.0 AppComboBox.qml
+AppExposePlugCheckBox 1.0 AppExposePlugCheckBox.qml

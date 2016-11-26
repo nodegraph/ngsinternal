@@ -21,10 +21,10 @@ BaseListPage {
     // Our settings.
     show_back_button: page.Stack.view && (page.Stack.view.depth > 1)
     delegate: DataListDelegate{}
-    list_view.height: app_settings.menu_page_height - edit_bar.height
+    list_view.height: exposable ? app_settings.menu_page_height - edit_bar.height - expose_plug_check_box.height : app_settings.menu_page_height - edit_bar.height
     
-    property var resizable: false
     property var array_or_object: page.Stack.view && (page.Stack.view.depth > 1)
+    property var exposable: page.Stack.view && (page.Stack.view.depth == 2)
     
     function get_stack_view() {
     	return Stack.view
@@ -48,29 +48,22 @@ BaseListPage {
 		get_stack_page().on_remove_element(name)
 	}
 	
-	RowLayout {
-		anchors {
+	function set_exposed(exposed) {
+    	expose_plug_check_box.set_exposed(exposed)
+    }
+    
+    function get_exposed() {
+    	return expose_plug_check_box.get_exposed()
+    }
+	
+	AppExposePlugCheckBox {
+        id: expose_plug_check_box
+        visible: page.exposable
+       	anchors {
             left: list_view.left
             right: list_view.right
             bottom: edit_bar.top
         }
-	
-    	//visible: page.exposable
-    	Layout.maximumWidth: parent.width
-    	Item {Layout.fillWidth: true}
-    	AppLabel {
-    		text: qsTr("expose as a plug in the node graph")
-    	}
-    	Rectangle {
-            color: "transparent"
-            height: app_settings.action_bar_height
-            width: app_settings.button_spacing
-        }
-        AppCheckBox {
-            id: exposed_check_box
-            checked: false
-        }
-        Item {Layout.fillWidth: true}
     }
 	
 	// Buttons.
@@ -113,6 +106,20 @@ BaseListPage {
             visible: array_or_object
             onClicked: {
                 on_remove()
+            }
+        }
+        Rectangle {
+            color: "transparent"
+            height: app_settings.action_bar_height
+            width: app_settings.button_spacing
+        }
+        AppLabelButton {
+            text: "accept"
+            visible: array_or_object
+            onClicked: {
+            	var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
+                page.Stack.view._stack_page.set_exposed(path, get_exposed())
+                main_bar.switch_to_node_graph()
             }
         }
         Item {Layout.fillWidth: true}

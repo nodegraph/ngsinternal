@@ -461,11 +461,9 @@ BaseStackPage{
 
 
     // Push next model on the stack.
-    function push_by_model(title, model, hints) {
+    function push_by_model(title, model, hints, exposed) {
         var list_page = stack_view.create_page("DataListPage")
-        //if (hints && hints.hasOwnProperty(hint_key.kElementResizableHint)) {
-        //	list_page.resizable = true
-        //}
+        list_page.set_exposed(exposed)
         stack_view.push_by_components(title, list_page, model)
     }
 
@@ -481,6 +479,7 @@ BaseStackPage{
 	// Used to bring up editable properties list of an object.
     function edit_object(title, path) {
     	var obj = get_value(path)
+    	var exposed = get_exposed(path)
     	var hints = get_hints(path)
         var model = create_list_model()
         for (var prop in obj) {
@@ -488,39 +487,42 @@ BaseStackPage{
                 model.append({name: prop, depth_index: stack_view.depth})
             }
         }
-        push_by_model(title, model, hints)
+        push_by_model(title, model, hints, exposed)
     }
 
 	// Used to bring up editable properties list of an array.
     function edit_array(title, path) {
     	var arr = get_value(path)
+    	var exposed = get_exposed(path)
     	var hints = get_hints(path)
         var model = create_list_model()
         for (var i=0; i<arr.length; i++) {
             model.append({name: i.toString(), depth_index: stack_view.depth})
         }
-        push_by_model(title, model, hints)
+        push_by_model(title, model, hints, exposed)
     }
     
     // Used to bring up non-editable properties list of an object.
     function view_object(title, path) {
        	var obj = get_value(path)
+       	var exposed = get_exposed(path)
         var model = create_list_model()
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop)) {
                 model.append({name: prop, depth_index: stack_view.depth})
             }
         }
-        push_by_model(title, model, {})
+        push_by_model(title, model, {}, exposed)
     }
     
     // Used to bring up non-editable properties list of an array.
     function view_array(title, path) {
     	var arr = get_value(path)
+    	var exposed = get_exposed(path)
         var model = create_list_model()
         for (var i=0; i<arr.length; i++) {
             model.append({name: i.toString(), depth_index: stack_view.depth})
         }
-        push_by_model(title, model, {})
+        push_by_model(title, model, {}, exposed)
     }
 }

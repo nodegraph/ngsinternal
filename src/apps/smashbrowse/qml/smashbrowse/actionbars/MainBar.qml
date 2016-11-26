@@ -79,6 +79,10 @@ Rectangle {
     function switch_to_current_mode(m) {
         on_switch_to_mode(current_mode)
     }
+    
+    function switch_to_node_graph() {
+    	on_switch_to_mode(app_settings.node_graph_mode)
+    }
 
     function clear_lit_buttons() {
         file_button.lit = false

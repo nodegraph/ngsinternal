@@ -17,6 +17,7 @@
         
         <!-- Edit Data Pages -->
         <file>qml/smashbrowse/contentpages/editdatapages/qmldir</file>
+        <file>qml/smashbrowse/contentpages/editdatapages/BaseEditPage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditMultiLinePage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditLinePage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml</file>
@@ -85,6 +86,7 @@
         <file>qml/smashbrowse/appwidgets/AppCheckBox.qml</file>
         <file>qml/smashbrowse/appwidgets/AppRadioButton.qml</file>
         <file>qml/smashbrowse/appwidgets/AppComboBox.qml</file>
+        <file>qml/smashbrowse/appwidgets/AppExposePlugCheckBox.qml</file>
         
         <!-- MenuModels -->
         <file>qml/smashbrowse/contentpages/listmodels/qmldir</file>

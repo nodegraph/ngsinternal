@@ -1,5 +1,6 @@
 module editdatapages
 
+BaseEditPage 1.0 BaseEditPage.qml
 EditMultiLinePage 1.0 EditMultiLinePage.qml
 EditLinePage 1.0 EditLinePage.qml
 EditBooleanPage 1.0 EditBooleanPage.qml
