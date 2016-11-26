@@ -18,7 +18,7 @@ Rectangle {
     width: parent.width
     height: app_settings.list_item_height_large
     border.color: "white"
-    border.width: app_settings.list_item_border_width
+    border.width: 0 //app_settings.list_item_border_width
     color: "transparent"
     
     // Displayed Content.
