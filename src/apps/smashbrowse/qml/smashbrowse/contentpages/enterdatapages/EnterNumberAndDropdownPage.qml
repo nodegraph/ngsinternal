@@ -111,6 +111,12 @@ Rectangle {
         
         AppComboBox {
             id: combo_box
+            anchors {
+			    left: parent.left
+			    right: parent.right
+			    leftMargin: app_settings.page_left_margin
+			    rightMargin: app_settings.page_right_margin
+			}
         }
         
         AppSpacer {}

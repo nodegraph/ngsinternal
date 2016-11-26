@@ -42,7 +42,12 @@ Rectangle {
 
     // Our Methods.
     function set_title(title) {
+   		try {
         stack_view_header.title_text = title
+        }
+        catch(e) {
+        	console.log(new Error().stack);
+        }
     }
     function get_title() {
         return stack_view_header.title_text

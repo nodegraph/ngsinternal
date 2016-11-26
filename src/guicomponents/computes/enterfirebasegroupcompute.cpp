@@ -59,8 +59,8 @@ QJsonObject EnterFirebaseGroupCompute::init_hints() {
   add_hint(m, Message::kAuthDomain, HintKey::kDescriptionHint, "The Firebase authentication domain.");
   add_hint(m, Message::kDatabaseURL, HintKey::kDescriptionHint, "The Firebase realtime database url.");
   add_hint(m, Message::kStorageBucket, HintKey::kDescriptionHint, "The Firebase storage bucket url.");
-  add_hint(m, Message::kEmail, HintKey::kDescriptionHint, "The email to sign in to Firebase. You must enable email/password authentication on your database.");
-  add_hint(m, Message::kPassword, HintKey::kDescriptionHint, "The password to sign in to Firebase. You must enable email/password authentication on your database.");
+  add_hint(m, Message::kEmail, HintKey::kDescriptionHint, "The email to sign in to Firebase. Please enable email/password authentication on your database.");
+  add_hint(m, Message::kPassword, HintKey::kDescriptionHint, "The password to sign in to Firebase. Please enable email/password authentication on your database.");
 
   return m;
 }

@@ -179,7 +179,7 @@ QJsonObject SwitchToIFrameCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
   add_hint(m, Message::kIFrame, HintKey::kDescriptionHint,
-           "The path to the iframe that subsequent nodes shall act on. IFrame paths are made up of iframe indexes separated by a forward slash. For example: 1/2/3");
+           "The path to the iframe that subsequent nodes will act on. IFrame paths are made up of iframe indexes separated by a forward slash. For example: 1/2/3");
   return m;
 }
 
@@ -222,12 +222,12 @@ QJsonObject CreateSetFromValuesCompute::init_hints() {
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
-  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The element type to use when creating the set.");
+  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of the elements to put into the set.");
 
-  add_hint(m, Message::kTextValues, HintKey::kDescriptionHint, "The set of text values used to find text elements.");
+  add_hint(m, Message::kTextValues, HintKey::kDescriptionHint, "The text values used to find text elements.");
   add_hint(m, Message::kTextValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
 
-  add_hint(m, Message::kImageValues, HintKey::kDescriptionHint, "The set of overlapping images used to find image elements.");
+  add_hint(m, Message::kImageValues, HintKey::kDescriptionHint, "The overlapping images used to find image elements.");
   add_hint(m, Message::kImageValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
   return m;
 }

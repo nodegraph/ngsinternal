@@ -73,7 +73,7 @@ QtObject {
     function get_sub_object(obj, path) {
         if (typeof obj !== 'object') {
             console.error("Error: get_sub_object requires an object.")
-            return undefined
+            return {}
         }
 
         if (path.length <=0) {
@@ -85,9 +85,18 @@ QtObject {
         for (var i=0; i<path.length; i++) {
             if (typeof data === 'object') {
                 if (Object.getPrototypeOf(data) === Array.prototype) {
-                    data = data[Number(path[i])]
+                	var index = Number(path[i])
+                	if (index < data.length) {
+                    	data = data[index]
+                    } else {
+                    	return {}
+                    }
                 } else if (Object.getPrototypeOf(data) === Object.prototype){
-                    data = data[path[i]]
+                	if (data.hasOwnProperty(path[i])) {
+                    	data = data[path[i]]
+                    } else {
+                    	return {}
+                    }
                 } else {
                     console.log("Error: app_utils::get_sub_object was expecting an object or an array.")
                     return {}

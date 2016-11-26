@@ -104,7 +104,7 @@ BaseStackPage{
             push_page.visible = true
             push_page.set_value("value")
             push_page.set_title("Add Element to Object.")
-            push_page.set_description("Enter the name and type of the new value to add.")
+            push_page.set_description("Name and type of the new value.")
             push_page.set_option_texts(['string','number','boolean', 'array', 'object'])
             push_page.set_option_ids([2, 3, 4, 1, 0])
             
@@ -112,14 +112,14 @@ BaseStackPage{
             push_page.callback = stack_page.add_element.bind(stack_page)
             stack_view.push_page(push_page)
         } else if (value_type == js_type.kArray) {
-        	if (hints && hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
+        	if (hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
         		var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterNumberPage.qml", stack_page, {})
             	push_page.visible = true
             	push_page.set_value(0)
             	push_page.set_bottom_value(0)
             	push_page.set_top_value(value.length)
             	push_page.set_title("Add Element to Array.")
-            	push_page.set_description("Enter the index at which to insert the new element.")
+            	push_page.set_description("Index of the new element.")
             	
             	
             	var element_type = hints[hint_key.kElementJSTypeHint]
@@ -132,7 +132,7 @@ BaseStackPage{
             	push_page.set_bottom_value(0)
             	push_page.set_top_value(value.length)
             	push_page.set_title("Add Element to Array.")
-            	push_page.set_description("Enter the index at which to insert the new element.")
+            	push_page.set_description("Index of the new element.")
             	push_page.set_option_texts(['string','number','boolean', 'array', 'object'])
             	push_page.set_option_ids([2, 3, 4, 1, 0])
             	
@@ -172,10 +172,20 @@ BaseStackPage{
         if (!stack_page._allow_edits) {
             return
         }
+        
+        console.log('on edit element: ' + name)
 
         var child_path = stack_view.get_title_path(1, stack_view.depth)
+        console.log('child path0: ' + JSON.stringify(child_path))
         child_path.push(name)
+        console.log('child path1: ' + JSON.stringify(child_path))
+        
         var child_hints = get_hints(child_path)
+        
+        console.log('child path2: ' + JSON.stringify(child_path))
+        
+        
+        
 
         // Push an edit page according to the js type.
         var child_value = stack_page.get_value(child_path)
@@ -183,7 +193,7 @@ BaseStackPage{
         var child_type = app_enums.determine_js_type(child_value)
         switch(child_type) {
         case js_type.kString:
-        	if (child_hints && child_hints.hasOwnProperty(hint_key.kMultiLineHint)) {
+        	if (child_hints.hasOwnProperty(hint_key.kMultiLineHint)) {
         		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditMultiLinePage.qml", edit_data_list_stack_page, {})
 	            setup_edit_page(page, name, child_value, child_hints, exposed)
 	            stack_view.push_page(page)
@@ -199,7 +209,7 @@ BaseStackPage{
             stack_view.push_page(page)
             break
         case js_type.kNumber:
-            if (child_hints && child_hints.hasOwnProperty(hint_key.kEnumHint)) {
+            if (child_hints.hasOwnProperty(hint_key.kEnumHint)) {
                 var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
                 setup_edit_page(page, name, child_value, child_hints, exposed)
                 stack_view.push_page(page)
@@ -210,6 +220,7 @@ BaseStackPage{
             }
             break
         case js_type.kObject:
+        	console.log('child path: ' + child_path)
             stack_page.edit_object(child_path[child_path.length-1], child_path);
             break
         case js_type.kArray:
@@ -258,9 +269,10 @@ BaseStackPage{
                 page.set_description(child_hints[hint_key.kDescriptionHint])
             } else {
                 // If there is not description, then we're editing an element of an object or array parameter.
-                page.set_description("Edit the value for this element.")
+                page.set_description("The current value of this element.")
             }
         }
+        console.log('title is: ' + title)
         page.set_title(title)
         page.set_value(child_value)
         page.set_exposed(exposed)
@@ -353,7 +365,36 @@ BaseStackPage{
     // --------------------------------------------------------------------------------------------------
 
     function get_hints(path) {
-    	return app_utils.get_sub_object(_hints, path)
+    	var hints = app_utils.get_sub_object(_hints, path)
+    	// Make a deep copy.
+    	hints = JSON.parse(JSON.stringify(hints));
+    	
+    	// Inherit some hints from parent.
+    	if (path.length > 0) {
+    		// Pop off the tail element of the path.
+			var parent_path = get_parent_path(path)
+			
+    		// Merge hints from the parent.
+    		var parent_hints = app_utils.get_sub_object(_hints, parent_path)
+    		if (parent_hints.hasOwnProperty(hint_key.kElementEnumHint)) {
+    			hints[hint_key.kEnumHint] = parent_hints[hint_key.kElementEnumHint]
+    		}
+    		if (parent_hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
+    			hints[hint_key.kJSTypeHint] = parent_hints[hint_key.kElementJSTypeHint]
+    		}
+    	}
+    	return hints
+    }
+    
+    function get_parent_path(path) {
+    	if (path.length == 0) {
+    		return path
+    	}
+    	
+    	// Pop off the tail element of the path.
+		var parent_path = path.slice() // Make a copy of the path array.
+		parent_path.pop()
+		return parent_path
     }
     
     // --------------------------------------------------------------------------------------------------
@@ -392,15 +433,17 @@ BaseStackPage{
     	
     	if (_allow_edits) {
     		var hints = get_hints(path)
-    		if (hints) {
-    			// Use the hints to get a more descriptive string representation.
-				if (hints.hasOwnProperty(hint_key.kEnumHint)) {
-		    		return app_enums.get_enum_hint_value_text(hints[hint_key.kEnumHint], value)
-		    	} else if (hints.hasOwnProperty(hint_key.kDescriptionHint) && 
-		    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
-		    		return hints[hint_key.kDescriptionHint]
-		    	}
+    		
+    		// If we have an enum hint, return the respective text.
+    		if (hints.hasOwnProperty(hint_key.kEnumHint)) {
+    			return app_enums.get_enum_hint_value_text(hints[hint_key.kEnumHint], value)
     		}
+    		
+    		// Otherwise return the description for objects and arrays.
+    		if (hints.hasOwnProperty(hint_key.kDescriptionHint) && 
+	    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
+	    		return hints[hint_key.kDescriptionHint]
+	    	}
     	}
 
         

@@ -24,7 +24,6 @@ BaseEditPage {
             tool_bar: copy_paste_bar
             text: "untitled"
             width: app_settings.page_content_width
-            anchors.centerIn: parent
         }
     }
 	

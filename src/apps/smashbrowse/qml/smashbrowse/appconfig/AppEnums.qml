@@ -49,8 +49,6 @@ Item{
     // --------------------------------------------------------------------------------------
 
     function get_enum_hint_value_text(enum_hint_value_type, index) {
-    	console.log('enum_hint_value_type: ' + enum_hint_value_type)
-    
         if (enum_hint_value_type == enum_hint_value.kMouseActionType) {
             return mouse_action_type_text[index]
         } else if (enum_hint_value_type == enum_hint_value.kTextActionType) {

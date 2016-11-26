@@ -82,7 +82,7 @@ Rectangle {
             id: description
             anchors.horizontalCenter: parent.horizontalCenter // used when the text is actually a single line
             Layout.maximumWidth: parent.width
-            text: "Current value of the property."
+            text: "The current value of this property."
         }
         
         AppSpacer {}
