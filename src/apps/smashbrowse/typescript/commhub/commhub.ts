@@ -161,40 +161,40 @@ class AppConnection extends BaseConnection {
                 this.webdriverwrap.navigate_to(req.args.url).then(() => {
                     let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
-                }, (error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
+                }, (error: Error) => {
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
                 })
             } break
             case RequestType.kNavigateBack: {
                 this.webdriverwrap.navigate_back().then(() => {
                     let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
-                }, (error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
+                }, (error: Error) => {
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
                 })
             } break
             case RequestType.kNavigateForward: {
                 this.webdriverwrap.navigate_forward().then(() => {
                     let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
-                }, (error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
+                }, (error: Error) => {
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
                 })
             } break
             case RequestType.kNavigateRefresh: {
                 this.webdriverwrap.navigate_refresh().then(() => {
                     let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
                     send_msg_to_ext(relay_req)
-                }, (error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
+                }, (error: Error) => {
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
                 })
             } break
             case RequestType.kSwitchIFrame: {
                 this.webdriverwrap.switch_to_iframe(req.args.iframe).then(() => {
                     // Update the chrome extension.
                     send_msg_to_ext(req)
-                }, (error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error))
+                }, (error: Error) => {
+                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
                 })
             } break
             case RequestType.kPerformMouseAction: {

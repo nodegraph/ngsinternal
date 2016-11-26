@@ -143,6 +143,10 @@ export class WebDriverWrap {
 
             // Get the frame index as a number.
             let frame_index = Number(splits[i])
+            // If we can't get the frame index then iframe path is syntactically incorrect.
+            if (isNaN(frame_index)) {
+                return webdriver.promise.rejected(new Error("invalid iframe path"))
+            }
 
             // Stop going deeper if get a negative index.
             if (frame_index < 0) {
