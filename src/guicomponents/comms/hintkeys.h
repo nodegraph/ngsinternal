@@ -13,7 +13,6 @@ COMPONENT_ENTRY1(MinHint)\
 COMPONENT_ENTRY1(MaxHint)\
 COMPONENT_ENTRY1(ElementJSTypeHint)\
 COMPONENT_ENTRY1(ElementEnumHint)\
-COMPONENT_ENTRY1(ElementResizableHint)\
 COMPONENT_ENTRY1(DescriptionHint)\
 COMPONENT_ENTRY1(MultiLineHint)\
 
@@ -25,7 +24,6 @@ COMPONENT_ENTRY1(MultiLineHint)\
 // Hints for elements in objects and arrays.
 // kElementJSTypeHint: This represents the javascript type of elements inside an array/object.
 // kElementEnumHint: This represents the type of enum represented by number elements inside an array/object.
-// kElementResizableHint: Whether an array or object parameter is adjustable in terms of the number of elements it contains.
 //
 // User info about the parameter.
 // kDescriptionHint: A helpful description of the parameter.

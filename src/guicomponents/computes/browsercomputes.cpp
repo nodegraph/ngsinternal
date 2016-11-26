@@ -225,11 +225,9 @@ QJsonObject CreateSetFromValuesCompute::init_hints() {
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The element type to use when creating the set.");
 
   add_hint(m, Message::kTextValues, HintKey::kDescriptionHint, "The set of text values used to find text elements.");
-  add_hint(m, Message::kTextValues, HintKey::kElementResizableHint, true);
   add_hint(m, Message::kTextValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
 
   add_hint(m, Message::kImageValues, HintKey::kDescriptionHint, "The set of overlapping images used to find image elements.");
-  add_hint(m, Message::kImageValues, HintKey::kElementResizableHint, true);
   add_hint(m, Message::kImageValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
   return m;
 }
@@ -779,7 +777,6 @@ QJsonObject ShrinkAgainstMarkedCompute::init_hints() {
 
   add_hint(m, Message::kDirections, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
   add_hint(m, Message::kDirections, HintKey::kElementEnumHint, to_underlying(EnumHintValue::kDirectionType));
-  add_hint(m, Message::kDirections, HintKey::kElementResizableHint, true);
   add_hint(m, Message::kDirections, HintKey::kDescriptionHint, "The sides of the marked sets used to intersect the set of interest.");
   return m;
 }
