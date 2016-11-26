@@ -406,6 +406,10 @@ BaseStackPage{
 	}
 	
 	function set_exposed(path, exposed) {
+		if (!_allow_edits) {
+			console.log('attempt to set exposed while in viewing outputs')
+			return
+		}
 		console.log('setting the exposure at path: ' + path + ' to ' + exposed)
 		app_utils.set_sub_object(_exposure, path, exposed)
         node_graph_item.set_input_exposure(_node_path, _exposure)

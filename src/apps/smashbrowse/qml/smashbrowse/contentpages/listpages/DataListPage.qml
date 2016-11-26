@@ -23,7 +23,8 @@ BaseListPage {
     list_view.height: exposable ? app_settings.menu_page_height - edit_bar.height - expose_plug_check_box.height : app_settings.menu_page_height - edit_bar.height
     
     property var array_or_object: page.Stack.view && (page.Stack.view.depth > 1)
-    property var exposable: page.Stack.view && (page.Stack.view.depth == 2)
+    property var exposable: page.Stack.view && (page.Stack.view.depth == 2) && (page.Stack.view._stack_page._allow_edits)
+    property var modifiable: page.Stack.view && (page.Stack.view._stack_page._allow_edits)
     
     function get_stack_view() {
     	return Stack.view
@@ -69,6 +70,7 @@ BaseListPage {
     RowLayout {
     	id: edit_bar
     	Layout.maximumWidth: list_view.width
+    	visible: modifiable
     	
     	anchors {
             left: list_view.left
