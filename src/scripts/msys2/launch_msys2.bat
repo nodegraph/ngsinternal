@@ -13,6 +13,8 @@ rem - -------------------------------------------------------------
 rem - this batch file takes the following arguments in the order specified
 rem - 1) the ARCH as an argument.
 rem - 2) the hardware bits 32 or 64
+rem - 3) (optional) the script file to run in msys2 environment. If no file
+rem      is specified then an interactive msys2 shell will be launched.
 
 rem - load the regular windows env setup batch file
 call %~dp0/../windows/env.bat %2
@@ -21,4 +23,16 @@ set ARCH=%1
 
 rem - now start up msys
 rem - call D:\installs\android\MinGW\msys\1.0\msys.bat
+rem - call D:\installs\windows\msys2\msys2_shell.bat
+
+if "%3"=="" goto INTERACTIVE
+
+rem - otherwise we run the script instead of launching an interactive shell
+D:\installs\windows\msys2\usr\bin\bash.exe -f %3
+echo "Done building in msys2 environment";
+goto DONE
+
+:INTERACTIVE
 call D:\installs\windows\msys2\msys2_shell.bat
+
+:DONE
