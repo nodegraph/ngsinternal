@@ -229,29 +229,29 @@ after_script:
     #- ninja run_testqml
   tags:
     - ngsrunner
-# ------------------------------------
-windows_debug:
-    <<: *windows_debug_tmpt
-    except:
-        - tags
-windows_debug_tag:
-    <<: *windows_debug_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - windows_debug/install/
-windows_release:
-    <<: *windows_release_tmpt
-    except:
-        - tags
-windows_release_tag:
-    <<: *windows_release_tmpt
-    only:
-        - tags
-    artifacts:
-        paths:
-            - windows_release/install
+## ------------------------------------
+#windows_debug:
+#    <<: *windows_debug_tmpt
+#    except:
+#        - tags
+#windows_debug_tag:
+#    <<: *windows_debug_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - windows_debug/install/
+#windows_release:
+#    <<: *windows_release_tmpt
+#    except:
+#        - tags
+#windows_release_tag:
+#    <<: *windows_release_tmpt
+#    only:
+#        - tags
+#    artifacts:
+#        paths:
+#            - windows_release/install
 ## ------------------------------------
 #macos_debug:
 #    <<: *macos_debug_tmpt
