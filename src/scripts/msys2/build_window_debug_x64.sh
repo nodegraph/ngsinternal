@@ -1,3 +1,9 @@
+# Jenkins Pipeline Definition.
+#node {
+#    bat "D:\\src\\ngsinternal\\src\\scripts\\msys2\\launch_msys2.bat ARCH_WINDOWS x64 D:\\src\\ngsinternal\\src\\scripts\\msys2\\build_window_debug_x64.sh"
+#}
+
+
 echo "WINDOWS DEBUG";
 export ARCH=ARCH_WINDOWS;
 export ARCH_BITS=x64;
