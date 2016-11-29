@@ -1,5 +1,3 @@
-/// <reference path="D:\installs\srcdeps\ngsexternal\nodejs2\node_modules\firebase\firebase.d.ts"/>
-
 import firebase = require("firebase");
 
 import { AppSocketServer } from './commhub'

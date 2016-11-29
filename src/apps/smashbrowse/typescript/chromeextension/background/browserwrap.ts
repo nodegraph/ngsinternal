@@ -1,4 +1,4 @@
-/// <reference path="D:\dev\windows\DefinitelyTyped\chrome\chrome.d.ts"/>
+
 
 // This class holds browser related utility methods.
 class BrowserWrap {

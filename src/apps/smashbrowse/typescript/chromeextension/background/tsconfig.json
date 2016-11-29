@@ -8,6 +8,11 @@
         "sourceMap": true
     },
     "files": [
+        "D:/dev/windows/DefinitelyTyped/chrome/chrome.d.ts",
+        
+        "../../message/message.d.ts",
+        "../../message/messagetypes.d.ts",
+
         "browserwrap.ts",
         "bgcomm.ts",
         "bgcommhandler.ts",

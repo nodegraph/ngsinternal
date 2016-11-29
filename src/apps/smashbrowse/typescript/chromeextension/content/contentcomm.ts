@@ -1,6 +1,3 @@
-/// <reference path="D:\dev\windows\DefinitelyTyped\chrome\chrome.d.ts"/>
-/// <reference path="..\..\message\message.d.ts"/>
-/// <reference path="..\..\message\messagetypes.d.ts"/>
 
 // Class which handles communication between this content script and the background script.
 class ContentComm {

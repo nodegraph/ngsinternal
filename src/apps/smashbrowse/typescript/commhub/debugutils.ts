@@ -1,4 +1,3 @@
-/// <reference path="D:\dev\windows\DefinitelyTyped\node\node.d.ts"/>
 
 export class DebugUtils {
     static catch_uncaught_exceptions() {
