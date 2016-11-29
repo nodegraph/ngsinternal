@@ -33,8 +33,8 @@ MessageReceiver::MessageReceiver(Entity* parent)
       _app_worker(this),
       _task_queue(this),
       _connected(false) {
-  get_dep_loader()->register_fixed_dep(_app_worker, Path({}));
-  get_dep_loader()->register_fixed_dep(_task_queue, Path({}));
+  get_dep_loader()->register_fixed_dep(_app_worker, Path());
+  get_dep_loader()->register_fixed_dep(_task_queue, Path());
 }
 
 MessageReceiver::~MessageReceiver() {

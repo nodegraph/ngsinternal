@@ -65,8 +65,8 @@ NodeGraphController::NodeGraphController(Entity* parent)
       Component(parent, kIID(), kDID()),
       _manipulator(this),
       _ng_quick(this) {
-  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
-  get_dep_loader()->register_fixed_dep(_ng_quick, Path({}));
+  get_dep_loader()->register_fixed_dep(_manipulator, Path());
+  get_dep_loader()->register_fixed_dep(_ng_quick, Path());
 }
 
 NodeGraphController::~NodeGraphController() {
@@ -194,13 +194,13 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
       _last_node_shape(this),
       _link_locked(false) {
 
-  get_dep_loader()->register_fixed_dep(_fbo_worker, Path({}));
-  get_dep_loader()->register_fixed_dep(_selection, Path({}));
-  get_dep_loader()->register_fixed_dep(_canvas, Path({}));
-  get_dep_loader()->register_fixed_dep(_factory, Path({}));
-  get_dep_loader()->register_fixed_dep(_file_model, Path({}));
-  get_dep_loader()->register_fixed_dep(_license_checker, Path({}));
-  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_fbo_worker, Path());
+  get_dep_loader()->register_fixed_dep(_selection, Path());
+  get_dep_loader()->register_fixed_dep(_canvas, Path());
+  get_dep_loader()->register_fixed_dep(_factory, Path());
+  get_dep_loader()->register_fixed_dep(_file_model, Path());
+  get_dep_loader()->register_fixed_dep(_license_checker, Path());
+  get_dep_loader()->register_fixed_dep(_manipulator, Path());
 
   _device_pixel_ratio = static_cast<GLsizei>(QGuiApplication::primaryScreen()->devicePixelRatio());
 

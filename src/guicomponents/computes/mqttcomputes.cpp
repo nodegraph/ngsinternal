@@ -19,7 +19,7 @@ BaseMQTTCompute::BaseMQTTCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
       _scheduler(this),
       _group_context(this) {
-  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
+  get_dep_loader()->register_fixed_dep(_scheduler, Path());
   get_dep_loader()->register_fixed_dep(_group_context, Path({"..","group_context"}));
 }
 

@@ -41,8 +41,8 @@ FileModel::FileModel(Entity* app_root)
       _crypto_logic(this),
       _graph_builder(this),
       _working_row(-1) {
-  get_dep_loader()->register_fixed_dep(_crypto_logic, Path({}));
-  get_dep_loader()->register_fixed_dep(_graph_builder, Path({}));
+  get_dep_loader()->register_fixed_dep(_crypto_logic, Path());
+  get_dep_loader()->register_fixed_dep(_graph_builder, Path());
 
   // Set our role names.
   _roles[kTitleRole] = "title";

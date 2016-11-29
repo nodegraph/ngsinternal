@@ -27,7 +27,7 @@ struct {
 GroupNodeCompute::GroupNodeCompute(Entity* entity, ComponentDID did):
     Compute(entity, did),
     _factory(this) {
-  get_dep_loader()->register_fixed_dep(_factory, Path({}));
+  get_dep_loader()->register_fixed_dep(_factory, Path());
 }
 
 GroupNodeCompute::~GroupNodeCompute() {

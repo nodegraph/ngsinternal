@@ -37,9 +37,9 @@ NodeJSWorker::NodeJSWorker(Entity* parent)
       _jitter(kJitterSize)
 
 {
-  get_dep_loader()->register_fixed_dep(_msg_sender, Path({}));
-  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
-  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_msg_sender, Path());
+  get_dep_loader()->register_fixed_dep(_scheduler, Path());
+  get_dep_loader()->register_fixed_dep(_manipulator, Path());
 
   // Setup the poll timer.
   _poll_timer.setSingleShot(false);

@@ -28,9 +28,9 @@ BrowserRecorder::BrowserRecorder(Entity* parent)
       _worker(this),
       _scheduler(this),
       _model(this) {
-  get_dep_loader()->register_fixed_dep(_worker, Path({}));
-  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
-  get_dep_loader()->register_fixed_dep(_model, Path({}));
+  get_dep_loader()->register_fixed_dep(_worker, Path());
+  get_dep_loader()->register_fixed_dep(_scheduler, Path());
+  get_dep_loader()->register_fixed_dep(_model, Path());
 }
 
 BrowserRecorder::~BrowserRecorder() {

@@ -20,7 +20,7 @@ TaskScheduler::TaskScheduler(Entity* parent)
       _ignore_outstanding_response(false),
       _outstanding_response_id(-1),
       _connected(false) {
-  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_manipulator, Path());
 }
 
 TaskScheduler::~TaskScheduler() {

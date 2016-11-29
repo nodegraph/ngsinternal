@@ -122,7 +122,7 @@ Entity* Compute::create_input(const std::string& name, const EntityConfig& confi
   external();
 
   // Get the inputs namespace.
-  Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
+  Dep<BaseFactory> factory = get_dep<BaseFactory>(Path());
   Entity* inputs_space = get_inputs_space();
 
   // Make sure the name doesn't exist already.
@@ -138,7 +138,7 @@ Entity* Compute::create_output(const std::string& name, const EntityConfig& conf
   external();
 
   // Get the outputs namespace.
-  Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
+  Dep<BaseFactory> factory = get_dep<BaseFactory>(Path());
   Entity* outputs_space = get_outputs_space();
 
   // Make sure the name doesn't exist already.
@@ -152,7 +152,7 @@ Entity* Compute::create_output(const std::string& name, const EntityConfig& conf
 
 Entity* Compute::create_namespace(const std::string& name) {
   external();
-  Dep<BaseFactory> factory = get_dep<BaseFactory>(Path({}));
+  Dep<BaseFactory> factory = get_dep<BaseFactory>(Path());
   Entity* space = static_cast<BaseNamespaceEntity*>(factory->instance_entity(our_entity(), EntityDID::kBaseNamespaceEntity, name));
   space->create_internals();
   return space;

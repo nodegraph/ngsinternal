@@ -39,7 +39,7 @@ TestDeps::TestDeps(Entity* entity)
       _dot_c_out_compute(this),
       _dot_d_in_compute(this),
       _dot_d_out_compute(this){
-  get_dep_loader()->register_fixed_dep(_factory, Path({}));
+  get_dep_loader()->register_fixed_dep(_factory, Path());
 }
 
 TestDeps::~TestDeps() {

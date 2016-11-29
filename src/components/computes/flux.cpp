@@ -17,7 +17,7 @@ Flux<Traits>::Flux(Entity* entity)
     : Component(entity, kIID(), kDID()),
       _manipulator(this),
       _null(this) {
-  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_manipulator, Path());
 }
 
 template<class Traits>

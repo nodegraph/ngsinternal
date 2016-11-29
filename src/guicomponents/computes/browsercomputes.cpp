@@ -21,8 +21,8 @@ BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
       _worker(this),
       _scheduler(this),
       _enter(this) {
-  get_dep_loader()->register_fixed_dep(_worker, Path({}));
-  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
+  get_dep_loader()->register_fixed_dep(_worker, Path());
+  get_dep_loader()->register_fixed_dep(_scheduler, Path());
   get_dep_loader()->register_fixed_dep(_enter, Path({"..","group_context"}));
 }
 

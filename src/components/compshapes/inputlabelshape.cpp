@@ -27,7 +27,7 @@ InputLabelShape::InputLabelShape(Entity* entity)
       _input_shape(this),
       _link_shape(this),
       _state(0) {
-  get_dep_loader()->register_fixed_dep(_resources, Path({}));
+  get_dep_loader()->register_fixed_dep(_resources, Path());
   get_dep_loader()->register_fixed_dep(_input_shape, Path({".."}));
 }
 

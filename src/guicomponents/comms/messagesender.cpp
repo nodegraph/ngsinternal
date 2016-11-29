@@ -22,7 +22,7 @@ MessageSender::MessageSender(Entity* parent)
       _process(this),
       _web_socket(NULL),
       _trying_to_open(false) {
-  get_dep_loader()->register_fixed_dep(_process, Path({}));
+  get_dep_loader()->register_fixed_dep(_process, Path());
 
   _web_socket  = new_ff QWebSocket();
   connect(_web_socket, SIGNAL(connected()), this, SLOT(on_connected()));

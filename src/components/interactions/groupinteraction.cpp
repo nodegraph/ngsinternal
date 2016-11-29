@@ -44,10 +44,10 @@ GroupInteraction::GroupInteraction(Entity* entity)
       _state(kNodeSelectionAndDragging),
       _hit_region(HitRegion::kMissedRegion),
       _panning_selection(false) {
-  get_dep_loader()->register_fixed_dep(_factory, Path({}));
-  get_dep_loader()->register_fixed_dep(_selection, Path({}));
+  get_dep_loader()->register_fixed_dep(_factory, Path());
+  get_dep_loader()->register_fixed_dep(_selection, Path());
   get_dep_loader()->register_fixed_dep(_shape_collective, Path({"."}));
-  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_manipulator, Path());
 }
 
 GroupInteraction::~GroupInteraction(){

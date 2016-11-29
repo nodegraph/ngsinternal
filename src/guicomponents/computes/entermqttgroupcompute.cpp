@@ -14,7 +14,7 @@ EnterMQTTGroupCompute::EnterMQTTGroupCompute(Entity* entity)
     : QObject(NULL),
       EnterGroupCompute(entity, kDID()),
       _scheduler(this) {
-  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
+  get_dep_loader()->register_fixed_dep(_scheduler, Path());
 
   // MQTT Client.
   _client = new_ff QMQTT::Client();

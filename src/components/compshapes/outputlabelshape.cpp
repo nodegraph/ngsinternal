@@ -22,7 +22,7 @@ OutputLabelShape::OutputLabelShape(Entity* entity)
       _resources(this),
       _output_shape(this),
       _state(0) {
-  get_dep_loader()->register_fixed_dep(_resources, Path({}));
+  get_dep_loader()->register_fixed_dep(_resources, Path());
   get_dep_loader()->register_fixed_dep(_output_shape, Path({".."}));
 }
 

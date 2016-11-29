@@ -26,8 +26,8 @@ FBOWorker::FBOWorker(Entity* entity)
       _display_texture_wrapper(NULL),
       _render_texture_wrapper(NULL) {
   qRegisterMetaType<QSGTexture*>();
-  get_dep_loader()->register_fixed_dep(_renderer, Path({}));
-  get_dep_loader()->register_fixed_dep(_ng_view, Path({}));
+  get_dep_loader()->register_fixed_dep(_renderer, Path());
+  get_dep_loader()->register_fixed_dep(_ng_view, Path());
 }
 
 FBOWorker::~FBOWorker() {

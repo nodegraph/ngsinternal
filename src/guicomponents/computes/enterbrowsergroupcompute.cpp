@@ -27,8 +27,8 @@ EnterBrowserGroupCompute::EnterBrowserGroupCompute(Entity* entity)
     : EnterGroupCompute(entity, kDID()),
       _scheduler(this),
       _worker(this) {
-  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
-  get_dep_loader()->register_fixed_dep(_worker, Path({}));
+  get_dep_loader()->register_fixed_dep(_scheduler, Path());
+  get_dep_loader()->register_fixed_dep(_worker, Path());
 }
 
 EnterBrowserGroupCompute::~EnterBrowserGroupCompute() {
@@ -65,8 +65,8 @@ ExitBrowserGroupCompute::ExitBrowserGroupCompute(Entity* entity)
     : ExitGroupCompute(entity, kDID()),
       _scheduler(this),
       _worker(this) {
-  get_dep_loader()->register_fixed_dep(_scheduler, Path({}));
-  get_dep_loader()->register_fixed_dep(_worker, Path({}));
+  get_dep_loader()->register_fixed_dep(_scheduler, Path());
+  get_dep_loader()->register_fixed_dep(_worker, Path());
 }
 
 ExitBrowserGroupCompute::~ExitBrowserGroupCompute() {

@@ -36,7 +36,7 @@ FBORenderer::FBORenderer(Entity* entity)
       _display_fbo(NULL),
       _display_texture(NULL),
       _ng_canvas(this) {
-  get_dep_loader()->register_fixed_dep(_ng_canvas, Path({}));
+  get_dep_loader()->register_fixed_dep(_ng_canvas, Path());
 }
 
 FBORenderer::~FBORenderer() {

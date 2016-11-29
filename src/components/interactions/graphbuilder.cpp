@@ -21,8 +21,8 @@ GraphBuilder::GraphBuilder(Entity* entity)
     : Component(entity, kIID(), kDID()),
       _factory(this),
       _manipulator(this) {
-  get_dep_loader()->register_fixed_dep(_factory, Path({}));
-  get_dep_loader()->register_fixed_dep(_manipulator, Path({}));
+  get_dep_loader()->register_fixed_dep(_factory, Path());
+  get_dep_loader()->register_fixed_dep(_manipulator, Path());
 }
 
 GraphBuilder::~GraphBuilder() {

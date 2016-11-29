@@ -45,9 +45,9 @@ ShapeCanvas::ShapeCanvas(Entity* entity)
       _text_pipeline(NULL),
       _clear_depth(true),
       _clear_color(true) {
-  get_dep_loader()->register_fixed_dep(_factory, Path({}));
-  get_dep_loader()->register_fixed_dep(_resources, Path({}));
-  get_dep_loader()->register_fixed_dep(_ng_state, Path({}));
+  get_dep_loader()->register_fixed_dep(_factory, Path());
+  get_dep_loader()->register_fixed_dep(_resources, Path());
+  get_dep_loader()->register_fixed_dep(_ng_state, Path());
 }
 
 ShapeCanvas::~ShapeCanvas() {
