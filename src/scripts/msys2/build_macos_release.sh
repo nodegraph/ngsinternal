@@ -6,12 +6,9 @@
 #}
 
 echo "MACOS RELEASE"
-#export ARCH=ARCH_MACOS
-#export ARCH_BITS=x64
-echo ${PATH}
-which cmake
-cd /Users/raindrop/src/ngsinternal
-git pull origin master
+export ARCH=ARCH_MACOS
+export ARCH_BITS=x64
+source /Users/raindrop/src/ngsinternal/src/scripts/macos/setup_env.sh
 cd /Users/raindrop/dev/macos
 rm -fr macos_release_jenkins
 mkdir macos_release_jenkins
