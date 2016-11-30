@@ -2,7 +2,7 @@
 # These are the main env variables that need to be configured.
 # The other variables below depend on where you installed other tools
 # like eclipse, ninja etc.
-
+#
 
 
 # setup the software locations
