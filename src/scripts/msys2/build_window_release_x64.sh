@@ -15,5 +15,5 @@ cd /d/wr64;
 git clone git@gitlab.com:nodegraph/ngsinternal.git;
 mkdir build;
 cd build;
-cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release /d/src/ngsinternal/src;
+cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ../ngsinternal/src;
 ninja install;
