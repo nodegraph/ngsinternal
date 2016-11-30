@@ -1,7 +1,10 @@
+#!/bin/bash
+
 # Jenkins Pipeline Definition.
 #node('macos') {
 #    sh "source /Users/raindrop/src/ngsinternal/src/scripts/msys2/build_macos_debug.sh"
 #}
+
 echo "MACOS DEBUG"
 export ARCH=ARCH_MACOS
 export ARCH_BITS=x64
