@@ -9,10 +9,8 @@ echo "MACOS DEBUG"
 #export ARCH=ARCH_MACOS
 #export ARCH_BITS=x64
 echo ${PATH}
-which cmake
 source /Users/raindrop/src/ngsinternal/src/scripts/msys2/setup_env.sh
 echo ${PATH}
-which cmake
 cd /Users/raindrop/src/ngsinternal
 git pull origin master
 cd /Users/raindrop/dev/macos
