@@ -8,8 +8,10 @@
 echo "MACOS DEBUG"
 export ARCH=ARCH_MACOS
 export ARCH_BITS=x64
+echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 echo ${PATH}
 source /Users/raindrop/src/ngsinternal/src/scripts/macos/setup_env.sh
+echo "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 echo ${PATH}
 cd /Users/raindrop/src/ngsinternal
 git pull origin master

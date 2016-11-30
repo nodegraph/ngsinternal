@@ -12,8 +12,7 @@
 # SRC_ROOT points to the location where you checked out the repos,
 # like ngsinternal. This file is expected to be in that repo.
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-#export SRC_ROOT=`readlink -f ${SCRIPT_DIR}/../../../..`
-export SRC_ROOT=${SCRIPT_DIR}/../../../..
+export SRC_ROOT=`readlink -f ${SCRIPT_DIR}/../../../..`
 #echo "SRC_ROOT is: ${SRC_ROOT}"
 
 # PLATFORM_ROOT points to the location where you install applications
@@ -79,6 +78,8 @@ echo setting up for ${ARCH} ${ARCH_BITS}
 
 # ARCH specific paths.
 if [ ${ARCH} == "ARCH_WINDOWS" ]; then 
+  echo
+elif [ ${ARCH} == "ARCH_MACOS" ]; then
   echo
 elif [ ${ARCH} == "ARCH_WINRT" ]; then
   echo
