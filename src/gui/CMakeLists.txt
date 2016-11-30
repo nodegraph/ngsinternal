@@ -30,13 +30,13 @@ target_link_libraries(ngs_gui
 	ngs_glewhelper
 	ngs_comms
 	Qt5::OpenGL
-    Qt5::Core
+	Qt5::Core
 	Qt5::Quick
 	Qt5::Network
 	Qt5::WebSockets
-	libeay32
-	ssleay32
 ) 
+
+
  
 # Install.
 INSTALL(TARGETS ngs_gui

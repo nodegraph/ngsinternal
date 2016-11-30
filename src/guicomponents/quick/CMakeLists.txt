@@ -41,13 +41,24 @@ target_link_libraries(ngs_quick
 	ngs_comms
 	ngs_guicomputes
 	Qt5::OpenGL
-    Qt5::Core
+   	Qt5::Core
 	Qt5::Quick
 	Qt5::Network
 	Qt5::WebSockets
-	libeay32
-	ssleay32
 ) 
+
+if (${ARCH} STREQUAL ARCH_WINDOWS)
+    target_link_libraries(ngs_guicomputes 
+        libeay32
+        ssleay32
+    ) 
+elif (${ARCH} STREQUAL ARCH_MACOS)
+    target_link_libraries(ngs_guicomputes 
+        crypto
+        ssl
+    ) 
+endif()
+
  
 # Install.
 INSTALL(TARGETS ngs_quick

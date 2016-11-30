@@ -17,6 +17,29 @@ add_custom_target (install_desktop
    DEPENDS install_desktop_cmd
 )
 
+# ------------------------------------------------------------------
+# NodeJS libraries.
+# ------------------------------------------------------------------
+
+INSTALL(
+    DIRECTORY 
+         "/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/"
+    DESTINATION "../build/smashbrowse.app/Contents/nodejs"
+    COMPONENT thirdparty
+    CONFIGURATIONS Debug Release
+    PATTERN "*"
+    PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+)
+
+INSTALL(
+    FILES 
+        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/macos/chromedriver_2.25/chromedriver"
+    DESTINATION "../build/smashbrowse.app/Contents/MacOS"
+    COMPONENT thirdparty
+    CONFIGURATIONS Debug Release
+    PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+)
+
 #INSTALL(
 #  DIRECTORY ${QT5_DIR}/plugins/platforms
 #  DESTINATION bin

@@ -49,11 +49,21 @@ target_link_libraries(ngs_qmqtt ngs_memoryallocator)
  
 target_link_libraries(ngs_qmqtt 
     Qt5::Core
-	Qt5::Network
-	Qt5::WebSockets
-	libeay32
-	ssleay32
+    Qt5::Network
+    Qt5::WebSockets
 ) 
+
+if (${ARCH} STREQUAL ARCH_WINDOWS)
+    target_link_libraries(ngs_qmqtt 
+        libeay32
+        ssleay32
+    )
+elif (${ARCH} STREQUAL ARCH_MACOS)
+    target_link_libraries(ngs_qmqtt 
+        crypto
+        ssl
+    )
+endif() 
  
 # Install.
 INSTALL(TARGETS ngs_qmqtt

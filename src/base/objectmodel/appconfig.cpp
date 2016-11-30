@@ -18,6 +18,7 @@ AppConfig::AppConfig(Entity* parent)
   // Make sure the app data dir exists.
   {
     QString app_data_dir = get_app_data_dir();
+    qDebug() << "app data dir is: " << app_data_dir << "\n";
     QFileInfo info(app_data_dir);
     if (!info.exists()) {
       QDir().mkpath(app_data_dir);

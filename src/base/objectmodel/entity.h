@@ -81,7 +81,7 @@ class OBJECTMODEL_EXPORT Entity {
   }
 
   // The maximum number of component interfaces we can have.
-  typedef std::unordered_map<ComponentIID, Component*> IIDToComponentMap;
+  typedef std::unordered_map<ComponentIID, Component*, ComponentIIDHash> IIDToComponentMap;
   typedef std::unordered_map<std::string, Entity*> NameToChildMap;
 
   // Constructors.

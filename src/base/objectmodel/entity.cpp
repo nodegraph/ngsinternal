@@ -242,7 +242,7 @@ void Entity::initialize_wires_mt() {
   collect_components(comps);
 
   std::function<void(std::pair<size_t,size_t>&)> func = std::bind(&Entity::helper, this, comps, std::placeholders::_1);
-  ThreadPool p(comps.size(), 32, func);
+  //ThreadPool p(comps.size(), 32, func);
 }
 
 void Entity::initialize_wires() {
@@ -438,7 +438,7 @@ void Entity::make_child_name_unique(std::string& name) const {
 //}
 
 Path Entity::get_path() const {
-  Path path({});
+  Path path;
   const Entity* child = this;
   const Entity* parent = child->get_parent();
   // Note the app root has doesn't have a name.

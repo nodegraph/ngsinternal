@@ -195,17 +195,17 @@ void QMLAppEntity::init_view(QSurfaceFormat& format) {
   NodeGraphView* view = get_node_graph_view();
 
   // Set the view size.
-#if ARCH == ARCH_WINDOWS
+//#if ARCH == ARCH_WINDOWS
   view->setWidth(800);
   view->setHeight(1024);
   view->setMaximumWidth(800);
   view->setMaximumHeight(1024);
   view->setMinimumWidth(800);
   view->setMinimumHeight(1024);
-#else
-  setWidth(QGuiApplication::primaryScreen()->size().width() );
-  setHeight(QGuiApplication::primaryScreen()->size().height() );
-#endif
+//#else
+//  setWidth(QGuiApplication::primaryScreen()->size().width() );
+//  setHeight(QGuiApplication::primaryScreen()->size().height() );
+//#endif
 
   view->setResizeMode(QQuickView::SizeRootObjectToView);
   view->setFormat(format);

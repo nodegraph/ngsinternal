@@ -1,6 +1,7 @@
 #pragma once
 #include <base/objectmodel/objectmodel_export.h>
 #include <base/objectmodel/dep.h>
+#include <base/objectmodel/depset.h>
 #include <base/objectmodel/entity.h>
 #include <base/objectmodel/patheddeps.h>
 
@@ -49,7 +50,7 @@ class DynamicDepUSetWrapper: public PathedDep {
 
   virtual void bake_path() const {
     _paths.resize(_deps->size());
-    DepUSet<T>::const_iterator iter;
+    typename DepUSet<T>::const_iterator iter;
     size_t count = 0;
     for (iter = _deps->begin(); iter != _deps->end(); ++iter) {
       if (*iter) {

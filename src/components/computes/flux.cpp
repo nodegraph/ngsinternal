@@ -115,7 +115,7 @@ void Flux<Traits>::gather() {
       if (child->get_did() != Traits::IOComputeEntityDID) {
         continue;
       }
-      Dep<Traits::IOCompute> dep = get_dep<Traits::IOCompute>(child);
+      Dep<typename Traits::IOCompute> dep = get_dep<typename Traits::IOCompute>(child);
       if (dep) {
         if (dep->is_exposed()) {
           _exposed.insert({child->get_name(),dep});

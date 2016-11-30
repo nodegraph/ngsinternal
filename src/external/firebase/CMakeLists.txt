@@ -32,12 +32,12 @@ target_link_libraries(ngs_firebase
 	ngs_glewhelper
 	ngs_comms
 	Qt5::OpenGL
-    Qt5::Core
+    	Qt5::Core
 	Qt5::Quick
 	Qt5::Network
 	Qt5::WebSockets
-	libeay32
-	ssleay32
+	#libeay32
+	#ssleay32
 ) 
  
 # Install.

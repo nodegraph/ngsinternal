@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+    	"target": "ES6",
+        "module": "none",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": false,
+        "sourceMap": true
+    },
+    
+    "files": [
+	"/Users/raindrop/installs/macos/DefinitelyTyped/chrome/chrome.d.ts",
+        "../../message/message.d.ts",
+        "../../message/messagetypes.d.ts",
+
+
+        "box.ts",
+        "contentcomm.ts",
+        "contentcommhandler.ts",
+        "pageoverlays.ts",
+        "distinctcolors.ts",
+        "elemwrap.ts",
+        "eventblocker.ts",
+        "matchcriteria.ts",
+        "crossoverlay.ts",
+        "overlay.ts",
+        "overlayset.ts",
+        "overlaysets.ts",
+        "mutationmonitor.ts",
+        "pagewrap.ts",
+        "guicollection.ts",
+        "point.ts",
+        "popupdialog.ts",
+        "utils.ts",
+        "contentmain.ts"
+   	]
+}

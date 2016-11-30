@@ -160,12 +160,12 @@ int main(int argc, char *argv[]) {
 
     // Check to make sure that there are no other instance running.
     bool first_instance = true;
-    QSharedMemory sharedMemory;
-    sharedMemory.setKey("SmashBrowse");
-    if (sharedMemory.create(1) == false) {
-      std::cerr << "Error: Smash Browse is already running.\n";
-      first_instance = false;
-    }
+    //QSharedMemory sharedMemory;
+    //sharedMemory.setKey("SmashBrowse");
+    //if (sharedMemory.create(1) == false) {
+    //  std::cerr << "Error: Smash Browse is already running.\n";
+    //  first_instance = false;
+    //}
 
 #if ARCH == ARCH_IOS
   // Register QML types.

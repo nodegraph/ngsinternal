@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "amd",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": false,
+        "sourceMap": true
+    },
+    "files": [
+	"/Users/raindrop/installs/macos/DefinitelyTyped/node/node.d.ts",
+	"/Users/raindrop/installs/macos/DefinitelyTyped/ws/ws.d.ts",
+	"/Users/raindrop/installs/macos/DefinitelyTyped/request/request.d.ts",
+	"/Users/raindrop/installs/macos/DefinitelyTyped/selenium-webdriver/selenium-webdriver.d.ts",
+
+	"/Users/raindrop/installs/srcdeps/ngsexternal/nodejs2/node_modules/firebase/firebase.d.ts",
+
+        "../message/message.d.ts",
+        "../message/messagetypes.d.ts",
+        
+
+        "debugutils.ts",
+        "fswrap.ts",
+        "webdriverwrap.ts",
+        "commhub.ts",
+        "firebasewrap.ts"
+    ]
+}

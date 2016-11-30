@@ -96,8 +96,22 @@ void NodeJSProcess::start_process() {
   connect(_process, SIGNAL(readyReadStandardOutput()), this, SLOT(on_read_standard_output()));
 
   // Set the executable.
+#if (ARCH == ARCH_WINDOWS)
   _process->setProgram(QString("node.exe"));
+#elif (ARCH == ARCH_MACOS)
+  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+  QString node_modules_path = AppConfig::get_app_bin_dir();
+  node_modules_path += "/../nodejs/lib/node_modules";
 
+  qDebug() << "node modules path: " << node_modules_path << "\n";
+  env.insert("NODE_PATH", node_modules_path); // Add an environment variable
+  _process->setProcessEnvironment(env);
+
+  QString node_path = AppConfig::get_app_bin_dir();
+  node_path += "/../nodejs/bin/node";
+  qDebug() << "node path: " << node_path << "\n";
+  _process->setProgram(node_path);
+#endif
   // Set the working directory.
   QString folder = AppConfig::get_app_bin_dir();
   _process->setWorkingDirectory(folder);

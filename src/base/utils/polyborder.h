@@ -33,7 +33,7 @@ public:
 class UTILS_EXPORT CompPolyBorder {
 public:
 
-  static void CompPolyBorder::update_extremes(const glm::vec2& low, const glm::vec2& hight, bool& first, glm::vec2& min, glm::vec2& max);
+  static void update_extremes(const glm::vec2& low, const glm::vec2& hight, bool& first, glm::vec2& min, glm::vec2& max);
   static void coalesce_bounds(const std::vector<CompPolyBorder>& bounds, glm::vec2& min, glm::vec2& max);
 
   CompPolyBorder(){}

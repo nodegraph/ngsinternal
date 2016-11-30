@@ -1,5 +1,6 @@
 #pragma once
 #include <base/objectmodel/objectmodel_export.h>
+#include <base/utils/enumutil.h>
 #include <string>
 
 namespace ngs {
@@ -95,4 +96,18 @@ OBJECTMODEL_EXPORT const char* get_entity_did_name(EntityDID did);
 
 // Returns a more user friendly name for the derived class.
 OBJECTMODEL_EXPORT std::string get_entity_user_did_name(EntityDID did);
+}
+
+
+namespace std {
+  template <> struct hash<ngs::EntityDID> {
+    size_t operator()(const ngs::EntityDID& x) const {
+     return ngs::to_underlying(x);
+    }
+  };
+  template <> struct hash<ngs::EntityIID> {
+    size_t operator()(const ngs::EntityIID& x) const {
+     return ngs::to_underlying(x);
+    }
+  };
 }

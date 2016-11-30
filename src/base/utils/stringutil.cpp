@@ -1,11 +1,11 @@
 #include "stringutil.h"
 
 #include <iostream>
-#include <algorithm>
 #include <regex>
 #include <unordered_map>
 #include <set>
 #include <cctype>
+#include <algorithm>
 
 namespace {
 
@@ -124,7 +124,7 @@ std::vector<std::string> split_on_capitals(const std::string& source) {
 std::string to_lower_case(const std::string& source) {
   std::string lower;
   lower.resize(source.size());
-  std::transform(source.begin(), source.end(), lower.begin(), std::tolower);
+  std::transform(source.begin(), source.end(), lower.begin(),[](unsigned char c){return std::tolower(c);});
   return lower;
 }
 

@@ -20,10 +20,10 @@ add_custom_command(
     OUTPUT ${cnt_js} ${cnt_js_min}
     
     COMMAND tsc
-    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${cnt_js_merged}
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/${tsconfig_json} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${cnt_js_merged}
         
     COMMAND java
-    ARGS -jar D:/installs/windows/closure_compiler/closure-compiler-v20160822.jar 
+    ARGS -jar ${closure_compiler_jar} 
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS
@@ -35,8 +35,15 @@ add_custom_command(
 )
 add_custom_target(chrome_ext_content ALL DEPENDS ${cnt_js} ${cnt_js_min})
 
+set(dest "bin/chromeextension")
+if (${ARCH} STREQUAL ARCH_MACOS)
+	set(dest "../build/smashbrowse.app/Contents/MacOS/chromeextension")
+endif()
+
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 
             ${cnt_js_min}
-		DESTINATION bin/chromeextension
-		COMPONENT apps)
+		DESTINATION ${dest}
+		COMPONENT apps
+    	PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+		)

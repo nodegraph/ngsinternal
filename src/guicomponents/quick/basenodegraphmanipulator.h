@@ -14,7 +14,7 @@ class Entity;
 
 class BaseNodeGraphManipulator: public Component {
  public:
-  COMPONENT_ID(BaseNodeGraphManipulator, InvalidComponent, "base manipulator");
+  COMPONENT_ID(BaseNodeGraphManipulator, InvalidComponent);
 
   BaseNodeGraphManipulator(Entity* entity, ComponentDID did):Component(entity, kIID(), did){}
   virtual ~BaseNodeGraphManipulator(){}

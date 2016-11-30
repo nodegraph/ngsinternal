@@ -35,10 +35,10 @@ add_custom_command(
     OUTPUT ${msg_js} ${msg_js_min}
     
     COMMAND tsc
-    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${msg_js_merged}
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/${tsconfig_json} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${msg_js_merged}
     
     COMMAND java
-    ARGS -jar D:/installs/windows/closure_compiler/closure-compiler-v20160822.jar 
+    ARGS -jar ${closure_compiler_jar}
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS

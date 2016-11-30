@@ -199,5 +199,24 @@ struct ComponentDIDHash {
      return to_underlying(x);
    }
 };
+struct ComponentIIDHash {
+   size_t operator() (const ComponentIID &x) const {
+     return to_underlying(x);
+   }
+};
 
+}
+
+
+namespace std {
+  template <> struct hash<ngs::ComponentDID> {
+    size_t operator()(const ngs::ComponentDID& x) const {
+     return ngs::to_underlying(x);
+    }
+  };
+  template <> struct hash<ngs::ComponentIID> {
+    size_t operator()(const ngs::ComponentIID& x) const {
+     return ngs::to_underlying(x);
+    }
+  };
 }

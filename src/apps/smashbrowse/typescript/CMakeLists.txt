@@ -2,7 +2,7 @@
 # Note having the files in tsconfig.json allows Visual Studio Code to parse typescript properly.
 function(get_tsconfig_files ts_files)
     # Read tsconfig file.
-    set(tsconfig_file "${CMAKE_CURRENT_SOURCE_DIR}/tsconfig.json")
+    set(tsconfig_file "${CMAKE_CURRENT_SOURCE_DIR}/${tsconfig_json}")
     file(STRINGS ${tsconfig_file} lines REGEX "(\".*\")")
     
     # Extract the tsconfig files.
@@ -10,7 +10,7 @@ function(get_tsconfig_files ts_files)
     foreach(line ${lines})
       if("${line}" MATCHES "\"files\":")
           #message("line is ${line}")
-          string(REGEX MATCHALL "([^ ,:;\"[]+)" tsconfig_files ${line})
+          string(REGEX MATCHALL "([^ ,:;\"[]+)[^\\.][^d]\\.ts" tsconfig_files ${line})
           list(REMOVE_ITEM tsconfig_files "files")
       endif()
     endforeach()

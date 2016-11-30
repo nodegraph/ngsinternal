@@ -20,6 +20,17 @@ add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 # __int32=int
 
 # ---------------------------------------------------------
+# Closure Compiler
+# ---------------------------------------------------------
+set(tsconfig_json "tsconfig.json")
+
+# ---------------------------------------------------------
+# Closure Compiler
+# ---------------------------------------------------------
+set(closure_compiler_jar "/Users/raindrop/installs/srcdeps/ngsexternal/closure_compiler/closure-compiler-v20160822.jar")
+
+
+# ---------------------------------------------------------
 # Qt Directory.
 # ---------------------------------------------------------
 

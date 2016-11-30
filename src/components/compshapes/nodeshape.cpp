@@ -113,7 +113,7 @@ NodeShape::NodeShape(Entity* entity, ComponentDID did)
     : SelectableShape(entity, did),
       _resources(this),
       _shared_state(0) {
-  get_dep_loader()->register_fixed_dep(_resources, Path( { }));
+  get_dep_loader()->register_fixed_dep(_resources, Path());
   _edit_marker.set_hit_region(HitRegion::kEditMarkerRegion);
   _edit_marker.set_letter("E");
   _edit_marker.set_bg_color( { 255, 255, 255, 255 });

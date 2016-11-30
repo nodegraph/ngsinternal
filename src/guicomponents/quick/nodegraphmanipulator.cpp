@@ -195,7 +195,7 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
     target_path.pop_back();
 
     // Starting from the root group we dive one by one to the target group.
-    Path path({});
+    Path path;
     do {
       path.push_back(target_path.front());
       target_path.pop_front();

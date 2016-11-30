@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "none",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": false,
+        "sourceMap": true
+    },
+    "files": [
+	"/Users/raindrop/installs/macos/DefinitelyTyped/chrome/chrome.d.ts",
+        
+        "../../message/message.d.ts",
+        "../../message/messagetypes.d.ts",
+
+        "browserwrap.ts",
+        "bgcomm.ts",
+        "bgcommhandler.ts",
+        "bgmain.ts"
+    ]
+}

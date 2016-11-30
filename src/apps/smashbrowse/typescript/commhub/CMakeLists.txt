@@ -22,7 +22,7 @@ add_custom_command(
     OUTPUT ${ch_js_merged} ${ch_js_min}
     
     COMMAND tsc
-    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR} 
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/${tsconfig_json}
          --outDir ${CMAKE_CURRENT_BINARY_DIR}
          --outFile ${ch_js_merged}
          
@@ -30,7 +30,7 @@ add_custom_command(
     #ARGS "building with ${msg_js_lib} ${ch_js_merged} require.js"
     
     COMMAND java
-    ARGS -jar D:/installs/windows/closure_compiler/closure-compiler-v20160822.jar 
+    ARGS -jar ${closure_compiler_jar}
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS
@@ -43,13 +43,19 @@ add_custom_command(
 )
 add_custom_target(commhub ALL DEPENDS ${ch_js_merged} ${ch_js_min})
 
-INSTALL(FILES 
-            ${ch_js_min}
-            cert.pem # certs for https server
-            key.pem # certs for https server
-            chb.js # commhub bootstrap file
-		DESTINATION bin
-		COMPONENT apps)
-		
+set(dest "bin")
+if (${ARCH} STREQUAL ARCH_MACOS)
+	set(dest "../build/smashbrowse.app/Contents/MacOS")
+endif()
+
+INSTALL(FILES
+	        ${ch_js_min}
+	        cert.pem # certs for https server
+	        key.pem # certs for https server
+	        chb.js # commhub bootstrap file
+		DESTINATION ${dest}
+		COMPONENT apps
+    	PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+		)
 		
 		
