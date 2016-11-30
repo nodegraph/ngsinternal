@@ -16,7 +16,7 @@ cd macos_release_jenkins
 git clone git@gitlab.com:nodegraph/ngsinternal.git;
 mkdir build;
 cd build;
-cmake -G "Eclipse CDT4 - Unix Makefiles" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Release ../ngsinternal/src
+cmake -G "Eclipse CDT4 - Ninja" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Release ../ngsinternal/src
 make install -j8
 
 
