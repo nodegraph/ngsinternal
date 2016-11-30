@@ -1,5 +1,5 @@
 # Jenkins Pipeline Definition.
-#node {
+#node('windows') {
 #    bat "D:\\src\\ngsinternal\\src\\scripts\\msys2\\launch_msys2.bat ARCH_WINDOWS x64 D:\\src\\ngsinternal\\src\\scripts\\msys2\\build_window_release_x64.sh"
 #}
 
