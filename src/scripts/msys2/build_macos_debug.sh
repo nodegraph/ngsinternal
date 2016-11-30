@@ -6,8 +6,8 @@
 #}
 
 echo "MACOS DEBUG"
-#export ARCH=ARCH_MACOS
-#export ARCH_BITS=x64
+export ARCH=ARCH_MACOS
+export ARCH_BITS=x64
 echo ${PATH}
 source /Users/raindrop/src/ngsinternal/src/scripts/msys2/setup_env.sh
 echo ${PATH}
