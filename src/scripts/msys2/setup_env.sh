@@ -6,6 +6,7 @@
 #
 
 
+
 # setup the software locations
 
 # SRC_ROOT points to the location where you checked out the repos,
@@ -77,23 +78,23 @@ echo setting up for ${ARCH} ${ARCH_BITS}
 
 # ARCH specific paths.
 if [ ${ARCH} == "ARCH_WINDOWS" ]; then 
-	echo
+  echo
 elif [ ${ARCH} == "ARCH_WINRT" ]; then
-	echo
+  echo
 elif [ ${ARCH} == "ARCH_ANDROID" ]; then
-	
-	# setup android variables
-	export ANDROID_SDK_ROOT=/d/installs/android/android-sdk
-	export ANDROID_NDK_ROOT=/d/installs/android/android-ndk-r10e
-	export ANDROID_TOOLCHAIN_ROOT=/d/installs/android/android_toolchain
-	
-	# check our android variables
-	echo "           sdk root: $ANDROID_SDK_ROOT"
-	echo "           ndk root: $ANDROID_NDK_ROOT"
-	echo "     toolchain root: $ANDROID_TOOLCHAIN_ROOT"
-	# check our device id
-	echo "  android device id: $ANDROID_DEVICE_ID"
+  
+  # setup android variables
+  export ANDROID_SDK_ROOT=/d/installs/android/android-sdk
+  export ANDROID_NDK_ROOT=/d/installs/android/android-ndk-r10e
+  export ANDROID_TOOLCHAIN_ROOT=/d/installs/android/android_toolchain
+  
+  # check our android variables
+  echo "           sdk root: $ANDROID_SDK_ROOT"
+  echo "           ndk root: $ANDROID_NDK_ROOT"
+  echo "     toolchain root: $ANDROID_TOOLCHAIN_ROOT"
+  # check our device id
+  echo "  android device id: $ANDROID_DEVICE_ID"
 
 else
-	echo unknown ARCH specified
+  echo unknown ARCH specified
 fi
