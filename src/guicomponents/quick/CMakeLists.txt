@@ -48,12 +48,12 @@ target_link_libraries(ngs_quick
 ) 
 
 if (${ARCH} STREQUAL ARCH_WINDOWS)
-    target_link_libraries(ngs_guicomputes 
+    target_link_libraries(ngs_quick 
         libeay32
         ssleay32
     ) 
-elif (${ARCH} STREQUAL ARCH_MACOS)
-    target_link_libraries(ngs_guicomputes 
+elseif (${ARCH} STREQUAL ARCH_MACOS)
+    target_link_libraries(ngs_quick 
         crypto
         ssl
     ) 

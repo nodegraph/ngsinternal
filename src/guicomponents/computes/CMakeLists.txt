@@ -63,7 +63,7 @@ if (${ARCH} STREQUAL ARCH_WINDOWS)
         libeay32
         ssleay32
     ) 
-elif (${ARCH} STREQUAL ARCH_MACOS)
+elseif (${ARCH} STREQUAL ARCH_MACOS)
     target_link_libraries(ngs_guicomputes 
         crypto
         ssl
