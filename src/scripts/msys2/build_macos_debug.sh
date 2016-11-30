@@ -9,7 +9,7 @@ echo "MACOS DEBUG"
 #export ARCH=ARCH_MACOS
 #export ARCH_BITS=x64
 cd /Users/raindrop/src/ngsinternal
-git pull
+git pull origin master
 cd /Users/raindrop/dev/macos
 rm -fr macos_debug_jenkins
 mkdir macos_debug_jenkins
