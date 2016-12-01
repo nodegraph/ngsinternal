@@ -8,7 +8,11 @@ set(headers
 )
 
 # Add the executable object.
-add_executable(testobjectmodel ${sources} ${headers})
+if (${ARCH} STREQUAL ARCH_MACOS)
+	add_executable(testobjectmodel MACOSX_BUNDLE ${sources} ${headers})
+else()
+	add_executable(testobjectmodel ${sources} ${headers})
+endif()
 
 # Link libraries.
 target_link_libraries(testobjectmodel 

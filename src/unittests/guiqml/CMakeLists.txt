@@ -5,7 +5,7 @@ if (${ARCH} STREQUAL ARCH_LINUX)
 	target_link_libraries(testguiqml 
 		Qt5::Qml)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
-	add_executable(testguiqml main.cpp ${resources})
+	add_executable(testguiqml MACOSX_BUNDLE main.cpp ${resources})
 	target_link_libraries(testguiqml 
 		Qt5::Qml)
 elseif (${ARCH} STREQUAL ARCH_IOS)

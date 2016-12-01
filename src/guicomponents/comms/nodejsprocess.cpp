@@ -100,15 +100,29 @@ void NodeJSProcess::start_process() {
   _process->setProgram(QString("node.exe"));
 #elif (ARCH == ARCH_MACOS)
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  QString node_modules_path = AppConfig::get_app_bin_dir();
-  node_modules_path += "/../nodejs/lib/node_modules";
+  QString node_modules_path;// = AppConfig::get_app_bin_dir();
+  node_modules_path = "../Resources/nodejs/lib/node_modules";
 
   qDebug() << "node modules path: " << node_modules_path << "\n";
   env.insert("NODE_PATH", node_modules_path); // Add an environment variable
   _process->setProcessEnvironment(env);
 
-  QString node_path = AppConfig::get_app_bin_dir();
-  node_path += "/../nodejs/bin/node";
+  //setenv("NODE_PATH", node_modules_path.toStdString().c_str(), 1);
+
+  
+  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  qDebug() << "env list is: " << env.toStringList();
+  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  qDebug() << "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+  qDebug() << "ccccccccccccccccccccccccccccccccccccccccccccccccc";
+  qDebug() << "ddddddddddddddddddddddddddddddddddddddddddddddddd";
+  qDebug() << "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+
+  QString node_path;// = AppConfig::get_app_bin_dir();
+  node_path = "../Resources/nodejs/bin/node";
   qDebug() << "node path: " << node_path << "\n";
   _process->setProgram(node_path);
 #endif

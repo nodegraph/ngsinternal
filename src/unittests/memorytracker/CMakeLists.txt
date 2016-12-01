@@ -6,7 +6,11 @@ set(headers
 )
 
 # Add the executable object.
-add_executable(testmemorytracker ${sources} ${headers})
+if (${ARCH} STREQUAL ARCH_MACOS)
+	add_executable(testmemorytracker MACOSX_BUNDLE ${sources} ${headers})
+else()
+	add_executable(testmemorytracker ${sources} ${headers})
+endif()
 
 if (${ARCH} STREQUAL "ARCH_IOS")
 	set_target_properties(testmemorytracker PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")

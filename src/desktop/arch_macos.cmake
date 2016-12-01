@@ -24,7 +24,7 @@ add_custom_target (install_desktop
 INSTALL(
     DIRECTORY 
          "/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/"
-    DESTINATION "../build/smashbrowse.app/Contents/nodejs"
+    DESTINATION "../build/smashbrowse.app/Contents/Resources/nodejs"
     COMPONENT thirdparty
     CONFIGURATIONS Debug Release
     PATTERN "*"

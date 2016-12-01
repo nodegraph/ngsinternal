@@ -20,7 +20,13 @@ set(headers
 )
 
 # Add the executable object.
-add_executable(testdevice ${sources} ${headers})
+if (${ARCH} STREQUAL ARCH_MACOS)
+	add_executable(testdevice MACOSX_BUNDLE ${sources} ${headers})
+else()
+	add_executable(testdevice ${sources} ${headers})
+endif()
+
+
 target_link_libraries(testdevice ngs_memoryallocator ngs_device ngs_resources ngs_gui)
 target_link_libraries(testdevice 
 		Qt5::Core
