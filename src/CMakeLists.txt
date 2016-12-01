@@ -6,9 +6,12 @@ include (GenerateExportHeader)
 
 # Grab some variables from our environment.
 # Switch backslashes to forward slashes in SRC_ROOT.
-message("SRC_ROOT is: ${SRC_ROOT}")
+
 string(REPLACE "\\" "/" SRC_ROOT $ENV{SRC_ROOT})
 string(REPLACE "\\" "/" PLATFORM_ROOT $ENV{PLATFORM_ROOT})
+message("SRC_ROOT is: ${SRC_ROOT}")
+message("PLATFORM_ROOT is: ${PLATFORM_ROOT}")
+
 set(PASSWORD $ENV{PASSWORD})
 set(ARCH_BITS $ENV{ARCH_BITS})
 
