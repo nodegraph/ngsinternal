@@ -2,7 +2,7 @@
 
 # Jenkins Pipeline Definition.
 #node('macos') {
-#    sh "source ~/src/ngsinternal/src/scripts/msys2/build_macos_debug.sh"
+#    sh "source /Users/raindrop/src/ngsinternal/src/scripts/msys2/build_macos_debug.sh"
 #}
 
 echo "MACOS DEBUG"
