@@ -13,8 +13,6 @@ cd ~/dev/macos
 rm -fr macos_release_jenkins
 mkdir macos_release_jenkins
 cd macos_release_jenkins
-mkdir build
-cd build
 cmake -G "Eclipse CDT4 - Ninja" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Release ~/src/ngsinternal/src
 ninja install
 
