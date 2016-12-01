@@ -2,7 +2,7 @@
 
 # Jenkins Pipeline Definition.
 #node('macos') {
-#    sh "source /Users/raindrop/src/ngsinternal/src/scripts/msys2/build_macos_release.sh"
+#    sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_release.sh"
 #}
 
 echo "MACOS RELEASE"

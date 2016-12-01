@@ -1,6 +1,6 @@
 # Jenkins Pipeline Definition.
 #node('macos') {
-#    sh "source ~/src/ngsinternal/src/scripts/msys2/build_macos_git_pull.sh"
+#    sh "source ~/src/ngsinternal/src/scripts/macos/build_macos_git_pull.sh"
 #}
 
 echo "MACOS GIT PULL"
