@@ -2,7 +2,7 @@
 
 # Jenkins Pipeline Definition.
 #node('windows') {
-#    bat "D:\\src\\ngsinternal\\src\\scripts\\msys2\\launch_msys2.bat ARCH_WINDOWS x64 D:\\src\\ngsinternal\\src\\scripts\\msys2\\build_window_debug_x64.sh"
+#    bat "D:\\src\\ngsinternal\\src\\scripts\\msys2\\launch_msys2.bat ARCH_WINDOWS x64 D:\\src\\ngsinternal\\src\\scripts\\msys2\\build_windows_debug.sh"
 #}
 
 echo "WINDOWS DEBUG";
