@@ -55,6 +55,14 @@ BaseListPage {
     function get_exposed() {
     	return expose_plug_check_box.get_exposed()
     }
+    
+	Rectangle {
+		anchors.top: list_view.bottom
+    	color: "#FFFFFFFF"
+    	// Dimensions.
+    	height: app_settings.splitter_height
+    	width: app_settings.page_width
+    }
 	
 	AppExposePlugCheckBox {
         id: expose_plug_check_box
