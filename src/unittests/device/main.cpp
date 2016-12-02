@@ -168,7 +168,13 @@ void test() {
     test_render_outputs_gles2();
 #endif
 
+    // Cleanup.
+    delete_ff(quad_pipeline);
+    delete_ff(resources);
+
   }
+
+
 
   // Finish using glew after all the gl related have been destroyed.
   finish_glew();

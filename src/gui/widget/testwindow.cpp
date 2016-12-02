@@ -5,6 +5,7 @@
 
 #include <gui/widget/testwindow.h>
 #include <QtCore/QDebug>
+#include <QtCore/QCoreApplication>
 
 #include <iostream>
 
@@ -42,7 +43,12 @@ void TestWindow::paintGL() {
     //gpu(glBindFramebuffer(GL_FRAMEBUFFER, 0));
     //gpu(glClearColor(0, 0, 1, 1));
     //gpu(glClear( GL_COLOR_BUFFER_BIT));
+
+    QCoreApplication::quit();
+
+    // We won't get here.
     swapBuffers();
+    makeCurrent();
     return;
   } else {
     _done = true;
