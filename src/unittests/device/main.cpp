@@ -4,6 +4,8 @@
 #include <base/memoryallocator/bootstrap.h>
 #include <base/glewhelper/glewhelper.h>
 #include <gui/widget/testwindow.h>
+#include <components/resources/resources.h>
+#include <base/device/pipelinesetups/quadpipelinesetup.h>
 
 #include <QtWidgets/QApplication>
 #include <QtOpenGL/QGLWidget>
@@ -121,9 +123,27 @@ void test() {
     // Initialize glew.
     start_glew();
 
+    // Create our shading pipeline.
+    Resources* resources = new Resources(NULL);
+    QuadPipelineSetup*  quad_pipeline = new_ff QuadPipelineSetup(resources->get_quad_vertex_shader(), resources->get_quad_fragment_shader());
+    quad_pipeline->initialize_gl();
+
+    // Fill our pipeline with one quad.
+    std::vector<ShapeInstance> instances;
+    ShapeInstance inst;
+    inst.set_state(0);
+    inst.set_scale(glm::vec2(512,512));
+    inst.set_rotate(0);
+    inst.set_translate(glm::vec2(0,0), -100);
+    inst.set_color(100, 255, 100);
+    instances.push_back(inst);
+
+    // Load our pipeline.
+    quad_pipeline->load_quad_instances(instances);
+
     // Test gpu memory.
     std::cerr << "testinging gpu memory ...\n";
-    TestMemory test_memory;
+    TestMemory test_memory(quad_pipeline);
 
 #if GLES_MAJOR_VERSION >= 3
     std::cerr << "testing gpu textures ...\n";

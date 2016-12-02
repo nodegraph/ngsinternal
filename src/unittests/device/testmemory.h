@@ -1,13 +1,13 @@
 #pragma once
-#include <base/device/geometry/quad.h>
 
 namespace ngs {
 
+class QuadPipelineSetup;
 class RenderBuffer;
 
 class TestMemory {
  public:
-  TestMemory();
+  TestMemory(QuadPipelineSetup* pipeline);
   virtual ~TestMemory();
 
   void draw_quad();
@@ -22,7 +22,7 @@ class TestMemory {
   static const int _height = 1024;//512;
   static const int _min_gpu_mem = 300000;  // This is in kbytes.
 
-  Quad _quad;
+  QuadPipelineSetup* _pipeline;
 };
 
 }

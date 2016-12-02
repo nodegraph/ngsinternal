@@ -7,6 +7,7 @@
 #include <base/device/unpackedbuffers/renderbuffer.h>
 #include <base/device/unpackedbuffers/framebuffer.h>
 #include <base/device/devicedebug.h>
+#include <base/device/pipelinesetups/quadpipelinesetup.h>
 
 #include <iostream>
 #include <limits>
@@ -14,8 +15,8 @@
 
 namespace ngs {
 
-TestMemory::TestMemory():
-    _quad(512, 512, -100, glm::vec2(0, 0)){
+TestMemory::TestMemory(QuadPipelineSetup* pipeline):
+    _pipeline(pipeline) {
 
 #if GLES_MAJOR_VERSION >= 3
   rundown_memory_with_depth_textures();
@@ -29,7 +30,7 @@ TestMemory::~TestMemory() {
 }
 
 void TestMemory::draw_quad() {
-  _quad.draw();
+  _pipeline->draw();
 }
 
 RenderBuffer* TestMemory::create_depth_rbo(int width, int height) {
@@ -167,8 +168,7 @@ void TestMemory::rundown_memory_with_depth_rbos() {
     delete_ff(textures[i]);
     delete_ff(rbos[i]);
     delete_ff(fbos[i]);
-
-	std::cerr << "DepthRBO #" << i << "\n";
+    std::cerr << "DepthRBO #" << i << "\n";
   }
 }
 
@@ -219,8 +219,7 @@ void TestMemory::rundown_memory_with_textures() {
   for (size_t i = 0; i < textures.size(); i++) {
     // Delete our texture.
     delete_ff(textures[i]);
-
-	std::cerr << "Texture #" << i << "\n";
+    std::cerr << "Texture #" << i << "\n";
   }
   delete_ff(fbo)
   ;
