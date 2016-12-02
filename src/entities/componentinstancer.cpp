@@ -52,6 +52,7 @@
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
+#include <guicomponents/quick/nodegraphcontroller.h>
 #include <guicomponents/quick/nodegraphrenderer.h>
 #include <guicomponents/quick/nodegraphview.h>
 #include <guicomponents/quick/nodegraphmanipulator.h>

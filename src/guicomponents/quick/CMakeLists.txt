@@ -3,6 +3,7 @@ set(quick_src
     eventtoinfo.cpp
 	nodegraphrenderer.cpp
 	nodegraphquickitem.cpp
+	nodegraphcontroller.cpp
 	fborenderer.cpp
 	fboworker.cpp
 	texturedisplaynode.cpp
@@ -20,6 +21,7 @@ set(quick_headers
 set(moc_quick
 	nodegraphrenderer.h
 	nodegraphquickitem.h
+	nodegraphcontroller.h
     fboworker.h
     texturedisplaynode.h
     nodegraphview.h

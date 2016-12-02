@@ -1,16 +1,14 @@
 #pragma once
 #include <guicomponents/quick/quick_export.h>
+#include <guicomponents/comms/filemodel.h>
 
-#include <base/device/devicebasictypesgl.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/dep.h>
-#include <base/objectmodel/componentids.h>
+
+#include <base/device/devicebasictypesgl.h>
 #include <base/device/transforms/mouseinfo.h>
-#include <guicomponents/comms/filemodel.h>
-#include <guicomponents/comms/qmltypes.h>
 
 #include <QtQuick/QQuickItem>
-//#include <QtCore/QThread>
 #include <QtCore/QTime>
 #include <QtCore/QTimer>
 
@@ -22,65 +20,8 @@ class ShapeCanvas;
 class NodeSelection;
 class NodeShape;
 class BaseFactory;
-class BaseEntityInstancer;
 class LicenseChecker;
 class BaseNodeGraphManipulator;
-class NodeGraphQuickItem;
-
-class QUICK_EXPORT NodeGraphController : public QObject, public Component {
-Q_OBJECT
- public:
-  COMPONENT_ID(NodeGraphController, NodeGraphController)
-  NodeGraphController(Entity* parent);
-  virtual ~NodeGraphController();
-
-  Q_INVOKABLE void dive();
-  Q_INVOKABLE void dive(const QString& group_node_name);
-  void dive(const std::string& group_node_name);
-  Q_INVOKABLE void surface_from_group();
-
-  // Objects which hold type info for use from the qml side.
-  JSTypeWrap js_type_wrap;
-  HintKeyWrap hint_key_wrap;
-  EnumHintValueWrap enum_hint_value_wrap;
-
-  Q_INVOKABLE void create_user_macro_node(bool centered, const QString& macro_name);
-  Q_INVOKABLE void create_app_macro_node(bool centered, const QString& macro_name);
-
-  // Group Nodes Creation.
-  Q_INVOKABLE void create_group_node(bool centered);
-  Q_INVOKABLE void create_script_group_node(bool centered);
-  Q_INVOKABLE void create_browser_group_node(bool centered);
-  Q_INVOKABLE void create_firebase_group_node(bool centered);
-  Q_INVOKABLE void create_mqtt_group_node(bool centered);
-
-  // Create interface nodes.
-  Q_INVOKABLE void create_input_node(bool centered);
-  Q_INVOKABLE void create_output_node(bool centered);
-
-  // Create data nodes.
-  Q_INVOKABLE void create_data_node(bool centered);
-  Q_INVOKABLE void create_dot_node(bool centered);
-
-  // Data compute nodes.
-  Q_INVOKABLE void create_merge_node(bool centered);
-
-  // Firebase compute nodes.
-  Q_INVOKABLE void create_firebase_write_data_node(bool centered);
-  Q_INVOKABLE void create_firebase_read_data_node(bool centered);
-
-  // Http compute nodes.
-  Q_INVOKABLE void create_http_node(bool centered);
-
-  // MQTT compute nodes.
-  Q_INVOKABLE void create_mqtt_publish_node(bool centered);
-  Q_INVOKABLE void create_mqtt_subscribe_node(bool centered);
-
-
- private:
-  Dep<BaseNodeGraphManipulator> _manipulator;
-  Dep<NodeGraphQuickItem> _ng_quick;
-};
 
 
 class QUICK_EXPORT NodeGraphQuickItem : public QQuickItem, public Component
