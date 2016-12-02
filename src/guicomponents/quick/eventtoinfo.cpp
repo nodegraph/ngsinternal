@@ -67,17 +67,29 @@ KeyInfo get_key_info_qt(QKeyEvent* event) {
 }
 
 WheelInfo get_wheel_info(QWheelEvent* event) {
+  // This returns the delta in screen pixels for track pads like in osx.
   QPoint numPixels = event->pixelDelta();
+  // This returns the delta of the wheel roation angle.
+  // Note this value is always provided.
   QPoint numDegrees = event->angleDelta() / 8.0f;
 
+  // To make this have uniform behavior across platforms, we always use the wheel angle.
   WheelInfo info;
-  if (!numPixels.isNull()) {
-    info.x = numPixels.x();
-    info.y = numPixels.y();
-  } else if (!numDegrees.isNull()) {
+
+#define USE_WHEEL_ANGLE
+
+#ifdef USE_WHEEL_ANGLE
     info.x = (float)numDegrees.x() / 15.0f;
     info.y = (float)numDegrees.y() / 15.0f;
-  }
+#else
+    if (!numPixels.isNull()) {
+      info.x = numPixels.x();
+      info.y = numPixels.y();
+    } else {
+      info.x = (float)numDegrees.x() / 15.0f;
+      info.y = (float)numDegrees.y() / 15.0f;
+    }
+#endif
   return info;
 }
 
