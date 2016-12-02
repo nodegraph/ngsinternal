@@ -359,6 +359,9 @@ void NodeGraphManipulatorImp::finish_creating_node(Entity* entity, bool centered
   // Otherwise after creating nodes like mock or input or output nodes,
   // they appear with their input and outplugs not showing.
   _factory->get_current_group()->clean_wires();
+  // We need 2 passes of clean wires for our special group nodes like the firebase group node.
+  _factory->get_current_group()->clean_wires();
+  // Update the gui.
   _ng_quick->update();
 }
 
