@@ -94,9 +94,24 @@ void NodeGraphController::create_output_node(bool centered) {
 }
 
 // Create data nodes.
-void NodeGraphController::create_data_node(bool centered) {
+void NodeGraphController::create_number_data_node(bool centered) {
+  _manipulator->create_data_node(centered, 0);
+}
+void NodeGraphController::create_string_data_node(bool centered) {
+  _manipulator->create_data_node(centered, "");
+}
+void NodeGraphController::create_boolean_data_node(bool centered) {
+  _manipulator->create_data_node(centered, false);
+}
+void NodeGraphController::create_array_data_node(bool centered) {
   _manipulator->create_data_node(centered, QJsonArray());
 }
+void NodeGraphController::create_object_data_node(bool centered) {
+  _manipulator->create_data_node(centered, QJsonObject());
+}
+
+
+// Create dot nodes.
 void NodeGraphController::create_dot_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kDotNodeEntity);
 }

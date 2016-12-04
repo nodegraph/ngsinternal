@@ -17,21 +17,12 @@ DataNodeCompute::~DataNodeCompute() {
 void DataNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    c.unconnected_value = QJsonObject();
-    create_input("in", c);
-  }
-
   {
     EntityConfig c = config;
     c.expose_plug = false;
     // We take the unconnected value from the config.
     create_input("data", c);
   }
-
   {
     EntityConfig c = config;
     c.expose_plug = true;
@@ -44,19 +35,15 @@ const QJsonObject DataNodeCompute::_hints = DataNodeCompute::init_hints();
 QJsonObject DataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kDescriptionHint, "The target value into which the data value will be merged.");
-  add_hint(m, "data", HintKey::kDescriptionHint, "The source value which will be merged into the target(in) value.");
+  add_hint(m, "data", HintKey::kDescriptionHint, "The data value to output from this node.");
 
   return m;
 }
 
 bool DataNodeCompute::update_state() {
   Compute::update_state();
-  QJsonValue incoming = _inputs->get_input_value("in");
   QJsonValue value = _inputs->get_input_value("data");
-
-  QJsonValue output = JSONUtils::deep_merge(incoming, value);
-  set_output("out", output);
+  set_output("out", value);
   return true;
 }
 

@@ -50,7 +50,13 @@ Q_OBJECT
   Q_INVOKABLE void create_output_node(bool centered);
 
   // Create data nodes.
-  Q_INVOKABLE void create_data_node(bool centered);
+  Q_INVOKABLE void create_number_data_node(bool centered);
+  Q_INVOKABLE void create_string_data_node(bool centered);
+  Q_INVOKABLE void create_boolean_data_node(bool centered);
+  Q_INVOKABLE void create_array_data_node(bool centered);
+  Q_INVOKABLE void create_object_data_node(bool centered);
+
+  // Dot nodes.
   Q_INVOKABLE void create_dot_node(bool centered);
 
   // Data compute nodes.

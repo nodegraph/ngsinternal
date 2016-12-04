@@ -23,7 +23,7 @@ void MergeNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   c.unconnected_value = QJsonObject();
 
   create_input("in", c);
-  create_input("layer", c);
+  create_input("source", c);
   create_output("out", c);
 }
 
@@ -31,8 +31,8 @@ const QJsonObject MergeNodeCompute::_hints = MergeNodeCompute::init_hints();
 QJsonObject MergeNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kDescriptionHint, "This object will get data from the \"layer\" input merged into it.");
-  add_hint(m, "layer", HintKey::kDescriptionHint, "The object will layer over the data from the \"in\" input.");
+  add_hint(m, "in", HintKey::kDescriptionHint, "This object will get data from the \"source\" input merged into it.");
+  add_hint(m, "source", HintKey::kDescriptionHint, "This object will merge into the object from the \"in\" input.");
 
   return m;
 }
@@ -51,9 +51,9 @@ bool MergeNodeCompute::update_state() {
     }
   }
 
-  // If our "layer" input is connected, we merge that value in.
+  // If our "source" input is connected, we merge that value in.
   {
-    const Dep<InputCompute>& c = _inputs->get("layer");
+    const Dep<InputCompute>& c = _inputs->get("source");
     if (c->is_connected()) {
       output = JSONUtils::deep_merge(output, c->get_output("out"));
     }

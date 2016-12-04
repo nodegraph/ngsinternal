@@ -65,11 +65,43 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_details_white_48dp.png"
-        title: "Data Node"
-        description: "Outputs user specified data from its output plug."
-        script: "ng_controller.create_data_node(center_new_nodes);
+        title: "Number Data Node"
+        description: "Outputs a number value from its output plug."
+        script: "ng_controller.create_number_data_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "String Data Node"
+        description: "Outputs a string value from its output plug."
+        script: "ng_controller.create_string_data_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Boolean Data Node"
+        description: "Outputs a boolean value from its output plug."
+        script: "ng_controller.create_boolean_data_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Array Data Node"
+        description: "Outputs an array value from its output plug."
+        script: "ng_controller.create_array_data_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Object Data Node"
+        description: "Outputs an object value from its output plug."
+        script: "ng_controller.create_object_data_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    
+    
+    
     ListElement {
         image_url: "qrc:///icons/ic_details_white_48dp.png"
         title: "Number Input Node"
