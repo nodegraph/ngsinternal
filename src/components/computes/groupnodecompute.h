@@ -33,6 +33,8 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   virtual void set_self_dirty(bool dirty);
 
  private:
+  void copy_inputs_to_input_nodes();
+
   Dep<BaseFactory> _factory;
   QJsonObject _node_hints;
 };

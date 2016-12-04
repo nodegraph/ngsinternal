@@ -156,7 +156,11 @@ bool GroupNodeCompute::clean_inputs() {
       return false;
     }
   }
+  copy_inputs_to_input_nodes();
+  return true;
+}
 
+void GroupNodeCompute::copy_inputs_to_input_nodes() {
   // Copy the input values onto the input nodes inside this group node.
   for (auto &iter: _inputs->get_all()) {
     const Dep<InputCompute>& input = iter.second;
@@ -173,42 +177,27 @@ bool GroupNodeCompute::clean_inputs() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (input_node_compute->get_override() != input->get_output("out")) {
-        std::cerr << "group node cleaning inputs: setting override: " << input->get_output("out").toString().toStdString() << "\n";
-        input_node_compute->set_override(input->get_output("out"));
+      if (input->is_connected()) {
+        // If the input is connected set the value as the override on the input node.
+        if (input_node_compute->get_override() != input->get_output("out")) {
+          std::cerr << "group node cleaning inputs: setting override: " << input->get_output("out").toString().toStdString() << "\n";
+          input_node_compute->set_override(input->get_output("out"));
+        }
+      } else {
+        // If the input is not connected we nullify the override on the input node.
+        if (input_node_compute->get_override() != QJsonValue()) {
+          std::cerr << "group node cleaning inputs: setting override: " << input->get_output("out").toString().toStdString() << "\n";
+          input_node_compute->set_override(QJsonValue());
+        }
       }
     }
   }
-  return true;
 }
 
 bool GroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
-
-  // For each input on this group if there is an associated input node, we set data on the input node.
-  for (auto &iter: _inputs->get_all()) {
-    const Dep<InputCompute>& input = iter.second;
-    const std::string& input_name = input->get_name();
-    // Find the input node inside this group with the same name as the input.
-    Entity* input_node = our_entity()->get_child(input_name);
-    // Not all the inputs on a group are associated with input nodes inside the group.
-    // Some are just params directly on the group.
-    if (!input_node) {
-      continue;
-    }
-    // Copy the input value to the input node, but only if they're different,
-    // because this compute will get called multiple times as part of asynchronous updating
-    // especially when the group contains asynchronous web action nodes.
-    Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
-    if (input_node_compute) {
-      if (input_node_compute->get_override() != input->get_output("out")) {
-        std::cerr << "group node updating state: setting override: " << input->get_output("out").toString().toStdString() << "\n";
-        input_node_compute->set_override(input->get_output("out"));
-      }
-      // We let the output nodes propagate cleanliness up to us when needed.
-    }
-  }
+  // copy_inputs_to_input_nodes();
 
   // Find all of our output entities.
   // For each one if there is an associated output node, we clean it and cache the result.

@@ -64,9 +64,37 @@ ListModel {
     }
     ListElement {
         image_url: "qrc:///icons/ic_details_white_48dp.png"
-        title: "Input Node"
+        title: "Number Input Node"
         description: "Relays data from outside a group to inside the group."
-        script: "ng_controller.create_input_node(center_new_nodes);
+        script: "ng_controller.create_number_input_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "String Input Node"
+        description: "Relays data from outside a group to inside the group."
+        script: "ng_controller.create_string_input_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Boolean Input Node"
+        description: "Relays data from outside a group to inside the group."
+        script: "ng_controller.create_boolean_input_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Array Input Node"
+        description: "Relays data from outside a group to inside the group."
+        script: "ng_controller.create_array_input_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Object Input Node"
+        description: "Relays data from outside a group to inside the group."
+        script: "ng_controller.create_object_input_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     ListElement {

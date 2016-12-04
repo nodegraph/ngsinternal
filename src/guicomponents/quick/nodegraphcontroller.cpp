@@ -9,6 +9,7 @@
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
 #include <QtCore/QJsonArray>
+#include <QtCore/QJsonObject>
 
 namespace ngs {
 
@@ -68,9 +69,23 @@ void NodeGraphController::create_mqtt_group_node(bool centered) {
 }
 
 // Create interface nodes.
-void NodeGraphController::create_input_node(bool centered) {
-  _manipulator->create_input_node(centered, QJsonValue(123));
+void NodeGraphController::create_number_input_node(bool centered) {
+  _manipulator->create_input_node(centered, QJsonValue(0));
 }
+void NodeGraphController::create_string_input_node(bool centered) {
+  _manipulator->create_input_node(centered, QJsonValue(""));
+}
+void NodeGraphController::create_boolean_input_node(bool centered) {
+  _manipulator->create_input_node(centered, QJsonValue(false));
+}
+void NodeGraphController::create_array_input_node(bool centered) {
+  _manipulator->create_input_node(centered, QJsonArray());
+}
+void NodeGraphController::create_object_input_node(bool centered) {
+  _manipulator->create_input_node(centered, QJsonObject());
+}
+
+
 void NodeGraphController::create_output_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kOutputNodeEntity);
 }

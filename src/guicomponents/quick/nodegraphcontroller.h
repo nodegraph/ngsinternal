@@ -39,7 +39,13 @@ Q_OBJECT
   Q_INVOKABLE void create_mqtt_group_node(bool centered);
 
   // Create interface nodes.
-  Q_INVOKABLE void create_input_node(bool centered);
+  Q_INVOKABLE void create_number_input_node(bool centered);
+  Q_INVOKABLE void create_string_input_node(bool centered);
+  Q_INVOKABLE void create_boolean_input_node(bool centered);
+  Q_INVOKABLE void create_array_input_node(bool centered);
+  Q_INVOKABLE void create_object_input_node(bool centered);
+  
+  // Create output nodes.
   Q_INVOKABLE void create_output_node(bool centered);
 
   // Create data nodes.
