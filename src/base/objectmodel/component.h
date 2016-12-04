@@ -61,8 +61,8 @@ class OBJECTMODEL_EXPORT Component {
 
   typedef std::unordered_set<Component*> Components;
   typedef std::unordered_map<Component*, std::weak_ptr<DepLink> > DepLinks;
-  typedef std::unordered_map<ComponentIID, DepLinks, ComponentIIDHash> IIDToDepLinks;
-  typedef std::unordered_map<ComponentIID, Components, ComponentIIDHash> IIDToComponents;
+  typedef std::unordered_map<ComponentIID, DepLinks> IIDToDepLinks;
+  typedef std::unordered_map<ComponentIID, Components> IIDToComponents;
 
 
 //  template <class T>

@@ -195,17 +195,6 @@ OBJECTMODEL_EXPORT const char* get_component_did_name(ComponentDID did);
 OBJECTMODEL_EXPORT std::string get_user_friendly_name(const std::string& name);
 OBJECTMODEL_EXPORT std::string get_component_user_did_name(ComponentDID did);
 
-struct ComponentDIDHash {
-   size_t operator() (const ComponentDID &x) const {
-     return to_underlying(x);
-   }
-};
-struct ComponentIIDHash {
-   size_t operator() (const ComponentIID &x) const {
-     return to_underlying(x);
-   }
-};
-
 }
 
 
