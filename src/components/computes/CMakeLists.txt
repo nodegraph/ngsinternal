@@ -7,6 +7,7 @@ set(sources
 	mergenodecompute.cpp
 	dotnodecompute.cpp
 	groupnodecompute.cpp
+	ifgroupnodecompute.cpp
 	inputcompute.cpp
 	datanodecompute.cpp
 	inputnodecompute.cpp
@@ -30,6 +31,7 @@ set(headers
     mergenodecompute.h
 	dotnodecompute.h
 	groupnodecompute.h
+	ifgroupnodecompute.h
 	inputcompute.h
 	datanodecompute.h
 	inputnodecompute.h

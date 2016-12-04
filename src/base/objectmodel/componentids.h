@@ -107,6 +107,7 @@ COMPONENT_ENTRY1(DotNodeCompute)\
 COMPONENT_ENTRY1(InputCompute)\
 COMPONENT_ENTRY1(OutputCompute)\
 COMPONENT_ENTRY1(GroupNodeCompute)\
+COMPONENT_ENTRY1(IfGroupNodeCompute)\
 COMPONENT_ENTRY1(ScriptGroupNodeCompute)\
 COMPONENT_ENTRY1(DataNodeCompute)\
 COMPONENT_ENTRY1(MergeNodeCompute)\

@@ -2,6 +2,7 @@
 #include <base/device/transforms/viewparams.h>
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/entity.h>
+#include <base/objectmodel/entityids.h>
 #include <components/interactions/groupinteraction.h>
 
 #include <base/utils/path.h>
@@ -238,13 +239,24 @@ void NodeSelection::destroy_selection() {
       continue;
     }
     Entity* e = cs->our_entity();
+    Entity* group = e->get_parent();
 
-    // Skip destroying the enter group nodes.
-    if ( e->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kEnterBrowserGroupCompute) ||
-        e->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kEnterFirebaseGroupCompute) ||
-        e->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kEnterGroupCompute) ||
-        e->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kEnterMQTTGroupCompute) ) {
+    // Nodes that are not visible can never be selected. However just in case we skip invisible nodes.
+    if (!cs->is_visible()) {
       continue;
+    }
+
+    // If we're in an IfGroupNode, we can't destroy "in", "out", and "condition" nodes.
+    if (group->get_did() == EntityDID::kIfGroupNodeEntity) {
+      const std::string& name = e->get_name();
+      if ( (name == "in") || (name == "out") || (name == "condition")) {
+        continue;
+      }
+    }
+
+    // If we're in an ForEachGroupNode we can't destroy ...
+    {
+
     }
 
     // Otherwise we destroy it.

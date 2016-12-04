@@ -55,6 +55,9 @@ void NodeGraphController::create_app_macro_node(bool centered, const QString& ma
 void NodeGraphController::create_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kGroupNodeEntity);
 }
+void NodeGraphController::create_if_group_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kIfGroupNodeEntity);
+}
 void NodeGraphController::create_script_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kScriptGroupNodeEntity);
 }

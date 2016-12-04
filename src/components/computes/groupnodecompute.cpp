@@ -17,12 +17,12 @@
 
 namespace ngs {
 
-struct {
-    bool operator()(const Dep<CompShape>& a, const Dep<CompShape>& b)
-    {
-        return a->get_pos().x < b->get_pos().x;
-    }
-} CompShapeCompare;
+//struct {
+//    bool operator()(const Dep<CompShape>& a, const Dep<CompShape>& b)
+//    {
+//        return a->get_pos().x < b->get_pos().x;
+//    }
+//} CompShapeCompare;
 
 GroupNodeCompute::GroupNodeCompute(Entity* entity, ComponentDID did):
     Compute(entity, did),

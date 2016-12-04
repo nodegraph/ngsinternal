@@ -78,6 +78,13 @@ class ENTITIES_EXPORT GroupNodeEntity : public Entity {
   virtual void copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const;
 };
 
+class ENTITIES_EXPORT IfGroupNodeEntity : public GroupNodeEntity {
+ public:
+  ENTITY_ID(IfGroupNodeEntity, "group")
+  IfGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
+  virtual void create_internals(const EntityConfig& configs = EntityConfig());
+};
+
 class ENTITIES_EXPORT ScriptGroupNodeEntity : public GroupNodeEntity {
  public:
   ENTITY_ID(ScriptGroupNodeEntity, "script group")

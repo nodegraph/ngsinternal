@@ -71,6 +71,7 @@ ENTITY_ENTRY1(OutputEntity)\
 ENTITY_ENTRY1(OutputLabelEntity)\
 /* Group Node. */\
 ENTITY_ENTRY1(GroupNodeEntity)\
+ENTITY_ENTRY1(IfGroupNodeEntity)\
 ENTITY_ENTRY1(ScriptGroupNodeEntity)\
 ENTITY_ENTRY1(BrowserGroupNodeEntity)\
 ENTITY_ENTRY1(FirebaseGroupNodeEntity)\

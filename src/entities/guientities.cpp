@@ -33,6 +33,7 @@
 #include <components/computes/compute.h>
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/groupnodecompute.h>
+#include <components/computes/ifgroupnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/datanodecompute.h>
 #include <components/computes/inputnodecompute.h>
@@ -421,6 +422,46 @@ void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>
         e->save(saver);
       }
     }
+}
+
+void IfGroupNodeEntity::create_internals(const EntityConfig& config) {
+  // Our components.
+  (new_ff IfGroupNodeCompute(this))->create_inputs_outputs(config);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  // Gui related.
+  if (config.visible) {
+    new_ff GroupInteraction(this);
+    new_ff CompShapeCollective(this);
+    new_ff GroupNodeShape(this);
+    new_ff InputTopology(this);
+    new_ff OutputTopology(this);
+  }
+  // Sub Components.
+  {
+    InputNodeEntity* in = new_ff InputNodeEntity(this, "in");
+    EntityConfig config2;
+    config2.visible = true;
+    config2.unconnected_value = QJsonObject();
+    in->create_internals(config2);
+  }
+  {
+    InputNodeEntity* condition = new_ff InputNodeEntity(this, "condition");
+    EntityConfig config2;
+    config2.visible = false;
+    config2.unconnected_value = false;
+    condition->create_internals(config2);
+  }
+  {
+    OutputNodeEntity* out = new_ff OutputNodeEntity(this, "out");
+    EntityConfig config2;
+    config2.visible = true;
+    out->create_internals(config2);
+  }
+
+  create_default_exit(this);
+
+  create_default_enter_and_exit(this);
 }
 
 void ScriptGroupNodeEntity::create_internals(const EntityConfig& config) {

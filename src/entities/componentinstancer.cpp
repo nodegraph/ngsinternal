@@ -22,6 +22,7 @@
 
 #include <components/computes/compute.h>
 #include <components/computes/groupnodecompute.h>
+#include <components/computes/ifgroupnodecompute.h>
 #include <components/computes/mergenodecompute.h>
 #include <components/computes/datanodecompute.h>
 #include <components/computes/inputnodecompute.h>
