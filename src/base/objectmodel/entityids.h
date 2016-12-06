@@ -9,7 +9,7 @@ namespace ngs {
 // These IDs are used heavily in serialization and identifying
 // components in Entities.
 // Entities always implement the Entity class interface.
-#define ENTITY_ID(derived, derived_name)\
+#define ENTITY_ID(derived)\
   static EntityIID kIID()\
   { return EntityIID::kIEntity; }\
   virtual EntityIID get_iid() const\
@@ -19,11 +19,6 @@ namespace ngs {
   { return EntityDID::k##derived; }\
   virtual EntityDID get_did() const\
   { return kDID(); }\
-  \
-//  static const char* kDIDName()\
-//  { return derived_name; }\
-//  virtual const char* get_did_name() const\
-//  { return kDIDName(); }\
 
 
 // Entity Interface IDs.

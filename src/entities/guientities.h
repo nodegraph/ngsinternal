@@ -30,7 +30,7 @@ class BaseNodeGraphManipulator;
 
 class ENTITIES_EXPORT QMLAppEntity : public Entity {
  public:
-  ENTITY_ID(QMLAppEntity, "qml app")
+  ENTITY_ID(QMLAppEntity)
   QMLAppEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 
@@ -51,28 +51,28 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
 
 class ENTITIES_EXPORT QtAppEntity : public Entity {
  public:
-  ENTITY_ID(QtAppEntity, "qt app")
+  ENTITY_ID(QtAppEntity)
   QtAppEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT AppEntity : public Entity {
  public:
-  ENTITY_ID(AppEntity, "app")
+  ENTITY_ID(AppEntity)
   AppEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT LinkEntity : public Entity {
  public:
-  ENTITY_ID(LinkEntity, "link head")
+  ENTITY_ID(LinkEntity)
   LinkEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT GroupNodeEntity : public Entity {
  public:
-  ENTITY_ID(GroupNodeEntity, "group")
+  ENTITY_ID(GroupNodeEntity)
   GroupNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
   virtual void copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const;
@@ -80,119 +80,119 @@ class ENTITIES_EXPORT GroupNodeEntity : public Entity {
 
 class ENTITIES_EXPORT IfGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(IfGroupNodeEntity, "group")
+  ENTITY_ID(IfGroupNodeEntity)
   IfGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT ForEachGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(ForEachGroupNodeEntity, "group")
+  ENTITY_ID(ForEachGroupNodeEntity)
  ForEachGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT ScriptGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(ScriptGroupNodeEntity, "script group")
+  ENTITY_ID(ScriptGroupNodeEntity)
  ScriptGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT BrowserGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(BrowserGroupNodeEntity, "browser group")
+  ENTITY_ID(BrowserGroupNodeEntity)
   BrowserGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT FirebaseGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(FirebaseGroupNodeEntity, "firebase group")
+  ENTITY_ID(FirebaseGroupNodeEntity)
  FirebaseGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT MQTTGroupNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(MQTTGroupNodeEntity, "firebase group")
+  ENTITY_ID(MQTTGroupNodeEntity)
  MQTTGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT DotNodeEntity : public Entity {
  public:
-  ENTITY_ID(DotNodeEntity, "dot")
+  ENTITY_ID(DotNodeEntity)
   DotNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT DataNodeEntity : public Entity {
  public:
-  ENTITY_ID(DataNodeEntity, "input")
+  ENTITY_ID(DataNodeEntity)
  DataNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT LoopDataNodeEntity : public Entity {
  public:
-  ENTITY_ID(LoopDataNodeEntity, "element")
+  ENTITY_ID(LoopDataNodeEntity)
  LoopDataNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT AccumulateDataNodeEntity : public Entity {
  public:
-  ENTITY_ID(AccumulateDataNodeEntity, "element")
+  ENTITY_ID(AccumulateDataNodeEntity)
  AccumulateDataNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT InputNodeEntity : public Entity {
  public:
-  ENTITY_ID(InputNodeEntity, "input")
+  ENTITY_ID(InputNodeEntity)
   InputNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT OutputNodeEntity : public Entity {
  public:
-  ENTITY_ID(OutputNodeEntity, "output")
+  ENTITY_ID(OutputNodeEntity)
   OutputNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT InputEntity : public Entity {
  public:
-  ENTITY_ID(InputEntity, "input")
+  ENTITY_ID(InputEntity)
   InputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT InputLabelEntity : public Entity {
  public:
-  ENTITY_ID(InputLabelEntity, "input param")
+  ENTITY_ID(InputLabelEntity)
   InputLabelEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT OutputEntity : public Entity {
  public:
-  ENTITY_ID(OutputEntity, "output param")
+  ENTITY_ID(OutputEntity)
   OutputEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT OutputLabelEntity : public Entity {
  public:
-  ENTITY_ID(OutputLabelEntity, "output param")
+  ENTITY_ID(OutputLabelEntity)
   OutputLabelEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
 class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
  public:
-  ENTITY_ID(ComputeNodeEntity, "compute")
+  ENTITY_ID(ComputeNodeEntity)
  ComputeNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
   Compute* get_compute();
@@ -200,7 +200,7 @@ class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
 
 class ENTITIES_EXPORT UserMacroNodeEntity : public Entity {
  public:
-  ENTITY_ID(UserMacroNodeEntity, "user macro");
+  ENTITY_ID(UserMacroNodeEntity);
   UserMacroNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
   virtual void save(SimpleSaver& saver) const;
@@ -214,7 +214,7 @@ class ENTITIES_EXPORT UserMacroNodeEntity : public Entity {
 
 class ENTITIES_EXPORT AppMacroNodeEntity : public UserMacroNodeEntity {
  public:
-  ENTITY_ID(AppMacroNodeEntity, "app macro");
+  ENTITY_ID(AppMacroNodeEntity);
   AppMacroNodeEntity(Entity* parent, const std::string& name):UserMacroNodeEntity(parent, name){}
  private:
   virtual std::string get_macro_dir() const;

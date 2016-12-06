@@ -122,9 +122,9 @@ QtObject {
             return
         }
 
-		console.log('setting value: ' + value)
-		console.log('at path: ' + path)
-		console.log('on obj: ' + JSON.stringify(obj))
+		//console.log('setting value: ' + value)
+		//console.log('at path: ' + path)
+		//console.log('on obj: ' + JSON.stringify(obj))
 
         // Drill down into the object according to the specified path.
         var data = obj
