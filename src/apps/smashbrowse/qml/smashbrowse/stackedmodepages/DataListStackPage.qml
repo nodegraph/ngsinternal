@@ -102,7 +102,7 @@ BaseStackPage{
         if (value_type == js_type.kObject) {
             var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringAndDropdownPage.qml", stack_page, {})
             push_page.visible = true
-            push_page.set_value("value")
+            push_page.set_value("name")
             push_page.set_title("Add Element to Object.")
             push_page.set_description("Name and type of the new value.")
             push_page.set_option_texts(['string','number','boolean', 'array', 'object'])
