@@ -8,7 +8,7 @@ namespace ngs {
 
 class InvalidEntity: public Entity {
  public:
-  ENTITY_ID(InvalidEntity, "invalid")
+  ENTITY_ID(InvalidEntity)
   InvalidEntity(Entity* parent, const std::string& name): Entity(parent, name){}
 };
 
