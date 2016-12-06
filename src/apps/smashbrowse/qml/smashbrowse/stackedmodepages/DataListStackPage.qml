@@ -173,18 +173,9 @@ BaseStackPage{
             return
         }
         
-        console.log('on edit element: ' + name)
-
         var child_path = stack_view.get_title_path(1, stack_view.depth)
-        console.log('child path0: ' + JSON.stringify(child_path))
         child_path.push(name)
-        console.log('child path1: ' + JSON.stringify(child_path))
-        
         var child_hints = get_hints(child_path)
-        
-        console.log('child path2: ' + JSON.stringify(child_path))
-        
-        
         
 
         // Push an edit page according to the js type.
@@ -220,7 +211,6 @@ BaseStackPage{
             }
             break
         case js_type.kObject:
-        	console.log('child path: ' + child_path)
             stack_page.edit_object(child_path[child_path.length-1], child_path);
             break
         case js_type.kArray:
@@ -272,7 +262,6 @@ BaseStackPage{
                 page.set_description("The current value of this element.")
             }
         }
-        console.log('title is: ' + title)
         page.set_title(title)
         page.set_value(child_value)
         page.set_exposed(exposed)
@@ -417,7 +406,6 @@ BaseStackPage{
 			console.log('attempt to set exposed while in viewing outputs')
 			return
 		}
-		console.log('setting the exposure at path: ' + path + ' to ' + exposed)
 		app_utils.set_sub_object(_exposure, path, exposed)
         node_graph_item.set_input_exposure(_node_path, _exposure)
 	}
@@ -447,10 +435,6 @@ BaseStackPage{
     		
     		// If we have an enum hint, return the respective text.
     		if (hints.hasOwnProperty(hint_key.kEnumHint)) {
-    			console.log('path is: ' + JSON.stringify(path))
-    			console.log('all hints: ' + JSON.stringify(_hints))
-    			console.log('hint keys: ' + JSON.stringify(hints))
-    			console.log('hint key enum: ' + JSON.stringify(hints[hint_key.kEnumHint]))
     			return app_enums.get_enum_hint_value_text(hints[hint_key.kEnumHint], value)
     		}
     		

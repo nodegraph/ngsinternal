@@ -608,7 +608,7 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
     }
   }
   //our_entity()->clean_dead_entities();
-  update_shape_collective();
+  //update_shape_collective();
 }
 
 void GroupInteraction::moved(const MouseInfo& mouse_info) {

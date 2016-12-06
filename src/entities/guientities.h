@@ -85,6 +85,13 @@ class ENTITIES_EXPORT IfGroupNodeEntity : public GroupNodeEntity {
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
+class ENTITIES_EXPORT ForEachGroupNodeEntity : public GroupNodeEntity {
+ public:
+  ENTITY_ID(ForEachGroupNodeEntity, "group")
+ ForEachGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
+  virtual void create_internals(const EntityConfig& configs = EntityConfig());
+};
+
 class ENTITIES_EXPORT ScriptGroupNodeEntity : public GroupNodeEntity {
  public:
   ENTITY_ID(ScriptGroupNodeEntity, "script group")
@@ -124,6 +131,20 @@ class ENTITIES_EXPORT DataNodeEntity : public Entity {
  public:
   ENTITY_ID(DataNodeEntity, "input")
  DataNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  virtual void create_internals(const EntityConfig& configs = EntityConfig());
+};
+
+class ENTITIES_EXPORT LoopDataNodeEntity : public Entity {
+ public:
+  ENTITY_ID(LoopDataNodeEntity, "element")
+ LoopDataNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  virtual void create_internals(const EntityConfig& configs = EntityConfig());
+};
+
+class ENTITIES_EXPORT AccumulateDataNodeEntity : public Entity {
+ public:
+  ENTITY_ID(AccumulateDataNodeEntity, "element")
+ AccumulateDataNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 

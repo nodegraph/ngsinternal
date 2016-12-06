@@ -20,10 +20,10 @@ namespace ngs {
   virtual EntityDID get_did() const\
   { return kDID(); }\
   \
-  static const char* kDIDName()\
-  { return derived_name; }\
-  virtual const char* get_did_name() const\
-  { return kDIDName(); }\
+//  static const char* kDIDName()\
+//  { return derived_name; }\
+//  virtual const char* get_did_name() const\
+//  { return kDIDName(); }\
 
 
 // Entity Interface IDs.
@@ -72,11 +72,14 @@ ENTITY_ENTRY1(OutputLabelEntity)\
 /* Group Node. */\
 ENTITY_ENTRY1(GroupNodeEntity)\
 ENTITY_ENTRY1(IfGroupNodeEntity)\
+ENTITY_ENTRY1(ForEachGroupNodeEntity)\
 ENTITY_ENTRY1(ScriptGroupNodeEntity)\
 ENTITY_ENTRY1(BrowserGroupNodeEntity)\
 ENTITY_ENTRY1(FirebaseGroupNodeEntity)\
 ENTITY_ENTRY1(MQTTGroupNodeEntity)\
 ENTITY_ENTRY1(DataNodeEntity)\
+ENTITY_ENTRY1(LoopDataNodeEntity)\
+ENTITY_ENTRY1(AccumulateDataNodeEntity)\
 ENTITY_ENTRY1(InputNodeEntity)\
 ENTITY_ENTRY1(OutputNodeEntity)\
 /* Dot Node. */\

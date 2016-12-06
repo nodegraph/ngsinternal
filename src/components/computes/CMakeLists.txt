@@ -8,8 +8,11 @@ set(sources
 	dotnodecompute.cpp
 	groupnodecompute.cpp
 	ifgroupnodecompute.cpp
+	foreachgroupnodecompute.cpp
 	inputcompute.cpp
 	datanodecompute.cpp
+	loopdatanodecompute.cpp
+	accumulatedatanodecompute.cpp
 	inputnodecompute.cpp
     mocknodecompute.cpp
     outputcompute.cpp
@@ -32,8 +35,11 @@ set(headers
 	dotnodecompute.h
 	groupnodecompute.h
 	ifgroupnodecompute.h
+	foreachgroupnodecompute.h
 	inputcompute.h
 	datanodecompute.h
+	loopdatanodecompute.h
+	accumulatedatanodecompute.h
 	inputnodecompute.h
 	mocknodecompute.h
 	outputcompute.h

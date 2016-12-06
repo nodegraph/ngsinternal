@@ -34,6 +34,7 @@
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/groupnodecompute.h>
 #include <components/computes/ifgroupnodecompute.h>
+#include <components/computes/foreachgroupnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/datanodecompute.h>
 #include <components/computes/inputnodecompute.h>
@@ -42,13 +43,15 @@
 #include <components/computes/outputnodecompute.h>
 #include <components/computes/inputs.h>
 #include <components/computes/outputs.h>
-
+#include <components/computes/loopdatanodecompute.h>
 #include <gui/widget/nodegrapheditor.h>
 
 #include <guicomponents/comms/nodejsprocess.h>
 #include <guicomponents/comms/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
 #include <base/objectmodel/appconfig.h>
+#include <components/computes/accumulatedatanodecompute.h>
+
 #include <guicomponents/computes/browserrecorder.h>
 #include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/computes/httpworker.h>
@@ -464,6 +467,52 @@ void IfGroupNodeEntity::create_internals(const EntityConfig& config) {
   create_default_enter_and_exit(this);
 }
 
+void ForEachGroupNodeEntity::create_internals(const EntityConfig& config) {
+  // Our components.
+  (new_ff ForEachGroupNodeCompute(this))->create_inputs_outputs(config);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  // Gui related.
+  if (config.visible) {
+    new_ff GroupInteraction(this);
+    new_ff CompShapeCollective(this);
+    new_ff GroupNodeShape(this);
+    new_ff InputTopology(this);
+    new_ff OutputTopology(this);
+  }
+  // Sub Components.
+  {
+    InputNodeEntity* in = new_ff InputNodeEntity(this, "in");
+    EntityConfig config2;
+    config2.visible = true;
+    config2.unconnected_value = QJsonObject();
+    in->create_internals(config2);
+  }
+  {
+    InputNodeEntity* elements = new_ff InputNodeEntity(this, "elements");
+    EntityConfig config2;
+    config2.visible = false;
+    config2.unconnected_value = QJsonObject();
+    elements->create_internals(config2);
+  }
+  {
+    LoopDataNodeEntity* element = new_ff LoopDataNodeEntity(this, "element");
+    EntityConfig config2;
+    config2.visible = true;
+    element->create_internals(config2);
+  }
+  {
+    OutputNodeEntity* out = new_ff OutputNodeEntity(this, "out");
+    EntityConfig config2;
+    config2.visible = true;
+    out->create_internals(config2);
+  }
+
+  create_default_exit(this);
+
+  create_default_enter_and_exit(this);
+}
+
 void ScriptGroupNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
   (new_ff ScriptGroupNodeCompute(this))->create_inputs_outputs(config);
@@ -577,6 +626,32 @@ void DotNodeEntity::create_internals(const EntityConfig& config) {
 void DataNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
   (new_ff DataNodeCompute(this))->create_inputs_outputs(config);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  // Gui components.
+  if (config.visible) {
+    new_ff InputNodeShape(this);
+    new_ff InputTopology(this);
+    new_ff OutputTopology(this);
+  }
+}
+
+void LoopDataNodeEntity::create_internals(const EntityConfig& config) {
+  // Our components.
+  (new_ff LoopDataNodeCompute(this))->create_inputs_outputs(config);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  // Gui components.
+  if (config.visible) {
+    new_ff InputNodeShape(this);
+    new_ff InputTopology(this);
+    new_ff OutputTopology(this);
+  }
+}
+
+void AccumulateDataNodeEntity::create_internals(const EntityConfig& config) {
+  // Our components.
+  (new_ff AccumulateDataNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
   // Gui components.

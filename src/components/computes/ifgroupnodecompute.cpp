@@ -22,9 +22,8 @@ bool IfGroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
-  // If the "condition" input is false then we copy the value from "in" to "out".
   if (!_inputs->get("condition")->get_output("out").toBool()) {
-    std::cerr << "running false logic of if\n";
+    // If the "condition" input is false then we copy the value from "in" to "out".
     Entity* output_node = our_entity()->get_child("out");
     Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
     set_output("out", output_node_compute->get_output("out"));
@@ -44,7 +43,6 @@ bool IfGroupNodeCompute::update_state() {
       }
     }
   } else {
-    std::cerr << "running true logic of if\n";
     // Otherwise if the "condition" input is true then run the normal group compute.
     return GroupNodeCompute::update_state();
   }

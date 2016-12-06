@@ -53,12 +53,8 @@ QJsonObject InputNodeCompute::init_hints() {
 bool InputNodeCompute::update_state() {
   Compute::update_state();
 
-  // This will hold our final output.
-  QJsonValue output;
-
   // Start with our default value.
-  QJsonValue default_value = _inputs->get_input_value("default_value");
-  output = JSONUtils::deep_merge(output, default_value);
+  QJsonValue output = _inputs->get_input_value("default_value");
 
   // If there is an override then merge that in.
   if (!_override.isNull() && !_override.isUndefined()) {

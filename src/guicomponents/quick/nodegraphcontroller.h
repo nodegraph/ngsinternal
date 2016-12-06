@@ -34,6 +34,7 @@ Q_OBJECT
   // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);
   Q_INVOKABLE void create_if_group_node(bool centered);
+  Q_INVOKABLE void create_for_each_group_node(bool centered);
   Q_INVOKABLE void create_script_group_node(bool centered);
   Q_INVOKABLE void create_browser_group_node(bool centered);
   Q_INVOKABLE void create_firebase_group_node(bool centered);
@@ -48,6 +49,8 @@ Q_OBJECT
   
   // Create output nodes.
   Q_INVOKABLE void create_output_node(bool centered);
+
+  Q_INVOKABLE void create_accumulate_data_node(bool centered);
 
   // Create data nodes.
   Q_INVOKABLE void create_number_data_node(bool centered);

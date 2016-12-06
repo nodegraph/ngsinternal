@@ -32,8 +32,9 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   virtual void propagate_dirtiness(Component* dependency);
   virtual void set_self_dirty(bool dirty);
 
- private:
+  // Copying values between inside and outside the group.
   void copy_inputs_to_input_nodes();
+  void copy_output_nodes_to_outputs();
 
   Dep<BaseFactory> _factory;
   QJsonObject _node_hints;

@@ -27,6 +27,7 @@ class BaseNodeGraphManipulator: public Component {
   // Ultimate Target Cleaning.
   virtual void clear_ultimate_targets() = 0;
   virtual void continue_cleaning_to_ultimate_targets() = 0;
+  virtual void continue_cleaning_to_ultimate_targets_on_idle() = 0;
   virtual bool is_busy_cleaning() = 0;
 
   // Update current compute markers on nodes.

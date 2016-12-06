@@ -564,28 +564,6 @@ size_t NodeGraphQuickItem::get_num_nodes() const {
   return get_current_interaction()->our_entity()->get_children().size() -3;
 }
 
-void NodeGraphQuickItem::finish_creating_node(Entity* e, bool centered) {
-  external();
-  e->create_internals();
-  e->initialize_wires();
-  Dep<NodeShape> cs = get_dep<NodeShape>(e);
-  if (centered) {
-    get_current_interaction()->centralize(cs);
-  } else {
-    cs->set_pos(_last_press.object_space_pos.xy());
-  }
-  // The parenting group node needs to update its inputs and outputs.
-  //get_app_root()->update_wires();
-  _selection->clear_selection();
-  _selection->select(cs);
-
-  // A little overkill, but we clean the wires on everything in this group.
-  // Otherwise after creating nodes like mock or input or output nodes,
-  // they appear with their input and outplugs not showing.
-  our_entity()->clean_wires();
-  update();
-}
-
 void NodeGraphQuickItem::dirty_node() {
   external();
   // Return if don't have a last pressed shape.

@@ -5,11 +5,11 @@
 
 namespace ngs {
 
-class COMPUTES_EXPORT InputNodeCompute: public Compute {
+class COMPUTES_EXPORT AccumulateDataNodeCompute: public Compute {
  public:
-  COMPONENT_ID(Compute, InputNodeCompute);
-  InputNodeCompute(Entity* entity);
-  virtual ~InputNodeCompute();
+  COMPONENT_ID(Compute, AccumulateDataNodeCompute);
+  AccumulateDataNodeCompute(Entity* entity);
+  virtual ~AccumulateDataNodeCompute();
 
   // Our topology.
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
@@ -28,8 +28,6 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   // Our state.
   virtual bool update_state();
 
-  // This is a runtime override on this node's output value.
-  // This is not serialized.
   QJsonValue _override;
 };
 

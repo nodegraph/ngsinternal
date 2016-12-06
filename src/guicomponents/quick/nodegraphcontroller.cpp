@@ -58,6 +58,9 @@ void NodeGraphController::create_group_node(bool centered) {
 void NodeGraphController::create_if_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kIfGroupNodeEntity);
 }
+void NodeGraphController::create_for_each_group_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kForEachGroupNodeEntity);
+}
 void NodeGraphController::create_script_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kScriptGroupNodeEntity);
 }
@@ -91,6 +94,10 @@ void NodeGraphController::create_object_input_node(bool centered) {
 
 void NodeGraphController::create_output_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kOutputNodeEntity);
+}
+
+void NodeGraphController::create_accumulate_data_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kAccumulateDataNodeEntity);
 }
 
 // Create data nodes.

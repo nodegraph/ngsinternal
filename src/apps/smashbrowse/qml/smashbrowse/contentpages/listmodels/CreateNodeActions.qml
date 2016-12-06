@@ -33,6 +33,14 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
+        title: "For Each Group Node"
+        description: "This group computes once for every element in the elements input."
+        script: "ng_controller.create_for_each_group_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
         title: "Browser Group Node"
         description: "Encapsulates web browser manipulation logic."
         script: "ng_controller.create_browser_group_node(center_new_nodes);
@@ -60,6 +68,14 @@ ListModel {
         title: "MQTT Group Node"
         description: "Provides an environment where you can publish and subscribe to MQTT topis and messages."
         script: "ng_controller.create_mqtt_group_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Accumulate Data Node"
+        description: "Merges all input values passing through this node."
+        script: "ng_controller.create_accumulate_data_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
 

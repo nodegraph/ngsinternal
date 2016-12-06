@@ -37,8 +37,7 @@ Q_OBJECT
   COMPONENT_ID(InvalidComponent, InvalidComponent);
   NodeGraphManipulatorImp(Entity* app_root);
 
-  bool start_waiting(std::function<void()> on_clean_inputs);
-  void stop_waiting();
+  bool start_waiting(std::function<void()> on_idle);
 
   virtual void initialize_wires();
 
@@ -50,6 +49,7 @@ Q_OBJECT
   // Ultimate Target Cleaning.
   virtual void clear_ultimate_targets();
   virtual void continue_cleaning_to_ultimate_targets();
+  virtual void continue_cleaning_to_ultimate_targets_on_idle();
   virtual bool is_busy_cleaning();
 
   // Update current compute markers on nodes.
@@ -97,7 +97,7 @@ Q_OBJECT
   virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
 
 private slots:
-  void on_condition_timer();
+  void on_idle_timer_timeout();
 
  private:
   virtual void synchronize_group_dirtiness(Entity* group_entity);
@@ -121,8 +121,8 @@ private slots:
   DepUSet<Compute> _ultimate_targets;
 
   // Wait for ultimate targets to become clean.
-  QTimer _condition_timer;
-  std::function<void()> _on_clean_inputs;
+  QTimer _idle_timer;
+  std::function<void()> _on_idle;
 };
 
 
@@ -148,6 +148,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   // Ultimate Target Cleaning.
   virtual void clear_ultimate_targets();
   virtual void continue_cleaning_to_ultimate_targets();
+  virtual void continue_cleaning_to_ultimate_targets_on_idle();
   virtual bool is_busy_cleaning();
 
   // Update current compute markers on nodes.

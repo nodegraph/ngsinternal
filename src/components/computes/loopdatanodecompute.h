@@ -2,17 +2,16 @@
 #include <components/computes/computes_export.h>
 #include <components/computes/compute.h>
 
-
 namespace ngs {
 
-class COMPUTES_EXPORT InputNodeCompute: public Compute {
+class COMPUTES_EXPORT LoopDataNodeCompute: public Compute {
  public:
-  COMPONENT_ID(Compute, InputNodeCompute);
-  InputNodeCompute(Entity* entity);
-  virtual ~InputNodeCompute();
+  COMPONENT_ID(Compute, LoopDataNodeCompute);
+  LoopDataNodeCompute(Entity* entity);
+  virtual ~LoopDataNodeCompute();
 
   // Our topology.
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+  virtual void create_inputs_outputs(const EntityConfig& config);
 
   // Our hints.
   static QJsonObject init_hints();

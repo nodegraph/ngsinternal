@@ -17,13 +17,6 @@
 
 namespace ngs {
 
-//struct {
-//    bool operator()(const Dep<CompShape>& a, const Dep<CompShape>& b)
-//    {
-//        return a->get_pos().x < b->get_pos().x;
-//    }
-//} CompShapeCompare;
-
 GroupNodeCompute::GroupNodeCompute(Entity* entity, ComponentDID did):
     Compute(entity, did),
     _factory(this) {
@@ -138,6 +131,13 @@ void GroupNodeCompute::update_wires() {
 
   // Now do the base Compute::update_wires().
   Compute::update_wires();
+
+  // The update_wires method on components, is called basically in random order for a given entity.
+  // However for group nodes, the inputs and outputs are created dynamically directly inside update_wires(),
+  // so the inputs(flux) component depends on this component to have updated its wires first.
+  // So we force the inputs component's update_wires call here.
+  // Note that this is an edge case that breaks our architecture.
+  _inputs->update_wires();
 }
 
 void GroupNodeCompute::propagate_dirtiness(Component* dirty_source) {
@@ -148,6 +148,11 @@ void GroupNodeCompute::set_self_dirty(bool dirty) {
   Compute::set_self_dirty(dirty);
 }
 
+// Note this method is called to make sure the inputs to the group we are currently inside is clean.
+// It gets called recursively starting at the root. Note that is not called on for any group nodes
+// inside the current group. For those groups the inputs get automatically cleaned via clean propagation
+// through dependencies. So node that the call to copy_inputs_to_input_nodes must be performed by both
+// by this method and the update_state() method.
 bool GroupNodeCompute::clean_inputs() {
   // Clean each input on this group node.
   for (auto &iter: _inputs->get_all()) {
@@ -180,13 +185,11 @@ void GroupNodeCompute::copy_inputs_to_input_nodes() {
       if (input->is_connected()) {
         // If the input is connected set the value as the override on the input node.
         if (input_node_compute->get_override() != input->get_output("out")) {
-          std::cerr << "group node cleaning inputs: setting override: " << input->get_output("out").toString().toStdString() << "\n";
           input_node_compute->set_override(input->get_output("out"));
         }
       } else {
         // If the input is not connected we nullify the override on the input node.
         if (input_node_compute->get_override() != QJsonValue()) {
-          std::cerr << "group node cleaning inputs: setting override: " << input->get_output("out").toString().toStdString() << "\n";
           input_node_compute->set_override(QJsonValue());
         }
       }
@@ -194,10 +197,23 @@ void GroupNodeCompute::copy_inputs_to_input_nodes() {
   }
 }
 
+void GroupNodeCompute::copy_output_nodes_to_outputs() {
+  Entity* outputs = get_entity(Path({".","outputs"}));
+  for (auto &iter: outputs->get_children()) {
+    Entity* output_entity = iter.second;
+    const std::string& output_name = output_entity->get_name();
+    Entity* output_node = our_entity()->get_child(output_name);
+    Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
+    set_output(output_name, output_node_compute->get_output("out"));
+  }
+}
+
 bool GroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
-  // copy_inputs_to_input_nodes();
+
+  // Bring input values from outside the group to the inside.
+  copy_inputs_to_input_nodes();
 
   // Find all of our output entities.
   // For each one if there is an associated output node, we clean it and cache the result.
@@ -223,13 +239,7 @@ bool GroupNodeCompute::update_state() {
   }
 
   // If we get here then all of our internal computes have finished.
-  for (auto &iter: outputs->get_children()) {
-    Entity* output_entity = iter.second;
-    const std::string& output_name = output_entity->get_name();
-    Entity* output_node = our_entity()->get_child(output_name);
-    Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
-    set_output(output_name, output_node_compute->get_output("out"));
-  }
+  copy_output_nodes_to_outputs();
 
   // Close out the group.
   _manipulator->clean_exit_group(our_entity());

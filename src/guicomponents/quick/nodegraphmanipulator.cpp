@@ -57,31 +57,25 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
       _scheduler(this) {
 
   // Timer setup.
-  _condition_timer.setSingleShot(false);
-  _condition_timer.setInterval(0); // We allow 1 second to wait to connect.
-  connect(&_condition_timer,SIGNAL(timeout()),this,SLOT(on_condition_timer()));
+  _idle_timer.setSingleShot(true);
+  _idle_timer.setInterval(0);
+  connect(&_idle_timer,SIGNAL(timeout()),this,SLOT(on_idle_timer_timeout()));
 }
 
-bool NodeGraphManipulatorImp::start_waiting(std::function<void()> on_clean_inputs) {
-  if (_condition_timer.isActive()) {
+bool NodeGraphManipulatorImp::start_waiting(std::function<void()> on_idle) {
+  if (_idle_timer.isActive()) {
     // We already waiting for something.
     return false;
   }
-  _on_clean_inputs = on_clean_inputs;
-  _condition_timer.start();
+  _on_idle = on_idle;
+  _idle_timer.start();
   return true;
 }
 
-void NodeGraphManipulatorImp::stop_waiting() {
-  _condition_timer.stop();
-}
-
-void NodeGraphManipulatorImp::on_condition_timer() {
-  if (!is_busy_cleaning()) {
-    _condition_timer.stop();
-    std::cerr << "performing work now that inputs are clean\n";
-    _on_clean_inputs();
-  }
+void NodeGraphManipulatorImp::on_idle_timer_timeout() {
+  //assert(!is_busy_cleaning());
+  //_idle_timer.stop();
+  _on_idle();
 }
 
 void NodeGraphManipulatorImp::initialize_wires() {
@@ -173,6 +167,11 @@ void NodeGraphManipulatorImp::prune_clean_or_dead() {
   }
 }
 
+void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets_on_idle() {
+  std::function<void()> f = std::bind(&NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets, this);
+  start_waiting(f);
+}
+
 void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
   // Make sure the ulimate targets have been pruned of dead or cleaned computes.
   prune_clean_or_dead();
@@ -199,7 +198,6 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
     do {
       path.push_back(target_path.front());
       target_path.pop_front();
-      std::cerr << "working on group inputs: " << path.get_as_string() << "\n";
 
       Entity* e = _app_root->get_entity(path);
       Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(e);
@@ -264,7 +262,6 @@ void NodeGraphManipulatorImp::clear_error_node() {
 }
 
 void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
-  std::cerr << "updating clean marker for: " << entity->get_path().get_as_string() << " : " << clean << "\n";
   Dep<NodeShape> ns = get_dep<NodeShape>(entity);
   if (ns) {
 	  ns->show_clean_marker(clean);
@@ -781,6 +778,10 @@ void NodeGraphManipulator::set_inputs_as_ultimate_targets(Entity* node_entity) {
 
 void NodeGraphManipulator::clear_ultimate_targets() {
   _imp->clear_ultimate_targets();
+}
+
+void NodeGraphManipulator::continue_cleaning_to_ultimate_targets_on_idle() {
+  _imp->continue_cleaning_to_ultimate_targets_on_idle();
 }
 
 void NodeGraphManipulator::continue_cleaning_to_ultimate_targets() {

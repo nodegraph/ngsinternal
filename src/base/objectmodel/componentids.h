@@ -108,8 +108,11 @@ COMPONENT_ENTRY1(InputCompute)\
 COMPONENT_ENTRY1(OutputCompute)\
 COMPONENT_ENTRY1(GroupNodeCompute)\
 COMPONENT_ENTRY1(IfGroupNodeCompute)\
+COMPONENT_ENTRY1(ForEachGroupNodeCompute)\
 COMPONENT_ENTRY1(ScriptGroupNodeCompute)\
 COMPONENT_ENTRY1(DataNodeCompute)\
+COMPONENT_ENTRY1(LoopDataNodeCompute)\
+COMPONENT_ENTRY1(AccumulateDataNodeCompute)\
 COMPONENT_ENTRY1(MergeNodeCompute)\
 COMPONENT_ENTRY1(InputNodeCompute)\
 COMPONENT_ENTRY1(OutputNodeCompute)\
