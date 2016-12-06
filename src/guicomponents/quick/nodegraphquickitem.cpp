@@ -889,5 +889,15 @@ void NodeGraphQuickItem::edit_node_poke() {
   emit edit_node_inputs(node_path, compute->get_editable_inputs(), compute->get_hints(), compute->get_input_exposure());
 }
 
+void NodeGraphQuickItem::rename_node(const QString& next_name) {
+  if (!_last_node_shape) {
+    std::cerr << "error there was no last clicked node\n";
+    return;
+  }
+  _last_node_shape->our_entity()->rename(next_name.toStdString());
+  _last_node_shape->dirty_state();
+  update();
+}
+
 }
 

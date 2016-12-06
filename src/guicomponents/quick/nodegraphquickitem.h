@@ -102,6 +102,8 @@ Q_OBJECT
   Q_INVOKABLE void view_node_poke();
   Q_INVOKABLE void edit_node_poke();
 
+  Q_INVOKABLE void rename_node(const QString& next_name);
+
  public Q_SLOTS:
   void cleanup();
 

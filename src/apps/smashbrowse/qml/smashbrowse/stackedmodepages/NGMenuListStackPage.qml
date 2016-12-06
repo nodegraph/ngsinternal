@@ -69,5 +69,17 @@ BaseStackPage{
             stack_view.push_by_names("Options", "NGMenuListPage", model_name)
         }
     }
+    
+    function rename_node() {
+    	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
+        push_page.visible = true
+        push_page.set_value("new_name")
+        push_page.set_title("New Node Name")
+        push_page.callback = function(name) {
+        		node_graph_item.rename_node(name)
+        		main_bar.switch_to_node_graph()
+        	}
+        stack_view.push_page(push_page)
+    }
 
 }

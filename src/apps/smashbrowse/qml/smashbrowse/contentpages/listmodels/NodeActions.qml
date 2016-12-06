@@ -22,6 +22,13 @@ ListModel {
         script: "node_graph_item.edit_node();
                  main_bar.switch_to_current_mode();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_build_white_48dp.png"
+        title: "Rename"
+        description: "Rename a node."
+		script: "ng_menu_list_stack_page.rename_node()"
+    }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
