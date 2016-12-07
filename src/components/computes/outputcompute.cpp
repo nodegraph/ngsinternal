@@ -15,10 +15,6 @@ OutputCompute::OutputCompute(Entity* entity)
 OutputCompute::~OutputCompute() {
 }
 
-void OutputCompute::update_wires() {
-  internal();
-}
-
 bool OutputCompute::update_state() {
   internal();
   Compute::update_state();

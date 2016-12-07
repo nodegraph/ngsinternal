@@ -26,7 +26,6 @@ class COMPUTES_EXPORT OutputCompute: public Compute {
  protected:
 
   // Our state.
-  virtual void update_wires();
   virtual bool update_state();
 
  private:
