@@ -105,15 +105,6 @@ void NodeGraphManipulatorImp::set_ultimate_targets(const std::unordered_set<Enti
     return;
   }
 
-  // Synchronize the dirtiness of all groups with the internal contents.
-  // This is needed because a group maintains it's own dirtiness separately from the internal nodes,
-  // and the user can manually change the dirtiness of the internal nodes or the group.
-  // This consolidates those dirtiness states, so the we perform the compute properly.
-  // Note that nodes in the currently are not dirtied because the user is likely adding/editing nodes
-  // and we don't want to have to keep recomputing all the upstream nodes in this case.
-  // All other groups get their dirtiness synchronized.
-  bubble_group_dirtiness();
-
   // Clear the error marker on nodes.
   _selection->clear_error_node();
   // This may be called while we are already trying to clean another ultimate target.
@@ -283,7 +274,7 @@ void NodeGraphManipulatorImp::clean_enter_group(Entity* group) {
   if (!node) {
     return;
   }
-  // Dirty the group context node.
+  // Dirty the group context node if we're entering a browser group.
   Dep<EnterGroupCompute> enter = get_dep<EnterGroupCompute>(node);
   if (enter->get_did() == ComponentDID::kEnterBrowserGroupCompute) {
     enter->dirty_state();
@@ -301,8 +292,16 @@ void NodeGraphManipulatorImp::clean_exit_group(Entity* group) {
 
   // We expect the exit compute to not have to wait for an asynchronous response.
   Dep<ExitGroupCompute> exit = get_dep<ExitGroupCompute>(child);
-  exit->dirty_state();
-  exit->clean_state();
+
+  // Dirty and clean group context node if we're exiting a browser group.
+  if (exit->get_did() == ComponentDID::kExitBrowserGroupCompute) {
+    exit->dirty_state();
+    // Make sure it is clean.
+    exit->clean_state();
+  }
+
+  // The other exit groups don't do anything.
+
 }
 
 void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
@@ -625,86 +624,20 @@ void NodeGraphManipulatorImp::copy_description_to_input_node(Entity* input_entit
   default_param->set_unconnected_value(unconnected_value);
 }
 
-void NodeGraphManipulatorImp::bubble_group_dirtiness() {
-  //synchronize_graph_dirtiness(_app_root);
-}
-
-void NodeGraphManipulatorImp::synchronize_graph_dirtiness(Entity* group_entity) {
-  const Entity::NameToChildMap& children = group_entity->get_children();
-  for (auto &iter : children) {
-    const std::string& child_name = iter.first;
-    Entity* child = iter.second;
-
-    EntityDID did = child->get_did();
-    if (child->has_comp_with_iid(ComponentIID::kIGroupInteraction)) {
-      // Skip our current group, because the user is likely incremently adding nodes
-      // and we don't want to recompute everything upstream over and over.
-      if (child != _factory->get_current_group()) {
-        synchronize_group_dirtiness(child);
-      }
-      synchronize_graph_dirtiness(child);
+// Bubbles dirtiness to parent groups. Needed because the dirtiness on the group is separate from the dirtiness of the internal nodes.
+// When a node is dirties inside a group, this method is used to bubble the dirtiness outside the group.
+// When a node is dirtied outside a group, we rely on the dirty propagation to dirty up to the group's inputs (input plugs).
+// Now that the group node is dirty, it will be forced to update_state(). The update_state() will copy the input values
+// onto the input nodes as overrides. This will make those input nodes dirty, if the values are differrrent.
+// This in turn should cause the group's internal nodes to re-compute.
+void NodeGraphManipulatorImp::bubble_group_dirtiness(Entity* dirty_node_entity) {
+  Entity* parent = dirty_node_entity->get_parent();
+  while(parent) {
+    Dep<Compute> c = get_dep<Compute>(parent);
+    if (c) {
+      c->dirty_state();
     }
-  }
-}
-
-//void NodeGraphManipulatorImp::dirty_compute(const Path& path) {
-//  Entity* entity = _app_root->get_entity(path);
-//  Dep<Compute> compute = get_dep<Compute>(entity);
-//  if (compute) {
-//    compute->dirty_state();
-//  }
-//}
-
-void NodeGraphManipulatorImp::synchronize_group_dirtiness(Entity* group_entity) {
-  // Update the group's dirtiness from our internals.
-  dirty_group_from_internals(group_entity);
-  dirty_internals_from_group(group_entity);
-}
-
-void NodeGraphManipulatorImp::dirty_group_from_internals(Entity* group_entity) {
-  // Grab the group compute.
-  Dep<Compute> group_compute = get_dep<Compute>(group_entity);
-
-  // Loop over the group's children.
-  const Entity::NameToChildMap& children = group_entity->get_children();
-  for (auto &iter : children) {
-    const std::string& child_name = iter.first;
-    Entity* child = iter.second;
-    EntityDID did = child->get_did();
-    // Anythings that's not a namespace will be a child node.
-    if (did != EntityDID::kBaseNamespaceEntity) {
-      // If a child node is dirty, then we set the group dirty.
-      Dep<Compute> compute = get_dep<Compute>(child);
-      if (compute->is_state_dirty()) {
-        group_compute->dirty_state();
-        return;
-      }
-    }
-  }
-}
-
-void NodeGraphManipulatorImp::dirty_internals_from_group(Entity* group_entity) {
-  // Grab the group compute.
-  Dep<Compute> group_compute = get_dep<Compute>(group_entity);
-  // If the group is clean then we can return right away.
-  if (!group_compute->is_state_dirty()) {
-    return;
-  }
-
-  // Otherwise we loop over the group's children.
-  const Entity::NameToChildMap& children = group_entity->get_children();
-  for (auto &iter : children) {
-    const std::string& child_name = iter.first;
-    Entity* child = iter.second;
-    EntityDID did = child->get_did();
-    // Anythings that's not a namespace will be a child node.
-    if (did != EntityDID::kBaseNamespaceEntity) {
-      // Make sure all the child nodes are dirty.
-      Dep<Compute> compute = get_dep<Compute>(child);
-      if (compute) {
-        compute->dirty_state();
-      }
-    }
+    parent = parent->get_parent();
   }
 }
 
@@ -723,9 +656,6 @@ void NodeGraphManipulatorImp::set_mqtt_override(const Path& node_path, const QSt
   // Set the override.
   Dep<MQTTSubscribeCompute> compute = get_dep<MQTTSubscribeCompute>(entity);
   compute->set_override(topic, payload);
-
-  // Bubble dirtiness through the group hierarchies.
-  bubble_group_dirtiness();
 }
 
 void NodeGraphManipulatorImp::set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) {
@@ -743,9 +673,6 @@ void NodeGraphManipulatorImp::set_firebase_override(const Path& node_path, const
   // Set the override.
   Dep<FirebaseReadDataCompute> compute = get_dep<FirebaseReadDataCompute>(entity);
   compute->set_override(data_path, value);
-
-  // Bubble dirtiness through the group hierarchies.
-  bubble_group_dirtiness();
 }
 
 // -----------------------------------------------------------------------------------
@@ -888,17 +815,9 @@ void NodeGraphManipulator::copy_description_to_input_node(Entity* input_entity, 
   return _imp->copy_description_to_input_node(input_entity, input_node_entity);
 }
 
-//void NodeGraphManipulator::bubble_group_dirtiness() {
-//  _imp->bubble_group_dirtiness();
-//}
-//
-//void NodeGraphManipulator::synchronize_graph_dirtiness(Entity* group_entity) {
-//  _imp->synchronize_graph_dirtiness(group_entity);
-//}
-//
-//void NodeGraphManipulator::dirty_compute(const Path& path) {
-//  _imp->dirty_compute(path);
-//}
+void NodeGraphManipulator::bubble_group_dirtiness(Entity* dirty_node_entity) {
+  _imp->bubble_group_dirtiness(dirty_node_entity);
+}
 
 void NodeGraphManipulator::set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) {
   _imp->set_mqtt_override(node_path, topic, payload);

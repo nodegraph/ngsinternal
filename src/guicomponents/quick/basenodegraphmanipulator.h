@@ -65,10 +65,8 @@ class BaseNodeGraphManipulator: public Component {
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity) = 0; // Returns the entity for the link.
   virtual void copy_description_to_input_node(Entity* input_entity, Entity* input_node_entity) = 0;
 
-//  // Graph Dirtiness.
-//  virtual void bubble_group_dirtiness() = 0;
-//  virtual void synchronize_graph_dirtiness(Entity* group_entity) = 0;
-//  virtual void dirty_compute(const Path& path) = 0;
+  // Graph Dirtiness.
+  virtual void bubble_group_dirtiness(Entity* dirty_node_entity) = 0;
 
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) = 0;

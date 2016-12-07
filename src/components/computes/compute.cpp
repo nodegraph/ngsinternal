@@ -49,6 +49,9 @@ void Compute::set_self_dirty(bool dirty) {
   Component::set_self_dirty(dirty);
   if (_manipulator) {
       _manipulator->update_clean_marker(our_entity(), !is_state_dirty());
+      if (dirty) {
+        _manipulator->bubble_group_dirtiness(our_entity());
+      }
   }
 }
 

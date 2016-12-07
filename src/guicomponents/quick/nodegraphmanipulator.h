@@ -88,9 +88,7 @@ Q_OBJECT
   virtual void copy_description_to_input_node(Entity* input_entity, Entity* input_node_entity);
 
   // Graph Dirtiness.
-  virtual void bubble_group_dirtiness();
-  virtual void synchronize_graph_dirtiness(Entity* group_entity);
-  //virtual void dirty_compute(const Path& path);
+  virtual void bubble_group_dirtiness(Entity* dirty_node_entity);
 
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
@@ -100,10 +98,6 @@ private slots:
   void on_idle_timer_timeout();
 
  private:
-  virtual void synchronize_group_dirtiness(Entity* group_entity);
-  virtual void dirty_group_from_internals(Entity* group_entity);
-  virtual void dirty_internals_from_group(Entity* group_entity);
-
   virtual void finish_creating_node(Entity* entity, bool centered);
 
   void prune_clean_or_dead();
@@ -186,10 +180,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
   virtual void copy_description_to_input_node(Entity* input_entity, Entity* input_node_entity);
 
-//  // Graph Dirtiness.
-//  virtual void bubble_group_dirtiness();
-//  virtual void synchronize_graph_dirtiness(Entity* group_entity);
-//  virtual void dirty_compute(const Path& path);
+  // Graph Dirtiness.
+  virtual void bubble_group_dirtiness(Entity* dirty_node_entity);
 
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
