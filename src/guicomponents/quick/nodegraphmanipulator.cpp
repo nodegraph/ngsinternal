@@ -285,7 +285,9 @@ void NodeGraphManipulatorImp::clean_enter_group(Entity* group) {
   }
   // Dirty the group context node.
   Dep<EnterGroupCompute> enter = get_dep<EnterGroupCompute>(node);
-  enter->dirty_state();
+  if (enter->get_did() == ComponentDID::kEnterBrowserGroupCompute) {
+    enter->dirty_state();
+  }
   // Now we it as the ultimate target to clean to.
   set_ultimate_targets(node);
 }
