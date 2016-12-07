@@ -73,14 +73,16 @@ ENTITY_ENTRY1(BrowserGroupNodeEntity)\
 ENTITY_ENTRY1(FirebaseGroupNodeEntity)\
 ENTITY_ENTRY1(MQTTGroupNodeEntity)\
 ENTITY_ENTRY1(DataNodeEntity)\
-ENTITY_ENTRY1(LoopDataNodeEntity)\
-ENTITY_ENTRY1(AccumulateDataNodeEntity)\
 ENTITY_ENTRY1(InputNodeEntity)\
 ENTITY_ENTRY1(OutputNodeEntity)\
 /* Dot Node. */\
 ENTITY_ENTRY1(DotNodeEntity)\
 /* Compute Nodes. */\
 ENTITY_ENTRY1(ComputeNodeEntity)\
+ENTITY_ENTRY1(BrowserComputeNodeEntity)\
+ENTITY_ENTRY1(FirebaseComputeNodeEntity)\
+ENTITY_ENTRY1(MQTTComputeNodeEntity)\
+ENTITY_ENTRY1(LoopComputeNodeEntity)\
 /* Macro Node. */\
 ENTITY_ENTRY1(UserMacroNodeEntity)\
 ENTITY_ENTRY1(AppMacroNodeEntity)\

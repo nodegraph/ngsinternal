@@ -33,8 +33,6 @@ class GUICOMPUTES_EXPORT FirebaseCompute: public Compute {
 
   Dep<NodeJSWorker> _worker;
   Dep<TaskScheduler> _scheduler;
-  // This enter dep makes sure the group context node computes before us.
-  Dep<EnterFirebaseGroupCompute> _enter;
 };
 
 class GUICOMPUTES_EXPORT FirebaseWriteDataCompute: public FirebaseCompute {

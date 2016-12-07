@@ -134,20 +134,6 @@ class ENTITIES_EXPORT DataNodeEntity : public Entity {
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
-class ENTITIES_EXPORT LoopDataNodeEntity : public Entity {
- public:
-  ENTITY_ID(LoopDataNodeEntity)
- LoopDataNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-  virtual void create_internals(const EntityConfig& configs = EntityConfig());
-};
-
-class ENTITIES_EXPORT AccumulateDataNodeEntity : public Entity {
- public:
-  ENTITY_ID(AccumulateDataNodeEntity)
- AccumulateDataNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
-  virtual void create_internals(const EntityConfig& configs = EntityConfig());
-};
-
 class ENTITIES_EXPORT InputNodeEntity : public Entity {
  public:
   ENTITY_ID(InputNodeEntity)
@@ -196,6 +182,30 @@ class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
  ComputeNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
   Compute* get_compute();
+};
+
+class ENTITIES_EXPORT BrowserComputeNodeEntity : public ComputeNodeEntity {
+ public:
+  ENTITY_ID(BrowserComputeNodeEntity)
+ BrowserComputeNodeEntity(Entity* parent, const std::string& name):ComputeNodeEntity(parent, name){}
+};
+
+class ENTITIES_EXPORT FirebaseComputeNodeEntity : public ComputeNodeEntity {
+ public:
+  ENTITY_ID(FirebaseComputeNodeEntity)
+ FirebaseComputeNodeEntity(Entity* parent, const std::string& name):ComputeNodeEntity(parent, name){}
+};
+
+class ENTITIES_EXPORT MQTTComputeNodeEntity : public ComputeNodeEntity {
+ public:
+  ENTITY_ID(MQTTComputeNodeEntity)
+ MQTTComputeNodeEntity(Entity* parent, const std::string& name):ComputeNodeEntity(parent, name){}
+};
+
+class ENTITIES_EXPORT LoopComputeNodeEntity : public ComputeNodeEntity {
+ public:
+  ENTITY_ID(LoopComputeNodeEntity)
+ LoopComputeNodeEntity(Entity* parent, const std::string& name):ComputeNodeEntity(parent, name){}
 };
 
 class ENTITIES_EXPORT UserMacroNodeEntity : public Entity {

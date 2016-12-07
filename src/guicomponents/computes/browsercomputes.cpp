@@ -19,11 +19,9 @@ namespace ngs {
 BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
       _worker(this),
-      _scheduler(this),
-      _enter(this) {
+      _scheduler(this) {
   get_dep_loader()->register_fixed_dep(_worker, Path());
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
-  get_dep_loader()->register_fixed_dep(_enter, Path({"..","group_context"}));
 }
 
 BrowserCompute::~BrowserCompute() {

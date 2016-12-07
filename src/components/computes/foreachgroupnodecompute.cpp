@@ -26,18 +26,6 @@ void ForEachGroupNodeCompute::set_self_dirty(bool dirty) {
   _restart_loop = true;
 }
 
-void ForEachGroupNodeCompute::reset_accumulate_data_nodes() {
-  // Reset all the Accumulate nodes directly inside this group.
-  // Because of dirtiness propagation, this will also get called on all inner groups recursively.
-  const Entity::NameToChildMap &children = our_entity()->get_children();
-  for (auto &iter: children) {
-    if (iter.second->get_did() == EntityDID::kAccumulateDataNodeEntity) {
-      Dep<AccumulateDataNodeCompute> c = get_dep<AccumulateDataNodeCompute>(iter.second);
-      c->clear_override();
-    }
-  }
-}
-
 bool ForEachGroupNodeCompute::update_state() {
   internal();
   Compute::update_state();

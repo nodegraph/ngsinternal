@@ -95,6 +95,9 @@ class OBJECTMODEL_EXPORT Entity {
   // Our parent.
   Entity* get_parent() const;
 
+  // Our group context.
+  std::unordered_set<EntityDID> get_group_context_dids() const;
+
   // Our name.
   const std::string& get_name() const;
   void rename(const std::string& next_name);

@@ -50,6 +50,7 @@ Q_OBJECT
   // Create output nodes.
   Q_INVOKABLE void create_output_node(bool centered);
 
+  // Create loop nodes.
   Q_INVOKABLE void create_accumulate_data_node(bool centered);
 
   // Create data nodes.

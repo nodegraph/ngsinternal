@@ -496,9 +496,10 @@ void ForEachGroupNodeEntity::create_internals(const EntityConfig& config) {
     elements->create_internals(config2);
   }
   {
-    LoopDataNodeEntity* element = new_ff LoopDataNodeEntity(this, "element");
+    ComputeNodeEntity* element = new_ff LoopComputeNodeEntity(this, "element");
     EntityConfig config2;
     config2.visible = true;
+    config2.compute_did = ComponentDID::kLoopDataNodeCompute;
     element->create_internals(config2);
   }
   {
@@ -626,32 +627,6 @@ void DotNodeEntity::create_internals(const EntityConfig& config) {
 void DataNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
   (new_ff DataNodeCompute(this))->create_inputs_outputs(config);
-  new_ff Inputs(this);
-  new_ff Outputs(this);
-  // Gui components.
-  if (config.visible) {
-    new_ff InputNodeShape(this);
-    new_ff InputTopology(this);
-    new_ff OutputTopology(this);
-  }
-}
-
-void LoopDataNodeEntity::create_internals(const EntityConfig& config) {
-  // Our components.
-  (new_ff LoopDataNodeCompute(this))->create_inputs_outputs(config);
-  new_ff Inputs(this);
-  new_ff Outputs(this);
-  // Gui components.
-  if (config.visible) {
-    new_ff InputNodeShape(this);
-    new_ff InputTopology(this);
-    new_ff OutputTopology(this);
-  }
-}
-
-void AccumulateDataNodeEntity::create_internals(const EntityConfig& config) {
-  // Our components.
-  (new_ff AccumulateDataNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
   // Gui components.

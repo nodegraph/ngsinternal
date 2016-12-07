@@ -31,8 +31,7 @@ NodeSelection::NodeSelection(Entity* entity)
       _error_node(this),
       _last_processing_node(this),
       _locked(false),
-      _accumulate(false),
-      _copy_group_did(EntityDID::kInvalidEntity) {
+      _accumulate(false) {
 }
 
 NodeSelection::~NodeSelection() {
@@ -286,7 +285,7 @@ void NodeSelection::copy() {
   Entity* group = node->get_parent();
 
   // Record the copy group did. We will only paste to groups with the same did.
-  _copy_group_did = group->get_did();
+  _group_context_dids = node->get_group_context_dids();
 
   // Convert the comp shapes to their entities.
   std::unordered_set<Entity*> selected_entities;
@@ -303,9 +302,28 @@ void NodeSelection::paste(Entity* group) {
   if (_raw_copy.empty()) {
     return;
   }
-  if (_copy_group_did == group->get_did()) {
-    group->paste_from_string(_raw_copy);
+
+  // The group context dids for the target location.
+  std::unordered_set<EntityDID> target_dids = group->get_group_context_dids();
+
+  std::cerr << "Error: the target group for the paste operation did not have appropriate surrounding group contexts\n";
+  for (auto did: _group_context_dids) {
+    std::cerr << "source: " << to_underlying(did) << "\n";
   }
+  for (auto did: target_dids) {
+    std::cerr << "dest: " << to_underlying(did) << "\n";
+  }
+
+
+  // Make sure the target location has all the needed context dids.
+  for (auto did: _group_context_dids) {
+    if (target_dids.count(did) == 0) {
+      return;
+    }
+  }
+  group->paste_from_string(_raw_copy);
+
+
 }
 
 }

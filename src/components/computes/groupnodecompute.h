@@ -2,6 +2,7 @@
 #include <components/computes/computes_export.h>
 #include <components/computes/compute.h>
 
+#include <unordered_set>
 
 namespace ngs {
 
@@ -35,6 +36,8 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   // Copying values between inside and outside the group.
   void copy_inputs_to_input_nodes();
   void copy_output_nodes_to_outputs();
+  void reset_accumulate_data_nodes();
+
 
   Dep<BaseFactory> _factory;
   QJsonObject _node_hints;

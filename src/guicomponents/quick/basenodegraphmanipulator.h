@@ -49,7 +49,7 @@ class BaseNodeGraphManipulator: public Component {
 
   // Node creation.
   virtual Entity* create_node(bool centered, EntityDID entity_did, const std::string& name = "", Entity* group_entity=NULL) = 0;
-  virtual Entity* create_compute_node(bool centered, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL) = 0;
+  virtual Entity* create_compute_node(bool centered, EntityDID entity_did, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL) = 0;
   virtual Entity* create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL) = 0;
   virtual Entity* create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL) = 0;
   virtual Entity* create_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL) = 0;
@@ -65,10 +65,10 @@ class BaseNodeGraphManipulator: public Component {
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity) = 0; // Returns the entity for the link.
   virtual void copy_description_to_input_node(Entity* input_entity, Entity* input_node_entity) = 0;
 
-  // Graph Dirtiness.
-  virtual void bubble_group_dirtiness() = 0;
-  virtual void synchronize_graph_dirtiness(Entity* group_entity) = 0;
-  virtual void dirty_compute(const Path& path) = 0;
+//  // Graph Dirtiness.
+//  virtual void bubble_group_dirtiness() = 0;
+//  virtual void synchronize_graph_dirtiness(Entity* group_entity) = 0;
+//  virtual void dirty_compute(const Path& path) = 0;
 
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) = 0;

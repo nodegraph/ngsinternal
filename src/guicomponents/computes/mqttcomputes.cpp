@@ -18,9 +18,8 @@ namespace ngs {
 BaseMQTTCompute::BaseMQTTCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
       _scheduler(this),
-      _group_context(this) {
+      _enter(this) {
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
-  get_dep_loader()->register_fixed_dep(_group_context, Path({"..","group_context"}));
 }
 
 BaseMQTTCompute::~BaseMQTTCompute() {
@@ -42,10 +41,55 @@ void BaseMQTTCompute::init_hints(QJsonObject& m) {
   add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 }
 
+void BaseMQTTCompute::update_wires() {
+  if (!_enter) {
+    _enter = get_enter_mqtt_group_compute();
+    return;
+  }
+
+  // Get the group of the enter node.
+  Entity* group = _enter->our_entity()->get_parent();
+
+  // Check to see if the group is our closest surrounding MQTT group.
+  Entity* parent = our_entity()->get_parent();
+  while(parent) {
+    if (parent->get_did() == EntityDID::kMQTTGroupNodeEntity) {
+      if (parent == group) {
+        return;
+      }
+      break;
+    }
+    parent = parent->get_parent();
+  }
+
+  // Otherwise we need to make ourself dirty and grab a novel dependency.
+  _enter = get_enter_mqtt_group_compute();
+}
+
+Entity* BaseMQTTCompute::get_mqtt_group_node() const {
+  Entity* e = our_entity();
+  while(e) {
+    if (e->get_did() == EntityDID::kMQTTGroupNodeEntity) {
+      return e;
+    }
+    e = e->get_parent();
+  }
+  assert(false);
+  return NULL;
+}
+
+Dep<EnterMQTTGroupCompute> BaseMQTTCompute::get_enter_mqtt_group_compute() {
+  std::cerr << "xxxxxxxxxxxxxxxxxxx\n";
+  Entity* group = get_mqtt_group_node();
+  Entity* enter = group->get_child("group_context");
+  assert(enter);
+  return get_dep<EnterMQTTGroupCompute>(enter);
+}
+
 void BaseMQTTCompute::append_callback_tasks(TaskContext& tc) {
   internal();
   std::function<void()> done = std::bind(&BaseMQTTCompute::on_finished_task, this);
-  _group_context->queue_finished_task(tc, done);
+  _enter->queue_finished_task(tc, done);
 }
 
 void BaseMQTTCompute::on_finished_task() {
@@ -91,7 +135,7 @@ bool MQTTPublishCompute::update_state() {
   QString message = _inputs->get_input_value(Message::kMessage).toString();
 
   TaskContext tc(_scheduler);
-  _group_context->queue_publish_task(tc, topic, message);
+  _enter->queue_publish_task(tc, topic, message);
   append_callback_tasks(tc);
   return false;
 }
@@ -167,8 +211,8 @@ bool MQTTSubscribeCompute::update_state() {
   _topic = _inputs->get_input_value(Message::kTopic).toString();
 
   TaskContext tc(_scheduler);
-  if (!_group_context->is_subscribed(this, _topic.toStdString())) {
-    _group_context->queue_subscribe_task(tc, _topic, get_path());
+  if (!_enter->is_subscribed(this, _topic.toStdString())) {
+    _enter->queue_subscribe_task(tc, _topic, get_path());
   }
   // Let on_finished_task() handle setting our final output value.
   append_callback_tasks(tc);
@@ -184,8 +228,8 @@ bool MQTTSubscribeCompute::destroy_state() {
   // however during destruction of our surrounding node
   // the context may be null as the deletion order of nodes within in a group is random.
   // The context is just another node in our group.
-  if (_group_context) {
-    _group_context->queue_unsubscribe_task(tc, _topic, get_path());
+  if (_enter) {
+    _enter->queue_unsubscribe_task(tc, _topic, get_path());
   }
   return true;
 }

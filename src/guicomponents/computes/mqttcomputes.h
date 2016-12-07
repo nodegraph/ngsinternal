@@ -21,12 +21,16 @@ class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
   virtual void on_finished_task();
 
   static void init_hints(QJsonObject& m);
+  virtual void update_wires();
 
  protected:
   virtual void append_callback_tasks(TaskContext& tc);
 
+  Entity* get_mqtt_group_node() const;
+  Dep<EnterMQTTGroupCompute> get_enter_mqtt_group_compute();
+
   Dep<TaskScheduler> _scheduler;
-  Dep<EnterMQTTGroupCompute> _group_context;
+  Dep<EnterMQTTGroupCompute> _enter; // This is not serialized and is gathered at runtime.
 };
 
 class GUICOMPUTES_EXPORT MQTTPublishCompute: public BaseMQTTCompute {

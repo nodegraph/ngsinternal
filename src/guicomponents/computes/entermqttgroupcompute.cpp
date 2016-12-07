@@ -168,6 +168,7 @@ void EnterMQTTGroupCompute::on_time_out() {
 void EnterMQTTGroupCompute::on_connected() {
   internal();
   _timer.stop();
+  std::cerr << "MQTT on connected\n";
   QString error;
   _scheduler->done_waiting_for_response(_current_task_id, error);
 }

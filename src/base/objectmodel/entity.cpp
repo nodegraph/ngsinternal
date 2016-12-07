@@ -55,6 +55,23 @@ Entity* Entity::get_parent() const {
   return _parent;
 }
 
+std::unordered_set<EntityDID> Entity::get_group_context_dids() const {
+  const Entity* e = this;
+  std::unordered_set<EntityDID> dids;
+  while (e) {
+    EntityDID did = e->get_did();
+    // Check for Groups which have an Enter node that does something.
+    if (did == EntityDID::kBrowserGroupNodeEntity ||
+        did == EntityDID::kFirebaseGroupNodeEntity ||
+        did == EntityDID::kMQTTGroupNodeEntity ||
+        did == EntityDID::kForEachGroupNodeEntity) {
+      dids.insert(did);
+    }
+    e = e->get_parent();
+  }
+  return dids;
+}
+
 const std::string& Entity::get_name() const {
   return _name;
 }

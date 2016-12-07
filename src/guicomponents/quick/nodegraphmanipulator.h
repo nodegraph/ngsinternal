@@ -71,7 +71,7 @@ Q_OBJECT
 
   // Node creation.
   virtual Entity* create_node(bool centered, EntityDID entity_did, const std::string& name = "", Entity* group_entity=NULL);
-  virtual Entity* create_compute_node(bool centered, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_compute_node(bool centered, EntityDID entity_did, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
@@ -90,7 +90,7 @@ Q_OBJECT
   // Graph Dirtiness.
   virtual void bubble_group_dirtiness();
   virtual void synchronize_graph_dirtiness(Entity* group_entity);
-  virtual void dirty_compute(const Path& path);
+  //virtual void dirty_compute(const Path& path);
 
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
@@ -170,7 +170,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
 
   // Node creation.
   virtual Entity* create_node(bool centered, EntityDID entity_did, const std::string& name = "", Entity* group_entity=NULL);
-  virtual Entity* create_compute_node(bool centered, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL);
+  virtual Entity* create_compute_node(bool centered, EntityDID entity_did, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
@@ -186,10 +186,10 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual Entity* connect_plugs(Entity* input_entity, Entity* output_entity);
   virtual void copy_description_to_input_node(Entity* input_entity, Entity* input_node_entity);
 
-  // Graph Dirtiness.
-  virtual void bubble_group_dirtiness();
-  virtual void synchronize_graph_dirtiness(Entity* group_entity);
-  virtual void dirty_compute(const Path& path);
+//  // Graph Dirtiness.
+//  virtual void bubble_group_dirtiness();
+//  virtual void synchronize_graph_dirtiness(Entity* group_entity);
+//  virtual void dirty_compute(const Path& path);
 
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);

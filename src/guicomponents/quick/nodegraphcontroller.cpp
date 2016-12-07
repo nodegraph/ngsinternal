@@ -97,7 +97,7 @@ void NodeGraphController::create_output_node(bool centered) {
 }
 
 void NodeGraphController::create_accumulate_data_node(bool centered) {
-  _manipulator->create_node(centered, EntityDID::kAccumulateDataNodeEntity);
+  _manipulator->create_compute_node(centered, EntityDID::kLoopComputeNodeEntity, ComponentDID::kAccumulateDataNodeCompute);
 }
 
 // Create data nodes.
@@ -125,28 +125,28 @@ void NodeGraphController::create_dot_node(bool centered) {
 
 // Data compute nodes.
 void NodeGraphController::create_merge_node(bool centered) {
-  _manipulator->create_compute_node(centered, ComponentDID::kMergeNodeCompute);
+  _manipulator->create_compute_node(centered, EntityDID::kComputeNodeEntity, ComponentDID::kMergeNodeCompute);
 }
 
 // Firebase compute nodes.
 void NodeGraphController::create_firebase_write_data_node(bool centered) {
-  _manipulator->create_compute_node(centered, ComponentDID::kFirebaseWriteDataCompute);
+  _manipulator->create_compute_node(centered, EntityDID::kFirebaseComputeNodeEntity, ComponentDID::kFirebaseWriteDataCompute);
 }
 void NodeGraphController::create_firebase_read_data_node(bool centered) {
-  _manipulator->create_compute_node(centered, ComponentDID::kFirebaseReadDataCompute);
+  _manipulator->create_compute_node(centered, EntityDID::kFirebaseComputeNodeEntity, ComponentDID::kFirebaseReadDataCompute);
 }
 
 // Http compute nodes.
 void NodeGraphController::create_http_node(bool centered) {
-  _manipulator->create_compute_node(centered, ComponentDID::kHTTPCompute);
+  _manipulator->create_compute_node(centered, EntityDID::kComputeNodeEntity, ComponentDID::kHTTPCompute);
 }
 
 // MQTT compute nodes.
 void NodeGraphController::create_mqtt_publish_node(bool centered) {
-  _manipulator->create_compute_node(centered, ComponentDID::kMQTTPublishCompute);
+  _manipulator->create_compute_node(centered, EntityDID::kMQTTComputeNodeEntity, ComponentDID::kMQTTPublishCompute);
 }
 void NodeGraphController::create_mqtt_subscribe_node(bool centered) {
-  _manipulator->create_compute_node(centered, ComponentDID::kMQTTSubscribeCompute);
+  _manipulator->create_compute_node(centered, EntityDID::kMQTTComputeNodeEntity, ComponentDID::kMQTTSubscribeCompute);
 }
 
 

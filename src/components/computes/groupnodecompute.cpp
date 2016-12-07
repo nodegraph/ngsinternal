@@ -8,6 +8,7 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/outputnodecompute.h>
+#include <components/computes/accumulatedatanodecompute.h>
 
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/outputshape.h>
@@ -182,16 +183,8 @@ void GroupNodeCompute::copy_inputs_to_input_nodes() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (input->is_connected()) {
-        // If the input is connected set the value as the override on the input node.
-        if (input_node_compute->get_override() != input->get_output("out")) {
-          input_node_compute->set_override(input->get_output("out"));
-        }
-      } else {
-        // If the input is not connected we nullify the override on the input node.
-        if (input_node_compute->get_override() != QJsonValue()) {
-          input_node_compute->set_override(QJsonValue());
-        }
+      if (input_node_compute->get_override() != input->get_output("out")) {
+        input_node_compute->set_override(input->get_output("out"));
       }
     }
   }
@@ -205,6 +198,31 @@ void GroupNodeCompute::copy_output_nodes_to_outputs() {
     Entity* output_node = our_entity()->get_child(output_name);
     Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
     set_output(output_name, output_node_compute->get_output("out"));
+  }
+}
+
+void GroupNodeCompute::reset_accumulate_data_nodes() {
+  // Reset all the Accumulate nodes directly inside this group.
+  // Because of dirtiness propagation, this will also get called on all inner groups recursively.
+  const Entity::NameToChildMap &children = our_entity()->get_children();
+  for (auto &iter: children) {
+    if (our_entity()->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kAccumulateDataNodeCompute)) {
+      Dep<AccumulateDataNodeCompute> c = get_dep<AccumulateDataNodeCompute>(iter.second);
+      c->clear_override();
+    }
+    // Recurse into all group node types.
+    EntityDID did = iter.second->get_did();
+    if (did == EntityDID::kBaseGroupNodeEntity ||
+        did == EntityDID::kGroupNodeEntity ||
+        did == EntityDID::kScriptGroupNodeEntity ||
+        did == EntityDID::kBrowserGroupNodeEntity ||
+        did == EntityDID::kFirebaseGroupNodeEntity ||
+        did == EntityDID::kMQTTGroupNodeEntity ||
+        did == EntityDID::kForEachGroupNodeEntity ||
+        did == EntityDID::kIfGroupNodeEntity) {
+      Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(iter.second);
+      c->reset_accumulate_data_nodes();
+    }
   }
 }
 

@@ -206,6 +206,7 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
         // In this case the GroupNodeCompute dep will be null.
         continue;
       }
+      std::cerr << "cleaning inputs to path: " << path.get_as_string() << "\n";
       if (!c->clean_inputs()) {
         return;
       }
@@ -373,7 +374,7 @@ Entity* NodeGraphManipulatorImp::create_node(bool centered, EntityDID entity_did
   return e;
 }
 
-Entity* NodeGraphManipulatorImp::create_compute_node(bool centered, ComponentDID compute_did, const std::string& name, Entity* group_entity) {
+Entity* NodeGraphManipulatorImp::create_compute_node(bool centered, EntityDID entity_did, ComponentDID compute_did, const std::string& name, Entity* group_entity) {
   if (!group_entity) {
     group_entity = _factory->get_current_group();
   }
@@ -382,7 +383,7 @@ Entity* NodeGraphManipulatorImp::create_compute_node(bool centered, ComponentDID
   if (node_name.empty()) {
     node_name = get_component_user_did_name(compute_did);
   }
-  Entity* e = _factory->instance_entity(group_entity, EntityDID::kComputeNodeEntity, node_name);
+  Entity* e = _factory->instance_entity(group_entity, entity_did, node_name);
   EntityConfig config;
   config.compute_did = compute_did;
   e->create_internals(config);
@@ -448,7 +449,7 @@ Entity* NodeGraphManipulatorImp::create_browser_node(bool centered, ComponentDID
   }
 
   // Create the node.
-  Entity* _node = create_compute_node(centered, compute_did, name, group_entity);
+  Entity* _node = create_compute_node(centered, EntityDID::kBrowserComputeNodeEntity, compute_did, name, group_entity);
 
   // Initialize and update the wires.
   _node->initialize_wires();
@@ -623,7 +624,7 @@ void NodeGraphManipulatorImp::copy_description_to_input_node(Entity* input_entit
 }
 
 void NodeGraphManipulatorImp::bubble_group_dirtiness() {
-  synchronize_graph_dirtiness(_app_root);
+  //synchronize_graph_dirtiness(_app_root);
 }
 
 void NodeGraphManipulatorImp::synchronize_graph_dirtiness(Entity* group_entity) {
@@ -644,13 +645,13 @@ void NodeGraphManipulatorImp::synchronize_graph_dirtiness(Entity* group_entity) 
   }
 }
 
-void NodeGraphManipulatorImp::dirty_compute(const Path& path) {
-  Entity* entity = _app_root->get_entity(path);
-  Dep<Compute> compute = get_dep<Compute>(entity);
-  if (compute) {
-    compute->dirty_state();
-  }
-}
+//void NodeGraphManipulatorImp::dirty_compute(const Path& path) {
+//  Entity* entity = _app_root->get_entity(path);
+//  Dep<Compute> compute = get_dep<Compute>(entity);
+//  if (compute) {
+//    compute->dirty_state();
+//  }
+//}
 
 void NodeGraphManipulatorImp::synchronize_group_dirtiness(Entity* group_entity) {
   // Update the group's dirtiness from our internals.
@@ -844,8 +845,8 @@ Entity* NodeGraphManipulator::create_node(bool centered, EntityDID entity_did, c
   return _imp->create_node(centered, entity_did, name, group_entity);
 }
 
-Entity* NodeGraphManipulator::create_compute_node(bool centered, ComponentDID compute_did, const std::string& name, Entity* group_entity) {
-  return _imp->create_compute_node(centered, compute_did, name, group_entity);
+Entity* NodeGraphManipulator::create_compute_node(bool centered, EntityDID entity_did, ComponentDID compute_did, const std::string& name, Entity* group_entity) {
+  return _imp->create_compute_node(centered, entity_did, compute_did, name, group_entity);
 }
 
 Entity* NodeGraphManipulator::create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
@@ -885,17 +886,17 @@ void NodeGraphManipulator::copy_description_to_input_node(Entity* input_entity, 
   return _imp->copy_description_to_input_node(input_entity, input_node_entity);
 }
 
-void NodeGraphManipulator::bubble_group_dirtiness() {
-  _imp->bubble_group_dirtiness();
-}
-
-void NodeGraphManipulator::synchronize_graph_dirtiness(Entity* group_entity) {
-  _imp->synchronize_graph_dirtiness(group_entity);
-}
-
-void NodeGraphManipulator::dirty_compute(const Path& path) {
-  _imp->dirty_compute(path);
-}
+//void NodeGraphManipulator::bubble_group_dirtiness() {
+//  _imp->bubble_group_dirtiness();
+//}
+//
+//void NodeGraphManipulator::synchronize_graph_dirtiness(Entity* group_entity) {
+//  _imp->synchronize_graph_dirtiness(group_entity);
+//}
+//
+//void NodeGraphManipulator::dirty_compute(const Path& path) {
+//  _imp->dirty_compute(path);
+//}
 
 void NodeGraphManipulator::set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) {
   _imp->set_mqtt_override(node_path, topic, payload);

@@ -93,7 +93,7 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
 
   // The did of the group from which the copy was performed.
   // We can only paste to other groups with the same did.
-  EntityDID _copy_group_did;
+  std::unordered_set<EntityDID> _group_context_dids;
 
   // Lock nodes and links from being moved.
   bool _locked;
