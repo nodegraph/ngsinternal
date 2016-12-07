@@ -64,8 +64,10 @@ class COMPUTES_EXPORT Flux: public Component {
  protected:
   // Our state.
   virtual void update_wires();
-  virtual bool wires_are_up_to_date();
-  virtual void gather();
+  virtual void gather(std::unordered_map<std::string, size_t>& exposed_ordering,
+                      std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& hidden,
+                      std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& exposed,
+                      std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& all);
 
   Dep<typename Traits::IOCompute> _null;
   Dep<BaseNodeGraphManipulator> _manipulator;

@@ -35,12 +35,16 @@ void OutputLabelShape::update_wires() {
   DepUSet<LinkShape> deps;
   std::unordered_set<Entity*> dependants = _output_shape->get_dependants_by_did(ComponentIID::kICompShape, ComponentDID::kLinkShape);
 
-  // Update our wires.
-  _link_shapes.clear();
+  // Get the current link shapes, without clearing the prev link shapes.
+  // This allows us to keep dependencies without re-registering them and making ourself dirty.
+  DepUSet<LinkShape> next_link_shapes;
   for (Entity* e: dependants) {
     Dep<LinkShape> link_shape = get_dep<LinkShape>(e);
-    _link_shapes.insert(link_shape);
+    next_link_shapes.insert(link_shape);
   }
+
+  // Update our wires.
+  _link_shapes = next_link_shapes;
 }
 
 bool OutputLabelShape::update_state() {

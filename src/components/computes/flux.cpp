@@ -27,101 +27,69 @@ Flux<Traits>::~Flux() {
 template<class Traits>
 void Flux<Traits>::update_wires() {
   internal();
-  if (!wires_are_up_to_date()) {
-    gather();
-    if (Traits::FluxDID == ComponentDID::kOutputs) {
-      _manipulator->set_output_topology(our_entity(), _exposed_ordering);
-    } else if (Traits::FluxDID == ComponentDID::kInputs) {
-      _manipulator->set_input_topology(our_entity(), _exposed_ordering);
-    }
+
+  std::unordered_map<std::string, size_t> next_exposed_ordering;
+  std::unordered_map<std::string, Dep<typename Traits::IOCompute> > next_hidden;
+  std::unordered_map<std::string, Dep<typename Traits::IOCompute> > next_exposed;
+  std::unordered_map<std::string, Dep<typename Traits::IOCompute> > next_all;
+  gather(next_exposed_ordering, next_hidden, next_exposed, next_all);
+
+  // If we're already up to date, then return right away.
+  if (next_exposed_ordering == _exposed_ordering &&
+      next_hidden == _hidden &&
+      next_exposed == _exposed &&
+      next_all == _all) {
+    return;
+  }
+
+  // Update our values.
+  _exposed_ordering = next_exposed_ordering;
+  _hidden = next_hidden;
+  _exposed = next_exposed;
+  _all = next_all;
+
+  // Update the topologies.
+  if (Traits::FluxDID == ComponentDID::kOutputs) {
+    _manipulator->set_output_topology(our_entity(), _exposed_ordering);
+  } else if (Traits::FluxDID == ComponentDID::kInputs) {
+    _manipulator->set_input_topology(our_entity(), _exposed_ordering);
   }
 }
 
 template<class Traits>
-bool Flux<Traits>::wires_are_up_to_date() {
-  Entity* space = has_entity(Path({".",Traits::folder_name}));
-  if (!space) {
-    return true;
-  }
-
-  size_t num_io = 0;
-  if (space) {
-    const Entity::NameToChildMap& children = space->get_children();
-    for (auto iter: children) {
-      Entity* child = iter.second;
-
-      // If we don't have an appropriate entity, skip it.
-      if (child->get_did() != Traits::IOComputeEntityDID) {
-        continue;
-      }
-
-      // We have an input/output.
-      const std::string& name = child->get_name();
-      num_io += 1;
-
-      // Check if this input/output is accounted for.
-      if (_all.count(name)) {
-        continue;
-      } else {
-        return false;
-      }
-    }
-  }
-
-  // Check the number of inputs/outputs.
-  if (_all.size() != num_io) {
-    return false;
-  }
-
-  // Make sure all the exposed are actually exposed.
-  for (auto iter: _exposed) {
-    // If an input has disappeared then we're not up to date.
-    if (!iter.second) {
-      return false;
-    }
-    if (!iter.second->is_exposed()) {
-      return false;
-    }
-  }
-
-  // Make sure all the hidden are actually hidden.
-  for (auto iter: _hidden) {
-    // If an input has disappeared then we're not up to date.
-    if (!iter.second) {
-      return false;
-    }
-    if (iter.second->is_exposed()) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-template<class Traits>
-void Flux<Traits>::gather() {
+void Flux<Traits>::gather(std::unordered_map<std::string, size_t>& exposed_ordering,
+                          std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& hidden,
+                          std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& exposed,
+                          std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& all) {
   internal();
-  _hidden.clear();
-  _exposed.clear();
-  _exposed_ordering.clear();
+
+  exposed_ordering.clear();
+  hidden.clear();
+  exposed.clear();
+  exposed_ordering.clear();
 
   std::vector<std::string> exposed_names;
 
+  // Loop through all the inputs or outputs.
   Entity* space = has_entity(Path({".",Traits::folder_name}));
   if (space) {
     const Entity::NameToChildMap& children = space->get_children();
     for (auto iter: children) {
       Entity* child = iter.second;
+      // If the child is not an input or output, then skip it.
       if (child->get_did() != Traits::IOComputeEntityDID) {
         continue;
       }
+      // Grab a dep on the input or output.
       Dep<typename Traits::IOCompute> dep = get_dep<typename Traits::IOCompute>(child);
       if (dep) {
         if (dep->is_exposed()) {
-          _exposed.insert({child->get_name(),dep});
+          // If the input or output is exposed, record it in the exposed set.
+          exposed.insert({child->get_name(),dep});
           exposed_names.push_back(child->get_name());
         } else {
-          _hidden.insert({child->get_name(),dep});
+          // If the input or output is not exposed, record it in the hidden set.
+          hidden.insert({child->get_name(),dep});
         }
       }
     }
@@ -130,12 +98,12 @@ void Flux<Traits>::gather() {
   // Sort the exposed inputs/outputs alphabetically.
   std::sort(exposed_names.begin(), exposed_names.end());
   for (size_t i=0; i<exposed_names.size(); ++i) {
-    _exposed_ordering[exposed_names[i]] = i;
+    exposed_ordering[exposed_names[i]] = i;
   }
 
   // Cache a merged map of the exposed and hidden.
-  _all = _exposed;
-  _all.insert(_hidden.begin(), _hidden.end());
+  all = exposed;
+  all.insert(hidden.begin(), hidden.end());
 }
 
 template<class Traits>
