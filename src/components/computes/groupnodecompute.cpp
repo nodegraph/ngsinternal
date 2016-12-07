@@ -18,42 +18,20 @@
 
 namespace ngs {
 
-GroupNodeCompute::GroupNodeCompute(Entity* entity, ComponentDID did):
-    Compute(entity, did),
-    _factory(this) {
-  get_dep_loader()->register_fixed_dep(_factory, Path());
-}
-
-GroupNodeCompute::~GroupNodeCompute() {
-}
-
-void GroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  Compute::create_inputs_outputs(config);
-  create_namespace("links");
-}
-
-void GroupNodeCompute::add_param_hints(const std::string& name, const QJsonValue& param_hints) {
-  _node_hints.insert(name.c_str(), param_hints);
-}
-
-void GroupNodeCompute::remove_param_hints(const std::string& name) {
-  Compute::remove_hint(_node_hints, name);
-}
-
-void GroupNodeCompute::update_wires() {
-  internal();
-
+GroupNodeCompute::WireUpdater::WireUpdater(GroupNodeCompute* target):
+    Component(NULL, ComponentIID::kIInvalidComponent, ComponentDID::kInvalidComponent),
+    _target(target){}
+void GroupNodeCompute::WireUpdater::update_wires() {
   // Make sure the inputs and outputs on this group match up
   // with the input and output nodes inside this group.
-  Entity* inputs_space = get_entity(Path({".","inputs"}));
-  Entity* outputs_space = get_entity(Path({".","outputs"}));
+  Entity* inputs_space = _target->get_entity(Path({".","inputs"}));
+  Entity* outputs_space = _target->get_entity(Path({".","outputs"}));
 
   std::unordered_set<std::string> exposed_inputs;
   std::unordered_set<std::string> exposed_outputs;
 
   // Make sure all the input/outputs nodes in this group are represented by inputs/outputs.
-  const Entity::NameToChildMap& children = our_entity()->get_children();
+  const Entity::NameToChildMap& children = _target->our_entity()->get_children();
   for (auto &iter : children) {
     const std::string& child_name = iter.first;
     Entity* node = iter.second;
@@ -64,7 +42,7 @@ void GroupNodeCompute::update_wires() {
       // If we already have an input plug corresponding to the input node, then make sure the hints are synced up.
       if (!inputs_space->has_child_name(child_name)) {
         // Otherwise we create an input plug.
-        InputEntity* input = static_cast<InputEntity*>(_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
+        InputEntity* input = static_cast<InputEntity*>(_target->_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
         EntityConfig config;
         config.expose_plug = true;
         input->create_internals(config);
@@ -72,7 +50,7 @@ void GroupNodeCompute::update_wires() {
         // Grab the computes on the input and the input node inside the group.
         Dep<InputCompute> outer = get_dep<InputCompute>(input);
         Dep<InputNodeCompute> inner = get_dep<InputNodeCompute>(node);
-        // Note an input node's input is not connected to anything and cleaning it won't start any asynchronous processed.
+        // Note an input node's input is not connected to anything and cleaning it won't start any asynchronous processes.
         inner->get_inputs()->clean_wires();
         inner->get_inputs()->clean_state();
         // Set the unconnected value;
@@ -86,7 +64,7 @@ void GroupNodeCompute::update_wires() {
       Dep<InputNodeCompute> input_node = get_dep<InputNodeCompute>(node);
       QJsonObject param_hints = input_node->get_hints().value("default_value").toObject();
       param_hints.insert(QString::number(to_underlying(HintKey::kDescriptionHint)), description);
-      add_param_hints(child_name, param_hints);
+      _target->add_param_hints(child_name, param_hints);
     } else if (did == EntityDID::kOutputNodeEntity) {
       // Update the set of exposed_outputs.
       exposed_outputs.insert(child_name);
@@ -95,7 +73,7 @@ void GroupNodeCompute::update_wires() {
         continue;
       }
       // Otherwise we create an output plug.
-      OutputEntity* out = static_cast<OutputEntity*>(_factory->instance_entity(outputs_space, EntityDID::kOutputEntity, child_name));
+      OutputEntity* out = static_cast<OutputEntity*>(_target->_factory->instance_entity(outputs_space, EntityDID::kOutputEntity, child_name));
       EntityConfig config;
       config.expose_plug = true;
       out->create_internals(config);
@@ -110,7 +88,7 @@ void GroupNodeCompute::update_wires() {
       const std::string& child_name = iter.first;
       if (!exposed_inputs.count(child_name)) {
         _inputs_to_destroy.push_back(iter.second);
-        remove_param_hints(child_name);
+        _target->remove_param_hints(child_name);
       }
     }
     std::vector<Entity*> _outputs_to_destroy;
@@ -129,9 +107,37 @@ void GroupNodeCompute::update_wires() {
       delete_ff(e);
     }
   }
+}
 
-  // Now do the base Compute::update_wires().
-  Compute::update_wires();
+
+GroupNodeCompute::GroupNodeCompute(Entity* entity, ComponentDID did):
+    Compute(entity, did),
+    _factory(this),
+    _wire_updater(new_ff WireUpdater(this)){
+  get_dep_loader()->register_fixed_dep(_factory, Path());
+}
+
+GroupNodeCompute::~GroupNodeCompute() {
+  delete_ff(_wire_updater);
+}
+
+void GroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  Compute::create_inputs_outputs(config);
+  create_namespace("links");
+}
+
+void GroupNodeCompute::add_param_hints(const std::string& name, const QJsonValue& param_hints) {
+  _node_hints.insert(name.c_str(), param_hints);
+}
+
+void GroupNodeCompute::remove_param_hints(const std::string& name) {
+  Compute::remove_hint(_node_hints, name);
+}
+
+void GroupNodeCompute::update_wires() {
+  internal();
+  _wire_updater->update_wires();
 
   // The update_wires method on components, is called basically in random order for a given entity.
   // However for group nodes, the inputs and outputs are created dynamically directly inside update_wires(),

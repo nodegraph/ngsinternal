@@ -12,6 +12,15 @@ class BaseNodeGraphManipulator;
 class COMPUTES_EXPORT GroupNodeCompute: public Compute {
  public:
   COMPONENT_ID(Compute, GroupNodeCompute);
+
+  class WireUpdater: public Component {
+   public:
+    WireUpdater(GroupNodeCompute* target);
+    void update_wires();
+    GroupNodeCompute* _target;
+  };
+
+
   GroupNodeCompute(Entity* entity, ComponentDID did = kDID());
   virtual ~GroupNodeCompute();
 
@@ -41,6 +50,7 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
 
   Dep<BaseFactory> _factory;
   QJsonObject _node_hints;
+  WireUpdater* _wire_updater;
 };
 
 }

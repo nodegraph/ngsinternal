@@ -42,27 +42,7 @@ void BaseMQTTCompute::init_hints(QJsonObject& m) {
 }
 
 void BaseMQTTCompute::update_wires() {
-  if (!_enter) {
-    _enter = get_enter_mqtt_group_compute();
-    return;
-  }
-
-  // Get the group of the enter node.
-  Entity* group = _enter->our_entity()->get_parent();
-
-  // Check to see if the group is our closest surrounding MQTT group.
-  Entity* parent = our_entity()->get_parent();
-  while(parent) {
-    if (parent->get_did() == EntityDID::kMQTTGroupNodeEntity) {
-      if (parent == group) {
-        return;
-      }
-      break;
-    }
-    parent = parent->get_parent();
-  }
-
-  // Otherwise we need to make ourself dirty and grab a novel dependency.
+  // This caches the dep, and will only dirty this component when it changes.
   _enter = get_enter_mqtt_group_compute();
 }
 
@@ -79,7 +59,6 @@ Entity* BaseMQTTCompute::get_mqtt_group_node() const {
 }
 
 Dep<EnterMQTTGroupCompute> BaseMQTTCompute::get_enter_mqtt_group_compute() {
-  std::cerr << "xxxxxxxxxxxxxxxxxxx\n";
   Entity* group = get_mqtt_group_node();
   Entity* enter = group->get_child("group_context");
   assert(enter);

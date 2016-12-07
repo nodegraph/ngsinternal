@@ -207,6 +207,8 @@ class OBJECTMODEL_EXPORT Component {
 
   // ------------------------------------------------
   // Our 4 get_dep implementations.
+  // Note: get_dep will only dirty the Component if a
+  //       novel dependency is registered.
   // ------------------------------------------------
   template <class T>
   Dep<T> get_dep(Entity* e) {
