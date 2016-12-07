@@ -171,7 +171,8 @@ DepLinkPtr Component::get_dep(const Path& path, ComponentIID iid) {
 }
 
 DepLinkPtr Component::connect_to_dep(Component* c) {
-  external();
+  // We only want the component to become dirty if a novel dependency is registered.
+  //external();
 
   // If this is going to create a cycle return NULL.
   if (dep_creates_cycle(c)) {
@@ -292,7 +293,8 @@ void Component::set_dep_link(Component* c, DepLinkPtr link) {
 }
 
 DepLinkPtr Component::register_dependency(Component* c) {
-  external();
+  // We only want the component to become dirty if a novel dependency is registered.
+  //external();
   // We assume cycle check has already been performed.
 
   // See if we have an existing dep link.
@@ -305,6 +307,9 @@ DepLinkPtr Component::register_dependency(Component* c) {
     bp->dependency = c;
     return bp;
   }
+
+  // Make ourself dirty, as a novel dependency is about to be registered.
+  external();
 
   // Otherwise we need to create a dep link.
   DepLinkPtr dp(new_ff DepLink(this, c));
