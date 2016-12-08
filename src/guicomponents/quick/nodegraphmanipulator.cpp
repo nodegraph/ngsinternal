@@ -269,39 +269,38 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
 }
 
 void NodeGraphManipulatorImp::clean_enter_group(Entity* group) {
-  // Graph the entity for the group context node.
-  Entity* node = group->get_child("group_context");
-  if (!node) {
-    return;
-  }
-  // Dirty the group context node if we're entering a browser group.
-  Dep<EnterGroupCompute> enter = get_dep<EnterGroupCompute>(node);
-  if (enter->get_did() == ComponentDID::kEnterBrowserGroupCompute) {
-    enter->dirty_state();
-  }
-  // Now we it as the ultimate target to clean to.
-  set_ultimate_targets(node);
+//  // Graph the entity for the group context node.
+//  Entity* node = group->get_child("group_context");
+//  if (!node) {
+//    return;
+//  }
+//  // Dirty the group context node if we're entering a browser group.
+//  Dep<EnterGroupCompute> enter = get_dep<EnterGroupCompute>(node);
+//  if (enter->get_did() == ComponentDID::kEnterBrowserGroupCompute) {
+//    enter->dirty_state();
+//  }
+//  // Now we it as the ultimate target to clean to.
+//  set_ultimate_targets(node);
 }
 
 void NodeGraphManipulatorImp::clean_exit_group(Entity* group) {
-  // If this group has an exit group node, then make it dirty and clean it.
-  Entity* child = group->get_child("exit_group_context");
-  if (!child) {
-    return;
-  }
-
-  // We expect the exit compute to not have to wait for an asynchronous response.
-  Dep<ExitGroupCompute> exit = get_dep<ExitGroupCompute>(child);
-
-  // Dirty and clean group context node if we're exiting a browser group.
-  if (exit->get_did() == ComponentDID::kExitBrowserGroupCompute) {
-    exit->dirty_state();
-    // Make sure it is clean.
-    exit->clean_state();
-  }
-
-  // The other exit groups don't do anything.
-
+//  // If this group has an exit group node, then make it dirty and clean it.
+//  Entity* child = group->get_child("exit_group_context");
+//  if (!child) {
+//    return;
+//  }
+//
+//  // We expect the exit compute to not have to wait for an asynchronous response.
+//  Dep<ExitGroupCompute> exit = get_dep<ExitGroupCompute>(child);
+//
+//  // Dirty and clean group context node if we're exiting a browser group.
+//  if (exit->get_did() == ComponentDID::kExitBrowserGroupCompute) {
+//    exit->dirty_state();
+//    // Make sure it is clean.
+//    exit->clean_state();
+//  }
+//
+//  // The other exit groups don't do anything.
 }
 
 void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {

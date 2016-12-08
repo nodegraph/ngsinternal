@@ -19,7 +19,8 @@ namespace ngs {
 FirebaseCompute::FirebaseCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
       _worker(this),
-      _scheduler(this) {
+      _scheduler(this),
+      _enter(this) {
   get_dep_loader()->register_fixed_dep(_worker, Path());
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
 }
@@ -47,6 +48,30 @@ void FirebaseCompute::dump_map(const QJsonObject& inputs) const {
   for(QJsonObject::const_iterator iter = inputs.begin(); iter != inputs.end(); ++iter) {
     std::cerr << iter.key().toStdString() << " : " << iter.value().toString().toStdString() << "\n";
   }
+}
+
+void FirebaseCompute::update_wires() {
+  // This caches the dep, and will only dirty this component when it changes.
+  _enter = find_enter_node();
+}
+
+Entity* FirebaseCompute::find_group_context() const {
+  Entity* e = our_entity();
+  while(e) {
+    if (e->get_did() == EntityDID::kFirebaseGroupNodeEntity) {
+      return e;
+    }
+    e = e->get_parent();
+  }
+  assert(false);
+  return NULL;
+}
+
+Dep<EnterFirebaseGroupCompute> FirebaseCompute::find_enter_node() {
+  Entity* group = find_group_context();
+  Entity* enter = group->get_child("group_context");
+  assert(enter);
+  return get_dep<EnterFirebaseGroupCompute>(enter);
 }
 
 void FirebaseCompute::prepend_tasks(TaskContext& tc) {

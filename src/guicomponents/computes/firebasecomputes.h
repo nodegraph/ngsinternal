@@ -23,6 +23,7 @@ class GUICOMPUTES_EXPORT FirebaseCompute: public Compute {
   virtual void receive_chain_state(const QJsonObject& chain_state);
 
   static void init_hints(QJsonObject& m);
+  virtual void update_wires();
 
  protected:
   // Our state.
@@ -31,8 +32,12 @@ class GUICOMPUTES_EXPORT FirebaseCompute: public Compute {
 
   void dump_map(const QJsonObject& inputs) const;
 
+  Entity* find_group_context() const;
+  Dep<EnterFirebaseGroupCompute> find_enter_node();
+
   Dep<NodeJSWorker> _worker;
   Dep<TaskScheduler> _scheduler;
+  Dep<EnterFirebaseGroupCompute> _enter; // This is not serialized and is gathered at runtime.
 };
 
 class GUICOMPUTES_EXPORT FirebaseWriteDataCompute: public FirebaseCompute {
