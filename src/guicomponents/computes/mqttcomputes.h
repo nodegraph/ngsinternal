@@ -26,8 +26,8 @@ class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
  protected:
   virtual void append_callback_tasks(TaskContext& tc);
 
-  Entity* get_mqtt_group_node() const;
-  Dep<EnterMQTTGroupCompute> get_enter_mqtt_group_compute();
+  Entity* find_enter_node_entity() const;
+  Dep<EnterMQTTGroupCompute> find_enter_node_compute();
 
   Dep<TaskScheduler> _scheduler;
   Dep<EnterMQTTGroupCompute> _enter; // This is not serialized and is gathered at runtime.

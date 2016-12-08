@@ -43,10 +43,10 @@ void BaseMQTTCompute::init_hints(QJsonObject& m) {
 
 void BaseMQTTCompute::update_wires() {
   // This caches the dep, and will only dirty this component when it changes.
-  _enter = get_enter_mqtt_group_compute();
+  _enter = find_enter_node_compute();
 }
 
-Entity* BaseMQTTCompute::get_mqtt_group_node() const {
+Entity* BaseMQTTCompute::find_enter_node_entity() const {
   Entity* e = our_entity();
   while(e) {
     if (e->get_did() == EntityDID::kMQTTGroupNodeEntity) {
@@ -58,8 +58,8 @@ Entity* BaseMQTTCompute::get_mqtt_group_node() const {
   return NULL;
 }
 
-Dep<EnterMQTTGroupCompute> BaseMQTTCompute::get_enter_mqtt_group_compute() {
-  Entity* group = get_mqtt_group_node();
+Dep<EnterMQTTGroupCompute> BaseMQTTCompute::find_enter_node_compute() {
+  Entity* group = find_enter_node_entity();
   Entity* enter = group->get_child("group_context");
   assert(enter);
   return get_dep<EnterMQTTGroupCompute>(enter);
