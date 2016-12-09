@@ -76,12 +76,18 @@ Dep<EnterBrowserGroupCompute> BrowserCompute::find_enter_node() {
 
 void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
+  // Make sure the browser is open.
+  _worker->queue_open_browser(tc);
+
+  // Merge chain state.
   QJsonObject inputs = _inputs->get_input_values();
   _worker->queue_merge_chain_state(tc, inputs);
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.
   // For examples ads may rotate and flip content.
   _worker->queue_wait_until_loaded(tc);
+
+
 }
 
 void BrowserCompute::post_update_state(TaskContext& tc) {

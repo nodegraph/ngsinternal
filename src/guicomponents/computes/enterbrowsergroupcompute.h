@@ -30,7 +30,6 @@ class GUICOMPUTES_EXPORT EnterBrowserGroupCompute: public EnterGroupCompute {
   EnterBrowserGroupCompute(Entity* entity);
   virtual ~EnterBrowserGroupCompute();
 
- protected:
   virtual bool update_state();
 
  private:
@@ -48,7 +47,6 @@ class GUICOMPUTES_EXPORT ExitBrowserGroupCompute: public ExitGroupCompute {
   ExitBrowserGroupCompute(Entity* entity);
   virtual ~ExitBrowserGroupCompute();
 
- protected:
   virtual bool update_state();
 
  private:

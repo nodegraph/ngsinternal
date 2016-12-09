@@ -38,8 +38,8 @@ class BaseNodeGraphManipulator: public Component {
   virtual void update_clean_marker(Entity* entity, bool clean) = 0;
 
   // Group logic..
-  virtual void clean_enter_group(Entity* group) = 0;
-  virtual void clean_exit_group(Entity* group) = 0;
+  virtual void clean_enter_node(Entity* group) = 0;
+  virtual void clean_exit_node(Entity* group) = 0;
   virtual void dive_into_group(const std::string& child_group_name) = 0;
   virtual void surface_from_group() = 0;
 

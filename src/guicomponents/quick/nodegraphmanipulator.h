@@ -60,8 +60,8 @@ Q_OBJECT
   virtual void update_clean_marker(Entity* entity, bool clean);
 
   // Group logic.
-  virtual void clean_enter_group(Entity* group);
-  virtual void clean_exit_group(Entity* group);
+  virtual void clean_enter_node(Entity* group);
+  virtual void clean_exit_node(Entity* group);
   virtual void dive_into_group(const std::string& child_group_name);
   virtual void surface_from_group();
 
@@ -153,8 +153,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void update_clean_marker(Entity* entity, bool clean);
 
   // Group logic.
-  virtual void clean_enter_group(Entity* group);
-  virtual void clean_exit_group(Entity* group);
+  virtual void clean_enter_node(Entity* group);
+  virtual void clean_exit_node(Entity* group);
   virtual void dive_into_group(const std::string& child_group_name);
   virtual void surface_from_group();
 

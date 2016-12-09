@@ -5,6 +5,8 @@
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/firebasecomputes.h>
+#include <guicomponents/computes/browsercomputes.h>
+#include <guicomponents/computes/enterbrowsergroupcompute.h>
 
 #include <components/compshapes/nodeselection.h>
 #include <components/interactions/groupinteraction.h>
@@ -268,39 +270,36 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
   // components. But now it is cleaning in a bad state.
 }
 
-void NodeGraphManipulatorImp::clean_enter_group(Entity* group) {
-//  // Graph the entity for the group context node.
-//  Entity* node = group->get_child("group_context");
-//  if (!node) {
-//    return;
-//  }
-//  // Dirty the group context node if we're entering a browser group.
-//  Dep<EnterGroupCompute> enter = get_dep<EnterGroupCompute>(node);
-//  if (enter->get_did() == ComponentDID::kEnterBrowserGroupCompute) {
-//    enter->dirty_state();
-//  }
-//  // Now we it as the ultimate target to clean to.
-//  set_ultimate_targets(node);
+void NodeGraphManipulatorImp::clean_enter_node(Entity* group) {
+  // Special case for browser group nodes.
+  // We always run the enter node's compute, but we don't dirty or clean it as it
+  // affects the group's dirtiness especially when just browsing the groups in the ui.
+  if (group->get_did() == EntityDID::kBrowserGroupNodeEntity) {
+    Entity* enter = group->get_child("group_context");
+    Dep<EnterBrowserGroupCompute> enter_compute = get_dep<EnterBrowserGroupCompute>(enter);
+    if (enter_compute->is_state_dirty() == false) {
+      enter_compute->update_state();
+      return;
+    }
+  }
+
+  // For all group types we, try to clean the enter node.
+  Entity* node = group->get_child("group_context");
+  if (!node) {
+    return;
+  }
+  set_ultimate_targets(node);
 }
 
-void NodeGraphManipulatorImp::clean_exit_group(Entity* group) {
-//  // If this group has an exit group node, then make it dirty and clean it.
-//  Entity* child = group->get_child("exit_group_context");
-//  if (!child) {
-//    return;
-//  }
-//
-//  // We expect the exit compute to not have to wait for an asynchronous response.
-//  Dep<ExitGroupCompute> exit = get_dep<ExitGroupCompute>(child);
-//
-//  // Dirty and clean group context node if we're exiting a browser group.
-//  if (exit->get_did() == ComponentDID::kExitBrowserGroupCompute) {
-//    exit->dirty_state();
-//    // Make sure it is clean.
-//    exit->clean_state();
-//  }
-//
-//  // The other exit groups don't do anything.
+void NodeGraphManipulatorImp::clean_exit_node(Entity* group) {
+  // Special case for browser group nodes.
+  // We always run the exit node's compute, but we don't dirty or clean it as it
+  // affects the group's dirtiness especially when just browsing the groups in the ui.
+  if (group->get_did() == EntityDID::kBrowserGroupNodeEntity) {
+    Entity* exit = group->get_child("exit_group_context");
+    Dep<ExitBrowserGroupCompute> exit_compute = get_dep<ExitBrowserGroupCompute>(exit);
+    exit_compute->update_state();
+  }
 }
 
 void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_name) {
@@ -311,12 +310,12 @@ void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_nam
   }
 
   _ng_quick->dive_into_group(child_group_name);
-  clean_enter_group(group);
+  clean_enter_node(group);
 }
 
 void NodeGraphManipulatorImp::surface_from_group() {
   Entity* group_entity = _factory->get_current_group();
-  clean_exit_group(group_entity);
+  clean_exit_node(group_entity);
   _ng_quick->surface();
 }
 
@@ -741,12 +740,12 @@ void NodeGraphManipulator::update_clean_marker(Entity* entity, bool clean) {
   _imp->update_clean_marker(entity, clean);
 }
 
-void NodeGraphManipulator::clean_enter_group(Entity* group) {
-  _imp->clean_enter_group(group);
+void NodeGraphManipulator::clean_enter_node(Entity* group) {
+  _imp->clean_enter_node(group);
 }
 
-void NodeGraphManipulator::clean_exit_group(Entity* group) {
-  _imp->clean_exit_group(group);
+void NodeGraphManipulator::clean_exit_node(Entity* group) {
+  _imp->clean_exit_node(group);
 }
 
 void NodeGraphManipulator::dive_into_group(const std::string& child_group_name) {

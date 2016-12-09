@@ -265,8 +265,8 @@ bool GroupNodeCompute::update_state() {
   // If we get here then all of our internal computes have finished.
   copy_output_nodes_to_outputs();
 
-  // Close out the group.
-  _manipulator->clean_exit_group(our_entity());
+  // Run our exit node if needed.
+  _manipulator->clean_exit_node(our_entity());
   return true;
 }
 
