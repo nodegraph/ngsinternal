@@ -44,7 +44,7 @@ void GroupNodeCompute::WireUpdater::update_wires() {
         // Otherwise we create an input plug.
         InputEntity* input = static_cast<InputEntity*>(_target->_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
         EntityConfig config;
-        config.expose_plug = true;
+        config.expose_plug = false;
         input->create_internals(config);
         input->initialize_wires();
         // Grab the computes on the input and the input node inside the group.

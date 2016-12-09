@@ -69,7 +69,7 @@ Entity* FirebaseCompute::find_group_context() const {
 
 Dep<EnterFirebaseGroupCompute> FirebaseCompute::find_enter_node() {
   Entity* group = find_group_context();
-  Entity* enter = group->get_child("group_context");
+  Entity* enter = group->get_child("enter");
   assert(enter);
   return get_dep<EnterFirebaseGroupCompute>(enter);
 }

@@ -113,7 +113,7 @@ void create_default_enter(Entity* group) {
   // The default enter compute does nothing.
   // This just reserves their namespace to prevent the user from creating other nodes in their place.
   // Then our code doesn't need check if the enter node is the one we expect.
-  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(group, "group_context");
+  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(group, "enter");
   EntityConfig config;
   config.compute_did = ComponentDID::kEnterGroupCompute;
   config.visible = false;
@@ -124,7 +124,7 @@ void create_default_exit(Entity* group) {
   // The default exit compute does nothing.
   // This just reserves their namespace to prevent the user from creating other nodes in their place.
   // Then our code doesn't need check if the enter node is the one we expect.
-  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(group, "exit_group_context");
+  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(group, "exit");
   EntityConfig config;
   config.compute_did = ComponentDID::kExitGroupCompute;
   config.visible = false;
@@ -545,12 +545,12 @@ void BrowserGroupNodeEntity::create_internals(const EntityConfig& config) {
     new_ff OutputTopology(this);
   }
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "group_context");
+  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "enter");
   EntityConfig config2;
   config2.compute_did = ComponentDID::kEnterBrowserGroupCompute;
   config2.visible = false;
   sub->create_internals(config2);
-  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit_group_context");
+  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit");
   config2.compute_did = ComponentDID::kExitBrowserGroupCompute;
   exit->create_internals(config2);
 }
@@ -569,7 +569,7 @@ void FirebaseGroupNodeEntity::create_internals(const EntityConfig& config) {
     new_ff OutputTopology(this);
   }
   // Sub Components.
-  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "group_context");
+  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "enter");
   EntityConfig config2;
   config2.compute_did = ComponentDID::kEnterFirebaseGroupCompute;
   config2.visible = false;
@@ -593,7 +593,7 @@ void MQTTGroupNodeEntity::create_internals(const EntityConfig& config) {
     new_ff OutputTopology(this);
   }
   // Sub Components.
-  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "group_context");
+  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "enter");
   EntityConfig config2;
   config2.compute_did = ComponentDID::kEnterMQTTGroupCompute;
   config2.visible = false;

@@ -60,7 +60,7 @@ Entity* BaseMQTTCompute::find_group_context() const {
 
 Dep<EnterMQTTGroupCompute> BaseMQTTCompute::find_enter_node() {
   Entity* group = find_group_context();
-  Entity* enter = group->get_child("group_context");
+  Entity* enter = group->get_child("enter");
   assert(enter);
   return get_dep<EnterMQTTGroupCompute>(enter);
 }

@@ -275,7 +275,7 @@ void NodeGraphManipulatorImp::clean_enter_node(Entity* group) {
   // We always run the enter node's compute, but we don't dirty or clean it as it
   // affects the group's dirtiness especially when just browsing the groups in the ui.
   if (group->get_did() == EntityDID::kBrowserGroupNodeEntity) {
-    Entity* enter = group->get_child("group_context");
+    Entity* enter = group->get_child("enter");
     Dep<EnterBrowserGroupCompute> enter_compute = get_dep<EnterBrowserGroupCompute>(enter);
     if (enter_compute->is_state_dirty() == false) {
       enter_compute->update_state();
@@ -284,7 +284,7 @@ void NodeGraphManipulatorImp::clean_enter_node(Entity* group) {
   }
 
   // For all group types we, try to clean the enter node.
-  Entity* node = group->get_child("group_context");
+  Entity* node = group->get_child("enter");
   if (!node) {
     return;
   }
@@ -296,7 +296,7 @@ void NodeGraphManipulatorImp::clean_exit_node(Entity* group) {
   // We always run the exit node's compute, but we don't dirty or clean it as it
   // affects the group's dirtiness especially when just browsing the groups in the ui.
   if (group->get_did() == EntityDID::kBrowserGroupNodeEntity) {
-    Entity* exit = group->get_child("exit_group_context");
+    Entity* exit = group->get_child("exit");
     Dep<ExitBrowserGroupCompute> exit_compute = get_dep<ExitBrowserGroupCompute>(exit);
     exit_compute->update_state();
   }
