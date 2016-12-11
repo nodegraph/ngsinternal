@@ -230,6 +230,9 @@ QJsonObject SwitchToIFrameCompute::init_hints() {
   add_hint(m, Message::kImageValues, HintKey::kDescriptionHint, "The overlapping images used to find image elements.");
   add_hint(m, Message::kImageValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
 
+  add_hint(m, Message::kClickPos, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
+  add_hint(m, Message::kClickPos, HintKey::kDescriptionHint, "The position to perform our action at, relative to the element itself.");
+
   return m;
 }
 

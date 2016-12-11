@@ -95,6 +95,72 @@ class PageWrap {
         return box
     }
 
+    static get_iframe_window(iframe_path: string) {
+        // Go to the root window.
+        let win = window
+        while(win.parent != win) {
+            win = win.parent
+        }
+
+        // Split the iframe path.
+        let splits = iframe_path.split('/')
+
+        // Traverse down the iframe tree starting at the root.
+        for (let i=0; i<splits.length; i++) {
+            // Note when empty strings are split on '/', you get an array with one element which is an empty string.
+            if (splits[i] === '') {
+                continue
+            }
+
+            // Get the frame index as a number.
+            let frame_index = Number(splits[i])
+            var iframes = win.document.getElementsByTagName('iframe');
+            if (frames.length <= frame_index) {
+                console.error("Error: could not find frame index.")
+            }
+            win = iframes[frame_index].contentWindow
+        }
+        return win
+    }
+
+    // Sort iframes according to their top left corner and size.
+    // We sort the frames as if they were pixels.
+    // The maximum width of the page is arbitrarily set at 10000.
+    // The maximum width of an element is arbitrarily set at 10000.
+    static sort_iframes(iframes: string[]) {
+        console.log("iframes before: " + JSON.stringify(iframes))
+
+        let max_page_width = 10000
+        let max_iframe_width = 10000
+        let weighted_iframes: any[]
+        for (let i=0; i<iframes.length; i++) {
+            let win = PageWrap.get_iframe_window(iframes[i])
+            let box = PageWrap.get_iframe_global_client_bounds(win)
+            let whole_weight = (box.top * max_page_width) + box.left
+            let fraction_weight = ((box.get_height() * max_iframe_width) + box.get_width()) / max_iframe_width / max_iframe_width
+            let weight = whole_weight + fraction_weight
+            weighted_iframes.push({iframe: iframes[i], weight: weight})
+        }
+
+        // Debugging.
+        console.log("Weights before: " + JSON.stringify(weighted_iframes))
+
+        // Sort the weighted frames.
+        weighted_iframes.sort(function(a, b) {
+            return a.weight - b.weight;
+        });
+
+        // Debugging.
+        console.log("Weights after: " + JSON.stringify(weighted_iframes))
+
+        // Modify iframes in place.
+        iframes.length = 0
+        for (let i=0; i<weighted_iframes.length; i++) {
+            iframes.push(weighted_iframes[i].iframe)
+        }
+        console.log("iframes after: " + JSON.stringify(iframes))
+    }
+
     //---------------------------------------------------------------------------------
     // Xpath Helpers.
     //---------------------------------------------------------------------------------

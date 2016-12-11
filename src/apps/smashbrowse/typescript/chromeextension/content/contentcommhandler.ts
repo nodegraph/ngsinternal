@@ -50,24 +50,30 @@ class ContentCommHandler {
                 this.content_comm.send_to_bg(resp)
             } break
             case RequestType.kFindIFrame: {
-                let elem_wraps: ElemWrap[]
+                
                 switch (req.args.wrap_type) {
                     case WrapType.text: {
+                    let elem_wraps: ElemWrap[]
                         elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.text, req.args.text_values)
                         if (elem_wraps.length > 0) {
                             console.log('found iframe by matching text')
                             let iframe = PageWrap.get_iframe_index_path_as_string(window)
                             console.log('iframe path is: ' + iframe)
-                            send_response({iframe: iframe})
+                            let box = PageWrap.get_iframe_global_client_bounds(window)
+                            let im = new InfoMessage(0, iframe, InfoType.kFoundIFrame, { iframe: iframe, left: box.left, right: box.right, bottom: box.bottom, top: box.top })
+                            this.content_comm.send_to_bg(im)
                         }
                     } break
                     case WrapType.image: {
+                        let elem_wraps: ElemWrap[]
                         elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, req.args.image_values)
                         if (elem_wraps.length > 0) {
-                            console.log('found iframe by matching images: ' + elem_wraps.length)
+                            console.log('found iframe by matching text')
                             let iframe = PageWrap.get_iframe_index_path_as_string(window)
                             console.log('iframe path is: ' + iframe)
-                            send_response({iframe: iframe})
+                            let box = PageWrap.get_iframe_global_client_bounds(window)
+                            let im = new InfoMessage(0, iframe, InfoType.kFoundIFrame, { iframe: iframe, left: box.left, right: box.right, bottom: box.bottom, top: box.top })
+                            this.content_comm.send_to_bg(im)
                         }
                     } break
                     case WrapType.iframe: {
@@ -85,7 +91,8 @@ class ContentCommHandler {
                             console.log('found iframe by matching positions')
                             let iframe = PageWrap.get_iframe_index_path_as_string(window)
                             console.log('iframe path is: ' + iframe)
-                            send_response({iframe: iframe})
+                            let im = new InfoMessage(0, iframe, InfoType.kFoundIFrame, { iframe: iframe, left: box.left, right: box.right, bottom: box.bottom, top: box.top })
+                            this.content_comm.send_to_bg(im)
                         }
                     } break
                     default: {

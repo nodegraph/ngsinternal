@@ -188,7 +188,10 @@ class BgComm {
                 console.log('message is from a different iframe')
                 req.value.prev_iframe = this.iframe
             }
-
+            if (req.info == InfoType.kFoundIFrame) {
+                console.log('found iframe: ' + req.value)
+                this.handler.found_iframe(req.value)
+            }
         }
 
         // Pass the message to nodejs.

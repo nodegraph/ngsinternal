@@ -89,6 +89,7 @@ enum class InfoType : int {
   kBgIsConnected,
   kShowWebActionMenu,
   kFirebaseChanged,
+  kFoundIFrame,
 };
 
 enum class MessageType : int {

@@ -1,15 +1,32 @@
 
+interface IframeInfoInterface {
+    iframe: string
+    left: number
+    right: number
+    top: number
+    bottom: number
+    weight?: number
+}
+
 class BgCommHandler {
     // Our Dependencies.
     bg_comm: BgComm
     browser_wrap: BrowserWrap
 
     // Our Members.
+    
+    // Used when searching for iframes.
+    private iframes_found: IframeInfoInterface[]
 
     // Constructor.
     constructor(bc: BgComm, bw: BrowserWrap) {
         this.bg_comm = bc
         this.browser_wrap = bw
+        this.iframes_found = []
+    }
+
+    found_iframe(iframe_info: IframeInfoInterface) {
+        this.iframes_found.push(iframe_info)
     }
 
     handle_nodejs_request(req: RequestMessage) {
@@ -71,13 +88,36 @@ class BgCommHandler {
                 this.bg_comm.send_to_content(req)
             } break
             case RequestType.kFindIFrame: {
-                this.bg_comm.send_to_content(req, function(receive){
-                    if (receive) {
-                        let iframe = receive.iframe
+                // Clear our previous matched iframes.
+                this.iframes_found.length = 0
+                this.bg_comm.send_to_content(req, (first_return_value: any) =>{
+                    // This gets called when all the content scripts in the iframes have finished processing,
+                    // because we made sure that none of the listeners return true, and now of them call this as the send_response functor.
+                    if (this.iframes_found.length == 1) {
+                        let iframe = this.iframes_found[0].iframe
+                        let response = new ResponseMessage(req.id, "-1", true, {iframe: iframe})
+                        this.bg_comm.send_to_nodejs(response)
+                    } else if (this.iframes_found.length > 1) {
+                        // Add weights to the iframe info.
+                        const max_page_width = 10000
+                        const max_iframe_width = 10000
+                        for (let i=0; i<this.iframes_found.length; i++) {
+                            let info = this.iframes_found[i]
+                            let whole_weight = (info.top * max_page_width) + info.left
+                            let fraction_weight = (((info.bottom-info.top) * max_iframe_width) + info.right - info.left) / max_iframe_width / max_iframe_width
+                            let weight = whole_weight + fraction_weight
+                            info.weight = weight
+                        }
+                        // Sort the weighted frames.
+                        this.iframes_found.sort(function(a, b) {
+                            return a.weight - b.weight;
+                        });
+                        // We take the first one this should be the topmost and leftmost iframe.
+                        let iframe = this.iframes_found[0].iframe
                         let response = new ResponseMessage(req.id, "-1", true, {iframe: iframe})
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let response = new ResponseMessage(req.id, "-1", false, "could not find iframe")
+                        let response = new ResponseMessage(req.id, "-1", false, "No matching iframes could be found. Please try using a different criteria.")
                         this.bg_comm.send_to_nodejs(response)
                     }
                 })

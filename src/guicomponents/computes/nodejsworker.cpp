@@ -634,8 +634,7 @@ void NodeJSWorker::find_iframe_task() {
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   args.insert(Message::kTextValues, _chain_state.value(Message::kTextValues));
   args.insert(Message::kImageValues, _chain_state.value(Message::kImageValues));
-  args.insert(Message::kClickPos, _browser_click_pos);
-  args.insert(Message::kIFrame, _browser_click_iframe);
+  args.insert(Message::kClickPos, _chain_state.value(Message::kClickPos));
   Message req(RequestType::kFindIFrame, args);
   send_msg_task(req);
 }

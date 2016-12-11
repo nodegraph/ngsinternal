@@ -94,6 +94,7 @@ const enum InfoType {
   kBgIsConnected,
   kShowWebActionMenu,
   kFirebaseChanged,
+  kFoundIFrame,
 }
 
 const enum MessageType {

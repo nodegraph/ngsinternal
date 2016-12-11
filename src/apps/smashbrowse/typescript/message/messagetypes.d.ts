@@ -94,6 +94,7 @@ declare const enum InfoType {
   kBgIsConnected,
   kShowWebActionMenu,
   kFirebaseChanged,
+  kFoundIFrame,
 }
 
 declare const enum MessageType {
