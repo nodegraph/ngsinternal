@@ -21,8 +21,8 @@ class ContentCommHandler {
         console.error('Got unexpected info message from bg.')
     }
 
-    handle_bg_request(req: RequestMessage) {
-        console.log('content script received message from bg: ' + JSON.stringify(req))
+    handle_bg_request(req: RequestMessage, send_response: (response: any) => void) {
+        console.log('content script ' + PageWrap.get_iframe_index_path_as_string(window) + ' received message from bg: ' + JSON.stringify(req))
         let success_msg = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), true)
         switch (req.request) {
             case RequestType.kUpdateOveralys: {
@@ -48,6 +48,50 @@ class ContentCommHandler {
                 let value = { xpath: xpath }
                 let resp = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), (xpath != ""), value)
                 this.content_comm.send_to_bg(resp)
+            } break
+            case RequestType.kFindIFrame: {
+                let elem_wraps: ElemWrap[]
+                switch (req.args.wrap_type) {
+                    case WrapType.text: {
+                        elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.text, req.args.text_values)
+                        if (elem_wraps.length > 0) {
+                            console.log('found iframe by matching text')
+                            let iframe = PageWrap.get_iframe_index_path_as_string(window)
+                            console.log('iframe path is: ' + iframe)
+                            send_response({iframe: iframe})
+                        }
+                    } break
+                    case WrapType.image: {
+                        elem_wraps = this.gui_collection.page_wrap.get_by_all_values(WrapType.image, req.args.image_values)
+                        if (elem_wraps.length > 0) {
+                            console.log('found iframe by matching images: ' + elem_wraps.length)
+                            let iframe = PageWrap.get_iframe_index_path_as_string(window)
+                            console.log('iframe path is: ' + iframe)
+                            send_response({iframe: iframe})
+                        }
+                    } break
+                    case WrapType.iframe: {
+                        // Note that the click_pos argument is always in global client coordinates. 
+                        let box = PageWrap.get_iframe_global_client_bounds(window)
+                        if (box.contains_point(req.args.click_pos)) {
+                            // See if we have any child iframes which contain this point.
+                            var iframes = window.document.getElementsByTagName('iframe');
+                            for (let i = 0; i < iframes.length; i++) {
+                                let child_box = PageWrap.get_iframe_global_client_bounds(iframes[i].contentWindow)
+                                if (child_box.contains_point(req.args.click_pos)) {
+                                    return
+                                }
+                            }
+                            console.log('found iframe by matching positions')
+                            let iframe = PageWrap.get_iframe_index_path_as_string(window)
+                            console.log('iframe path is: ' + iframe)
+                            send_response({iframe: iframe})
+                        }
+                    } break
+                    default: {
+                        console.error("Error: Attempt to create set from unknown wrap type.")
+                    }
+                }
             } break
             case RequestType.kCreateSetFromMatchValues: {
                 let elem_wraps: ElemWrap[]
@@ -152,7 +196,7 @@ class ContentCommHandler {
                 this.content_comm.send_to_bg(success_msg)
             } break
             case RequestType.kGetCrosshairInfo: {
-                let info = this.gui_collection.get_crosshair_info(req.args.click_pos)
+                let info = this.gui_collection.get_crosshair_info(new Point(req.args.click_pos))
                 let resp = new ResponseMessage(req.id, PageWrap.get_iframe_index_path_as_string(window), true, info)
                 this.content_comm.send_to_bg(resp)
             } break

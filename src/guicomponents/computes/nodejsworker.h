@@ -44,8 +44,6 @@ Q_OBJECT
   void firebase_init(const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket);
   void firebase_sign_in(const QString& email, const QString& password);
 
-  const QString& get_iframe_to_switch_to() {return _iframe_to_switch_to;}
-
   // Handle Incoming messages. Note the same messages are also handled by the AppTaskQueue.
   void handle_response(const Message& sm);
   void handle_info(const Message& msg);
@@ -89,7 +87,8 @@ Q_OBJECT
   // Queue Navigate Tasks.
   void queue_navigate_to(TaskContext& tc);
   void queue_navigate_refresh(TaskContext& tc);
-  void queue_switch_to_iframe(TaskContext& tc);
+  void queue_find_iframe(TaskContext& tc);
+  void queue_switch_iframe(TaskContext& tc);
 
   // Queue Set Tasks.
   void queue_update_overlays(TaskContext& tc);
@@ -181,7 +180,8 @@ signals:
   // Navigation Tasks.
   void navigate_to_task();
   void navigate_refresh_task();
-  void switch_to_iframe_task();
+  void find_iframe_task();
+  void switch_iframe_task();
 
   // Set Creation/Modification Tasks.
   void update_overlays_task();
@@ -227,7 +227,7 @@ signals:
   QTimer _poll_timer;
 
   // State to bring up the web actions menu, and handle menu activations.
-  QString _iframe_to_switch_to;
+  QString _browser_click_iframe;
   QJsonObject _browser_click_pos;
 
   // State for hovering.

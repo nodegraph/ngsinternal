@@ -11,16 +11,59 @@ class Point {
         this.x = point.x
         this.y = point.y
     }
+    to_string() {
+        return '(' + this.x + ',' + this.y + ')'
+    }
+
+    // Our definitions.
+    // Local client space: The origin is at the top left of our local frame or window.
+    // Global client space: The origin is at the top left of our top window in the browser.
+    // Local page space: The origin is at the top left of our local document page, and is agnostic to scroll.
+    // Global page space: Is not used, as many parenting frames can be scrolled and gets complicated.
+
+    // Assumes we are in local client space.
+    to_global_client_space(local_win: Window): void {
+        this.to_global_client_space_helper(local_win, true)
+    }
+    // Assumes we are in global client space.
+    to_local_client_space(local_win: Window): void {
+        this.to_global_client_space_helper(local_win, false)
+    }
+    // Local to global client space transform helper.
+    private to_global_client_space_helper(local_win: Window, to: boolean) {
+        let win = local_win
+        let factor = 1
+        if (!to) {
+            factor = -1
+        }
+        while (win.parent != win) {
+            var iframes = win.parent.document.getElementsByTagName('iframe');
+            let found = false
+            for (let i = 0; i < iframes.length; i++) {
+                if (iframes[i].contentWindow === win) {
+                    this.x += factor * iframes[i].getBoundingClientRect().left
+                    this.y += factor * iframes[i].getBoundingClientRect().top
+                    found = true
+                    break;
+                }
+            }
+            if (!found) {
+                console.error('Error Point::to_global_client_space did not find parenting iframe')
+            }
+            win = win.parent
+        }
+    }
+
     // Assumes we are in page space and converts to client space.
-    to_client_space() : void {
-        this.x -= window.scrollX
-        this.y -= window.scrollY
+    to_client_space(local_win: Window) : void {
+        this.x -= local_win.scrollX
+        this.y -= local_win.scrollY
     }
 
     // Assumes we are in client space and convert to page space.
-    to_page_space() : void {
-        this.x += window.scrollX
-        this.y += window.scrollY
+    to_page_space(local_win: Window) : void {
+        this.x += local_win.scrollX
+        this.y += local_win.scrollY
     }
     
     assign(other: PointInterface) : void {

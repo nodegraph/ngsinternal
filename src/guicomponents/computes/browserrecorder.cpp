@@ -98,10 +98,31 @@ void BrowserRecorder::record_navigate_to(const QString& url) {
   finish();
 }
 
-void BrowserRecorder::record_switch_to_iframe() {
+void BrowserRecorder::record_switch_to_iframe_by_matching_text() {
   check_busy()
+  _worker->queue_get_crosshair_info(tc);
   QJsonObject args;
-  args.insert(Message::kIFrame, _worker->get_iframe_to_switch_to());
+  args.insert(Message::kWrapType, to_underlying(WrapType::text));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute);
+  finish();
+}
+
+void BrowserRecorder::record_switch_to_iframe_by_matching_images() {
+  check_busy()
+  _worker->queue_get_crosshair_info(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::image));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute);
+  finish();
+}
+
+void BrowserRecorder::record_switch_to_iframe_by_matching_positions() {
+  check_busy()
+  _worker->queue_get_crosshair_info(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::iframe)); // ** Note we overload WrapType::iframe to mean find the iframe by position.
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute);
   finish();

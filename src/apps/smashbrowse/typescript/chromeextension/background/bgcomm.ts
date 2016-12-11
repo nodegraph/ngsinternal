@@ -155,10 +155,17 @@ class BgComm {
             { this.receive_from_content(msg, sender, send_response) })
     }
 
+    // Notes from chrome api web page.
+    // Note: If multiple pages are listening for onMessage events, only the first to call sendResponse() for a particular event will succeed in sending the response. All other responses to that event will be ignored.
+    // Note: The sendResponse callback is only valid if used synchronously, or if the event handler returns true to indicate that it will respond asynchronously. The sendMessage function's callback will be invoked automatically if no handlers return true or if the sendResponse callback is garbage-collected.
+
     // Send a message to the content script.
-    send_to_content(msg: BaseMessage): void {
+    // Note we currently do message passing synchronously. So on_response will be called by the first listener who calls send_response.
+    // If none of the listeners call send_response, then on_response will be called after all listeners finish with the message as we 
+    // do the messaging synchronously.
+    send_to_content(msg: BaseMessage, on_response: (response: any) => void = function(){}): void {
         //console.log("bg sending message to content: " + JSON.stringify(msg))
-        chrome.tabs.sendMessage(this.tab_id, msg)
+        chrome.tabs.sendMessage(this.tab_id, msg, on_response)
     }
 
     // Receive a message from the content script. We simply forward the message to nodejs.

@@ -13,7 +13,7 @@ class PageOverlays {
     image_box_overlay: Overlay
     click_cross_overlay: CrossOverlay
 
-    // The click point at which the crosshairs will be overlayed.
+    // The click point at which the crosshairs will be overlayed. This is in local page space.
     page_pos: Point
     
     constructor() {
@@ -67,8 +67,8 @@ class PageOverlays {
         this.image_box_overlay.update(DistinctColors.image_color, -1)
     }
 
-    update_crosshair(pos: Point): void {
-        this.click_cross_overlay.update_dom_elements(pos)
+    update_crosshair(page_pos: Point): void {
+        this.click_cross_overlay.update_dom_elements(page_pos)
     }
 
 }

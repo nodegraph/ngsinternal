@@ -18,8 +18,9 @@ class BgCommHandler {
         // We intercept certain requests before it gets to the content script,
         // because content scripts can't use the chrome.* APIs except for parts of chrome.extension for message passing.
 
-        // The req.iframe should be "-1" here.
-        if (req.iframe != '-1') {
+        // The req.iframe should be "-1" most of the time.
+        // However for kGetCrosshairInfo we allow the iframe to be specified.
+        if (req.iframe != '-1'  && req.request != RequestType.kGetCrosshairInfo) {
             console.error('Error: bgcomm was expecting msg from nodejs with -1 iframe.')
         }
 
@@ -61,9 +62,28 @@ class BgCommHandler {
                 }
                 BrowserWrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom);
             } break
+            case RequestType.kGetCrosshairInfo: {
+                // If the iframe is specified we allow it go to the specified iframe.
+                // However if it's not specified we pick up the iframe from this bg_comm as usual.
+                if (req.iframe == '-1') {
+                    req.iframe = this.bg_comm.get_iframe()
+                }
+                this.bg_comm.send_to_content(req)
+            } break
+            case RequestType.kFindIFrame: {
+                this.bg_comm.send_to_content(req, function(receive){
+                    if (receive) {
+                        let iframe = receive.iframe
+                        let response = new ResponseMessage(req.id, "-1", true, {iframe: iframe})
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, "-1", false, "could not find iframe")
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+            } break
             case RequestType.kSwitchIFrame: {
                 this.bg_comm.set_iframe(req.args.iframe)
-                // Send response to nodejs.
                 let response = new ResponseMessage(req.id, "-1", true)
                 this.bg_comm.send_to_nodejs(response)
             } break

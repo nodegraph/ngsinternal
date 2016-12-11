@@ -137,7 +137,7 @@ class ElemWrap {
         this.page_box.right = elem_rect.right
         this.page_box.top = elem_rect.top
         this.page_box.bottom = elem_rect.bottom
-        this.page_box.to_page_space()
+        this.page_box.to_page_space(window)
     }
 
     //Returns true if the outer element contains the inner element.

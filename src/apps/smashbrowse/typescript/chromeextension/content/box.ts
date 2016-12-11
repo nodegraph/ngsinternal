@@ -72,20 +72,61 @@ class Box {
         return rel
     }
 
+    // Our definitions.
+    // Local client space: The origin is at the top left of our local frame or window.
+    // Global client space: The origin is at the top left of our top window in the browser.
+    // Local page space: The origin is at the top left of our local document page, and is agnostic to scroll.
+    // Global page space: Is not used, as many parenting frames can be scrolled and gets complicated.
+
+    // Assumes we are in local client space.
+    to_global_client_space(local_win: Window): void {
+        this.to_global_client_space_helper(local_win, true)
+    }
+    // Assumes we are in global client space.
+    to_local_client_space(local_win: Window): void {
+        this.to_global_client_space_helper(local_win, false)
+    }
+    // Local to global client space transform helper.
+    private to_global_client_space_helper(local_win: Window, to: boolean): void {
+        let win = local_win
+        let factor = 1
+        if (!to) {
+            factor = -1
+        }
+        while (win.parent != win) {
+            var iframes = win.parent.document.getElementsByTagName('iframe');
+            let found = false
+            for (let i = 0; i < iframes.length; i++) {
+                if (iframes[i].contentWindow === win) {
+                    this.left += factor * iframes[i].getBoundingClientRect().left
+                    this.right += factor * iframes[i].getBoundingClientRect().left
+                    this.top += factor * iframes[i].getBoundingClientRect().top
+                    this.bottom += factor * iframes[i].getBoundingClientRect().top
+                    found = true
+                    break;
+                }
+            }
+            if (!found) {
+                console.error('Error box::to_global_client_space did not find parenting iframe')
+            }
+            win = win.parent
+        }
+    }
+
     //Assumes we are in page space and converts to client space.
-    to_client_space(): void {
-        this.left -= window.scrollX
-        this.right -= window.scrollX
-        this.top -= window.scrollY
-        this.top -= window.scrollY
+    to_client_space(local_win: Window): void {
+        this.left -= local_win.scrollX
+        this.right -= local_win.scrollX
+        this.top -= local_win.scrollY
+        this.top -= local_win.scrollY
     }
 
     // Assumes we are in client space and convert to page space.
-    to_page_space(): void {
-        this.left += window.scrollX
-        this.right += window.scrollX
-        this.top += window.scrollY
-        this.bottom += window.scrollY
+    to_page_space(local_win: Window): void {
+        this.left += local_win.scrollX
+        this.right += local_win.scrollX
+        this.top += local_win.scrollY
+        this.bottom += local_win.scrollY
     }
 
     //Returns true if and only if we contain the inner entirely.

@@ -13,7 +13,7 @@ class CrossOverlay {
     static size = 50
 
     // Position.
-    pos: Point
+    page_pos: Point // The position in page space. (Not client space)
     static thickness = 0
     
     // Our dom elements.
@@ -72,8 +72,8 @@ class CrossOverlay {
     }
 
     //Updates the dom elements to reflect new position and size.
-    update_dom_elements(pos: Point): void {
-        this.pos = pos
+    update_dom_elements(page_pos: Point): void {
+        this.page_pos = page_pos
 
         // Set the color of the dom elements.
         this.horizontal.style.outlineColor = this.color
@@ -83,14 +83,14 @@ class CrossOverlay {
         let half_thickness = CrossOverlay.thickness / 2.0
 
         // Left.
-        this.horizontal.style.left = (this.pos.x - half_size) + 'px'
-        this.horizontal.style.top = (this.pos.y - half_thickness) + 'px'
+        this.horizontal.style.left = (this.page_pos.x - half_size) + 'px'
+        this.horizontal.style.top = (this.page_pos.y - half_thickness) + 'px'
         this.horizontal.style.width = CrossOverlay.size + 'px'
         this.horizontal.style.height = CrossOverlay.thickness + 'px'
 
         // Right.
-        this.vertical.style.left = (this.pos.x + half_thickness) + 'px'
-        this.vertical.style.top = (this.pos.y - half_size) + 'px'
+        this.vertical.style.left = (this.page_pos.x + half_thickness) + 'px'
+        this.vertical.style.top = (this.page_pos.y - half_size) + 'px'
         this.vertical.style.width = CrossOverlay.thickness + 'px'
         this.vertical.style.height = CrossOverlay.size + 'px'
     }

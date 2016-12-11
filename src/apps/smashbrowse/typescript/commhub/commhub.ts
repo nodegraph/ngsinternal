@@ -180,6 +180,9 @@ class AppConnection extends BaseConnection {
                     send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
                 })
             } break
+            case RequestType.kFindIFrame: {
+            	send_msg_to_ext(req)
+            } break
             case RequestType.kSwitchIFrame: {
                 this.webdriverwrap.switch_to_iframe(req.args.iframe).then(() => {
                     // Update the chrome extension.

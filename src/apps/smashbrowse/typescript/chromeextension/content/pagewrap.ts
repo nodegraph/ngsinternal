@@ -62,7 +62,7 @@ class PageWrap {
         while (win.parent != win) {
             var iframes = win.parent.document.getElementsByTagName('iframe');
             let found = false
-            for (let i = iframes.length-1; i>=0; i--) {
+            for (let i = 0; i < iframes.length; i++) {
                 if (iframes[i].contentWindow === win) {
                     path.unshift(i)
                     totals.unshift(iframes.length)
@@ -78,6 +78,21 @@ class PageWrap {
         return path
         //path.push(-2)
         //return path.concat(totals)
+    }
+
+    static get_iframe_local_client_bounds(iframe_win: Window) {
+        let box = new Box()
+        box.left = 0
+        box.top = 0
+        box.right = iframe_win.document.documentElement.clientWidth
+        box.bottom = iframe_win.document.documentElement.clientHeight
+        return box
+    }
+
+    static get_iframe_global_client_bounds(iframe_win: Window) {
+        let box = PageWrap.get_iframe_local_client_bounds(iframe_win)
+        box.to_global_client_space(iframe_win)
+        return box
     }
 
     //---------------------------------------------------------------------------------
@@ -114,7 +129,7 @@ class PageWrap {
     // Note this will miss out on reporting svg elements.
     get_overlapping_at(page_pos: Point): ElemWrap[] {
         let client_pos = new Point(page_pos)
-        client_pos.to_client_space()
+        client_pos.to_client_space(window)
         // declare Document.msElementsFromPoint(x: number, y: number){} // The DefinitelyTyped libraries seem to be missing this call.
         let hack: any = document
         let nodes: NodeList = hack.elementsFromPoint(client_pos.x, client_pos.y)

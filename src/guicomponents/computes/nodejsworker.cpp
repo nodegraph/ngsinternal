@@ -263,8 +263,12 @@ void NodeJSWorker::queue_navigate_refresh(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::navigate_refresh_task,this), "queue_navigate_refresh");
 }
 
-void NodeJSWorker::queue_switch_to_iframe(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::switch_to_iframe_task,this), "queue_swith_to_iframe");
+void NodeJSWorker::queue_find_iframe(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::find_iframe_task,this), "queue_find_iframe");
+}
+
+void NodeJSWorker::queue_switch_iframe(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::switch_iframe_task,this), "queue_switch_to_iframe");
 }
 
 // ---------------------------------------------------------------------------------
@@ -456,7 +460,7 @@ void NodeJSWorker::handle_info(const Message& msg) {
   int info_type = msg.value(Message::kInfo).toInt();
   if (info_type == to_underlying(InfoType::kShowWebActionMenu)) {
     _browser_click_pos = msg.value(Message::kValue).toObject().value(Message::kClickPos).toObject();
-    _iframe_to_switch_to = msg.value(Message::kIFrame).toString();
+    _browser_click_iframe = msg.value(Message::kIFrame).toString();
     if (msg.value(Message::kValue).toObject().contains(Message::kPrevIFrame)) {
       QString prev_iframe = msg.value(Message::kValue).toObject().value(Message::kPrevIFrame).toString();
       emit show_iframe_menu();
@@ -485,7 +489,10 @@ void NodeJSWorker::handle_info(const Message& msg) {
 void NodeJSWorker::get_crosshair_info_task() {
   QJsonObject args;
   args.insert(Message::kClickPos, _browser_click_pos);
+  args.insert(Message::kIFrame, _browser_click_iframe);
+  std::cerr << "SSSSSSSSSSSSSSSSSSSending cross hair request to frame: " << _browser_click_iframe.toStdString() << "\n";
   Message req(RequestType::kGetCrosshairInfo,args);
+  req[Message::kIFrame] = _browser_click_iframe;
   send_msg_task(req);
 }
 
@@ -622,7 +629,18 @@ void NodeJSWorker::navigate_refresh_task() {
   send_msg_task(req);
 }
 
-void NodeJSWorker::switch_to_iframe_task() {
+void NodeJSWorker::find_iframe_task() {
+  QJsonObject args;
+  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
+  args.insert(Message::kTextValues, _chain_state.value(Message::kTextValues));
+  args.insert(Message::kImageValues, _chain_state.value(Message::kImageValues));
+  args.insert(Message::kClickPos, _browser_click_pos);
+  args.insert(Message::kIFrame, _browser_click_iframe);
+  Message req(RequestType::kFindIFrame, args);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::switch_iframe_task() {
   QJsonObject args;
   args.insert(Message::kIFrame, _chain_state.value(Message::kIFrame));
   Message req(RequestType::kSwitchIFrame, args);

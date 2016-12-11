@@ -35,10 +35,17 @@ class ContentComm {
             let req = <RequestMessage>(msg)
             // Update overlays on all frames.
             if (req.request == RequestType.kUpdateOveralys) {
-                this.handler.handle_bg_request(req)
+                this.handler.handle_bg_request(req, send_response)
+                return
+            }
+
+            if (req.request == RequestType.kFindIFrame) {
+                this.handler.handle_bg_request(req, send_response)
                 return
             }
         } 
+
+
 
         // Ignore the message if it doesn't match our iframe.
         if (msg.iframe != PageWrap.get_iframe_index_path_as_string(window)) {
@@ -47,7 +54,7 @@ class ContentComm {
 
         switch (msg.get_msg_type()) {
             case MessageType.kRequestMessage:
-                this.handler.handle_bg_request(<RequestMessage>msg)
+                this.handler.handle_bg_request(<RequestMessage>msg, send_response)
                 break
             case MessageType.kResponseMessage:
                 this.handler.handle_bg_response(<ResponseMessage>msg)

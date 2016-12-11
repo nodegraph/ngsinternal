@@ -196,19 +196,40 @@ bool NavigateRefreshCompute::update_state() {
 void SwitchToIFrameCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kWrapType, c);
+  }
+  {
+    QJsonArray string_arr;
+    string_arr.push_back("example");
 
-  EntityConfig c = config;
-  c.expose_plug = false;
-  c.unconnected_value = "";
-  create_input(Message::kIFrame, c);
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = string_arr;
+    create_input(Message::kTextValues, c);
+    create_input(Message::kImageValues, c);
+  }
 }
 
 const QJsonObject SwitchToIFrameCompute::_hints = SwitchToIFrameCompute::init_hints();
 QJsonObject SwitchToIFrameCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-  add_hint(m, Message::kIFrame, HintKey::kDescriptionHint,
-           "The path to the iframe that subsequent nodes will act on. IFrame paths are made up of iframe indexes separated by a forward slash. For example: 1/2/3");
+  //add_hint(m, Message::kIFrame, HintKey::kDescriptionHint,
+  //         "The path to the iframe that subsequent nodes will act on. IFrame paths are made up of iframe indexes separated by a forward slash. For example: 1/2/3");
+
+  add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
+  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of the elements to put into the set.");
+
+  add_hint(m, Message::kTextValues, HintKey::kDescriptionHint, "The text values used to find text elements.");
+  add_hint(m, Message::kTextValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
+
+  add_hint(m, Message::kImageValues, HintKey::kDescriptionHint, "The overlapping images used to find image elements.");
+  add_hint(m, Message::kImageValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
+
   return m;
 }
 
@@ -218,7 +239,8 @@ bool SwitchToIFrameCompute::update_state() {
 
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _worker->queue_switch_to_iframe(tc);
+  _worker->queue_find_iframe(tc);
+  _worker->queue_switch_iframe(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }

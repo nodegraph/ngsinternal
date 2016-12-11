@@ -29,6 +29,7 @@ enum class RequestType : int {
   kNavigateBack,
   kNavigateForward,
   kNavigateRefresh,
+  kFindIFrame,
   kSwitchIFrame,
 
   // Page Content Set Requests.

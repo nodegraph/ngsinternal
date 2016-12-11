@@ -75,13 +75,20 @@ class GUICollection {
         if (!this.page_overlays.initialized()) {
             return
         }
-        let click_pos = new Point({ x: e.pageX, y: e.pageY })
 
-        // Update the click box overly.
-        this.page_overlays.update_crosshair(click_pos)
+        // Get the click position in global client space.
+        let global_client_click = new Point({ x: e.clientX, y: e.clientY })
+        console.log('contextmenu local client click: ' + global_client_click.to_string())
+        global_client_click.to_global_client_space(window)
+        console.log('contextmenu global client click: ' + global_client_click.to_string())
+
+        // Update the click box overly with local page space coordinates.
+        let local_page_click = new Point({ x: e.pageX, y: e.pageY })
+        this.page_overlays.update_crosshair(local_page_click)
+        console.log('contextmenu local page click: ' + local_page_click.to_string())
 
         // Send the request to the app.
-        let im = new InfoMessage(0, PageWrap.get_iframe_index_path_as_string(window), InfoType.kShowWebActionMenu, { click_pos: click_pos })
+        let im = new InfoMessage(0, PageWrap.get_iframe_index_path_as_string(window), InfoType.kShowWebActionMenu, { click_pos: global_client_click })
         this.content_comm.send_to_bg(im)
 
         // Prevent default behavior of the event.
@@ -96,29 +103,36 @@ class GUICollection {
         this.page_overlays.update_overlays(text_elem_wrap, image_elem_wrap)
     }
 
-    get_crosshair_info(click_pos: Point): any {
+    get_crosshair_info(global_client_click: Point): any {
+        console.log('global client click: ' + global_client_click.to_string())
+        let local_page_click = new Point(global_client_click)
+        local_page_click.to_local_client_space(window)
+        console.log('local client click: ' + local_page_click.x + ',' + local_page_click.y)
+        local_page_click.to_page_space(window)
+        console.log('local page click: ' + local_page_click.x + ',' + local_page_click.y)
+
         // Get the text and image values.
-        let elem_wraps = this.page_wrap.get_visible_overlapping_at(click_pos)
-        let text_values = PageWrap.get_text_values_at(elem_wraps, click_pos)
-        let image_values = PageWrap.get_image_values_at(elem_wraps, click_pos)
+        let elem_wraps = this.page_wrap.get_visible_overlapping_at(local_page_click)
+        let text_values = PageWrap.get_text_values_at(elem_wraps, local_page_click)
+        let image_values = PageWrap.get_image_values_at(elem_wraps, local_page_click)
 
         // This is currently not getting used. But is useful for debugging.
         // Get the click pos relative to the topmost/innermost/nearest element in the stack of elements
         // under the click point. Note that this element may not be in an overlay set yet. 
         let nearest_rel_click_pos = new Point({ x: 0, y: 0 })
         if (elem_wraps.length > 0) {
-            nearest_rel_click_pos = elem_wraps[0].get_box().get_relative_point(click_pos)
+            nearest_rel_click_pos = elem_wraps[0].get_box().get_relative_point(local_page_click)
         }
 
         // Determine the set index and overlay index at the click point.
         // Also determine the click pos relative to this overlay.
-        let set_overlay_index = this.overlay_sets.find_set_overlay_index(click_pos)
+        let set_overlay_index = this.overlay_sets.find_set_overlay_index(local_page_click)
         let set_index = set_overlay_index.set_index
         let overlay_index = set_overlay_index.overlay_index
         let overlay_rel_click_pos: Point = new Point({ x: 1, y: 1 })
         if (set_index >= 0) {
             let oset = this.overlay_sets.get_set(set_index)
-            overlay_rel_click_pos = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(click_pos)
+            overlay_rel_click_pos = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(local_page_click)
         }
 
         // If we're a select element, grab the option values and texts.
@@ -140,7 +154,7 @@ class GUICollection {
 
         let args = {
             // Click pos.
-            click_pos: click_pos,
+            click_pos: global_client_click,
             nearest_rel_click_pos: nearest_rel_click_pos,
             overlay_rel_click_pos: overlay_rel_click_pos,
             // Text and image values under click.

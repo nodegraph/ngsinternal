@@ -36,7 +36,11 @@ Q_OBJECT
   // Record Navigate Actions.
   Q_INVOKABLE void record_navigate_to(const QString& url);
   Q_INVOKABLE void record_navigate_refresh();
-  Q_INVOKABLE void record_switch_to_iframe();
+
+  // Record IFrame Switching Actions.
+  Q_INVOKABLE void record_switch_to_iframe_by_matching_text();
+  Q_INVOKABLE void record_switch_to_iframe_by_matching_images();
+  Q_INVOKABLE void record_switch_to_iframe_by_matching_positions();
 
   // Record Create Set By Matching Values.
   Q_INVOKABLE void record_create_set_by_matching_text_values();
