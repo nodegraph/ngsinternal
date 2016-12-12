@@ -30,18 +30,6 @@ class ContentCommHandler {
                 // Otherwise there would be too many. Instead bg comm will send a single response back for all iframes.
                 this.gui_collection.overlay_sets.update()
             } break
-            case RequestType.kCacheFrame: {
-                let content = document.documentElement.innerHTML //textContent;
-                localStorage.setItem('smash_browse_page_cache_' + PageWrap.get_iframe_index_path_as_string(window), content);
-                // let serializer = new XMLSerializer()
-                // let content = serializer.serializeToString(document.body)
-                // localStorage.setItem('smash_browse_page_cache_' + PageWrap.get_iframe_index_path_as_string(window), content);
-            } break
-            case RequestType.kLoadCachedFrame: {
-                let content = localStorage.getItem('smash_browse_page_cache_' + PageWrap.get_iframe_index_path_as_string(window));
-                //document.documentElement.innerHTML = content //textContent = content
-                document.write(content)
-            } break
             case RequestType.kGetXPath: {
                 // Determine the xpath of the overlay element.
                 let xpath = this.gui_collection.overlay_sets.get_xpath(req.args.set_index, req.args.overlay_index)

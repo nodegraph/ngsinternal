@@ -127,9 +127,7 @@ class BgCommHandler {
                 let response = new ResponseMessage(req.id, "-1", true)
                 this.bg_comm.send_to_nodejs(response)
             } break
-            case RequestType.kUpdateOveralys:
-            case RequestType.kCacheFrame: 
-            case RequestType.kLoadCachedFrame: {
+            case RequestType.kUpdateOveralys: {
                 // These cases apply to all iframes. 
                 // Each iframe should not send a response because there would be too many responses and this always succeeds.
                 req.iframe = this.bg_comm.get_iframe()

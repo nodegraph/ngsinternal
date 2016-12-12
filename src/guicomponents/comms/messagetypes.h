@@ -38,8 +38,6 @@ enum class RequestType : int {
   kPerformTextAction,
   kPerformElementAction,
   kUpdateOveralys,
-  kCacheFrame,
-  kLoadCachedFrame,
   kCreateSetFromMatchValues,
   kCreateSetFromWrapType,
   kDeleteSet,

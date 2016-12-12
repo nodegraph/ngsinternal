@@ -43,8 +43,6 @@ declare const enum RequestType {
   kPerformTextAction,
   kPerformElementAction,
   kUpdateOveralys,
-  kCacheFrame,
-  kLoadCachedFrame,
   kCreateSetFromMatchValues,
   kCreateSetFromWrapType,
   kDeleteSet,
