@@ -27,6 +27,7 @@ const char* Message::kDimensions = "dimensions";
 const char* Message::kWrapType = "wrap_type";
 const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";
+const char* Message::kTargetValues = "target_values";
 
 const char* Message::kMouseAction = "mouse_action";
 const char* Message::kTextAction = "text_action";
@@ -101,7 +102,6 @@ Message::Message(const QString& json) {
 
 Message::Message(RequestType rt, const QJsonObject& args) {
   insert(Message::kID, -1);
-  insert(Message::kIFrame, Message::kAppIFramePath);
   insert(Message::kMessageType, static_cast<int>(MessageType::kRequestMessage));
 
   insert(Message::kRequest, static_cast<int>(rt));
@@ -112,7 +112,6 @@ Message::Message(RequestType rt, const QJsonObject& args) {
 
 Message::Message(bool success, const QJsonValue& value) {
   insert(Message::kID, -1);
-  insert(Message::kIFrame, Message::kAppIFramePath);
   insert(Message::kMessageType, static_cast<int>(MessageType::kResponseMessage));
 
   insert(Message::kSuccess, success);
@@ -123,7 +122,6 @@ Message::Message(bool success, const QJsonValue& value) {
 
 Message::Message(InfoType it, const QJsonValue& value) {
   insert(Message::kID, -1);
-  insert(Message::kIFrame, Message::kAppIFramePath);
   insert(Message::kMessageType, static_cast<int>(MessageType::kResponseMessage));
 
   insert(Message::kInfo, static_cast<int>(it));
@@ -144,10 +142,6 @@ Message::~Message() {
 bool Message::check_contents() {
   if (!contains(Message::kID)) {
     std::cerr << "Error: message is missing id.\n";
-    return false;
-  }
-  if (!contains(Message::kIFrame)) {
-    std::cerr << "Error: message is missing iframe.\n";
     return false;
   }
   if (!contains(Message::kMessageType)) {

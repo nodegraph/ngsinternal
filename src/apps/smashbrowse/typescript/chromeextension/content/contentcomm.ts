@@ -29,29 +29,6 @@ class ContentComm {
     receive_from_bg(obj: any, sender: chrome.runtime.MessageSender, send_response: (response: any) => void){
         // The base message will get flattened out into a regular dict obj, during the transfer from the bgcomm.
         let msg = BaseMessage.create_from_obj(obj)
-
-        // Some messages apply to all frames.
-        if (msg.get_msg_type() == MessageType.kRequestMessage) {
-            let req = <RequestMessage>(msg)
-            // Update overlays on all frames.
-            if (req.request == RequestType.kUpdateOveralys) {
-                this.handler.handle_bg_request(req, send_response)
-                return
-            }
-
-            if (req.request == RequestType.kFindIFrame) {
-                this.handler.handle_bg_request(req, send_response)
-                return
-            }
-        } 
-
-
-
-        // Ignore the message if it doesn't match our iframe.
-        if (msg.iframe != PageWrap.get_iframe_index_path_as_string(window)) {
-            return
-        }
-
         switch (msg.get_msg_type()) {
             case MessageType.kRequestMessage:
                 this.handler.handle_bg_request(<RequestMessage>msg, send_response)

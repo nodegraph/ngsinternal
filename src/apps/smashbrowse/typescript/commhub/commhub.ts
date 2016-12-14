@@ -60,7 +60,7 @@ class ChromeConnection extends BaseConnection {
     receive_json(json: string): void {
         // Extract the frame from the msg.
         let msg = BaseMessage.create_from_string(json)
-        console.log('frame[' + msg.iframe + '] --> commhub: ' + json)
+        console.log('ext --> commhub: ' + json)
 
         // Messages from chrome get passed straight to the app.
         send_msg_to_app(msg)
@@ -83,11 +83,6 @@ class AppConnection extends BaseConnection {
         // Build the message.
         let msg = BaseMessage.create_from_string(json)
 
-        // The msg.frame should always be -1 here.
-        if (msg.iframe != '-1') {
-            console.error('nodejs expects msg.iframe from app to be -1')
-        }
-
         // Make sure the message is a request.
         if (msg.get_msg_type() == MessageType.kResponseMessage || msg.get_msg_type() == MessageType.kInfoMessage) {
             console.error("Error: AppConnection currently always expects a request.")
@@ -104,31 +99,31 @@ class AppConnection extends BaseConnection {
                 let on_response = (open: boolean) => {
                     if (!open) {
                         if (!this.webdriverwrap.open_browser()) {
-                            send_msg_to_app(new ResponseMessage(msg.id, '-1', false, false))
+                            send_msg_to_app(new ResponseMessage(msg.id, false, false))
                             return
                         }
                         // Now convert this request to navigate to a default url with a port number.
                         let url = "https://www.google.com/?" + get_ext_server_port()
-                        let relay = new RequestMessage(msg.id, '-1', RequestType.kNavigateTo, { url: url })
+                        let relay = new RequestMessage(msg.id, RequestType.kNavigateTo, { url: url })
                         this.receive_json(relay.to_string())
                     } else {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true))
+                        send_msg_to_app(new ResponseMessage(msg.id, true, true))
                     }
                 }
                 this.webdriverwrap.browser_is_open(on_response)
             } break
             case RequestType.kResizeBrowser: {
                 this.webdriverwrap.resize_browser(req.args.width, req.args.height).then(
-                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true)) },
-                    () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false, false)) }
+                    () => { send_msg_to_app(new ResponseMessage(msg.id, true, true)) },
+                    () => { send_msg_to_app(new ResponseMessage(msg.id, false, false)) }
                     )
             } break
             case RequestType.kIsBrowserOpen: {
                 let on_response = (open: boolean) => {
                     if (open) {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true))
+                        send_msg_to_app(new ResponseMessage(msg.id, true, true))
                     } else {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, false))
+                        send_msg_to_app(new ResponseMessage(msg.id, true, false))
                     }
                 }
                 this.webdriverwrap.browser_is_open(on_response)
@@ -138,11 +133,11 @@ class AppConnection extends BaseConnection {
                 ext_server.clear_connections()
                 let on_response = (open: boolean) => {
                     if (!open) {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true))
+                        send_msg_to_app(new ResponseMessage(msg.id, true, true))
                     } else {
                         this.webdriverwrap.close_browser().then(
-                            () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', true, true)) },
-                            () => { send_msg_to_app(new ResponseMessage(msg.id, '-1', false, false)) })
+                            () => { send_msg_to_app(new ResponseMessage(msg.id, true, true)) },
+                            () => { send_msg_to_app(new ResponseMessage(msg.id, false, false)) })
                     }
                 }
                 this.webdriverwrap.browser_is_open(on_response)
@@ -150,45 +145,30 @@ class AppConnection extends BaseConnection {
             } break
             case RequestType.kNavigateTo: {
                 this.webdriverwrap.navigate_to(req.args.url).then(() => {
-                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
-                    send_msg_to_ext(relay_req)
+                    send_msg_to_app(new ResponseMessage(msg.id, true, true))
                 }, (error: Error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
+                    send_msg_to_app(new ResponseMessage(msg.id, false, error.message))
                 })
             } break
             case RequestType.kNavigateBack: {
                 this.webdriverwrap.navigate_back().then(() => {
-                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
-                    send_msg_to_ext(relay_req)
+                    send_msg_to_app(new ResponseMessage(msg.id, true, true))
                 }, (error: Error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
+                    send_msg_to_app(new ResponseMessage(msg.id, false, error.message))
                 })
             } break
             case RequestType.kNavigateForward: {
                 this.webdriverwrap.navigate_forward().then(() => {
-                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
-                    send_msg_to_ext(relay_req)
+                    send_msg_to_app(new ResponseMessage(msg.id, true, true))
                 }, (error: Error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
+                    send_msg_to_app(new ResponseMessage(msg.id, false, error.message))
                 })
             } break
             case RequestType.kNavigateRefresh: {
                 this.webdriverwrap.navigate_refresh().then(() => {
-                    let relay_req = new RequestMessage(msg.id, "-1", RequestType.kSwitchIFrame, { iframe: '' })
-                    send_msg_to_ext(relay_req)
+                    send_msg_to_app(new ResponseMessage(msg.id, true, true))
                 }, (error: Error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
-                })
-            } break
-            case RequestType.kFindIFrame: {
-            	send_msg_to_ext(req)
-            } break
-            case RequestType.kSwitchIFrame: {
-                this.webdriverwrap.switch_to_iframe(req.args.iframe).then(() => {
-                    // Update the chrome extension.
-                    send_msg_to_ext(req)
-                }, (error: Error) => {
-                    send_msg_to_app(new ResponseMessage(msg.id, '-1', false, error.message))
+                    send_msg_to_app(new ResponseMessage(msg.id, false, error.message))
                 })
             } break
             case RequestType.kPerformMouseAction: {
@@ -202,7 +182,7 @@ class AppConnection extends BaseConnection {
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
                     default: {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, "unknown mouse action"))
+                        send_msg_to_app(new ResponseMessage(msg.id, false, "unknown mouse action"))
                     }
                 }
             } break
@@ -217,7 +197,7 @@ class AppConnection extends BaseConnection {
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
                     default: {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, "unknown text action"))
+                        send_msg_to_app(new ResponseMessage(msg.id, false, "unknown text action"))
                     }
                 }
             } break
@@ -237,7 +217,7 @@ class AppConnection extends BaseConnection {
                         send_msg_to_ext(req)
                     } break
                     default: {
-                        send_msg_to_app(new ResponseMessage(msg.id, '-1', false, "unknown element action"))
+                        send_msg_to_app(new ResponseMessage(msg.id, false, "unknown element action"))
                     }
                 }
             } break

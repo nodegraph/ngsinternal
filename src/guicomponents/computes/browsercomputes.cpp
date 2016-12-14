@@ -193,61 +193,6 @@ bool NavigateRefreshCompute::update_state() {
   return false;
 }
 
-void SwitchToIFrameCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-    create_input(Message::kWrapType, c);
-  }
-  {
-    QJsonArray string_arr;
-    string_arr.push_back("example");
-
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = string_arr;
-    create_input(Message::kTextValues, c);
-    create_input(Message::kImageValues, c);
-  }
-}
-
-const QJsonObject SwitchToIFrameCompute::_hints = SwitchToIFrameCompute::init_hints();
-QJsonObject SwitchToIFrameCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-  //add_hint(m, Message::kIFrame, HintKey::kDescriptionHint,
-  //         "The path to the iframe that subsequent nodes will act on. IFrame paths are made up of iframe indexes separated by a forward slash. For example: 1/2/3");
-
-  add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
-  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of the elements to put into the set.");
-
-  add_hint(m, Message::kTextValues, HintKey::kDescriptionHint, "The text values used to find text elements.");
-  add_hint(m, Message::kTextValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
-
-  add_hint(m, Message::kImageValues, HintKey::kDescriptionHint, "The overlapping images used to find image elements.");
-  add_hint(m, Message::kImageValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
-
-  add_hint(m, Message::kClickPos, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kClickPos, HintKey::kDescriptionHint, "The position to perform our action at, relative to the element itself.");
-
-  return m;
-}
-
-bool SwitchToIFrameCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_find_iframe(tc);
-  _worker->queue_switch_iframe(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
 void CreateSetFromValuesCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
@@ -265,8 +210,7 @@ void CreateSetFromValuesCompute::create_inputs_outputs(const EntityConfig& confi
     EntityConfig c = config;
     c.expose_plug = false;
     c.unconnected_value = string_arr;
-    create_input(Message::kTextValues, c);
-    create_input(Message::kImageValues, c);
+    create_input(Message::kTargetValues, c);
   }
 }
 
@@ -281,8 +225,7 @@ QJsonObject CreateSetFromValuesCompute::init_hints() {
   add_hint(m, Message::kTextValues, HintKey::kDescriptionHint, "The text values used to find text elements.");
   add_hint(m, Message::kTextValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
 
-  add_hint(m, Message::kImageValues, HintKey::kDescriptionHint, "The overlapping images used to find image elements.");
-  add_hint(m, Message::kImageValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kTargetValues, HintKey::kDescriptionHint, "The texts or image urls used to find elements.");
   return m;
 }
 
@@ -293,7 +236,7 @@ bool CreateSetFromValuesCompute::update_state() {
 
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _worker->queue_create_set_by_matching_values(tc);
+  _worker->queue_find_element_by_values(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
@@ -326,12 +269,14 @@ bool CreateSetFromTypeCompute::update_state() {
 
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _worker->queue_create_set_by_matching_type(tc);
+  _worker->queue_find_element_by_type(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
 
-void DeleteSetCompute::create_inputs_outputs(const EntityConfig& config) {
+// ---------------------------------------------------------------------------------------------------
+
+void ShiftElementByTypeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
 
@@ -339,44 +284,12 @@ void DeleteSetCompute::create_inputs_outputs(const EntityConfig& config) {
   c.expose_plug = false;
   c.unconnected_value = 0;
 
-  create_input(Message::kSetIndex, c);
-}
-
-const QJsonObject DeleteSetCompute::_hints = DeleteSetCompute::init_hints();
-QJsonObject DeleteSetCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to delete.");
-  return m;
-}
-
-bool DeleteSetCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_delete_set(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
-void ShiftSetCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = false;
-  c.unconnected_value = 0;
-
-  create_input(Message::kSetIndex, c);
   create_input(Message::kDirection, c);
   create_input(Message::kWrapType, c);
 }
 
-const QJsonObject ShiftSetCompute::_hints = ShiftSetCompute::init_hints();
-QJsonObject ShiftSetCompute::init_hints() {
+const QJsonObject ShiftElementByTypeCompute::_hints = ShiftElementByTypeCompute::init_hints();
+QJsonObject ShiftElementByTypeCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
@@ -390,16 +303,71 @@ QJsonObject ShiftSetCompute::init_hints() {
   return m;
 }
 
-bool ShiftSetCompute::update_state() {
+bool ShiftElementByTypeCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _worker->queue_shift_set(tc);
+  _worker->queue_shift_element_by_type(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }
+
+// ---------------------------------------------------------------------------------------------------
+
+void ShiftElementByValuesCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+
+    create_input(Message::kDirection, c);
+    create_input(Message::kWrapType, c);
+  }
+
+  {
+    QJsonArray string_arr;
+    string_arr.push_back("example");
+
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = string_arr;
+    create_input(Message::kTargetValues, c);
+  }
+}
+
+const QJsonObject ShiftElementByValuesCompute::_hints = ShiftElementByValuesCompute::init_hints();
+QJsonObject ShiftElementByValuesCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+
+  add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
+  add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The direction in which to shift the set elements to.");
+
+  add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
+  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of elements to shift to.");
+
+  add_hint(m, Message::kTargetValues, HintKey::kDescriptionHint, "The texts or image urls used to find elements.");
+  return m;
+}
+
+bool ShiftElementByValuesCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_shift_element_by_values(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
+
+
+// ---------------------------------------------------------------------------------------------------
 
 void MouseActionCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
@@ -634,214 +602,6 @@ bool ElementActionCompute::update_state() {
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
   _worker->queue_perform_element_action(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
-void ExpandSetCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-
-    create_input(Message::kSetIndex, c);
-    create_input(Message::kDirection, c);  // Only used when the element action is set to scroll.
-  }
-  {
-    QJsonObject match_criteria;
-    match_criteria.insert(Message::kMatchLeft, true);
-    match_criteria.insert(Message::kMatchRight, false);
-    match_criteria.insert(Message::kMatchTop, false);
-    match_criteria.insert(Message::kMatchBottom, false);
-    match_criteria.insert(Message::kMatchFont, true);
-    match_criteria.insert(Message::kMatchFontSize, true);
-
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = match_criteria;
-
-    create_input(Message::kMatchCriteria, c);
-  }
-}
-
-const QJsonObject ExpandSetCompute::_hints = ExpandSetCompute::init_hints();
-QJsonObject ExpandSetCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to expand.");
-
-  add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
-  add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The direction in which to expand the set.");
-
-  add_hint(m, Message::kMatchCriteria, HintKey::kDescriptionHint, "The match criteria used when expanding the set.");
-  return m;
-}
-
-bool ExpandSetCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_expand_set(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
-void MarkSetCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = false;
-  c.unconnected_value = 0;
-
-  create_input(Message::kSetIndex, c);
-}
-
-const QJsonObject MarkSetCompute::_hints = MarkSetCompute::init_hints();
-QJsonObject MarkSetCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to mark.");
-  return m;
-}
-
-bool MarkSetCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_mark_set(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
-void UnmarkSetCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = false;
-  c.unconnected_value = 0;
-
-  create_input(Message::kSetIndex, c);
-}
-
-const QJsonObject UnmarkSetCompute::_hints = UnmarkSetCompute::init_hints();
-QJsonObject UnmarkSetCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to unmark.");
-  return m;
-}
-
-bool UnmarkSetCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_unmark_set(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
-bool MergeSetsCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_merge_sets(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
-void ShrinkSetToSideCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = false;
-  c.unconnected_value = 0;
-
-  create_input(Message::kSetIndex, c);
-  create_input(Message::kDirection, c);
-}
-
-const QJsonObject ShrinkSetToSideCompute::_hints = ShrinkSetToSideCompute::init_hints();
-QJsonObject ShrinkSetToSideCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to shrink on one side.");
-
-  add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
-  add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The side of the set from which to perform the shrink.");
-  return m;
-}
-
-bool ShrinkSetToSideCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_shrink_set_to_side(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
-void ShrinkAgainstMarkedCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-
-    create_input(Message::kSetIndex, c);
-  }
-  {
-    QJsonArray number_arr;
-    number_arr.push_back(0);
-
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = number_arr;
-
-    create_input(Message::kDirections, c);
-  }
-}
-
-const QJsonObject ShrinkAgainstMarkedCompute::_hints = ShrinkAgainstMarkedCompute::init_hints();
-QJsonObject ShrinkAgainstMarkedCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to shrink against.");
-
-  add_hint(m, Message::kDirections, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kDirections, HintKey::kElementEnumHint, to_underlying(EnumHintValue::kDirectionType));
-  add_hint(m, Message::kDirections, HintKey::kDescriptionHint, "The sides of the marked sets used to intersect the set of interest.");
-  return m;
-}
-
-bool ShrinkAgainstMarkedCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_shrink_against_marked(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }

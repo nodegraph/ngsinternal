@@ -1,28 +1,10 @@
-//import {Point} from "./point"
-
-// // DirectionType.
-// const enum DirectionType {
-//     left,
-//     right,
-//     up,
-//     down
-// }
-
-//This interface represents the data shape for box.
-interface BoxInterface {
-    left: number
-    right: number
-    top: number
-    bottom: number
-}
-
 //This class represents a box.
 class Box {
     left: number
     right: number
     top: number
     bottom: number
-    constructor(box: BoxInterface = {left: 0, right:0, top:0, bottom:0}) {
+    constructor(box: IBox = {left: 0, right:0, top:0, bottom:0}) {
         this.left = box.left
         this.right = box.right
         this.top = box.top
@@ -130,7 +112,7 @@ class Box {
     }
 
     //Returns true if and only if we contain the inner entirely.
-    contains(inner: BoxInterface): boolean {
+    contains(inner: IBox): boolean {
         if ((inner.left >= this.left) &&
             (inner.right <= this.right) &&
             (inner.top >= this.top) &&
@@ -153,7 +135,7 @@ class Box {
     }
 
     //Returns true if and only if we intersect the other page box.
-    intersects(other: BoxInterface): boolean {
+    intersects(other: IBox): boolean {
         if (this.right <= other.left) {
             return false
         } else if (this.left >= other.right) {
@@ -167,7 +149,7 @@ class Box {
     }
 
     //Returns true if this page box is on one side of another page box.
-    is_oriented_on(side: DirectionType, other: BoxInterface): number {
+    is_oriented_on(side: DirectionType, other: IBox): number {
         switch (side) {
             case DirectionType.left:
                 if (this.right < other.right) {

@@ -97,23 +97,23 @@ export class FirebaseWrap {
             this.firebase_app.auth().signInWithEmailAndPassword(req.args.email, req.args.password).then(
                 (a: any) => {
                     this.signed_in = true
-                    this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                    this.app_server.send_msg(new ResponseMessage(req.id, true, true))
                 },
                 (error: Error) => {
                     // The user account may not exist yet if this is the first time trying to sign in.
                     // So we try to create an account.
                     this.firebase_app.auth().createUserWithEmailAndPassword(req.args.email, req.args.password).then(
                         (a: any) => {
-                            this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                            this.app_server.send_msg(new ResponseMessage(req.id, true, true))
                         },
                         (error: Error) => {
-                            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
+                            this.app_server.send_msg(new ResponseMessage(req.id, false, error.message))
                         }
                     )
                 }
             )
         } catch (e) {
-            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, e.message))
+            this.app_server.send_msg(new ResponseMessage(req.id, false, e.message))
         }
     }
 
@@ -121,10 +121,10 @@ export class FirebaseWrap {
     sign_out(req: RequestMessage): void {
         this.firebase_app.auth().signOut().then(
             () => {
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                this.app_server.send_msg(new ResponseMessage(req.id, true, true))
             },
             (error: Error) => {
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
+                this.app_server.send_msg(new ResponseMessage(req.id, false, error.message))
             });
     }
 
@@ -144,16 +144,16 @@ export class FirebaseWrap {
     // Write data.
     write_data(req: RequestMessage): void {
         if (!this.signed_in) {
-            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
+            this.app_server.send_msg(new ResponseMessage(req.id, false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
             return
         }
         let full_data_path = this.get_full_data_path(req.args.data_path)
         this.firebase_app.database().ref(full_data_path).set(FirebaseWrap.js_to_value(req.args.value)).then(
             (a: any) => {
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                this.app_server.send_msg(new ResponseMessage(req.id, true, true))
             },
             (error: Error) => {
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
+                this.app_server.send_msg(new ResponseMessage(req.id, false, error.message))
             }
         )
     }
@@ -161,18 +161,18 @@ export class FirebaseWrap {
     // Read data.
     read_data(req: RequestMessage): void {
         if (!this.signed_in) {
-            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
+            this.app_server.send_msg(new ResponseMessage(req.id, false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
             return
         }
         let full_data_path = this.get_full_data_path(req.args.data_path)
         this.firebase_app.database().ref(full_data_path).once('value').then(
             (data: firebase.database.DataSnapshot) => {
                 console.log('got value: ' + JSON.stringify(data.exportVal()))
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, data.exportVal()))
+                this.app_server.send_msg(new ResponseMessage(req.id, true, data.exportVal()))
             },
             (error: Error) => {
                 console.log('got error: ' + error.message)
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
+                this.app_server.send_msg(new ResponseMessage(req.id, false, error.message))
             }
         )
     }
@@ -180,7 +180,7 @@ export class FirebaseWrap {
     // Listen to changes.
     subscribe(req: RequestMessage): void {
         if (!this.signed_in) {
-            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
+            this.app_server.send_msg(new ResponseMessage(req.id, false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
             return
         }
         let full_data_path = this.get_full_data_path(req.args.data_path)
@@ -192,18 +192,18 @@ export class FirebaseWrap {
         this.add_listener(req.args.node_path, req.args.data_path)
 
         // Send our response.
-        this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+        this.app_server.send_msg(new ResponseMessage(req.id, true, true))
     }
 
     unsubscribe(req: RequestMessage): void {
         if (!this.signed_in) {
-            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
+            this.app_server.send_msg(new ResponseMessage(req.id, false, "Error: Not signed into firebase. Check surrounding firebase group settings."))
             return
         }
         this.remove_listener(req.args.node_path, req.args.data_path)
         
         // Send our response.
-        this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+        this.app_server.send_msg(new ResponseMessage(req.id, true, true))
     }
 
     add_listener(node_path: string, data_path: string) {
@@ -212,7 +212,7 @@ export class FirebaseWrap {
             info.node_path = node_path
             info.data_path = data_path
             info.value = data.exportVal()
-            this.app_server.send_msg(new InfoMessage(-1, "-1", InfoType.kFirebaseChanged, info))
+            this.app_server.send_msg(new InfoMessage(-1, InfoType.kFirebaseChanged, info))
         }
 
         // Make sure a tracker exists at node_path.
@@ -357,7 +357,7 @@ export class FirebaseWraps {
             if (!need_to_create) {
                 // If we don't need to create a wrapper, then we're done.
                 // Send back a response.
-                this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                this.app_server.send_msg(new ResponseMessage(req.id, true, true))
                 return true
             } else {
                 // Try to find an existing app under the group_path.
@@ -374,19 +374,19 @@ export class FirebaseWraps {
                             // Now we just need to create a wrapper.
                             this.create_firebase_wrap(group_path, config)
                             // And we're done.
-                            this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                            this.app_server.send_msg(new ResponseMessage(req.id, true, true))
                             return true
                         },
                         (error: Error) => {
                             console.log('got error: ' + error.message)
-                            this.app_server.send_msg(new ResponseMessage(req.id, '-1', false, error.message))
+                            this.app_server.send_msg(new ResponseMessage(req.id, false, error.message))
                             return true
                         })
                 } else {
                     // Otherwise we just create a wrapper.
                     this.create_firebase_wrap(group_path, config)
                     // Send back a response.
-                    this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+                    this.app_server.send_msg(new ResponseMessage(req.id, true, true))
                     return true
                 }
             }
@@ -404,7 +404,7 @@ export class FirebaseWraps {
                 existing_app.delete() // Note we don't wait for the promise.
             }
             // Send back a response.
-            this.app_server.send_msg(new ResponseMessage(req.id, '-1', true, true))
+            this.app_server.send_msg(new ResponseMessage(req.id, true, true))
             return true
         }
 

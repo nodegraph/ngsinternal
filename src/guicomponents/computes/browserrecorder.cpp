@@ -98,36 +98,6 @@ void BrowserRecorder::record_navigate_to(const QString& url) {
   finish();
 }
 
-void BrowserRecorder::record_switch_to_iframe_by_matching_text() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute);
-  finish();
-}
-
-void BrowserRecorder::record_switch_to_iframe_by_matching_images() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute);
-  finish();
-}
-
-void BrowserRecorder::record_switch_to_iframe_by_matching_positions() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::iframe)); // ** Note we overload WrapType::iframe to mean find the iframe by position.
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kSwitchToIFrameCompute);
-  finish();
-}
-
 void BrowserRecorder::record_navigate_refresh() {
   check_busy()
   _worker->queue_build_compute_node(tc, ComponentDID::kNavigateRefreshCompute);
@@ -138,22 +108,24 @@ void BrowserRecorder::record_navigate_refresh() {
 // Record Create Set By Matching Values..
 // -----------------------------------------------------------------
 
-void BrowserRecorder::record_create_set_by_matching_text_values() {
+void BrowserRecorder::record_find_element_by_text() {
   check_busy()
   _worker->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
   _worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromValuesCompute);
   finish();
 }
 
-void BrowserRecorder::record_create_set_by_matching_image_values() {
+void BrowserRecorder::record_find_element_by_images() {
   check_busy()
   _worker->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
   _worker->queue_build_compute_node(tc, ComponentDID::kCreateSetFromValuesCompute);
   finish();
 }
@@ -199,17 +171,6 @@ void BrowserRecorder::record_create_set_of_text() {
 }
 
 // -----------------------------------------------------------------
-// Record Delete Set.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_delete_set() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  _worker->queue_build_compute_node(tc, ComponentDID::kDeleteSetCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
 // Record Shift Sets.
 // -----------------------------------------------------------------
 
@@ -220,7 +181,7 @@ void BrowserRecorder::record_shift_to_text_above() {
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_text_below() {
@@ -230,7 +191,7 @@ void BrowserRecorder::record_shift_to_text_below() {
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   args.insert(Message::kDirection, to_underlying(DirectionType::down));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_text_on_left() {
@@ -240,7 +201,7 @@ void BrowserRecorder::record_shift_to_text_on_left() {
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   args.insert(Message::kDirection, to_underlying(DirectionType::left));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_text_on_right() {
@@ -250,7 +211,7 @@ void BrowserRecorder::record_shift_to_text_on_right() {
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   args.insert(Message::kDirection, to_underlying(DirectionType::right));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 
@@ -261,7 +222,7 @@ void BrowserRecorder::record_shift_to_images_above() {
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_images_below() {
@@ -271,7 +232,7 @@ void BrowserRecorder::record_shift_to_images_below() {
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   args.insert(Message::kDirection, to_underlying(DirectionType::down));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_images_on_left() {
@@ -281,7 +242,7 @@ void BrowserRecorder::record_shift_to_images_on_left() {
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   args.insert(Message::kDirection, to_underlying(DirectionType::left));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_images_on_right() {
@@ -291,7 +252,7 @@ void BrowserRecorder::record_shift_to_images_on_right() {
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   args.insert(Message::kDirection, to_underlying(DirectionType::right));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 
@@ -302,7 +263,7 @@ void BrowserRecorder::record_shift_to_inputs_above() {
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_inputs_below() {
@@ -312,7 +273,7 @@ void BrowserRecorder::record_shift_to_inputs_below() {
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   args.insert(Message::kDirection, to_underlying(DirectionType::down));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_inputs_on_left() {
@@ -322,7 +283,7 @@ void BrowserRecorder::record_shift_to_inputs_on_left() {
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   args.insert(Message::kDirection, to_underlying(DirectionType::left));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_inputs_on_right() {
@@ -332,7 +293,7 @@ void BrowserRecorder::record_shift_to_inputs_on_right() {
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   args.insert(Message::kDirection, to_underlying(DirectionType::right));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 
@@ -343,7 +304,7 @@ void BrowserRecorder::record_shift_to_selects_above() {
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_selects_below() {
@@ -353,7 +314,7 @@ void BrowserRecorder::record_shift_to_selects_below() {
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   args.insert(Message::kDirection, to_underlying(DirectionType::down));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_selects_on_left() {
@@ -363,7 +324,7 @@ void BrowserRecorder::record_shift_to_selects_on_left() {
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   args.insert(Message::kDirection, to_underlying(DirectionType::left));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_selects_on_right() {
@@ -373,7 +334,7 @@ void BrowserRecorder::record_shift_to_selects_on_right() {
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   args.insert(Message::kDirection, to_underlying(DirectionType::right));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 
@@ -384,7 +345,7 @@ void BrowserRecorder::record_shift_to_iframes_above() {
   args.insert(Message::kWrapType, to_underlying(WrapType::iframe));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_iframes_below() {
@@ -394,7 +355,7 @@ void BrowserRecorder::record_shift_to_iframes_below() {
   args.insert(Message::kWrapType, to_underlying(WrapType::iframe));
   args.insert(Message::kDirection, to_underlying(DirectionType::down));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_iframes_on_left() {
@@ -404,7 +365,7 @@ void BrowserRecorder::record_shift_to_iframes_on_left() {
   args.insert(Message::kWrapType, to_underlying(WrapType::iframe));
   args.insert(Message::kDirection, to_underlying(DirectionType::left));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 void BrowserRecorder::record_shift_to_iframes_on_right() {
@@ -414,247 +375,7 @@ void BrowserRecorder::record_shift_to_iframes_on_right() {
   args.insert(Message::kWrapType, to_underlying(WrapType::iframe));
   args.insert(Message::kDirection, to_underlying(DirectionType::right));
   _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftSetCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Record Expand Sets.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_expand_above() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonObject match_criteria;
-  match_criteria.insert(Message::kMatchLeft, true);
-  match_criteria.insert(Message::kMatchRight, false);
-  match_criteria.insert(Message::kMatchTop, false);
-  match_criteria.insert(Message::kMatchBottom, false);
-  match_criteria.insert(Message::kMatchFont, true);
-  match_criteria.insert(Message::kMatchFontSize, true);
-
-  QJsonObject args;
-  args.insert(Message::kMatchCriteria, match_criteria);
-  args.insert(Message::kDirection, to_underlying(DirectionType::up));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
-  finish();
-}
-
-void BrowserRecorder::record_expand_below() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonObject match_criteria;
-  match_criteria.insert(Message::kMatchLeft, true);
-  match_criteria.insert(Message::kMatchRight, false);
-  match_criteria.insert(Message::kMatchTop, false);
-  match_criteria.insert(Message::kMatchBottom, false);
-  match_criteria.insert(Message::kMatchFont, true);
-  match_criteria.insert(Message::kMatchFontSize, true);
-
-  QJsonObject args;
-  args.insert(Message::kMatchCriteria, match_criteria);
-  args.insert(Message::kDirection, to_underlying(DirectionType::down));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
-  finish();
-}
-
-void BrowserRecorder::record_expand_left() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonObject match_criteria;
-  match_criteria.insert(Message::kMatchLeft, false);
-  match_criteria.insert(Message::kMatchRight, false);
-  match_criteria.insert(Message::kMatchTop, true);
-  match_criteria.insert(Message::kMatchBottom, false);
-  match_criteria.insert(Message::kMatchFont, true);
-  match_criteria.insert(Message::kMatchFontSize, true);
-
-  QJsonObject args;
-  args.insert(Message::kMatchCriteria, match_criteria);
-  args.insert(Message::kDirection, to_underlying(DirectionType::left));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
-  finish();
-}
-
-void BrowserRecorder::record_expand_right() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonObject match_criteria;
-  match_criteria.insert(Message::kMatchLeft, false);
-  match_criteria.insert(Message::kMatchRight, false);
-  match_criteria.insert(Message::kMatchTop, true);
-  match_criteria.insert(Message::kMatchBottom, false);
-  match_criteria.insert(Message::kMatchFont, true);
-  match_criteria.insert(Message::kMatchFontSize, true);
-
-  QJsonObject args;
-  args.insert(Message::kMatchCriteria, match_criteria);
-  args.insert(Message::kDirection, to_underlying(DirectionType::right));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kExpandSetCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Record Mark Sets.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_mark_set() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-  _worker->queue_build_compute_node(tc, ComponentDID::kMarkSetCompute);
-  finish();
-}
-
-void BrowserRecorder::record_unmark_set() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-  _worker->queue_build_compute_node(tc, ComponentDID::kUnmarkSetCompute);
-  finish();
-}
-
-void BrowserRecorder::record_merge_sets() {
-  check_busy();
-  _worker->queue_build_compute_node(tc, ComponentDID::kMergeSetsCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Record Shrink To One Side.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_shrink_set_to_topmost() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonObject args;
-  args.insert(Message::kDirection, to_underlying(DirectionType::up));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shrink_set_to_bottommost() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonObject args;
-  args.insert(Message::kDirection, to_underlying(DirectionType::down));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shrink_set_to_leftmost() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonObject args;
-  args.insert(Message::kDirection, to_underlying(DirectionType::left));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shrink_set_to_rightmost() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonObject args;
-  args.insert(Message::kDirection, to_underlying(DirectionType::right));
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkSetToSideCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Record Shrink Against Marked Sets.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_shrink_above_of_marked() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonArray dirs;
-  dirs.push_back(to_underlying(DirectionType::up));
-  QJsonObject args;
-  args.insert(Message::kDirections, dirs);
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shrink_below_of_marked() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonArray dirs;
-  dirs.push_back(to_underlying(DirectionType::down));
-  QJsonObject args;
-  args.insert(Message::kDirections, dirs);
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shrink_above_and_below_of_marked() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonArray dirs;
-  dirs.push_back(to_underlying(DirectionType::up));
-  dirs.push_back(to_underlying(DirectionType::down));
-  QJsonObject args;
-  args.insert(Message::kDirections, dirs);
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shrink_left_of_marked() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonArray dirs;
-  dirs.push_back(to_underlying(DirectionType::left));
-  QJsonObject args;
-  args.insert(Message::kDirections, dirs);
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shrink_right_of_marked() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonArray dirs;
-  dirs.push_back(to_underlying(DirectionType::right));
-  QJsonObject args;
-  args.insert(Message::kDirections, dirs);
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shrink_left_and_right_of_marked() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-
-  QJsonArray dirs;
-  dirs.push_back(to_underlying(DirectionType::left));
-  dirs.push_back(to_underlying(DirectionType::right));
-  QJsonObject args;
-  args.insert(Message::kDirections, dirs);
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShrinkAgainstMarkedCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 

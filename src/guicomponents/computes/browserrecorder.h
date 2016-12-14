@@ -37,23 +37,15 @@ Q_OBJECT
   Q_INVOKABLE void record_navigate_to(const QString& url);
   Q_INVOKABLE void record_navigate_refresh();
 
-  // Record IFrame Switching Actions.
-  Q_INVOKABLE void record_switch_to_iframe_by_matching_text();
-  Q_INVOKABLE void record_switch_to_iframe_by_matching_images();
-  Q_INVOKABLE void record_switch_to_iframe_by_matching_positions();
-
   // Record Create Set By Matching Values.
-  Q_INVOKABLE void record_create_set_by_matching_text_values();
-  Q_INVOKABLE void record_create_set_by_matching_image_values();
+  Q_INVOKABLE void record_find_element_by_text();
+  Q_INVOKABLE void record_find_element_by_images();
 
   // Record Create Set By Type.
   Q_INVOKABLE void record_create_set_of_inputs();
   Q_INVOKABLE void record_create_set_of_selects();
   Q_INVOKABLE void record_create_set_of_images();
   Q_INVOKABLE void record_create_set_of_text();
-
-  // Record Delete Set.
-  Q_INVOKABLE void record_delete_set();
 
   // Record Shift Sets.
   Q_INVOKABLE void record_shift_to_text_above();
@@ -80,31 +72,6 @@ Q_OBJECT
   Q_INVOKABLE void record_shift_to_iframes_below();
   Q_INVOKABLE void record_shift_to_iframes_on_left();
   Q_INVOKABLE void record_shift_to_iframes_on_right();
-
-  // Record Expand Sets.
-  Q_INVOKABLE void record_expand_above();
-  Q_INVOKABLE void record_expand_below();
-  Q_INVOKABLE void record_expand_left();
-  Q_INVOKABLE void record_expand_right();
-
-  // Record Mark Sets.
-  Q_INVOKABLE void record_mark_set();
-  Q_INVOKABLE void record_unmark_set();
-  Q_INVOKABLE void record_merge_sets();
-
-  // Record Shrink To One Side.
-  Q_INVOKABLE void record_shrink_set_to_topmost();
-  Q_INVOKABLE void record_shrink_set_to_bottommost();
-  Q_INVOKABLE void record_shrink_set_to_leftmost();
-  Q_INVOKABLE void record_shrink_set_to_rightmost();
-
-  // Record Shrink Against Marked Sets.
-  Q_INVOKABLE void record_shrink_above_of_marked();
-  Q_INVOKABLE void record_shrink_below_of_marked();
-  Q_INVOKABLE void record_shrink_above_and_below_of_marked();
-  Q_INVOKABLE void record_shrink_left_of_marked();
-  Q_INVOKABLE void record_shrink_right_of_marked();
-  Q_INVOKABLE void record_shrink_left_and_right_of_marked();
 
   // Record Mouse Actions.
   Q_INVOKABLE void record_click();

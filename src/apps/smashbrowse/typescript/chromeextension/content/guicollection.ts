@@ -88,7 +88,7 @@ class GUICollection {
         console.log('contextmenu local page click: ' + local_page_click.to_string())
 
         // Send the request to the app.
-        let im = new InfoMessage(0, PageWrap.get_iframe_index_path_as_string(window), InfoType.kShowWebActionMenu, { click_pos: global_client_click })
+        let im = new InfoMessage(0, InfoType.kShowWebActionMenu, { click_pos: global_client_click })
         this.content_comm.send_to_bg(im)
 
         // Prevent default behavior of the event.
@@ -104,12 +104,9 @@ class GUICollection {
     }
 
     get_crosshair_info(global_client_click: Point): any {
-        console.log('global client click: ' + global_client_click.to_string())
         let local_page_click = new Point(global_client_click)
         local_page_click.to_local_client_space(window)
-        console.log('local client click: ' + local_page_click.x + ',' + local_page_click.y)
         local_page_click.to_page_space(window)
-        console.log('local page click: ' + local_page_click.x + ',' + local_page_click.y)
 
         // Get the text and image values.
         let elem_wraps = this.page_wrap.get_visible_overlapping_at(local_page_click)

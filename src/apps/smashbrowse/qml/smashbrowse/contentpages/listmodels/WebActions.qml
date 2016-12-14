@@ -65,14 +65,6 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Delete Set"
-        description: "Delete set under crosshair."
-        script: "web_recorder.record_delete_set();
-        		main_bar.switch_to_current_mode();"
-    }
-
-    ListElement {
-        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "Perform Action"
         description: "Perform action on element under crosshair."
         script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsPerformAction')"

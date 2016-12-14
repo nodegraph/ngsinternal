@@ -360,7 +360,6 @@ class PageWrap {
     }
 
     // Returns an array of elem wraps with the given xpath.
-    // Note that even in visible elements will be returned.
     get_visible_by_xpath(xpath: string): ElemWrap[] {
         let set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
         // Convert to elem wraps.

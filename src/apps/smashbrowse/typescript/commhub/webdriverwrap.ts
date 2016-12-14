@@ -299,7 +299,7 @@ export class WebDriverWrap {
                 try {
                     console.log("result: " + JSON.stringify(result))
                 } catch(e){}
-                send_msg_to_app(new ResponseMessage(id, '-1', true, result))
+                send_msg_to_app(new ResponseMessage(id, true, result))
             },
             (error: any) => {
                 // Output error details.
@@ -319,7 +319,7 @@ export class WebDriverWrap {
                 console.error('exception: ' + error.message + ' stack: ' + error.stack)
 
                 // Send failure reponse to the app.
-                send_msg_to_app(new ResponseMessage(id, '-1', false))
+                send_msg_to_app(new ResponseMessage(id, false))
             })
     }
 

@@ -34,6 +34,7 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kWrapType;
   static const char* kTextValues;
   static const char* kImageValues;
+  static const char* kTargetValues;
 
   static const char* kMouseAction;
   static const char* kTextAction;

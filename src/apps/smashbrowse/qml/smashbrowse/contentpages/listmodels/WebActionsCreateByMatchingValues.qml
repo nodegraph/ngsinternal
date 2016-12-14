@@ -11,7 +11,7 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "By Matching Text"
         description: "Create set from text under crosshair."
-        script: "web_recorder.record_create_set_by_matching_text_values();
+        script: "web_recorder.record_find_element_by_text();
         		 main_bar.switch_to_current_mode();"
     }
 
@@ -19,7 +19,7 @@ ListModel {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "By Matching Images"
         description: "Create set from images under crosshair."
-        script: "web_recorder.record_create_set_by_matching_image_values()
+        script: "web_recorder.record_find_element_by_images()
         		 main_bar.switch_to_current_mode();"
     }
 

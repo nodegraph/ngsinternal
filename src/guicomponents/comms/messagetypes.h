@@ -29,25 +29,19 @@ enum class RequestType : int {
   kNavigateBack,
   kNavigateForward,
   kNavigateRefresh,
-  kFindIFrame,
-  kSwitchIFrame,
 
   // Page Content Set Requests.
-  kGetXPath,
+  kUpdateElement,
+  kClearElement,
+  kGetElement,
+  kSetElement,
+  kFindElementByValues,
+  kFindElementByType,
   kPerformMouseAction,
   kPerformTextAction,
   kPerformElementAction,
-  kUpdateOveralys,
-  kCreateSetFromMatchValues,
-  kCreateSetFromWrapType,
-  kDeleteSet,
-  kShiftSet,
-  kExpandSet,
-  kMarkSet,
-  kUnmarkSet,
-  kMergeMarkedSets,
-  kShrinkSetToMarked,
-  kShrinkSet,
+  kShiftElementByType,
+  kShiftElementByValues,
 
   // Info Request.
   kGetCrosshairInfo,
@@ -87,7 +81,11 @@ enum class InfoType : int {
   kBgIsConnected,
   kShowWebActionMenu,
   kFirebaseChanged,
-  kFoundIFrame,
+
+  kCollectElement,
+  kCollectElements,
+  kCollectBoolean,
+  kCollectClick,
 };
 
 enum class MessageType : int {

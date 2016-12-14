@@ -61,9 +61,10 @@ Q_OBJECT
   // ---------------------------------------------------------------------------------
 
   // Queue Framework Tasks.
-  void queue_get_xpath(TaskContext& tc);
+  void queue_get_current_element(TaskContext& tc);
   void queue_get_crosshair_info(TaskContext& tc);
   void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
+  void queue_copy_chain_property(TaskContext& tc, const QString& src_prop, const QString& dest_prop);
   void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did);
   void queue_receive_chain_state(TaskContext& tc, std::function<void(const QJsonObject&)> receive_chain_state);
 
@@ -87,21 +88,14 @@ Q_OBJECT
   // Queue Navigate Tasks.
   void queue_navigate_to(TaskContext& tc);
   void queue_navigate_refresh(TaskContext& tc);
-  void queue_find_iframe(TaskContext& tc);
-  void queue_switch_iframe(TaskContext& tc);
 
   // Queue Set Tasks.
-  void queue_update_overlays(TaskContext& tc);
-  void queue_create_set_by_matching_values(TaskContext& tc);
-  void queue_create_set_by_matching_type(TaskContext& tc);
-  void queue_delete_set(TaskContext& tc);
-  void queue_shift_set(TaskContext& tc);
-  void queue_expand_set(TaskContext& tc);
-  void queue_mark_set(TaskContext& tc);
-  void queue_unmark_set(TaskContext& tc);
-  void queue_merge_sets(TaskContext& tc);
-  void queue_shrink_set_to_side(TaskContext& tc);
-  void queue_shrink_against_marked(TaskContext& tc);
+  void queue_update_element(TaskContext& tc);
+  void queue_clear_element(TaskContext& tc);
+  void queue_find_element_by_values(TaskContext& tc);
+  void queue_find_element_by_type(TaskContext& tc);
+  void queue_shift_element_by_type(TaskContext& tc);
+  void queue_shift_element_by_values(TaskContext& tc);
 
   // Queue Perform Action Tasks.
   void queue_perform_mouse_action(TaskContext& tc);
@@ -150,8 +144,9 @@ signals:
 
   // Infrastructure Tasks.
   void get_crosshair_info_task();
-  void get_xpath_task();
+  void get_current_element_info();
   void merge_chain_state_task(const QJsonObject& map);
+  void copy_chain_property_task(const QString& src_prop, const QString& dest_prop);
   void receive_chain_state_task(std::function<void(const QJsonObject&)> on_finished_sequence);
   void start_sequence_task();
   void finished_sequence_task(std::function<void()> on_finished_sequence);
@@ -180,21 +175,14 @@ signals:
   // Navigation Tasks.
   void navigate_to_task();
   void navigate_refresh_task();
-  void find_iframe_task();
-  void switch_iframe_task();
 
   // Set Creation/Modification Tasks.
-  void update_overlays_task();
-  void create_set_by_matching_values_task();
-  void create_set_by_matching_type_task();
-  void delete_set_task();
-  void shift_set_task();
-  void expand_set_task();
-  void mark_set_task();
-  void unmark_set_task();
-  void merge_sets_task();
-  void shrink_set_to_side_task();
-  void shrink_against_marked_task();
+  void update_element_task();
+  void clear_element_task();
+  void find_element_by_values_task();
+  void find_element_by_type_task();
+  void shift_element_by_type_task();
+  void shift_element_by_values_task();
 
   void perform_mouse_action_task();
   void perform_hover_action_task();

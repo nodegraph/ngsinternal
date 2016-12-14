@@ -173,8 +173,8 @@ void NodeJSWorker::send_msg_task(Message& msg) {
 // Queue Framework Tasks.
 // ---------------------------------------------------------------------------------
 
-void NodeJSWorker::queue_get_xpath(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_xpath_task,this), "queue_get_xpath");
+void NodeJSWorker::queue_get_current_element(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_current_element_info,this), "queue_get_xpath");
 }
 
 void NodeJSWorker::queue_get_crosshair_info(TaskContext& tc) {
@@ -183,6 +183,10 @@ void NodeJSWorker::queue_get_crosshair_info(TaskContext& tc) {
 
 void NodeJSWorker::queue_merge_chain_state(TaskContext& tc, const QJsonObject& map) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::merge_chain_state_task,this, map), "queue_merge_chain_state");
+}
+
+void NodeJSWorker::queue_copy_chain_property(TaskContext& tc, const QString& src_prop, const QString& dest_prop) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::copy_chain_property_task,this, src_prop, dest_prop), "queue_merge_chain_state");
 }
 
 void NodeJSWorker::queue_build_compute_node(TaskContext& tc, ComponentDID compute_did) {
@@ -263,60 +267,32 @@ void NodeJSWorker::queue_navigate_refresh(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::navigate_refresh_task,this), "queue_navigate_refresh");
 }
 
-void NodeJSWorker::queue_find_iframe(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::find_iframe_task,this), "queue_find_iframe");
-}
-
-void NodeJSWorker::queue_switch_iframe(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::switch_iframe_task,this), "queue_switch_to_iframe");
-}
-
 // ---------------------------------------------------------------------------------
 // Queue Set Tasks.
 // ---------------------------------------------------------------------------------
 
-void NodeJSWorker::queue_update_overlays(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::update_overlays_task, this), "queue_update_overlays");
+void NodeJSWorker::queue_update_element(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::update_element_task, this), "queue_update_overlays");
 }
 
-void NodeJSWorker::queue_create_set_by_matching_values(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::create_set_by_matching_values_task,this), "queue_create_set_by_matching_values");
+void NodeJSWorker::queue_clear_element(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::clear_element_task, this), "queue_clear_element");
 }
 
-void NodeJSWorker::queue_create_set_by_matching_type(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::create_set_by_matching_type_task,this), "queue_create_set_by_matching_type");
+void NodeJSWorker::queue_find_element_by_values(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::find_element_by_values_task,this), "queue_find_element_by_values");
 }
 
-void NodeJSWorker::queue_delete_set(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::delete_set_task,this), "queue_delete_set");
+void NodeJSWorker::queue_find_element_by_type(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::find_element_by_type_task,this), "queue_find_element_by_type");
 }
 
-void NodeJSWorker::queue_shift_set(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::shift_set_task,this), "queue_shift_set");
+void NodeJSWorker::queue_shift_element_by_type(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::shift_element_by_type_task,this), "queue_shift_set");
 }
 
-void NodeJSWorker::queue_expand_set(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::expand_set_task,this), "queue_expand_set");
-}
-
-void NodeJSWorker::queue_mark_set(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::mark_set_task,this), "queue_mark_set");
-}
-
-void NodeJSWorker::queue_unmark_set(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::unmark_set_task,this), "queue_unmark_set");
-}
-
-void NodeJSWorker::queue_merge_sets(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::merge_sets_task, this), "queue_merge_sets");
-}
-
-void NodeJSWorker::queue_shrink_set_to_side(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::shrink_set_to_side_task, this), "queue_merge_sets");
-}
-
-void NodeJSWorker::queue_shrink_against_marked(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::shrink_against_marked_task,this), "queue_shrink_against_marked");
+void NodeJSWorker::queue_shift_element_by_values(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::shift_element_by_values_task,this), "queue_shift_set");
 }
 
 // ---------------------------------------------------------------------------------
@@ -324,21 +300,21 @@ void NodeJSWorker::queue_shrink_against_marked(TaskContext& tc) {
 // ---------------------------------------------------------------------------------
 
 void NodeJSWorker::queue_perform_mouse_action(TaskContext& tc) {
-  queue_get_xpath(tc);
+  queue_get_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::perform_mouse_action_task,this), "queue_perform_action_task");
   queue_block_events(tc); // After we're done interacting with the page, block events on the page.
   queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
-  queue_update_overlays(tc); // Our actions may have moved elements arounds, so we update our overlays.
+  queue_update_element(tc); // Our actions may have moved elements arounds, so we update our overlays.
 }
 
 void NodeJSWorker::queue_perform_mouse_hover(TaskContext& tc) {
-  queue_get_xpath(tc);
+  queue_get_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::perform_hover_action_task,this), "queue_perform_hover");
   queue_block_events(tc);
   queue_wait_until_loaded(tc);
-  queue_update_overlays(tc);
+  queue_update_element(tc);
 }
 
 void NodeJSWorker::queue_perform_post_mouse_hover(TaskContext& tc) {
@@ -346,21 +322,21 @@ void NodeJSWorker::queue_perform_post_mouse_hover(TaskContext& tc) {
 }
 
 void NodeJSWorker::queue_perform_text_action(TaskContext& tc) {
-  queue_get_xpath(tc);
+  queue_get_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::perform_text_action_task,this), "queue_perform_text_action");
   queue_block_events(tc);
   queue_wait_until_loaded(tc);
-  queue_update_overlays(tc);
+  queue_update_element(tc);
 }
 
 void NodeJSWorker::queue_perform_element_action(TaskContext& tc) {
-  queue_get_xpath(tc);
+  queue_get_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::perform_element_action_task,this), "queue_perform_element_action");
   queue_block_events(tc);
   queue_wait_until_loaded(tc);
-  queue_update_overlays(tc);
+  queue_update_element(tc);
 }
 
 // ---------------------------------------------------------------------------------
@@ -368,7 +344,7 @@ void NodeJSWorker::queue_perform_element_action(TaskContext& tc) {
 // ---------------------------------------------------------------------------------
 
 void NodeJSWorker::queue_start_mouse_hover(TaskContext& tc) {
-  queue_get_xpath(tc);
+  queue_get_current_element(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::start_mouse_hover_task,this), "queue_stop_mouse_hover");
 }
 
@@ -497,11 +473,11 @@ void NodeJSWorker::get_crosshair_info_task() {
 }
 
 // Should be run after a response message like get_crosshair_info_task that has set_index and overlay_index.
-void NodeJSWorker::get_xpath_task() {
+void NodeJSWorker::get_current_element_info() {
   QJsonObject args;
   args.insert(Message::kSetIndex, _chain_state.value(Message::kSetIndex));
   args.insert(Message::kOverlayIndex, _chain_state.value(Message::kOverlayIndex));
-  Message req(RequestType::kGetXPath,args);
+  Message req(RequestType::kGetElement,args);
   send_msg_task(req);
 }
 
@@ -511,12 +487,17 @@ void NodeJSWorker::merge_chain_state_task(const QJsonObject& map) {
   _scheduler->run_next_task();
 }
 
+void NodeJSWorker::copy_chain_property_task(const QString& src_prop, const QString& dest_prop) {
+  _chain_state.insert(dest_prop, _chain_state[src_prop]);
+}
+
 void NodeJSWorker::receive_chain_state_task(std::function<void(const QJsonObject&)> receive_chain_state) {
   receive_chain_state(_chain_state);
   _scheduler->run_next_task();
 }
 
 void NodeJSWorker::build_compute_node_task(ComponentDID compute_did) {
+  std::cerr << "building compute node!!\n";
   Entity* node = _manipulator->create_browser_node(true, compute_did, _chain_state);
   _manipulator->link_to_closest_node(node);
   _manipulator->set_ultimate_targets(node, false);
@@ -629,122 +610,56 @@ void NodeJSWorker::navigate_refresh_task() {
   send_msg_task(req);
 }
 
-void NodeJSWorker::find_iframe_task() {
-  QJsonObject args;
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kTextValues, _chain_state.value(Message::kTextValues));
-  args.insert(Message::kImageValues, _chain_state.value(Message::kImageValues));
-  args.insert(Message::kClickPos, _chain_state.value(Message::kClickPos));
-  Message req(RequestType::kFindIFrame, args);
-  send_msg_task(req);
-}
-
-void NodeJSWorker::switch_iframe_task() {
-  QJsonObject args;
-  args.insert(Message::kIFrame, _chain_state.value(Message::kIFrame));
-  Message req(RequestType::kSwitchIFrame, args);
-  send_msg_task(req);
-}
-
 // ------------------------------------------------------------------------
 // Set Creation/Modification Tasks.
 // ------------------------------------------------------------------------
 
-void NodeJSWorker::update_overlays_task() {
-  Message req(RequestType::kUpdateOveralys);
+void NodeJSWorker::update_element_task() {
+  Message req(RequestType::kUpdateElement);
   send_msg_task(req);
 }
 
-void NodeJSWorker::create_set_by_matching_values_task() {
+void NodeJSWorker::clear_element_task() {
+  Message req(RequestType::kClearElement);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::find_element_by_values_task() {
   QJsonObject args;
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   args.insert(Message::kTextValues, _chain_state.value(Message::kTextValues));
   args.insert(Message::kImageValues, _chain_state.value(Message::kImageValues));
 
-  Message req(RequestType::kCreateSetFromMatchValues);
+  Message req(RequestType::kFindElementByValues);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
 
-void NodeJSWorker::create_set_by_matching_type_task() {
+void NodeJSWorker::find_element_by_type_task() {
   QJsonObject args;
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
 
-  Message req(RequestType::kCreateSetFromWrapType);
+  Message req(RequestType::kFindElementByType);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
 
-void NodeJSWorker::delete_set_task() {
+void NodeJSWorker::shift_element_by_type_task() {
   QJsonObject args;
-  args.insert(Message::kSetIndex, _chain_state.value(Message::kSetIndex));
-
-  Message req(RequestType::kDeleteSet);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void NodeJSWorker::shift_set_task() {
-  QJsonObject args;
-  args.insert(Message::kSetIndex, _chain_state.value(Message::kSetIndex));
   args.insert(Message::kDirection, _chain_state.value(Message::kDirection));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
 
-  Message req(RequestType::kShiftSet);
+  Message req(RequestType::kShiftElementByType);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
 
-void NodeJSWorker::expand_set_task() {
+void NodeJSWorker::shift_element_by_values_task() {
   QJsonObject args;
-  args.insert(Message::kSetIndex, _chain_state.value(Message::kSetIndex));
   args.insert(Message::kDirection, _chain_state.value(Message::kDirection));
-  args.insert(Message::kMatchCriteria, _chain_state.value(Message::kMatchCriteria));
-
-  Message req(RequestType::kExpandSet);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void NodeJSWorker::mark_set_task() {
-  QJsonObject args;
-  args.insert(Message::kSetIndex, _chain_state.value(Message::kSetIndex));
-
-  Message req(RequestType::kMarkSet);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void NodeJSWorker::unmark_set_task() {
-  QJsonObject args;
-  args.insert(Message::kSetIndex, _chain_state.value(Message::kSetIndex));
-
-  Message req(RequestType::kUnmarkSet);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void NodeJSWorker::merge_sets_task() {
-  Message req(RequestType::kMergeMarkedSets);
-  send_msg_task(req);
-}
-
-void NodeJSWorker::shrink_set_to_side_task() {
-  QJsonObject args;
-  args.insert(Message::kSetIndex, _chain_state.value(Message::kSetIndex));
-  args.insert(Message::kDirection, _chain_state.value(Message::kDirection));
-
-  Message req(RequestType::kShrinkSet);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void NodeJSWorker::shrink_against_marked_task() {
-  QJsonObject args;
-  args.insert(Message::kSetIndex, _chain_state.value(Message::kSetIndex));
-  args.insert(Message::kDirections, _chain_state.value(Message::kDirections));
-
-  Message req(RequestType::kShrinkSetToMarked);
+  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
+  args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
+  Message req(RequestType::kShiftElementByValues);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -826,7 +741,7 @@ void NodeJSWorker::mouse_hover_task() {
   queue_perform_post_mouse_hover(tc);
   queue_block_events(tc);
   queue_wait_until_loaded(tc);
-  queue_update_overlays(tc);
+  queue_update_element(tc);
 }
 
 void NodeJSWorker::post_hover_task() {
