@@ -460,6 +460,7 @@ class PageWrap {
     get_by_all_values(wrap_type: WrapType, target_values: string[]): ElemWrap[] {
         // Get our initial candiate elem wraps.
         let candidates: ElemWrap[] = this.get_by_any_value(wrap_type, target_values)
+        console.log('num candidates: ' + candidates.length)
 
         // Get our getter.
         let getter: () => string = ElemWrap.get_getter_from_wrap_type(wrap_type)
@@ -474,6 +475,7 @@ class PageWrap {
                 }
             }
         }
+        console.log('num overlaps: ' + overlaps.length)
 
         // Find the elem wraps which have surrounding elem wraps matching the target_values.
         let matching: ElemWrap[] = []
@@ -489,12 +491,14 @@ class PageWrap {
                 matching.push(candidates[i])
             }
         }
+        console.log('num matching: ' + matching.length)
 
         // Initialize eliminated to all false.
         let eliminated: boolean[] = []
         for (let i = 0; i < matching.length; i++) {
             eliminated.push(false)
         }
+        console.log('num eliminated: ' + eliminated.length)
 
         // Coalesce all contained elem wraps together
         // and find the smallest most internal element
@@ -522,6 +526,7 @@ class PageWrap {
                 results.push(matching[i])
             }
         }
+        console.log('num results: ' + results.length)
 
         // Phew we're done!
         return results

@@ -83,7 +83,7 @@ class ContentCommHandler {
             case RequestType.kFindElementByValues: {
                 let elem_wraps: ElemWrap[] = this.gui_collection.page_wrap.get_by_all_values(req.args.wrap_type, req.args.target_values)
                 if (elem_wraps.length > 0) {
-                    let values : IElementInfo[]
+                    let values : IElementInfo[] = []
                     elem_wraps.forEach((e)=>{
                         e.update()
                         let box = new Box(e.get_box())
@@ -98,7 +98,7 @@ class ContentCommHandler {
             case RequestType.kFindElementByType: {
                 let elem_wraps = this.gui_collection.page_wrap.get_by_any_value(req.args.wrap_type, [])
                 if (elem_wraps.length > 0) {
-                    let values : IElementInfo[]
+                    let values : IElementInfo[] = []
                     elem_wraps.forEach((e)=>{
                         e.update()
                         let box = new Box(e.get_box())
@@ -144,9 +144,9 @@ class ContentCommHandler {
                 let pos = new Point(req.args.click_pos)
                 // Get the frame bounds in global client space.
                 let box = PageWrap.get_iframe_global_client_bounds(window)
-                box.to_global_client_space(window)
                 // If this frame doesn't contain the click point, return.
                 if (!box.contains_point(pos)) {
+                    console.log('111')
                     return
                 }
                 // If any of our child frames contains the click point, return.
@@ -154,8 +154,8 @@ class ContentCommHandler {
                     var iframes = window.document.getElementsByTagName('iframe');
                     for (let i = 0; i < iframes.length; i++) {
                         let child_box = PageWrap.get_iframe_global_client_bounds(iframes[i].contentWindow)
-                        child_box.to_global_client_space(window)
                         if (child_box.contains_point(pos)) {
+                            console.log('222')
                             return
                         }
                     }
@@ -164,6 +164,7 @@ class ContentCommHandler {
                 let info = this.gui_collection.get_crosshair_info(new Point(req.args.click_pos))
                 let resp = new InfoMessage(-1, InfoType.kCollectClick, info)
                 this.content_comm.send_to_bg(resp)
+                console.log('333' + JSON.stringify(info))
             } break
 
         }

@@ -489,6 +489,7 @@ void NodeJSWorker::merge_chain_state_task(const QJsonObject& map) {
 
 void NodeJSWorker::copy_chain_property_task(const QString& src_prop, const QString& dest_prop) {
   _chain_state.insert(dest_prop, _chain_state[src_prop]);
+  _scheduler->run_next_task();
 }
 
 void NodeJSWorker::receive_chain_state_task(std::function<void(const QJsonObject&)> receive_chain_state) {
@@ -627,8 +628,7 @@ void NodeJSWorker::clear_element_task() {
 void NodeJSWorker::find_element_by_values_task() {
   QJsonObject args;
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kTextValues, _chain_state.value(Message::kTextValues));
-  args.insert(Message::kImageValues, _chain_state.value(Message::kImageValues));
+  args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
 
   Message req(RequestType::kFindElementByValues);
   req.insert(Message::kArgs, args);

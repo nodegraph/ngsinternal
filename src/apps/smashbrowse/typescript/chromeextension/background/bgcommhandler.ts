@@ -20,6 +20,9 @@ class BgCommHandler {
     // Timer.
     private timer: number
 
+    // Task Queue.
+    private tasks: (()=>void) [] = []
+
     // Constructor.
     constructor(bc: BgComm, bw: BrowserWrap) {
         this.bg_comm = bc
@@ -32,6 +35,7 @@ class BgCommHandler {
     }
     collect_elements(elems: IElementInfo[]) {
         this.collected_elems = this.collected_elems.concat(elems);
+        console.log('collected elems: ' + JSON.stringify(this.collected_elems))
     }
     collect_boolean(b: boolean) {
         this.collected_booleans.push(b)
@@ -111,54 +115,70 @@ class BgCommHandler {
         return (e1.box.left <= e2.box.right) && (e2.box.left <= e1.box.right)
     }
 
+    // Functor Queue.
+    queue(task: ()=>void) {
+        this.tasks.push(task)
+    }
+
+    clear_tasks() {
+        this.tasks.length = 0
+    }
+
+    run_next_task() {
+        if (this.tasks.length == 0) {
+            return
+        }
+        let t = this.tasks.shift()
+        t()
+    }
+
     // Other.
     block_events() {
         let req = new RequestMessage(-1, RequestType.kBlockEvents)
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
-            console.log('finished block events 111')
+            console.log('finished block events')
+            this.run_next_task()
         })
-        console.log('finished block events 222')
     }
 
     unblock_events() {
         let req = new RequestMessage(-1, RequestType.kUnblockEvents)
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
-            console.log('finished unblock events 111')
+            console.log('finished unblock events')
+            this.run_next_task()
         })
-        console.log('finished unblock events 222')
     }
 
-    wait_until_loaded(done: () => void) {
+    wait_until_loaded() {
         let req = new RequestMessage(-1, RequestType.kWaitUntilLoaded)
         this.collected_booleans.length = 0
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
-            console.log('finished waiting until loaded 111')
+            console.log('finished waiting until loaded')
+            if (this.collected_booleans.length == 0) {
+                clearInterval(this.timer)
+                this.timer = null
+                this.run_next_task()
+            } else if (this.timer == null) {
+                this.timer = setInterval(() => { this.wait_until_loaded() }, 1000)
+            }
         })
-        console.log('finished waiting until loaded 222')
-        if (this.collected_booleans.length == 0) {
-            clearInterval(this.timer)
-            this.timer = null
-            done()
-        } else if (this.timer == null) {
-            this.timer = setInterval(() => { this.wait_until_loaded(done) }, 1000)
-        }
     }
 
     // Element mutation methods.
     update_element() {
         let req = new RequestMessage(-1, RequestType.kUpdateElement)
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
-            console.log('finished update element 111')
+            console.log('finished update element')
+            this.run_next_task()
         })
-        console.log('finished update element 222')
     }
 
     clear_element() {
         let req = new RequestMessage(-1, RequestType.kClearElement)
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
-            console.log('finished clear element 111')
+            console.log('finished clear element')
+            this.run_next_task()
         })
-        console.log('finished clear element 222')
     }
 
     // Result will be in this.found_elem. Error will be in this.error_msg.
@@ -168,7 +188,7 @@ class BgCommHandler {
         this.collected_elems.length = 0
         let req = new RequestMessage(-1, RequestType.kGetElement)
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
-            console.log('finished get current element 111')
+            console.log('finished get current element')
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
                 this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
@@ -177,8 +197,8 @@ class BgCommHandler {
             } else {
                 this.error_msg = "There were multiple current elements."
             }
+            this.run_next_task()
         })
-        console.log('finished get current element 222')
     }
 
     // Result will be in this.found_elem. Error will be in this.error_msg.
@@ -189,7 +209,7 @@ class BgCommHandler {
         this.collected_elems.length = 0
         let req = new RequestMessage(-1, RequestType.kSetElement, info)
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
-            console.log('finished set current element 111')
+            console.log('finished set current element')
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
                 this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
@@ -198,8 +218,8 @@ class BgCommHandler {
             } else {
                 this.error_msg = "There were multiple elements matching the make current request."
             }
+            this.run_next_task()
         })
-        console.log('finished set current element 222')
     }
 
     // Result will be in this.found_elems. Error will be in this.error_msg.
@@ -210,6 +230,7 @@ class BgCommHandler {
         let req = new RequestMessage(-1, RequestType.kFindElementByType, {wrap_type: wrap_type})
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
+            this.run_next_task()
         })
     }
 
@@ -218,9 +239,12 @@ class BgCommHandler {
         this.found_elems = []
         this.error_msg = ""
         this.collected_elems.length = 0
-        let req = new RequestMessage(-1, RequestType.kFindElementByValues, {wrap_type: wrap_type, values: target_values})
+        let req = new RequestMessage(-1, RequestType.kFindElementByValues, {wrap_type: wrap_type, target_values: target_values})
+        console.log("find_all_elements_by_values 1111")
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
+            console.log("find_all_elements_by_values 2222")
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
+            this.run_next_task()
         })
     }
 
@@ -279,127 +303,265 @@ class BgCommHandler {
             // Requests that are broadcast to all frames.
             // --------------------------------------------------
             case RequestType.kBlockEvents: {
-                this.block_events()
-                let response = new ResponseMessage(req.id, true, true)
-                this.bg_comm.send_to_nodejs(response)
-            } break
-            case RequestType.kUnblockEvents: {
-                this.unblock_events()
-                let response = new ResponseMessage(req.id, true, true)
-                this.bg_comm.send_to_nodejs(response)
-            } break
-            case RequestType.kWaitUntilLoaded: {
-                this.wait_until_loaded(()=>{
+                this.clear_tasks()
+                this.queue(() => {
+                    this.block_events()
+                })
+                this.queue(()=> {
                     let response = new ResponseMessage(req.id, true, true)
                     this.bg_comm.send_to_nodejs(response)
                 })
-            }
+                this.run_next_task()
+            } break
+            case RequestType.kUnblockEvents: {
+                this.clear_tasks()
+                this.queue(() => {
+                    this.unblock_events()
+                })
+                this.queue(() => {
+                    let response = new ResponseMessage(req.id, true, true)
+                    this.bg_comm.send_to_nodejs(response)
+                })
+                this.run_next_task()
+            } break
+            case RequestType.kWaitUntilLoaded: {
+                this.clear_tasks()
+                this.queue(() => {
+                    this.wait_until_loaded()
+                })
+                this.queue(() => {
+                    let response = new ResponseMessage(req.id, true, true)
+                    this.bg_comm.send_to_nodejs(response)
+                })
+                this.run_next_task()
+            } break
             case RequestType.kUpdateElement: {
-                this.update_element()
-                let response = new ResponseMessage(req.id, true, true)
-                this.bg_comm.send_to_nodejs(response)
+                this.clear_tasks()
+                this.queue(() => {
+                    this.update_element()
+                })
+                this.queue(() => {
+                    let response = new ResponseMessage(req.id, true, true)
+                    this.bg_comm.send_to_nodejs(response)
+                })
+                this.run_next_task()
             } break
             case RequestType.kClearElement:{
-                this.clear_element()
-                let response = new ResponseMessage(req.id, true, true)
-                this.bg_comm.send_to_nodejs(response)
+                this.clear_tasks()
+                this.queue(() => {
+                    this.clear_element()
+                })
+                this.queue(() => {
+                    let response = new ResponseMessage(req.id, true, true)
+                    this.bg_comm.send_to_nodejs(response)
+                })
+                this.run_next_task()
             } break
             case RequestType.kGetElement: {
-                this.get_current_element()
-                if (this.found_elem) {
-                    let response = new ResponseMessage(req.id, true, this.found_elem)
-                    this.bg_comm.send_to_nodejs(response)
-                } else {
-                    let response = new ResponseMessage(req.id, false, this.error_msg)
-                    this.bg_comm.send_to_nodejs(response)
-                }
-            }
+                this.clear_tasks()
+                this.queue(() => {
+                    this.get_current_element()
+                })
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
+            } break
             case RequestType.kSetElement: {
-                this.set_current_element(req.args)
-                if (this.found_elem) {
-                    let response = new ResponseMessage(req.id, true, this.found_elem)
-                    this.bg_comm.send_to_nodejs(response)
-                } else {
-                    let response = new ResponseMessage(req.id, false, this.error_msg)
-                    this.bg_comm.send_to_nodejs(response)
-                }
+                this.clear_tasks()
+                this.queue(() => {
+                    this.set_current_element(req.args)
+                })
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
             } break
             case RequestType.kFindElementByValues: {
-                this.find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
-                if (this.found_elems.length > 0) {
-                    BgCommHandler.sort_elements(this.found_elems)
-                    let response = new ResponseMessage(req.id, true, this.found_elems[0])
-                    this.bg_comm.send_to_nodejs(response)
-                } else {
-                    let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given values.")
-                    this.bg_comm.send_to_nodejs(response)
-                }
+                this.clear_tasks()
+                this.queue(() => {
+                    this.find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
+                    console.log("zzzzzzzzzzzzzzz")
+                })
+                this.queue(() => {
+                    console.log("find_all_elements_by_values 3333" + this.found_elems.length)
+                    if (this.found_elems.length > 0) {
+                        BgCommHandler.sort_elements(this.found_elems)
+                        this.found_elem = this.found_elems[0]
+                        this.run_next_task()
+                    } else {
+                        // Wipe out the queue.
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given values.")
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.queue(() => {
+                    this.set_current_element(this.found_elem)
+                })
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                console.log("yyyyyyyyyyyyyyyyy")
+                this.run_next_task()
             } break
             case RequestType.kFindElementByType: {
-                this.find_all_elements_by_type(req.args.wrap_type)
-                if (this.found_elems.length > 0) {
-                    BgCommHandler.sort_elements(this.found_elems)
-                    let response = new ResponseMessage(req.id, true, this.found_elems[0])
-                    this.bg_comm.send_to_nodejs(response)
-                } else {
-                    let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given type.")
-                    this.bg_comm.send_to_nodejs(response)
-                }
+                this.clear_tasks()
+                this.queue(() => {
+                    this.find_all_elements_by_type(req.args.wrap_type)
+                })
+                this.queue(() => {
+                    if (this.found_elems.length > 0) {
+                        BgCommHandler.sort_elements(this.found_elems)
+                        this.found_elem = this.found_elems[0]
+                        this.run_next_task()                        
+                    } else {
+                        // Wipe out the queue.
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given type.")
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.queue(() => {
+                    this.set_current_element(this.found_elem)
+                })
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
             } break
             case RequestType.kShiftElementByType: {
-                // Get our current element's info.
-                this.get_current_element()
-                if (!this.found_elem) {
-                    let response = new ResponseMessage(req.id, false, this.error_msg)
-                    this.bg_comm.send_to_nodejs(response)
-                    return
-                }
-
-                // Now get all the possible elements that we can shift to.
-                this.find_all_elements_by_type(req.args.wrap_type)
-                if (this.found_elems.length == 0) {
-                    let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
-                    this.bg_comm.send_to_nodejs(response)
-                } else {
-                    let best = BgCommHandler.find_neighbor(this.found_elem, this.found_elems, req.args.direction)
-                    if (!best) {
-                        let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to in the specified direction.")
+                this.clear_tasks()
+                this.queue(() => {
+                    // Get our current element's info.
+                    this.get_current_element()
+                })
+                this.queue(() => {
+                    if (!this.found_elem) {
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let response = new ResponseMessage(req.id, true, this.collected_elems[0])
+                        this.run_next_task()
+                    }
+                })
+                this.queue(() => {
+                    // Now get all the possible elements that we can shift to.
+                    this.find_all_elements_by_type(req.args.wrap_type)
+                })
+                this.queue(() => {
+                    if (this.found_elems.length == 0) {
+                        // Wipe out the queue.
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let best = BgCommHandler.find_neighbor(this.found_elem, this.found_elems, req.args.direction)
+                        if (!best) {
+                            // Wipe out the queue.
+                            this.clear_tasks()
+                            let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to in the specified direction.")
+                            this.bg_comm.send_to_nodejs(response)
+                        } else {
+                            this.found_elem = best
+                            this.run_next_task()
+                        }
+                    }
+                })
+                this.queue(() => {
+                    this.set_current_element(this.found_elem)
+                })
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
                         this.bg_comm.send_to_nodejs(response)
                     }
-                }
+                })
+                this.run_next_task()
             } break
             case RequestType.kShiftElementByValues: {
-                // Get our current element's info.
-                this.get_current_element()
-                if (!this.found_elem) {
-                    let response = new ResponseMessage(req.id, false, this.error_msg)
-                    this.bg_comm.send_to_nodejs(response)
-                    return
-                }
-
-                // Now get all the possible elements that we can shift to.
-                this.find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
-                if (this.found_elems.length == 0) {
-                    let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
-                    this.bg_comm.send_to_nodejs(response)
-                } else {
-                    let best = BgCommHandler.find_neighbor(this.found_elem, this.found_elems, req.args.direction)
-                    if (!best) {
-                        let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values in the specified direction.")
+                this.clear_tasks()
+                this.queue(() => {
+                    // Get our current element's info.
+                    this.get_current_element()
+                })
+                this.queue(() => {
+                    if (!this.found_elem) {
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let response = new ResponseMessage(req.id, true, this.collected_elems[0])
+                        this.run_next_task()
+                    }
+                })
+                this.queue(() => {
+                    // Now get all the possible elements that we can shift to.
+                    this.find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
+                })
+                this.queue(() => {
+                    if (this.found_elems.length == 0) {
+                        // Wipe out the queue.
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let best = BgCommHandler.find_neighbor(this.found_elem, this.found_elems, req.args.direction)
+                        if (!best) {
+                            // Wipe out the queue.
+                            this.clear_tasks()
+                            let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values in the specified direction.")
+                            this.bg_comm.send_to_nodejs(response)
+                        } else {
+                            this.found_elem = best
+                            this.run_next_task()
+                        }
+                    }
+                })
+                this.queue(() => {
+                    this.set_current_element(this.found_elem)
+                })
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
                         this.bg_comm.send_to_nodejs(response)
                     }
-                }
+                })
+                this.run_next_task()
             } break
             case RequestType.kPerformElementAction: {
                 this.collected_elems.length = 0
                 this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
-                    console.log('finished performing element action')
+                    console.log('finished performing element action 111')
                     if (this.collected_elems.length == 1) {
                         let response = new ResponseMessage(req.id, true, this.collected_elems[0])
                         this.bg_comm.send_to_nodejs(response)
@@ -411,11 +573,12 @@ class BgCommHandler {
                         this.bg_comm.send_to_nodejs(response)
                     }
                     })
+                console.log('finished performing element action 222')
             } break
             case RequestType.kGetCrosshairInfo: {
                 this.collected_clicks.length = 0
                 this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
-                    console.log('finished getting crosshair info')
+                    console.log('finished getting crosshair info 111')
                     if (this.collected_clicks.length == 1) {
                         let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
                         this.bg_comm.send_to_nodejs(response)
@@ -427,6 +590,7 @@ class BgCommHandler {
                         this.bg_comm.send_to_nodejs(response)
                     }
                     })
+                console.log('finished getting crosshair info 222')
             } break
             default: {
                 console.error("BgCommHandler got an unknown request.")
