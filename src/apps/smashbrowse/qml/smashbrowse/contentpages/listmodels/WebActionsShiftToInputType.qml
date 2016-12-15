@@ -8,32 +8,32 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Above"
-        description: "Expand to similar elements above."
-        script: "web_recorder.record_expand_above();
+        description: "Shift to text input elements above."
+        script: "web_recorder.record_shift_to_input_type_above();
         		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Below"
-        description: "Expand to similar elements below."
-        script: "web_recorder.record_expand_below();
+        description: "Shift to text input elements below."
+        script: "web_recorder.record_shift_to_input_type_below();
         		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-        title: "Left"
-        description: "Expand to similar elements on the left."
-        script: "web_recorder.record_expand_left();
+        title: "On Left"
+        description: "Shift to text input elements on left."
+        script: "web_recorder.record_shift_to_input_type_on_left();
         		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
-        title: "Right"
-        description: "Expand to similar elements on the right."
-        script: "web_recorder.record_expand_right();
+        title: "On Right"
+        description: "Shift to text input elements on right."
+        script: "web_recorder.record_shift_to_input_type_on_right();
         		main_bar.switch_to_current_mode();"
     }
 

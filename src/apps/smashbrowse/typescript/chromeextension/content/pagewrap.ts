@@ -123,6 +123,15 @@ class PageWrap {
         return win
     }
 
+    static get_weight(global_client_box: Box) {
+        let max_page_width = 10000
+        let max_iframe_width = 10000
+        let whole_weight = (global_client_box.top * max_page_width) + global_client_box.left
+        let fraction_weight = ((global_client_box.get_height() * max_iframe_width) + global_client_box.get_width()) / max_iframe_width / max_iframe_width
+        let weight = whole_weight + fraction_weight
+        return weight
+    }
+
     // Sort iframes according to their top left corner and size.
     // We sort the frames as if they were pixels.
     // The maximum width of the page is arbitrarily set at 10000.
@@ -130,15 +139,11 @@ class PageWrap {
     static sort_iframes(iframes: string[]) {
         console.log("iframes before: " + JSON.stringify(iframes))
 
-        let max_page_width = 10000
-        let max_iframe_width = 10000
         let weighted_iframes: any[]
         for (let i=0; i<iframes.length; i++) {
             let win = PageWrap.get_iframe_window(iframes[i])
             let box = PageWrap.get_iframe_global_client_bounds(win)
-            let whole_weight = (box.top * max_page_width) + box.left
-            let fraction_weight = ((box.get_height() * max_iframe_width) + box.get_width()) / max_iframe_width / max_iframe_width
-            let weight = whole_weight + fraction_weight
+            let weight = PageWrap.get_weight(box)
             weighted_iframes.push({iframe: iframes[i], weight: weight})
         }
 

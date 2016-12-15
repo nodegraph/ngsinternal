@@ -86,6 +86,22 @@ class GUICOMPUTES_EXPORT NavigateToCompute: public BrowserCompute {
 
 };
 
+class GUICOMPUTES_EXPORT NavigateBackCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, NavigateBackCompute);
+  NavigateBackCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+ protected:
+  virtual bool update_state();
+};
+
+class GUICOMPUTES_EXPORT NavigateForwardCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, NavigateForwardCompute);
+  NavigateForwardCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+ protected:
+  virtual bool update_state();
+};
+
 class GUICOMPUTES_EXPORT NavigateRefreshCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, NavigateRefreshCompute);
@@ -94,10 +110,10 @@ class GUICOMPUTES_EXPORT NavigateRefreshCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT CreateSetFromValuesCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT FindElementByValuesCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, CreateSetFromValuesCompute);
-  CreateSetFromValuesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, FindElementByValuesCompute);
+  FindElementByValuesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
@@ -107,10 +123,10 @@ class GUICOMPUTES_EXPORT CreateSetFromValuesCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT CreateSetFromTypeCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT FindElementByTypeCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, CreateSetFromTypeCompute);
-  CreateSetFromTypeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, FindElementByTypeCompute);
+  FindElementByTypeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();

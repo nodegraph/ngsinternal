@@ -263,6 +263,14 @@ void NodeJSWorker::queue_navigate_to(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::navigate_to_task,this), "queue_navigate_to");
 }
 
+void NodeJSWorker::queue_navigate_back(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::navigate_back_task,this), "queue_navigate_refresh");
+}
+
+void NodeJSWorker::queue_navigate_forward(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::navigate_forward_task,this), "queue_navigate_refresh");
+}
+
 void NodeJSWorker::queue_navigate_refresh(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::navigate_refresh_task,this), "queue_navigate_refresh");
 }
@@ -288,11 +296,11 @@ void NodeJSWorker::queue_find_element_by_type(TaskContext& tc) {
 }
 
 void NodeJSWorker::queue_shift_element_by_type(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::shift_element_by_type_task,this), "queue_shift_set");
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::shift_element_by_type_task,this), "queue_shift_element_by_type");
 }
 
 void NodeJSWorker::queue_shift_element_by_values(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::shift_element_by_values_task,this), "queue_shift_set");
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::shift_element_by_values_task,this), "queue_shift_element_by_values");
 }
 
 // ---------------------------------------------------------------------------------
@@ -603,6 +611,16 @@ void NodeJSWorker::navigate_to_task() {
   QJsonObject args;
   args.insert(Message::kURL, _chain_state.value(Message::kURL));
   Message req(RequestType::kNavigateTo, args);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::navigate_back_task() {
+  Message req(RequestType::kNavigateBack);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::navigate_forward_task() {
+  Message req(RequestType::kNavigateForward);
   send_msg_task(req);
 }
 

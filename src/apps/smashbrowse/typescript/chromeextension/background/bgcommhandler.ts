@@ -68,33 +68,43 @@ class BgCommHandler {
     static find_neighbor(elem: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = elem
+        console.log('elem: ' + JSON.stringify(elem))
         candidates.forEach((candidate) => {
+            console.log('candidate: ' + JSON.stringify(candidate))
             // Now choose the closest element on one side, according to the direction in the request.
             switch(dir) {
                 case DirectionType.left: {
                     if (BgCommHandler.elements_in_row(candidate, elem)) {
+                        console.log('llll')
                         if (candidate.weight < best.weight) {
+                            console.log('llll2222')
                             best = candidate
                         }
                     }
                 } break
                 case DirectionType.right: {
                     if (BgCommHandler.elements_in_row(candidate, elem)) {
+                        console.log('rrrr')
                         if (candidate.weight > best.weight) {
+                            console.log('rrrr2222')
                             best = candidate
                         }
                     }
                 } break
                 case DirectionType.down: {
                     if (BgCommHandler.elements_in_column(candidate, elem)) {
+                        console.log('dddd')
                         if (candidate.weight > best.weight) {
+                            console.log('dddd2222')
                             best = candidate
                         }
                     }
                 } break
                 case DirectionType.up: {
                     if (BgCommHandler.elements_in_column(candidate, elem)) {
+                        console.log('uuuu')
                         if (candidate.weight < best.weight) {
+                            console.log('uuuu2222')
                             best = candidate
                         }
                     }
@@ -230,6 +240,7 @@ class BgCommHandler {
         let req = new RequestMessage(-1, RequestType.kFindElementByType, {wrap_type: wrap_type})
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
+            BgCommHandler.sort_elements(this.found_elems)
             this.run_next_task()
         })
     }
@@ -244,6 +255,7 @@ class BgCommHandler {
         this.bg_comm.send_to_content(req, (unused_return_value: any) =>{
             console.log("find_all_elements_by_values 2222")
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
+            BgCommHandler.sort_elements(this.found_elems)
             this.run_next_task()
         })
     }
@@ -393,12 +405,10 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.queue(() => {
                     this.find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
-                    console.log("zzzzzzzzzzzzzzz")
                 })
                 this.queue(() => {
                     console.log("find_all_elements_by_values 3333" + this.found_elems.length)
                     if (this.found_elems.length > 0) {
-                        BgCommHandler.sort_elements(this.found_elems)
                         this.found_elem = this.found_elems[0]
                         this.run_next_task()
                     } else {
@@ -420,7 +430,6 @@ class BgCommHandler {
                         this.bg_comm.send_to_nodejs(response)
                     }
                 })
-                console.log("yyyyyyyyyyyyyyyyy")
                 this.run_next_task()
             } break
             case RequestType.kFindElementByType: {
@@ -430,7 +439,6 @@ class BgCommHandler {
                 })
                 this.queue(() => {
                     if (this.found_elems.length > 0) {
-                        BgCommHandler.sort_elements(this.found_elems)
                         this.found_elem = this.found_elems[0]
                         this.run_next_task()                        
                     } else {
@@ -457,10 +465,12 @@ class BgCommHandler {
             case RequestType.kShiftElementByType: {
                 this.clear_tasks()
                 this.queue(() => {
+                    console.log('uuuuuu')
                     // Get our current element's info.
                     this.get_current_element()
                 })
                 this.queue(() => {
+                    console.log('vvvvv')
                     if (!this.found_elem) {
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, false, this.error_msg)
@@ -470,10 +480,12 @@ class BgCommHandler {
                     }
                 })
                 this.queue(() => {
+                    console.log('wwwww')
                     // Now get all the possible elements that we can shift to.
                     this.find_all_elements_by_type(req.args.wrap_type)
                 })
                 this.queue(() => {
+                    console.log('xxxxxxxx')
                     if (this.found_elems.length == 0) {
                         // Wipe out the queue.
                         this.clear_tasks()
@@ -493,10 +505,13 @@ class BgCommHandler {
                     }
                 })
                 this.queue(() => {
+                    console.log('yyyyyy')
                     this.set_current_element(this.found_elem)
                 })
                 this.queue(() => {
+                    console.log('zzzzzzzz')
                     if (this.found_elem) {
+                        console.log('fffffffffffffff found element to shift to: ' + this.found_elem.iframe_index_path + this.found_elem.xpath)
                         let response = new ResponseMessage(req.id, true, this.found_elem)
                         this.bg_comm.send_to_nodejs(response)
                     } else {

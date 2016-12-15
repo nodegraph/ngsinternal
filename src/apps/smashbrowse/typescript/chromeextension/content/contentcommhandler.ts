@@ -53,10 +53,16 @@ class ContentCommHandler {
             }
             case RequestType.kGetElement: {
                 // Only one or none of the frames should have an element.
-                let xpath = this.gui_collection.overlay_sets.get_xpath(0, 0)
+                let elem_wrap = this.gui_collection.overlay_sets.get_elem_wrap(0, 0)
+                
                 // If the xpath is not empty then we are that one element.
-                if (xpath != "") {
-                    let value: IElementInfo = { iframe_index_path: iframe_index_path, xpath: xpath }
+                if (elem_wrap) {
+                    let xpath = elem_wrap.get_xpath()
+                    let box = new Box(elem_wrap.get_box())
+                    box.to_local_client_space(window)
+                    box.to_global_client_space(window)
+                    let weight = PageWrap.get_weight(box)
+                    let value: IElementInfo = { iframe_index_path: iframe_index_path, xpath: xpath, box: box, weight: weight }
                     let msg = new InfoMessage(0, InfoType.kCollectElement, value)
                     this.content_comm.send_to_bg(msg)
                 }
@@ -72,11 +78,17 @@ class ContentCommHandler {
                         this.gui_collection.overlay_sets.update()
 
                         // We send the element info back to bg comm. Only one of these frames should be returning a value.
-                        let value: IElementInfo = { iframe_index_path: iframe_index_path, xpath: req.args.xpath }
+                        let box = new Box(elem_wraps[0].get_box())
+                        box.to_local_client_space(window)
+                        box.to_global_client_space(window)
+                        let weight = PageWrap.get_weight(box)
+                        let value: IElementInfo = { iframe_index_path: iframe_index_path, xpath: req.args.xpath, box: box, weight: weight }
                         let im = new InfoMessage(0, InfoType.kCollectElement, value)
                         this.content_comm.send_to_bg(im)
+                    } else if (elem_wraps.length > 1) {
+                        console.error("More than one element matches the xpath of the element we want to make current: " + iframe_index_path)
                     } else {
-                        console.error("More than one element is selected in frame: " + iframe_index_path)
+                        console.error("No element matches the xpath of the element we want to make current: " + iframe_index_path)
                     }
                 }
             } break
@@ -89,7 +101,8 @@ class ContentCommHandler {
                         let box = new Box(e.get_box())
                         box.to_local_client_space(window)
                         box.to_global_client_space(window)
-                        values.push({iframe_index_path: iframe_index_path, xpath: e.get_xpath(), box: box })
+                        let weight = PageWrap.get_weight(box)
+                        values.push({iframe_index_path: iframe_index_path, xpath: e.get_xpath(), box: box, weight: weight })
                     })
                     let im = new InfoMessage(0, InfoType.kCollectElements, values)
                     this.content_comm.send_to_bg(im)
@@ -104,7 +117,8 @@ class ContentCommHandler {
                         let box = new Box(e.get_box())
                         box.to_local_client_space(window)
                         box.to_global_client_space(window)
-                        values.push({iframe_index_path: iframe_index_path, xpath: e.get_xpath(), box: box })
+                        let weight = PageWrap.get_weight(box)
+                        values.push({iframe_index_path: iframe_index_path, xpath: e.get_xpath(), box: box, weight: weight })
                     })
                     let im = new InfoMessage(0, InfoType.kCollectElements, values)
                     this.content_comm.send_to_bg(im)
@@ -135,8 +149,13 @@ class ContentCommHandler {
                     }
                 }
                 // Only one of the frames will actually send a response back to bgcomm.
-                let xpath = this.gui_collection.overlay_sets.get_xpath(0, 0)
-                let info: IElementInfo = { iframe_index_path: iframe_index_path, xpath: xpath }
+                let elem_wrap = this.gui_collection.overlay_sets.get_elem_wrap(0, 0)
+                let xpath = elem_wrap.get_xpath()
+                let box = new Box(elem_wrap.get_box())
+                box.to_local_client_space(window)
+                box.to_global_client_space(window)
+                let weight = PageWrap.get_weight(box)
+                let info: IElementInfo = { iframe_index_path: iframe_index_path, xpath: xpath, box: box, weight: weight }
                 let im = new InfoMessage(0, InfoType.kCollectElement, info)
                 this.content_comm.send_to_bg(im)
             } break

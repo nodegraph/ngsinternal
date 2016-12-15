@@ -102,18 +102,12 @@
         <file>qml/smashbrowse/contentpages/listmodels/FileMenuActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsCreateByMatchingValues.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsCreateFromWrapType.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsFindFirstElement.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsShift.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToText.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToImages.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToInputs.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToSelects.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToIFrames.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsExpand.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsMark.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShrink.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShrinkAgainstMarked.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToTextType.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToImageType.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToInputType.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToSelectType.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformAction.qml</file>
 		<file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformScroll.qml</file>
         

@@ -27,51 +27,48 @@ Q_OBJECT
   // Record Actions.
   // ---------------------------------------------------------------------------------
 
-  // Record Browser Actions.
+  // Browser actions.
   Q_INVOKABLE void record_open_browser();
   Q_INVOKABLE void record_close_browser();
   Q_INVOKABLE void record_is_browser_open();
   Q_INVOKABLE void record_check_browser_size();
 
-  // Record Navigate Actions.
+  // Navigate the browser.
   Q_INVOKABLE void record_navigate_to(const QString& url);
   Q_INVOKABLE void record_navigate_refresh();
+  Q_INVOKABLE void record_navigate_back();
+  Q_INVOKABLE void record_navigate_forward();
 
-  // Record Create Set By Matching Values.
+  // Find the first element by values.
   Q_INVOKABLE void record_find_element_by_text();
   Q_INVOKABLE void record_find_element_by_images();
 
-  // Record Create Set By Type.
-  Q_INVOKABLE void record_create_set_of_inputs();
-  Q_INVOKABLE void record_create_set_of_selects();
-  Q_INVOKABLE void record_create_set_of_images();
-  Q_INVOKABLE void record_create_set_of_text();
+  // Find the first element by type.
+  Q_INVOKABLE void record_find_element_by_text_type();
+  Q_INVOKABLE void record_find_element_by_image_type();
+  Q_INVOKABLE void record_find_element_by_input_type();
+  Q_INVOKABLE void record_find_element_by_select_type();
 
-  // Record Shift Sets.
-  Q_INVOKABLE void record_shift_to_text_above();
-  Q_INVOKABLE void record_shift_to_text_below();
-  Q_INVOKABLE void record_shift_to_text_on_left();
-  Q_INVOKABLE void record_shift_to_text_on_right();
+  // Shift the element.
+  Q_INVOKABLE void record_shift_to_text_type_above();
+  Q_INVOKABLE void record_shift_to_text_type_below();
+  Q_INVOKABLE void record_shift_to_text_type_on_left();
+  Q_INVOKABLE void record_shift_to_text_type_on_right();
 
-  Q_INVOKABLE void record_shift_to_images_above();
-  Q_INVOKABLE void record_shift_to_images_below();
-  Q_INVOKABLE void record_shift_to_images_on_left();
-  Q_INVOKABLE void record_shift_to_images_on_right();
+  Q_INVOKABLE void record_shift_to_image_type_above();
+  Q_INVOKABLE void record_shift_to_image_type_below();
+  Q_INVOKABLE void record_shift_to_image_type_on_left();
+  Q_INVOKABLE void record_shift_to_image_type_on_right();
 
-  Q_INVOKABLE void record_shift_to_inputs_above();
-  Q_INVOKABLE void record_shift_to_inputs_below();
-  Q_INVOKABLE void record_shift_to_inputs_on_left();
-  Q_INVOKABLE void record_shift_to_inputs_on_right();
+  Q_INVOKABLE void record_shift_to_input_type_above();
+  Q_INVOKABLE void record_shift_to_input_type_below();
+  Q_INVOKABLE void record_shift_to_input_type_on_left();
+  Q_INVOKABLE void record_shift_to_input_type_on_right();
 
-  Q_INVOKABLE void record_shift_to_selects_above();
-  Q_INVOKABLE void record_shift_to_selects_below();
-  Q_INVOKABLE void record_shift_to_selects_on_left();
-  Q_INVOKABLE void record_shift_to_selects_on_right();
-
-  Q_INVOKABLE void record_shift_to_iframes_above();
-  Q_INVOKABLE void record_shift_to_iframes_below();
-  Q_INVOKABLE void record_shift_to_iframes_on_left();
-  Q_INVOKABLE void record_shift_to_iframes_on_right();
+  Q_INVOKABLE void record_shift_to_select_type_above();
+  Q_INVOKABLE void record_shift_to_select_type_below();
+  Q_INVOKABLE void record_shift_to_select_type_on_left();
+  Q_INVOKABLE void record_shift_to_select_type_on_right();
 
   // Record Mouse Actions.
   Q_INVOKABLE void record_click();

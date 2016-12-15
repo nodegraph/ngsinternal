@@ -87,6 +87,8 @@ Q_OBJECT
 
   // Queue Navigate Tasks.
   void queue_navigate_to(TaskContext& tc);
+  void queue_navigate_back(TaskContext& tc);
+  void queue_navigate_forward(TaskContext& tc);
   void queue_navigate_refresh(TaskContext& tc);
 
   // Queue Set Tasks.
@@ -174,6 +176,8 @@ signals:
 
   // Navigation Tasks.
   void navigate_to_task();
+  void navigate_back_task();
+  void navigate_forward_task();
   void navigate_refresh_task();
 
   // Set Creation/Modification Tasks.

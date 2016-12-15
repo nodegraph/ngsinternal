@@ -10,63 +10,28 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Navigate..."
-        description: "Navigate to a url."
+        description: "Navigate to another web page."
         script: "push_by_names('Navigate', 'WebMenuListPage', 'WebActionsNavigate')"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Create Set From Values..."
-        description: "Create set from values under crosshair."
-        script: "push_by_names('Create Set', 'WebMenuListPage', 'WebActionsCreateByMatchingValues')"
+        title: "Find First Element..."
+        description: "Find the first element."
+        script: "push_by_names('Find First Element', 'WebMenuListPage', 'WebActionsFindFirstElement')"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Create Set From Types..."
-        description: "Create set from element types."
-        script: "push_by_names('Create Set', 'WebMenuListPage', 'WebActionsCreateFromWrapType')"
-    }
-
-    ListElement {
-        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Shift Set Elements..."
-        description: "Shift set elements along direction."
+        title: "Shift Element..."
+        description: "Shift the current element."
         script: "push_by_names('Shift Set Elements', 'WebMenuListPage', 'WebActionsShift')"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Expand Set..."
-        description: "Expand set to similar elements."
-        script: "push_by_names('Expand Set', 'WebMenuListPage', 'WebActionsExpand')"
-    }
-
-    ListElement {
-        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Shrink Set..."
-        description: "Shrink sets to one side."
-        script: "push_by_names('Shrink Set', 'WebMenuListPage', 'WebActionsShrink')"
-    }
-
-    ListElement {
-        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Mark Sets..."
-        description: "Mark and unmark sets."
-        script: "push_by_names('Mark Set', 'WebMenuListPage', 'WebActionsMark')"
-    }
-
-    ListElement {
-        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Shrink Set Against Marked..."
-        description: "Shrink sets against other marked sets."
-        script: "push_by_names('Shrink Set', 'WebMenuListPage', 'WebActionsShrinkAgainstMarked')"
-    }
-
-    ListElement {
-        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "Perform Action"
-        description: "Perform action on element under crosshair."
+        description: "Perform an action at the current element."
         script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsPerformAction')"
     }
 

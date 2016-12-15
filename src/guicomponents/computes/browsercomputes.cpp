@@ -182,6 +182,28 @@ bool NavigateToCompute::update_state() {
   return false;
 }
 
+bool NavigateBackCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_navigate_back(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
+
+bool NavigateForwardCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_navigate_forward(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
+
 bool NavigateRefreshCompute::update_state() {
   internal();
   BrowserCompute::update_state();
@@ -193,7 +215,7 @@ bool NavigateRefreshCompute::update_state() {
   return false;
 }
 
-void CreateSetFromValuesCompute::create_inputs_outputs(const EntityConfig& config) {
+void FindElementByValuesCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
 
@@ -214,23 +236,21 @@ void CreateSetFromValuesCompute::create_inputs_outputs(const EntityConfig& confi
   }
 }
 
-const QJsonObject CreateSetFromValuesCompute::_hints = CreateSetFromValuesCompute::init_hints();
-QJsonObject CreateSetFromValuesCompute::init_hints() {
+const QJsonObject FindElementByValuesCompute::_hints = FindElementByValuesCompute::init_hints();
+QJsonObject FindElementByValuesCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of the elements to put into the set.");
 
-  add_hint(m, Message::kTextValues, HintKey::kDescriptionHint, "The text values used to find text elements.");
-  add_hint(m, Message::kTextValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
-
   add_hint(m, Message::kTargetValues, HintKey::kDescriptionHint, "The texts or image urls used to find elements.");
+  add_hint(m, Message::kTargetValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
   return m;
 }
 
 
-bool CreateSetFromValuesCompute::update_state() {
+bool FindElementByValuesCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -241,7 +261,7 @@ bool CreateSetFromValuesCompute::update_state() {
   return false;
 }
 
-void CreateSetFromTypeCompute::create_inputs_outputs(const EntityConfig& config) {
+void FindElementByTypeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
 
@@ -253,8 +273,8 @@ void CreateSetFromTypeCompute::create_inputs_outputs(const EntityConfig& config)
 
 }
 
-const QJsonObject CreateSetFromTypeCompute::_hints = CreateSetFromTypeCompute::init_hints();
-QJsonObject CreateSetFromTypeCompute::init_hints() {
+const QJsonObject FindElementByTypeCompute::_hints = FindElementByTypeCompute::init_hints();
+QJsonObject FindElementByTypeCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
@@ -263,7 +283,7 @@ QJsonObject CreateSetFromTypeCompute::init_hints() {
   return m;
 }
 
-bool CreateSetFromTypeCompute::update_state() {
+bool FindElementByTypeCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
@@ -292,8 +312,6 @@ const QJsonObject ShiftElementByTypeCompute::_hints = ShiftElementByTypeCompute:
 QJsonObject ShiftElementByTypeCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set to shift.");
 
   add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
   add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The direction in which to shift the set elements to.");

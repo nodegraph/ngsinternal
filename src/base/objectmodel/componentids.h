@@ -124,9 +124,11 @@ COMPONENT_ENTRY1(CloseBrowserCompute)\
 COMPONENT_ENTRY1(IsBrowserOpenCompute)\
 COMPONENT_ENTRY1(ResizeBrowserCompute)\
 COMPONENT_ENTRY1(NavigateToCompute)\
+COMPONENT_ENTRY1(NavigateBackCompute)\
+COMPONENT_ENTRY1(NavigateForwardCompute)\
 COMPONENT_ENTRY1(NavigateRefreshCompute)\
-COMPONENT_ENTRY1(CreateSetFromValuesCompute)\
-COMPONENT_ENTRY1(CreateSetFromTypeCompute)\
+COMPONENT_ENTRY1(FindElementByValuesCompute)\
+COMPONENT_ENTRY1(FindElementByTypeCompute)\
 COMPONENT_ENTRY1(ShiftElementByTypeCompute)\
 COMPONENT_ENTRY1(ShiftElementByValuesCompute)\
 COMPONENT_ENTRY1(MouseActionCompute)\

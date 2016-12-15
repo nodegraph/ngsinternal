@@ -222,58 +222,59 @@ class OverlaySets {
         this.sets[set_index].shrink_to_extreme(side)
     }
 
-    // Get xpath.
-    get_xpath(set_index: number, overlay_index: number): string {
+    // Get the elem wrap.
+    get_elem_wrap(set_index: number, overlay_index: number): ElemWrap {
         if (!this.set_index_is_valid(set_index)) {
-            return ""
+            return null
         }
         if (!this.overlay_index_is_valid(set_index, overlay_index)) {
+            return null
+        }
+        return this.sets[set_index].get_overlay(overlay_index).get_elem_wrap()
+    }
+
+    // Get xpath.
+    get_xpath(set_index: number, overlay_index: number): string {
+        let e = this.get_elem_wrap(set_index, overlay_index)
+        if (!e) {
             return ""
         }
-        return this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_xpath()
+        return e.get_xpath()
     }
 
     scroll_down(set_index: number, overlay_index: number): void {
-        if (!this.set_index_is_valid(set_index)) {
+        let e = this.get_elem_wrap(set_index, overlay_index)
+        if (!e) {
             return
         }
-        if (!this.overlay_index_is_valid(set_index, overlay_index)) {
-            return
-        }
-        let scroller = this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_closest_scroll(true)
+        let scroller = e.get_closest_scroll(true)
         scroller.scroll_down()
     }
 
     scroll_up(set_index: number, overlay_index: number): void {
-        if (!this.set_index_is_valid(set_index)) {
+        let e = this.get_elem_wrap(set_index, overlay_index)
+        if (!e) {
             return
         }
-        if (!this.overlay_index_is_valid(set_index, overlay_index)) {
-            return
-        }
-        let scroller = this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_closest_scroll(true)
+        let scroller = e.get_closest_scroll(true)
         scroller.scroll_up()
     }
 
     scroll_right(set_index: number, overlay_index: number): void {
-        if (!this.set_index_is_valid(set_index)) {
+        let e = this.get_elem_wrap(set_index, overlay_index)
+        if (!e) {
             return
         }
-        if (!this.overlay_index_is_valid(set_index, overlay_index)) {
-            return
-        }
-        let scroller = this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_closest_scroll(false)
+        let scroller = e.get_closest_scroll(false)
         scroller.scroll_right()
     }
 
     scroll_left(set_index: number, overlay_index: number): void {
-        if (!this.set_index_is_valid(set_index)) {
+        let e = this.get_elem_wrap(set_index, overlay_index)
+        if (!e) {
             return
         }
-        if (!this.overlay_index_is_valid(set_index, overlay_index)) {
-            return
-        }
-        let scroller = this.sets[set_index].get_overlay(overlay_index).get_elem_wrap().get_closest_scroll(false)
+        let scroller = e.get_closest_scroll(false)
         scroller.scroll_left()
     }
 
