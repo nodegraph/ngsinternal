@@ -11,7 +11,6 @@ interface IElementInfo {
     iframe_index_path: string
     xpath: string
     box: IBox // These are the bounds in global client space.
-    weight: number // A weight used to sort the elements.
 }
 
 interface IPoint{

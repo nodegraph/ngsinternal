@@ -52,6 +52,8 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kDirection;
   static const char* kDirections;
 
+  static const char* kAllowInternalElements;
+
   static const char* kMatchCriteria;
 
   static const char* kMatchLeft;

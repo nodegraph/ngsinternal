@@ -50,6 +50,7 @@ Q_OBJECT
   Q_INVOKABLE void record_find_element_by_select_type();
 
   // Shift the element.
+  Q_INVOKABLE void set_allow_internal_elements(bool allow = false);
   Q_INVOKABLE void record_shift_to_text_type_above();
   Q_INVOKABLE void record_shift_to_text_type_below();
   Q_INVOKABLE void record_shift_to_text_type_on_left();
@@ -102,6 +103,9 @@ Q_OBJECT
   Dep<NodeJSWorker> _worker;
   Dep<TaskScheduler> _scheduler;
   Dep<FileModel> _model;
+
+  // State set by the gui.
+  bool _allow_internal_elements; // Whether to allow shifting to internal elements.
 };
 
 }

@@ -241,10 +241,8 @@ class ElemWrap {
         console.log('local client space: ' + JSON.stringify(box))
         box.to_global_client_space(window)
         console.log('global client space: ' + JSON.stringify(box))
-        // Weight.
-        let weight = PageWrap.get_weight(box)
         // Form the info.
-        return { iframe_index_path: iframe_index_path, xpath: xpath, box: box, weight: weight }
+        return { iframe_index_path: iframe_index_path, xpath: xpath, box: box }
     }
 
     //----------------------------------------------------------------------------------------

@@ -102,7 +102,7 @@
         <file>qml/smashbrowse/contentpages/listmodels/FileMenuActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsFindFirstElement.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsFindElement.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsShift.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToTextType.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToImageType.qml</file>

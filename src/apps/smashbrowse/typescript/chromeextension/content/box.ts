@@ -95,7 +95,7 @@ class Box {
         }
     }
 
-    //Assumes we are in page space and converts to client space.
+    //Assumes we are in local page space and converts to local client space.
     to_client_space(local_win: Window): void {
         this.left -= local_win.scrollX
         this.right -= local_win.scrollX
@@ -103,7 +103,7 @@ class Box {
         this.bottom -= local_win.scrollY
     }
 
-    // Assumes we are in client space and convert to page space.
+    // Assumes we are in local client space and convert to local page space.
     to_page_space(local_win: Window): void {
         this.left += local_win.scrollX
         this.right += local_win.scrollX

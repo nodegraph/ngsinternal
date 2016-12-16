@@ -44,6 +44,7 @@ const char* Message::kPosition = "position";
 
 const char* Message::kDirection = "direction";
 const char* Message::kDirections = "directions";
+const char* Message::kAllowInternalElements = "allow_internal_elements";
 
 const char* Message::kMatchCriteria = "match_criteria";
 const char* Message::kMatchLeft = "match_left";

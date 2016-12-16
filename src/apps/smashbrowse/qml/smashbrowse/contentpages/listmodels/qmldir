@@ -11,7 +11,7 @@ FileMenuActions 1.0 FileMenuActions.qml
 IFrameActions 1.0 IFrameActions.qml
 WebActions 1.0 WebActions.qml
 WebActionsNavigate 1.0 WebActionsNavigate.qml
-WebActionsFindFirstElement 1.0 WebActionsFindFirstElement.qml
+WebActionsFindElement 1.0 WebActionsFindElement.qml
 WebActionsShift 1.0 WebActionsShift.qml
 WebActionsShiftToTextType 1.0 WebActionsShiftToTextType.qml
 WebActionsShiftToImageType 1.0 WebActionsShiftToImageType.qml

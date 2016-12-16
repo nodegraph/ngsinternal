@@ -10,7 +10,6 @@ declare interface IElementInfo {
     iframe_index_path: string
     xpath: string
     box: IBox
-    weight: number
 }
 
 declare interface IPoint{

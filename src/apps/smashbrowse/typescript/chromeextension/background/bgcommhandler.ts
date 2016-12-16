@@ -110,15 +110,87 @@ class BgCommHandler {
     // Static element methods.
     // ------------------------------------------------------------------------------------------------------------------
 
-    // Element static methods.
-    static sort_elements(elements: IElementInfo[]) {
-        // Sort the weighted infos.
-        elements.sort(function (a, b) {
-            return a.weight - b.weight;
-        });
+    static find_top_leftmost(elems: IElementInfo[]): IElementInfo {
+        let best: IElementInfo = null
+        elems.forEach((elem) => {
+            if (best === null) {
+                best = elem
+            } else {
+                if ( (elem.box.left <= best.box.left) && (elem.box.top <= best.box.top) ) {
+                    best = elem
+                }
+            }
+        })
+        return best
     }
 
-    static find_neighbor(origin: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
+    static find_neighbor_internal(origin: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
+        // Loop through each one trying to find the best one.
+        let best: IElementInfo = null
+        console.log('elem: ' + JSON.stringify(origin))
+        candidates.forEach((candidate) => {
+            // Make sure the candidate intersect the origin element.
+            if (!BgCommHandler.elements_in_row(candidate, origin) || !BgCommHandler.elements_in_column(candidate, origin)) {
+                return
+            }
+
+            // Make sure the candidate is not the same element as the origin.
+            if ( (candidate.iframe_index_path == origin.iframe_index_path) && (candidate.xpath == origin.xpath) ) {
+                return
+            }
+
+            // Now analyze the candidate according to the search direction.
+            switch (dir) {
+                case DirectionType.left: {
+                    if (candidate.box.left < origin.box.right) {
+                        if (!best) {
+                            best = candidate
+                            console.log('found first: ' + JSON.stringify(best))
+                        } else if (candidate.box.left > best.box.left) {
+                            best = candidate
+                            console.log('found better: ' + JSON.stringify(best))
+                        }
+                    }
+                } break
+                case DirectionType.right: {
+                    if (candidate.box.right > origin.box.left) {
+                        if (!best) {
+                            best = candidate
+                            console.log('found first: ' + JSON.stringify(best))
+                        } else if (candidate.box.right < best.box.right) {
+                            best = candidate
+                            console.log('found better: ' + JSON.stringify(best))
+                        }
+                    }
+                } break
+                case DirectionType.down: {
+                    if (candidate.box.bottom > origin.box.top) {
+                        if (!best) {
+                            best = candidate
+                            console.log('found first: ' + JSON.stringify(best))
+                        } else if (candidate.box.bottom < best.box.bottom) {
+                            best = candidate
+                            console.log('found better: ' + JSON.stringify(best))
+                        }
+                    }
+                } break
+                case DirectionType.up: {
+                    if (candidate.box.top < origin.box.bottom) {
+                        if (!best) {
+                            best = candidate
+                            console.log('found first: ' + JSON.stringify(best))
+                        } else if (candidate.box.top > best.box.top) {
+                            best = candidate
+                            console.log('found better: ' + JSON.stringify(best))
+                        }
+                    }
+                } break
+            }
+        })
+        return best
+    }
+
+        static find_neighbor_external(origin: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
         console.log('elem: ' + JSON.stringify(origin))
@@ -127,11 +199,11 @@ class BgCommHandler {
             switch (dir) {
                 case DirectionType.left: {
                     if (BgCommHandler.elements_in_row(candidate, origin)) {
-                        if (candidate.weight < origin.weight) {
+                        if (candidate.box.right < origin.box.left) {
                             if (!best) {
                                 best = candidate
                                 console.log('found first: ' + JSON.stringify(best))
-                            } else if (candidate.weight > best.weight) {
+                            } else if (candidate.box.right > best.box.right) {
                                 best = candidate
                                 console.log('found better: ' + JSON.stringify(best))
                             }
@@ -140,11 +212,11 @@ class BgCommHandler {
                 } break
                 case DirectionType.right: {
                     if (BgCommHandler.elements_in_row(candidate, origin)) {
-                        if (candidate.weight > origin.weight) {
+                        if (candidate.box.left > origin.box.right) {
                             if (!best) {
                                 best = candidate
                                 console.log('found first: ' + JSON.stringify(best))
-                            } else if (candidate.weight < best.weight) {
+                            } else if (candidate.box.left < best.box.left) {
                                 best = candidate
                                 console.log('found better: ' + JSON.stringify(best))
                             }
@@ -153,11 +225,11 @@ class BgCommHandler {
                 } break
                 case DirectionType.down: {
                     if (BgCommHandler.elements_in_column(candidate, origin)) {
-                        if (candidate.weight > origin.weight) {
+                        if (candidate.box.top > origin.box.bottom) {
                             if (!best) {
                                 best = candidate
                                 console.log('found first: ' + JSON.stringify(best))
-                            } else if (candidate.weight < best.weight) {
+                            } else if (candidate.box.top < best.box.top) {
                                 best = candidate
                                 console.log('found better: ' + JSON.stringify(best))
                             }
@@ -166,11 +238,11 @@ class BgCommHandler {
                 } break
                 case DirectionType.up: {
                     if (BgCommHandler.elements_in_column(candidate, origin)) {
-                        if (candidate.weight < origin.weight) {
+                        if (candidate.box.bottom < origin.box.top) {
                             if (!best) {
                                 best = candidate
                                 console.log('found first: ' + JSON.stringify(best))
-                            } else if (candidate.weight > best.weight) {
+                            } else if (candidate.box.bottom > best.box.bottom) {
                                 best = candidate
                                 console.log('found better: ' + JSON.stringify(best))
                             }
@@ -324,7 +396,6 @@ class BgCommHandler {
         this.queue(() => {
             console.log("queue_find_all_elements_by_type")
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
-            BgCommHandler.sort_elements(this.found_elems)
             this.run_next_task()
         })
     }
@@ -339,12 +410,13 @@ class BgCommHandler {
         this.queue(() => {
             console.log("find_all_elements_by_values")
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
-            BgCommHandler.sort_elements(this.found_elems)
             this.run_next_task()
         })
     }
 
-    // Handler.
+    // ------------------------------------------------------------------------------------------------------------------
+    // Main message handler.
+    // ------------------------------------------------------------------------------------------------------------------
     handle_nodejs_request(req: RequestMessage) {
         //console.log('handling request from nodejs: ' + JSON.stringify(req))
 
@@ -356,6 +428,7 @@ class BgCommHandler {
             // --------------------------------------------------------------
             // Requests that are handled by the background script on its own.
             // --------------------------------------------------------------
+
             case RequestType.kClearAllCookies: {
                 let done_clear_all_cookies = () => {
                     // Send response to nodejs.
@@ -394,10 +467,10 @@ class BgCommHandler {
                 BrowserWrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom);
             } break
 
-
             // --------------------------------------------------------------
             // Requests that are broadcast to all frames.
             // --------------------------------------------------------------
+
             case RequestType.kBlockEvents: {
                 this.clear_tasks()
                 this.queue_block_events()
@@ -477,7 +550,7 @@ class BgCommHandler {
                 this.queue(() => {
                     console.log("find_all_elements_by_values 3333" + this.found_elems.length)
                     if (this.found_elems.length > 0) {
-                        this.found_elem = this.found_elems[0]
+                        this.found_elem = BgCommHandler.find_top_leftmost(this.found_elems)
                         this.run_next_task()
                     } else {
                         // Wipe out the queue.
@@ -503,7 +576,7 @@ class BgCommHandler {
                 this.queue_find_all_elements_by_type(req.args.wrap_type)
                 this.queue(() => {
                     if (this.found_elems.length > 0) {
-                        this.found_elem = this.found_elems[0]
+                        this.found_elem = BgCommHandler.find_top_leftmost(this.found_elems)
                         this.run_next_task()
                     } else {
                         // Wipe out the queue.
@@ -548,7 +621,12 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best = BgCommHandler.find_neighbor(this.found_elem, this.found_elems, req.args.direction)
+                        let best: IElementInfo = null
+                        if (req.args.allow_internal_elements) {
+                            best = BgCommHandler.find_neighbor_internal(this.found_elem, this.found_elems, req.args.direction)
+                        } else {
+                            best = BgCommHandler.find_neighbor_external(this.found_elem, this.found_elems, req.args.direction)
+                        }
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
@@ -597,7 +675,12 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best = BgCommHandler.find_neighbor(this.found_elem, this.found_elems, req.args.direction)
+                        let best: IElementInfo = null
+                        if (req.args.allow_internal_elements) {
+                            best = BgCommHandler.find_neighbor_internal(this.found_elem, this.found_elems, req.args.direction)
+                        } else {
+                            best = BgCommHandler.find_neighbor_external(this.found_elem, this.found_elems, req.args.direction)
+                        }
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
