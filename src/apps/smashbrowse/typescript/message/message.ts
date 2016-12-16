@@ -19,7 +19,7 @@ interface IPoint{
     y: number
 }
 
-interface ICrosshairInfo {
+interface IClickInfo {
     // Click pos.
     click_pos: IPoint,
     nearest_rel_click_pos: IPoint,

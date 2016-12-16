@@ -127,7 +127,7 @@ class PageWrap {
         let max_page_width = 10000
         let max_iframe_width = 10000
         let whole_weight = (global_client_box.top * max_page_width) + global_client_box.left
-        let fraction_weight = ((global_client_box.get_height() * max_iframe_width) + global_client_box.get_width()) / max_iframe_width / max_iframe_width
+        let fraction_weight = 1.0 - (global_client_box.get_height() * global_client_box.get_width() / (max_iframe_width * max_iframe_width))
         let weight = whole_weight + fraction_weight
         return weight
     }

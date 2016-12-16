@@ -41,7 +41,8 @@
     "activeTab",
     "browsingData",
     "nativeMessaging",
-    "history"
+    "history",
+    "webNavigation"
   ]
   
 

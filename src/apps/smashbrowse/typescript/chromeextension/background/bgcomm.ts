@@ -181,7 +181,7 @@ class BgComm {
         if (msg.msg_type == MessageType.kInfoMessage) {
             let req = <InfoMessage>msg
             if (req.info == InfoType.kCollectElement) {
-                this.handler.collect_element(req.value)
+                this.handler.collect_elements([req.value])
                 // Return so that we don't send this info message to the nodejs.
                 return
             } else if (req.info == InfoType.kCollectElements) {
@@ -191,7 +191,7 @@ class BgComm {
                 this.handler.collect_boolean(req.value)
                 return
             } else if (req.info == InfoType.kCollectClick) {
-                this.handler.collect_click(req.value)
+                //this.handler.collect_click(req.value)
                 return
             }
         }

@@ -18,7 +18,7 @@ declare interface IPoint{
     y: number
 }
 
-declare interface ICrosshairInfo {
+declare interface IClickInfo {
     // Click pos.
     click_pos: IPoint,
     nearest_rel_click_pos: IPoint,

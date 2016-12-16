@@ -229,6 +229,21 @@ class ElemWrap {
         return '/' + path.join('/');
     }
 
+    get_info(): IElementInfo {
+        // Frame index path.
+        let iframe_index_path = PageWrap.get_iframe_index_path_as_string(window)
+        // XPath.
+        let xpath = this.get_xpath()
+        // Bounds.
+        let box = new Box(this.get_box()) // This should be in page space.
+        box.to_client_space(window)
+        box.to_global_client_space(window)
+        // Weight.
+        let weight = PageWrap.get_weight(box)
+        // Form the info.
+        return { iframe_index_path: iframe_index_path, xpath: xpath, box: box, weight: weight }
+    }
+
     //----------------------------------------------------------------------------------------
     // Element Shifting.
     //----------------------------------------------------------------------------------------
