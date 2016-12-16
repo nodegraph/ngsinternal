@@ -301,10 +301,10 @@ class BgCommHandler {
             this.collect_from_frames(req, (elems: IElementInfo[]) => {this.collect_elements(elems)})
         })
         this.queue(() => {
-            console.log('finished set current element')
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
                 this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
+                console.log('finished set current element: ' + JSON.stringify(this.found_elem))
             } else if (this.collected_elems.length == 0) {
                 this.error_msg = "Unable to find the element to make current."
             } else {

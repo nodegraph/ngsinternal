@@ -100,7 +100,7 @@ class Box {
         this.left -= local_win.scrollX
         this.right -= local_win.scrollX
         this.top -= local_win.scrollY
-        this.top -= local_win.scrollY
+        this.bottom -= local_win.scrollY
     }
 
     // Assumes we are in client space and convert to page space.

@@ -236,8 +236,11 @@ class ElemWrap {
         let xpath = this.get_xpath()
         // Bounds.
         let box = new Box(this.get_box()) // This should be in page space.
+        console.log('page space: ' + JSON.stringify(box))
         box.to_client_space(window)
+        console.log('local client space: ' + JSON.stringify(box))
         box.to_global_client_space(window)
+        console.log('global client space: ' + JSON.stringify(box))
         // Weight.
         let weight = PageWrap.get_weight(box)
         // Form the info.
