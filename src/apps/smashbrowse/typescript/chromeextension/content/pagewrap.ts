@@ -31,12 +31,7 @@ class PageWrap {
 
     // Returns current bounds.
     static get_bounds() {
-        let box = new Box()
-        box.left = 0
-        box.top = 0
-        box.right = this.get_width()
-        box.bottom = this.get_height()
-        return box
+        return new Box({left:0, right: this.get_width(), top:0, bottom: this.get_height()})
     }
 
     // Get frame index path as string.
@@ -81,12 +76,7 @@ class PageWrap {
     }
 
     static get_iframe_local_client_bounds(iframe_win: Window) {
-        let box = new Box()
-        box.left = 0
-        box.top = 0
-        box.right = iframe_win.document.documentElement.clientWidth
-        box.bottom = iframe_win.document.documentElement.clientHeight
-        return box
+        return new Box({ left: 0, right: iframe_win.document.documentElement.clientWidth, top: 0, bottom: iframe_win.document.documentElement.clientHeight })
     }
 
     static get_iframe_global_client_bounds(iframe_win: Window) {

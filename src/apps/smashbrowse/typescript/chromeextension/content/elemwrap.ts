@@ -27,7 +27,7 @@ class ElemWrap {
         this.element = element
 
         // Cached values, which need to be updated when the element changes.
-        this.page_box = new Box()
+        this.page_box = new Box({left: 0, right: 0, top: 0, bottom: 0})
 
         // Our wrap type and getter should stay fixed throughout our lifetime.
         this.wrap_type = this.calculate_wrap_type()

@@ -4,7 +4,7 @@ class Box {
     right: number
     top: number
     bottom: number
-    constructor(box: IBox = {left: 0, right:0, top:0, bottom:0}) {
+    constructor(box: IBox) {
         this.left = box.left
         this.right = box.right
         this.top = box.top
@@ -126,7 +126,8 @@ class Box {
     //Returns true if and only if we contain the given page point.
     //Due the document.elementsFromPoint() precision on x and y,
     //we need to do a containment test with a sigma of 1.0 by default.
-    contains_point(page_pos: Point, sigma = 1.0): boolean {
+    contains_point(page_pos: Point): boolean {
+        const sigma = 1.0
         if ((page_pos.x >= (this.left - sigma)) && (page_pos.x <= (this.right + sigma)) &&
             (page_pos.y >= (this.top - sigma)) && (page_pos.y <= (this.bottom + sigma))) {
             return true

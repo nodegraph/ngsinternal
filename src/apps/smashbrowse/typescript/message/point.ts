@@ -1,17 +1,11 @@
-//This interface represents the data shape for a point.
-interface PointInterface {
-    x: number
-    y: number
-}
-
 class Point {
     x: number
     y: number
-    constructor(point: PointInterface) {
+    constructor(point: IPoint) {
         this.x = point.x
         this.y = point.y
     }
-    to_string() {
+    to_string(): string {
         return '(' + this.x + ',' + this.y + ')'
     }
 
@@ -66,7 +60,7 @@ class Point {
         this.y += local_win.scrollY
     }
     
-    assign(other: PointInterface) : void {
+    assign(other: IPoint) : void {
         this.x = other.x
         this.y = other.y
     }
@@ -85,21 +79,21 @@ class Point {
         return Math.sqrt(this.x * this.x + this.y * this.y)
     }
 
-    increment(other: PointInterface) : void {
+    increment(other: IPoint) : void {
         this.x += other.x
         this.y += other.y
     }
 
-    decrement(other: PointInterface) : void{
+    decrement(other: IPoint) : void{
         this.x -= other.x
         this.y -= other.y
     }
 
-    add(other: PointInterface) : Point {
+    add(other: IPoint) : Point {
         return new Point({x: this.x + other.x, y: this.y + other.y})
     }
 
-    subtract(other: PointInterface) : Point{
+    subtract(other: IPoint) : Point{
         return new Point({x: this.x - other.x, y: this.y - other.y})
     }
 
@@ -113,19 +107,19 @@ class Point {
         this.y *= factor
     }
 
-    lt(other: PointInterface) : boolean {
+    lt(other: IPoint) : boolean {
         return (this.x < other.x) && (this.y < other.y)
     }
 
-    lte(other: PointInterface) : boolean {
+    lte(other: IPoint) : boolean {
         return (this.x <= other.x) && (this.y <= other.y)
     }
 
-    gt(other: PointInterface) : boolean {
+    gt(other: IPoint) : boolean {
         return (this.x > other.x) && (this.y > other.y)
     }
     
-    gte(other: PointInterface) : boolean {
+    gte(other: IPoint) : boolean {
         return (this.x >= other.x) && (this.y >= other.y)
     }
 

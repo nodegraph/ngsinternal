@@ -190,7 +190,7 @@ class BgCommHandler {
         return best
     }
 
-        static find_neighbor_external(origin: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
+    static find_neighbor_external(origin: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
         console.log('elem: ' + JSON.stringify(origin))
@@ -249,6 +249,71 @@ class BgCommHandler {
                         }
                     }
                 } break
+            }
+        })
+        return best
+    }
+
+    static find_neighbor_closest(src: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
+        // Loop through each one trying to find the best one.
+        let best: IElementInfo = null
+        let best_mag = 0
+        const off_axis_weight = 1 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
+
+        console.log('elem: ' + JSON.stringify(src))
+        let src_box = new Box(src.box)
+        let src_center = src_box.get_center()
+
+        // Note the return in the forEach loop acts like a continue statement.
+        candidates.forEach((dest) => {
+            // Skip the dest element if its equal to the src element.
+            if ((dest.iframe_index_path == src.iframe_index_path) && (dest.xpath == src.xpath)) {
+                return
+            }
+
+            // Determine the direction and magnitude.
+            let dest_box = new Box(dest.box)
+            let dest_center:Point = dest_box.get_center()
+            let diff = dest_center.subtract(src_center)
+            let mag = 0
+
+            // Now choose the closest element on one side, according to the direction in the request.
+            switch (dir) {
+                case DirectionType.left: {
+                    if (diff.x >= 0) {
+                        return
+                    }
+                    mag = Math.abs(diff.x) + Math.abs(diff.y) * off_axis_weight
+                } break
+                case DirectionType.right: {
+                    if (diff.x <= 0) {
+                        return
+                    }
+                    mag = Math.abs(diff.x) + Math.abs(diff.y) * off_axis_weight
+                } break
+                case DirectionType.down: {
+                    if (diff.y <= 0) {
+                        return
+                    }
+                    mag = Math.abs(diff.y) + Math.abs(diff.x) * off_axis_weight
+                } break
+                case DirectionType.up: {
+                    if (diff.y >= 0) {
+                        return
+                    }
+                    mag = Math.abs(diff.y) + Math.abs(diff.x) * off_axis_weight
+                } break
+            }
+
+            // Update best if the dest is closer to the src element.
+            if (!best) {
+                best = dest
+                best_mag = mag
+                console.log('found first: ' + JSON.stringify(best))
+            } else if (mag < best_mag) {
+                best = dest
+                best_mag = mag
+                console.log('found better: ' + JSON.stringify(best))
             }
         })
         return best
@@ -622,11 +687,12 @@ class BgCommHandler {
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let best: IElementInfo = null
-                        if (req.args.allow_internal_elements) {
-                            best = BgCommHandler.find_neighbor_internal(this.found_elem, this.found_elems, req.args.direction)
-                        } else {
-                            best = BgCommHandler.find_neighbor_external(this.found_elem, this.found_elems, req.args.direction)
-                        }
+                        best = BgCommHandler.find_neighbor_closest(this.found_elem, this.found_elems, req.args.direction)
+                        // if (req.args.allow_internal_elements) {
+                        //     best = BgCommHandler.find_neighbor_internal(this.found_elem, this.found_elems, req.args.direction)
+                        // } else {
+                        //     best = BgCommHandler.find_neighbor_external(this.found_elem, this.found_elems, req.args.direction)
+                        // }
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
@@ -676,11 +742,12 @@ class BgCommHandler {
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let best: IElementInfo = null
-                        if (req.args.allow_internal_elements) {
-                            best = BgCommHandler.find_neighbor_internal(this.found_elem, this.found_elems, req.args.direction)
-                        } else {
-                            best = BgCommHandler.find_neighbor_external(this.found_elem, this.found_elems, req.args.direction)
-                        }
+                        best = BgCommHandler.find_neighbor_closest(this.found_elem, this.found_elems, req.args.direction)
+                        // if (req.args.allow_internal_elements) {
+                        //     best = BgCommHandler.find_neighbor_internal(this.found_elem, this.found_elems, req.args.direction)
+                        // } else {
+                        //     best = BgCommHandler.find_neighbor_external(this.found_elem, this.found_elems, req.args.direction)
+                        // }
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()

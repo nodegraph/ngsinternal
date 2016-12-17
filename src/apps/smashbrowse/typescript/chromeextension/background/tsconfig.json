@@ -10,6 +10,8 @@
     "files": [
         "D:/dev/windows/DefinitelyTyped/chrome/chrome.d.ts",
         
+        "../../message/point.d.ts",
+        "../../message/box.d.ts",
         "../../message/message.d.ts",
         "../../message/messagetypes.d.ts",
 

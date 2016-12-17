@@ -6,6 +6,11 @@ interface IBox {
     bottom: number
 }
 
+interface IPoint {
+    x: number
+    y: number
+}
+
 // Info about an html element in the browser. 
 interface IElementInfo {
     iframe_index_path: string

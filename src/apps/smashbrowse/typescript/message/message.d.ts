@@ -1,20 +1,11 @@
 
-declare interface IBox {
-    left: number
-    right: number
-    top: number
-    bottom: number
-}
+
+
 
 declare interface IElementInfo {
     iframe_index_path: string
     xpath: string
     box: IBox
-}
-
-declare interface IPoint{
-    x: number
-    y: number
 }
 
 declare interface IClickInfo {

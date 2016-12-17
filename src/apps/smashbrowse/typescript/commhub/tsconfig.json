@@ -15,6 +15,8 @@
 
         "D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/firebase/firebase.d.ts",
 
+        "../message/point.d.ts",
+        "../message/box.d.ts",
         "../message/message.d.ts",
         "../message/messagetypes.d.ts",
         

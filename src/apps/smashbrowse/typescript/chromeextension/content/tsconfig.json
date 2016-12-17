@@ -11,11 +11,12 @@
     "files": [
         "D:/dev/windows/DefinitelyTyped/chrome/chrome.d.ts",
         
+        "../../message/point.d.ts",
+        "../../message/box.d.ts",
         "../../message/message.d.ts",
         "../../message/messagetypes.d.ts",
 
 
-        "box.ts",
         "contentcomm.ts",
         "contentcommhandler.ts",
         "pageoverlays.ts",
@@ -30,7 +31,6 @@
         "mutationmonitor.ts",
         "pagewrap.ts",
         "guicollection.ts",
-        "point.ts",
         "popupdialog.ts",
         "utils.ts",
         "contentmain.ts"

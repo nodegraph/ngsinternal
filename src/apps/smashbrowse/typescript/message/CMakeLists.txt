@@ -20,7 +20,7 @@ set(msg_js_min ${CMAKE_CURRENT_BINARY_DIR}/m.js)
 
 # The main lib that other's will use.
 # Make msg_js_merged available to other dirs besides the message dir.
-set(msg_js_lib ${CMAKE_CURRENT_BINARY_DIR}/message.js PARENT_SCOPE)
+set(msg_js_lib ${CMAKE_CURRENT_BINARY_DIR}/point.js ${CMAKE_CURRENT_BINARY_DIR}/box.js ${CMAKE_CURRENT_BINARY_DIR}/message.js PARENT_SCOPE)
 
 
 configure_file(
