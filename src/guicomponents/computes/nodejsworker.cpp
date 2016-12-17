@@ -666,7 +666,6 @@ void NodeJSWorker::shift_element_by_type_task() {
   QJsonObject args;
   args.insert(Message::kDirection, _chain_state.value(Message::kDirection));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kAllowInternalElements, _chain_state.value(Message::kAllowInternalElements));
   Message req(RequestType::kShiftElementByType);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
@@ -676,7 +675,6 @@ void NodeJSWorker::shift_element_by_values_task() {
   QJsonObject args;
   args.insert(Message::kDirection, _chain_state.value(Message::kDirection));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kAllowInternalElements, _chain_state.value(Message::kAllowInternalElements));
   args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
   Message req(RequestType::kShiftElementByValues);
   req.insert(Message::kArgs, args);

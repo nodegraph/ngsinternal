@@ -306,9 +306,6 @@ void ShiftElementByTypeCompute::create_inputs_outputs(const EntityConfig& config
 
   create_input(Message::kDirection, c);
   create_input(Message::kWrapType, c);
-
-  c.unconnected_value = false;
-  create_input(Message::kAllowInternalElements, c);
 }
 
 const QJsonObject ShiftElementByTypeCompute::_hints = ShiftElementByTypeCompute::init_hints();
@@ -321,8 +318,6 @@ QJsonObject ShiftElementByTypeCompute::init_hints() {
 
   add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of elements to shift to.");
-
-  add_hint(m, Message::kAllowInternalElements, HintKey::kDescriptionHint, "Allow shifting to elements inside the current element as well.");
 
   return m;
 }
@@ -351,9 +346,6 @@ void ShiftElementByValuesCompute::create_inputs_outputs(const EntityConfig& conf
 
     create_input(Message::kDirection, c);
     create_input(Message::kWrapType, c);\
-
-    c.unconnected_value = false;
-    create_input(Message::kAllowInternalElements, c);
   }
 
   {
@@ -379,8 +371,6 @@ QJsonObject ShiftElementByValuesCompute::init_hints() {
 
   add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of elements to shift to.");
-
-  add_hint(m, Message::kAllowInternalElements, HintKey::kDescriptionHint, "Allow shifting to elements inside the current element as well.");
 
   add_hint(m, Message::kTargetValues, HintKey::kDescriptionHint, "The texts or image urls used to find elements.");
   return m;

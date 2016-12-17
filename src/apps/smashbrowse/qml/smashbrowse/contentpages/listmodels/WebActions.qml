@@ -23,20 +23,11 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Shift To External Element..."
-        description: "Shift to another element, outside the current element."
-        script: "web_recorder.set_allow_internal_elements(false);
-        		 push_by_names('Shift to External Element', 'WebMenuListPage', 'WebActionsShift')"
+        title: "Shift Element..."
+        description: "Shift to another element."
+        script: "push_by_names('Shift Element', 'WebMenuListPage', 'WebActionsShift')"
     }
     
-    ListElement {
-        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Shift To Internal Element..."
-        description: "Shift to another element, inside the current element."
-        script: "web_recorder.set_allow_internal_elements(true);
-        		 push_by_names('Shift to Internal Element', 'WebMenuListPage', 'WebActionsShift')"
-    }
-
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
         title: "Perform Action..."

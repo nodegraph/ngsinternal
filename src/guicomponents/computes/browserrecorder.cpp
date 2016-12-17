@@ -27,8 +27,7 @@ BrowserRecorder::BrowserRecorder(Entity* parent)
       Component(parent, kIID(), kDID()),
       _worker(this),
       _scheduler(this),
-      _model(this),
-      _allow_internal_elements(false) {
+      _model(this) {
   get_dep_loader()->register_fixed_dep(_worker, Path());
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
   get_dep_loader()->register_fixed_dep(_model, Path());
@@ -187,16 +186,12 @@ void BrowserRecorder::record_find_element_by_select_type() {
 // Record Shift Sets.
 // -----------------------------------------------------------------
 
-void BrowserRecorder::set_allow_internal_elements(bool allow) {
-  _allow_internal_elements = allow;
-}
-
 void BrowserRecorder::record_shift_to_text_type_above() {
   check_busy()
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -206,7 +201,7 @@ void BrowserRecorder::record_shift_to_text_type_below() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   args.insert(Message::kDirection, to_underlying(DirectionType::down));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -216,7 +211,7 @@ void BrowserRecorder::record_shift_to_text_type_on_left() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   args.insert(Message::kDirection, to_underlying(DirectionType::left));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -226,7 +221,7 @@ void BrowserRecorder::record_shift_to_text_type_on_right() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   args.insert(Message::kDirection, to_underlying(DirectionType::right));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -238,7 +233,7 @@ void BrowserRecorder::record_shift_to_image_type_above() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -249,7 +244,7 @@ void BrowserRecorder::record_shift_to_image_type_below() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   args.insert(Message::kDirection, to_underlying(DirectionType::down));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -260,7 +255,7 @@ void BrowserRecorder::record_shift_to_image_type_on_left() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   args.insert(Message::kDirection, to_underlying(DirectionType::left));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -271,7 +266,7 @@ void BrowserRecorder::record_shift_to_image_type_on_right() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   args.insert(Message::kDirection, to_underlying(DirectionType::right));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -283,7 +278,7 @@ void BrowserRecorder::record_shift_to_input_type_above() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -294,7 +289,7 @@ void BrowserRecorder::record_shift_to_input_type_below() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   args.insert(Message::kDirection, to_underlying(DirectionType::down));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -305,7 +300,7 @@ void BrowserRecorder::record_shift_to_input_type_on_left() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   args.insert(Message::kDirection, to_underlying(DirectionType::left));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -316,7 +311,7 @@ void BrowserRecorder::record_shift_to_input_type_on_right() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   args.insert(Message::kDirection, to_underlying(DirectionType::right));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -328,7 +323,7 @@ void BrowserRecorder::record_shift_to_select_type_above() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -339,7 +334,7 @@ void BrowserRecorder::record_shift_to_select_type_below() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   args.insert(Message::kDirection, to_underlying(DirectionType::down));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -350,7 +345,7 @@ void BrowserRecorder::record_shift_to_select_type_on_left() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   args.insert(Message::kDirection, to_underlying(DirectionType::left));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
@@ -361,7 +356,7 @@ void BrowserRecorder::record_shift_to_select_type_on_right() {
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   args.insert(Message::kDirection, to_underlying(DirectionType::right));
-  args.insert(Message::kAllowInternalElements, _allow_internal_elements);
+
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();

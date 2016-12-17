@@ -124,136 +124,6 @@ class BgCommHandler {
         return best
     }
 
-    static find_neighbor_internal(origin: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
-        // Loop through each one trying to find the best one.
-        let best: IElementInfo = null
-        console.log('elem: ' + JSON.stringify(origin))
-        candidates.forEach((candidate) => {
-            // Make sure the candidate intersect the origin element.
-            if (!BgCommHandler.elements_in_row(candidate, origin) || !BgCommHandler.elements_in_column(candidate, origin)) {
-                return
-            }
-
-            // Make sure the candidate is not the same element as the origin.
-            if ( (candidate.iframe_index_path == origin.iframe_index_path) && (candidate.xpath == origin.xpath) ) {
-                return
-            }
-
-            // Now analyze the candidate according to the search direction.
-            switch (dir) {
-                case DirectionType.left: {
-                    if (candidate.box.left < origin.box.right) {
-                        if (!best) {
-                            best = candidate
-                            console.log('found first: ' + JSON.stringify(best))
-                        } else if (candidate.box.left > best.box.left) {
-                            best = candidate
-                            console.log('found better: ' + JSON.stringify(best))
-                        }
-                    }
-                } break
-                case DirectionType.right: {
-                    if (candidate.box.right > origin.box.left) {
-                        if (!best) {
-                            best = candidate
-                            console.log('found first: ' + JSON.stringify(best))
-                        } else if (candidate.box.right < best.box.right) {
-                            best = candidate
-                            console.log('found better: ' + JSON.stringify(best))
-                        }
-                    }
-                } break
-                case DirectionType.down: {
-                    if (candidate.box.bottom > origin.box.top) {
-                        if (!best) {
-                            best = candidate
-                            console.log('found first: ' + JSON.stringify(best))
-                        } else if (candidate.box.bottom < best.box.bottom) {
-                            best = candidate
-                            console.log('found better: ' + JSON.stringify(best))
-                        }
-                    }
-                } break
-                case DirectionType.up: {
-                    if (candidate.box.top < origin.box.bottom) {
-                        if (!best) {
-                            best = candidate
-                            console.log('found first: ' + JSON.stringify(best))
-                        } else if (candidate.box.top > best.box.top) {
-                            best = candidate
-                            console.log('found better: ' + JSON.stringify(best))
-                        }
-                    }
-                } break
-            }
-        })
-        return best
-    }
-
-    static find_neighbor_external(origin: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
-        // Loop through each one trying to find the best one.
-        let best: IElementInfo = null
-        console.log('elem: ' + JSON.stringify(origin))
-        candidates.forEach((candidate) => {
-            // Now choose the closest element on one side, according to the direction in the request.
-            switch (dir) {
-                case DirectionType.left: {
-                    if (BgCommHandler.elements_in_row(candidate, origin)) {
-                        if (candidate.box.right < origin.box.left) {
-                            if (!best) {
-                                best = candidate
-                                console.log('found first: ' + JSON.stringify(best))
-                            } else if (candidate.box.right > best.box.right) {
-                                best = candidate
-                                console.log('found better: ' + JSON.stringify(best))
-                            }
-                        }
-                    }
-                } break
-                case DirectionType.right: {
-                    if (BgCommHandler.elements_in_row(candidate, origin)) {
-                        if (candidate.box.left > origin.box.right) {
-                            if (!best) {
-                                best = candidate
-                                console.log('found first: ' + JSON.stringify(best))
-                            } else if (candidate.box.left < best.box.left) {
-                                best = candidate
-                                console.log('found better: ' + JSON.stringify(best))
-                            }
-                        }
-                    }
-                } break
-                case DirectionType.down: {
-                    if (BgCommHandler.elements_in_column(candidate, origin)) {
-                        if (candidate.box.top > origin.box.bottom) {
-                            if (!best) {
-                                best = candidate
-                                console.log('found first: ' + JSON.stringify(best))
-                            } else if (candidate.box.top < best.box.top) {
-                                best = candidate
-                                console.log('found better: ' + JSON.stringify(best))
-                            }
-                        }
-                    }
-                } break
-                case DirectionType.up: {
-                    if (BgCommHandler.elements_in_column(candidate, origin)) {
-                        if (candidate.box.bottom < origin.box.top) {
-                            if (!best) {
-                                best = candidate
-                                console.log('found first: ' + JSON.stringify(best))
-                            } else if (candidate.box.bottom > best.box.bottom) {
-                                best = candidate
-                                console.log('found better: ' + JSON.stringify(best))
-                            }
-                        }
-                    }
-                } break
-            }
-        })
-        return best
-    }
-
     static find_neighbor_closest(src: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
@@ -686,13 +556,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = null
-                        best = BgCommHandler.find_neighbor_closest(this.found_elem, this.found_elems, req.args.direction)
-                        // if (req.args.allow_internal_elements) {
-                        //     best = BgCommHandler.find_neighbor_internal(this.found_elem, this.found_elems, req.args.direction)
-                        // } else {
-                        //     best = BgCommHandler.find_neighbor_external(this.found_elem, this.found_elems, req.args.direction)
-                        // }
+                        let best: IElementInfo = BgCommHandler.find_neighbor_closest(this.found_elem, this.found_elems, req.args.direction)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
@@ -741,13 +605,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = null
-                        best = BgCommHandler.find_neighbor_closest(this.found_elem, this.found_elems, req.args.direction)
-                        // if (req.args.allow_internal_elements) {
-                        //     best = BgCommHandler.find_neighbor_internal(this.found_elem, this.found_elems, req.args.direction)
-                        // } else {
-                        //     best = BgCommHandler.find_neighbor_external(this.found_elem, this.found_elems, req.args.direction)
-                        // }
+                        let best: IElementInfo = BgCommHandler.find_neighbor_closest(this.found_elem, this.found_elems, req.args.direction)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
