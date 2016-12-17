@@ -60,6 +60,10 @@ Q_OBJECT
   Q_INVOKABLE void create_array_data_node(bool centered);
   Q_INVOKABLE void create_object_data_node(bool centered);
 
+  // Create data op nodes.
+  Q_INVOKABLE void create_copy_data_node(bool centered);
+  Q_INVOKABLE void create_erase_data_node(bool centered);
+
   // Dot nodes.
   Q_INVOKABLE void create_dot_node(bool centered);
 

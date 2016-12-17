@@ -1,4 +1,6 @@
 #include <base/objectmodel/deploader.h>
+#include <base/utils/stringutil.h>
+#include <components/computes/jsonutils.h>
 
 #include <components/computes/ifgroupnodecompute.h>
 #include <components/computes/inputcompute.h>
@@ -22,12 +24,17 @@ bool IfGroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
-  if (!_inputs->get("condition")->get_output("out").toBool()) {
-    // If the "condition" input is false then we copy the value from "in" to "out".
-    Entity* output_node = our_entity()->get_child("out");
-    Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
-    set_output("out", output_node_compute->get_output("out"));
+  // Get the path to the condition in the in input.
+  QString condition_path_string = _inputs->get("condition_path")->get_output("out").toString();
+  Path condition_path(Path::split_string(condition_path_string.toStdString()));
 
+  // Get the value of the condition.
+  QJsonObject in_obj = _inputs->get("in")->get_output("out").toObject();
+  QJsonValue condition_value = JSONUtils::extract_value(in_obj, condition_path, false);
+
+  if (!condition_value.toBool()) {
+    // If the "condition" input is false then we copy the value from "in" to "out".
+    // We set the value to zero for all other outputs.
     Entity* outputs = get_entity(Path( { ".", "outputs" }));
     for (auto &iter : outputs->get_children()) {
       Entity* output_entity = iter.second;
@@ -43,7 +50,7 @@ bool IfGroupNodeCompute::update_state() {
       }
     }
   } else {
-    // Otherwise if the "condition" input is true then run the normal group compute.
+    // Otherwise we run the normal group compute.
     return GroupNodeCompute::update_state();
   }
   return true;

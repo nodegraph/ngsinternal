@@ -24,8 +24,11 @@
 #include <components/computes/groupnodecompute.h>
 #include <components/computes/ifgroupnodecompute.h>
 #include <components/computes/foreachgroupnodecompute.h>
+#include <components/computes/whilegroupnodecompute.h>
 #include <components/computes/mergenodecompute.h>
 #include <components/computes/datanodecompute.h>
+#include <components/computes/copydatanodecompute.h>
+#include <components/computes/erasedatanodecompute.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/mocknodecompute.h>
 #include <components/computes/outputnodecompute.h>

@@ -35,6 +35,7 @@
 #include <components/computes/groupnodecompute.h>
 #include <components/computes/ifgroupnodecompute.h>
 #include <components/computes/foreachgroupnodecompute.h>
+#include <components/computes/whilegroupnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/datanodecompute.h>
 #include <components/computes/inputnodecompute.h>
@@ -449,10 +450,10 @@ void IfGroupNodeEntity::create_internals(const EntityConfig& config) {
     in->create_internals(config2);
   }
   {
-    InputNodeEntity* condition = new_ff InputNodeEntity(this, "condition");
+    InputNodeEntity* condition = new_ff InputNodeEntity(this, "condition_path");
     EntityConfig config2;
     config2.visible = false;
-    config2.unconnected_value = false;
+    config2.unconnected_value = "/result";
     condition->create_internals(config2);
   }
   {
@@ -489,6 +490,53 @@ void ForEachGroupNodeEntity::create_internals(const EntityConfig& config) {
     in->create_internals(config2);
   }
   {
+    InputNodeEntity* elements = new_ff InputNodeEntity(this, "elements_path");
+    EntityConfig config2;
+    config2.visible = false;
+    config2.unconnected_value = "/elements";
+    elements->create_internals(config2);
+  }
+  {
+    ComputeNodeEntity* element = new_ff LoopComputeNodeEntity(this, "element");
+    EntityConfig config2;
+    config2.visible = true;
+    config2.compute_did = ComponentDID::kLoopDataNodeCompute;
+    element->create_internals(config2);
+  }
+  {
+    OutputNodeEntity* out = new_ff OutputNodeEntity(this, "out");
+    EntityConfig config2;
+    config2.visible = true;
+    out->create_internals(config2);
+  }
+
+  create_default_exit(this);
+
+  create_default_enter_and_exit(this);
+}
+
+void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
+  // Our components.
+  (new_ff WhileGroupNodeCompute(this))->create_inputs_outputs(config);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  // Gui related.
+  if (config.visible) {
+    new_ff GroupInteraction(this);
+    new_ff CompShapeCollective(this);
+    new_ff GroupNodeShape(this);
+    new_ff InputTopology(this);
+    new_ff OutputTopology(this);
+  }
+  // Sub Components.
+  {
+    InputNodeEntity* in = new_ff InputNodeEntity(this, "in");
+    EntityConfig config2;
+    config2.visible = true;
+    config2.unconnected_value = QJsonObject();
+    in->create_internals(config2);
+  }
+  {
     InputNodeEntity* elements = new_ff InputNodeEntity(this, "elements");
     EntityConfig config2;
     config2.visible = false;
@@ -498,7 +546,7 @@ void ForEachGroupNodeEntity::create_internals(const EntityConfig& config) {
   {
     ComputeNodeEntity* element = new_ff LoopComputeNodeEntity(this, "element");
     EntityConfig config2;
-    config2.visible = true;
+    config2.visible = false;
     config2.compute_did = ComponentDID::kLoopDataNodeCompute;
     element->create_internals(config2);
   }

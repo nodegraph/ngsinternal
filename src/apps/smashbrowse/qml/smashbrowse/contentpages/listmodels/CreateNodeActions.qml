@@ -78,6 +78,22 @@ ListModel {
         script: "ng_controller.create_accumulate_data_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Copy Data Node"
+        description: "Copies data inside the input object to another location."
+        script: "ng_controller.create_copy_data_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_details_white_48dp.png"
+        title: "Erase Data Node"
+        description: "Erases data a certain location inside the input object."
+        script: "ng_controller.create_erase_data_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
 
     ListElement {
         image_url: "qrc:///icons/ic_details_white_48dp.png"

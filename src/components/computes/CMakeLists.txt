@@ -9,8 +9,11 @@ set(sources
 	groupnodecompute.cpp
 	ifgroupnodecompute.cpp
 	foreachgroupnodecompute.cpp
+	whilegroupnodecompute.cpp
 	inputcompute.cpp
 	datanodecompute.cpp
+	copydatanodecompute.cpp
+	erasedatanodecompute.cpp
 	loopdatanodecompute.cpp
 	accumulatedatanodecompute.cpp
 	inputnodecompute.cpp
@@ -36,8 +39,11 @@ set(headers
 	groupnodecompute.h
 	ifgroupnodecompute.h
 	foreachgroupnodecompute.h
+	whilegroupnodecompute.h
 	inputcompute.h
 	datanodecompute.h
+	copydatanodecompute.h
+	erasedatanodecompute.h
 	loopdatanodecompute.h
 	accumulatedatanodecompute.h
 	inputnodecompute.h

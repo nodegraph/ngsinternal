@@ -68,6 +68,7 @@ ENTITY_ENTRY1(OutputLabelEntity)\
 ENTITY_ENTRY1(GroupNodeEntity)\
 ENTITY_ENTRY1(IfGroupNodeEntity)\
 ENTITY_ENTRY1(ForEachGroupNodeEntity)\
+ENTITY_ENTRY1(WhileGroupNodeEntity)\
 ENTITY_ENTRY1(ScriptGroupNodeEntity)\
 ENTITY_ENTRY1(BrowserGroupNodeEntity)\
 ENTITY_ENTRY1(FirebaseGroupNodeEntity)\

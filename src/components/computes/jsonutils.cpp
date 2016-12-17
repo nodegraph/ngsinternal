@@ -1,4 +1,5 @@
 #include <components/computes/jsonutils.h>
+#include <base/utils/path.h>
 
 #include <sstream>
 #include <iostream>
@@ -903,5 +904,104 @@ bool JSONUtils::eval_js_in_context(QJSEngine& engine, const QString& expr, QJson
   return true;
 }
 
+QJsonValue JSONUtils::extract_value(const QJsonObject& src, const Path& src_path, const QJsonValue& target) {
+  QJsonObject obj(src);
+  Path path(src_path);
+
+  while(!path.empty()) {
+    // Grab an element of the path.
+    std::string key = path.front();
+    path.pop_front();
+
+    // If the path is now empty, we're at the right location to extract the value.
+    if (path.empty()) {
+      QJsonValue value = obj.value(key.c_str());
+      QJsonValue merged = JSONUtils::deep_merge(target, value);
+      return merged;
+    }
+
+    // Make sure the object has something at this path_elem.
+    if (!obj.contains(key.c_str())) {
+      return QJsonValue();
+    }
+
+    // Make sure the object has this key.
+    if (!obj.contains(key.c_str())) {
+      return QJsonValue();
+    }
+
+    // Dive into the object one step.
+    QJsonValue child = obj.value(key.c_str());
+
+    // The child should always be an object.
+    if (!child.isObject()) {
+      return QJsonValue();
+    }
+
+    // Convert the child to an object.
+    obj = child.toObject();
+  }
+  return QJsonValue();
+}
+
+QJsonObject JSONUtils::embed_value(const QJsonObject& obj, const Path& dest_path, const QJsonValue& dest_value) {
+  if (dest_path.empty()) {
+    return obj;
+  }
+
+  QString child_key(dest_path.front().c_str());
+
+  // Base Case.
+  if (dest_path.size() == 1) {
+    QJsonObject result(obj);
+    result.insert(child_key, dest_value);
+    return result;
+  }
+
+  // Get the recursive object and dest path.
+  QJsonObject child_obj = obj.value(child_key).toObject();
+  Path child_path(dest_path);
+  child_path.pop_front();
+
+  // Recursive case.
+  // Insert the result of a recursive call.
+  QJsonObject result(obj);
+  result.insert(child_key, embed_value(child_obj, child_path, dest_value));
+  return result;
+}
+
+QJsonObject JSONUtils::erase_value(const QJsonObject& obj, const Path& path2) {
+  if (path2.empty()) {
+    return obj;
+  }
+
+  QString child_key(path2.front().c_str());
+
+  // Base Case.
+  if (path2.size() == 1) {
+    QJsonObject result(obj);
+    QJsonObject::iterator iter = result.find(child_key);
+    if (iter != result.end()) {
+      result.erase(iter);
+    }
+    return result;
+  }
+
+  // Make sure the object has the child_key, otherwise we can't find the location to erase.
+  if (!obj.contains(child_key)) {
+    return obj;
+  }
+
+  // Get the recursive object and dest path.
+  QJsonObject child_obj = obj.value(child_key).toObject();
+  Path child_path(path2);
+  child_path.pop_front();
+
+  // Recursive case.
+  // Insert the result of a recursive call.
+  QJsonObject result(obj);
+  result.insert(child_key, erase_value(child_obj, child_path));
+  return result;
+}
 
 }

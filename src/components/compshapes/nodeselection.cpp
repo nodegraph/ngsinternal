@@ -245,17 +245,24 @@ void NodeSelection::destroy_selection() {
       continue;
     }
 
-    // If we're in an IfGroupNode, we can't destroy "in", "out", and "condition" nodes.
+    // Nodes in certain groups cannot be destroyed.
     if (group->get_did() == EntityDID::kIfGroupNodeEntity) {
       const std::string& name = e->get_name();
-      if ( (name == "in") || (name == "out") || (name == "condition")) {
+      if ( (name == "in") || (name == "out") ) {
         continue;
       }
     }
-
-    // If we're in an ForEachGroupNode we can't destroy ...
-    {
-
+    if (group->get_did() == EntityDID::kForEachGroupNodeEntity) {
+      const std::string& name = e->get_name();
+      if ( (name == "in") || (name == "out") || (name == "element")) {
+        continue;
+      }
+    }
+    if (group->get_did() == EntityDID::kWhileGroupNodeEntity) {
+      const std::string& name = e->get_name();
+      if ( (name == "in") || (name == "out") ) {
+        continue;
+      }
     }
 
     // Otherwise we destroy it.

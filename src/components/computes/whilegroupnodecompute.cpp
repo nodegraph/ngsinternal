@@ -1,7 +1,6 @@
 #include <base/objectmodel/deploader.h>
 
-#include <components/computes/jsonutils.h>
-#include <components/computes/foreachgroupnodecompute.h>
+#include <components/computes/whilegroupnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/outputnodecompute.h>
@@ -14,37 +13,32 @@
 
 namespace ngs {
 
-ForEachGroupNodeCompute::ForEachGroupNodeCompute(Entity* entity, ComponentDID did):
+WhileGroupNodeCompute::WhileGroupNodeCompute(Entity* entity, ComponentDID did):
     GroupNodeCompute(entity, did),
     _restart_loop(true) {
 }
 
-ForEachGroupNodeCompute::~ForEachGroupNodeCompute() {
+WhileGroupNodeCompute::~WhileGroupNodeCompute() {
 }
 
-void ForEachGroupNodeCompute::set_self_dirty(bool dirty) {
+void WhileGroupNodeCompute::set_self_dirty(bool dirty) {
   GroupNodeCompute::set_self_dirty(dirty);
   _restart_loop = true;
 }
 
-bool ForEachGroupNodeCompute::update_state() {
-  std::cerr << "ForEachGroupNodeCompute::update_state\n";
-
+bool WhileGroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
-  // Get the path to the elements in the in input.
-  QString elements_path_string = _inputs->get("elements_path")->get_output("out").toString();
-  Path elements_path(Path::split_string(elements_path_string.toStdString()));
-
-  // Get the value of elements.
-  QJsonObject in_obj = _inputs->get("in")->get_output("out").toObject();
-  QJsonObject elements = JSONUtils::extract_value(in_obj, elements_path, QJsonObject()).toObject();
+  // Get the elements.
+  QJsonObject elements = _inputs->get_input_value("elements").toObject();
 
   if (elements.isEmpty()) {
-    std::cerr << "elements is empty\n";
     // If the "condition" input is false then we copy the value from "in" to "out".
-    // We set the value to zero for all other outputs.
+    Entity* output_node = our_entity()->get_child("out");
+    Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
+    set_output("out", output_node_compute->get_output("out"));
+
     Entity* outputs = get_entity(Path( { ".", "outputs" }));
     for (auto &iter : outputs->get_children()) {
       Entity* output_entity = iter.second;
@@ -61,8 +55,6 @@ bool ForEachGroupNodeCompute::update_state() {
     }
     return true;
   }
-
-  std::cerr << "elements has stuff inside\n";
 
   Entity* element_node = our_entity()->get_child("element");
   assert(element_node);
@@ -92,7 +84,6 @@ bool ForEachGroupNodeCompute::update_state() {
       QJsonObject element_value;
       element_value.insert(iter.key(), iter.value());
       element_compute->set_override(element_value);
-      std::cerr << "looping over: " << iter.key().toStdString() << "\n";
     }
     // Otherwise if the "condition" input is true then run the normal group compute.
     if (!GroupNodeCompute::update_state()) {

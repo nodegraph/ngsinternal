@@ -117,6 +117,13 @@ void NodeGraphController::create_object_data_node(bool centered) {
   _manipulator->create_data_node(centered, QJsonObject());
 }
 
+// Create data op nodes.
+void NodeGraphController::create_copy_data_node(bool centered) {
+  _manipulator->create_compute_node(centered, EntityDID::kComputeNodeEntity, ComponentDID::kCopyDataNodeCompute);
+}
+void NodeGraphController::create_erase_data_node(bool centered) {
+  _manipulator->create_compute_node(centered, EntityDID::kComputeNodeEntity, ComponentDID::kEraseDataNodeCompute);
+}
 
 // Create dot nodes.
 void NodeGraphController::create_dot_node(bool centered) {

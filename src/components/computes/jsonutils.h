@@ -12,6 +12,8 @@ class QByteArray;
 
 namespace ngs {
 
+class Path;
+
 class COMPUTES_EXPORT JSONUtils {
  public:
 
@@ -53,6 +55,11 @@ class COMPUTES_EXPORT JSONUtils {
   static QJsonValue eval_js2(const QString& expr);
   static bool eval_js_in_context(QJSEngine& engine, const QString& expr, QJsonValue& result, QString& error);
 
+
+  // Grab values from objects.
+  static QJsonValue extract_value(const QJsonObject& src, const Path& src_path, const QJsonValue& target);
+  static QJsonObject embed_value(const QJsonObject& obj, const Path& dest_path, const QJsonValue& dest_value);
+  static QJsonObject erase_value(const QJsonObject& obj, const Path& path);
 };
 
 }
