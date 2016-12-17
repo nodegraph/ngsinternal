@@ -32,9 +32,9 @@ bool IfGroupNodeCompute::update_state() {
   QJsonObject in_obj = _inputs->get("in")->get_output("out").toObject();
   QJsonValue condition_value = JSONUtils::extract_value(in_obj, condition_path, false);
 
+  // If the "condition" input is false then we copy the value from "in" to "out".
+  // We set the value to zero for all other outputs.
   if (!condition_value.toBool()) {
-    // If the "condition" input is false then we copy the value from "in" to "out".
-    // We set the value to zero for all other outputs.
     Entity* outputs = get_entity(Path( { ".", "outputs" }));
     for (auto &iter : outputs->get_children()) {
       Entity* output_entity = iter.second;

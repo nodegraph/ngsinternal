@@ -26,8 +26,16 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
         title: "If Group Node"
-        description: "This group computes only when the condition input is true."
+        description: "This group computes only when the value at condition_path evaluates to true."
         script: "ng_controller.create_if_group_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
+        title: "While Group Node"
+        description: "This group computes only while the value at condition_path remains true."
+        script: "ng_controller.create_while_group_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     

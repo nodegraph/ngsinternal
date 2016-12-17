@@ -537,18 +537,11 @@ void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
     in->create_internals(config2);
   }
   {
-    InputNodeEntity* elements = new_ff InputNodeEntity(this, "elements");
+    InputNodeEntity* condition = new_ff InputNodeEntity(this, "condition_path");
     EntityConfig config2;
     config2.visible = false;
-    config2.unconnected_value = QJsonObject();
-    elements->create_internals(config2);
-  }
-  {
-    ComputeNodeEntity* element = new_ff LoopComputeNodeEntity(this, "element");
-    EntityConfig config2;
-    config2.visible = false;
-    config2.compute_did = ComponentDID::kLoopDataNodeCompute;
-    element->create_internals(config2);
+    config2.unconnected_value = "/result";
+    condition->create_internals(config2);
   }
   {
     OutputNodeEntity* out = new_ff OutputNodeEntity(this, "out");

@@ -58,6 +58,9 @@ void NodeGraphController::create_group_node(bool centered) {
 void NodeGraphController::create_if_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kIfGroupNodeEntity);
 }
+void NodeGraphController::create_while_group_node(bool centered) {
+  _manipulator->create_node(centered, EntityDID::kWhileGroupNodeEntity);
+}
 void NodeGraphController::create_for_each_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kForEachGroupNodeEntity);
 }

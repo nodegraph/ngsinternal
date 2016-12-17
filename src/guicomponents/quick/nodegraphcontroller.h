@@ -34,6 +34,7 @@ Q_OBJECT
   // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);
   Q_INVOKABLE void create_if_group_node(bool centered);
+  Q_INVOKABLE void create_while_group_node(bool centered);
   Q_INVOKABLE void create_for_each_group_node(bool centered);
   Q_INVOKABLE void create_script_group_node(bool centered);
   Q_INVOKABLE void create_browser_group_node(bool centered);

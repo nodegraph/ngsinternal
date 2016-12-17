@@ -16,7 +16,8 @@ namespace ngs {
 
 ForEachGroupNodeCompute::ForEachGroupNodeCompute(Entity* entity, ComponentDID did):
     GroupNodeCompute(entity, did),
-    _restart_loop(true) {
+    _restart_loop(true),
+    _do_next(false){
 }
 
 ForEachGroupNodeCompute::~ForEachGroupNodeCompute() {
@@ -79,7 +80,9 @@ bool ForEachGroupNodeCompute::update_state() {
       element_value.insert(iter.key(), iter.value());
       element_compute->set_override(element_value);
       _restart_loop = false;
-    } else {
+      _do_next = false;
+    } else if (_do_next) {
+      _do_next = false;
       QJsonObject::iterator iter = elements.find(element_compute->get_override().toObject().begin().key());
       assert(iter != elements.end());
       ++iter;
@@ -87,6 +90,7 @@ bool ForEachGroupNodeCompute::update_state() {
         // Copy our output values from the inside to the outside.
         copy_output_nodes_to_outputs();
         _restart_loop = true;
+        _do_next = false;
         return true;
       }
       QJsonObject element_value;
@@ -94,10 +98,19 @@ bool ForEachGroupNodeCompute::update_state() {
       element_compute->set_override(element_value);
       std::cerr << "looping over: " << iter.key().toStdString() << "\n";
     }
+
+    std::cerr << "performing foreach compute\n";
+
     // Otherwise if the "condition" input is true then run the normal group compute.
     if (!GroupNodeCompute::update_state()) {
       return false;
     }
+
+    // If we've made it here we successfully go to the next element.
+    // This logic is needed because some of the internal nodes may return false, in the
+    // above GroupNodeCompute::update_state(). In this case we are not ready to move onto
+    // the next element yet.
+    _do_next = true;
   }
 
   _restart_loop = true;

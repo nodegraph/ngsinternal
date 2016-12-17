@@ -16,6 +16,7 @@ class COMPUTES_EXPORT ForEachGroupNodeCompute: public GroupNodeCompute {
   virtual void set_self_dirty(bool dirty);
 
   bool _restart_loop;
+  bool _do_next;
 };
 
 }

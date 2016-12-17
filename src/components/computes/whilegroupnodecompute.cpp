@@ -1,5 +1,7 @@
 #include <base/objectmodel/deploader.h>
 
+#include <components/computes/jsonutils.h>
+
 #include <components/computes/whilegroupnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/inputnodecompute.h>
@@ -15,6 +17,7 @@ namespace ngs {
 
 WhileGroupNodeCompute::WhileGroupNodeCompute(Entity* entity, ComponentDID did):
     GroupNodeCompute(entity, did),
+    _infinite_counter(0),
     _restart_loop(true) {
 }
 
@@ -30,15 +33,17 @@ bool WhileGroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
-  // Get the elements.
-  QJsonObject elements = _inputs->get_input_value("elements").toObject();
+  // Get the path to the condition in the in input.
+  QString condition_path_string = _inputs->get("condition_path")->get_output("out").toString();
+  Path condition_path(Path::split_string(condition_path_string.toStdString()));
 
-  if (elements.isEmpty()) {
-    // If the "condition" input is false then we copy the value from "in" to "out".
-    Entity* output_node = our_entity()->get_child("out");
-    Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
-    set_output("out", output_node_compute->get_output("out"));
+  // Get the value of the condition.
+  QJsonObject in_obj = _inputs->get("in")->get_output("out").toObject();
+  QJsonValue condition_value = JSONUtils::extract_value(in_obj, condition_path, false);
 
+  // If the "condition" input is false then we copy the value from "in" to "out".
+  // We set the value to zero for all other outputs.
+  if (!condition_value.toBool()) {
     Entity* outputs = get_entity(Path( { ".", "outputs" }));
     for (auto &iter : outputs->get_children()) {
       Entity* output_entity = iter.second;
@@ -56,38 +61,34 @@ bool WhileGroupNodeCompute::update_state() {
     return true;
   }
 
-  Entity* element_node = our_entity()->get_child("element");
-  assert(element_node);
-  Dep<LoopDataNodeCompute> element_compute = get_dep<LoopDataNodeCompute>(element_node);
-
   while (true) {
     if (_restart_loop) {
       // If we get then we're just starting our loop.
       // Reset all the accumulate data nodes.
       reset_accumulate_data_nodes();
-      // Set the first element value.
-      QJsonObject::iterator iter = elements.begin();
-      QJsonObject element_value;
-      element_value.insert(iter.key(), iter.value());
-      element_compute->set_override(element_value);
       _restart_loop = false;
-    } else {
-      QJsonObject::iterator iter = elements.find(element_compute->get_override().toObject().begin().key());
-      assert(iter != elements.end());
-      ++iter;
-      if (iter == elements.end()) {
-        // Copy our output values from the inside to the outside.
-        copy_output_nodes_to_outputs();
-        _restart_loop = true;
-        return true;
-      }
-      QJsonObject element_value;
-      element_value.insert(iter.key(), iter.value());
-      element_compute->set_override(element_value);
     }
-    // Otherwise if the "condition" input is true then run the normal group compute.
+    // Run the regular group compute.
     if (!GroupNodeCompute::update_state()) {
       return false;
+    } else {
+      // Check the "out" value to see if the value at condition_path is false.
+      QJsonObject out_obj = get_output("out").toObject();
+      QJsonValue condition_value = JSONUtils::extract_value(out_obj, condition_path, false);
+      if (!condition_value.toBool()) {
+        break;
+      }
+
+      // We return false once in a while so the user can stop infinite while loops.
+      if ((_infinite_counter++) % 2 == 0) {
+        return false;
+      }
+
+      // Set the inputs dirty, so that we can perform the compute again.
+      for (auto &iter: _inputs->get_all()) {
+        const Dep<InputCompute>& input = iter.second;
+        input->dirty_state();
+      }
     }
   }
 

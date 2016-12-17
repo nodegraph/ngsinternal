@@ -15,6 +15,7 @@ class COMPUTES_EXPORT WhileGroupNodeCompute: public GroupNodeCompute {
   virtual bool update_state();
   virtual void set_self_dirty(bool dirty);
 
+  size_t _infinite_counter;
   bool _restart_loop;
 };
 
