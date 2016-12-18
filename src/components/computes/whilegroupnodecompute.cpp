@@ -90,22 +90,26 @@ bool WhileGroupNodeCompute::update_state() {
     // Run the regular group compute.
     if (!GroupNodeCompute::update_state()) {
       return false;
-    } else {
-      // Check the "out" value to see if the value at condition_path is false.
-      QJsonObject out_obj = get_output("out").toObject();
-      QJsonValue condition_value = JSONUtils::extract_value(out_obj, condition_path, false);
-      if (!condition_value.toBool()) {
-        break;
-      }
-
-      // We return false once in a while so the user can stop infinite while loops.
-      if ((_infinite_counter++ % 2) == 0) {
-        _manipulator->continue_cleaning_to_ultimate_targets_on_idle();
-        return false;
-      }
-
-      _do_next = true;
     }
+
+    // Check the "out" value to see if the value at condition_path is false.
+    QJsonObject out_obj = get_output("out").toObject();
+    QJsonValue condition_value = JSONUtils::extract_value(out_obj, condition_path, false);
+    if (!condition_value.toBool()) {
+      break;
+    }
+
+    // We return false once in a while so the user can stop infinite while loops.
+    if ((_infinite_counter++ % 2) == 0) {
+      _manipulator->continue_cleaning_to_ultimate_targets_on_idle();
+      return false;
+    }
+
+    // If we've made it here we successfully go to the next element.
+    // This logic is needed because some of the internal nodes may return false, in the
+    // above GroupNodeCompute::update_state(). In this case we are not ready to move onto
+    // the next element yet.
+    _do_next = true;
   }
 
   _restart_loop = true;
