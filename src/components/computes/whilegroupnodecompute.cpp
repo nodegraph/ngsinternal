@@ -12,13 +12,15 @@
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/outputshape.h>
 
+#include <guicomponents/quick/basenodegraphmanipulator.h>
 
 namespace ngs {
 
 WhileGroupNodeCompute::WhileGroupNodeCompute(Entity* entity, ComponentDID did):
     GroupNodeCompute(entity, did),
     _infinite_counter(0),
-    _restart_loop(true) {
+    _restart_loop(true),
+    _do_next(false){
 }
 
 WhileGroupNodeCompute::~WhileGroupNodeCompute() {
@@ -67,7 +69,24 @@ bool WhileGroupNodeCompute::update_state() {
       // Reset all the accumulate data nodes.
       reset_accumulate_data_nodes();
       _restart_loop = false;
+      _do_next = true;
     }
+
+    // Set the inputs dirty when starting an iteration of the loop,
+    // so that we can perform the compute again.
+    if (_do_next) {
+      for (auto &iter: _inputs->get_all()) {
+        // Name of input on the group.
+        std::string input_name = iter.second->get_name();
+        // Find the input compute inside the group.
+        Entity* input_node = our_entity()->get_child(input_name);
+        assert(input_node);
+        Dep<Compute> input_compute = get_dep<Compute>(input_node);
+        input_compute->dirty_state();
+      }
+      _do_next = false;
+    }
+
     // Run the regular group compute.
     if (!GroupNodeCompute::update_state()) {
       return false;
@@ -80,19 +99,17 @@ bool WhileGroupNodeCompute::update_state() {
       }
 
       // We return false once in a while so the user can stop infinite while loops.
-      if ((_infinite_counter++) % 2 == 0) {
+      if ((_infinite_counter++ % 2) == 0) {
+        _manipulator->continue_cleaning_to_ultimate_targets_on_idle();
         return false;
       }
 
-      // Set the inputs dirty, so that we can perform the compute again.
-      for (auto &iter: _inputs->get_all()) {
-        const Dep<InputCompute>& input = iter.second;
-        input->dirty_state();
-      }
+      _do_next = true;
     }
   }
 
   _restart_loop = true;
+  _do_next = false;
   return true;
 }
 

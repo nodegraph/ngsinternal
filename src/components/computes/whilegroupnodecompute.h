@@ -17,6 +17,7 @@ class COMPUTES_EXPORT WhileGroupNodeCompute: public GroupNodeCompute {
 
   size_t _infinite_counter;
   bool _restart_loop;
+  bool _do_next;
 };
 
 }
