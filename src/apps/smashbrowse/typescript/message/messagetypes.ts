@@ -87,11 +87,6 @@ const enum InfoType {
   kBgIsConnected,
   kShowWebActionMenu,
   kFirebaseChanged,
-
-  kCollectElement,
-  kCollectElements,
-  kCollectBoolean,
-  kCollectClick,
 }
 
 const enum MessageType {

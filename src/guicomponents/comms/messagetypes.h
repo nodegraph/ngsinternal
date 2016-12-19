@@ -82,11 +82,6 @@ enum class InfoType : int {
   kBgIsConnected,
   kShowWebActionMenu,
   kFirebaseChanged,
-
-  kCollectElement,
-  kCollectElements,
-  kCollectBoolean,
-  kCollectClick,
 };
 
 enum class MessageType : int {

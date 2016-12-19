@@ -177,25 +177,6 @@ class BgComm {
             return
         }
 
-        // We consume some info messages ourselves without passing them onto nodejs.
-        if (msg.msg_type == MessageType.kInfoMessage) {
-            let req = <InfoMessage>msg
-            if (req.info == InfoType.kCollectElement) {
-                this.handler.collect_elements([req.value])
-                // Return so that we don't send this info message to the nodejs.
-                return
-            } else if (req.info == InfoType.kCollectElements) {
-                this.handler.collect_elements(req.value)
-                return
-            } else if (req.info == InfoType.kCollectBoolean) {
-                this.handler.collect_boolean(req.value)
-                return
-            } else if (req.info == InfoType.kCollectClick) {
-                //this.handler.collect_click(req.value)
-                return
-            }
-        }
-
         // Pass the message to nodejs.
         this.send_to_nodejs(msg);
     }
