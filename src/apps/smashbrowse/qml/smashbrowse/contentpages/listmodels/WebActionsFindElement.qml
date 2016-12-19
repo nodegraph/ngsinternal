@@ -26,7 +26,7 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "With Any Text"
-        description: "Find the top-leftmost element that has any text."
+        description: "Find the top-leftmost text element."
         script: "web_recorder.record_find_element_by_text_type();
         		main_bar.switch_to_current_mode();"
     }
@@ -34,23 +34,23 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "With Any Image"
-        description: "Find the top-leftmost element that has any image."
+        description: "Find the top-leftmost image element."
         script: "web_recorder.record_find_element_by_image_type();
         		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-        title: "With Any Input"
-        description: "Find the top-leftmost element that has any input field."
+        title: "With Any Input Field"
+        description: "Find the top-leftmost input field."
         script: "web_recorder.record_find_element_by_input_type();
         		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
-        title: "With Any Select"
-        description: "Find the top-leftmost element that has any select/dropdown."
+        title: "With Any Drop Down Field"
+        description: "Find the top-leftmost dropdown field."
         script: "web_recorder.record_find_element_by_select_type();
         		main_bar.switch_to_current_mode();"
     }

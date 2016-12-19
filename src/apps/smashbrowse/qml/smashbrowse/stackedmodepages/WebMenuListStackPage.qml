@@ -61,7 +61,7 @@ BaseStackPage{
         visible = true
     }
 
-    function on_select_from_dropdown() {
+    function on_choose_from_dropdown() {
     	web_worker.queue_emit_option_texts()
     }
     

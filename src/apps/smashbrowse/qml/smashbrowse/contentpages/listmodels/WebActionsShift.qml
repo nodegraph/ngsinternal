@@ -21,16 +21,16 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-        title: "To Input Element"
-        description: "Shift to neighboring element containing a text input."
+        title: "To Input Field Element"
+        description: "Shift to neighboring element containing an input field."
         script: "push_by_names('Shift To Text Inputs', 'WebMenuListPage', 'WebActionsShiftToInputType')"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
-        title: "To Select/Dropdown Element"
-        description: "Shift to neighboring element containing a select dropdown."
-        script: "push_by_names('Shift To DropDowns', 'WebMenuListPage', 'WebActionsShiftToSelectType')"
+        title: "To Drop Down Field Element"
+        description: "Shift to neighboring element containing a drop down field."
+        script: "push_by_names('Shift To DropDowns', 'WebMenuListPage', 'WebActionsShiftToDropDownType')"
     }
 
 }

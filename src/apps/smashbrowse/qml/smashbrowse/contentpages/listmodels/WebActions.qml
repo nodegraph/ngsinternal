@@ -16,9 +16,9 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Find Element..."
-        description: "Find an element."
-        script: "push_by_names('Find Element', 'WebMenuListPage', 'WebActionsFindElement')"
+        title: "Find Top Leftmost Element..."
+        description: "Find top leftmost element."
+        script: "push_by_names('Find Top Leftmost Element', 'WebMenuListPage', 'WebActionsFindElement')"
     }
 
     ListElement {

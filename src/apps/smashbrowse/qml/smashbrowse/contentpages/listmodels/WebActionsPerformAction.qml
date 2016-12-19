@@ -16,14 +16,14 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Type Text"
-        description: "Type text into a text input element."
+        description: "Type text into an input field."
         script: "web_menu_list_stack_page.on_type_text();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Press Enter/Submit"
-        description: "Type enter or submit into a text input element."
+        description: "Type enter or submit into an input field."
         script: "web_recorder.record_type_enter();
         		main_bar.switch_to_current_mode();"
     }
@@ -38,9 +38,9 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-        title: "Select from Dropdown"
-        description: "Select a choice from a dropdown."
-        script: "web_menu_list_stack_page.on_select_from_dropdown();"
+        title: "Choose from Drop Down"
+        description: "Choose an option from a drop down field."
+        script: "web_menu_list_stack_page.on_choose_from_dropdown();"
     }
 
     ListElement {

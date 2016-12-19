@@ -15,6 +15,6 @@ WebActionsShift 1.0 WebActionsShift.qml
 WebActionsShiftToTextType 1.0 WebActionsShiftToTextType.qml
 WebActionsShiftToImageType 1.0 WebActionsShiftToImageType.qml
 WebActionsShiftToInputType 1.0 WebActionsShiftToInputType.qml
-WebActionsShiftToSelectType 1.0 WebActionsShiftToSelectType.qml
+WebActionsShiftToDropDownType 1.0 WebActionsShiftToDropDownType.qml
 WebActionsPerformAction 1.0 WebActionsPerformAction.qml
 WebActionsPerformScroll 1.0 WebActionsPerformScroll.qml
