@@ -7,7 +7,7 @@ let mutation_monitor: MutationMonitor = null
 let content_comm: ContentComm = null
 let content_comm_handler: ContentCommHandler = null
 
-// If we're not the top window (ie: an IFrame), then we just block all events.
+// Event Blocking.
 let event_blocker: EventBlocker = null
 
 // Setup content comms.

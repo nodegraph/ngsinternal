@@ -13,7 +13,7 @@ interface IPoint {
 
 // Info about an html element in the browser. 
 interface IElementInfo {
-    iframe_index_path: string
+    frame_index_path: string
     xpath: string
     box: IBox // These are the bounds in global client space.
 }
@@ -25,9 +25,8 @@ interface IPoint{
 
 interface IClickInfo {
     // Click pos.
-    click_pos: IPoint,
-    nearest_rel_click_pos: IPoint,
-    overlay_rel_click_pos: IPoint,
+    global_mouse_position: IPoint, // In global client space.
+    local_mouse_position: IPoint, // In local space relative to the element of interest. (Calculated by subtracting the click pos from the element pos in page space coordinates.)
     // Text and image values under click.
     text_values: string[],
     image_values: string[],
@@ -38,7 +37,6 @@ interface IClickInfo {
 class BaseMessage {
     msg_type: MessageType
     id: Number // RequestMessage and ResponseMessage id should match. (-1 means we don't care/track about it.)
-    iframe: string // The iframe identified by a path of indices. eg /1/0/3/2
 
     constructor(id: Number) {
         this.msg_type = MessageType.kUnformedMessage

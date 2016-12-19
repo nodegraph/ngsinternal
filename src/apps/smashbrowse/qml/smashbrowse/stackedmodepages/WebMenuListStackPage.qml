@@ -35,15 +35,6 @@ BaseStackPage{
      	}   
     }
 
-    function on_show_iframe_menu() {
-        app_settings.vibrate()
-        visible = true
-        if (!show_busy_page()) {
-	        stack_view.clear_pages()
-	        stack_view.push_by_names("IFrame Switch", "WebMenuListPage", "IFrameActions")
-        }
-    }
-
     function on_url_entry() {
         var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
         push_page.visible = true

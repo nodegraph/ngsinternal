@@ -443,14 +443,8 @@ void NodeJSWorker::handle_info(const Message& msg) {
   std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
   int info_type = msg.value(Message::kInfo).toInt();
   if (info_type == to_underlying(InfoType::kShowWebActionMenu)) {
-    _browser_click_pos = msg.value(Message::kValue).toObject().value(Message::kClickPos).toObject();
-    _browser_click_iframe = msg.value(Message::kIFrame).toString();
-    if (msg.value(Message::kValue).toObject().contains(Message::kPrevIFrame)) {
-      QString prev_iframe = msg.value(Message::kValue).toObject().value(Message::kPrevIFrame).toString();
-      emit show_iframe_menu();
-    } else {
-      emit show_web_action_menu();
-    }
+    _global_mouse_pos = msg.value(Message::kValue).toObject().value(Message::kGlobalMousePosition).toObject();
+    emit show_web_action_menu();
   } else if (info_type == to_underlying(InfoType::kFirebaseChanged)) {
     if (!msg.value(Message::kValue).isObject()) {
       return;
@@ -472,19 +466,14 @@ void NodeJSWorker::handle_info(const Message& msg) {
 
 void NodeJSWorker::get_crosshair_info_task() {
   QJsonObject args;
-  args.insert(Message::kClickPos, _browser_click_pos);
-  args.insert(Message::kIFrame, _browser_click_iframe);
-  std::cerr << "SSSSSSSSSSSSSSSSSSSending cross hair request to frame: " << _browser_click_iframe.toStdString() << "\n";
+  args.insert(Message::kGlobalMousePosition, _global_mouse_pos);
   Message req(RequestType::kGetCrosshairInfo,args);
-  req[Message::kIFrame] = _browser_click_iframe;
   send_msg_task(req);
 }
 
 // Should be run after a response message like get_crosshair_info_task that has set_index and overlay_index.
 void NodeJSWorker::get_current_element_info() {
   QJsonObject args;
-  args.insert(Message::kSetIndex, _chain_state.value(Message::kSetIndex));
-  args.insert(Message::kOverlayIndex, _chain_state.value(Message::kOverlayIndex));
   Message req(RequestType::kGetElement,args);
   send_msg_task(req);
 }
@@ -683,9 +672,11 @@ void NodeJSWorker::shift_element_by_values_task() {
 
 void NodeJSWorker::perform_mouse_action_task() {
   QJsonObject args;
-  args.insert(Message::kMouseAction, _chain_state.value(Message::kMouseAction));
+  args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
   args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
-  args.insert(Message::kOverlayRelClickPos, _chain_state.value(Message::kOverlayRelClickPos));
+
+  args.insert(Message::kMouseAction, _chain_state.value(Message::kMouseAction));
+  args.insert(Message::kLocalMousePosition, _chain_state.value(Message::kLocalMousePosition));
 
   Message req(RequestType::kPerformMouseAction);
   req.insert(Message::kArgs, args);
@@ -694,9 +685,11 @@ void NodeJSWorker::perform_mouse_action_task() {
 
 void NodeJSWorker::perform_hover_action_task() {
   QJsonObject args;
-  args.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
+  args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
   args.insert(Message::kXPath, _hover_state.value(Message::kXPath));
-  args.insert(Message::kOverlayRelClickPos, _hover_state.value(Message::kOverlayRelClickPos));
+
+  args.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
+  args.insert(Message::kLocalMousePosition, _hover_state.value(Message::kLocalMousePosition));
 
   Message req(RequestType::kPerformMouseAction);
   req.insert(Message::kArgs, args);
@@ -705,8 +698,10 @@ void NodeJSWorker::perform_hover_action_task() {
 
 void NodeJSWorker::perform_text_action_task() {
   QJsonObject args;
-  args.insert(Message::kTextAction, _chain_state.value(Message::kTextAction));
+  args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
   args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
+
+  args.insert(Message::kTextAction, _chain_state.value(Message::kTextAction));
   args.insert(Message::kText, _chain_state.value(Message::kText));
 
   Message req(RequestType::kPerformTextAction);
@@ -716,8 +711,10 @@ void NodeJSWorker::perform_text_action_task() {
 
 void NodeJSWorker::perform_element_action_task() {
   QJsonObject args;
-  args.insert(Message::kElementAction, _chain_state.value(Message::kElementAction));
+  args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
   args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
+
+  args.insert(Message::kElementAction, _chain_state.value(Message::kElementAction));
   args.insert(Message::kOptionText, _chain_state.value(Message::kOptionText)); // Used for selecting element from dropdowns.
   args.insert(Message::kDirection, _chain_state.value(Message::kDirection)); // Used for the scrolling directions.
 
@@ -739,8 +736,8 @@ void NodeJSWorker::stop_mouse_hover_task() {
 
 void NodeJSWorker::mouse_hover_task() {
   // Jitter the hover position back and forth by one.
-  int x = _hover_state.value(Message::kOverlayRelClickPos).toObject().value("x").toInt();
-  int y = _hover_state.value(Message::kOverlayRelClickPos).toObject().value("y").toInt();
+  int x = _hover_state.value(Message::kLocalMousePosition).toObject().value("x").toInt();
+  int y = _hover_state.value(Message::kLocalMousePosition).toObject().value("y").toInt();
   x += _jitter;
   y += _jitter;
   _jitter *= -1;
@@ -749,7 +746,7 @@ void NodeJSWorker::mouse_hover_task() {
   QJsonObject pos;
   pos.insert("x", x);
   pos.insert("y", y);
-  _hover_state.insert(Message::kOverlayRelClickPos, pos);
+  _hover_state.insert(Message::kLocalMousePosition, pos);
 
   // Queue the tasks.
   TaskContext tc(_scheduler);
@@ -763,7 +760,6 @@ void NodeJSWorker::mouse_hover_task() {
 
 void NodeJSWorker::post_hover_task() {
   // Stop hovering if the last hover fails.
-  // This happens if the element we're hovering over disappears or webdriver switches to another iframe.
   bool success = _last_response.value(Message::kSuccess).toBool();
   if (!success) {
     _hovering = false;

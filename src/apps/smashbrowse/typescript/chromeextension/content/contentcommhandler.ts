@@ -22,8 +22,8 @@ class ContentCommHandler {
     }
 
     handle_bg_request(req: RequestMessage, send_response: (response: any) => void) {
-        let iframe_index_path = PageWrap.get_iframe_index_path_as_string(window) 
-        console.log('content script ' + iframe_index_path + ' received message from bg: ' + JSON.stringify(req))
+        let frame_index_path = PageWrap.get_frame_index_path(window) 
+        console.log('content script ' + frame_index_path + ' received message from bg: ' + JSON.stringify(req))
         let success_msg = new ResponseMessage(req.id, true)
         switch (req.request) {
             case RequestType.kBlockEvents: {
@@ -61,7 +61,7 @@ class ContentCommHandler {
                 // Clear out our current element, if any.
                 this.gui_collection.overlay_sets.destroy()
                 // Now if our frame matches the request, then try to find the element.
-                if (req.args.iframe_index_path == iframe_index_path) {
+                if (req.args.frame_index_path == frame_index_path) {
                     let elem_wraps = this.gui_collection.page_wrap.get_visible_by_xpath(req.args.xpath)
                     if (elem_wraps.length == 1) {
                         this.gui_collection.add_overlay_set(elem_wraps)
@@ -70,9 +70,9 @@ class ContentCommHandler {
                         let info = elem_wraps[0].get_info()
                         send_response(info)
                     } else if (elem_wraps.length > 1) {
-                        console.error("More than one element matches the xpath of the element we want to make current: " + iframe_index_path)
+                        console.error("More than one element matches the xpath of the element we want to make current: " + frame_index_path)
                     } else {
-                        console.error("No element matches the xpath of the element we want to make current: " + iframe_index_path)
+                        console.error("No element matches the xpath of the element we want to make current: " + frame_index_path)
                     }
                 }
             } break
@@ -128,26 +128,25 @@ class ContentCommHandler {
                 send_response(info)
             } break
             case RequestType.kGetCrosshairInfo: {
-                let pos = new Point(req.args.click_pos)
+                let pos = new Point(req.args.global_mouse_position)
                 // Get the frame bounds in global client space.
-                let box = PageWrap.get_iframe_global_client_bounds(window)
+                let box = PageWrap.get_global_client_frame_bounds(window)
                 // If this frame doesn't contain the click point, return.
                 if (!box.contains_point(pos)) {
                     return
                 }
                 // If any of our child frames contains the click point, return.
                 {
-                    var iframes = window.document.getElementsByTagName('iframe');
-                    for (let i = 0; i < iframes.length; i++) {
-                        let child_box = PageWrap.get_iframe_global_client_bounds(iframes[i].contentWindow)
+                    var frames = window.document.getElementsByTagName('iframe');
+                    for (let i = 0; i < frames.length; i++) {
+                        let child_box = PageWrap.get_global_client_frame_bounds(frames[i].contentWindow)
                         if (child_box.contains_point(pos)) {
                             return
                         }
                     }
                 }
                 // Otherwise we get crosshair info.
-                let info = this.gui_collection.get_crosshair_info(new Point(req.args.click_pos))
-                console.log('FOUND crosshair: ' + JSON.stringify(info))
+                let info = this.gui_collection.get_crosshair_info(new Point(req.args.global_mouse_position))
                 send_response(info)
             } break
 

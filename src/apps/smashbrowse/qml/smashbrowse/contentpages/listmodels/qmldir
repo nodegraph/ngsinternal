@@ -8,7 +8,6 @@ SelectNodeActions 1.0 SelectNodeActions.qml
 CopyPasteNodeActions 1.0 CopyPasteNodeActions.qml
 ExplodeCollapseNodeActions 1.0 ExplodeCollapseNodeActions.qml
 FileMenuActions 1.0 FileMenuActions.qml
-IFrameActions 1.0 IFrameActions.qml
 WebActions 1.0 WebActions.qml
 WebActionsNavigate 1.0 WebActionsNavigate.qml
 WebActionsFindElement 1.0 WebActionsFindElement.qml

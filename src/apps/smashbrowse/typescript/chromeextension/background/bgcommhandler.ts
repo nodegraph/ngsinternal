@@ -6,7 +6,7 @@ class BgCommHandler {
 
     // Our Members.
 
-    // Used when searching for iframes.
+    // Members used to collected info from our frames.
     private collected_elems: IElementInfo[] = []
     private collected_booleans: boolean[] = []
     private collected_clicks: IClickInfo[] = []
@@ -137,7 +137,7 @@ class BgCommHandler {
         // Note the return in the forEach loop acts like a continue statement.
         candidates.forEach((dest) => {
             // Skip the dest element if its equal to the src element.
-            if ((dest.iframe_index_path == src.iframe_index_path) && (dest.xpath == src.xpath)) {
+            if ((dest.frame_index_path == src.frame_index_path) && (dest.xpath == src.xpath)) {
                 return
             }
 
@@ -572,7 +572,7 @@ class BgCommHandler {
                 this.queue_set_current_element()
                 this.queue(() => {
                     if (this.found_elem) {
-                        console.log('found element to shift to: ' + this.found_elem.iframe_index_path + this.found_elem.xpath)
+                        console.log('found element to shift to: ' + this.found_elem.frame_index_path + this.found_elem.xpath)
                         let response = new ResponseMessage(req.id, true, this.found_elem)
                         this.bg_comm.send_to_nodejs(response)
                     } else {

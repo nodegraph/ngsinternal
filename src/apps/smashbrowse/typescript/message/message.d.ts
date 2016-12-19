@@ -3,16 +3,15 @@
 
 
 declare interface IElementInfo {
-    iframe_index_path: string
+    frame_index_path: string
     xpath: string
     box: IBox
 }
 
 declare interface IClickInfo {
     // Click pos.
-    click_pos: IPoint,
-    nearest_rel_click_pos: IPoint,
-    overlay_rel_click_pos: IPoint,
+    global_mouse_position: IPoint, // In global client space.
+    local_mouse_position: IPoint, // In local space relative to the element of interest. (Calculated by subtracting the click pos from the element pos in page space coordinates.)
     // Text and image values under click.
     text_values: string[],
     image_values: string[],

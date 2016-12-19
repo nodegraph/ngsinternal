@@ -369,7 +369,6 @@ void BrowserRecorder::record_shift_to_select_type_on_right() {
 void BrowserRecorder::record_click() {
   check_busy();
   _worker->queue_get_crosshair_info(tc);
-
   QJsonObject args;
   args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendClick));
   _worker->queue_merge_chain_state(tc, args);

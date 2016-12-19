@@ -15,8 +15,7 @@ const char* Message::kValue = "value";
 
 const char* Message::kInfo = "info";
 
-const char* Message::kIFrame = "iframe";
-const char* Message::kPrevIFrame = "prev_iframe";
+const char* Message::kFrameIndexPath = "frame_index_path";
 const char* Message::kMessageType = "msg_type";
 
 const char* Message::kURL = "url";
@@ -32,9 +31,6 @@ const char* Message::kTargetValues = "target_values";
 const char* Message::kMouseAction = "mouse_action";
 const char* Message::kTextAction = "text_action";
 const char* Message::kElementAction = "element_action";
-
-const char* Message::kSetIndex = "set_index";
-const char* Message::kOverlayIndex = "overlay_index";
 
 const char* Message::kTextDataName = "text_data_name";
 
@@ -58,10 +54,8 @@ const char* Message::kMatchFontSize = "match_font_size";
 const char* Message::kOptionTexts = "option_texts";
 const char* Message::kOptionValues = "option_values";
 
-const char* Message::kClickPos = "click_pos";
-const char* Message::kNearestRelClickPos = "nearest_rel_click_pos";
-const char* Message::kOverlayRelClickPos = "overlay_rel_click_pos";
-const char* Message::kAppIFramePath = "-1";
+const char* Message::kGlobalMousePosition = "global_mouse_position";
+const char* Message::kLocalMousePosition = "local_mouse_position";
 
 const char* Message::kID = "id";
 

@@ -22,8 +22,7 @@ class COMMS_EXPORT Message: public QJsonObject {
 
   static const char* kInfo;
 
-  static const char* kIFrame;
-  static const char* kPrevIFrame; // Sent by show web action request it's iframe doesn't match the current iframe.
+  static const char* kFrameIndexPath;
   static const char* kMessageType;
 
   static const char* kURL;
@@ -39,9 +38,6 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kMouseAction;
   static const char* kTextAction;
   static const char* kElementAction;
-
-  static const char* kSetIndex;
-  static const char* kOverlayIndex;
 
   static const char* kTextDataName;
 
@@ -67,11 +63,9 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kOptionTexts;
   static const char* kOptionValues;
 
-  static const char* kClickPos;
-  static const char* kNearestRelClickPos;
-  static const char* kOverlayRelClickPos;
+  static const char* kGlobalMousePosition;
+  static const char* kLocalMousePosition;
 
-  static const char* kAppIFramePath;
   static const char* kID;
 
   static const char* kDataPath;

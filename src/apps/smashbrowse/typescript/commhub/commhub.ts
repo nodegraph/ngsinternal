@@ -174,11 +174,11 @@ class AppConnection extends BaseConnection {
             case RequestType.kPerformMouseAction: {
                 switch (req.args.mouse_action) {
                     case MouseActionType.kSendClick: {
-                        let p = this.webdriverwrap.click_on_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
+                        let p = this.webdriverwrap.click_on_element(req.args.frame_index_path, req.args.xpath, req.args.local_mouse_position.x, req.args.local_mouse_position.y)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
                     case MouseActionType.kMouseOver: {
-                        let p = this.webdriverwrap.mouse_over_element(req.args.xpath, req.args.overlay_rel_click_pos.x, req.args.overlay_rel_click_pos.y)
+                        let p = this.webdriverwrap.mouse_over_element(req.args.frame_index_path, req.args.xpath, req.args.local_mouse_position.x, req.args.local_mouse_position.y)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
                     default: {
@@ -189,11 +189,11 @@ class AppConnection extends BaseConnection {
             case RequestType.kPerformTextAction: {
                 switch (req.args.text_action) {
                     case TextActionType.kSendText: {
-                        let p = this.webdriverwrap.send_text(req.args.xpath, req.args.text)
+                        let p = this.webdriverwrap.send_text(req.args.frame_index_path, req.args.xpath, req.args.text)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
                     case TextActionType.kSendEnter: {
-                        let p = this.webdriverwrap.send_key(req.args.xpath, Key.RETURN)
+                        let p = this.webdriverwrap.send_key(req.args.frame_index_path, req.args.xpath, Key.RETURN)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
                     default: {
@@ -204,11 +204,11 @@ class AppConnection extends BaseConnection {
             case RequestType.kPerformElementAction: {
                 switch (req.args.element_action) {
                     case ElementActionType.kGetText: {
-                        let p = this.webdriverwrap.get_text(req.args.xpath)
+                        let p = this.webdriverwrap.get_text(req.args.frame_index_path, req.args.xpath)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
                     case ElementActionType.kSelectOption: {
-                        let p = this.webdriverwrap.select_option(req.args.xpath, req.args.option_text)
+                        let p = this.webdriverwrap.select_option(req.args.frame_index_path, req.args.xpath, req.args.option_text)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
                     case ElementActionType.kScroll: {

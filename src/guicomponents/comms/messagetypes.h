@@ -100,7 +100,6 @@ enum class WrapType : int {
   image,
   input,
   select,
-  iframe
 };
 
 enum class DirectionType : int {

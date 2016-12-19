@@ -105,7 +105,6 @@ const enum WrapType {
   image,
   input,
   select,
-  iframe
 }
 
 const enum DirectionType {

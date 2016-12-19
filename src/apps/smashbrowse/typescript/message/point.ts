@@ -31,18 +31,18 @@ class Point {
             factor = -1
         }
         while (win.parent != win) {
-            var iframes = win.parent.document.getElementsByTagName('iframe');
+            var frames = win.parent.document.getElementsByTagName('iframe');
             let found = false
-            for (let i = 0; i < iframes.length; i++) {
-                if (iframes[i].contentWindow === win) {
-                    this.x += factor * iframes[i].getBoundingClientRect().left
-                    this.y += factor * iframes[i].getBoundingClientRect().top
+            for (let i = 0; i < frames.length; i++) {
+                if (frames[i].contentWindow === win) {
+                    this.x += factor * frames[i].getBoundingClientRect().left
+                    this.y += factor * frames[i].getBoundingClientRect().top
                     found = true
                     break;
                 }
             }
             if (!found) {
-                console.error('Error Point::to_global_client_space did not find parenting iframe')
+                console.error('Error Point::to_global_client_space did not find parenting frame')
             }
             win = win.parent
         }

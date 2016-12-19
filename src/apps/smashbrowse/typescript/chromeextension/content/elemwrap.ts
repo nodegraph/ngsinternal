@@ -1,13 +1,4 @@
 
-// //Wrap type.
-// const enum WrapType {
-//     text,
-//     image,
-//     input,
-//     select,
-//     iframe
-// }
-
 // This class wraps the dom element with extra functionality.
 class ElemWrap {
     // Our dependencies.
@@ -66,10 +57,10 @@ class ElemWrap {
         return this.valid
     }
 
-    get_frame_index_path(): number[] {
-        let local_window: Window = this.element.ownerDocument.defaultView
-        return PageWrap.get_iframe_index_path(local_window)
-    }
+    // get_frame_index_path(): number[] {
+    //     let local_window: Window = this.element.ownerDocument.defaultView
+    //     return PageWrap.get_frame_index_path(local_window)
+    // }
 
     // Update all internal state.
     update(): void {
@@ -91,9 +82,6 @@ class ElemWrap {
 
     // Get our wrap type.
     private calculate_wrap_type(): WrapType {
-        if (this.is_iframe()) {
-            return WrapType.iframe
-        }
         if (this.get_text()) {
             return WrapType.text
         }
@@ -121,8 +109,6 @@ class ElemWrap {
                 return ElemWrap.prototype.is_input
             case WrapType.select:
                 return ElemWrap.prototype.is_select
-            case WrapType.iframe:
-                return ElemWrap.prototype.is_iframe
         }
         return null
     }
@@ -231,7 +217,7 @@ class ElemWrap {
 
     get_info(): IElementInfo {
         // Frame index path.
-        let iframe_index_path = PageWrap.get_iframe_index_path_as_string(window)
+        let frame_index_path = PageWrap.get_frame_index_path(window)
         // XPath.
         let xpath = this.get_xpath()
         // Bounds.
@@ -242,7 +228,7 @@ class ElemWrap {
         box.to_global_client_space(window)
         console.log('global client space: ' + JSON.stringify(box))
         // Form the info.
-        return { iframe_index_path: iframe_index_path, xpath: xpath, box: box }
+        return { frame_index_path: frame_index_path, xpath: xpath, box: box }
     }
 
     //----------------------------------------------------------------------------------------

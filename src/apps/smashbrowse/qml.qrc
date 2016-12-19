@@ -98,7 +98,6 @@
         <file>qml/smashbrowse/contentpages/listmodels/SelectNodeActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/CopyPasteNodeActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/ExplodeCollapseNodeActions.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/IFrameActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/FileMenuActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>

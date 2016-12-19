@@ -37,8 +37,8 @@ class PageWrap {
     // Get frame index path as string.
     // Note that there is no leading '/'. 
     // This helps when splitting the string, as there won't be empty elements.
-    static get_iframe_index_path_as_string(win: Window) {
-        let ipath = this.get_iframe_index_path(win)
+    static get_frame_index_path(win: Window) {
+        let ipath = this.get_frame_index_path_as_array(win)
         let spath: string = ''
         for (let i = 0; i < ipath.length; i++) {
             if (i != 0) {
@@ -49,24 +49,24 @@ class PageWrap {
         return spath
     }
 
-    // Get our iframe path as zero-based indexes.
-    // An empty iframe path means we are in the top window.
-    static get_iframe_index_path(win: Window) {
+    // Get our frame_index_path as zero-based indexes.
+    // An empty frame_index_path means we are in the top window.
+    static get_frame_index_path_as_array(win: Window) {
         let path: number[] = []
         let totals: number[] = [] // debugging
         while (win.parent != win) {
-            var iframes = win.parent.document.getElementsByTagName('iframe');
+            var frames = win.parent.document.getElementsByTagName('iframe');
             let found = false
-            for (let i = 0; i < iframes.length; i++) {
-                if (iframes[i].contentWindow === win) {
+            for (let i = 0; i < frames.length; i++) {
+                if (frames[i].contentWindow === win) {
                     path.unshift(i)
-                    totals.unshift(iframes.length)
+                    totals.unshift(frames.length)
                     found = true
                     break;
                 }
             }
             if (!found) {
-                console.error('Error did not find parenting iframe')
+                console.error('Error did not find parenting frame.')
             }
             win = win.parent
         }
@@ -75,27 +75,27 @@ class PageWrap {
         //return path.concat(totals)
     }
 
-    static get_iframe_local_client_bounds(iframe_win: Window) {
-        return new Box({ left: 0, right: iframe_win.document.documentElement.clientWidth, top: 0, bottom: iframe_win.document.documentElement.clientHeight })
+    static get_local_client_frame_bounds(frame_window: Window) {
+        return new Box({ left: 0, right: frame_window.document.documentElement.clientWidth, top: 0, bottom: frame_window.document.documentElement.clientHeight })
     }
 
-    static get_iframe_global_client_bounds(iframe_win: Window) {
-        let box = PageWrap.get_iframe_local_client_bounds(iframe_win)
-        box.to_global_client_space(iframe_win)
+    static get_global_client_frame_bounds(frame_window: Window) {
+        let box = PageWrap.get_local_client_frame_bounds(frame_window)
+        box.to_global_client_space(frame_window)
         return box
     }
 
-    static get_iframe_window(iframe_path: string) {
+    static get_frame_window(frame_index_path: string) {
         // Go to the root window.
         let win = window
         while(win.parent != win) {
             win = win.parent
         }
 
-        // Split the iframe path.
-        let splits = iframe_path.split('/')
+        // Split the frame_index_path.
+        let splits = frame_index_path.split('/')
 
-        // Traverse down the iframe tree starting at the root.
+        // Traverse down the tree of frames starting at the root.
         for (let i=0; i<splits.length; i++) {
             // Note when empty strings are split on '/', you get an array with one element which is an empty string.
             if (splits[i] === '') {
@@ -104,11 +104,11 @@ class PageWrap {
 
             // Get the frame index as a number.
             let frame_index = Number(splits[i])
-            var iframes = win.document.getElementsByTagName('iframe');
+            var frames = win.document.getElementsByTagName('iframe');
             if (frames.length <= frame_index) {
                 console.error("Error: could not find frame index.")
             }
-            win = iframes[frame_index].contentWindow
+            win = frames[frame_index].contentWindow
         }
         return win
     }

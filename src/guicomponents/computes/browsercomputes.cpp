@@ -398,9 +398,6 @@ void MouseActionCompute::create_inputs_outputs(const EntityConfig& config) {
     EntityConfig c = config;
     c.expose_plug = false;
     c.unconnected_value = "";
-
-    create_input(Message::kSetIndex, c);
-    create_input(Message::kOverlayIndex, c);
     create_input(Message::kMouseAction, c);
   }
   {
@@ -412,7 +409,7 @@ void MouseActionCompute::create_inputs_outputs(const EntityConfig& config) {
     c.expose_plug = false;
     c.unconnected_value = pos;
 
-    create_input(Message::kOverlayRelClickPos, c);
+    create_input(Message::kLocalMousePosition, c);
   }
 }
 
@@ -421,12 +418,8 @@ QJsonObject MouseActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set which contains the element to act on.");
-
-  add_hint(m, Message::kOverlayIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element to act on inside the set.");
-
-  add_hint(m, Message::kOverlayRelClickPos, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kOverlayRelClickPos, HintKey::kDescriptionHint, "The position to perform our action at, relative to the element itself.");
+  add_hint(m, Message::kLocalMousePosition, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
+  add_hint(m, Message::kLocalMousePosition, HintKey::kDescriptionHint, "The position to perform our action at, relative to the element itself.");
 
   add_hint(m, Message::kMouseAction, HintKey::kEnumHint, to_underlying(EnumHintValue::kMouseActionType));
   add_hint(m, Message::kMouseAction, HintKey::kDescriptionHint, "The type of mouse mouse action to perform.");
@@ -452,9 +445,6 @@ void StartMouseHoverActionCompute::create_inputs_outputs(const EntityConfig& con
     EntityConfig c = config;
     c.expose_plug = false;
     c.unconnected_value = 0;
-
-    create_input(Message::kSetIndex, c);
-    create_input(Message::kOverlayIndex, c);
   }
   {
     QJsonObject pos;
@@ -465,7 +455,7 @@ void StartMouseHoverActionCompute::create_inputs_outputs(const EntityConfig& con
     c.expose_plug = false;
     c.unconnected_value = pos;
 
-    create_input(Message::kOverlayRelClickPos, c);
+    create_input(Message::kLocalMousePosition, c);
   }
 }
 
@@ -474,12 +464,8 @@ QJsonObject StartMouseHoverActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set which contains the element to act on.");
-
-  add_hint(m, Message::kOverlayIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element to hover on inside the set.");
-
-  add_hint(m, Message::kOverlayRelClickPos, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kOverlayRelClickPos, HintKey::kDescriptionHint, "The position to perform our hover at, relative to the element itself.");
+  add_hint(m, Message::kLocalMousePosition, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
+  add_hint(m, Message::kLocalMousePosition, HintKey::kDescriptionHint, "The position to perform our hover at, relative to the element itself.");
   return m;
 }
 
@@ -512,9 +498,6 @@ void TextActionCompute::create_inputs_outputs(const EntityConfig& config) {
     EntityConfig c = config;
     c.expose_plug = false;
     c.unconnected_value = 0;
-
-    create_input(Message::kSetIndex, c);
-    create_input(Message::kOverlayIndex, c);
     create_input(Message::kTextAction, c);
   }
   {
@@ -529,10 +512,6 @@ const QJsonObject TextActionCompute::_hints = TextActionCompute::init_hints();
 QJsonObject TextActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set which contains the element to type on.");
-
-  add_hint(m, Message::kOverlayIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element to type on inside the set.");
 
   add_hint(m, Message::kTextAction, HintKey::kEnumHint, to_underlying(EnumHintValue::kTextActionType));
   add_hint(m, Message::kTextAction, HintKey::kDescriptionHint, "The type of text action to perform.");
@@ -560,8 +539,6 @@ void ElementActionCompute::create_inputs_outputs(const EntityConfig& config) {
     c.expose_plug = false;
     c.unconnected_value = 0;
 
-    create_input(Message::kSetIndex, c);
-    create_input(Message::kOverlayIndex, c);
     create_input(Message::kElementAction, c);
     create_input(Message::kDirection, c);  // Only used when the element action is set to scroll.
   }
@@ -581,10 +558,6 @@ const QJsonObject ElementActionCompute::_hints = ElementActionCompute::init_hint
 QJsonObject ElementActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kSetIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element set which contains the element to act on.");
-
-  add_hint(m, Message::kOverlayIndex, HintKey::kDescriptionHint, "The zero based index that identifies the element to act on inside the set.");
 
   add_hint(m, Message::kElementAction, HintKey::kEnumHint, to_underlying(EnumHintValue::kElementActionType));
   add_hint(m, Message::kElementAction, HintKey::kDescriptionHint, "The type of element action to perform.");

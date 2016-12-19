@@ -88,7 +88,7 @@ class GUICollection {
         console.log('contextmenu local page click: ' + local_page_click.to_string())
 
         // Send the request to the app.
-        let im = new InfoMessage(0, InfoType.kShowWebActionMenu, { click_pos: global_client_click })
+        let im = new InfoMessage(0, InfoType.kShowWebActionMenu, { global_mouse_position: global_client_click })
         this.content_comm.send_to_bg(im)
 
         // Prevent default behavior of the event.
@@ -113,23 +113,15 @@ class GUICollection {
         let text_values = PageWrap.get_text_values_at(elem_wraps, local_page_click)
         let image_values = PageWrap.get_image_values_at(elem_wraps, local_page_click)
 
-        // This is currently not getting used. But is useful for debugging.
-        // Get the click pos relative to the topmost/innermost/nearest element in the stack of elements
-        // under the click point. Note that this element may not be in an overlay set yet. 
-        let nearest_rel_click_pos = new Point({ x: 0, y: 0 })
-        if (elem_wraps.length > 0) {
-            nearest_rel_click_pos = elem_wraps[0].get_box().get_relative_point(local_page_click)
-        }
-
         // Determine the set index and overlay index at the click point.
         // Also determine the click pos relative to this overlay.
         let set_overlay_index = this.overlay_sets.find_set_overlay_index(local_page_click)
         let set_index = set_overlay_index.set_index
         let overlay_index = set_overlay_index.overlay_index
-        let overlay_rel_click_pos: Point = new Point({ x: 1, y: 1 })
+        let local_mouse_position: Point = new Point({ x: 1, y: 1 })
         if (set_index >= 0) {
             let oset = this.overlay_sets.get_set(set_index)
-            overlay_rel_click_pos = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(local_page_click)
+            local_mouse_position = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(local_page_click)
         }
 
         // If we're a select element, grab the option values and texts.
@@ -151,15 +143,11 @@ class GUICollection {
 
         let args = {
             // Click pos.
-            click_pos: global_client_click,
-            nearest_rel_click_pos: nearest_rel_click_pos,
-            overlay_rel_click_pos: overlay_rel_click_pos,
+            global_mouse_position: global_client_click,
+            local_mouse_position: local_mouse_position,
             // Text and image values under click.
             text_values: text_values,
             image_values: image_values,
-            // Existing set element under click.
-            set_index: set_index,
-            overlay_index: overlay_index,
             // Select/Dropdown option texts.
             option_texts: option_texts,
         }

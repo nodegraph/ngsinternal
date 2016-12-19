@@ -123,17 +123,17 @@ export class WebDriverWrap {
         return this.driver.navigate().refresh();
     }
 
-    // Negative numbers in the iframe string path will make the path equivalent to an empty path.
-    // Empty paths switch the iframe to the top iframe.
-    switch_to_iframe(iframe: string): webdriver.promise.Promise<void> {
-        console.log('switching to iframe: ' + iframe)
+    // Negative numbers in the frame_index_path will make the path equivalent to an empty path.
+    // Empty paths switch the frame to the top frame.
+    switch_to_frame(frame_index_path: string): webdriver.promise.Promise<void> {
+        console.log('switching to frame_index_path: ' + frame_index_path)
 
         // Switch to the top frame.
         let last_promise: webdriver.promise.Promise<void> = null
         last_promise = this.driver.switchTo().defaultContent()
 
         // Loop through each sub frame.
-        let splits = iframe.split('/')
+        let splits = frame_index_path.split('/')
         for (let i=0; i<splits.length; i++) {
 
             // Note when empty strings are split on '/', you get an array with one element which is an empty string.
@@ -143,9 +143,9 @@ export class WebDriverWrap {
 
             // Get the frame index as a number.
             let frame_index = Number(splits[i])
-            // If we can't get the frame index then iframe path is syntactically incorrect.
+            // If we can't get the frame index then frame_index_path is syntactically incorrect.
             if (isNaN(frame_index)) {
-                return webdriver.promise.rejected(new Error("invalid iframe path"))
+                return webdriver.promise.rejected(new Error("invalid frame_index_path"))
             }
 
             // Stop going deeper if get a negative index.
@@ -156,33 +156,33 @@ export class WebDriverWrap {
 
             console.log('switching to frame: ' + frame_index)
             
-            // Debug dump of the current iframe after switching.
+            // Debug dump of the current frame after switching.
             last_promise = this.driver.executeScript('return self.name').then(function (name: string){console.log('current frame name is: ' + name)})
 
-            // Debug dump of the number of iframes.
+            // Debug dump of the number of frames.
             this.driver.findElements(By.tagName('iframe')).then(
-                (iframes: webdriver.WebElement[]) => {
-                    console.log('num iframes: ' + iframes.length)
+                (frames: webdriver.WebElement[]) => {
+                    console.log('num frames: ' + frames.length)
                 })
 
             // Debug dump of the number of frames.
             this.driver.findElements(By.tagName('frame')).then(
-                (iframes: webdriver.WebElement[]) => {
-                    console.log('num frames: ' + iframes.length)
+                (frames: webdriver.WebElement[]) => {
+                    console.log('num frames: ' + frames.length)
                 })
             
             // We switch to the frame by using it's WebElement instead of by its index.
             // For example as follows: this.driver.switchTo().frame(frame_index)
-            // This is because otherwise it doesn't match up with the iframe index produced in PageWrap.get_iframe_path().
+            // This is because otherwise it doesn't match up with the frame_index_path produced in PageWrap.get_frame_index_path().
             this.driver.findElements(By.tagName('iframe')).then(
-                (iframes: webdriver.WebElement[]) => {
+                (frames: webdriver.WebElement[]) => {
                     console.log('switching to index: ' + frame_index)
                     let target_locator: any = this.driver.switchTo()
-                    target_locator.frame(iframes[frame_index]);
+                    target_locator.frame(frames[frame_index]);
                 }) 
 
 
-            // Debug dump of the name of the iframe after switching.
+            // Debug dump of the name of the frame after switching.
             last_promise = this.driver.executeScript('return self.frameElement.className + "--" + self.name + " w--" + self.frameElement.clientWidth + " h--" + self.frameElement.clientHeight')
             .then(function (name: string){console.log('frame class--name is: ' + name)})
         }
@@ -212,16 +212,18 @@ export class WebDriverWrap {
     //------------------------------------------------------------------------------------------------
 
     // Returns a promise which evaulates to an existing element or is rejected.
-    get_element(xpath: string): webdriver.promise.Promise<webdriver.WebElement> {
-        return this.driver.findElement(By.xpath(xpath))
+    get_element(frame_index_path: string, xpath: string): webdriver.promise.Promise<webdriver.WebElement> {
+        return this.switch_to_frame(frame_index_path).then(
+            () => { return this.driver.findElement(By.xpath(xpath)) },
+            (error) => { console.info('Error could not find element at frame_index_path: ' + frame_index_path + ' and xpath: ' + xpath); throw (error) })
     }
         
     // Returns a promise which evaulates to a visible element.
     // Usually we skip checking the visibility of the element because it allows us to
     // click through elements. This is very helpful when clicking video player controls
     // on web pages like cnet.
-    get_visible_element(xpath: string): webdriver.promise.Promise<webdriver.WebElement> {
-        return this.get_element(xpath)
+    get_visible_element(frame_index_path: string, xpath: string): webdriver.promise.Promise<webdriver.WebElement> {
+        return this.get_element(frame_index_path, xpath)
             .then((element: webdriver.WebElement) => {
                 return this.driver.wait(Until.elementIsVisible(element), 1000).then(
                     (found) => { return element },
@@ -230,16 +232,16 @@ export class WebDriverWrap {
     }
 
     // Creates promise chain which will type one key into an element.
-    send_key(xpath: string, key: string): webdriver.promise.Promise<void> {
-        return this.get_element(xpath).then(
+    send_key(frame_index_path: string, xpath: string, key: string): webdriver.promise.Promise<void> {
+        return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
                 return element.sendKeys(key)
             }
         )
     }
 
-    get_text(xpath: string): webdriver.promise.Promise<string> {
-        return this.get_element(xpath).then(
+    get_text(frame_index_path: string, xpath: string): webdriver.promise.Promise<string> {
+        return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
                 return element.getText()
             }
@@ -247,8 +249,8 @@ export class WebDriverWrap {
     }
 
     // Creates promise chain which will set text on an element.
-    send_text(xpath: string, text: string): webdriver.promise.Promise<void> {
-        return this.get_element(xpath).then(
+    send_text(frame_index_path: string, xpath: string, text: string): webdriver.promise.Promise<void> {
+        return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
                 return element.sendKeys(Key.HOME, Key.chord(Key.SHIFT, Key.END), text)
             }
@@ -256,8 +258,8 @@ export class WebDriverWrap {
     }
 
     // Creates a promise chain which will click on an element.
-    click_on_element(xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<void> {
-        return this.get_element(xpath).then(
+    click_on_element(frame_index_path: string, xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<void> {
+        return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
                 //console.log('xpath: ' + xpath)
                 //return element.click()
@@ -270,8 +272,8 @@ export class WebDriverWrap {
     }
 
     // Creates a promise chain which will mouseover an element.
-    mouse_over_element(xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<void> {
-        return this.get_element(xpath).then(
+    mouse_over_element(frame_index_path: string, xpath: string, relative_x: number, relative_y: number): webdriver.promise.Promise<void> {
+        return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
                 return this.driver.actions().mouseMove(element, { x: relative_x, y: relative_y }).perform().then(
                     () => {console.log('info: moved mouse to: ' + relative_x + "," + relative_y + " over: " + xpath) },
@@ -282,8 +284,8 @@ export class WebDriverWrap {
     }
 
     // Creates a promise which will select an option in a select dropdown.
-    select_option(xpath: string, option_text: string): webdriver.promise.Promise<void> {
-        return this.get_element(xpath).then(
+    select_option(frame_index_path: string, xpath: string, option_text: string): webdriver.promise.Promise<void> {
+        return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
                 return element.findElement(By.xpath('option[normalize-space(text())="' + option_text + '"]')).click()
             }

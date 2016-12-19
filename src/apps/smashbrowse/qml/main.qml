@@ -199,7 +199,6 @@ Rectangle {
 
         // Web actions mode.
         web_worker.show_web_action_menu.connect(web_menu_list_stack_page.on_show_web_action_menu)
-        web_worker.show_iframe_menu.connect(web_menu_list_stack_page.on_show_iframe_menu)
         web_worker.select_option_texts.connect(web_menu_list_stack_page.on_select_option_texts)
         web_recorder.web_action_ignored.connect(web_menu_list_stack_page.on_action_ignored)
 

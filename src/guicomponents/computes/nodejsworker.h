@@ -122,7 +122,6 @@ Q_OBJECT
 
 signals:
   void show_web_action_menu();
-  void show_iframe_menu();
   void select_option_texts(QStringList option_texts);
 
  private slots:
@@ -219,8 +218,7 @@ signals:
   QTimer _poll_timer;
 
   // State to bring up the web actions menu, and handle menu activations.
-  QString _browser_click_iframe;
-  QJsonObject _browser_click_pos;
+  QJsonObject _global_mouse_pos;
 
   // State for hovering.
   bool _hovering;
