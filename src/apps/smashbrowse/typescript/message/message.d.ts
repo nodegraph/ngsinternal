@@ -15,8 +15,11 @@ declare interface IClickInfo {
     local_mouse_position: IPoint, // In local space relative to the element of interest. (Calculated by subtracting the click pos from the element pos in page space coordinates.)
     // Text and image values under click.
     text_values: string[],
-    image_values: string[],
-    // Select/Dropdown option texts.
+    image_values: string[]
+}
+
+interface IDropDownInfo {
+    option_values: string[],
     option_texts: string[]
 }
 

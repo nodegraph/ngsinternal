@@ -45,6 +45,7 @@ enum class RequestType : int {
 
   // Info Request.
   kGetCrosshairInfo,
+  kGetDropDownInfo,
 
   // Firebase.
   kFirebaseInit,

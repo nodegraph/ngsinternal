@@ -63,6 +63,7 @@ Q_OBJECT
   // Queue Framework Tasks.
   void queue_get_current_element(TaskContext& tc);
   void queue_get_crosshair_info(TaskContext& tc);
+  void queue_get_drop_down_info(TaskContext& tc);
   void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
   void queue_copy_chain_property(TaskContext& tc, const QString& src_prop, const QString& dest_prop);
   void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did);
@@ -145,6 +146,7 @@ signals:
 
   // Infrastructure Tasks.
   void get_crosshair_info_task();
+  void get_drop_down_info_task();
   void get_current_element_info();
   void merge_chain_state_task(const QJsonObject& map);
   void copy_chain_property_task(const QString& src_prop, const QString& dest_prop);

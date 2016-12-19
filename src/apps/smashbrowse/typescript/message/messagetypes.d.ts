@@ -50,6 +50,7 @@ declare const enum RequestType {
 
   // Info Request.
   kGetCrosshairInfo,
+  kGetDropDownInfo,
 
   // Firebase.
   kFirebaseInit,

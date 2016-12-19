@@ -149,6 +149,13 @@ class ContentCommHandler {
                 let info = this.gui_collection.get_crosshair_info(new Point(req.args.global_mouse_position))
                 send_response(info)
             } break
+            case RequestType.kGetDropDownInfo: {
+                if (this.gui_collection.overlay_sets.get_num_sets() == 0) {
+                    return
+                }
+                let info: IDropDownInfo = this.gui_collection.get_drop_down_info(0,0)
+                send_response(info)
+            } break
 
         }
 

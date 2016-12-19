@@ -103,7 +103,27 @@ class GUICollection {
         this.page_overlays.update_overlays(text_elem_wrap, image_elem_wrap)
     }
 
-    get_crosshair_info(global_client_click: Point): any {
+    get_drop_down_info(set_index: number = 0, overlay_index: number = 0): IDropDownInfo {
+        // If we're a select element, grab the option values and texts.
+        let option_values: string[] = []
+        let option_texts: string[] = []
+        if (set_index >= 0) {
+            let oset = this.overlay_sets.get_set(set_index)
+            let element = oset.get_overlay(overlay_index).get_elem_wrap().get_element()
+            if (element instanceof HTMLSelectElement) {
+                let select: HTMLSelectElement = <HTMLSelectElement>element
+                for (let i = 0; i < element.options.length; i++) {
+                    let option = <HTMLOptionElement>(element.options[i])
+                    option_values.push(option.value)
+                    option_texts.push(option.text)
+                    console.log('option value,text: ' + option.value + "," + option.text)
+                }
+            }
+        }
+        return { option_values: option_values, option_texts: option_texts }
+    }
+
+    get_crosshair_info(global_client_click: Point): IClickInfo {
         let local_page_click = new Point(global_client_click)
         local_page_click.to_local_client_space(window)
         local_page_click.to_page_space(window)
@@ -124,32 +144,30 @@ class GUICollection {
             local_mouse_position = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(local_page_click)
         }
 
-        // If we're a select element, grab the option values and texts.
-        let option_values: string[] = []
-        let option_texts: string[] = []
-        if (set_index >= 0) {
-            let oset = this.overlay_sets.get_set(set_index)
-            let element = oset.get_overlay(overlay_index).get_elem_wrap().get_element()
-            if (element instanceof HTMLSelectElement) {
-                let select: HTMLSelectElement = <HTMLSelectElement>element
-                for (let i = 0; i < element.options.length; i++) {
-                    let option = <HTMLOptionElement>(element.options[i])
-                    option_values.push(option.value)
-                    option_texts.push(option.text)
-                    console.log('option value,text: ' + option.value + "," + option.text)
-                }
-            }
-        }
+        // // If we're a select element, grab the option values and texts.
+        // let option_values: string[] = []
+        // let option_texts: string[] = []
+        // if (set_index >= 0) {
+        //     let oset = this.overlay_sets.get_set(set_index)
+        //     let element = oset.get_overlay(overlay_index).get_elem_wrap().get_element()
+        //     if (element instanceof HTMLSelectElement) {
+        //         let select: HTMLSelectElement = <HTMLSelectElement>element
+        //         for (let i = 0; i < element.options.length; i++) {
+        //             let option = <HTMLOptionElement>(element.options[i])
+        //             option_values.push(option.value)
+        //             option_texts.push(option.text)
+        //             console.log('option value,text: ' + option.value + "," + option.text)
+        //         }
+        //     }
+        // }
 
-        let args = {
+        let args: IClickInfo = {
             // Click pos.
             global_mouse_position: global_client_click,
             local_mouse_position: local_mouse_position,
             // Text and image values under click.
             text_values: text_values,
             image_values: image_values,
-            // Select/Dropdown option texts.
-            option_texts: option_texts,
         }
         return args
     }

@@ -10,6 +10,7 @@ class BgCommHandler {
     private collected_elems: IElementInfo[] = []
     private collected_booleans: boolean[] = []
     private collected_clicks: IClickInfo[] = []
+    private collected_drop_downs: IDropDownInfo[] = []
 
 
     // Caches used in our calculations.
@@ -52,6 +53,12 @@ class BgCommHandler {
             return
         }
         this.collected_clicks.push(click)
+    }
+    collect_drop_down(drop_down: IDropDownInfo) {
+        if (drop_down == undefined) {
+            return
+        }
+        this.collected_drop_downs.push(drop_down)
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -103,6 +110,13 @@ class BgCommHandler {
         this.queue(() => {
             this.collected_clicks.length = 0
             this.collect_from_frames(msg, (click_info: IClickInfo) => {this.collect_click(click_info)})
+        })
+    }
+
+    queue_collect_drop_down_from_frames(msg: BaseMessage) {
+        this.queue(() => {
+            this.collected_drop_downs.length = 0
+            this.collect_from_frames(msg, (drop_down: IDropDownInfo) => {this.collect_drop_down(drop_down)})
         })
     }
 
@@ -665,29 +679,46 @@ class BgCommHandler {
                     }
                 })
                 this.run_next_task()
-        } break
+            } break
             case RequestType.kGetCrosshairInfo: {
-            this.clear_tasks()
-            this.queue_collect_click_from_frames(req)
-            this.queue(() => {
-                console.log('finished getting crosshair info: num hits:' + this.collected_clicks.length)
-                if (this.collected_clicks.length == 1) {
-                    let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
-                    this.bg_comm.send_to_nodejs(response)
-                } else if (this.collected_clicks.length > 1) {
-                    let response = new ResponseMessage(req.id, false, "The crosshair click point intersected multiple elements.")
-                    this.bg_comm.send_to_nodejs(response)
-                } else {
-                    let response = new ResponseMessage(req.id, false, "The crosshair click point did not intersect any elements.")
-                    this.bg_comm.send_to_nodejs(response)
-                }
-            })
-            this.run_next_task()
-        } break
+                this.clear_tasks()
+                this.queue_collect_click_from_frames(req)
+                this.queue(() => {
+                    console.log('finished getting crosshair info: num hits:' + this.collected_clicks.length)
+                    if (this.collected_clicks.length == 1) {
+                        let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
+                        this.bg_comm.send_to_nodejs(response)
+                    } else if (this.collected_clicks.length > 1) {
+                        let response = new ResponseMessage(req.id, false, "The crosshair click point intersected multiple elements.")
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, "The crosshair click point did not intersect any elements.")
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
+            } break
+            case RequestType.kGetDropDownInfo: {
+                this.clear_tasks()
+                this.queue_collect_drop_down_from_frames(req)
+                this.queue(() => {
+                    console.log('finished getting drop down info: num hits:' + this.collected_drop_downs.length)
+                    if (this.collected_drop_downs.length == 1) {
+                        let response = new ResponseMessage(req.id, true, this.collected_drop_downs[0])
+                        this.bg_comm.send_to_nodejs(response)
+                    } else if (this.collected_drop_downs.length > 1) {
+                        let response = new ResponseMessage(req.id, false, "Received drop down info from multiple elements.")
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, "Did not receive any drop down info from any elements.")
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
+            } break
             default: {
                 console.error("BgCommHandler got an unknown request.")
             } break
         }
-
     }
 }

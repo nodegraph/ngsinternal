@@ -181,6 +181,10 @@ void NodeJSWorker::queue_get_crosshair_info(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_crosshair_info_task,this), "queue_get_crosshair_info");
 }
 
+void NodeJSWorker::queue_get_drop_down_info(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_drop_down_info_task,this), "queue_get_crosshair_info");
+}
+
 void NodeJSWorker::queue_merge_chain_state(TaskContext& tc, const QJsonObject& map) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::merge_chain_state_task,this, map), "queue_merge_chain_state");
 }
@@ -361,8 +365,8 @@ void NodeJSWorker::queue_stop_mouse_hover(TaskContext& tc) {
 }
 
 void NodeJSWorker::queue_emit_option_texts(TaskContext& tc) {
-  queue_get_crosshair_info(tc);
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::emit_option_texts_task,this), "select_from_dropdown3");
+  queue_get_drop_down_info(tc);
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::emit_option_texts_task,this), "queue_emit_option_texts");
 }
 
 // ---------------------------------------------------------------------------------
@@ -468,6 +472,11 @@ void NodeJSWorker::get_crosshair_info_task() {
   QJsonObject args;
   args.insert(Message::kGlobalMousePosition, _global_mouse_pos);
   Message req(RequestType::kGetCrosshairInfo,args);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::get_drop_down_info_task() {
+  Message req(RequestType::kGetDropDownInfo);
   send_msg_task(req);
 }
 

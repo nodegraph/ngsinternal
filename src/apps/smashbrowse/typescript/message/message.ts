@@ -31,7 +31,10 @@ interface IClickInfo {
     // Text and image values under click.
     text_values: string[],
     image_values: string[],
-    // Select/Dropdown option texts.
+}
+
+interface IDropDownInfo {
+    option_values: string[],
     option_texts: string[]
 }
 
