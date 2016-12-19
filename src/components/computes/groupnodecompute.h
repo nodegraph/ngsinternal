@@ -34,6 +34,11 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   virtual void add_param_hints(const std::string& name, const QJsonValue& param_hints);
   virtual void remove_param_hints(const std::string& name);
 
+  // Internal nodes.
+  virtual void dirty_all_nodes_in_group();
+  virtual void dirty_all_nodes_in_group_recursively();
+
+
  protected:
 
   // Our state.

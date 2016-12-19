@@ -34,15 +34,23 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Clean"
-        description: "Clean this node and all upstream nodes."
+        description: "Clean this group node."
         script: "node_graph_item.clean_node();
+                 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        title: "Reclean"
+        description: "Clean this group node."
+        script: "node_graph_item.reclean_node();
                  main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Dirty"
-        description: "Dirty this node and all downstream nodes."
+        description: "Dirty this group node."
         script: "node_graph_item.dirty_node();
                  main_bar.switch_to_current_mode();"
     }

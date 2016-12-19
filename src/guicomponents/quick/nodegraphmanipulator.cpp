@@ -188,7 +188,7 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
 
     // Starting from the root group we dive one by one to the target group.
     Path path;
-    do {
+    while(target_path.size()) {
       path.push_back(target_path.front());
       target_path.pop_front();
 
@@ -203,7 +203,7 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
       if (!c->clean_inputs()) {
         return;
       }
-    } while (target_path.size());
+    }
 
     // If we get here the inputs on our surrounding group and our input nodes
     // now have appropriate values to perform the compute.
@@ -346,8 +346,16 @@ void NodeGraphManipulatorImp::finish_creating_node(Entity* entity, bool centered
     } else {
       cs->set_pos(_ng_quick->get_last_press_info().object_space_pos.xy());
     }
-    // The parenting group node needs to update its inputs and outputs.
-    //get_app_root()->update_wires();
+    // The parenting group node needs to clean its wires and update the Inputs to
+    // to reflect the possible creation of input and output nodes.
+//    _factory->get_current_group()->clean_wires();
+//    Dep<Inputs> group_inputs = get_dep<Inputs>(entity->get_parent());
+//    group_inputs->clean_state();
+
+    // We need let encompassing groups know that we are dirty.
+    bubble_group_dirtiness(entity);
+
+    // Make sure the created node is selected.
     _selection->clear_selection();
     _selection->select(cs);
   }

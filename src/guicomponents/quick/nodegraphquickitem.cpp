@@ -4,6 +4,7 @@
 #include <guicomponents/quick/texturedisplaynode.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 #include <guicomponents/computes/entergroupcompute.h>
+#include <components/computes/groupnodecompute.h>
 #include <guicomponents/comms/licensechecker.h>
 
 #include <ngsversion.h>
@@ -580,6 +581,34 @@ void NodeGraphQuickItem::dirty_node() {
   }
 }
 
+void NodeGraphQuickItem::dirty_group() {
+  external();
+  Entity* group = _factory->get_current_group();
+  Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(group);
+  compute->dirty_all_nodes_in_group();
+  update();
+}
+
+void NodeGraphQuickItem::dirty_group_recursively() {
+  external();
+  Entity* group = _factory->get_current_group();
+  Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(group);
+  compute->dirty_all_nodes_in_group_recursively();
+  update();
+}
+
+void NodeGraphQuickItem::clean_group() {
+  external();
+  Entity* group = _factory->get_current_group();
+  _manipulator->set_ultimate_targets(group, true);
+}
+
+void NodeGraphQuickItem::reclean_group() {
+  external();
+  dirty_group_recursively();
+  clean_group();
+}
+
 void NodeGraphQuickItem::clean_node() {
   external();
   // Return if don't have a last pressed shape.
@@ -593,6 +622,16 @@ void NodeGraphQuickItem::clean_node() {
   }else {
     qDebug() << "Error: could not find compute to perform. \n";
   }
+}
+
+void NodeGraphQuickItem::reclean_node() {
+  external();
+  // Return if don't have a last pressed shape.
+  if (!_last_node_shape) {
+    return;
+  }
+  dirty_group_recursively();
+  clean_node();
 }
 
 void NodeGraphQuickItem::view_node() {

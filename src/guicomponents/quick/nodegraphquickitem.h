@@ -52,7 +52,12 @@ Q_OBJECT
   Q_INVOKABLE void view_node();
   Q_INVOKABLE void edit_node();
   Q_INVOKABLE void dirty_node();
+  Q_INVOKABLE void dirty_group();
+  Q_INVOKABLE void dirty_group_recursively();
+  Q_INVOKABLE void clean_group();
+  Q_INVOKABLE void reclean_group();
   Q_INVOKABLE void clean_node();
+  Q_INVOKABLE void reclean_node();
 
   Q_INVOKABLE void set_editable_inputs(const QString& node_path, const QJsonObject& values);
   Q_INVOKABLE void set_input_exposure(const QString& node_path, const QJsonObject& values);

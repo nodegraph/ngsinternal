@@ -128,11 +128,51 @@ void GroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
 }
 
 void GroupNodeCompute::add_param_hints(const std::string& name, const QJsonValue& param_hints) {
+  if (_node_hints.contains(name.c_str()) && (_node_hints[name.c_str()] == param_hints) ) {
+    return;
+  }
+  // Only dirty this component if we actually add something.
+  external();
   _node_hints.insert(name.c_str(), param_hints);
 }
 
 void GroupNodeCompute::remove_param_hints(const std::string& name) {
+  if (!_node_hints.contains(name.c_str())) {
+    return;
+  }
+  // Only dirty this component if we actually remove something.
+  external();
   Compute::remove_hint(_node_hints, name);
+}
+
+void GroupNodeCompute::dirty_all_nodes_in_group() {
+  external();
+  const Entity::NameToChildMap& children = our_entity()->get_children();
+  for (auto &iter : children) {
+    Dep<Compute> compute = get_dep<Compute>(iter.second);
+    if (compute) {
+      compute->dirty_state();
+    }
+  }
+}
+
+void GroupNodeCompute::dirty_all_nodes_in_group_recursively() {
+  external();
+  const Entity::NameToChildMap& children = our_entity()->get_children();
+  for (auto &iter : children) {
+    // If we have a group, we recurse.
+    if (iter.second->has_comp_with_did(ComponentIID::kIGroupInteraction, ComponentDID::kGroupInteraction)) {
+      Dep<GroupNodeCompute> compute = get_dep<GroupNodeCompute>(iter.second);
+      assert(compute);
+      compute->dirty_state();
+      compute->dirty_all_nodes_in_group_recursively();
+    } else {
+      Dep<Compute> compute = get_dep<Compute>(iter.second);
+      if (compute) {
+        compute->dirty_state();
+      }
+    }
+  }
 }
 
 void GroupNodeCompute::update_wires() {
