@@ -16,6 +16,7 @@ interface IElementInfo {
     frame_index_path: string
     xpath: string
     box: IBox // These are the bounds in global client space.
+    z_index: number
 }
 
 interface IPoint{

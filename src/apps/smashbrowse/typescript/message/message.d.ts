@@ -6,6 +6,7 @@ declare interface IElementInfo {
     frame_index_path: string
     xpath: string
     box: IBox
+    z_index: number
 }
 
 declare interface IClickInfo {

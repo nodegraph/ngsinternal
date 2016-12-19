@@ -185,6 +185,12 @@ class ElemWrap {
         return true
     }
 
+    get_z_index(): number {
+        let style = window.getComputedStyle(this.element, null)
+        return Number(style.zIndex)
+    }
+
+
     //----------------------------------------------------------------------------------------
     //Element Identification. (This is usually only valid during one browsing session.)
     //----------------------------------------------------------------------------------------
@@ -227,8 +233,9 @@ class ElemWrap {
         console.log('local client space: ' + JSON.stringify(box))
         box.to_global_client_space(window)
         console.log('global client space: ' + JSON.stringify(box))
+        let z_index = this.get_z_index()
         // Form the info.
-        return { frame_index_path: frame_index_path, xpath: xpath, box: box }
+        return { frame_index_path: frame_index_path, xpath: xpath, box: box, z_index: z_index }
     }
 
     //----------------------------------------------------------------------------------------

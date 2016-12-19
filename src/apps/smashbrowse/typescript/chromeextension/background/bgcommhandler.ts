@@ -116,7 +116,9 @@ class BgCommHandler {
             if (best === null) {
                 best = elem
             } else {
-                if ( (elem.box.left <= best.box.left) && (elem.box.top <= best.box.top) ) {
+                if ( (elem.box.left == best.box.left) && (elem.box.top == best.box.top) && (elem.z_index > best.z_index)) {
+                    best = elem
+                } else if ( (elem.box.left < best.box.left) && (elem.box.top < best.box.top) ) {
                     best = elem
                 }
             }
@@ -124,10 +126,10 @@ class BgCommHandler {
         return best
     }
 
-    static find_neighbor_closest(src: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
+    static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
-        let best_mag = 0
+        let best_distance = 0
         const off_axis_weight = 1 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
 
         console.log('elem: ' + JSON.stringify(src))
@@ -145,7 +147,7 @@ class BgCommHandler {
             let dest_box = new Box(dest.box)
             let dest_center:Point = dest_box.get_center()
             let diff = dest_center.subtract(src_center)
-            let mag = 0
+            let distance = 0
 
             // Now choose the closest element on one side, according to the direction in the request.
             switch (dir) {
@@ -153,36 +155,52 @@ class BgCommHandler {
                     if (diff.x >= 0) {
                         return
                     }
-                    mag = Math.abs(diff.x) + Math.abs(diff.y) * off_axis_weight
+                    distance = Math.abs(diff.x) + Math.abs(diff.y) * off_axis_weight
                 } break
                 case DirectionType.right: {
                     if (diff.x <= 0) {
                         return
                     }
-                    mag = Math.abs(diff.x) + Math.abs(diff.y) * off_axis_weight
+                    distance = Math.abs(diff.x) + Math.abs(diff.y) * off_axis_weight
                 } break
                 case DirectionType.down: {
                     if (diff.y <= 0) {
                         return
                     }
-                    mag = Math.abs(diff.y) + Math.abs(diff.x) * off_axis_weight
+                    distance = Math.abs(diff.y) + Math.abs(diff.x) * off_axis_weight
                 } break
                 case DirectionType.up: {
                     if (diff.y >= 0) {
                         return
                     }
-                    mag = Math.abs(diff.y) + Math.abs(diff.x) * off_axis_weight
+                    distance = Math.abs(diff.y) + Math.abs(diff.x) * off_axis_weight
                 } break
             }
 
             // Update best if the dest is closer to the src element.
             if (!best) {
                 best = dest
-                best_mag = mag
+                best_distance = distance
                 console.log('found first: ' + JSON.stringify(best))
-            } else if (mag < best_mag) {
+            } else if (Math.abs(distance - best_distance) < 0.0001) {
+                // If the distance and best_distance are very close check their z_index values or their sizes.
+                // We choose the one with larger z_index or smaller size.
+                if (dest.z_index && best.z_index && (dest.z_index > best.z_index)) {
+                    best = dest
+                    best_distance = distance
+                    console.log('found better: ' + JSON.stringify(best))
+                } else {
+                    let dest_area = (dest.box.right - dest.box.left) * (dest.box.bottom - dest.box.top)
+                    let best_area = (best.box.right - best.box.left) * (best.box.bottom - best.box.top)
+                    if (dest_area < best_area) {
+                        best = dest
+                        best_distance = distance
+                        console.log('found better: ' + JSON.stringify(best))
+                    }
+                }
+            } else if (distance < best_distance) {
                 best = dest
-                best_mag = mag
+                best_distance = distance
                 console.log('found better: ' + JSON.stringify(best))
             }
         })
@@ -556,7 +574,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_neighbor_closest(this.found_elem, this.found_elems, req.args.direction)
+                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.direction)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
@@ -605,7 +623,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_neighbor_closest(this.found_elem, this.found_elems, req.args.direction)
+                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.direction)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
