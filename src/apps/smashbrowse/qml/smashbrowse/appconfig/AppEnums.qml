@@ -45,7 +45,7 @@ Item{
 
     // --------------------------------------------------------------------------------------
     // Msg Enum Enum. This is used to add additional info (as in hint) to an integer.
-    // This allows us to display a custom dropdown in the gui for the integer as an enum.
+    // This allows us to display a custom drop down in the gui for the integer as an enum.
     // --------------------------------------------------------------------------------------
 
     function get_enum_hint_value_text(enum_hint_value_type, index) {
@@ -91,7 +91,7 @@ Item{
         'text',
         'image',
         'input field',
-        'select dropdown'
+        'drop down field'
     ]
 
     property var direction_type_text: [

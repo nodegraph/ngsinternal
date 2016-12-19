@@ -72,7 +72,7 @@ enum class TextActionType : int {
 
 enum class ElementActionType : int {
   kGetText,
-  kSelectOption,
+  kChooseOption,
   kScroll
 };
 

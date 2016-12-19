@@ -77,7 +77,7 @@ declare const enum TextActionType {
 
 declare const enum ElementActionType {
   kGetText,
-  kSelectOption,
+  kChooseOption,
   kScroll
 }
 

@@ -50,7 +50,7 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "With Any Drop Down Field"
-        description: "Find the top-leftmost dropdown field."
+        description: "Find the top-leftmost drop down field."
         script: "web_recorder.record_find_element_by_select_type();
         		main_bar.switch_to_current_mode();"
     }

@@ -77,7 +77,7 @@ const enum TextActionType {
 
 const enum ElementActionType {
   kGetText,
-  kSelectOption,
+  kChooseOption,
   kScroll
 }
 

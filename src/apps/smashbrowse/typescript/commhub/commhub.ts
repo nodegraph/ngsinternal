@@ -207,8 +207,8 @@ class AppConnection extends BaseConnection {
                         let p = this.webdriverwrap.get_text(req.args.frame_index_path, req.args.xpath)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
-                    case ElementActionType.kSelectOption: {
-                        let p = this.webdriverwrap.select_option(req.args.frame_index_path, req.args.xpath, req.args.option_text)
+                    case ElementActionType.kChooseOption: {
+                        let p = this.webdriverwrap.choose_option(req.args.frame_index_path, req.args.xpath, req.args.option_text)
                         WebDriverWrap.terminate_chain(p, req.id)
                     } break
                     case ElementActionType.kScroll: {

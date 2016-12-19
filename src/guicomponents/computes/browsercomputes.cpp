@@ -547,7 +547,7 @@ void ElementActionCompute::create_inputs_outputs(const EntityConfig& config) {
     c.expose_plug = false;
     c.unconnected_value = "";
 
-    create_input(Message::kOptionText, c); // Only used when the element action is set to select option from dropdown.
+    create_input(Message::kOptionText, c); // Only used when the element action is set to choose an option from a drop down field.
 
     c.unconnected_value = "extracted_text";
     create_input(Message::kTextDataName, c); // Only used when the element action is set to get_text.

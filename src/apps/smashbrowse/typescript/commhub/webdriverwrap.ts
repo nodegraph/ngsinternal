@@ -283,8 +283,8 @@ export class WebDriverWrap {
         )
     }
 
-    // Creates a promise which will select an option in a select dropdown.
-    select_option(frame_index_path: string, xpath: string, option_text: string): webdriver.promise.Promise<void> {
+    // Creates a promise which will choose an option in a  drop down field.
+    choose_option(frame_index_path: string, xpath: string, option_text: string): webdriver.promise.Promise<void> {
         return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
                 return element.findElement(By.xpath('option[normalize-space(text())="' + option_text + '"]')).click()

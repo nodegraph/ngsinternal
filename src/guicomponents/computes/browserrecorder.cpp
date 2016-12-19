@@ -447,7 +447,7 @@ void BrowserRecorder::record_select_from_dropdown(const QString& option_text) {
   _worker->queue_get_crosshair_info(tc);
 
   QJsonObject args;
-  args.insert(Message::kElementAction, to_underlying(ElementActionType::kSelectOption));
+  args.insert(Message::kElementAction, to_underlying(ElementActionType::kChooseOption));
   args.insert(Message::kOptionText, option_text);
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
