@@ -55,4 +55,11 @@ ListModel {
         		main_bar.switch_to_current_mode();"
     }
 
+	ListElement {
+        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        title: "Using Crosshair Position"
+        description: "Finds the element containing the crosshair position."
+        script: "web_recorder.record_find_element_by_position();
+        		 main_bar.switch_to_current_mode();"
+    }
 }

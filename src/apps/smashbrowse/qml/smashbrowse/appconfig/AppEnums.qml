@@ -71,19 +71,17 @@ Item{
 
     property var mouse_action_type_text: [
         'mouse click',
-        'mouse over',
-        'start mouse hover',
-        'stop mouse hover'
+        'mouse over'
     ]
 
     property var text_action_type_text: [
         'type letters',
-        'type enter',
+        'press enter',
     ]
 
     property var element_action_type_text: [
         'extract text',
-        'select an option',
+        'choose an option',
         'scroll'
     ]
 

@@ -356,17 +356,20 @@ BaseStackPage{
 	// Note there are hints only for paths of length 1 and 2.
 	// For paths of length 2, the hints actually come from the parent path of length 1.
     function get_hints(path) {
-    	// The hints are expected to be a flat list of hints.
-    	
+		// The hints are expected to be a flat list of hints.
     	var hints = {}
     	
     	if (path.length == 0) {
     		return hints
-    	} else if (path.length == 1) {
-    		app_utils.get_sub_object(_hints, path)
+    	}
+    	
+    	if (path.length >= 1) {
+    		hints = app_utils.get_sub_object(_hints, path)
     		// Make a deep copy.
     		hints = JSON.parse(JSON.stringify(hints));
-    	} else {
+    	}
+    	
+    	if (path.length >= 2) {
     		// Some hints propagate from the parent to the child for one level only.
 			var parent_path = get_parent_path(path)
 			

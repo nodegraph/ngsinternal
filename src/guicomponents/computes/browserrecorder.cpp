@@ -117,6 +117,21 @@ void BrowserRecorder::record_navigate_refresh() {
 }
 
 // -----------------------------------------------------------------
+// Find element by position.
+// -----------------------------------------------------------------
+
+void BrowserRecorder::record_find_element_by_position() {
+//  check_busy()
+//  _worker->queue_get_crosshair_info(tc);
+//  QJsonObject args;
+//  args.insert(Message::kWrapType, to_underlying(WrapType::text));
+//  _worker->queue_merge_chain_state(tc, args);
+//  _worker->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
+//  _worker->queue_build_compute_node(tc, ComponentDID::kFindElementByValuesCompute);
+//  finish();
+}
+
+// -----------------------------------------------------------------
 // Find the first element by values.
 // -----------------------------------------------------------------
 
