@@ -693,7 +693,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.collected_elems[0])
                         this.bg_comm.send_to_nodejs(response)
                     } else if (this.collected_elems.length > 1) {
-                        let response = new ResponseMessage(req.id, false, "Performed element action on multiple elements.")
+                        let response = new ResponseMessage(req.id, false, "Performed element action on multiple elements: " + this.collected_elems.length)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, "No current element to perform element action on.")
@@ -711,7 +711,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
                         this.bg_comm.send_to_nodejs(response)
                     } else if (this.collected_clicks.length > 1) {
-                        let response = new ResponseMessage(req.id, false, "The crosshair click point intersected multiple elements.")
+                        let response = new ResponseMessage(req.id, false, "The crosshair click point intersected multiple elements: " + this.collected_clicks.length)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, "The crosshair click point did not intersect any elements.")
@@ -729,7 +729,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.collected_drop_downs[0])
                         this.bg_comm.send_to_nodejs(response)
                     } else if (this.collected_drop_downs.length > 1) {
-                        let response = new ResponseMessage(req.id, false, "Received drop down info from multiple elements.")
+                        let response = new ResponseMessage(req.id, false, "Received drop down info from multiple elements: " + this.collected_drop_downs.length)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, "Did not receive any drop down info from any elements.")

@@ -93,6 +93,8 @@ class MutationMonitor {
             // We can now show the context menu.
             this.gui_collection.initialize()
             this.gui_collection.wait_popup.close()
+            // Update our overlay sets as some of elements may have disappeared.
+            this.gui_collection.overlay_sets.update()
         }
     }
 
