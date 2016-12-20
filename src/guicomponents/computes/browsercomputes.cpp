@@ -437,60 +437,6 @@ bool MouseActionCompute::update_state() {
   return false;
 }
 
-void StartMouseHoverActionCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-  }
-  {
-    QJsonObject pos;
-    pos.insert("x", 0);
-    pos.insert("y", 0);
-
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = pos;
-
-    create_input(Message::kLocalMousePosition, c);
-  }
-}
-
-const QJsonObject StartMouseHoverActionCompute::_hints = StartMouseHoverActionCompute::init_hints();
-QJsonObject StartMouseHoverActionCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kLocalMousePosition, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kLocalMousePosition, HintKey::kDescriptionHint, "The position to perform our hover at, relative to the element itself.");
-  return m;
-}
-
-bool StartMouseHoverActionCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_start_mouse_hover(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
-bool StopMouseHoverActionCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_stop_mouse_hover(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
 void TextActionCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);

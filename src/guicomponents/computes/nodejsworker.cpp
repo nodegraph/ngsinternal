@@ -25,16 +25,13 @@
 namespace ngs {
 
 const int NodeJSWorker::kPollInterval = 1000;
-const int NodeJSWorker::kJitterSize = 1;
 
 NodeJSWorker::NodeJSWorker(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
       _msg_sender(this),
       _scheduler(this),
-      _manipulator(this),
-      _hovering(false),
-      _jitter(kJitterSize)
+      _manipulator(this)
 
 {
   get_dep_loader()->register_fixed_dep(_msg_sender, Path());
@@ -53,11 +50,17 @@ NodeJSWorker::~NodeJSWorker() {
 void NodeJSWorker::open() {
   external();
   _msg_sender->open();
+
+  // The logic to always hover over the current element has not been fully implemented.
+  //_poll_timer.start();
 }
 
 void NodeJSWorker::close() {
   external();
   _msg_sender->close();
+
+  // The logic to always hover over the current element has not been fully implemented.
+  //_poll_timer.stop();
 }
 
 bool NodeJSWorker::is_open() {
@@ -138,11 +141,6 @@ void NodeJSWorker::stop_polling() {
 void NodeJSWorker::reset_state() {
     // State for message queuing.
     _chain_state = QJsonObject();
-
-    // State for hovering.
-    _hovering = false;
-    _hover_state = QJsonObject();
-    _jitter = kJitterSize;
 }
 
 // -----------------------------------------------------------------
@@ -150,11 +148,10 @@ void NodeJSWorker::reset_state() {
 // -----------------------------------------------------------------
 
 void NodeJSWorker::on_poll() {
-  if (_hovering) {
     if (!_scheduler->is_busy()) {
-      mouse_hover_task();
+      TaskContext tc(_scheduler);
+      queue_perform_mouse_hover(tc);
     }
-  }
 }
 
 // ---------------------------------------------------------------------------------
@@ -175,6 +172,10 @@ void NodeJSWorker::send_msg_task(Message& msg) {
 
 void NodeJSWorker::queue_get_current_element(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_current_element_info,this), "queue_get_xpath");
+}
+
+void NodeJSWorker::queue_has_current_element(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::has_current_element_info,this), "queue_get_xpath");
 }
 
 void NodeJSWorker::queue_get_crosshair_info(TaskContext& tc) {
@@ -321,16 +322,12 @@ void NodeJSWorker::queue_perform_mouse_action(TaskContext& tc) {
 }
 
 void NodeJSWorker::queue_perform_mouse_hover(TaskContext& tc) {
-  queue_get_current_element(tc);
+  queue_has_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::perform_hover_action_task,this), "queue_perform_hover");
   queue_block_events(tc);
   queue_wait_until_loaded(tc);
   queue_update_element(tc);
-}
-
-void NodeJSWorker::queue_perform_post_mouse_hover(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::post_hover_task, this), "queue_perform_post_hover");
 }
 
 void NodeJSWorker::queue_perform_text_action(TaskContext& tc) {
@@ -354,15 +351,6 @@ void NodeJSWorker::queue_perform_element_action(TaskContext& tc) {
 // ---------------------------------------------------------------------------------
 // Queue other actions.
 // ---------------------------------------------------------------------------------
-
-void NodeJSWorker::queue_start_mouse_hover(TaskContext& tc) {
-  queue_get_current_element(tc);
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::start_mouse_hover_task,this), "queue_stop_mouse_hover");
-}
-
-void NodeJSWorker::queue_stop_mouse_hover(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::stop_mouse_hover_task,this), "queue_stop_mouse_hover");
-}
 
 void NodeJSWorker::queue_emit_option_texts(TaskContext& tc) {
   queue_get_drop_down_info(tc);
@@ -484,6 +472,12 @@ void NodeJSWorker::get_drop_down_info_task() {
 void NodeJSWorker::get_current_element_info() {
   QJsonObject args;
   Message req(RequestType::kGetElement,args);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::has_current_element_info() {
+  QJsonObject args;
+  Message req(RequestType::kHasElement,args);
   send_msg_task(req);
 }
 
@@ -695,11 +689,8 @@ void NodeJSWorker::perform_mouse_action_task() {
 void NodeJSWorker::perform_hover_action_task() {
   QJsonObject args;
   args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
-  args.insert(Message::kXPath, _hover_state.value(Message::kXPath));
-
+  args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
   args.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
-  args.insert(Message::kLocalMousePosition, _hover_state.value(Message::kLocalMousePosition));
-
   Message req(RequestType::kPerformMouseAction);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
@@ -732,49 +723,15 @@ void NodeJSWorker::perform_element_action_task() {
   send_msg_task(req);
 }
 
-void NodeJSWorker::start_mouse_hover_task() {
-  _hover_state = _chain_state;
-  _hovering = true;
-  _scheduler->run_next_task();
-}
-
-void NodeJSWorker::stop_mouse_hover_task() {
-  _hovering = false;
-  _scheduler->run_next_task();
-}
-
-void NodeJSWorker::mouse_hover_task() {
-  // Jitter the hover position back and forth by one.
-  int x = _hover_state.value(Message::kLocalMousePosition).toObject().value("x").toInt();
-  int y = _hover_state.value(Message::kLocalMousePosition).toObject().value("y").toInt();
-  x += _jitter;
-  y += _jitter;
-  _jitter *= -1;
-
-  // Lock in the jitter.
-  QJsonObject pos;
-  pos.insert("x", x);
-  pos.insert("y", y);
-  _hover_state.insert(Message::kLocalMousePosition, pos);
-
-  // Queue the tasks.
-  TaskContext tc(_scheduler);
-  queue_unblock_events(tc);
-  queue_perform_mouse_hover(tc);
-  queue_perform_post_mouse_hover(tc);
-  queue_block_events(tc);
-  queue_wait_until_loaded(tc);
-  queue_update_element(tc);
-}
-
-void NodeJSWorker::post_hover_task() {
-  // Stop hovering if the last hover fails.
-  bool success = _last_response.value(Message::kSuccess).toBool();
-  if (!success) {
-    _hovering = false;
-  }
-  _scheduler->run_next_task();
-}
+//void NodeJSWorker::mouse_hover_task() {
+//  // Queue the tasks.
+//  TaskContext tc(_scheduler);
+//  queue_unblock_events(tc);
+//  queue_perform_mouse_hover(tc);
+//  queue_block_events(tc);
+//  queue_wait_until_loaded(tc);
+//  queue_update_element(tc);
+//}
 
 void NodeJSWorker::emit_option_texts_task() {
   QJsonArray vals = _chain_state.value(Message::kOptionTexts).toArray();

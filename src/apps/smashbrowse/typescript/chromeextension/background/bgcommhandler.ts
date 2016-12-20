@@ -496,6 +496,28 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
+            case RequestType.kHasElement: {
+                this.clear_tasks()
+                this.queue_get_current_element()
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                    	// We don't error out if there is no current element.
+                    	// We just return a dummy info instead.
+                        let dummy: IElementInfo = {
+                            frame_index_path: "-1",
+                            xpath: "",
+                            box: {left: 0, right: 0, bottom: 0, top: 0},
+                            z_index: 0
+                        }
+                        let response = new ResponseMessage(req.id, true, dummy)
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
+            } break
             case RequestType.kSetElement: {
                 this.clear_tasks()
                 this.found_elem = req.args

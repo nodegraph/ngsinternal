@@ -174,12 +174,22 @@ class AppConnection extends BaseConnection {
             case RequestType.kPerformMouseAction: {
                 switch (req.args.mouse_action) {
                     case MouseActionType.kSendClick: {
-                        let p = this.webdriverwrap.click_on_element(req.args.frame_index_path, req.args.xpath, req.args.local_mouse_position.x, req.args.local_mouse_position.y)
-                        WebDriverWrap.terminate_chain(p, req.id)
+                        if (req.args.local_mouse_position) {
+                            let p = this.webdriverwrap.click_on_element(req.args.frame_index_path, req.args.xpath, req.args.local_mouse_position.x, req.args.local_mouse_position.y)
+                            WebDriverWrap.terminate_chain(p, req.id)
+                        } else {
+                            let p = this.webdriverwrap.click_on_element_center(req.args.frame_index_path, req.args.xpath)
+                            WebDriverWrap.terminate_chain(p, req.id)
+                        }
                     } break
                     case MouseActionType.kMouseOver: {
-                        let p = this.webdriverwrap.mouse_over_element(req.args.frame_index_path, req.args.xpath, req.args.local_mouse_position.x, req.args.local_mouse_position.y)
-                        WebDriverWrap.terminate_chain(p, req.id)
+                        if (req.args.local_mouse_position) {
+                            let p = this.webdriverwrap.mouse_over_element(req.args.frame_index_path, req.args.xpath, req.args.local_mouse_position.x, req.args.local_mouse_position.y)
+                            WebDriverWrap.terminate_chain(p, req.id)
+                        } else {
+                            let p = this.webdriverwrap.mouse_over_element_center(req.args.frame_index_path, req.args.xpath)
+                            WebDriverWrap.terminate_chain(p, req.id)
+                        }
                     } break
                     default: {
                         send_msg_to_app(new ResponseMessage(msg.id, false, "unknown mouse action"))

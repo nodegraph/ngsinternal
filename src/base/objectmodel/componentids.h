@@ -135,8 +135,6 @@ COMPONENT_ENTRY1(FindElementByTypeCompute)\
 COMPONENT_ENTRY1(ShiftElementByTypeCompute)\
 COMPONENT_ENTRY1(ShiftElementByValuesCompute)\
 COMPONENT_ENTRY1(MouseActionCompute)\
-COMPONENT_ENTRY1(StartMouseHoverActionCompute)\
-COMPONENT_ENTRY1(StopMouseHoverActionCompute)\
 COMPONENT_ENTRY1(TextActionCompute)\
 COMPONENT_ENTRY1(ElementActionCompute)\
 \

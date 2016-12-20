@@ -175,27 +175,6 @@ class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT StartMouseHoverActionCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, StartMouseHoverActionCompute);
-  StartMouseHoverActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT StopMouseHoverActionCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, StopMouseHoverActionCompute);
-  StopMouseHoverActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
- protected:
-  virtual bool update_state();
-};
-
 class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, TextActionCompute);

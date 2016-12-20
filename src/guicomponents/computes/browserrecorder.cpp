@@ -387,19 +387,6 @@ void BrowserRecorder::record_mouse_over() {
   finish();
 }
 
-void BrowserRecorder::record_start_mouse_hover() {
-  check_busy();
-  _worker->queue_get_crosshair_info(tc);
-  _worker->queue_build_compute_node(tc, ComponentDID::kStartMouseHoverActionCompute);
-  finish();
-}
-
-void BrowserRecorder::record_stop_mouse_hover() {
-  check_busy();
-  _worker->queue_build_compute_node(tc, ComponentDID::kStopMouseHoverActionCompute);
-  finish();
-}
-
 // -----------------------------------------------------------------
 // Record Text Actions.
 // -----------------------------------------------------------------

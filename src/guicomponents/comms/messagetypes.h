@@ -34,6 +34,7 @@ enum class RequestType : int {
   kUpdateElement,
   kClearElement,
   kGetElement,
+  kHasElement,
   kSetElement,
   kFindElementByValues,
   kFindElementByType,

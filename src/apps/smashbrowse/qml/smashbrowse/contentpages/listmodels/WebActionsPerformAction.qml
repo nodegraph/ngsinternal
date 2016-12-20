@@ -45,32 +45,19 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-        title: "Hover the Mouse"
-        description: "Hover the mouse over the crosshair."
-        script: "web_recorder.record_mouse_over();
-        		main_bar.switch_to_current_mode();"
-    }
-    ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-        title: "Start Hovering the Mouse"
-        description: "Starts hovering the mouse over the crosshair."
-        script: "web_recorder.record_start_mouse_hover();
-        		main_bar.switch_to_current_mode();"
-    }
-    ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-        title: "Stop Hovering the Mouse"
-        description: "Stops hovering the mouse over the crosshair."
-        script: "web_recorder.record_stop_mouse_hover();
-        		main_bar.switch_to_current_mode();"
-    }
-
-    ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "Perform Scroll"
         description: "Scroll along a direction."
         script: "push_by_names('Scroll', 'WebMenuListPage', 'WebActionsPerformScroll')"
     }
 
+    // Eventually we want to automatically and persistently hover over the current element.
+    // But this hasn't been fully implemented and tested.
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        title: "Hover the Mouse"
+        description: "Hovers the mouse over the element."
+        script: "web_recorder.record_mouse_over();
+                main_bar.switch_to_current_mode();"
+    }
 
 }

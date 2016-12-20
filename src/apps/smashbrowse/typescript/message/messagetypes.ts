@@ -39,6 +39,7 @@ const enum RequestType {
   kUpdateElement,
   kClearElement,
   kGetElement,
+  kHasElement,
   kSetElement,
   kFindElementByValues,
   kFindElementByType,

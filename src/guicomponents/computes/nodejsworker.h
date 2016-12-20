@@ -62,6 +62,7 @@ Q_OBJECT
 
   // Queue Framework Tasks.
   void queue_get_current_element(TaskContext& tc);
+  void queue_has_current_element(TaskContext& tc);
   void queue_get_crosshair_info(TaskContext& tc);
   void queue_get_drop_down_info(TaskContext& tc);
   void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
@@ -103,13 +104,10 @@ Q_OBJECT
   // Queue Perform Action Tasks.
   void queue_perform_mouse_action(TaskContext& tc);
   void queue_perform_mouse_hover(TaskContext& tc);
-  void queue_perform_post_mouse_hover(TaskContext& tc);
   void queue_perform_text_action(TaskContext& tc);
   void queue_perform_element_action(TaskContext& tc);
 
   // Queue other actions.
-  void queue_start_mouse_hover(TaskContext& tc);
-  void queue_stop_mouse_hover(TaskContext& tc);
   void queue_emit_option_texts(TaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
 
   void queue_firebase_init(TaskContext& tc);
@@ -148,6 +146,7 @@ signals:
   void get_crosshair_info_task();
   void get_drop_down_info_task();
   void get_current_element_info();
+  void has_current_element_info();
   void merge_chain_state_task(const QJsonObject& map);
   void copy_chain_property_task(const QString& src_prop, const QString& dest_prop);
   void receive_chain_state_task(std::function<void(const QJsonObject&)> on_finished_sequence);
@@ -194,10 +193,7 @@ signals:
   void perform_text_action_task();
   void perform_element_action_task();
 
-  void start_mouse_hover_task();
-  void stop_mouse_hover_task();
-  void mouse_hover_task();
-  void post_hover_task();
+  //void mouse_hover_task();
 
   void emit_option_texts_task();
   void reset_task();
@@ -221,12 +217,6 @@ signals:
 
   // State to bring up the web actions menu, and handle menu activations.
   QJsonObject _global_mouse_pos;
-
-  // State for hovering.
-  bool _hovering;
-  QJsonObject _hover_state;
-  static const int kJitterSize;
-  int _jitter;
 
   // The 'value' value from responses will get merged into this state overriding previous values.
   QJsonObject _chain_state;

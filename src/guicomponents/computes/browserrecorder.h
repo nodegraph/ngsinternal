@@ -73,8 +73,6 @@ Q_OBJECT
   // Record Mouse Actions.
   Q_INVOKABLE void record_click();
   Q_INVOKABLE void record_mouse_over();
-  Q_INVOKABLE void record_start_mouse_hover();
-  Q_INVOKABLE void record_stop_mouse_hover();
 
   // Record Text Actions.
   Q_INVOKABLE void record_type_text(const QString& text);
