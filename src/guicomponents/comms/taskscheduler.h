@@ -36,7 +36,7 @@ class COMMS_EXPORT TaskScheduler : public Component {
   void done_waiting_for_response(int resp_id, const QString& error);
 
   // Task queue info.
-  bool is_busy() const {external(); return !_stack.empty();}
+  bool is_busy() const {external(); return _waiting_for_response || (!_stack.empty());}
 
  private:
   typedef std::deque<Task> Queue;
