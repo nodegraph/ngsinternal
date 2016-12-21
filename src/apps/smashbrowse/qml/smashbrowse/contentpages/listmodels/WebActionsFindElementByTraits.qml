@@ -1,7 +1,5 @@
 import QtQuick 2.6
 
-// The first element contains the title to display in the stack view navigator.
-
 ListModel {
 
     function update(props) {
@@ -53,13 +51,5 @@ ListModel {
         description: "Find the top-leftmost drop down field."
         script: "web_recorder.record_find_element_by_select_type();
         		main_bar.switch_to_current_mode();"
-    }
-
-	ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
-        title: "Using Crosshair Position"
-        description: "Finds the element containing the crosshair position."
-        script: "web_recorder.record_find_element_by_position();
-        		 main_bar.switch_to_current_mode();"
     }
 }

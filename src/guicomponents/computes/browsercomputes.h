@@ -110,6 +110,19 @@ class GUICOMPUTES_EXPORT NavigateRefreshCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
+class GUICOMPUTES_EXPORT FindElementByPositionCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, FindElementByPositionCompute);
+  FindElementByPositionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
+  virtual bool update_state();
+};
+
 class GUICOMPUTES_EXPORT FindElementByValuesCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, FindElementByValuesCompute);

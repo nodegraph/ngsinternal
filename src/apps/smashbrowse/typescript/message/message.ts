@@ -13,8 +13,10 @@ interface IPoint {
 
 // Info about an html element in the browser. 
 interface IElementInfo {
+    // Frame and element info.
     frame_index_path: string
     xpath: string
+    // Dimension and stacking order.
     box: IBox // These are the bounds in global client space.
     z_index: number
 }
@@ -25,6 +27,9 @@ interface IPoint{
 }
 
 interface IClickInfo {
+    // Frame and element info.
+    frame_index_path: string,
+    xpath: string,
     // Click pos.
     global_mouse_position: IPoint, // In global client space.
     local_mouse_position: IPoint, // In local space relative to the element of interest. (Calculated by subtracting the click pos from the element pos in page space coordinates.)

@@ -40,7 +40,10 @@ Q_OBJECT
   Q_INVOKABLE void record_navigate_forward();
 
   // Find element by position.
-  Q_INVOKABLE void record_find_element_by_position();
+  Q_INVOKABLE void record_find_text_element_by_position();
+  Q_INVOKABLE void record_find_image_element_by_position();
+  Q_INVOKABLE void record_find_input_element_by_position();
+  Q_INVOKABLE void record_find_select_element_by_position();
 
   // Find the first element by values.
   Q_INVOKABLE void record_find_element_by_text();

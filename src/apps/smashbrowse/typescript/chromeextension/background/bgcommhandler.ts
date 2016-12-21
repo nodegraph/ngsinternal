@@ -140,6 +140,31 @@ class BgCommHandler {
         return best
     }
 
+    // This method is supposed to find the topmost frame, in a set of overlapping frames.
+    // This will take some time to implement so for now it simply looks at the frame index path_length
+    // and choose the shortest path, or if there are multiple paths with the same length then it
+    // chooses the first one it encounters.
+    // The other issue that needs to be investigated is that we seem to be getting frames that aren't
+    // really visible and often they would be clipped by their parent iframes but our logic currently
+    // doesn't take this into account.
+    static find_top_iframe(elems: IClickInfo[]): IClickInfo {
+        let best: IClickInfo = null
+        let best_path_length: number = null
+        elems.forEach((elem) => {
+            let path_length = elem.frame_index_path.split('/').length
+            if (best === null) {
+                best = elem
+                best_path_length = path_length
+            } else {
+                if (path_length < best_path_length) {
+                    best = elem
+                    best_path_length = path_length
+                }
+            }
+        })
+        return best
+    }
+
     static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
@@ -353,29 +378,23 @@ class BgCommHandler {
         })
     }
 
-    // Result will be in this.found_elems. Error will be in this.error_msg.
     queue_find_all_elements_by_type(wrap_type: WrapType) {
         this.found_elems = []
-        this.error_msg = ""
         this.collected_elems.length = 0
         let req = new RequestMessage(-1, RequestType.kFindElementByType, { wrap_type: wrap_type })
         this.queue_collect_elements_from_frames(req)
         this.queue(() => {
-            console.log("queue_find_all_elements_by_type")
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
             this.run_next_task()
         })
     }
 
-    // Result will be in this.found_elems. Error will be in this.error_msg.
     queue_find_all_elements_by_values(wrap_type: WrapType, target_values: string[]) {
         this.found_elems = []
-        this.error_msg = ""
         this.collected_elems.length = 0
         let req = new RequestMessage(-1, RequestType.kFindElementByValues, { wrap_type: wrap_type, target_values: target_values })
         this.queue_collect_elements_from_frames(req)
         this.queue(() => {
-            console.log("find_all_elements_by_values")
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
             this.run_next_task()
         })
@@ -533,11 +552,68 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
+            case RequestType.kFindElementByPosition: {
+                this.clear_tasks()
+                this.queue_find_all_elements_by_type(req.args.wrap_type)
+                this.queue(() => {
+                    // Loop through all the found elements of the given wrap type.
+                    let best: IElementInfo = null
+                    let best_area = 0
+                    let best_path_length = 0
+                    this.collected_elems.forEach((info: IElementInfo) => {
+                        let box = new Box(info.box)
+                        let point = new Point(req.args.global_mouse_position)
+                        let path_length = info.frame_index_path.split('/').length
+                        let area = box.get_area()
+                        // Examine elements which contain our point of interest.
+                        if (box.contains_point(point)) {
+                            if (best == null) {
+                                // The first element is automatically the best.
+                                best = info
+                                best_area = box.get_area()
+                                best_path_length = path_length
+                            } else if (path_length < best_path_length) {
+                                // If the candidate's frame index path length is smaller, then it is now the best.
+                                best = info
+                                best_area = box.get_area()
+                                best_path_length = path_length
+                            } else if (path_length == best_path_length) {
+                                // Otherwise if the candidate has a smaller area, then it is now the best.
+                                if (area < best_area) {
+                                    best = info
+                                    best_area = area
+                                    best_path_length = path_length
+                                }
+                            }
+                        }
+                    });
+                    this.found_elem = JSON.parse(JSON.stringify(best))
+
+                    if (this.found_elem != null) {
+                        this.run_next_task()
+                    } else {
+                        // Wipe out the queue.
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given values.")
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.queue_set_current_element()
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
+            } break
             case RequestType.kFindElementByValues: {
                 this.clear_tasks()
                 this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
                 this.queue(() => {
-                    console.log("find_all_elements_by_values 3333" + this.found_elems.length)
                     if (this.found_elems.length > 0) {
                         this.found_elem = BgCommHandler.find_top_leftmost(this.found_elems)
                         this.run_next_task()
@@ -711,7 +787,13 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
                         this.bg_comm.send_to_nodejs(response)
                     } else if (this.collected_clicks.length > 1) {
-                        let response = new ResponseMessage(req.id, false, "The crosshair click point intersected multiple elements: " + this.collected_clicks.length)
+                        let best = BgCommHandler.find_top_iframe(this.collected_clicks)
+
+                        let msg = "The crosshair click point intersected " + this.collected_clicks.length + " elements.\n"
+                        this.collected_clicks.forEach((e) => {msg += "frame_index_path: " + e.frame_index_path + " xpath: " + e.xpath + "\n"})
+                        console.log(msg)
+
+                        let response = new ResponseMessage(req.id, true, best)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, "The crosshair click point did not intersect any elements.")

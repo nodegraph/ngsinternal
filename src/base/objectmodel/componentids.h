@@ -130,6 +130,7 @@ COMPONENT_ENTRY1(NavigateToCompute)\
 COMPONENT_ENTRY1(NavigateBackCompute)\
 COMPONENT_ENTRY1(NavigateForwardCompute)\
 COMPONENT_ENTRY1(NavigateRefreshCompute)\
+COMPONENT_ENTRY1(FindElementByPositionCompute)\
 COMPONENT_ENTRY1(FindElementByValuesCompute)\
 COMPONENT_ENTRY1(FindElementByTypeCompute)\
 COMPONENT_ENTRY1(ShiftElementByTypeCompute)\

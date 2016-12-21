@@ -147,7 +147,9 @@ class ContentCommHandler {
                 }
                 // Otherwise we get crosshair info.
                 let info = this.gui_collection.get_crosshair_info(new Point(req.args.global_mouse_position))
-                send_response(info)
+                if (info != null) {
+                    send_response(info)
+                }
             } break
             case RequestType.kGetDropDownInfo: {
                 if (this.gui_collection.overlay_sets.get_num_sets() == 0) {

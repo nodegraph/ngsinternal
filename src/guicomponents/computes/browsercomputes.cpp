@@ -215,6 +215,56 @@ bool NavigateRefreshCompute::update_state() {
   return false;
 }
 
+void FindElementByPositionCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kWrapType, c);
+  }
+
+  {
+    QJsonObject pos;
+    pos.insert("x", 0);
+    pos.insert("y", 0);
+
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = pos;
+
+    create_input(Message::kGlobalMousePosition, c);
+  }
+}
+
+const QJsonObject FindElementByPositionCompute::_hints = FindElementByPositionCompute::init_hints();
+QJsonObject FindElementByPositionCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+
+  add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
+  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of the elements to put into the set.");
+
+  add_hint(m, Message::kGlobalMousePosition, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
+  add_hint(m, Message::kGlobalMousePosition, HintKey::kDescriptionHint, "The position to look for the element at.");
+
+  return m;
+}
+
+
+bool FindElementByPositionCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_find_element_by_position(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
+
 void FindElementByValuesCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);

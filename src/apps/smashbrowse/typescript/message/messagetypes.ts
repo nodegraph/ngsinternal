@@ -41,6 +41,7 @@ const enum RequestType {
   kGetElement,
   kHasElement,
   kSetElement,
+  kFindElementByPosition,
   kFindElementByValues,
   kFindElementByType,
   kPerformMouseAction,

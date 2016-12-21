@@ -292,6 +292,10 @@ void NodeJSWorker::queue_clear_element(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::clear_element_task, this), "queue_clear_element");
 }
 
+void NodeJSWorker::queue_find_element_by_position(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::find_element_by_position_task,this), "queue_find_element_by_values");
+}
+
 void NodeJSWorker::queue_find_element_by_values(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::find_element_by_values_task,this), "queue_find_element_by_values");
 }
@@ -632,6 +636,16 @@ void NodeJSWorker::update_element_task() {
 
 void NodeJSWorker::clear_element_task() {
   Message req(RequestType::kClearElement);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::find_element_by_position_task() {
+  QJsonObject args;
+  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
+  args.insert(Message::kGlobalMousePosition, _chain_state.value(Message::kGlobalMousePosition));
+
+  Message req(RequestType::kFindElementByPosition);
+  req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
 

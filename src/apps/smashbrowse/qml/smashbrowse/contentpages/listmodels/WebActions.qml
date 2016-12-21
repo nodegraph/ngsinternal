@@ -14,11 +14,18 @@ ListModel {
         script: "push_by_names('Navigate', 'WebMenuListPage', 'WebActionsNavigate')"
     }
 
+	ListElement {
+        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        title: "Find Element By Position..."
+        description: "Find an element by position."
+        script: "push_by_names('Find Element By Position', 'WebMenuListPage', 'WebActionsFindElementByPosition')"
+    }
+
     ListElement {
         image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
-        title: "Find Element..."
-        description: "Find an element in this page."
-        script: "push_by_names('Find Element', 'WebMenuListPage', 'WebActionsFindElement')"
+        title: "Find Element By Traits..."
+        description: "Find an element using traits."
+        script: "push_by_names('Find Element By Traits', 'WebMenuListPage', 'WebActionsFindElementByTraits')"
     }
 
     ListElement {

@@ -10,7 +10,8 @@ ExplodeCollapseNodeActions 1.0 ExplodeCollapseNodeActions.qml
 FileMenuActions 1.0 FileMenuActions.qml
 WebActions 1.0 WebActions.qml
 WebActionsNavigate 1.0 WebActionsNavigate.qml
-WebActionsFindElement 1.0 WebActionsFindElement.qml
+WebActionsFindElementByPosition 1.0 WebActionsFindElementByPosition.qml
+WebActionsFindElementByTraits 1.0 WebActionsFindElementByTraits.qml
 WebActionsShift 1.0 WebActionsShift.qml
 WebActionsShiftToTextType 1.0 WebActionsShiftToTextType.qml
 WebActionsShiftToImageType 1.0 WebActionsShiftToImageType.qml

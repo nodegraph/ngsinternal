@@ -133,16 +133,26 @@ class GUICollection {
         let text_values = PageWrap.get_text_values_at(elem_wraps, local_page_click)
         let image_values = PageWrap.get_image_values_at(elem_wraps, local_page_click)
 
-        // Determine the set index and overlay index at the click point.
-        // Also determine the click pos relative to this overlay.
-        let set_overlay_index = this.overlay_sets.find_set_overlay_index(local_page_click)
-        let set_index = set_overlay_index.set_index
-        let overlay_index = set_overlay_index.overlay_index
-        let local_mouse_position: Point = new Point({ x: 1, y: 1 })
-        if (set_index >= 0) {
-            let oset = this.overlay_sets.get_set(set_index)
-            local_mouse_position = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(local_page_click)
+        // PageWrap.get_visible_overlapping_at(..) should be returning the elements in paint order.
+        // So we take the first one.
+        if (elem_wraps.length == 0) {
+            return null
         }
+
+        let elem = elem_wraps[0]
+        let xpath = elem.get_xpath()
+        let local_mouse_position = elem.get_box().get_relative_point(local_page_click)
+
+        // // Determine the set index and overlay index at the click point.
+        // // Also determine the click pos relative to this overlay.
+        // let set_overlay_index = this.overlay_sets.find_set_overlay_index(local_page_click)
+        // let set_index = set_overlay_index.set_index
+        // let overlay_index = set_overlay_index.overlay_index
+        // let local_mouse_position: Point = new Point({ x: 1, y: 1 })
+        // if (set_index >= 0) {
+        //     let oset = this.overlay_sets.get_set(set_index)
+        //     local_mouse_position = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(local_page_click)
+        // }
 
         // // If we're a select element, grab the option values and texts.
         // let option_values: string[] = []
@@ -162,6 +172,8 @@ class GUICollection {
         // }
 
         let args: IClickInfo = {
+            frame_index_path: PageWrap.get_frame_index_path(window),
+            xpath: xpath,
             // Click pos.
             global_mouse_position: global_client_click,
             local_mouse_position: local_mouse_position,
