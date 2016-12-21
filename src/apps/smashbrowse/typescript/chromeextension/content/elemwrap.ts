@@ -166,22 +166,35 @@ class ElemWrap {
             return false
         }
 
+        // If the :before and :after pseudo element and the element itself is not visible,
+        // then we are are not visible.
+
         // Check the :before pseudo element first.
+        let before_is_visible = true
         let before_style = window.getComputedStyle(this.element, ':before');
         if (before_style.visibility == "hidden" || (before_style.display == 'none')) {
-            return false
+            before_is_visible = false
         }
 
         // Check the :after pseudo element first.
+        let after_is_visible = true
         let after_style = window.getComputedStyle(this.element, ':after');
         if (after_style.visibility == "hidden" || (after_style.display == 'none')) {
-            return false
+            after_is_visible = false
         }
+
         // Now check the actual element.
+        let main_is_visible = true
         let style = window.getComputedStyle(this.element, null)
         if (style.visibility != "visible") {
+            main_is_visible = false
+        }
+
+        // If all 3 are not visible then we're not visible.
+        if (!before_is_visible && !after_is_visible && !main_is_visible) {
             return false
         }
+
         return true
     }
 
@@ -547,12 +560,12 @@ class ElemWrap {
             }
         }
 
-        if (this.element.tagName.toLowerCase() == 'input') {
-            let value = this.element.getAttribute('value')
-            if (!Utils.is_all_whitespace(value)) {
-                text += value
-            }
-        }
+        //if (this.element.tagName.toLowerCase() == 'input') {
+        //    let value = this.element.getAttribute('value')
+        //    if (!Utils.is_all_whitespace(value)) {
+        //        text += value
+        //    }
+        //}
 
         let before_style = window.getComputedStyle(this.element, ':before');
         let value: string = before_style.content
