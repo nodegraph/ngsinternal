@@ -135,18 +135,29 @@ class ContentCommHandler {
                 if (!box.contains_point(pos)) {
                     return
                 }
-                // If any of our child frames contains the click point, return.
-                {
-                    var frames = window.document.getElementsByTagName('iframe');
-                    for (let i = 0; i < frames.length; i++) {
-                        let child_box = PageWrap.get_global_client_frame_bounds(frames[i].contentWindow)
-                        if (child_box.contains_point(pos)) {
-                            return
-                        }
-                    }
+                // If any of our child frames contains the click point, they will also
+                // return a IClickInfo to the background script. The background script
+                // select the best one to use.
+                let info = this.gui_collection.get_crosshair_info(pos)
+                if (info != null) {
+                    send_response(info)
                 }
-                // Otherwise we get crosshair info.
-                let info = this.gui_collection.get_crosshair_info(new Point(req.args.global_mouse_position))
+            } break
+            case RequestType.kGetElementValues: {
+                // Only one or none of the frames should have an element.
+                let elem_wrap = this.gui_collection.overlay_sets.get_elem_wrap(0, 0)
+                if (!elem_wrap) {
+                    return
+                }
+
+                // Get the center of the current element in global client space.
+                let elem_box = new Box(elem_wrap.get_box())
+                elem_box.to_client_space(window)
+                elem_box.to_global_client_space(window)
+                let pos = elem_box.get_center()
+
+                // Get the crosshair info using the center point.
+                let info = this.gui_collection.get_crosshair_info(pos)
                 if (info != null) {
                     send_response(info)
                 }

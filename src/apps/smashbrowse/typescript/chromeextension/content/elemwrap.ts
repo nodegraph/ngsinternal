@@ -241,11 +241,8 @@ class ElemWrap {
         let xpath = this.get_xpath()
         // Bounds.
         let box = new Box(this.get_box()) // This should be in page space.
-        console.log('page space: ' + JSON.stringify(box))
         box.to_client_space(window)
-        console.log('local client space: ' + JSON.stringify(box))
         box.to_global_client_space(window)
-        console.log('global client space: ' + JSON.stringify(box))
         let z_index = this.get_z_index()
         // Form the info.
         return { frame_index_path: frame_index_path, xpath: xpath, box: box, z_index: z_index }
@@ -270,7 +267,6 @@ class ElemWrap {
             }
             let value = getter.call(elem_wraps[i])
             if (value) {
-                console.log('found element with value:-->' + value + "<--")
                 candidates.push(elem_wraps[i])
             }
         }
@@ -291,7 +287,6 @@ class ElemWrap {
         }
 
         // Return our result.
-        console.log('min candidate: ' + getter.call(min_candidate))
         return min_candidate
     }
 
@@ -311,7 +306,6 @@ class ElemWrap {
 
         // Get all elem wraps intersecting the beam.
         let elem_wraps = page_wrap.get_intersecting_with(beam)
-        //console.log('num elem wraps: ' + elem_wraps.length)
 
         // Select out those elem wraps returning any value with getter.
         let getter: () => string = this.get_getter()
@@ -322,7 +316,6 @@ class ElemWrap {
                 candidates.push(elem_wraps[i])
             }
         }
-        //console.log('num candidates: ' + candidates.length)
 
         // Find the candidates which match us.
         let matches: ElemWrap[] = []
@@ -331,7 +324,6 @@ class ElemWrap {
                 matches.push(candidates[i])
             }
         }
-        //console.log('num matches: ' + matches.length)
 
         // Return our result.
         return matches
@@ -537,16 +529,15 @@ class ElemWrap {
     //Retrieves the text value directly under an element in the dom hierarchy.
     //Note that there may be multiple texts (ie muliple paragraphs) however they
     //will always be returned as one string from this function.
-    get_text(): string {
+    static gather_element_text(elem: Element) {
         let text = ""
 
         // Loop through children accumulating text node values.
-        for (let c = 0; c < this.element.childNodes.length; c++) {
-            let child = this.element.childNodes[c]
+        for (let c = 0; c < elem.childNodes.length; c++) {
+            let child = elem.childNodes[c]
             if (child.nodeType == Node.TEXT_NODE) {
                 if (child instanceof Attr) {
                     let attr: Attr = <Attr>(child)
-                    console.log('text nodes attr name is: ' + attr.name)
                     if (attr.name.toLowerCase() == 'href') {
                         continue
                     }
@@ -560,27 +551,32 @@ class ElemWrap {
             }
         }
 
-        //if (this.element.tagName.toLowerCase() == 'input') {
-        //    let value = this.element.getAttribute('value')
-        //    if (!Utils.is_all_whitespace(value)) {
-        //        text += value
-        //    }
-        //}
+        if (elem.tagName.toLowerCase() == 'input') {
+           let value = elem.getAttribute('value')
+           if (!Utils.is_all_whitespace(value)) {
+               text += value
+           }
+        }
 
-        let before_style = window.getComputedStyle(this.element, ':before');
+        let before_style = window.getComputedStyle(elem, ':before');
         let value: string = before_style.content
         value = Utils.strip_quotes(value)
         if (!Utils.is_all_whitespace(value)) {
-            text += value
+            text = value + text
         }
 
-        let after_style = window.getComputedStyle(this.element, ':after');
+        let after_style = window.getComputedStyle(elem, ':after');
         value = after_style.content
         value = Utils.strip_quotes(value)
         if (!Utils.is_all_whitespace(value)) {
             text += value
         }
         return text
+    }
+
+
+    get_text(): string {
+        return ElemWrap.gather_element_text(this.element)
     }
 
     get_text_or_image(): string {

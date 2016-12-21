@@ -78,14 +78,11 @@ class GUICollection {
 
         // Get the click position in global client space.
         let global_client_click = new Point({ x: e.clientX, y: e.clientY })
-        console.log('contextmenu local client click: ' + global_client_click.to_string())
         global_client_click.to_global_client_space(window)
-        console.log('contextmenu global client click: ' + global_client_click.to_string())
 
         // Update the click box overly with local page space coordinates.
         let local_page_click = new Point({ x: e.pageX, y: e.pageY })
         this.page_overlays.update_crosshair(local_page_click)
-        console.log('contextmenu local page click: ' + local_page_click.to_string())
 
         // Send the request to the app.
         let im = new InfoMessage(0, InfoType.kShowWebActionMenu, { global_mouse_position: global_client_click })

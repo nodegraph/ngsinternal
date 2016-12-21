@@ -13,6 +13,8 @@ WebActionsNavigate 1.0 WebActionsNavigate.qml
 WebActionsFindElementByPosition 1.0 WebActionsFindElementByPosition.qml
 WebActionsFindElementByTraits 1.0 WebActionsFindElementByTraits.qml
 WebActionsShift 1.0 WebActionsShift.qml
+WebActionsShiftToTextValues 1.0 WebActionsShiftToTextValues.qml
+WebActionsShiftToImageValues 1.0 WebActionsShiftToImageValues.qml
 WebActionsShiftToTextType 1.0 WebActionsShiftToTextType.qml
 WebActionsShiftToImageType 1.0 WebActionsShiftToImageType.qml
 WebActionsShiftToInputType 1.0 WebActionsShiftToInputType.qml

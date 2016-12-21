@@ -423,6 +423,7 @@ QJsonObject ShiftElementByValuesCompute::init_hints() {
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of elements to shift to.");
 
   add_hint(m, Message::kTargetValues, HintKey::kDescriptionHint, "The texts or image urls used to find elements.");
+  add_hint(m, Message::kTargetValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
   return m;
 }
 

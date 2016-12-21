@@ -227,7 +227,7 @@ void BrowserRecorder::record_find_element_by_select_type() {
 }
 
 // -----------------------------------------------------------------
-// Record Shift Sets.
+// Shift to element by type.
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_shift_to_text_type_above() {
@@ -403,6 +403,100 @@ void BrowserRecorder::record_shift_to_select_type_on_right() {
 
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
+  finish();
+}
+
+// -----------------------------------------------------------------
+// Shift to element by values.
+// -----------------------------------------------------------------
+
+void BrowserRecorder::record_shift_to_text_values_above() {
+  check_busy()
+  _worker->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::text));
+  args.insert(Message::kDirection, to_underlying(DirectionType::up));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
+  finish();
+}
+void BrowserRecorder::record_shift_to_text_values_below(){
+  check_busy()
+  _worker->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::text));
+  args.insert(Message::kDirection, to_underlying(DirectionType::down));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
+  finish();
+}
+void BrowserRecorder::record_shift_to_text_values_on_left(){
+  check_busy()
+  _worker->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::text));
+  args.insert(Message::kDirection, to_underlying(DirectionType::left));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
+  finish();
+}
+void BrowserRecorder::record_shift_to_text_values_on_right(){
+  check_busy()
+  _worker->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::text));
+  args.insert(Message::kDirection, to_underlying(DirectionType::right));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
+  finish();
+}
+
+void BrowserRecorder::record_shift_to_image_values_above(){
+  check_busy()
+  _worker->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::image));
+  args.insert(Message::kDirection, to_underlying(DirectionType::up));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
+  finish();
+}
+void BrowserRecorder::record_shift_to_image_values_below(){
+  check_busy()
+  _worker->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::image));
+  args.insert(Message::kDirection, to_underlying(DirectionType::down));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
+  finish();
+}
+void BrowserRecorder::record_shift_to_image_values_on_left(){
+  check_busy()
+  _worker->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::image));
+  args.insert(Message::kDirection, to_underlying(DirectionType::left));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
+  finish();
+}
+void BrowserRecorder::record_shift_to_image_values_on_right(){
+  check_busy()
+  _worker->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::image));
+  args.insert(Message::kDirection, to_underlying(DirectionType::right));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
+  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
   finish();
 }
 

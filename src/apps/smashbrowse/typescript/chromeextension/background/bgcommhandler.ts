@@ -169,7 +169,7 @@ class BgCommHandler {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
         let best_distance = 0
-        const off_axis_weight = 1 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
+        const off_axis_weight = 10 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
 
         console.log('elem: ' + JSON.stringify(src))
         let src_box = new Box(src.box)
@@ -797,6 +797,30 @@ class BgCommHandler {
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, "The crosshair click point did not intersect any elements.")
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
+            } break
+            case RequestType.kGetElementValues: {
+                this.clear_tasks()
+                this.queue_collect_click_from_frames(req)
+                this.queue(() => {
+                    console.log('finished getting element values: num hits:' + this.collected_clicks.length)
+                    if (this.collected_clicks.length == 1) {
+                        let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
+                        this.bg_comm.send_to_nodejs(response)
+                    } else if (this.collected_clicks.length > 1) {
+                        let best = BgCommHandler.find_top_iframe(this.collected_clicks)
+
+                        let msg = "The current element's center point intersected " + this.collected_clicks.length + " elements.\n"
+                        this.collected_clicks.forEach((e) => {msg += "frame_index_path: " + e.frame_index_path + " xpath: " + e.xpath + "\n"})
+                        console.log(msg)
+
+                        let response = new ResponseMessage(req.id, true, best)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, "The element's center point did not intersect any elements.")
                         this.bg_comm.send_to_nodejs(response)
                     }
                 })

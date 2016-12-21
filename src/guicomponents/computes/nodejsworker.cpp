@@ -182,6 +182,10 @@ void NodeJSWorker::queue_get_crosshair_info(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_crosshair_info_task,this), "queue_get_crosshair_info");
 }
 
+void NodeJSWorker::queue_get_element_values(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_element_values_task,this), "queue_get_element_values");
+}
+
 void NodeJSWorker::queue_get_drop_down_info(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_drop_down_info_task,this), "queue_get_crosshair_info");
 }
@@ -464,6 +468,11 @@ void NodeJSWorker::get_crosshair_info_task() {
   QJsonObject args;
   args.insert(Message::kGlobalMousePosition, _global_mouse_pos);
   Message req(RequestType::kGetCrosshairInfo,args);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::get_element_values_task() {
+  Message req(RequestType::kGetElementValues);
   send_msg_task(req);
 }
 

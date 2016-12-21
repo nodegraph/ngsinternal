@@ -55,7 +55,7 @@ Q_OBJECT
   Q_INVOKABLE void record_find_element_by_input_type();
   Q_INVOKABLE void record_find_element_by_select_type();
 
-  // Shift the element.
+  // Shift to element by type.
   Q_INVOKABLE void record_shift_to_text_type_above();
   Q_INVOKABLE void record_shift_to_text_type_below();
   Q_INVOKABLE void record_shift_to_text_type_on_left();
@@ -75,6 +75,17 @@ Q_OBJECT
   Q_INVOKABLE void record_shift_to_select_type_below();
   Q_INVOKABLE void record_shift_to_select_type_on_left();
   Q_INVOKABLE void record_shift_to_select_type_on_right();
+
+  // Shift to element by values.
+  Q_INVOKABLE void record_shift_to_text_values_above();
+  Q_INVOKABLE void record_shift_to_text_values_below();
+  Q_INVOKABLE void record_shift_to_text_values_on_left();
+  Q_INVOKABLE void record_shift_to_text_values_on_right();
+
+  Q_INVOKABLE void record_shift_to_image_values_above();
+  Q_INVOKABLE void record_shift_to_image_values_below();
+  Q_INVOKABLE void record_shift_to_image_values_on_left();
+  Q_INVOKABLE void record_shift_to_image_values_on_right();
 
   // Record Mouse Actions.
   Q_INVOKABLE void record_click();

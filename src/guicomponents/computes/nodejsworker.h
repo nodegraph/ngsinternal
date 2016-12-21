@@ -64,6 +64,7 @@ Q_OBJECT
   void queue_get_current_element(TaskContext& tc);
   void queue_has_current_element(TaskContext& tc);
   void queue_get_crosshair_info(TaskContext& tc);
+  void queue_get_element_values(TaskContext& tc);
   void queue_get_drop_down_info(TaskContext& tc);
   void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
   void queue_copy_chain_property(TaskContext& tc, const QString& src_prop, const QString& dest_prop);
@@ -145,6 +146,7 @@ signals:
 
   // Infrastructure Tasks.
   void get_crosshair_info_task();
+  void get_element_values_task();
   void get_drop_down_info_task();
   void get_current_element_info();
   void has_current_element_info();
