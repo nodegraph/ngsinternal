@@ -205,10 +205,14 @@ if(WIN32)
     
     set(CPACK_WIX_UNINSTALL "1")
     
+    # Hacks to shorten the build/packaging paths.
+    set(CPACK_PACKAGE_DIRECTORY "p")
+    set(CPACK_PACKAGE_FILE_NAME "b")
+    
     #set(CPACK_PACKAGE_EXECUTABLES "bin/smashbrowse" "Smash Browse" ${CPACK_PACKAGE_EXECUTABLES})
     #set(CPACK_CREATE_DESKTOP_LINKS "smashbrowse" ${CPACK_CREATE_DESKTOP_LINKS})
     
-    
+
     set(CPACK_WIX_PROGRAM_MENU_FOLDER "Smash Browse")
     
     set_property(INSTALL "bin/smashbrowse.exe"

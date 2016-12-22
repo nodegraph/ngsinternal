@@ -29,6 +29,9 @@ PATH=${PLATFORM_ROOT}/windowsunpack/FileChecksumIntegrityVerifier:${PATH}
 # CMake
 PATH="/c/Program Files (x86)/CMake/bin":${PATH}
 
+# Path for wix.
+PATH="/c/Program Files (x86)/WiX Toolset v3.10/bin":${PATH}
+
 # Path for xxd, which is part of vim for windows
 PATH="/c/Program Files (x86)/Vim/vim74":${PATH}
 
