@@ -140,6 +140,20 @@ class BgCommHandler {
         return best
     }
 
+    static get_array_from_frame_index_path(path: string) {
+        let arr: number[] = []
+        let splits = path.split('/')
+        for (let i=0; i<splits.length; i++) {
+            // Note when empty strings are split on '/', you get an array with one element which is an empty string.
+            if (splits[i] === '') {
+                continue
+            }
+            // Get the frame index as a number.
+            arr.push(Number(splits[i]))
+        }
+        return arr
+    }
+
     // This method is supposed to find the topmost frame, in a set of overlapping frames.
     // This will take some time to implement so for now it simply looks at the frame index path_length
     // and choose the shortest path, or if there are multiple paths with the same length then it
@@ -151,7 +165,8 @@ class BgCommHandler {
         let best: IClickInfo = null
         let best_path_length: number = null
         elems.forEach((elem) => {
-            let path_length = elem.frame_index_path.split('/').length
+            let path_arr = BgCommHandler.get_array_from_frame_index_path(elem.frame_index_path)
+            let path_length = path_arr.length
             if (best === null) {
                 best = elem
                 best_path_length = path_length
@@ -790,8 +805,10 @@ class BgCommHandler {
                         let best = BgCommHandler.find_top_iframe(this.collected_clicks)
 
                         let msg = "The crosshair click point intersected " + this.collected_clicks.length + " elements.\n"
-                        this.collected_clicks.forEach((e) => {msg += "frame_index_path: " + e.frame_index_path + " xpath: " + e.xpath + "\n"})
+                        this.collected_clicks.forEach((e) => {msg += "frame_index_path: " + e.frame_index_path + " xpath: " + e.xpath + " text_values: " + e.text_values + " image_values: " + e.image_values + "\n"})
                         console.log(msg)
+
+                        console.log('the best is: ' + "frame_index_path: " + best.frame_index_path + " xpath: " + best.xpath + " text_values: " + best.text_values + " image_values: " + best.image_values + "\n" )
 
                         let response = new ResponseMessage(req.id, true, best)
                         this.bg_comm.send_to_nodejs(response)
