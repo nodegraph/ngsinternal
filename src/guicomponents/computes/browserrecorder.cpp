@@ -65,14 +65,14 @@ void BrowserRecorder::record_is_browser_open() {
   finish();
 }
 
-void BrowserRecorder::record_check_browser_size() {
+void BrowserRecorder::record_resize_browser() {
   check_busy();
-  int width = _model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
-  int height = _model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
+  //int width = _model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
+  //int height = _model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
 
   QJsonObject dims;
-  dims.insert(Message::kWidth, width);
-  dims.insert(Message::kHeight, height);
+  dims.insert(Message::kWidth, 1024);
+  dims.insert(Message::kHeight, 1150);
 
   QJsonObject args;
   args.insert(Message::kDimensions, dims);

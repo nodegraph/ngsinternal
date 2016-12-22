@@ -141,6 +141,30 @@ bool IsBrowserOpenCompute::update_state(){
   return false;
 }
 
+void ResizeBrowserCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+
+  EntityConfig c = config;
+  c.expose_plug = false;
+  c.unconnected_value = 1024;
+  create_input(Message::kWidth, c);
+
+  c.unconnected_value = 1150;
+  create_input(Message::kHeight, c);
+}
+
+const QJsonObject ResizeBrowserCompute::_hints = ResizeBrowserCompute::init_hints();
+QJsonObject ResizeBrowserCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+
+  add_hint(m, Message::kWidth, HintKey::kDescriptionHint, "The desired width of the browser.");
+  add_hint(m, Message::kHeight, HintKey::kDescriptionHint, "The desired height of the browser.");
+
+  return m;
+}
+
 bool ResizeBrowserCompute::update_state(){
   internal();
   BrowserCompute::update_state();

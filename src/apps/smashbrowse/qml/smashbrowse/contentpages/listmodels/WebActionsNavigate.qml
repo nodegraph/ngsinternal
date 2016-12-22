@@ -37,5 +37,13 @@ ListModel {
         script: "web_recorder.record_navigate_refresh();
                  main_bar.switch_to_node_graph();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Resize"
+        description: "Resize the browser."
+        script: "web_recorder.record_resize_browser();
+                 main_bar.switch_to_node_graph();"
+    }
 
 }

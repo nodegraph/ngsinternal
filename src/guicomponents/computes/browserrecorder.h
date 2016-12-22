@@ -31,7 +31,7 @@ Q_OBJECT
   Q_INVOKABLE void record_open_browser();
   Q_INVOKABLE void record_close_browser();
   Q_INVOKABLE void record_is_browser_open();
-  Q_INVOKABLE void record_check_browser_size();
+  Q_INVOKABLE void record_resize_browser();
 
   // Navigate the browser.
   Q_INVOKABLE void record_navigate_to(const QString& url);

@@ -68,6 +68,11 @@ class GUICOMPUTES_EXPORT ResizeBrowserCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, ResizeBrowserCompute);
   ResizeBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
