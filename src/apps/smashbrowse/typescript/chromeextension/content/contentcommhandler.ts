@@ -106,7 +106,7 @@ class ContentCommHandler {
                 if (this.gui_collection.overlay_sets.get_num_sets() == 0) {
                     return
                 }
-                if (req.args.action == ElementActionType.kScroll) {
+                if (req.args.element_action == ElementActionType.kScroll) {
                     switch (req.args.direction) {
                         case DirectionType.down: {
                             this.gui_collection.overlay_sets.scroll_down(0, 0);
