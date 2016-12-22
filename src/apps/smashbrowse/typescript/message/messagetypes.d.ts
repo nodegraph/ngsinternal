@@ -34,6 +34,8 @@ declare const enum RequestType {
   kNavigateBack,
   kNavigateForward,
   kNavigateRefresh,
+  kSwitchToTab,
+  kCloseCurrentTab,
 
   // Page Content Set Requests.
   kUpdateElement,

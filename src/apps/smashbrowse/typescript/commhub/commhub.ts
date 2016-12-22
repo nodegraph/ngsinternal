@@ -171,6 +171,18 @@ class AppConnection extends BaseConnection {
                     send_msg_to_app(new ResponseMessage(msg.id, false, error.message))
                 })
             } break
+            case RequestType.kSwitchToTab: {
+                this.webdriverwrap.switch_to_tab(req.args.next).then(
+                    () => {send_msg_to_ext(req)},
+                    (error) => {send_msg_to_app(new ResponseMessage(msg.id, false, error.message))}
+                )
+            } break
+            case RequestType.kCloseCurrentTab: {
+                this.webdriverwrap.switch_to_tab(false, true).then(
+                    () => {send_msg_to_app(new ResponseMessage(msg.id, true, true))},
+                    (error) => {send_msg_to_app(new ResponseMessage(msg.id, false, error.message))}
+                )
+            } break
             case RequestType.kPerformMouseAction: {
                 switch (req.args.mouse_action) {
                     case MouseActionType.kSendClick: {

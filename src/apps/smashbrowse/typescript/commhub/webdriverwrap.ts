@@ -123,6 +123,44 @@ export class WebDriverWrap {
         return this.driver.navigate().refresh();
     }
 
+    // Switches to the next or prev tab.
+    // The tabs are ordered in the order that were opened.
+    // Next means going to the next tab that is newer.
+    // Prev means going to the prev tab that is older.
+    switch_to_tab(next: boolean, close_current: boolean = false): webdriver.promise.Promise<void> {
+        return this.driver.getWindowHandle().then(
+            (handle) => {
+                return this.driver.getAllWindowHandles().then(
+                    (handles) => {
+                        let current_index: number = 0
+                        let next_index: number = 0
+                        for (; current_index<handles.length; current_index++) {
+                            if (handles[current_index] == handle) {
+                                break;
+                            }
+                        }
+                        if (next) {
+                            next_index = (current_index+1) % handles.length
+                        } else {
+                            next_index = (current_index-1) % handles.length
+                        }
+                        console.log('current window handle: ' + handle)
+                        console.log('next window handle: ' + handles[next_index])
+                        if (close_current) {
+                            this.driver.close().then(
+                                () => {return this.driver.switchTo().window(handles[next_index])}
+                            )
+                        } else {
+                            return this.driver.switchTo().window(handles[next_index])
+                        }
+                    },
+                    (error) => {console.info('Error unable to get all window handles.'); throw (error)}
+                )
+            },
+            (error) => {console.info('Error unable to get current window handle.'); throw (error)}
+        )
+    }
+
     // Negative numbers in the frame_index_path will make the path equivalent to an empty path.
     // Empty paths switch the frame to the top frame.
     switch_to_frame(frame_index_path: string): webdriver.promise.Promise<void> {

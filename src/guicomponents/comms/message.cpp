@@ -22,6 +22,7 @@ const char* Message::kURL = "url";
 const char* Message::kWidth = "width";
 const char* Message::kHeight = "height";
 const char* Message::kDimensions = "dimensions";
+const char* Message::kNext = "next";
 
 const char* Message::kWrapType = "wrap_type";
 const char* Message::kTextValues = "text_values";

@@ -46,4 +46,27 @@ ListModel {
                  main_bar.switch_to_node_graph();"
     }
 
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Switch to a Newer Tab"
+        description: "Switch to a newer tab"
+        script: "web_recorder.record_switch_to_newer_tab();
+                 main_bar.switch_to_node_graph();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Switch to an Older Tab"
+        description: "Switch to an older tab"
+        script: "web_recorder.record_switch_to_older_tab();
+                 main_bar.switch_to_node_graph();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Close Current Tab"
+        description: "Close the current tab and switch to a previous tab."
+        script: "web_recorder.record_close_current_tab();
+                 main_bar.switch_to_node_graph();"
+    }
 }

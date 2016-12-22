@@ -29,6 +29,8 @@ enum class RequestType : int {
   kNavigateBack,
   kNavigateForward,
   kNavigateRefresh,
+  kSwitchToTab,
+  kCloseCurrentTab,
 
   // Page Content Set Requests.
   kUpdateElement,

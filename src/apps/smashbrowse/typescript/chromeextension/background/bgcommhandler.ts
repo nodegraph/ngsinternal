@@ -498,6 +498,11 @@ class BgCommHandler {
                     })
                 this.run_next_task()
             } break
+            case RequestType.kSwitchToTab: {
+                this.bg_comm.switch_to_tab(req.args.next)
+                let response = new ResponseMessage(req.id, true, true)
+                this.bg_comm.send_to_nodejs(response)
+            } break
             case RequestType.kUpdateElement: {
                 this.clear_tasks()
                 this.queue_update_element()

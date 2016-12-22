@@ -244,6 +244,14 @@ void NodeJSWorker::queue_resize_browser(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::resize_browser_task,this), "queue_resize_browser");
 }
 
+void NodeJSWorker::queue_switch_to_tab(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::switch_to_tab_task,this), "queue_switch_to_tab");
+}
+
+void NodeJSWorker::queue_close_current_tab(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::close_current_tab_task,this), "queue_close_current_tab");
+}
+
 void NodeJSWorker::queue_reset(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::reset_task, this), "reset");
 }
@@ -564,6 +572,20 @@ void NodeJSWorker::resize_browser_task() {
 
   Message req(RequestType::kResizeBrowser);
   req.insert(Message::kArgs, args);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::switch_to_tab_task() {
+  QJsonObject args;
+  args.insert(Message::kNext,_chain_state.value(Message::kNext));
+
+  Message req(RequestType::kSwitchToTab);
+  req.insert(Message::kArgs, args);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::close_current_tab_task() {
+  Message req(RequestType::kCloseCurrentTab);
   send_msg_task(req);
 }
 

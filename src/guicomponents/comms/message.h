@@ -29,6 +29,7 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kWidth;
   static const char* kHeight;
   static const char* kDimensions;
+  static const char* kNext;
 
   static const char* kWrapType;
   static const char* kTextValues;

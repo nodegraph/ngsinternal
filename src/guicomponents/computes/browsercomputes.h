@@ -77,6 +77,32 @@ class GUICOMPUTES_EXPORT ResizeBrowserCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
+class GUICOMPUTES_EXPORT SwitchToTabCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, SwitchToTabCompute);
+  SwitchToTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
+  virtual bool update_state();
+};
+
+class GUICOMPUTES_EXPORT CloseCurrentTabCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, CloseCurrentTabCompute);
+  CloseCurrentTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
+  virtual bool update_state();
+};
+
 class GUICOMPUTES_EXPORT NavigateToCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, NavigateToCompute);

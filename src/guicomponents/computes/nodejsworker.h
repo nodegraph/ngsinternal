@@ -81,6 +81,8 @@ Q_OBJECT
   void queue_close_browser(TaskContext& tc);
   void queue_is_browser_open(TaskContext& tc);
   void queue_resize_browser(TaskContext& tc);
+  void queue_switch_to_tab(TaskContext& tc);
+  void queue_close_current_tab(TaskContext& tc);
   void queue_reset(TaskContext& tc);
 
   // Queue Page Content Tasks.
@@ -167,6 +169,8 @@ signals:
   void close_browser_task();
   void is_browser_open_task();
   void resize_browser_task();
+  void switch_to_tab_task();
+  void close_current_tab_task();
 
   // Page Content Tasks.
   void block_events_task();
