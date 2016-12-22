@@ -258,10 +258,38 @@ export class WebDriverWrap {
     }
 
     // Creates a promise chain which will click on an element.
-    click_on_element(frame_index_path: string, xpath: string, local_x: number, local_y: number): webdriver.promise.Promise<void> {
+    click_on_element(frame_index_path: string, xpath: string, local_mouse_position: IPoint = null, hold_ctrl: boolean = false): webdriver.promise.Promise<void> {
         return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
-                return this.driver.actions().mouseMove(element, { x: local_x, y: local_y }).click().perform()
+                if (local_mouse_position) {
+                    // If we have a local_mouse_position, use it.
+                    let seq: webdriver.ActionSequence = this.driver.actions()
+                    seq = seq.mouseMove(element, { x: local_mouse_position.x, y: local_mouse_position.y })
+                    if (hold_ctrl) {
+                        seq = seq.keyDown(Key.CONTROL)
+                    }
+                    seq = seq.click()
+                    if (hold_ctrl) {
+                        seq = seq.keyUp(Key.CONTROL)
+                    }
+                    return seq.perform()
+                } else {
+                    // If we don't a local_mouse_position, then we click the center of the element.
+                    return element.getSize().then(
+                        (size) => { 
+                            let seq: webdriver.ActionSequence = this.driver.actions()
+                            seq = seq.mouseMove(element, { x: size.width/2.0, y: size.height/2.0 })
+                            if (hold_ctrl) {
+                                seq = seq.keyDown(Key.CONTROL)
+                            }
+                            seq = seq.click()
+                            if (hold_ctrl) {
+                                seq = seq.keyUp(Key.CONTROL)
+                            }
+                            return seq.perform() 
+                        },
+                        (error) => { console.info('Warning: could not get the size of the element: ' + xpath); throw (error) })
+                }
             },
             (error: any) => {
                 console.log('Error: was not able to click element.'); throw (error) 
@@ -269,43 +297,22 @@ export class WebDriverWrap {
         )
     }
 
-    // Creates a promise chain which will click on an element's center.
-    click_on_element_center(frame_index_path: string, xpath: string): webdriver.promise.Promise<void> {
-        return this.get_element(frame_index_path, xpath).then(
-            (element: webdriver.WebElement) => {
-                return element.getSize().then(
-                    (size) => { return this.driver.actions().mouseMove(element, { x: size.width/2.0, y: size.height/2.0 }).click().perform() },
-                    (error) => { console.info('Warning: could not get the size of the element: ' + xpath); throw (error) })
-            },
-            (error: any) => {
-                console.log('Error: was not able to find element.'); throw (error) 
-            }
-        )
-    }
-
     // Creates a promise chain which will mouseover an element.
-    mouse_over_element(frame_index_path: string, xpath: string, local_x: number, local_y: number): webdriver.promise.Promise<void> {
+    mouse_over_element(frame_index_path: string, xpath: string, local_mouse_position: IPoint = null): webdriver.promise.Promise<void> {
         return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
-                return this.driver.actions().mouseMove(element, { x: local_x, y: local_y }).perform()
+                if (local_mouse_position) {
+                    return this.driver.actions().mouseMove(element, { x: local_mouse_position.x, y: local_mouse_position.y }).perform()
+                } else {
+                    return element.getSize().then(
+                        (size) => { return this.driver.actions().mouseMove(element, { x: size.width/2.0, y: size.height/2.0 }).perform()},
+                        (error) => {console.info('Warning: could not get the size of the element: ' + xpath); throw (error) })
+                }
             },
             (error: any) => {
                 console.log('Error: was not able to find element.'); throw (error) 
             }
         )
-    }
-
-    // Creates a promise chain which will mouseover an element's center.
-    mouse_over_element_center(frame_index_path: string, xpath: string): webdriver.promise.Promise<void> {
-        return this.get_element(frame_index_path, xpath).then(
-            (element: webdriver.WebElement) => {
-                return element.getSize().then(
-                    (size) => { return this.driver.actions().mouseMove(element, { x: size.width/2.0, y: size.height/2.0 }).perform()},
-                    (error) => {console.info('Warning: could not get the size of the element: ' + xpath); throw (error) })
-            },
-            (error: any) => {
-                console.log('Error: was not able to find element.'); throw (error) 
-            })
     }
 
     // Creates a promise which will choose an option in a  drop down field.

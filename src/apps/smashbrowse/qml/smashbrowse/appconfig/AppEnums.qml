@@ -71,6 +71,7 @@ Item{
 
     property var mouse_action_type_text: [
         'mouse click',
+        'mouse ctrl click',
         'mouse over'
     ]
 

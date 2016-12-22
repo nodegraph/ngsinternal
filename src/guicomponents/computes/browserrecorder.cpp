@@ -514,6 +514,16 @@ void BrowserRecorder::record_click() {
   finish();
 }
 
+void BrowserRecorder::record_ctrl_click() {
+  check_busy();
+  _worker->queue_get_crosshair_info(tc);
+  QJsonObject args;
+  args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendCtrlClick));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
+  finish();
+}
+
 void BrowserRecorder::record_mouse_over() {
   check_busy();
   _worker->queue_get_crosshair_info(tc);

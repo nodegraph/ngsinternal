@@ -12,6 +12,14 @@ ListModel {
         script: "web_recorder.record_click();
         		main_bar.switch_to_current_mode();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        title: "Control Click"
+        description: "Control click on an element to open it in a new tab."
+        script: "web_recorder.record_ctrl_click();
+        		main_bar.switch_to_current_mode();"
+    }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"

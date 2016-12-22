@@ -63,9 +63,8 @@ enum class RequestType : int {
 
 enum class MouseActionType : int {
   kSendClick,
+  kSendCtrlClick,
   kMouseOver,
-  kStartMouseHover,
-  kStopMouseHover,
 };
 
 enum class TextActionType : int {

@@ -89,6 +89,7 @@ Q_OBJECT
 
   // Record Mouse Actions.
   Q_INVOKABLE void record_click();
+  Q_INVOKABLE void record_ctrl_click();
   Q_INVOKABLE void record_mouse_over();
 
   // Record Text Actions.
