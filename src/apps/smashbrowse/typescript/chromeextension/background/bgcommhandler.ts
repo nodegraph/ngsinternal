@@ -188,7 +188,6 @@ class BgCommHandler {
         let best_distance = 0
         const off_axis_weight = 10 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
 
-        console.log('elem: ' + JSON.stringify(src))
         let src_box = new Box(src.box)
         let src_center = src_box.get_center()
 
@@ -237,27 +236,23 @@ class BgCommHandler {
             if (!best) {
                 best = dest
                 best_distance = distance
-                console.log('found first: ' + JSON.stringify(best))
             } else if (Math.abs(distance - best_distance) < 0.0001) {
                 // If the distance and best_distance are very close check their z_index values or their sizes.
                 // We choose the one with larger z_index or smaller size.
                 if (dest.z_index && best.z_index && (dest.z_index > best.z_index)) {
                     best = dest
                     best_distance = distance
-                    console.log('found better: ' + JSON.stringify(best))
                 } else {
                     let dest_area = (dest.box.right - dest.box.left) * (dest.box.bottom - dest.box.top)
                     let best_area = (best.box.right - best.box.left) * (best.box.bottom - best.box.top)
                     if (dest_area < best_area) {
                         best = dest
                         best_distance = distance
-                        console.log('found better: ' + JSON.stringify(best))
                     }
                 }
             } else if (distance < best_distance) {
                 best = dest
                 best_distance = distance
-                console.log('found better: ' + JSON.stringify(best))
             }
         })
         return best
@@ -307,13 +302,11 @@ class BgCommHandler {
     queue_block_events() {
         let req = new RequestMessage(-1, RequestType.kBlockEvents)
         this.queue_collect_void_from_frames(req)
-        this.queue_debug_msg("done blocking events")
     }
 
     queue_unblock_events() {
         let req = new RequestMessage(-1, RequestType.kUnblockEvents)
         this.queue_collect_void_from_frames(req)
-        this.queue_debug_msg("done unblocking events")
     }
 
     // Note this method modifies the stack while executing.
@@ -323,12 +316,10 @@ class BgCommHandler {
         this.queue_collect_bool_from_frames(req)
         this.queue(() => {
             if (this.collected_booleans.length == 0) {
-                console.log('finished waiting until loaded')
                 clearInterval(this.timer)
                 this.timer = null
                 callback()
             } else if (this.timer == null) {
-                console.log('requeuing wait until loaded')
                 this.timer = setInterval(() => { this.queue_wait_until_loaded(callback); this.run_next_task() }, 1000)
             }
         })
@@ -338,13 +329,11 @@ class BgCommHandler {
     queue_update_element() {
         let req = new RequestMessage(-1, RequestType.kUpdateElement)
         this.queue_collect_void_from_frames(req)
-        this.queue_debug_msg('finished update element')
     }
 
     queue_clear_element() {
         let req = new RequestMessage(-1, RequestType.kClearElement)
         this.queue_collect_void_from_frames(req)
-        this.queue_debug_msg('finished clear element')
     }
 
     // Result will be in this.found_elem. Error will be in this.error_msg.
@@ -355,7 +344,6 @@ class BgCommHandler {
         let req = new RequestMessage(-1, RequestType.kGetElement)
         this.queue_collect_elements_from_frames(req)
         this.queue(() => {
-            console.log('finished get current element')
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
                 this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
@@ -369,14 +357,12 @@ class BgCommHandler {
     }
 
     queue_scroll_element_into_view() {
-        console.log('bg comm scrolling element into view')
         this.found_elem = null
         this.error_msg = ""
         this.collected_elems.length = 0
         let req = new RequestMessage(-1, RequestType.kScrollElementIntoView)
         this.queue_collect_elements_from_frames(req)
         this.queue(() => {
-            console.log('finished scrolling element into view')
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
                 this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
@@ -406,7 +392,6 @@ class BgCommHandler {
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
                 this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
-                console.log('finished set current element: ' + JSON.stringify(this.found_elem))
             } else if (this.collected_elems.length == 0) {
                 this.error_msg = "Unable to find the element to make current."
             } else {
@@ -442,7 +427,7 @@ class BgCommHandler {
     // Main message handler.
     // ------------------------------------------------------------------------------------------------------------------
     handle_nodejs_request(req: RequestMessage) {
-        console.log('handling request from nodejs: ' + JSON.stringify(req))
+        //console.log('handling request from nodejs: ' + JSON.stringify(req))
 
         // We intercept certain requests before it gets to the content script,
         // because content scripts can't use the chrome.* APIs except for parts of chrome.extension for message passing.
@@ -496,16 +481,13 @@ class BgCommHandler {
             // --------------------------------------------------------------
 
             case RequestType.kBlockEvents: {
-                console.log('bg comm handler got kblockevents')
                 this.clear_tasks()
                 this.queue_block_events()
                 this.queue(() => {
-                    console.log('bg comm handler got kblockevents 2222')
                     let response = new ResponseMessage(req.id, true, true)
                     this.bg_comm.send_to_nodejs(response)
                 })
                 this.run_next_task()
-                console.log('ran_next_task')
             } break
             case RequestType.kUnblockEvents: {
                 this.clear_tasks()
@@ -729,7 +711,6 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, this.error_msg)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        console.log('shift from origin element: ' + JSON.stringify(this.found_elem))
                         this.run_next_task()
                     }
                 })
@@ -759,7 +740,6 @@ class BgCommHandler {
                 this.queue_set_current_element()
                 this.queue(() => {
                     if (this.found_elem) {
-                        console.log('found element to shift to: ' + this.found_elem.frame_index_path + this.found_elem.xpath)
                         let response = new ResponseMessage(req.id, true, this.found_elem)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
@@ -821,7 +801,6 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.queue_collect_elements_from_frames(req)
                 this.queue(() => {
-                    console.log('finished performing element action 111')
                     if (this.collected_elems.length == 1) {
                         let response = new ResponseMessage(req.id, true, this.collected_elems[0])
                         this.bg_comm.send_to_nodejs(response)
@@ -839,19 +818,11 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.queue_collect_click_from_frames(req)
                 this.queue(() => {
-                    console.log('finished getting crosshair info: num hits:' + this.collected_clicks.length)
                     if (this.collected_clicks.length == 1) {
                         let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
                         this.bg_comm.send_to_nodejs(response)
                     } else if (this.collected_clicks.length > 1) {
                         let best = BgCommHandler.find_top_iframe(this.collected_clicks)
-
-                        let msg = "The crosshair click point intersected " + this.collected_clicks.length + " elements.\n"
-                        this.collected_clicks.forEach((e) => {msg += "frame_index_path: " + e.frame_index_path + " xpath: " + e.xpath + " text_values: " + e.text_values + " image_values: " + e.image_values + "\n"})
-                        console.log(msg)
-
-                        console.log('the best is: ' + "frame_index_path: " + best.frame_index_path + " xpath: " + best.xpath + " text_values: " + best.text_values + " image_values: " + best.image_values + "\n" )
-
                         let response = new ResponseMessage(req.id, true, best)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
@@ -865,17 +836,11 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.queue_collect_click_from_frames(req)
                 this.queue(() => {
-                    console.log('finished getting element values: num hits:' + this.collected_clicks.length)
                     if (this.collected_clicks.length == 1) {
                         let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
                         this.bg_comm.send_to_nodejs(response)
                     } else if (this.collected_clicks.length > 1) {
                         let best = BgCommHandler.find_top_iframe(this.collected_clicks)
-
-                        let msg = "The current element's center point intersected " + this.collected_clicks.length + " elements.\n"
-                        this.collected_clicks.forEach((e) => {msg += "frame_index_path: " + e.frame_index_path + " xpath: " + e.xpath + "\n"})
-                        console.log(msg)
-
                         let response = new ResponseMessage(req.id, true, best)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
@@ -889,7 +854,6 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.queue_collect_drop_down_from_frames(req)
                 this.queue(() => {
-                    console.log('finished getting drop down info: num hits:' + this.collected_drop_downs.length)
                     if (this.collected_drop_downs.length == 1) {
                         let response = new ResponseMessage(req.id, true, this.collected_drop_downs[0])
                         this.bg_comm.send_to_nodejs(response)

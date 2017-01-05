@@ -76,7 +76,6 @@ class BgComm {
 
         // Hack to retrieve the nodejs port.
         // The very first opened tab's url will have the port number embedded into the url.
-        console.log('on tab updated: ' + tab.id)
         if (this.nodejs_port != -1) {
             return
         }
@@ -89,7 +88,6 @@ class BgComm {
             this.connect_to_nodejs()
             //chrome.tabs.onUpdated.removeListener(this.on_tab_updated_bound)
             this.tab_ids = [tab.id]
-            console.log('initializing tab_ids to: ' + JSON.stringify(this.tab_ids))
             BrowserWrap.close_other_tabs(this.get_current_tab_id())
         }
     }
@@ -139,8 +137,7 @@ class BgComm {
     send_to_nodejs(msg: BaseMessage): void {
         // If we're not connected to nodejs yet, then just return.
         if (!this.nodejs_socket || (this.nodejs_socket.readyState != WebSocket.OPEN)) {
-            console.log('nodejs socket is not connected')
-            console.log('unable to send: ' + msg.to_string())
+            console.log('nodejs socket is not connected, unable to send: ' + msg.to_string())
             return
         }
         this.nodejs_socket.send(JSON.stringify(msg));
@@ -154,7 +151,7 @@ class BgComm {
     receive_from_nodejs(event: MessageEvent) {
         let msg = BaseMessage.create_from_string(event.data);
         //let request = JSON.parse(event.data);
-        console.log("bg received message from nodejs: " + event.data)
+        //console.log("bg received message from nodejs: " + event.data)
         if (msg.get_msg_type() != MessageType.kRequestMessage) {
             console.error('bgcomm was expecting a request message')
             return

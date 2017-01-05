@@ -10,4 +10,4 @@ bg_comm = new BgComm()
 bg_comm_handler = new BgCommHandler(bg_comm, browser_wrap)
 bg_comm.register_nodejs_request_handler(bg_comm_handler)
 
-console.log("create a new bgcomm!")
+

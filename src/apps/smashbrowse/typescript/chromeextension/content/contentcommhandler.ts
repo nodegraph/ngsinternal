@@ -23,7 +23,7 @@ class ContentCommHandler {
 
     handle_bg_request(req: RequestMessage, send_response: (response: any) => void) {
         let frame_index_path = PageWrap.get_frame_index_path(window) 
-        console.log('content script ' + frame_index_path + ' received message from bg: ' + JSON.stringify(req))
+        //console.log('content script ' + frame_index_path + ' received message from bg: ' + JSON.stringify(req))
         let success_msg = new ResponseMessage(req.id, true)
         switch (req.request) {
             case RequestType.kBlockEvents: {
@@ -77,7 +77,6 @@ class ContentCommHandler {
                 }
             } break
             case RequestType.kScrollElementIntoView: {
-                console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSS')
                 // Only one or none of the frames should have an element.
                 let elem_wrap = this.gui_collection.overlay_sets.get_elem_wrap(0, 0)
                 
