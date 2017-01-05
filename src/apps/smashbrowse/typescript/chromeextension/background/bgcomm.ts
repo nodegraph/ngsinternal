@@ -11,8 +11,10 @@ class BgComm {
     private nodejs_port: number
 
     // Our internal state.
-    private tab_id: number // This is set by the first message received from any tab.
-    private tab_ids: number[] = [] // This is an array of tab_ids in order from the oldest to the newest created tab.
+    // This is an array of tab_ids in order from the oldest to the newest created tab.
+    // The current tab id is always assumed to be the last entry.
+    private tab_ids: number[] = [] 
+    private created_tab_ids: number[] = []
 
     constructor() {
         // Our dependencies.
@@ -24,98 +26,57 @@ class BgComm {
         // Connect to the content scripts.
         this.connect_to_content()
 
-        // Our state.
-        this.tab_id = null
-
-
-        chrome.tabs.onUpdated.addListener(this.on_tab_updated_bound)
-        chrome.tabs.onCreated.addListener(this.on_tab_created_bound)
-        chrome.tabs.onRemoved.addListener(this.on_tab_destroyed_bound)
+        chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
+            this.on_tab_updated(tabId, changeInfo, tab)
+        })
+        chrome.tabs.onCreated.addListener((tab: chrome.tabs.Tab) => {
+            this.on_tab_created(tab)
+        })
+        chrome.tabs.onRemoved.addListener((tab_id: number, remove_info: any) => {
+           this.on_tab_removed(tab_id, remove_info)
+        })
     }
 
-    get_tab_id() {
-        return this.tab_id
+    get_current_tab_id() {
+        return this.tab_ids[this.tab_ids.length-1]
+    }
+
+    // Joins the novel tab ids with the existing and makes the last tab_id be the current tab id.
+    update_current_tab_id() {
+        this.tab_ids = this.tab_ids.concat(this.created_tab_ids)
+        this.created_tab_ids.length = 0
+        chrome.tabs.update(this.get_current_tab_id(), {active: true, pinned: true});
     }
 
     on_tab_created(tab: chrome.tabs.Tab) {
-        this.tab_ids.push(tab.id)
-        console.log(' Tab created --------- tab ids are: ' + JSON.stringify(this.tab_ids))
-
-        // // We always switch to the newest tab.
-        // if (this.tab_id != null) {
-        //     // Record the newest tab id.
-        //     this.tab_ids.push(tab.id)
-            
-        // }
-        
-        // //chrome.tabs.update(this.tab_id, {active: true});
-        // console.log('on tab created: ' + tab.id)
+        this.created_tab_ids.push(tab.id)
+        chrome.tabs.update(tab.id, {pinned: true});
     }
 
-    on_tab_created_bound = (tab: chrome.tabs.Tab) => {
-        this.on_tab_created(tab)
-    }
-
-    on_tab_destroyed(tab_id: number, remove_info: any) {
-        // If the number of tab_ids is 1, then the browser is closing down.
-        // if (this.tab_ids.length <= 1) {
-        //     this.tab_id = null
-        //     this.tab_ids.length = 0
-
-        //     console.log(' Tab destroyed --------- tab ids are: ' + JSON.stringify(this.tab_ids))
-        //     return
-        // }
-        // If the destroyed tab is the current tab, then shift the 
-        // current tab to the previous one.
-        if (tab_id == this.tab_id) {
-            this.switch_to_tab(false)
-        }
-        // Remove tab_id from tab_ids.
-        for (let i=0; i<this.tab_ids.length; i++) {
-            if (this.tab_ids[i] == tab_id) {
-                this.tab_ids.splice(i,1)
-                i -= 1
+    on_tab_removed(tab_id: number, remove_info: any) {
+        if (tab_id != this.get_current_tab_id()) {
+            console.error('Error: A tab which was not the latest tab was manually destroyed. The nodes must be used to destoy tabs.')
+            for (let i = 0; i < this.tab_ids.length; i++) {
+                if (this.tab_ids[i] == tab_id) {
+                    this.tab_ids.splice(i,1)
+                    i -= 1
+                }
             }
+            return
         }
-
-        console.log(' Tab destroyed --------- tab ids are: ' + JSON.stringify(this.tab_ids))
+        this.tab_ids.pop()
+        chrome.tabs.update(this.get_current_tab_id(), {active: true, pinned: true});
     }
 
-    on_tab_destroyed_bound = (tab_id: number, remove_info: any) => {
-        this.on_tab_destroyed(tab_id, remove_info)
-    }
+    on_tab_updated(tabId: number, change_info: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {
 
-    on_tab_updated(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {
+        // We don't allow the user to unpin the tabs, because when the tabs are unpinned they can be
+        // accidentally destroyed by the user. We want to keep the destroying under our control.
+        chrome.tabs.update(tabId, {pinned: true});
+
         // Hack to retrieve the nodejs port.
         // The very first opened tab's url will have the port number embedded into the url.
         console.log('on tab updated: ' + tab.id)
-        this.initialize_from_tab(tab)
-    }
-
-    on_tab_updated_bound = (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
-        this.on_tab_updated(tabId, changeInfo, tab)
-    }
-
-    switch_to_tab(next: boolean) {
-        let index = 0
-        for (; index<this.tab_ids.length; index++) {
-            if (this.tab_id == this.tab_ids[index]) {
-                break
-            }
-        }
-        let next_index = 0
-        if (next) {
-            next_index = (index + 1) % this.tab_ids.length
-        } else {
-            next_index = (index - 1) % this.tab_ids.length
-        }
-        // Set the next tab id.
-        this.tab_id = this.tab_ids[next_index]
-        // Make the next tab id active in the browser.
-        chrome.tabs.update(this.tab_id, {active: true});
-    }
-
-    initialize_from_tab(tab: chrome.tabs.Tab) {
         if (this.nodejs_port != -1) {
             return
         }
@@ -126,11 +87,10 @@ class BgComm {
         this.nodejs_port = BgComm.extract_port_from_url(tab.url)
         if (this.nodejs_port != -1) {
             this.connect_to_nodejs()
-            chrome.tabs.onUpdated.removeListener(this.on_tab_updated_bound)
-            this.tab_id = tab.id
+            //chrome.tabs.onUpdated.removeListener(this.on_tab_updated_bound)
             this.tab_ids = [tab.id]
             console.log('initializing tab_ids to: ' + JSON.stringify(this.tab_ids))
-            BrowserWrap.close_other_tabs(this.tab_id)
+            BrowserWrap.close_other_tabs(this.get_current_tab_id())
         }
     }
 
@@ -194,7 +154,7 @@ class BgComm {
     receive_from_nodejs(event: MessageEvent) {
         let msg = BaseMessage.create_from_string(event.data);
         //let request = JSON.parse(event.data);
-        //console.log("bg received message from nodejs: " + event.data)
+        console.log("bg received message from nodejs: " + event.data)
         if (msg.get_msg_type() != MessageType.kRequestMessage) {
             console.error('bgcomm was expecting a request message')
             return
@@ -224,20 +184,20 @@ class BgComm {
     // Send a message to all frames.
     send_to_content(msg: BaseMessage, on_response: (response: any) => void = function(){}): void {
         //console.log("bg sending message to content: " + JSON.stringify(msg))
-        chrome.tabs.sendMessage(this.tab_id, msg, on_response)
+        chrome.tabs.sendMessage(this.get_current_tab_id(), msg, on_response)
     }
 
     // Receive a message from on of the frames.
     receive_from_content(msg: BaseMessage, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
         //console.log("bg received from frameid: " + sender.frameId + " : " + JSON.stringify(msg))
 
-        // The first tab to send us a content message will be the tab that we pay attention to.
-        if (!this.tab_id) {
-            this.tab_id = sender.tab.id
-        }
+        // // The first tab to send us a content message will be the tab that we pay attention to.
+        // if (!this.tab_id) {
+        //     this.tab_id = sender.tab.id
+        // }
 
         // Skip messages from tabs that we're not interested in.
-        if (this.tab_id != sender.tab.id) {
+        if (this.get_current_tab_id() != sender.tab.id) {
             return
         }
 

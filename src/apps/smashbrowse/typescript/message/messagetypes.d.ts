@@ -26,16 +26,20 @@ declare const enum RequestType {
   kOpenBrowser,
   kCloseBrowser,
 
-  // Web Page Requests.
+  // Web Page Event Control.
   kBlockEvents,
   kUnblockEvents,
   kWaitUntilLoaded,
+
+  // Web Page Navigation.
   kNavigateTo,
   kNavigateBack,
   kNavigateForward,
   kNavigateRefresh,
-  kSwitchToTab,
-  kCloseCurrentTab,
+
+  // Web Page Tabs.
+  kUpdateCurrentTab,
+  kDestroyCurrentTab,
 
   // Page Content Set Requests.
   kUpdateElement,
@@ -43,6 +47,7 @@ declare const enum RequestType {
   kGetElement,
   kSetElement,
   kHasElement,
+  kScrollElementIntoView,
   kGetElementValues,
   kFindElementByPosition,
   kFindElementByValues,

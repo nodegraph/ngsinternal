@@ -21,13 +21,12 @@ let Until = webdriver.until
 
 export class WebDriverWrap {
 
-    driver: webdriver.WebDriver
-    flow: webdriver.promise.ControlFlow 
-    fswrap: FSWrap
+    driver: webdriver.WebDriver = null
+    flow: webdriver.promise.ControlFlow = null
+    fswrap: FSWrap = null
+    window_handles: string[] = []
 
     constructor(fswrap: FSWrap) {
-        this.driver = null
-        this.flow = null
         this.fswrap = fswrap
     }
 
@@ -123,41 +122,49 @@ export class WebDriverWrap {
         return this.driver.navigate().refresh();
     }
 
-    // Switches to the next or prev tab.
-    // The tabs are ordered in the order that were opened.
-    // Next means going to the next tab that is newer.
-    // Prev means going to the prev tab that is older.
-    switch_to_tab(next: boolean, close_current: boolean = false): webdriver.promise.Promise<void> {
-        return this.driver.getWindowHandle().then(
-            (handle) => {
-                return this.driver.getAllWindowHandles().then(
-                    (handles) => {
-                        let current_index: number = 0
-                        let next_index: number = 0
-                        for (; current_index<handles.length; current_index++) {
-                            if (handles[current_index] == handle) {
-                                break;
-                            }
-                        }
-                        if (next) {
-                            next_index = (current_index+1) % handles.length
-                        } else {
-                            next_index = (current_index-1) % handles.length
-                        }
-                        console.log('current window handle: ' + handle)
-                        console.log('next window handle: ' + handles[next_index])
-                        if (close_current) {
-                            this.driver.close().then(
-                                () => {return this.driver.switchTo().window(handles[next_index])}
-                            )
-                        } else {
-                            return this.driver.switchTo().window(handles[next_index])
-                        }
-                    },
-                    (error) => {console.info('Error unable to get all window handles.'); throw (error)}
-                )
+    destroy_current_tab(): webdriver.promise.Promise<void> {
+        // Do nothing if have only one tab left.
+        if (this.window_handles.length == 1) {
+            return webdriver.promise.fullyResolved<void>(null)
+        }  
+
+        // Otherwise close the current tab and then switch to an older tab.
+        return this.driver.close().then(
+            () => { 
+                    this.window_handles.pop()    
+                    return this.driver.switchTo().window(this.window_handles[this.window_handles.length-1]) },
+            (error) => {console.info('Error unable to close current window handle.'); throw (error)}
+        )
+    }
+
+    update_current_tab(): webdriver.promise.Promise<void> { 
+        return this.driver.getAllWindowHandles().then(
+            (handles) => {
+                // Scan through the handles to find the new tab.
+                let num_novel = 0
+                for (let i = 0; i < handles.length; i++) {
+                    // Functor used to see if a handle from window_handles matches this handle at i.
+                    let match = (element: string): boolean => {
+                        return element == handles[i]
+                    }
+                    // See if we can find this handle in window_handles.
+                    let existing_index = this.window_handles.findIndex(match)
+                    // Continue if we've seen this handle before.
+                    if (existing_index >= 0) {
+                        continue
+                    }
+                    // Otherwise cache the handle.
+                    this.window_handles.push(handles[i])
+                    // Note there should only be one new handle discovered on each call to this method.
+                    num_novel++
+                    if (num_novel > 1) {
+                        console.log('WebDriverWrap.push_tab: more than one novel window handle discovered.')
+                    }
+                }
+                // Switch to the latest tab.
+                return this.driver.switchTo().window(this.window_handles[this.window_handles.length-1])
             },
-            (error) => {console.info('Error unable to get current window handle.'); throw (error)}
+            (error) => {console.info('Error unable to get all window handles.'); throw (error)}
         )
     }
 
@@ -299,19 +306,19 @@ export class WebDriverWrap {
     click_on_element(frame_index_path: string, xpath: string, local_mouse_position: IPoint = null, hold_ctrl: boolean = false): webdriver.promise.Promise<void> {
         return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
-                if (local_mouse_position) {
-                    // If we have a local_mouse_position, use it.
-                    let seq: webdriver.ActionSequence = this.driver.actions()
-                    seq = seq.mouseMove(element, { x: local_mouse_position.x, y: local_mouse_position.y })
-                    if (hold_ctrl) {
-                        seq = seq.keyDown(Key.CONTROL)
-                    }
-                    seq = seq.click()
-                    if (hold_ctrl) {
-                        seq = seq.keyUp(Key.CONTROL)
-                    }
-                    return seq.perform()
-                } else {
+                // if (local_mouse_position) {
+                //     // If we have a local_mouse_position, use it.
+                //     let seq: webdriver.ActionSequence = this.driver.actions()
+                //     seq = seq.mouseMove(element, { x: local_mouse_position.x, y: local_mouse_position.y })
+                //     if (hold_ctrl) {
+                //         seq = seq.keyDown(Key.CONTROL)
+                //     }
+                //     seq = seq.click()
+                //     if (hold_ctrl) {
+                //         seq = seq.keyUp(Key.CONTROL)
+                //     }
+                //     return seq.perform()
+                // } else {
                     // If we don't a local_mouse_position, then we click the center of the element.
                     return element.getSize().then(
                         (size) => { 
@@ -327,7 +334,7 @@ export class WebDriverWrap {
                             return seq.perform() 
                         },
                         (error) => { console.info('Warning: could not get the size of the element: ' + xpath); throw (error) })
-                }
+                // }
             },
             (error: any) => {
                 console.log('Error: was not able to click element.'); throw (error) 

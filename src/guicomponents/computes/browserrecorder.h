@@ -32,9 +32,7 @@ Q_OBJECT
   Q_INVOKABLE void record_close_browser();
   Q_INVOKABLE void record_is_browser_open();
   Q_INVOKABLE void record_resize_browser();
-  Q_INVOKABLE void record_switch_to_newer_tab();
-  Q_INVOKABLE void record_switch_to_older_tab();
-  Q_INVOKABLE void record_close_current_tab();
+  Q_INVOKABLE void record_destroy_current_tab();
 
   // Navigate the browser.
   Q_INVOKABLE void record_navigate_to(const QString& url);

@@ -34,6 +34,24 @@ class PageWrap {
         return new Box({left:0, right: this.get_width(), top:0, bottom: this.get_height()})
     }
 
+    static scroll_into_view(win: Window) {
+        while (win.parent != win) {
+            var frames = win.parent.document.getElementsByTagName('iframe');
+            let found = false
+            for (let i = 0; i < frames.length; i++) {
+                if (frames[i].contentWindow === win) {
+                    found = true
+                    frames[i].scrollIntoView(true)
+                    break;
+                }
+            }
+            if (!found) {
+                console.error('Error did not find parenting frame.')
+            }
+            win = win.parent
+        }
+    }
+
     // Get frame index path as string.
     // Note that there is no leading '/'. 
     // This helps when splitting the string, as there won't be empty elements.

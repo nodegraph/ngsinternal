@@ -83,6 +83,26 @@ class AppConnection extends BaseConnection {
         // Build the message.
         let msg = BaseMessage.create_from_string(json)
 
+        // // Process info messages.
+        // if (msg.get_msg_type() == MessageType.kInfoMessage) {
+        //     let info_msg = <InfoMessage>msg
+        //     switch(info_msg.info) {
+        //         case InfoType.kPushTab: {
+        //             this.webdriverwrap.push_tab().then(
+        //                 () => {console.error('finished pushing tab')},
+        //                 (error) => {console.error('unable to push tab')}
+        //             )
+        //         } break
+        //         case InfoType.kPopTab: {
+        //             this.webdriverwrap.pop_tab().then(
+        //                 () => {console.error('finished poppping tab')},
+        //                 (error) => {console.error('unable to pop tab')}
+        //             )
+        //         } break
+        //     }
+        //     return
+        // }
+
         // Make sure the message is a request.
         if (msg.get_msg_type() == MessageType.kResponseMessage || msg.get_msg_type() == MessageType.kInfoMessage) {
             console.error("Error: AppConnection currently always expects a request.")
@@ -171,14 +191,14 @@ class AppConnection extends BaseConnection {
                     send_msg_to_app(new ResponseMessage(msg.id, false, error.message))
                 })
             } break
-            case RequestType.kSwitchToTab: {
-                this.webdriverwrap.switch_to_tab(req.args.next).then(
+            case RequestType.kUpdateCurrentTab: {
+                this.webdriverwrap.update_current_tab().then(
                     () => {send_msg_to_ext(req)},
                     (error) => {send_msg_to_app(new ResponseMessage(msg.id, false, error.message))}
                 )
             } break
-            case RequestType.kCloseCurrentTab: {
-                this.webdriverwrap.switch_to_tab(false, true).then(
+            case RequestType.kDestroyCurrentTab: {
+                this.webdriverwrap.destroy_current_tab().then(
                     () => {send_msg_to_app(new ResponseMessage(msg.id, true, true))},
                     (error) => {send_msg_to_app(new ResponseMessage(msg.id, false, error.message))}
                 )

@@ -171,11 +171,15 @@ void NodeJSWorker::send_msg_task(Message& msg) {
 // ---------------------------------------------------------------------------------
 
 void NodeJSWorker::queue_get_current_element(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_current_element_info,this), "queue_get_xpath");
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_current_element_info,this), "queue_get_current_element");
 }
 
 void NodeJSWorker::queue_has_current_element(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::has_current_element_info,this), "queue_get_xpath");
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::has_current_element_info,this), "queue_has_current_element");
+}
+
+void NodeJSWorker::queue_scroll_element_into_view(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::scroll_element_into_view_task,this), "queue_scroll_element_into_view");
 }
 
 void NodeJSWorker::queue_get_crosshair_info(TaskContext& tc) {
@@ -244,12 +248,12 @@ void NodeJSWorker::queue_resize_browser(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::resize_browser_task,this), "queue_resize_browser");
 }
 
-void NodeJSWorker::queue_switch_to_tab(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::switch_to_tab_task,this), "queue_switch_to_tab");
+void NodeJSWorker::queue_update_current_tab(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::update_current_tab_task,this), "queue_update_current_tab");
 }
 
-void NodeJSWorker::queue_close_current_tab(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::close_current_tab_task,this), "queue_close_current_tab");
+void NodeJSWorker::queue_destroy_current_tab(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::destroy_current_tab_task,this), "queue_destroy_current_tab");
 }
 
 void NodeJSWorker::queue_reset(TaskContext& tc) {
@@ -502,6 +506,12 @@ void NodeJSWorker::has_current_element_info() {
   send_msg_task(req);
 }
 
+void NodeJSWorker::scroll_element_into_view_task() {
+  QJsonObject args;
+  Message req(RequestType::kScrollElementIntoView,args);
+  send_msg_task(req);
+}
+
 void NodeJSWorker::merge_chain_state_task(const QJsonObject& map) {
   // Merge the values into the chain_state.
   JSONUtils::shallow_object_merge(_chain_state, map);
@@ -575,17 +585,13 @@ void NodeJSWorker::resize_browser_task() {
   send_msg_task(req);
 }
 
-void NodeJSWorker::switch_to_tab_task() {
-  QJsonObject args;
-  args.insert(Message::kNext,_chain_state.value(Message::kNext));
-
-  Message req(RequestType::kSwitchToTab);
-  req.insert(Message::kArgs, args);
+void NodeJSWorker::update_current_tab_task() {
+  Message req(RequestType::kUpdateCurrentTab);
   send_msg_task(req);
 }
 
-void NodeJSWorker::close_current_tab_task() {
-  Message req(RequestType::kCloseCurrentTab);
+void NodeJSWorker::destroy_current_tab_task() {
+  Message req(RequestType::kDestroyCurrentTab);
   send_msg_task(req);
 }
 

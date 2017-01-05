@@ -63,6 +63,7 @@ Q_OBJECT
   // Queue Framework Tasks.
   void queue_get_current_element(TaskContext& tc);
   void queue_has_current_element(TaskContext& tc);
+  void queue_scroll_element_into_view(TaskContext& tc);
   void queue_get_crosshair_info(TaskContext& tc);
   void queue_get_element_values(TaskContext& tc);
   void queue_get_drop_down_info(TaskContext& tc);
@@ -81,8 +82,8 @@ Q_OBJECT
   void queue_close_browser(TaskContext& tc);
   void queue_is_browser_open(TaskContext& tc);
   void queue_resize_browser(TaskContext& tc);
-  void queue_switch_to_tab(TaskContext& tc);
-  void queue_close_current_tab(TaskContext& tc);
+  void queue_update_current_tab(TaskContext& tc);
+  void queue_destroy_current_tab(TaskContext& tc);
   void queue_reset(TaskContext& tc);
 
   // Queue Page Content Tasks.
@@ -152,6 +153,7 @@ signals:
   void get_drop_down_info_task();
   void get_current_element_info();
   void has_current_element_info();
+  void scroll_element_into_view_task();
   void merge_chain_state_task(const QJsonObject& map);
   void copy_chain_property_task(const QString& src_prop, const QString& dest_prop);
   void receive_chain_state_task(std::function<void(const QJsonObject&)> on_finished_sequence);
@@ -169,8 +171,8 @@ signals:
   void close_browser_task();
   void is_browser_open_task();
   void resize_browser_task();
-  void switch_to_tab_task();
-  void close_current_tab_task();
+  void update_current_tab_task();
+  void destroy_current_tab_task();
 
   // Page Content Tasks.
   void block_events_task();

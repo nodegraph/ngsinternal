@@ -76,6 +76,22 @@ class ContentCommHandler {
                     }
                 }
             } break
+            case RequestType.kScrollElementIntoView: {
+                console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSS')
+                // Only one or none of the frames should have an element.
+                let elem_wrap = this.gui_collection.overlay_sets.get_elem_wrap(0, 0)
+                
+                // If the xpath is not empty then we are that one element.
+                if (elem_wrap) {
+                    // Scroll our frame into view.
+                    PageWrap.scroll_into_view(window)
+                    // Scroll our elememt into view in our frame.
+                    elem_wrap.scroll_into_view()
+                    // Get the info.
+                    let info = elem_wrap.get_info()
+                    send_response(info)
+                }
+            } break
             case RequestType.kFindElementByValues: {
                 let elem_wraps: ElemWrap[] = this.gui_collection.page_wrap.get_by_all_values(req.args.wrap_type, req.args.target_values)
                 if (elem_wraps.length > 0) {

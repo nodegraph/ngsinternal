@@ -66,7 +66,7 @@ class BgCommHandler {
     // ------------------------------------------------------------------------------------------------------------------
 
     collect_from_frames(msg: BaseMessage, response_collector: (response: any) => void = function(){}) {
-        chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_tab_id()}, (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
+        chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
             // Initialize our response counters, so that we know when all responses have come back.
             this.response_count = 0
             this.expected_response_count = details.length
@@ -80,7 +80,7 @@ class BgCommHandler {
             }
             // Now send a message to each frame.
             details.forEach((frame: chrome.webNavigation.GetAllFrameResultDetails) => {
-                chrome.tabs.sendMessage(this.bg_comm.get_tab_id(), msg, { frameId: frame.frameId }, collector_wrap);
+                chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector_wrap);
             });
         });
     }
@@ -130,9 +130,11 @@ class BgCommHandler {
             if (best === null) {
                 best = elem
             } else {
-                if ( (elem.box.left == best.box.left) && (elem.box.top == best.box.top) && (elem.z_index > best.z_index)) {
+                if ((elem.box.left == best.box.left) && (elem.box.top == best.box.top) && (elem.z_index > best.z_index)) {
                     best = elem
-                } else if ( (elem.box.left < best.box.left) && (elem.box.top < best.box.top) ) {
+                } else if (elem.box.top < best.box.top) {
+                    best = elem
+                } else if ((elem.box.top == best.box.top) && (elem.box.left < best.box.left)) {
                     best = elem
                 }
             }
@@ -366,6 +368,27 @@ class BgCommHandler {
         })
     }
 
+    queue_scroll_element_into_view() {
+        console.log('bg comm scrolling element into view')
+        this.found_elem = null
+        this.error_msg = ""
+        this.collected_elems.length = 0
+        let req = new RequestMessage(-1, RequestType.kScrollElementIntoView)
+        this.queue_collect_elements_from_frames(req)
+        this.queue(() => {
+            console.log('finished scrolling element into view')
+            if (this.collected_elems.length == 1) {
+                // Make a deep copy of the current element info.
+                this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
+            } else if (this.collected_elems.length == 0) {
+                this.error_msg = "Unable to find the current element."
+            } else {
+                this.error_msg = "There were multiple current elements."
+            }
+            this.run_next_task()
+        })
+    }
+
     // Result will be in this.found_elem. Error will be in this.error_msg.
     // Note this uses the dynamic value of this.found_elem to set the current element.
     queue_set_current_element() {
@@ -419,7 +442,7 @@ class BgCommHandler {
     // Main message handler.
     // ------------------------------------------------------------------------------------------------------------------
     handle_nodejs_request(req: RequestMessage) {
-        //console.log('handling request from nodejs: ' + JSON.stringify(req))
+        console.log('handling request from nodejs: ' + JSON.stringify(req))
 
         // We intercept certain requests before it gets to the content script,
         // because content scripts can't use the chrome.* APIs except for parts of chrome.extension for message passing.
@@ -465,7 +488,7 @@ class BgCommHandler {
                     let response = new ResponseMessage(req.id, true, { 'zoom': zoom })
                     this.bg_comm.send_to_nodejs(response)
                 }
-                BrowserWrap.get_zoom(this.bg_comm.get_tab_id(), done_get_zoom);
+                BrowserWrap.get_zoom(this.bg_comm.get_current_tab_id(), done_get_zoom);
             } break
 
             // --------------------------------------------------------------
@@ -473,13 +496,16 @@ class BgCommHandler {
             // --------------------------------------------------------------
 
             case RequestType.kBlockEvents: {
+                console.log('bg comm handler got kblockevents')
                 this.clear_tasks()
                 this.queue_block_events()
                 this.queue(() => {
+                    console.log('bg comm handler got kblockevents 2222')
                     let response = new ResponseMessage(req.id, true, true)
                     this.bg_comm.send_to_nodejs(response)
                 })
                 this.run_next_task()
+                console.log('ran_next_task')
             } break
             case RequestType.kUnblockEvents: {
                 this.clear_tasks()
@@ -498,8 +524,9 @@ class BgCommHandler {
                     })
                 this.run_next_task()
             } break
-            case RequestType.kSwitchToTab: {
-                this.bg_comm.switch_to_tab(req.args.next)
+            case RequestType.kUpdateCurrentTab: {
+                this.clear_tasks()
+                this.bg_comm.update_current_tab_id()
                 let response = new ResponseMessage(req.id, true, true)
                 this.bg_comm.send_to_nodejs(response)
             } break
@@ -569,6 +596,16 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, this.error_msg)
                         this.bg_comm.send_to_nodejs(response)
                     }
+                })
+                this.run_next_task()
+            } break
+            case RequestType.kScrollElementIntoView: {
+                this.clear_tasks()
+                this.queue_scroll_element_into_view()
+                this.queue(() => {
+                    // Note if there is no current element, there is nothing to scroll, but we always return success/true.
+                    let response = new ResponseMessage(req.id, true, {})
+                    this.bg_comm.send_to_nodejs(response)
                 })
                 this.run_next_task()
             } break

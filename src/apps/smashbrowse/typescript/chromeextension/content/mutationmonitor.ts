@@ -256,7 +256,7 @@ class MutationMonitor {
         }
     }
 
-    // Note really tested.
+    // Not really tested.
     add_video_controls() {
         let videos = this.gui_collection.page_wrap.get_videos()
         for (let v = 0; v<videos.length; v++) {
@@ -264,7 +264,7 @@ class MutationMonitor {
         }
     }
 
-    // Note really tested.
+    // Not really tested.
     adjust_display_property(rules: CSSRuleList): void {
         if (!rules) {
             return
@@ -284,7 +284,7 @@ class MutationMonitor {
         }
     }
 
-    // Note really tested.
+    // Not really tested.
     show_hidden() {
         for (let i = 0; i < document.styleSheets.length; i++) {
             let sheet = document.styleSheets[i]

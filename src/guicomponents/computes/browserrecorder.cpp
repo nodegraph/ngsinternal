@@ -82,29 +82,9 @@ void BrowserRecorder::record_resize_browser() {
   finish();
 }
 
-void BrowserRecorder::record_switch_to_newer_tab() {
+void BrowserRecorder::record_destroy_current_tab() {
   check_busy();
-  QJsonObject args;
-  args.insert(Message::kNext, true);
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kSwitchToTabCompute);
-  finish();
-}
-
-void BrowserRecorder::record_switch_to_older_tab() {
-  check_busy();
-  QJsonObject args;
-  args.insert(Message::kNext, false);
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kSwitchToTabCompute);
-  finish();
-}
-
-void BrowserRecorder::record_close_current_tab() {
-  check_busy();
-  _worker->queue_build_compute_node(tc, ComponentDID::kCloseCurrentTabCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kDestroyCurrentTabCompute);
   finish();
 }
 

@@ -77,23 +77,23 @@ class GUICOMPUTES_EXPORT ResizeBrowserCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT SwitchToTabCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, SwitchToTabCompute);
-  SwitchToTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+//class GUICOMPUTES_EXPORT SwitchToTabCompute: public BrowserCompute {
+// public:
+//  COMPONENT_ID(Compute, SwitchToTabCompute);
+//  SwitchToTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+//  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+//
+//  static QJsonObject init_hints();
+//  static const QJsonObject _hints;
+//  virtual const QJsonObject& get_hints() const {return _hints;}
+// protected:
+//  virtual bool update_state();
+//};
 
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT CloseCurrentTabCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT DestroyCurrentTabCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, CloseCurrentTabCompute);
-  CloseCurrentTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, DestroyCurrentTabCompute);
+  DestroyCurrentTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();

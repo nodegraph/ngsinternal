@@ -21,16 +21,20 @@ enum class RequestType : int {
   kOpenBrowser,
   kCloseBrowser,
 
-  // Web Page Requests.
+  // Web Page Event Control.
   kBlockEvents,
   kUnblockEvents,
   kWaitUntilLoaded,
+
+  // Web Page Navigation.
   kNavigateTo,
   kNavigateBack,
   kNavigateForward,
   kNavigateRefresh,
-  kSwitchToTab,
-  kCloseCurrentTab,
+
+  // Web Page Tabs.
+  kUpdateCurrentTab,
+  kDestroyCurrentTab,
 
   // Page Content Set Requests.
   kUpdateElement,
@@ -38,6 +42,7 @@ enum class RequestType : int {
   kGetElement,
   kSetElement,
   kHasElement,
+  kScrollElementIntoView,
   kGetElementValues,
   kFindElementByPosition,
   kFindElementByValues,

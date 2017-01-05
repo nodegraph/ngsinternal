@@ -68,7 +68,8 @@ class EventBlocker {
                 //    console.log('got scroll target: ' + elem_wrap.get_xpath())
                 //}
                 //g_overlay_sets.update()
-                return true
+                //return true
+                break
             case 'message':
                 return true
         }

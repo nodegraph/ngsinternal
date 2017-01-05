@@ -94,6 +94,8 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
   internal();
   std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::receive_chain_state,this,std::placeholders::_1);
   _worker->queue_receive_chain_state(tc, callback);
+  _worker->queue_scroll_element_into_view(tc);
+  _worker->queue_update_current_tab(tc);
 }
 
 void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
@@ -176,56 +178,56 @@ bool ResizeBrowserCompute::update_state(){
   return false;
 }
 
-void SwitchToTabCompute::create_inputs_outputs(const EntityConfig& config) {
+//void SwitchToTabCompute::create_inputs_outputs(const EntityConfig& config) {
+//  external();
+//  BrowserCompute::create_inputs_outputs(config);
+//
+//  EntityConfig c = config;
+//  c.expose_plug = false;
+//  c.unconnected_value = true;
+//  create_input(Message::kNext, c);
+//}
+//
+//const QJsonObject SwitchToTabCompute::_hints = SwitchToTabCompute::init_hints();
+//QJsonObject SwitchToTabCompute::init_hints() {
+//  QJsonObject m;
+//  BrowserCompute::init_hints(m);
+//
+//  add_hint(m, Message::kNext, HintKey::kDescriptionHint, "Switches to the next (newer) tab when true, otherwise switches to older.");
+//
+//  return m;
+//}
+//
+//bool SwitchToTabCompute::update_state(){
+//  internal();
+//  BrowserCompute::update_state();
+//
+//  TaskContext tc(_scheduler);
+//  BrowserCompute::pre_update_state(tc);
+//  _worker->queue_switch_to_tab(tc);
+//  BrowserCompute::post_update_state(tc);
+//  return false;
+//}
+
+void DestroyCurrentTabCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = false;
-  c.unconnected_value = true;
-  create_input(Message::kNext, c);
 }
 
-const QJsonObject SwitchToTabCompute::_hints = SwitchToTabCompute::init_hints();
-QJsonObject SwitchToTabCompute::init_hints() {
+const QJsonObject DestroyCurrentTabCompute::_hints = DestroyCurrentTabCompute::init_hints();
+QJsonObject DestroyCurrentTabCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kNext, HintKey::kDescriptionHint, "Switches to the next (newer) tab when true, otherwise switches to older.");
-
   return m;
 }
 
-bool SwitchToTabCompute::update_state(){
+bool DestroyCurrentTabCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _worker->queue_switch_to_tab(tc);
-  BrowserCompute::post_update_state(tc);
-  return false;
-}
-
-void CloseCurrentTabCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-}
-
-const QJsonObject CloseCurrentTabCompute::_hints = CloseCurrentTabCompute::init_hints();
-QJsonObject CloseCurrentTabCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-  return m;
-}
-
-bool CloseCurrentTabCompute::update_state(){
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  BrowserCompute::pre_update_state(tc);
-  _worker->queue_close_current_tab(tc);
+  _worker->queue_destroy_current_tab(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }

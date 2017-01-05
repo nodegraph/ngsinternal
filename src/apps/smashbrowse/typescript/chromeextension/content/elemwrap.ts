@@ -334,6 +334,11 @@ class ElemWrap {
     // Scroll Bars.
     //----------------------------------------------------------------------------------------
 
+    scroll_into_view(): void {
+        // I asseume this call works with nested frames and scrollbars.
+        this.element.scrollIntoView(false)
+    }
+
     //Returns true if the element has horizontal scroll bars.
     has_horizontal_scroll_bar(): boolean {
         if (!(this.element.scrollWidth > this.element.clientWidth)) {
