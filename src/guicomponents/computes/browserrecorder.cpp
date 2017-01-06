@@ -411,7 +411,7 @@ void BrowserRecorder::record_scroll_down() {
 
   QJsonObject args;
   args.insert(Message::kElementAction, to_underlying(ElementActionType::kScroll));
-  args.insert(Message::kDirection, to_underlying(DirectionType::down));
+  args.insert(Message::kScrollDirection, to_underlying(DirectionType::down));
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -423,7 +423,7 @@ void BrowserRecorder::record_scroll_up() {
 
   QJsonObject args;
   args.insert(Message::kElementAction, to_underlying(ElementActionType::kScroll));
-  args.insert(Message::kDirection, to_underlying(DirectionType::up));
+  args.insert(Message::kScrollDirection, to_underlying(DirectionType::up));
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -435,7 +435,7 @@ void BrowserRecorder::record_scroll_right() {
 
   QJsonObject args;
   args.insert(Message::kElementAction, to_underlying(ElementActionType::kScroll));
-  args.insert(Message::kDirection, to_underlying(DirectionType::right));
+  args.insert(Message::kScrollDirection, to_underlying(DirectionType::right));
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -447,7 +447,7 @@ void BrowserRecorder::record_scroll_left() {
 
   QJsonObject args;
   args.insert(Message::kElementAction, to_underlying(ElementActionType::kScroll));
-  args.insert(Message::kDirection, to_underlying(DirectionType::left));
+  args.insert(Message::kScrollDirection, to_underlying(DirectionType::left));
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();

@@ -615,7 +615,7 @@ void ElementActionCompute::create_inputs_outputs(const EntityConfig& config) {
     c.unconnected_value = 0;
 
     create_input(Message::kElementAction, c);
-    create_input(Message::kDirection, c);  // Only used when the element action is set to scroll.
+    create_input(Message::kScrollDirection, c);  // Only used when the element action is set to scroll.
   }
   {
     EntityConfig c = config;
@@ -639,8 +639,8 @@ QJsonObject ElementActionCompute::init_hints() {
 
   add_hint(m, Message::kOptionText, HintKey::kDescriptionHint, "The text to select from dropdowns.");
 
-  add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
-  add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The direction to scroll.");
+  add_hint(m, Message::kScrollDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
+  add_hint(m, Message::kScrollDirection, HintKey::kDescriptionHint, "The direction to scroll.");
 
   add_hint(m, Message::kTextDataName, HintKey::kDescriptionHint, "The name used to reference the extracted text data.");
 

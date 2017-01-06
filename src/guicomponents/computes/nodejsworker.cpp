@@ -799,7 +799,7 @@ void NodeJSWorker::perform_element_action_task() {
 
   args.insert(Message::kElementAction, _chain_state.value(Message::kElementAction));
   args.insert(Message::kOptionText, _chain_state.value(Message::kOptionText)); // Used for selecting element from dropdowns.
-  args.insert(Message::kDirection, _chain_state.value(Message::kDirection)); // Used for the scrolling directions.
+  args.insert(Message::kScrollDirection, _chain_state.value(Message::kScrollDirection)); // Used for the scrolling directions.
 
   Message req(RequestType::kPerformElementAction);
   req.insert(Message::kArgs, args);

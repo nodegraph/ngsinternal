@@ -189,7 +189,7 @@ class BgCommHandler {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
         let best_distance = 0
-        const off_axis_weight = 100 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
+        const off_axis_weight = 2 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
 
         let src_box = new Box(src.box)
         let src_center = src_box.get_center()
@@ -214,7 +214,7 @@ class BgCommHandler {
             // Now choose the closest element on one side, according to the direction in the request.
             let parallel_dist = (diff.x * dir.x) + (diff.y * dir.y)
             let perp_dist = (diff.x * perp_dir.x) + (diff.y * perp_dir.y)
-            let distance = parallel_dist + off_axis_weight * Math.pow(perp_dist,2)
+            let distance = parallel_dist + off_axis_weight * Math.abs(perp_dist)  //Math.pow(perp_dist,2)
 
             if (parallel_dist < 0) {
                 return
