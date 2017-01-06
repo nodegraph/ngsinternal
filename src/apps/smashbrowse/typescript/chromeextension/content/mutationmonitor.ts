@@ -256,6 +256,46 @@ class MutationMonitor {
         }
     }
 
+    adjust_scroll_property(rules: CSSRuleList): void {
+        if (!rules) {
+            return
+        }
+        for (let j = 0; j < rules.length; j++) {
+            let rule = rules[j];
+            if (rule.type == CSSRule.MEDIA_RULE) {
+                // This rule acts like a grouping rule, so we recurse.
+                this.adjust_scroll_property((<CSSMediaRule>rule).cssRules)
+            } else if (rule.type == CSSRule.STYLE_RULE) {
+                // This is the normal leaf rule type.
+                let style_rule = <CSSStyleRule>rule
+                if (style_rule.style) {
+                    if (style_rule.style.overflow) {
+                        style_rule.style.setProperty('position','static','')
+                    }
+                    if (style_rule.style.overflowY) {
+                        style_rule.style.setProperty('position','static','')
+                    }
+                    if (style_rule.style.overflowX) {
+                        style_rule.style.setProperty('position','static','')
+                    }
+                }
+            }
+        }
+    }
+
+    disable_scrollbars() {
+        for (let i = 0; i < document.styleSheets.length; i++) {
+            let sheet = document.styleSheets[i]
+            // Note the cssRules will be null if the css stylesheet is loaded from another domain (cross domain security).
+            // However is you use "chrome --disable-web-security --user-data-dir", then it will not be null allowing you to access it.
+            if (sheet.type != "text/css") {
+                continue
+            }
+            let css_sheet = <CSSStyleSheet>(sheet)
+            this.adjust_scroll_property(css_sheet.cssRules)
+        }
+    }
+
     // Not really tested.
     add_video_controls() {
         let videos = this.gui_collection.page_wrap.get_videos()
@@ -301,6 +341,7 @@ class MutationMonitor {
     adjust_page() {
         //this.disable_hover()
         this.disable_zoom()
+        //this.disable_scrollbars()
         //this.add_video_controls()
         //this.show_hidden()
     }
