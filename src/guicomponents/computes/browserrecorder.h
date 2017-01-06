@@ -63,15 +63,8 @@ Q_OBJECT
   Q_INVOKABLE void record_shift_to_select_type();
 
   // Shift to element by values.
-  Q_INVOKABLE void record_shift_to_text_values_above();
-  Q_INVOKABLE void record_shift_to_text_values_below();
-  Q_INVOKABLE void record_shift_to_text_values_on_left();
-  Q_INVOKABLE void record_shift_to_text_values_on_right();
-
-  Q_INVOKABLE void record_shift_to_image_values_above();
-  Q_INVOKABLE void record_shift_to_image_values_below();
-  Q_INVOKABLE void record_shift_to_image_values_on_left();
-  Q_INVOKABLE void record_shift_to_image_values_on_right();
+  Q_INVOKABLE void record_shift_to_text_values();
+  Q_INVOKABLE void record_shift_to_image_values();
 
   // Record Mouse Actions.
   Q_INVOKABLE void record_click();

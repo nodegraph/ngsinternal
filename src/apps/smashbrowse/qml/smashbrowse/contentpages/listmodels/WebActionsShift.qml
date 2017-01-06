@@ -9,14 +9,16 @@ ListModel {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "To Similar Text Element"
         description: "Shift to a neighboring text element with the same text."
-        script: "push_by_names('Shift To Similar Text', 'WebMenuListPage', 'WebActionsShiftToTextValues')"
+        script: "web_recorder.record_shift_to_text_values();
+        		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "To Similar Image Element"
         description: "Shift to a neighboring image element with the same images."
-        script: "push_by_names('Shift To Similar Image', 'WebMenuListPage', 'WebActionsShiftToImageValues')"
+        script: "web_recorder.record_shift_to_image_values();
+        		main_bar.switch_to_current_mode();"
     }
 
     ListElement {

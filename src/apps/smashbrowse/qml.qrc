@@ -104,8 +104,6 @@
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsFindElementByPosition.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsFindElementByTraits.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsShift.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToTextValues.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftToImageValues.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformAction.qml</file>
 		<file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformScroll.qml</file>
         

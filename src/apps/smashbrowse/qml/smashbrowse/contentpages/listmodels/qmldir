@@ -13,7 +13,5 @@ WebActionsNavigate 1.0 WebActionsNavigate.qml
 WebActionsFindElementByPosition 1.0 WebActionsFindElementByPosition.qml
 WebActionsFindElementByTraits 1.0 WebActionsFindElementByTraits.qml
 WebActionsShift 1.0 WebActionsShift.qml
-WebActionsShiftToTextValues 1.0 WebActionsShiftToTextValues.qml
-WebActionsShiftToImageValues 1.0 WebActionsShiftToImageValues.qml
 WebActionsPerformAction 1.0 WebActionsPerformAction.qml
 WebActionsPerformScroll 1.0 WebActionsPerformScroll.qml
