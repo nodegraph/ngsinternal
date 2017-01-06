@@ -306,35 +306,26 @@ export class WebDriverWrap {
     click_on_element(frame_index_path: string, xpath: string, local_mouse_position: IPoint = null, hold_ctrl: boolean = false): webdriver.promise.Promise<void> {
         return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
-                // if (local_mouse_position) {
-                //     // If we have a local_mouse_position, use it.
-                //     let seq: webdriver.ActionSequence = this.driver.actions()
-                //     seq = seq.mouseMove(element, { x: local_mouse_position.x, y: local_mouse_position.y })
-                //     if (hold_ctrl) {
-                //         seq = seq.keyDown(Key.CONTROL)
-                //     }
-                //     seq = seq.click()
-                //     if (hold_ctrl) {
-                //         seq = seq.keyUp(Key.CONTROL)
-                //     }
-                //     return seq.perform()
-                // } else {
-                    // If we don't a local_mouse_position, then we click the center of the element.
-                    return element.getSize().then(
-                        (size) => { 
-                            let seq: webdriver.ActionSequence = this.driver.actions()
+                return element.getSize().then(
+                    (size) => { 
+                        let seq: webdriver.ActionSequence = this.driver.actions()
+                        // If the local mouse position is within the element's bounds use it.
+                        // Otherwise we use the center point of the element.
+                        if ((local_mouse_position.x < size.width) && (local_mouse_position.y < size.height)) {
+                            seq = seq.mouseMove(element, { x: local_mouse_position.x, y: local_mouse_position.y })
+                        } else {
                             seq = seq.mouseMove(element, { x: size.width/2.0, y: size.height/2.0 })
-                            if (hold_ctrl) {
-                                seq = seq.keyDown(Key.CONTROL)
-                            }
-                            seq = seq.click()
-                            if (hold_ctrl) {
-                                seq = seq.keyUp(Key.CONTROL)
-                            }
-                            return seq.perform() 
-                        },
-                        (error) => { console.info('Warning: could not get the size of the element: ' + xpath); throw (error) })
-                // }
+                        }
+                        if (hold_ctrl) {
+                            seq = seq.keyDown(Key.CONTROL)
+                        }
+                        seq = seq.click()
+                        if (hold_ctrl) {
+                            seq = seq.keyUp(Key.CONTROL)
+                        }
+                        return seq.perform() 
+                    },
+                    (error) => { console.info('Warning: could not get the size of the element: ' + xpath); throw (error) })
             },
             (error: any) => {
                 console.log('Error: was not able to click element.'); throw (error) 
