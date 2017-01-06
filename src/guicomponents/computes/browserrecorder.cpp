@@ -236,177 +236,52 @@ void BrowserRecorder::record_find_element_by_select_type() {
 // Shift to element by type.
 // -----------------------------------------------------------------
 
-void BrowserRecorder::record_shift_to_text_type_above() {
+void BrowserRecorder::record_shift_to_text_type() {
   check_busy()
+  _worker->queue_get_current_element(tc);
+  _worker->queue_get_crosshair_info(tc);
+  _worker->queue_determine_angle_in_degress(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_text_type_below() {
-  check_busy()
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  args.insert(Message::kDirection, to_underlying(DirectionType::down));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_text_type_on_left() {
-  check_busy()
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  args.insert(Message::kDirection, to_underlying(DirectionType::left));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_text_type_on_right() {
-  check_busy()
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  args.insert(Message::kDirection, to_underlying(DirectionType::right));
-
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 
-void BrowserRecorder::record_shift_to_image_type_above() {
+void BrowserRecorder::record_shift_to_image_type() {
   check_busy()
+  _worker->queue_get_current_element(tc);
   _worker->queue_get_crosshair_info(tc);
+  _worker->queue_determine_angle_in_degress(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  args.insert(Message::kDirection, to_underlying(DirectionType::up));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_image_type_below() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  args.insert(Message::kDirection, to_underlying(DirectionType::down));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_image_type_on_left() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  args.insert(Message::kDirection, to_underlying(DirectionType::left));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_image_type_on_right() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  args.insert(Message::kDirection, to_underlying(DirectionType::right));
-
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 
-void BrowserRecorder::record_shift_to_input_type_above() {
+void BrowserRecorder::record_shift_to_input_type() {
   check_busy()
+  _worker->queue_get_current_element(tc);
   _worker->queue_get_crosshair_info(tc);
+  _worker->queue_determine_angle_in_degress(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_input_type_below() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::input));
-  args.insert(Message::kDirection, to_underlying(DirectionType::down));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_input_type_on_left() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::input));
-  args.insert(Message::kDirection, to_underlying(DirectionType::left));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_input_type_on_right() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::input));
-  args.insert(Message::kDirection, to_underlying(DirectionType::right));
-
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();
 }
 
-void BrowserRecorder::record_shift_to_select_type_above() {
+void BrowserRecorder::record_shift_to_select_type() {
   check_busy()
+  _worker->queue_get_current_element(tc);
   _worker->queue_get_crosshair_info(tc);
+  _worker->queue_determine_angle_in_degress(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   args.insert(Message::kDirection, to_underlying(DirectionType::up));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_select_type_below() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::select));
-  args.insert(Message::kDirection, to_underlying(DirectionType::down));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_select_type_on_left() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::select));
-  args.insert(Message::kDirection, to_underlying(DirectionType::left));
-
-  _worker->queue_merge_chain_state(tc, args);
-  _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-void BrowserRecorder::record_shift_to_select_type_on_right() {
-  check_busy()
-  _worker->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::select));
-  args.insert(Message::kDirection, to_underlying(DirectionType::right));
-
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
   finish();

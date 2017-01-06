@@ -434,7 +434,7 @@ void ShiftElementByTypeCompute::create_inputs_outputs(const EntityConfig& config
   c.expose_plug = false;
   c.unconnected_value = 0;
 
-  create_input(Message::kDirection, c);
+  create_input(Message::kAngleInDegrees, c);
   create_input(Message::kWrapType, c);
 }
 
@@ -443,8 +443,7 @@ QJsonObject ShiftElementByTypeCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
-  add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The direction in which to shift the set elements to.");
+  add_hint(m, Message::kAngleInDegrees, HintKey::kDescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
 
   add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of elements to shift to.");
@@ -474,7 +473,7 @@ void ShiftElementByValuesCompute::create_inputs_outputs(const EntityConfig& conf
     c.expose_plug = false;
     c.unconnected_value = 0;
 
-    create_input(Message::kDirection, c);
+    create_input(Message::kAngleInDegrees, c);
     create_input(Message::kWrapType, c);\
   }
 
@@ -496,8 +495,7 @@ QJsonObject ShiftElementByValuesCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
-  add_hint(m, Message::kDirection, HintKey::kDescriptionHint, "The direction in which to shift the set elements to.");
+  add_hint(m, Message::kAngleInDegrees, HintKey::kDescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
 
   add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
   add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of elements to shift to.");

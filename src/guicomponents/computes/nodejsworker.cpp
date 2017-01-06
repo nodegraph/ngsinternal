@@ -202,6 +202,10 @@ void NodeJSWorker::queue_copy_chain_property(TaskContext& tc, const QString& src
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::copy_chain_property_task,this, src_prop, dest_prop), "queue_merge_chain_state");
 }
 
+void NodeJSWorker::queue_determine_angle_in_degress(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::determine_angle_in_degrees_task,this), "queue_determine_angle_in_degress");
+}
+
 void NodeJSWorker::queue_build_compute_node(TaskContext& tc, ComponentDID compute_did) {
   std::stringstream ss;
   ss << "queue build compute node with did: " << (size_t)compute_did;
@@ -523,6 +527,34 @@ void NodeJSWorker::copy_chain_property_task(const QString& src_prop, const QStri
   _scheduler->run_next_task();
 }
 
+void NodeJSWorker::determine_angle_in_degrees_task() {
+  QJsonObject box = _chain_state["box"].toObject();
+  double left = box["left"].toDouble();
+  double right = box["right"].toDouble();
+  double bottom = box["bottom"].toDouble();
+  double top = box["top"].toDouble();
+  double center_x = (left + right) / 2.0;
+  double center_y = (bottom + top) / 2.0;
+
+  QJsonObject p = _chain_state["global_mouse_position"].toObject();
+  double global_x = p["x"].toDouble();
+  double global_y = p["y"].toDouble();
+
+  double diff_x = global_x - center_x;
+  double diff_y = global_y - center_y;
+
+  double theta = atan2(diff_y, diff_x);
+  double angle_in_degrees = -1 * theta / 3.141592653 * 180.0; // -1 is because y increases from top to bottom, and we want users to think that 0 degress is to the right, and 90 degress is up.
+
+  std::cerr << "---------------------------------------------------------------\n";
+  std::cerr << "Box center is: " << center_x << "," << center_y << "\n";
+  std::cerr << "The click pos: " << global_x << "," << global_y << "\n";
+  std::cerr << "The angle in degrees is: " << angle_in_degrees << "\n";
+
+  _chain_state.insert(Message::kAngleInDegrees, angle_in_degrees);
+  _scheduler->run_next_task();
+}
+
 void NodeJSWorker::receive_chain_state_task(std::function<void(const QJsonObject&)> receive_chain_state) {
   receive_chain_state(_chain_state);
   _scheduler->run_next_task();
@@ -707,7 +739,7 @@ void NodeJSWorker::find_element_by_type_task() {
 
 void NodeJSWorker::shift_element_by_type_task() {
   QJsonObject args;
-  args.insert(Message::kDirection, _chain_state.value(Message::kDirection));
+  args.insert(Message::kAngleInDegrees, _chain_state.value(Message::kAngleInDegrees));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   Message req(RequestType::kShiftElementByType);
   req.insert(Message::kArgs, args);
@@ -716,7 +748,7 @@ void NodeJSWorker::shift_element_by_type_task() {
 
 void NodeJSWorker::shift_element_by_values_task() {
   QJsonObject args;
-  args.insert(Message::kDirection, _chain_state.value(Message::kDirection));
+  args.insert(Message::kAngleInDegrees, _chain_state.value(Message::kAngleInDegrees));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
   Message req(RequestType::kShiftElementByValues);

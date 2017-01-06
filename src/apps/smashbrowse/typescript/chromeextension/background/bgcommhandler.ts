@@ -182,14 +182,21 @@ class BgCommHandler {
         return best
     }
 
-    static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], dir: DirectionType) {
+    static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], angle_in_degrees: number) {
+
+        console.log('angle in degress: ' + angle_in_degrees)
+
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
         let best_distance = 0
-        const off_axis_weight = 10 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
+        const off_axis_weight = 100 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
 
         let src_box = new Box(src.box)
         let src_center = src_box.get_center()
+
+        let theta = angle_in_degrees / 180.0 * Math.PI
+        let dir = new Point({x: Math.cos(theta), y: -1 * Math.sin(theta)}) // -1 is because y increases from top to bottom.
+        let perp_dir = new Point({x: -dir.y, y: dir.x})
 
         // Note the return in the forEach loop acts like a continue statement.
         candidates.forEach((dest) => {
@@ -202,34 +209,15 @@ class BgCommHandler {
             let dest_box = new Box(dest.box)
             let dest_center:Point = dest_box.get_center()
             let diff = dest_center.subtract(src_center)
-            let distance = 0
+            
 
             // Now choose the closest element on one side, according to the direction in the request.
-            switch (dir) {
-                case DirectionType.left: {
-                    if (diff.x >= 0) {
-                        return
-                    }
-                    distance = Math.abs(diff.x) + Math.abs(diff.y) * off_axis_weight
-                } break
-                case DirectionType.right: {
-                    if (diff.x <= 0) {
-                        return
-                    }
-                    distance = Math.abs(diff.x) + Math.abs(diff.y) * off_axis_weight
-                } break
-                case DirectionType.down: {
-                    if (diff.y <= 0) {
-                        return
-                    }
-                    distance = Math.abs(diff.y) + Math.abs(diff.x) * off_axis_weight
-                } break
-                case DirectionType.up: {
-                    if (diff.y >= 0) {
-                        return
-                    }
-                    distance = Math.abs(diff.y) + Math.abs(diff.x) * off_axis_weight
-                } break
+            let parallel_dist = (diff.x * dir.x) + (diff.y * dir.y)
+            let perp_dist = (diff.x * perp_dir.x) + (diff.y * perp_dir.y)
+            let distance = parallel_dist + off_axis_weight * Math.pow(perp_dist,2)
+
+            if (parallel_dist < 0) {
+                return
             }
 
             // Update best if the dest is closer to the src element.
@@ -724,7 +712,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.direction)
+                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle_in_degrees)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
@@ -772,7 +760,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.direction)
+                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle_in_degrees)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()

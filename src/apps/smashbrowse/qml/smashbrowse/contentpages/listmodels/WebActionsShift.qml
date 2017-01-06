@@ -22,29 +22,33 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "To Text Element"
-        description: "Shift to a neighboring text element containing any text."
-        script: "push_by_names('Shift To Text', 'WebMenuListPage', 'WebActionsShiftToTextType')"
+        description: "Shift to a neighboring text element in the direction specified by the crosshair."
+        script: "web_recorder.record_shift_to_text_type();
+        		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "To Image Element"
-        description: "Shift to a neighboring image element containing any images."
-        script: "push_by_names('Shift To Image', 'WebMenuListPage', 'WebActionsShiftToImageType')"
+        description: "Shift to a neighboring image element in the direction specified by the crosshair."
+        script: "web_recorder.record_shift_to_image_type();
+        		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
         title: "To Input Field Element"
-        description: "Shift to a neighboring input field."
-        script: "push_by_names('Shift To Text Inputs', 'WebMenuListPage', 'WebActionsShiftToInputType')"
+        description: "Shift to a neighboring input field in the direction specified by the crosshair."
+        script: "web_recorder.record_shift_to_input_type();
+        		main_bar.switch_to_current_mode();"
     }
 
     ListElement {
         image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "To Drop Down Field Element"
-        description: "Shift to a neighboring drop down field."
-        script: "push_by_names('Shift To DropDowns', 'WebMenuListPage', 'WebActionsShiftToDropDownType')"
+        description: "Shift to a neighboring drop down field in the direction specified by the crosshair."
+        script: "web_recorder.record_shift_to_select_type();
+        		main_bar.switch_to_current_mode();"
     }
 
 }

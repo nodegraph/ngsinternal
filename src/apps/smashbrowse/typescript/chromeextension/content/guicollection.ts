@@ -140,34 +140,6 @@ class GUICollection {
         let xpath = elem.get_xpath()
         let local_mouse_position = elem.get_box().get_relative_point(local_page_click)
 
-        // // Determine the set index and overlay index at the click point.
-        // // Also determine the click pos relative to this overlay.
-        // let set_overlay_index = this.overlay_sets.find_set_overlay_index(local_page_click)
-        // let set_index = set_overlay_index.set_index
-        // let overlay_index = set_overlay_index.overlay_index
-        // let local_mouse_position: Point = new Point({ x: 1, y: 1 })
-        // if (set_index >= 0) {
-        //     let oset = this.overlay_sets.get_set(set_index)
-        //     local_mouse_position = oset.get_overlay(overlay_index).get_elem_wrap().get_box().get_relative_point(local_page_click)
-        // }
-
-        // // If we're a select element, grab the option values and texts.
-        // let option_values: string[] = []
-        // let option_texts: string[] = []
-        // if (set_index >= 0) {
-        //     let oset = this.overlay_sets.get_set(set_index)
-        //     let element = oset.get_overlay(overlay_index).get_elem_wrap().get_element()
-        //     if (element instanceof HTMLSelectElement) {
-        //         let select: HTMLSelectElement = <HTMLSelectElement>element
-        //         for (let i = 0; i < element.options.length; i++) {
-        //             let option = <HTMLOptionElement>(element.options[i])
-        //             option_values.push(option.value)
-        //             option_texts.push(option.text)
-        //             console.log('option value,text: ' + option.value + "," + option.text)
-        //         }
-        //     }
-        // }
-
         let args: IClickInfo = {
             frame_index_path: PageWrap.get_frame_index_path(window),
             xpath: xpath,
