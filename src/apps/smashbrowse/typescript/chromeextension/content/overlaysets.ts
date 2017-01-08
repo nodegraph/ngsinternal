@@ -122,22 +122,22 @@ class OverlaySets {
     }
 
     // Shift.
-    shift(set_index: number, direction: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
-        if (!this.set_index_is_valid(set_index)) {
-            return
-        }
-        this.sets[set_index].shift(direction, wrap_type, page_wrap)
-        this.sets[set_index].update()
-    }
+    // shift(set_index: number, direction: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
+    //     if (!this.set_index_is_valid(set_index)) {
+    //         return
+    //     }
+    //     this.sets[set_index].shift(direction, wrap_type, page_wrap)
+    //     this.sets[set_index].update()
+    // }
 
     // Expand.
-    expand(set_index: number, direction: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap) {
-        if (!this.set_index_is_valid(set_index)) {
-            return
-        }
-        this.sets[set_index].expand(direction, match_criteria, page_wrap)
-        this.sets[set_index].update()
-    }
+    // expand(set_index: number, direction: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap) {
+    //     if (!this.set_index_is_valid(set_index)) {
+    //         return
+    //     }
+    //     this.sets[set_index].expand(direction, match_criteria, page_wrap)
+    //     this.sets[set_index].update()
+    // }
 
     get_marked_sets(): MarkedSetInfo {
         let marked: number[] = []

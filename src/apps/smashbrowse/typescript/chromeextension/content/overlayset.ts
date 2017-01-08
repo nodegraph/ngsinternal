@@ -105,11 +105,11 @@ class OverlaySet {
     }
 
     // Shift.
-    shift(side: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
-        for (let i = 0; i < this.overlays.length; i++) {
-            this.overlays[i].get_elem_wrap().shift(side, wrap_type, page_wrap)
-        }
-    }
+    // shift(side: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
+    //     for (let i = 0; i < this.overlays.length; i++) {
+    //         this.overlays[i].get_elem_wrap().shift(side, wrap_type, page_wrap)
+    //     }
+    // }
 
     static find_element(elem_wraps: ElemWrap[], element: Element): number {
         for(var i=0; i<elem_wraps.length; i++) {
@@ -120,32 +120,32 @@ class OverlaySet {
         return -1
     }
 
-    // Expand
-    expand(side: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap): void {
-        // Cache the elem_wraps already in this set.
-        let existing_elem_wraps: ElemWrap[] = []
-        for (let i = 0; i < this.overlays.length; i++) {
-            existing_elem_wraps.push(this.overlays[i].get_elem_wrap())
-        }
+    // // Expand
+    // expand(side: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap): void {
+    //     // Cache the elem_wraps already in this set.
+    //     let existing_elem_wraps: ElemWrap[] = []
+    //     for (let i = 0; i < this.overlays.length; i++) {
+    //         existing_elem_wraps.push(this.overlays[i].get_elem_wrap())
+    //     }
 
-        // Loop through each elem wrap, looking for neighbors.
-        let similar_elem_wraps: ElemWrap[] = []
-        for (let i = 0; i < this.overlays.length; i++) {
-            let neighbors = this.overlays[i].get_elem_wrap().get_similar_neighbors(side, match_criteria, page_wrap)
-            for (let j = 0; j < neighbors.length; j++) {
-                // If the neighbor isn't already in the existing set or the similar set, then add it.
-                if ((OverlaySet.find_element(similar_elem_wraps, neighbors[j].get_element()) < 0) &&
-                    (OverlaySet.find_element(existing_elem_wraps, neighbors[j].get_element()) < 0)) {
-                    similar_elem_wraps.push(neighbors[j])
-                }
-            }
-        }
+    //     // Loop through each elem wrap, looking for neighbors.
+    //     let similar_elem_wraps: ElemWrap[] = []
+    //     for (let i = 0; i < this.overlays.length; i++) {
+    //         let neighbors = this.overlays[i].get_elem_wrap().get_similar_neighbors(side, match_criteria, page_wrap)
+    //         for (let j = 0; j < neighbors.length; j++) {
+    //             // If the neighbor isn't already in the existing set or the similar set, then add it.
+    //             if ((OverlaySet.find_element(similar_elem_wraps, neighbors[j].get_element()) < 0) &&
+    //                 (OverlaySet.find_element(existing_elem_wraps, neighbors[j].get_element()) < 0)) {
+    //                 similar_elem_wraps.push(neighbors[j])
+    //             }
+    //         }
+    //     }
 
-        for (let i = 0; i < similar_elem_wraps.length; i++) {
-            let overlay = new Overlay('smash_browse_selected', this.color, this.color_index, this.marked, similar_elem_wraps[i])
-            this.overlays.push(overlay)
-        }
-    }
+    //     for (let i = 0; i < similar_elem_wraps.length; i++) {
+    //         let overlay = new Overlay('smash_browse_selected', this.color, this.color_index, this.marked, similar_elem_wraps[i])
+    //         this.overlays.push(overlay)
+    //     }
+    // }
 
     // Merge another sets elements into ourself.
     merge(other: OverlaySet): void {

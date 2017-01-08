@@ -252,82 +252,82 @@ class ElemWrap {
     // Element Shifting.
     //----------------------------------------------------------------------------------------
 
-    // Returns the next topmost element on one side of us.
-    get_neighboring_elem_wrap(getter: () => string, side: DirectionType, page_wrap: PageWrap): ElemWrap {
-        let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
+    // // Returns the next topmost element on one side of us.
+    // get_neighboring_elem_wrap(getter: () => string, side: DirectionType, page_wrap: PageWrap): ElemWrap {
+    //     let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
 
-        // Get all elem wraps intersecting the beam.
-        let elem_wraps: ElemWrap[] = page_wrap.get_intersecting_with(beam)
+    //     // Get all elem wraps intersecting the beam.
+    //     let elem_wraps: ElemWrap[] = page_wrap.get_intersecting_with(beam)
 
-        // Select out those elem wraps returning any value with getter.
-        let candidates: ElemWrap[] = []
-        for (let i = 0; i < elem_wraps.length; i++) {
-            if (elem_wraps[i].get_id() == this.get_id()) {
-                continue
-            }
-            let value = getter.call(elem_wraps[i])
-            if (value) {
-                candidates.push(elem_wraps[i])
-            }
-        }
+    //     // Select out those elem wraps returning any value with getter.
+    //     let candidates: ElemWrap[] = []
+    //     for (let i = 0; i < elem_wraps.length; i++) {
+    //         if (elem_wraps[i].get_id() == this.get_id()) {
+    //             continue
+    //         }
+    //         let value = getter.call(elem_wraps[i])
+    //         if (value) {
+    //             candidates.push(elem_wraps[i])
+    //         }
+    //     }
 
-        // Find the closest candidate to us.
-        let min_dist: number = 99999999
-        let min_candidate: ElemWrap = null
-        for (let i = 0; i < candidates.length; i++) {
-            let dist = candidates[i].page_box.is_oriented_on(side, this.page_box)
-            // A dist greater than zero means it's properly oriented.
-            if (dist > 0) {
-                // Is this closer than any other candidate.
-                if (!min_candidate || dist < min_dist) {
-                    min_candidate = candidates[i]
-                    min_dist = dist
-                }
-            }
-        }
+    //     // Find the closest candidate to us.
+    //     let min_dist: number = 99999999
+    //     let min_candidate: ElemWrap = null
+    //     for (let i = 0; i < candidates.length; i++) {
+    //         let dist = candidates[i].page_box.is_oriented_on(side, this.page_box)
+    //         // A dist greater than zero means it's properly oriented.
+    //         if (dist > 0) {
+    //             // Is this closer than any other candidate.
+    //             if (!min_candidate || dist < min_dist) {
+    //                 min_candidate = candidates[i]
+    //                 min_dist = dist
+    //             }
+    //         }
+    //     }
 
-        // Return our result.
-        return min_candidate
-    }
+    //     // Return our result.
+    //     return min_candidate
+    // }
 
-    shift(dir: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
-        // Find the proper getter for the type we're shifting to.
-        let getter: () => string = ElemWrap.get_getter_from_wrap_type(wrap_type)
-        let elem_wrap: ElemWrap = this.get_neighboring_elem_wrap(getter, dir, page_wrap)
-        if (elem_wrap) {
-            this.element = elem_wrap.element
-        }
-    }
+    // shift(dir: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
+    //     // Find the proper getter for the type we're shifting to.
+    //     let getter: () => string = ElemWrap.get_getter_from_wrap_type(wrap_type)
+    //     let elem_wrap: ElemWrap = this.get_neighboring_elem_wrap(getter, dir, page_wrap)
+    //     if (elem_wrap) {
+    //         this.element = elem_wrap.element
+    //     }
+    // }
 
 
-    //Returns the next topmost element on one side of us.
-    get_similar_neighbors(side: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap): ElemWrap[] {
-        let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
+    // //Returns the next topmost element on one side of us.
+    // get_similar_neighbors(side: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap): ElemWrap[] {
+    //     let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
 
-        // Get all elem wraps intersecting the beam.
-        let elem_wraps = page_wrap.get_intersecting_with(beam)
+    //     // Get all elem wraps intersecting the beam.
+    //     let elem_wraps = page_wrap.get_intersecting_with(beam)
 
-        // Select out those elem wraps returning any value with getter.
-        let getter: () => string = this.get_getter()
-        let candidates: ElemWrap[] = []
-        for (let i = 0; i < elem_wraps.length; i++) {
-            let value = getter.call(elem_wraps[i])
-            if (value) {
-                candidates.push(elem_wraps[i])
-            }
-        }
+    //     // Select out those elem wraps returning any value with getter.
+    //     let getter: () => string = this.get_getter()
+    //     let candidates: ElemWrap[] = []
+    //     for (let i = 0; i < elem_wraps.length; i++) {
+    //         let value = getter.call(elem_wraps[i])
+    //         if (value) {
+    //             candidates.push(elem_wraps[i])
+    //         }
+    //     }
 
-        // Find the candidates which match us.
-        let matches: ElemWrap[] = []
-        for (let i = 0; i < candidates.length; i++) {
-            if (match_criteria.matches(this, candidates[i])) {
-                matches.push(candidates[i])
-            }
-        }
+    //     // Find the candidates which match us.
+    //     let matches: ElemWrap[] = []
+    //     for (let i = 0; i < candidates.length; i++) {
+    //         if (match_criteria.matches(this, candidates[i])) {
+    //             matches.push(candidates[i])
+    //         }
+    //     }
 
-        // Return our result.
-        return matches
-    }
+    //     // Return our result.
+    //     return matches
+    // }
 
 
     //----------------------------------------------------------------------------------------
