@@ -109,7 +109,8 @@ class MutationMonitor {
             if (mutation.type == "childList") {
                 for (let n = 0; n < mutation.addedNodes.length; n++) {
                     let node_name = mutation.addedNodes[n].nodeName.toLowerCase()
-                    if (node_name != '#text' && node_name != 'svg') {
+                    //console.log('mutation node name: ' + node_name)
+                    if (node_name != '#text' && node_name != 'svg' && node_name != 'span') {
                         ignore = false
                         break
                     }
