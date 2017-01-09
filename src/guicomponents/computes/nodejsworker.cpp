@@ -25,6 +25,7 @@
 namespace ngs {
 
 const int NodeJSWorker::kPollInterval = 1000;
+const int NodeJSWorker::kWaitInterval = 1000;
 
 NodeJSWorker::NodeJSWorker(Entity* parent)
     : QObject(NULL),
@@ -42,6 +43,11 @@ NodeJSWorker::NodeJSWorker(Entity* parent)
   _poll_timer.setSingleShot(false);
   _poll_timer.setInterval(kPollInterval);
   connect(&_poll_timer,SIGNAL(timeout()),this,SLOT(on_poll()));
+
+  // Setup the wait timer.
+  _wait_timer.setSingleShot(false);
+  _wait_timer.setInterval(kWaitInterval);
+  connect(&_wait_timer,SIGNAL(timeout()),this,SLOT(on_done_wait()));
 }
 
 NodeJSWorker::~NodeJSWorker() {
@@ -152,6 +158,11 @@ void NodeJSWorker::on_poll() {
       TaskContext tc(_scheduler);
       queue_perform_mouse_hover(tc);
     }
+}
+
+void NodeJSWorker::on_done_wait() {
+  _scheduler->run_next_task();
+  //_manipulator->continue_cleaning_to_ultimate_targets_on_idle();
 }
 
 // ---------------------------------------------------------------------------------
@@ -280,6 +291,11 @@ void NodeJSWorker::queue_wait_until_loaded(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::wait_until_loaded_task, this), "queue_wait_until_loaded");
 }
 
+void NodeJSWorker::queue_wait(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::wait_task, this), "queue_wait");
+}
+
+
 // ---------------------------------------------------------------------------------
 // Queue Navigate Tasks.
 // ---------------------------------------------------------------------------------
@@ -338,10 +354,20 @@ void NodeJSWorker::queue_shift_element_by_values(TaskContext& tc) {
 
 void NodeJSWorker::queue_perform_mouse_action(TaskContext& tc) {
   queue_get_current_element(tc);
+
+  queue_unblock_events(tc);
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::perform_hover_action_task,this), "perform_hover_action_task");
+  queue_block_events(tc); // After we're done interacting with the page, block events on the page.
+  queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
+
+  // Force wait so that the webpage can react to the mouse hover.
+  queue_wait(tc);
+
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::perform_mouse_action_task,this), "queue_perform_action_task");
   queue_block_events(tc); // After we're done interacting with the page, block events on the page.
   queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
+
   queue_update_element(tc); // Our actions may have moved elements arounds, so we update our overlays.
 }
 
@@ -649,6 +675,10 @@ void NodeJSWorker::wait_until_loaded_task() {
   send_msg_task(req);
 }
 
+void NodeJSWorker::wait_task() {
+  _wait_timer.start();
+}
+
 // ------------------------------------------------------------------------
 // Browser Reset and Shutdown Tasks.
 // ------------------------------------------------------------------------
@@ -773,7 +803,10 @@ void NodeJSWorker::perform_hover_action_task() {
   QJsonObject args;
   args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
   args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
+
   args.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
+  args.insert(Message::kLocalMousePosition, _chain_state.value(Message::kLocalMousePosition));
+
   Message req(RequestType::kPerformMouseAction);
   req.insert(Message::kArgs, args);
   send_msg_task(req);

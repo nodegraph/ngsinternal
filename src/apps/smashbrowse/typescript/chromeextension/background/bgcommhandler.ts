@@ -189,7 +189,7 @@ class BgCommHandler {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
         let best_distance = 0
-        const off_axis_weight = 2 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
+        const off_axis_weight = 1000 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
 
         let src_box = new Box(src.box)
         let src_center = src_box.get_center()
@@ -210,11 +210,15 @@ class BgCommHandler {
             let dest_center:Point = dest_box.get_center()
             let diff = dest_center.subtract(src_center)
             
+            // Determine the size weight for the size difference.
+            let size_diff_x = dest_box.get_width() - src_box.get_width()
+            let size_diff_y = dest_box.get_height() - src_box.get_height()
+            let size_weight = size_diff_x * size_diff_x + size_diff_y * size_diff_y
 
             // Now choose the closest element on one side, according to the direction in the request.
             let parallel_dist = (diff.x * dir.x) + (diff.y * dir.y)
             let perp_dist = (diff.x * perp_dir.x) + (diff.y * perp_dir.y)
-            let distance = parallel_dist + off_axis_weight * Math.abs(perp_dist)  //Math.pow(perp_dist,2)
+            let distance = (parallel_dist*parallel_dist) + (off_axis_weight * perp_dist * perp_dist) + size_weight
 
             // We want to skip elements that are in the opposite direction and that are overlaid directly on top of us.
             // For example an image when hovered over may load in a video on top.

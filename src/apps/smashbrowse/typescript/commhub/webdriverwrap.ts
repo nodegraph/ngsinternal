@@ -1,5 +1,6 @@
 import webdriver = require('selenium-webdriver')
 import chrome = require('selenium-webdriver/chrome')
+import firefox = require('selenium-webdriver/firefox')
 import Path = require('path')
 
 import {FSWrap} from './fswrap'
@@ -42,37 +43,144 @@ export class WebDriverWrap {
 
     open_browser(): boolean {
         try {
-            let chromeOptions = new chrome.Options()
-            //Win_x64-389148-chrome-win32
-            //Win-338428-chrome-win32
-            //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
+            // ----------------------------------------------------------------------------------------------------------------------------
+            // Chrome Options.
+            // ----------------------------------------------------------------------------------------------------------------------------
+            let chrome_opts = new chrome.Options()
+            {
+                //Win_x64-389148-chrome-win32
+                //Win-338428-chrome-win32
+                //chromeOptions.setChromeBinaryPath('/downloaded_software/chromium/Win_x64-389148-chrome-win32/chrome-win32/chrome.exe')
 
-            //let url = "file://"+FSWrap.get_bin_dir() + '/../html/smashbrowse.html?' + get_app_server_port()
-            //url = url.replace(/\\/g,"/")
+                //let url = "file://"+FSWrap.get_bin_dir() + '/../html/smashbrowse.html?' + get_app_server_port()
+                //url = url.replace(/\\/g,"/")
 
-            let url = "https://www.google.com/?" + get_ext_server_port()
-            chromeOptions.addArguments(url)
+                let url = "https://www.google.com/?" + get_ext_server_port()
+                chrome_opts.addArguments(url)
 
-            // chromeOptions.addArguments("--ssl-version-min tls1.2")
-            // chromeOptions.addArguments("--ssl-version-max tls1.2")
-            // chromeOptions.addArguments("--allow-insecure-localhost")
-            // chromeOptions.addArguments("--ignore-certificate-errors")
-            // chromeOptions.addArguments("--dns-prefetch-disable")
+                // chromeOptions.addArguments("--ssl-version-min tls1.2")
+                // chromeOptions.addArguments("--ssl-version-max tls1.2")
+                // chromeOptions.addArguments("--allow-insecure-localhost")
+                // chromeOptions.addArguments("--ignore-certificate-errors")
+                // chromeOptions.addArguments("--dns-prefetch-disable")
 
-            chromeOptions.addArguments("--load-extension=" + FSWrap.get_chrome_ext_dir())
-            chromeOptions.addArguments("--ignore-certificate-errors")
-            chromeOptions.addArguments("--disable-web-security")
-            chromeOptions.addArguments("--user-data-dir=" + this.fswrap.get_chrome_user_data_dir())
-            chromeOptions.addArguments("--first-run")
+                //chrome_opts.addArguments("--incognito")
+                //chrome_opts.addArguments("--enable-extensions")
+
+                chrome_opts.addArguments("--load-extension=" 
+                    + FSWrap.get_chrome_ext_dir() + ","
+                    + FSWrap.settings_dir + "/../../Local/Google/Chrome/User Data/Default/Extensions/lmjnegcaeklhafolokijcfjliaokphfk/2.0.1.0_0" + ","
+                    + FSWrap.settings_dir + "/../../Local/Google/Chrome/User Data/Default/Extensions/elicpjhcidhpjomhibiffojpinpmmpil/1.97.54_0"
+                    ) // Extension for downloading.
+
+                // The main page of the extension can be accessed at this url.: 
+                // chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/mainPanel.html
+                // chrome-extension://elicpjhcidhpjomhibiffojpinpmmpil/startpage/index.html
+                //chromeOptions.addArguments("--load-extension=" + FSWrap.get_chrome_ext_dir()) // The smashbrowse extension.
+                chrome_opts.addArguments("--ignore-certificate-errors")
+                chrome_opts.addArguments("--disable-web-security")
+                chrome_opts.addArguments("--user-data-dir=" + this.fswrap.get_chrome_user_data_dir())
+                chrome_opts.addArguments("--first-run")
+ 
+
+                // Some preferences.
+                let prefs:{ [s: string]: any }  = {}
+                prefs["download.prompt_for_download"] = false
+                prefs["download.directory_upgrade"] = true
+                prefs["download.default_directory"] = "C:\\"
+                chrome_opts.setUserPreferences(prefs)
+            }
+
+            // ----------------------------------------------------------------------------------------------------------------------------
+            // Firefox Options.
+            // ----------------------------------------------------------------------------------------------------------------------------
+            let firefox_profile = new firefox.Profile()
+            {
+                // Disable Save As Dialog.
+                firefox_profile.setPreference("browser.download.folderList",2);
+                firefox_profile.setPreference("browser.download.manager.showWhenStarting",false);
+                firefox_profile.setPreference("browser.download.dir", "c:/");
+                firefox_profile.setPreference("browser.helperApps.neverAsk.saveToDisk",
+                                              "text/html, application/xhtml+xml, application/xml, application/csv, text/plain, application/vnd.ms-excel, text/csv, text/comma-separated-values, application/octet-stream");   
+                
+                // Blank start page.
+                firefox_profile.setPreference("browser.startup.homepage", "about:blank");
+                firefox_profile.setPreference("startup.homepage_welcome_url", "about:blank");
+                firefox_profile.setPreference("startup.homepage_welcome_url.additional", "about:blank");
+
+                //firefox_profile.addExtension(FSWrap.get_chrome_ext_dir() )
+                firefox_profile.addExtension("C:/Program Files (x86)/Mozilla Firefox/browser/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}.xpi")
+                //firefox_profile.setPreference("downloadHelper." + "currentVersion", "6.2.0");
+            }
             
+            // Add extensions.
+            let firefox_binary = new firefox.Binary() 
+            {
+                firefox_binary.addArguments("-e "+ "C:/Program Files (x86)/Mozilla Firefox/browser/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}.xpi")
+                firefox_binary.addArguments("-asdfa sdf asdf;klj a dflkj asdf aslkdjf l asdlkfj alksdfj asd flkja sdf xxxxxxxxxxxxxxxxxxxxxxxxxx")
+            }
+
+            let firefox_opts = new firefox.Options()
+            {
+                firefox_opts = firefox_opts.setProfile(firefox_profile)
+                firefox_opts = firefox_opts.setBinary(firefox_binary)
+            }
+
+            
+
+
+            // ----------------------------------------------------------------------------------------------------------------------------
+            // Chrome Capabilities.
+            // ----------------------------------------------------------------------------------------------------------------------------
+            //let chrome_caps = webdriver.Capabilities.chrome()
+
+            
+            // ----------------------------------------------------------------------------------------------------------------------------
+            // Firefox Capabilities.
+            // ----------------------------------------------------------------------------------------------------------------------------
+            //let firefox_caps = webdriver.Capabilities.firefox()
+            //firefox_caps.set("firefox_profile", encoded)
+            // firefox_profile.encode().then(
+            //     (encoded:string) => { 
+            //         firefox_caps.set("firefox_profile", encoded)
+                
+            //         this.driver = new webdriver.Builder()
+            //             .forBrowser('firefox')
+            //             .setFirefoxOptions(firefox_opts)
+            //             .withCapabilities(firefox_caps)
+            //             .build()
+
+            //         this.flow = webdriver.promise.controlFlow()
+
+            //         // Set default settings.
+            //         this.driver.manage().timeouts().setScriptTimeout(180000); // 3 mins
+            //         this.driver.manage().timeouts().pageLoadTimeout(180000); // 3 mins
+
+            //         webdriver.promise.controlFlow().on('uncaughtException', function(e: Error) {
+            //             console.error('Unhandled error: ' + e);
+            //         });
+            //     }
+            // )
+            
+
+
             //chromeOptions.addArguments("--app=file:///"+url)
 
             // "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir --app=https://www.google.com
 
             this.driver = new webdriver.Builder()
                 .forBrowser('chrome')//.forBrowser('firefox')
-                .setChromeOptions(chromeOptions)
-                .build();
+                .setChromeOptions(chrome_opts)
+                //.withCapabilities(chrome_caps)
+                .build()
+
+            // this.driver = new webdriver.Builder()
+            //     .forBrowser('firefox')
+            //     .setFirefoxOptions(firefox_opts)
+            //     //.withCapabilities(firefox_caps)
+            //     .build()
+
+            // this.driver = new firefox.Driver(firefox_opts);
 
             this.flow = webdriver.promise.controlFlow()
 
@@ -262,6 +370,18 @@ export class WebDriverWrap {
             () => { return this.driver.findElement(By.xpath(xpath)) },
             (error) => { console.info('Error could not find element at frame_index_path: ' + frame_index_path + ' and xpath: ' + xpath); throw (error) })
     }
+
+    get_element_css(frame_index_path: string, css: string): webdriver.promise.Promise<webdriver.WebElement> {
+        return this.switch_to_frame(frame_index_path).then(
+            () => { return this.driver.findElement(By.css(css)) },
+            (error) => { console.info('Error could not find element at frame_index_path: ' + frame_index_path + ' and css selector: ' + css); throw (error) })
+    }
+
+    open_tab() {
+        return this.get_element_css("", "body").then(
+            (element: webdriver.WebElement) => {return element.sendKeys(Key.CONTROL, "t")},
+            (error) => { console.info('Error could not find body: '); throw (error) })
+    }
         
     // Returns a promise which evaulates to a visible element.
     // Usually we skip checking the visibility of the element because it allows us to
@@ -308,18 +428,20 @@ export class WebDriverWrap {
             (element: webdriver.WebElement) => {
                 return element.getSize().then(
                     (size) => { 
+                        console.log('element size: ' + size.width + ", " + size.height)
                         let seq: webdriver.ActionSequence = this.driver.actions()
                         // If the local mouse position is within the element's bounds use it.
                         // Otherwise we use the center point of the element.
-                        if ((local_mouse_position.x < size.width) && (local_mouse_position.y < size.height)) {
+                        if ((local_mouse_position.x >= 0) && (local_mouse_position.y >= 0) && (local_mouse_position.x < size.width) && (local_mouse_position.y < size.height)) {
                             seq = seq.mouseMove(element, { x: local_mouse_position.x, y: local_mouse_position.y })
                         } else {
-                            seq = seq.mouseMove(element, { x: size.width/2.0, y: size.height/2.0 })
+                            seq = seq.mouseMove(element, { x: size.width / 2.0, y: size.height /2.0 })
                         }
                         if (hold_ctrl) {
                             seq = seq.keyDown(Key.CONTROL)
                         }
-                        seq = seq.click()
+                        seq = seq.mouseDown()
+                        seq = seq.mouseUp()
                         if (hold_ctrl) {
                             seq = seq.keyUp(Key.CONTROL)
                         }
@@ -337,13 +459,22 @@ export class WebDriverWrap {
     mouse_over_element(frame_index_path: string, xpath: string, local_mouse_position: IPoint = null): webdriver.promise.Promise<void> {
         return this.get_element(frame_index_path, xpath).then(
             (element: webdriver.WebElement) => {
-                if (local_mouse_position) {
-                    return this.driver.actions().mouseMove(element, { x: local_mouse_position.x, y: local_mouse_position.y }).perform()
-                } else {
-                    return element.getSize().then(
-                        (size) => { return this.driver.actions().mouseMove(element, { x: size.width/2.0, y: size.height/2.0 }).perform()},
-                        (error) => {console.info('Warning: could not get the size of the element: ' + xpath); throw (error) })
-                }
+                return element.getSize().then(
+                    (size) => {
+                        let seq: webdriver.ActionSequence = this.driver.actions()
+                        let local_x = 0
+                        let local_y = 0
+                        if ((local_mouse_position.x >= 0) && (local_mouse_position.y >= 0) && (local_mouse_position.x < size.width) && (local_mouse_position.y < size.height)) {
+                            local_x = local_mouse_position.x
+                            local_y = local_mouse_position.y
+                        } else {
+                            local_x = size.width/2.0
+                            local_y = size.height/2.0
+                        }
+                        seq = seq.mouseMove(element, { x: local_x, y: local_y })
+                        return seq.perform()
+                    },
+                    (error) => {console.info('Warning: could not get the size of the element: ' + xpath); throw (error) })
             },
             (error: any) => {
                 console.log('Error: was not able to find element.'); throw (error) 
@@ -358,6 +489,22 @@ export class WebDriverWrap {
                 return element.findElement(By.xpath('option[normalize-space(text())="' + option_text + '"]')).click()
             }
         )
+    }
+
+
+
+    download_files(frame_index_path: string) {
+        this.open_tab()
+        .then(()=>{this.navigate_to("chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/mainPanel.html")})
+        .then(()=>{        
+            return this.get_element_css(frame_index_path, "#content-footer > div.groups > div.group.group-inactive.ng-binding").then(
+            (element: webdriver.WebElement) => {
+                let seq: webdriver.ActionSequence = this.driver.actions()
+                seq = seq.mouseMove(element, { x: 10, y: 10 })
+                seq = seq.click()
+                return seq.perform() 
+            }
+        )})
     }
 
     // Helper to terminate promise chains.

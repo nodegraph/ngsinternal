@@ -52,6 +52,7 @@ Q_OBJECT
   // Polling Control.
   // Polling is used to ensure that the browser is open and of the expected dimensions.
   static const int kPollInterval;
+  static const int kWaitInterval;
   bool is_polling();
   void start_polling();
   void stop_polling();
@@ -91,6 +92,7 @@ Q_OBJECT
   void queue_block_events(TaskContext& tc);
   void queue_unblock_events(TaskContext& tc);
   void queue_wait_until_loaded(TaskContext& tc);
+  void queue_wait(TaskContext& tc);
 
   // Queue Navigate Tasks.
   void queue_navigate_to(TaskContext& tc);
@@ -131,6 +133,7 @@ signals:
 
  private slots:
   void on_poll();
+  void on_done_wait();
 
  private:
   void reset_state();
@@ -180,6 +183,7 @@ signals:
   void block_events_task();
   void unblock_events_task();
   void wait_until_loaded_task();
+  void wait_task();
 
   // Browser Reset and Shutdown Tasks.
   void shutdown_task();
@@ -226,6 +230,7 @@ signals:
 
   // Poll timer.
   QTimer _poll_timer;
+  QTimer _wait_timer;
 
   // State to bring up the web actions menu, and handle menu activations.
   QJsonObject _global_mouse_pos;
