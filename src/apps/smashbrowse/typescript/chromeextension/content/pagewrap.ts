@@ -255,18 +255,10 @@ class PageWrap {
         return null
     }
 
-    // Returns the top elem wrap with text, according to z-order.
-    get_top_text_elem_wrap_at(page_pos: Point): ElemWrap {
-        let candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_text, page_pos)
-        if (!candidate) {
-            return null
-        }
-        return candidate
-    }
-
-    //Returns the top elem wrap with an image, according to z-order.
-    get_top_image_elem_wrap_at(page_pos: Point): ElemWrap {
-        let candidate = this.get_first_elem_wrap_at(ElemWrap.prototype.get_image, page_pos)
+    // Returns the top elem wrap, according to z-order.
+    get_top_elem_wrap_at(page_pos: Point, wrap_type: WrapType): ElemWrap {
+        let getter = ElemWrap.get_getter_from_wrap_type(wrap_type)
+        let candidate = this.get_first_elem_wrap_at(getter, page_pos)
         if (!candidate) {
             return null
         }

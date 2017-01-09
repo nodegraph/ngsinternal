@@ -95,8 +95,8 @@ class GUICollection {
 
     on_mouse_over(e: MouseEvent): void {
         let point = new Point({ x: e.pageX, y: e.pageY })
-        let text_elem_wrap = this.page_wrap.get_top_text_elem_wrap_at(point)
-        let image_elem_wrap = this.page_wrap.get_top_image_elem_wrap_at(point)
+        let text_elem_wrap = this.page_wrap.get_top_elem_wrap_at(point, WrapType.text)
+        let image_elem_wrap = this.page_wrap.get_top_elem_wrap_at(point, WrapType.image)
         this.page_overlays.update_overlays(text_elem_wrap, image_elem_wrap)
     }
 
