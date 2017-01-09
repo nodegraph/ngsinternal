@@ -216,7 +216,9 @@ class BgCommHandler {
             let perp_dist = (diff.x * perp_dir.x) + (diff.y * perp_dir.y)
             let distance = parallel_dist + off_axis_weight * Math.abs(perp_dist)  //Math.pow(perp_dist,2)
 
-            if (parallel_dist < 0) {
+            // We want to skip elements that are in the opposite direction and that are overlaid directly on top of us.
+            // For example an image when hovered over may load in a video on top.
+            if (parallel_dist < 5) {
                 return
             }
 
