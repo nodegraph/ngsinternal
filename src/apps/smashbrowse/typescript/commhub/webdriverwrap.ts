@@ -230,6 +230,10 @@ export class WebDriverWrap {
         return this.driver.navigate().refresh();
     }
 
+    get_current_url(): webdriver.promise.Promise<string> {
+        return this.driver.getCurrentUrl()
+    }
+
     destroy_current_tab(): webdriver.promise.Promise<void> {
         // Do nothing if have only one tab left.
         if (this.window_handles.length == 1) {

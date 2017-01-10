@@ -99,6 +99,7 @@ Q_OBJECT
   void queue_navigate_back(TaskContext& tc);
   void queue_navigate_forward(TaskContext& tc);
   void queue_navigate_refresh(TaskContext& tc);
+  void queue_get_current_url(TaskContext& tc);
 
   // Queue Set Tasks.
   void queue_update_element(TaskContext& tc);
@@ -194,6 +195,7 @@ signals:
   void navigate_back_task();
   void navigate_forward_task();
   void navigate_refresh_task();
+  void get_current_url_task();
 
   // Set Creation/Modification Tasks.
   void update_element_task();

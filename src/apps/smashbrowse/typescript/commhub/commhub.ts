@@ -257,6 +257,10 @@ class AppConnection extends BaseConnection {
                     }
                 }
             } break
+            case RequestType.kGetCurrentURL: {
+                let p = this.webdriverwrap.get_current_url()
+                WebDriverWrap.terminate_chain(p, req.id)
+            } break
             default: {
                 console.log('checking if firebase can handle request')
                 if (firebasewraps.handle_request(req)) {

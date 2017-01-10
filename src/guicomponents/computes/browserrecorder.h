@@ -39,6 +39,7 @@ Q_OBJECT
   Q_INVOKABLE void record_navigate_refresh();
   Q_INVOKABLE void record_navigate_back();
   Q_INVOKABLE void record_navigate_forward();
+  Q_INVOKABLE void record_get_current_url();
 
   // Find element by position.
   Q_INVOKABLE void record_find_text_element_by_position();

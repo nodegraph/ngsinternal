@@ -48,6 +48,14 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Get Current URL"
+        description: "Get current url."
+        script: "web_recorder.record_get_current_url();
+                 main_bar.switch_to_node_graph();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
         title: "Close Current Tab"
         description: "Close the current tab and switch to a previous tab."
         script: "web_recorder.record_destroy_current_tab();

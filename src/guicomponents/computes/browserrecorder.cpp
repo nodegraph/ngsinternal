@@ -122,6 +122,12 @@ void BrowserRecorder::record_navigate_refresh() {
   finish();
 }
 
+void BrowserRecorder::record_get_current_url() {
+  check_busy()
+  _worker->queue_build_compute_node(tc, ComponentDID::kGetCurrentURLCompute);
+  finish();
+}
+
 // -----------------------------------------------------------------
 // Find element by position.
 // -----------------------------------------------------------------

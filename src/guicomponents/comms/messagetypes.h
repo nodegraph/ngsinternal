@@ -31,6 +31,7 @@ enum class RequestType : int {
   kNavigateBack,
   kNavigateForward,
   kNavigateRefresh,
+  kGetCurrentURL,
 
   // Web Page Tabs.
   kUpdateCurrentTab,

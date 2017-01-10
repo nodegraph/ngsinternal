@@ -141,6 +141,15 @@ class GUICOMPUTES_EXPORT NavigateRefreshCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
+class GUICOMPUTES_EXPORT GetCurrentURLCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, GetCurrentURLCompute);
+  GetCurrentURLCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void receive_chain_state(const QJsonObject& chain_state);
+ protected:
+  virtual bool update_state();
+};
+
 class GUICOMPUTES_EXPORT FindElementByPositionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, FindElementByPositionCompute);

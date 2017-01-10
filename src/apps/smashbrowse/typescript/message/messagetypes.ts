@@ -36,6 +36,7 @@ const enum RequestType {
   kNavigateBack,
   kNavigateForward,
   kNavigateRefresh,
+  kGetCurrentURL,
 
   // Web Page Tabs.
   kUpdateCurrentTab,

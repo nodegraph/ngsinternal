@@ -295,6 +295,33 @@ bool NavigateRefreshCompute::update_state() {
   return false;
 }
 
+bool GetCurrentURLCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_get_current_url(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
+
+void GetCurrentURLCompute::receive_chain_state(const QJsonObject& chain_state) {
+  internal();
+  clean_finalize();
+
+  // Grab the url from the chain state.
+  QString url = chain_state["value"].toString();
+  std::cerr << "Got final url: " << url.toStdString() << "\n";
+  // Grab the incoming object.
+  QJsonValue incoming = _inputs->get_input_value("in");
+  // Add the url into the incoming object under the key, "value".
+  QJsonObject obj = incoming.toObject();
+  obj.insert("value", url);
+  set_output("out", obj);
+}
+
+
 void FindElementByPositionCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);

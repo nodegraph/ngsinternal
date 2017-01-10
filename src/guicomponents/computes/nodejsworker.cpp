@@ -317,6 +317,10 @@ void NodeJSWorker::queue_navigate_refresh(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::navigate_refresh_task,this), "queue_navigate_refresh");
 }
 
+void NodeJSWorker::queue_get_current_url(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_current_url_task,this), "queue_navigate_refresh");
+}
+
 // ---------------------------------------------------------------------------------
 // Queue Set Tasks.
 // ---------------------------------------------------------------------------------
@@ -725,6 +729,11 @@ void NodeJSWorker::navigate_forward_task() {
 
 void NodeJSWorker::navigate_refresh_task() {
   Message req(RequestType::kNavigateRefresh);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::get_current_url_task() {
+  Message req(RequestType::kGetCurrentURL);
   send_msg_task(req);
 }
 
