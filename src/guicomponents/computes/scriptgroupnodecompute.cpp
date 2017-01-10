@@ -28,7 +28,7 @@ void ScriptGroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
 
   EntityConfig c = config;
   c.expose_plug = false;
-  c.unconnected_value = "var input = get_input(\"input\");\n set_output(\"output\", input);\n";
+  c.unconnected_value = "var input = get_input(\"input\");\nset_output(\"output\", input);\n";
 
   create_input("script", c);
 }
@@ -40,8 +40,8 @@ const std::unordered_set<std::string>& ScriptGroupNodeCompute::get_fixed_inputs(
 const QJsonObject ScriptGroupNodeCompute::_hints = ScriptGroupNodeCompute::init_hints();
 QJsonObject ScriptGroupNodeCompute::init_hints() {
   QJsonObject m;
-  //add_hint(m, "script", HintKey::kMultiLineHint, true);
-  add_hint(m, "script", HintKey::kDescriptionHint, "The script which computes the output values of this group. All the input values are made available under their names. Use \"set_output_value(...)\" to set an output value.");
+  add_hint(m, "script", HintKey::kMultiLineHint, true);
+  add_hint(m, "script", HintKey::kDescriptionHint, "Script to compute the outputs.\nget_input(name): retrieves an input.\nset_output(name, value): sets an output value.");
   return m;
 }
 
@@ -52,7 +52,6 @@ QJsonValue ScriptGroupNodeCompute::get_input(const QString& name) {
 void ScriptGroupNodeCompute::set_output(const QString& name, const QJsonValue& value) {
   _outputs.insert(name, value);
 }
-
 
 bool ScriptGroupNodeCompute::evaluate_script() {
   internal();
