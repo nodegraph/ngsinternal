@@ -86,6 +86,9 @@ void GroupNodeCompute::WireUpdater::update_wires() {
     std::vector<Entity*> _inputs_to_destroy;
     for (auto &iter : inputs_space->get_children()) {
       const std::string& child_name = iter.first;
+      if (_target->get_fixed_inputs().count(child_name)) {
+        continue;
+      }
       if (!exposed_inputs.count(child_name)) {
         _inputs_to_destroy.push_back(iter.second);
         _target->remove_param_hints(child_name);
@@ -125,6 +128,11 @@ void GroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
   create_namespace("links");
+}
+
+const std::unordered_set<std::string>& GroupNodeCompute::get_fixed_inputs() const {
+  static const std::unordered_set<std::string> dummy;
+  return dummy;
 }
 
 void GroupNodeCompute::add_param_hints(const std::string& name, const QJsonValue& param_hints) {

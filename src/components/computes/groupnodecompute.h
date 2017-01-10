@@ -25,6 +25,7 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   virtual ~GroupNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+  virtual const std::unordered_set<std::string>& get_fixed_inputs() const;
 
   // Clean the group interface.
   virtual bool clean_inputs();
@@ -37,6 +38,7 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   // Internal nodes.
   virtual void dirty_all_nodes_in_group();
   virtual void dirty_all_nodes_in_group_recursively();
+
 
 
  protected:

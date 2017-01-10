@@ -19,6 +19,7 @@ class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNod
 
   // Inputs and Outputs.
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+  virtual const std::unordered_set<std::string>& get_fixed_inputs() const;
 
   // Hints.
   static QJsonObject init_hints();
@@ -26,7 +27,8 @@ class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNod
   virtual const QJsonObject& get_hints() const {return _hints;}
 
   // Scripting API.
-  Q_INVOKABLE void set_output_value(const QString& name, const QJsonValue& value);
+  Q_INVOKABLE QJsonValue get_input(const QString& names);
+  Q_INVOKABLE void set_output(const QString& name, const QJsonValue& value);
 
  protected:
 
@@ -36,6 +38,8 @@ class GUICOMPUTES_EXPORT ScriptGroupNodeCompute: public QObject, public GroupNod
   virtual bool evaluate_script();
 
  private:
+
+  std::unordered_set<std::string> _fixed_inputs;
 };
 
 }

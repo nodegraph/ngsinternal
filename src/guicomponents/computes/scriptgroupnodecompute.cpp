@@ -15,8 +15,8 @@ namespace ngs {
 
 ScriptGroupNodeCompute::ScriptGroupNodeCompute(Entity* entity):
     QObject(NULL),
-    GroupNodeCompute(entity, kDID()) {
-  //_on_group_inputs.insert("script");
+    GroupNodeCompute(entity, kDID()),
+    _fixed_inputs({"script"}) {
 }
 
 ScriptGroupNodeCompute::~ScriptGroupNodeCompute() {
@@ -28,20 +28,28 @@ void ScriptGroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
 
   EntityConfig c = config;
   c.expose_plug = false;
-  c.unconnected_value = "var delta = 99;\nset_output_value(\"output\", input.value + delta);\n";
+  c.unconnected_value = "var input = get_input(\"input\");\n set_output(\"output\", input);\n";
 
   create_input("script", c);
+}
+
+const std::unordered_set<std::string>& ScriptGroupNodeCompute::get_fixed_inputs() const {
+  return _fixed_inputs;
 }
 
 const QJsonObject ScriptGroupNodeCompute::_hints = ScriptGroupNodeCompute::init_hints();
 QJsonObject ScriptGroupNodeCompute::init_hints() {
   QJsonObject m;
-  add_hint(m, "script", HintKey::kMultiLineHint, true);
+  //add_hint(m, "script", HintKey::kMultiLineHint, true);
   add_hint(m, "script", HintKey::kDescriptionHint, "The script which computes the output values of this group. All the input values are made available under their names. Use \"set_output_value(...)\" to set an output value.");
   return m;
 }
 
-void ScriptGroupNodeCompute::set_output_value(const QString& name, const QJsonValue& value) {
+QJsonValue ScriptGroupNodeCompute::get_input(const QString& name) {
+  return _inputs->get_input_value(name.toStdString());
+}
+
+void ScriptGroupNodeCompute::set_output(const QString& name, const QJsonValue& value) {
   _outputs.insert(name, value);
 }
 
@@ -55,27 +63,6 @@ bool ScriptGroupNodeCompute::evaluate_script() {
 
   // Set ourself as the context object, so all our methods will be available to qml.
   eval_context.setContextObject(this);
-
-  // Add the input values from the input nodes into the context.
-  // Note that we use input values from the input nodes instead of on the group because
-  // the default values are set properly on the input nodes for proper merging.
-  // The inputs on the group have their default values set to null, so that all value
-  // types will pass through.
-  for (auto &iter: _inputs->get_all()) {
-    const std::string& input_name = iter.first;
-    // Try to find the input node inside this group with the same name as the input.
-    Entity* input_node = our_entity()->get_child(input_name);
-    // Not all the inputs on a group are associated with input nodes inside the group.
-    // Some are just params directly on the group.
-    if (input_node) {
-      Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
-      QJsonValue value = input_node_compute->get_output("out");
-      eval_context.setContextProperty(input_name.c_str(), value);
-    } else {
-      QJsonValue value = _inputs->get_input_value(input_name);
-      eval_context.setContextProperty(input_name.c_str(), value);
-    }
-  }
 
   // Create the expression.
   QJsonValue script = _inputs->get_input_value("script");
