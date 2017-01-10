@@ -22,7 +22,7 @@ class GUICOMPUTES_EXPORT ScriptNodeCompute: public QObject, public Compute  {
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
 
-  Q_INVOKABLE QJsonValue get_input_value();
+  Q_INVOKABLE QJsonValue get_input();
   Q_INVOKABLE void set_output_value(const QJsonValue& value);
 
 protected:

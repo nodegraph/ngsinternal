@@ -7,6 +7,7 @@
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/comms/message.h>
 #include <guicomponents/comms/commtypes.h>
+#include <guicomponents/quick/nodegraphmanipulator.h>
 
 //#include <QtCore/QVariant>
 #include <QtQml/QQmlEngine>
@@ -37,7 +38,7 @@ void ScriptNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   {
     EntityConfig c = config;
     c.expose_plug = false;
-    c.unconnected_value = "";
+    c.unconnected_value = "var value = get_input().value; set_output(value);";
     create_input("script", c);
   }
   {
@@ -55,7 +56,7 @@ QJsonObject ScriptNodeCompute::init_hints() {
   return m;
 }
 
-QJsonValue ScriptNodeCompute::get_input_value() {
+QJsonValue ScriptNodeCompute::get_input() {
   return _inputs->get_input_value("in");
 }
 
@@ -84,6 +85,14 @@ bool ScriptNodeCompute::update_state() {
   // Evaluate the expression.
   bool value_is_undefined = false;
   QVariant result = expr.evaluate(&value_is_undefined);
+  // Check for errors.
+  if (expr.hasError()) {
+    std::cerr << "Error: expression has an error: " << expr.error().toString().toStdString() << "\n";
+    // Also show the error marker on the node.
+    _manipulator->set_error_node(expr.error().toString());
+    _manipulator->clear_ultimate_targets();
+    return false;
+  }
   return true;
 }
 
