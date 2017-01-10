@@ -440,8 +440,7 @@ export class WebDriverWrap {
                         if (hold_ctrl) {
                             seq = seq.keyDown(Key.CONTROL)
                         }
-                        seq = seq.mouseDown()
-                        seq = seq.mouseUp()
+                        seq = seq.click()
                         if (hold_ctrl) {
                             seq = seq.keyUp(Key.CONTROL)
                         }

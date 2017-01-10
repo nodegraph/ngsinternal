@@ -14,6 +14,7 @@ set(sources
     entermqttgroupcompute.cpp
     enterfirebasegroupcompute.cpp
     enterbrowsergroupcompute.cpp
+    waitnodecompute.cpp
     )
    
 set(headers
@@ -35,6 +36,7 @@ set(moc_headers
     scriptgroupnodecompute.h
     browserrecorder.h
     entermqttgroupcompute.h
+    waitnodecompute.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})

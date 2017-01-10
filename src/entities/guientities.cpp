@@ -68,6 +68,7 @@
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
+#include <guicomponents/computes/waitnodecompute.h>
 
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>
@@ -649,6 +650,19 @@ void LinkEntity::create_internals(const EntityConfig& config) {
   // Gui components.
   if (config.visible) {
     new_ff LinkShape(this);
+  }
+}
+
+void WaitNodeEntity::create_internals(const EntityConfig& config) {
+  // Our components.
+  (new_ff WaitNodeCompute(this))->create_inputs_outputs(config);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  // Gui components.
+  if (config.visible) {
+    new_ff RectNodeShape(this);
+    new_ff InputTopology(this);
+    new_ff OutputTopology(this);
   }
 }
 

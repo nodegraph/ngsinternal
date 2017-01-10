@@ -127,6 +127,13 @@ class ENTITIES_EXPORT MQTTGroupNodeEntity : public GroupNodeEntity {
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
+class ENTITIES_EXPORT WaitNodeEntity : public Entity {
+ public:
+  ENTITY_ID(WaitNodeEntity)
+ WaitNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  virtual void create_internals(const EntityConfig& configs = EntityConfig());
+};
+
 class ENTITIES_EXPORT DotNodeEntity : public Entity {
  public:
   ENTITY_ID(DotNodeEntity)

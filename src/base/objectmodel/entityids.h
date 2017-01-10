@@ -78,6 +78,7 @@ ENTITY_ENTRY1(InputNodeEntity)\
 ENTITY_ENTRY1(OutputNodeEntity)\
 /* Dot Node. */\
 ENTITY_ENTRY1(DotNodeEntity)\
+ENTITY_ENTRY1(WaitNodeEntity)\
 /* Compute Nodes. */\
 ENTITY_ENTRY1(ComputeNodeEntity)\
 ENTITY_ENTRY1(BrowserComputeNodeEntity)\

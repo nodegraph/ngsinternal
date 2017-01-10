@@ -25,7 +25,7 @@
 namespace ngs {
 
 const int NodeJSWorker::kPollInterval = 1000;
-const int NodeJSWorker::kWaitInterval = 1000;
+const int NodeJSWorker::kWaitInterval = 2000;
 
 NodeJSWorker::NodeJSWorker(Entity* parent)
     : QObject(NULL),
@@ -161,6 +161,7 @@ void NodeJSWorker::on_poll() {
 }
 
 void NodeJSWorker::on_done_wait() {
+  _wait_timer.stop();
   _scheduler->run_next_task();
   //_manipulator->continue_cleaning_to_ultimate_targets_on_idle();
 }
@@ -369,6 +370,9 @@ void NodeJSWorker::queue_perform_mouse_action(TaskContext& tc) {
   queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
 
   queue_update_element(tc); // Our actions may have moved elements arounds, so we update our overlays.
+
+  // Force wait so that the webpage can react to the mouse action.
+  queue_wait(tc);
 }
 
 void NodeJSWorker::queue_perform_mouse_hover(TaskContext& tc) {
@@ -676,7 +680,7 @@ void NodeJSWorker::wait_until_loaded_task() {
 }
 
 void NodeJSWorker::wait_task() {
-  _wait_timer.start();
+  _wait_timer.start(kWaitInterval);
 }
 
 // ------------------------------------------------------------------------

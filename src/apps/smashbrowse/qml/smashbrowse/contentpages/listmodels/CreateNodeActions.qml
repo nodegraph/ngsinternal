@@ -192,6 +192,13 @@ ListModel {
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     ListElement {
+        image_url: "qrc:///icons/ic_fiber_manual_record_white_48dp.png"
+        title: "Wait Node"
+        description: "Pauses the processing of the graph for the specified amount of time."
+        script: "ng_controller.create_wait_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
         image_url: "qrc:///icons/ic_gesture_white_48dp.png"
         title: "Merge Node"
         description: "Merges data from two inputs and outputs it."

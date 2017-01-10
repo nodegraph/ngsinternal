@@ -24,6 +24,8 @@ const char* Message::kHeight = "height";
 const char* Message::kDimensions = "dimensions";
 const char* Message::kNext = "next";
 
+const char* Message::kTimeInMilliseconds = "time_in_milliseconds";
+
 const char* Message::kWrapType = "wrap_type";
 const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";

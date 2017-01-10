@@ -122,6 +122,7 @@ COMPONENT_ENTRY1(OutputNodeCompute)\
 COMPONENT_ENTRY1(ScriptNodeCompute)\
 COMPONENT_ENTRY1(MockNodeCompute)\
 \
+COMPONENT_ENTRY1(WaitNodeCompute)\
 COMPONENT_ENTRY1(OpenBrowserCompute)\
 COMPONENT_ENTRY1(CloseBrowserCompute)\
 COMPONENT_ENTRY1(IsBrowserOpenCompute)\

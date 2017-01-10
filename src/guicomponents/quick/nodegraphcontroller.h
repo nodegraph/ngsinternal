@@ -65,6 +65,9 @@ Q_OBJECT
   Q_INVOKABLE void create_copy_data_node(bool centered);
   Q_INVOKABLE void create_erase_data_node(bool centered);
 
+  // Wait nodes.
+  Q_INVOKABLE void create_wait_node(bool centered);
+
   // Dot nodes.
   Q_INVOKABLE void create_dot_node(bool centered);
 
