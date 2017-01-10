@@ -128,6 +128,11 @@ void NodeGraphController::create_erase_data_node(bool centered) {
   _manipulator->create_compute_node(centered, EntityDID::kComputeNodeEntity, ComponentDID::kEraseDataNodeCompute);
 }
 
+// Create script nodes.
+void NodeGraphController::create_script_node(bool centered) {
+  _manipulator->create_compute_node(centered, EntityDID::kComputeNodeEntity, ComponentDID::kScriptNodeCompute);
+}
+
 // Create wait nodes.
 void NodeGraphController::create_wait_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kWaitNodeEntity);

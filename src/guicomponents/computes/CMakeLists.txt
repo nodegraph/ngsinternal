@@ -18,7 +18,6 @@ set(sources
     )
    
 set(headers
-    scriptnodecompute.h
     browsercomputes.h
     firebasecomputes.h
     httpcomputes.h
@@ -36,6 +35,7 @@ set(moc_headers
     scriptgroupnodecompute.h
     browserrecorder.h
     entermqttgroupcompute.h
+    scriptnodecompute.h
     waitnodecompute.h
     )
     

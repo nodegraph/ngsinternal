@@ -65,6 +65,14 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_group_work_white_48dp.png"
+        title: "Script Node"
+        description: "Uses script to transform the input object into the output object."
+        script: "ng_controller.create_script_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_group_work_white_48dp.png"
         title: "Firebase Group Node"
         description: "Provides an environment where you manipulate Firebase databases."
         script: "ng_controller.create_firebase_group_node(center_new_nodes);

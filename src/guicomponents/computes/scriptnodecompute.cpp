@@ -13,25 +13,10 @@
 #include <QtQml/QQmlExpression>
 #include <QtQml/QQmlContext>
 
-//#include <QtCore/QByteArray>
-//#include <QtCore/QDataStream>
-//
-//#include <QtQml/QQmlEngine>
-//#include <QtQml/QQmlContext>
-//#include <QtQml/QQmlExpression>
-
-//#include <QtCore/QJsonObject>
-
-// Example of calling a qml method.
-//    QMetaObject::invokeMethod(g_node_pool_api, "create_js_node",
-//            Q_RETURN_ARG(QVariant, return_value),
-//            Q_ARG(QVariant, _flattened_path),
-//            Q_ARG(QVariant, compute_type));
-
-
 namespace ngs {
 
 ScriptNodeCompute::ScriptNodeCompute(Entity* entity):
+  QObject(),
   Compute(entity, kDID()) {
   // In derived classes the input and output param names should be set here.
 }
@@ -70,42 +55,35 @@ QJsonObject ScriptNodeCompute::init_hints() {
   return m;
 }
 
+QJsonValue ScriptNodeCompute::get_input_value() {
+  return _inputs->get_input_value("in");
+}
+
+void ScriptNodeCompute::set_output_value(const QJsonValue& value) {
+  QJsonObject obj = _inputs->get_input_value("in").toObject();
+  obj.insert("value", value);
+  _outputs.insert("out", obj);
+}
+
 bool ScriptNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
-  // Accumulate all of our inputs into a map.
-  QJsonObject inputs_obj;
-  for (auto &in: _inputs->get_all()) {
-    Dep<InputCompute> op = in.second;
-    const std::string& input_name = in.first;
-    QJsonValue out = op->get_output("out");
-    inputs_obj.insert(input_name.c_str(), out);
-  }
+  QQmlEngine engine;
+  // Create a new context to run our javascript expression.
+  QQmlContext eval_context(engine.rootContext());
+  // Expose our set_output method to the script.
+  eval_context.setContextObject(this);
+  // Add our single input into the context.
+  //eval_context.setContextProperty("from", 111);
+  //eval_context.setContextProperty("in", _inputs->get_input_value("in").toVariant());
 
-  {
-    QQmlEngine engine;
-    // Create a new context to run our javascript expression.
-    QQmlContext eval_context(engine.rootContext());
-    // Add the above inputs into the context.
-    // The script will reference the inputs as inputs.in etc.
-    eval_context.setContextProperty("inputs", inputs_obj);
-    // Create the expression.
-    QQmlExpression expr(&eval_context, NULL, _script);
-    // Replace the results.
-    QVariant var = expr.evaluate();
-    _outputs = var.toJsonObject();
-  }
-
-  // Make sure we have enough result data for each of our outputs.
-  Entity* outputs = get_entity(Path({".","outputs"}));
-  for (auto &out: outputs->get_children()) {
-    const std::string& output_name = out.first;
-    if (!_outputs.contains(output_name.c_str())) {
-      std::cerr << "Error: ScripNodeCompute did not produce enough data for its outputs: " << output_name << "\n";
-    }
-  }
-
+  // Create the expression.
+  QString script = _inputs->get_input_value("script").toString();
+  QQmlExpression expr(&eval_context, NULL, script);
+  // Evaluate the expression.
+  bool value_is_undefined = false;
+  QVariant result = expr.evaluate(&value_is_undefined);
   return true;
 }
 

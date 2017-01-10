@@ -10,7 +10,8 @@
 namespace ngs {
 
 WaitNodeCompute::WaitNodeCompute(Entity* entity)
-    : Compute(entity, kDID()),
+    : QObject(),
+      Compute(entity, kDID()),
       _restart_timer(true) {
   // Setup the wait timer.
   _wait_timer.setSingleShot(false);
