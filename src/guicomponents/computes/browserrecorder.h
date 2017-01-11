@@ -33,6 +33,8 @@ Q_OBJECT
   Q_INVOKABLE void record_is_browser_open();
   Q_INVOKABLE void record_resize_browser();
   Q_INVOKABLE void record_destroy_current_tab();
+  Q_INVOKABLE void record_open_tab();
+  Q_INVOKABLE void record_download_files();
 
   // Navigate the browser.
   Q_INVOKABLE void record_navigate_to(const QString& url);

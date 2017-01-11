@@ -178,37 +178,6 @@ bool ResizeBrowserCompute::update_state(){
   return false;
 }
 
-//void SwitchToTabCompute::create_inputs_outputs(const EntityConfig& config) {
-//  external();
-//  BrowserCompute::create_inputs_outputs(config);
-//
-//  EntityConfig c = config;
-//  c.expose_plug = false;
-//  c.unconnected_value = true;
-//  create_input(Message::kNext, c);
-//}
-//
-//const QJsonObject SwitchToTabCompute::_hints = SwitchToTabCompute::init_hints();
-//QJsonObject SwitchToTabCompute::init_hints() {
-//  QJsonObject m;
-//  BrowserCompute::init_hints(m);
-//
-//  add_hint(m, Message::kNext, HintKey::kDescriptionHint, "Switches to the next (newer) tab when true, otherwise switches to older.");
-//
-//  return m;
-//}
-//
-//bool SwitchToTabCompute::update_state(){
-//  internal();
-//  BrowserCompute::update_state();
-//
-//  TaskContext tc(_scheduler);
-//  BrowserCompute::pre_update_state(tc);
-//  _worker->queue_switch_to_tab(tc);
-//  BrowserCompute::post_update_state(tc);
-//  return false;
-//}
-
 void DestroyCurrentTabCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
@@ -228,6 +197,46 @@ bool DestroyCurrentTabCompute::update_state(){
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
   _worker->queue_destroy_current_tab(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
+
+bool OpenTabCompute::update_state(){
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_open_tab(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
+
+
+void DownloadFilesCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+}
+
+const QJsonObject DownloadFilesCompute::_hints = DownloadFilesCompute::init_hints();
+QJsonObject DownloadFilesCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+  return m;
+}
+
+bool DownloadFilesCompute::update_state(){
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_download_files(tc);
+  // We need to wait as the download files task will close it's tab automatically on its own.
+  // We need to make sure that tab completely closes before doing any more tasks.
+  // If not the task is sent to a tab for completion, but it disappears mid-process causing
+  // neither a success or failure response message to be sent.
+  _worker->queue_wait(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }

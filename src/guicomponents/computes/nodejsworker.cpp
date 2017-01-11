@@ -272,6 +272,16 @@ void NodeJSWorker::queue_destroy_current_tab(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::destroy_current_tab_task,this), "queue_destroy_current_tab");
 }
 
+void NodeJSWorker::queue_open_tab(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::open_tab_task,this), "queue_open_tab");
+}
+
+void NodeJSWorker::queue_download_files(TaskContext& tc) {
+  queue_open_tab(tc);
+  queue_update_current_tab(tc);
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::download_files_task,this), "queue_download_files");
+}
+
 void NodeJSWorker::queue_reset(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::reset_task, this), "reset");
 }
@@ -365,7 +375,7 @@ void NodeJSWorker::queue_perform_mouse_action(TaskContext& tc) {
   queue_block_events(tc); // After we're done interacting with the page, block events on the page.
   queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
 
-  // Force wait so that the webpage can react to the mouse hover.
+  // Force wait so that the webpage can react to the mouse hover. Note this is real and makes the mouse click work 100% of the time.
   queue_wait(tc);
 
   queue_unblock_events(tc);
@@ -375,7 +385,7 @@ void NodeJSWorker::queue_perform_mouse_action(TaskContext& tc) {
 
   queue_update_element(tc); // Our actions may have moved elements arounds, so we update our overlays.
 
-  // Force wait so that the webpage can react to the mouse action.
+  // Force wait so that the webpage can react to the mouse action. Note this is real and makes the mouse click work 100% of the time.
   queue_wait(tc);
 }
 
@@ -658,6 +668,16 @@ void NodeJSWorker::update_current_tab_task() {
 
 void NodeJSWorker::destroy_current_tab_task() {
   Message req(RequestType::kDestroyCurrentTab);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::open_tab_task() {
+  Message req(RequestType::kOpenTab);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::download_files_task() {
+  Message req(RequestType::kDownloadFiles);
   send_msg_task(req);
 }
 

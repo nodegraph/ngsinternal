@@ -88,6 +88,19 @@ void BrowserRecorder::record_destroy_current_tab() {
   finish();
 }
 
+void BrowserRecorder::record_open_tab() {
+  check_busy();
+  _worker->queue_build_compute_node(tc, ComponentDID::kOpenTabCompute);
+  finish();
+}
+
+
+void BrowserRecorder::record_download_files() {
+  check_busy();
+  _worker->queue_build_compute_node(tc, ComponentDID::kDownloadFilesCompute);
+  finish();
+}
+
 // -----------------------------------------------------------------
 // Record Navigate Actions.
 // -----------------------------------------------------------------

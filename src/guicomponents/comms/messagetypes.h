@@ -36,6 +36,10 @@ enum class RequestType : int {
   // Web Page Tabs.
   kUpdateCurrentTab,
   kDestroyCurrentTab,
+  kOpenTab,
+
+  // File Downloads.
+  kDownloadFiles,
 
   // Page Content Set Requests.
   kUpdateElement,
@@ -92,6 +96,8 @@ enum class InfoType : int {
   kBgIsConnected,
   kShowWebActionMenu,
   kFirebaseChanged,
+  kTabCreated,
+  kTabDestroyed,
 };
 
 enum class MessageType : int {

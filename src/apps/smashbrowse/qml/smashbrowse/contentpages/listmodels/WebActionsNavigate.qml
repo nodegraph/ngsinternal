@@ -61,4 +61,20 @@ ListModel {
         script: "web_recorder.record_destroy_current_tab();
                  main_bar.switch_to_node_graph();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Open Tab"
+        description: "Open Tab."
+        script: "web_recorder.record_open_tab();
+                 main_bar.switch_to_node_graph();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Download Files"
+        description: "Download Files."
+        script: "web_recorder.record_download_files();
+                 main_bar.switch_to_node_graph();"
+    }
 }

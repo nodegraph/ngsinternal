@@ -86,6 +86,8 @@ Q_OBJECT
   void queue_resize_browser(TaskContext& tc);
   void queue_update_current_tab(TaskContext& tc);
   void queue_destroy_current_tab(TaskContext& tc);
+  void queue_open_tab(TaskContext& tc);
+  void queue_download_files(TaskContext& tc);
   void queue_reset(TaskContext& tc);
 
   // Queue Page Content Tasks.
@@ -179,6 +181,8 @@ signals:
   void resize_browser_task();
   void update_current_tab_task();
   void destroy_current_tab_task();
+  void open_tab_task();
+  void download_files_task();
 
   // Page Content Tasks.
   void block_events_task();

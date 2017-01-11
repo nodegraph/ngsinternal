@@ -62,6 +62,23 @@ class ChromeConnection extends BaseConnection {
         let msg = BaseMessage.create_from_string(json)
         console.log('ext --> commhub: ' + json)
 
+        // Process info messages.
+        if (msg.get_msg_type() == MessageType.kInfoMessage) {
+            let info_msg = <InfoMessage>msg
+            switch(info_msg.info) {
+                case InfoType.kTabCreated: {
+                    // Don't do anything. 
+                    // Each node will have a sequence of tasks all queued up.
+                    // And each of the tasks is expecting to operate on the old existing tab
+                    // instead of the newly created tab. 
+                    // The last task is usually to update to the latest tab.
+                } return
+                case InfoType.kTabDestroyed: {
+                    this.webdriverwrap.update_current_tab()
+                } return
+            }
+        }
+
         // Messages from chrome get passed straight to the app.
         send_msg_to_app(msg)
     }
@@ -83,25 +100,7 @@ class AppConnection extends BaseConnection {
         // Build the message.
         let msg = BaseMessage.create_from_string(json)
 
-        // // Process info messages.
-        // if (msg.get_msg_type() == MessageType.kInfoMessage) {
-        //     let info_msg = <InfoMessage>msg
-        //     switch(info_msg.info) {
-        //         case InfoType.kPushTab: {
-        //             this.webdriverwrap.push_tab().then(
-        //                 () => {console.error('finished pushing tab')},
-        //                 (error) => {console.error('unable to push tab')}
-        //             )
-        //         } break
-        //         case InfoType.kPopTab: {
-        //             this.webdriverwrap.pop_tab().then(
-        //                 () => {console.error('finished poppping tab')},
-        //                 (error) => {console.error('unable to pop tab')}
-        //             )
-        //         } break
-        //     }
-        //     return
-        // }
+
 
         // Make sure the message is a request.
         if (msg.get_msg_type() == MessageType.kResponseMessage || msg.get_msg_type() == MessageType.kInfoMessage) {
@@ -259,6 +258,15 @@ class AppConnection extends BaseConnection {
             } break
             case RequestType.kGetCurrentURL: {
                 let p = this.webdriverwrap.get_current_url()
+                WebDriverWrap.terminate_chain(p, req.id)
+            } break
+            case RequestType.kOpenTab: {
+                send_msg_to_ext(req)
+                //let p = this.webdriverwrap.open_tab()
+                //WebDriverWrap.terminate_chain(p, req.id)
+            } break
+            case RequestType.kDownloadFiles: {
+                let p = this.webdriverwrap.download_files()
                 WebDriverWrap.terminate_chain(p, req.id)
             } break
             default: {

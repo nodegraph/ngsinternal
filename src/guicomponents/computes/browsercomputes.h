@@ -103,6 +103,27 @@ class GUICOMPUTES_EXPORT DestroyCurrentTabCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
+class GUICOMPUTES_EXPORT OpenTabCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, OpenTabCompute);
+  OpenTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+ protected:
+  virtual bool update_state();
+};
+
+class GUICOMPUTES_EXPORT DownloadFilesCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, DownloadFilesCompute);
+  DownloadFilesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
+  virtual bool update_state();
+};
+
 class GUICOMPUTES_EXPORT NavigateToCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, NavigateToCompute);

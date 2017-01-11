@@ -253,7 +253,7 @@ export class WebDriverWrap {
         return this.driver.getAllWindowHandles().then(
             (handles) => {
                 // Scan through the handles to find the new tab.
-                let num_novel = 0
+                let num_created = 0
                 for (let i = 0; i < handles.length; i++) {
                     // Functor used to see if a handle from window_handles matches this handle at i.
                     let match = (element: string): boolean => {
@@ -267,11 +267,32 @@ export class WebDriverWrap {
                     }
                     // Otherwise cache the handle.
                     this.window_handles.push(handles[i])
-                    // Note there should only be one new handle discovered on each call to this method.
-                    num_novel++
-                    if (num_novel > 1) {
-                        console.log('WebDriverWrap.push_tab: more than one novel window handle discovered.')
+                    // Note there should ideally be one created handle per call to this method.
+                    num_created++
+                }
+                if (num_created > 1) {
+                    console.log('WebDriverWrap.update_current_tab: found more than new tab was created.')
+                }
+                let num_destroyed = 0
+                for (let i = 0; i < this.window_handles.length; i++) {
+                    // Functor used to see if a handle from handles matches this handle at i.
+                    let match = (element: string): boolean => {
+                        return element == this.window_handles[i]
                     }
+                    // See if we can find this handle in handles.
+                    let existing_index = handles.findIndex(match)
+                    // Continue if the handle is still in existence.
+                    if (existing_index >= 0) {
+                        continue
+                    }
+                    // Otherwise remove the handle.
+                    this.window_handles.splice(i,1)
+                    i -= 1
+                    // Note there should ideally be one destroyed handle per call to this method.
+                    num_destroyed++
+                }
+                if (num_destroyed > 1) {
+                    console.log('WebDriverWrap.update_current_tab: more than one tab has been destroyed.')
                 }
                 // Switch to the latest tab.
                 return this.driver.switchTo().window(this.window_handles[this.window_handles.length-1])
@@ -377,16 +398,10 @@ export class WebDriverWrap {
 
     get_element_css(frame_index_path: string, css: string): webdriver.promise.Promise<webdriver.WebElement> {
         return this.switch_to_frame(frame_index_path).then(
-            () => { return this.driver.findElement(By.css(css)) },
+            () => { console.log('found element by css'); return this.driver.findElement(By.css(css)) },
             (error) => { console.info('Error could not find element at frame_index_path: ' + frame_index_path + ' and css selector: ' + css); throw (error) })
     }
 
-    open_tab() {
-        return this.get_element_css("", "body").then(
-            (element: webdriver.WebElement) => {return element.sendKeys(Key.CONTROL, "t")},
-            (error) => { console.info('Error could not find body: '); throw (error) })
-    }
-        
     // Returns a promise which evaulates to a visible element.
     // Usually we skip checking the visibility of the element because it allows us to
     // click through elements. This is very helpful when clicking video player controls
@@ -494,20 +509,32 @@ export class WebDriverWrap {
         )
     }
 
-
-
-    download_files(frame_index_path: string) {
-        this.open_tab()
-        .then(()=>{this.navigate_to("chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/mainPanel.html")})
-        .then(()=>{        
-            return this.get_element_css(frame_index_path, "#content-footer > div.groups > div.group.group-inactive.ng-binding").then(
-            (element: webdriver.WebElement) => {
-                let seq: webdriver.ActionSequence = this.driver.actions()
-                seq = seq.mouseMove(element, { x: 10, y: 10 })
-                seq = seq.click()
-                return seq.perform() 
-            }
-        )})
+    download_files(): webdriver.promise.Promise<void> {
+        return this.navigate_to("chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/mainPanel.html").then(
+            ()=>{        
+                console.log('finding cdd element');
+                return this.get_element_css('', "#content-footer > div.groups > div.group.group-inactive.ng-binding").then(
+                (element: webdriver.WebElement) => {
+                    let seq: webdriver.ActionSequence = this.driver.actions()
+                    seq = seq.mouseMove(element, { x: 10, y: 10 })
+                    seq = seq.click()
+                    return seq.perform() 
+            },
+            (error) => {console.log('could not find css element.'); throw (error) }
+        )}).then(
+            ()=>{
+                return this.get_element_css('',"#content-hits > div.media > div:nth-child(1) > div > div > div > div.vdh-fullwidth.hit-descr > div.hit-title > div").then(
+                    (element: webdriver.WebElement) => {
+                        let seq: webdriver.ActionSequence = this.driver.actions()
+                        seq = seq.mouseMove(element, { x: 10, y: 10 })
+                        seq = seq.click()
+                        return seq.perform() 
+                    },
+                    (error) => {console.log('could not find element to download.'); throw (error)}
+                )
+            },
+            (error) => {console.log('could not click on the other tabs button.'); throw (error) }
+        )
     }
 
     // Helper to terminate promise chains.

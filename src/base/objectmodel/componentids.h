@@ -128,6 +128,8 @@ COMPONENT_ENTRY1(CloseBrowserCompute)\
 COMPONENT_ENTRY1(IsBrowserOpenCompute)\
 COMPONENT_ENTRY1(ResizeBrowserCompute)\
 COMPONENT_ENTRY1(DestroyCurrentTabCompute)\
+COMPONENT_ENTRY1(OpenTabCompute)\
+COMPONENT_ENTRY1(DownloadFilesCompute)\
 COMPONENT_ENTRY1(NavigateToCompute)\
 COMPONENT_ENTRY1(NavigateBackCompute)\
 COMPONENT_ENTRY1(NavigateForwardCompute)\

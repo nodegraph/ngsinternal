@@ -46,26 +46,41 @@ class BgComm {
         this.tab_ids = this.tab_ids.concat(this.created_tab_ids)
         this.created_tab_ids.length = 0
         chrome.tabs.update(this.get_current_tab_id(), {active: true, pinned: true});
+
+        console.log('adding created_tab_ids: ' + JSON.stringify(this.created_tab_ids) + ' to yield tab_ids: ' + JSON.stringify(this.tab_ids))
     }
 
     on_tab_created(tab: chrome.tabs.Tab) {
+        console.log('new tab created: ' + tab.id)
         this.created_tab_ids.push(tab.id)
         chrome.tabs.update(tab.id, {pinned: true});
+        this.send_to_nodejs(new InfoMessage(-1, InfoType.kTabCreated))
     }
 
     on_tab_removed(tab_id: number, remove_info: any) {
         if (tab_id != this.get_current_tab_id()) {
-            console.error('Error: A tab which was not the latest tab was manually destroyed. The nodes must be used to destoy tabs.')
+            console.error('Warning: A tab was not the latest tab was manually destroyed. The nodes must be used to destoy tabs.')
+            // If the tab_id is in tab_ids, remove it.
             for (let i = 0; i < this.tab_ids.length; i++) {
                 if (this.tab_ids[i] == tab_id) {
                     this.tab_ids.splice(i,1)
                     i -= 1
                 }
             }
-            return
+            // If the tab_id is in created_tab_ids, remove it.
+            for (let i = 0; i < this.created_tab_ids.length; i++) {
+                if (this.created_tab_ids[i] == tab_id) {
+                    this.created_tab_ids.splice(i, 1)
+                    i -= 1
+                }
+            }
+        } else {
+            this.tab_ids.pop()
+            chrome.tabs.update(this.get_current_tab_id(), {active: true, pinned: true});
         }
-        this.tab_ids.pop()
-        chrome.tabs.update(this.get_current_tab_id(), {active: true, pinned: true});
+
+        console.log('tab removed: ' + tab_id + ' to yield: ' + JSON.stringify(this.tab_ids))
+        this.send_to_nodejs(new InfoMessage(-1, InfoType.kTabDestroyed))
     }
 
     on_tab_updated(tabId: number, change_info: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {

@@ -41,6 +41,10 @@ const enum RequestType {
   // Web Page Tabs.
   kUpdateCurrentTab,
   kDestroyCurrentTab,
+  kOpenTab,
+
+  // File Downloads.
+  kDownloadFiles,
 
   // Page Content Set Requests.
   kUpdateElement,
@@ -97,6 +101,8 @@ const enum InfoType {
   kBgIsConnected,
   kShowWebActionMenu,
   kFirebaseChanged,
+  kTabCreated,
+  kTabDestroyed,
 }
 
 const enum MessageType {

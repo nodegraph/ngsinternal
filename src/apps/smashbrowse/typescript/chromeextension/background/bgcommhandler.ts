@@ -470,6 +470,16 @@ class BgCommHandler {
                 }
                 BrowserWrap.get_zoom(this.bg_comm.get_current_tab_id(), done_get_zoom);
             } break
+            case RequestType.kOpenTab: {
+                //let response = new ResponseMessage(req.id, true, true)
+                //this.bg_comm.send_to_nodejs(response)
+                chrome.tabs.create({'url': 'http://www.google.com'}, 
+                    (tab) => {
+                        // Tab opened successfully.
+                        let response = new ResponseMessage(req.id, true, true)
+                        this.bg_comm.send_to_nodejs(response)
+                    });
+            } break
 
             // --------------------------------------------------------------
             // Requests that are broadcast to all frames.
@@ -577,6 +587,7 @@ class BgCommHandler {
                 this.run_next_task()
             } break
             case RequestType.kScrollElementIntoView: {
+                console.log('bgcommhandler got kScrollElementIntoView')
                 this.clear_tasks()
                 this.queue_scroll_element_into_view()
                 this.queue(() => {
