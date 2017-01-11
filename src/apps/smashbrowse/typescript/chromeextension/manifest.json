@@ -3,9 +3,9 @@
 
   "manifest_version": 2,
 
-  "name": "Dom Checker",
+  "name": "Smash Browse",
   "description": "This extension provides some insight into the dom",
-  "version": "1.0",
+  "version": "1.1",
 
   "icons": { "16": "images/octopus_blue_16.png",
            "48": "images/octopus_blue_48.png",
