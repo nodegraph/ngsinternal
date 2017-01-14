@@ -287,6 +287,7 @@ class AppConnection extends BaseConnection {
                 // We detect if we've looped through all the windows by counting how many times we see the smashbrowse app.
                 let smashbrowse_count = 0
                 let callback = (window: any) => {
+                    console.log("eeeeeeeeeeeeee examining app name: " + window.app + " title: " + window.title)
                     if ((window.app == req.args.application_name) && (window.title == req.args.window_title)) {
                         // Tap out the keys. Todo: maybe later we will support modifiers.
                         for (let i = 0; i < req.args.keys.length; i++) {

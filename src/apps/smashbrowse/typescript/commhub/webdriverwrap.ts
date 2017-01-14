@@ -20,8 +20,6 @@ let Until = webdriver.until
 //     console.log('processes: ' + stdout)
 // });
 
-//export function keyTap(key: string, modifier?: string | string[]) : void
-
 export class WebDriverWrap {
 
     driver: webdriver.WebDriver = null
@@ -518,8 +516,43 @@ export class WebDriverWrap {
     }
 
     download_files(): webdriver.promise.Promise<void> {
-        // Navigate to the external download extension.
-        return this.navigate_to("chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/mainPanel.html").then(
+
+        // Navigate to the settings page.
+        let p = this.navigate_to("chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/settingsPanel.html")
+        p = p.then(
+            () => {
+                // Click the behavior tab.
+                return this.get_element('', '//*[@id="content"]/ul/li[3]/a').then(
+                    (element) => {
+                        let seq: webdriver.ActionSequence = this.driver.actions()
+                        seq = seq.mouseMove(element, { x: 10, y: 10 })
+                        seq = seq.click()
+                        return seq.perform() 
+                    },
+                    (error) => {console.log('could not find settings button'); throw (error)}
+                )
+            },
+            (error) => {console.log('could not navigate to main download extension page'); throw (error)}
+        )
+        p = p.then(
+            () => {
+                // Enter a number into the "Max concurrent downloads input and press Return.
+                return this.get_element('', '//*[@id="content"]/div[2]/div[3]/div[1]/input').then(
+                    (element) => {
+                        return element.sendKeys(Key.HOME, Key.chord(Key.SHIFT, Key.END), '1000', Key.RETURN)
+                    },
+                    (error) => {console.log('unable to find the max concurrent downloads input field'); throw (error)}
+                )
+            },
+            (error) => {console.log('could not click the settings button'); throw (error)}
+        )
+
+        p = p.then(
+            () => {return this.navigate_to("chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/mainPanel.html")},
+            (error) => {console.log('unable to navigate to the main download extension page.'); throw (error)}
+        )
+
+        p = p.then(
             ()=>{        
                 // Find the "other tabs" button as our videos are on older tabs, and click it.
                 return this.get_element_css('', "#content-footer > div.groups > div.group.group-inactive.ng-binding").then(
@@ -530,10 +563,12 @@ export class WebDriverWrap {
                     return seq.perform() 
             },
             (error) => {console.log('could not find css element.'); throw (error) }
-        )}).then(
+        )})
+        
+        p = p.then(
             ()=>{
+                // Find the elements which contain the size and format of the videos.
                 return this.get_elements('', '//*[@id="content-hits"]/div[1]/child::*/div/div/div/div[2]/div[2]').then(
-                //return this.get_element_css('',"#content-hits > div.media > div:nth-child(1) > div > div > div > div.vdh-fullwidth.hit-descr > div.hit-title > div").then(
                     (elements: webdriver.WebElement[]) => {
                         // Extract the raw size and format text from the web element.
                         console.log('the number of video files is: ' + elements.length)
@@ -598,6 +633,8 @@ export class WebDriverWrap {
             },
             (error) => {console.log('could not click on the other tabs button.'); throw (error) }
         )
+
+        return p
     }
 
     // Helper to terminate promise chains.

@@ -312,21 +312,21 @@ void NodeJSWorker::queue_download_files(TaskContext& tc) {
   // We don't currently need this as the chrome extension which does the download
   // adds a number in parentheses at the end.
 
-//  {
-//    QJsonObject args;
-//    args.insert(Message::kApplicationName, "chrome");
-//    args.insert(Message::kWindowTitle, "Confirm Save As");
-//    args.insert(Message::kAllMatchingWindows, false);
-//
-//    QJsonArray keys;
-//    keys.push_back("tab");
-//    keys.push_back("enter");
-//
-//    args.insert(Message::kKeys, keys);
-//    queue_merge_chain_state(tc, args);
-//  }
-//  // Now the chain_state has all the values to do our tap at the os level.
-//  queue_tap_keys_in_os(tc);
+  {
+    QJsonObject args;
+    args.insert(Message::kApplicationName, "chrome");
+    args.insert(Message::kWindowTitle, "Save As");
+    args.insert(Message::kAllMatchingWindows, false);
+
+    QJsonArray keys;
+    keys.push_back("tab");
+    keys.push_back("enter");
+
+    args.insert(Message::kKeys, keys);
+    queue_merge_chain_state(tc, args);
+  }
+  // Now the chain_state has all the values to do our tap at the os level.
+  queue_tap_keys_in_os(tc);
 }
 
 // ---------------------------------------------------------------------------------
