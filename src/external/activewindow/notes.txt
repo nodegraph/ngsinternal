@@ -1,0 +1,2 @@
+These are the files that were modified or created for node npm's active-window module.
+We use this in conjunction with robotjs.

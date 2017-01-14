@@ -179,7 +179,7 @@ void NodeJSWorker::send_msg_task(Message& msg) {
 }
 
 // ---------------------------------------------------------------------------------
-// Queue Framework Tasks.
+// Queue Element Tasks.
 // ---------------------------------------------------------------------------------
 
 void NodeJSWorker::queue_get_current_element(TaskContext& tc) {
@@ -206,6 +206,10 @@ void NodeJSWorker::queue_get_drop_down_info(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_drop_down_info_task,this), "queue_get_crosshair_info");
 }
 
+// ---------------------------------------------------------------------------------
+// Queue Framework Tasks.
+// ---------------------------------------------------------------------------------
+
 void NodeJSWorker::queue_merge_chain_state(TaskContext& tc, const QJsonObject& map) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::merge_chain_state_task,this, map), "queue_merge_chain_state");
 }
@@ -226,6 +230,10 @@ void NodeJSWorker::queue_build_compute_node(TaskContext& tc, ComponentDID comput
 
 void NodeJSWorker::queue_receive_chain_state(TaskContext& tc, std::function<void(const QJsonObject&)> receive_chain_state) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::receive_chain_state_task,this,receive_chain_state), "queue_get_outputs");
+}
+
+void NodeJSWorker::queue_reset(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::reset_task, this), "reset");
 }
 
 // ---------------------------------------------------------------------------------
@@ -264,6 +272,10 @@ void NodeJSWorker::queue_resize_browser(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::resize_browser_task,this), "queue_resize_browser");
 }
 
+void NodeJSWorker::queue_get_browser_title(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_browser_title_task,this), "queue_resize_browser");
+}
+
 void NodeJSWorker::queue_update_current_tab(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::update_current_tab_task,this), "queue_update_current_tab");
 }
@@ -280,10 +292,53 @@ void NodeJSWorker::queue_download_files(TaskContext& tc) {
   queue_open_tab(tc);
   queue_update_current_tab(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::download_files_task,this), "queue_download_files");
+  queue_wait(tc); // We need to wait a little for the Save-As dialog to come up.
+  {
+    QJsonObject args;
+    args.insert(Message::kApplicationName, "chrome");
+    args.insert(Message::kWindowTitle, "Save As");
+    args.insert(Message::kAllMatchingWindows, false);
+
+    QJsonArray keys;
+    keys.push_back("enter");
+
+    args.insert(Message::kKeys, keys);
+    queue_merge_chain_state(tc, args);
+  }
+  // Now the chain_state has all the values to do our tap at the os level.
+  queue_tap_keys_in_os(tc);
+
+  // Code to deal with "Confirm Save As" dialogs when a file with the same name exists.
+  // We don't currently need this as the chrome extension which does the download
+  // adds a number in parentheses at the end.
+
+//  {
+//    QJsonObject args;
+//    args.insert(Message::kApplicationName, "chrome");
+//    args.insert(Message::kWindowTitle, "Confirm Save As");
+//    args.insert(Message::kAllMatchingWindows, false);
+//
+//    QJsonArray keys;
+//    keys.push_back("tab");
+//    keys.push_back("enter");
+//
+//    args.insert(Message::kKeys, keys);
+//    queue_merge_chain_state(tc, args);
+//  }
+//  // Now the chain_state has all the values to do our tap at the os level.
+//  queue_tap_keys_in_os(tc);
 }
 
-void NodeJSWorker::queue_reset(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::reset_task, this), "reset");
+// ---------------------------------------------------------------------------------
+// OS Level Tasks.
+// ---------------------------------------------------------------------------------
+
+void NodeJSWorker::queue_get_active_window_in_os(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_active_window_in_os_task,this), "queue_get_active_window_in_os");
+}
+
+void NodeJSWorker::queue_tap_keys_in_os(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::tap_keys_in_os_task,this), "queue_tap_enter_in_os");
 }
 
 // ---------------------------------------------------------------------------------
@@ -521,7 +576,7 @@ void NodeJSWorker::handle_info(const Message& msg) {
 }
 
 // ------------------------------------------------------------------------
-// Infrastructure Tasks.
+// Element Tasks.
 // ------------------------------------------------------------------------
 
 void NodeJSWorker::get_crosshair_info_task() {
@@ -559,6 +614,10 @@ void NodeJSWorker::scroll_element_into_view_task() {
   Message req(RequestType::kScrollElementIntoView,args);
   send_msg_task(req);
 }
+
+// ------------------------------------------------------------------------
+// Infrastructure Tasks.
+// ------------------------------------------------------------------------
 
 void NodeJSWorker::merge_chain_state_task(const QJsonObject& map) {
   // Merge the values into the chain_state.
@@ -611,6 +670,12 @@ void NodeJSWorker::build_compute_node_task(ComponentDID compute_did) {
   _manipulator->set_ultimate_targets(node, false);
 }
 
+void NodeJSWorker::reset_task() {
+  reset_state();
+  TaskContext tc(_scheduler);
+  queue_open_browser(tc);
+}
+
 
 // ------------------------------------------------------------------------
 // Cookie Tasks.
@@ -661,6 +726,11 @@ void NodeJSWorker::resize_browser_task() {
   send_msg_task(req);
 }
 
+void NodeJSWorker::get_browser_title_task() {
+  Message req(RequestType::kGetBrowserTitle);
+  send_msg_task(req);
+}
+
 void NodeJSWorker::update_current_tab_task() {
   Message req(RequestType::kUpdateCurrentTab);
   send_msg_task(req);
@@ -678,6 +748,27 @@ void NodeJSWorker::open_tab_task() {
 
 void NodeJSWorker::download_files_task() {
   Message req(RequestType::kDownloadFiles);
+  send_msg_task(req);
+}
+
+// ------------------------------------------------------------------------
+// OS Level Tasks.
+// ------------------------------------------------------------------------
+
+void NodeJSWorker::get_active_window_in_os_task() {
+  Message req(RequestType::kGetActiveWindowInOS);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::tap_keys_in_os_task() {
+  QJsonObject args;
+  args.insert(Message::kApplicationName, _chain_state.value(Message::kApplicationName));
+  args.insert(Message::kWindowTitle, _chain_state.value(Message::kWindowTitle));
+  args.insert(Message::kAllMatchingWindows, _chain_state.value(Message::kAllMatchingWindows));
+  args.insert(Message::kKeys, _chain_state.value(Message::kKeys));
+
+  Message req(RequestType::kTapKeysInOS);
+  req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
 
@@ -890,12 +981,6 @@ void NodeJSWorker::emit_option_texts_task() {
   }
   emit select_option_texts(options);
   _scheduler->run_next_task();
-}
-
-void NodeJSWorker::reset_task() {
-  reset_state();
-  TaskContext tc(_scheduler);
-  queue_open_browser(tc);
 }
 
 void NodeJSWorker::firebase_init_task() {

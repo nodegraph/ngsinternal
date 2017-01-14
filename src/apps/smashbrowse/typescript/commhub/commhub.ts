@@ -16,6 +16,11 @@ import {WebDriverWrap, Key} from './webdriverwrap'
 import {DebugUtils} from './debugutils'
 import {FirebaseWraps} from './firebasewrap'
 
+//import { keyTap } from "D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/robotjs/index"
+import robotjs = require("D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/robotjs/index")
+import active_window = require("D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/active-window/index")
+//declare function getActiveWindow(calback: (window:any)=>void): void
+
 // Secure web socket to communicate with chrome extension.
 let ext_server: ChromeSocketServer = null
 
@@ -262,12 +267,50 @@ class AppConnection extends BaseConnection {
             } break
             case RequestType.kOpenTab: {
                 send_msg_to_ext(req)
-                //let p = this.webdriverwrap.open_tab()
-                //WebDriverWrap.terminate_chain(p, req.id)
             } break
             case RequestType.kDownloadFiles: {
                 let p = this.webdriverwrap.download_files()
                 WebDriverWrap.terminate_chain(p, req.id)
+            } break
+            case RequestType.kGetActiveWindowInOS: {
+                let callback = (window: any) => {
+                    console.log("App: " + window.app);
+                    console.log("Title: " + window.title);
+                    // The name of the app is in window.app.
+                    // The title of the app window is in window.title.
+                    send_msg_to_app(new ResponseMessage(msg.id, true, window))
+                }
+                active_window.getActiveWindow(callback, 1, 0)
+            } break
+            case RequestType.kTapKeysInOS: {
+                // Finds all windows with the specified application name and window title, and interacts with it.
+                // We detect if we've looped through all the windows by counting how many times we see the smashbrowse app.
+                let smashbrowse_count = 0
+                let callback = (window: any) => {
+                    if ((window.app == req.args.application_name) && (window.title == req.args.window_title)) {
+                        // Tap out the keys. Todo: maybe later we will support modifiers.
+                        for (let i = 0; i < req.args.keys.length; i++) {
+                            robotjs.keyTap(req.args.keys[i]);
+                        }
+                        // If all_matching_windows is true, then we tap out the keys for all windows with the same app name and title.
+                        if (!req.args.all_matching_windows) {
+                            send_msg_to_app(new ResponseMessage(msg.id, true, true))
+                            return
+                        }
+                    } else if ((window.app == "smashbrowse") && (window.title == "Smash Browse")) {
+                        smashbrowse_count += 1
+                        // If we've seen the smash browse window twice then we've seen all the windows.
+                        if (smashbrowse_count >= 2) {
+                            send_msg_to_app(new ResponseMessage(msg.id, true, true))
+                            return
+                        }
+                    }
+                    // Switch focus to another window.
+                    robotjs.keyTap("escape", "alt");
+                    // Get the active window info. (Recursion)
+                    active_window.getActiveWindow(callback, 1, 0)
+                }
+                active_window.getActiveWindow(callback, 1, 0)
             } break
             default: {
                 console.log('checking if firebase can handle request')

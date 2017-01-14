@@ -20,6 +20,8 @@ let Until = webdriver.until
 //     console.log('processes: ' + stdout)
 // });
 
+//export function keyTap(key: string, modifier?: string | string[]) : void
+
 export class WebDriverWrap {
 
     driver: webdriver.WebDriver = null
@@ -396,6 +398,12 @@ export class WebDriverWrap {
             (error) => { console.info('Error could not find element at frame_index_path: ' + frame_index_path + ' and xpath: ' + xpath); throw (error) })
     }
 
+    get_elements(frame_index_path: string, xpath: string): webdriver.promise.Promise<webdriver.WebElement[]> {
+        return this.switch_to_frame(frame_index_path).then(
+            () => { return this.driver.findElements(By.xpath(xpath)) },
+            (error) => { console.info('Error could not find elements at frame_index_path: ' + frame_index_path + ' and xpath: ' + xpath); throw (error) })
+    }
+
     get_element_css(frame_index_path: string, css: string): webdriver.promise.Promise<webdriver.WebElement> {
         return this.switch_to_frame(frame_index_path).then(
             () => { console.log('found element by css'); return this.driver.findElement(By.css(css)) },
@@ -510,9 +518,10 @@ export class WebDriverWrap {
     }
 
     download_files(): webdriver.promise.Promise<void> {
+        // Navigate to the external download extension.
         return this.navigate_to("chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/mainPanel.html").then(
             ()=>{        
-                console.log('finding cdd element');
+                // Find the "other tabs" button as our videos are on older tabs, and click it.
                 return this.get_element_css('', "#content-footer > div.groups > div.group.group-inactive.ng-binding").then(
                 (element: webdriver.WebElement) => {
                     let seq: webdriver.ActionSequence = this.driver.actions()
@@ -523,12 +532,66 @@ export class WebDriverWrap {
             (error) => {console.log('could not find css element.'); throw (error) }
         )}).then(
             ()=>{
-                return this.get_element_css('',"#content-hits > div.media > div:nth-child(1) > div > div > div > div.vdh-fullwidth.hit-descr > div.hit-title > div").then(
-                    (element: webdriver.WebElement) => {
-                        let seq: webdriver.ActionSequence = this.driver.actions()
-                        seq = seq.mouseMove(element, { x: 10, y: 10 })
-                        seq = seq.click()
-                        return seq.perform() 
+                return this.get_elements('', '//*[@id="content-hits"]/div[1]/child::*/div/div/div/div[2]/div[2]').then(
+                //return this.get_element_css('',"#content-hits > div.media > div:nth-child(1) > div > div > div > div.vdh-fullwidth.hit-descr > div.hit-title > div").then(
+                    (elements: webdriver.WebElement[]) => {
+                        // Extract the raw size and format text from the web element.
+                        console.log('the number of video files is: ' + elements.length)
+                        let size_and_formats: string[] = []
+                        let video_names: string [] = []
+                        let p = webdriver.promise.fulfilled<void>()
+                        for (let i=0; i<elements.length; i++) {
+                            p = p.then(
+                                () => {elements[i].getText().then(
+                                    (text) => {
+                                        size_and_formats.push(text);
+                                        console.log('the extractes texts are now: ' + JSON.stringify(size_and_formats))},
+                                    (error) => {
+                                        console.log('unable to extract text from element.'); throw (error)}
+                                )}
+                            )
+                        }
+                        p = p.then(
+                            ()=>{
+                                // Parse the size and formats from the match text.
+                                let r = /([0-9\.]*) (\w\w) - (\w+)/
+                                let sizes: number[] = []
+                                let formats: string[] = []
+                                for (let j = 0; j < size_and_formats.length; j++) {
+                                    let matches = r.exec(size_and_formats[j])
+                                    if (!matches) {
+                                        continue
+                                    }
+                                    if (matches[2].toLowerCase() == "kb") {
+                                        sizes.push(Number(matches[1]) * 0.001)
+                                    } else if (matches[2].toLowerCase() == "mb") {
+                                        sizes.push(Number(matches[1]))
+                                    } else {
+                                        console.log('error: unknown byte units')
+                                    }
+                                    formats.push(matches[3])
+                                    console.log('matches at ' + j + ": " + JSON.stringify(matches))
+                                }
+
+                                // Find the largest video file.
+                                let best_size = -1
+                                let best_index = -1
+                                for (let j = 0; j < size_and_formats.length; j++) {
+                                    if (sizes[j]>best_size) {
+                                        best_size = sizes[j]
+                                        best_index = j
+                                    }
+                                }
+                                console.log('the best index is: ' + best_index + ' with size of: ' + best_size)
+
+                                // Click it.
+                                let seq: webdriver.ActionSequence = this.driver.actions()
+                                seq = seq.mouseMove(elements[best_index], { x: 10, y: 10 })
+                                seq = seq.click()
+                                return seq.perform() 
+                            }
+                        )
+                        return p
                     },
                     (error) => {console.log('could not find element to download.'); throw (error)}
                 )

@@ -20,6 +20,7 @@ enum class RequestType : int {
   kResizeBrowser,
   kOpenBrowser,
   kCloseBrowser,
+  kGetBrowserTitle,
 
   // Web Page Event Control.
   kBlockEvents,
@@ -40,6 +41,10 @@ enum class RequestType : int {
 
   // File Downloads.
   kDownloadFiles,
+
+  // OS Level.
+  kTapKeysInOS,
+  kGetActiveWindowInOS,
 
   // Page Content Set Requests.
   kUpdateElement,

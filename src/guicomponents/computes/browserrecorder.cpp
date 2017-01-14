@@ -82,6 +82,12 @@ void BrowserRecorder::record_resize_browser() {
   finish();
 }
 
+void BrowserRecorder::record_get_browser_title() {
+  check_busy();
+  _worker->queue_build_compute_node(tc, ComponentDID::kGetBrowserTitleCompute);
+  finish();
+}
+
 void BrowserRecorder::record_destroy_current_tab() {
   check_busy();
   _worker->queue_build_compute_node(tc, ComponentDID::kDestroyCurrentTabCompute);

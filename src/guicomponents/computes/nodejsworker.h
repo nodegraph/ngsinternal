@@ -61,18 +61,21 @@ Q_OBJECT
   // Queue Tasks.
   // ---------------------------------------------------------------------------------
 
-  // Queue Framework Tasks.
+  // Queue Element Tasks.
   void queue_get_current_element(TaskContext& tc);
   void queue_has_current_element(TaskContext& tc);
   void queue_scroll_element_into_view(TaskContext& tc);
   void queue_get_crosshair_info(TaskContext& tc);
   void queue_get_element_values(TaskContext& tc);
   void queue_get_drop_down_info(TaskContext& tc);
+
+  // Queue Framework Tasks.
   void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
   void queue_copy_chain_property(TaskContext& tc, const QString& src_prop, const QString& dest_prop);
   void queue_determine_angle_in_degress(TaskContext& tc);
   void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did);
   void queue_receive_chain_state(TaskContext& tc, std::function<void(const QJsonObject&)> receive_chain_state);
+  void queue_reset(TaskContext& tc);
 
   // Queue Cookie Tasks.
   void queue_get_all_cookies(TaskContext& tc);
@@ -84,11 +87,17 @@ Q_OBJECT
   void queue_close_browser(TaskContext& tc);
   void queue_is_browser_open(TaskContext& tc);
   void queue_resize_browser(TaskContext& tc);
+  void queue_get_browser_title(TaskContext& tc);
+
   void queue_update_current_tab(TaskContext& tc);
   void queue_destroy_current_tab(TaskContext& tc);
   void queue_open_tab(TaskContext& tc);
   void queue_download_files(TaskContext& tc);
-  void queue_reset(TaskContext& tc);
+
+  // OS Level Tasks.
+  void queue_get_active_window_in_os(TaskContext& tc);
+  void queue_tap_keys_in_os(TaskContext& tc);
+
 
   // Queue Page Content Tasks.
   void queue_block_events(TaskContext& tc);
@@ -154,13 +163,15 @@ signals:
   // Socket Messaging Tasks.
   void send_msg_task(Message& msg);
 
-  // Infrastructure Tasks.
+  // Element Tasks.
   void get_crosshair_info_task();
   void get_element_values_task();
   void get_drop_down_info_task();
   void get_current_element_info();
   void has_current_element_info();
   void scroll_element_into_view_task();
+
+  // Infrastructure Tasks.
   void merge_chain_state_task(const QJsonObject& map);
   void copy_chain_property_task(const QString& src_prop, const QString& dest_prop);
   void determine_angle_in_degrees_task();
@@ -168,6 +179,7 @@ signals:
   void start_sequence_task();
   void finished_sequence_task(std::function<void()> on_finished_sequence);
   void build_compute_node_task(ComponentDID compute_did);
+  void reset_task();
 
   // Cookie Tasks.
   void get_all_cookies_task();
@@ -179,10 +191,15 @@ signals:
   void close_browser_task();
   void is_browser_open_task();
   void resize_browser_task();
+  void get_browser_title_task();
   void update_current_tab_task();
   void destroy_current_tab_task();
   void open_tab_task();
   void download_files_task();
+
+  // OS Level Tasks.
+  void get_active_window_in_os_task();
+  void tap_keys_in_os_task();
 
   // Page Content Tasks.
   void block_events_task();
@@ -218,7 +235,7 @@ signals:
   //void mouse_hover_task();
 
   void emit_option_texts_task();
-  void reset_task();
+
 
   void firebase_init_task();
   void firebase_destroy_task();

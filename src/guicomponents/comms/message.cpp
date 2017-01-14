@@ -24,6 +24,11 @@ const char* Message::kHeight = "height";
 const char* Message::kDimensions = "dimensions";
 const char* Message::kNext = "next";
 
+const char* Message::kApplicationName = "application_name";
+const char* Message::kWindowTitle = "window_title";
+const char* Message::kAllMatchingWindows = "all_matching_windows";
+const char* Message::kKeys = "keys";
+
 const char* Message::kTimeInMilliseconds = "time_in_milliseconds";
 
 const char* Message::kWrapType = "wrap_type";

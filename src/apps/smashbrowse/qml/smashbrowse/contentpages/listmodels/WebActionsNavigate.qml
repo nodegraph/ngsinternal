@@ -77,4 +77,12 @@ ListModel {
         script: "web_recorder.record_download_files();
                  main_bar.switch_to_node_graph();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Get Title"
+        description: "Get Current Title of Browser"
+        script: "web_recorder.record_get_browser_title();
+                 main_bar.switch_to_node_graph();"
+    }
 }

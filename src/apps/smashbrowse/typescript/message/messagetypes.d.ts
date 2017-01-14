@@ -25,6 +25,7 @@ declare const enum RequestType {
   kResizeBrowser,
   kOpenBrowser,
   kCloseBrowser,
+  kGetBrowserTitle,
 
   // Web Page Event Control.
   kBlockEvents,
@@ -45,6 +46,10 @@ declare const enum RequestType {
 
   // File Downloads.
   kDownloadFiles,
+
+  // OS Level.
+  kTapKeysInOS,
+  kGetActiveWindowInOS,
 
   // Page Content Set Requests.
   kUpdateElement,

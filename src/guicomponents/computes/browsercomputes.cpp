@@ -178,6 +178,32 @@ bool ResizeBrowserCompute::update_state(){
   return false;
 }
 
+void GetBrowserTitleCompute::receive_chain_state(const QJsonObject& chain_state) {
+  internal();
+  clean_finalize();
+
+  // Grab the title from the chain state.
+  QString title = chain_state["value"].toString();
+  std::cerr << "Got browser title: " << title.toStdString() << "\n";
+  // Grab the incoming object.
+  QJsonValue incoming = _inputs->get_input_value("in");
+  // Add the url into the incoming object under the key, "value".
+  QJsonObject obj = incoming.toObject();
+  obj.insert("value", title);
+  set_output("out", obj);
+}
+
+bool GetBrowserTitleCompute::update_state(){
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_get_browser_title(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
+
 void DestroyCurrentTabCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);

@@ -480,6 +480,16 @@ class BgCommHandler {
                         this.bg_comm.send_to_nodejs(response)
                     });
             } break
+            case RequestType.kGetBrowserTitle: {
+                chrome.tabs.query({ active: true },
+                    (tabs) => {
+                        if (tabs.length > 1) {
+                            console.log('Error: More than 1 tab is active. Choosing the first one.')
+                        }
+                        let response = new ResponseMessage(req.id, true, tabs[0].title)
+                        this.bg_comm.send_to_nodejs(response)
+                    });
+            } break
 
             // --------------------------------------------------------------
             // Requests that are broadcast to all frames.

@@ -21,6 +21,7 @@ function(get_tsconfig_files ts_files)
     SET(${ts_files} ${tsconfig_files} PARENT_SCOPE)
 endfunction()
 
+set(active_window_js_lib "D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/active-window/index.js")
 
 # Sub Directories.
 add_subdirectory(message) # This injects ${msg_js_lib} into this dir scope, so the following dirs can use it.
