@@ -1,0 +1,6 @@
+These are the files that were modified or created for node npm's active-window module.
+We use this in conjunction with robotjs.
+
+- index.d.ts - added
+- index.js - modified slightly
+- windows.ps1 - heaviliy modified to get window titles reliably
