@@ -16,10 +16,8 @@ import {WebDriverWrap, Key} from './webdriverwrap'
 import {DebugUtils} from './debugutils'
 import {FirebaseWraps} from './firebasewrap'
 
-//import { keyTap } from "D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/robotjs/index"
-import robotjs = require("D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/robotjs/index")
-import active_window = require("D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/active-window/index")
-//declare function getActiveWindow(calback: (window:any)=>void): void
+// Other libs that needed to be separated due to cross platform import issues.
+import {robotjs, active_window} from './libs'
 
 // Secure web socket to communicate with chrome extension.
 let ext_server: ChromeSocketServer = null

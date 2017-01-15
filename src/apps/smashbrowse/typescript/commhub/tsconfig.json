@@ -22,7 +22,7 @@
         "../message/message.d.ts",
         "../message/messagetypes.d.ts",
         
-
+        "libs.ts",
         "debugutils.ts",
         "fswrap.ts",
         "webdriverwrap.ts",
