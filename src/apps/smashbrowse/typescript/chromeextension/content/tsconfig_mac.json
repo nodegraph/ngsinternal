@@ -17,7 +17,6 @@
         "../../message/messagetypes.d.ts",
 
 
-        "box.ts",
         "contentcomm.ts",
         "contentcommhandler.ts",
         "pageoverlays.ts",
@@ -32,7 +31,6 @@
         "mutationmonitor.ts",
         "pagewrap.ts",
         "guicollection.ts",
-        "point.ts",
         "popupdialog.ts",
         "utils.ts",
         "contentmain.ts"

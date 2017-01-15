@@ -17,7 +17,7 @@ import {DebugUtils} from './debugutils'
 import {FirebaseWraps} from './firebasewrap'
 
 // Other libs that needed to be separated due to cross platform import issues.
-import {robotjs, active_window} from './libs'
+import {robotjs, active_window} from './maclibs'
 
 // Secure web socket to communicate with chrome extension.
 let ext_server: ChromeSocketServer = null

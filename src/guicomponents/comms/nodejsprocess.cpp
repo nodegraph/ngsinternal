@@ -132,6 +132,7 @@ void NodeJSProcess::start_process() {
 
   // Set the arguments.
   QStringList list("chb.js");
+  qDebug() << "user app dir: " << AppConfig::get_user_app_dir() << "\n";
   list.append(AppConfig::get_user_app_dir());
   _process->setArguments(list);
   _process->start();
