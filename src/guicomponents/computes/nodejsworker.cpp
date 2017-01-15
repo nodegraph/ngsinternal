@@ -315,7 +315,7 @@ void NodeJSWorker::queue_download_files(TaskContext& tc) {
   {
     QJsonObject args;
     args.insert(Message::kApplicationName, "chrome");
-    args.insert(Message::kWindowTitle, "Save As");
+    args.insert(Message::kWindowTitle, "Confirm Save As");
     args.insert(Message::kAllMatchingWindows, false);
 
     QJsonArray keys;

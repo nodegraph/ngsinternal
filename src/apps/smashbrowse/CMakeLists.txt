@@ -109,3 +109,4 @@ elseif (${ARCH} MATCHES "ARCH_IOS")
 endif()
 
 add_subdirectory(typescript)
+add_subdirectory(java)
