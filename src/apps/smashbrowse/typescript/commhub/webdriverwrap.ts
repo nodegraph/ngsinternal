@@ -466,11 +466,25 @@ export class WebDriverWrap {
                             seq = seq.mouseMove(element, { x: size.width / 2.0, y: size.height /2.0 })
                         }
                         if (hold_ctrl) {
-                            seq = seq.keyDown(Key.CONTROL)
+                            switch (os_type) {
+                                case OSType.windows:
+                                    seq = seq.keyDown(Key.CONTROL)
+                                    break
+                                case OSType.macos:
+                                    seq = seq.keyDown(Key.COMMAND)
+                                    break
+                            }
                         }
                         seq = seq.click()
                         if (hold_ctrl) {
-                            seq = seq.keyUp(Key.CONTROL)
+                            switch (os_type) {
+                                case OSType.windows:
+                                    seq = seq.keyUp(Key.CONTROL)
+                                    break
+                                case OSType.macos:
+                                    seq = seq.keyUp(Key.COMMAND)
+                                    break
+                            }
                         }
                         return seq.perform() 
                     },

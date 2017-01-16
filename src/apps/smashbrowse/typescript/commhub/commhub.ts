@@ -296,7 +296,7 @@ class AppConnection extends BaseConnection {
                             send_msg_to_app(new ResponseMessage(msg.id, true, true))
                             return
                         }
-                    } else if ((window.app == "smashbrowse") && (window.title == "Smash Browse")) {
+                    } else if ((window.app == 'smashbrowse') && (window.title == 'Smash Browse')) {
                         smashbrowse_count += 1
                         // If we've seen the smash browse window twice then we've seen all the windows.
                         if (smashbrowse_count >= 2) {
@@ -305,7 +305,17 @@ class AppConnection extends BaseConnection {
                         }
                     }
                     // Switch focus to another window.
-                    robotjs.keyTap("escape", "alt");
+                    switch (os_type) {
+                        case OSType.windows:
+                            robotjs.keyTap('escape', ['alt']);
+                            break
+                        case OSType.macos:
+                            // Depending on system preferences the "fn" key needs to be pressed as function keys share their responsibility with things like volume control.
+                            // We send both possibilities.
+                            robotjs.keyTap('F4', ['fn','control']);
+                            robotjs.keyTap('F4', ['control']);
+                            break
+                    }
                     // Get the active window info. (Recursion)
                     active_window.getActiveWindow(callback, 1, 0)
                 }
