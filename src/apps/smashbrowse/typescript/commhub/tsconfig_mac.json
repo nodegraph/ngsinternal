@@ -17,6 +17,8 @@
         "/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/lib/node_modules/robotjs/index.d.ts",
         "/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/lib/node_modules/active-window/index.d.ts",
 
+		"platform.d.ts",
+		"macos_platform.ts",
         "../message/point.d.ts",
         "../message/box.d.ts",
         "../message/message.d.ts",

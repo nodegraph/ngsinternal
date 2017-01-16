@@ -69,13 +69,16 @@ export class WebDriverWrap {
 
                 chrome_opts.addArguments("--load-extension=" 
                     + FSWrap.get_chrome_ext_dir() + ","
-                    + FSWrap.settings_dir + "/../../Local/Google/Chrome/User Data/Default/Extensions/lmjnegcaeklhafolokijcfjliaokphfk/2.0.1.0_0" + ","
-                    + FSWrap.settings_dir + "/../../Local/Google/Chrome/User Data/Default/Extensions/elicpjhcidhpjomhibiffojpinpmmpil/1.97.54_0"
+                    + FSWrap.settings_dir + download_extension_dir 
+                    //+ ","
                     ) // Extension for downloading.
+                   
+                console.log("download extension prefix:" + FSWrap.settings_dir+":")
+                console.log("download extension suffix:" + download_extension_dir+":")
 
                 // The main page of the extension can be accessed at this url.: 
                 // chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/mainPanel.html
-                // chrome-extension://elicpjhcidhpjomhibiffojpinpmmpil/startpage/index.html
+                
                 //chromeOptions.addArguments("--load-extension=" + FSWrap.get_chrome_ext_dir()) // The smashbrowse extension.
                 chrome_opts.addArguments("--ignore-certificate-errors")
                 chrome_opts.addArguments("--disable-web-security")

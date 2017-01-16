@@ -1,0 +1,1 @@
+declare let download_extension_dir: string
