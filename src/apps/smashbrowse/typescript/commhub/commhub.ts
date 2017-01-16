@@ -16,8 +16,8 @@ import {WebDriverWrap, Key} from './webdriverwrap'
 import {DebugUtils} from './debugutils'
 import {FirebaseWraps} from './firebasewrap'
 
-// Other libs that needed to be separated due to cross platform import issues.
-import {robotjs, active_window} from './maclibs'
+let robotjs = require('robotjs')
+let active_window = require('active-window')
 
 // Secure web socket to communicate with chrome extension.
 let ext_server: ChromeSocketServer = null

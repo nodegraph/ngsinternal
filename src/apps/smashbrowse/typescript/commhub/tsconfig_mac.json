@@ -14,13 +14,14 @@
         "/Users/raindrop/installs/macos/DefinitelyTyped/selenium-webdriver/selenium-webdriver.d.ts",
 
         "/Users/raindrop/installs/srcdeps/ngsexternal/nodejs2/node_modules/firebase/firebase.d.ts",
+        "/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/lib/node_modules/robotjs/index.d.ts",
+        "/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/lib/node_modules/active-window/index.d.ts",
 
         "../message/point.d.ts",
         "../message/box.d.ts",
         "../message/message.d.ts",
         "../message/messagetypes.d.ts",
         
-		"maclibs.ts",
         "debugutils.ts",
         "fswrap.ts",
         "webdriverwrap.ts",
