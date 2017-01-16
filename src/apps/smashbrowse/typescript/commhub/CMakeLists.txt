@@ -5,9 +5,6 @@ get_tsconfig_files(ch_ts)
 # Form ch_js by adding our build dir prefix.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" ch_js "${ch_ts}")
 
-
-
-
 # Form ch_js by changing .ts suffix to .js.
 string(REGEX REPLACE "(\\.ts)" ".js" ch_js "${ch_js}")
 

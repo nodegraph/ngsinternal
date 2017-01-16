@@ -18,7 +18,7 @@
         "D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/active-window/index.d.ts",
 	
 		"platform.d.ts",
-		"windows_platform.d.ts",
+		"windows_platform.ts",
         "../message/point.d.ts",
         "../message/box.d.ts",
         "../message/message.d.ts",
