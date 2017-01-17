@@ -312,8 +312,8 @@ class AppConnection extends BaseConnection {
                         case OSType.macos:
                             // Depending on system preferences the "fn" key needs to be pressed as function keys share their responsibility with things like volume control.
                             // We send both possibilities.
-                            robotjs.keyTap('F4', ['fn','control']);
-                            robotjs.keyTap('F4', ['control']);
+                            //robotjs.keyTap('F4', ['fn','control']);
+                            robotjs.keyTap('f4', ['control']);
                             break
                     }
                     // Get the active window info. (Recursion)
