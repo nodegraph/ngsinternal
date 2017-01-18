@@ -108,6 +108,7 @@ while ($window_handle -ne 0) {
     # Get process id and thread id from the window handle.
     $process_id = 0
     $thread_id = [UserWindows]::GetWindowThreadProcessId($window_handle, [ref] $process_id)
+    $process = Get-Process -Id $process_id
 
     if ($all_chrome_pids -contains $process_id) {
 
@@ -119,6 +120,16 @@ while ($window_handle -ne 0) {
             "found save as window with pid: " + $process_id
             $foreground_window_set = [UserWindows]::SetForegroundWindow($window_handle)
             [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
+
+            Start-Sleep -Milliseconds 1000
+
+            # If the Save As dialog is still up,
+            # send keys tab and enter as the Confirm Save As dialog should be focused.
+            # Todo: Try to find the Confirm Save As window directly. For some reason it doesn't show up under its own process.
+            if (!$process.HasExited) {
+                [System.Windows.Forms.SendKeys]::SendWait("{TAB}")
+                [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
+            }
         }
     }
 
@@ -126,53 +137,4 @@ while ($window_handle -ne 0) {
     $window_handle = [UserWindows]::GetWindow($window_handle, 2)
 }
 
-# ----------------------------------------------------------------------------------------------
-# Now check for Confirm Save As dialogs, which pop up if the file we're saving already exists.
-# ----------------------------------------------------------------------------------------------
-# Pause for the confirm save as dialogs to come up.
-Start-Sleep -Milliseconds 1000
-
-$window_handle = $main_chrome_handles[0]
-while ($window_handle -ne 0) {
-
-    # Get process id and thread id from the window handle.
-    $process_id = 0
-    $thread_id = [UserWindows]::GetWindowThreadProcessId($window_handle, [ref] $process_id)
-
-    if ($all_chrome_pids -contains $process_id) {
-
-        # Determine the window title. 
-        $window_name = Get-WindowName $window_handle
-        "window_name: " + $window_name
-
-        # If the window name is Save As.
-        if ($window_name -eq "Save As") {
-        
-            "found confirm save as window with pid: " + $process_id
-            $foreground_window_set = [UserWindows]::SetForegroundWindow($window_handle)
-            [System.Windows.Forms.SendKeys]::SendWait("{TAB}")
-            [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
-        
-        	$chandles = [UserWindows]::GetChildWindows($window_handle)
-		   $children = @()
-		   foreach($child in $chandles)
-		   {
-		       $cname = Get-WindowName($child)
-		       "child window name: " + $cname
-		       $obj = New-Object psobject -Property @{
-		       Title = $cname
-		       Handle = $child
-		       }
-		       $children += $obj
-		   }
-        
-        
-
-        }
-    }
-
-    # Go to the next window handle. 
-    $window_handle = [UserWindows]::GetWindow($window_handle, 2)
-}
-
-Read-Host -Prompt "Press Enter to exit: "
+#Read-Host -Prompt "Press Enter to exit: "
