@@ -115,38 +115,34 @@ void AcceptSaveProcess::start_process() {
   QTextStream stream(&script);
   QString script_contents = stream.readAll();
 
-  QStringList commands;
-  commands.append("-Command");
-  commands.append(script_contents);
-  _process->setArguments(commands);
+  QStringList args;
+  args.append("-Command");
+  args.append(script_contents);
+  _process->setArguments(args);
+  _process->start();
+
 
 #elif (ARCH == ARCH_MACOS)
-  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  QString node_modules_path;// = AppConfig::get_app_bin_dir();
-  node_modules_path = "../Resources/nodejs/lib/node_modules";
+  // Set the osascript binary.
+  QString osascript_path = "/usr/bin/osascript";
+  _process->setProgram(osascript_path);
 
-  qDebug() << "node modules path: " << node_modules_path << "\n";
-  env.insert("NODE_PATH", node_modules_path); // Add an environment variable
-  _process->setProcessEnvironment(env);
+  // Get the osascript script.
+  QFile script(":/scripts/acceptsave.scpt");
+  if (!script.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+      qDebug() << "Unable to open file: " << script.fileName() << " error: " << script.errorString() << "\n";
+  }
 
-  //setenv("NODE_PATH", node_modules_path.toStdString().c_str(), 1);
+  QTextStream stream(&script);
+  QString script_contents = stream.readAll();
 
+  QStringList args;
+  args << "-l" << "AppleScript";
 
-  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  qDebug() << "env list is: " << env.toStringList();
-  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  qDebug() << "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
-  qDebug() << "ccccccccccccccccccccccccccccccccccccccccccccccccc";
-  qDebug() << "ddddddddddddddddddddddddddddddddddddddddddddddddd";
-  qDebug() << "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-
-  QString node_path;// = AppConfig::get_app_bin_dir();
-  node_path = "../Resources/nodejs/bin/node";
-  qDebug() << "node path: " << node_path << "\n";
-  _process->setProgram(node_path);
+  _process->start();
+  _process->write(script_contents.toUtf8());
+  _process->closeWriteChannel();
 #endif
 
   // Set the working directory.
@@ -155,7 +151,7 @@ void AcceptSaveProcess::start_process() {
 
 
   // We wait processing events until it's running.
-  _process->start();
+
   while(!is_running()) {
     qApp->processEvents();
   }
