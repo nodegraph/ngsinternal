@@ -7,6 +7,7 @@
 #include <guicomponents/computes/firebasecomputes.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
+#include <guicomponents/computes/messagereceiver.h>
 
 #include <components/compshapes/nodeselection.h>
 #include <components/interactions/groupinteraction.h>
@@ -56,7 +57,8 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
       _factory(this),
       _selection(this),
       _ng_quick(this),
-      _scheduler(this) {
+      _scheduler(this),
+      _msg_receiver(this){
 
   // Timer setup.
   _idle_timer.setSingleShot(true);
@@ -87,6 +89,11 @@ void NodeGraphManipulatorImp::initialize_wires() {
   _selection = get_dep<NodeSelection>(_app_root);
   _ng_quick = get_dep<NodeGraphQuickItem>(_app_root);
   _scheduler = get_dep<TaskScheduler>(_app_root);
+  _msg_receiver = get_dep<MessageReceiver>(_app_root);
+}
+
+void NodeGraphManipulatorImp::receive_message(const QString& msg) {
+  _msg_receiver->on_text_received(msg);
 }
 
 void NodeGraphManipulatorImp::set_ultimate_targets(Entity* entity, bool force_stack_reset) {
@@ -698,6 +705,10 @@ NodeGraphManipulator::~NodeGraphManipulator(){
 void NodeGraphManipulator::initialize_wires() {
   Component::initialize_wires();
   _imp->initialize_wires();
+}
+
+void NodeGraphManipulator::receive_message(const QString& msg) {
+  _imp->receive_message(msg);
 }
 
 void NodeGraphManipulator::set_ultimate_targets(Entity* entity, bool force_stack_reset) {

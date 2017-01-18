@@ -13,7 +13,7 @@
 #include <components/computes/jsonutils.h>
 
 #include <guicomponents/computes/nodejsworker.h>
-#include <guicomponents/comms/messagesender.h>
+#include <guicomponents/computes/messagesender.h>
 
 #include <iostream>
 #include <sstream>
@@ -173,7 +173,13 @@ void NodeJSWorker::on_done_wait() {
 void NodeJSWorker::send_msg_task(Message& msg) {
   int id = _scheduler->wait_for_response();
   msg.insert(Message::kID, id);
-  _msg_sender->send_msg(msg);
+
+  if (msg[Message::kRequest].toDouble() == to_underlying(RequestType::kAcceptSaveDialog)) {
+    _msg_sender->accept_save_dialog(id);
+  } else {
+    _msg_sender->send_msg(msg);
+  }
+
 
   std::cerr << "sending app --> commhub: " << msg.to_string().toStdString() << "\n";
 }
@@ -293,40 +299,46 @@ void NodeJSWorker::queue_download_files(TaskContext& tc) {
   queue_update_current_tab(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::download_files_task,this), "queue_download_files");
   queue_wait(tc); // We need to wait a little for the Save-As dialog to come up.
-  {
-    QJsonObject args;
-    args.insert(Message::kApplicationName, "chrome");
-    args.insert(Message::kWindowTitle, "Save As");
-    args.insert(Message::kAllMatchingWindows, false);
+  queue_accept_save_dialog(tc);
 
-    QJsonArray keys;
-    keys.push_back("enter");
+//  {
+//    QJsonObject args;
+//    args.insert(Message::kApplicationName, "chrome");
+//    args.insert(Message::kWindowTitle, "Save As");
+//    args.insert(Message::kAllMatchingWindows, false);
+//
+//    QJsonArray keys;
+//    keys.push_back("enter");
+//
+//    args.insert(Message::kKeys, keys);
+//    queue_merge_chain_state(tc, args);
+//  }
+//  // Now the chain_state has all the values to do our tap at the os level.
+//  queue_tap_keys_in_os(tc);
+//
+//  // Code to deal with "Confirm Save As" dialogs when a file with the same name exists.
+//  // We don't currently need this as the chrome extension which does the download
+//  // adds a number in parentheses at the end.
+//
+//  {
+//    QJsonObject args;
+//    args.insert(Message::kApplicationName, "chrome");
+//    args.insert(Message::kWindowTitle, "Confirm Save As");
+//    args.insert(Message::kAllMatchingWindows, false);
+//
+//    QJsonArray keys;
+//    keys.push_back("tab");
+//    keys.push_back("enter");
+//
+//    args.insert(Message::kKeys, keys);
+//    queue_merge_chain_state(tc, args);
+//  }
+//  // Now the chain_state has all the values to do our tap at the os level.
+//  queue_tap_keys_in_os(tc);
+}
 
-    args.insert(Message::kKeys, keys);
-    queue_merge_chain_state(tc, args);
-  }
-  // Now the chain_state has all the values to do our tap at the os level.
-  queue_tap_keys_in_os(tc);
-
-  // Code to deal with "Confirm Save As" dialogs when a file with the same name exists.
-  // We don't currently need this as the chrome extension which does the download
-  // adds a number in parentheses at the end.
-
-  {
-    QJsonObject args;
-    args.insert(Message::kApplicationName, "chrome");
-    args.insert(Message::kWindowTitle, "Confirm Save As");
-    args.insert(Message::kAllMatchingWindows, false);
-
-    QJsonArray keys;
-    keys.push_back("tab");
-    keys.push_back("enter");
-
-    args.insert(Message::kKeys, keys);
-    queue_merge_chain_state(tc, args);
-  }
-  // Now the chain_state has all the values to do our tap at the os level.
-  queue_tap_keys_in_os(tc);
+void NodeJSWorker::queue_accept_save_dialog(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::accept_save_dialog_task,this), "queue_accept_save_dialog");
 }
 
 // ---------------------------------------------------------------------------------
@@ -748,6 +760,11 @@ void NodeJSWorker::open_tab_task() {
 
 void NodeJSWorker::download_files_task() {
   Message req(RequestType::kDownloadFiles);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::accept_save_dialog_task() {
+  Message req(RequestType::kAcceptSaveDialog);
   send_msg_task(req);
 }
 

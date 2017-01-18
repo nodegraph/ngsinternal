@@ -1,6 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource prefix="/">
     
+    	<!-- Accept Save Scripts for different OS'es-->
+    	<file alias="scripts/acceptsave.ps1">../../guicomponents/comms/acceptsave.ps1</file>
+    	<file alias="scripts/acceptsave.scpt">../../guicomponents/comms/acceptsave.scpt</file>
+    
         <!-- Main Window -->
         <file>qml/main.qml</file>
         

@@ -93,6 +93,7 @@ Q_OBJECT
   void queue_destroy_current_tab(TaskContext& tc);
   void queue_open_tab(TaskContext& tc);
   void queue_download_files(TaskContext& tc);
+  void queue_accept_save_dialog(TaskContext& tc);
 
   // OS Level Tasks.
   void queue_get_active_window_in_os(TaskContext& tc);
@@ -196,6 +197,7 @@ signals:
   void destroy_current_tab_task();
   void open_tab_task();
   void download_files_task();
+  void accept_save_dialog_task();
 
   // OS Level Tasks.
   void get_active_window_in_os_task();

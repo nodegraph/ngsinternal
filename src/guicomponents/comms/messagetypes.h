@@ -41,6 +41,7 @@ enum class RequestType : int {
 
   // File Downloads.
   kDownloadFiles,
+  kAcceptSaveDialog,
 
   // OS Level.
   kTapKeysInOS,

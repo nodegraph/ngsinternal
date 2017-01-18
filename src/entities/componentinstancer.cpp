@@ -64,7 +64,7 @@
 #include <guicomponents/quick/nodegraphmanipulator.h>
 
 #include <guicomponents/comms/nodejsprocess.h>
-#include <guicomponents/comms/messagesender.h>
+#include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
 #include <base/objectmodel/appconfig.h>
 #include <components/computes/accumulatedatanodecompute.h>
@@ -75,6 +75,7 @@
 #include <guicomponents/comms/cryptologic.h>
 
 #include <gui/widget/nodegrapheditor.h>
+#include <guicomponents/computes/acceptsaveprocess.h>
 #include <guicomponents/computes/browserrecorder.h>
 #include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>

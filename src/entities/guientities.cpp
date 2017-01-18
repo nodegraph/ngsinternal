@@ -48,7 +48,7 @@
 #include <gui/widget/nodegrapheditor.h>
 
 #include <guicomponents/comms/nodejsprocess.h>
-#include <guicomponents/comms/messagesender.h>
+#include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
 #include <base/objectmodel/appconfig.h>
 #include <components/computes/accumulatedatanodecompute.h>
@@ -60,6 +60,7 @@
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/comms/filemodel.h>
+#include <guicomponents/computes/acceptsaveprocess.h>
 #include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/enterfirebasegroupcompute.h>
@@ -189,6 +190,7 @@ void QMLAppEntity::create_internals(const EntityConfig& config) {
   // Our tasks processing and workers.
   new_ff FileModel(this);
   new_ff NodeJSProcess(this);
+  new_ff AcceptSaveProcess(this);
   new_ff MessageSender(this);
   new_ff MessageReceiver(this);
   new_ff TaskScheduler(this);

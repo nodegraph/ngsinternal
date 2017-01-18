@@ -3,7 +3,7 @@
 #include <guicomponents/computes/nodejsworker.h>
 
 #include <guicomponents/comms/message.h>
-#include <guicomponents/comms/messagesender.h>
+#include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <openssl/aes.h>

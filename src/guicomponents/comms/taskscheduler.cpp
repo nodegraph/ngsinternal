@@ -2,7 +2,6 @@
 #include <base/objectmodel/deploader.h>
 
 #include <guicomponents/comms/taskscheduler.h>
-#include <guicomponents/comms/messagesender.h>
 #include <guicomponents/comms/message.h>
 
 #include <guicomponents/quick/basenodegraphmanipulator.h>

@@ -19,6 +19,8 @@ class BaseNodeGraphManipulator: public Component {
   BaseNodeGraphManipulator(Entity* entity, ComponentDID did):Component(entity, kIID(), did){}
   virtual ~BaseNodeGraphManipulator(){}
 
+  virtual void receive_message(const QString& msg) = 0;
+
   // Set Ultimate Targets.
   virtual void set_ultimate_targets(Entity* entity, bool force_stack_reset = false) = 0;
   virtual void set_ultimate_targets(const std::unordered_set<Entity*>& entities, bool force_stack_reset) = 0;

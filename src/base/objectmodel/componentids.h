@@ -59,6 +59,7 @@ enum class ComponentIID : size_t {
   kINodeGraphView,
   kIFileModel,
   kINodeJSProcess,
+  kIAcceptSaveProcess,
   kIMessageSender,
   kIMessageReceiver,
   kIAppConfig,
@@ -175,6 +176,7 @@ COMPONENT_ENTRY1(NodeGraphRenderer)\
 COMPONENT_ENTRY1(NodeGraphView)\
 COMPONENT_ENTRY1(FileModel)\
 COMPONENT_ENTRY1(NodeJSProcess)\
+COMPONENT_ENTRY1(AcceptSaveProcess)\
 COMPONENT_ENTRY1(MessageSender)\
 COMPONENT_ENTRY1(MessageReceiver)\
 COMPONENT_ENTRY1(AppConfig)\

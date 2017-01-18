@@ -46,6 +46,7 @@ declare const enum RequestType {
 
   // File Downloads.
   kDownloadFiles,
+  kAcceptSaveDialog,
 
   // OS Level.
   kTapKeysInOS,

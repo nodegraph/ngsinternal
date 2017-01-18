@@ -19,6 +19,7 @@ class NodeSelection;
 class NodeGraphQuickItem;
 class TaskScheduler;
 class Compute;
+class MessageReceiver;
 
 
 // This is the implementation class for the NodeGraphManipulator.
@@ -40,6 +41,8 @@ Q_OBJECT
   bool start_waiting(std::function<void()> on_idle);
 
   virtual void initialize_wires();
+
+  virtual void receive_message(const QString& msg);
 
   // Set Ultimate Targets.
   virtual void set_ultimate_targets(Entity* entity, bool force_stack_reset = false);
@@ -107,6 +110,7 @@ private slots:
   Dep<NodeSelection> _selection;
   Dep<NodeGraphQuickItem> _ng_quick;
   Dep<TaskScheduler> _scheduler;
+  Dep<MessageReceiver> _msg_receiver;
 
   // The ultimate compute (of a node) that we are trying to clean.
   // Note that there maybe many asynchronous computes which cause each cleaning pass over the dependencies
@@ -133,6 +137,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
 
   NodeGraphManipulator(Entity* entity);
   virtual ~NodeGraphManipulator();
+
+  virtual void receive_message(const QString& msg);
 
   // Set Ultimate Targets.
   virtual void set_ultimate_targets(Entity* entity, bool force_stack_reset);

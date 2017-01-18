@@ -1,5 +1,5 @@
 #pragma once
-#include <guicomponents/comms/comms_export.h>
+#include <guicomponents/computes/guicomputes_export.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/componentids.h>
 #include <base/objectmodel/dep.h>
@@ -14,10 +14,11 @@ class QWebSocket;
 namespace ngs {
 
 class NodeJSProcess;
+class AcceptSaveProcess;
 class Message;
 
 // This class communicates with the nodejs process.
-class COMMS_EXPORT MessageSender : public QObject, public Component {
+class GUICOMPUTES_EXPORT MessageSender : public QObject, public Component {
 Q_OBJECT
  public:
   COMPONENT_ID(MessageSender, MessageSender)
@@ -32,6 +33,7 @@ Q_OBJECT
   // Note the sending and receiving of messages of QWebSocket has been split into
   // two parts to keep the dependencies cleanly separated, without hacks.
   void send_msg(const Message& msg) const;
+  void accept_save_dialog(int msg_id);
 
  private slots:
   void on_connected();
@@ -46,6 +48,7 @@ Q_OBJECT
 
   // Our fixed dependencies.
   Dep<NodeJSProcess> _process; // The node js process we want to connect to.
+  Dep<AcceptSaveProcess> _accept_save_process;
 
   mutable QWebSocket* _web_socket;
   bool _trying_to_open;

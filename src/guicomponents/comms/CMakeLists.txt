@@ -5,7 +5,6 @@ set(sources
     filemodel.cpp
     message.cpp
     nodejsprocess.cpp
-    messagesender.cpp
     taskscheduler.cpp
     licensechecker.cpp
     cryptologic.cpp
@@ -24,7 +23,6 @@ set(moc_headers
     filemodel.h
     message.h
     nodejsprocess.h
-    messagesender.h
     licensechecker.h
     qmltypes.h
     )

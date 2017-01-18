@@ -25,7 +25,7 @@ Q_OBJECT
   explicit MessageReceiver(Entity* parent);
   virtual ~MessageReceiver();
 
- private slots:
+ public slots:
   void on_text_received(const QString & text);
 
  protected:

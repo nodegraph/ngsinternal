@@ -9,7 +9,6 @@ class QString;
 
 namespace ngs {
 
-class MessageSender;
 class BaseNodeGraphManipulator;
 
 class TaskContext;

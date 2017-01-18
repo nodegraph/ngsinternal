@@ -3,9 +3,9 @@
 
 #include <base/objectmodel/appconfig.h>
 #include <guicomponents/comms/message.h>
-#include <guicomponents/comms/messagesender.h>
+#include <guicomponents/computes/messagesender.h>
 #include <guicomponents/comms/nodejsprocess.h>
-
+#include <guicomponents/computes/acceptsaveprocess.h>
 #include <cstddef>
 #include <cassert>
 
@@ -20,9 +20,11 @@ MessageSender::MessageSender(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
       _process(this),
+      _accept_save_process(this),
       _web_socket(NULL),
       _trying_to_open(false) {
   get_dep_loader()->register_fixed_dep(_process, Path());
+  get_dep_loader()->register_fixed_dep(_accept_save_process, Path());
 
   _web_socket  = new_ff QWebSocket();
   connect(_web_socket, SIGNAL(connected()), this, SLOT(on_connected()));
@@ -48,6 +50,12 @@ void MessageSender::send_msg(const Message& msg) const {
   if(num_bytes == 0) {
     std::cerr << "Error: Unable to send msg from app to commhub. The commhub process may have terminated.\n";
   }
+}
+
+void MessageSender::accept_save_dialog(int msg_id) {
+  external();
+  _accept_save_process->set_msg_id(msg_id);
+  _accept_save_process->start_process();
 }
 
 void MessageSender::on_connected() {
