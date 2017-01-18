@@ -102,7 +102,10 @@ $all_chrome_pids = Get-Process "chrome" | %{$_.ID}
 # to get a window handle from which we start iterating through all the window handles.
 # ----------------------------------------------------------------------------------------------
 
-$window_handle = $main_chrome_handles[0]
+$window_handle = $main_chrome_handles[1]
+foreach ($start_handle in $main_chrome_handles) {
+$window_handle = $start_handle
+
 while ($window_handle -ne 0) {
 
     # Get process id and thread id from the window handle.
@@ -135,6 +138,7 @@ while ($window_handle -ne 0) {
 
     # Go to the next window handle. 
     $window_handle = [UserWindows]::GetWindow($window_handle, 2)
+}
 }
 
 #Read-Host -Prompt "Press Enter to exit: "
