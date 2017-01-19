@@ -61,6 +61,7 @@
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/acceptsaveprocess.h>
+#include <guicomponents/computes/javaprocess.h>
 #include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/enterfirebasegroupcompute.h>
@@ -191,6 +192,7 @@ void QMLAppEntity::create_internals(const EntityConfig& config) {
   new_ff FileModel(this);
   new_ff NodeJSProcess(this);
   new_ff AcceptSaveProcess(this);
+  new_ff JavaProcess(this);
   new_ff MessageSender(this);
   new_ff MessageReceiver(this);
   new_ff TaskScheduler(this);

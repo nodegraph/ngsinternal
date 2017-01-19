@@ -6,6 +6,7 @@
 #include <guicomponents/computes/messagesender.h>
 #include <guicomponents/comms/nodejsprocess.h>
 #include <guicomponents/computes/acceptsaveprocess.h>
+#include <guicomponents/computes/javaprocess.h>
 #include <cstddef>
 #include <cassert>
 
@@ -21,10 +22,12 @@ MessageSender::MessageSender(Entity* parent)
       Component(parent, kIID(), kDID()),
       _process(this),
       _accept_save_process(this),
+      _java_process(this),
       _web_socket(NULL),
       _trying_to_open(false) {
   get_dep_loader()->register_fixed_dep(_process, Path());
   get_dep_loader()->register_fixed_dep(_accept_save_process, Path());
+  get_dep_loader()->register_fixed_dep(_java_process, Path());
 
   _web_socket  = new_ff QWebSocket();
   connect(_web_socket, SIGNAL(connected()), this, SLOT(on_connected()));
@@ -50,6 +53,7 @@ void MessageSender::send_msg(const Message& msg) const {
   if(num_bytes == 0) {
     std::cerr << "Error: Unable to send msg from app to commhub. The commhub process may have terminated.\n";
   }
+  _java_process->send_msg(msg);
 }
 
 void MessageSender::accept_save_dialog(int msg_id) {
@@ -101,6 +105,11 @@ void MessageSender::close() {
   if (_process && _process->is_running()) {
     _process->stop_process();
   }
+
+  // Make sure the nodejs process is stopped as well.
+  if (_java_process && _java_process->is_running()) {
+    _java_process->stop_process();
+  }
 }
 
 void MessageSender::open() {
@@ -111,6 +120,7 @@ void MessageSender::open() {
   // Make sure the nodejs process has started.
   if (!_process->is_running()) {
     _process->start_process();
+    _java_process->start_process();
   }
 
   const QString& nodejs_port = _process->get_nodejs_port();

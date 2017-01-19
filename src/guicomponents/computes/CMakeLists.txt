@@ -1,6 +1,7 @@
 
 set(sources
     acceptsaveprocess.cpp
+    javaprocess.cpp
     messagesender.cpp
     messagereceiver.cpp
     scriptgroupnodecompute.cpp
@@ -32,6 +33,7 @@ set(headers
     
 set(moc_headers
     acceptsaveprocess.h
+    javaprocess.h
     messagesender.h
     messagereceiver.h
     nodejsworker.h

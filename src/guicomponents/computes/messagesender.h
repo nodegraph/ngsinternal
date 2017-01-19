@@ -15,6 +15,7 @@ namespace ngs {
 
 class NodeJSProcess;
 class AcceptSaveProcess;
+class JavaProcess;
 class Message;
 
 // This class communicates with the nodejs process.
@@ -49,6 +50,7 @@ Q_OBJECT
   // Our fixed dependencies.
   Dep<NodeJSProcess> _process; // The node js process we want to connect to.
   Dep<AcceptSaveProcess> _accept_save_process;
+  Dep<JavaProcess> _java_process;
 
   mutable QWebSocket* _web_socket;
   bool _trying_to_open;

@@ -76,6 +76,7 @@
 
 #include <gui/widget/nodegrapheditor.h>
 #include <guicomponents/computes/acceptsaveprocess.h>
+#include <guicomponents/computes/javaprocess.h>
 #include <guicomponents/computes/browserrecorder.h>
 #include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
