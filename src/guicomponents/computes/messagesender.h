@@ -8,8 +8,10 @@
 #include <QtCore/QObject>
 #include <QtNetwork/QAbstractSocket>
 #include <QtNetwork/QSslError>
+#include <QtWebSockets/qwebsocketprotocol.h>
 
 class QWebSocket;
+class QWebSocketServer;
 
 namespace ngs {
 
@@ -29,30 +31,36 @@ Q_OBJECT
 
   void open();
   void close();
-  bool is_open() const;
+  //bool is_open() const;
 
   // Note the sending and receiving of messages of QWebSocket has been split into
   // two parts to keep the dependencies cleanly separated, without hacks.
   void send_msg(const Message& msg) const;
-  void accept_save_dialog(int msg_id);
+  void accept_save_dialog(int msg_id) const;
 
  private slots:
-  void on_connected();
-  void on_disconnected();
-  void on_error(QAbstractSocket::SocketError error);
-  void on_ssl_error(const QList<QSslError>& errors);
-  void on_state_changed(QAbstractSocket::SocketState);
+  void on_new_connection();
+  //void on_connected();
+  //void on_disconnected();
+  //void on_error(QAbstractSocket::SocketError error);
+  void on_ssl_errors(const QList<QSslError>& errors);
+  void on_server_error(QWebSocketProtocol::CloseCode closeCode);
+  //void on_state_changed(QAbstractSocket::SocketState);
 
  private:
 
-  QWebSocket* get_web_socket() const; // The MessageSender will use this to grab the web socket.
+  QWebSocket* get_web_socket() const;
+  void clear_web_socket();
+  QWebSocketServer* get_web_socket_server() const; // The MessageSender will use this to grab the web socket.
 
   // Our fixed dependencies.
   Dep<NodeJSProcess> _process; // The node js process we want to connect to.
   Dep<AcceptSaveProcess> _accept_save_process;
   Dep<JavaProcess> _java_process;
 
-  mutable QWebSocket* _web_socket;
+  int _port;
+  mutable QWebSocketServer* _server; // The main web socket server.
+  QWebSocket* _client; // We only expect one client to connect to the server.
   bool _trying_to_open;
 
   friend class Grabber; // This is temporary component that needs access to get_web_socket().

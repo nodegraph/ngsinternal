@@ -7,8 +7,6 @@ string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" msg_js "${msg_t
 
 
 
-
-
 # Change the .ts suffix to .js in our ts filenames.
 string(REGEX REPLACE "(\\.ts)" ".js" msg_js "${msg_js}")
 
@@ -21,7 +19,6 @@ set(msg_js_min ${CMAKE_CURRENT_BINARY_DIR}/m.js)
 # The main lib that other's will use.
 # Make msg_js_merged available to other dirs besides the message dir.
 set(msg_js_lib ${CMAKE_CURRENT_BINARY_DIR}/point.js ${CMAKE_CURRENT_BINARY_DIR}/box.js ${CMAKE_CURRENT_BINARY_DIR}/message.js PARENT_SCOPE)
-
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/generator.cmake.in"

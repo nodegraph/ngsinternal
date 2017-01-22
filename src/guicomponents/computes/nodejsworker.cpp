@@ -69,10 +69,10 @@ void NodeJSWorker::close() {
   //_poll_timer.stop();
 }
 
-bool NodeJSWorker::is_open() {
-  external();
-  return _msg_sender->is_open();
-}
+//bool NodeJSWorker::is_open() {
+//  external();
+//  return _msg_sender->is_open();
+//}
 
 void NodeJSWorker::open_browser() {
   TaskContext tc(_scheduler);
@@ -174,12 +174,11 @@ void NodeJSWorker::send_msg_task(Message& msg) {
   int id = _scheduler->wait_for_response();
   msg.insert(Message::kID, id);
 
-  if (msg[Message::kRequest].toDouble() == to_underlying(RequestType::kAcceptSaveDialog)) {
+  if (msg[Message::kRequest].toDouble() == to_underlying(PlatformRequestType::kAcceptSaveDialog)) {
     _msg_sender->accept_save_dialog(id);
   } else {
     _msg_sender->send_msg(msg);
   }
-
 
   std::cerr << "sending app --> commhub: " << msg.to_string().toStdString() << "\n";
 }
@@ -278,12 +277,16 @@ void NodeJSWorker::queue_resize_browser(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::resize_browser_task,this), "queue_resize_browser");
 }
 
-void NodeJSWorker::queue_get_browser_title(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_browser_title_task,this), "queue_resize_browser");
+void NodeJSWorker::queue_get_active_tab_title(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_active_tab_title_task,this), "queue_resize_browser");
 }
 
-void NodeJSWorker::queue_update_current_tab(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::update_current_tab_task,this), "queue_update_current_tab");
+void NodeJSWorker::queue_update_current_tab_in_browser_controller(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::update_current_tab_in_browser_controller_task,this), "queue_update_current_tab");
+}
+
+void NodeJSWorker::queue_update_current_tab_in_chrome_extension(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::update_current_tab_in_chrome_extension_task,this), "queue_update_current_tab");
 }
 
 void NodeJSWorker::queue_destroy_current_tab(TaskContext& tc) {
@@ -296,61 +299,15 @@ void NodeJSWorker::queue_open_tab(TaskContext& tc) {
 
 void NodeJSWorker::queue_download_files(TaskContext& tc) {
   queue_open_tab(tc);
-  queue_update_current_tab(tc);
+  queue_update_current_tab_in_browser_controller(tc);
+  queue_update_current_tab_in_chrome_extension(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::download_files_task,this), "queue_download_files");
   queue_wait(tc); // We need to wait a little for the Save-As dialog to come up.
   queue_accept_save_dialog(tc);
-
-//  {
-//    QJsonObject args;
-//    args.insert(Message::kApplicationName, "chrome");
-//    args.insert(Message::kWindowTitle, "Save As");
-//    args.insert(Message::kAllMatchingWindows, false);
-//
-//    QJsonArray keys;
-//    keys.push_back("enter");
-//
-//    args.insert(Message::kKeys, keys);
-//    queue_merge_chain_state(tc, args);
-//  }
-//  // Now the chain_state has all the values to do our tap at the os level.
-//  queue_tap_keys_in_os(tc);
-//
-//  // Code to deal with "Confirm Save As" dialogs when a file with the same name exists.
-//  // We don't currently need this as the chrome extension which does the download
-//  // adds a number in parentheses at the end.
-//
-//  {
-//    QJsonObject args;
-//    args.insert(Message::kApplicationName, "chrome");
-//    args.insert(Message::kWindowTitle, "Confirm Save As");
-//    args.insert(Message::kAllMatchingWindows, false);
-//
-//    QJsonArray keys;
-//    keys.push_back("tab");
-//    keys.push_back("enter");
-//
-//    args.insert(Message::kKeys, keys);
-//    queue_merge_chain_state(tc, args);
-//  }
-//  // Now the chain_state has all the values to do our tap at the os level.
-//  queue_tap_keys_in_os(tc);
 }
 
 void NodeJSWorker::queue_accept_save_dialog(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::accept_save_dialog_task,this), "queue_accept_save_dialog");
-}
-
-// ---------------------------------------------------------------------------------
-// OS Level Tasks.
-// ---------------------------------------------------------------------------------
-
-void NodeJSWorker::queue_get_active_window_in_os(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_active_window_in_os_task,this), "queue_get_active_window_in_os");
-}
-
-void NodeJSWorker::queue_tap_keys_in_os(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::tap_keys_in_os_task,this), "queue_tap_enter_in_os");
 }
 
 // ---------------------------------------------------------------------------------
@@ -594,36 +551,36 @@ void NodeJSWorker::handle_info(const Message& msg) {
 void NodeJSWorker::get_crosshair_info_task() {
   QJsonObject args;
   args.insert(Message::kGlobalMousePosition, _global_mouse_pos);
-  Message req(RequestType::kGetCrosshairInfo,args);
+  Message req(ChromeRequestType::kGetCrosshairInfo,args);
   send_msg_task(req);
 }
 
 void NodeJSWorker::get_element_values_task() {
-  Message req(RequestType::kGetElementValues);
+  Message req(ChromeRequestType::kGetElementValues);
   send_msg_task(req);
 }
 
 void NodeJSWorker::get_drop_down_info_task() {
-  Message req(RequestType::kGetDropDownInfo);
+  Message req(ChromeRequestType::kGetDropDownInfo);
   send_msg_task(req);
 }
 
 // Should be run after a response message like get_crosshair_info_task that has set_index and overlay_index.
 void NodeJSWorker::get_current_element_info() {
   QJsonObject args;
-  Message req(RequestType::kGetElement,args);
+  Message req(ChromeRequestType::kGetElement,args);
   send_msg_task(req);
 }
 
 void NodeJSWorker::has_current_element_info() {
   QJsonObject args;
-  Message req(RequestType::kHasElement,args);
+  Message req(ChromeRequestType::kHasElement,args);
   send_msg_task(req);
 }
 
 void NodeJSWorker::scroll_element_into_view_task() {
   QJsonObject args;
-  Message req(RequestType::kScrollElementIntoView,args);
+  Message req(ChromeRequestType::kScrollElementIntoView,args);
   send_msg_task(req);
 }
 
@@ -694,17 +651,17 @@ void NodeJSWorker::reset_task() {
 // ------------------------------------------------------------------------
 
 void NodeJSWorker::get_all_cookies_task() {
-  Message req(RequestType::kGetAllCookies);
+  Message req(ChromeRequestType::kGetAllCookies);
   send_msg_task(req);
 }
 
 void NodeJSWorker::clear_all_cookies_task() {
-  Message req(RequestType::kClearAllCookies);
+  Message req(ChromeRequestType::kClearAllCookies);
   send_msg_task(req);
 }
 
 void NodeJSWorker::set_all_cookies_task() {
-  Message req(RequestType::kSetAllCookies);
+  Message req(ChromeRequestType::kSetAllCookies);
   send_msg_task(req);
 }
 
@@ -714,17 +671,17 @@ void NodeJSWorker::set_all_cookies_task() {
 // ------------------------------------------------------------------------
 
 void NodeJSWorker::is_browser_open_task() {
-  Message req(RequestType::kIsBrowserOpen);
+  Message req(WebDriverRequestType::kIsBrowserOpen);
   send_msg_task(req);
 }
 
 void NodeJSWorker::close_browser_task() {
-  Message req(RequestType::kCloseBrowser);
+  Message req(WebDriverRequestType::kCloseBrowser);
   send_msg_task(req);
 }
 
 void NodeJSWorker::open_browser_task() {
-  Message req(RequestType::kOpenBrowser);
+  Message req(WebDriverRequestType::kOpenBrowser);
   send_msg_task(req);
 }
 
@@ -733,59 +690,43 @@ void NodeJSWorker::resize_browser_task() {
   args.insert(Message::kWidth,_chain_state.value(Message::kWidth));
   args.insert(Message::kHeight, _chain_state.value(Message::kHeight));
 
-  Message req(RequestType::kResizeBrowser);
+  Message req(WebDriverRequestType::kResizeBrowser);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
 
-void NodeJSWorker::get_browser_title_task() {
-  Message req(RequestType::kGetBrowserTitle);
+void NodeJSWorker::get_active_tab_title_task() {
+  Message req(ChromeRequestType::kGetActiveTabTitle);
   send_msg_task(req);
 }
 
-void NodeJSWorker::update_current_tab_task() {
-  Message req(RequestType::kUpdateCurrentTab);
+void NodeJSWorker::update_current_tab_in_browser_controller_task() {
+  Message req(WebDriverRequestType::kUpdateCurrentTab);
+  send_msg_task(req);
+}
+
+void NodeJSWorker::update_current_tab_in_chrome_extension_task() {
+  Message req(ChromeRequestType::kUpdateCurrentTab);
   send_msg_task(req);
 }
 
 void NodeJSWorker::destroy_current_tab_task() {
-  Message req(RequestType::kDestroyCurrentTab);
+  Message req(WebDriverRequestType::kDestroyCurrentTab);
   send_msg_task(req);
 }
 
 void NodeJSWorker::open_tab_task() {
-  Message req(RequestType::kOpenTab);
+  Message req(WebDriverRequestType::kOpenTab);
   send_msg_task(req);
 }
 
 void NodeJSWorker::download_files_task() {
-  Message req(RequestType::kDownloadFiles);
+  Message req(WebDriverRequestType::kDownloadFiles);
   send_msg_task(req);
 }
 
 void NodeJSWorker::accept_save_dialog_task() {
-  Message req(RequestType::kAcceptSaveDialog);
-  send_msg_task(req);
-}
-
-// ------------------------------------------------------------------------
-// OS Level Tasks.
-// ------------------------------------------------------------------------
-
-void NodeJSWorker::get_active_window_in_os_task() {
-  Message req(RequestType::kGetActiveWindowInOS);
-  send_msg_task(req);
-}
-
-void NodeJSWorker::tap_keys_in_os_task() {
-  QJsonObject args;
-  args.insert(Message::kApplicationName, _chain_state.value(Message::kApplicationName));
-  args.insert(Message::kWindowTitle, _chain_state.value(Message::kWindowTitle));
-  args.insert(Message::kAllMatchingWindows, _chain_state.value(Message::kAllMatchingWindows));
-  args.insert(Message::kKeys, _chain_state.value(Message::kKeys));
-
-  Message req(RequestType::kTapKeysInOS);
-  req.insert(Message::kArgs, args);
+  Message req(PlatformRequestType::kAcceptSaveDialog);
   send_msg_task(req);
 }
 
@@ -797,17 +738,17 @@ void NodeJSWorker::block_events_task() {
   // This action implies the browser's event unblocked for a time to allow
   // some actions to be performed. After such an action we need to update
   // the overlays as elements may disappear or move around.
-  Message req(RequestType::kBlockEvents);
+  Message req(ChromeRequestType::kBlockEvents);
   send_msg_task(req);
 }
 
 void NodeJSWorker::unblock_events_task() {
-  Message req(RequestType::kUnblockEvents);
+  Message req(ChromeRequestType::kUnblockEvents);
   send_msg_task(req);
 }
 
 void NodeJSWorker::wait_until_loaded_task() {
-  Message req(RequestType::kWaitUntilLoaded);
+  Message req(ChromeRequestType::kWaitUntilLoaded);
   send_msg_task(req);
 }
 
@@ -820,7 +761,7 @@ void NodeJSWorker::wait_task() {
 // ------------------------------------------------------------------------
 
 void NodeJSWorker::shutdown_task() {
-  Message msg(RequestType::kShutdown);
+  Message msg(WebDriverRequestType::kShutdown);
   // Shutdown without queuing it.
   send_msg_task(msg);
   close();
@@ -841,27 +782,27 @@ void NodeJSWorker::reset_browser_task() {
 void NodeJSWorker::navigate_to_task() {
   QJsonObject args;
   args.insert(Message::kURL, _chain_state.value(Message::kURL));
-  Message req(RequestType::kNavigateTo, args);
+  Message req(WebDriverRequestType::kNavigateTo, args);
   send_msg_task(req);
 }
 
 void NodeJSWorker::navigate_back_task() {
-  Message req(RequestType::kNavigateBack);
+  Message req(WebDriverRequestType::kNavigateBack);
   send_msg_task(req);
 }
 
 void NodeJSWorker::navigate_forward_task() {
-  Message req(RequestType::kNavigateForward);
+  Message req(WebDriverRequestType::kNavigateForward);
   send_msg_task(req);
 }
 
 void NodeJSWorker::navigate_refresh_task() {
-  Message req(RequestType::kNavigateRefresh);
+  Message req(WebDriverRequestType::kNavigateRefresh);
   send_msg_task(req);
 }
 
 void NodeJSWorker::get_current_url_task() {
-  Message req(RequestType::kGetCurrentURL);
+  Message req(WebDriverRequestType::kGetCurrentURL);
   send_msg_task(req);
 }
 
@@ -870,12 +811,12 @@ void NodeJSWorker::get_current_url_task() {
 // ------------------------------------------------------------------------
 
 void NodeJSWorker::update_element_task() {
-  Message req(RequestType::kUpdateElement);
+  Message req(ChromeRequestType::kUpdateElement);
   send_msg_task(req);
 }
 
 void NodeJSWorker::clear_element_task() {
-  Message req(RequestType::kClearElement);
+  Message req(ChromeRequestType::kClearElement);
   send_msg_task(req);
 }
 
@@ -884,7 +825,7 @@ void NodeJSWorker::find_element_by_position_task() {
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   args.insert(Message::kGlobalMousePosition, _chain_state.value(Message::kGlobalMousePosition));
 
-  Message req(RequestType::kFindElementByPosition);
+  Message req(ChromeRequestType::kFindElementByPosition);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -894,7 +835,7 @@ void NodeJSWorker::find_element_by_values_task() {
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
 
-  Message req(RequestType::kFindElementByValues);
+  Message req(ChromeRequestType::kFindElementByValues);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -903,7 +844,7 @@ void NodeJSWorker::find_element_by_type_task() {
   QJsonObject args;
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
 
-  Message req(RequestType::kFindElementByType);
+  Message req(ChromeRequestType::kFindElementByType);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -912,7 +853,7 @@ void NodeJSWorker::shift_element_by_type_task() {
   QJsonObject args;
   args.insert(Message::kAngleInDegrees, _chain_state.value(Message::kAngleInDegrees));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  Message req(RequestType::kShiftElementByType);
+  Message req(ChromeRequestType::kShiftElementByType);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -922,7 +863,7 @@ void NodeJSWorker::shift_element_by_values_task() {
   args.insert(Message::kAngleInDegrees, _chain_state.value(Message::kAngleInDegrees));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
-  Message req(RequestType::kShiftElementByValues);
+  Message req(ChromeRequestType::kShiftElementByValues);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -935,7 +876,7 @@ void NodeJSWorker::perform_mouse_action_task() {
   args.insert(Message::kMouseAction, _chain_state.value(Message::kMouseAction));
   args.insert(Message::kLocalMousePosition, _chain_state.value(Message::kLocalMousePosition));
 
-  Message req(RequestType::kPerformMouseAction);
+  Message req(WebDriverRequestType::kPerformMouseAction);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -948,7 +889,7 @@ void NodeJSWorker::perform_hover_action_task() {
   args.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
   args.insert(Message::kLocalMousePosition, _chain_state.value(Message::kLocalMousePosition));
 
-  Message req(RequestType::kPerformMouseAction);
+  Message req(WebDriverRequestType::kPerformMouseAction);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -961,7 +902,7 @@ void NodeJSWorker::perform_text_action_task() {
   args.insert(Message::kTextAction, _chain_state.value(Message::kTextAction));
   args.insert(Message::kText, _chain_state.value(Message::kText));
 
-  Message req(RequestType::kPerformTextAction);
+  Message req(WebDriverRequestType::kPerformTextAction);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -975,7 +916,7 @@ void NodeJSWorker::perform_element_action_task() {
   args.insert(Message::kOptionText, _chain_state.value(Message::kOptionText)); // Used for selecting element from dropdowns.
   args.insert(Message::kScrollDirection, _chain_state.value(Message::kScrollDirection)); // Used for the scrolling directions.
 
-  Message req(RequestType::kPerformElementAction);
+  Message req(WebDriverRequestType::kPerformElementAction);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -1008,7 +949,7 @@ void NodeJSWorker::firebase_init_task() {
   args.insert(Message::kStorageBucket, _chain_state.value(Message::kStorageBucket));
   args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
-  Message req(RequestType::kFirebaseInit);
+  Message req(FirebaseRequestType::kFirebaseInit);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -1017,7 +958,7 @@ void NodeJSWorker::firebase_destroy_task() {
   QJsonObject args;
   args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
-  Message req(RequestType::kFirebaseDestroy);
+  Message req(FirebaseRequestType::kFirebaseDestroy);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -1028,7 +969,7 @@ void NodeJSWorker::firebase_sign_in_task() {
   args.insert(Message::kPassword, _chain_state.value(Message::kPassword));
   args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
-  Message req(RequestType::kFirebaseSignIn);
+  Message req(FirebaseRequestType::kFirebaseSignIn);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -1037,7 +978,7 @@ void NodeJSWorker::firebase_sign_out_task() {
   QJsonObject args;
   args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
-  Message req(RequestType::kFirebaseSignOut);
+  Message req(FirebaseRequestType::kFirebaseSignOut);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -1048,7 +989,7 @@ void NodeJSWorker::firebase_write_data_task() {
   args.insert(Message::kValue, _chain_state.value(Message::kValue));
   args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
-  Message req(RequestType::kFirebaseWriteData);
+  Message req(FirebaseRequestType::kFirebaseWriteData);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -1058,7 +999,7 @@ void NodeJSWorker::firebase_read_data_task() {
   args.insert(Message::kDataPath, _chain_state.value(Message::kDataPath));
   args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
-  Message req(RequestType::kFirebaseReadData);
+  Message req(FirebaseRequestType::kFirebaseReadData);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -1068,7 +1009,7 @@ void NodeJSWorker::firebase_subscribe_task() {
   args.insert(Message::kDataPath, _chain_state.value(Message::kDataPath));
   args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
-  Message req(RequestType::kFirebaseSubscribe);
+  Message req(FirebaseRequestType::kFirebaseSubscribe);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
@@ -1078,7 +1019,7 @@ void NodeJSWorker::firebase_unsubscribe_task() {
   args.insert(Message::kDataPath, _chain_state.value(Message::kDataPath));
   args.insert(Message::kNodePath, _chain_state.value(Message::kNodePath));
 
-  Message req(RequestType::kFirebaseUnsubscribe);
+  Message req(FirebaseRequestType::kFirebaseUnsubscribe);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }

@@ -48,8 +48,10 @@ void Compute::create_inputs_outputs(const EntityConfig& config) {
 void Compute::set_self_dirty(bool dirty) {
   Component::set_self_dirty(dirty);
   if (_manipulator) {
+      std::cerr << to_underlying(get_did()) << " Compute setting marker to: " << !is_state_dirty() << "\n";
       _manipulator->update_clean_marker(our_entity(), !is_state_dirty());
       if (dirty) {
+        std::cerr << to_underlying(get_did()) << " Compute is bubbling dirtiness\n";
         _manipulator->bubble_group_dirtiness(our_entity());
       }
   }

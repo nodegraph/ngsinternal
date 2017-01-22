@@ -26,11 +26,16 @@ Q_OBJECT
   virtual ~MessageReceiver();
 
  public slots:
+  void on_connected();
+  void on_disconnected();
+  void on_error(QAbstractSocket::SocketError error);
+  void on_ssl_error(const QList<QSslError>& errors);
+  void on_state_changed(QAbstractSocket::SocketState);
   void on_text_received(const QString & text);
 
  protected:
   // Our state.
-  virtual void initialize_wires();
+  virtual void update_wires();
 
  private:
   // Debug methods.

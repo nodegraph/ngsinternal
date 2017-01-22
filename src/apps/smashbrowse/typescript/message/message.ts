@@ -63,7 +63,7 @@ class BaseMessage {
         let id: Number = obj.id
         switch (obj.msg_type) {
             case MessageType.kRequestMessage: {
-                let req = new RequestMessage(id, RequestType.kUnknownRequest)
+                let req = new RequestMessage(id, WebDriverRequestType.kUnknownWebDriverRequest)
                 if (obj.hasOwnProperty('request')) {
                     req.request = obj.request
                 }
@@ -106,9 +106,9 @@ class BaseMessage {
 }
 
 class RequestMessage extends BaseMessage {
-    request: RequestType
+    request: WebDriverRequestType
     args: any // a key value dict of arguments
-    constructor(id: Number, request: RequestType, args: any = {}) {
+    constructor(id: Number, request: WebDriverRequestType, args: any = {}) {
         super(id)
         this.msg_type = MessageType.kRequestMessage
         this.request = request

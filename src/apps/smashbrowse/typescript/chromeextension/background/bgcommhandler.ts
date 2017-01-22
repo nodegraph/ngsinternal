@@ -295,19 +295,19 @@ class BgCommHandler {
 
     // Other.
     queue_block_events() {
-        let req = new RequestMessage(-1, RequestType.kBlockEvents)
+        let req = new RequestMessage(-1, ChromeRequestType.kBlockEvents)
         this.queue_collect_void_from_frames(req)
     }
 
     queue_unblock_events() {
-        let req = new RequestMessage(-1, RequestType.kUnblockEvents)
+        let req = new RequestMessage(-1, ChromeRequestType.kUnblockEvents)
         this.queue_collect_void_from_frames(req)
     }
 
     // Note this method modifies the stack while executing.
     // It continually pushes a task to query the frames about whether they are busy.
     queue_wait_until_loaded(callback: ()=>void) {
-        let req = new RequestMessage(-1, RequestType.kWaitUntilLoaded)
+        let req = new RequestMessage(-1, ChromeRequestType.kWaitUntilLoaded)
         this.queue_collect_bool_from_frames(req)
         this.queue(() => {
             if (this.collected_booleans.length == 0) {
@@ -322,12 +322,12 @@ class BgCommHandler {
 
     // Element mutation methods.
     queue_update_element() {
-        let req = new RequestMessage(-1, RequestType.kUpdateElement)
+        let req = new RequestMessage(-1, ChromeRequestType.kUpdateElement)
         this.queue_collect_void_from_frames(req)
     }
 
     queue_clear_element() {
-        let req = new RequestMessage(-1, RequestType.kClearElement)
+        let req = new RequestMessage(-1, ChromeRequestType.kClearElement)
         this.queue_collect_void_from_frames(req)
     }
 
@@ -336,7 +336,7 @@ class BgCommHandler {
         this.found_elem = null
         this.error_msg = ""
         this.collected_elems.length = 0
-        let req = new RequestMessage(-1, RequestType.kGetElement)
+        let req = new RequestMessage(-1, ChromeRequestType.kGetElement)
         this.queue_collect_elements_from_frames(req)
         this.queue(() => {
             if (this.collected_elems.length == 1) {
@@ -355,7 +355,7 @@ class BgCommHandler {
         this.found_elem = null
         this.error_msg = ""
         this.collected_elems.length = 0
-        let req = new RequestMessage(-1, RequestType.kScrollElementIntoView)
+        let req = new RequestMessage(-1, ChromeRequestType.kScrollElementIntoView)
         this.queue_collect_elements_from_frames(req)
         this.queue(() => {
             if (this.collected_elems.length == 1) {
@@ -379,7 +379,7 @@ class BgCommHandler {
         // We skip using queue_collect_elements_from_frames, because we need to dynamically create the message
         // using the current value of this.found_elem.
         this.queue(() => {
-            let req = new RequestMessage(-1, RequestType.kSetElement, this.found_elem)
+            let req = new RequestMessage(-1, ChromeRequestType.kSetElement, this.found_elem)
             this.collected_elems.length = 0
             this.collect_from_frames(req, (elems: IElementInfo[]) => {this.collect_elements(elems)})
         })
@@ -399,7 +399,7 @@ class BgCommHandler {
     queue_find_all_elements_by_type(wrap_type: WrapType) {
         this.found_elems = []
         this.collected_elems.length = 0
-        let req = new RequestMessage(-1, RequestType.kFindElementByType, { wrap_type: wrap_type })
+        let req = new RequestMessage(-1, ChromeRequestType.kFindElementByType, { wrap_type: wrap_type })
         this.queue_collect_elements_from_frames(req)
         this.queue(() => {
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
@@ -410,7 +410,7 @@ class BgCommHandler {
     queue_find_all_elements_by_values(wrap_type: WrapType, target_values: string[]) {
         this.found_elems = []
         this.collected_elems.length = 0
-        let req = new RequestMessage(-1, RequestType.kFindElementByValues, { wrap_type: wrap_type, target_values: target_values })
+        let req = new RequestMessage(-1, ChromeRequestType.kFindElementByValues, { wrap_type: wrap_type, target_values: target_values })
         this.queue_collect_elements_from_frames(req)
         this.queue(() => {
             this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
@@ -433,7 +433,7 @@ class BgCommHandler {
             // Requests that are handled by the background script on its own.
             // --------------------------------------------------------------
 
-            case RequestType.kClearAllCookies: {
+            case ChromeRequestType.kClearAllCookies: {
                 let done_clear_all_cookies = () => {
                     // Send response to nodejs.
                     let response = new ResponseMessage(req.id, true)
@@ -441,7 +441,7 @@ class BgCommHandler {
                 }
                 BrowserWrap.clear_all_cookies(done_clear_all_cookies)
             } break
-            case RequestType.kGetAllCookies: {
+            case ChromeRequestType.kGetAllCookies: {
                 let done_get_all_cookies = (cookies: chrome.cookies.Cookie[]) => {
                     // Send response to nodejs.
                     let response = new ResponseMessage(req.id, true, cookies)
@@ -449,7 +449,7 @@ class BgCommHandler {
                 }
                 BrowserWrap.get_all_cookies(done_get_all_cookies);
             } break
-            case RequestType.kSetAllCookies: {
+            case ChromeRequestType.kSetAllCookies: {
                 let cookies = req.args.cookies
                 let count = 0
                 let done_set_all_cookies = () => {
@@ -462,7 +462,7 @@ class BgCommHandler {
                 }
                 BrowserWrap.set_all_cookies(cookies, done_set_all_cookies)
             } break
-            case RequestType.kGetZoom: {
+            case ChromeRequestType.kGetZoom: {
                 let done_get_zoom = (zoom: number) => {
                     // Send response to nodejs.
                     let response = new ResponseMessage(req.id, true, { 'zoom': zoom })
@@ -470,7 +470,13 @@ class BgCommHandler {
                 }
                 BrowserWrap.get_zoom(this.bg_comm.get_current_tab_id(), done_get_zoom);
             } break
-            case RequestType.kOpenTab: {
+            case ChromeRequestType.kUpdateCurrentTab: {
+                this.clear_tasks()
+                this.bg_comm.update_current_tab_id()
+                let response = new ResponseMessage(req.id, true, true)
+                this.bg_comm.send_to_nodejs(response)
+            } break
+            case ChromeRequestType.kOpenTab: {
                 //let response = new ResponseMessage(req.id, true, true)
                 //this.bg_comm.send_to_nodejs(response)
                 chrome.tabs.create({'url': 'http://www.google.com'}, 
@@ -480,7 +486,7 @@ class BgCommHandler {
                         this.bg_comm.send_to_nodejs(response)
                     });
             } break
-            case RequestType.kGetBrowserTitle: {
+            case ChromeRequestType.kGetActiveTabTitle: {
                 chrome.tabs.query({ active: true },
                     (tabs) => {
                         if (tabs.length > 1) {
@@ -495,7 +501,7 @@ class BgCommHandler {
             // Requests that are broadcast to all frames.
             // --------------------------------------------------------------
 
-            case RequestType.kBlockEvents: {
+            case ChromeRequestType.kBlockEvents: {
                 this.clear_tasks()
                 this.queue_block_events()
                 this.queue(() => {
@@ -504,7 +510,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kUnblockEvents: {
+            case ChromeRequestType.kUnblockEvents: {
                 this.clear_tasks()
                 this.queue_unblock_events()
                 this.queue(() => {
@@ -513,7 +519,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kWaitUntilLoaded: {
+            case ChromeRequestType.kWaitUntilLoaded: {
                 this.clear_tasks()
                 this.queue_wait_until_loaded(() => {
                         let response = new ResponseMessage(req.id, true, true)
@@ -521,13 +527,8 @@ class BgCommHandler {
                     })
                 this.run_next_task()
             } break
-            case RequestType.kUpdateCurrentTab: {
-                this.clear_tasks()
-                this.bg_comm.update_current_tab_id()
-                let response = new ResponseMessage(req.id, true, true)
-                this.bg_comm.send_to_nodejs(response)
-            } break
-            case RequestType.kUpdateElement: {
+
+            case ChromeRequestType.kUpdateElement: {
                 this.clear_tasks()
                 this.queue_update_element()
                 this.queue(() => {
@@ -536,7 +537,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kClearElement: {
+            case ChromeRequestType.kClearElement: {
                 this.clear_tasks()
                 this.queue_clear_element()
                 this.queue(() => {
@@ -545,7 +546,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kGetElement: {
+            case ChromeRequestType.kGetElement: {
                 this.clear_tasks()
                 this.queue_get_current_element()
                 this.queue(() => {
@@ -559,7 +560,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kHasElement: {
+            case ChromeRequestType.kHasElement: {
                 this.clear_tasks()
                 this.queue_get_current_element()
                 this.queue(() => {
@@ -581,7 +582,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kSetElement: {
+            case ChromeRequestType.kSetElement: {
                 this.clear_tasks()
                 this.found_elem = req.args
                 this.queue_set_current_element()
@@ -596,7 +597,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kScrollElementIntoView: {
+            case ChromeRequestType.kScrollElementIntoView: {
                 console.log('bgcommhandler got kScrollElementIntoView')
                 this.clear_tasks()
                 this.queue_scroll_element_into_view()
@@ -607,7 +608,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kFindElementByPosition: {
+            case ChromeRequestType.kFindElementByPosition: {
                 this.clear_tasks()
                 this.queue_find_all_elements_by_type(req.args.wrap_type)
                 this.queue(() => {
@@ -665,7 +666,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kFindElementByValues: {
+            case ChromeRequestType.kFindElementByValues: {
                 this.clear_tasks()
                 this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
                 this.queue(() => {
@@ -691,7 +692,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kFindElementByType: {
+            case ChromeRequestType.kFindElementByType: {
                 this.clear_tasks()
                 this.queue_find_all_elements_by_type(req.args.wrap_type)
                 this.queue(() => {
@@ -717,7 +718,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kShiftElementByType: {
+            case ChromeRequestType.kShiftElementByType: {
                 this.clear_tasks()
                 // Make sure we have a current element to shift from.
                 this.queue_get_current_element()
@@ -765,7 +766,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kShiftElementByValues: {
+            case ChromeRequestType.kShiftElementByValues: {
                 this.clear_tasks()
                 // Make sure we have a current element to shift from.
                 this.queue_get_current_element()
@@ -813,24 +814,24 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kPerformElementAction: {
-                this.clear_tasks()
-                this.queue_collect_elements_from_frames(req)
-                this.queue(() => {
-                    if (this.collected_elems.length == 1) {
-                        let response = new ResponseMessage(req.id, true, this.collected_elems[0])
-                        this.bg_comm.send_to_nodejs(response)
-                    } else if (this.collected_elems.length > 1) {
-                        let response = new ResponseMessage(req.id, false, "Performed element action on multiple elements: " + this.collected_elems.length)
-                        this.bg_comm.send_to_nodejs(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, false, "No current element to perform element action on.")
-                        this.bg_comm.send_to_nodejs(response)
-                    }
-                })
-                this.run_next_task()
-            } break
-            case RequestType.kGetCrosshairInfo: {
+            // case ChromeRequestType.kPerformElementAction: {
+            //     this.clear_tasks()
+            //     this.queue_collect_elements_from_frames(req)
+            //     this.queue(() => {
+            //         if (this.collected_elems.length == 1) {
+            //             let response = new ResponseMessage(req.id, true, this.collected_elems[0])
+            //             this.bg_comm.send_to_nodejs(response)
+            //         } else if (this.collected_elems.length > 1) {
+            //             let response = new ResponseMessage(req.id, false, "Performed element action on multiple elements: " + this.collected_elems.length)
+            //             this.bg_comm.send_to_nodejs(response)
+            //         } else {
+            //             let response = new ResponseMessage(req.id, false, "No current element to perform element action on.")
+            //             this.bg_comm.send_to_nodejs(response)
+            //         }
+            //     })
+            //     this.run_next_task()
+            // } break
+            case ChromeRequestType.kGetCrosshairInfo: {
                 this.clear_tasks()
                 this.queue_collect_click_from_frames(req)
                 this.queue(() => {
@@ -848,7 +849,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kGetElementValues: {
+            case ChromeRequestType.kGetElementValues: {
                 this.clear_tasks()
                 this.queue_collect_click_from_frames(req)
                 this.queue(() => {
@@ -866,7 +867,7 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case RequestType.kGetDropDownInfo: {
+            case ChromeRequestType.kGetDropDownInfo: {
                 this.clear_tasks()
                 this.queue_collect_drop_down_from_frames(req)
                 this.queue(() => {

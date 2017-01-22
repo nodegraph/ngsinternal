@@ -77,10 +77,10 @@ class GUICOMPUTES_EXPORT ResizeBrowserCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT GetBrowserTitleCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT GetActiveTabTitleCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, GetBrowserTitleCompute);
-  GetBrowserTitleCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, GetActiveTabTitleCompute);
+  GetActiveTabTitleCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void receive_chain_state(const QJsonObject& chain_state);
  protected:
   virtual bool update_state();

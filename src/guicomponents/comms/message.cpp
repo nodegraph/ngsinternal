@@ -94,7 +94,8 @@ const char* Message::kPort = "port";
 const char* Message::kClientID = "client_id";
 
 Message::Message()
-    : QJsonObject() {
+    : QJsonObject(),
+      _receiver_type(ReceiverType::Unknown){
 }
 
 Message::Message(const QString& json) {
@@ -104,11 +105,31 @@ Message::Message(const QString& json) {
   assert(check_contents());
 }
 
-Message::Message(RequestType rt, const QJsonObject& args) {
+Message::Message(WebDriverRequestType rt, const QJsonObject& args):
+  _receiver_type(ReceiverType::WebDriver) {
+  init_request(to_underlying(rt),args);
+}
+
+Message::Message(ChromeRequestType rt, const QJsonObject& args):
+      _receiver_type(ReceiverType::Chrome) {
+  init_request(to_underlying(rt),args);
+}
+
+Message::Message(PlatformRequestType rt, const QJsonObject& args):
+      _receiver_type(ReceiverType::Platform) {
+  init_request(to_underlying(rt),args);
+}
+
+Message::Message(FirebaseRequestType rt, const QJsonObject& args):
+      _receiver_type(ReceiverType::Firebase) {
+  init_request(to_underlying(rt),args);
+}
+
+void Message::init_request(int rt, const QJsonObject& args) {
   insert(Message::kID, -1);
   insert(Message::kMessageType, static_cast<int>(MessageType::kRequestMessage));
 
-  insert(Message::kRequest, static_cast<int>(rt));
+  insert(Message::kRequest, rt);
   insert(Message::kArgs, args);
 
   assert(check_contents());
@@ -194,8 +215,16 @@ QString Message::to_string() const {
   return QString(bytes);
 }
 
+int Message::get_id() const {
+  return value(Message::kID).toInt();
+}
+
 MessageType Message::get_msg_type() const {
   return static_cast<MessageType>(value(Message::kMessageType).toInt());
+}
+
+Message::ReceiverType Message::get_receiver_type() const {
+  return _receiver_type;
 }
 
 }

@@ -40,9 +40,9 @@ declare class BaseMessage {
 }
 
 declare class RequestMessage extends BaseMessage {
-    request: RequestType
+    request: ChromeRequestType
     args: any // a key value dict of arguments
-    constructor(id: Number, request: RequestType, args?: any)
+    constructor(id: Number, request: ChromeRequestType, args?: any)
 }
 
 declare class ResponseMessage extends BaseMessage {

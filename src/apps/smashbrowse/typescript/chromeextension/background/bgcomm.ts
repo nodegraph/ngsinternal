@@ -138,8 +138,10 @@ class BgComm {
                 console.error("Error: nodejs socket error: " + JSON.stringify(error))
             }
             this.nodejs_socket.onopen = (event: Event) => {
+                console.log('nodejs sockected connected ... testing sending info over it')
                 // BgComm is now connected.
                 this.send_to_nodejs(new InfoMessage(-1, InfoType.kBgIsConnected))
+                console.log('nodejs sockected connected ... done sending over it')
             }
             this.nodejs_socket.onmessage = (event: MessageEvent) => { this.receive_from_nodejs(event) }
         } catch (e) {
@@ -166,7 +168,7 @@ class BgComm {
     receive_from_nodejs(event: MessageEvent) {
         let msg = BaseMessage.create_from_string(event.data);
         //let request = JSON.parse(event.data);
-        //console.log("bg received message from nodejs: " + event.data)
+        console.log("bg received message from nodejs: " + event.data)
         if (msg.get_msg_type() != MessageType.kRequestMessage) {
             console.error('bgcomm was expecting a request message')
             return
@@ -201,7 +203,7 @@ class BgComm {
 
     // Receive a message from on of the frames.
     receive_from_content(msg: BaseMessage, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
-        //console.log("bg received from frameid: " + sender.frameId + " : " + JSON.stringify(msg))
+        console.log("bg received from frameid: " + sender.frameId + " of tab: " + sender.tab.id + " with msg: " + JSON.stringify(msg))
 
         // // The first tab to send us a content message will be the tab that we pay attention to.
         // if (!this.tab_id) {

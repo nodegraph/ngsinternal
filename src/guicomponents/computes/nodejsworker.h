@@ -32,7 +32,7 @@ Q_OBJECT
 
   Q_INVOKABLE void open();
   Q_INVOKABLE void close();
-  Q_INVOKABLE bool is_open();
+  //Q_INVOKABLE bool is_open();
   Q_INVOKABLE void open_browser();
   Q_INVOKABLE void close_browser();
   Q_INVOKABLE void force_close_browser();
@@ -87,18 +87,14 @@ Q_OBJECT
   void queue_close_browser(TaskContext& tc);
   void queue_is_browser_open(TaskContext& tc);
   void queue_resize_browser(TaskContext& tc);
-  void queue_get_browser_title(TaskContext& tc);
+  void queue_get_active_tab_title(TaskContext& tc);
 
-  void queue_update_current_tab(TaskContext& tc);
+  void queue_update_current_tab_in_browser_controller(TaskContext& tc);
+  void queue_update_current_tab_in_chrome_extension(TaskContext& tc);
   void queue_destroy_current_tab(TaskContext& tc);
   void queue_open_tab(TaskContext& tc);
   void queue_download_files(TaskContext& tc);
   void queue_accept_save_dialog(TaskContext& tc);
-
-  // OS Level Tasks.
-  void queue_get_active_window_in_os(TaskContext& tc);
-  void queue_tap_keys_in_os(TaskContext& tc);
-
 
   // Queue Page Content Tasks.
   void queue_block_events(TaskContext& tc);
@@ -192,16 +188,13 @@ signals:
   void close_browser_task();
   void is_browser_open_task();
   void resize_browser_task();
-  void get_browser_title_task();
-  void update_current_tab_task();
+  void get_active_tab_title_task();
+  void update_current_tab_in_browser_controller_task();
+  void update_current_tab_in_chrome_extension_task();
   void destroy_current_tab_task();
   void open_tab_task();
   void download_files_task();
   void accept_save_dialog_task();
-
-  // OS Level Tasks.
-  void get_active_window_in_os_task();
-  void tap_keys_in_os_task();
 
   // Page Content Tasks.
   void block_events_task();

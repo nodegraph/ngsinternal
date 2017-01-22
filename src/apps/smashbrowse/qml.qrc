@@ -4,6 +4,10 @@
     	<!-- Accept Save Scripts for different OS'es-->
     	<file alias="scripts/acceptsave.ps1">../../guicomponents/comms/acceptsave.ps1</file>
     	<file alias="scripts/acceptsave.scpt">../../guicomponents/comms/acceptsave.scpt</file>
+    	
+    	<!-- SSL Certificates -->
+    	<file alias="ssl/cert.pem">../../apps/smashbrowse/typescript/commhub/cert.pem</file>
+    	<file alias="ssl/key.pem">../../apps/smashbrowse/typescript/commhub/key.pem</file>
     
         <!-- Main Window -->
         <file>qml/main.qml</file>

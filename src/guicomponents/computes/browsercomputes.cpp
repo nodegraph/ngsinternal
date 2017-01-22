@@ -95,7 +95,7 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
   std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::receive_chain_state,this,std::placeholders::_1);
   _worker->queue_receive_chain_state(tc, callback);
   _worker->queue_scroll_element_into_view(tc);
-  _worker->queue_update_current_tab(tc);
+  _worker->queue_update_current_tab_in_browser_controller(tc);
 }
 
 void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
@@ -178,7 +178,7 @@ bool ResizeBrowserCompute::update_state(){
   return false;
 }
 
-void GetBrowserTitleCompute::receive_chain_state(const QJsonObject& chain_state) {
+void GetActiveTabTitleCompute::receive_chain_state(const QJsonObject& chain_state) {
   internal();
   clean_finalize();
 
@@ -193,13 +193,13 @@ void GetBrowserTitleCompute::receive_chain_state(const QJsonObject& chain_state)
   set_output("out", obj);
 }
 
-bool GetBrowserTitleCompute::update_state(){
+bool GetActiveTabTitleCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _worker->queue_get_browser_title(tc);
+  _worker->queue_get_active_tab_title(tc);
   BrowserCompute::post_update_state(tc);
   return false;
 }

@@ -102,12 +102,25 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kPort;
   static const char* kClientID;
 
+  enum class ReceiverType : int  {
+    Unknown = 0,
+    WebDriver = 1,
+    Chrome = 2,
+    Platform = 3,
+    Firebase = 4,
+  };
+
   Message();
   Message(const QString& json); // Initialize from a json string typcially coming from another process outside the native app.
   Message(const QJsonObject& other);
 
   // Initializes a request message.
-  Message(RequestType rt, const QJsonObject& args = QJsonObject());
+  Message(WebDriverRequestType rt, const QJsonObject& args = QJsonObject());
+  Message(ChromeRequestType rt, const QJsonObject& args = QJsonObject());
+  Message(PlatformRequestType rt, const QJsonObject& args = QJsonObject());
+  Message(FirebaseRequestType rt, const QJsonObject& args = QJsonObject());
+  void init_request(int rt, const QJsonObject& args);
+
   // Initializes a response message.
   // The success arg is whether the app should continue sending more requests in this sequence.
   // False means some unrecoverable error has occured.
@@ -118,10 +131,14 @@ class COMMS_EXPORT Message: public QJsonObject {
   virtual ~Message();
 
   virtual QString to_string() const;
+
+  virtual int get_id() const;
   virtual MessageType get_msg_type() const;
+  virtual ReceiverType get_receiver_type() const;
 
  private:
   bool check_contents();
+  ReceiverType _receiver_type;
 };
 
 }
