@@ -76,12 +76,6 @@ public class WebDriverWrap {
         chrome_opts.addArguments("--first-run");
         
         _web_driver = new ChromeDriver(chrome_opts);
-//		try {
-//			// wait 4 seconds before closing the browser
-//			Thread.sleep(4000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
         
         // The url on the command line doesn't seem to work, so we navigate to it.
         navigate_to(url);
@@ -91,6 +85,13 @@ public class WebDriverWrap {
     void close_browser() {
     	if (browser_is_open()) {
     		_web_driver.quit();
+    	}
+    	_window_handles.clear();
+    }
+    
+    void release_browser() {
+    	if (browser_is_open()) {
+    		_web_driver = null;
     	}
     	_window_handles.clear();
     }
@@ -390,39 +391,28 @@ public class WebDriverWrap {
         
         // Parse the size and formats from the match text.
         String pattern = "([0-9\\.]*) (\\w\\w) - (\\w+)";
-        // Create the pattern.
         Pattern r = Pattern.compile(pattern);
-//        // Create the matcher.
-//        Matcher m = r.matcher(line);
-//        
-//        if (m.find( )) {
-//           System.out.println("Found value: " + m.group(0) );
-//           System.out.println("Found value: " + m.group(1) );
-//           System.out.println("Found value: " + m.group(2) );
-//        }else {
-//           System.out.println("NO MATCH");
-//        }
         
-        Stack<Integer> sizes = new Stack<Integer>();
+        Stack<Float> sizes = new Stack<Float>();
         Stack<String> formats = new Stack<String>();
         for (String t: size_and_formats) {
         	Matcher m = r.matcher(t);
             if (!m.find()) {
                 continue;
             }
-            if (m.group(2).toLowerCase() == "kb") {
-                sizes.push(Integer.parseInt(m.group(1)) / 1000);
-            } else if (m.group(2).toLowerCase() == "mb") {
-                sizes.push(Integer.parseInt(m.group(1)));
+            if (m.group(2).toLowerCase().equals("kb")) {
+                sizes.push(Float.parseFloat(m.group(1)) / 1000);
+            } else if (m.group(2).toLowerCase().equals("mb")) {
+                sizes.push(Float.parseFloat(m.group(1)));
             } else {
-                System.err.println("error: unknown byte units");
+                System.err.println("error: unknown byte units -->" + m.group(2) + "<--");
             }
             formats.push(m.group(3));
             System.err.println("matches: **" + m.group(0) + "**" + m.group(1) + "**" + m.group(2) + "**" + m.group(3));
         }
-
+        
         // Find the largest video file.
-        int best_size = -1;
+        float best_size = -1;
         int best_index = -1;
         for (int j = 0; j < size_and_formats.size(); j++) {
             if (sizes.get(j)>best_size) {

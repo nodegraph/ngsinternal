@@ -37,11 +37,6 @@ void JavaProcess::on_error(QProcess::ProcessError error) {
 
 void JavaProcess::on_state_changed(QProcess::ProcessState state) {
   internal();
-  if (state == QProcess::NotRunning) {
-    Message response(true, true);
-    response.insert(Message::kID, _msg_id);
-    _manipulator->receive_message(response.to_string());
-  }
 }
 
 void JavaProcess::on_read_standard_error() {
@@ -65,6 +60,11 @@ void JavaProcess::on_read_standard_output() {
 
   //debug << "nodejs state: " << _process->state();
   QString output(_process->readAllStandardOutput());
+  // Usually there is a newline at the end of the data.
+  // However sometimes the newline comes later over the stream.
+  if (output.trimmed().isEmpty()) {
+    return;
+  }
 
   // Dump any std output from the process.
   if (!output.isEmpty()) {

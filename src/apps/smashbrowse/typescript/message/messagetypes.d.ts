@@ -14,11 +14,11 @@ declare const enum WebDriverRequestType {
   kUnknownWebDriverRequest = 0,
 
   // Browser Requests.
-  kShutdown = 1,
-  kIsBrowserOpen = 2,
-  kResizeBrowser = 3,
-  kOpenBrowser = 4,
-  kCloseBrowser = 5,
+  kIsBrowserOpen = 1,
+  kOpenBrowser = 2,
+  kCloseBrowser = 3,
+  kReleaseBrowser = 4,
+  kResizeBrowser = 5,
 
   // Web Page Navigation.
   kNavigateTo = 6,
@@ -30,47 +30,56 @@ declare const enum WebDriverRequestType {
   // Web Page Tabs.
   kUpdateCurrentTab = 11,
   kDestroyCurrentTab = 12,
-  kOpenTab = 13,
 
   // Actions.
-  kPerformMouseAction = 14,
-  kPerformTextAction = 15,
-  kPerformElementAction = 16,
+  kPerformMouseAction = 13,
+  kPerformTextAction = 14,
+  kPerformElementAction = 15,
 
-  // File Downloads.
-  kDownloadFiles = 17
+  // Video Downloads.
+  kDownloadVideo = 16
 }
 
 declare const enum ChromeRequestType {
   kUnknownChromeRequest = 0,
 
-  // Chrome BG Requests.
+  // Cookies.
   kClearAllCookies = 1,
   kGetAllCookies = 2,
   kSetAllCookies = 3,
+
+  // Zoom.
   kGetZoom = 4,
 
-  // Web Page Event Control.
+  // Event Control.
   kBlockEvents = 5,
   kUnblockEvents = 6,
   kWaitUntilLoaded = 7,
 
-  // Web Page Tabs.
+  // Tabs.
   kUpdateCurrentTab = 8,
   kOpenTab = 9,
   kGetActiveTabTitle = 10,
 
-  // Page Content Set Requests.
+  // Current element on Page.
   kUpdateElement = 11,
   kClearElement = 12,
   kGetElement = 13,
   kSetElement = 14,
   kHasElement = 15,
-  kScrollElementIntoView = 16,
-  kGetElementValues = 17,
+
+  // Extract info from element.
+  kGetElementValues = 16,
+
+  // Act on element.
+  kScrollElementIntoView = 17,
+
+  // Find the current element.
   kFindElementByPosition = 18,
   kFindElementByValues = 19,
   kFindElementByType = 20,
+
+  // Shift the current element.
   kShiftElementByType = 21,
   kShiftElementByValues = 22,
 

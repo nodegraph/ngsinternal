@@ -32,24 +32,11 @@ public class BaseMessage {
     }
     
     MessageEnums.MessageType get_msg_type() {
-    	return get_enum(obj, "msg_type", MessageEnums.MessageType.class);
+    	return MessageEnums.MessageType.get_enum(obj.get("msg_type").getAsInt());
     }
     
-	static <E extends Enum<E>> E get_enum(JsonObject obj, String path, Class<E> c) {
-		String [] splits = path.split("/");
-		JsonObject child = obj;
-		// All but the last one will be a JsonObject.
-		// The last one will be a primitive.
-		for (int i=0; i<splits.length-1; i++) {
-			child = child.getAsJsonObject(splits[i]);
-		}
-        int index = child.get(splits[splits.length-1]).getAsInt();
-        E[] values = c.getEnumConstants();
-        return values[index];
-    }
-
     static BaseMessage create_from_obj(JsonObject obj) {
-        MessageEnums.MessageType msg_type = get_enum(obj, "msg_type", MessageEnums.MessageType.class);
+        MessageEnums.MessageType msg_type = MessageEnums.MessageType.get_enum(obj.get("msg_type").getAsInt());
         switch (msg_type) {
             case kRequestMessage: {
             	return new RequestMessage(obj);

@@ -47,11 +47,12 @@ Q_OBJECT
   void on_server_error(QWebSocketProtocol::CloseCode closeCode);
   //void on_state_changed(QAbstractSocket::SocketState);
 
- private:
-
+ public:
   QWebSocket* get_web_socket() const;
   void clear_web_socket();
   QWebSocketServer* get_web_socket_server() const; // The MessageSender will use this to grab the web socket.
+
+ private:
 
   // Our fixed dependencies.
   Dep<NodeJSProcess> _process; // The node js process we want to connect to.

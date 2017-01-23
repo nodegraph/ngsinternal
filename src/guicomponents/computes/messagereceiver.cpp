@@ -25,7 +25,7 @@ class Grabber : public Component {
   }
   void clear_web_socket() {
     Dep<MessageSender> sender = get_dep<MessageSender>(_app_root);
-        return sender->clear_web_socket();
+    return sender->clear_web_socket();
   }
  private:
   Entity* _app_root;
@@ -75,6 +75,7 @@ void MessageReceiver::on_disconnected() {
   internal();
   Grabber* temp = new_ff Grabber(get_app_root());
   temp->clear_web_socket();
+  delete_ff(temp);
   _web_socket = NULL;
   _connected = false;
   qDebug() << "message receiver is now disconnected";
@@ -99,6 +100,11 @@ void MessageReceiver::on_ssl_error(const QList<QSslError>& errors) {
 
 void MessageReceiver::on_state_changed(QAbstractSocket::SocketState s) {
   internal();
+//  if (s == QAbstractSocket::UnconnectedState) {
+//    // Disconnect all connections from the websocket.
+//    // This prevents
+//    disconnect(_web_socket, 0,0,0);
+//  }
   qDebug() << "state changed: " << s;
 }
 

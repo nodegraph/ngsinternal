@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 public class MessageEnums {
 
 
@@ -16,11 +18,11 @@ static enum WebDriverRequestType {
   kUnknownWebDriverRequest(0),
 
   // Browser Requests.
-  kShutdown(1),
-  kIsBrowserOpen(2),
-  kResizeBrowser(3),
-  kOpenBrowser(4),
-  kCloseBrowser(5),
+  kIsBrowserOpen(1),
+  kOpenBrowser(2),
+  kCloseBrowser(3),
+  kReleaseBrowser(4),
+  kResizeBrowser(5),
 
   // Web Page Navigation.
   kNavigateTo(6),
@@ -32,52 +34,65 @@ static enum WebDriverRequestType {
   // Web Page Tabs.
   kUpdateCurrentTab(11),
   kDestroyCurrentTab(12),
-  kOpenTab(13),
 
   // Actions.
-  kPerformMouseAction(14),
-  kPerformTextAction(15),
-  kPerformElementAction(16),
+  kPerformMouseAction(13),
+  kPerformTextAction(14),
+  kPerformElementAction(15),
 
-  // File Downloads.
-  kDownloadFiles(17);
+  // Video Downloads.
+  kDownloadVideo(16);
 
   private final int value;
-  WebDriverRequestType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  WebDriverRequestType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, WebDriverRequestType> map = new HashMap<Integer, WebDriverRequestType>();
+  static {for (WebDriverRequestType e : WebDriverRequestType.values()) {map.put(e.value, e);}}
+  public static WebDriverRequestType get_enum(int value) {return map.get(value);}
 }
 
 
 static enum ChromeRequestType {
   kUnknownChromeRequest(0),
 
-  // Chrome BG Requests.
+  // Cookies.
   kClearAllCookies(1),
   kGetAllCookies(2),
   kSetAllCookies(3),
+
+  // Zoom.
   kGetZoom(4),
 
-  // Web Page Event Control.
+  // Event Control.
   kBlockEvents(5),
   kUnblockEvents(6),
   kWaitUntilLoaded(7),
 
-  // Web Page Tabs.
+  // Tabs.
   kUpdateCurrentTab(8),
   kOpenTab(9),
   kGetActiveTabTitle(10),
 
-  // Page Content Set Requests.
+  // Current element on Page.
   kUpdateElement(11),
   kClearElement(12),
   kGetElement(13),
   kSetElement(14),
   kHasElement(15),
-  kScrollElementIntoView(16),
-  kGetElementValues(17),
+
+  // Extract info from element.
+  kGetElementValues(16),
+
+  // Act on element.
+  kScrollElementIntoView(17),
+
+  // Find the current element.
   kFindElementByPosition(18),
   kFindElementByValues(19),
   kFindElementByType(20),
+
+  // Shift the current element.
   kShiftElementByType(21),
   kShiftElementByValues(22),
 
@@ -86,8 +101,12 @@ static enum ChromeRequestType {
   kGetDropDownInfo(24);
 
   private final int value;
-  ChromeRequestType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  ChromeRequestType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, ChromeRequestType> map = new HashMap<Integer, ChromeRequestType>();
+  static {for (ChromeRequestType e : ChromeRequestType.values()) {map.put(e.value, e);}}
+  public static ChromeRequestType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -96,8 +115,12 @@ static enum PlatformRequestType {
   kAcceptSaveDialog(1);
 
   private final int value;
-  PlatformRequestType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  PlatformRequestType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, PlatformRequestType> map = new HashMap<Integer, PlatformRequestType>();
+  static {for (PlatformRequestType e : PlatformRequestType.values()) {map.put(e.value, e);}}
+  public static PlatformRequestType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -112,8 +135,12 @@ static enum FirebaseRequestType {
     kFirebaseUnsubscribe(7);
 
   private final int value;
-  FirebaseRequestType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  FirebaseRequestType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, FirebaseRequestType> map = new HashMap<Integer, FirebaseRequestType>();
+  static {for (FirebaseRequestType e : FirebaseRequestType.values()) {map.put(e.value, e);}}
+  public static FirebaseRequestType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -123,8 +150,12 @@ static enum MouseActionType {
   kMouseOver(2);
 
   private final int value;
-  MouseActionType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  MouseActionType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, MouseActionType> map = new HashMap<Integer, MouseActionType>();
+  static {for (MouseActionType e : MouseActionType.values()) {map.put(e.value, e);}}
+  public static MouseActionType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -133,8 +164,12 @@ static enum TextActionType {
   kSendEnter(1);
 
   private final int value;
-  TextActionType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  TextActionType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, TextActionType> map = new HashMap<Integer, TextActionType>();
+  static {for (TextActionType e : TextActionType.values()) {map.put(e.value, e);}}
+  public static TextActionType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -144,8 +179,12 @@ static enum ElementActionType {
   kScroll(2);
 
   private final int value;
-  ElementActionType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  ElementActionType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, ElementActionType> map = new HashMap<Integer, ElementActionType>();
+  static {for (ElementActionType e : ElementActionType.values()) {map.put(e.value, e);}}
+  public static ElementActionType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -159,8 +198,12 @@ static enum InfoType {
   kTabDestroyed(6);
 
   private final int value;
-  InfoType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  InfoType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, InfoType> map = new HashMap<Integer, InfoType>();
+  static {for (InfoType e : InfoType.values()) {map.put(e.value, e);}}
+  public static InfoType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -171,8 +214,12 @@ static enum MessageType {
   kInfoMessage(3);
 
   private final int value;
-  MessageType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  MessageType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, MessageType> map = new HashMap<Integer, MessageType>();
+  static {for (MessageType e : MessageType.values()) {map.put(e.value, e);}}
+  public static MessageType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -183,8 +230,12 @@ static enum WrapType {
   select(3);
 
   private final int value;
-  WrapType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  WrapType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, WrapType> map = new HashMap<Integer, WrapType>();
+  static {for (WrapType e : WrapType.values()) {map.put(e.value, e);}}
+  public static WrapType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -195,8 +246,12 @@ static enum DirectionType {
   down(3);
 
   private final int value;
-  DirectionType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  DirectionType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, DirectionType> map = new HashMap<Integer, DirectionType>();
+  static {for (DirectionType e : DirectionType.values()) {map.put(e.value, e);}}
+  public static DirectionType get_enum(int value) {return map.get(value);}
 }
 
 
@@ -208,8 +263,12 @@ static enum HTTPSendType {
   kPatch(4);
 
   private final int value;
-  HTTPSendType(final int newValue) {  value = newValue;}
-  public int getValue() {return value;}
+  HTTPSendType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, HTTPSendType> map = new HashMap<Integer, HTTPSendType>();
+  static {for (HTTPSendType e : HTTPSendType.values()) {map.put(e.value, e);}}
+  public static HTTPSendType get_enum(int value) {return map.get(value);}
 }
 
 

@@ -72,9 +72,17 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_select_all_white_48dp.png"
-        title: "Download Files"
-        description: "Download Files."
-        script: "web_recorder.record_download_files();
+        title: "Download Video"
+        description: "Download the largest video file among all the tabs."
+        script: "web_recorder.record_download_video();
+                 main_bar.switch_to_node_graph();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Release Browser"
+        description: "Release the current browser from our control."
+        script: "web_recorder.record_release_browser();
                  main_bar.switch_to_node_graph();"
     }
     

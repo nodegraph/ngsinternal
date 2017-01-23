@@ -59,6 +59,12 @@ void BrowserRecorder::record_close_browser() {
   finish();
 }
 
+void BrowserRecorder::record_release_browser() {
+  check_busy();
+  _worker->queue_build_compute_node(tc, ComponentDID::kReleaseBrowserCompute);
+  finish();
+}
+
 void BrowserRecorder::record_is_browser_open() {
   check_busy();
   _worker->queue_build_compute_node(tc, ComponentDID::kIsBrowserOpenCompute);
@@ -101,9 +107,9 @@ void BrowserRecorder::record_open_tab() {
 }
 
 
-void BrowserRecorder::record_download_files() {
+void BrowserRecorder::record_download_video() {
   check_busy();
-  _worker->queue_build_compute_node(tc, ComponentDID::kDownloadFilesCompute);
+  _worker->queue_build_compute_node(tc, ComponentDID::kDownloadVideoCompute);
   finish();
 }
 

@@ -85,15 +85,17 @@ Q_OBJECT
   // Queue Browser Tasks.
   void queue_open_browser(TaskContext& tc);
   void queue_close_browser(TaskContext& tc);
+  void queue_release_browser(TaskContext& tc);
   void queue_is_browser_open(TaskContext& tc);
   void queue_resize_browser(TaskContext& tc);
   void queue_get_active_tab_title(TaskContext& tc);
 
+  void queue_update_current_tab(TaskContext& tc);
   void queue_update_current_tab_in_browser_controller(TaskContext& tc);
   void queue_update_current_tab_in_chrome_extension(TaskContext& tc);
   void queue_destroy_current_tab(TaskContext& tc);
   void queue_open_tab(TaskContext& tc);
-  void queue_download_files(TaskContext& tc);
+  void queue_download_video(TaskContext& tc);
   void queue_accept_save_dialog(TaskContext& tc);
 
   // Queue Page Content Tasks.
@@ -186,6 +188,7 @@ signals:
   // Browser Tasks.
   void open_browser_task();
   void close_browser_task();
+  void release_browser_task();
   void is_browser_open_task();
   void resize_browser_task();
   void get_active_tab_title_task();
@@ -193,7 +196,7 @@ signals:
   void update_current_tab_in_chrome_extension_task();
   void destroy_current_tab_task();
   void open_tab_task();
-  void download_files_task();
+  void download_video_task();
   void accept_save_dialog_task();
 
   // Page Content Tasks.
@@ -203,7 +206,6 @@ signals:
   void wait_task();
 
   // Browser Reset and Shutdown Tasks.
-  void shutdown_task();
   void reset_browser_task();
 
   // Navigation Tasks.

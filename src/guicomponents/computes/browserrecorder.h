@@ -30,12 +30,13 @@ Q_OBJECT
   // Browser actions.
   Q_INVOKABLE void record_open_browser();
   Q_INVOKABLE void record_close_browser();
+  Q_INVOKABLE void record_release_browser();
   Q_INVOKABLE void record_is_browser_open();
   Q_INVOKABLE void record_resize_browser();
   Q_INVOKABLE void record_get_browser_title();
   Q_INVOKABLE void record_destroy_current_tab();
   Q_INVOKABLE void record_open_tab();
-  Q_INVOKABLE void record_download_files();
+  Q_INVOKABLE void record_download_video();
 
   // Navigate the browser.
   Q_INVOKABLE void record_navigate_to(const QString& url);

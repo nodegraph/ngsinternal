@@ -269,6 +269,10 @@ void NodeJSWorker::queue_close_browser(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::close_browser_task,this), "queue_close_browser");
 }
 
+void NodeJSWorker::queue_release_browser(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::release_browser_task,this), "queue_close_browser");
+}
+
 void NodeJSWorker::queue_is_browser_open(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::is_browser_open_task,this), "queue_check_browser_is_open");
 }
@@ -279,6 +283,11 @@ void NodeJSWorker::queue_resize_browser(TaskContext& tc) {
 
 void NodeJSWorker::queue_get_active_tab_title(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::get_active_tab_title_task,this), "queue_resize_browser");
+}
+
+void NodeJSWorker::queue_update_current_tab(TaskContext& tc) {
+  queue_update_current_tab_in_browser_controller(tc);
+  queue_update_current_tab_in_chrome_extension(tc);
 }
 
 void NodeJSWorker::queue_update_current_tab_in_browser_controller(TaskContext& tc) {
@@ -297,11 +306,10 @@ void NodeJSWorker::queue_open_tab(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::open_tab_task,this), "queue_open_tab");
 }
 
-void NodeJSWorker::queue_download_files(TaskContext& tc) {
+void NodeJSWorker::queue_download_video(TaskContext& tc) {
   queue_open_tab(tc);
-  queue_update_current_tab_in_browser_controller(tc);
-  queue_update_current_tab_in_chrome_extension(tc);
-  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::download_files_task,this), "queue_download_files");
+  queue_update_current_tab(tc);
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::download_video_task,this), "queue_download_files");
   queue_wait(tc); // We need to wait a little for the Save-As dialog to come up.
   queue_accept_save_dialog(tc);
 }
@@ -680,6 +688,12 @@ void NodeJSWorker::close_browser_task() {
   send_msg_task(req);
 }
 
+void NodeJSWorker::release_browser_task() {
+  Message req(WebDriverRequestType::kReleaseBrowser);
+  send_msg_task(req);
+  _msg_sender->clear_web_socket();
+}
+
 void NodeJSWorker::open_browser_task() {
   Message req(WebDriverRequestType::kOpenBrowser);
   send_msg_task(req);
@@ -716,12 +730,12 @@ void NodeJSWorker::destroy_current_tab_task() {
 }
 
 void NodeJSWorker::open_tab_task() {
-  Message req(WebDriverRequestType::kOpenTab);
+  Message req(ChromeRequestType::kOpenTab);
   send_msg_task(req);
 }
 
-void NodeJSWorker::download_files_task() {
-  Message req(WebDriverRequestType::kDownloadFiles);
+void NodeJSWorker::download_video_task() {
+  Message req(WebDriverRequestType::kDownloadVideo);
   send_msg_task(req);
 }
 
@@ -759,13 +773,6 @@ void NodeJSWorker::wait_task() {
 // ------------------------------------------------------------------------
 // Browser Reset and Shutdown Tasks.
 // ------------------------------------------------------------------------
-
-void NodeJSWorker::shutdown_task() {
-  Message msg(WebDriverRequestType::kShutdown);
-  // Shutdown without queuing it.
-  send_msg_task(msg);
-  close();
-}
 
 void NodeJSWorker::reset_browser_task() {
   // Close the browser without queuing it.

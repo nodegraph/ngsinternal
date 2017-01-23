@@ -56,6 +56,14 @@ class GUICOMPUTES_EXPORT CloseBrowserCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
+class GUICOMPUTES_EXPORT ReleaseBrowserCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ReleaseBrowserCompute);
+  ReleaseBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+ protected:
+  virtual bool update_state();
+};
+
 class GUICOMPUTES_EXPORT IsBrowserOpenCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, IsBrowserOpenCompute);
@@ -120,10 +128,10 @@ class GUICOMPUTES_EXPORT OpenTabCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT DownloadFilesCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT DownloadVideoCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, DownloadFilesCompute);
-  DownloadFilesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, DownloadVideoCompute);
+  DownloadVideoCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();

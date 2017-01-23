@@ -31,7 +31,12 @@ public class FSWrap {
                 // Try to remove the director if it already exists.
                 // It will raise an exception if another chrome session is currently using it.
                 if (dir.exists()) {
-                    FSWrap.destory_file(dir);
+                	System.err.println("attempt to destroy dir: " + dir);
+                    if (!FSWrap.destory_file(dir)) {
+                    	System.err.println("error could not destroy dir: " + dir);
+                    	i += 1;
+                    	continue;
+                    }
                 }
 
                 // Now we create a clean chrome dir for our use. 

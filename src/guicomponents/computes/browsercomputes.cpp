@@ -95,7 +95,7 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
   std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::receive_chain_state,this,std::placeholders::_1);
   _worker->queue_receive_chain_state(tc, callback);
   _worker->queue_scroll_element_into_view(tc);
-  _worker->queue_update_current_tab_in_browser_controller(tc);
+  _worker->queue_update_current_tab(tc);
 }
 
 void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
@@ -129,6 +129,18 @@ bool CloseBrowserCompute::update_state() {
   BrowserCompute::pre_update_state(tc);
   _worker->queue_close_browser(tc);
   BrowserCompute::post_update_state(tc);
+  return false;
+}
+
+bool ReleaseBrowserCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_release_browser(tc);
+  // No post updates as the browser is released.
+  //BrowserCompute::post_update_state(tc);
   return false;
 }
 
@@ -239,25 +251,25 @@ bool OpenTabCompute::update_state(){
 }
 
 
-void DownloadFilesCompute::create_inputs_outputs(const EntityConfig& config) {
+void DownloadVideoCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
 }
 
-const QJsonObject DownloadFilesCompute::_hints = DownloadFilesCompute::init_hints();
-QJsonObject DownloadFilesCompute::init_hints() {
+const QJsonObject DownloadVideoCompute::_hints = DownloadVideoCompute::init_hints();
+QJsonObject DownloadVideoCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
   return m;
 }
 
-bool DownloadFilesCompute::update_state(){
+bool DownloadVideoCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
-  _worker->queue_download_files(tc);
+  _worker->queue_download_video(tc);
   // We need to wait as the download files task will close it's tab automatically on its own.
   // We need to make sure that tab completely closes before doing any more tasks.
   // If not the task is sent to a tab for completion, but it disappears mid-process causing

@@ -88,7 +88,11 @@ QWebSocket* MessageSender::get_web_socket() const {
 }
 
 void MessageSender::clear_web_socket() {
-  delete_ff(_client);
+  if (_client) {
+    _client->close();
+    // Client will be deleted in a callback in MessageReceiver.
+  }
+  _client = NULL;
 }
 
 QWebSocketServer* MessageSender::get_web_socket_server() const {

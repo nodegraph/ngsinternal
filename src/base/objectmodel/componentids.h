@@ -127,12 +127,13 @@ COMPONENT_ENTRY1(MockNodeCompute)\
 COMPONENT_ENTRY1(WaitNodeCompute)\
 COMPONENT_ENTRY1(OpenBrowserCompute)\
 COMPONENT_ENTRY1(CloseBrowserCompute)\
+COMPONENT_ENTRY1(ReleaseBrowserCompute)\
 COMPONENT_ENTRY1(IsBrowserOpenCompute)\
 COMPONENT_ENTRY1(ResizeBrowserCompute)\
 COMPONENT_ENTRY1(GetActiveTabTitleCompute)\
 COMPONENT_ENTRY1(DestroyCurrentTabCompute)\
 COMPONENT_ENTRY1(OpenTabCompute)\
-COMPONENT_ENTRY1(DownloadFilesCompute)\
+COMPONENT_ENTRY1(DownloadVideoCompute)\
 COMPONENT_ENTRY1(NavigateToCompute)\
 COMPONENT_ENTRY1(NavigateBackCompute)\
 COMPONENT_ENTRY1(NavigateForwardCompute)\

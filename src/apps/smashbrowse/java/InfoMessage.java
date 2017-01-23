@@ -26,7 +26,7 @@ public class InfoMessage extends BaseMessage {
     }
     
     MessageEnums.InfoType get_info_type() {
-    	return get_enum(obj, "info", MessageEnums.InfoType.class);
+    	return MessageEnums.InfoType.get_enum(obj.get("info").getAsInt());
     }
     
     void set_value(JsonElement value) {
