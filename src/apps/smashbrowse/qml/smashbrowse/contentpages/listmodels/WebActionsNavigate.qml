@@ -88,6 +88,14 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Open Browser"
+        description: "Opens a browser window if one is not open already."
+        script: "web_recorder.record_open_browser();
+                 main_bar.switch_to_node_graph();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
         title: "Get Title"
         description: "Get Current Title of Browser"
         script: "web_recorder.record_get_browser_title();

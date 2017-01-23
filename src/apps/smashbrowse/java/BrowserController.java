@@ -25,7 +25,6 @@ public class BrowserController {
 	
 	static String working_dir;
 	static String chrome_ext_dir;
-	static String chrome_user_data_dir;
 	static String download_extension_dir;
 	
 	static WebDriverWrap web_driver;
@@ -41,11 +40,10 @@ public class BrowserController {
 		// Get other directories.
 		working_dir = System.getProperty("user.dir");
 		chrome_ext_dir = working_dir + java.io.File.separator + "chromeextension";
-		chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(settings_dir);
 		download_extension_dir = FSWrap.get_download_extension_dir(settings_dir);
 		
 		// Create our webdriver wrapper.
-	    web_driver = new WebDriverWrap(settings_dir, chrome_ext_dir, chrome_user_data_dir, download_extension_dir, app_socket_port);
+	    web_driver = new WebDriverWrap(settings_dir, chrome_ext_dir, download_extension_dir, app_socket_port);
 		
 		// We use gson to convert between json and java objects.
 		gson = new Gson();

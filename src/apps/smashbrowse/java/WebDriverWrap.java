@@ -21,7 +21,6 @@ public class WebDriverWrap {
 	private WebDriver _web_driver;
 	private String _settings_dir; // smashbrowse settings dir
 	private String _chrome_ext_dir; // chrome extension dir
-	private String _chrome_user_data_dir; // chrome user data dir
 	private String _download_extension_dir;
 	private int _app_socket_port;
 	
@@ -30,13 +29,11 @@ public class WebDriverWrap {
 	
 	public WebDriverWrap(String settings_dir, 
 					String chrome_ext_dir,
-					String chrome_user_data_dir, 
 					String download_extension_dir,
 					int app_socket_port) {
 		_web_driver = null;
 		_settings_dir = settings_dir;
 		_chrome_ext_dir = chrome_ext_dir;
-		_chrome_user_data_dir = chrome_user_data_dir;
 		_download_extension_dir = download_extension_dir;
 		_app_socket_port = app_socket_port;
 		
@@ -64,6 +61,7 @@ public class WebDriverWrap {
 		ChromeOptions chrome_opts = new ChromeOptions();
 		String port = Integer.toString(_app_socket_port);
 		String url = "https://www.google.com/?" + port;
+		String chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(_settings_dir);
         chrome_opts.addArguments(url);
         chrome_opts.addArguments("--load-extension=" 
                 + _chrome_ext_dir + ","
@@ -72,7 +70,7 @@ public class WebDriverWrap {
                 ); // Extension for downloading.
         chrome_opts.addArguments("--ignore-certificate-errors");
         chrome_opts.addArguments("--disable-web-security");
-        chrome_opts.addArguments("--user-data-dir=" + _chrome_user_data_dir);
+        chrome_opts.addArguments("--user-data-dir=" + chrome_user_data_dir);
         chrome_opts.addArguments("--first-run");
         
         _web_driver = new ChromeDriver(chrome_opts);

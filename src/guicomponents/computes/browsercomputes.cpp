@@ -139,8 +139,8 @@ bool ReleaseBrowserCompute::update_state() {
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
   _worker->queue_release_browser(tc);
-  // No post updates as the browser is released.
-  //BrowserCompute::post_update_state(tc);
+  _worker->queue_open_browser(tc);
+  BrowserCompute::post_update_state(tc);
   return false;
 }
 
