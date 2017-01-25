@@ -261,8 +261,13 @@ void NodeJSWorker::queue_set_all_cookies(TaskContext& tc) {
 // Queue Browser Tasks.
 // ---------------------------------------------------------------------------------
 
+void NodeJSWorker::queue_wait_for_chrome_connection(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::wait_for_chrome_connection_task,this), "queue_wait_for_chrome_connection");
+}
+
 void NodeJSWorker::queue_open_browser(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&NodeJSWorker::open_browser_task,this), "queue_open_browser");
+  queue_wait_for_chrome_connection(tc);
 }
 
 void NodeJSWorker::queue_close_browser(TaskContext& tc) {
@@ -692,6 +697,11 @@ void NodeJSWorker::release_browser_task() {
   Message req(WebDriverRequestType::kReleaseBrowser);
   send_msg_task(req);
   _msg_sender->clear_web_socket();
+}
+
+void NodeJSWorker::wait_for_chrome_connection_task() {
+  _msg_sender->wait_for_chrome_connection();
+  _scheduler->run_next_task();
 }
 
 void NodeJSWorker::open_browser_task() {

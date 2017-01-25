@@ -63,7 +63,6 @@
 #include <guicomponents/quick/nodegraphview.h>
 #include <guicomponents/quick/nodegraphmanipulator.h>
 
-#include <guicomponents/comms/nodejsprocess.h>
 #include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
 #include <base/objectmodel/appconfig.h>

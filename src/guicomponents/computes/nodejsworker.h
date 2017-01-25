@@ -61,6 +61,8 @@ Q_OBJECT
   // Queue Tasks.
   // ---------------------------------------------------------------------------------
 
+
+
   // Queue Element Tasks.
   void queue_get_current_element(TaskContext& tc);
   void queue_has_current_element(TaskContext& tc);
@@ -83,6 +85,7 @@ Q_OBJECT
   void queue_set_all_cookies(TaskContext& tc);
 
   // Queue Browser Tasks.
+  void queue_wait_for_chrome_connection(TaskContext& tc);
   void queue_open_browser(TaskContext& tc);
   void queue_close_browser(TaskContext& tc);
   void queue_release_browser(TaskContext& tc);
@@ -186,6 +189,7 @@ signals:
   void set_all_cookies_task();
 
   // Browser Tasks.
+  void wait_for_chrome_connection_task();
   void open_browser_task();
   void close_browser_task();
   void release_browser_task();

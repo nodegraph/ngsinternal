@@ -28,29 +28,24 @@ Rectangle {
 
     // Clean up routine.
     function on_closing(close) {
-        //if (web_worker.is_polling()) {
-        //    // Make sure the polling is stopped.
-        //    web_worker.stop_polling()
-        //    close.accepted = false
-        //    close_timer.start()
-        //} else 
-        
-        if (!tried_closing_browser) {
-        	// Force close the browser.
-        	web_worker.force_close_browser()
-        	tried_closing_browser = true
-        	close.accepted = false
-            close_timer.start()
-        } else if (web_worker.is_open()) {
-            // Close down the websocket connection to nodejs.
-            // Also terminate nodejs.
-            web_worker.close()
-            close.accepted = false
-            close_timer.start()
-        } else {
-        	node_graph_item.parent = null
-        	tried_closing_browser = false
-        }
+    	node_graph_item.parent = null
+    	
+//        if (!tried_closing_browser) {
+//        	// Force close the browser.
+//        	web_worker.force_close_browser()
+//        	tried_closing_browser = true
+//        	close.accepted = false
+//            close_timer.start()
+//        } else if (web_worker.is_open()) {
+//            // Close down the websocket connection to nodejs.
+//            // Also terminate nodejs.
+//            web_worker.close()
+//            close.accepted = false
+//            close_timer.start()
+//        } else {
+//        	node_graph_item.parent = null
+//        	tried_closing_browser = false
+//        }
     }
 
     // Timer that delays closing/exit a bit so we can clean up.

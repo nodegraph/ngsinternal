@@ -16,7 +16,10 @@ add_custom_command(
 
 add_jar(jcomm 
     SOURCES BrowserController.java MessageEnums.java WebDriverWrap.java FSWrap.java BaseMessage.java RequestMessage.java ResponseMessage.java InfoMessage.java
-    INCLUDE_JARS "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson/gson-2.8.0.jar"
+    INCLUDE_JARS
+                # gson 
+                "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson/gson-2.8.0.jar"
+                # selenium
                 "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/client-combined-3.0.1-nodeps.jar"
                 "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/lib/cglib-nodep-3.2.4.jar"
                 "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/lib/commons-codec-1.10.jar"
@@ -61,8 +64,6 @@ get_target_property(compile_dir jcomm CLASSDIR)
 message(STATUS "jcomm jar file located at: ${jar_file}")
 message(STATUS "jcomm classes compiled at: ${compile_dir}")
 
-# You can run the java program as follows.
-# java -cp gson/gson-2.8.0.jar:jcomm.jar BrowserController
 
 INSTALL(
   DIRECTORY

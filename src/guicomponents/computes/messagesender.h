@@ -15,7 +15,6 @@ class QWebSocketServer;
 
 namespace ngs {
 
-class NodeJSProcess;
 class AcceptSaveProcess;
 class JavaProcess;
 class Message;
@@ -31,7 +30,7 @@ Q_OBJECT
 
   void open();
   void close();
-  //bool is_open() const;
+  void wait_for_chrome_connection();
 
   // Note the sending and receiving of messages of QWebSocket has been split into
   // two parts to keep the dependencies cleanly separated, without hacks.
@@ -55,7 +54,6 @@ Q_OBJECT
  private:
 
   // Our fixed dependencies.
-  Dep<NodeJSProcess> _process; // The node js process we want to connect to.
   Dep<AcceptSaveProcess> _accept_save_process;
   Dep<JavaProcess> _java_process;
 

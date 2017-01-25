@@ -47,7 +47,6 @@
 #include <components/computes/loopdatanodecompute.h>
 #include <gui/widget/nodegrapheditor.h>
 
-#include <guicomponents/comms/nodejsprocess.h>
 #include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
 #include <base/objectmodel/appconfig.h>
@@ -190,7 +189,6 @@ void QMLAppEntity::create_internals(const EntityConfig& config) {
   }
   // Our tasks processing and workers.
   new_ff FileModel(this);
-  new_ff NodeJSProcess(this);
   new_ff AcceptSaveProcess(this);
   new_ff JavaProcess(this);
   new_ff MessageSender(this);

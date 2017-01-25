@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 
+
 public class BrowserController {
 	// Must be called with the following arguments in the specified order.
 	// settings_dir
@@ -31,6 +32,7 @@ public class BrowserController {
 	static Gson gson;
 	
 	public static void main(String[] args) {
+				
 		// Process arguments.
 		// The app's setting directory where we store the node graphs.
 		settings_dir = args[0]; 

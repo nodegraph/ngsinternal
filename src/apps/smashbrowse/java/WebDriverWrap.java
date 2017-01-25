@@ -1,9 +1,13 @@
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -22,9 +26,7 @@ public class WebDriverWrap {
 	private String _settings_dir; // smashbrowse settings dir
 	private String _chrome_ext_dir; // chrome extension dir
 	private String _download_extension_dir;
-	private int _app_socket_port;
-	
-
+	private int _app_socket_port = -1;
 	private Stack<String> _window_handles;
 	
 	public WebDriverWrap(String settings_dir, 
@@ -58,22 +60,31 @@ public class WebDriverWrap {
 			return true;
 		}
 		
+		DesiredCapabilities capabilities = new DesiredCapabilities();
+		{
+		}
+		
 		ChromeOptions chrome_opts = new ChromeOptions();
-		String port = Integer.toString(_app_socket_port);
-		String url = "https://www.google.com/?" + port;
-		String chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(_settings_dir);
-        chrome_opts.addArguments(url);
-        chrome_opts.addArguments("--load-extension=" 
-                + _chrome_ext_dir + ","
-                + _download_extension_dir 
-                //+ ","
-                ); // Extension for downloading.
-        chrome_opts.addArguments("--ignore-certificate-errors");
-        chrome_opts.addArguments("--disable-web-security");
-        chrome_opts.addArguments("--user-data-dir=" + chrome_user_data_dir);
-        chrome_opts.addArguments("--first-run");
+		String app_port = Integer.toString(_app_socket_port);
+		String url = "https://www.google.com/?" + app_port;
+		{
+			// Create a new chrome user data dir for this browser instance.
+			String chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(_settings_dir);
+	        chrome_opts.addArguments(url);
+	        chrome_opts.addArguments("--load-extension=" 
+	                + _chrome_ext_dir + ","
+	                + _download_extension_dir 
+	                //+ ","
+	                ); // Extension for downloading.
+	        chrome_opts.addArguments("--ignore-certificate-errors");
+	        chrome_opts.addArguments("--disable-web-security");
+	        chrome_opts.addArguments("--user-data-dir=" + chrome_user_data_dir);
+	        chrome_opts.addArguments("--first-run");
+		}
+		
+		capabilities.setCapability(ChromeOptions.CAPABILITY, chrome_opts);
         
-        _web_driver = new ChromeDriver(chrome_opts);
+        _web_driver = new ChromeDriver(capabilities);
         
         // The url on the command line doesn't seem to work, so we navigate to it.
         navigate_to(url);
@@ -121,9 +132,33 @@ public class WebDriverWrap {
     }
 
     void navigate_refresh() {
-        _web_driver.navigate().refresh();
+    	// Debugging.
+        //_web_driver.navigate().refresh();
+    	
+    	//switch_to_popup();
+    	//get_network_traffic();
     }
 
+    //------------------------------------------------------------------------------------------------
+    // Extension Popups.
+    //------------------------------------------------------------------------------------------------
+    
+	void switch_to_popup() {
+		String current_handle = _web_driver.getWindowHandle();
+		System.err.println("current handle: " + current_handle);
+		
+		System.err.println("num seen handles: " + _window_handles.size());
+		Set<String> handles = _web_driver.getWindowHandles();
+		System.err.println("current num handles: " +handles.size());
+		
+//		for (String handle : handles) {
+//			if (!current_handle.equals(handle)) {
+//				driver.switchTo().window(handle);
+//			}
+//		}
+	}
+	
+    
     //------------------------------------------------------------------------------------------------
     // Browser Tabs.
     //------------------------------------------------------------------------------------------------
@@ -140,17 +175,19 @@ public class WebDriverWrap {
     }
 
 	void update_current_tab() { 
+		System.err.println("java updating current tab XXXXX");
         Set<String> handles = _web_driver.getWindowHandles();
         // Check for newly added tabs.
         int num_created = 0;
         for (String handle: handles) {
         	// If we already know about this handle then continue.
-        	int index_from_top = _window_handles.search(handles);
+        	int index_from_top = _window_handles.search(handle);
         	if (index_from_top >= 1) {
         		continue;
         	}
         	// Otherwise we incorporate this handle as well.
             this._window_handles.push(handle);
+            System.err.println("found handle: " + handle);
             // Note there should ideally be one created handle per call to this method.
             num_created++;
         }

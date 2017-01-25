@@ -4,7 +4,6 @@ set(sources
     hintkeys.cpp
     filemodel.cpp
     message.cpp
-    nodejsprocess.cpp
     taskscheduler.cpp
     licensechecker.cpp
     cryptologic.cpp
@@ -22,7 +21,6 @@ set(headers
 set(moc_headers
     filemodel.h
     message.h
-    nodejsprocess.h
     licensechecker.h
     qmltypes.h
     )

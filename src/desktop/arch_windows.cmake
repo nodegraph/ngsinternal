@@ -63,20 +63,23 @@ INSTALL(
 
 
 # ------------------------------------------------------------------
-# NodeJS libraries.
+# Youtube-dl executable.
 # ------------------------------------------------------------------
 
 INSTALL(
-    DIRECTORY 
-         "${PLATFORM_ROOT}/srcdeps/ngsexternal/nodejs2/node_modules"
-    DESTINATION bin
-    COMPONENT thirdparty
-    CONFIGURATIONS Debug Release
+  FILES
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/youtube-dl/windows/youtube-dl.exe"
+  DESTINATION bin
+  COMPONENT thirdparty
+  CONFIGURATIONS Debug Release
 )
+
+# ------------------------------------------------------------------
+# ChromeDriver executable.
+# ------------------------------------------------------------------
 
 INSTALL(
     FILES 
-        "${PLATFORM_ROOT}/srcdeps/ngsexternal/nodejs2/node.exe"
         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.25/chromedriver.exe"
     DESTINATION bin
     COMPONENT thirdparty
