@@ -21,6 +21,18 @@ Add-Type @"
     public static extern IntPtr FindWindow(string className, string windowName);
 
     [DllImport("user32.dll")]
+    public static extern int SendMessage(int hWnd, int hMsg, int wParam, int lParam);
+
+    [DllImport("user32.dll")]
+    public static extern int PostMessage(int hWnd, int hMsg, int wParam, int lParam);
+
+    [DllImport("user32.dll")]
+    public static extern void keybd_event(int bVk, int bScan, int dwFlags, int dwExtraInfo);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetDlgItem(IntPtr hWnd, int nIDDlgItem);
+
+    [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool SetForegroundWindow(IntPtr hWnd);
 
@@ -90,6 +102,28 @@ function Get-WindowName {
     }
 }
 
+# Some constants.
+$WM_NEXTDLGCTL = 0x0028
+$WM_KEYDOWN = 0x0100
+$WM_KEYUP = 0x0101
+$WM_SYSKEYDOWN = 0x104
+$WM_SYSKEYUP = 0x105
+$WM_LBUTTONDOWN = 0x0201
+$WM_LBUTTONUP = 0x0202
+$WM_CHAR = 0x0102
+$WM_COMMAND = 0x0111
+
+$MK_LBUTTON = 0x0001
+
+$VK_RETURN = 0x0D
+$VK_TAB = 0x09
+
+$BN_CLICKED = 0
+$SaveButtonId = 0x01
+$CancelButtonId = 0x02
+$YesButtonId = 0x01
+$NoButtonId = 0x00
+
 # These are the main windows of the non-smashbrowse and smashbrowse windows of chrome.
 $main_chrome_handles = Get-Process "chrome" | ?{$_.MainWindowTitle} | %{$_.MainWindowHandle}
 "main chrome handles: " + $main_chrome_handles
@@ -117,21 +151,51 @@ while ($window_handle -ne 0) {
 
         # Determine the window title. 
         $window_name = Get-WindowName $window_handle
-
+        "window name: " + $window_name
+        
         # If the window name is Save As.
         if ($window_name -eq "Save As") {
-            "found save as window with pid: " + $process_id
-            $foreground_window_set = [UserWindows]::SetForegroundWindow($window_handle)
-            [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                
+            # Find and click the yes button.
+            $child_handles = [UserWindows]::GetChildWindows($window_handle)
+            foreach($child_handle in $child_handles)
+            {
+                $cname = Get-WindowName($child_handle)
+                if ($cname -eq "&Save") {
+                    [UserWindows]::PostMessage($child_handle, $WM_LBUTTONDOWN, $MK_LBUTTON, 0);
+                    [UserWindows]::PostMessage($child_handle, $WM_LBUTTONUP, $MK_LBUTTON, 0);
+                }
+            }
 
-            Start-Sleep -Milliseconds 1000
+            # Wait a tiny bit just in case the Confirm Save As dialog pops up.
+            Start-Sleep -Milliseconds 1000 
 
             # If the Save As dialog is still up,
             # send keys tab and enter as the Confirm Save As dialog should be focused.
             # Todo: Try to find the Confirm Save As window directly. For some reason it doesn't show up under its own process.
             if (!$process.HasExited) {
-                [System.Windows.Forms.SendKeys]::SendWait("{TAB}")
-                [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
+
+                # Get the popup handle.
+                $popup_handle = [UserWindows]::GetWindow($window_handle, 6)
+                "popup handle is: " + $popup_handle
+
+                # Get the popup name.
+                $popup_name = Get-WindowName $popup_handle
+                "popup name is: " + $popup_name
+                
+                # Find and click the yes button.
+                $child_handles = [UserWindows]::GetChildWindows($popup_handle)
+                foreach($child_handle in $child_handles)
+                {
+                    $cname = Get-WindowName($child_handle)
+                    if ($cname -eq "&Yes") {
+                        [UserWindows]::PostMessage($child_handle, $WM_LBUTTONDOWN, $MK_LBUTTON, 0);
+                        [UserWindows]::PostMessage($child_handle, $WM_LBUTTONUP, $MK_LBUTTON, 0);
+                    }
+                }
+
+                # Wait a tiny bit for the Confirm Save As dialog to go away.
+                Start-Sleep -Milliseconds 1000 
             }
         }
     }
@@ -140,5 +204,5 @@ while ($window_handle -ne 0) {
     $window_handle = [UserWindows]::GetWindow($window_handle, 2)
 }
 }
-
+"Done!"
 #Read-Host -Prompt "Press Enter to exit: "
