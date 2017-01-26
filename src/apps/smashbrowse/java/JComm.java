@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 
 
-public class BrowserController {
+public class JComm {
 	// Must be called with the following arguments in the specified order.
 	// settings_dir
 	// app_socket_port

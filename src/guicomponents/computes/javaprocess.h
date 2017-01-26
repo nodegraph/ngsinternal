@@ -28,7 +28,7 @@ Q_OBJECT
   void set_msg_id(int msg_id);
   void send_msg(const Message& msg);
 
-  void start_process();
+  void start_process(int app_server_port);
   void stop_process();
   bool is_running() const;
 

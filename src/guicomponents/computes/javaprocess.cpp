@@ -91,7 +91,7 @@ void JavaProcess::send_msg(const Message& msg) {
   _process->write("\n");
 }
 
-void JavaProcess::start_process() {
+void JavaProcess::start_process(int app_server_port) {
   external();
   if (is_running()) {
     return;
@@ -162,10 +162,10 @@ void JavaProcess::start_process() {
   jars+=";selenium-java-3.0.1/lib/xml-apis-1.4.01.jar";
   args.append(jars);
   // The main class.
-  args.append("BrowserController");
+  args.append("JComm");
   // The arguments to the program.
   args.append(AppConfig::get_user_app_dir());
-  args.append("8093");
+  args.append(QString::number(app_server_port));
 
   _process->setArguments(args);
   _process->start();

@@ -15,7 +15,7 @@ add_custom_command(
 )
 
 add_jar(jcomm 
-    SOURCES BrowserController.java MessageEnums.java WebDriverWrap.java FSWrap.java BaseMessage.java RequestMessage.java ResponseMessage.java InfoMessage.java
+    SOURCES JComm.java MessageEnums.java WebDriverWrap.java FSWrap.java BaseMessage.java RequestMessage.java ResponseMessage.java InfoMessage.java
     INCLUDE_JARS
                 # gson 
                 "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson/gson-2.8.0.jar"

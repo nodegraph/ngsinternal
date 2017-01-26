@@ -57,7 +57,7 @@ Q_OBJECT
   Dep<AcceptSaveProcess> _accept_save_process;
   Dep<JavaProcess> _java_process;
 
-  int _port;
+  int _server_port;
   mutable QWebSocketServer* _server; // The main web socket server.
   QWebSocket* _client; // We only expect one client to connect to the server.
   bool _trying_to_open;
