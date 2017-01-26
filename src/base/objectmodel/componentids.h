@@ -132,6 +132,7 @@ COMPONENT_ENTRY1(ResizeBrowserCompute)\
 COMPONENT_ENTRY1(GetActiveTabTitleCompute)\
 COMPONENT_ENTRY1(DestroyCurrentTabCompute)\
 COMPONENT_ENTRY1(OpenTabCompute)\
+COMPONENT_ENTRY1(AcceptSaveDialogCompute)\
 COMPONENT_ENTRY1(DownloadVideoCompute)\
 COMPONENT_ENTRY1(NavigateToCompute)\
 COMPONENT_ENTRY1(NavigateBackCompute)\

@@ -36,6 +36,7 @@ Q_OBJECT
   Q_INVOKABLE void record_get_browser_title();
   Q_INVOKABLE void record_destroy_current_tab();
   Q_INVOKABLE void record_open_tab();
+  Q_INVOKABLE void record_accept_save_dialog();
   Q_INVOKABLE void record_download_video();
 
   // Navigate the browser.

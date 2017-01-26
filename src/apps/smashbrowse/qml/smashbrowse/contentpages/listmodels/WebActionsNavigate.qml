@@ -72,6 +72,14 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_select_all_white_48dp.png"
+        title: "Accept Save Dialog"
+        description: "Accepts a Save As dialog, and will confirm overwriting the file if it exists."
+        script: "web_recorder.record_accept_save_dialog();
+                 main_bar.switch_to_node_graph();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_select_all_white_48dp.png"
         title: "Download Video"
         description: "Download the largest video file among all the tabs."
         script: "web_recorder.record_download_video();

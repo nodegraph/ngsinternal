@@ -250,6 +250,16 @@ bool OpenTabCompute::update_state(){
   return false;
 }
 
+bool AcceptSaveDialogCompute::update_state(){
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_accept_save_dialog(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
 
 void DownloadVideoCompute::create_inputs_outputs(const EntityConfig& config) {
   external();

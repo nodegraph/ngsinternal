@@ -105,6 +105,11 @@ void BrowserRecorder::record_open_tab() {
   finish();
 }
 
+void BrowserRecorder::record_accept_save_dialog() {
+  check_busy();
+  _worker->queue_build_compute_node(tc, ComponentDID::kAcceptSaveDialogCompute);
+  finish();
+}
 
 void BrowserRecorder::record_download_video() {
   check_busy();

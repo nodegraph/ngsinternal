@@ -115,6 +115,14 @@ class GUICOMPUTES_EXPORT OpenTabCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
+class GUICOMPUTES_EXPORT AcceptSaveDialogCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, AcceptSaveDialogCompute);
+  AcceptSaveDialogCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+ protected:
+  virtual bool update_state();
+};
+
 class GUICOMPUTES_EXPORT DownloadVideoCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, DownloadVideoCompute);
