@@ -26,7 +26,7 @@ MessageSender::MessageSender(Entity* parent)
       Component(parent, kIID(), kDID()),
       _accept_save_process(this),
       _java_process(this),
-      _server_port(8093),
+      _server_port(-1),
       _server(NULL),
       _client(NULL),
       _trying_to_open(false) {
@@ -49,10 +49,11 @@ MessageSender::MessageSender(Entity* parent)
   sslConfiguration.setProtocol(QSsl::TlsV1SslV3);
   _server->setSslConfiguration(sslConfiguration);
 
-  if (_server->listen(QHostAddress::Any, _server_port))
-  {
-      connect(_server, &QWebSocketServer::newConnection, this, &MessageSender::on_new_connection);
-      connect(_server, &QWebSocketServer::sslErrors,this, &MessageSender::on_ssl_errors);
+  if (_server->listen(QHostAddress::Any, 0))  // 0 means that Qt will automatically find an open port for us.
+                      {
+    _server_port = _server->serverPort();
+    connect(_server, &QWebSocketServer::newConnection, this, &MessageSender::on_new_connection);
+    connect(_server, &QWebSocketServer::sslErrors, this, &MessageSender::on_ssl_errors);
   }
 
   connect(_server, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(on_ssl_errors(const QList<QSslError>&)));
