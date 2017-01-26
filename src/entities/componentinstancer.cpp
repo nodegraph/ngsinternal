@@ -77,8 +77,8 @@
 #include <guicomponents/computes/acceptsaveprocess.h>
 #include <guicomponents/computes/javaprocess.h>
 #include <guicomponents/computes/browserrecorder.h>
-#include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
+#include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/computes/waitnodecompute.h>
 #include <iostream>
 #include <cassert>

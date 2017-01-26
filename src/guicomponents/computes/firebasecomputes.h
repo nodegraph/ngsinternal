@@ -7,7 +7,7 @@
 namespace ngs {
 
 class Entity;
-class NodeJSWorker;
+class TaskQueuer;
 class TaskScheduler;
 class TaskContext;
 class EnterFirebaseGroupCompute;
@@ -35,7 +35,7 @@ class GUICOMPUTES_EXPORT FirebaseCompute: public Compute {
   Entity* find_group_context() const;
   Dep<EnterFirebaseGroupCompute> find_enter_node();
 
-  Dep<NodeJSWorker> _worker;
+  Dep<TaskQueuer> _worker;
   Dep<TaskScheduler> _scheduler;
   Dep<EnterFirebaseGroupCompute> _enter; // This is not serialized and is gathered at runtime.
 };

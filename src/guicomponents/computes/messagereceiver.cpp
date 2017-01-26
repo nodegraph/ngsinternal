@@ -1,11 +1,10 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
-#include <guicomponents/computes/nodejsworker.h>
-
 #include <guicomponents/comms/message.h>
 #include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
 #include <guicomponents/comms/taskscheduler.h>
+#include <guicomponents/computes/taskqueuer.h>
 #include <openssl/aes.h>
 #include <QtWebSockets/QWebSocket>
 

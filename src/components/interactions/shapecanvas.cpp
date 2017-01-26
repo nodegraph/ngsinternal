@@ -27,8 +27,7 @@
 #include <base/objectmodel/componentids.h>
 #include <components/interactions/viewcontrols.h>
 #include <freetype-gl/texture-atlas.h>
-#include <guicomponents/computes/nodejsworker.h>
-
+#include <guicomponents/computes/taskqueuer.h>
 #include <iostream>
 #include <QtCore/qDebug>
 

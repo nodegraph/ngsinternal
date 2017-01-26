@@ -53,7 +53,6 @@
 #include <components/computes/accumulatedatanodecompute.h>
 
 #include <guicomponents/computes/browserrecorder.h>
-#include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/computes/httpworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/licensechecker.h>
@@ -69,6 +68,7 @@
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/scriptgroupnodecompute.h>
+#include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/computes/waitnodecompute.h>
 
 #include <guicomponents/quick/fborenderer.h>
@@ -194,7 +194,7 @@ void QMLAppEntity::create_internals(const EntityConfig& config) {
   new_ff MessageSender(this);
   new_ff MessageReceiver(this);
   new_ff TaskScheduler(this);
-  new_ff NodeJSWorker(this);
+  new_ff TaskQueuer(this);
   new_ff BrowserRecorder(this);
   new_ff HTTPWorker(this);
 
@@ -230,7 +230,7 @@ void QMLAppEntity::expose_to_qml() {
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
   NodeGraphController* ng_controller = get_node_graph_controller();
-  NodeJSWorker* web_worker = get_app_worker();
+  TaskQueuer* web_worker = get_app_worker();
   BrowserRecorder* web_recorder = get_app_recorder();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
@@ -297,8 +297,8 @@ FileModel* QMLAppEntity::get_file_model() {
   return get<FileModel>();
 }
 
-NodeJSWorker* QMLAppEntity::get_app_worker() {
-  return get<NodeJSWorker>();
+TaskQueuer* QMLAppEntity::get_app_worker() {
+  return get<TaskQueuer>();
 }
 
 BrowserRecorder* QMLAppEntity::get_app_recorder() {

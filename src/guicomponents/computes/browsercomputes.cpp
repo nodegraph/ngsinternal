@@ -3,12 +3,12 @@
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
-#include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/comms/commtypes.h>
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
+#include <guicomponents/computes/taskqueuer.h>
 
 #include <functional>
 

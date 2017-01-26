@@ -3,12 +3,11 @@
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
-#include <guicomponents/computes/nodejsworker.h>
-
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/firebasecomputes.h>
 #include <guicomponents/computes/enterfirebasegroupcompute.h>
 #include <guicomponents/comms/commtypes.h>
+#include <guicomponents/computes/taskqueuer.h>
 
 #include <functional>
 

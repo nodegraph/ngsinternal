@@ -16,7 +16,7 @@ enum class JSType;
 
 class FileModel;
 class AppComm;
-class NodeJSWorker;
+class TaskQueuer;
 class BrowserRecorder;
 class LicenseChecker;
 class NodeGraphQuickItem;
@@ -39,7 +39,7 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   void embed_node_graph();
 
   FileModel* get_file_model();
-  NodeJSWorker* get_app_worker();
+  TaskQueuer* get_app_worker();
   BrowserRecorder* get_app_recorder();
   LicenseChecker* get_license_checker();
   NodeGraphQuickItem* get_node_graph_quick_item();

@@ -6,7 +6,7 @@ set(sources
     messagereceiver.cpp
     scriptgroupnodecompute.cpp
     scriptnodecompute.cpp
-    nodejsworker.cpp
+    taskqueuer.cpp
     httpworker.cpp
     browsercomputes.cpp
     firebasecomputes.cpp
@@ -36,7 +36,7 @@ set(moc_headers
     javaprocess.h
     messagesender.h
     messagereceiver.h
-    nodejsworker.h
+    taskqueuer.h
     httpworker.h
     scriptgroupnodecompute.h
     browserrecorder.h

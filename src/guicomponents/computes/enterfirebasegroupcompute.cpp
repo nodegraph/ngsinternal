@@ -2,10 +2,10 @@
 #include <base/objectmodel/dep.h>
 #include <base/objectmodel/deploader.h>
 #include <components/computes/inputs.h>
-#include <guicomponents/computes/nodejsworker.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
 #include <guicomponents/comms/commtypes.h>
+#include <guicomponents/computes/taskqueuer.h>
 
 #include <QtNetwork/QHostAddress>
 

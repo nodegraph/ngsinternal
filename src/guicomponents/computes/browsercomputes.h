@@ -7,7 +7,7 @@
 namespace ngs {
 
 class Entity;
-class NodeJSWorker;
+class TaskQueuer;
 class TaskScheduler;
 class TaskContext;
 class EnterBrowserGroupCompute;
@@ -35,7 +35,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   Entity* find_group_context() const;
   Dep<EnterBrowserGroupCompute> find_enter_node();
 
-  Dep<NodeJSWorker> _worker;
+  Dep<TaskQueuer> _worker;
   Dep<TaskScheduler> _scheduler;
   Dep<EnterBrowserGroupCompute> _enter;
 };

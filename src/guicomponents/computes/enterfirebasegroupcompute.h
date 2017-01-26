@@ -10,7 +10,7 @@ class QJsonObject;
 namespace ngs {
 
 class TaskScheduler;
-class NodeJSWorker;
+class TaskQueuer;
 
 
 class GUICOMPUTES_EXPORT EnterFirebaseGroupCompute: public EnterGroupCompute {
@@ -49,7 +49,7 @@ class GUICOMPUTES_EXPORT EnterFirebaseGroupCompute: public EnterGroupCompute {
   void receive_chain_state(const QJsonObject& chain_state);
 
   Dep<TaskScheduler> _scheduler;
-  Dep<NodeJSWorker> _worker;
+  Dep<TaskQueuer> _worker;
 };
 
 }

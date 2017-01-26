@@ -58,14 +58,13 @@ enum class ComponentIID : size_t {
   kINodeGraphRenderer,
   kINodeGraphView,
   kIFileModel,
-  kINodeJSProcess,
   kIAcceptSaveProcess,
   kIJavaProcess,
   kIMessageSender,
   kIMessageReceiver,
   kIAppConfig,
   //kIAppComm,
-  kINodeJSWorker,
+  kITaskQueuer,
   kIHTTPWorker,
   kIBrowserRecorder,
   kITaskScheduler,
@@ -183,7 +182,7 @@ COMPONENT_ENTRY1(MessageSender)\
 COMPONENT_ENTRY1(MessageReceiver)\
 COMPONENT_ENTRY1(AppConfig)\
 /*COMPONENT_ENTRY1(AppComm)\*/\
-COMPONENT_ENTRY1(NodeJSWorker)\
+COMPONENT_ENTRY1(TaskQueuer)\
 COMPONENT_ENTRY1(HTTPWorker)\
 COMPONENT_ENTRY1(BrowserRecorder)\
 COMPONENT_ENTRY1(TaskScheduler)\

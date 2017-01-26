@@ -21,8 +21,7 @@
 #include <sstream>
 
 #include <boost/lexical_cast.hpp>
-#include <guicomponents/computes/nodejsworker.h>
-
+#include <guicomponents/computes/taskqueuer.h>
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>

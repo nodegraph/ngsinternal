@@ -4,10 +4,9 @@
 
 #include <components/computes/compute.h>
 #include <guicomponents/computes/browserrecorder.h>
-#include <guicomponents/computes/nodejsworker.h>
-
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/filemodel.h>
+#include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/quick/nodegraphmanipulator.h>
 
 #include <QtCore/QUrl>
