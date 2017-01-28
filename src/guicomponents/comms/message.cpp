@@ -19,6 +19,13 @@ const char* Message::kFrameIndexPath = "frame_index_path";
 const char* Message::kMessageType = "msg_type";
 
 const char* Message::kURL = "url";
+const char* Message::kDirectory = "directory";
+const char* Message::kFilename = "filename";
+
+const char* Message::kMaxWidth = "max_width";
+const char* Message::kMaxHeight = "max_height";
+const char* Message::kMaxFilesize = "max_filesize";
+
 const char* Message::kWidth = "width";
 const char* Message::kHeight = "height";
 const char* Message::kDimensions = "dimensions";

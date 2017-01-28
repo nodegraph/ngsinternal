@@ -59,6 +59,7 @@ enum class ComponentIID : size_t {
   kINodeGraphView,
   kIFileModel,
   kIAcceptSaveProcess,
+  kIDownloadManager,
   kIJavaProcess,
   kIMessageSender,
   kIMessageReceiver,
@@ -182,7 +183,7 @@ COMPONENT_ENTRY1(JavaProcess)\
 COMPONENT_ENTRY1(MessageSender)\
 COMPONENT_ENTRY1(MessageReceiver)\
 COMPONENT_ENTRY1(AppConfig)\
-/*COMPONENT_ENTRY1(AppComm)\*/\
+COMPONENT_ENTRY1(DownloadManager)\
 COMPONENT_ENTRY1(TaskQueuer)\
 COMPONENT_ENTRY1(HTTPWorker)\
 COMPONENT_ENTRY1(BrowserRecorder)\

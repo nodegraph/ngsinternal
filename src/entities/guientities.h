@@ -18,6 +18,7 @@ class FileModel;
 class AppComm;
 class TaskQueuer;
 class BrowserRecorder;
+class DownloadManager;
 class LicenseChecker;
 class NodeGraphQuickItem;
 class NodeGraphController;
@@ -41,6 +42,7 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   FileModel* get_file_model();
   TaskQueuer* get_app_worker();
   BrowserRecorder* get_app_recorder();
+  DownloadManager* get_download_manager();
   LicenseChecker* get_license_checker();
   NodeGraphQuickItem* get_node_graph_quick_item();
   NodeGraphController* get_node_graph_controller();

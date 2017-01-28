@@ -264,12 +264,46 @@ bool AcceptSaveDialogCompute::update_state(){
 void DownloadVideoCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "";
+    create_input(Message::kDirectory, c);
+  }
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kMaxWidth, c);
+  }
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kMaxHeight, c);
+  }
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kMaxFilesize, c);
+  }
+
 }
 
 const QJsonObject DownloadVideoCompute::_hints = DownloadVideoCompute::init_hints();
 QJsonObject DownloadVideoCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
+
+  add_hint(m, Message::kDirectory, HintKey::kDescriptionHint, "The directory to save the video to. Leave empty to use the default directory.");
+  add_hint(m, Message::kMaxWidth, HintKey::kDescriptionHint, "The maximum video width (in pixels) to download. Zero will download the largest.");
+  add_hint(m, Message::kMaxHeight, HintKey::kDescriptionHint, "The maximum video height (in pixels) to download. Zero will download the largest.");
+  add_hint(m, Message::kMaxFilesize, HintKey::kDescriptionHint, "The maximum video filesize (in megabytes) to download. Zero will download the largest.");
   return m;
 }
 
@@ -277,14 +311,18 @@ bool DownloadVideoCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
+
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
+
+  // Set the url chain property to the current url.
+  _worker->queue_get_current_url(tc);
+  _worker->queue_copy_chain_property(tc, Message::kValue, Message::kURL);
+
+  // Download the video.
   _worker->queue_download_video(tc);
-  // We need to wait as the download files task will close it's tab automatically on its own.
-  // We need to make sure that tab completely closes before doing any more tasks.
-  // If not the task is sent to a tab for completion, but it disappears mid-process causing
-  // neither a success or failure response message to be sent.
-  _worker->queue_wait(tc);
+
+  // The video filename will be inserted into the value property.
   BrowserCompute::post_update_state(tc);
   return false;
 }

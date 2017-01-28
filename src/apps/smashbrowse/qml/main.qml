@@ -118,6 +118,11 @@ Rectangle {
         id: file_menu_list_stack_page
         visible: false
     }
+    
+    DownloadListPage {
+    	id: downloads_page
+        visible: false
+    }
 
     PostListPage {
         id: posts_page
@@ -182,6 +187,7 @@ Rectangle {
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(view_data_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(edit_data_list_stack_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(downloads_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(ng_menu_list_stack_page.on_switch_to_mode)
@@ -196,6 +202,12 @@ Rectangle {
         web_worker.show_web_action_menu.connect(web_menu_list_stack_page.on_show_web_action_menu)
         web_worker.select_option_texts.connect(web_menu_list_stack_page.on_select_option_texts)
         web_recorder.web_action_ignored.connect(web_menu_list_stack_page.on_action_ignored)
+        
+        // Download manager connections.
+        download_manager.download_started.connect(downloads_page.on_download_started)
+        download_manager.download_progress.connect(downloads_page.on_download_progress)
+        download_manager.download_finished.connect(downloads_page.on_download_finished)
+        download_manager.download_errored.connect(downloads_page.on_download_errored)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.

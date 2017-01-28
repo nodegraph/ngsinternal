@@ -1,6 +1,9 @@
 
 set(sources
+    baseprocess.cpp
     acceptsaveprocess.cpp
+    downloadvideoprocess.cpp
+    downloadmanager.cpp
     javaprocess.cpp
     messagesender.cpp
     messagereceiver.cpp
@@ -32,7 +35,10 @@ set(headers
 
     
 set(moc_headers
+    baseprocess.h
     acceptsaveprocess.h
+    downloadvideoprocess.h
+    downloadmanager.h
     javaprocess.h
     messagesender.h
     messagereceiver.h

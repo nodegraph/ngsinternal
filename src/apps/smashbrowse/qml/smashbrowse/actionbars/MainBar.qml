@@ -29,6 +29,7 @@ Rectangle {
     property var current_mode: app_settings.node_graph_mode
 
     Component.onCompleted: {
+    	on_switch_to_mode(app_settings.node_graph_mode)
     }
     
     // Methods.
@@ -50,6 +51,10 @@ Rectangle {
         } else if (m == app_settings.edit_node_mode) {
             edit_node_button.lit = true
             action_bar_title.text = "Edit Node Parameters"
+            more_menu_button.visible = false
+        } else if (m == app_settings.downloads_mode) {
+        	downloads_button.lit = true
+        	action_bar_title.text = "Downloads"
             more_menu_button.visible = false
         } else if (m == app_settings.posts_mode) {
             posts_button.lit = true
@@ -194,7 +199,7 @@ Rectangle {
         
         anchors {
         	verticalCenter: parent.verticalCenter
-        	right: posts_button.left
+        	right: downloads_button.left
         	leftMargin: app_settings.action_bar_left_margin
     		rightMargin: app_settings.action_bar_right_margin
     	}
@@ -205,6 +210,25 @@ Rectangle {
         onClicked: {
         	node_graph_item.edit_node_poke();
             on_switch_to_mode(app_settings.edit_node_mode)
+        }
+    }
+    
+    // Downloads Mode Button.
+    AppImageButton {
+        id: downloads_button
+        
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: posts_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+    	}
+        
+        image_url: "qrc:///icons/ic_file_download_white_48dp.png"
+        tooltip_text: "Downloads"
+        
+        onClicked: {
+            on_switch_to_mode(app_settings.downloads_mode)
         }
     }
 

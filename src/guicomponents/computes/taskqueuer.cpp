@@ -21,6 +21,8 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
+#include <QtCore/QStandardPaths>
+#include <QtCore/QDir>
 
 namespace ngs {
 
@@ -173,13 +175,7 @@ void TaskQueuer::on_done_wait() {
 void TaskQueuer::send_msg_task(Message& msg) {
   int id = _scheduler->wait_for_response();
   msg.insert(Message::kID, id);
-
-  if (msg[Message::kRequest].toDouble() == to_underlying(PlatformRequestType::kAcceptSaveDialog)) {
-    _msg_sender->accept_save_dialog(id);
-  } else {
-    _msg_sender->send_msg(msg);
-  }
-
+  _msg_sender->send_msg(msg);
   std::cerr << "sending app --> commhub: " << msg.to_string().toStdString() << "\n";
 }
 
@@ -312,11 +308,7 @@ void TaskQueuer::queue_open_tab(TaskContext& tc) {
 }
 
 void TaskQueuer::queue_download_video(TaskContext& tc) {
-  queue_open_tab(tc);
-  queue_update_current_tab(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::download_video_task,this), "queue_download_files");
-  queue_wait(tc); // We need to wait a little for the Save-As dialog to come up.
-  queue_accept_save_dialog(tc);
 }
 
 void TaskQueuer::queue_accept_save_dialog(TaskContext& tc) {
@@ -745,7 +737,24 @@ void TaskQueuer::open_tab_task() {
 }
 
 void TaskQueuer::download_video_task() {
-  Message req(WebDriverRequestType::kDownloadVideo);
+  QJsonObject args;
+  // Note this task uses the URL property even though it is not a paremeter
+  // on the DownloadVideoCompute node. This is so that we can always set it
+  // to the current URL.
+  args.insert(Message::kURL, _chain_state.value(Message::kURL));
+
+  // If the kDirectory param is empty or is a relative path,
+  // then we prepend the platform specific user's download directory to the dir.
+  QDir dir(_chain_state.value(Message::kDirectory).toString());
+  if (dir.isRelative()) {
+    dir = QDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + QDir::separator() + "smashbrowse" + QDir::separator() + dir.path());
+  }
+  args.insert(Message::kDirectory, dir.path());
+  args.insert(Message::kMaxWidth, _chain_state.value(Message::kMaxWidth));
+  args.insert(Message::kMaxHeight, _chain_state.value(Message::kMaxHeight));
+  args.insert(Message::kMaxFilesize, _chain_state.value(Message::kMaxFilesize));
+
+  Message req(PlatformRequestType::kDownloadVideo, args);
   send_msg_task(req);
 }
 

@@ -1,4 +1,4 @@
-
+#pragma once
 namespace ngs {
 
 // Note we don't use the Q_DECLARE_METATYPE() or the Q_ENUM() macro because we may eventually
@@ -30,9 +30,6 @@ enum class WebDriverRequestType : int {
   kPerformMouseAction = 13,
   kPerformTextAction = 14,
   kPerformElementAction = 15,
-
-  // Video Downloads.
-  kDownloadVideo = 16
 };
 
 enum class ChromeRequestType : int {
@@ -85,7 +82,8 @@ enum class ChromeRequestType : int {
 
 enum class PlatformRequestType : int {
   kUnknownPlatformRequest = 0,
-  kAcceptSaveDialog = 1
+  kAcceptSaveDialog = 1,
+  kDownloadVideo = 2,
 };
 
 enum class FirebaseRequestType : int {

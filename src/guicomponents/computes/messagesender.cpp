@@ -6,6 +6,7 @@
 #include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/acceptsaveprocess.h>
 #include <guicomponents/computes/javaprocess.h>
+#include <guicomponents/computes/downloadmanager.h>
 #include <cstddef>
 #include <cassert>
 
@@ -26,12 +27,14 @@ MessageSender::MessageSender(Entity* parent)
       Component(parent, kIID(), kDID()),
       _accept_save_process(this),
       _java_process(this),
+      _download_manager(this),
       _server_port(-1),
       _server(NULL),
       _client(NULL),
       _trying_to_open(false) {
   get_dep_loader()->register_fixed_dep(_accept_save_process, Path());
   get_dep_loader()->register_fixed_dep(_java_process, Path());
+  get_dep_loader()->register_fixed_dep(_download_manager, Path());
 
   _server  = new_ff QWebSocketServer(QStringLiteral("Smash Browser Server"), QWebSocketServer::SecureMode);
   QSslConfiguration sslConfiguration;
@@ -113,7 +116,9 @@ void MessageSender::send_msg(const Message& msg) const {
     }
     case Message::ReceiverType::Platform: {
       if (msg[Message::kRequest].toDouble() == to_underlying(PlatformRequestType::kAcceptSaveDialog)) {
-        accept_save_dialog(msg.get_id());
+        _accept_save_process->start_process(msg.get_id());
+      } else if (msg[Message::kRequest].toDouble() == to_underlying(PlatformRequestType::kDownloadVideo)) {
+        _download_manager->download(msg.get_id(), msg[Message::kArgs].toObject());
       }
       break;
     }
@@ -121,12 +126,6 @@ void MessageSender::send_msg(const Message& msg) const {
       break;
     }
   }
-}
-
-void MessageSender::accept_save_dialog(int msg_id) const {
-  external();
-  _accept_save_process->set_msg_id(msg_id);
-  _accept_save_process->start_process();
 }
 
 void MessageSender::on_ssl_errors(const QList<QSslError>& errors) {

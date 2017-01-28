@@ -15,6 +15,7 @@ class QWebSocketServer;
 
 namespace ngs {
 
+class DownloadManager;
 class AcceptSaveProcess;
 class JavaProcess;
 class Message;
@@ -32,19 +33,12 @@ Q_OBJECT
   void close();
   void wait_for_chrome_connection();
 
-  // Note the sending and receiving of messages of QWebSocket has been split into
-  // two parts to keep the dependencies cleanly separated, without hacks.
   void send_msg(const Message& msg) const;
-  void accept_save_dialog(int msg_id) const;
 
  private slots:
   void on_new_connection();
-  //void on_connected();
-  //void on_disconnected();
-  //void on_error(QAbstractSocket::SocketError error);
   void on_ssl_errors(const QList<QSslError>& errors);
   void on_server_error(QWebSocketProtocol::CloseCode closeCode);
-  //void on_state_changed(QAbstractSocket::SocketState);
 
  public:
   QWebSocket* get_web_socket() const;
@@ -56,6 +50,7 @@ Q_OBJECT
   // Our fixed dependencies.
   Dep<AcceptSaveProcess> _accept_save_process;
   Dep<JavaProcess> _java_process;
+  Dep<DownloadManager> _download_manager;
 
   int _server_port;
   mutable QWebSocketServer* _server; // The main web socket server.

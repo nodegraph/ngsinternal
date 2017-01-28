@@ -148,6 +148,7 @@ public class JComm {
 	    
 	    case kGetCurrentURL: {
 	        String url = web_driver.get_current_url();
+	        System.err.println("The extracted url: -->" + url + "<--");
 	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(url));
 	        System.out.println(resp.to_string());
 	        break;
@@ -263,13 +264,6 @@ public class JComm {
 	        }
 	        break;
 	    } 
-	    
-	    case kDownloadVideo: {
-	        web_driver.download_files();
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
-	        System.out.println(resp.to_string());
-	        break;
-	    }
 		}	
 	}
 	

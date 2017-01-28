@@ -16,7 +16,7 @@ import smashbrowse.contentpages.listmodels 1.0
 Rectangle {
     id: delegate
     width: parent.width
-    height: app_settings.list_item_height_large
+    height: item_height
     border.color: "white"
     border.width: 0 //app_settings.list_item_border_width
     color: "transparent"
@@ -26,9 +26,13 @@ Rectangle {
     property var _title: ""
     property var _content: ""
 
+	property var title_point_size: app_settings.menu_page_title_point_size
+	property var description_point_size: app_settings.menu_page_description_point_size
+	property var item_height: app_settings.list_item_height_large
+
 	function on_pressed() {}
 	function on_double_clicked() {}
-
+	
     // -----------------------------------------------------------------
     // Methods.
     // -----------------------------------------------------------------
@@ -56,8 +60,8 @@ Rectangle {
     Row {
         // The large icon on the left that indicates the data type.
         Rectangle {
-            height: app_settings.list_item_height_large
-            width: app_settings.list_item_height_large
+            height: item_height
+            width: item_height
             color: "transparent"
             Image {
                 height: parent.height * 2/3
@@ -76,7 +80,7 @@ Rectangle {
                 text: delegate._title
                 font.family: "Arial"
                 font.bold: true
-                font.pointSize: app_settings.menu_page_title_point_size
+                font.pointSize: title_point_size
                 font.italic: false
                 color: "white"
             }
@@ -84,7 +88,7 @@ Rectangle {
             Text {
                 text: delegate._content
                 font.family: "Arial"
-                font.pointSize: app_settings.menu_page_description_point_size
+                font.pointSize: description_point_size
                 font.italic: false
                 color: "white"
                 wrapMode: Text.Wrap

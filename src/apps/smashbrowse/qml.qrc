@@ -59,6 +59,7 @@
         
         <!-- ListPages -->
         <file>qml/smashbrowse/contentpages/listpages/qmldir</file>
+        <file>qml/smashbrowse/contentpages/listpages/DownloadListPage.qml</file>
         <file>qml/smashbrowse/contentpages/listpages/BaseListPage.qml</file>
         <file>qml/smashbrowse/contentpages/listpages/PostListPage.qml</file>
         <file>qml/smashbrowse/contentpages/listpages/DataListPage.qml</file>
@@ -74,6 +75,7 @@
         <file>qml/smashbrowse/contentpages/listdelegates/MenuItemListDelegate.qml</file>
         <file>qml/smashbrowse/contentpages/listdelegates/FileListDelegate.qml</file>
         <file>qml/smashbrowse/contentpages/listdelegates/PostListDelegate.qml</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/DownloadListDelegate.qml</file>
         
         <!-- AppWidgets -->
         <file>qml/smashbrowse/appwidgets/qmldir</file>
@@ -143,6 +145,22 @@
         <file alias="icons/ic_add_circle_outline_white_48dp.png">../../external/icons/ic_add_circle_outline_white_48dp.png</file>
         <file alias="icons/ic_remove_circle_outline_black_48dp.png">../../external/icons/ic_remove_circle_outline_black_48dp.png</file>
         <file alias="icons/ic_remove_circle_outline_white_48dp.png">../../external/icons/ic_remove_circle_outline_white_48dp.png</file>
+        
+        <file alias="icons/ic_file_download_black_48dp.png">../../external/icons/ic_file_download_black_48dp.png</file>
+        <file alias="icons/ic_file_download_white_48dp.png">../../external/icons/ic_file_download_white_48dp.png</file>
+        
+        <file alias="icons/ic_cloud_done_black_48dp.png">../../external/icons/ic_cloud_done_black_48dp.png</file>
+        <file alias="icons/ic_cloud_done_white_48dp.png">../../external/icons/ic_cloud_done_white_48dp.png</file>
+        
+        <file alias="icons/ic_cloud_download_black_48dp.png">../../external/icons/ic_cloud_download_black_48dp.png</file>
+        <file alias="icons/ic_cloud_download_white_48dp.png">../../external/icons/ic_cloud_download_white_48dp.png</file>
+        
+        <file alias="icons/ic_cloud_upload_black_48dp.png">../../external/icons/ic_cloud_upload_black_48dp.png</file>
+        <file alias="icons/ic_cloud_upload_white_48dp.png">../../external/icons/ic_cloud_upload_white_48dp.png</file>
+        
+        <file alias="icons/ic_cloud_off_black_48dp.png">../../external/icons/ic_cloud_off_black_48dp.png</file>
+        <file alias="icons/ic_cloud_off_white_48dp.png">../../external/icons/ic_cloud_off_white_48dp.png</file>
+        
         
         <!-- Web Browser Icons. -->
         <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>

@@ -25,8 +25,7 @@ Q_OBJECT
   explicit AcceptSaveProcess(Entity* parent);
   virtual ~AcceptSaveProcess();
 
-  void set_msg_id(int msg_id);
-  void start_process();
+  void start_process(int msg_id);
   void stop_process();
   bool is_running() const;
 

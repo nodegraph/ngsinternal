@@ -61,8 +61,6 @@ Q_OBJECT
   // Queue Tasks.
   // ---------------------------------------------------------------------------------
 
-
-
   // Queue Element Tasks.
   void queue_get_current_element(TaskContext& tc);
   void queue_has_current_element(TaskContext& tc);

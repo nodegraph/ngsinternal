@@ -60,6 +60,7 @@
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/acceptsaveprocess.h>
 #include <guicomponents/computes/javaprocess.h>
+#include <guicomponents/computes/downloadmanager.h>
 #include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/enterfirebasegroupcompute.h>
@@ -191,6 +192,7 @@ void QMLAppEntity::create_internals(const EntityConfig& config) {
   new_ff FileModel(this);
   new_ff AcceptSaveProcess(this);
   new_ff JavaProcess(this);
+  new_ff DownloadManager(this);
   new_ff MessageSender(this);
   new_ff MessageReceiver(this);
   new_ff TaskScheduler(this);
@@ -232,6 +234,7 @@ void QMLAppEntity::expose_to_qml() {
   NodeGraphController* ng_controller = get_node_graph_controller();
   TaskQueuer* web_worker = get_app_worker();
   BrowserRecorder* web_recorder = get_app_recorder();
+  DownloadManager* download_manager = get_download_manager();
   NodeGraphView* view = get_node_graph_view();
   LicenseChecker* license_checker = get_license_checker();
 
@@ -254,6 +257,7 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
   context->setContextProperty(QStringLiteral("web_worker"), web_worker);
   context->setContextProperty(QStringLiteral("web_recorder"), web_recorder);
+  context->setContextProperty(QStringLiteral("download_manager"), download_manager);
   context->setContextProperty(QStringLiteral("license_checker"), license_checker);
   context->setContextProperty(QStringLiteral("ng_controller"), ng_controller);
   context->setContextProperty(QStringLiteral("js_type"), &ng_controller->js_type_wrap);
@@ -303,6 +307,10 @@ TaskQueuer* QMLAppEntity::get_app_worker() {
 
 BrowserRecorder* QMLAppEntity::get_app_recorder() {
   return get<BrowserRecorder>();
+}
+
+DownloadManager* QMLAppEntity::get_download_manager() {
+  return get<DownloadManager>();
 }
 
 LicenseChecker* QMLAppEntity::get_license_checker() {

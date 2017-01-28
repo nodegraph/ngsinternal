@@ -5,4 +5,5 @@ DataListDelegate 1.0 DataListDelegate.qml
 MenuItemListDelegate 1.0 MenuItemListDelegate.qml
 FileListDelegate 1.0 FileListDelegate.qml
 PostListDelegate 1.0 PostListDelegate.qml
+DownloadListDelegate 1.0 DownloadListDelegate.qml
 

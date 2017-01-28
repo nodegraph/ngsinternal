@@ -34,7 +34,7 @@ INSTALL(
 
 INSTALL(
     FILES 
-        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/macos/chromedriver_2.25/chromedriver"
+        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/macos/chromedriver_2.27/chromedriver"
     DESTINATION "../build/smashbrowse.app/Contents/MacOS"
     COMPONENT thirdparty
     CONFIGURATIONS Debug Release

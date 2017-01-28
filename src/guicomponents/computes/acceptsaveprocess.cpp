@@ -78,15 +78,13 @@ void AcceptSaveProcess::on_read_standard_output() {
 // Private Methods.
 // -----------------------------------------------------------------
 
-void AcceptSaveProcess::set_msg_id(int msg_id) {
-  _msg_id = msg_id;
-}
-
-void AcceptSaveProcess::start_process() {
+void AcceptSaveProcess::start_process(int msg_id) {
   external();
   if (is_running()) {
     return;
   }
+
+  _msg_id = msg_id;
 
   // Create a process.
   delete_ff(_process);
