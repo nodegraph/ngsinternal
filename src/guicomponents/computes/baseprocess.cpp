@@ -13,7 +13,8 @@ namespace ngs {
 
 BaseProcess::BaseProcess()
     : QObject(NULL),
-      _process(NULL) {
+      _process(NULL),
+      _show_stream_activity(true){
 }
 
 BaseProcess::~BaseProcess() {
@@ -46,30 +47,34 @@ void BaseProcess::on_state_changed(QProcess::ProcessState state) {
 }
 
 void BaseProcess::on_read_standard_error() {
-  QDebug debug = qDebug();
-  debug.noquote();
+  _last_stderr = _process->readAllStandardError();
 
   // Dump any std errors from the process.
-  _last_stderr = _process->readAllStandardError();
-  if (!_last_stderr.isEmpty()) {
-    debug << "stderr from: " << _process_name << "\n";
-    debug << "------------------------------------------------\n";
-    debug << _last_stderr;
-    debug << "------------------------------------------------\n";
+  if (_show_stream_activity) {
+    QDebug debug = qDebug();
+    debug.noquote();
+    if (!_last_stderr.isEmpty()) {
+      debug << "stderr from: " << _process_name << "\n";
+      debug << "------------------------------------------------\n";
+      debug << _last_stderr;
+      debug << "------------------------------------------------\n";
+    }
   }
 }
 
 void BaseProcess::on_read_standard_output() {
-  QDebug debug = qDebug();
-  debug.noquote();
+  _last_stdout = _process->readAllStandardOutput();
 
   // Dump any std output from the process.
-  _last_stdout = _process->readAllStandardOutput();
-  if (!_last_stdout.isEmpty()) {
-    debug << "stdout from " << _process_name << "\n";
-    debug << "------------------------------------------------\n";
-    debug << _last_stdout;
-    debug << "------------------------------------------------\n";
+  if (_show_stream_activity) {
+    QDebug debug = qDebug();
+    debug.noquote();
+    if (!_last_stdout.isEmpty()) {
+      debug << "stdout from " << _process_name << "\n";
+      debug << "------------------------------------------------\n";
+      debug << _last_stdout;
+      debug << "------------------------------------------------\n";
+    }
   }
 }
 

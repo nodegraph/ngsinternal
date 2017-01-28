@@ -28,7 +28,9 @@ BaseListDelegate {
 	item_height: app_settings.list_item_height_small
 	
 	function get_image_url() {
-		if (_status == "downloading") {
+		if (_status == "queued") {
+			return "qrc:///icons/ic_cloud_queue_white_48dp.png"
+		} else if (_status == "downloading") {
 			return "qrc:///icons/ic_cloud_download_white_48dp.png"
 		} else if (_status == "finished") {
 			return "qrc:///icons/ic_cloud_done_white_48dp.png"

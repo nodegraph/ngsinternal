@@ -26,6 +26,7 @@ Q_OBJECT
   virtual const QString& get_filename() const;
 
   signals:
+  void queued(long long pid, const QString& url);
   void started(long long pid, const QString& filename);
   void progress(long long pid, const  QString& progress);
   void finished(long long pid);
@@ -47,8 +48,10 @@ Q_OBJECT
   int _max_filesize; // in mega bytes
 
   QString _filename; // This is sent to us over stdout from the process.
+  static const char* _already_downloaded_pattern;
   static const char* _progress_pattern;
   static const char* _filename_pattern;
+  const QRegExp _already_downloaded_regex;
   const QRegExp _progress_regex; // Extract progress info from stdout.
   const QRegExp _filename_regex; // Extract filename info from stdout.
 };

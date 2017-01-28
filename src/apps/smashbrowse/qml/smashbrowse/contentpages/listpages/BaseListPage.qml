@@ -58,8 +58,8 @@ Rectangle {
         id: stack_view_header
         stack_view: page.Stack.view
     }
-
-    // Our ListView.
+			
+	// Our ListView.
     ListView {
         id: list_view
         clip: true

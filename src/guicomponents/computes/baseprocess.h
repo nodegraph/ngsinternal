@@ -40,6 +40,7 @@ Q_OBJECT
   QString _program;
   QStringList _args;
 
+  bool _show_stream_activity;
   QString _last_stderr;
   QString _last_stdout;
 

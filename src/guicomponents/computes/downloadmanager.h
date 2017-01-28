@@ -27,16 +27,20 @@ Q_OBJECT
   explicit DownloadManager(Entity* parent);
   virtual ~DownloadManager();
 
+  Q_INVOKABLE void download_on_the_side(const QString& url);
   void download(int msg_id, const QJsonObject& args);
   void stop(long long pid);
 
 signals:
+ void download_queued(long long pid, const QString& url);
  void download_started(long long pid, const QString& filename);
  void download_progress(long long pid, const  QString& progress);
  void download_finished(long long pid);
  void download_errored(long long pid, const QString& error);
 
  private slots:
+  void on_queued_side_download(long long pid, const QString& url);
+  void on_queued(long long pid, const QString& url);
   void on_started(long long pid, const QString& filename);
   void on_progress(long long pid, const  QString& progress);
   void on_errored(long long pid, const QString& error);

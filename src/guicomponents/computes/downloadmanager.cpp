@@ -4,6 +4,9 @@
 #include <guicomponents/computes/downloadvideoprocess.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
+#include <QtCore/QStandardPaths>
+#include <QtCore/QDir>
+
 namespace ngs {
 
 DownloadManager::DownloadManager(Entity* parent)
@@ -21,11 +24,34 @@ DownloadManager::~DownloadManager() {
   _processes.clear();
 }
 
+void DownloadManager::download_on_the_side(const QString& url) {
+  DownloadVideoProcess *p = new_ff DownloadVideoProcess();
+
+  // Connect to signals.
+  connect(p, SIGNAL(queued(long long, const QString&)), this, SLOT(on_queued_side_download(long long, const QString&)));
+  connect(p, SIGNAL(started(long long, const QString&)), this, SLOT(on_started(long long, const QString&)));
+  connect(p, SIGNAL(progress(long long, const  QString&)), this, SLOT(on_progress(long long, const  QString&)));
+  connect(p, SIGNAL(finished(long long)), this, SLOT(on_finished(long long)));
+  connect(p, SIGNAL(errored(long long, const QString&)), this, SLOT(on_errored(long long, const QString&)));
+
+  // Setup the arguments.
+  p->set_url(url);
+  QDir dir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + QDir::separator() + "smashbrowse");
+  p->set_dir(dir.path());
+
+  // Start the process.
+  p->start();
+
+  // Record the process.
+  _processes.insert({p->get_pid(),p});
+}
+
 void DownloadManager::download(int msg_id, const QJsonObject& args) {
   _last_msg_id = msg_id;
   DownloadVideoProcess *p = new_ff DownloadVideoProcess();
 
   // Connect to signals.
+  connect(p, SIGNAL(queued(long long, const QString&)), this, SLOT(on_queued(long long, const QString&)));
   connect(p, SIGNAL(started(long long, const QString&)), this, SLOT(on_started(long long, const QString&)));
   connect(p, SIGNAL(progress(long long, const  QString&)), this, SLOT(on_progress(long long, const  QString&)));
   connect(p, SIGNAL(finished(long long)), this, SLOT(on_finished(long long)));
@@ -62,14 +88,23 @@ void DownloadManager::destroy_process(long long pid) {
   //delete_ff(p);
 }
 
-void DownloadManager::on_started(long long pid, const QString& filename) {
+void DownloadManager::on_queued_side_download(long long pid, const QString& url) {
+  emit download_queued(pid, url);
+}
+
+void DownloadManager::on_queued(long long pid, const QString& url) {
   internal();
 
-  // Once the download starts we consider the task to be done. We don't wait for it to finish.
-  Message response(true, filename);
+  // Once queued we consider the task to be done. We don't wait for it to finish.
+  Message response(true, url);
   response.insert(Message::kID, _last_msg_id);
   _manipulator->receive_message(response.to_string());
 
+  emit download_queued(pid, url);
+}
+
+void DownloadManager::on_started(long long pid, const QString& filename) {
+  internal();
   emit download_started(pid, filename);
 }
 

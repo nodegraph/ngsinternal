@@ -36,9 +36,22 @@ BaseListPage {
             visible = false;
         }
     }
+
+    function on_download_queued(pid, url) {
+        model.append({"title": url, "description": "queued", "pid": pid, "status": "queued"})
+    }
     
     function on_download_started(pid, filename) {
-        model.append({"title": filename, "description": "", "pid": pid, "status": "downloading"})
+        for (var i=0; i<model.count; i++) {
+            var obj = model.get(i)
+            if (obj.pid == pid) {
+                obj.title = filename
+                obj.description = ""
+                obj.status = "downloading"
+                model.set(i, obj);
+                break;
+            }
+        }
     }
     
     function on_download_progress(pid, progress) {
@@ -46,6 +59,7 @@ BaseListPage {
             var obj = model.get(i)
             if (obj.pid == pid) {
                 obj.description = progress
+                obj.status = "downloading"
                 model.set(i, obj);
                 break;
             }
@@ -81,5 +95,20 @@ BaseListPage {
     model: ListModel {
     }
     model_is_dynamic: false
+
+    DropArea {
+        id: drop_area
+        anchors.fill: parent
+        onDropped: {
+            console.log("something was dropped on a list page!")
+            if (drop.hasUrls) {
+                console.log("urls were dropped on a list page!")
+                console.log("url: " + drop.urls[0])
+                download_manager.download_on_the_side(drop.urls[0])
+            }
+        }
+        onEntered: {
+        }
+    }
     
 }

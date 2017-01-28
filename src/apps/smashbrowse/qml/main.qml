@@ -204,6 +204,7 @@ Rectangle {
         web_recorder.web_action_ignored.connect(web_menu_list_stack_page.on_action_ignored)
         
         // Download manager connections.
+        download_manager.download_queued.connect(downloads_page.on_download_queued)
         download_manager.download_started.connect(downloads_page.on_download_started)
         download_manager.download_progress.connect(downloads_page.on_download_progress)
         download_manager.download_finished.connect(downloads_page.on_download_finished)
