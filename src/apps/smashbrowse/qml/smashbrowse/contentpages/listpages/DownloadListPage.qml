@@ -30,7 +30,7 @@ BaseListPage {
     // Methods.
     function on_switch_to_mode(mode) {
         if (mode == app_settings.downloads_mode) {
-            stack_view_header.title_text = "Downloads"
+            stack_view_header.title_text = "download queue"
             visible = true;
         } else {
             visible = false;
@@ -100,10 +100,7 @@ BaseListPage {
         id: drop_area
         anchors.fill: parent
         onDropped: {
-            console.log("something was dropped on a list page!")
             if (drop.hasUrls) {
-                console.log("urls were dropped on a list page!")
-                console.log("url: " + drop.urls[0])
                 download_manager.download_on_the_side(drop.urls[0])
             }
         }

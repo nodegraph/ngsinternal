@@ -10,7 +10,8 @@ namespace ngs {
 
 class GraphBuilder;
 
-class COMMS_EXPORT CryptoLogic: public Component {
+class COMMS_EXPORT CryptoLogic: public QObject, public Component {
+  Q_OBJECT
  public:
 
   static const QString kCryptoFile;
@@ -20,17 +21,12 @@ class COMMS_EXPORT CryptoLogic: public Component {
   CryptoLogic(Entity* app_root);
   virtual ~CryptoLogic();
 
-  // App license.
-  QString get_edition() const;
-  QString get_license() const;
-  void set_license(const QString& edition, const QString& license);
-
   // Password Setup.
-  void create_crypto(const QString& chosen_password);
-  void save_crypto() const;
-  bool crypto_exists() const;
-  void load_crypto();
-  bool check_password(const QString& password);
+  Q_INVOKABLE void create_crypto(const QString& chosen_password);
+  Q_INVOKABLE void save_crypto() const;
+  Q_INVOKABLE bool crypto_exists() const;
+  Q_INVOKABLE void load_crypto();
+  Q_INVOKABLE bool check_password(const QString& password);
 
   // File save and load with or without encryption.
   void write_file(const QString& filename, const std::string& data) const {_write_file(filename,data,_use_encryption);}
@@ -57,10 +53,6 @@ class COMMS_EXPORT CryptoLogic: public Component {
 
   // User's app data directory where all app data is saved.
   QString _app_dir;
-
-  // License Key for Application Usage.
-  std::string _edition; // The edition of the app: currently "pro" or "lite"
-  std::string _license;
 
   // Crypto.
   std::string _nonce;

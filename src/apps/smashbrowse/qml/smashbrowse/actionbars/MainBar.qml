@@ -38,19 +38,19 @@ Rectangle {
         clear_lit_buttons()
         if (m == app_settings.file_mode) {
             file_button.lit = true
-            action_bar_title.text = "Node Files"
+            action_bar_title.text = "Files"
             more_menu_button.visible = false
         } else if (m == app_settings.node_graph_mode) {
             node_graph_button.lit = true
-            action_bar_title.text = "Node Graph"
+            action_bar_title.text = "Graph"
             more_menu_button.visible = false
         } else if (m == app_settings.view_node_mode) {
             view_node_button.lit = true
-            action_bar_title.text = "View Node Outputs"
+            action_bar_title.text = "View"
             more_menu_button.visible = false
         } else if (m == app_settings.edit_node_mode) {
             edit_node_button.lit = true
-            action_bar_title.text = "Edit Node Parameters"
+            action_bar_title.text = "Edit"
             more_menu_button.visible = false
         } else if (m == app_settings.downloads_mode) {
         	downloads_button.lit = true
@@ -58,11 +58,11 @@ Rectangle {
             more_menu_button.visible = false
         } else if (m == app_settings.posts_mode) {
             posts_button.lit = true
-            action_bar_title.text = "Posts from Nodes"
+            action_bar_title.text = "Posts"
             more_menu_button.visible = false
         } else if (m == app_settings.settings_mode) {
             settings_button.lit = true
-            action_bar_title.text = "Node Graph Settings"
+            action_bar_title.text = "Settings"
             more_menu_button.visible = false
         }
         switch_to_mode(m)
@@ -94,6 +94,7 @@ Rectangle {
         node_graph_button.lit = false
         view_node_button.lit = false
         edit_node_button.lit = false
+        downloads_button.lit = false
         posts_button.lit = false
         settings_button.lit = false
     }

@@ -19,9 +19,11 @@ DownloadManager::DownloadManager(Entity* parent)
       Component(parent, kIID(), kDID()),
       _manipulator(this),
       _license_checker(this),
+      _file_model(this),
       _last_msg_id(-1) {
   get_dep_loader()->register_fixed_dep(_manipulator, Path());
   get_dep_loader()->register_fixed_dep(_license_checker, Path());
+  get_dep_loader()->register_fixed_dep(_file_model, Path());
 
   // Setup the poll timer.
   _check_timer.setSingleShot(false);
@@ -40,9 +42,10 @@ DownloadManager::~DownloadManager() {
 void DownloadManager::on_check() {
   // Determine the maximum number of running processes allowed.
   int max_running = 2;
-//  if (_license_checker->get_edition() == "pro") {
-//    _file_model->get
-//  }
+  if (_license_checker->get_edition() == "pro") {
+    // Get the number of concurrent downloads from the settings.
+    max_running = _file_model->get_max_concurrent_downloads();
+  }
   // If the number of running processes is less than the max, then start another.
   if (get_num_running() < max_running) {
     for (auto &i: _processes) {
@@ -68,7 +71,6 @@ void DownloadManager::download_on_the_side(const QString& url) {
   DownloadVideoProcess *p = new_ff DownloadVideoProcess();
 
   // Connect to signals.
-  connect(p, SIGNAL(queued(long long, const QString&)), this, SLOT(on_queued_side_download(long long, const QString&)));
   connect(p, SIGNAL(started(long long, const QString&)), this, SLOT(on_started(long long, const QString&)));
   connect(p, SIGNAL(progress(long long, const  QString&)), this, SLOT(on_progress(long long, const  QString&)));
   connect(p, SIGNAL(finished(long long)), this, SLOT(on_finished(long long)));

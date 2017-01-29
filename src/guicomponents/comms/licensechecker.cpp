@@ -1,5 +1,6 @@
 #include <base/memoryallocator/taggednew.h>
 #include <guicomponents/comms/licensechecker.h>
+#include <base/objectmodel/deploader.h>
 
 #include <cstddef>
 #include <cassert>
@@ -18,6 +19,7 @@
 #include <QtNetwork/QSsl>
 
 #include <iostream>
+#include <sstream>
 
 namespace ngs {
 
@@ -50,17 +52,24 @@ function check_license(edition, license) {
 }
 */
 
+const QString LicenseChecker::kLicenseFile = "license.dat"; // Stores info about our license.
+
 LicenseChecker::LicenseChecker(Entity *parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
+      _crypto_logic(this),
       _network_manager(new_ff QNetworkAccessManager(this)),
-      _license_is_valid(false),
-      _date_regex("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)") {
+      _date_regex("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)"),
+      _license_is_valid(false) {
+  get_dep_loader()->register_fixed_dep(_crypto_logic, Path());
+
   assert(QSslSocket::supportsSsl());
   connect(_network_manager, SIGNAL(finished(QNetworkReply*)), SLOT(on_reply_from_web(QNetworkReply*)));
   //check_license("lite", "3AA4B57A-B8EC4445-B0D2437B-11568F59");
 
 #ifdef SKIP_LICENSE_CHECK
+  _edition = "lite";
+  _license = "bogus";
   _license_is_valid = true;
 #endif
 }
@@ -69,9 +78,58 @@ LicenseChecker::~LicenseChecker() {
   delete_ff(_network_manager);
 }
 
+void LicenseChecker::save() const{
+  external();
+  // Save out the crypto config.
+  {
+    std::stringstream ss;
+    SimpleSaver saver(ss);
+    saver.save(_edition);
+    saver.save(_license);
+    _crypto_logic->write_file(kLicenseFile, ss.str());
+  }
+}
+
+void LicenseChecker::load() {
+  external();
+  if (!_crypto_logic->file_exists(kLicenseFile)) {
+    _edition.clear();
+    _license.clear();
+    _license_is_valid = false;
+    return;
+  }
+
+  // Load the crypto file.
+  QByteArray contents = _crypto_logic->load_file(kLicenseFile);
+  Bits* bits = create_bits_from_raw(contents.data(), contents.size());
+  SimpleLoader loader(bits);
+
+  // Extract the nonce and salt.
+  loader.load(_edition);
+  loader.load(_license);
+  _license_is_valid = false;
+}
+
+void LicenseChecker::set_edition(const QString& edition) {
+  _edition = edition.toStdString();
+}
+
+void LicenseChecker::set_license(const QString& license) {
+  _license = license.toStdString();
+}
+
+QString LicenseChecker::get_edition() const {
+  return _edition.c_str();
+}
+
+QString LicenseChecker::get_license() const {
+  return _license.c_str();
+}
+
 #ifdef SKIP_LICENSE_CHECK
 
-void LicenseChecker::check_license(const QString& edition, const QString& license) {
+void LicenseChecker::check_license() {
+  // Note any edition and license will be ok.
   _license_is_valid = true;
   emit license_checked(true);
 }
@@ -81,9 +139,7 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
 
 #else
 
-void LicenseChecker::check_license(const QString& edition, const QString& license) {
-  _check_edition = edition;
-
+void LicenseChecker::check_license() {
   // Create our request.
   QNetworkRequest request(QUrl("https://api.gumroad.com/v2/licenses/verify"));
   QSslConfiguration config = QSslConfiguration::defaultConfiguration();
@@ -93,14 +149,14 @@ void LicenseChecker::check_license(const QString& edition, const QString& licens
 
   // Determine product id.
   QString product_id;
-  if (edition == "pro") {
+  if (_edition == "pro") {
     product_id = "tgctL";
   } else {
     product_id = "QbCCX";
   }
 
   // Generate query object in json.
-  QString query = "{\"product_permalink\": \"" + product_id + "\", \"license_key\": \"" + license + "\"}";
+  QString query = "{\"product_permalink\": \"" + product_id + "\", \"license_key\": \"" + _license.c_str() + "\"}";
 
   // Post query.
   QNetworkReply *reply = _network_manager->post(request, query.toUtf8());
@@ -145,7 +201,7 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
   }
 
   // Check if the trial/lite software has expired.
-  if (_check_edition == "lite") {
+  if (_edition == "lite") {
     if (purchase["created_at"] == QJsonValue::Undefined) {
       emit license_checked(false);
       return;

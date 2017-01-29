@@ -57,8 +57,6 @@ Rectangle {
         // First password entry.
         AppPasswordField {
             id: password_1
-            // Normally echoMode is bound to app_settings.hide_passwords, but it's not setup yet
-            // becuase the filemodel hasn't loaded the graph yet.
             echoMode: TextInput.Password
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -76,8 +74,6 @@ Rectangle {
         // Second password entry.
         AppPasswordField {
             id: password_2
-            // Normally echoMode is bound to app_settings.hide_passwords, but it's not setup yet
-            // becuase the filemodel hasn't loaded the graph yet.
             echoMode: TextInput.Password
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -94,8 +90,8 @@ Rectangle {
                     status.text = "passwords cannot be empty"
                 } else {
                     // Setup the crypto.
-                    file_model.create_crypto(password_1.text)
-                    file_model.save_crypto();
+                    crypto_logic.create_crypto(password_1.text)
+                    crypto_logic.save_crypto();
 
                     // Now show the license entry page.
                     show_license_entry_page()

@@ -1,12 +1,12 @@
 
 set(sources
+    cryptologic.cpp
+    licensechecker.cpp
+    filemodel.cpp
     commtypes.cpp
     hintkeys.cpp
-    filemodel.cpp
     message.cpp
     taskscheduler.cpp
-    licensechecker.cpp
-    cryptologic.cpp
     qmltypes.cpp
     )
    
@@ -15,13 +15,13 @@ set(headers
     messagetypes.h
     hintkeys.h
     taskscheduler.h
-    cryptologic.h
 )
     
 set(moc_headers
+    cryptologic.h
+    licensechecker.h
     filemodel.h
     message.h
-    licensechecker.h
     qmltypes.h
     )
     

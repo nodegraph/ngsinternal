@@ -14,7 +14,7 @@ TextField {
     text: ""
     textColor: "white"
     font.pointSize: app_settings.font_point_size
-    echoMode: app_settings.hide_passwords ? TextInput.Password : TextInput.Normal
+    echoMode: true ? TextInput.Password : TextInput.Normal
 
     // Center the text.
     horizontalAlignment: TextInput.AlignHCenter

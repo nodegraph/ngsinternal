@@ -51,7 +51,7 @@ Rectangle {
         image_url: "qrc:///icons/ic_arrow_back_white_48dp.png"
         visible: show_back_button
         onClicked: {
-            if (stack_view.depth > 1) {
+            if (stack_view && stack_view.depth > 1) {
                 stack_view.pop_page()
             } else {
                 main_bar.switch_to_node_graph()

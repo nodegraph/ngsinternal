@@ -28,9 +28,9 @@ Rectangle {
     property string edition_cache: ""
 
     function update_fields() {
-        // Since this page is built before the file_model is ready, we need to set the fields manually.
-        license_text_field.text = file_model.get_license()
-        if (file_model.get_edition() == "pro") {
+    	license_checker.load()
+        license_text_field.text = license_checker.get_license()
+        if (license_checker.get_edition() == "pro") {
             pro_edition_button.checked = true
             lite_edition_button.checked = false
         } else {
@@ -45,8 +45,7 @@ Rectangle {
     		return
     	}
         // Record the license.
-        file_model.set_license(edition_cache, license_cache)
-        file_model.save_crypto()
+        license_checker.save()
         // Hide this page.
         check_license_page.visible = false
         // Erase passwords from page.
@@ -123,7 +122,9 @@ Rectangle {
                 } else {
                 	edition_cache = "lite"
                 }
-                app_utils.check_license(edition_cache, license_cache, on_license_checked)
+                license_checker.set_edition(edition_cache)
+                license_checker.set_license(license_cache)
+                app_utils.check_license(on_license_checked)
             }
         }
 

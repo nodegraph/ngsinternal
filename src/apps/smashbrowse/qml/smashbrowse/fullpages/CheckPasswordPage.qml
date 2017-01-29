@@ -79,8 +79,6 @@ Rectangle {
         // Password field.
         AppPasswordField {
             id: password_field
-            // Normally echoMode is bound to app_settings.hide_passwords, but it's not setup yet
-            // becuase the filemodel hasn't loaded the graph yet.
             echoMode: TextInput.Password
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -111,8 +109,9 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "continue"
             onClicked: {
-                if (file_model.check_password(password_field.text)) {
-                    app_utils.check_license(file_model.get_edition(), file_model.get_license(), on_license_checked)
+                if (crypto_logic.check_password(password_field.text)) {
+                	license_checker.load()
+                    app_utils.check_license(on_license_checked)
                 } else {
                     status_label.text = "password is incorrect"
                 }

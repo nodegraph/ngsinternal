@@ -27,7 +27,7 @@ QtObject {
     }
 
     // Public.
-    function check_license(edition, license, callback) {
+    function check_license(callback) {
         // Connect to callback.
         license_checker.license_checked.connect(__on_license_checked)
 
@@ -35,7 +35,7 @@ QtObject {
         license_check_callback = callback
 
         // Initiate license checking.
-        license_checker.check_license(edition, license)
+        license_checker.check_license()
     }
 
     // Private.

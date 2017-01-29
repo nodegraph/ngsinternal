@@ -30,10 +30,8 @@ Rectangle {
         if (mode == app_settings.settings_mode) {
             if (file_model.get_working_row()>=0) {
                 stack_view_header.title_text = file_model.get_work_setting('title')
-                hide_passwords_check_box.checked = file_model.get_work_setting('hide_passwords')
                 lock_links_check_box.checked = file_model.get_work_setting('lock_links')
-                browser_width_text_field.text = file_model.get_work_setting('browser_width')
-                browser_height_text_field.text = file_model.get_work_setting('browser_height')
+                max_concurrent_downloads_text_field.text = file_model.get_work_setting('max_concurrent_downloads')
                 max_node_posts_text_field.text = file_model.get_work_setting('max_node_posts')
                 auto_run_check_box.checked = file_model.get_work_setting('auto_run')
                 auto_run_interval_text_field.text = file_model.get_work_setting('auto_run_interval')
@@ -47,7 +45,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        show_back_button: false
+        show_back_button: true
     }
 
     ColumnLayout {
@@ -62,27 +60,6 @@ Rectangle {
 
         // Appearance.
         spacing: app_settings.column_layout_spacing
-
-        RowLayout {
-            AppLabel {
-                id: hide_passwords_label
-                text: "Hide Passwords"
-                anchors {
-                    left: parent.left
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-            AppCheckBox {
-                id: hide_passwords_check_box
-                checked: true
-                anchors {
-                    left: hide_passwords_label.right
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-        }
 
         RowLayout {
             AppLabel {
@@ -108,8 +85,8 @@ Rectangle {
 
         RowLayout {
             AppLabel {
-                id: browser_width_label
-                text: "Browser Width"
+                id: max_concurrent_downloads_label
+                text: "Max Concurrent Downloads"
                 anchors {
                     left: parent.left
                     leftMargin: app_settings.page_left_margin
@@ -119,39 +96,13 @@ Rectangle {
 
             // Title Field.
             AppLineEdit {
-                id: browser_width_text_field
-                text: '1024'
+                id: max_concurrent_downloads_text_field
+                text: '2'
                 tool_bar: copy_paste_bar
                 validator: RegExpValidator{regExp: /\d+/}
                 inputMethodHints: Qt.ImhDigitsOnly
                 anchors {
-                    left: browser_width_label.right
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-        }
-
-        RowLayout {
-            AppLabel {
-                id: browser_height_label
-                text: "Browser Height"
-                anchors {
-                    left: parent.left
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-
-            // Title Field.
-            AppLineEdit {
-                id: browser_height_text_field
-                text: '1150'
-                tool_bar: copy_paste_bar
-                validator: RegExpValidator{regExp: /\d+/}
-                inputMethodHints: Qt.ImhDigitsOnly
-                anchors {
-                    left: browser_height_label.right
+                    left: max_concurrent_downloads_label.right
                     leftMargin: app_settings.page_left_margin
                     rightMargin: app_settings.page_right_margin
                 }
@@ -244,11 +195,9 @@ Rectangle {
                     var info = {}
                     info.auto_run = auto_run_check_box.checked
                     info.auto_run_interval = Number(auto_run_interval_text_field.text)
-                    info.hide_passwords = hide_passwords_check_box.checked
                     info.lock_links = lock_links_check_box.checked
                     info.max_node_posts = Number(max_node_posts_text_field.text)
-                    info.browser_width = Number(browser_width_text_field.text)
-                    info.browser_height = Number(browser_height_text_field.text)
+                    info.max_concurrent_downloads = Number(max_concurrent_downloads_text_field.text)
 
                     // Set values.
                     var row = file_model.get_working_row()

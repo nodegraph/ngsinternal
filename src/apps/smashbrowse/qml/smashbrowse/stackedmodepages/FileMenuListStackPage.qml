@@ -19,7 +19,7 @@ BaseStackPage{
     function on_switch_to_mode(mode) {
         if (mode == app_settings.file_mode) {
             visible = true;
-            stack_view.push_by_names("File Menu", "FileMenuListPage", "FileMenuActions")
+            stack_view.push_by_names("file operations", "FileMenuListPage", "FileMenuActions")
         } else {
             visible = false;
             stack_view.clear_pages()

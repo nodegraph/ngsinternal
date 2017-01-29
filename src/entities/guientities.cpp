@@ -229,6 +229,8 @@ void QMLAppEntity::init_view(QSurfaceFormat& format) {
 
 void QMLAppEntity::expose_to_qml() {
   // Grab some components without using Deps.
+  CryptoLogic* crypto_logic = get_crypto_logic();
+  LicenseChecker* license_checker = get_license_checker();
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
   NodeGraphController* ng_controller = get_node_graph_controller();
@@ -236,7 +238,7 @@ void QMLAppEntity::expose_to_qml() {
   BrowserRecorder* web_recorder = get_app_recorder();
   DownloadManager* download_manager = get_download_manager();
   NodeGraphView* view = get_node_graph_view();
-  LicenseChecker* license_checker = get_license_checker();
+
 
   // Clean and open the socket on web_worker.
   web_worker->clean_state();
@@ -253,12 +255,14 @@ void QMLAppEntity::expose_to_qml() {
 
   // Inject them into the qml context.
   QQmlContext* context = view->engine()->rootContext();
+  context->setContextProperty(QStringLiteral("crypto_logic"), crypto_logic);
+  context->setContextProperty(QStringLiteral("license_checker"), license_checker);
   context->setContextProperty(QStringLiteral("file_model"), file_model);
   context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
   context->setContextProperty(QStringLiteral("web_worker"), web_worker);
   context->setContextProperty(QStringLiteral("web_recorder"), web_recorder);
   context->setContextProperty(QStringLiteral("download_manager"), download_manager);
-  context->setContextProperty(QStringLiteral("license_checker"), license_checker);
+
   context->setContextProperty(QStringLiteral("ng_controller"), ng_controller);
   context->setContextProperty(QStringLiteral("js_type"), &ng_controller->js_type_wrap);
   context->setContextProperty(QStringLiteral("hint_key"), &ng_controller->hint_key_wrap);
@@ -297,6 +301,14 @@ void QMLAppEntity::embed_node_graph() {
 
 }
 
+CryptoLogic* QMLAppEntity::get_crypto_logic() {
+  return get<CryptoLogic>();
+}
+
+LicenseChecker* QMLAppEntity::get_license_checker() {
+  return get<LicenseChecker>();
+}
+
 FileModel* QMLAppEntity::get_file_model() {
   return get<FileModel>();
 }
@@ -311,10 +323,6 @@ BrowserRecorder* QMLAppEntity::get_app_recorder() {
 
 DownloadManager* QMLAppEntity::get_download_manager() {
   return get<DownloadManager>();
-}
-
-LicenseChecker* QMLAppEntity::get_license_checker() {
-  return get<LicenseChecker>();
 }
 
 NodeGraphQuickItem* QMLAppEntity::get_node_graph_quick_item() {

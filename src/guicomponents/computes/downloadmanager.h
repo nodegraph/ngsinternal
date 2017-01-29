@@ -63,7 +63,7 @@ signals:
   // Our fixed dependencies.
   Dep<BaseNodeGraphManipulator> _manipulator;
   Dep<LicenseChecker> _license_checker;
-  //Dep<FileModel> _file_model;
+  Dep<FileModel> _file_model;
 
   // A map of ids to download video processes.
   std::unordered_map<long long, DownloadVideoProcess*> _processes;

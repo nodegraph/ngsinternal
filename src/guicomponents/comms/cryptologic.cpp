@@ -32,7 +32,7 @@
 
 namespace ngs {
 
-const QString CryptoLogic::kCryptoFile = "app_init.dat"; // Stores info about our encryption.
+const QString CryptoLogic::kCryptoFile = "crypto.dat"; // Stores info about our encryption.
 
 CryptoLogic::CryptoLogic(Entity* app_root)
     : Component(app_root, kIID(), kDID()),
@@ -45,22 +45,6 @@ CryptoLogic::CryptoLogic(Entity* app_root)
 }
 
 CryptoLogic::~CryptoLogic() {
-}
-
-QString CryptoLogic::get_edition() const {
-  external();
-  return _edition.c_str();
-}
-
-QString CryptoLogic::get_license() const {
-  external();
-  return _license.c_str();
-}
-
-void CryptoLogic::set_license(const QString& edition, const QString& license) {
-  external();
-  _edition = edition.toStdString();
-  _license = license.toStdString();
 }
 
 void CryptoLogic::create_crypto(const QString& chosen_password) {
@@ -83,8 +67,6 @@ void CryptoLogic::save_crypto() const{
     saver.save(_nonce);
     saver.save(_salt);
     saver.save(_hashed_password);
-    saver.save(_edition);
-    saver.save(_license);
     _write_file(kCryptoFile, ss.str(), false);
   }
 }
@@ -112,8 +94,6 @@ void CryptoLogic::load_crypto() {
   loader.load(_nonce);
   loader.load(_salt);
   loader.load(_hashed_password);
-  loader.load(_edition);
-  loader.load(_license);
 }
 
 bool CryptoLogic::check_password(const QString& password) {

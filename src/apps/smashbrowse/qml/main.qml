@@ -220,9 +220,9 @@ Rectangle {
 			main_bar.switch_to_mode(app_settings.node_graph_mode)
 			app_utils.load_last_graph()
 			app_utils.frame_all_on_idle()
-		} else if (file_model.crypto_exists()) {
+		} else if (crypto_logic.crypto_exists()) {
 			// Go to the check password page.
-            file_model.load_crypto()
+            crypto_logic.load_crypto()
             check_password_page.visible = true
         } else {
         	// Go to the create a new password page.

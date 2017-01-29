@@ -32,7 +32,7 @@
 
 namespace ngs {
 
-const QString FileModel::kAppFile = "app_data.dat"; // Stores the mapping between displayed filename and actual filename.
+const QString FileModel::kAppFile = "model.dat"; // Stores the mapping between displayed filename and actual filename.
 
 FileModel::FileModel(Entity* app_root)
     : QStandardItemModel(),
@@ -49,11 +49,9 @@ FileModel::FileModel(Entity* app_root)
   _roles[kDescriptionRole] = "description";
   _roles[kAutoRunRole] = "auto_run";
   _roles[kAutoRunIntervalRole] = "auto_run_interval";
-  _roles[kHidePasswordsRole] = "hide_passwords";
   _roles[kLockLinksRole] = "lock_links";
   _roles[kMaxNodePostsRole] = "max_node_posts";
-  _roles[kBrowserWidthRole] = "browser_width";
-  _roles[kBrowserHeightRole] = "browser_height";
+  _roles[kMaxConcurrentDownloadsRole] = "max_concurrent_downloads";
   setItemRoleNames(_roles);
 
   // Set up our default role values.
@@ -61,11 +59,9 @@ FileModel::FileModel(Entity* app_root)
   _default_settings["description"] = "An empty graph.";
   _default_settings["auto_run"] = false;
   _default_settings["auto_run_interval"] = 60;
-  _default_settings["hide_passwords"] = true;
   _default_settings["lock_links"] = false;
   _default_settings["max_node_posts"] = 1000;
-  _default_settings["browser_width"] = 1024;
-  _default_settings["browser_height"] = 1150;
+  _default_settings["max_concurrent_downloads"] = 2;
 
   // Sort on titles.
   setSortRole(kTitleRole);
@@ -78,67 +74,26 @@ FileModel::FileModel(Entity* app_root)
 FileModel::~FileModel() {
 }
 
-bool FileModel::get_hide_passwords() const {
-  return get_work_setting(FileModel::kHidePasswordsRole).toBool();
+//int FileModel::get_max_node_posts() const {
+//  return get_work_setting(FileModel::kMaxNodePostsRole).toInt();
+//}
+//
+//void FileModel::set_max_node_posts(int max) {
+//  set_work_setting(FileModel::kMaxNodePostsRole, max);
+//  emit max_node_posts_changed();
+//}
+
+bool FileModel::links_are_locked() const {
+  return get_work_setting(FileModel::kLockLinksRole).toInt();
 }
 
-void FileModel::set_hide_passwords(bool hide) {
-  set_work_setting(FileModel::kHidePasswordsRole, hide);
-  emit hide_passwords_changed();
-}
-
-int FileModel::get_max_node_posts() const {
-  return get_work_setting(FileModel::kMaxNodePostsRole).toInt();
-}
-
-void FileModel::set_max_node_posts(int max) {
-  set_work_setting(FileModel::kMaxNodePostsRole, max);
-  emit max_node_posts_changed();
+int FileModel::get_max_concurrent_downloads() const {
+  return get_work_setting(FileModel::kMaxConcurrentDownloadsRole).toInt();
 }
 
 void FileModel::on_item_changed(QStandardItem* item) {
   external();
   save_model();
-}
-
-QString FileModel::get_edition() const {
-  external();
-  return _crypto_logic->get_edition();
-}
-
-QString FileModel::get_license() const {
-  external();
-  return _crypto_logic->get_license();
-}
-
-void FileModel::set_license(const QString& edition, const QString& license) {
-  external();
-  return _crypto_logic->set_license(edition, license);
-}
-
-void FileModel::create_crypto(const QString& chosen_password) {
-  external();
-  _crypto_logic->create_crypto(chosen_password);
-}
-
-void FileModel::save_crypto() const{
-  external();
-  _crypto_logic->save_crypto();
-}
-
-bool FileModel::crypto_exists() const {
-  external();
-  return _crypto_logic->crypto_exists();
-}
-
-void FileModel::load_crypto() {
-  external();
-  _crypto_logic->load_crypto();
-}
-
-bool FileModel::check_password(const QString& password) {
-  external();
-  return _crypto_logic->check_password(password);
 }
 
 void FileModel::sort_files() {
@@ -315,16 +270,12 @@ void FileModel::load_model() {
     loader.load(auto_run);
     int auto_run_interval;
     loader.load(auto_run_interval);
-    bool hide_passwords;
-    loader.load(hide_passwords);
     bool lock_links;
     loader.load(lock_links);
     int max_node_posts;
     loader.load(max_node_posts);
-    int browser_width;
-    loader.load(browser_width);
-    int browser_height;
-    loader.load(browser_height);
+    int max_concurrent_downloads;
+    loader.load(max_concurrent_downloads);
 
     QStandardItem *item = new_ff QStandardItem();
     QString qtitle(title.c_str());
@@ -333,18 +284,15 @@ void FileModel::load_model() {
     item->setData(description.c_str(), kDescriptionRole);
     item->setData(auto_run, kAutoRunRole);
     item->setData(auto_run_interval, kAutoRunIntervalRole);
-    item->setData(hide_passwords, kHidePasswordsRole);
     item->setData(lock_links, kLockLinksRole);
     item->setData(max_node_posts, kMaxNodePostsRole);
-    item->setData(browser_width, kBrowserWidthRole);
-    item->setData(browser_height, kBrowserHeightRole);
+    item->setData(max_concurrent_downloads, kMaxConcurrentDownloadsRole);
     setItem(static_cast<int>(i), 0, item);
   }
 
-  assert(_working_row >= 0);
+  //assert(_working_row >= 0);
 
   // Update qml.
-  emit hide_passwords_changed();
   emit max_node_posts_changed();
 }
 
@@ -369,11 +317,9 @@ void FileModel::save_model() {
       saver.save(data(index(ii,0), kDescriptionRole).toString().toStdString());
       saver.save(data(index(ii,0), kAutoRunRole).toBool());
       saver.save(data(index(ii,0), kAutoRunIntervalRole).toInt());
-      saver.save(data(index(ii,0), kHidePasswordsRole).toBool());
       saver.save(data(index(ii,0), kLockLinksRole).toBool());
       saver.save(data(index(ii,0), kMaxNodePostsRole).toInt());
-      saver.save(data(index(ii,0), kBrowserWidthRole).toInt());
-      saver.save(data(index(ii,0), kBrowserHeightRole).toInt());
+      saver.save(data(index(ii,0), kMaxConcurrentDownloadsRole).toInt());
     }
   }
 
@@ -381,7 +327,6 @@ void FileModel::save_model() {
   _crypto_logic->write_file(kAppFile, ss.str());
 
   // Update qml.
-  emit hide_passwords_changed();
   emit max_node_posts_changed();
 }
 
@@ -592,11 +537,9 @@ void FileModel::create_graph(const QVariantMap& arg) {
   item->setData(settings["description"].toString(), kDescriptionRole);
   item->setData(settings["auto_run"], kAutoRunRole);
   item->setData(settings["auto_run_interval"], kAutoRunIntervalRole);
-  item->setData(settings["hide_passwords"], kHidePasswordsRole);
   item->setData(settings["lock_links"], kLockLinksRole);
   item->setData(settings["max_node_posts"], kMaxNodePostsRole);
-  item->setData(settings["browser_width"], kBrowserWidthRole);
-  item->setData(settings["browser_height"], kBrowserHeightRole);
+  item->setData(settings["max_concurrent_downloads"], kMaxConcurrentDownloadsRole);
   setItem(_working_row, 0, item);
 
   // Clear the existing nodes.

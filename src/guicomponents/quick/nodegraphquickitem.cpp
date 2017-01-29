@@ -57,8 +57,7 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
       _file_model(this),
       _license_checker(this),
       _manipulator(this),
-      _last_node_shape(this),
-      _link_locked(false) {
+      _last_node_shape(this) {
 
   get_dep_loader()->register_fixed_dep(_fbo_worker, Path());
   get_dep_loader()->register_fixed_dep(_selection, Path());
@@ -100,7 +99,8 @@ NodeGraphQuickItem::~NodeGraphQuickItem() {
 
 bool NodeGraphQuickItem::update_state() {
   internal();
-  lock_links(_file_model->get_work_setting(FileModel::kLockLinksRole).toBool());
+  //std::cerr << "ng quick item locking links\n";
+  //lock_links(_file_model->get_work_setting(FileModel::kLockLinksRole).toBool());
   return true;
 }
 
@@ -268,7 +268,7 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
 
   HitRegion region;
 
-  if (_link_locked && _last_press.left_button) {
+  if (_file_model->links_are_locked() && _last_press.left_button) {
     // We only allow the press to go through if a node is pressed
     // or the background is pressed.
     if (get_current_interaction()->node_hit(_last_press) ||
@@ -397,7 +397,7 @@ void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
           get_current_interaction()->update_mouse_info(_last_press);
 
           HitRegion region;
-          if (_link_locked) {
+          if (_file_model->links_are_locked()) {
             // We only allow the press to go through if a node is pressed
             // or the background is pressed.
             if (get_current_interaction()->node_hit(_last_press) ||
@@ -895,21 +895,21 @@ void NodeGraphQuickItem::explode_group() {
   update();
 }
 
-// Lock Graph.
-void NodeGraphQuickItem::lock_links(bool locked) {
-  external();
-  _link_locked = locked;
-}
-
-bool NodeGraphQuickItem::links_are_locked() const {
-  external();
-  return _link_locked;
-}
+//// Lock Graph.
+//void NodeGraphQuickItem::lock_links(bool locked) {
+//  external();
+//  _link_locked = locked;
+//}
+//
+//bool NodeGraphQuickItem::links_are_locked() const {
+//  external();
+//  return _link_locked;
+//}
 
 void NodeGraphQuickItem::view_node_poke() {
   _last_node_shape = _selection->get_view_node();
   if (!_last_node_shape) {
-    emit view_node_outputs(QString("no view node selected"), QJsonObject());
+    emit view_node_outputs(QString("select a node to view"), QJsonObject());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
@@ -920,7 +920,7 @@ void NodeGraphQuickItem::view_node_poke() {
 void NodeGraphQuickItem::edit_node_poke() {
   _last_node_shape = _selection->get_edit_node();
   if (!_last_node_shape) {
-    emit edit_node_inputs(QString("no edit node selected"), QJsonObject(), QJsonObject(), QJsonObject());
+    emit edit_node_inputs(QString("select a node to edit"), QJsonObject(), QJsonObject(), QJsonObject());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());

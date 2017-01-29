@@ -25,36 +25,22 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
     kDescriptionRole, // String: A short description of the contents of the file.
     kAutoRunRole, // Bool: Whether to auto run this file.
     kAutoRunIntervalRole, // Int: Interval between runs of this file in minutes.
-    kHidePasswordsRole, // Bool: Whether to hide passwords.
     kLockLinksRole, // Bool: Whether to lock links.
     kMaxNodePostsRole, // Int: Maximum number of node posts. Overflow is destroyed.
-    kBrowserWidthRole, // Int: Fixed width of indirect browser.
-    kBrowserHeightRole, // Int: Fixed height of indirect browser.
+    kMaxConcurrentDownloadsRole, // Int: Maximum number of concurrent downloads.
   };
 
   FileModel(Entity* app_root);
   virtual ~FileModel();
 
   // Properties that can be bound in QML.
-  Q_PROPERTY(bool hide_passwords READ get_hide_passwords WRITE set_hide_passwords NOTIFY hide_passwords_changed)
-  Q_PROPERTY(int max_node_posts READ get_max_node_posts WRITE set_max_node_posts NOTIFY max_node_posts_changed)
+  //Q_PROPERTY(int max_node_posts READ get_max_node_posts WRITE set_max_node_posts NOTIFY max_node_posts_changed)
 
-  bool get_hide_passwords() const;
-  void set_hide_passwords(bool hide);
-  int get_max_node_posts() const;
-  void set_max_node_posts(int max);
+  //int get_max_node_posts() const;
+  //void set_max_node_posts(int max);
 
-  // App license.
-  Q_INVOKABLE QString get_edition() const;
-  Q_INVOKABLE QString get_license() const;
-  Q_INVOKABLE void set_license(const QString& edition, const QString& license);
-
-  // Password Setup.
-  Q_INVOKABLE void create_crypto(const QString& chosen_password);
-  Q_INVOKABLE void save_crypto() const;
-  Q_INVOKABLE bool crypto_exists() const;
-  Q_INVOKABLE void load_crypto();
-  Q_INVOKABLE bool check_password(const QString& password);
+  bool links_are_locked() const;
+  int get_max_concurrent_downloads() const;
 
   // Model.
   Q_INVOKABLE void load_model();
@@ -117,7 +103,6 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   void on_item_changed(QStandardItem* item);
 
  Q_SIGNALS:
-   void hide_passwords_changed();
    void max_node_posts_changed();
 
  private:
