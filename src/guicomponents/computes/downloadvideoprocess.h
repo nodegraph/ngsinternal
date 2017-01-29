@@ -15,6 +15,8 @@ Q_OBJECT
  public:
   explicit DownloadVideoProcess();
   virtual ~DownloadVideoProcess();
+  int get_id() const;
+
 
   void set_url(const QString& url);
   void set_dir(const QString& dir);
@@ -26,7 +28,6 @@ Q_OBJECT
   virtual const QString& get_filename() const;
 
   signals:
-  void queued(long long pid, const QString& url);
   void started(long long pid, const QString& filename);
   void progress(long long pid, const  QString& progress);
   void finished(long long pid);
@@ -41,6 +42,9 @@ Q_OBJECT
   virtual void on_read_standard_output();
 
  protected:
+  static int next_id;
+  const int _id;
+
   QString _url;
   QString _dir;
   int _max_width; // in pixels

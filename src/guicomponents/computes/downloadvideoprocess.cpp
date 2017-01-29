@@ -14,18 +14,28 @@
 
 namespace ngs {
 
+int DownloadVideoProcess::next_id = 0;
+
 DownloadVideoProcess::DownloadVideoProcess()
     : BaseProcess(),
+      _id(next_id++),
       _max_width(-1),
       _max_height(-1),
       _max_filesize(-1),
       _already_downloaded_regex(_already_downloaded_pattern),
       _progress_regex(_progress_pattern),
       _filename_regex(_filename_pattern){
+  // Set our process name.
   set_process_name("download video");
+  // Stop outputting stream activity.
+  _show_stream_activity = false;
 }
 
 DownloadVideoProcess::~DownloadVideoProcess() {
+}
+
+int DownloadVideoProcess::get_id() const {
+  return _id;
 }
 
 void DownloadVideoProcess::set_url(const QString& url) {
@@ -52,27 +62,27 @@ void DownloadVideoProcess::on_error(QProcess::ProcessError error) {
   BaseProcess::on_error(error);
   switch (error) {
     case QProcess::ProcessError::FailedToStart: {
-      emit errored(get_pid(), "failed to start");
+      emit errored(get_id(), "failed to start");
       break;
     }
     case QProcess::ProcessError::Crashed: {
-      emit errored(get_pid(), "crashed");
+      emit errored(get_id(), "crashed");
       break;
     }
     case QProcess::ProcessError::Timedout: {
-      emit errored(get_pid(), "timed out");
+      emit errored(get_id(), "timed out");
       break;
     }
     case QProcess::ProcessError::WriteError: {
-      emit errored(get_pid(), "write error");
+      emit errored(get_id(), "write error");
       break;
     }
     case QProcess::ProcessError::ReadError: {
-      emit errored(get_pid(), "read error");
+      emit errored(get_id(), "read error");
       break;
     }
     case QProcess::ProcessError::UnknownError: {
-      emit errored(get_pid(), "unknown error");
+      emit errored(get_id(), "unknown error");
       break;
     }
   }
@@ -80,7 +90,7 @@ void DownloadVideoProcess::on_error(QProcess::ProcessError error) {
 
 void DownloadVideoProcess::on_state_changed(QProcess::ProcessState state) {
   if (state == QProcess::NotRunning) {
-    emit finished(get_pid());
+    emit finished(get_id());
   }
 }
 
@@ -110,7 +120,7 @@ void DownloadVideoProcess::on_read_standard_output() {
       QString tail = splits[splits.size()-1];
       tail = tail.simplified(); // strip whitespace from the front and back
       // Emit signal.
-      emit started(get_pid(), tail);
+      emit started(get_id(), tail);
       continue;
     }
 
@@ -127,7 +137,7 @@ void DownloadVideoProcess::on_read_standard_output() {
       QString tail = splits[splits.size()-1];
       tail = tail.simplified(); // strip whitespace from the front and back
       // Emit signal.
-      emit started(get_pid(), tail);
+      emit started(get_id(), tail);
       continue;
     }
 
@@ -142,7 +152,7 @@ void DownloadVideoProcess::on_read_standard_output() {
       QString msg = list[1];
       msg = msg.simplified(); // strip whitespace from the front and back
       // Emit signal.
-      emit progress(get_pid(), msg);
+      emit progress(get_id(), msg);
       continue;
     }
   }
@@ -204,9 +214,6 @@ void DownloadVideoProcess::start() {
 
   // Start.
   BaseProcess::start();
-
-  // Emit queued signal.
-  emit queued(get_pid(), _url);
 }
 
 const QString& DownloadVideoProcess::get_filename() const {
