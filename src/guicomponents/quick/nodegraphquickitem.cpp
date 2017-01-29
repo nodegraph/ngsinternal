@@ -704,6 +704,8 @@ void NodeGraphQuickItem::destroy_selection() {
 }
 
 void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
+
+
   // Find the child group.
   Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
   if (!group_entity) {
@@ -714,6 +716,14 @@ void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
   // If the child isn't a group or doesn't exist, then return.
   if (!get_dep<GroupInteraction>(group_entity)) {
     return;
+  }
+
+  // If the license is lite then we don't allow diving into app and user macros.
+  if (_license_checker->get_edition() == "lite") {
+    if ( (group_entity->get_did() == EntityDID::kAppMacroNodeEntity) ||
+        (group_entity->get_did() == EntityDID::kUserMacroNodeEntity) ) {
+      return;
+    }
   }
 
   // Dive into the group.
@@ -891,6 +901,15 @@ void NodeGraphQuickItem::collapse_to_group() {
 
 void NodeGraphQuickItem::explode_group() {
   external();
+
+  // If the license is lite then we don't allow exploding groups,
+  // because we don't allow diving into app and user macros.
+  // Otherwise exploding the group could get around this.
+  if (_license_checker->get_edition() == "lite") {
+    return;
+  }
+
+  // Otherwise explode the selected.
   get_current_interaction()->explode_selected();
   update();
 }
