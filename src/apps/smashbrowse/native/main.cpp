@@ -40,59 +40,8 @@
 #include <guicomponents/quick/nodegraphrenderer.h>
 #include <guicomponents/quick/nodegraphview.h>
 
-#if (ARCH == ARCH_ANDROID)
-#include <native/javabridge.h>
-#endif
-
 #include <cassert>
 #include <iostream>
-
-
-#if ARCH == ARCH_IOS
-  #include <QtPlugin>
-  Q_IMPORT_PLUGIN(QtQuick2Plugin)
-  Q_IMPORT_PLUGIN(QtQuickControlsPlugin)
-  Q_IMPORT_PLUGIN(QtQuick2DialogsPlugin)
-  Q_IMPORT_PLUGIN(QtQuick2WindowPlugin)
-
-  //Q_IMPORT_PLUGIN(DialogPlugin)
-  //Q_IMPORT_PLUGIN(WindowPlugin)
-  Q_IMPORT_PLUGIN(QmlFolderListModelPlugin)
-  Q_IMPORT_PLUGIN(QmlSettingsPlugin)
-  //Q_IMPORT_PLUGIN(DialogsPrivatePlugin)
-  Q_IMPORT_PLUGIN(QtQuickLayoutsPlugin)
-  Q_IMPORT_PLUGIN(QtQuickExtrasPlugin)
-  //Q_IMPORT_PLUGIN(QtGraphicalEffectsPrivate)
-  //Q_IMPORT_PLUGIN(ModelsPlugin)
-
-
-  Q_IMPORT_PLUGIN(QtQuick2DialogsPrivatePlugin)
-  Q_IMPORT_PLUGIN(QtQmlModelsPlugin)
-  Q_IMPORT_PLUGIN(QtQuick2PrivateWidgetsPlugin)
-
-  // WebView.=.
-  Q_IMPORT_PLUGIN(QWebViewModule)
-  Q_IMPORT_PLUGIN(QtGraphicalEffectsPlugin)
-
-  Q_IMPORT_PLUGIN(QDDSPlugin)
-  Q_IMPORT_PLUGIN(QICNSPlugin)
-  Q_IMPORT_PLUGIN(QICOPlugin)
-  Q_IMPORT_PLUGIN(QTgaPlugin)
-  Q_IMPORT_PLUGIN(QTiffPlugin)
-  Q_IMPORT_PLUGIN(QWbmpPlugin)
-  Q_IMPORT_PLUGIN(QWebpPlugin)
-  Q_IMPORT_PLUGIN(QQmlDebuggerServiceFactory)
-  Q_IMPORT_PLUGIN(QQmlInspectorServiceFactory)
-  Q_IMPORT_PLUGIN(QLocalClientConnectionFactory)
-  Q_IMPORT_PLUGIN(QQmlNativeDebugConnectorFactory)
-  Q_IMPORT_PLUGIN(QQmlProfilerServiceFactory)
-  Q_IMPORT_PLUGIN(QQmlDebugServerFactory)
-  Q_IMPORT_PLUGIN(QTcpServerConnectionFactory)
-  Q_IMPORT_PLUGIN(QGenericEnginePlugin)
-
-
-#endif
-
 
 
 static void copy_dir(const QDir &src, const QDir &target) {
@@ -117,6 +66,20 @@ static void copy_dir(const QDir &src, const QDir &target) {
     }
 }
 
+void test_json_utils() {
+  // Test converting QJsonValues.
+  ngs::JSONUtils::test_convert_to_bool();
+  ngs::JSONUtils::test_convert_to_double();
+  ngs::JSONUtils::test_convert_to_string();
+  ngs::JSONUtils::test_convert_to_object();
+  ngs::JSONUtils::test_convert_to_array();
+
+  // Test deep merges of QJsonValues.
+  ngs::JSONUtils::test_deep_merge_object_to_object();
+  ngs::JSONUtils::test_deep_merge_array_to_array();
+  ngs::JSONUtils::test_deep_merge_array_to_object();
+  ngs::JSONUtils::test_deep_merge_object_to_array();
+}
 
 int main(int argc, char *argv[]) {
   using namespace ngs;
@@ -175,54 +138,6 @@ int main(int argc, char *argv[]) {
       first_instance = false;
     }
 
-#if ARCH == ARCH_IOS
-  // Register QML types.
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2Plugin().instance())->registerTypes("QtQuick");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2PrivateWidgetsPlugin().instance())->registerTypes("QtQuick.PrivateWidgets");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->registerTypes("QtQuick.Controls");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->registerTypes("QtQuick.Controls.Private");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->registerTypes("QtQuick.Controls.Styles");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2DialogsPlugin().instance())->registerTypes("QtQuick.Dialogs");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2DialogsPrivatePlugin().instance())->registerTypes("QtQuick.Dialogs.Private");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickLayoutsPlugin().instance())->registerTypes("QtQuick.Layouts");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2WindowPlugin().instance())->registerTypes("QtQuick.Window");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickExtrasPlugin().instance())->registerTypes("QtQuick.Extras");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQmlModelsPlugin().instance())->registerTypes("QtQml.Models");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtGraphicalEffectsPlugin().instance())->registerTypes("QtGraphicalEffects.private");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QWebViewModule().instance())->registerTypes("QtWebView");
-
-  // Initialize engine with these QML types.
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2Plugin().instance())->initializeEngine(g_qml_engine, "QtQuick");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2PrivateWidgetsPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.PrivateWidgets");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Controls");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->initializeEngine(g_qml_engine,
-                                                                                                            "QtQuick.Controls.Private");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickControlsPlugin().instance())->initializeEngine(g_qml_engine,
-                                                                                                            "QtQuick.Controls.Styles");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2DialogsPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Dialogs");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2DialogsPrivatePlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Dialogs.Private");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickLayoutsPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Layouts");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuick2WindowPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Window");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQuickExtrasPlugin().instance())->initializeEngine(g_qml_engine, "QtQuick.Extras");
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtQmlModelsPlugin().instance())->initializeEngine(g_qml_engine, "QtQml.Models");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QWebViewModule().instance())->initializeEngine(g_qml_engine, "QtWebView");
-
-  qobject_cast<QQmlExtensionPlugin*>(qt_static_plugin_QtGraphicalEffectsPlugin().instance())->initializeEngine(g_qml_engine, "QtGraphicalEffects");
-
-#endif
-
     // Create the app root.
     QMLAppEntity* app_root = new_ff QMLAppEntity(NULL, "app");
     app_root->create_internals();
@@ -262,18 +177,7 @@ int main(int argc, char *argv[]) {
       view->update();
     }
 
-//    // Test converting QJsonValues.
-//    JSONUtils::test_convert_to_bool();
-//    JSONUtils::test_convert_to_double();
-//    JSONUtils::test_convert_to_string();
-//    JSONUtils::test_convert_to_object();
-//    JSONUtils::test_convert_to_array();
-//
-//    // Test deep merges of QJsonValues.
-//    JSONUtils::test_deep_merge_object_to_object();
-//    JSONUtils::test_deep_merge_array_to_array();
-//    JSONUtils::test_deep_merge_array_to_object();
-//    JSONUtils::test_deep_merge_object_to_array();
+    // test_json_utils();
 
     // Run the Qt loop.
     execReturn = app.exec();
