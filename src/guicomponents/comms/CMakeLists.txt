@@ -36,15 +36,9 @@ target_link_libraries(ngs_comms
 	ngs_device
 	ngs_interactions
 	ngs_glewhelper
-	#Qt5::OpenGL
-    #Qt5::Core
     Qt5::Gui
 	Qt5::Quick
-	#Qt5::Network
 	Qt5::WebSockets
-	#libeay32
-	#ssleay32
-	ngs_qmqtt
 ) 
  
 # Install.

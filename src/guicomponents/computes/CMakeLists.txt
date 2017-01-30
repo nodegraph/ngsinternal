@@ -44,9 +44,9 @@ set(moc_headers
     messagereceiver.h
     taskqueuer.h
     httpworker.h
+    entermqttgroupcompute.h
     scriptgroupnodecompute.h
     browserrecorder.h
-    entermqttgroupcompute.h
     scriptnodecompute.h
     waitnodecompute.h
     )
@@ -65,8 +65,9 @@ target_link_libraries(ngs_guicomputes
 	ngs_glewhelper
 	ngs_comms
 	ngs_computes
+	ngs_qmqtt
 	Qt5::OpenGL
-    	Qt5::Core
+    Qt5::Core
 	Qt5::Quick
 	Qt5::Network
 	Qt5::WebSockets

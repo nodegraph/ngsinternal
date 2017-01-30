@@ -45,7 +45,7 @@ endif()
 INSTALL(FILES 
             ${bg_js_min}
 		DESTINATION ${dest}
-		COMPONENT apps
+		COMPONENT chrome_ext_background
     	PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 		)
 		

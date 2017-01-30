@@ -54,7 +54,7 @@ add_jar(jcomm
                 "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/lib/xalan-2.7.2.jar"
                 "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/lib/xercesImpl-2.11.0.jar"
                 "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/lib/xml-apis-1.4.01.jar"
-    OUTPUT_DIR ${PROJECT_BINARY_DIR}/install/bin
+   # OUTPUT_DIR ${PROJECT_BINARY_DIR}/install/bin
     )
 
 get_target_property(jar_file jcomm JAR_FILE)
@@ -64,6 +64,13 @@ get_target_property(compile_dir jcomm CLASSDIR)
 message(STATUS "jcomm jar file located at: ${jar_file}")
 message(STATUS "jcomm classes compiled at: ${compile_dir}")
 
+
+INSTALL(
+  FILES
+      "${CMAKE_CURRENT_BINARY_DIR}/jcomm.jar"
+  DESTINATION bin
+  COMPONENT jcomm
+)
 
 INSTALL(
   DIRECTORY

@@ -6,8 +6,4 @@
  
 # Third party libraries that we have modified.
 add_subdirectory(half)
-add_subdirectory(firebase)
-add_subdirectory(o2)
 add_subdirectory(qmqtt)
- 
-

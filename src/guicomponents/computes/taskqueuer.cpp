@@ -1,5 +1,6 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
+#include <base/objectmodel/appconfig.h>
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
@@ -21,7 +22,6 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
-#include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
 
 namespace ngs {
@@ -747,7 +747,7 @@ void TaskQueuer::download_video_task() {
   // then we prepend the platform specific user's download directory to the dir.
   QDir dir(_chain_state.value(Message::kDirectory).toString());
   if (dir.isRelative()) {
-    dir = QDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + QDir::separator() + "smashbrowse" + QDir::separator() + dir.path());
+    dir = QDir(AppConfig::get_download_dir() + QDir::separator() + dir.path());
   }
   args.insert(Message::kDirectory, dir.path());
   args.insert(Message::kMaxWidth, _chain_state.value(Message::kMaxWidth));

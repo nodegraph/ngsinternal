@@ -1,4 +1,4 @@
-qt5_add_resources(resources qml.qrc)
+qt5_add_resources(resources smashbrowse.qrc)
 
 include_directories("${PROJECT_SOURCE_DIR}/apps/smashbrowse")
 
@@ -86,7 +86,7 @@ endif ()
 # Install.
 INSTALL(TARGETS smashbrowse
   RUNTIME DESTINATION bin
-  COMPONENT apps
+  COMPONENT smashbrowse
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   BUNDLE DESTINATION .
@@ -96,7 +96,7 @@ INSTALL(TARGETS smashbrowse
 # Install the html files.
 INSTALL(DIRECTORY html
 		DESTINATION .
-		COMPONENT apps)
+		COMPONENT smashbrowse_html)
 
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	

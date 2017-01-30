@@ -1,12 +1,12 @@
 #include <guicomponents/computes/downloadmanager.h>
 #include <base/objectmodel/deploader.h>
+#include <base/objectmodel/appconfig.h>
 #include <guicomponents/comms/message.h>
 #include <guicomponents/computes/downloadvideoprocess.h>
 #include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
-#include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
 
 namespace ngs {
@@ -78,7 +78,7 @@ void DownloadManager::download_on_the_side(const QString& url) {
 
   // Setup the arguments.
   p->set_url(url);
-  QDir dir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + QDir::separator() + "smashbrowse");
+  QDir dir(AppConfig::get_download_dir());
   p->set_dir(dir.path());
 
   // Queue the process.

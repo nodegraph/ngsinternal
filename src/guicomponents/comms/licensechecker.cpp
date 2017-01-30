@@ -93,9 +93,9 @@ void LicenseChecker::save() const{
 void LicenseChecker::load() {
   external();
   if (!_crypto_logic->file_exists(kLicenseFile)) {
-    _edition.clear();
-    _license.clear();
-    _license_is_valid = false;
+    _edition = "lite";
+    _license = "unspecified";
+    _license_is_valid = true;
     return;
   }
 
@@ -140,6 +140,15 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
 #else
 
 void LicenseChecker::check_license() {
+  // Note use QCoreApplication::applicationName to determine which app we're checking the license for.
+
+  if (_edition == "lite") {
+    _license_is_valid = true;
+    emit license_checked(true);
+    return;
+  }
+
+
   // Create our request.
   QNetworkRequest request(QUrl("https://api.gumroad.com/v2/licenses/verify"));
   QSslConfiguration config = QSslConfiguration::defaultConfiguration();

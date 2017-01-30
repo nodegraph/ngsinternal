@@ -24,7 +24,7 @@ NodeGraphView::NodeGraphView(Entity* entity)
   // Set the app icon.
   QIcon icon(":images/octopus_blue.png");
   setIcon(icon);
-  setTitle("Smash Browse");
+  setTitle(QGuiApplication::applicationName());
 }
 
 NodeGraphView::~NodeGraphView() {

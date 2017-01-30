@@ -119,18 +119,11 @@ int main(int argc, char *argv[]) {
 
     // Create our application. Note that QGUIApplication has no dependency on widgets.
     QGuiApplication app(argc, argv);
-    QApplication::setApplicationName("smashbrowse"); // This affects the user's data dir resolution.
+    QApplication::setApplicationName("SmashBrowse"); // This affects the user's data dir resolution.
     QApplication::setOrganizationDomain("smashbrowse.com");
 
     // Check to make sure that there are no other instance running.
     bool first_instance = true;
-
-    //QSharedMemory sharedMemory;
-    //sharedMemory.setKey("SmashBrowse");
-    //if (sharedMemory.create(1) == false) {
-    //  std::cerr << "Error: Smash Browse is already running.\n";
-    //  first_instance = false;
-    //}
 
     QString tmpDir = QDir::tempPath();
     QLockFile lockFile(tmpDir + "/smashbrowse.lock");
@@ -165,7 +158,7 @@ int main(int argc, char *argv[]) {
       app_root->expose_to_qml();
 
       // Show our main app.
-      view->setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse.qml")));
 
       // Embed the node graph quick item into the node graph page.
       app_root->embed_node_graph();

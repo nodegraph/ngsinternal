@@ -43,11 +43,11 @@ Rectangle {
         check_password_page.visible = false
 
         if (!upgrade_license_check_box.checked) {
-            // Switch to node graph mode.
-            main_bar.on_switch_to_mode(app_settings.node_graph_mode)
-
             // Erase the password from this page.
             password_field.text = ""
+            
+            // Switch to node graph mode.
+            main_bar.on_switch_to_mode(app_settings.node_graph_mode)
 
             // Load the last graph.
             app_utils.load_last_graph()
@@ -87,7 +87,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             AppLabel {
                 id: upgrade_license_label
-                text: "change license "
+                text: "upgrade license "
                 anchors {
                     leftMargin: app_settings.page_left_margin
                     rightMargin: app_settings.page_right_margin

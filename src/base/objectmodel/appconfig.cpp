@@ -1,5 +1,6 @@
 #include <base/objectmodel/appconfig.h>
 
+#include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
@@ -62,6 +63,10 @@ QString AppConfig::get_app_macros_dir() {
 
 QString AppConfig::get_user_macros_dir() {
   return get_user_app_dir() + "/" + kUserMacrosDir;
+}
+
+QString AppConfig::get_download_dir() {
+  return QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + QDir::separator() + QCoreApplication::applicationName();
 }
 
 QString AppConfig::get_smash_browse_url() {

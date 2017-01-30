@@ -22,6 +22,12 @@ Rectangle {
 
     // Properties.
     color: app_settings.menu_stack_bg_color
+    
+    function wipe_passwords() {
+    	// Erase passwords from page.
+        password_1.text = ""
+        password_2.text = ""
+    }
 
     function show_license_entry_page() {
         // Hide this page.
@@ -30,12 +36,23 @@ Rectangle {
         // Show the license page.
         license_page.update_fields()
         license_page.visible = true
-
-        // Erase passwords from page.
-        password_1.text = ""
-        password_2.text = ""
     }
-
+    
+    function on_license_checked(valid) {
+    	wipe_passwords()
+    	if (valid) {
+    		license_checker.save()
+    		create_password_page.visible = false
+    		
+	        // Switch to node graph mode.
+			main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+			// Load the last graph.
+			app_utils.load_last_graph()
+		} else {
+			show_license_entry_page()
+		}
+	}
+    
     ColumnLayout {
         height: app_settings.screen_height
         width: app_settings.screen_width
@@ -93,8 +110,10 @@ Rectangle {
                     crypto_logic.create_crypto(password_1.text)
                     crypto_logic.save_crypto();
 
-                    // Now show the license entry page.
-                    show_license_entry_page()
+                    // The first the app is run, there won't be a license file.
+                    // The license will automatically go to the "lite" edition with un unspecified license key.
+                    license_checker.load()
+                    app_utils.check_license(on_license_checked)
                 }
             }
         }

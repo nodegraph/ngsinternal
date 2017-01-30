@@ -54,7 +54,7 @@ INSTALL(FILES
 	        key.pem # certs for https server
 	        chb.js # commhub bootstrap file
 		DESTINATION ${dest}
-		COMPONENT apps
+		COMPONENT commhub
     	PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 		)
 		

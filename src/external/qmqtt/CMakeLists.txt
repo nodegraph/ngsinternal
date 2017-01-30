@@ -68,7 +68,7 @@ endif()
 # Install.
 INSTALL(TARGETS ngs_qmqtt
   RUNTIME DESTINATION bin
-  COMPONENT gui
+  COMPONENT thirdparty
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )

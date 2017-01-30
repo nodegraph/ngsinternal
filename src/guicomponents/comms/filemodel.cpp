@@ -22,7 +22,6 @@
 
 #include <boost/lexical_cast.hpp>
 #include <guicomponents/computes/taskqueuer.h>
-#include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtQml/QtQml>
@@ -394,7 +393,7 @@ void FileModel::load_graph(int row) {
   loader.load(minor);
   loader.load(patch);
   loader.load(tweak);
-  std::cerr << "version number is: " << major << "." << minor << "." << patch << "." << tweak << "\n";
+  //std::cerr << "version number is: " << major << "." << minor << "." << patch << "." << tweak << "\n";
 
   std::string description;
   loader.load(description);

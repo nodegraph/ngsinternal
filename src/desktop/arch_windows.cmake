@@ -28,6 +28,7 @@ INSTALL(
       #"${QT5_DIR}/plugins/platforminputcontexts"
   DESTINATION bin
   COMPONENT thirdparty
+  PATTERN "*.pdb" EXCLUDE
 )
 
 # ------------------------------------------------------------------
@@ -45,6 +46,7 @@ INSTALL(
       #"${QT5_DIR}/qml/QtWebView"
   DESTINATION bin
   COMPONENT thirdparty
+  PATTERN "*.pdb" EXCLUDE
 )
 
 # ------------------------------------------------------------------
@@ -192,41 +194,91 @@ add_custom_target (pack_desktop
 # To build the msi installer for debug binaries, type the following in the msys2 shell.
 # cpack -G WIX -c Debug
 
+function(create_cpack_config filename) 
+  set(CPACK_OUTPUT_CONFIG_FILE "${filename}") 
+  include(CPack) 
+endfunction(create_cpack_config) 
+
+#set(package_type "smashbrowse")
+set(package_type "smashdownloader")
+
 if(WIN32)
     # On Windows generate MSI packages
-    set(CPACK_GENERATOR "WIX")
+    if (${package_type} STREQUAL smashbrowse)
+        set(CPACK_GENERATOR "WIX")
+        set(CPACK_PACKAGE_NAME "Smash Browse")
+        set(CPACK_PACKAGE_VERSION ${ngs_version})
+        set(CPACK_PACKAGE_VENDOR "Node Graph Software")
+        set(CPACK_PACKAGE_INSTALL_DIRECTORY "Smash Browse")
+        
+        set(CPACK_WIX_TEMPLATE "${PROJECT_SOURCE_DIR}/desktop/wix.template.in")
+        set(CPACK_WIX_UPGRADE_GUID 1F015D65-E1C1-468F-A2A5-4E431E279F70)
+        set(CPACK_WIX_PRODUCT_ICON ${PROJECT_SOURCE_DIR}/external/images/octopus_blue.ico)
+        set(CPACK_WIX_LICENSE_RTF ${PROJECT_SOURCE_DIR}/desktop/eula.rtf)
+        set(CPACK_WIX_UI_BANNER  ${PROJECT_SOURCE_DIR}/desktop/installer_banner_493x58.png)
+        set(CPACK_WIX_UI_DIALOG  ${PROJECT_SOURCE_DIR}/desktop/installer_bg_493x312.png)
+        
+        set(CPACK_WIX_UNINSTALL "1")
+        
+        set(CPACK_PACKAGE_DIRECTORY "d:/b1installers/smashbrowse")
+        
+        set(CPACK_WIX_PROGRAM_MENU_FOLDER "Smash Browse")
+        
+        set_property(INSTALL "bin/smashbrowse.exe"
+            PROPERTY CPACK_DESKTOP_SHORTCUTS "Smash Browse"
+        )
+        set_property(INSTALL "bin/smashbrowse.exe"
+            PROPERTY CPACK_START_MENU_SHORTCUTS "Smash Browse"
+        )
+        set(CPACK_COMPONENTS_ALL
+            smashbrowse
+            smashbrowse_html
+            chrome_ext_background
+            chrome_ext_content
+            jcomm
+            gui
+            components 
+            base
+            thirdparty 
+        )
+    elseif(${package_type} STREQUAL smashdownloader)
+        set(CPACK_GENERATOR "WIX")
+        set(CPACK_PACKAGE_NAME "Smash Downloader")
+        set(CPACK_PACKAGE_VERSION ${ngs_version})
+        set(CPACK_PACKAGE_VENDOR "Node Graph Software")
+        set(CPACK_PACKAGE_INSTALL_DIRECTORY "Smash Downloader")
+        
+        set(CPACK_WIX_TEMPLATE "${PROJECT_SOURCE_DIR}/desktop/wix.template.in")
+        set(CPACK_WIX_UPGRADE_GUID EA4311A8-3DE0-44B8-87F1-2FDCBF98F34B)
+        set(CPACK_WIX_PRODUCT_ICON ${PROJECT_SOURCE_DIR}/external/images/octopus_blue.ico)
+        set(CPACK_WIX_LICENSE_RTF ${PROJECT_SOURCE_DIR}/desktop/eula.rtf)
+        set(CPACK_WIX_UI_BANNER  ${PROJECT_SOURCE_DIR}/desktop/installer_banner_493x58.png)
+        set(CPACK_WIX_UI_DIALOG  ${PROJECT_SOURCE_DIR}/desktop/installer_bg_493x312.png)
+        
+        set(CPACK_WIX_UNINSTALL "1")
+        
+        set(CPACK_PACKAGE_DIRECTORY "d:/b1installers/smashdownloader")
+        
+        set(CPACK_WIX_PROGRAM_MENU_FOLDER "Smash Downloader")
+        
+        set_property(INSTALL "bin/smashdownloader.exe"
+            PROPERTY CPACK_DESKTOP_SHORTCUTS "Smash Downloader"
+        )
+        set_property(INSTALL "bin/smashdownloader.exe"
+            PROPERTY CPACK_START_MENU_SHORTCUTS "Smash Downloader"
+        )
+        set(CPACK_COMPONENTS_ALL
+            smashdownloader
+            chrome_ext_background
+            chrome_ext_content
+            jcomm
+            gui
+            components 
+            base
+            thirdparty 
+        )
+    endif()
     
-    set(CPACK_PACKAGE_NAME "Smash Browse")
-    set(CPACK_PACKAGE_VERSION ${ngs_version})
-    set(CPACK_PACKAGE_VENDOR "Node Graph Software")
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Smash Browse")
-
-    set(CPACK_WIX_TEMPLATE "${PROJECT_SOURCE_DIR}/desktop/wix.template.in")
-    set(CPACK_WIX_UPGRADE_GUID A5BE780A-779E-49CF-8D0D-E6413224710E)
-    set(CPACK_WIX_PRODUCT_ICON ${PROJECT_SOURCE_DIR}/external/images/octopus_blue.ico)
-    set(CPACK_WIX_LICENSE_RTF ${PROJECT_SOURCE_DIR}/desktop/eula.rtf)
-    set(CPACK_WIX_UI_BANNER  ${PROJECT_SOURCE_DIR}/desktop/installer_banner_493x58.png)
-    set(CPACK_WIX_UI_DIALOG  ${PROJECT_SOURCE_DIR}/desktop/installer_bg_493x312.png)
-    
-    set(CPACK_WIX_UNINSTALL "1")
-    
-    # Hacks to shorten the build/packaging paths.
-    set(CPACK_PACKAGE_DIRECTORY "d:/installer")
-    #set(CPACK_PACKAGE_FILE_NAME "b")
-    
-    #set(CPACK_PACKAGE_EXECUTABLES "bin/smashbrowse" "Smash Browse" ${CPACK_PACKAGE_EXECUTABLES})
-    #set(CPACK_CREATE_DESKTOP_LINKS "smashbrowse" ${CPACK_CREATE_DESKTOP_LINKS})
-    
-
-    set(CPACK_WIX_PROGRAM_MENU_FOLDER "Smash Browse")
-    
-    set_property(INSTALL "bin/smashbrowse.exe"
-        PROPERTY CPACK_DESKTOP_SHORTCUTS "Smash Browse"
-    )
-    set_property(INSTALL "bin/smashbrowse.exe"
-        PROPERTY CPACK_START_MENU_SHORTCUTS "Smash Browse"
-    )
-
 elseif(APPLE)
     # APPLE is also UNIX, so must check for APPLE before UNIX
     SET(CPACK_GENERATOR "DragNDrop")
@@ -251,7 +303,7 @@ endif()
 #set(CPACK_COMPONENT_APPS_REQUIRED true)
 
 #set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
-set(CPACK_COMPONENTS_ALL thirdparty base components gui apps)
+
 
 include(CPack)
 
