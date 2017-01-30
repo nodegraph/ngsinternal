@@ -167,6 +167,7 @@ elseif (${ARCH} STREQUAL "ARCH_IOS")
 endif()
 
 find_package(Qt5Qml)
+find_package(Qt5Xml)
 find_package(Qt5Quick)
 find_package(Qt5QuickWidgets)
 find_package(Qt5Multimedia)
