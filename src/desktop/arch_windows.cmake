@@ -199,8 +199,8 @@ function(create_cpack_config filename)
   include(CPack) 
 endfunction(create_cpack_config) 
 
-#set(package_type "smashbrowse")
-set(package_type "smashdownloader")
+set(package_type "smashbrowse")
+#set(package_type "smashdownloader")
 
 if(WIN32)
     # On Windows generate MSI packages
@@ -232,7 +232,6 @@ if(WIN32)
         )
         set(CPACK_COMPONENTS_ALL
             smashbrowse
-            smashbrowse_html
             chrome_ext_background
             chrome_ext_content
             jcomm

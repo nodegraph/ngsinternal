@@ -96,7 +96,7 @@ INSTALL(TARGETS smashbrowse
 # Install the html files.
 INSTALL(DIRECTORY html
 		DESTINATION .
-		COMPONENT smashbrowse_html)
+		COMPONENT smashbrowse)
 
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	
