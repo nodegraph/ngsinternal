@@ -100,8 +100,8 @@ BaseListPage {
         id: drop_area
         anchors.fill: parent
         onDropped: {
-            if (drop.hasUrls) {
-                download_manager.download_on_the_side(drop.urls[0])
+            if (drop.hasUrls && drop.hasText) {
+                download_manager.download_on_the_side(drop.text)
             }
         }
         onEntered: {
