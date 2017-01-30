@@ -36,6 +36,10 @@ BaseListPage {
             visible = false;
         }
     }
+    
+    function on_download_double_clicked(row) {
+    	//downloads_page.visible = false
+    }
 
     function on_download_queued(pid, url) {
         model.append({"title": url, "description": "queued", "pid": pid, "status": "queued"})
