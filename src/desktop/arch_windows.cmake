@@ -199,8 +199,8 @@ function(create_cpack_config filename)
   include(CPack) 
 endfunction(create_cpack_config) 
 
-set(package_type "smashbrowse")
-#set(package_type "smashdownloader")
+#set(package_type "smashbrowse")
+set(package_type "smashdownloader")
 
 if(WIN32)
     # On Windows generate MSI packages
@@ -306,27 +306,47 @@ endif()
 
 include(CPack)
 
-cpack_add_component(thirdparty
-                    DISPLAY_NAME "Third party libraries."
+cpack_add_component(smashbrowse
+                    DISPLAY_NAME "Smash Browse Application."
                     HIDDEN REQUIRED)
                     
-cpack_add_component(base
-                    DISPLAY_NAME "Base libraries."
+cpack_add_component(smashdownloader
+                    DISPLAY_NAME "Smash Downloader Application."
                     HIDDEN REQUIRED)
-                    
+
+cpack_add_component(chrome_ext_background
+                    DISPLAY_NAME "Chrome extension background."
+                    HIDDEN REQUIRED)
+
+cpack_add_component(chrome_ext_content
+                    DISPLAY_NAME "Chrome extension content."
+                    HIDDEN REQUIRED)
+
+cpack_add_component(jcomm
+                    DISPLAY_NAME "Java communication."
+                    HIDDEN REQUIRED)
+
+cpack_add_component(gui
+                    DISPLAY_NAME "GUI components."
+                    HIDDEN REQUIRED)
+
 cpack_add_component(components
                     DISPLAY_NAME "Non GUI components."
                     HIDDEN REQUIRED)
-                    
-cpack_add_component(gui
-                    DISPLAY_NAME "GUI components."
+
+cpack_add_component(base
+                    DISPLAY_NAME "Base libraries."
+                    HIDDEN REQUIRED)
+
+cpack_add_component(thirdparty
+                    DISPLAY_NAME "Third party libraries."
                     HIDDEN REQUIRED)
                     
 cpack_add_component(unittests
                     DISPLAY_NAME "Unit tests."
                     HIDDEN REQUIRED)
                     
-cpack_add_component(apps
-                    DISPLAY_NAME "Application binaries."
-                    DESCRIPTION "These are the main app binaries."
-                    HIDDEN REQUIRED)
+                    
+                    
+                    
+                    
