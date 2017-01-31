@@ -108,8 +108,6 @@ void JavaProcess::start_process(int app_server_port) {
   connect(_process, SIGNAL(readyReadStandardError()), this, SLOT(on_read_standard_error()));
   connect(_process, SIGNAL(readyReadStandardOutput()), this, SLOT(on_read_standard_output()));
 
-  // Set the executable.
-#if (ARCH == ARCH_WINDOWS)
   // Set the working directory.
   QString folder = AppConfig::get_app_bin_dir();
   _process->setWorkingDirectory(folder);
@@ -169,25 +167,6 @@ void JavaProcess::start_process(int app_server_port) {
 
   _process->setArguments(args);
   _process->start();
-
-#elif (ARCH == ARCH_MACOS)
-  // Set the working directory.
-  QString folder = AppConfig::get_app_bin_dir();
-  _process->setWorkingDirectory(folder);
-
-  // Set the powershell binary.
-  QString java_binary_path = "java";
-  _process->setProgram(java_binary_path);
-
-  QStringList args;
-  args.append("-cp");
-  args.append("gson-2.8.0.jar:jcomm.jar");
-  args.append("BrowserController");
-
-  _process->setArguments(args);
-  _process->start();
-#endif
-
 
   // We wait processing events until it's running.
   while(!is_running()) {
