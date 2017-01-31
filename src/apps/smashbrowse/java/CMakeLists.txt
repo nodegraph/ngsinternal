@@ -2,6 +2,10 @@ find_package(Java REQUIRED)
 include(UseJava)
 set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.8" "-target" "1.8")
 
+set(dest "bin")
+if (${ARCH} STREQUAL ARCH_MACOS)
+	set(dest "../build/smashbrowse.app/Contents/MacOS")
+endif()
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/generator.cmake.in"
@@ -68,20 +72,20 @@ message(STATUS "jcomm classes compiled at: ${compile_dir}")
 INSTALL(
   FILES
       "${CMAKE_CURRENT_BINARY_DIR}/jcomm.jar"
-  DESTINATION bin
+  DESTINATION ${dest}
   COMPONENT jcomm
 )
 
 INSTALL(
   DIRECTORY
       "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson"
-  DESTINATION bin
+  DESTINATION ${dest}
   COMPONENT thirdparty
 )
 
 INSTALL(
   DIRECTORY 
       "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1"
-  DESTINATION bin
+  DESTINATION ${dest}
   COMPONENT thirdparty
 )

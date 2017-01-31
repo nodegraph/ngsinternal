@@ -41,7 +41,9 @@ public class JComm {
 		
 		// Get other directories.
 		working_dir = System.getProperty("user.dir");
+        System.err.println("user dir is: " + working_dir);
 		chrome_ext_dir = working_dir + java.io.File.separator + "chromeextension";
+        System.err.println("chrome ext dir is: " + chrome_ext_dir);
 		download_extension_dir = FSWrap.get_download_extension_dir(settings_dir);
 		
 		// Create our webdriver wrapper.

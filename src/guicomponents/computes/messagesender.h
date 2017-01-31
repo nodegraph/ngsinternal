@@ -12,6 +12,8 @@
 
 class QWebSocket;
 class QWebSocketServer;
+class QWebSocketCorsAuthenticator;
+class QSslPreSharedKeyAuthenticator;
 
 namespace ngs {
 
@@ -36,6 +38,11 @@ Q_OBJECT
   void send_msg(const Message& msg) const;
 
  private slots:
+  void on_accept_error(QAbstractSocket::SocketError);
+  void on_closed();
+  void on_auth(QWebSocketCorsAuthenticator * auth);
+  void on_peer_verify_error(const QSslError &error);
+  void on_auth2(QSslPreSharedKeyAuthenticator *authenticator);
   void on_new_connection();
   void on_ssl_errors(const QList<QSslError>& errors);
   void on_server_error(QWebSocketProtocol::CloseCode closeCode);

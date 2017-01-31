@@ -72,11 +72,11 @@ public class WebDriverWrap {
 			String chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(_settings_dir);
 	        chrome_opts.addArguments(url);
 	        chrome_opts.addArguments("--load-extension=" 
-	                + _chrome_ext_dir + ","
-	                + _download_extension_dir 
+	                + _chrome_ext_dir
 	                //+ ","
 	                ); // Extension for downloading.
 	        chrome_opts.addArguments("--ignore-certificate-errors");
+	        chrome_opts.addArguments("--allow-insecure-localhost");
 	        chrome_opts.addArguments("--disable-web-security");
 	        chrome_opts.addArguments("--user-data-dir=" + chrome_user_data_dir);
 	        chrome_opts.addArguments("--first-run");

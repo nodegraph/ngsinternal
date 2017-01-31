@@ -52,20 +52,48 @@ MessageSender::MessageSender(Entity* parent)
   sslConfiguration.setProtocol(QSsl::TlsV1SslV3);
   _server->setSslConfiguration(sslConfiguration);
 
-  if (_server->listen(QHostAddress::Any, 0))  // 0 means that Qt will automatically find an open port for us.
-                      {
+
+
+  if (_server->listen(QHostAddress::Any, 0)) { // 0 means that Qt will automatically find an open port for us.
     _server_port = _server->serverPort();
-    connect(_server, &QWebSocketServer::newConnection, this, &MessageSender::on_new_connection);
-    connect(_server, &QWebSocketServer::sslErrors, this, &MessageSender::on_ssl_errors);
+    std::cerr << "server listening on port: " << _server_port << "\n";
+
+    connect(_server, SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(on_accept_error(QAbstractSocket::SocketError)));
+    connect(_server, SIGNAL(closed()), this, SLOT(on_closed()));
+    connect(_server, SIGNAL(originAuthenticationRequired(QWebSocketCorsAuthenticator *)), this, SLOT(on_auth(QWebSocketCorsAuthenticator *)));
+    connect(_server, SIGNAL(peerVerifyError(const QSslError &error)), this, SLOT(on_peer_verify_error(const QSslError &error)));
+    connect(_server, SIGNAL(preSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator *)), this, SLOT(on_auth2(QSslPreSharedKeyAuthenticator *)));
+    connect(_server, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(on_ssl_errors(const QList<QSslError>&)));
+    connect(_server, SIGNAL(serverError(QWebSocketProtocol::CloseCode)), this, SLOT(on_server_error(QWebSocketProtocol::CloseCode)));
+    connect(_server, SIGNAL(newConnection()), this, SLOT(on_new_connection()));
   }
 
-  connect(_server, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(on_ssl_errors(const QList<QSslError>&)));
-  connect(_server, SIGNAL(serverError(QWebSocketProtocol::CloseCode)), this, SLOT(on_server_error(QWebSocketProtocol::CloseCode)));
+
 }
 
 MessageSender::~MessageSender() {
   close();
   delete_ff(_server);
+}
+
+void MessageSender::on_accept_error(QAbstractSocket::SocketError error) {
+  std::cerr << "MessageSender accept error: " << error << "\n";
+}
+
+void MessageSender::on_closed() {
+  std::cerr << "MessageSender on closed\n";
+}
+
+void MessageSender::on_auth(QWebSocketCorsAuthenticator *) {
+  std::cerr << "MessageSender on auth required\n";
+}
+
+void MessageSender::on_peer_verify_error(const QSslError &error) {
+  std::cerr << "MessageSender peer verify error: " << error.errorString().toStdString() << "\n";
+}
+
+void MessageSender::on_auth2(QSslPreSharedKeyAuthenticator *authenticator) {
+  std::cerr << "MessageSender on pre shared key auth\n";
 }
 
 void MessageSender::on_new_connection() {
@@ -130,13 +158,12 @@ void MessageSender::send_msg(const Message& msg) const {
 
 void MessageSender::on_ssl_errors(const QList<QSslError>& errors) {
   internal();
-  qDebug() << "SSLErrors: " << errors;
-  //_server->ignoreSslErrors(errors);
+  qDebug() << "MessageSender SSLErrors: " << errors;
 }
 
 void MessageSender::on_server_error(QWebSocketProtocol::CloseCode closeCode) {
   internal();
-  qDebug() << "on server error: " << closeCode;
+  qDebug() << "MessageSender on server error: " << closeCode;
 }
 
 void MessageSender::close() {
@@ -163,6 +190,7 @@ void MessageSender::open() {
 
 void MessageSender::wait_for_chrome_connection() {
   while(!_client) {
+    std::cerr << "waiting for chrome connection\n";
     qApp->processEvents();
   }
 }

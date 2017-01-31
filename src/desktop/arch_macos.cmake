@@ -17,21 +17,6 @@ add_custom_target (install_desktop
    DEPENDS install_desktop_cmd
 )
 
-# ------------------------------------------------------------------
-# NodeJS libraries.
-# ------------------------------------------------------------------
-
-
-INSTALL(
-    DIRECTORY 
-         "/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/"
-    DESTINATION "../build/smashbrowse.app/Contents/Resources/nodejs"
-    COMPONENT thirdparty
-    CONFIGURATIONS Debug Release
-    PATTERN "*"
-    PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-)
-
 INSTALL(
     FILES 
         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/macos/chromedriver_2.27/chromedriver"

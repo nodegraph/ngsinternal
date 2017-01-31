@@ -100,6 +100,7 @@ class BgComm {
         
         this.nodejs_port = BgComm.extract_port_from_url(tab.url)
         if (this.nodejs_port != -1) {
+        	console.log("found nodejs port")
             this.connect_to_nodejs()
             //chrome.tabs.onUpdated.removeListener(this.on_tab_updated_bound)
             this.tab_ids = [tab.id]
