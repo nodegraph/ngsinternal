@@ -114,6 +114,7 @@ BaseListPage {
         	//console.log("drop keys: " + drop.keys)
             if (drop.hasText) {
                 download_manager.download_on_the_side(drop.text)
+                drop.accept()
             }
         }
         onEntered: {
