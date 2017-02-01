@@ -72,7 +72,20 @@ INSTALL(
   FILES
       "${PLATFORM_ROOT}/srcdeps/ngsexternal/youtube-dl/windows/2017.01.31/youtube-dl.exe"
   RENAME "ngs_helper.dll"
-  PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+  PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
+  DESTINATION bin
+  COMPONENT thirdparty
+  CONFIGURATIONS Debug Release
+)
+
+# ------------------------------------------------------------------
+# Ffmpeg executables.
+# ------------------------------------------------------------------
+
+INSTALL(
+  FILES
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/ffmpeg/windows/2017.01.30/ffmpeg.exe"
+  PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
   DESTINATION bin
   COMPONENT thirdparty
   CONFIGURATIONS Debug Release

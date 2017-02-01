@@ -1,10 +1,8 @@
 {
-	// "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir --app=https://www.google.com
-
   "manifest_version": 2,
 
   "name": "Smash Browse",
-  "description": "This extension provides some insight into the dom",
+  "description": "Automates the browser using a node graph.",
   "version": "1.1",
 
   "icons": { "16": "images/octopus_blue_16.png",

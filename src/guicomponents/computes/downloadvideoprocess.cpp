@@ -104,57 +104,74 @@ const char* DownloadVideoProcess::_progress_pattern = "(.*)";
 
 void DownloadVideoProcess::on_read_standard_output() {
   BaseProcess::on_read_standard_output();
+  QStringList lines = _last_stdout.split('\n', QString::SkipEmptyParts);
 
-  // Multiple message lines from our process may get jammed together so we need to split them.
-  QStringList lines = _last_stdout.split("[download]", QString::SkipEmptyParts);
-  for (QString &line: lines) {
+  for (QString & line: lines) {
 
-    // [download] this is an awesome video.mp4 has already been downloaded
-    int pos = _already_downloaded_regex.indexIn(line);
-    if (pos >= 0) {
-      QStringList list = _already_downloaded_regex.capturedTexts();
-      // list[0] contains the full match. The other elements contain the submatches.
-      QString filename = list[1];
-      // Stip off any parent directories on the filename.
-      QStringList splits = filename.split(QDir::separator(), QString::SkipEmptyParts);
-      QString tail = splits[splits.size()-1];
-      tail = tail.simplified(); // strip whitespace from the front and back
-      // Emit signal.
-      emit started(get_id(), tail);
-      continue;
+    // Multiple message lines from our process may get jammed together so we need to split them.
+    QStringList splits = line.split("[download]", QString::SkipEmptyParts);
+    for (QString &split: splits) {
+
+      if (split.startsWith("Deleting original file")) {
+        continue;
+      }
+
+      if (split.startsWith("[ffmpeg]")) {
+        continue;
+      }
+
+      if (split.startsWith("WARNING: Requested formats are incompatible for merge and will be merged into mkv.")) {
+        continue;
+      }
+
+      // [download] this is an awesome video.mp4 has already been downloaded
+      int pos = _already_downloaded_regex.indexIn(split);
+      if (pos >= 0) {
+        QStringList list = _already_downloaded_regex.capturedTexts();
+        // list[0] contains the full match. The other elements contain the submatches.
+        QString filename = list[1];
+        // Stip off any parent directories on the filename.
+        QStringList splits = filename.split(QDir::separator(), QString::SkipEmptyParts);
+        QString tail = splits[splits.size()-1];
+        tail = tail.simplified(); // strip whitespace from the front and back
+        // Emit signal.
+        emit started(get_id(), tail);
+        continue;
+      }
+
+      // Example filename message from std out.
+      // [download] Destination: the best video ever.mp4
+      // Note we use lastIndexIn because a number of these [download] message may arrive concatenated together.
+      pos = _filename_regex.indexIn(split);
+      if (pos >= 0) {
+        QStringList list = _filename_regex.capturedTexts();
+        // list[0] contains the full match. The other elements contain the submatches.
+        QString filename = list[1];
+        // Stip off any parent directories on the filename.
+        QStringList splits = filename.split(QDir::separator(), QString::SkipEmptyParts);
+        QString tail = splits[splits.size()-1];
+        tail = tail.simplified(); // strip whitespace from the front and back
+        // Emit signal.
+        emit started(get_id(), tail);
+        continue;
+      }
+
+      // Example progress message from std out.
+      // [download] 100% of 35.77MiB in 00:05
+      // [download] 0.0% of 87.34MiB at 857.15KiB/s ETA 01:44
+      // Note we use lastIndexIn because a number of these [download] message may arrive concatenated together.
+      pos = _progress_regex.indexIn(split);
+      if (pos >= 0) {
+        QStringList list = _progress_regex.capturedTexts();
+        // list[0] contains the full match. The other elements contain the submatches.
+        QString msg = list[1];
+        msg = msg.simplified(); // strip whitespace from the front and back
+        // Emit signal.
+        emit progress(get_id(), msg);
+        continue;
+      }
     }
 
-    // Example filename message from std out.
-    // [download] Destination: the best video ever.mp4
-    // Note we use lastIndexIn because a number of these [download] message may arrive concatenated together.
-    pos = _filename_regex.indexIn(line);
-    if (pos >= 0) {
-      QStringList list = _filename_regex.capturedTexts();
-      // list[0] contains the full match. The other elements contain the submatches.
-      QString filename = list[1];
-      // Stip off any parent directories on the filename.
-      QStringList splits = filename.split(QDir::separator(), QString::SkipEmptyParts);
-      QString tail = splits[splits.size()-1];
-      tail = tail.simplified(); // strip whitespace from the front and back
-      // Emit signal.
-      emit started(get_id(), tail);
-      continue;
-    }
-
-    // Example progress message from std out.
-    // [download] 100% of 35.77MiB in 00:05
-    // [download] 0.0% of 87.34MiB at 857.15KiB/s ETA 01:44
-    // Note we use lastIndexIn because a number of these [download] message may arrive concatenated together.
-    pos = _progress_regex.indexIn(line);
-    if (pos >= 0) {
-      QStringList list = _progress_regex.capturedTexts();
-      // list[0] contains the full match. The other elements contain the submatches.
-      QString msg = list[1];
-      msg = msg.simplified(); // strip whitespace from the front and back
-      // Emit signal.
-      emit progress(get_id(), msg);
-      continue;
-    }
   }
 
 }
