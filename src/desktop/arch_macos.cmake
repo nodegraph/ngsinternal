@@ -44,6 +44,19 @@ INSTALL(
   CONFIGURATIONS Debug Release
 )
 
+# ------------------------------------------------------------------
+# Ffmpeg executables.
+# ------------------------------------------------------------------
+
+INSTALL(
+  FILES
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/ffmpeg/macos/83288/ffmpeg"
+  PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
+  DESTINATION "../build/smashbrowse.app/Contents/MacOS"
+  COMPONENT thirdparty
+  CONFIGURATIONS Debug Release
+)
+
 #INSTALL(
 #  DIRECTORY ${QT5_DIR}/plugins/platforms
 #  DESTINATION bin
