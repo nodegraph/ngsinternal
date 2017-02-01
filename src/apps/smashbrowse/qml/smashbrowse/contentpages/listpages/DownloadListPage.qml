@@ -104,7 +104,15 @@ BaseListPage {
         id: drop_area
         anchors.fill: parent
         onDropped: {
-            if (drop.hasUrls && drop.hasText) {
+        	//console.log("drop has urls: " + drop.hasUrls)
+        	//console.log("drop has num urls: " + drop.urls.length)
+        	//console.log("drop has text: " + drop.hasText)
+        	//console.log("drop text: " + drop.text)
+        	//console.log("drop has color: " + drop.hasColor)
+        	//console.log("drop color: " + drop.colorData)
+        	//console.log("drop html: " + drop.html)
+        	//console.log("drop keys: " + drop.keys)
+            if (drop.hasText) {
                 download_manager.download_on_the_side(drop.text)
             }
         }
