@@ -28,7 +28,7 @@ set(closure_compiler_jar "/Users/raindrop/installs/srcdeps/ngsexternal/closure_c
 # Qt Directory.
 # ---------------------------------------------------------
 
-set(QT5_DIR "/Users/raindrop/installs/macos/Qt5.7.0/5.7/clang_64")
+set(QT5_DIR "/Users/raindrop/installs/macos/Qt5.8.0/5.8/clang_64")
 
 # ---------------------------------------------------------
 # Custom Directories. 

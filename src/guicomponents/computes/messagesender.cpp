@@ -36,7 +36,17 @@ MessageSender::MessageSender(Entity* parent)
   get_dep_loader()->register_fixed_dep(_java_process, Path());
   get_dep_loader()->register_fixed_dep(_download_manager, Path());
 
-  _server  = new_ff QWebSocketServer(QStringLiteral("Smash Browser Server"), QWebSocketServer::SecureMode);
+  // Using ssl doesn't seem to work on macos. It's not clear whether qt has a bug
+  // or whether chrome is not permitting the connection.
+  // Note this does work on windows however.
+  // For now we keep it disabled for all platforms.
+
+#ifndef USE_SSL
+  _server  = new_ff QWebSocketServer(QStringLiteral("Smash Browser Server"), QWebSocketServer::NonSecureMode);
+#else
+  _server  = new_ff QWebSocketServer(QStringLiteral("Smash Browser Server"), QWebSocketServer::NonSecureMode);
+
+  assert(QSslSocket::supportsSsl());
   QSslConfiguration sslConfiguration;
   QFile certFile(QStringLiteral(":/ssl/cert.pem"));
   QFile keyFile(QStringLiteral(":/ssl/key.pem"));
@@ -51,7 +61,7 @@ MessageSender::MessageSender(Entity* parent)
   sslConfiguration.setPrivateKey(sslKey);
   sslConfiguration.setProtocol(QSsl::TlsV1SslV3);
   _server->setSslConfiguration(sslConfiguration);
-
+#endif
 
 
   if (_server->listen(QHostAddress::Any, 0)) { // 0 means that Qt will automatically find an open port for us.
@@ -61,7 +71,7 @@ MessageSender::MessageSender(Entity* parent)
     connect(_server, SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(on_accept_error(QAbstractSocket::SocketError)));
     connect(_server, SIGNAL(closed()), this, SLOT(on_closed()));
     connect(_server, SIGNAL(originAuthenticationRequired(QWebSocketCorsAuthenticator *)), this, SLOT(on_auth(QWebSocketCorsAuthenticator *)));
-    connect(_server, SIGNAL(peerVerifyError(const QSslError &error)), this, SLOT(on_peer_verify_error(const QSslError &error)));
+    connect(_server, SIGNAL(peerVerifyError(const QSslError &)), this, SLOT(on_peer_verify_error(const QSslError &)));
     connect(_server, SIGNAL(preSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator *)), this, SLOT(on_auth2(QSslPreSharedKeyAuthenticator *)));
     connect(_server, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(on_ssl_errors(const QList<QSslError>&)));
     connect(_server, SIGNAL(serverError(QWebSocketProtocol::CloseCode)), this, SLOT(on_server_error(QWebSocketProtocol::CloseCode)));
@@ -190,7 +200,7 @@ void MessageSender::open() {
 
 void MessageSender::wait_for_chrome_connection() {
   while(!_client) {
-    std::cerr << "waiting for chrome connection\n";
+    //std::cerr << "waiting for chrome connection\n";
     qApp->processEvents();
   }
 }

@@ -17,6 +17,10 @@ add_custom_target (install_desktop
    DEPENDS install_desktop_cmd
 )
 
+# ------------------------------------------------------------------
+# ChromeDriver executable.
+# ------------------------------------------------------------------
+
 INSTALL(
     FILES 
         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/macos/chromedriver_2.27/chromedriver"
@@ -24,6 +28,20 @@ INSTALL(
     COMPONENT thirdparty
     CONFIGURATIONS Debug Release
     PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+)
+
+# ------------------------------------------------------------------
+# Youtube-dl executable.
+# ------------------------------------------------------------------
+
+INSTALL(
+  FILES
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/youtube-dl/macos/2017.01.31/youtube-dl"
+  RENAME "ngs_helper"
+  PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
+  DESTINATION "../build/smashbrowse.app/Contents/MacOS"
+  COMPONENT thirdparty
+  CONFIGURATIONS Debug Release
 )
 
 #INSTALL(

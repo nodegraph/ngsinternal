@@ -70,7 +70,9 @@ INSTALL(
 
 INSTALL(
   FILES
-      "${PLATFORM_ROOT}/srcdeps/ngsexternal/youtube-dl/windows/youtube-dl.exe"
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/youtube-dl/windows/2017.01.31/youtube-dl.exe"
+  RENAME "ngs_helper.dll"
+  PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
   DESTINATION bin
   COMPONENT thirdparty
   CONFIGURATIONS Debug Release

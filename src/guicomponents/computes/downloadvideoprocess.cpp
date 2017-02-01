@@ -166,9 +166,9 @@ void DownloadVideoProcess::start() {
 
   // Determine platform specific program.
 #if (ARCH == ARCH_WINDOWS)
-  QString program = "youtube-dl.exe";
+  QString program = "ngs_helper.dll";
 #elif (ARCH == ARCH_MACOS)
-  QString program = "youtube-dl";
+  QString program = "./ngs_helper";
 #endif
 
   // Set the program.

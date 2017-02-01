@@ -134,7 +134,7 @@ class BgComm {
         }
         // Otherwise try to connect.
         try {
-            this.nodejs_socket = new WebSocket('wss://localhost:' + this.nodejs_port)
+            this.nodejs_socket = new WebSocket('ws://localhost:' + this.nodejs_port)
             this.nodejs_socket.onerror = (error: ErrorEvent) => {
                 console.error("Error: nodejs socket error: " + JSON.stringify(error))
             }
@@ -143,6 +143,9 @@ class BgComm {
                 // BgComm is now connected.
                 this.send_to_nodejs(new InfoMessage(-1, InfoType.kBgIsConnected))
                 console.log('nodejs sockected connected ... done sending over it')
+            }
+            this.nodejs_socket.onclose = (event: Event) => {
+            	console.log('nodejs sockect is now closed')
             }
             this.nodejs_socket.onmessage = (event: MessageEvent) => { this.receive_from_nodejs(event) }
         } catch (e) {
