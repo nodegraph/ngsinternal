@@ -17,7 +17,7 @@
 # ------------------------------------------------------------------
 
 # Note each of these directories hold debug, release and .pdb files which gets quite big.
-# If you need these plugins, you should selectively install the specific dlls you need.
+# We currently only weed out the pdb files from installation.
 INSTALL(
   DIRECTORY 
       "${QT5_DIR}/plugins/platforms"
@@ -35,7 +35,7 @@ INSTALL(
 # QML Libraries.
 # ------------------------------------------------------------------
 # Note each of these directories hold debug, release and .pdb files which gets quite big.
-# If you need these plugins, you should selectively install the specific dlls you need.
+# We currently only weed out the pdb files from installation.
 INSTALL(
   DIRECTORY 
       "${QT5_DIR}/qml/Qt"
@@ -168,30 +168,30 @@ INSTALL(FILES
 #		CONFIGURATIONS Release)
 
 # ------------------------------------------------------------------
-# windeployqt custom command.
+# Qt windeployqt Packaging.
 # ------------------------------------------------------------------
 
-add_custom_command (
-  DEPENDS install
-  OUTPUT install_desktop_cmd
-  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
-  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/smashbrowse.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/smashbrowse/qml 
-  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
-  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
-  # copy the nodejs windows install into the bin dir
-  COMMAND ${CMAKE_COMMAND} -E copy_directory "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/nodejs/" ${CMAKE_BINARY_DIR}/install/bin
-  # extra nodejs modules
-  COMMAND ${CMAKE_COMMAND} -E copy_directory "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/node_modules" ${CMAKE_BINARY_DIR}/install/bin/node_modules
-  # chromedriver
-  COMMAND ${CMAKE_COMMAND} -E copy "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.27/chromedriver.exe" ${CMAKE_BINARY_DIR}/install/bin
-)
+#add_custom_command (
+#  DEPENDS install
+#  OUTPUT install_desktop_cmd
+#  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
+#  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/smashbrowse.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/smashbrowse/qml 
+#  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
+#  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
+#  # copy the nodejs windows install into the bin dir
+#  COMMAND ${CMAKE_COMMAND} -E copy_directory "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/nodejs/" ${CMAKE_BINARY_DIR}/install/bin
+#  # extra nodejs modules
+#  COMMAND ${CMAKE_COMMAND} -E copy_directory "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/node_modules" ${CMAKE_BINARY_DIR}/install/bin/node_modules
+#  # chromedriver
+#  COMMAND ${CMAKE_COMMAND} -E copy "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.27/chromedriver.exe" ${CMAKE_BINARY_DIR}/install/bin
+#)
 
-add_custom_target (install_desktop
-   DEPENDS install_desktop_cmd
-)
+#add_custom_target (install_desktop
+#   DEPENDS install_desktop_cmd
+#)
 
 # ------------------------------------------------------------------
-# Simple Packaging
+# Simple ZIP Packaging
 # ------------------------------------------------------------------
 add_custom_command(
     OUTPUT pack_desktop_cmd
@@ -203,7 +203,7 @@ add_custom_target (pack_desktop
 )
 
 # ------------------------------------------------------------------
-# Desktop Packaging
+# WIX Tools Packaging
 # ------------------------------------------------------------------
 
 # To build the msi installer for debug binaries, type the following in the msys2 shell.
