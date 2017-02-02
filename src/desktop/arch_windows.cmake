@@ -153,6 +153,17 @@ INSTALL(FILES
 		CONFIGURATIONS Release)
 		
 # ------------------------------------------------------------------
+# JRE. Install the version that's already installed on the dev machine.
+# ------------------------------------------------------------------
+		
+INSTALL(DIRECTORY 
+			"C:/Program Files/Java/jre1.8.0_102"
+		DESTINATION bin
+		COMPONENT thirdparty
+		CONFIGURATIONS Debug Release		
+		)
+		
+# ------------------------------------------------------------------
 # GLEW	
 # ------------------------------------------------------------------
 

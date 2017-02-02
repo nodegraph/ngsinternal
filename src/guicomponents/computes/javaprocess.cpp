@@ -9,6 +9,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication.h>
 #include <QtCore/QFile>
+#include <QtCore/QDir>
 #include <QtCore/QProcessEnvironment>
 
 namespace ngs {
@@ -110,18 +111,18 @@ void JavaProcess::start_process(int app_server_port) {
   connect(_process, SIGNAL(readyReadStandardOutput()), this, SLOT(on_read_standard_output()));
 
   // Set the working directory.
-  QString folder = AppConfig::get_app_bin_dir();
-  _process->setWorkingDirectory(folder);
-
-  // Set the powershell binary.
-  QString java_binary_path = "java";
-  _process->setProgram(java_binary_path);
+  QString bin_dir = AppConfig::get_app_bin_dir();
+  _process->setWorkingDirectory(bin_dir);
 
 #if (ARCH == ARCH_WINDOWS)
+  QString java_binary_path = bin_dir + QDir::separator() + "jre1.8.0_102" + QDir::separator() + "bin" + QDir::separator() + "java.exe";
   QString sep = ";";
 #elif (ARCH == ARCH_MACOS)
+  QString java_binary_path = bin_dir + QDir::separator() + "jre1.8.0_102" + QDir::separator() + "bin" + QDir::separator() + "java.exe";
   QString sep = ":";
 #endif
+
+  _process->setProgram(java_binary_path);
 
   QStringList args;
   args.append("-cp");
