@@ -71,7 +71,7 @@ void DownloadManager::download_on_the_side(const QString& url) {
   DownloadVideoProcess *p = new_ff DownloadVideoProcess();
 
   // Connect to signals.
-  connect(p, SIGNAL(started(long long, const QString&)), this, SLOT(on_started(long long, const QString&)));
+  connect(p, SIGNAL(started(long long, const QString&, const QString&)), this, SLOT(on_started(long long, const QString, const QString&)));
   connect(p, SIGNAL(progress(long long, const  QString&)), this, SLOT(on_progress(long long, const  QString&)));
   connect(p, SIGNAL(finished(long long)), this, SLOT(on_finished(long long)));
   connect(p, SIGNAL(errored(long long, const QString&)), this, SLOT(on_errored(long long, const QString&)));
@@ -93,7 +93,7 @@ void DownloadManager::download(int msg_id, const QJsonObject& args) {
 
   // Connect to signals.
   connect(p, SIGNAL(queued(long long, const QString&)), this, SLOT(on_queued(long long, const QString&)));
-  connect(p, SIGNAL(started(long long, const QString&)), this, SLOT(on_started(long long, const QString&)));
+  connect(p, SIGNAL(started(long long, const QString&, const QString&)), this, SLOT(on_started(long long, const QString&, const QString&)));
   connect(p, SIGNAL(progress(long long, const  QString&)), this, SLOT(on_progress(long long, const  QString&)));
   connect(p, SIGNAL(finished(long long)), this, SLOT(on_finished(long long)));
   connect(p, SIGNAL(errored(long long, const QString&)), this, SLOT(on_errored(long long, const QString&)));
@@ -144,9 +144,9 @@ void DownloadManager::on_queued(long long id, const QString& url) {
   emit download_queued(id, url);
 }
 
-void DownloadManager::on_started(long long id, const QString& filename) {
+void DownloadManager::on_started(long long id, const QString& dir, const QString& filename) {
   internal();
-  emit download_started(id, filename);
+  emit download_started(id, dir, filename);
 }
 
 void DownloadManager::on_progress(long long id, const  QString& progress) {
@@ -161,6 +161,71 @@ void DownloadManager::on_errored(long long id, const QString& error) {
 void DownloadManager::on_finished(long long id) {
   destroy_process(id);
   emit download_finished(id);
+}
+
+void DownloadManager::reveal_file(const QString& dir, const QString &filename) {
+  DownloadManager::reveal_file_on_platform(dir, filename);
+}
+
+QString DownloadManager::find_best_matching_file(const QString& dir, const QString& filename) {
+  // Find the base filename, which is the part up to the first period.
+  QFileInfo info(filename);
+  QString base_name = info.baseName();
+
+  // Create our name filters.
+  QStringList name_filters;
+  name_filters.append(base_name+".*");
+
+  // Grab the files matching the name filters.
+  QDir d(dir);
+  QFileInfoList files = d.entryInfoList(name_filters, QDir::Files);
+
+  // Find the file with the largest byte size.
+  qint64 largest = 0;
+  QString largest_file = "";
+  for (QFileInfo &info : files) {
+    info.size();
+    if (info.size() > largest) {
+      largest = info.size();
+      largest_file = info.fileName();
+    }
+  }
+  return largest_file;
+}
+
+void DownloadManager::reveal_file_on_platform(const QString& dir, const QString &similar_filename) {
+  if (dir.isEmpty()) {
+    return;
+  }
+  QString best_filename = find_best_matching_file(dir, similar_filename);
+
+#if (ARCH == ARCH_WINDOWS)
+  QString cmd = "explorer.exe";
+  if (!best_filename.isEmpty()) {
+    cmd += " /select,";
+    cmd += QDir::toNativeSeparators(dir) + QDir::separator() + best_filename;
+  } else {
+    cmd += " ";
+    cmd += QDir::toNativeSeparators(dir) + QDir::separator() + best_filename;
+  }
+  QProcess::startDetached(cmd);
+#elif (ARCH == ARCH_MACOS)
+  {
+    QStringList args;
+    args.append("-e");
+    QString cmd = "tell application \"Finder\" to reveal POSIX file \""; + dir + "/" + find_best_matching_file + "\"";
+    args.append(cmd);
+    QProcess::execute("/usr/bin/osascript", args);
+  }
+  {
+    QStringList args;
+    args.append("-e");
+    QString cmd = "tell application \"Finder\" to activate";
+    args.append(cmd);
+    QProcess::execute("/usr/bin/osascript", args);
+  }
+#endif
+
 }
 
 }

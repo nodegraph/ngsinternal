@@ -38,19 +38,21 @@ BaseListPage {
     }
     
     function on_download_double_clicked(row) {
-    	//downloads_page.visible = false
+    	var obj = model.get(row)
+    	download_manager.reveal_file(obj.dir, obj.title)
     }
 
     function on_download_queued(pid, url) {
-        model.append({"title": url, "description": "queued", "pid": pid, "status": "queued"})
+        model.append({"title": url, "dir": "", "description": "queued", "pid": pid, "status": "queued"})
     }
     
-    function on_download_started(pid, filename) {
+    function on_download_started(pid, dir, filename) {
         for (var i=0; i<model.count; i++) {
             var obj = model.get(i)
             if (obj.pid == pid) {
                 obj.title = filename
                 obj.description = ""
+                obj.dir = dir
                 obj.status = "downloading"
                 model.set(i, obj);
                 break;

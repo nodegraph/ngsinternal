@@ -49,6 +49,6 @@ BaseListDelegate {
     
     // Method Overrides.
     function on_double_clicked() {
-    	//get_list_page().on_download_double_clicked(index)
+    	get_list_page().on_download_double_clicked(index)
     }
 }

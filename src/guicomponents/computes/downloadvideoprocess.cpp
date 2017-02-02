@@ -129,13 +129,12 @@ void DownloadVideoProcess::on_read_standard_output() {
       if (pos >= 0) {
         QStringList list = _already_downloaded_regex.capturedTexts();
         // list[0] contains the full match. The other elements contain the submatches.
-        QString filename = list[1];
-        // Stip off any parent directories on the filename.
-        QStringList splits = filename.split(QDir::separator(), QString::SkipEmptyParts);
-        QString tail = splits[splits.size()-1];
-        tail = tail.simplified(); // strip whitespace from the front and back
+        QString abs_path = list[1].trimmed();
+        QFileInfo info(abs_path);
+        QString dir = info.dir().path();
+        QString filename = info.fileName();
         // Emit signal.
-        emit started(get_id(), tail);
+        emit started(get_id(), dir, filename);
         continue;
       }
 
@@ -146,13 +145,12 @@ void DownloadVideoProcess::on_read_standard_output() {
       if (pos >= 0) {
         QStringList list = _filename_regex.capturedTexts();
         // list[0] contains the full match. The other elements contain the submatches.
-        QString filename = list[1];
-        // Stip off any parent directories on the filename.
-        QStringList splits = filename.split(QDir::separator(), QString::SkipEmptyParts);
-        QString tail = splits[splits.size()-1];
-        tail = tail.simplified(); // strip whitespace from the front and back
+        QString abs_path = list[1].trimmed();
+        QFileInfo info(abs_path);
+        QString dir = info.dir().path();
+        QString filename = info.fileName();
         // Emit signal.
-        emit started(get_id(), tail);
+        emit started(get_id(), dir, filename);
         continue;
       }
 

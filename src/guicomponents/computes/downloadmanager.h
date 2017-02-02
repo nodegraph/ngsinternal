@@ -38,11 +38,13 @@ Q_OBJECT
   void download(int msg_id, const QJsonObject& args);
   void stop(long long id);
 
-
+  Q_INVOKABLE void reveal_file(const QString& dir, const QString &filename);
+  static QString find_best_matching_file(const QString& dir, const QString& filename);
+  static void reveal_file_on_platform(const QString& dir, const QString &filename);
 
 signals:
  void download_queued(long long id, const QString& url);
- void download_started(long long id, const QString& filename);
+ void download_started(long long id, const QString& dir, const QString& filename);
  void download_progress(long long id, const  QString& progress);
  void download_finished(long long id);
  void download_errored(long long id, const QString& error);
@@ -52,7 +54,7 @@ signals:
   void on_queued_side_download(long long id, const QString& url);
 
   void on_queued(long long id, const QString& url);
-  void on_started(long long id, const QString& filename);
+  void on_started(long long id, const QString& dir, const QString& filename);
   void on_progress(long long id, const  QString& progress);
   void on_errored(long long id, const QString& error);
   void on_finished(long long id);

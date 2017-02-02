@@ -28,7 +28,7 @@ Q_OBJECT
   virtual const QString& get_filename() const;
 
   signals:
-  void started(long long pid, const QString& filename);
+  void started(long long pid, const QString& dir, const QString& filename);
   void progress(long long pid, const  QString& progress);
   void finished(long long pid);
   void errored(long long pid, const QString& error);
