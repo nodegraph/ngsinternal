@@ -3,10 +3,13 @@
 add_custom_command (
 	OUTPUT install_smashbrowse_cmd
 	
+	# Copy the bin dir into the bundle.
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/build/install/bin/ ${SMASHBROWSE_BIN_DIR}
+	
 	# Remove previous dmg files.
 	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashbrowse.dmg
 	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashbrowse.dmg.shadow
-	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashbrowse_pimped.dmg
+	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashbrowse_app.dmg
 	
 	
 	# Note we want macdeployqt to strip our binaries However it seems to produce stripped binary of our old code.

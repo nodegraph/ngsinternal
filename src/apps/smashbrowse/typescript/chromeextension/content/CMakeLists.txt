@@ -37,9 +37,6 @@ add_custom_command(
 add_custom_target(chrome_ext_content ALL DEPENDS ${cnt_js} ${cnt_js_min})
 
 set(dest "bin/chromeextension")
-if (${ARCH} STREQUAL ARCH_MACOS)
-	set(dest "../build/smashbrowse.app/Contents/MacOS/chromeextension")
-endif()
 
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 

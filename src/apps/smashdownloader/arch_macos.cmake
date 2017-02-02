@@ -3,10 +3,14 @@
 add_custom_command (
 	OUTPUT install_smashdownloader_cmd
 	
+	# Copy the bin dir into the bundle.
+	#COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/install/bin/ ${SMASHDOWNLOADER_BIN_DIR}
+	COMMAND cp -fr ${CMAKE_BINARY_DIR}/install/bin/* ${SMASHDOWNLOADER_BIN_DIR}/.
+	
 	# Remove previous dmg files.
 	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashdownloader.dmg
 	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashdownloader.dmg.shadow
-	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashdownloader_pimped.dmg
+	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashdownloader_app.dmg
 	
 	
 	# Note we want macdeployqt to strip our binaries However it seems to produce stripped binary of our old code.

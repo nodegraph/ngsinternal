@@ -84,8 +84,8 @@ elseif (${ARCH} STREQUAL ARCH_LINUX)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	target_link_libraries(ngs_utils sodium)
 	INSTALL(FILES 
-		"${LIBSODIUM_DIR}/lib/libsodium.dylib"
-		DESTINATION bin
+		"${LIBSODIUM_DIR}/lib/libsodium.18.dylib"
+		DESTINATION lib
 		COMPONENT thirdparty
 		CONFIGURATIONS ${CMAKE_BUILD_TYPE})
 elseif (${ARCH} STREQUAL ARCH_IOS)

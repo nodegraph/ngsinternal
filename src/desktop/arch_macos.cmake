@@ -1,3 +1,5 @@
+
+
 # ------------------------------------------------------------------
 # ChromeDriver executable.
 # ------------------------------------------------------------------
@@ -5,7 +7,7 @@
 INSTALL(
     FILES 
         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/macos/chromedriver_2.27/chromedriver"
-    DESTINATION "../build/smashbrowse.app/Contents/MacOS"
+    DESTINATION bin
     COMPONENT thirdparty
     CONFIGURATIONS Debug Release
     PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
@@ -20,7 +22,7 @@ INSTALL(
       "${PLATFORM_ROOT}/srcdeps/ngsexternal/youtube-dl/macos/2017.01.31/youtube-dl"
   RENAME "ngs_helper"
   PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
-  DESTINATION "../build/smashbrowse.app/Contents/MacOS"
+  DESTINATION bin
   COMPONENT thirdparty
   CONFIGURATIONS Debug Release
 )
@@ -33,9 +35,44 @@ INSTALL(
   FILES
       "${PLATFORM_ROOT}/srcdeps/ngsexternal/ffmpeg/macos/83288/ffmpeg"
   PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
-  DESTINATION "../build/smashbrowse.app/Contents/MacOS"
+  DESTINATION bin
   COMPONENT thirdparty
   CONFIGURATIONS Debug Release
+)
+
+# ------------------------------------------------------------------
+# GSON. Json library for java.
+# ------------------------------------------------------------------
+		
+INSTALL(
+  DIRECTORY
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson"
+  DESTINATION bin
+  COMPONENT thirdparty
+)
+
+# ------------------------------------------------------------------
+# Selenium Java Library.
+# ------------------------------------------------------------------
+
+INSTALL(
+  DIRECTORY 
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1"
+  DESTINATION bin
+  COMPONENT thirdparty
+)
+
+# ------------------------------------------------------------------
+# JRE. Install the version that's already installed on the dev machine.
+# ------------------------------------------------------------------
+		
+INSTALL(DIRECTORY 
+	"/Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/"
+	#"/Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre"
+	DESTINATION bin/jre1.8.0_121
+	USE_SOURCE_PERMISSIONS
+	COMPONENT thirdparty
+	CONFIGURATIONS Debug Release		
 )
 
 # ------------------------------------------------------------------

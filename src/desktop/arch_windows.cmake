@@ -153,12 +153,35 @@ INSTALL(FILES
 		CONFIGURATIONS Release)
 		
 # ------------------------------------------------------------------
+# GSON. Json library for java.
+# ------------------------------------------------------------------
+		
+INSTALL(
+  DIRECTORY
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson"
+  DESTINATION bin
+  COMPONENT thirdparty
+)
+
+# ------------------------------------------------------------------
+# Selenium Java Library.
+# ------------------------------------------------------------------
+
+INSTALL(
+  DIRECTORY 
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1"
+  DESTINATION bin
+  COMPONENT thirdparty
+)
+		
+# ------------------------------------------------------------------
 # JRE. Install the version that's already installed on the dev machine.
 # ------------------------------------------------------------------
 		
 INSTALL(DIRECTORY 
 			"C:/Program Files/Java/jre1.8.0_102"
 		DESTINATION bin
+		USE_SOURCE_PERMISSIONS
 		COMPONENT thirdparty
 		CONFIGURATIONS Debug Release		
 		)

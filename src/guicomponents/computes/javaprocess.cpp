@@ -118,7 +118,7 @@ void JavaProcess::start_process(int app_server_port) {
   QString java_binary_path = bin_dir + QDir::separator() + "jre1.8.0_102" + QDir::separator() + "bin" + QDir::separator() + "java.exe";
   QString sep = ";";
 #elif (ARCH == ARCH_MACOS)
-  QString java_binary_path = bin_dir + QDir::separator() + "jre1.8.0_102" + QDir::separator() + "bin" + QDir::separator() + "java.exe";
+  QString java_binary_path = bin_dir + QDir::separator() + "jre1.8.0_121" + QDir::separator() + "bin" + QDir::separator() + "java";
   QString sep = ":";
 #endif
 
