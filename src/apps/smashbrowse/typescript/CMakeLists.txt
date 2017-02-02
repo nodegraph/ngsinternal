@@ -26,6 +26,5 @@ set(active_window_js_lib "D:/installs/srcdeps/ngsexternal/nodejs2/node_modules/a
 # Sub Directories.
 add_subdirectory(message) # This injects ${msg_js_lib} into this dir scope, so the following dirs can use it.
 add_subdirectory(chromeextension)
-#add_subdirectory(commhub)
 
 
