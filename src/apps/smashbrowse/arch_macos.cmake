@@ -1,10 +1,16 @@
-
-
 add_custom_command (
-	OUTPUT install_smashbrowse_cmd
+	OUTPUT bundle_smashbrowse_cmd
 	
 	# Copy the bin dir into the bundle.
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/build/install/bin/ ${SMASHBROWSE_BIN_DIR}
+	COMMAND cp -fr ${CMAKE_BINARY_DIR}/install/bin/* ${SMASHBROWSE_BIN_DIR}/.
+)
+
+add_custom_target (bundle_smashbrowse
+   DEPENDS bundle_smashbrowse_cmd
+)
+
+add_custom_command (
+	OUTPUT package_smashbrowse_cmd
 	
 	# Remove previous dmg files.
 	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashbrowse.dmg
@@ -29,7 +35,7 @@ add_custom_command (
 				smashbrowse
 )
 
-add_custom_target (install_smashbrowse
-   DEPENDS install_smashbrowse_cmd
+add_custom_target (package_smashbrowse
+   DEPENDS package_smashbrowse_cmd
 )
 
