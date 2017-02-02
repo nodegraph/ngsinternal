@@ -1,3 +1,9 @@
+# Note to build os macos do the following:
+# 1) ninja
+# 2) ninja install
+# 3) ninja bundle_smashbrowse
+# 4) ninja package_smashbrowse
+
 add_custom_command (
 	OUTPUT bundle_smashbrowse_cmd
 	
