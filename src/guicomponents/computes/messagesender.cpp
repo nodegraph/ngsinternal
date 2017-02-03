@@ -191,8 +191,10 @@ void MessageSender::open() {
 
   _trying_to_open = true;
 
+  std::cerr << "MessageSender is opening for app: " << QCoreApplication::applicationName().toStdString() << "\n";
+
   // Make sure the java process has started.
-  if (!_java_process->is_running()) {
+  if (!_java_process->is_running() && QCoreApplication::applicationName() == "SmashBrowse") {
     //_process->start_process();
     _java_process->start_process(_server_port);
   }

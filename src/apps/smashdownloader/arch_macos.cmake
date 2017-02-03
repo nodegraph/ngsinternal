@@ -8,7 +8,8 @@ add_custom_command (
 	OUTPUT bundle_smashdownloader_cmd
 	
 	# Copy the bin dir into the bundle.
-	COMMAND cp -fr ${CMAKE_BINARY_DIR}/install/bin/* ${SMASHDOWNLOADER_BIN_DIR}/.
+	COMMAND cp -f ${CMAKE_BINARY_DIR}/install/bin/ffmpeg ${SMASHDOWNLOADER_BIN_DIR}
+	COMMAND cp -f ${CMAKE_BINARY_DIR}/install/bin/ngs_helper ${SMASHDOWNLOADER_BIN_DIR}
 )
 
 add_custom_target (bundle_smashdownloader
