@@ -35,7 +35,7 @@ set(closure_compiler_jar "${PLATFORM_ROOT}/srcdeps/ngsexternal/closure_compiler/
 # ---------------------------------------------------------
 
 #set(QT5_DIR "C:/Qt/Qt5.5.1/5.5/msvc2013_64")
-set(QT5_DIR "D:/installs/windows/Qt5.7.0/5.7/msvc2015_64")
+set(QT5_DIR "D:/installs/windows/Qt5.8.0/5.8/msvc2015_64")
 
 list(APPEND QML_DIRS "qrc:/qml")
 list(APPEND QML_DIRS "qrc:")
