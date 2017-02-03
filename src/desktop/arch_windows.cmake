@@ -117,7 +117,7 @@ INSTALL(
     FILES 
         "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.27/chromedriver.exe"
     DESTINATION bin
-    COMPONENT thirdparty
+    COMPONENT thirdparty_chromedriver
     CONFIGURATIONS Debug Release
 )
 
@@ -178,7 +178,7 @@ INSTALL(
   DIRECTORY
       "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson"
   DESTINATION bin
-  COMPONENT thirdparty
+  COMPONENT thirdparty_java
 )
 
 # ------------------------------------------------------------------
@@ -189,7 +189,7 @@ INSTALL(
   DIRECTORY 
       "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1"
   DESTINATION bin
-  COMPONENT thirdparty
+  COMPONENT thirdparty_java
 )
 		
 # ------------------------------------------------------------------
@@ -200,7 +200,7 @@ INSTALL(DIRECTORY
 			"C:/Program Files/Java/jre1.8.0_102"
 		DESTINATION bin
 		USE_SOURCE_PERMISSIONS
-		COMPONENT thirdparty
+		COMPONENT thirdparty_java
 		CONFIGURATIONS Debug Release		
 		)
 		
@@ -266,8 +266,8 @@ function(create_cpack_config filename)
   include(CPack) 
 endfunction(create_cpack_config) 
 
-#set(package_type "smashbrowse")
-set(package_type "smashdownloader")
+set(package_type "smashbrowse")
+#set(package_type "smashdownloader")
 
 if(WIN32)
     # On Windows generate MSI packages
@@ -305,7 +305,9 @@ if(WIN32)
             gui
             components 
             base
-            thirdparty 
+            thirdparty
+            thirdparty_java
+            thirdparty_chromedriver
         )
     elseif(${package_type} STREQUAL smashdownloader)
         set(CPACK_GENERATOR "WIX")
@@ -335,9 +337,6 @@ if(WIN32)
         )
         set(CPACK_COMPONENTS_ALL
             smashdownloader
-            chrome_ext_background
-            chrome_ext_content
-            jcomm
             gui
             components 
             base
@@ -407,6 +406,14 @@ cpack_add_component(base
 
 cpack_add_component(thirdparty
                     DISPLAY_NAME "Third party libraries."
+                    HIDDEN REQUIRED)
+                    
+cpack_add_component(thirdparty_java
+                    DISPLAY_NAME "Third party java libraries."
+                    HIDDEN REQUIRED)
+                    
+cpack_add_component(thirdparty_chromedriver
+                    DISPLAY_NAME "Third party chromedriver."
                     HIDDEN REQUIRED)
                     
 cpack_add_component(unittests
