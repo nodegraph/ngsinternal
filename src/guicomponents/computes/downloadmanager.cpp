@@ -213,7 +213,7 @@ void DownloadManager::reveal_file_on_platform(const QString& dir, const QString 
   {
     QStringList args;
     args.append("-e");
-    QString cmd = "tell application \"Finder\" to reveal POSIX file \""; + dir + "/" + find_best_matching_file + "\"";
+    QString cmd = "tell application \"Finder\" to reveal POSIX file \"" + dir + "/" + best_filename + "\"";
     args.append(cmd);
     QProcess::execute("/usr/bin/osascript", args);
   }
