@@ -14,6 +14,16 @@ INSTALL(
 )
 
 # ------------------------------------------------------------------
+# LibSodium Libraries.
+# ------------------------------------------------------------------
+
+INSTALL(FILES 
+	"${LIBSODIUM_DIR}/lib/libsodium.18.dylib"
+	DESTINATION lib
+	COMPONENT thirdparty
+	CONFIGURATIONS Debug Release)
+
+# ------------------------------------------------------------------
 # Youtube-dl executable.
 # ------------------------------------------------------------------
 

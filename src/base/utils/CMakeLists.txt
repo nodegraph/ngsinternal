@@ -45,54 +45,9 @@ target_link_libraries(ngs_utils ngs_memoryallocator)
 
 if (${ARCH} STREQUAL ARCH_WINDOWS)
 	target_link_libraries(ngs_utils libsodium)
-	if (${ARCH_BITS} STREQUAL "x64")
-	INSTALL(FILES 
-		"${LIBSODIUM_DIR}/x64/${CMAKE_BUILD_TYPE}/v140/dynamic/libsodium.dll"
-		DESTINATION bin
-		COMPONENT thirdparty
-		CONFIGURATIONS ${CMAKE_BUILD_TYPE})
-	else()
-		INSTALL(FILES 
-		"${LIBSODIUM_DIR}/Win32/${CMAKE_BUILD_TYPE}/v140/dynamic/libsodium.dll"
-		DESTINATION bin
-		COMPONENT thirdparty
-		CONFIGURATIONS ${CMAKE_BUILD_TYPE})
-	endif()
-elseif (${ARCH} STREQUAL ARCH_WINRT)
-	target_link_libraries(ngs_utils libsodium)
-	if (${ARCH_BITS} STREQUAL "x64")
-		INSTALL(FILES 
-			"${LIBSODIUM_DIR}/x64/${CMAKE_BUILD_TYPE}/v140/dynamic/libsodium.dll"
-			DESTINATION bin
-			COMPONENT thirdparty
-			CONFIGURATIONS ${CMAKE_BUILD_TYPE})
-	else()
-		INSTALL(FILES 
-			"${LIBSODIUM_DIR}/Win32/${CMAKE_BUILD_TYPE}/v140/dynamic/libsodium.dll"
-			DESTINATION bin
-			COMPONENT thirdparty
-			CONFIGURATIONS ${CMAKE_BUILD_TYPE})
-	endif()
-elseif (${ARCH} STREQUAL ARCH_ANDROID)
-    target_link_libraries(ngs_utils sodium)
-	INSTALL(FILES 
-		"${LIBSODIUM_DIR}/lib/libsodium.so"
-		DESTINATION lib
-		COMPONENT thirdparty)
-elseif (${ARCH} STREQUAL ARCH_LINUX)
-	target_link_libraries(ngs_utils sodium)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	target_link_libraries(ngs_utils sodium)
-	INSTALL(FILES 
-		"${LIBSODIUM_DIR}/lib/libsodium.18.dylib"
-		DESTINATION lib
-		COMPONENT thirdparty
-		CONFIGURATIONS ${CMAKE_BUILD_TYPE})
-elseif (${ARCH} STREQUAL ARCH_IOS)
-	target_link_libraries(ngs_utils sodium)
 endif ()
-
-
 
 # Install.
 INSTALL(TARGETS ngs_utils

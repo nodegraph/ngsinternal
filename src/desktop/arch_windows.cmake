@@ -50,6 +50,24 @@ INSTALL(
 )
 
 # ------------------------------------------------------------------
+# LibSodium Libraries.
+# ------------------------------------------------------------------
+
+if (${ARCH_BITS} STREQUAL "x64")
+	INSTALL(FILES 
+		"${LIBSODIUM_DIR}/x64/${CMAKE_BUILD_TYPE}/v140/dynamic/libsodium.dll"
+		DESTINATION bin
+		COMPONENT thirdparty
+		CONFIGURATIONS Debug Release)
+else()
+	INSTALL(FILES 
+		"${LIBSODIUM_DIR}/Win32/${CMAKE_BUILD_TYPE}/v140/dynamic/libsodium.dll"
+		DESTINATION bin
+		COMPONENT thirdparty
+		CONFIGURATIONS Debug Release)
+endif()
+
+# ------------------------------------------------------------------
 # OpenSSL Libraries.
 # ------------------------------------------------------------------
 
