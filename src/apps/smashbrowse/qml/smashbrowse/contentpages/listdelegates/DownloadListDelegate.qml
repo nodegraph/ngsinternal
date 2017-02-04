@@ -21,20 +21,19 @@ BaseListDelegate {
     _image_url: get_image_url()
     _title: title
     _content: description
-    property var _status: status
     
     title_point_size: app_settings.download_title_point_size
 	description_point_size: app_settings.download_description_point_size
 	item_height: app_settings.list_item_height_small
 	
 	function get_image_url() {
-		if (_status == "queued") {
+		if (_content == "queued") {
 			return "qrc:///icons/ic_cloud_queue_white_48dp.png"
-		} else if (_status == "downloading") {
+		} else if (_content == "downloading") {
 			return "qrc:///icons/ic_cloud_download_white_48dp.png"
-		} else if (_status == "finished") {
+		} else if (_content == "finished") {
 			return "qrc:///icons/ic_cloud_done_white_48dp.png"
-		} else if (_status == "errored") {
+		} else {
 			return "qrc:///icons/ic_cloud_off_white_48dp.png"
 		}
 	}

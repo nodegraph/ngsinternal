@@ -28,6 +28,7 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
     kLockLinksRole, // Bool: Whether to lock links.
     kMaxNodePostsRole, // Int: Maximum number of node posts. Overflow is destroyed.
     kMaxConcurrentDownloadsRole, // Int: Maximum number of concurrent downloads.
+    kDefaultDownloadsDirRole, // String: The default download directory.
   };
 
   FileModel(Entity* app_root);
@@ -41,6 +42,7 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
 
   bool links_are_locked() const;
   int get_max_concurrent_downloads() const;
+  QString get_default_download_dir() const;
 
   // Model.
   Q_INVOKABLE void load_model();

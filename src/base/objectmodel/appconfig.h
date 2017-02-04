@@ -26,7 +26,7 @@ class OBJECTMODEL_EXPORT AppConfig : public Component {
   static QString get_app_data_dir(); // The app data dir inside the user dir.
   static QString get_app_macros_dir(); // The macros dir inside of the app data dir.
   static QString get_user_macros_dir(); // The user macros dir inside of the app data dir.
-  static QString get_download_dir();
+  static QString get_fallback_download_dir();
 
   static QString get_smash_browse_url();
 

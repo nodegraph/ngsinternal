@@ -742,14 +742,7 @@ void TaskQueuer::download_video_task() {
   // on the DownloadVideoCompute node. This is so that we can always set it
   // to the current URL.
   args.insert(Message::kURL, _chain_state.value(Message::kURL));
-
-  // If the kDirectory param is empty or is a relative path,
-  // then we prepend the platform specific user's download directory to the dir.
-  QDir dir(_chain_state.value(Message::kDirectory).toString());
-  if (dir.isRelative()) {
-    dir = QDir(AppConfig::get_download_dir() + QDir::separator() + dir.path());
-  }
-  args.insert(Message::kDirectory, dir.path());
+  args.insert(Message::kDirectory, _chain_state.value(Message::kDirectory));
   args.insert(Message::kMaxWidth, _chain_state.value(Message::kMaxWidth));
   args.insert(Message::kMaxHeight, _chain_state.value(Message::kMaxHeight));
   args.insert(Message::kMaxFilesize, _chain_state.value(Message::kMaxFilesize));

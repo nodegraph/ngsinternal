@@ -26,10 +26,10 @@ DownloadManager::DownloadManager(Entity* parent)
   get_dep_loader()->register_fixed_dep(_file_model, Path());
 
   // Setup the poll timer.
-  _check_timer.setSingleShot(false);
-  _check_timer.setInterval(kCheckInterval);
-  connect(&_check_timer,SIGNAL(timeout()),this,SLOT(on_check()));
-  _check_timer.start();
+  _poll_timer.setSingleShot(false);
+  _poll_timer.setInterval(kCheckInterval);
+  connect(&_poll_timer,SIGNAL(timeout()),this,SLOT(on_poll()));
+  _poll_timer.start();
 }
 
 DownloadManager::~DownloadManager() {
@@ -39,15 +39,10 @@ DownloadManager::~DownloadManager() {
   _processes.clear();
 }
 
-void DownloadManager::on_check() {
-  // Determine the maximum number of running processes allowed.
-  int max_running = 2;
-  if (_license_checker->get_edition() == "pro") {
-    // Get the number of concurrent downloads from the settings.
-    max_running = _file_model->get_max_concurrent_downloads();
-  }
+void DownloadManager::on_poll() {
   // If the number of running processes is less than the max, then start another.
-  if (get_num_running() < max_running) {
+  int max = get_max_concurrent_by_license();
+  if (get_num_running() < max) {
     for (auto &i: _processes) {
       if (!i.second->is_running()) {
         i.second->start();
@@ -71,20 +66,20 @@ void DownloadManager::download_on_the_side(const QString& url) {
   DownloadVideoProcess *p = new_ff DownloadVideoProcess();
 
   // Connect to signals.
-  connect(p, SIGNAL(started(long long, const QString&, const QString&)), this, SLOT(on_started(long long, const QString, const QString&)));
-  connect(p, SIGNAL(progress(long long, const  QString&)), this, SLOT(on_progress(long long, const  QString&)));
-  connect(p, SIGNAL(finished(long long)), this, SLOT(on_finished(long long)));
-  connect(p, SIGNAL(errored(long long, const QString&)), this, SLOT(on_errored(long long, const QString&)));
+  connect(p, SIGNAL(started(const QString&)), this, SLOT(on_started(const QString&)));
+  connect(p, SIGNAL(progress(const  QString&)), this, SLOT(on_progress(const  QString&)));
+  connect(p, SIGNAL(finished()), this, SLOT(on_finished()));
+  connect(p, SIGNAL(errored(const QString&)), this, SLOT(on_errored(const QString&)));
 
   // Setup the arguments.
   p->set_url(url);
-  QDir dir(AppConfig::get_download_dir());
-  p->set_dir(dir.path());
+  QString dir = get_default_download_dir_by_license();
+  p->set_dir(dir);
 
   // Queue the process.
   _processes.insert({p->get_id(),p});
   // Emit queued signal.
-  emit download_queued(p->get_id(), url);
+  emit download_queued(p->get_id(), url, dir);
 }
 
 void DownloadManager::download(int msg_id, const QJsonObject& args) {
@@ -92,15 +87,25 @@ void DownloadManager::download(int msg_id, const QJsonObject& args) {
   DownloadVideoProcess *p = new_ff DownloadVideoProcess();
 
   // Connect to signals.
-  connect(p, SIGNAL(queued(long long, const QString&)), this, SLOT(on_queued(long long, const QString&)));
-  connect(p, SIGNAL(started(long long, const QString&, const QString&)), this, SLOT(on_started(long long, const QString&, const QString&)));
-  connect(p, SIGNAL(progress(long long, const  QString&)), this, SLOT(on_progress(long long, const  QString&)));
-  connect(p, SIGNAL(finished(long long)), this, SLOT(on_finished(long long)));
-  connect(p, SIGNAL(errored(long long, const QString&)), this, SLOT(on_errored(long long, const QString&)));
+  connect(p, SIGNAL(started(const QString&)), this, SLOT(on_started(const QString&)));
+  connect(p, SIGNAL(progress(const  QString&)), this, SLOT(on_progress(const  QString&)));
+  connect(p, SIGNAL(finished()), this, SLOT(on_finished()));
+  connect(p, SIGNAL(errored(const QString&)), this, SLOT(on_errored(const QString&)));
 
   // Setup the arguments.
+  QString path = args[Message::kDirectory].toString();
+
+  // Combine the directory parameter with the default donwload directory.
+  QDir dir(path);
+  if (dir.isRelative()) {
+    path = get_default_download_dir_by_license() + QDir::separator() + dir.path();
+  } else {
+    path = dir.path();
+  }
+
+  // Setup the download process.
+  p->set_dir(path);
   p->set_url(args[Message::kURL].toString());
-  p->set_dir(args[Message::kDirectory].toString());
   p->set_max_width(args[Message::kMaxWidth].toInt());
   p->set_max_height(args[Message::kMaxHeight].toInt());
   p->set_max_filesize(args[Message::kMaxFilesize].toInt());
@@ -109,7 +114,7 @@ void DownloadManager::download(int msg_id, const QJsonObject& args) {
   _processes.insert({p->get_id(),p});
 
   // Emit queued signal.
-  emit download_queued(p->get_id(), args[Message::kURL].toString());
+  emit download_queued(p->get_id(), args[Message::kURL].toString(), path);
 }
 
 void DownloadManager::stop(long long id) {
@@ -117,6 +122,28 @@ void DownloadManager::stop(long long id) {
     return;
   }
   destroy_process(id);
+}
+
+long long DownloadManager::get_sender_id() {
+  QObject* obj = sender();
+  DownloadVideoProcess *p = static_cast<DownloadVideoProcess*>(obj);
+  return p->get_id();
+}
+
+int DownloadManager::get_max_concurrent_by_license() {
+  if (_license_checker->get_edition() == "pro") {
+    // Get the number of concurrent downloads from the settings.
+    return _file_model->get_max_concurrent_downloads();
+  }
+  return 2;
+}
+
+QString DownloadManager::get_default_download_dir_by_license() {
+  if (_license_checker->get_edition() == "pro") {
+    // Get the number of concurrent downloads from the settings.
+    return _file_model->get_default_download_dir();
+  }
+  return AppConfig::get_fallback_download_dir();
 }
 
 void DownloadManager::destroy_process(long long id) {
@@ -129,36 +156,28 @@ void DownloadManager::destroy_process(long long id) {
   //delete_ff(p);
 }
 
-void DownloadManager::on_queued_side_download(long long id, const QString& url) {
-  emit download_queued(id, url);
-}
-
-void DownloadManager::on_queued(long long id, const QString& url) {
+void DownloadManager::on_started(const QString& filename) {
   internal();
-
-  // Once queued we consider the task to be done. We don't wait for it to finish.
-  Message response(true, url);
-  response.insert(Message::kID, _last_msg_id);
-  _manipulator->receive_message(response.to_string());
-
-  emit download_queued(id, url);
+  long long id = get_sender_id();
+  emit download_started(id, filename);
 }
 
-void DownloadManager::on_started(long long id, const QString& dir, const QString& filename) {
+void DownloadManager::on_progress(const  QString& progress) {
   internal();
-  emit download_started(id, dir, filename);
-}
-
-void DownloadManager::on_progress(long long id, const  QString& progress) {
+  long long id = get_sender_id();
   emit download_progress(id, progress);
 }
 
-void DownloadManager::on_errored(long long id, const QString& error) {
+void DownloadManager::on_errored(const QString& error) {
+  internal();
+  long long id = get_sender_id();
   destroy_process(id);
   emit download_errored(id, error);
 }
 
-void DownloadManager::on_finished(long long id) {
+void DownloadManager::on_finished() {
+  internal();
+  long long id = get_sender_id();
   destroy_process(id);
   emit download_finished(id);
 }
@@ -198,17 +217,18 @@ void DownloadManager::reveal_file_on_platform(const QString& dir, const QString 
     return;
   }
   QString best_filename = find_best_matching_file(dir, similar_filename);
+  std::cerr << "best filename is: " << best_filename.toStdString() << "\n";
 
 #if (ARCH == ARCH_WINDOWS)
   QString cmd = "explorer.exe";
+  QStringList args;
   if (!best_filename.isEmpty()) {
-    cmd += " /select,";
-    cmd += QDir::toNativeSeparators(dir) + QDir::separator() + best_filename;
-  } else {
-    cmd += " ";
-    cmd += QDir::toNativeSeparators(dir) + QDir::separator() + best_filename;
+    args.append("/select,");
   }
-  QProcess::startDetached(cmd);
+  args.append(QString("\"%1\"").arg(QDir::toNativeSeparators(dir) + QDir::separator() + best_filename));
+
+  std::cerr << "cmd is: " << cmd.toStdString() << "\n";
+  QProcess::startDetached(cmd, args);
 #elif (ARCH == ARCH_MACOS)
   {
     QStringList args;

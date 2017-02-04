@@ -103,29 +103,32 @@ Rectangle {
         id: download_settings
         visible: false
     }
-
+    
     // Stuff to do when this component is completed.
     Component.onCompleted: {
         update_dependencies()
     }
 
+	function on_license_checked(valid) {
+		console.log("license is valid: " + license_checker.license_is_valid())
+    	console.log("loading stuff")
+    	file_model.load_model()
+    	file_model.load_graph()
+	}
+
     function update_dependencies() {
         // Download manager connections.
         download_manager.download_queued.connect(downloads_page.on_download_queued)
         download_manager.download_started.connect(downloads_page.on_download_started)
-        download_manager.download_progress.connect(downloads_page.on_download_progress)
         download_manager.download_finished.connect(downloads_page.on_download_finished)
         download_manager.download_errored.connect(downloads_page.on_download_errored)
 
-		// Determine the next page to show.
-		//license_checker.load()
-		//if (license_checker.license_is_valid()) {
-		//	downloads_page.visible = true
-		//} else {
-		//	license_page.visible = true
-        //}
-
         // Hook up some pre-close tasks.
         quick_view.closing.connect(app_window.on_closing)
+        
+        // Load our license.
+        license_checker.load()
+        app_utils.check_license(on_license_checked)
+        console.log("www waiting for license check")
     }
 }

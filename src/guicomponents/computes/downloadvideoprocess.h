@@ -17,7 +17,6 @@ Q_OBJECT
   virtual ~DownloadVideoProcess();
   int get_id() const;
 
-
   void set_url(const QString& url);
   void set_dir(const QString& dir);
   void set_max_width(int w);
@@ -28,22 +27,22 @@ Q_OBJECT
   virtual const QString& get_filename() const;
 
   signals:
-  void started(long long pid, const QString& dir, const QString& filename);
-  void progress(long long pid, const  QString& progress);
-  void finished(long long pid);
-  void errored(long long pid, const QString& error);
+  void started(const QString& filename);
+  void progress(const  QString& progress);
+  void finished();
 
  protected:
 
  protected slots:
-  virtual void on_error(QProcess::ProcessError error);
   virtual void on_state_changed(QProcess::ProcessState);
-  virtual void on_read_standard_error();
-  virtual void on_read_standard_output();
+  virtual void on_stderr();
+  virtual void on_stdout();
 
  protected:
   static int next_id;
   const int _id;
+
+  bool _started;
 
   QString _url;
   QString _dir;

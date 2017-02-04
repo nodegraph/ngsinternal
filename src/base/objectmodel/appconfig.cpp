@@ -65,7 +65,7 @@ QString AppConfig::get_user_macros_dir() {
   return get_user_app_dir() + "/" + kUserMacrosDir;
 }
 
-QString AppConfig::get_download_dir() {
+QString AppConfig::get_fallback_download_dir() {
   return QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + QDir::separator() + QCoreApplication::applicationName();
 }
 

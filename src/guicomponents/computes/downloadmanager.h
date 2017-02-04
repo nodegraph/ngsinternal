@@ -43,23 +43,23 @@ Q_OBJECT
   static void reveal_file_on_platform(const QString& dir, const QString &filename);
 
 signals:
- void download_queued(long long id, const QString& url);
- void download_started(long long id, const QString& dir, const QString& filename);
+ void download_queued(long long id, const QString& url, const QString& dest_dir);
+ void download_started(long long id, const QString& filename);
  void download_progress(long long id, const  QString& progress);
  void download_finished(long long id);
  void download_errored(long long id, const QString& error);
 
  private slots:
-  void on_check();
-  void on_queued_side_download(long long id, const QString& url);
-
-  void on_queued(long long id, const QString& url);
-  void on_started(long long id, const QString& dir, const QString& filename);
-  void on_progress(long long id, const  QString& progress);
-  void on_errored(long long id, const QString& error);
-  void on_finished(long long id);
+  void on_poll();
+  void on_started(const QString& filename);
+  void on_progress(const  QString& progress);
+  void on_errored(const QString& error);
+  void on_finished();
 
  private:
+  long long get_sender_id();
+  int get_max_concurrent_by_license();
+  QString get_default_download_dir_by_license();
   void destroy_process(long long id);
 
   // Our fixed dependencies.
@@ -74,7 +74,7 @@ signals:
   int _last_msg_id;
 
   // Timer to check when is room to start running the next queued process.
-  QTimer _check_timer;
+  QTimer _poll_timer;
   static const int kCheckInterval;
 };
 

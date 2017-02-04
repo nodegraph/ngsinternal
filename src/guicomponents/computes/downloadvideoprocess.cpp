@@ -19,6 +19,7 @@ int DownloadVideoProcess::next_id = 0;
 DownloadVideoProcess::DownloadVideoProcess()
     : BaseProcess(),
       _id(next_id++),
+      _started(false),
       _max_width(-1),
       _max_height(-1),
       _max_filesize(-1),
@@ -58,52 +59,32 @@ void DownloadVideoProcess::set_max_filesize(int s) {
   _max_filesize = s;
 }
 
-void DownloadVideoProcess::on_error(QProcess::ProcessError error) {
-  BaseProcess::on_error(error);
-  switch (error) {
-    case QProcess::ProcessError::FailedToStart: {
-      emit errored(get_id(), "failed to start");
-      break;
-    }
-    case QProcess::ProcessError::Crashed: {
-      emit errored(get_id(), "crashed");
-      break;
-    }
-    case QProcess::ProcessError::Timedout: {
-      emit errored(get_id(), "timed out");
-      break;
-    }
-    case QProcess::ProcessError::WriteError: {
-      emit errored(get_id(), "write error");
-      break;
-    }
-    case QProcess::ProcessError::ReadError: {
-      emit errored(get_id(), "read error");
-      break;
-    }
-    case QProcess::ProcessError::UnknownError: {
-      emit errored(get_id(), "unknown error");
-      break;
-    }
-  }
-}
-
 void DownloadVideoProcess::on_state_changed(QProcess::ProcessState state) {
   if (state == QProcess::NotRunning) {
-    emit finished(get_id());
+    emit finished();
   }
 }
 
-void DownloadVideoProcess::on_read_standard_error() {
-  BaseProcess::on_read_standard_error();
+void DownloadVideoProcess::on_stderr() {
+  if (_started) {
+    disconnect_stderr();
+    return;
+  }
+
+  BaseProcess::on_stderr();
 }
 
 const char* DownloadVideoProcess::_already_downloaded_pattern ="(.+)\\s*has already been downloaded";
 const char* DownloadVideoProcess::_filename_pattern = "Destination:\\s*(.+)";
 const char* DownloadVideoProcess::_progress_pattern = "(.*)";
 
-void DownloadVideoProcess::on_read_standard_output() {
-  BaseProcess::on_read_standard_output();
+void DownloadVideoProcess::on_stdout() {
+  if (_started) {
+    disconnect_stdout();
+    return;
+  }
+
+  BaseProcess::on_stdout();
   QStringList lines = _last_stdout.split('\n', QString::SkipEmptyParts);
 
   for (QString & line: lines) {
@@ -132,9 +113,10 @@ void DownloadVideoProcess::on_read_standard_output() {
         QString abs_path = list[1].trimmed();
         QFileInfo info(abs_path);
         QString dir = info.dir().path();
-        QString filename = info.fileName();
+        QString base_name = info.baseName();
         // Emit signal.
-        emit started(get_id(), dir, filename);
+        _started = true;
+        emit started(base_name);
         continue;
       }
 
@@ -148,9 +130,10 @@ void DownloadVideoProcess::on_read_standard_output() {
         QString abs_path = list[1].trimmed();
         QFileInfo info(abs_path);
         QString dir = info.dir().path();
-        QString filename = info.fileName();
+        QString base_name = info.baseName();
         // Emit signal.
-        emit started(get_id(), dir, filename);
+        _started = true;
+        emit started(base_name);
         continue;
       }
 
@@ -165,7 +148,7 @@ void DownloadVideoProcess::on_read_standard_output() {
         QString msg = list[1];
         msg = msg.simplified(); // strip whitespace from the front and back
         // Emit signal.
-        emit progress(get_id(), msg);
+        emit progress(msg);
         continue;
       }
     }

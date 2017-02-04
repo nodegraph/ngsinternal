@@ -57,12 +57,14 @@ Rectangle {
     	file_model.load_graph()
     	// We currently only have one value.
     	max_concurrent_downloads_text_field.text = file_model.get_work_setting('max_concurrent_downloads')
+    	default_downloads_dir_text_field.text = file_model.get_work_setting('default_downloads_directory')
     }
     
     function save_settings() {
         // We currently only have one value.
         var info = {}
         info.max_concurrent_downloads = Number(max_concurrent_downloads_text_field.text)
+        info.default_downloads_directory = default_downloads_dir_text_field.text
         
         var row = file_model.get_working_row()
         file_model.update_graph(row, info)
@@ -85,6 +87,22 @@ Rectangle {
         // Go back to the downloads page.
         downloads_page.visible = true
     }
+    
+    FileDialog {
+	    id: file_dialog
+	    title: "Please choose a folder"
+	    folder: shortcuts.home
+	    selectFolder: true
+	    onAccepted: {
+	    	var dir = file_dialog.folder.toString()
+        	dir = dir.replace(/^(file:\/{3})/,"");
+        	// unescape html codes
+        	default_downloads_dir_text_field.text = decodeURIComponent(dir);
+	    }
+	    onRejected: {
+	    }
+	    //Component.onCompleted: visible = true
+	}
 
     ColumnLayout {
         height: app_settings.screen_height
@@ -170,7 +188,6 @@ Rectangle {
             
         AppLabel {
             id: max_concurrent_downloads_label
-            visible: pro_edition_button.checked
             text: "Max Concurrent Downloads"
             anchors {
             	horizontalCenter: parent.horizontalCenter
@@ -182,7 +199,7 @@ Rectangle {
         // Title Field.
         AppLineEdit {
             id: max_concurrent_downloads_text_field
-            visible: pro_edition_button.checked
+            enabled: pro_edition_button.checked
             text: '2'
             validator: RegExpValidator{regExp: /\d+/}
             inputMethodHints: Qt.ImhDigitsOnly
@@ -191,6 +208,51 @@ Rectangle {
                 leftMargin: app_settings.page_left_margin
                 rightMargin: app_settings.page_right_margin
             }
+        }
+        
+        AppLabel {
+            id: default_download_dir_label
+            text: "Default Download Directory"
+            anchors {
+            	horizontalCenter: parent.horizontalCenter
+                leftMargin: app_settings.page_left_margin
+                rightMargin: app_settings.page_right_margin
+            }
+        }
+        
+        RowLayout {
+        	Item {
+        		Layout.fillWidth: true
+        	}
+        		
+	        AppLineEdit {
+	            id: default_downloads_dir_text_field
+	            enabled: pro_edition_button.checked
+	            text: ''
+	            validator: RegExpValidator{regExp: /\d+/}
+	            inputMethodHints: Qt.ImhDigitsOnly
+	            anchors {
+	                leftMargin: app_settings.page_left_margin
+	                rightMargin: app_settings.page_right_margin
+	            }
+	        }
+	        
+	        // Continue button.
+	        AppLabelButton {
+	            id: file_dialog_button
+	            enabled: pro_edition_button.checked
+	            text: "..."
+	            onClicked: {
+	            	if (default_downloads_dir_text_field.text != "") {
+	            		file_dialog.folder = "file:///" + default_downloads_dir_text_field.text
+	            	}
+	            	file_dialog.open()
+	            }
+	        }
+	        
+	        Item {
+        		Layout.fillWidth: true
+        	}
         }
 
         // Continue button.

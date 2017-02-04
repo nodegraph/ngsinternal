@@ -51,6 +51,7 @@ FileModel::FileModel(Entity* app_root)
   _roles[kLockLinksRole] = "lock_links";
   _roles[kMaxNodePostsRole] = "max_node_posts";
   _roles[kMaxConcurrentDownloadsRole] = "max_concurrent_downloads";
+  _roles[kDefaultDownloadsDirRole] = "default_downloads_directory";
   setItemRoleNames(_roles);
 
   // Set up our default role values.
@@ -61,6 +62,7 @@ FileModel::FileModel(Entity* app_root)
   _default_settings["lock_links"] = false;
   _default_settings["max_node_posts"] = 1000;
   _default_settings["max_concurrent_downloads"] = 2;
+  _default_settings["default_downloads_directory"] = "";
 
   // Sort on titles.
   setSortRole(kTitleRole);
@@ -88,6 +90,14 @@ bool FileModel::links_are_locked() const {
 
 int FileModel::get_max_concurrent_downloads() const {
   return get_work_setting(FileModel::kMaxConcurrentDownloadsRole).toInt();
+}
+
+QString FileModel::get_default_download_dir() const {
+  QString dir = get_work_setting(FileModel::kDefaultDownloadsDirRole).toString();
+  if (dir.isEmpty()) {
+    return AppConfig::get_fallback_download_dir();
+  }
+  return dir;
 }
 
 void FileModel::on_item_changed(QStandardItem* item) {
@@ -275,6 +285,8 @@ void FileModel::load_model() {
     loader.load(max_node_posts);
     int max_concurrent_downloads;
     loader.load(max_concurrent_downloads);
+    std::string default_downloads_directory;
+    loader.load(default_downloads_directory);
 
     QStandardItem *item = new_ff QStandardItem();
     QString qtitle(title.c_str());
@@ -286,6 +298,7 @@ void FileModel::load_model() {
     item->setData(lock_links, kLockLinksRole);
     item->setData(max_node_posts, kMaxNodePostsRole);
     item->setData(max_concurrent_downloads, kMaxConcurrentDownloadsRole);
+    item->setData(default_downloads_directory.c_str(), kDefaultDownloadsDirRole);
     setItem(static_cast<int>(i), 0, item);
   }
 
@@ -319,6 +332,7 @@ void FileModel::save_model() {
       saver.save(data(index(ii,0), kLockLinksRole).toBool());
       saver.save(data(index(ii,0), kMaxNodePostsRole).toInt());
       saver.save(data(index(ii,0), kMaxConcurrentDownloadsRole).toInt());
+      saver.save(data(index(ii,0), kDefaultDownloadsDirRole).toString().toStdString());
     }
   }
 
@@ -539,6 +553,7 @@ void FileModel::create_graph(const QVariantMap& arg) {
   item->setData(settings["lock_links"], kLockLinksRole);
   item->setData(settings["max_node_posts"], kMaxNodePostsRole);
   item->setData(settings["max_concurrent_downloads"], kMaxConcurrentDownloadsRole);
+  item->setData(settings["default_downloads_directory"], kDefaultDownloadsDirRole);
   setItem(_working_row, 0, item);
 
   // Clear the existing nodes.

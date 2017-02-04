@@ -18,6 +18,9 @@ Q_OBJECT
   virtual bool is_running() const;
   virtual long long get_pid() const;
 
+ signals:
+  void errored(const QString& error);
+
  protected:
 
   // Setup.
@@ -25,12 +28,16 @@ Q_OBJECT
   void set_program(const QString& program);
   void set_args(const QStringList& args);
 
+  // Comms.
+  void disconnect_stderr();
+  void disconnect_stdout();
+
  protected slots:
   virtual void on_started();
   virtual void on_error(QProcess::ProcessError error);
   virtual void on_state_changed(QProcess::ProcessState);
-  virtual void on_read_standard_error();
-  virtual void on_read_standard_output();
+  virtual void on_stderr();
+  virtual void on_stdout();
 
  private:
   QProcess* _process;

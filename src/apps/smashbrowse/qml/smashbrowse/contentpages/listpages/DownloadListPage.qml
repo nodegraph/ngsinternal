@@ -26,70 +26,62 @@ BaseListPage {
     x: app_settings.page_x
     y: app_settings.page_y
     z: app_settings.page_z
+    
+    property int _downloads_completed: 0
         
     // Methods.
     function on_switch_to_mode(mode) {
         if (mode == app_settings.downloads_mode) {
-            stack_view_header.title_text = "download queue"
-            visible = true;
+            update_header()
+            visible = true
         } else {
-            visible = false;
+            visible = false
         }
+    }
+    
+    function update_header() {
+    	stack_view_header.title_text = "finished: " + _downloads_completed
     }
     
     function on_download_double_clicked(row) {
     	var obj = model.get(row)
-    	download_manager.reveal_file(obj.dir, obj.title)
+    	console.log('double clicked dir: ' + obj.dest_dir + ' title: ' + obj.title) 
+    	download_manager.reveal_file(obj.dest_dir, obj.title)
     }
 
-    function on_download_queued(pid, url) {
-        model.append({"title": url, "dir": "", "description": "queued", "pid": pid, "status": "queued"})
+    function on_download_queued(id, url, dest_dir) {
+        model.append({"id": id, "title": url, "dest_dir": dest_dir, "description": "queued"})
     }
     
-    function on_download_started(pid, dir, filename) {
+    function on_download_started(id, filename) {
         for (var i=0; i<model.count; i++) {
             var obj = model.get(i)
-            if (obj.pid == pid) {
+            if (obj.id == id) {
                 obj.title = filename
-                obj.description = ""
-                obj.dir = dir
-                obj.status = "downloading"
+                obj.description = "downloading"
                 model.set(i, obj);
                 break;
             }
         }
     }
     
-    function on_download_progress(pid, progress) {
+    function on_download_finished(id) {
         for (var i=0; i<model.count; i++) {
             var obj = model.get(i)
-            if (obj.pid == pid) {
-                obj.description = progress
-                obj.status = "downloading"
-                model.set(i, obj);
+            if (obj.id == id) {
+            	_downloads_completed += 1
+            	update_header()
+            	model.remove(i)
                 break;
             }
         }
     }
     
-    function on_download_finished(pid) {
+    function on_download_errored(id, error) {
         for (var i=0; i<model.count; i++) {
             var obj = model.get(i)
-            if (obj.pid == pid) {
-                obj.description = obj.description + '\n' + 'finished'
-                obj.status = "finished"
-                model.set(i, obj);
-                break;
-            }
-        }
-    }
-    
-    function on_download_errored(pid, error) {
-        for (var i=0; i<model.count; i++) {
-            var obj = model.get(i)
-            if (obj.pid == pid) {
+            if (obj.id == id) {
                 obj.description = "error: " + error
-                obj.status = "errored"
                 model.set(i, obj);
                 break;
             }

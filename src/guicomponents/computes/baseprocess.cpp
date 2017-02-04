@@ -33,12 +33,45 @@ void BaseProcess::set_args(const QStringList& args) {
   _args = args;
 }
 
+void BaseProcess::disconnect_stderr() {
+  disconnect(_process, SIGNAL(readyReadStandardError()), this, SLOT(on_stderr()));
+}
+
+void BaseProcess::disconnect_stdout() {
+  disconnect(_process, SIGNAL(readyReadStandardOutput()), this, SLOT(on_stdout()));
+}
+
 void BaseProcess::on_started() {
   //qDebug() << "process has started";
 }
 
 void BaseProcess::on_error(QProcess::ProcessError error) {
-  qDebug() << "process error: " << error << "\n";
+  switch (error) {
+    case QProcess::ProcessError::FailedToStart: {
+      emit errored("failed to start");
+      break;
+    }
+    case QProcess::ProcessError::Crashed: {
+      emit errored("crashed");
+      break;
+    }
+    case QProcess::ProcessError::Timedout: {
+      emit errored("timed out");
+      break;
+    }
+    case QProcess::ProcessError::WriteError: {
+      emit errored("write error");
+      break;
+    }
+    case QProcess::ProcessError::ReadError: {
+      emit errored("read error");
+      break;
+    }
+    case QProcess::ProcessError::UnknownError: {
+      emit errored("unknown error");
+      break;
+    }
+  }
 }
 
 void BaseProcess::on_state_changed(QProcess::ProcessState state) {
@@ -46,7 +79,7 @@ void BaseProcess::on_state_changed(QProcess::ProcessState state) {
   }
 }
 
-void BaseProcess::on_read_standard_error() {
+void BaseProcess::on_stderr() {
   _last_stderr = _process->readAllStandardError();
 
   // Dump any std errors from the process.
@@ -62,7 +95,7 @@ void BaseProcess::on_read_standard_error() {
   }
 }
 
-void BaseProcess::on_read_standard_output() {
+void BaseProcess::on_stdout() {
   _last_stdout = _process->readAllStandardOutput();
 
   // Dump any std output from the process.
@@ -89,8 +122,8 @@ void BaseProcess::start() {
   connect(_process, SIGNAL(started()), this, SLOT(on_started()));
   connect(_process, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(on_error(QProcess::ProcessError)));
   connect(_process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(on_state_changed(QProcess::ProcessState)));
-  connect(_process, SIGNAL(readyReadStandardError()), this, SLOT(on_read_standard_error()));
-  connect(_process, SIGNAL(readyReadStandardOutput()), this, SLOT(on_read_standard_output()));
+  connect(_process, SIGNAL(readyReadStandardError()), this, SLOT(on_stderr()));
+  connect(_process, SIGNAL(readyReadStandardOutput()), this, SLOT(on_stdout()));
 
   _process->setProgram(_program);
   _process->setArguments(_args);
