@@ -225,9 +225,7 @@ void DownloadManager::reveal_file_on_platform(const QString& dir, const QString 
   if (!best_filename.isEmpty()) {
     args.append("/select,");
   }
-  args.append(QString("\"%1\"").arg(QDir::toNativeSeparators(dir) + QDir::separator() + best_filename));
-
-  std::cerr << "cmd is: " << cmd.toStdString() << "\n";
+  args.append(QDir::toNativeSeparators(dir) + QDir::separator() + best_filename);
   QProcess::startDetached(cmd, args);
 #elif (ARCH == ARCH_MACOS)
   {
