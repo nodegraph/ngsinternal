@@ -115,6 +115,12 @@ void DownloadManager::download(int msg_id, const QJsonObject& args) {
 
   // Emit queued signal.
   emit download_queued(p->get_id(), args[Message::kURL].toString(), path);
+
+  // We don't wait for the download to finish.
+  // We send the success response back right away.
+  Message response(true, true);
+  response.insert(Message::kID, msg_id);
+  _manipulator->receive_message(response.to_string());
 }
 
 void DownloadManager::stop(long long id) {
