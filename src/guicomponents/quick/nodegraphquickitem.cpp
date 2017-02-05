@@ -945,7 +945,7 @@ void NodeGraphQuickItem::explode_group() {
 void NodeGraphQuickItem::view_node_poke() {
   _last_node_shape = _selection->get_view_node();
   if (!_last_node_shape) {
-    emit view_node_outputs(QString("select a node to view"), QJsonObject());
+    emit view_node_outputs(QString("no last viewed"), QJsonObject());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
@@ -956,7 +956,7 @@ void NodeGraphQuickItem::view_node_poke() {
 void NodeGraphQuickItem::edit_node_poke() {
   _last_node_shape = _selection->get_edit_node();
   if (!_last_node_shape) {
-    emit edit_node_inputs(QString("select a node to edit"), QJsonObject(), QJsonObject(), QJsonObject());
+    emit edit_node_inputs(QString("no last edited"), QJsonObject(), QJsonObject(), QJsonObject());
     return;
   }
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());

@@ -28,11 +28,13 @@ BaseListPage {
     x: app_settings.page_x
     y: app_settings.page_y
     z: app_settings.page_z
+    
+    property int _num_posts: 0
 
     // Methods.
     function on_switch_to_mode(mode) {
         if (mode == app_settings.posts_mode) {
-            stack_view_header.title_text = "Posts from Nodes"
+            stack_view_header.title_text = "0 posts"
             visible = true;
         } else {
             visible = false;

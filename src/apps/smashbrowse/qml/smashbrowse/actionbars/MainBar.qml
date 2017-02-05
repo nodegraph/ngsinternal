@@ -245,7 +245,7 @@ Rectangle {
     	}
         
         image_url: "qrc:///icons/ic_whatshot_white_48dp.png"
-        tooltip_text: "Posts from Nodes"
+        tooltip_text: "Posts"
         
         onClicked: {
             on_switch_to_mode(app_settings.posts_mode)
