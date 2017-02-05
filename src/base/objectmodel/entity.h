@@ -97,6 +97,8 @@ class OBJECTMODEL_EXPORT Entity {
 
   // Our group context.
   std::unordered_set<EntityDID> get_group_context_dids() const;
+  bool has_group_related_did() const;
+  size_t get_num_nodes() const;
 
   // Our name.
   const std::string& get_name() const;

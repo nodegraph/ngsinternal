@@ -28,7 +28,7 @@ Rectangle {
         color: "white"
 
         y: parent.height * 6.5/10
-        text: "Smash Browse"
+        text: "already running"
         anchors {
             horizontalCenter:  parent.horizontalCenter
         }

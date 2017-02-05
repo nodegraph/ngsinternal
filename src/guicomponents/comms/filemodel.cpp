@@ -34,6 +34,7 @@ namespace ngs {
 
 const QString FileModel::kAppFile = "model.dat"; // Stores the mapping between displayed filename and actual filename.
 const int FileModel::kMaxConcurrentDownloadsLite = 1;
+const int FileModel::kMaxSaveableNodes = 20;
 
 FileModel::FileModel(Entity* app_root)
     : QStandardItemModel(),
@@ -65,7 +66,7 @@ FileModel::FileModel(Entity* app_root)
   _default_settings["auto_run_interval"] = 60;
   _default_settings["lock_links"] = false;
   _default_settings["max_node_posts"] = 1000;
-  _default_settings["max_concurrent_downloads"] = 2;
+  _default_settings["max_concurrent_downloads"] = kMaxConcurrentDownloadsLite;
   _default_settings["default_downloads_directory"] = "";
 
   // Sort on titles.
@@ -372,12 +373,13 @@ void FileModel::load_graph() {
   }
 }
 
-void FileModel::save_graph() {
+bool FileModel::save_graph() {
   external();
   if (_working_row < 0) {
-    return;
+    return false;
   }
-  save_graph(_working_row);
+
+  return save_graph(_working_row);
 }
 
 bool FileModel::user_macro_exists(const QString& macro_name) const {
@@ -478,7 +480,14 @@ std::string FileModel::graph_to_string(int row) {
   return ss.str();
 }
 
-void FileModel::save_graph(int row) {
+bool FileModel::save_graph(int row) {
+  // A lite license only permits us to save graphs with a max of 10 nodes.
+  if (!_license_checker->has_valid_pro_license()) {
+    if (get_root_group()->get_num_nodes() > kMaxSaveableNodes) {
+      return false;
+    }
+  }
+
   external();
   _working_row = row;
 
@@ -488,6 +497,7 @@ void FileModel::save_graph(int row) {
   // Write the graph file.
   QString graph_file = data(index(row,0), kFilenameRole).toString();
   _crypto_logic->write_file(graph_file, contents);
+  return true;
 }
 
 void FileModel::publish_user_macro(int row, const QString& macro_name) {

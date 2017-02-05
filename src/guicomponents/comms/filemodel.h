@@ -18,6 +18,7 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
 
   static const QString kAppFile;
   static const int kMaxConcurrentDownloadsLite;
+  static const int kMaxSaveableNodes;
 
   COMPONENT_ID(FileModel, FileModel)
 
@@ -52,9 +53,9 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   // Graph.
   Q_INVOKABLE void load_graph();
   Q_INVOKABLE void load_graph(int row);
-  Q_INVOKABLE void save_graph();
+  Q_INVOKABLE bool save_graph();
 
-  Q_INVOKABLE void save_graph(int row);
+  Q_INVOKABLE bool save_graph(int row);
   Q_INVOKABLE void destroy_graph();
   Q_INVOKABLE void destroy_graph(int row);
 

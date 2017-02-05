@@ -718,12 +718,13 @@ void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
     return;
   }
 
-  // If the license is lite then we don't allow diving into app and user macros.
-  if (!_license_checker->has_valid_pro_license()) {
-    if ( (group_entity->get_did() == EntityDID::kAppMacroNodeEntity) ||
-        (group_entity->get_did() == EntityDID::kUserMacroNodeEntity) ) {
-      return;
-    }
+  // We don't allow diving into app and user macros.
+  if ( (group_entity->get_did() == EntityDID::kAppMacroNodeEntity) ||
+      (group_entity->get_did() == EntityDID::kUserMacroNodeEntity) ) {
+    QString msg = "Diving into app and user macros is not permitted.";
+    emit set_error_message(msg);
+    emit show_error_page();
+    return;
   }
 
   // Dive into the group.
@@ -789,9 +790,19 @@ void NodeGraphQuickItem::frame_selected() {
   update();
 }
 
-void NodeGraphQuickItem::save() {
+bool NodeGraphQuickItem::save() {
   external();
-  _file_model->save_graph();
+  if (!_file_model->save_graph()) {
+    size_t num_nodes = get_root_group()->get_num_nodes();
+    std::cerr << "num nodes is: " << num_nodes << "\n";
+    QString msg = "Unable to save graph.\n";
+    msg += "With the Lite license, only graphs with a maximum of " + QString::number(FileModel::kMaxSaveableNodes)+ " nodes can be saved.";
+    msg += "There are currently " + QString::number(num_nodes) + " nodes in this graph.";
+    emit set_error_message(msg);
+    emit show_error_page();
+    return false;
+  }
+  return true;
 }
 
 bool NodeGraphQuickItem::macro_exists(const QString& macro_name) const{
@@ -902,10 +913,17 @@ void NodeGraphQuickItem::collapse_to_group() {
 void NodeGraphQuickItem::explode_group() {
   external();
 
-  // If the license is lite then we don't allow exploding groups,
-  // because we don't allow diving into app and user macros.
-  // Otherwise exploding the group could get around this.
-  if (!_license_checker->has_valid_pro_license()) {
+  // We don't allow exploding macros.
+  const DepUSet<NodeShape>& selected = _selection->get_selected();
+  if (selected.empty()) {
+    return;
+  }
+  Entity *e = (*selected.begin())->our_entity();
+  if ((e->get_did() == EntityDID::kAppMacroNodeEntity) ||
+      (e->get_did() == EntityDID::kUserMacroNodeEntity)) {
+    QString msg = "Exploding app and user macros is not permitted.";
+    emit set_error_message(msg);
+    emit show_error_page();
     return;
   }
 

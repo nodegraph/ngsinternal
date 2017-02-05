@@ -41,7 +41,7 @@ Rectangle {
     AppStackViewHeader {
         id: stack_view_header
         stack_view: processing_page.Stack.view
-        title_text: "Node Compute Error"
+        title_text: "Error Details"
         show_back_button: false
     }
 

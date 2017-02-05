@@ -72,6 +72,40 @@ std::unordered_set<EntityDID> Entity::get_group_context_dids() const {
   return dids;
 }
 
+bool Entity::has_group_related_did() const {
+  EntityDID did = get_did();
+  if ((did == EntityDID::kBaseGroupNodeEntity) ||
+      (did == EntityDID::kGroupNodeEntity) ||
+      (did == EntityDID::kIfGroupNodeEntity) ||
+      (did == EntityDID::kForEachGroupNodeEntity) ||
+      (did == EntityDID::kWhileGroupNodeEntity) ||
+      (did == EntityDID::kScriptGroupNodeEntity) ||
+      (did == EntityDID::kBrowserGroupNodeEntity) ||
+      (did == EntityDID::kFirebaseGroupNodeEntity) ||
+      (did == EntityDID::kMQTTGroupNodeEntity)) {
+    return true;
+  }
+  return false;
+}
+
+size_t Entity::get_num_nodes() const {
+  // Note we don't the group node itself as a node.
+  // However we do count the nodes inside the group node.
+  const Entity::NameToChildMap& children = get_children();
+  size_t count = 0;
+  for (auto &iter: children) {
+    // Skip namespace folders like inputs, outputs and links.
+    if (iter.second->get_did() == EntityDID::kBaseNamespaceEntity) {
+      continue;
+    } else if (iter.second->has_group_related_did()) {
+      count += iter.second->get_num_nodes();
+    } else {
+      count += 1;
+    }
+  }
+  return count;
+}
+
 const std::string& Entity::get_name() const {
   return _name;
 }

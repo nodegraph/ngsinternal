@@ -39,8 +39,6 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   virtual void dirty_all_nodes_in_group();
   virtual void dirty_all_nodes_in_group_recursively();
 
-
-
  protected:
 
   // Our state.

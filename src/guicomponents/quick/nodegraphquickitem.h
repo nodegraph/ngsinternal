@@ -80,7 +80,7 @@ Q_OBJECT
   Q_INVOKABLE void frame_selected();
 
   // Serialization.
-  Q_INVOKABLE void save();
+  Q_INVOKABLE bool save();
   Q_INVOKABLE void load();
 
   // Macros.
