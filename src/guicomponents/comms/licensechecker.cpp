@@ -1,5 +1,6 @@
 #include <base/memoryallocator/taggednew.h>
 #include <guicomponents/comms/licensechecker.h>
+#include <guicomponents/comms/messagetypes.h>
 #include <base/objectmodel/deploader.h>
 
 #include <cstddef>
@@ -12,6 +13,7 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonValue>
+#include <QtCore/QCoreApplication>
 #include <QtWebSockets/QWebSocket>
 
 #include <QtNetwork/QNetworkAccessManager>
@@ -60,6 +62,7 @@ LicenseChecker::LicenseChecker(Entity *parent)
       _crypto_logic(this),
       _network_manager(new_ff QNetworkAccessManager(this)),
       _date_regex("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)"),
+      _edition(LicenseEdition::kLite),
       _license_is_valid(false) {
   get_dep_loader()->register_fixed_dep(_crypto_logic, Path());
 
@@ -68,7 +71,7 @@ LicenseChecker::LicenseChecker(Entity *parent)
   //check_license("lite", "3AA4B57A-B8EC4445-B0D2437B-11568F59");
 
 #ifdef SKIP_LICENSE_CHECK
-  _edition = "lite";
+  _edition = LicenseEdition::kLite;
   _license = "bogus";
   _license_is_valid = true;
 #endif
@@ -84,7 +87,8 @@ void LicenseChecker::save() const{
   {
     std::stringstream ss;
     SimpleSaver saver(ss);
-    saver.save(_edition);
+    int e = to_underlying(_edition);
+    saver.save(e);
     saver.save(_license);
     _crypto_logic->write_file(kLicenseFile, ss.str());
   }
@@ -93,7 +97,7 @@ void LicenseChecker::save() const{
 void LicenseChecker::load() {
   external();
   if (!_crypto_logic->file_exists(kLicenseFile)) {
-    _edition = "lite";
+    _edition = LicenseEdition::kLite;
     _license = "unspecified";
     _license_is_valid = true;
     return;
@@ -105,21 +109,27 @@ void LicenseChecker::load() {
   SimpleLoader loader(bits);
 
   // Extract the nonce and salt.
-  loader.load(_edition);
+  int e;
+  loader.load(e);
+  _edition = static_cast<LicenseEdition>(e);
   loader.load(_license);
   _license_is_valid = false;
 }
 
-void LicenseChecker::set_edition(const QString& edition) {
-  _edition = edition.toStdString();
+void LicenseChecker::set_lite_edition() {
+  _edition = LicenseEdition::kLite;
+}
+
+void LicenseChecker::set_pro_edition() {
+  _edition = LicenseEdition::kPro;
 }
 
 void LicenseChecker::set_license(const QString& license) {
   _license = license.toStdString();
 }
 
-QString LicenseChecker::get_edition() const {
-  return _edition.c_str();
+LicenseEdition LicenseChecker::get_edition() const {
+  return _edition;
 }
 
 QString LicenseChecker::get_license() const {
@@ -132,6 +142,7 @@ void LicenseChecker::check_license() {
   // Note any edition and license will be ok.
   _license_is_valid = true;
   emit license_checked(true);
+  emit has_valid_pro_license_changed();
 }
 
 void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
@@ -142,12 +153,14 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
 void LicenseChecker::check_license() {
   // Note use QCoreApplication::applicationName to determine which app we're checking the license for.
 
-  if (_edition == "lite") {
+  if (_edition == LicenseEdition::kLite) {
     _license_is_valid = true;
     emit license_checked(true);
+    emit has_valid_pro_license_changed();
     return;
   }
 
+  // The logic below pertains to the pro license.
 
   // Create our request.
   QNetworkRequest request(QUrl("https://api.gumroad.com/v2/licenses/verify"));
@@ -158,11 +171,20 @@ void LicenseChecker::check_license() {
 
   // Determine product id.
   QString product_id;
-  if (_edition == "pro") {
+
+#if (ARCH == ARCH_WINDOWS)
+  if (QCoreApplication::applicationName() == "SmashBrowse") {
     product_id = "tgctL";
-  } else {
-    product_id = "QbCCX";
+  } else if (QCoreApplication::applicationName() == "SmashDownloader") {
+    product_id = "mrsyb";
   }
+#elif (ARCH == ARCH_MACOS)
+  if (QCoreApplication::applicationName() == "SmashBrowse") {
+    product_id = "RMzG";
+  } else if (QCoreApplication::applicationName() == "SmashDownloader") {
+    product_id = "bHYBo";
+  }
+#endif
 
   // Generate query object in json.
   QString query = "{\"product_permalink\": \"" + product_id + "\", \"license_key\": \"" + _license.c_str() + "\"}";
@@ -176,6 +198,7 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
   if (reply->error() > 0) {
     //std::cerr << "license check error: " << reply->errorString().toStdString() << "\n";
     emit license_checked(false);
+    emit has_valid_pro_license_changed();
     return;
   }
 
@@ -187,12 +210,14 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
   // Check the success property.
   if (obj["success"] == QJsonValue::Undefined || !obj["success"].toBool()) {
     emit license_checked(false);
+    emit has_valid_pro_license_changed();
     return;
   }
 
   // Grab the purchase object.
   if (obj["purchase"] == QJsonValue::Undefined) {
     emit license_checked(false);
+    emit has_valid_pro_license_changed();
     return;
   }
   QJsonObject purchase = obj["purchase"].toObject();
@@ -200,19 +225,22 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
   // Check the refunded property.
   if (purchase["refunded"] == QJsonValue::Undefined || purchase["refunded"].toBool()) {
     emit license_checked(false);
+    emit has_valid_pro_license_changed();
     return;
   }
 
   // Check the chargebacked property.
   if (purchase["chargebacked"] == QJsonValue::Undefined || purchase["chargebacked"].toBool()) {
     emit license_checked(false);
+    emit has_valid_pro_license_changed();
     return;
   }
 
   // Check if the trial/lite software has expired.
-  if (_edition == "lite") {
+  if (_edition == LicenseEdition::kLite) {
     if (purchase["created_at"] == QJsonValue::Undefined) {
       emit license_checked(false);
+      emit has_valid_pro_license_changed();
       return;
     }
     int pos = _date_regex.indexIn(purchase["created_at"].toString());
@@ -228,6 +256,7 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
       qint64 num_days_used = current_date.toJulianDay() - install_date.toJulianDay();
       if (num_days_used > num_trial_days) {
         emit license_checked(false);
+        emit has_valid_pro_license_changed();
         return;
       }
     }
@@ -236,6 +265,7 @@ void LicenseChecker::on_reply_from_web(QNetworkReply* reply) {
   // Cache the valid license state.
   _license_is_valid = true;
   emit license_checked(true);
+  emit has_valid_pro_license_changed();
 }
 #endif
 

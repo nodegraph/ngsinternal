@@ -270,5 +270,19 @@ static enum HTTPSendType {
 }
 
 
+static enum LicenseEdition {
+  kLite(0),
+  kPro(1);
+
+  private final int value;
+  LicenseEdition(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, LicenseEdition> map = new HashMap<Integer, LicenseEdition>();
+  static {for (LicenseEdition e : LicenseEdition.values()) {map.put(e.value, e);}}
+  public static LicenseEdition get_enum(int value) {return map.get(value);}
+}
+
+
 
 }

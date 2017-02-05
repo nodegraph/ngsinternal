@@ -158,4 +158,9 @@ declare const enum HTTPSendType {
   kPatch = 4
 }
 
+declare const enum LicenseEdition {
+  kLite = 0,
+  kPro = 1
+}
+
 

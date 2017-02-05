@@ -24,8 +24,6 @@ Rectangle {
     color: app_settings.menu_stack_bg_color
 
     // Internal data.
-    property string license_cache: ""
-    property string edition_cache: ""
     property string version_number: ""
 
     function update_fields() {
@@ -42,7 +40,7 @@ Rectangle {
         
         // Update the gui fields.
         license_text_field.text = license_checker.get_license()
-        if (license_checker.get_edition() == "pro") {
+        if (license_checker.edition_is_pro()) {
             pro_edition_button.checked = true
             lite_edition_button.checked = false
         } else {
@@ -83,7 +81,6 @@ Rectangle {
         page.visible = false
         // Erase passwords from page.
         license_text_field.text = ""
-        license_cache = ""
         // Go back to the downloads page.
         downloads_page.visible = true
     }
@@ -133,7 +130,7 @@ Rectangle {
         //    color: "white"
         //}
         
-        // License field.
+        // Version field.
         AppLineEdit {
             id: version_number_field
             anchors.horizontalCenter: parent.horizontalCenter
@@ -188,6 +185,8 @@ Rectangle {
             
         AppLabel {
             id: max_concurrent_downloads_label
+            enabled: pro_edition_button.checked
+	        opacity: pro_edition_button.checked ? 1.0 : 0.5
             text: "Max Concurrent Downloads"
             anchors {
             	horizontalCenter: parent.horizontalCenter
@@ -200,7 +199,8 @@ Rectangle {
         AppLineEdit {
             id: max_concurrent_downloads_text_field
             enabled: pro_edition_button.checked
-            text: '2'
+	        opacity: pro_edition_button.checked ? 1.0 : 0.5
+            text: '1'
             validator: RegExpValidator{regExp: /\d+/}
             inputMethodHints: Qt.ImhDigitsOnly
             anchors {
@@ -212,6 +212,8 @@ Rectangle {
         
         AppLabel {
             id: default_download_dir_label
+            enabled: pro_edition_button.checked
+	        opacity: pro_edition_button.checked ? 1.0 : 0.5
             text: "Default Download Directory"
             anchors {
             	horizontalCenter: parent.horizontalCenter
@@ -228,10 +230,13 @@ Rectangle {
 	        AppLineEdit {
 	            id: default_downloads_dir_text_field
 	            enabled: pro_edition_button.checked
+	        	opacity: pro_edition_button.checked ? 1.0 : 0.5
 	            text: ''
 	            validator: RegExpValidator{regExp: /\d+/}
 	            inputMethodHints: Qt.ImhDigitsOnly
 	            anchors {
+	            	left: parent.left
+                	right: file_dialog_button.left
 	                leftMargin: app_settings.page_left_margin
 	                rightMargin: app_settings.page_right_margin
 	            }
@@ -241,12 +246,18 @@ Rectangle {
 	        AppLabelButton {
 	            id: file_dialog_button
 	            enabled: pro_edition_button.checked
+	        	opacity: pro_edition_button.checked ? 1.0 : 0.5
 	            text: "..."
 	            onClicked: {
 	            	if (default_downloads_dir_text_field.text != "") {
 	            		file_dialog.folder = "file:///" + default_downloads_dir_text_field.text
 	            	}
 	            	file_dialog.open()
+	            }
+	            anchors {
+	            	right: parent.right
+	                leftMargin: app_settings.page_left_margin
+	                rightMargin: app_settings.page_right_margin
 	            }
 	        }
 	        
@@ -261,14 +272,13 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "continue"
             onClicked: {
-                license_cache = license_text_field.text
                 if (pro_edition_button.checked) {
-                	edition_cache = "pro"
+                	license_checker.set_pro_edition()
                 } else {
-                	edition_cache = "lite"
+                	license_checker.set_lite_edition()
                 }
-                license_checker.set_edition(edition_cache)
-                license_checker.set_license(license_cache)
+                
+                license_checker.set_license(license_text_field.text)
                 app_utils.check_license(on_license_checked)
             }
         }

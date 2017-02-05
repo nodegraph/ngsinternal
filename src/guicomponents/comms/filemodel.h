@@ -8,6 +8,7 @@
 
 namespace ngs {
 
+class LicenseChecker;
 class CryptoLogic;
 class GraphBuilder;
 
@@ -16,6 +17,7 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
  public:
 
   static const QString kAppFile;
+  static const int kMaxConcurrentDownloadsLite;
 
   COMPONENT_ID(FileModel, FileModel)
 
@@ -119,6 +121,7 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   void update_qml() const;
 
   // Our Dependencies.
+  Dep<LicenseChecker> _license_checker;
   Dep<CryptoLogic> _crypto_logic;
   Dep<GraphBuilder> _graph_builder;
 

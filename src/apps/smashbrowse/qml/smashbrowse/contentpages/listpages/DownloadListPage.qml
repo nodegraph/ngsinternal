@@ -40,12 +40,11 @@ BaseListPage {
     }
     
     function update_header() {
-    	stack_view_header.title_text = "finished: " + _downloads_completed
+    	stack_view_header.title_text = _downloads_completed.toString() + " completed"
     }
     
     function on_download_double_clicked(row) {
     	var obj = model.get(row)
-    	console.log('double clicked dir: ' + obj.dest_dir + ' title: ' + obj.title) 
     	download_manager.reveal_file(obj.dest_dir, obj.title)
     }
 

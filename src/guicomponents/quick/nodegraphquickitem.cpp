@@ -719,7 +719,7 @@ void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
   }
 
   // If the license is lite then we don't allow diving into app and user macros.
-  if (_license_checker->get_edition() == "lite") {
+  if (!_license_checker->has_valid_pro_license()) {
     if ( (group_entity->get_did() == EntityDID::kAppMacroNodeEntity) ||
         (group_entity->get_did() == EntityDID::kUserMacroNodeEntity) ) {
       return;
@@ -905,7 +905,7 @@ void NodeGraphQuickItem::explode_group() {
   // If the license is lite then we don't allow exploding groups,
   // because we don't allow diving into app and user macros.
   // Otherwise exploding the group could get around this.
-  if (_license_checker->get_edition() == "lite") {
+  if (!_license_checker->has_valid_pro_license()) {
     return;
   }
 

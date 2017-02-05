@@ -41,7 +41,7 @@ DownloadManager::~DownloadManager() {
 
 void DownloadManager::on_poll() {
   // If the number of running processes is less than the max, then start another.
-  int max = get_max_concurrent_by_license();
+  int max = _file_model->get_max_concurrent_downloads();
   if (get_num_running() < max) {
     for (auto &i: _processes) {
       if (!i.second->is_running()) {
@@ -73,7 +73,7 @@ void DownloadManager::download_on_the_side(const QString& url) {
 
   // Setup the arguments.
   p->set_url(url);
-  QString dir = get_default_download_dir_by_license();
+  QString dir = _file_model->get_default_download_dir();
   p->set_dir(dir);
 
   // Queue the process.
@@ -98,7 +98,7 @@ void DownloadManager::download(int msg_id, const QJsonObject& args) {
   // Combine the directory parameter with the default donwload directory.
   QDir dir(path);
   if (dir.isRelative()) {
-    path = get_default_download_dir_by_license() + QDir::separator() + dir.path();
+    path = _file_model->get_default_download_dir() + QDir::separator() + dir.path();
   } else {
     path = dir.path();
   }
@@ -128,22 +128,6 @@ long long DownloadManager::get_sender_id() {
   QObject* obj = sender();
   DownloadVideoProcess *p = static_cast<DownloadVideoProcess*>(obj);
   return p->get_id();
-}
-
-int DownloadManager::get_max_concurrent_by_license() {
-  if (_license_checker->get_edition() == "pro") {
-    // Get the number of concurrent downloads from the settings.
-    return _file_model->get_max_concurrent_downloads();
-  }
-  return 2;
-}
-
-QString DownloadManager::get_default_download_dir_by_license() {
-  if (_license_checker->get_edition() == "pro") {
-    // Get the number of concurrent downloads from the settings.
-    return _file_model->get_default_download_dir();
-  }
-  return AppConfig::get_fallback_download_dir();
 }
 
 void DownloadManager::destroy_process(long long id) {
@@ -217,7 +201,6 @@ void DownloadManager::reveal_file_on_platform(const QString& dir, const QString 
     return;
   }
   QString best_filename = find_best_matching_file(dir, similar_filename);
-  std::cerr << "best filename is: " << best_filename.toStdString() << "\n";
 
 #if (ARCH == ARCH_WINDOWS)
   QString cmd = "explorer.exe";

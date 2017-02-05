@@ -10,6 +10,7 @@
 #include <components/interactions/graphbuilder.h>
 
 #include <base/objectmodel/appconfig.h>
+#include <guicomponents/comms/licensechecker.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/comms/cryptologic.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
@@ -32,13 +33,16 @@
 namespace ngs {
 
 const QString FileModel::kAppFile = "model.dat"; // Stores the mapping between displayed filename and actual filename.
+const int FileModel::kMaxConcurrentDownloadsLite = 1;
 
 FileModel::FileModel(Entity* app_root)
     : QStandardItemModel(),
       Component(app_root, kIID(), kDID()),
+      _license_checker(this),
       _crypto_logic(this),
       _graph_builder(this),
       _working_row(-1) {
+  get_dep_loader()->register_fixed_dep(_license_checker, Path());
   get_dep_loader()->register_fixed_dep(_crypto_logic, Path());
   get_dep_loader()->register_fixed_dep(_graph_builder, Path());
 
@@ -89,15 +93,23 @@ bool FileModel::links_are_locked() const {
 }
 
 int FileModel::get_max_concurrent_downloads() const {
-  return get_work_setting(FileModel::kMaxConcurrentDownloadsRole).toInt();
+  if (_license_checker->has_valid_pro_license()) {
+    // Get the number of concurrent downloads from the settings.
+    return get_work_setting(FileModel::kMaxConcurrentDownloadsRole).toInt();
+  }
+  return kMaxConcurrentDownloadsLite;
 }
 
 QString FileModel::get_default_download_dir() const {
-  QString dir = get_work_setting(FileModel::kDefaultDownloadsDirRole).toString();
-  if (dir.isEmpty()) {
-    return AppConfig::get_fallback_download_dir();
+  if (_license_checker->has_valid_pro_license()) {
+    // Get the number of concurrent downloads from the settings.
+    QString dir = get_work_setting(FileModel::kDefaultDownloadsDirRole).toString();
+    if (dir.isEmpty()) {
+      return AppConfig::get_fallback_download_dir();
+    }
+    return dir;
   }
-  return dir;
+  return AppConfig::get_fallback_download_dir();
 }
 
 void FileModel::on_item_changed(QStandardItem* item) {
@@ -411,7 +423,6 @@ void FileModel::load_graph(int row) {
 
   std::string description;
   loader.load(description);
-  std::cerr << "description is: " << description << "\n";
 
   // Load off some pre data.
   size_t derived_id;
@@ -459,7 +470,6 @@ std::string FileModel::graph_to_string(int row) {
 
     // Save the description.
     std::string description = data(index(row,0), kDescriptionRole).toString().toStdString();
-    std::cerr << "saving descriptiong: " << description << "\n";
     saver.save(description);
 
     // Save the group contents.

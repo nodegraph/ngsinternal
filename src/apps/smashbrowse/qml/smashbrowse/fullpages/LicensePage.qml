@@ -23,14 +23,10 @@ Rectangle {
     // Properties.
     color: app_settings.menu_stack_bg_color
 
-    // Internal data.
-    property string license_cache: ""
-    property string edition_cache: ""
-
     function update_fields() {
     	license_checker.load()
         license_text_field.text = license_checker.get_license()
-        if (license_checker.get_edition() == "pro") {
+        if (license_checker.edition_is_pro()) {
             pro_edition_button.checked = true
             lite_edition_button.checked = false
         } else {
@@ -50,7 +46,6 @@ Rectangle {
         check_license_page.visible = false
         // Erase passwords from page.
         license_text_field.text = ""
-        license_cache = ""
         // Switch to node graph mode.
         main_bar.on_switch_to_mode(app_settings.node_graph_mode)
         // Load the last graph.
@@ -116,14 +111,13 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "continue"
             onClicked: {
-                license_cache = license_text_field.text
                 if (pro_edition_button.checked) {
-                	edition_cache = "pro"
+                	license_checker.set_pro_edition()
                 } else {
-                	edition_cache = "lite"
+                	license_checker.set_lite_edition()
                 }
-                license_checker.set_edition(edition_cache)
-                license_checker.set_license(license_cache)
+                
+                license_checker.set_license(license_text_field.text)
                 app_utils.check_license(on_license_checked)
             }
         }

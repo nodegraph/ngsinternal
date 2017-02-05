@@ -27,6 +27,8 @@ Q_OBJECT
  public:
   COMPONENT_ID(DownloadManager, DownloadManager)
 
+  static const int kCheckInterval;
+
   explicit DownloadManager(Entity* parent);
   virtual ~DownloadManager();
 
@@ -58,8 +60,6 @@ signals:
 
  private:
   long long get_sender_id();
-  int get_max_concurrent_by_license();
-  QString get_default_download_dir_by_license();
   void destroy_process(long long id);
 
   // Our fixed dependencies.
@@ -75,7 +75,7 @@ signals:
 
   // Timer to check when is room to start running the next queued process.
   QTimer _poll_timer;
-  static const int kCheckInterval;
+
 };
 
 }

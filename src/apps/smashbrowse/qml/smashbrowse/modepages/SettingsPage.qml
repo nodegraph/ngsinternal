@@ -35,12 +35,29 @@ Rectangle {
                 max_node_posts_text_field.text = file_model.get_work_setting('max_node_posts')
                 auto_run_check_box.checked = file_model.get_work_setting('auto_run')
                 auto_run_interval_text_field.text = file_model.get_work_setting('auto_run_interval')
+                default_downloads_dir_text_field.text = file_model.get_work_setting('default_downloads_directory')
             }
             visible = true;
         } else {
             visible = false;
         }
     }
+    
+    FileDialog {
+	    id: file_dialog
+	    title: "Please choose a folder"
+	    folder: shortcuts.home
+	    selectFolder: true
+	    onAccepted: {
+	    	var dir = file_dialog.folder.toString()
+        	dir = dir.replace(/^(file:\/{3})/,"");
+        	// unescape html codes
+        	default_downloads_dir_text_field.text = decodeURIComponent(dir);
+	    }
+	    onRejected: {
+	    }
+	    //Component.onCompleted: visible = true
+	}
 
     // The stack view header.
     AppStackViewHeader {
@@ -63,6 +80,92 @@ Rectangle {
 
         RowLayout {
             AppLabel {
+                id: max_concurrent_downloads_label
+                enabled: license_checker.has_valid_pro_license
+	        	opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
+                text: "Max Concurrent Downloads"
+                anchors {
+                    left: parent.left
+                    leftMargin: app_settings.page_left_margin
+                    rightMargin: app_settings.page_right_margin
+                }
+            }
+
+            // Title Field.
+            AppLineEdit {
+                id: max_concurrent_downloads_text_field
+                enabled: license_checker.has_valid_pro_license
+	        	opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
+                text: '1'
+                tool_bar: copy_paste_bar
+                validator: RegExpValidator{regExp: /\d+/}
+                inputMethodHints: Qt.ImhDigitsOnly
+                anchors {
+                    left: max_concurrent_downloads_label.right
+                    leftMargin: app_settings.page_left_margin
+                    rightMargin: app_settings.page_right_margin
+                }
+            }
+        }
+        
+        AppLabel {
+            id: default_download_dir_label
+            enabled: license_checker.has_valid_pro_license
+	        opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
+            text: "Default Download Directory"
+            anchors {
+            	left: parent.left
+                leftMargin: app_settings.page_left_margin
+                rightMargin: app_settings.page_right_margin
+            }
+        }
+        
+        RowLayout {
+        	Item {
+        		Layout.fillWidth: true
+        	}
+        		
+	        AppLineEdit {
+	            id: default_downloads_dir_text_field
+	            enabled: license_checker.has_valid_pro_license
+	            opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
+	            text: ''
+	            validator: RegExpValidator{regExp: /\d+/}
+	            inputMethodHints: Qt.ImhDigitsOnly
+	            anchors {
+	            	left: parent.left
+                	right: file_dialog_button.left
+	                leftMargin: app_settings.page_left_margin
+	                rightMargin: app_settings.page_right_margin
+	            }
+	        }
+	        
+	        // Continue button.
+	        AppLabelButton {
+	            id: file_dialog_button
+	            enabled: license_checker.has_valid_pro_license
+	            opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
+	            text: "..."
+	            onClicked: {
+	            	if (default_downloads_dir_text_field.text != "") {
+	            		file_dialog.folder = "file:///" + default_downloads_dir_text_field.text
+	            	}
+	            	file_dialog.open()
+	            }
+	            anchors {
+	            	right: parent.right
+	                leftMargin: app_settings.page_left_margin
+	                rightMargin: app_settings.page_right_margin
+	            }
+	        }
+	        
+	        Item {
+        		Layout.fillWidth: true
+        	}
+        }
+        
+        RowLayout {
+            AppLabel {
                 id: lock_links_label
                 text: "Lock Links"
                 anchors {
@@ -77,32 +180,6 @@ Rectangle {
                 checked: false
                 anchors {
                     left: lock_links_label.right
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-        }
-
-        RowLayout {
-            AppLabel {
-                id: max_concurrent_downloads_label
-                text: "Max Concurrent Downloads"
-                anchors {
-                    left: parent.left
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-
-            // Title Field.
-            AppLineEdit {
-                id: max_concurrent_downloads_text_field
-                text: '2'
-                tool_bar: copy_paste_bar
-                validator: RegExpValidator{regExp: /\d+/}
-                inputMethodHints: Qt.ImhDigitsOnly
-                anchors {
-                    left: max_concurrent_downloads_label.right
                     leftMargin: app_settings.page_left_margin
                     rightMargin: app_settings.page_right_margin
                 }
@@ -198,6 +275,7 @@ Rectangle {
                     info.lock_links = lock_links_check_box.checked
                     info.max_node_posts = Number(max_node_posts_text_field.text)
                     info.max_concurrent_downloads = Number(max_concurrent_downloads_text_field.text)
+                    info.default_downloads_directory = default_downloads_dir_text_field.text
 
                     // Set values.
                     var row = file_model.get_working_row()
