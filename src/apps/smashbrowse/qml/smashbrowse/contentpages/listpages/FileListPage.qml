@@ -25,7 +25,7 @@ BaseListPage {
 
     // Our File Methods.
     function init() {
-    	set_title("File List")
+    	set_title("available files")
         list_view.currentIndex = file_model.get_working_row();
     }
 }

@@ -56,14 +56,14 @@ BaseStackPage{
     function on_publish_user_macro() {
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/PublishMacroPage.qml", page, {})
         push_page.visible = true
-        push_page.set_title("Publish a Macro")
+        push_page.set_title("enter macro details")
         stack_view.push_page(push_page)
     }
     
     function on_import_user_macro() {
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
         push_page.visible = true
-        push_page.set_title("Import a User Macro")
+        push_page.set_title("select a user macro")
         push_page.callback = function(option_text) {
         		if (option_text != "") {
         			ng_controller.create_user_macro_node(true, option_text)
@@ -79,7 +79,7 @@ BaseStackPage{
     function on_import_app_macro() {
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
         push_page.visible = true
-        push_page.set_title("Import an App Macro")
+        push_page.set_title("select an app macro")
         push_page.callback = function(option_text) {
         		if (option_text != "") {
         			ng_controller.create_app_macro_node(true, option_text)
@@ -122,7 +122,7 @@ BaseStackPage{
         var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml", page, {})
         push_page.visible = true
         push_page.create_file = true
-        push_page.set_title("New File")
+        push_page.set_title("enter file details")
         stack_view.push_page(push_page)
     }
 
@@ -130,7 +130,7 @@ BaseStackPage{
         var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml", page, {})
         push_page.visible = true
         push_page.create_file = false
-        push_page.set_title("File Info")
+        push_page.set_title("edit file details")
         stack_view.push_page(push_page)
     }
     
