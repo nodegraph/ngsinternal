@@ -253,7 +253,7 @@ BaseStackPage{
             }
             var child_type = app_enums.determine_js_type(child_value)
             if (child_type == js_type.kArray || child_type == js_type.kObject) {
-            	page.resizable = true
+            	//page.resizable = true
             }
             if (child_hints.hasOwnProperty(hint_key.kDescriptionHint)) {
                 page.set_description(child_hints[hint_key.kDescriptionHint])
