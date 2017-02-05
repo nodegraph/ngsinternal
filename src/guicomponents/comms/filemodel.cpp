@@ -481,6 +481,9 @@ std::string FileModel::graph_to_string(int row) {
 }
 
 bool FileModel::save_graph(int row) {
+
+  std::cerr << "trying to save a graph with " << get_root_group()->get_num_nodes() << " nodes\n";
+
   // A lite license only permits us to save graphs with a max of 10 nodes.
   if (!_license_checker->has_valid_pro_license()) {
     if (get_root_group()->get_num_nodes() > kMaxSaveableNodes) {

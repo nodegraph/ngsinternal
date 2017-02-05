@@ -82,7 +82,9 @@ bool Entity::has_group_related_did() const {
       (did == EntityDID::kScriptGroupNodeEntity) ||
       (did == EntityDID::kBrowserGroupNodeEntity) ||
       (did == EntityDID::kFirebaseGroupNodeEntity) ||
-      (did == EntityDID::kMQTTGroupNodeEntity)) {
+      (did == EntityDID::kMQTTGroupNodeEntity)||
+      (did == EntityDID::kUserMacroNodeEntity)||
+      (did == EntityDID::kAppMacroNodeEntity)) {
     return true;
   }
   return false;
