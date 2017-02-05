@@ -109,6 +109,7 @@
         <file>qml/smashbrowse/contentpages/listmodels/CopyPasteNodeActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/ExplodeCollapseNodeActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/FileMenuActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/ImportExportActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsFindElementByPosition.qml</file>
@@ -141,13 +142,33 @@
         
         <!-- Tree View Icons. -->
         <file alias="icons/ic_add_circle_outline_black_48dp.png">../../external/icons/ic_add_circle_outline_black_48dp.png</file>
-        
         <file alias="icons/ic_add_circle_outline_white_48dp.png">../../external/icons/ic_add_circle_outline_white_48dp.png</file>
+        <file alias="icons/ic_add_circle_black_48dp.png">../../external/icons/ic_add_circle_black_48dp.png</file>
+        <file alias="icons/ic_add_circle_white_48dp.png">../../external/icons/ic_add_circle_white_48dp.png</file>
+        
         <file alias="icons/ic_remove_circle_outline_black_48dp.png">../../external/icons/ic_remove_circle_outline_black_48dp.png</file>
         <file alias="icons/ic_remove_circle_outline_white_48dp.png">../../external/icons/ic_remove_circle_outline_white_48dp.png</file>
+        <file alias="icons/ic_remove_circle_black_48dp.png">../../external/icons/ic_remove_circle_black_48dp.png</file>
+        <file alias="icons/ic_remove_circle_white_48dp.png">../../external/icons/ic_remove_circle_white_48dp.png</file>
+        
+        <file alias="icons/ic_add_to_queue_black_48dp.png">../../external/icons/ic_add_to_queue_black_48dp.png</file>
+        <file alias="icons/ic_add_to_queue_white_48dp.png">../../external/icons/ic_add_to_queue_white_48dp.png</file>
+        
+        <file alias="icons/ic_remove_from_queue_black_48dp.png">../../external/icons/ic_remove_from_queue_black_48dp.png</file>
+        <file alias="icons/ic_remove_from_queue_white_48dp.png">../../external/icons/ic_remove_from_queue_white_48dp.png</file>
+        
+        <file alias="icons/ic_tv_black_48dp.png">../../external/icons/ic_tv_black_48dp.png</file>
+        <file alias="icons/ic_tv_white_48dp.png">../../external/icons/ic_tv_white_48dp.png</file>
+        
+        
+        <file alias="icons/ic_dvr_black_48dp.png">../../external/icons/ic_dvr_black_48dp.png</file>
+        <file alias="icons/ic_dvr_white_48dp.png">../../external/icons/ic_dvr_white_48dp.png</file>
         
         <file alias="icons/ic_file_download_black_48dp.png">../../external/icons/ic_file_download_black_48dp.png</file>
         <file alias="icons/ic_file_download_white_48dp.png">../../external/icons/ic_file_download_white_48dp.png</file>
+        
+        <file alias="icons/ic_file_upload_black_48dp.png">../../external/icons/ic_file_upload_black_48dp.png</file>
+        <file alias="icons/ic_file_upload_white_48dp.png">../../external/icons/ic_file_upload_white_48dp.png</file>
         
         <file alias="icons/ic_cloud_done_black_48dp.png">../../external/icons/ic_cloud_done_black_48dp.png</file>
         <file alias="icons/ic_cloud_done_white_48dp.png">../../external/icons/ic_cloud_done_white_48dp.png</file>
@@ -237,6 +258,14 @@
         <file alias="icons/ic_note_add_white_48dp.png">../../external/icons/ic_note_add_white_48dp.png</file>
         <file alias="icons/ic_open_in_browser_black_48dp.png">../../external/icons/ic_open_in_browser_black_48dp.png</file>
         <file alias="icons/ic_open_in_browser_white_48dp.png">../../external/icons/ic_open_in_browser_white_48dp.png</file>
+        <file alias="icons/ic_open_in_new_black_48dp.png">../../external/icons/ic_open_in_new_black_48dp.png</file>
+        <file alias="icons/ic_open_in_new_white_48dp.png">../../external/icons/ic_open_in_new_white_48dp.png</file>
+        <file alias="icons/ic_save_black_48dp.png">../../external/icons/ic_save_black_48dp.png</file>
+        <file alias="icons/ic_save_white_48dp.png">../../external/icons/ic_save_white_48dp.png</file>
+        
+        <file alias="icons/ic_import_export_black_48dp.png">../../external/icons/ic_import_export_black_48dp.png</file>
+        <file alias="icons/ic_import_export_white_48dp.png">../../external/icons/ic_import_export_white_48dp.png</file>
+        
         <file alias="icons/ic_create_new_folder_black_48dp.png">../../external/icons/ic_create_new_folder_black_48dp.png</file>
         <file alias="icons/ic_create_new_folder_white_48dp.png">../../external/icons/ic_create_new_folder_white_48dp.png</file>
         <file alias="icons/ic_folder_black_48dp.png">../../external/icons/ic_folder_black_48dp.png</file>

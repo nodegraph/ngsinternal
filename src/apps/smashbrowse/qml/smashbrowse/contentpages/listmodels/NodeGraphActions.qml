@@ -16,22 +16,22 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_build_white_48dp.png"
-        title: "Create..."
-        description: "Create a new node."
+        image_url: "qrc:///icons/ic_add_circle_outline_white_48dp.png"
+        title: "Add"
+        description: "Add a new node."
         script: "push_by_names('Create', 'NGMenuListPage', 'CreateNodeActions')"
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_delete_forever_white_48dp.png"
-        title: "Delete"
-        description: "Delete the selected nodes."
+        image_url: "qrc:///icons/ic_remove_circle_outline_white_48dp.png"
+        title: "Remove"
+        description: "Remove the selected nodes."
         script: "node_graph_item.destroy_selection();
                  main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_check_white_48dp.png"
         title: "Clean Current Group"
         description: "Clean all the output nodes in the current group."
         script: "node_graph_item.clean_group();
@@ -39,7 +39,7 @@ ListModel {
     }
     
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_refresh_white_48dp.png"
         title: "Reclean Current Group"
         description: "Reclean all the output nodes in the current group."
         script: "node_graph_item.reclean_group();
@@ -47,7 +47,7 @@ ListModel {
     }
     
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_close_white_48dp.png"
         title: "Dirty Current Group"
         description: "Dirty all the nodes in this group and below."
         script: "node_graph_item.dirty_group_recursively();

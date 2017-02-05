@@ -147,7 +147,7 @@ Rectangle {
     		rightMargin: app_settings.action_bar_right_margin
       	}
 
-        image_url: "qrc:///icons/ic_folder_open_white_48dp.png"
+        image_url: "qrc:///icons/ic_tv_white_48dp.png"
         tooltip_text: "Node Files"
 
         onClicked: {

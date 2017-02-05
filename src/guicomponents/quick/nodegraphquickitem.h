@@ -81,6 +81,7 @@ Q_OBJECT
 
   // Serialization.
   Q_INVOKABLE bool save();
+  Q_INVOKABLE bool destroy_graph();
   Q_INVOKABLE void load();
 
   // Macros.

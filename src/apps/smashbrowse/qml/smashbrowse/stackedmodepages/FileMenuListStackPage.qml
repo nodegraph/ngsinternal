@@ -94,7 +94,7 @@ BaseStackPage{
     
     function on_destroy_current(){
         // Destroy the graph.
-        file_model.destroy_graph()
+        node_graph_item.destroy_graph()
         // Finished.
         on_finished_with_menu()
     }

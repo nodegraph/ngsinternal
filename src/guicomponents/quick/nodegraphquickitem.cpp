@@ -804,6 +804,18 @@ bool NodeGraphQuickItem::save() {
   return true;
 }
 
+bool NodeGraphQuickItem::destroy_graph() {
+  external();
+  if (!_file_model->destroy_graph()) {
+    QString msg = "Unable to remove the current graph.\n";
+    msg += "This is the last remaining graph and the app requires at least one graph to operate.";
+    emit set_error_message(msg);
+    emit show_error_page();
+    return false;
+  }
+  return true;
+}
+
 bool NodeGraphQuickItem::macro_exists(const QString& macro_name) const{
   return _file_model->user_macro_exists(macro_name);
 }

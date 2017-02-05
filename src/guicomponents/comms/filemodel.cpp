@@ -539,9 +539,9 @@ QStringList FileModel::get_app_macro_names() const {
   return get_files(AppConfig::get_app_macros_dir());
 }
 
-void FileModel::destroy_graph() {
+bool FileModel::destroy_graph() {
   external();
-  destroy_graph(_working_row);
+  return destroy_graph(_working_row);
 }
 
 // The info argument must contain all required key-value pairs.
@@ -596,10 +596,10 @@ void FileModel::create_graph(const QVariantMap& arg) {
   save_graph();
 }
 
-void FileModel::destroy_graph(int row) {
+bool FileModel::destroy_graph(int row) {
   external();
   if (rowCount() <= 1) {
-    return;
+    return false;
   }
 
   if (row == _working_row) {
@@ -625,6 +625,7 @@ void FileModel::destroy_graph(int row) {
 
   // Now save the model.
   save_model();
+  return true;
 }
 
 void FileModel::update_current_graph(const QVariantMap& info) {

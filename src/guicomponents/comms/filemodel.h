@@ -53,11 +53,12 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   // Graph.
   Q_INVOKABLE void load_graph();
   Q_INVOKABLE void load_graph(int row);
-  Q_INVOKABLE bool save_graph();
 
+  Q_INVOKABLE bool save_graph();
   Q_INVOKABLE bool save_graph(int row);
-  Q_INVOKABLE void destroy_graph();
-  Q_INVOKABLE void destroy_graph(int row);
+
+  Q_INVOKABLE bool destroy_graph();
+  Q_INVOKABLE bool destroy_graph(int row);
 
   Q_INVOKABLE bool user_macro_exists(const QString& macro_name) const;
   Q_INVOKABLE void publish_user_macro(const QString& macro_name);
