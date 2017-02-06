@@ -129,7 +129,7 @@ Rectangle {
         }
         
         image_url: "qrc:///icons/ic_more_vert_white_48dp.png"
-        tooltip_text: "More Options"
+        tooltip_text: "more options"
         
         onClicked: {
             open_more_options();
@@ -148,7 +148,7 @@ Rectangle {
       	}
 
         image_url: "qrc:///icons/ic_tv_white_48dp.png"
-        tooltip_text: "Node Files"
+        tooltip_text: "node graph files"
 
         onClicked: {
             on_switch_to_mode(app_settings.file_mode)
@@ -167,7 +167,7 @@ Rectangle {
         }
         
         image_url: "qrc:///icons/ic_widgets_white_48dp.png"
-        tooltip_text: "Node Graph"
+        tooltip_text: "node graph"
         
         onClicked: {
             on_switch_to_mode(app_settings.node_graph_mode)
@@ -185,8 +185,8 @@ Rectangle {
     		rightMargin: app_settings.action_bar_right_margin
       	}
         
-        image_url: "qrc:///icons/ic_visibility_white_48dp.png"
-        tooltip_text: "View Node Outputs"
+        image_url: "qrc:///icons/ic_format_list_bulleted_white_48dp.png"
+        tooltip_text: "node outputs"
         
         onClicked: {
         	node_graph_item.view_node_poke();
@@ -205,8 +205,8 @@ Rectangle {
     		rightMargin: app_settings.action_bar_right_margin
     	}
         
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
-        tooltip_text: "Edit Node Parameters"
+        image_url: "qrc:///icons/ic_format_list_numbered_white_48dp.png"
+        tooltip_text: "node parameters"
         
         onClicked: {
         	node_graph_item.edit_node_poke();
@@ -226,7 +226,7 @@ Rectangle {
     	}
         
         image_url: "qrc:///icons/ic_file_download_white_48dp.png"
-        tooltip_text: "Downloads"
+        tooltip_text: "downloads"
         
         onClicked: {
             on_switch_to_mode(app_settings.downloads_mode)
@@ -245,7 +245,7 @@ Rectangle {
     	}
         
         image_url: "qrc:///icons/ic_whatshot_white_48dp.png"
-        tooltip_text: "Posts"
+        tooltip_text: "posts"
         
         onClicked: {
             on_switch_to_mode(app_settings.posts_mode)
@@ -264,7 +264,7 @@ Rectangle {
     	}
         
         image_url: "qrc:///icons/ic_settings_white_48dp.png"
-            tooltip_text: "Node Graph Settings"
+            tooltip_text: "node graph settings"
         
         onClicked: {
             on_switch_to_mode(app_settings.settings_mode)

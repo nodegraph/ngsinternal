@@ -16,7 +16,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        image_url: "qrc:///icons/ic_format_list_bulleted_white_48dp.png"
         title: "View"
         description: "View the output data from the group node."
         script: "node_graph_item.view_node();
@@ -24,7 +24,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_format_list_numbered_white_48dp.png"
         title: "Edit"
         description: "Edit the parameters of the group node"
         script: "node_graph_item.edit_node();
@@ -32,14 +32,14 @@ ListModel {
     }
     
     ListElement {
-        image_url: "qrc:///icons/ic_build_white_48dp.png"
+        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
         title: "Rename"
         description: "Rename this group node."
 		script: "ng_menu_list_stack_page.rename_node()"
     }
     
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_check_white_48dp.png"
         title: "Clean"
         description: "Clean this group node."
         script: "node_graph_item.clean_node();
@@ -47,7 +47,7 @@ ListModel {
     }
     
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_refresh_white_48dp.png"
         title: "Reclean"
         description: "Clean this group node."
         script: "node_graph_item.reclean_node();
@@ -55,7 +55,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_close_white_48dp.png"
         title: "Dirty"
         description: "Dirty this group node."
         script: "node_graph_item.dirty_node();

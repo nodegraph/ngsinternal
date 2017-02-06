@@ -185,6 +185,14 @@
         <file alias="icons/ic_cloud_queue_black_48dp.png">../../external/icons/ic_cloud_queue_black_48dp.png</file>
         <file alias="icons/ic_cloud_queue_white_48dp.png">../../external/icons/ic_cloud_queue_white_48dp.png</file>
         
+        <file alias="icons/ic_format_list_numbered_black_48dp.png">../../external/icons/ic_format_list_numbered_black_48dp.png</file>
+        <file alias="icons/ic_format_list_numbered_white_48dp.png">../../external/icons/ic_format_list_numbered_white_48dp.png</file>
+        
+        <file alias="icons/ic_format_line_spacing_black_48dp.png">../../external/icons/ic_format_line_spacing_black_48dp.png</file>
+        <file alias="icons/ic_format_line_spacing_white_48dp.png">../../external/icons/ic_format_line_spacing_white_48dp.png</file>
+        
+        <file alias="icons/ic_format_list_bulleted_black_48dp.png">../../external/icons/ic_format_list_bulleted_black_48dp.png</file>
+        <file alias="icons/ic_format_list_bulleted_white_48dp.png">../../external/icons/ic_format_list_bulleted_white_48dp.png</file>
         
         <!-- Web Browser Icons. -->
         <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>

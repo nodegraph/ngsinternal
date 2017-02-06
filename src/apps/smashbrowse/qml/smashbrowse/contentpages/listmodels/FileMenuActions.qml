@@ -39,8 +39,8 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_dvr_white_48dp.png"
-        title: "Info"
-        description: "Edit name and description of current graph."
+        title: "Meta Info"
+        description: "Edit current graph's meta info."
         script: "file_menu_list_stack_page.on_edit_file_info()"
     }
 
