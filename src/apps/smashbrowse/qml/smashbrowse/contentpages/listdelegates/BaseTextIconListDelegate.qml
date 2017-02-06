@@ -30,14 +30,14 @@ BaseListDelegate {
 	            verticalAlignment:  Text.AlignVCenter
 	            clip: true
 	            
-	            height: parent.height * 0.9
-            	width: parent.height * 0.9
+	            height: parent.height
+            	width: parent.height
             	anchors.verticalCenter: parent.verticalCenter
             	anchors.horizontalCenter: parent.horizontalCenter
 	            
 	            font.family: "Arial"
 	            font.bold: true
-			    font.pointSize: 1.9 * app_settings.large_font_point_size
+			    font.pointSize: 1.7 * app_settings.large_font_point_size
 			    color: "white"
 	            text: delegate._letters
 	        }
