@@ -56,7 +56,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "SG"
+    	letters: "Sg"
         title: "Script Group Node"
         description: "Evaluates a script to compute the groups outputs. Input and Output nodes define the interface to the script."
         script: "ng_controller.create_script_group_node(center_new_nodes);
