@@ -22,9 +22,11 @@ Rectangle {
     color: "transparent"
     
     // Displayed Content.
-    property var _image_url: ""
     property var _title: ""
     property var _content: ""
+    
+    property Component icon_component
+    property alias icon_loader: icon_loader
 
 	property var title_point_size: app_settings.menu_page_title_point_size
 	property var description_point_size: app_settings.menu_page_description_point_size
@@ -63,13 +65,15 @@ Rectangle {
             height: item_height
             width: item_height
             color: "transparent"
-            Image {
-                height: parent.height * 2/3
-                width: parent.height * 2/3
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                source: delegate._image_url
-            }
+            Loader {
+            	id: icon_loader
+            	sourceComponent: icon_component
+            	
+            	height: parent.height
+            	width: parent.height
+            	anchors.verticalCenter: parent.verticalCenter
+            	anchors.horizontalCenter: parent.horizontalCenter
+        	}
         }
 
         // The textual content on the right that refers to the data value.

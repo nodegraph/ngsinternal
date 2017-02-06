@@ -14,16 +14,24 @@ import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
 
-BaseImageIconListDelegate {
+BaseListDelegate {
     id: delegate
     
     // Displayed Content.
-    _image_url: "qrc:///icons/ic_insert_drive_file_white_48dp.png"
-    _title: title
-    _content: description
+    property var _image_url: ""
     
-    // Method Overrides.
-    function on_double_clicked() {
-    	get_stack_page().on_file_double_clicked(index)
+    icon_component: Component {
+    	id: icon_component
+    	Rectangle {
+    		color: "transparent"
+	    	Image {
+	    		source: delegate._image_url
+	    		
+	            height: parent.height * 0.75
+            	width: parent.height * 0.75
+            	anchors.verticalCenter: parent.verticalCenter
+            	anchors.horizontalCenter: parent.horizontalCenter
+	        }
+        }
     }
 }

@@ -14,7 +14,7 @@ import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
 
-BaseListDelegate {
+BaseImageIconListDelegate {
     id: post_delegate
     
    	// Displayed Content.

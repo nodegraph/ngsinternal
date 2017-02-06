@@ -67,15 +67,19 @@
         <file>qml/smashbrowse/contentpages/listpages/FileMenuListPage.qml</file>
         <file>qml/smashbrowse/contentpages/listpages/NGMenuListPage.qml</file>
         <file>qml/smashbrowse/contentpages/listpages/WebMenuListPage.qml</file>
+        <file>qml/smashbrowse/contentpages/listpages/NodeMenuListPage.qml</file>
         
         <!-- Delegates -->
         <file>qml/smashbrowse/contentpages/listdelegates/qmldir</file>
         <file>qml/smashbrowse/contentpages/listdelegates/BaseListDelegate.qml</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/BaseImageIconListDelegate.qml</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/BaseTextIconListDelegate.qml</file>
         <file>qml/smashbrowse/contentpages/listdelegates/DataListDelegate.qml</file>
         <file>qml/smashbrowse/contentpages/listdelegates/MenuItemListDelegate.qml</file>
         <file>qml/smashbrowse/contentpages/listdelegates/FileListDelegate.qml</file>
         <file>qml/smashbrowse/contentpages/listdelegates/PostListDelegate.qml</file>
         <file>qml/smashbrowse/contentpages/listdelegates/DownloadListDelegate.qml</file>
+        <file>qml/smashbrowse/contentpages/listdelegates/NodeMenuItemListDelegate.qml</file>
         
         <!-- AppWidgets -->
         <file>qml/smashbrowse/appwidgets/qmldir</file>

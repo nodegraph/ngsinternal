@@ -8,6 +8,7 @@ ListModel {
     }
 
     ListElement {
+        //image_url: "qrc:///icons/ic_arrow_upward_white_48dp.png"
         image_url: "qrc:///icons/ic_arrow_upward_white_48dp.png"
         title: "Surface"
         description: "Surface out of the current group."
@@ -19,7 +20,7 @@ ListModel {
         image_url: "qrc:///icons/ic_add_circle_outline_white_48dp.png"
         title: "Add"
         description: "Add a new node."
-        script: "push_by_names('Create', 'NGMenuListPage', 'CreateNodeActions')"
+        script: "push_by_names('Create', 'NodeMenuListPage', 'CreateNodeActions')"
     }
 
     ListElement {

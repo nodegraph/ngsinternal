@@ -13,17 +13,17 @@ import smashbrowse.fullpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
-
-BaseImageIconListDelegate {
+BaseTextIconListDelegate {
     id: delegate
     
-    // Displayed Content.
-    _image_url: "qrc:///icons/ic_insert_drive_file_white_48dp.png"
-    _title: title
-    _content: description
-    
-    // Method Overrides.
-    function on_double_clicked() {
-    	get_stack_page().on_file_double_clicked(index)
+   	// Displayed Content.
+	_letters: letters
+	_title: title
+	_content: description
+	
+	function on_double_clicked() {
+		if (typeof script !== "undefined") {
+                get_stack_view().execute_script(script)
+        }
     }
 }
