@@ -36,7 +36,7 @@ BaseStackPage{
         visible = true
         if (!show_busy_page()) {
         	stack_view.clear_pages()
-        	stack_view.push_by_names("Node Options", "NGMenuListPage", "NodeActions")
+        	stack_view.push_by_names("manage node", "NGMenuListPage", "NodeActions")
         }
     }
 
@@ -46,7 +46,7 @@ BaseStackPage{
        	visible = true
         if (!show_busy_page()) {
         	stack_view.clear_pages()
-            stack_view.push_by_names("Group Node Options", "NGMenuListPage", "GroupNodeActions")
+            stack_view.push_by_names("manage group node", "NGMenuListPage", "GroupNodeActions")
         }
     }
 
@@ -56,7 +56,7 @@ BaseStackPage{
         visible = true
         if (!show_busy_page()) {
         	stack_view.clear_pages()
-            stack_view.push_by_names("Node Graph Options", "NGMenuListPage", "NodeGraphActions")
+            stack_view.push_by_names("manage node graph", "NGMenuListPage", "NodeGraphActions")
         }
     }
 
@@ -66,7 +66,7 @@ BaseStackPage{
         visible = true
         if (!show_busy_page()) {
         	stack_view.clear_pages()
-            stack_view.push_by_names("Options", "NGMenuListPage", model_name)
+            stack_view.push_by_names("more options", "NGMenuListPage", model_name)
         }
     }
     
@@ -74,7 +74,7 @@ BaseStackPage{
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
         push_page.visible = true
         push_page.set_value("new_name")
-        push_page.set_title("New Node Name")
+        push_page.set_title("enter new node name")
         push_page.callback = function(name) {
         		node_graph_item.rename_node(name)
         		main_bar.switch_to_node_graph()

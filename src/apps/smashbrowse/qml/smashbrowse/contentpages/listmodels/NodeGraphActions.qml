@@ -76,7 +76,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_zoom_out_map_white_48dp.png"
+        image_url: "qrc:///icons/ic_bubble_chart_white_48dp.png"
         title: "Explode and Collapse..."
         description: "Explode group nodes or collapse some nodes."
         script: "push_by_names('Explode and Collapse', 'NGMenuListPage', 'ExplodeCollapseNodeActions')"

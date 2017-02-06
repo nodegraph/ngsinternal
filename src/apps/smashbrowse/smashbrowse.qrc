@@ -194,6 +194,9 @@
         <file alias="icons/ic_format_list_bulleted_black_48dp.png">../../external/icons/ic_format_list_bulleted_black_48dp.png</file>
         <file alias="icons/ic_format_list_bulleted_white_48dp.png">../../external/icons/ic_format_list_bulleted_white_48dp.png</file>
         
+        <file alias="icons/ic_bubble_chart_black_48dp.png">../../external/icons/ic_bubble_chart_black_48dp.png</file>
+        <file alias="icons/ic_bubble_chart_white_48dp.png">../../external/icons/ic_bubble_chart_white_48dp.png</file>
+        
         <!-- Web Browser Icons. -->
         <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>
         <file alias="icons/ic_cancel_white_48dp.png">../../external/icons/ic_cancel_white_48dp.png</file>

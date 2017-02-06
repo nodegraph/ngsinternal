@@ -8,7 +8,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_zoom_out_map_white_48dp.png"
+        image_url: "qrc:///icons/ic_bubble_chart_white_48dp.png"
         title: "Explode"
         description: "Explode the selected group node into its contents."
         script: "node_graph_item.explode_group();
