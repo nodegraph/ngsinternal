@@ -78,8 +78,4 @@ class COMMS_EXPORT GUITypes : public QObject
     GUITypes();
 };
 
-Q_DECLARE_METATYPE(GUITypes::JSType)
-Q_DECLARE_METATYPE(GUITypes::HintKey)
-Q_DECLARE_METATYPE(GUITypes::EnumHintValue)
-
 }
