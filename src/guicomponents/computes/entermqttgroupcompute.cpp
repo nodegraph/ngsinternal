@@ -2,10 +2,10 @@
 #include <base/objectmodel/dep.h>
 #include <base/objectmodel/deploader.h>
 #include <components/computes/inputs.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/comms/commtypes.h>
 
 
 namespace ngs {
@@ -60,12 +60,12 @@ const QJsonObject EnterMQTTGroupCompute::_hints = EnterMQTTGroupCompute::init_hi
 QJsonObject EnterMQTTGroupCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, Message::kHostName, HintKey::kDescriptionHint, "The host name of the MQTT broker. When set this takes precedence over host_address.");
-  add_hint(m, Message::kHostAddress, HintKey::kDescriptionHint, "The ip address of the MQTT broker.");
-  add_hint(m, Message::kPort, HintKey::kDescriptionHint, "The port number of the MQTT broker.");
-  add_hint(m, Message::kUsername, HintKey::kDescriptionHint, "The username to use if the MQTT broker uses authentication.");
-  add_hint(m, Message::kPassword, HintKey::kDescriptionHint, "The password to use if the MQTT broker uses authentication.");
-  add_hint(m, Message::kClientID, HintKey::kDescriptionHint, "The client id to use to identify your connection with the MQTT broker.");
+  add_hint(m, Message::kHostName, GUITypes::HintKey::DescriptionHint, "The host name of the MQTT broker. When set this takes precedence over host_address.");
+  add_hint(m, Message::kHostAddress, GUITypes::HintKey::DescriptionHint, "The ip address of the MQTT broker.");
+  add_hint(m, Message::kPort, GUITypes::HintKey::DescriptionHint, "The port number of the MQTT broker.");
+  add_hint(m, Message::kUsername, GUITypes::HintKey::DescriptionHint, "The username to use if the MQTT broker uses authentication.");
+  add_hint(m, Message::kPassword, GUITypes::HintKey::DescriptionHint, "The password to use if the MQTT broker uses authentication.");
+  add_hint(m, Message::kClientID, GUITypes::HintKey::DescriptionHint, "The client id to use to identify your connection with the MQTT broker.");
 
   return m;
 }

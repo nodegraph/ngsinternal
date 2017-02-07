@@ -1,9 +1,8 @@
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
-#include <guicomponents/comms/commtypes.h>
-
 #include <base/objectmodel/deploader.h>
+#include <guicomponents/comms/guitypes.h>
 
 namespace ngs {
 
@@ -33,7 +32,7 @@ const QJsonObject DotNodeCompute::_hints = DotNodeCompute::init_hints();
 QJsonObject DotNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 
   return m;
 }

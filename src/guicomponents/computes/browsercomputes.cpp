@@ -3,8 +3,7 @@
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
-#include <guicomponents/comms/commtypes.h>
-
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
@@ -41,7 +40,7 @@ void BrowserCompute::create_inputs_outputs(const EntityConfig& config) {
 }
 
 void BrowserCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 }
 
 void BrowserCompute::dump_map(const QJsonObject& inputs) const {
@@ -173,8 +172,8 @@ QJsonObject ResizeBrowserCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kWidth, HintKey::kDescriptionHint, "The desired width of the browser.");
-  add_hint(m, Message::kHeight, HintKey::kDescriptionHint, "The desired height of the browser.");
+  add_hint(m, Message::kWidth, GUITypes::HintKey::DescriptionHint, "The desired width of the browser.");
+  add_hint(m, Message::kHeight, GUITypes::HintKey::DescriptionHint, "The desired height of the browser.");
 
   return m;
 }
@@ -300,10 +299,10 @@ QJsonObject DownloadVideoCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kDirectory, HintKey::kDescriptionHint, "The directory to save the video to. Leave empty to use the default directory.");
-  add_hint(m, Message::kMaxWidth, HintKey::kDescriptionHint, "The maximum video width (in pixels) to download. Zero will download the largest.");
-  add_hint(m, Message::kMaxHeight, HintKey::kDescriptionHint, "The maximum video height (in pixels) to download. Zero will download the largest.");
-  add_hint(m, Message::kMaxFilesize, HintKey::kDescriptionHint, "The maximum video filesize (in megabytes) to download. Zero will download the largest.");
+  add_hint(m, Message::kDirectory, GUITypes::HintKey::DescriptionHint, "The directory to save the video to. Leave empty to use the default directory.");
+  add_hint(m, Message::kMaxWidth, GUITypes::HintKey::DescriptionHint, "The maximum video width (in pixels) to download. Zero will download the largest.");
+  add_hint(m, Message::kMaxHeight, GUITypes::HintKey::DescriptionHint, "The maximum video height (in pixels) to download. Zero will download the largest.");
+  add_hint(m, Message::kMaxFilesize, GUITypes::HintKey::DescriptionHint, "The maximum video filesize (in megabytes) to download. Zero will download the largest.");
   return m;
 }
 
@@ -341,7 +340,7 @@ const QJsonObject NavigateToCompute::_hints = NavigateToCompute::init_hints();
 QJsonObject NavigateToCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-  add_hint(m, Message::kURL, HintKey::kDescriptionHint, "The url the browser should to navigate to.");
+  add_hint(m, Message::kURL, GUITypes::HintKey::DescriptionHint, "The url the browser should to navigate to.");
   return m;
 }
 
@@ -446,11 +445,11 @@ QJsonObject FindElementByPositionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
-  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of the elements to put into the set.");
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of the elements to put into the set.");
 
-  add_hint(m, Message::kGlobalMousePosition, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kGlobalMousePosition, HintKey::kDescriptionHint, "The position to look for the element at.");
+  add_hint(m, Message::kGlobalMousePosition, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::Number));
+  add_hint(m, Message::kGlobalMousePosition, GUITypes::HintKey::DescriptionHint, "The position to look for the element at.");
 
   return m;
 }
@@ -493,11 +492,11 @@ QJsonObject FindElementByValuesCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
-  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of the elements to put into the set.");
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of the elements to put into the set.");
 
-  add_hint(m, Message::kTargetValues, HintKey::kDescriptionHint, "The texts or image urls used to find elements.");
-  add_hint(m, Message::kTargetValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
+  add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
   return m;
 }
 
@@ -530,8 +529,8 @@ QJsonObject FindElementByTypeCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
-  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The element type to use when creating the set.");
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The element type to use when creating the set.");
   return m;
 }
 
@@ -565,10 +564,10 @@ QJsonObject ShiftElementByTypeCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kAngleInDegrees, HintKey::kDescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
+  add_hint(m, Message::kAngleInDegrees, GUITypes::HintKey::DescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
 
-  add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
-  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of elements to shift to.");
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
 
   return m;
 }
@@ -617,13 +616,13 @@ QJsonObject ShiftElementByValuesCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kAngleInDegrees, HintKey::kDescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
+  add_hint(m, Message::kAngleInDegrees, GUITypes::HintKey::DescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
 
-  add_hint(m, Message::kWrapType, HintKey::kEnumHint, to_underlying(EnumHintValue::kWrapType));
-  add_hint(m, Message::kWrapType, HintKey::kDescriptionHint, "The type of elements to shift to.");
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
 
-  add_hint(m, Message::kTargetValues, HintKey::kDescriptionHint, "The texts or image urls used to find elements.");
-  add_hint(m, Message::kTargetValues, HintKey::kElementJSTypeHint, to_underlying(JSType::kString));
+  add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
+  add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
   return m;
 }
 
@@ -669,11 +668,11 @@ QJsonObject MouseActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kLocalMousePosition, HintKey::kElementJSTypeHint, to_underlying(JSType::kNumber));
-  add_hint(m, Message::kLocalMousePosition, HintKey::kDescriptionHint, "The position to perform our action at, relative to the element itself.");
+  add_hint(m, Message::kLocalMousePosition, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::Number));
+  add_hint(m, Message::kLocalMousePosition, GUITypes::HintKey::DescriptionHint, "The position to perform our action at, relative to the element itself.");
 
-  add_hint(m, Message::kMouseAction, HintKey::kEnumHint, to_underlying(EnumHintValue::kMouseActionType));
-  add_hint(m, Message::kMouseAction, HintKey::kDescriptionHint, "The type of mouse mouse action to perform.");
+  add_hint(m, Message::kMouseAction, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::MouseActionType));
+  add_hint(m, Message::kMouseAction, GUITypes::HintKey::DescriptionHint, "The type of mouse mouse action to perform.");
   return m;
 }
 
@@ -710,10 +709,10 @@ QJsonObject TextActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kTextAction, HintKey::kEnumHint, to_underlying(EnumHintValue::kTextActionType));
-  add_hint(m, Message::kTextAction, HintKey::kDescriptionHint, "The type of text action to perform.");
+  add_hint(m, Message::kTextAction, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::TextActionType));
+  add_hint(m, Message::kTextAction, GUITypes::HintKey::DescriptionHint, "The type of text action to perform.");
 
-  add_hint(m, Message::kText, HintKey::kDescriptionHint, "The text to type.");
+  add_hint(m, Message::kText, GUITypes::HintKey::DescriptionHint, "The text to type.");
   return m;
 }
 
@@ -756,15 +755,15 @@ QJsonObject ElementActionCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kElementAction, HintKey::kEnumHint, to_underlying(EnumHintValue::kElementActionType));
-  add_hint(m, Message::kElementAction, HintKey::kDescriptionHint, "The type of element action to perform.");
+  add_hint(m, Message::kElementAction, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::ElementActionType));
+  add_hint(m, Message::kElementAction, GUITypes::HintKey::DescriptionHint, "The type of element action to perform.");
 
-  add_hint(m, Message::kOptionText, HintKey::kDescriptionHint, "The text to select from dropdowns.");
+  add_hint(m, Message::kOptionText, GUITypes::HintKey::DescriptionHint, "The text to select from dropdowns.");
 
-  add_hint(m, Message::kScrollDirection, HintKey::kEnumHint, to_underlying(EnumHintValue::kDirectionType));
-  add_hint(m, Message::kScrollDirection, HintKey::kDescriptionHint, "The direction to scroll.");
+  add_hint(m, Message::kScrollDirection, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::DirectionType));
+  add_hint(m, Message::kScrollDirection, GUITypes::HintKey::DescriptionHint, "The direction to scroll.");
 
-  add_hint(m, Message::kTextDataName, HintKey::kDescriptionHint, "The name used to reference the extracted text data.");
+  add_hint(m, Message::kTextDataName, GUITypes::HintKey::DescriptionHint, "The name used to reference the extracted text data.");
 
   return m;
 }

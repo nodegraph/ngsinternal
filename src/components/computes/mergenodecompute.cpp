@@ -2,8 +2,8 @@
 #include <components/computes/mergenodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/jsonutils.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/comms/commtypes.h>
 
 namespace ngs {
 
@@ -31,8 +31,8 @@ const QJsonObject MergeNodeCompute::_hints = MergeNodeCompute::init_hints();
 QJsonObject MergeNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kDescriptionHint, "This object will get data from the \"source\" input merged into it.");
-  add_hint(m, "source", HintKey::kDescriptionHint, "This object will merge into the object from the \"in\" input.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "This object will get data from the \"source\" input merged into it.");
+  add_hint(m, "source", GUITypes::HintKey::DescriptionHint, "This object will merge into the object from the \"in\" input.");
 
   return m;
 }

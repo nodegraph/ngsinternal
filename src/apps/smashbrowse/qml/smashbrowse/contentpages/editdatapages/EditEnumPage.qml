@@ -27,25 +27,25 @@ BaseEditPage {
     
     function set_enum_type(type) {
     	var cb = value_editor_loader.item
-        if (type == enum_hint_value.kMouseActionType) {
+        if (type == GUITypes.MouseActionType) {
             console.log('edit setting options: ' + app_enums.mouse_action_type_text)
             cb.set_option_texts(app_enums.mouse_action_type_text)
-        } else if (type == enum_hint_value.kTextActionType) {
+        } else if (type == GUITypes.TextActionType) {
             console.log('edit setting options: ' + app_enums.text_action_type_text)
             cb.set_option_texts(app_enums.text_action_type_text)
-        } else if (type == enum_hint_value.kElementActionType) {
+        } else if (type == GUITypes.ElementActionType) {
             console.log('edit setting options: ' + app_enums.element_action_type_text)
             cb.set_option_texts(app_enums.element_action_type_text)
-        } else if (type == enum_hint_value.kWrapType) {
+        } else if (type == GUITypes.WrapType) {
             console.log('edit setting options: ' + app_enums.wrap_type_text)
             cb.set_option_texts(app_enums.wrap_type_text)
-        } else if (type == enum_hint_value.kDirectionType) {
+        } else if (type == GUITypes.DirectionType) {
             console.log('edit setting options: ' + app_enums.direction_type_text)
             cb.set_option_texts(app_enums.direction_type_text)
-        } else if (type == enum_hint_value.kHTTPSendType) {
+        } else if (type == GUITypes.HTTPSendType) {
             console.log('edit setting options: ' + app_enums.http_send_type_text)
             cb.set_option_texts(app_enums.http_send_type_text)
-        } else if (type == enum_hint_value.kJSType) {
+        } else if (type == GUITypes.JSType) {
         	console.log('edit setting options: ' + app_enums.js_type_text)
             cb.set_option_texts(app_enums.js_type_text)
         } else {

@@ -1,8 +1,7 @@
 #pragma once
 #include <components/computes/computes_export.h>
 #include <components/computes/compute.h>
-#include <guicomponents/comms/hintkeys.h>
-
+#include <guicomponents/comms/guitypes.h>
 #include <QtCore/QJsonValue>
 
 namespace ngs {

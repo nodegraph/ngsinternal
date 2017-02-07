@@ -3,8 +3,8 @@
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
+#include <guicomponents/comms/guitypes.h>
 
-#include <guicomponents/comms/commtypes.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/entermqttgroupcompute.h>
@@ -38,7 +38,7 @@ void BaseMQTTCompute::create_inputs_outputs(const EntityConfig& config) {
 }
 
 void BaseMQTTCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 }
 
 void BaseMQTTCompute::update_wires() {
@@ -100,8 +100,8 @@ QJsonObject MQTTPublishCompute::init_hints() {
   QJsonObject m;
   BaseMQTTCompute::init_hints(m);
 
-  add_hint(m, Message::kTopic, HintKey::kDescriptionHint, "The topic to publish the message to.");
-  add_hint(m, Message::kMessage, HintKey::kDescriptionHint, "The message to publish.");
+  add_hint(m, Message::kTopic, GUITypes::HintKey::DescriptionHint, "The topic to publish the message to.");
+  add_hint(m, Message::kMessage, GUITypes::HintKey::DescriptionHint, "The message to publish.");
 
   return m;
 }
@@ -159,8 +159,8 @@ QJsonObject MQTTSubscribeCompute::init_hints() {
   QJsonObject m;
   BaseMQTTCompute::init_hints(m);
 
-  add_hint(m, Message::kTopic, HintKey::kDescriptionHint, "The topic to subscribe to.");
-  add_hint(m, Message::kOutputPropertyName, HintKey::kDescriptionHint,
+  add_hint(m, Message::kTopic, GUITypes::HintKey::DescriptionHint, "The topic to subscribe to.");
+  add_hint(m, Message::kOutputPropertyName, GUITypes::HintKey::DescriptionHint,
            "The name of the property to add to our output. The value of the property will be the latest message.");
 
   return m;

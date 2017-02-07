@@ -1,8 +1,7 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
-#include <guicomponents/comms/commtypes.h>
-
 #include <base/objectmodel/deploader.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/computes/waitnodecompute.h>
 
 #include <guicomponents/quick/basenodegraphmanipulator.h>
@@ -49,8 +48,8 @@ const QJsonObject WaitNodeCompute::_hints = WaitNodeCompute::init_hints();
 QJsonObject WaitNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
-  add_hint(m, "time_in_milliseconds", HintKey::kDescriptionHint, "The time to wait specified in milliseconds.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "time_in_milliseconds", GUITypes::HintKey::DescriptionHint, "The time to wait specified in milliseconds.");
 
   return m;
 }

@@ -3,17 +3,14 @@ set(sources
     cryptologic.cpp
     licensechecker.cpp
     filemodel.cpp
-    commtypes.cpp
-    hintkeys.cpp
     message.cpp
     taskscheduler.cpp
-    qmltypes.cpp
+    guitypes.cpp
     )
    
 set(headers
     commtypes.h
     messagetypes.h
-    hintkeys.h
     taskscheduler.h
 )
     
@@ -22,7 +19,7 @@ set(moc_headers
     licensechecker.h
     filemodel.h
     message.h
-    qmltypes.h
+    guitypes.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})

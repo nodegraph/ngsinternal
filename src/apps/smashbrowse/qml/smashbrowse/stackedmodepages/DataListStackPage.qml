@@ -12,7 +12,7 @@ import smashbrowse.stackedmodepages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
-import JSTypeWrap 1.0
+import GUITypes 1.0
 
 BaseStackPage{
     id: stack_page
@@ -100,7 +100,7 @@ BaseStackPage{
         var value_type = app_enums.determine_js_type(value)
 
 		// Push a page to get the name or index of the element to add.
-        if (value_type == js_type.kObject) {
+        if (value_type == GUITypes.Object) {
             var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringAndDropdownPage.qml", stack_page, {})
             push_page.visible = true
             push_page.set_value("name")
@@ -112,8 +112,8 @@ BaseStackPage{
             
             push_page.callback = stack_page.add_element.bind(stack_page)
             stack_view.push_page(push_page)
-        } else if (value_type == js_type.kArray) {
-        	if (hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
+        } else if (value_type == GUITypes.Array) {
+        	if (hints.hasOwnProperty(GUITypes.ElementJSTypeHint)) {
         		var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterNumberPage.qml", stack_page, {})
             	push_page.visible = true
             	push_page.set_value(0)
@@ -123,7 +123,7 @@ BaseStackPage{
             	push_page.set_description("Index of the new element.")
             	
             	
-            	var element_type = hints[hint_key.kElementJSTypeHint]
+            	var element_type = hints[GUITypes.ElementJSTypeHint]
 	            push_page.callback = stack_page.add_element.bind(stack_page, element_type)
 	            stack_view.push_page(push_page)
         	} else {
@@ -151,16 +151,16 @@ BaseStackPage{
         var child_value_type = app_enums.determine_js_type(child_value)
         
         switch(child_value_type) {
-        case js_type.kString:
-        case js_type.kBoolean:
-        case js_type.kNumber: {
+        case GUITypes.String:
+        case GUITypes.Boolean:
+        case GUITypes.Number: {
         		// Can't do anything further.
             }
             break
-        case js_type.kObject:
+        case GUITypes.Object:
             stack_page.view_object(child_path[child_path.length-1], child_path);
             break
-        case js_type.kArray:
+        case GUITypes.Array:
             stack_page.view_array(child_path[child_path.length-1], child_path);
             break
         default:
@@ -184,8 +184,8 @@ BaseStackPage{
         var exposed = stack_page.get_exposed(child_path)
         var child_type = app_enums.determine_js_type(child_value)
         switch(child_type) {
-        case js_type.kString:
-        	if (child_hints.hasOwnProperty(hint_key.kMultiLineHint)) {
+        case GUITypes.String:
+        	if (child_hints.hasOwnProperty(GUITypes.MultiLineHint)) {
         		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditMultiLinePage.qml", edit_data_list_stack_page, {})
 	            setup_edit_page(page, name, child_value, child_hints, exposed)
 	            stack_view.push_page(page)
@@ -195,13 +195,13 @@ BaseStackPage{
 	            stack_view.push_page(page)
             }
             break
-        case js_type.kBoolean:
+        case GUITypes.Boolean:
             var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml", edit_data_list_stack_page, {})
             setup_edit_page(page, name, child_value, child_hints, exposed)
             stack_view.push_page(page)
             break
-        case js_type.kNumber:
-            if (child_hints.hasOwnProperty(hint_key.kEnumHint)) {
+        case GUITypes.Number:
+            if (child_hints.hasOwnProperty(GUITypes.EnumHint)) {
                 var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml", edit_data_list_stack_page, {})
                 setup_edit_page(page, name, child_value, child_hints, exposed)
                 stack_view.push_page(page)
@@ -211,10 +211,10 @@ BaseStackPage{
                 stack_view.push_page(page)
             }
             break
-        case js_type.kObject:
+        case GUITypes.Object:
             stack_page.edit_object(child_path[child_path.length-1], child_path);
             break
-        case js_type.kArray:
+        case GUITypes.Array:
             stack_page.edit_array(child_path[child_path.length-1], child_path);
             break
         default:
@@ -229,10 +229,10 @@ BaseStackPage{
         var hints = get_hints(path)
         var value_type = app_enums.determine_js_type(value)
 
-        if (value_type == js_type.kObject) {
+        if (value_type == GUITypes.Object) {
             delete value[name]
             set_value(path, value)
-        } else if (value_type == js_type.kArray) {
+        } else if (value_type == GUITypes.Array) {
             value.splice(Number(name),1)
             set_value(path, value)
         }
@@ -249,15 +249,15 @@ BaseStackPage{
     // Setup an editor page before pushing onto the stack view.
     function setup_edit_page(page, title, child_value, child_hints, exposed) {
         if (child_hints) {
-            if (child_hints.hasOwnProperty(hint_key.kEnumHint)) {
-                page.set_enum_type(child_hints[hint_key.kEnumHint])
+            if (child_hints.hasOwnProperty(GUITypes.EnumHint)) {
+                page.set_enum_type(child_hints[GUITypes.EnumHint])
             }
             var child_type = app_enums.determine_js_type(child_value)
-            if (child_type == js_type.kArray || child_type == js_type.kObject) {
+            if (child_type == GUITypes.Array || child_type == GUITypes.Object) {
             	//page.resizable = true
             }
-            if (child_hints.hasOwnProperty(hint_key.kDescriptionHint)) {
-                page.set_description(child_hints[hint_key.kDescriptionHint])
+            if (child_hints.hasOwnProperty(GUITypes.DescriptionHint)) {
+                page.set_description(child_hints[GUITypes.DescriptionHint])
             } else {
                 // If there is not description, then we're editing an element of an object or array parameter.
                 page.set_description("The current value of this element.")
@@ -279,31 +279,31 @@ BaseStackPage{
         var parent_type = app_enums.determine_js_type(parent_value)
 
         // Add a new element.
-        if (parent_type == js_type.kArray) {
+        if (parent_type == GUITypes.Array) {
             // Add an array element.
             switch(element_type) {
-            	case js_type.kString: {
+            	case GUITypes.String: {
             		parent_value.splice(element_name, 0, '');
             		break;
             	}
-            	case js_type.kNumber: {
+            	case GUITypes.Number: {
             		parent_value.splice(element_name, 0, 0);
             		break;
             	}
-            	case js_type.kBoolean: {
+            	case GUITypes.Boolean: {
             		parent_value.splice(element_name, 0, false);
             		break;
             	}
-            	case js_type.kArray: {
+            	case GUITypes.Array: {
             		parent_value.splice(element_name, 0, []);
             		break;
             	}
-            	case js_type.kObject: {
+            	case GUITypes.Object: {
             		parent_value.splice(element_name, 0, {});
             		break;
             	}
             }
-        } else if (parent_type == js_type.kObject) {
+        } else if (parent_type == GUITypes.Object) {
             // Make sure the element_name is unique.
             var unique_name = element_name
             if (parent_value.hasOwnProperty(unique_name)) {
@@ -317,23 +317,23 @@ BaseStackPage{
 
             // Add an object element.
         	switch(element_type) {
-        		case js_type.kString: {
+        		case GUITypes.String: {
         			parent_value[unique_name] = ''
         			break
         			}
-        		case js_type.kNumber: {
+        		case GUITypes.Number: {
         			parent_value[unique_name] = 0
         			break
         		}
-        		case js_type.kBoolean: {
+        		case GUITypes.Boolean: {
         			parent_value[unique_name] = false
         			break
         		}
-        		case js_type.kArray: {
+        		case GUITypes.Array: {
         			parent_value[unique_name] = []
         			break
         		}
-        		case js_type.kObject: {
+        		case GUITypes.Object: {
         			parent_value[unique_name] = {}
         			break
         		}
@@ -376,11 +376,11 @@ BaseStackPage{
 			
     		// Merge hints from the parent.
     		var parent_hints = app_utils.get_sub_object(_hints, parent_path)
-    		if (parent_hints.hasOwnProperty(hint_key.kElementEnumHint)) {
-    			hints[hint_key.kEnumHint] = parent_hints[hint_key.kElementEnumHint]
+    		if (parent_hints.hasOwnProperty(GUITypes.ElementEnumHint)) {
+    			hints[GUITypes.EnumHint] = parent_hints[GUITypes.ElementEnumHint]
     		}
-    		if (parent_hints.hasOwnProperty(hint_key.kElementJSTypeHint)) {
-    			hints[hint_key.kJSTypeHint] = parent_hints[hint_key.kElementJSTypeHint]
+    		if (parent_hints.hasOwnProperty(GUITypes.ElementJSTypeHint)) {
+    			hints[GUITypes.JSTypeHint] = parent_hints[GUITypes.ElementJSTypeHint]
     		}
     	}
     	return hints
@@ -438,31 +438,31 @@ BaseStackPage{
     		var hints = get_hints(path)
     		
     		// If we have an enum hint, return the respective text.
-    		if (hints.hasOwnProperty(hint_key.kEnumHint)) {
-    			return app_enums.get_enum_hint_value_text(hints[hint_key.kEnumHint], value)
+    		if (hints.hasOwnProperty(GUITypes.EnumHint)) {
+    			return app_enums.get_enum_hint_value_text(hints[GUITypes.EnumHint], value)
     		}
     		
     		// Otherwise return the description for objects and arrays.
-    		if (hints.hasOwnProperty(hint_key.kDescriptionHint) && 
-	    				(value_type == js_type.kObject || value_type == js_type.kArray)) {
-	    		return hints[hint_key.kDescriptionHint]
+    		if (hints.hasOwnProperty(GUITypes.DescriptionHint) && 
+	    				(value_type == GUITypes.Object || value_type == GUITypes.Array)) {
+	    		return hints[GUITypes.DescriptionHint]
 	    	}
     	}
 
         
         // Use the js type if the hints don't help.
         switch(value_type) {
-        case js_type.kString:
-        case js_type.kBoolean:
-        case js_type.kNumber:
+        case GUITypes.String:
+        case GUITypes.Boolean:
+        case GUITypes.Number:
             return value.toString()
-        case js_type.kObject:
+        case GUITypes.Object:
             return "folder of values"
-        case js_type.kArray:
+        case GUITypes.Array:
             return "array of values"
-        case js_type.kUndefined:
+        case GUITypes.Undefined:
             return "undefined"
-        case js_type.kNull:
+        case GUITypes.Null:
             return "null"
         default:
             console.log("Error: DataStackPage::get_string_for_value encountered unknown type: " + value_type + " for value: " + value)
@@ -474,38 +474,22 @@ BaseStackPage{
     // Get an image which represents the value's type.
     function get_image_for_value(path) {
         var value = get_value(path)
-        
-        console.log('----------------------')
-        
     	var value_type = app_enums.determine_js_type(value)
     	
-    	console.log('object type as string: ' + js_type.get_string(0))
-    	console.log('js type strings: ' + js_type.get_gui_strings())
-    	console.log('getting int value: ' + js_type.kTest)
-    	console.log('value type: ' + JSON.stringify(value_type))
-    	console.log('getting image for: ' + JSON.stringify(value))
-    	
         switch(value_type) {
-        case js_type.kString:
-        	console.log('string')
+        case GUITypes.String:
             return 'qrc:///icons/ic_font_download_white_48dp.png'
-        case js_type.kBoolean:
-        	console.log('boolean')
+        case GUITypes.Boolean:
             return 'qrc:///icons/ic_check_box_white_24dp.png'
-        case js_type.kNumber:
-        	console.log('number')
+        case GUITypes.Number:
             return 'qrc:///icons/ic_looks_3_white_48dp.png'
-        case js_type.kObject:
-        	console.log('object')
+        case GUITypes.Object:
             return 'qrc:///icons/ic_folder_white_48dp.png'
-        case js_type.kArray:
-        	console.log('array')
+        case GUITypes.Array:
             return 'qrc:///icons/ic_folder_white_48dp.png'
-        case js_type.kUndefined:
-        	console.log('undefined')
+        case GUITypes.Undefined:
             return 'qrc:///icons/ic_warning_white_48dp.png'
-        case js_type.kNull:
-        	console.log('null')
+        case GUITypes.Null:
             return 'qrc:///icons/ic_warning_white_48dp.png'
         default:
             console.log("Error: DataStackPage::get_image_for_value encountered unknown type at: " + path)

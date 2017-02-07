@@ -4,8 +4,8 @@
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/datanodecompute.h>
 #include <components/computes/jsonutils.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/comms/commtypes.h>
 
 namespace ngs {
 
@@ -36,7 +36,7 @@ const QJsonObject AccumulateDataNodeCompute::_hints = AccumulateDataNodeCompute:
 QJsonObject AccumulateDataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kDescriptionHint, "This value will be merged into its value from a previous pass through this node.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "This value will be merged into its value from a previous pass through this node.");
   return m;
 }
 

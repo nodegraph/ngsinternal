@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
-import JSTypeWrap 1.0
+import GUITypes 1.0
 
 Item{
     id: app_enums
@@ -21,36 +21,28 @@ Item{
     // Get the value type at the given path in _values.
     function determine_js_type(value) {
         if (value === undefined) {
-        	console.log('111')
-            return js_type.kUndefined
+            return GUITypes.Undefined
         } else if (value === null) {
-        	console.log('222')
-            return js_type.kNull
+            return GUITypes.Null
         }else if (typeof value === 'string') {
             // String.
-            console.log('333')
-            return js_type.kString
+            return GUITypes.String
         } else if (typeof value === 'boolean') {
             // Boolean.
-            console.log('444')
-            return js_type.kBoolean
+            return GUITypes.Boolean
         } else if (typeof value === 'number'){
             // Number.
-            console.log('555')
-            return js_type.kNumber
+            return GUITypes.Number
         } else if (typeof value === 'object') {
             if (Object.getPrototypeOf(value) === Object.prototype) {
                 // Object.
-                console.log('666')
-                return js_type.kObject
+                return GUITypes.Object
             } else if (Object.getPrototypeOf(value) === Array.prototype) {
                 // Array.
-                console.log('777')
-                return js_type.kArray
+                return GUITypes.Array
             }
         }
-        console.log('888')
-        return js_type.kUndefined
+        return GUITypes.Undefined
     }
 
     // --------------------------------------------------------------------------------------
@@ -59,19 +51,19 @@ Item{
     // --------------------------------------------------------------------------------------
 
     function get_enum_hint_value_text(enum_hint_value_type, index) {
-        if (enum_hint_value_type == enum_hint_value.kMouseActionType) {
+        if (enum_hint_value_type == GUITypes.MouseActionType) {
             return mouse_action_type_text[index]
-        } else if (enum_hint_value_type == enum_hint_value.kTextActionType) {
+        } else if (enum_hint_value_type == GUITypes.TextActionType) {
             return text_action_type_text[index]
-        } else if (enum_hint_value_type == enum_hint_value.kElementActionType) {
+        } else if (enum_hint_value_type == GUITypes.ElementActionType) {
             return element_action_type_text[index]
-        } else if (enum_hint_value_type == enum_hint_value.kWrapType) {
+        } else if (enum_hint_value_type == GUITypes.WrapType) {
             return wrap_type_text[index]
-        } else if (enum_hint_value_type == enum_hint_value.kDirectionType) {
+        } else if (enum_hint_value_type == GUITypes.DirectionType) {
             return direction_type_text[index]
-        } else if (enum_hint_value_type == enum_hint_value.kHTTPSendType) {
+        } else if (enum_hint_value_type == GUITypes.HTTPSendType) {
         	return http_send_type_text[index]
-        } else if (enum_hint_value_type == enum_hint_value.kJSType) {
+        } else if (enum_hint_value_type == GUITypes.JSType) {
         	return js_type_text[index]
         } else {
             console.log('Error: attempt to get text for an enum with invalid type: ' + enum_hint_value_type)

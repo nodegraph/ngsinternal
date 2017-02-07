@@ -4,9 +4,9 @@
 #include <base/utils/simplesaver.h>
 #include <base/utils/simpleloader.h>
 #include <components/computes/inputcompute.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/comms/message.h>
-#include <guicomponents/comms/commtypes.h>
 #include <guicomponents/quick/nodegraphmanipulator.h>
 
 //#include <QtCore/QVariant>
@@ -51,10 +51,10 @@ void ScriptNodeCompute::create_inputs_outputs(const EntityConfig& config) {
 const QJsonObject ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();
 QJsonObject ScriptNodeCompute::init_hints() {
   QJsonObject m;
-  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 
-  add_hint(m, "script", HintKey::kMultiLineHint, true);
-  add_hint(m, "script", HintKey::kDescriptionHint, "Script to compute output value.\nget_input(): retrieves the input.\nset_output_value(value): sets the output value property.");
+  add_hint(m, "script", GUITypes::HintKey::MultiLineHint, true);
+  add_hint(m, "script", GUITypes::HintKey::DescriptionHint, "Script to compute output value.\nget_input(): retrieves the input.\nset_output_value(value): sets the output value property.");
   return m;
 }
 

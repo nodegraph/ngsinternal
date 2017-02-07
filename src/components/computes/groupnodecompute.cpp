@@ -63,7 +63,7 @@ void GroupNodeCompute::WireUpdater::update_wires() {
 
       Dep<InputNodeCompute> input_node = get_dep<InputNodeCompute>(node);
       QJsonObject param_hints = input_node->get_hints().value("default_value").toObject();
-      param_hints.insert(QString::number(to_underlying(HintKey::kDescriptionHint)), description);
+      param_hints.insert(QString::number(to_underlying(GUITypes::HintKey::DescriptionHint)), description);
       _target->add_param_hints(child_name, param_hints);
     } else if (did == EntityDID::kOutputNodeEntity) {
       // Update the set of exposed_outputs.

@@ -1,7 +1,7 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputnodecompute.h>
 #include <components/computes/flux.h>
-#include <guicomponents/comms/commtypes.h>
+#include <guicomponents/comms/guitypes.h>
 
 namespace ngs {
 
@@ -31,7 +31,7 @@ const QJsonObject OutputNodeCompute::_hints = OutputNodeCompute::init_hints();
 QJsonObject OutputNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 
   return m;
 }

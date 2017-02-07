@@ -623,7 +623,7 @@ void NodeGraphManipulatorImp::copy_description_to_input_node(Entity* input_entit
   // Get the description from the description hint on the node for our input name.
   const QJsonObject& node_hints = node_compute->get_hints();
   QJsonObject input_hints = node_hints.value(input_name.c_str()).toObject();
-  QJsonValue description = input_hints.value(QString::number(to_underlying(HintKey::kDescriptionHint))).toString();
+  QJsonValue description = input_hints.value(QString::number(to_underlying(GUITypes::HintKey::DescriptionHint))).toString();
 
   // Get the unconnected value from the input. This determine the type as well.
   const QJsonValue& unconnected_value = input_compute->get_unconnected_value();

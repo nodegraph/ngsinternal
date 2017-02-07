@@ -2,8 +2,8 @@
 #include <components/computes/erasedatanodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/jsonutils.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/comms/commtypes.h>
 
 namespace ngs {
 
@@ -41,8 +41,8 @@ const QJsonObject EraseDataNodeCompute::_hints = EraseDataNodeCompute::init_hint
 QJsonObject EraseDataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kDescriptionHint, "The main input object this node acts on.");
-  add_hint(m, "path", HintKey::kDescriptionHint, "The path at which to erase data.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main input object this node acts on.");
+  add_hint(m, "path", GUITypes::HintKey::DescriptionHint, "The path at which to erase data.");
 
   return m;
 }

@@ -2,8 +2,8 @@
 #include <components/computes/datanodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/jsonutils.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/comms/commtypes.h>
 
 namespace ngs {
 
@@ -35,7 +35,7 @@ const QJsonObject DataNodeCompute::_hints = DataNodeCompute::init_hints();
 QJsonObject DataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "data", HintKey::kDescriptionHint, "The data value to output from this node.");
+  add_hint(m, "data", GUITypes::HintKey::DescriptionHint, "The data value to output from this node.");
 
   return m;
 }

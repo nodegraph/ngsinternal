@@ -2,9 +2,9 @@
 #include <base/objectmodel/dep.h>
 #include <base/objectmodel/deploader.h>
 #include <components/computes/inputs.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
-#include <guicomponents/comms/commtypes.h>
 #include <guicomponents/computes/taskqueuer.h>
 
 #include <QtNetwork/QHostAddress>
@@ -55,12 +55,12 @@ const QJsonObject EnterFirebaseGroupCompute::_hints = EnterFirebaseGroupCompute:
 QJsonObject EnterFirebaseGroupCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, Message::kApiKey, HintKey::kDescriptionHint, "The Firebase api key.");
-  add_hint(m, Message::kAuthDomain, HintKey::kDescriptionHint, "The Firebase authentication domain.");
-  add_hint(m, Message::kDatabaseURL, HintKey::kDescriptionHint, "The Firebase realtime database url.");
-  add_hint(m, Message::kStorageBucket, HintKey::kDescriptionHint, "The Firebase storage bucket url.");
-  add_hint(m, Message::kEmail, HintKey::kDescriptionHint, "The email to sign in to Firebase. Please enable email/password authentication on your database.");
-  add_hint(m, Message::kPassword, HintKey::kDescriptionHint, "The password to sign in to Firebase. Please enable email/password authentication on your database.");
+  add_hint(m, Message::kApiKey, GUITypes::HintKey::DescriptionHint, "The Firebase api key.");
+  add_hint(m, Message::kAuthDomain, GUITypes::HintKey::DescriptionHint, "The Firebase authentication domain.");
+  add_hint(m, Message::kDatabaseURL, GUITypes::HintKey::DescriptionHint, "The Firebase realtime database url.");
+  add_hint(m, Message::kStorageBucket, GUITypes::HintKey::DescriptionHint, "The Firebase storage bucket url.");
+  add_hint(m, Message::kEmail, GUITypes::HintKey::DescriptionHint, "The email to sign in to Firebase. Please enable email/password authentication on your database.");
+  add_hint(m, Message::kPassword, GUITypes::HintKey::DescriptionHint, "The password to sign in to Firebase. Please enable email/password authentication on your database.");
 
   return m;
 }

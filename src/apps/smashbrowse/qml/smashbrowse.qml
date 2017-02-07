@@ -215,18 +215,15 @@ Rectangle {
 
 		// Determine the next page to show.
 		if (license_checker.license_is_valid()) {
-			console.log('aaaa')
 			// Skip right to the node graph.
 			main_bar.switch_to_mode(app_settings.node_graph_mode)
 			app_utils.load_last_graph()
 			app_utils.frame_all_on_idle()
 		} else if (crypto_logic.crypto_exists()) {
-			console.log('bbbb')
 			// Go to the check password page.
             crypto_logic.load_crypto()
             check_password_page.visible = true
         } else {
-        	console.log('cccc')
         	// Go to the create a new password page.
             create_password_page.visible = true
         }

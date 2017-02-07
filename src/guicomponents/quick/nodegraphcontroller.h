@@ -1,8 +1,8 @@
 #pragma once
 #include <guicomponents/quick/quick_export.h>
 #include <base/objectmodel/dep.h>
-#include <guicomponents/comms/qmltypes.h>
 #include <base/objectmodel/component.h>
+#include <guicomponents/comms/guitypes.h>
 
 #include <QtCore/QObject>
 
@@ -23,10 +23,10 @@ Q_OBJECT
   void dive(const std::string& group_node_name);
   Q_INVOKABLE void surface_from_group();
 
-  // Objects which hold type info for use from the qml side.
-  JSTypeWrap js_type_wrap;
-  HintKeyWrap hint_key_wrap;
-  EnumHintValueWrap enum_hint_value_wrap;
+//  // Objects which hold type info for use from the qml side.
+//  JSTypeWrap js_type_wrap;
+//  HintKeyWrap hint_key_wrap;
+//  EnumHintValueWrap enum_hint_value_wrap;
 
   Q_INVOKABLE void create_user_macro_node(bool centered, const QString& macro_name);
   Q_INVOKABLE void create_app_macro_node(bool centered, const QString& macro_name);

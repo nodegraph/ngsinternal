@@ -2,8 +2,8 @@
 #include <components/computes/copydatanodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/jsonutils.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/comms/commtypes.h>
 
 namespace ngs {
 
@@ -49,9 +49,9 @@ const QJsonObject CopyDataNodeCompute::_hints = CopyDataNodeCompute::init_hints(
 QJsonObject CopyDataNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "in", HintKey::kDescriptionHint, "The input object within which to copy and paste a value.");
-  add_hint(m, "source_path", HintKey::kDescriptionHint, "The source path from which we want to copy data.");
-  add_hint(m, "destination_path", HintKey::kDescriptionHint, "The target path to which we want to paste data.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The input object within which to copy and paste a value.");
+  add_hint(m, "source_path", GUITypes::HintKey::DescriptionHint, "The source path from which we want to copy data.");
+  add_hint(m, "destination_path", GUITypes::HintKey::DescriptionHint, "The target path to which we want to paste data.");
 
   return m;
 }

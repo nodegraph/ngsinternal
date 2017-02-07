@@ -2,8 +2,8 @@
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/jsonutils.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/comms/commtypes.h>
 
 namespace ngs {
 
@@ -44,8 +44,8 @@ const QJsonObject InputNodeCompute::_hints = InputNodeCompute::init_hints();
 QJsonObject InputNodeCompute::init_hints() {
   QJsonObject m;
 
-  add_hint(m, "default_value", HintKey::kDescriptionHint, "The value to be output by this node when its associated input plug on the group is not connected.");
-  add_hint(m, "description", HintKey::kDescriptionHint, "A short description of this input value. It will be displayed when editing the surrounding group.");
+  add_hint(m, "default_value", GUITypes::HintKey::DescriptionHint, "The value to be output by this node when its associated input plug on the group is not connected.");
+  add_hint(m, "description", GUITypes::HintKey::DescriptionHint, "A short description of this input value. It will be displayed when editing the surrounding group.");
 
   return m;
 }

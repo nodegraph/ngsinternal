@@ -173,7 +173,7 @@ Entity* Compute::get_outputs_space() {
   return our_entity()->get_child("outputs");
 }
 
-void Compute::add_hint(QJsonObject& node_hints, const std::string& name, HintKey hint_type, const QJsonValue& value) {
+void Compute::add_hint(QJsonObject& node_hints, const std::string& name, GUITypes::HintKey hint_type, const QJsonValue& value) {
   QJsonObject param_hints = node_hints.value(name.c_str()).toObject();
   param_hints.insert(QString::number(to_underlying(hint_type)), value);
   node_hints.insert(name.c_str(),  param_hints);

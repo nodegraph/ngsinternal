@@ -3,10 +3,10 @@
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
+#include <guicomponents/comms/guitypes.h>
 
 #include <guicomponents/computes/httpworker.h>
 #include <guicomponents/comms/taskscheduler.h>
-#include <guicomponents/comms/commtypes.h>
 #include <guicomponents/computes/httpcomputes.h>
 
 #include <functional>
@@ -39,7 +39,7 @@ void BaseHTTPCompute::create_inputs_outputs(const EntityConfig& config) {
 }
 
 void BaseHTTPCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", HintKey::kDescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
 }
 
 void BaseHTTPCompute::dump_map(const QJsonObject& inputs) const {
@@ -93,17 +93,17 @@ QJsonObject HTTPCompute::init_hints() {
   QJsonObject m;
   BaseHTTPCompute::init_hints(m);
 
-  add_hint(m, Message::kURL, HintKey::kDescriptionHint,
+  add_hint(m, Message::kURL, GUITypes::HintKey::DescriptionHint,
            "The URL to send the HTTP request to.");
 
-  add_hint(m, Message::kPayload, HintKey::kDescriptionHint,
+  add_hint(m, Message::kPayload, GUITypes::HintKey::DescriptionHint,
            "The value to send with the HTTP request. This should be an expression in javascript.");
 
-  add_hint(m, Message::kHTTPRequestMethod, HintKey::kEnumHint, to_underlying(EnumHintValue::kHTTPSendType));
-  add_hint(m, Message::kHTTPRequestMethod, HintKey::kDescriptionHint,
+  add_hint(m, Message::kHTTPRequestMethod, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::HTTPSendType));
+  add_hint(m, Message::kHTTPRequestMethod, GUITypes::HintKey::DescriptionHint,
            "The value to send with the HTTP request. This should be an expression in javascript.");
 
-  add_hint(m, Message::kOutputPropertyName, HintKey::kDescriptionHint,
+  add_hint(m, Message::kOutputPropertyName, GUITypes::HintKey::DescriptionHint,
            "The name of the property to add to our output. The value of the property will be the HTTP reply.");
 
   return m;

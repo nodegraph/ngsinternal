@@ -2,8 +2,8 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/jsonutils.h>
 #include <components/computes/loopdatanodecompute.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/comms/commtypes.h>
 
 namespace ngs {
 

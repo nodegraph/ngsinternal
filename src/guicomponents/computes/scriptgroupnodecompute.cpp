@@ -3,9 +3,8 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/outputnodecompute.h>
+#include <guicomponents/comms/guitypes.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/comms/commtypes.h>
-
 #include <QtCore/QDebug>
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlContext>
@@ -40,8 +39,8 @@ const std::unordered_set<std::string>& ScriptGroupNodeCompute::get_fixed_inputs(
 const QJsonObject ScriptGroupNodeCompute::_hints = ScriptGroupNodeCompute::init_hints();
 QJsonObject ScriptGroupNodeCompute::init_hints() {
   QJsonObject m;
-  add_hint(m, "script", HintKey::kMultiLineHint, true);
-  add_hint(m, "script", HintKey::kDescriptionHint, "Script to compute the outputs.\nget_input(name): retrieves an input.\nset_output(name, value): sets an output value.");
+  add_hint(m, "script", GUITypes::HintKey::MultiLineHint, true);
+  add_hint(m, "script", GUITypes::HintKey::DescriptionHint, "Script to compute the outputs.\nget_input(name): retrieves an input.\nset_output(name, value): sets an output value.");
   return m;
 }
 
