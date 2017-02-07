@@ -35,21 +35,21 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_gavel_white_48dp.png"
         title: "Perform Action on Element..."
-        description: "Perform an action at the current element."
+        description: "Perform an action on the current element."
         script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsPerformAction')"
     }
     
     ListElement {
         image_url: "qrc:///icons/ic_gavel_white_48dp.png"
         title: "Perform Action on Browser Window..."
-        description: "Perform an action at the current element."
-        script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsBrowserWindow')"
+        description: "Perform an action on the browser."
+        script: "push_by_names('Perform Action', 'NodeMenuListPage', 'WebActionsBrowserWindow')"
     }
     
     ListElement {
         image_url: "qrc:///icons/ic_format_list_bulleted_white_48dp.png"
-        title: "Extract Info from Browser..."
-        description: "Perform an action at the current element."
+        title: "Extract Info..."
+        description: "Extract info from the current element or browser"
         script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsExtract')"
     }
     

@@ -6,7 +6,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        image_url: "qrc:///icons/ic_keyboard_arrow_down_white_48dp.png"
         title: "Down"
         description: "Scroll down"
         script: "web_recorder.record_scroll_down();
@@ -14,7 +14,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_keyboard_arrow_up_white_48dp.png"
         title: "Up"
         description: "Scroll up."
         script: "web_recorder.record_scroll_up();
@@ -22,7 +22,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        image_url: "qrc:///icons/ic_keyboard_arrow_right_white_48dp.png"
         title: "Right"
         description: "Scroll right."
         script: "web_recorder.record_scroll_right();
@@ -30,7 +30,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        image_url: "qrc:///icons/ic_keyboard_arrow_left_white_48dp.png"
         title: "Left"
         description: "Scroll left."
         script: "web_recorder.record_scroll_left();

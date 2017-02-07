@@ -6,7 +6,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        image_url: "qrc:///icons/ic_title_white_48dp.png"
         title: "Using Text Under Crosshair"
         description: "Find the top-leftmost element containing the text under the crosshair."
         script: "web_recorder.record_find_element_by_text();
@@ -14,7 +14,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_crop_original_white_48dp.png"
         title: "Using Images Under Crosshair"
         description: "Find the top-leftmost element containing the images under the crosshair."
         script: "web_recorder.record_find_element_by_images()
@@ -22,7 +22,7 @@ ListModel {
     }
     
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_title_white_48dp.png"
         title: "With Any Text"
         description: "Find the top-leftmost text element."
         script: "web_recorder.record_find_element_by_text_type();
@@ -30,7 +30,7 @@ ListModel {
     }
     
     ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        image_url: "qrc:///icons/ic_crop_original_white_48dp.png"
         title: "With Any Image"
         description: "Find the top-leftmost image element."
         script: "web_recorder.record_find_element_by_image_type();
@@ -38,7 +38,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_settings_system_daydream_white_48dp.png"
+        image_url: "qrc:///icons/ic_text_fields_white_48dp.png"
         title: "With Any Input Field"
         description: "Find the top-leftmost input field."
         script: "web_recorder.record_find_element_by_input_type();
@@ -46,7 +46,7 @@ ListModel {
     }
 
     ListElement {
-        image_url: "qrc:///icons/ic_mode_edit_white_48dp.png"
+        image_url: "qrc:///icons/ic_format_line_spacing_white_48dp.png"
         title: "With Any Drop Down Field"
         description: "Find the top-leftmost drop down field."
         script: "web_recorder.record_find_element_by_select_type();

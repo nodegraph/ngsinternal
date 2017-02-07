@@ -239,6 +239,37 @@
         <file alias="icons/ic_link_black_48dp.png">../../external/icons/ic_link_black_48dp.png</file>
         <file alias="icons/ic_link_white_48dp.png">../../external/icons/ic_link_white_48dp.png</file>
         
+        <file alias="icons/ic_text_fields_black_48dp.png">../../external/icons/ic_text_fields_black_48dp.png</file>
+        <file alias="icons/ic_text_fields_white_48dp.png">../../external/icons/ic_text_fields_white_48dp.png</file>
+        
+        <file alias="icons/ic_title_black_48dp.png">../../external/icons/ic_title_black_48dp.png</file>
+        <file alias="icons/ic_title_white_48dp.png">../../external/icons/ic_title_white_48dp.png</file>
+        
+        <file alias="icons/ic_wallpaper_black_48dp.png">../../external/icons/ic_wallpaper_black_48dp.png</file>
+        <file alias="icons/ic_wallpaper_white_48dp.png">../../external/icons/ic_wallpaper_white_48dp.png</file>
+        
+        <file alias="icons/ic_mouse_black_48dp.png">../../external/icons/ic_mouse_black_48dp.png</file>
+        <file alias="icons/ic_mouse_white_48dp.png">../../external/icons/ic_mouse_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_black_48dp.png">../../external/icons/ic_keyboard_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_white_48dp.png">../../external/icons/ic_keyboard_white_48dp.png</file>
+        
+        <file alias="icons/ic_crop_original_black_48dp.png">../../external/icons/ic_crop_original_black_48dp.png</file>
+        <file alias="icons/ic_crop_original_white_48dp.png">../../external/icons/ic_crop_original_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_arrow_left_black_48dp.png">../../external/icons/ic_keyboard_arrow_left_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_arrow_left_white_48dp.png">../../external/icons/ic_keyboard_arrow_left_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_arrow_right_black_48dp.png">../../external/icons/ic_keyboard_arrow_right_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_arrow_right_white_48dp.png">../../external/icons/ic_keyboard_arrow_right_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_arrow_down_black_48dp.png">../../external/icons/ic_keyboard_arrow_down_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_arrow_down_white_48dp.png">../../external/icons/ic_keyboard_arrow_down_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_arrow_up_black_48dp.png">../../external/icons/ic_keyboard_arrow_up_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_arrow_up_white_48dp.png">../../external/icons/ic_keyboard_arrow_up_white_48dp.png</file>
+        
+        
         <!-- Web Browser Icons. -->
         <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>
         <file alias="icons/ic_cancel_white_48dp.png">../../external/icons/ic_cancel_white_48dp.png</file>
