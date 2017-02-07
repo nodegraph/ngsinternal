@@ -12,7 +12,7 @@ BaseEditPage {
 	
 	// Our Methods.
     function set_value(value) {
-        value_editor_loader.item.text = value
+        value_editor_loader.item.text = value.toString()
     }
 
     function get_value(value) {

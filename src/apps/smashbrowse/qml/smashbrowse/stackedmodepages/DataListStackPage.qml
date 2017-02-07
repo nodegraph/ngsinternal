@@ -12,6 +12,7 @@ import smashbrowse.stackedmodepages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
+import JSTypeWrap 1.0
 
 BaseStackPage{
     id: stack_page
@@ -473,22 +474,38 @@ BaseStackPage{
     // Get an image which represents the value's type.
     function get_image_for_value(path) {
         var value = get_value(path)
+        
+        console.log('----------------------')
+        
     	var value_type = app_enums.determine_js_type(value)
+    	
+    	console.log('object type as string: ' + js_type.get_string(0))
+    	console.log('js type strings: ' + js_type.get_gui_strings())
+    	console.log('getting int value: ' + js_type.kTest)
+    	console.log('value type: ' + JSON.stringify(value_type))
+    	console.log('getting image for: ' + JSON.stringify(value))
     	
         switch(value_type) {
         case js_type.kString:
+        	console.log('string')
             return 'qrc:///icons/ic_font_download_white_48dp.png'
         case js_type.kBoolean:
+        	console.log('boolean')
             return 'qrc:///icons/ic_check_box_white_24dp.png'
         case js_type.kNumber:
+        	console.log('number')
             return 'qrc:///icons/ic_looks_3_white_48dp.png'
         case js_type.kObject:
+        	console.log('object')
             return 'qrc:///icons/ic_folder_white_48dp.png'
         case js_type.kArray:
+        	console.log('array')
             return 'qrc:///icons/ic_folder_white_48dp.png'
         case js_type.kUndefined:
+        	console.log('undefined')
             return 'qrc:///icons/ic_warning_white_48dp.png'
         case js_type.kNull:
+        	console.log('null')
             return 'qrc:///icons/ic_warning_white_48dp.png'
         default:
             console.log("Error: DataStackPage::get_image_for_value encountered unknown type at: " + path)

@@ -1,5 +1,12 @@
 module menumodels
+
 CreateNodeActions 1.0 CreateNodeActions.qml
+CreateDataNodeActions 1.0 CreateDataNodeActions.qml
+CreateDataOpNodeActions 1.0 CreateDataOpNodeActions.qml
+CreateGroupNodeActions 1.0 CreateGroupNodeActions.qml
+CreateInputNodeActions 1.0 CreateInputNodeActions.qml
+CreateProtocolNodeActions 1.0 CreateProtocolNodeActions.qml
+
 NodeActions 1.0 NodeActions.qml
 GroupNodeActions 1.0 GroupNodeActions.qml
 NodeGraphActions 1.0 NodeGraphActions.qml
@@ -12,6 +19,8 @@ FileMenuActions 1.0 FileMenuActions.qml
 ImportExportActions 1.0 ImportExportActions.qml
 
 WebActions 1.0 WebActions.qml
+WebActionsBrowserWindow 1.0 WebActionsBrowserWindow.qml
+WebActionsExtract 1.0 WebActionsExtract.qml
 WebActionsNavigate 1.0 WebActionsNavigate.qml
 WebActionsFindElementByPosition 1.0 WebActionsFindElementByPosition.qml
 WebActionsFindElementByTraits 1.0 WebActionsFindElementByTraits.qml

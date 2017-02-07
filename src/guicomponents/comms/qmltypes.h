@@ -20,12 +20,12 @@ Q_OBJECT
       : QObject() {
   }
 
-  QString get_string(int type) const {
+  Q_INVOKABLE QString get_string(int type) const {
     return js_type_to_string((JSType)type);
   }
 
   static const QStringList _gui_strings;
-  Q_INVOKABLE const QStringList& get_gui_strings() {return _gui_strings;}
+  Q_INVOKABLE const QStringList get_gui_strings() {return _gui_strings;}
 
 
 // Declare properties.
@@ -41,9 +41,13 @@ Q_OBJECT
 // int kObject(){return (int)JSType::kObject;}
 #undef COMPONENT_ENTRY1
 #undef COMPONENT_ENTRY2
-#define COMPONENT_ENTRY1(NAME) int k##NAME(){return (int)JSType::k##NAME;}
+#define COMPONENT_ENTRY1(NAME) int k##NAME() const{return to_underlying(JSType::k##NAME);}
 #define COMPONENT_ENTRY2(NAME, VALUE) COMPONENT_ENTRY1(NAME)
   JSTYPE_ENTRIES()
+
+
+  Q_PROPERTY(int kTest READ kTest CONSTANT)
+  int kTest() const {return 123;}
 };
 
 // -------------------------------------------------------------------------------

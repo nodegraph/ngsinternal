@@ -7,6 +7,8 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
+import JSTypeWrap 1.0
+
 Item{
     id: app_enums
     objectName: "app_enums_object"
@@ -19,27 +21,35 @@ Item{
     // Get the value type at the given path in _values.
     function determine_js_type(value) {
         if (value === undefined) {
+        	console.log('111')
             return js_type.kUndefined
         } else if (value === null) {
+        	console.log('222')
             return js_type.kNull
         }else if (typeof value === 'string') {
             // String.
+            console.log('333')
             return js_type.kString
         } else if (typeof value === 'boolean') {
             // Boolean.
+            console.log('444')
             return js_type.kBoolean
         } else if (typeof value === 'number'){
             // Number.
+            console.log('555')
             return js_type.kNumber
         } else if (typeof value === 'object') {
             if (Object.getPrototypeOf(value) === Object.prototype) {
                 // Object.
+                console.log('666')
                 return js_type.kObject
             } else if (Object.getPrototypeOf(value) === Array.prototype) {
                 // Array.
+                console.log('777')
                 return js_type.kArray
             }
         }
+        console.log('888')
         return js_type.kUndefined
     }
 

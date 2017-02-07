@@ -263,8 +263,16 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("web_recorder"), web_recorder);
   context->setContextProperty(QStringLiteral("download_manager"), download_manager);
 
+  qmlRegisterUncreatableType<JSTypeWrap>("JSTypeWrap", 1, 0, "JSTypeWrap", "");
+
   context->setContextProperty(QStringLiteral("ng_controller"), ng_controller);
   context->setContextProperty(QStringLiteral("js_type"), &ng_controller->js_type_wrap);
+
+  // Debugging.
+  {
+    std::cerr << "js type test: " << ng_controller->js_type_wrap.kObject() << "\n";
+  }
+
   context->setContextProperty(QStringLiteral("hint_key"), &ng_controller->hint_key_wrap);
   context->setContextProperty(QStringLiteral("enum_hint_value"), &ng_controller->enum_hint_value_wrap);
 

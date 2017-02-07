@@ -105,6 +105,12 @@
         <!-- MenuModels -->
         <file>qml/smashbrowse/contentpages/listmodels/qmldir</file>
         <file>qml/smashbrowse/contentpages/listmodels/CreateNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/CreateDataNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/CreateDataOpNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/CreateGroupNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/CreateInputNodeActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/CreateProtocolNodeActions.qml</file>
+        
         <file>qml/smashbrowse/contentpages/listmodels/NodeActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/GroupNodeActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/NodeGraphActions.qml</file>
@@ -115,6 +121,8 @@
         <file>qml/smashbrowse/contentpages/listmodels/FileMenuActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/ImportExportActions.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActions.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsBrowserWindow.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsExtract.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsFindElementByPosition.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsFindElementByTraits.qml</file>
@@ -200,6 +208,36 @@
         
         <file alias="icons/ic_bubble_chart_black_48dp.png">../../external/icons/ic_bubble_chart_black_48dp.png</file>
         <file alias="icons/ic_bubble_chart_white_48dp.png">../../external/icons/ic_bubble_chart_white_48dp.png</file>
+        
+        <file alias="icons/ic_dehaze_black_48dp.png">../../external/icons/ic_dehaze_black_48dp.png</file>
+        <file alias="icons/ic_dehaze_white_48dp.png">../../external/icons/ic_dehaze_white_48dp.png</file>
+        
+        <file alias="icons/ic_photo_filter_black_48dp.png">../../external/icons/ic_photo_filter_black_48dp.png</file>
+        <file alias="icons/ic_photo_filter_white_48dp.png">../../external/icons/ic_photo_filter_white_48dp.png</file>
+        
+        <file alias="icons/ic_filter_1_black_48dp.png">../../external/icons/ic_filter_1_black_48dp.png</file>
+        <file alias="icons/ic_filter_1_white_48dp.png">../../external/icons/ic_filter_1_white_48dp.png</file>
+        
+        <file alias="icons/ic_graphic_eq_black_48dp.png">../../external/icons/ic_graphic_eq_black_48dp.png</file>
+        <file alias="icons/ic_graphic_eq_white_48dp.png">../../external/icons/ic_graphic_eq_white_48dp.png</file>
+        
+        <file alias="icons/ic_navigation_black_48dp.png">../../external/icons/ic_navigation_black_48dp.png</file>
+        <file alias="icons/ic_navigation_white_48dp.png">../../external/icons/ic_navigation_white_48dp.png</file>
+        
+        <file alias="icons/ic_open_with_black_48dp.png">../../external/icons/ic_open_with_black_48dp.png</file>
+        <file alias="icons/ic_open_with_white_48dp.png">../../external/icons/ic_open_with_white_48dp.png</file>
+        
+        <file alias="icons/ic_picture_in_picture_black_48dp.png">../../external/icons/ic_picture_in_picture_black_48dp.png</file>
+        <file alias="icons/ic_picture_in_picture_white_48dp.png">../../external/icons/ic_picture_in_picture_white_48dp.png</file>
+        
+        <file alias="icons/ic_picture_in_picture_alt_black_48dp.png">../../external/icons/ic_picture_in_picture_alt_black_48dp.png</file>
+        <file alias="icons/ic_picture_in_picture_alt_white_48dp.png">../../external/icons/ic_picture_in_picture_alt_white_48dp.png</file>
+        
+        <file alias="icons/ic_gavel_black_48dp.png">../../external/icons/ic_gavel_black_48dp.png</file>
+        <file alias="icons/ic_gavel_white_48dp.png">../../external/icons/ic_gavel_white_48dp.png</file>
+        
+        <file alias="icons/ic_link_black_48dp.png">../../external/icons/ic_link_black_48dp.png</file>
+        <file alias="icons/ic_link_white_48dp.png">../../external/icons/ic_link_white_48dp.png</file>
         
         <!-- Web Browser Icons. -->
         <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>
