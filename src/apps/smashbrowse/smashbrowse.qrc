@@ -269,6 +269,8 @@
         <file alias="icons/ic_keyboard_arrow_up_black_48dp.png">../../external/icons/ic_keyboard_arrow_up_black_48dp.png</file>
         <file alias="icons/ic_keyboard_arrow_up_white_48dp.png">../../external/icons/ic_keyboard_arrow_up_white_48dp.png</file>
         
+        <file alias="icons/ic_crop_16_9_black_48dp.png">../../external/icons/ic_crop_16_9_black_48dp.png</file>
+        <file alias="icons/ic_crop_16_9_white_48dp.png">../../external/icons/ic_crop_16_9_white_48dp.png</file>
         
         <!-- Web Browser Icons. -->
         <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>

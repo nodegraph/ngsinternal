@@ -70,7 +70,7 @@ ListModel {
                  main_bar.switch_to_current_mode();"
     }
     ListElement {
-        image_url: "qrc:///icons/ic_border_clear_white_48dp.png"
+        image_url: "qrc:///icons/ic_crop_16_9_white_48dp.png"
         title: "Deselect"
         description: "Deselect this node."
         script: "node_graph_item.deselect_last_press();
