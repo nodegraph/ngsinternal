@@ -38,10 +38,13 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   virtual ~FileModel();
 
   // Properties that can be bound in QML.
-  //Q_PROPERTY(int max_node_posts READ get_max_node_posts WRITE set_max_node_posts NOTIFY max_node_posts_changed)
+  Q_PROPERTY(int max_node_posts READ get_max_node_posts NOTIFY max_node_posts_changed)
+  Q_PROPERTY(int auto_run READ get_auto_run NOTIFY auto_run_changed)
+  Q_PROPERTY(int auto_run_interval READ get_auto_run_interval NOTIFY auto_run_interval_changed)
 
-  //int get_max_node_posts() const;
-  //void set_max_node_posts(int max);
+  Q_INVOKABLE int get_max_node_posts() const;
+  Q_INVOKABLE bool get_auto_run() const;
+  Q_INVOKABLE int get_auto_run_interval() const;
 
   bool links_are_locked() const;
   int get_max_concurrent_downloads() const;
@@ -109,7 +112,9 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   void on_item_changed(QStandardItem* item);
 
  Q_SIGNALS:
-   void max_node_posts_changed();
+   void max_node_posts_changed(int);
+   void auto_run_changed(bool);
+   void auto_run_interval_changed(int);
 
  private:
   // Title.

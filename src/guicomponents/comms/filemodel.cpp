@@ -65,7 +65,7 @@ FileModel::FileModel(Entity* app_root)
   _default_settings["auto_run"] = false;
   _default_settings["auto_run_interval"] = 60;
   _default_settings["lock_links"] = false;
-  _default_settings["max_node_posts"] = 1000;
+  _default_settings["max_node_posts"] = 100;
   _default_settings["max_concurrent_downloads"] = kMaxConcurrentDownloadsLite;
   _default_settings["default_downloads_directory"] = "";
 
@@ -80,14 +80,17 @@ FileModel::FileModel(Entity* app_root)
 FileModel::~FileModel() {
 }
 
-//int FileModel::get_max_node_posts() const {
-//  return get_work_setting(FileModel::kMaxNodePostsRole).toInt();
-//}
-//
-//void FileModel::set_max_node_posts(int max) {
-//  set_work_setting(FileModel::kMaxNodePostsRole, max);
-//  emit max_node_posts_changed();
-//}
+int FileModel::get_max_node_posts() const {
+  return get_work_setting(FileModel::kMaxNodePostsRole).toInt();
+}
+
+bool FileModel::get_auto_run() const {
+  return get_work_setting(FileModel::kAutoRunRole).toBool();
+}
+
+int FileModel::get_auto_run_interval() const {
+  return get_work_setting(FileModel::kAutoRunIntervalRole).toInt();
+}
 
 bool FileModel::links_are_locked() const {
   return get_work_setting(FileModel::kLockLinksRole).toInt();
@@ -318,7 +321,9 @@ void FileModel::load_model() {
   //assert(_working_row >= 0);
 
   // Update qml.
-  emit max_node_posts_changed();
+  emit max_node_posts_changed(get_max_node_posts());
+  emit auto_run_changed(get_auto_run());
+  emit auto_run_interval_changed(get_auto_run_interval());
 }
 
 void FileModel::save_model() {
@@ -353,7 +358,9 @@ void FileModel::save_model() {
   _crypto_logic->write_file(kAppFile, ss.str());
 
   // Update qml.
-  emit max_node_posts_changed();
+  emit max_node_posts_changed(get_max_node_posts());
+  emit auto_run_changed(get_auto_run());
+  emit auto_run_interval_changed(get_auto_run_interval());
 }
 
 void FileModel::load_graph() {

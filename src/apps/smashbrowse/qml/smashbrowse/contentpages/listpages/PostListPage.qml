@@ -61,6 +61,13 @@ BaseListPage {
     function on_post_value(post_type, title, obj) {
     	_num_posts += 1
     	model.append({"post_type": post_type, "title": title, "object": obj})
+    	
+    	// Trim the model if it's greater than max posts.
+    	var max = file_model.get_max_node_posts()
+    	if (model.count > max) {
+    		var num = model.count - max
+    		model.remove(0, num)
+    	}
     }
     
     delegate: PostListDelegate{}
