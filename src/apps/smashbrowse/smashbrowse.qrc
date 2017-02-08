@@ -272,6 +272,15 @@
         <file alias="icons/ic_crop_16_9_black_48dp.png">../../external/icons/ic_crop_16_9_black_48dp.png</file>
         <file alias="icons/ic_crop_16_9_white_48dp.png">../../external/icons/ic_crop_16_9_white_48dp.png</file>
         
+        <file alias="icons/ic_info_outline_black_48dp.png">../../external/icons/ic_info_outline_black_48dp.png</file>
+        <file alias="icons/ic_info_outline_white_48dp.png">../../external/icons/ic_info_outline_white_48dp.png</file>
+        
+        <file alias="icons/ic_highlight_off_black_48dp.png">../../external/icons/ic_highlight_off_black_48dp.png</file>
+        <file alias="icons/ic_highlight_off_white_48dp.png">../../external/icons/ic_highlight_off_white_48dp.png</file>
+        
+        <file alias="icons/check-circle-outline-black.png">../../external/icons/check-circle-outline-black.png</file>
+        <file alias="icons/check-circle-outline-white.png">../../external/icons/check-circle-outline-white.png</file>
+        
         <!-- Web Browser Icons. -->
         <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>
         <file alias="icons/ic_cancel_white_48dp.png">../../external/icons/ic_cancel_white_48dp.png</file>
@@ -332,8 +341,8 @@
         <file alias="icons/ic_widgets_white_48dp.png">../../external/icons/ic_widgets_white_48dp.png</file>
         <file alias="icons/ic_folder_open_black_48dp.png">../../external/icons/ic_folder_open_black_48dp.png</file>
         <file alias="icons/ic_folder_open_white_48dp.png">../../external/icons/ic_folder_open_white_48dp.png</file>
-        <file alias="icons/ic_info_outline_black_48dp.png">../../external/icons/ic_info_outline_black_48dp.png</file>
-        <file alias="icons/ic_info_outline_white_48dp.png">../../external/icons/ic_info_outline_white_48dp.png</file>
+        
+        
          
         <!-- File Menu Icons. -->
         <file alias="icons/ic_delete_forever_black_48dp.png">../../external/icons/ic_delete_forever_black_48dp.png</file>

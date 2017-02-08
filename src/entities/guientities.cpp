@@ -238,7 +238,9 @@ void QMLAppEntity::expose_to_qml() {
   BrowserRecorder* web_recorder = get_app_recorder();
   DownloadManager* download_manager = get_download_manager();
   NodeGraphView* view = get_node_graph_view();
-
+  BaseNodeGraphManipulator* base_manipulator = get_manipulator();
+  NodeGraphManipulator* ng_manipulator = static_cast<NodeGraphManipulator*>(base_manipulator);
+  NodeGraphManipulatorImp* manipulator = ng_manipulator->get_imp();
 
   // Clean and open the socket on web_worker.
   web_worker->clean_state();
@@ -262,11 +264,13 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("web_worker"), web_worker);
   context->setContextProperty(QStringLiteral("web_recorder"), web_recorder);
   context->setContextProperty(QStringLiteral("download_manager"), download_manager);
+  context->setContextProperty(QStringLiteral("manipulator"), manipulator);
 
   qmlRegisterType<GUITypes>("GUITypes", 1, 0, "GUITypes");
   qRegisterMetaType<GUITypes::JSType>("JSType");
   qRegisterMetaType<GUITypes::HintKey>("HintKey");
   qRegisterMetaType<GUITypes::EnumHintValue>("EnumHintValue");
+  qRegisterMetaType<GUITypes::PostType>("PostType");
   //Q_DECLARE_METATYPE(GUITypes::JSType);
   //Q_DECLARE_METATYPE(GUITypes::HintKey);
   //Q_DECLARE_METATYPE(GUITypes::EnumHintValue);

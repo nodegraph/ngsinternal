@@ -57,7 +57,13 @@ ListModel {
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
 
-
+	ListElement {
+    	letters: "Po"
+        title: "Post Data Node"
+        description: "Posts a property a property from the input data to the posts page."
+        script: "ng_controller.create_post_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
 
 
 

@@ -54,6 +54,7 @@
 #include <guicomponents/computes/entermqttgroupcompute.h>
 #include <guicomponents/computes/enterfirebasegroupcompute.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
+#include <guicomponents/computes/postnodecompute.h>
 
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>

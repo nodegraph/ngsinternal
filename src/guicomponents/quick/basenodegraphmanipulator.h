@@ -1,5 +1,6 @@
 #pragma once
 #include <guicomponents/quick/quick_export.h>
+#include <guicomponents/comms/guitypes.h>
 #include <base/objectmodel/component.h>
 #include <base/objectmodel/componentids.h>
 #include <base/objectmodel/entityids.h>
@@ -73,6 +74,8 @@ class BaseNodeGraphManipulator: public Component {
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) = 0;
   virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) = 0;
+
+  virtual void send_post_value_signal(GUITypes::PostType post_type, const QString& title, const QJsonValue& value) = 0;
 };
 
 }

@@ -169,5 +169,9 @@ void NodeGraphController::create_mqtt_subscribe_node(bool centered) {
   _manipulator->create_compute_node(centered, EntityDID::kMQTTComputeNodeEntity, ComponentDID::kMQTTSubscribeCompute);
 }
 
+void NodeGraphController::create_post_node(bool centered) {
+  _manipulator->create_compute_node(centered, EntityDID::kMQTTComputeNodeEntity, ComponentDID::kPostNodeCompute);
+}
+
 
 }

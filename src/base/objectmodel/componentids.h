@@ -161,6 +161,7 @@ COMPONENT_ENTRY1(ExitGroupCompute)\
 COMPONENT_ENTRY1(FirebaseWriteDataCompute)\
 COMPONENT_ENTRY1(FirebaseReadDataCompute)\
 \
+COMPONENT_ENTRY1(PostNodeCompute)\
 COMPONENT_ENTRY1(HTTPCompute)\
 COMPONENT_ENTRY1(MQTTPublishCompute)\
 COMPONENT_ENTRY1(MQTTSubscribeCompute)\

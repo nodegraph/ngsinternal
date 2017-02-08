@@ -688,6 +688,14 @@ void NodeGraphManipulatorImp::set_firebase_override(const Path& node_path, const
   compute->set_override(data_path, value);
 }
 
+void NodeGraphManipulatorImp::send_post_value_signal(GUITypes::PostType post_type, const QString& title, const QJsonValue& value) {
+  std::cerr << "emitting post type: " << to_underlying(post_type) << "\n";
+  std::cerr << "emitting post title: " << title.toStdString() << "\n";
+  std::cerr << "emitting post value: " << value.isString() << "\n";
+
+  emit post_value(to_underlying(post_type), title, value);
+}
+
 // -----------------------------------------------------------------------------------
 // The NodeGraphManipulator.
 // -----------------------------------------------------------------------------------
@@ -842,6 +850,10 @@ void NodeGraphManipulator::set_mqtt_override(const Path& node_path, const QStrin
 
 void NodeGraphManipulator::set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) {
   _imp->set_firebase_override(node_path, data_path, value);
+}
+
+void NodeGraphManipulator::send_post_value_signal(GUITypes::PostType post_type, const QString& title, const QJsonValue& value) {
+  _imp->send_post_value_signal(post_type, title, value);
 }
 
 }

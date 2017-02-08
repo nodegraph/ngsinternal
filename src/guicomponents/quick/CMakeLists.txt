@@ -25,7 +25,7 @@ set(moc_quick
     fboworker.h
     texturedisplaynode.h
     nodegraphview.h
-     nodegraphmanipulator.h
+    nodegraphmanipulator.h
     )
     
 qt5_wrap_cpp(quick_imps ${moc_quick})

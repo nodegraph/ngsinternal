@@ -88,6 +88,8 @@ Q_OBJECT
   Q_INVOKABLE void create_mqtt_publish_node(bool centered);
   Q_INVOKABLE void create_mqtt_subscribe_node(bool centered);
 
+  Q_INVOKABLE void create_post_node(bool centered);
+
 
  private:
   Dep<BaseNodeGraphManipulator> _manipulator;

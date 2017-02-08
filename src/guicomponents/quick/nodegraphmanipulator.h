@@ -6,6 +6,7 @@
 #include <base/objectmodel/dep.h>
 
 #include <guicomponents/quick/basenodegraphmanipulator.h>
+#include <guicomponents/comms/guitypes.h>
 #include <string>
 
 #include <QtCore/QObject>
@@ -26,7 +27,7 @@ class MessageReceiver;
 // It is held by a raw pointer in NodeGraphManipulator to avoid dependency cycles.
 // This allows us to call this from the non-gui side (eg computes) at arbitrary
 // locations to update the gui side to reflect non-gui side changes.
-class NodeGraphManipulatorImp: public QObject, public Component {
+class QUICK_EXPORT NodeGraphManipulatorImp: public QObject, public Component {
 Q_OBJECT
  public:
   // Note that components with and IID of kIInvalidComponent, should not be
@@ -96,6 +97,11 @@ Q_OBJECT
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
   virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
+
+  virtual void send_post_value_signal(GUITypes::PostType post_type, const QString& title, const QJsonValue& value);
+
+  signals:
+  void post_value(int post_type, const QString& title, const QJsonValue& value);
 
 private slots:
   void on_idle_timer_timeout();
@@ -192,6 +198,10 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
   virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
+
+  virtual void send_post_value_signal(GUITypes::PostType post_type, const QString& title, const QJsonValue& value);
+  NodeGraphManipulatorImp* get_imp() {return _imp;}
+
  protected:
   virtual void initialize_wires();
 

@@ -76,9 +76,9 @@ BaseStackPage{
         push_page.set_value("new_name")
         push_page.set_title("enter new node name")
         push_page.callback = function(name) {
-        		node_graph_item.rename_node(name)
-        		main_bar.switch_to_node_graph()
-        	}
+    		node_graph_item.rename_node(name)
+    		main_bar.switch_to_node_graph()
+    	}
         stack_view.push_page(push_page)
     }
 

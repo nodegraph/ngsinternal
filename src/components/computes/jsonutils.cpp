@@ -12,7 +12,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QJsonDocument>
 
-#include <QtCore/QJsonValue>
+
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonObject>
 
@@ -904,6 +904,7 @@ bool JSONUtils::eval_js_in_context(QJSEngine& engine, const QString& expr, QJson
   return true;
 }
 
+// Note when target is null or defined the value comes back without any merging.
 QJsonValue JSONUtils::extract_value(const QJsonObject& src, const Path& src_path, const QJsonValue& target) {
   QJsonObject obj(src);
   Path path(src_path);

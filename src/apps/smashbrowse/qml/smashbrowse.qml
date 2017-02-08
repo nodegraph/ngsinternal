@@ -208,6 +208,9 @@ Rectangle {
         download_manager.download_started.connect(downloads_page.on_download_started)
         download_manager.download_finished.connect(downloads_page.on_download_finished)
         download_manager.download_errored.connect(downloads_page.on_download_errored)
+        
+        // Manipuloatr connections.
+        manipulator.post_value.connect(posts_page.on_post_value)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.

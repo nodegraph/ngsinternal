@@ -1,9 +1,9 @@
 #pragma once
 #include <components/computes/computes_export.h>
+#include <QtCore/QJsonValue>
 
 class QString;
 
-class QJsonValue;
 class QJsonObject;
 class QJsonArray;
 class QJSEngine;
@@ -56,9 +56,11 @@ class COMPUTES_EXPORT JSONUtils {
   static bool eval_js_in_context(QJSEngine& engine, const QString& expr, QJsonValue& result, QString& error);
 
 
-  // Grab values from objects.
-  static QJsonValue extract_value(const QJsonObject& src, const Path& src_path, const QJsonValue& target);
+  // Merges into target if one is provided. Otherwise returns the json value directly.
+  static QJsonValue extract_value(const QJsonObject& src, const Path& src_path, const QJsonValue& target = QJsonValue());
+  // Embed a value at dest_path.
   static QJsonObject embed_value(const QJsonObject& obj, const Path& dest_path, const QJsonValue& dest_value);
+  // Erase a value at path.
   static QJsonObject erase_value(const QJsonObject& obj, const Path& path);
 };
 

@@ -75,6 +75,13 @@ class COMMS_EXPORT GUITypes : public QObject
 
     // ----------------------------------------------------------------------------------------------------------
 
+    enum class PostType: int {
+      Pass = 0,
+      Fail = 1,
+      Info = 2
+    };
+    Q_ENUM(PostType)
+
     GUITypes();
 };
 

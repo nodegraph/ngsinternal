@@ -54,7 +54,7 @@ Rectangle {
             if (stack_view && stack_view.depth > 1) {
                 stack_view.pop_page()
             } else {
-                main_bar.switch_to_node_graph()
+                main_bar.switch_to_last_mode()
             }
         }
     }
