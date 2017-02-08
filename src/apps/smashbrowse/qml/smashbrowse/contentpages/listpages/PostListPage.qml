@@ -60,7 +60,12 @@ BaseListPage {
     
     function on_post_value(post_type, title, obj) {
     	_num_posts += 1
-    	model.append({"post_type": post_type, "title": title, "object": obj})
+    	
+    	// Get current time as a string.
+        var date = new Date().toLocaleString(Qt.locale(), "yyyy-MM-dd hh:mm:ss");
+        
+        // Add a new item to the model.
+    	model.append({"post_type": post_type, "title": title, "object": obj, "date": date})
     	
     	// Trim the model if it's greater than max posts.
     	var max = file_model.get_max_node_posts()

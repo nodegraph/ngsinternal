@@ -22,7 +22,7 @@ BaseImageIconListDelegate {
    	// Displayed Content.
 	_image_url: get_image_url()
 	_title: title
-	_content: get_content_as_string()
+	_content: get_content_as_string() + '\n' + date
 	
 	function get_image_url() {
 		if (post_type == GUITypes.Pass) {
