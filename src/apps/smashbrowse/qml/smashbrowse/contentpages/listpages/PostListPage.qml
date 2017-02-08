@@ -31,7 +31,7 @@ BaseListPage {
     y: app_settings.page_y
     z: app_settings.page_z
     
-    property int _num_posts: 0
+    property int _num_posted: 0
 
     // Methods.
     function on_switch_to_mode(mode) {
@@ -44,7 +44,7 @@ BaseListPage {
     }
     
     function update_header() {
-    	stack_view_header.title_text = _num_posts.toString() + " posts"
+    	stack_view_header.title_text = _num_posted.toString() + " posted"
     }
     
     function on_post_double_clicked(row) {
@@ -54,6 +54,8 @@ BaseListPage {
     }
     
     function on_post_value(post_type, title, value) {
+    	_num_posted += 1
+    
     	console.log('post_type: ' + post_type)
     	console.log('title: ' + title)
     	console.log('value: ' + value)
