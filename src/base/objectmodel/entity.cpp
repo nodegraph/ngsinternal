@@ -83,7 +83,15 @@ bool Entity::has_group_related_did() const {
       (did == EntityDID::kBrowserGroupNodeEntity) ||
       (did == EntityDID::kFirebaseGroupNodeEntity) ||
       (did == EntityDID::kMQTTGroupNodeEntity)||
-      (did == EntityDID::kUserMacroNodeEntity)||
+      has_macro_related_did()) {
+    return true;
+  }
+  return false;
+}
+
+bool Entity::has_macro_related_did() const {
+  EntityDID did = get_did();
+  if ((did == EntityDID::kUserMacroNodeEntity)||
       (did == EntityDID::kAppMacroNodeEntity)) {
     return true;
   }

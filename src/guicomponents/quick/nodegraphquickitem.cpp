@@ -511,7 +511,7 @@ void NodeGraphQuickItem::popup_context_menu() {
       Entity* e = _last_node_shape->our_entity();
       EntityDID did = e->get_did();
       // Send out context menu request signals.
-      if (e->has<GroupInteraction>()) {
+      if (e->has_group_related_did() && (!e->has_macro_related_did())) {
         // Show the group context menu.
         emit group_node_context_menu_requested();
       } else if (e->has<Compute>()) {
