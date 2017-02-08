@@ -115,7 +115,6 @@ Rectangle {
                     	page.Stack.view._stack_page.set_exposed(path, get_exposed())
                     }
                     page.Stack.view.pop_page()
-                    //main_bar.switch_to_node_graph()
                 }
             }
             Rectangle {
@@ -127,7 +126,6 @@ Rectangle {
                 text: "cancel"
                 onClicked: {
                 	page.Stack.view.pop_page()
-                    //main_bar.switch_to_node_graph()
                 }
             }
             Item {Layout.fillWidth: true}

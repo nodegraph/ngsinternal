@@ -45,7 +45,7 @@ Rectangle {
     		create_password_page.visible = false
     		
 	        // Switch to node graph mode.
-			main_bar.on_switch_to_mode(app_settings.node_graph_mode)
+			main_bar.switch_to_node_graph()
 			// Load the last graph.
 			app_utils.load_last_graph()
 		} else {

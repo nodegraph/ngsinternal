@@ -63,7 +63,7 @@ BaseStackPage{
     	
     	var data_path = []
         view_object(title, data_path)
-        main_bar.on_switch_to_mode(app_settings.view_node_mode)
+        main_bar.switch_to_view_node_mode()
     }
     
     function on_view_outputs(node_path, values) {
@@ -78,7 +78,7 @@ BaseStackPage{
     	var data_path = []
     	var node_path_tail = get_node_path_tail()
         view_object(node_path_tail + ' node', data_path)
-        main_bar.on_switch_to_mode(app_settings.view_node_mode)
+        main_bar.switch_to_view_node_mode()
     }
 
     // Show data values with hints on how to show it.
@@ -100,7 +100,7 @@ BaseStackPage{
         var data_path = []
         var node_path_tail = get_node_path_tail()
         edit_object(node_path_tail + ' node', data_path)
-        main_bar.on_switch_to_mode(app_settings.edit_node_mode)
+        main_bar.switch_to_edit_node_mode()
     }
 
     function on_add_element() {

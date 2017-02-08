@@ -128,7 +128,7 @@ BaseListPage {
             onClicked: {
             	var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
                 page.Stack.view._stack_page.set_exposed(path, get_exposed())
-                main_bar.switch_to_node_graph()
+                main_bar.switch_to_last_mode()
             }
         }
         Item {Layout.fillWidth: true}

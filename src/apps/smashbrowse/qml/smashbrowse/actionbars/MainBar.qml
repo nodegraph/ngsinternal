@@ -24,12 +24,35 @@ Rectangle {
     signal switch_to_mode(int mode)
     signal open_more_options()
 
-    // Internal Properties.
-    property var last_mode: app_settings.settings_mode
-    property var current_mode: app_settings.node_graph_mode
+    // Keeps track of past mode so we can back up.
+    property var mode_stack: []
 
     Component.onCompleted: {
     	on_switch_to_mode(app_settings.node_graph_mode)
+    }
+    
+    function get_current_mode() {
+    	if (mode_stack.length == 0) {
+    		return app_settings.node_graph_mode
+    	}
+    	return mode_stack[mode_stack.length-1]
+    }
+    
+    function push_mode(m) {
+    	if (get_current_mode() != m) {
+        	mode_stack.push(m)
+        }
+    }
+    
+    function pop_mode() {
+    	return mode_stack.pop()
+    }
+    
+    function trim_mode_stack() {
+        if (mode_stack.length >= 100) {
+        	var num = mode_stack.length - 100 - 1
+        	mode_stack.splice(0, num)
+        }
     }
     
     // Methods.
@@ -66,27 +89,37 @@ Rectangle {
             more_menu_button.visible = false
         }
         switch_to_mode(m)
-        // Update our current and last modes.
-        if (current_mode != m) {
-            last_mode = current_mode
-            current_mode = m
-        }
+        
+        // Update our mode stack.
+        trim_mode_stack();
+        push_mode(m);
 
         // Make sure the node actions aren't showing.
         ng_menu_list_stack_page.stack_view.clear_pages()
         ng_menu_list_stack_page.visible = false
     }
-
+    
     function switch_to_last_mode(m) {
-        on_switch_to_mode(last_mode)
+    	pop_mode()
+    	var m = get_current_mode()
+        on_switch_to_mode(m)
     }
     
     function switch_to_current_mode(m) {
-        on_switch_to_mode(current_mode)
+    	var m = get_current_mode()
+        on_switch_to_mode(m)
     }
     
     function switch_to_node_graph() {
     	on_switch_to_mode(app_settings.node_graph_mode)
+    }
+    
+    function switch_to_view_node_mode() {
+    	on_switch_to_mode(app_settings.view_node_mode)
+    }
+    
+    function switch_to_edit_node_mode() {
+    	on_switch_to_mode(app_settings.edit_node_mode)
     }
 
     function clear_lit_buttons() {
