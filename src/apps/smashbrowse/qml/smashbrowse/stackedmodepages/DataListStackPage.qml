@@ -52,6 +52,20 @@ BaseStackPage{
         return node_path_splits[node_path_splits.length-1]
     }
     
+    function view_outputs(title, values) {
+        app_settings.vibrate()
+        stack_view.clear_pages()
+        
+    	_values = values
+    	_hints = {}
+    	_exposure = {}
+    	_node_path = ""
+    	
+    	var data_path = []
+        view_object(title, data_path)
+        main_bar.on_switch_to_mode(app_settings.view_node_mode)
+    }
+    
     function on_view_outputs(node_path, values) {
         app_settings.vibrate()
         stack_view.clear_pages()
@@ -550,6 +564,7 @@ BaseStackPage{
        	var obj = get_value(path)
        	var exposed = get_exposed(path)
         var model = create_list_model()
+        
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop)) {
                 model.append({name: prop, depth_index: stack_view.depth})

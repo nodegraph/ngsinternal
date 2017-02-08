@@ -909,6 +909,10 @@ QJsonValue JSONUtils::extract_value(const QJsonObject& src, const Path& src_path
   QJsonObject obj(src);
   Path path(src_path);
 
+  if (path.empty()) {
+    return obj;
+  }
+
   while(!path.empty()) {
     // Grab an element of the path.
     std::string key = path.front();

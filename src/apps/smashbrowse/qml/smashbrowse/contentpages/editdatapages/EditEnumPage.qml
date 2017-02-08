@@ -7,6 +7,8 @@ import QtQuick.Controls.Styles 1.4
 
 import smashbrowse.appwidgets 1.0
 
+import GUITypes 1.0
+
 BaseEditPage {
     id: page
 
@@ -48,6 +50,9 @@ BaseEditPage {
         } else if (type == GUITypes.JSType) {
         	console.log('edit setting options: ' + app_enums.js_type_text)
             cb.set_option_texts(app_enums.js_type_text)
+        } else if (type == GUITypes.PostType) {
+        	console.log('edit setting options: ' + app_enums.post_type_text)
+        	cb.set_option_texts(app_enums.post_type_text)
         } else {
             console.log('Error: attempt to edit an enum with invalid type.')
             console.log(new Error().stack);

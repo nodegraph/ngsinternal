@@ -65,6 +65,8 @@ Item{
         	return http_send_type_text[index]
         } else if (enum_hint_value_type == GUITypes.JSType) {
         	return js_type_text[index]
+        } else if (enum_hint_value_type == GUITypes.PostType) {
+        	return post_type_text[index]
         } else {
             console.log('Error: attempt to get text for an enum with invalid type: ' + enum_hint_value_type)
             console.log(new Error().stack);
@@ -116,6 +118,12 @@ Item{
   		'string',
   		'number',
   		'boolean',
+    ]
+    
+    property var post_type_text: [
+  		'pass',
+  		'fail',
+  		'info',
     ]
 
 }

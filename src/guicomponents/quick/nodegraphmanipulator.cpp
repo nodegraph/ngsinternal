@@ -38,7 +38,7 @@
 
 #include <QtCore/QJsonValue>
 #include <QtCore/QJsonArray>
-#include <QtCore/QJsonObject>
+
 
 namespace ngs {
 
@@ -688,12 +688,8 @@ void NodeGraphManipulatorImp::set_firebase_override(const Path& node_path, const
   compute->set_override(data_path, value);
 }
 
-void NodeGraphManipulatorImp::send_post_value_signal(GUITypes::PostType post_type, const QString& title, const QJsonValue& value) {
-  std::cerr << "emitting post type: " << to_underlying(post_type) << "\n";
-  std::cerr << "emitting post title: " << title.toStdString() << "\n";
-  std::cerr << "emitting post value: " << value.isString() << "\n";
-
-  emit post_value(to_underlying(post_type), title, value);
+void NodeGraphManipulatorImp::send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj) {
+  emit post_value(post_type, title, obj);
 }
 
 // -----------------------------------------------------------------------------------
@@ -852,8 +848,8 @@ void NodeGraphManipulator::set_firebase_override(const Path& node_path, const QS
   _imp->set_firebase_override(node_path, data_path, value);
 }
 
-void NodeGraphManipulator::send_post_value_signal(GUITypes::PostType post_type, const QString& title, const QJsonValue& value) {
-  _imp->send_post_value_signal(post_type, title, value);
+void NodeGraphManipulator::send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj) {
+  _imp->send_post_value_signal(post_type, title, obj);
 }
 
 }

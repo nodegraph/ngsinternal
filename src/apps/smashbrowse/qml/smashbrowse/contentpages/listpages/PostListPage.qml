@@ -31,7 +31,7 @@ BaseListPage {
     y: app_settings.page_y
     z: app_settings.page_z
     
-    property int _num_posted: 0
+    property int _num_posts: 0
 
     // Methods.
     function on_switch_to_mode(mode) {
@@ -44,43 +44,28 @@ BaseListPage {
     }
     
     function update_header() {
-    	stack_view_header.title_text = _num_posted.toString() + " posted"
+    	stack_view_header.title_text = _num_posts.toString()
+    	if (_num_posts == 1) {
+    		stack_view_header.title_text += " post"
+    	} else {
+    		stack_view_header.title_text += " posts"
+    	}
     }
     
     function on_post_double_clicked(row) {
     	var obj = model.get(row)
-    	view_data_list_stack_page.on_view_outputs('value', {'value':obj.value})
+    	view_data_list_stack_page.view_outputs('posted value', obj.object)
     	
     }
     
-    function on_post_value(post_type, title, value) {
-    	_num_posted += 1
-    
-    	console.log('post_type: ' + post_type)
-    	console.log('title: ' + title)
-    	console.log('value: ' + value)
-    	
-    	model.append({"post_type": post_type, "title": title, "value": value})
+    function on_post_value(post_type, title, obj) {
+    	_num_posts += 1
+    	model.append({"post_type": post_type, "title": title, "object": obj})
     }
     
     delegate: PostListDelegate{}
     
     model: ListModel {
-    	ListElement {
-    		post_type: GUITypes.Pass
-	        title: "Testing passed"
-	        value: "hello"
-    	}
-    	ListElement {
-    		post_type: GUITypes.Fail
-	        title: "Testing failed"
-	        value: 123
-    	}
-    	ListElement {
-    		post_type: GUITypes.Info
-	        title: "Testing info"
-	        value: true
-    	}
     }
     model_is_dynamic: false
 

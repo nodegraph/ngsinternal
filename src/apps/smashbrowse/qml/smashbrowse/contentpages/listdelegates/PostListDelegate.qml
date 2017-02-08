@@ -35,6 +35,7 @@ BaseImageIconListDelegate {
 	}
 	
 	function get_content_as_string() {
+		var value = object.value
 		var value_type = app_enums.determine_js_type(value)
         switch(value_type) {
         case GUITypes.String:

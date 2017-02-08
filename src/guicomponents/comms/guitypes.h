@@ -69,7 +69,8 @@ class COMMS_EXPORT GUITypes : public QObject
       WrapType = 6,
       DirectionType = 7,
       HTTPSendType = 8,
-      JSType = 9
+      JSType = 9,
+      PostType = 10
     };
     Q_ENUM(EnumHintValue)
 

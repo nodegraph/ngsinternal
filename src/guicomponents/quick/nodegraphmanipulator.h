@@ -11,6 +11,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
+#include <QtCore/QJsonObject>
 
 namespace ngs {
 
@@ -98,10 +99,10 @@ Q_OBJECT
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
   virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
 
-  virtual void send_post_value_signal(GUITypes::PostType post_type, const QString& title, const QJsonValue& value);
+  virtual void send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj);
 
   signals:
-  void post_value(int post_type, const QString& title, const QJsonValue& value);
+  void post_value(int post_type, QString title, QJsonObject obj);
 
 private slots:
   void on_idle_timer_timeout();
@@ -199,7 +200,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
   virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
 
-  virtual void send_post_value_signal(GUITypes::PostType post_type, const QString& title, const QJsonValue& value);
+  virtual void send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj);
   NodeGraphManipulatorImp* get_imp() {return _imp;}
 
  protected:
