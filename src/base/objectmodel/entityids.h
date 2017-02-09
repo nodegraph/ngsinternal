@@ -23,8 +23,8 @@ namespace ngs {
 
 // Entity Interface IDs.
 enum class EntityIID : size_t {
-  kIInvalidEntity,
-  kIEntity,
+  kIInvalidEntity = 0,
+  kIEntity = 1,
 };
 
 #define ENTITY_ENTRY1(NAME) k##NAME,
