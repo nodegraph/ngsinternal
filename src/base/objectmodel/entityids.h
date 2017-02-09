@@ -31,63 +31,66 @@ enum class EntityIID : size_t {
 #define ENTITY_ENTRY2(NAME, VALUE) k##NAME = VALUE,
 
 #define ENTITY_ENTRIES()\
-ENTITY_ENTRY1(InvalidEntity)\
+ENTITY_ENTRY2(InvalidEntity, 0)\
 /* ------------------------------ */\
 /* Non Gui Based Entities. */\
 /* ------------------------------ */\
-ENTITY_ENTRY1(BaseNamespaceEntity)\
+ENTITY_ENTRY2(BaseNamespaceEntity, 1)\
 /* App. */\
-ENTITY_ENTRY1(BaseAppEntity)\
+ENTITY_ENTRY2(BaseAppEntity, 2)\
 /* Links. */\
-ENTITY_ENTRY1(BaseLinkEntity)\
-ENTITY_ENTRY1(BaseInputEntity)\
-ENTITY_ENTRY1(BaseOutputEntity)\
+ENTITY_ENTRY2(BaseLinkEntity, 3)\
+ENTITY_ENTRY2(BaseInputEntity, 4)\
+ENTITY_ENTRY2(BaseOutputEntity, 5)\
 /* Group Node. */\
-ENTITY_ENTRY1(BaseGroupNodeEntity)\
-ENTITY_ENTRY1(BaseInputNodeEntity)\
-ENTITY_ENTRY1(BaseOutputNodeEntity)\
+ENTITY_ENTRY2(BaseGroupNodeEntity, 6)\
+ENTITY_ENTRY2(BaseInputNodeEntity, 7)\
+ENTITY_ENTRY2(BaseOutputNodeEntity, 8)\
 /* Dot Node. */\
-ENTITY_ENTRY1(BaseDotNodeEntity)\
+ENTITY_ENTRY2(BaseDotNodeEntity, 9)\
 /* Other Nodes. */\
-ENTITY_ENTRY1(BaseMockNodeEntity)\
-/*ENTITY_ENTRY1(BaseScriptNodeEntity)*/\
+ENTITY_ENTRY2(BaseMockNodeEntity, 10)\
 /* ------------------------------ */\
 /* Gui Based Entities. */\
 /* ------------------------------ */\
 /* App. */\
-ENTITY_ENTRY1(AppEntity)\
-ENTITY_ENTRY1(QMLAppEntity)\
-ENTITY_ENTRY1(QtAppEntity)\
+ENTITY_ENTRY2(AppEntity, 11)\
+ENTITY_ENTRY2(QMLAppEntity, 12)\
+ENTITY_ENTRY2(QtAppEntity, 13)\
 /* Links. */\
-ENTITY_ENTRY1(LinkEntity)\
-ENTITY_ENTRY1(InputEntity)\
-ENTITY_ENTRY1(InputLabelEntity)\
-ENTITY_ENTRY1(OutputEntity)\
-ENTITY_ENTRY1(OutputLabelEntity)\
-/* Group Node. */\
-ENTITY_ENTRY1(GroupNodeEntity)\
-ENTITY_ENTRY1(IfGroupNodeEntity)\
-ENTITY_ENTRY1(ForEachGroupNodeEntity)\
-ENTITY_ENTRY1(WhileGroupNodeEntity)\
-ENTITY_ENTRY1(ScriptGroupNodeEntity)\
-ENTITY_ENTRY1(BrowserGroupNodeEntity)\
-ENTITY_ENTRY1(FirebaseGroupNodeEntity)\
-ENTITY_ENTRY1(MQTTGroupNodeEntity)\
-ENTITY_ENTRY1(DataNodeEntity)\
-ENTITY_ENTRY1(InputNodeEntity)\
-ENTITY_ENTRY1(OutputNodeEntity)\
+ENTITY_ENTRY2(LinkEntity, 14)\
+ENTITY_ENTRY2(InputEntity, 15)\
+ENTITY_ENTRY2(InputLabelEntity, 16)\
+ENTITY_ENTRY2(OutputEntity, 17)\
+ENTITY_ENTRY2(OutputLabelEntity, 18)\
+/* Group Nodes. */\
+ENTITY_ENTRY2(GroupNodeEntity, 19)\
+ENTITY_ENTRY2(IfGroupNodeEntity, 20)\
+ENTITY_ENTRY2(ForEachGroupNodeEntity, 21)\
+ENTITY_ENTRY2(WhileGroupNodeEntity, 22)\
+ENTITY_ENTRY2(ScriptGroupNodeEntity, 23)\
+ENTITY_ENTRY2(BrowserGroupNodeEntity, 24)\
+ENTITY_ENTRY2(FirebaseGroupNodeEntity, 25)\
+ENTITY_ENTRY2(MQTTGroupNodeEntity, 26)\
+/* Data Nodes. */\
+ENTITY_ENTRY2(DataNodeEntity, 27)\
+/* Input Nodes. */\
+ENTITY_ENTRY2(InputNodeEntity, 28)\
+/* Output Nodes. */\
+ENTITY_ENTRY2(OutputNodeEntity, 29)\
 /* Dot Node. */\
-ENTITY_ENTRY1(DotNodeEntity)\
-ENTITY_ENTRY1(WaitNodeEntity)\
+ENTITY_ENTRY2(DotNodeEntity, 30)\
+/* Wait Nodes. */\
+ENTITY_ENTRY2(WaitNodeEntity, 31)\
 /* Compute Nodes. */\
-ENTITY_ENTRY1(ComputeNodeEntity)\
-ENTITY_ENTRY1(BrowserComputeNodeEntity)\
-ENTITY_ENTRY1(FirebaseComputeNodeEntity)\
-ENTITY_ENTRY1(MQTTComputeNodeEntity)\
-ENTITY_ENTRY1(LoopComputeNodeEntity)\
+ENTITY_ENTRY2(ComputeNodeEntity, 32)\
+ENTITY_ENTRY2(BrowserComputeNodeEntity, 33)\
+ENTITY_ENTRY2(FirebaseComputeNodeEntity, 34)\
+ENTITY_ENTRY2(MQTTComputeNodeEntity, 35)\
+ENTITY_ENTRY2(LoopComputeNodeEntity, 36)\
 /* Macro Node. */\
-ENTITY_ENTRY1(UserMacroNodeEntity)\
-ENTITY_ENTRY1(AppMacroNodeEntity)\
+ENTITY_ENTRY2(UserMacroNodeEntity, 37)\
+ENTITY_ENTRY2(AppMacroNodeEntity, 38)\
 
 
 enum class EntityDID: size_t {
