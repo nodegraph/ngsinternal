@@ -13,6 +13,10 @@ add_custom_command(
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    set(CMAKE_JAVA_COMPILE_FLAGS -g:none)
+endif()
+
 add_jar(jcomm 
     SOURCES JComm.java MessageEnums.java WebDriverWrap.java FSWrap.java BaseMessage.java RequestMessage.java ResponseMessage.java InfoMessage.java
     INCLUDE_JARS
