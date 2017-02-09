@@ -58,12 +58,18 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
       _selection(this),
       _ng_quick(this),
       _scheduler(this),
-      _msg_receiver(this){
+      _msg_receiver(this),
+      _file_model(this) {
 
   // Timer setup.
   _idle_timer.setSingleShot(true);
   _idle_timer.setInterval(0);
   connect(&_idle_timer,SIGNAL(timeout()),this,SLOT(on_idle_timer_timeout()));
+
+  // Auto Run Timer setup.
+  _auto_run_timer.setSingleShot(false);
+  connect(&_auto_run_timer,SIGNAL(timeout()),this,SLOT(on_auto_run_timer_timeout()));
+
 }
 
 bool NodeGraphManipulatorImp::start_waiting(std::function<void()> on_idle) {
@@ -82,6 +88,14 @@ void NodeGraphManipulatorImp::on_idle_timer_timeout() {
   _on_idle();
 }
 
+void NodeGraphManipulatorImp::on_auto_run_timer_timeout() {
+  if (is_busy_cleaning()) {
+    return;
+  }
+  _ng_quick->surface_to_root();
+  _ng_quick->reclean_group();
+}
+
 void NodeGraphManipulatorImp::initialize_wires() {
   Component::initialize_wires();
 
@@ -90,6 +104,20 @@ void NodeGraphManipulatorImp::initialize_wires() {
   _ng_quick = get_dep<NodeGraphQuickItem>(_app_root);
   _scheduler = get_dep<TaskScheduler>(_app_root);
   _msg_receiver = get_dep<MessageReceiver>(_app_root);
+  _file_model = get_dep<FileModel>(_app_root);
+
+  // Just to be safe when initialize_wires get called multiple times,
+  // we disconnect possible pre-existing connections.
+  disconnect(_file_model.get(), SIGNAL(auto_run_changed(bool)), this, SLOT(on_auto_run_changed(bool)));
+  disconnect(_file_model.get(), SIGNAL(auto_run_interval_changed(int)), this, SLOT(on_auto_run_interval_changed(int)));
+
+  // Now reconnect.
+  connect(_file_model.get(), SIGNAL(auto_run_changed(bool)), this, SLOT(on_auto_run_changed(bool)));
+  connect(_file_model.get(), SIGNAL(auto_run_interval_changed(int)), this, SLOT(on_auto_run_interval_changed(int)));
+
+  // Initialize auto run values.
+  on_auto_run_changed(_file_model->get_auto_run());
+  on_auto_run_interval_changed(_file_model->get_auto_run_interval());
 }
 
 void NodeGraphManipulatorImp::receive_message(const QString& msg) {
@@ -690,6 +718,35 @@ void NodeGraphManipulatorImp::set_firebase_override(const Path& node_path, const
 
 void NodeGraphManipulatorImp::send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj) {
   emit post_value(post_type, title, obj);
+}
+
+void NodeGraphManipulatorImp::update_auto_run_timer() {
+  int interval = _file_model->get_auto_run_interval() * 1000;
+  if (_auto_run_timer.interval() != interval) {
+    std::cerr << "auto run interval being set to: " << interval << "\n";
+    _auto_run_timer.setInterval(interval);
+  }
+
+  bool auto_run = _file_model->get_auto_run();
+  if (auto_run) {
+    if (!_auto_run_timer.isActive()) {
+      std::cerr << "auto run timer starting\n";
+      _auto_run_timer.start();
+    }
+  } else {
+    if (_auto_run_timer.isActive()) {
+      std::cerr << "auto run timer stopping\n";
+      _auto_run_timer.stop();
+    }
+  }
+}
+
+void NodeGraphManipulatorImp::on_auto_run_changed(bool r) {
+  update_auto_run_timer();
+}
+
+void NodeGraphManipulatorImp::on_auto_run_interval_changed(int i) {
+  update_auto_run_timer();
 }
 
 // -----------------------------------------------------------------------------------

@@ -60,6 +60,7 @@ BaseListPage {
     
     function on_post_value(post_type, title, obj) {
     	_num_posts += 1
+    	update_header()
     	
     	// Get current time as a string.
         var date = new Date().toLocaleString(Qt.locale(), "yyyy-MM-dd hh:mm:ss");

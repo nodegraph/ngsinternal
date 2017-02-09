@@ -22,6 +22,7 @@ class NodeGraphQuickItem;
 class TaskScheduler;
 class Compute;
 class MessageReceiver;
+class FileModel;
 
 
 // This is the implementation class for the NodeGraphManipulator.
@@ -104,10 +105,18 @@ Q_OBJECT
   signals:
   void post_value(int post_type, QString title, QJsonObject obj);
 
+ protected:
+
 private slots:
+  void on_auto_run_changed(bool r);
+  void on_auto_run_interval_changed(int i);
+
   void on_idle_timer_timeout();
+  void on_auto_run_timer_timeout();
 
  private:
+  void update_auto_run_timer();
+
   virtual void finish_creating_node(Entity* entity, bool centered);
 
   void prune_clean_or_dead();
@@ -118,6 +127,7 @@ private slots:
   Dep<NodeGraphQuickItem> _ng_quick;
   Dep<TaskScheduler> _scheduler;
   Dep<MessageReceiver> _msg_receiver;
+  Dep<FileModel> _file_model;
 
   // The ultimate compute (of a node) that we are trying to clean.
   // Note that there maybe many asynchronous computes which cause each cleaning pass over the dependencies
@@ -128,6 +138,10 @@ private slots:
   // Wait for ultimate targets to become clean.
   QTimer _idle_timer;
   std::function<void()> _on_idle;
+
+  // Auto run timer.
+  QTimer _auto_run_timer;
+
 };
 
 

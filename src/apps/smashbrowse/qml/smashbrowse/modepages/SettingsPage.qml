@@ -237,7 +237,7 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: auto_run_interval_label
-                text: "Auto Run Interval (mins)"
+                text: "Auto Run Interval (seconds)"
                 anchors {
                     left: parent.left
                     leftMargin: app_settings.page_left_margin
