@@ -106,14 +106,21 @@ void NodeSelection::set_processing_node(const Dep<NodeShape>& node) {
   // The processing node may not be in the current group but nested deep inside another group.
   // In this case we travel up the hierarchy looking for a group node in our current group.
   Entity* node_entity = node->our_entity();
-  Entity* current_group = _factory->get_current_group();
-  while(node_entity->get_parent() != current_group) {
-    node_entity = node_entity->get_parent();
-  }
+  Entity* node_parent = node_entity->get_parent();
+  // If the node_entity is null, we're at the app_root, and we never show the root group,
+  // so in this case there is no node to mark.
+  if (node_entity) {
+    Entity* current_group = _factory->get_current_group();
+    Entity* root_group = get_app_root();
+    while(node_parent && (node_parent != root_group) && (node_parent != current_group)) {
+      node_entity = node_parent;
+      node_parent = node_entity->get_parent();
+    }
 
-  // Show the icon on the right node.
-  _processing_icon_node  = get_dep<NodeShape>(node_entity);
-  _processing_icon_node->show_processing_marker(true);
+    // Show the icon on the right node.
+    _processing_icon_node  = get_dep<NodeShape>(node_entity);
+    _processing_icon_node->show_processing_marker(true);
+  }
 
   // Record the main processing node.
   _processing_node = node;
