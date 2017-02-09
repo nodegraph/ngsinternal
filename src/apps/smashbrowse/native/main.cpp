@@ -150,6 +150,7 @@ int main(int argc, char *argv[]) {
       // Show our splash page, while loading the real qml app.
       view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPage.qml")));
       view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+      view->rootObject()->setProperty("app_name", "Smash Browse");
       view->show();
       view->update();
       app.processEvents();

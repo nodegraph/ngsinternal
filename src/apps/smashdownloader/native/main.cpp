@@ -134,11 +134,12 @@ int main(int argc, char *argv[]) {
 
     if (first_instance) {
       // Show our splash page, while loading the real qml app.
-      //view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPage.qml")));
-      //view->rootObject()->setProperty("ngs_version", NGS_VERSION);
-      //view->show();
-      //view->update();
-      //app.processEvents();
+      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPage.qml")));
+      view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+      view->rootObject()->setProperty("app_name", "Smash Downloader");
+      view->show();
+      view->update();
+      app.processEvents();
 
       // Expose some object to qml before loading our main app.
       app_root->expose_to_qml();

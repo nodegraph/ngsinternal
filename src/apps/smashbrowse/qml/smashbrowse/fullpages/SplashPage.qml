@@ -10,6 +10,7 @@ Rectangle {
     color: "#FF0288D1" // a darker blue than the node graph blue
 
     property string ngs_version: ""
+    property string app_name: ""
 
     // Logo.
     Image {
@@ -28,7 +29,7 @@ Rectangle {
         color: "white"
 
         y: parent.height * 6.5/10
-        text: "Smash Browse"
+        text: app_name
         anchors {
             horizontalCenter:  parent.horizontalCenter
         }
