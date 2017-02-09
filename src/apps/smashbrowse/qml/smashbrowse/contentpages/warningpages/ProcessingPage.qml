@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import smashbrowse.appwidgets 1.0
 
 Rectangle {
-    id: processing_page
+    id: page
 
     // Dimensions.
     height: app_settings.page_height
@@ -33,7 +33,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: processing_page.Stack.view
+        stack_view: page.Stack.view
     }
 
     ColumnLayout {
@@ -58,7 +58,7 @@ Rectangle {
                 text: "stop processing"
                 onClicked: {
                     web_worker.force_stack_reset()
-                    processing_page.Stack.view.pop_page()
+                    page.Stack.view.pop_page()
                     main_bar.switch_to_current_mode()
                 }
             }
@@ -70,7 +70,7 @@ Rectangle {
             AppLabelButton {
                 text: "wait for process to finish"
                 onClicked: {
-                    processing_page.Stack.view.pop_page()
+                    page.Stack.view.pop_page()
                     main_bar.switch_to_current_mode()
                 }
             }

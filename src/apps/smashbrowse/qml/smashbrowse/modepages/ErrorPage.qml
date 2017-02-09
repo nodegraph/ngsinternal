@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.4
 import smashbrowse.appwidgets 1.0
 
 Rectangle {
-    id: processing_page
+    id: page
 
     // Dimensions.
     height: app_settings.page_height
@@ -40,7 +40,7 @@ Rectangle {
     // The stack view header.
     AppStackViewHeader {
         id: stack_view_header
-        stack_view: processing_page.Stack.view
+        stack_view: page.Stack.view
         title_text: "error details"
         show_back_button: false
     }
@@ -80,7 +80,7 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                    processing_page.visible = false
+                    page.visible = false
                     main_bar.switch_to_current_mode()
                 }
             }
