@@ -9,8 +9,8 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_file_upload_white_48dp.png"
-        title: "Publish a User Macro"
-        description: "Publish the current graph as a user macro."
+        title: "Export a User Macro"
+        description: "Export the current graph as a user macro."
         script: "file_menu_list_stack_page.on_publish_user_macro();"
     }
     

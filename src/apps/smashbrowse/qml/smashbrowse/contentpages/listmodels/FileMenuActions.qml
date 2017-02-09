@@ -47,7 +47,7 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_import_export_white_48dp.png"
         title: "Import and Export"
-        description: "Import and export of macros. Macros are shareable graphs."
+        description: "Import and export of macros. Macros are shareable groups which hide their internal nodes."
         script: "push_by_names('import and export', 'FileMenuListPage', 'ImportExportActions')"
     }
 
