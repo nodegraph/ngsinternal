@@ -7,6 +7,7 @@
 
 #include <base/utils/path.h>
 #include <base/utils/permit.h>
+#include <base/objectmodel/basefactory.h>
 
 #include <base/utils/simplesaver.h>
 #include <base/utils/simpleloader.h>
@@ -16,8 +17,11 @@
 #include <components/compshapes/nodeselection.h>
 #include <components/compshapes/nodeshape.h>
 #include <components/computes/compute.h>
-#include <base/objectmodel/entityids.h>
 #include <components/computes/inputcompute.h>
+
+#include <base/objectmodel/entityids.h>
+#include <base/objectmodel/deploader.h>
+
 #include <sstream>
 #include <unordered_map>
 
@@ -25,13 +29,16 @@ namespace ngs {
 
 NodeSelection::NodeSelection(Entity* entity)
     : Component(entity, kIID(), kDID()),
+      _factory(this),
       _edit_node(this),
       _view_node(this),
       _processing_node(this),
+      _processing_icon_node(this),
       _error_node(this),
       _last_processing_node(this),
       _locked(false),
       _accumulate(false) {
+  get_dep_loader()->register_fixed_dep(_factory, Path());
 }
 
 NodeSelection::~NodeSelection() {
@@ -94,7 +101,21 @@ void NodeSelection::set_processing_node(const Dep<NodeShape>& node) {
     return;
   }
   clear_processing_node();
-  node->show_processing_marker(true);
+
+  // Determine the node to show the processing marker on.
+  // The processing node may not be in the current group but nested deep inside another group.
+  // In this case we travel up the hierarchy looking for a group node in our current group.
+  Entity* node_entity = node->our_entity();
+  Entity* current_group = _factory->get_current_group();
+  while(node_entity->get_parent() != current_group) {
+    node_entity = node_entity->get_parent();
+  }
+
+  // Show the icon on the right node.
+  _processing_icon_node  = get_dep<NodeShape>(node_entity);
+  _processing_icon_node->show_processing_marker(true);
+
+  // Record the main processing node.
   _processing_node = node;
   _last_processing_node = node;
 }
@@ -149,9 +170,10 @@ void NodeSelection::clear_view_node() {
 
 void NodeSelection::clear_processing_node() {
   external();
-  if (_processing_node) {
-    _processing_node->show_processing_marker(false);
+  if (_processing_icon_node) {
+    _processing_icon_node->show_processing_marker(false);
   }
+  _processing_icon_node.reset();
   _processing_node.reset();
 }
 
@@ -292,7 +314,7 @@ void NodeSelection::copy() {
   Entity* group = node->get_parent();
 
   // Record the copy group did. We will only paste to groups with the same did.
-  _group_context_dids = node->get_group_context_dids();
+  _group_context_dids = group->get_group_context_dids();
 
   // Convert the comp shapes to their entities.
   std::unordered_set<Entity*> selected_entities;

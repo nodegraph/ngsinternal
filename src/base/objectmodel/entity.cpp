@@ -60,11 +60,10 @@ std::unordered_set<EntityDID> Entity::get_group_context_dids() const {
   std::unordered_set<EntityDID> dids;
   while (e) {
     EntityDID did = e->get_did();
-    // Check for Groups which have an Enter node that does something.
+    // Check for Groups which have special nodes which only they can contain.
     if (did == EntityDID::kBrowserGroupNodeEntity ||
         did == EntityDID::kFirebaseGroupNodeEntity ||
-        did == EntityDID::kMQTTGroupNodeEntity ||
-        did == EntityDID::kForEachGroupNodeEntity) {
+        did == EntityDID::kMQTTGroupNodeEntity) {
       dids.insert(did);
     }
     e = e->get_parent();

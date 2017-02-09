@@ -11,6 +11,7 @@ namespace ngs {
 
 class Entity;
 class NodeShape;
+class BaseFactory;
 
 class COMPSHAPES_EXPORT NodeSelection: public Component {
  public:
@@ -70,6 +71,8 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   virtual bool update_state();
 
  private:
+  // Our fixed deps.
+  Dep<BaseFactory> _factory;
 
   // We have exclusive control over the following shapes.
   // It is similar to object composition and encapsulation.
@@ -79,8 +82,11 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
   // Our edit and view nodes.
   Dep<NodeShape> _edit_node;
   Dep<NodeShape> _view_node;
-  Dep<NodeShape> _processing_node;
   Dep<NodeShape> _error_node;
+
+  // The processing node may be hidden inside a group, so it's not always the node displayed with the processing icon.
+  Dep<NodeShape> _processing_node;
+  Dep<NodeShape> _processing_icon_node;
 
   // The last processing entity is used to set the error marker.
   Dep<NodeShape> _last_processing_node;
