@@ -218,9 +218,6 @@ void NodeGraphQuickItem::focusOutEvent(QFocusEvent * event) {
 // Mouse overrides.
 void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
   internal();
-  if (!_license_checker->license_is_valid()) {
-    return;
-  }
   if (!get_current_interaction()) {
     return;
   }
@@ -230,9 +227,6 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
 
 void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
   internal();
-  if (!_license_checker->license_is_valid()) {
-    return;
-  }
   if (!get_current_interaction()) {
     return;
   }
@@ -243,9 +237,6 @@ void NodeGraphQuickItem::mouseMoveEvent(QMouseEvent * event) {
 
 void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
   internal();
-  if (!_license_checker->license_is_valid()) {
-    return;
-  }
   if (!get_current_interaction()) {
     return;
   }
@@ -256,9 +247,6 @@ void NodeGraphQuickItem::hoverMoveEvent(QHoverEvent * event) {
 
 void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
   internal();
-  if (!_license_checker->license_is_valid()) {
-    return;
-  }
   if (!get_current_interaction()) {
     return;
   }
@@ -316,9 +304,6 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
 
 void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
   internal();
-  if (!_license_checker->license_is_valid()) {
-    return;
-  }
   if (!get_current_interaction()) {
     return;
   }
@@ -336,9 +321,6 @@ void NodeGraphQuickItem::mouseReleaseEvent(QMouseEvent * event) {
 
 void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
   internal();
-  if (!_license_checker->license_is_valid()) {
-    return;
-  }
   if (!get_current_interaction()) {
     return;
   }
@@ -350,9 +332,6 @@ void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
 // Key overrides.
 void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
   internal();
-  if (!_license_checker->license_is_valid()) {
-    return;
-  }
   if (!get_current_interaction()) {
     return;
   }
@@ -362,9 +341,6 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
 
 void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
   internal();
-  if (!_license_checker->license_is_valid()) {
-    return;
-  }
   if (!get_current_interaction()) {
     return;
   }
@@ -374,9 +350,6 @@ void NodeGraphQuickItem::keyReleaseEvent(QKeyEvent * event) {
 
 void NodeGraphQuickItem::touchEvent(QTouchEvent * event) {
   internal();
-  if (!_license_checker->license_is_valid()) {
-    return;
-  }
   if (!get_current_interaction()) {
     return;
   }
