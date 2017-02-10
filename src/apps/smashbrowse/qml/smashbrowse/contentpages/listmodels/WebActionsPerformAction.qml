@@ -15,8 +15,8 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_mouse_white_48dp.png"
-        title: "Control Click"
-        description: "Control click on an element to open it in a new tab."
+        title: "Ctrl/Cmd Click"
+        description: "Control/Command click on an element to open it in a new tab."
         script: "web_recorder.record_ctrl_click();
         		main_bar.switch_to_current_mode();"
     }
