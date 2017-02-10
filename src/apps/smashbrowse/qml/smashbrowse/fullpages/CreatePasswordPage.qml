@@ -10,6 +10,8 @@ import smashbrowse.appwidgets 1.0
 
 Rectangle {
     id: create_password_page
+    
+    onVisibleChanged: if (visible) password_1.forceActiveFocus()
 
     // Dimensions.
     height: app_settings.screen_height
@@ -38,6 +40,17 @@ Rectangle {
         license_page.visible = true
     }
     
+    function initiate_license_check() {
+	    // Setup the crypto.
+	    crypto_logic.create_crypto(password_1.text)
+	    crypto_logic.save_crypto();
+	
+	    // The first the app is run, there won't be a license file.
+	    // The license will automatically go to the "lite" edition with un unspecified license key.
+	    license_checker.load()
+	    app_utils.check_license(on_license_checked)
+    }
+    
     function on_license_checked(valid) {
     	wipe_passwords()
     	if (valid) {
@@ -52,6 +65,17 @@ Rectangle {
 			show_license_entry_page()
 		}
 	}
+	
+	Keys.onPressed: {
+    	if ((event.key == Qt.Key_Return) || (event.key == Qt.Key_Enter)) {
+    		status.on_mouse_pressed()
+        }
+    }
+    Keys.onReleased: {
+        if ((event.key == Qt.Key_Return) || (event.key == Qt.Key_Enter)) {
+        	initiate_license_check()
+        }
+    }
     
     ColumnLayout {
         height: app_settings.screen_height

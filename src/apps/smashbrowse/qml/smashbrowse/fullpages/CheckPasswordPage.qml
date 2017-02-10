@@ -10,6 +10,7 @@ import smashbrowse.appwidgets 1.0
 
 Rectangle {
     id: check_password_page
+    onVisibleChanged: if (visible) password_field.forceActiveFocus()
 
     // Dimensions.
     height: app_settings.screen_height
@@ -23,8 +24,6 @@ Rectangle {
     // Properties.
     color: app_settings.menu_stack_bg_color
     
-    onVisibleChanged: if (visible) password_field.forceActiveFocus()
-
 	function initiate_license_check() {
 		status_label.on_mouse_pressed()
 		update()
@@ -76,7 +75,7 @@ Rectangle {
     }
     Keys.onReleased: {
         if ((event.key == Qt.Key_Return) || (event.key == Qt.Key_Enter)) {
-        	check_password_page.initiate_license_check()
+        	initiate_license_check()
         }
     }
 
