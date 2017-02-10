@@ -20,25 +20,6 @@ TextField {
     horizontalAlignment: TextInput.AlignHCenter
     verticalAlignment: TextInput.AlignVCenter
     
-    // Callback to call when the Submit/Enter key is pressed.
-    // The callback should accept one argument which is the password.
-    property var return_pressed_callback: null
-    property var return_released_callback: null
-    Keys.onPressed: {
-    	if ((event.key == Qt.Key_Return) || (event.key == Qt.Key_Enter)) {
-	    	if (return_pressed_callback) {
-	        	return_pressed_callback(password_field.text)
-	        }
-        }
-    }
-    Keys.onReleased: {
-        if ((event.key == Qt.Key_Return) || (event.key == Qt.Key_Enter)) {
-	    	if (return_released_callback) {
-	        	return_released_callback(password_field.text)
-	        }
-        }
-    }
-
     // Our Style.
     style: TextFieldStyle {
 
