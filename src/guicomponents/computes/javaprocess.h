@@ -22,6 +22,8 @@ Q_OBJECT
  public:
   COMPONENT_ID(JavaProcess, JavaProcess)
 
+  static void kill_all_chromedriver_processes();
+
   explicit JavaProcess(Entity* parent);
   virtual ~JavaProcess();
 

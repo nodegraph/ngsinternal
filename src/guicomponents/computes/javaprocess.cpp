@@ -14,6 +14,14 @@
 
 namespace ngs {
 
+void JavaProcess::kill_all_chromedriver_processes() {
+#if (ARCH == ARCH_WINDOWS)
+  QProcess::execute("taskkill /F /IM chromedriver.exe");
+#elif (ARCH == ARCH_MACOS)
+  QProcess::execute("pkill -f chromedriver");
+#endif
+}
+
 JavaProcess::JavaProcess(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),

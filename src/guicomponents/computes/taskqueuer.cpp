@@ -15,6 +15,7 @@
 
 #include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/taskqueuer.h>
+#include <guicomponents/computes/javaprocess.h>
 
 #include <iostream>
 #include <sstream>
@@ -689,6 +690,8 @@ void TaskQueuer::release_browser_task() {
   Message req(WebDriverRequestType::kReleaseBrowser);
   send_msg_task(req);
   _msg_sender->clear_web_socket();
+  // Clean up the chromedriver process.
+  JavaProcess::kill_all_chromedriver_processes();
 }
 
 void TaskQueuer::wait_for_chrome_connection_task() {

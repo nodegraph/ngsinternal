@@ -38,6 +38,7 @@
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/quick/nodegraphview.h>
+#include <guicomponents/computes/javaprocess.h>
 
 #include <cassert>
 #include <iostream>
@@ -178,6 +179,9 @@ int main(int argc, char *argv[]) {
     // Cleanup.
     delete_ff(app_root);
   }
+
+  // Cleanup left over chromedriver processes.
+  JavaProcess::kill_all_chromedriver_processes();
 
   // Shutdown.
   shutdown_memory_tracker();
