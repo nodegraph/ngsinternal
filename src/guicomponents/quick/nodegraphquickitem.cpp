@@ -73,6 +73,8 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
   setAcceptedMouseButtons(Qt::AllButtons);
   setAcceptHoverEvents(true);
   setFlag(QQuickItem::ItemHasContents, true);
+  setFlag(QQuickItem::ItemAcceptsInputMethod, true);
+  this->setFocus(true);
 
   // Connect a slot to perform cleanup prior to destruction of the QQuickWindow.
   connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handle_window_changed(QQuickWindow*)));
@@ -345,6 +347,11 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
     return;
   }
   KeyInfo info = get_key_info_qt(event);
+  if (info.key_code == Qt::Key_E) {
+    edit_node();
+  } else if (info.key_code == Qt::Key_V) {
+    view_node();
+  }
   update();
 }
 

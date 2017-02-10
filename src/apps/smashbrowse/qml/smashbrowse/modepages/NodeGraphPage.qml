@@ -6,9 +6,6 @@ Rectangle {
     id: node_graph_page
     objectName: "node_graph_page"
 
-    //property alias node_graph: our_node_graph
-    property var node_graph
-
     // Dimensions.
     height: app_settings.page_height
     width: app_settings.page_width
@@ -27,21 +24,27 @@ Rectangle {
     signal popup_menu_with_centering()
 
     // Methods.
+    function show_page() {
+    	visible = true
+    	node_graph_item.forceActiveFocus() 
+    }
+    function hide_page() {
+    	visible = false
+    }
     function on_switch_to_mode(mode) {
         if (mode == app_settings.node_graph_mode) {
-            visible = true
+            show_page()
         } else {
-            visible = false
+            hide_page()
         }
     }
     
-    // Error Popup.
-    //AppText  {
-    //    id: test
-    //    anchors.horizontalCenter: parent.horizontalCenter // used when the text is actually a single line
-    //    anchors.bottom: node_graph_page.bottom
-    //    
-    //    text: 'test is a test'
-    //}
+    Keys.onPressed: {
+		console.log('node graph page key pressed')
+    }
+    Keys.onReleased: {
+        console.log('node graph page key released')
+    }
+    
 }
 
