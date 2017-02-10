@@ -222,6 +222,15 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
     return;
   }
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
+
+  // Note that mousePressEvent is called twice before a double click is triggered.
+  if (_last_node_shape) {
+    if (_last_node_shape->our_entity()->has_group_related_did()) {
+      dive_into_group(_last_node_shape->get_name());
+    }
+  } else {
+    _selection->clear_selection();
+  }
   update();
 }
 
