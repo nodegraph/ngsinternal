@@ -22,7 +22,19 @@ Rectangle {
 
     // Properties.
     color: app_settings.menu_stack_bg_color
+    
+    onVisibleChanged: if (visible) password_field.forceActiveFocus()
 
+	function initiate_license_check() {
+		status_label.on_mouse_pressed()
+		update()
+		if (crypto_logic.check_password(password_field.text)) {
+        	license_checker.load()
+            app_utils.check_license(on_license_checked)
+        } else {
+            status_label.text = "password is incorrect"
+        }
+	}
     function on_license_checked(valid) {
     	// Invalid License.
     	if (!valid) {
@@ -108,14 +120,7 @@ Rectangle {
             id: continue_button
             anchors.horizontalCenter: parent.horizontalCenter
             text: "continue"
-            onClicked: {
-                if (crypto_logic.check_password(password_field.text)) {
-                	license_checker.load()
-                    app_utils.check_license(on_license_checked)
-                } else {
-                    status_label.text = "password is incorrect"
-                }
-            }
+            onClicked: initiate_license_check()
         }
 
         // Shows status of password processing.
@@ -140,6 +145,8 @@ Rectangle {
         // Hook up our signals.
         Component.onCompleted: {
             continue_button.mouse_pressed.connect(status_label.on_mouse_pressed)
+            password_field.return_pressed_callback = status_label.on_mouse_pressed
+            password_field.return_released_callback = check_password_page.initiate_license_check
         }
     }
 }
