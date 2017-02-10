@@ -273,7 +273,7 @@ void NodeGraphQuickItem::mousePressEvent(QMouseEvent * event) {
       _last_node_shape = get_current_interaction()->pressed(_last_press, region);
     }
   } else {
-    if (_last_press.middle_button) {
+    if (_last_press.control_modifier || _last_press.middle_button) {
       // Simulate touching with two fingers on a desktop.
       get_current_interaction()->accumulate_select(_last_press, _last_press);
     } else if (_last_press.right_button) {
