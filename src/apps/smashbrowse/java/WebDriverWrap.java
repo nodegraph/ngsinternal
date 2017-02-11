@@ -166,11 +166,7 @@ public class WebDriverWrap {
     }
 
     void navigate_refresh() {
-    	// Debugging.
-        //_web_driver.navigate().refresh();
-    	
-    	//switch_to_popup();
-    	//get_network_traffic();
+        _web_driver.navigate().refresh();
     }
 
     //------------------------------------------------------------------------------------------------
