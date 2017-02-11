@@ -9,7 +9,7 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_format_list_bulleted_white_48dp.png"
-        title: "View"
+        title: "View (V)"
         description: "View the output data from this node."
         script: "node_graph_item.view_node();
                  main_bar.switch_to_current_mode();"
@@ -17,7 +17,7 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_format_list_numbered_white_48dp.png"
-        title: "Edit"
+        title: "Edit (E)"
         description: "Edit the parameters of this node"
         script: "node_graph_item.edit_node();
                  main_bar.switch_to_current_mode();"
@@ -32,7 +32,7 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_check_white_48dp.png"
-        title: "Clean"
+        title: "Clean (C)"
         description: "Clean this node."
         script: "node_graph_item.clean_node();
                  main_bar.switch_to_current_mode();"
@@ -40,7 +40,7 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_refresh_white_48dp.png"
-        title: "Reclean"
+        title: "Reclean (R)"
         description: "Reclean this node."
         script: "node_graph_item.reclean_node();
                  main_bar.switch_to_current_mode();"
@@ -48,7 +48,7 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_close_white_48dp.png"
-        title: "Dirty"
+        title: "Dirty (D)"
         description: "Dirty this node."
         script: "node_graph_item.dirty_node();
                  main_bar.switch_to_current_mode();"
@@ -56,14 +56,14 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_select_all_white_48dp.png"
-        title: "Select"
+        title: "Select (CTRL+LMB)"
         description: "Select this node"
         script: "node_graph_item.select_last_press();
                  main_bar.switch_to_current_mode();"
     }
     ListElement {
         image_url: "qrc:///icons/ic_crop_16_9_white_48dp.png"
-        title: "Deselect"
+        title: "Deselect (CTRL+LMB)"
         description: "Deselect this node."
         script: "node_graph_item.deselect_last_press();
                  main_bar.switch_to_current_mode();"

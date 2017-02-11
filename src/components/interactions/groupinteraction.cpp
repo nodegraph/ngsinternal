@@ -163,15 +163,19 @@ void GroupInteraction::reset_state() {
   _view_controls.track_ball.stop_tracking();
 }
 
-bool GroupInteraction::bg_hit(const MouseInfo& info) const {
+Entity* GroupInteraction::entity_hit(const MouseInfo& info) const {
   external();
   MouseInfo updated_info = info;
   _view_controls.update_coord_spaces(updated_info);
-
   // Do a hit test.
   HitRegion region;
   Entity* e = _shape_collective->hit_test(updated_info.object_space_pos.xy(), region);
-  if (!e)  {
+  return e;
+}
+
+bool GroupInteraction::bg_hit(const MouseInfo& info) const {
+  external();
+  if (!entity_hit(info))  {
     return true;
   }
   return false;
@@ -786,7 +790,7 @@ void GroupInteraction::explode_selected() {
   if (selected.empty()) {
     return;
   }
-  explode(*selected.begin());
+  explode((*selected.begin())->our_entity());
 }
 
 void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
@@ -854,8 +858,10 @@ void GroupInteraction::collapse(const DepUSet<NodeShape>& selected) {
   _selection->select(collapsed_node_cs);
 }
 
-void GroupInteraction::explode(const Dep<NodeShape>& cs) {
+void GroupInteraction::explode(Entity* e) {
   external();
+  Dep<NodeShape> cs = get_dep<NodeShape>(e);
+
   // Determine the exploding center.
   glm::vec2 min, max;
   cs->get_border().get_aa_bounds(min, max);
@@ -914,6 +920,67 @@ void GroupInteraction::explode(const Dep<NodeShape>& cs) {
   clean_dead_links();
   update_shape_collective();
 }
+
+//void GroupInteraction::explode(const Dep<NodeShape>& cs) {
+//  external();
+//  // Determine the exploding center.
+//  glm::vec2 min, max;
+//  cs->get_border().get_aa_bounds(min, max);
+//  glm::vec2 exploding_center = 0.5f * (min + max);
+//
+//  Entity* cs_entity = cs->our_entity();
+//
+//  // Select all the nodes in the group, this includes the input and output nodes.
+//  std::unordered_set<Entity*> nodes;
+//  DepUSet<NodeShape> shapes;
+//  for (auto &iter: cs_entity->get_children()) {
+//    Dep<CompShape> cs = get_dep<CompShape>(iter.second);
+//    if (cs && cs->is_linkable()) {
+//      nodes.insert(iter.second);
+//      shapes.insert(get_dep<NodeShape>(iter.second));
+//    }
+//  }
+//
+//  // Determine the center of the nodes in the exploding group.
+//  CompShapeCollective::get_aa_bounds(shapes, min, max);
+//  glm::vec2 nodes_center = 0.5f * (min + max);
+//
+//  // Copy the nodes.
+//  std::string raw_copy = cs_entity->copy_to_string(nodes);
+//
+//  // Paste these nodes outside the exploding group.
+//  Entity* parent = cs->get_entity(Path({".."}));
+//  parent->paste_from_string(raw_copy);
+//
+//  // Get the pasted nodes.
+//  const std::unordered_set<Entity*>& pasted = parent->get_last_pasted();
+//
+//  // Destroy the exploding group.
+//  delete_ff(cs_entity);
+//  //get_app_root()->initialize_wires();
+//
+//  // Center the pasted nodes around the exploding center.
+//  glm::vec2 offset = exploding_center - nodes_center;
+//  for (Entity* p : pasted) {
+//    Dep<CompShape> cs = get_dep<CompShape>(p);
+//    if (cs) {
+//      glm::vec2 pos = cs->get_pos();
+//      pos += offset;
+//      cs->set_pos(pos);
+//    }
+//  }
+//
+//  // Select the exploded contents.
+//  _selection->clear_selection();
+//  for (Entity* p : pasted) {
+//    Dep<NodeShape> cs = get_dep<NodeShape>(p);
+//    _selection->select(cs);
+//  }
+//
+//  // Clean out dead links and update the shape collective.
+//  clean_dead_links();
+//  update_shape_collective();
+//}
 
 void GroupInteraction::resize_gl(GLsizei width, GLsizei height) {
   external();

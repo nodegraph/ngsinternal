@@ -64,7 +64,7 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
 
   // Copy and Paste.
   virtual void copy();
-  virtual void paste(Entity* group);
+  virtual bool paste(Entity* group);
 
  protected:
   // Our state.

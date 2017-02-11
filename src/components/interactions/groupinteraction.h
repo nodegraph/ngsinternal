@@ -70,6 +70,7 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   virtual Dep<NodeShape> pressed(const MouseInfo& mouse_info, HitRegion& region);
   virtual void accumulate_select(const MouseInfo& a, const MouseInfo& b);
   virtual void reset_state();
+  virtual Entity* entity_hit(const MouseInfo& info) const;
   virtual bool bg_hit(const MouseInfo& info) const;
   virtual bool node_hit(const MouseInfo& info) const;
 
@@ -130,7 +131,8 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   void collapse_selected();
   void explode_selected();
   void collapse(const DepUSet<NodeShape>& selected);
-  void explode(const Dep<NodeShape>& group);
+  void explode(Entity* e);
+  //void explode(const Dep<NodeShape>& group);
 
   void resize_gl(GLsizei width, GLsizei height);
   const ViewportParams& get_viewport_params() const;

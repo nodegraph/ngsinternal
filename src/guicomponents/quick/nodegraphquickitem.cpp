@@ -228,7 +228,7 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
   // Note that mousePressEvent is called twice before a double click is triggered.
   if (_last_node_shape) {
     if (_last_node_shape->our_entity()->has_group_related_did()) {
-      dive_into_group(_last_node_shape->get_name());
+      _manipulator->dive_into_group(_last_node_shape->get_name());
     }
   } else {
     _selection->clear_selection();
@@ -346,12 +346,72 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
   if (!get_current_interaction()) {
     return;
   }
+  // See if the pressed key is a hotkey that we can handle.
   KeyInfo info = get_key_info_qt(event);
-  if (info.key_code == Qt::Key_E) {
-    edit_node();
-  } else if (info.key_code == Qt::Key_V) {
-    view_node();
+  int kc = info.key_code;
+  bool ctrl = info.control_modifier;
+  const MouseInfo& mouse_info = get_current_interaction()->get_mouse_over_info();
+  Entity* entity = get_current_interaction()->entity_hit(mouse_info);
+  if (entity) {
+    if (kc == Qt::Key_E && !ctrl) {
+      _last_node_shape = get_dep<NodeShape>(entity);
+      edit_node();
+      return;
+    } else if (kc == Qt::Key_V && !ctrl) {
+      _last_node_shape = get_dep<NodeShape>(entity);
+      view_node();
+      return;
+    } else if (kc == Qt::Key_C && !ctrl) {
+      _last_node_shape = get_dep<NodeShape>(entity);
+      clean_node();
+      return;
+    } else if (kc == Qt::Key_R && !ctrl) {
+      _last_node_shape = get_dep<NodeShape>(entity);
+      reclean_node();
+      return;
+    } else if (kc == Qt::Key_D && !ctrl) {
+      _last_node_shape = get_dep<NodeShape>(entity);
+      dirty_node();
+      return;
+    } else if (kc == Qt::Key_X && !ctrl) {
+      explode_group(entity);
+    }
   }
+
+  if (kc == Qt::Key_C  && !ctrl) {
+    clean_group();
+    return;
+  } else if (kc == Qt::Key_R  && !ctrl) {
+    reclean_group();
+    return;
+  } else if (kc == Qt::Key_D  && !ctrl) {
+    dirty_group();
+    return;
+  } else if (kc == Qt::Key_F && !ctrl) {
+    frame_all();
+    return;
+  } else if (kc == Qt::Key_F && ctrl) {
+    frame_selected();
+    return;
+  } else if (kc == Qt::Key_C && ctrl) {
+    copy();
+    return;
+  } else if (kc == Qt::Key_X && ctrl) {
+    cut();
+    return;
+  } else if (kc == Qt::Key_V && ctrl) {
+    paste(true);
+    return;
+  } else if (kc == Qt::Key_A && ctrl) {
+    select_all();
+    return;
+  } else if (kc == Qt::Key_D && ctrl) {
+    deselect_all();
+    return;
+  } else if (kc == Qt::Key_P && !ctrl) {
+    collapse_to_group();
+  }
+
   update();
 }
 
@@ -556,6 +616,9 @@ size_t NodeGraphQuickItem::get_num_nodes() const {
 
 void NodeGraphQuickItem::dirty_node() {
   external();
+  if (_manipulator->is_busy_cleaning()) {
+    return;
+  }
   // Return if don't have a last pressed shape.
   if (!_last_node_shape) {
     return;
@@ -600,10 +663,14 @@ void NodeGraphQuickItem::reclean_group() {
 
 void NodeGraphQuickItem::clean_node() {
   external();
+  if (_manipulator->is_busy_cleaning()) {
+    return;
+  }
   // Return if don't have a last pressed shape.
   if (!_last_node_shape) {
     return;
   }
+
   Dep<Compute> compute = get_dep<Compute>(_last_node_shape->our_entity());
   if(compute) {
     // Update our node graph selection object which also tracks and edit and view nodes.
@@ -615,16 +682,24 @@ void NodeGraphQuickItem::clean_node() {
 
 void NodeGraphQuickItem::reclean_node() {
   external();
+  if (_manipulator->is_busy_cleaning()) {
+    return;
+  }
   // Return if don't have a last pressed shape.
   if (!_last_node_shape) {
     return;
   }
+
+
   dirty_group_recursively();
   clean_node();
 }
 
 void NodeGraphQuickItem::view_node() {
   external();
+  if (_manipulator->is_busy_cleaning()) {
+    return;
+  }
   // Return if don't have a last pressed shape.
   if (!_last_node_shape) {
     return;
@@ -643,6 +718,9 @@ void NodeGraphQuickItem::view_node() {
 
 void NodeGraphQuickItem::edit_node() {
   external();
+  if (_manipulator->is_busy_cleaning()) {
+    return;
+  }
   // Return if don't have a last pressed shape.
   if (!_last_node_shape) {
     return;
@@ -850,7 +928,25 @@ void NodeGraphQuickItem::paste(bool centered) {
   external();
   const Dep<GroupInteraction>& interaction = get_current_interaction();
   Entity* group = interaction->our_entity();
-  _selection->paste(group);
+  if (!_selection->paste(group)) {
+    QString msg = "Unable to paste here as the surrounding group context "
+        "does not match the group context from which the nodes were copied.";
+    emit set_error_message(msg);
+    emit show_error_page();
+    return;
+  }
+
+  // debugging
+  {
+    const std::unordered_set<Entity*>& pasted = group->get_last_pasted();
+    for (Entity* e : pasted) {
+      Dep<NodeShape> ns = get_dep<NodeShape>(e);
+      if (ns) {
+        std::cerr << "ns name: " << ns->get_name() << "\n";
+        ns->clean_state(); // we need them clean as we'll be using their bounds.
+      }
+    }
+  }
 
   // At this point the pasting is complete, but we now need to perform adjustments
   // like centering it and selecting the pasted nodes.
@@ -867,7 +963,8 @@ void NodeGraphQuickItem::paste(bool centered) {
   }
 
   // Get the bounds of the newly created nodes.
-  const std::unordered_set<Entity*>& pasted = group->get_last_pasted();
+  const std::unordered_set<Entity*> pasted = group->get_last_pasted();
+  group->clear_last_pasted();
 
   // Gather all the pasted comp shapes.
   DepUSet<NodeShape> node_shapes;
@@ -919,6 +1016,21 @@ void NodeGraphQuickItem::explode_group() {
     return;
   }
   Entity *e = (*selected.begin())->our_entity();
+  explode_group(e);
+}
+
+void NodeGraphQuickItem::explode_group(Entity* e) {
+  if (!e->has_group_related_did()) {
+    return;
+  }
+
+  EntityDID did = e->get_did();
+  if ((did == EntityDID::kBrowserGroupNodeEntity) ||
+      (did == EntityDID::kFirebaseGroupNodeEntity) ||
+      (did == EntityDID::kMQTTGroupNodeEntity)) {
+    return;
+  }
+
   if ((e->get_did() == EntityDID::kAppMacroNodeEntity) ||
       (e->get_did() == EntityDID::kUserMacroNodeEntity)) {
     QString msg = "Exploding app and user macros is not permitted.";
@@ -928,7 +1040,7 @@ void NodeGraphQuickItem::explode_group() {
   }
 
   // Otherwise explode the selected.
-  get_current_interaction()->explode_selected();
+  get_current_interaction()->explode(e);
   update();
 }
 

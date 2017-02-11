@@ -333,33 +333,35 @@ void NodeSelection::copy() {
   _raw_copy = group->copy_to_string(selected_entities);
 }
 
-void NodeSelection::paste(Entity* group) {
+bool NodeSelection::paste(Entity* group) {
   external();
   if (_raw_copy.empty()) {
-    return;
+    return false;
   }
 
   // The group context dids for the target location.
   std::unordered_set<EntityDID> target_dids = group->get_group_context_dids();
 
-  std::cerr << "Error: the target group for the paste operation did not have appropriate surrounding group contexts\n";
-  for (auto did: _group_context_dids) {
-    std::cerr << "source: " << to_underlying(did) << "\n";
-  }
-  for (auto did: target_dids) {
-    std::cerr << "dest: " << to_underlying(did) << "\n";
-  }
-
-
   // Make sure the target location has all the needed context dids.
+  bool context_mismatch = false;
   for (auto did: _group_context_dids) {
     if (target_dids.count(did) == 0) {
-      return;
+      context_mismatch = true;
     }
   }
+  if (context_mismatch) {
+    std::cerr << "Error: the target group for the paste operation did not have appropriate surrounding group contexts\n";
+    for (auto did: _group_context_dids) {
+      std::cerr << "source: " << to_underlying(did) << "\n";
+    }
+    for (auto did: target_dids) {
+      std::cerr << "dest: " << to_underlying(did) << "\n";
+    }
+    return false;
+  }
+
   group->paste_from_string(_raw_copy);
-
-
+  return true;
 }
 
 }

@@ -33,7 +33,7 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_check_white_48dp.png"
-        title: "Clean Current Group"
+        title: "Clean Current Group (C)"
         description: "Clean all the output nodes in the current group."
         script: "node_graph_item.clean_group();
                  main_bar.switch_to_current_mode();"
@@ -41,7 +41,7 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_refresh_white_48dp.png"
-        title: "Reclean Current Group"
+        title: "Reclean Current Group (R)"
         description: "Reclean all the output nodes in the current group."
         script: "node_graph_item.reclean_group();
                  main_bar.switch_to_current_mode();"
@@ -49,7 +49,7 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_close_white_48dp.png"
-        title: "Dirty Current Group"
+        title: "Dirty Current Group (D)"
         description: "Dirty all the nodes in this group and below."
         script: "node_graph_item.dirty_group_recursively();
                  main_bar.switch_to_current_mode();"
@@ -78,8 +78,8 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_bubble_chart_white_48dp.png"
-        title: "Explode and Collapse..."
-        description: "Explode group nodes or collapse some nodes."
+        title: "Explode and Package..."
+        description: "Explode groups or package nodes into groups."
         script: "push_by_names('Explode and Collapse', 'NGMenuListPage', 'ExplodeCollapseNodeActions')"
     }
 

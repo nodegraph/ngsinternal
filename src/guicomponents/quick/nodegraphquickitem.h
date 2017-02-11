@@ -99,6 +99,7 @@ Q_OBJECT
   // Explode and Collapse.
   Q_INVOKABLE void collapse_to_group();
   Q_INVOKABLE void explode_group();
+  void explode_group(Entity* e);
 
   // Lock Graph.
   //Q_INVOKABLE void lock_links(bool locked);
