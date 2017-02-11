@@ -1021,6 +1021,9 @@ void NodeGraphQuickItem::explode_group() {
 
 void NodeGraphQuickItem::explode_group(Entity* e) {
   if (!e->has_group_related_did()) {
+    QString msg = "Only group nodes can be exploded.";
+    emit set_error_message(msg);
+    emit show_error_page();
     return;
   }
 
@@ -1028,12 +1031,15 @@ void NodeGraphQuickItem::explode_group(Entity* e) {
   if ((did == EntityDID::kBrowserGroupNodeEntity) ||
       (did == EntityDID::kFirebaseGroupNodeEntity) ||
       (did == EntityDID::kMQTTGroupNodeEntity)) {
+    QString msg = "Special protocol groups for the browser or mqtt cannot be exploded.";
+    emit set_error_message(msg);
+    emit show_error_page();
     return;
   }
 
   if ((e->get_did() == EntityDID::kAppMacroNodeEntity) ||
       (e->get_did() == EntityDID::kUserMacroNodeEntity)) {
-    QString msg = "Exploding app and user macros is not permitted.";
+    QString msg = "App and user macros cannot be exploded.";
     emit set_error_message(msg);
     emit show_error_page();
     return;
