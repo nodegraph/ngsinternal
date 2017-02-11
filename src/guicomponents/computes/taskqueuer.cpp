@@ -110,6 +110,15 @@ bool TaskQueuer::is_busy_cleaning() {
   return _manipulator->is_busy_cleaning();
 }
 
+bool TaskQueuer::is_waiting_for_response() {
+  return _scheduler->is_waiting_for_response();
+}
+
+void TaskQueuer::queue_stop_service() {
+  TaskContext tc(_scheduler);
+  queue_stop_service(tc);
+}
+
 void TaskQueuer::queue_emit_option_texts() {
   TaskContext tc(_scheduler);
   queue_emit_option_texts(tc);
@@ -252,6 +261,18 @@ void TaskQueuer::queue_clear_all_cookies(TaskContext& tc) {
 
 void TaskQueuer::queue_set_all_cookies(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::set_all_cookies_task, this), "queue_set_all_cookies");
+}
+
+// ---------------------------------------------------------------------------------
+// Web Driver Service Tasks.
+// ---------------------------------------------------------------------------------
+
+void TaskQueuer::queue_start_service(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::start_service_task,this), "queue_start_service");
+}
+
+void TaskQueuer::queue_stop_service(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::stop_service_task,this), "queue_stop_service");
 }
 
 // ---------------------------------------------------------------------------------
@@ -690,8 +711,16 @@ void TaskQueuer::release_browser_task() {
   Message req(WebDriverRequestType::kReleaseBrowser);
   send_msg_task(req);
   _msg_sender->clear_web_socket();
-  // Clean up the chromedriver process.
-  JavaProcess::kill_all_chromedriver_processes();
+}
+
+void TaskQueuer::start_service_task() {
+  Message req(WebDriverRequestType::kStartService);
+  send_msg_task(req);
+}
+
+void TaskQueuer::stop_service_task() {
+  Message req(WebDriverRequestType::kStopService);
+  send_msg_task(req);
 }
 
 void TaskQueuer::wait_for_chrome_connection_task() {

@@ -15,32 +15,65 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.JavascriptExecutor;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Stack;
 import java.util.Set;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
+
+
 public class WebDriverWrap {
+	private ChromeDriverService _service;
 	private WebDriver _web_driver;
 	private String _settings_dir; // smashbrowse settings dir
 	private String _chrome_ext_dir; // chrome extension dir
-	private String _download_extension_dir;
 	private int _app_socket_port = -1;
 	private Stack<String> _window_handles;
 	
 	public WebDriverWrap(String settings_dir, 
 					String chrome_ext_dir,
-					String download_extension_dir,
 					int app_socket_port) {
 		_web_driver = null;
 		_settings_dir = settings_dir;
 		_chrome_ext_dir = chrome_ext_dir;
-		_download_extension_dir = download_extension_dir;
 		_app_socket_port = app_socket_port;
 		
 		_window_handles = new Stack<String>();
+		
+		// Build the webdriver service and start it.
+		_service = new ChromeDriverService.Builder()
+		        .usingAnyFreePort()
+		        .build();
+		start_service();
+		
 	}
+	
+    //------------------------------------------------------------------------------------------------
+    // Web Driver Service Control.
+    //------------------------------------------------------------------------------------------------
+	public boolean start_service() {
+		try {
+			_service.start();
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.err.println("Unable to start chromedriver servier: ");
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public void stop_service() {
+		// Note the main purpose of stopping the service is so that
+		// chromedriver.exe process gets killed off.
+		// This is called when quitting the application.
+		_service.stop();
+	}
+	
 	
     //------------------------------------------------------------------------------------------------
     // Browser App Control.
@@ -84,7 +117,8 @@ public class WebDriverWrap {
 		
 		capabilities.setCapability(ChromeOptions.CAPABILITY, chrome_opts);
         
-        _web_driver = new ChromeDriver(capabilities);
+        //_web_driver = new ChromeDriver(capabilities);
+        _web_driver = new RemoteWebDriver(_service.getUrl(), capabilities);
         
         // The url on the command line doesn't seem to work, so we navigate to it.
         navigate_to(url);

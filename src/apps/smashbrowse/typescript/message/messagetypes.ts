@@ -13,28 +13,32 @@
 const enum WebDriverRequestType {
   kUnknownWebDriverRequest = 0,
 
+  // Service Requests.
+  kStartService = 1,
+  kStopService = 2,
+
   // Browser Requests.
-  kIsBrowserOpen = 1,
-  kOpenBrowser = 2,
-  kCloseBrowser = 3,
-  kReleaseBrowser = 4,
-  kResizeBrowser = 5,
+  kIsBrowserOpen = 3,
+  kOpenBrowser = 4,
+  kCloseBrowser = 5,
+  kReleaseBrowser = 6,
+  kResizeBrowser = 7,
 
   // Web Page Navigation.
-  kNavigateTo = 6,
-  kNavigateBack = 7,
-  kNavigateForward = 8,
-  kNavigateRefresh = 9,
-  kGetCurrentURL = 10,
+  kNavigateTo = 8,
+  kNavigateBack = 9,
+  kNavigateForward = 10,
+  kNavigateRefresh = 11,
+  kGetCurrentURL = 12,
 
   // Web Page Tabs.
-  kUpdateCurrentTab = 11,
-  kDestroyCurrentTab = 12,
+  kUpdateCurrentTab = 13,
+  kDestroyCurrentTab = 14,
 
   // Actions.
-  kPerformMouseAction = 13,
-  kPerformTextAction = 14,
-  kPerformElementAction = 15,
+  kPerformMouseAction = 15,
+  kPerformTextAction = 16,
+  kPerformElementAction = 17,
 }
 
 const enum ChromeRequestType {

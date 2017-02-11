@@ -25,10 +25,26 @@ Rectangle {
 
     property alias node_graph_page: node_graph_page
     property bool tried_closing_browser: false
+    property int num_close_tries: 0
 
     // Clean up routine.
     function on_closing(close) {
-    	node_graph_item.parent = null
+    	// Stop the web driver service.
+    	if (num_close_tries == 0) {
+    		web_worker.force_stack_reset()
+    		web_worker.queue_stop_service()
+    		close.accepted = false
+    		num_close_tries += 1
+    		close_timer.start()
+    	} else if (web_worker.is_waiting_for_response()){
+    		close.accepted = false
+    		num_close_tries += 1
+    		close_timer.start()
+    	} else {
+    		node_graph_item.parent = null
+    		close_timer.stop()
+    	}
+    	
     	
 //        if (!tried_closing_browser) {
 //        	// Force close the browser.
@@ -51,7 +67,7 @@ Rectangle {
     // Timer that delays closing/exit a bit so we can clean up.
     Timer {
         id: close_timer
-        interval: 200
+        interval: 100
         running: false
         repeat: false
         onTriggered: quick_view.close()

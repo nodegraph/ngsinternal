@@ -38,6 +38,9 @@ Q_OBJECT
   Q_INVOKABLE void force_close_browser();
   Q_INVOKABLE void force_stack_reset();
   Q_INVOKABLE bool is_busy_cleaning();
+  Q_INVOKABLE bool is_waiting_for_response();
+
+  Q_INVOKABLE void queue_stop_service();
   Q_INVOKABLE void queue_emit_option_texts();
 
 
@@ -81,6 +84,10 @@ Q_OBJECT
   void queue_get_all_cookies(TaskContext& tc);
   void queue_clear_all_cookies(TaskContext& tc);
   void queue_set_all_cookies(TaskContext& tc);
+
+  // Web Driver Service Tasks.
+  void queue_start_service(TaskContext& tc);
+  void queue_stop_service(TaskContext& tc);
 
   // Queue Browser Tasks.
   void queue_wait_for_chrome_connection(TaskContext& tc);
@@ -185,6 +192,10 @@ signals:
   void get_all_cookies_task();
   void clear_all_cookies_task();
   void set_all_cookies_task();
+
+  // Web Driver Service.
+  void start_service_task();
+  void stop_service_task();
 
   // Browser Tasks.
   void wait_for_chrome_connection_task();

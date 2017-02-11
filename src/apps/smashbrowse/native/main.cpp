@@ -180,9 +180,6 @@ int main(int argc, char *argv[]) {
     delete_ff(app_root);
   }
 
-  // Cleanup left over chromedriver processes.
-  JavaProcess::kill_all_chromedriver_processes();
-
   // Shutdown.
   shutdown_memory_tracker();
   return execReturn;

@@ -3,9 +3,6 @@ import java.io.File;
 public class FSWrap {
 	
 	private static final String chrome_user_data_prefix = "chromeuserdata";
-	private static final String windows_download_extension_dir = "/../../Local/Google/Chrome/User Data/Default/Extensions/lmjnegcaeklhafolokijcfjliaokphfk/2.0.1.0_0";
-	private static final String macos_download_extension_dir = "/../Google/Chrome/Default/Extensions/lmjnegcaeklhafolokijcfjliaokphfk/2.0.1.0_0";
-			
 	
 	public static boolean destory_file(File file) {
 		if (file.isDirectory()) {
@@ -61,12 +58,4 @@ public class FSWrap {
 		}
 	}
 	
-	public static String get_download_extension_dir(String settings_dir) {
-		if (platform_is_windows()) {
-			return settings_dir + windows_download_extension_dir; 
-		} else {
-			return settings_dir + macos_download_extension_dir;
-		}
-	}
-
 }

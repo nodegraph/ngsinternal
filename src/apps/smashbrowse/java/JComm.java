@@ -26,7 +26,6 @@ public class JComm {
 	
 	static String working_dir;
 	static String chrome_ext_dir;
-	static String download_extension_dir;
 	
 	static WebDriverWrap web_driver;
 	static Gson gson;
@@ -44,10 +43,9 @@ public class JComm {
         System.err.println("user dir is: " + working_dir);
 		chrome_ext_dir = working_dir + java.io.File.separator + "chromeextension";
         System.err.println("chrome ext dir is: " + chrome_ext_dir);
-		download_extension_dir = FSWrap.get_download_extension_dir(settings_dir);
 		
 		// Create our webdriver wrapper.
-	    web_driver = new WebDriverWrap(settings_dir, chrome_ext_dir, download_extension_dir, app_socket_port);
+	    web_driver = new WebDriverWrap(settings_dir, chrome_ext_dir, app_socket_port);
 		
 		// We use gson to convert between json and java objects.
 		gson = new Gson();
@@ -78,6 +76,20 @@ public class JComm {
 	static void handle_request(RequestMessage req) {
 		MessageEnums.WebDriverRequestType request_type = req.get_request_type();
 		switch (request_type) {
+		
+		case kStartService: {
+			boolean started = web_driver.start_service();
+			ResponseMessage resp = new ResponseMessage(req.get_id(), started, gson.toJsonTree(started));
+	        System.out.println(resp.to_string());
+	        break;
+		}
+		
+		case kStopService: {
+			web_driver.stop_service();
+			ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	        System.out.println(resp.to_string());
+	        break;
+		}
 		
 		case kIsBrowserOpen: {
 	        boolean open = web_driver.browser_is_open();
