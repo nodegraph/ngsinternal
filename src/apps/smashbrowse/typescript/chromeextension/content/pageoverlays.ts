@@ -9,22 +9,15 @@ class PageOverlays {
     // Our overlays. 
     // The user will never be able to click these with the mouse as the line width is zero.
     // They are being drawn using an outline feature.
-    text_box_overlay: Overlay
-    image_box_overlay: Overlay
-    click_cross_overlay: CrossOverlay
+    text_box_overlay: Overlay = null
+    image_box_overlay: Overlay = null
+    element_overlay: Overlay = null
+    click_cross_overlay: CrossOverlay = null
 
     // The click point at which the crosshairs will be overlayed. This is in local page space.
     page_pos: Point
     
     constructor() {
-        // Dependencies.
-        
-        // Our Members.
-
-        // Our Overlays.
-        this.text_box_overlay = null
-        this.image_box_overlay = null
-        this.click_cross_overlay = null
     }
 
     get_page_pos(): Point {
@@ -44,10 +37,32 @@ class PageOverlays {
         }
 
         // Create our mouse overlays.
-        this.text_box_overlay = new Overlay('smash_browse_text_box', DistinctColors.text_color, -1, false, null)
-        this.image_box_overlay = new Overlay('smash_browse_image_box', DistinctColors.image_color, -1, false, null)
+        this.text_box_overlay = new Overlay('smash_browse_text_box', DistinctColors.text_color, null)
+        this.image_box_overlay = new Overlay('smash_browse_image_box', DistinctColors.image_color, null)
         this.click_cross_overlay = new CrossOverlay('smash_browse_text_box', DistinctColors.text_color, -1)
+        this.element_overlay = new Overlay('smash_browse_selected', "#00FF00", null)
     }
+
+    // Current element overlay.
+
+    get_elem_wrap(): ElemWrap {
+        return this.element_overlay.get_elem_wrap()
+    }
+
+    set_elem_wrap(elem_wrap: ElemWrap): void {
+        this.element_overlay.set_elem_wrap(elem_wrap)
+        this.element_overlay.update()
+    }
+
+    clear_elem_wrap(): void {
+        this.element_overlay.clear_elem_wrap()
+    }
+
+    update_element_overlay(): void {
+        this.element_overlay.update()
+    }
+
+    // Text and Image overlays.
 
     update_overlays(text_elem_wrap: ElemWrap, image_elem_wrap: ElemWrap): void {
         if (!this.text_box_overlay || !this.image_box_overlay) {
@@ -59,13 +74,15 @@ class PageOverlays {
 
     private update_text_box_overlay(elem_wrap: ElemWrap): void {
         this.text_box_overlay.set_elem_wrap(elem_wrap)
-        this.text_box_overlay.update(DistinctColors.text_color, -1)
+        this.text_box_overlay.update()
     }
 
     private update_image_box_overlay(elem_wrap: ElemWrap): void {
         this.image_box_overlay.set_elem_wrap(elem_wrap)
-        this.image_box_overlay.update(DistinctColors.image_color, -1)
+        this.image_box_overlay.update()
     }
+
+    // Crosshair Overlay.
 
     update_crosshair(page_pos: Point): void {
         this.click_cross_overlay.update_dom_elements(page_pos)

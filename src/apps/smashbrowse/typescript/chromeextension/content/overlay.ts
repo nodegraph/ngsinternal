@@ -15,13 +15,16 @@ class Overlay {
     private right: HTMLDivElement
     private top: HTMLDivElement
     private bottom: HTMLDivElement
-    private marker: HTMLDivElement
     
     // Our ElemWrap.
     private elem_wrap: ElemWrap
+    private color: string
+    private css_class_name: string
     
-    constructor(class_name: string, color: string, color_index: number, mark = false, elem_wrap: ElemWrap=null) {
+    constructor(class_name: string, color: string,  elem_wrap: ElemWrap=null) {
         // Primary roperty.
+        this.css_class_name = class_name
+        this.color = color
         this.elem_wrap = elem_wrap // Note the elem wrap is allowed to be null as well.
 
         // Our dom elements.
@@ -29,32 +32,32 @@ class Overlay {
         this.right = null
         this.top = null
         this.bottom = null
-        this.marker = null
 
         // Setup.
         this.create_dom_elements(class_name)
-        this.update_dom_elements(color, color_index)
-        this.mark(mark)
+        this.update_dom_elements(color)
     }
 
+    // ElemWrap
     get_elem_wrap() {
         return this.elem_wrap
     }
-
     set_elem_wrap(elem_wrap: ElemWrap) {
         this.elem_wrap = elem_wrap
     }
-
+    clear_elem_wrap() {
+        this.elem_wrap = null
+    }
     is_valid() {
         return this.elem_wrap.is_valid()
     }
     
     // Update all internal state.
-    update(color: string, color_index: number): void {
+    update(): void {
         if (this.elem_wrap) {
             this.elem_wrap.update()
         }
-        this.update_dom_elements(color, color_index)
+        this.update_dom_elements(this.color)
     }
 
     // Destroy our dom elements.
@@ -66,13 +69,11 @@ class Overlay {
         document.body.removeChild(this.right)
         document.body.removeChild(this.top)
         document.body.removeChild(this.bottom)
-        document.body.removeChild(this.marker)
         // Set our dom references to null.
         this.left = null
         this.right = null
         this.top = null
         this.bottom = null
-        this.marker = null
     }
 
     contains_point(page_pos: Point): boolean {
@@ -104,15 +105,10 @@ class Overlay {
         this.bottom.classList.add(class_name)
         this.bottom.style.position = "absolute"
         document.body.appendChild(this.bottom)
-
-        this.marker = document.createElement("div")
-        this.marker.classList.add(class_name)
-        this.marker.style.position = "absolute"
-        document.body.appendChild(this.marker)
     }
 
     // Updates the dom elements to reflect new position and size.
-    update_dom_elements(color: string, color_index: number): void {
+    update_dom_elements(color: string): void {
         if (!this.elem_wrap) {
             this.left.style.left = '0px'
             this.left.style.top = '0px'
@@ -133,11 +129,6 @@ class Overlay {
             this.bottom.style.top = '0px'
             this.bottom.style.width = '0px'
             this.bottom.style.height = '0px'
-
-            this.marker.style.left = '0px'
-            this.marker.style.top = '0px'
-            this.marker.style.width = '0px'
-            this.marker.style.height = '0px'
             return
         }
 
@@ -147,7 +138,6 @@ class Overlay {
         this.right.style.outlineColor = color
         this.top.style.outlineColor = color
         this.bottom.style.outlineColor = color
-        this.marker.style.outlineColor = color
 
         // Set the geometry of the dom elements.
         let page_box = this.elem_wrap.get_box()
@@ -178,21 +168,6 @@ class Overlay {
         this.bottom.style.top = page_box.bottom + Overlay.enlarge + 'px'
         this.bottom.style.width = (width + 2 * Overlay.enlarge + 2 * t) + 'px'
         this.bottom.style.height = t + 'px'
-
-        // Mark.
-        this.marker.style.left = (page_box.left - Overlay.enlarge - t + (color_index + 1) * 8) + 'px'
-        this.marker.style.top = (page_box.top - Overlay.enlarge - t) + 'px'
-        this.marker.style.width = t + 'px'
-        this.marker.style.height = (height + 2 * Overlay.enlarge + 2 * t) + 'px'
-    }
-
-    // Updates the css style of the dom elements to reflect new color.
-    mark(mark: boolean): void {
-        if (mark) {
-            this.marker.style.outlineWidth = "4px"
-        } else {
-            this.marker.style.outlineWidth = "2px"
-        }
     }
 
 }

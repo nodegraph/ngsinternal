@@ -41,15 +41,15 @@ class ContentCommHandler {
             } break
             case ChromeRequestType.kUpdateElement: {
                 // There is no information to send back from this call.
-                this.gui_collection.overlay_sets.update()
+                this.gui_collection.page_overlays.update_element_overlay()
             } break
             case ChromeRequestType.kClearElement: {
                 // There is no information to send back from this call.
-                this.gui_collection.overlay_sets.destroy()
+                this.gui_collection.page_overlays.clear_elem_wrap()
             } break
             case ChromeRequestType.kGetElement: {
                 // Only one or none of the frames should have an element.
-                let elem_wrap = this.gui_collection.overlay_sets.get_elem_wrap(0, 0)
+                let elem_wrap = this.gui_collection.page_overlays.get_elem_wrap()
                 
                 // If the xpath is not empty then we are that one element.
                 if (elem_wrap) {
@@ -59,13 +59,12 @@ class ContentCommHandler {
             } break
             case ChromeRequestType.kSetElement: {
                 // Clear out our current element, if any.
-                this.gui_collection.overlay_sets.destroy()
+                this.gui_collection.page_overlays.clear_elem_wrap()
                 // Now if our frame matches the request, then try to find the element.
                 if (req.args.frame_index_path == frame_index_path) {
                     let elem_wraps = this.gui_collection.page_wrap.get_visible_by_xpath(req.args.xpath)
                     if (elem_wraps.length == 1) {
-                        this.gui_collection.add_overlay_set(elem_wraps)
-                        this.gui_collection.overlay_sets.update()
+                        this.gui_collection.page_overlays.set_elem_wrap(elem_wraps[0])
                         // We send the element info back to bg comm. Only one of these frames should be returning a value.
                         let info = elem_wraps[0].get_info()
                         send_response(info)
@@ -78,7 +77,7 @@ class ContentCommHandler {
             } break
             case ChromeRequestType.kScrollElementIntoView: {
                 // Only one or none of the frames should have an element.
-                let elem_wrap = this.gui_collection.overlay_sets.get_elem_wrap(0, 0)
+                let elem_wrap = this.gui_collection.page_overlays.get_elem_wrap()
                 
                 // If the xpath is not empty then we are that one element.
                 if (elem_wrap) {
@@ -160,7 +159,7 @@ class ContentCommHandler {
             } break
             case ChromeRequestType.kGetElementValues: {
                 // Only one or none of the frames should have an element.
-                let elem_wrap = this.gui_collection.overlay_sets.get_elem_wrap(0, 0)
+                let elem_wrap = this.gui_collection.page_overlays.get_elem_wrap()
                 if (!elem_wrap) {
                     return
                 }
@@ -178,10 +177,10 @@ class ContentCommHandler {
                 }
             } break
             case ChromeRequestType.kGetDropDownInfo: {
-                if (this.gui_collection.overlay_sets.get_num_sets() == 0) {
+                if (!this.gui_collection.page_overlays.get_elem_wrap()) {
                     return
                 }
-                let info: IDropDownInfo = this.gui_collection.get_drop_down_info(0,0)
+                let info: IDropDownInfo = this.gui_collection.get_drop_down_info()
                 send_response(info)
             } break
 

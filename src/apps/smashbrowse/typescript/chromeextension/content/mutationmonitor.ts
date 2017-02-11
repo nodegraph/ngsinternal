@@ -94,7 +94,7 @@ class MutationMonitor {
             this.gui_collection.initialize()
             this.gui_collection.wait_popup.close()
             // Update our overlay sets as some of elements may have disappeared.
-            this.gui_collection.overlay_sets.update()
+            this.gui_collection.page_overlays.update_element_overlay()
         }
     }
 

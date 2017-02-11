@@ -26,8 +26,6 @@
         "matchcriteria.ts",
         "crossoverlay.ts",
         "overlay.ts",
-        "overlayset.ts",
-        "overlaysets.ts",
         "mutationmonitor.ts",
         "pagewrap.ts",
         "guicollection.ts",

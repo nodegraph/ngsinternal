@@ -4,28 +4,20 @@ class GUICollection {
     event_blocker: EventBlocker
     content_comm: ContentComm
     page_overlays: PageOverlays
-
-
-    wait_popup: WaitPopup
-    text_input_popup: TextInputPopup
-    select_input_popup: SelectInputPopup
-
     page_wrap: PageWrap
 
+    wait_popup: WaitPopup
+
     private distinct_colors: DistinctColors
-    overlay_sets: OverlaySets
 
     constructor(content_comm: ContentComm) {
         this.content_comm = content_comm
 
         // Our popups.
         this.wait_popup = new WaitPopup()
-        this.text_input_popup = new TextInputPopup()
-        this.select_input_popup = new SelectInputPopup()
 
         // Our overlay sets.
         this.distinct_colors = new DistinctColors()
-        this.overlay_sets = new OverlaySets()
 
         // Our page wrap.
         this.page_wrap = new PageWrap(this)
@@ -44,31 +36,13 @@ class GUICollection {
         if (!this.wait_popup.is_initialized) {
             this.wait_popup.initialize()
         }
-        if (!this.text_input_popup.is_initialized) {
-            this.text_input_popup.initialize()
-        }
-        if (!this.select_input_popup.is_initialized) {
-            this.select_input_popup.initialize()
-        }
     }
-
 
     contains_element(element: Node): boolean {
         if (this.wait_popup.contains_element(element)) {
             return true
         }
-        if (this.text_input_popup.contains_element(element)) {
-            return true
-        }
-        if (this.select_input_popup.contains_element(element)) {
-            return true
-        }
         return false
-    }
-
-    add_overlay_set(elem_wraps: ElemWrap[]): void {
-        let os: OverlaySet = new OverlaySet(elem_wraps, this.distinct_colors)
-        this.overlay_sets.add_set(os)
     }
 
     on_context_menu(e: MouseEvent): boolean {
@@ -100,13 +74,13 @@ class GUICollection {
         this.page_overlays.update_overlays(text_elem_wrap, image_elem_wrap)
     }
 
-    get_drop_down_info(set_index: number = 0, overlay_index: number = 0): IDropDownInfo {
+    get_drop_down_info(): IDropDownInfo {
         // If we're a select element, grab the option values and texts.
         let option_values: string[] = []
         let option_texts: string[] = []
-        if (set_index >= 0) {
-            let oset = this.overlay_sets.get_set(set_index)
-            let element = oset.get_overlay(overlay_index).get_elem_wrap().get_element()
+        let elem_wrap = this.page_overlays.get_elem_wrap()
+        if (elem_wrap) {
+            let element = elem_wrap.get_element()
             if (element instanceof HTMLSelectElement) {
                 let select: HTMLSelectElement = <HTMLSelectElement>element
                 for (let i = 0; i < element.options.length; i++) {

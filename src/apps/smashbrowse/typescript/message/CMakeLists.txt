@@ -5,8 +5,6 @@ get_tsconfig_files(msg_ts)
 # Add our build dir prefix to the ts filenames.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" msg_js "${msg_ts}")
 
-
-
 # Change the .ts suffix to .js in our ts filenames.
 string(REGEX REPLACE "(\\.ts)" ".js" msg_js "${msg_js}")
 
