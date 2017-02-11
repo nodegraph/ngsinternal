@@ -592,7 +592,6 @@ void TaskQueuer::get_drop_down_info_task() {
   send_msg_task(req);
 }
 
-// Should be run after a response message like get_crosshair_info_task that has set_index and overlay_index.
 void TaskQueuer::get_current_element_info() {
   QJsonObject args;
   Message req(ChromeRequestType::kGetElement,args);
