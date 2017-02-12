@@ -7,7 +7,6 @@
 class CrossOverlay {
     // Color.
     color: string
-    color_index: number
 
     // Visual properties of the cross.
     bar_length: number
@@ -20,14 +19,13 @@ class CrossOverlay {
     horizontal: HTMLDivElement
     vertical: HTMLDivElement
     
-    constructor(class_name: string, color: string, color_index: number) {
+    constructor(class_name: string, color: string) {
         // Our dom elements.
         this.horizontal = null
         this.vertical = null
 
         // Our color.
         this.color = color
-        this.color_index = color_index
 
         // Physical properties.
         this.bar_length = 50

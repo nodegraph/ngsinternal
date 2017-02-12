@@ -39,7 +39,7 @@ class PageOverlays {
         // Create our mouse overlays.
         this.text_box_overlay = new Overlay('smash_browse_text_box', DistinctColors.text_color, null)
         this.image_box_overlay = new Overlay('smash_browse_image_box', DistinctColors.image_color, null)
-        this.click_cross_overlay = new CrossOverlay('smash_browse_text_box', DistinctColors.text_color, -1)
+        this.click_cross_overlay = new CrossOverlay('smash_browse_text_box', DistinctColors.text_color)
         this.element_overlay = new Overlay('smash_browse_selected', "#00FF00", null)
     }
 
