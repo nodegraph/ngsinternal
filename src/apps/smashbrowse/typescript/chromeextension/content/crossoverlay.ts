@@ -90,8 +90,6 @@ class CrossOverlay {
         this.horizontal.style.width = this.bar_length + 'px'
         this.horizontal.style.height = this.thickness + 'px'
 
-        console.log('wwwwwwwwwwwwwwwww: ' + this.bar_length + 'px')
-
         // Right.
         this.vertical.style.left = (this.page_pos.x + half_thickness) + 'px'
         this.vertical.style.top = (this.page_pos.y - half_size) + 'px'

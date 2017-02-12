@@ -13,6 +13,7 @@ class PageOverlays {
     image_box_overlay: Overlay = null
     element_overlay: Overlay = null
     click_cross_overlay: CrossOverlay = null
+    element_cross_overlay: CrossOverlay = null
 
     // The click point at which the crosshairs will be overlayed. This is in local page space.
     page_pos: Point
@@ -41,6 +42,7 @@ class PageOverlays {
         this.image_box_overlay = new Overlay('smash_browse_image_box', DistinctColors.image_color, null)
         this.click_cross_overlay = new CrossOverlay('smash_browse_text_box', DistinctColors.text_color)
         this.element_overlay = new Overlay('smash_browse_selected', "#00FF00", null)
+        this.element_cross_overlay = new CrossOverlay('smash_browse_text_box', "#00FF00")
     }
 
     // Current element overlay.
@@ -51,18 +53,29 @@ class PageOverlays {
 
     set_elem_wrap(elem_wrap: ElemWrap): void {
         this.element_overlay.set_elem_wrap(elem_wrap)
-        this.element_overlay.update()
+        this.update_element_overlay()
     }
 
     clear_elem_wrap(): void {
         this.element_overlay.clear_elem_wrap()
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Element overlay update.
+    // ---------------------------------------------------------------------------------------------
+
     update_element_overlay(): void {
         this.element_overlay.update()
+        let elem_wrap = this.element_overlay.get_elem_wrap()
+        if (elem_wrap) {
+            const point = elem_wrap.get_box().get_center()
+            this.element_cross_overlay.update_dom_elements(point)
+        }
     }
 
-    // Text and Image overlays.
+    // ---------------------------------------------------------------------------------------------
+    // Text and Image overlay update.
+    // ---------------------------------------------------------------------------------------------
 
     update_overlays(text_elem_wrap: ElemWrap, image_elem_wrap: ElemWrap): void {
         if (!this.text_box_overlay || !this.image_box_overlay) {
@@ -82,7 +95,9 @@ class PageOverlays {
         this.image_box_overlay.update()
     }
 
-    // Crosshair Overlay.
+    // ---------------------------------------------------------------------------------------------
+    // Crosshair overlay update.
+    // ---------------------------------------------------------------------------------------------
 
     update_crosshair(page_pos: Point): void {
         this.click_cross_overlay.update_dom_elements(page_pos)
