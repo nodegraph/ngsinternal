@@ -20,7 +20,8 @@ DownloadManager::DownloadManager(Entity* parent)
       _manipulator(this),
       _license_checker(this),
       _file_model(this),
-      _last_msg_id(-1) {
+      _last_msg_id(-1),
+      _num_rows(0) {
   get_dep_loader()->register_fixed_dep(_manipulator, Path());
   get_dep_loader()->register_fixed_dep(_license_checker, Path());
   get_dep_loader()->register_fixed_dep(_file_model, Path());
@@ -33,6 +34,7 @@ DownloadManager::DownloadManager(Entity* parent)
 }
 
 DownloadManager::~DownloadManager() {
+  _poll_timer.stop();
   for (auto &p: _processes) {
     delete_ff(p.second);
   }
@@ -80,6 +82,8 @@ void DownloadManager::download_on_the_side(const QString& url) {
   _processes.insert({p->get_id(),p});
   // Emit queued signal.
   emit download_queued(p->get_id(), url, dir);
+  // Update our id_to_row.
+  _id_to_row[p->get_id()] = _num_rows++;
 }
 
 void DownloadManager::download(int msg_id, const QJsonObject& args) {
@@ -115,6 +119,8 @@ void DownloadManager::download(int msg_id, const QJsonObject& args) {
 
   // Emit queued signal.
   emit download_queued(p->get_id(), args[Message::kURL].toString(), path);
+  // Update our id_to_row.
+  _id_to_row[p->get_id()] = _num_rows++;
 
   // We don't wait for the download to finish.
   // We send the success response back right away.
@@ -123,17 +129,14 @@ void DownloadManager::download(int msg_id, const QJsonObject& args) {
   _manipulator->receive_message(response.to_string());
 }
 
-void DownloadManager::stop(long long id) {
-  if (_processes.count(id) == 0) {
-    return;
-  }
-  destroy_process(id);
-}
-
-long long DownloadManager::get_sender_id() {
+int DownloadManager::get_sender_id() const {
   QObject* obj = sender();
   DownloadVideoProcess *p = static_cast<DownloadVideoProcess*>(obj);
   return p->get_id();
+}
+
+int DownloadManager::get_row(int id) const {
+  return _id_to_row.at(id);
 }
 
 void DownloadManager::destroy_process(long long id) {
@@ -141,36 +144,63 @@ void DownloadManager::destroy_process(long long id) {
   _processes.erase(id);
   // Let Qt destroy this when convenient.
   p->deleteLater();
-
   // The following delete causes a crash.
   //delete_ff(p);
 }
 
+void DownloadManager::remove_id_from_map(int id) {
+  // Remove the id from the map.
+  int row = _id_to_row[id];
+  _id_to_row.erase(id);
+  // Update the rows on the remaining elements.
+  for (auto &iter: _id_to_row) {
+    if (iter.second >= row) {
+      iter.second -= 1;
+    }
+  }
+  // Update the total number of rows we have.
+  _num_rows -= 1;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Relaying signal from video download process.
+// ---------------------------------------------------------------------------------------------
+
 void DownloadManager::on_started(const QString& filename) {
   internal();
-  long long id = get_sender_id();
-  emit download_started(id, filename);
+  int id = get_sender_id();
+  int row = get_row(id);
+  emit download_started(row, filename);
 }
 
 void DownloadManager::on_progress(const  QString& progress) {
   internal();
-  long long id = get_sender_id();
-  emit download_progress(id, progress);
+  int id = get_sender_id();
+  int row = get_row(id);
+  emit download_progress(row, progress);
 }
 
 void DownloadManager::on_errored(const QString& error) {
   internal();
-  long long id = get_sender_id();
+  int id = get_sender_id();
+  int row = get_row(id);
   destroy_process(id);
-  emit download_errored(id, error);
+  remove_id_from_map(id);
+  emit download_errored(row, error);
 }
 
 void DownloadManager::on_finished() {
   internal();
-  long long id = get_sender_id();
+  int id = get_sender_id();
+  int row = get_row(id);
   destroy_process(id);
-  emit download_finished(id);
+  remove_id_from_map(id);
+  emit download_finished(row);
 }
+
+// ---------------------------------------------------------------------------------------------
+// File Reveal Functionality.
+// ---------------------------------------------------------------------------------------------
 
 void DownloadManager::reveal_file(const QString& dir, const QString &filename) {
   DownloadManager::reveal_file_on_platform(dir, filename);

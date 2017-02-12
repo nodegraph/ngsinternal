@@ -13,6 +13,7 @@ import smashbrowse.fullpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
+import GUITypes 1.0
 
 BaseImageIconListDelegate {
     id: delegate
@@ -27,27 +28,20 @@ BaseImageIconListDelegate {
 	item_height: app_settings.list_item_height_small
 	
 	function get_image_url() {
-		if (_content == "queued") {
+		if (download_state == GUITypes.Queued) {
 			return "qrc:///icons/ic_cloud_queue_white_48dp.png"
-		} else if (_content == "downloading") {
+		} else if (download_state == GUITypes.Downloading) {
 			return "qrc:///icons/ic_cloud_download_white_48dp.png"
-		} else if (_content == "finished") {
+		} else if (download_state == GUITypes.Finished) {
 			return "qrc:///icons/ic_cloud_done_white_48dp.png"
 		} else {
 			return "qrc:///icons/ic_cloud_off_white_48dp.png"
 		}
 	}
     
-    function update_icon_to_downloading() {
-    	_image_url = "qrc:///icons/ic_cloud_download_white_48dp.png"
-    }
-    
-    function update_icon_to_finished() {
-    	_image_url = "qrc:///icons/ic_cloud_done_white_48dp.png"
-    }
-    
     // Method Overrides.
     function on_double_clicked() {
     	get_list_page().on_download_double_clicked(index)
     }
+    
 }

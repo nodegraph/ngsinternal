@@ -15,6 +15,8 @@ import smashbrowse.contentpages.listpages 1.0
 import smashbrowse.appwidgets 1.0
 import smashbrowse.contentpages.listmodels 1.0
 
+import GUITypes 1.0
+
 BaseListPage {
     id: page
     
@@ -48,43 +50,51 @@ BaseListPage {
     	download_manager.reveal_file(obj.dest_dir, obj.title)
     }
 
-    function on_download_queued(id, url, dest_dir) {
-        model.append({"id": id, "title": url, "dest_dir": dest_dir, "description": "queued"})
-    }
-    
-    function on_download_started(id, filename) {
-        for (var i=0; i<model.count; i++) {
-            var obj = model.get(i)
-            if (obj.id == id) {
-                obj.title = filename
-                obj.description = "downloading"
-                model.set(i, obj);
-                break;
-            }
+    function on_download_queued(row, url, dest_dir) {
+        model.append({"title": url, "dest_dir": dest_dir, "description": "queued", "download_state": GUITypes.Queued})
+        // Check that we are at the right row.
+        if (row !== model.count -1) {
+        	console.log('row index mismatch detected')
         }
     }
     
-    function on_download_finished(id) {
-        for (var i=0; i<model.count; i++) {
-            var obj = model.get(i)
-            if (obj.id == id) {
-            	_downloads_completed += 1
-            	update_header()
-            	model.remove(i)
-                break;
-            }
-        }
+    function on_download_started(row, filename) {
+        var obj = model.get(row)
+        obj.title = filename
+        obj.description = "downloading"
+        obj.download_state = GUITypes.Downloading
     }
     
-    function on_download_errored(id, error) {
-        for (var i=0; i<model.count; i++) {
-            var obj = model.get(i)
-            if (obj.id == id) {
-                obj.description = "error: " + error
-                model.set(i, obj);
-                break;
-            }
+    function on_download_progress(row, progress) {
+    	var obj = model.get(row)
+        obj.description = progress
+        obj.download_state = GUITypes.Downloading
+    }
+    
+    function on_download_finished(row) {
+    	var obj = model.get(row)
+    	if (obj.download_state == GUITypes.Errored) {
+    		obj.description = "Unable to download this file.\n" + obj.description
+    	} else {
+        	obj.description += "\nfinished"
+        	obj.download_state = GUITypes.Finished
         }
+        
+        // Update counter and header.
+        _downloads_completed += 1
+    	update_header()
+    	
+    	// Remove the element.
+    	model.remove(row,1)
+    }
+    
+    function on_download_errored(row, error) {
+        var obj = model.get(row)
+        obj.description = "error: " + error
+        obj.download_state = GUITypes.Errored
+        
+        // Remove the element.
+    	model.remove(row,1)
     }
     
     delegate: DownloadListDelegate{}

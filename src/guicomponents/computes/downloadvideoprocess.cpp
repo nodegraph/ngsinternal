@@ -67,8 +67,8 @@ void DownloadVideoProcess::on_state_changed(QProcess::ProcessState state) {
 
 void DownloadVideoProcess::on_stderr() {
   if (_started) {
-    disconnect_stderr();
-    return;
+    //disconnect_stderr();
+    //return;
   }
 
   BaseProcess::on_stderr();
@@ -80,8 +80,8 @@ const char* DownloadVideoProcess::_progress_pattern = "(.*)";
 
 void DownloadVideoProcess::on_stdout() {
   if (_started) {
-    disconnect_stdout();
-    return;
+    //disconnect_stdout();
+    //return;
   }
 
   BaseProcess::on_stdout();

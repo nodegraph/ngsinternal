@@ -271,6 +271,7 @@ void QMLAppEntity::expose_to_qml() {
   qRegisterMetaType<GUITypes::HintKey>("HintKey");
   qRegisterMetaType<GUITypes::EnumHintValue>("EnumHintValue");
   qRegisterMetaType<GUITypes::PostType>("PostType");
+  qRegisterMetaType<GUITypes::VideoDownloadState>("VideoDownloadState");
   //Q_DECLARE_METATYPE(GUITypes::JSType);
   //Q_DECLARE_METATYPE(GUITypes::HintKey);
   //Q_DECLARE_METATYPE(GUITypes::EnumHintValue);

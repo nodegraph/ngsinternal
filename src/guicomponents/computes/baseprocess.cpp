@@ -140,7 +140,10 @@ void BaseProcess::start() {
 void BaseProcess::stop() {
   if (_process) {
     _process->kill();
-    delete_ff(_process);
+    // Let Qt destroy this when convenient.
+    _process->deleteLater();
+    // The following delete causes a crash.
+    //delete_ff(_process);
   }
 }
 

@@ -122,4 +122,8 @@ Rectangle {
             on_double_clicked()
         }
     }
+    
+    Drag.active: mouse_area.drag.active
+    Drag.hotSpot.x: 10
+    Drag.hotSpot.y: 10
 }

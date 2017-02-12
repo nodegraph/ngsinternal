@@ -83,6 +83,16 @@ class COMMS_EXPORT GUITypes : public QObject
     };
     Q_ENUM(PostType)
 
+    // ----------------------------------------------------------------------------------------------------------
+
+    enum class VideoDownloadState: int {
+      Queued = 0,
+      Downloading = 1,
+      Finished = 2,
+      Errored = 3,
+    };
+    Q_ENUM(VideoDownloadState)
+
     GUITypes();
 };
 
