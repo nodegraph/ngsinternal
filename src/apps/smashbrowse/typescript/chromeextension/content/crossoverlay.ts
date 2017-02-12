@@ -9,12 +9,12 @@ class CrossOverlay {
     color: string
     color_index: number
 
-    // Size of the cross.
-    static size = 50
+    // Visual properties of the cross.
+    bar_length: number
+    thickness: number
 
     // Position.
     page_pos: Point // The position in page space. (Not client space)
-    static thickness = 0
     
     // Our dom elements.
     horizontal: HTMLDivElement
@@ -28,6 +28,10 @@ class CrossOverlay {
         // Our color.
         this.color = color
         this.color_index = color_index
+
+        // Physical properties.
+        this.bar_length = 50
+        this.thickness = 0
 
         // Setup.
         this.create_dom_elements(class_name)
@@ -79,20 +83,22 @@ class CrossOverlay {
         this.horizontal.style.outlineColor = this.color
         this.vertical.style.outlineColor = this.color
 
-        let half_size = CrossOverlay.size / 2.0
-        let half_thickness = CrossOverlay.thickness / 2.0
+        const half_size = this.bar_length / 2.0
+        const half_thickness = this.thickness / 2.0
 
         // Left.
         this.horizontal.style.left = (this.page_pos.x - half_size) + 'px'
         this.horizontal.style.top = (this.page_pos.y - half_thickness) + 'px'
-        this.horizontal.style.width = CrossOverlay.size + 'px'
-        this.horizontal.style.height = CrossOverlay.thickness + 'px'
+        this.horizontal.style.width = this.bar_length + 'px'
+        this.horizontal.style.height = this.thickness + 'px'
+
+        console.log('wwwwwwwwwwwwwwwww: ' + this.bar_length + 'px')
 
         // Right.
         this.vertical.style.left = (this.page_pos.x + half_thickness) + 'px'
         this.vertical.style.top = (this.page_pos.y - half_size) + 'px'
-        this.vertical.style.width = CrossOverlay.thickness + 'px'
-        this.vertical.style.height = CrossOverlay.size + 'px'
+        this.vertical.style.width = this.thickness + 'px'
+        this.vertical.style.height = this.bar_length + 'px'
     }
 
 }
