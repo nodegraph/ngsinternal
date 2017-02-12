@@ -68,6 +68,12 @@ class PageOverlays {
         this.element_overlay.update()
         let elem_wrap = this.element_overlay.get_elem_wrap()
         if (elem_wrap) {
+            const box = elem_wrap.get_box()
+            const width = box.get_width()
+            const height = box.get_height()
+            const bar_length = Math.min(width/ 4, height /4)
+            this.element_cross_overlay.bar_length = bar_length
+
             const point = elem_wrap.get_box().get_center()
             this.element_cross_overlay.update_dom_elements(point)
         }
