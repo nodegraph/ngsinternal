@@ -39,7 +39,7 @@ BaseStackPage{
         var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
         push_page.visible = true
         push_page.set_value("www.")
-        push_page.set_title("Enter URL")
+        push_page.set_title("enter url")
         push_page.callback = function(url) {
         		web_recorder.record_navigate_to(url)
         		main_bar.switch_to_current_mode()
@@ -52,9 +52,22 @@ BaseStackPage{
         var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
         push_page.visible = true
         push_page.set_value("")
-        push_page.set_title("Type Text")
+        push_page.set_title("type text")
         push_page.callback = function(text) {
         		web_recorder.record_type_text(text)
+        		main_bar.switch_to_current_mode()
+        	}
+        stack_view.push_page(push_page)
+        visible = true
+    }
+    
+    function on_type_password() {
+        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterPasswordPage.qml", page, {})
+        push_page.visible = true
+        push_page.set_value("")
+        push_page.set_title("type password")
+        push_page.callback = function(text) {
+        		web_recorder.record_type_password(text)
         		main_bar.switch_to_current_mode()
         	}
         stack_view.push_page(push_page)
@@ -70,7 +83,7 @@ BaseStackPage{
     	console.log('got option texts: ' + option_texts)
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
         push_page.visible = true
-        push_page.set_title("Select from Dropdown")
+        push_page.set_title("select dropdown option")
         push_page.callback = function(option_text) {
         		web_recorder.record_select_from_dropdown(option_text)
         		main_bar.switch_to_current_mode()

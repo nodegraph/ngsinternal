@@ -4,6 +4,7 @@ PublishMacroPage 1.0 PublishMacroPage.qml
 EnterStringAndDropdownPage 1.0 EnterStringAndDropdownPage.qml
 EnterNumberAndDropdownPage 1.0 EnterNumberAndDropdownPage.qml
 EnterStringPage 1.0 EnterStringPage.qml
+EnterPasswordPage 1.0 EnterPasswordPage.qml
 EnterNumberPage 1.0 EnterNumberPage.qml
 
 CreateFilePage 1.0 CreateFilePage.qml

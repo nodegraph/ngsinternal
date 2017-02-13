@@ -35,6 +35,13 @@ ListModel {
         script: "web_recorder.record_type_enter();
         		main_bar.switch_to_current_mode();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_keyboard_white_48dp.png"
+        title: "Type Password"
+        description: "Type a password into an input field."
+        script: "web_menu_list_stack_page.on_type_password();"
+    }
 
     ListElement {
         image_url: "qrc:///icons/ic_format_line_spacing_white_48dp.png"

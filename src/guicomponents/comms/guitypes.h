@@ -53,7 +53,8 @@ class COMMS_EXPORT GUITypes : public QObject
       ElementJSTypeHint = 3,
       ElementEnumHint = 4,
       DescriptionHint = 5,
-      MultiLineHint = 6
+      MultiLineHint = 6,
+      PasswordHint = 7,
     };
     Q_ENUM(HintKey)
 

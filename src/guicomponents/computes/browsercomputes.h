@@ -264,7 +264,7 @@ class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
 class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, TextActionCompute);
-  TextActionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  TextActionCompute(Entity* entity, ComponentDID did = kDID()): BrowserCompute(entity, did){}
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
@@ -272,6 +272,19 @@ class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
   virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
+};
+
+// This class is exactly like TextActionCompute except that
+// it adds a hint to the text param indicate that it's a password
+// and that it should be hidden.
+class GUICOMPUTES_EXPORT PasswordActionCompute: public TextActionCompute {
+ public:
+  COMPONENT_ID(Compute, PasswordActionCompute);
+  PasswordActionCompute(Entity* entity): TextActionCompute(entity, PasswordActionCompute::kDID()){}
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
 };
 
 class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {

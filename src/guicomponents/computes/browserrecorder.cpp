@@ -413,6 +413,18 @@ void BrowserRecorder::record_type_enter() {
   finish();
 }
 
+void BrowserRecorder::record_type_password(const QString& text) {
+  check_busy();
+  _worker->queue_get_crosshair_info(tc);
+
+  QJsonObject args;
+  args.insert(Message::kText, text);
+  args.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
+  _worker->queue_merge_chain_state(tc, args);
+  _worker->queue_build_compute_node(tc, ComponentDID::kPasswordActionCompute);
+  finish();
+}
+
 // -----------------------------------------------------------------
 // Record Element Actions.
 // -----------------------------------------------------------------

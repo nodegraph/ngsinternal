@@ -203,6 +203,10 @@ BaseStackPage{
         		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditMultiLinePage.qml", edit_data_list_stack_page, {})
 	            setup_edit_page(page, name, child_value, child_hints, exposed)
 	            stack_view.push_page(page)
+        	} else if(child_hints.hasOwnProperty(GUITypes.PasswordHint)) {
+        		var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditPasswordPage.qml", edit_data_list_stack_page, {})
+	            setup_edit_page(page, name, child_value, child_hints, exposed)
+	            stack_view.push_page(page)
         	} else {
 	            var page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/editdatapages/EditLinePage.qml", edit_data_list_stack_page, {})
 	            setup_edit_page(page, name, child_value, child_hints, exposed)
@@ -448,9 +452,9 @@ BaseStackPage{
     	var value = get_value(path)
     	var value_type = app_enums.determine_js_type(value)
     	
+    	var hints = get_hints(path)
+    	
     	if (_allow_edits) {
-    		var hints = get_hints(path)
-    		
     		// If we have an enum hint, return the respective text.
     		if (hints.hasOwnProperty(GUITypes.EnumHint)) {
     			return app_enums.get_enum_hint_value_text(hints[GUITypes.EnumHint], value)
@@ -461,6 +465,12 @@ BaseStackPage{
 	    				(value_type == GUITypes.Object || value_type == GUITypes.Array)) {
 	    		return hints[GUITypes.DescriptionHint]
 	    	}
+    	}
+    	
+    	// Keep passwords hidden we get to the editor, and the user chooses to reveal it.
+    	if (hints.hasOwnProperty(GUITypes.PasswordHint)) {
+    		var value = value.toString()
+    		return value.replace(/./g, '*')
     	}
 
         

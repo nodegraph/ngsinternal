@@ -7,6 +7,10 @@ RowLayout {
 	anchors.horizontalCenter: parent.horizontalCenter
 	property alias text: password_field.text
 	property alias password_field: password_field
+	
+	Item {
+		Layout.fillWidth: true
+	}
 
 	TextField {
 	    id: password_field
@@ -55,21 +59,25 @@ RowLayout {
 	// Uncomment the following to show a check box which allows you to reveal the password.
 	
 	// Reveal Checkbox.
-	//AppCheckBox {
-	//    id: reveal_check_box
-	//    checked: false
-	//    anchors {
-	//    	left: password_field.right
-	//        leftMargin: app_settings.page_left_margin / 2
-	//        //rightMargin: app_settings.page_right_margin
-	//    }
-	//    onClicked: {
-	//    	if (checked) {
-	//    		password_field.reveal()
-	//    	} else {
-	//    		password_field.hide()
-	//    	}
-	//    }
-	//}
+	AppCheckBox {
+	    id: reveal_check_box
+	    checked: false
+	    anchors {
+	    	left: password_field.right
+	        leftMargin: app_settings.page_left_margin / 2
+	        //rightMargin: app_settings.page_right_margin
+	    }
+	    onClicked: {
+	    	if (checked) {
+	    		password_field.reveal()
+	    	} else {
+	    		password_field.hide()
+	    	}
+	    }
+	}
+	
+	Item {
+		Layout.fillWidth: true
+	}
 
 }

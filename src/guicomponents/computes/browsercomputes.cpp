@@ -712,7 +712,7 @@ QJsonObject TextActionCompute::init_hints() {
   add_hint(m, Message::kTextAction, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::TextActionType));
   add_hint(m, Message::kTextAction, GUITypes::HintKey::DescriptionHint, "The type of text action to perform.");
 
-  add_hint(m, Message::kText, GUITypes::HintKey::DescriptionHint, "The text to type.");
+  add_hint(m, Message::kText, GUITypes::HintKey::DescriptionHint, "The password to type.");
   return m;
 }
 
@@ -725,6 +725,13 @@ bool TextActionCompute::update_state() {
   _worker->queue_perform_text_action(tc);
   BrowserCompute::post_update_state(tc);
   return false;
+}
+
+const QJsonObject PasswordActionCompute::_hints = PasswordActionCompute::init_hints();
+QJsonObject PasswordActionCompute::init_hints() {
+  QJsonObject m = TextActionCompute::init_hints();
+  add_hint(m, Message::kText, GUITypes::HintKey::PasswordHint, true);
+  return m;
 }
 
 void ElementActionCompute::create_inputs_outputs(const EntityConfig& config) {

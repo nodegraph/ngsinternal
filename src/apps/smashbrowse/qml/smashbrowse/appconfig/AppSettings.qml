@@ -145,7 +145,7 @@ Item{
     // CheckBox Properties.
     property int check_box_radius: app_units.dp(3)
     property int check_box_border_width: app_units.dp(3)
-    property int check_box_size: app_units.dp(32)
+    property int check_box_size: app_units.dp(48)
     
     // Tree View.
     property double tree_view_header_height: app_units.dp(60)

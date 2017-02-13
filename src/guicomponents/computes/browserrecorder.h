@@ -80,6 +80,7 @@ Q_OBJECT
   // Record Text Actions.
   Q_INVOKABLE void record_type_text(const QString& text);
   Q_INVOKABLE void record_type_enter();
+  Q_INVOKABLE void record_type_password(const QString& text);
 
   // Record Element Actions.
   Q_INVOKABLE void record_extract_text();

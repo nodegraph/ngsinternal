@@ -28,6 +28,7 @@
         <file>qml/smashbrowse/contentpages/editdatapages/BaseEditPage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditMultiLinePage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditLinePage.qml</file>
+        <file>qml/smashbrowse/contentpages/editdatapages/EditPasswordPage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditBooleanPage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditNumberPage.qml</file>
         <file>qml/smashbrowse/contentpages/editdatapages/EditEnumPage.qml</file>
@@ -39,6 +40,7 @@
         <file>qml/smashbrowse/contentpages/enterdatapages/EnterNumberAndDropdownPage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/EnterStringAndDropdownPage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml</file>
+        <file>qml/smashbrowse/contentpages/enterdatapages/EnterPasswordPage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/EnterNumberPage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/CreateFilePage.qml</file>
         <file>qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml</file>

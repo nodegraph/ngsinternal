@@ -250,7 +250,8 @@ COMPONENT_ENTRY2(DownloadVideoCompute, 92)\
 /* Perform action on Element. */\
 COMPONENT_ENTRY2(MouseActionCompute, 93)\
 COMPONENT_ENTRY2(TextActionCompute, 94)\
-COMPONENT_ENTRY2(ElementActionCompute, 95)\
+COMPONENT_ENTRY2(PasswordActionCompute, 95)\
+COMPONENT_ENTRY2(ElementActionCompute, 96)\
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()
