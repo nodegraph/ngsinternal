@@ -103,6 +103,8 @@ Rectangle {
 	        id: password_field
 	        anchors.horizontalCenter: parent.horizontalCenter
 	    }
+	    
+	    AppSpacer{}
 		    
         RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
