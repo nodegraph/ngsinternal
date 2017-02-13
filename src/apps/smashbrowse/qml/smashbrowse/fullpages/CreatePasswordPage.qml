@@ -108,6 +108,7 @@ Rectangle {
         // First password entry.
         AppPasswordField {
             id: password_1
+            reveal_check_box_visible: false
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -124,6 +125,7 @@ Rectangle {
         // Second password entry.
         AppPasswordField {
             id: password_2
+            reveal_check_box_visible: false
             anchors.horizontalCenter: parent.horizontalCenter
         }
 

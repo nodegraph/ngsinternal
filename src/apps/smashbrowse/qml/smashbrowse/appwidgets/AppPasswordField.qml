@@ -7,6 +7,7 @@ RowLayout {
 	anchors.horizontalCenter: parent.horizontalCenter
 	property alias text: password_field.text
 	property alias password_field: password_field
+	property alias reveal_check_box_visible: reveal_check_box.visible
 	
 	Item {
 		Layout.fillWidth: true
@@ -14,6 +15,7 @@ RowLayout {
 
 	TextField {
 	    id: password_field
+	    anchors.horizontalCenter: parent.horizontalCenter
 	    
 	    // Dimensions.
 	    height: app_settings.text_field_height
@@ -61,6 +63,7 @@ RowLayout {
 	// Reveal Checkbox.
 	AppCheckBox {
 	    id: reveal_check_box
+	    visible: true
 	    checked: false
 	    anchors {
 	    	left: password_field.right

@@ -101,6 +101,7 @@ Rectangle {
 	    // Password field.
 	    AppPasswordField {
 	        id: password_field
+	        reveal_check_box_visible: false
 	        anchors.horizontalCenter: parent.horizontalCenter
 	    }
 	    
@@ -110,6 +111,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             AppLabel {
                 id: upgrade_license_label
+                anchors.horizontalCenter: parent.horizontalCenter
                 text: "upgrade license "
                 anchors {
                     leftMargin: app_settings.page_left_margin
@@ -120,7 +122,8 @@ Rectangle {
                 id: upgrade_license_check_box
                 checked: false
                 anchors {
-                    leftMargin: app_settings.page_left_margin
+                	left: upgrade_license_label.right
+                    leftMargin: app_settings.page_left_margin / 2
                     rightMargin: app_settings.page_right_margin
                 }
             }
