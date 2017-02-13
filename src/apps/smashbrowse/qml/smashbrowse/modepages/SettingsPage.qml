@@ -140,7 +140,7 @@ Rectangle {
 	            }
 	        }
 	        
-	        // Continue button.
+	        // File dialog button.
 	        AppLabelButton {
 	            id: file_dialog_button
 	            enabled: license_checker.has_valid_pro_license

@@ -11,7 +11,7 @@ import smashbrowse.appwidgets 1.0
 Rectangle {
     id: create_password_page
     
-    onVisibleChanged: if (visible) password_1.forceActiveFocus()
+    onVisibleChanged: if (visible) password_1.password_field.forceActiveFocus()
 
     // Dimensions.
     height: app_settings.screen_height
@@ -38,6 +38,16 @@ Rectangle {
         // Show the license page.
         license_page.update_fields()
         license_page.visible = true
+    }
+    
+    function check_passwords_match() {
+	    if (password_1.text != password_2.text) {
+	        status.text = "passwords do not match"
+	    } else if ((!password_1.text) || (!password_2.text)) {
+	        status.text = "passwords cannot be empty"
+	    } else {
+	        initiate_license_check()
+	    }
     }
     
     function initiate_license_check() {
@@ -73,7 +83,7 @@ Rectangle {
     }
     Keys.onReleased: {
         if ((event.key == Qt.Key_Return) || (event.key == Qt.Key_Enter)) {
-        	initiate_license_check()
+        	check_passwords_match()
         }
     }
     
@@ -98,7 +108,6 @@ Rectangle {
         // First password entry.
         AppPasswordField {
             id: password_1
-            echoMode: TextInput.Password
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -115,7 +124,6 @@ Rectangle {
         // Second password entry.
         AppPasswordField {
             id: password_2
-            echoMode: TextInput.Password
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -125,20 +133,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "continue"
             onClicked: {
-                if (password_1.text != password_2.text) {
-                    status.text = "passwords do not match"
-                } else if ((password_1.length == 0) || (password_2.length == 0)) {
-                    status.text = "passwords cannot be empty"
-                } else {
-                    // Setup the crypto.
-                    crypto_logic.create_crypto(password_1.text)
-                    crypto_logic.save_crypto();
-
-                    // The first the app is run, there won't be a license file.
-                    // The license will automatically go to the "lite" edition with un unspecified license key.
-                    license_checker.load()
-                    app_utils.check_license(on_license_checked)
-                }
+            	check_passwords_match()
             }
         }
 

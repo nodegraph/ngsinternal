@@ -10,7 +10,7 @@ import smashbrowse.appwidgets 1.0
 
 Rectangle {
     id: check_password_page
-    onVisibleChanged: if (visible) password_field.forceActiveFocus()
+    onVisibleChanged: if (visible) password_field.password_field.forceActiveFocus()
 
     // Dimensions.
     height: app_settings.screen_height
@@ -98,13 +98,12 @@ Rectangle {
             color: "white"
         }
 
-        // Password field.
-        AppPasswordField {
-            id: password_field
-            echoMode: TextInput.Password
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
+	    // Password field.
+	    AppPasswordField {
+	        id: password_field
+	        anchors.horizontalCenter: parent.horizontalCenter
+	    }
+		    
         RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
             AppLabel {
