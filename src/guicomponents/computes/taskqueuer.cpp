@@ -907,6 +907,9 @@ void TaskQueuer::shift_element_by_type_task() {
   QJsonObject args;
   args.insert(Message::kAngleInDegrees, _chain_state.value(Message::kAngleInDegrees));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
+  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
+  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
+  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
   Message req(ChromeRequestType::kShiftElementByType);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
@@ -917,6 +920,9 @@ void TaskQueuer::shift_element_by_values_task() {
   args.insert(Message::kAngleInDegrees, _chain_state.value(Message::kAngleInDegrees));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
+  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
+  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
+  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
   Message req(ChromeRequestType::kShiftElementByValues);
   req.insert(Message::kArgs, args);
   send_msg_task(req);

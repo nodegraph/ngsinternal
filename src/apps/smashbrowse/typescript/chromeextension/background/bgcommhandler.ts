@@ -182,9 +182,12 @@ class BgCommHandler {
         return best
     }
 
-    static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], angle_in_degrees: number) {
+    static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], angle_in_degrees: number, max_width_diff: number, max_height_diff: number, max_angle_diff: number) {
 
-        console.log('angle in degress: ' + angle_in_degrees)
+        //console.log('angle in degress: ' + angle_in_degrees)
+        //console.log('max_width_diff: ' + max_width_diff)
+        //console.log('max_height_diff: ' + max_height_diff)
+        //console.log('max_angle_diff: ' + max_angle_diff)
 
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
@@ -214,12 +217,26 @@ class BgCommHandler {
             // Determine the size weight for the size difference.
             let size_diff_x = dest_box.get_width() - src_box.get_width()
             let size_diff_y = dest_box.get_height() - src_box.get_height()
-            let size_weight = size_diff_x * size_diff_x + size_diff_y * size_diff_y
+            if (Math.abs(size_diff_x) > Math.abs(max_width_diff)) {
+                return
+            }
+            if (Math.abs(size_diff_y) > Math.abs(max_height_diff)) {
+                return
+            }
 
-            // Now choose the closest element on one side, according to the direction in the request.
+            // Determine the angle difference from the desired angle.
+            // First determine the x and y in the tilted frame of the desired angle.
             let parallel_dist = (diff.x * dir.x) + (diff.y * dir.y)
             let perp_dist = (diff.x * perp_dir.x) + (diff.y * perp_dir.y)
-            let distance = (parallel_dist*parallel_dist) + (off_axis_weight * perp_dist * perp_dist) + (off_size_weight * size_weight)
+            // Next determine the angle in radians.
+            let theta = Math.atan2(perp_dist, parallel_dist);
+            let angle_in_degrees = -1 * theta / 3.141592653 * 180.0; // -1 is because y increases from top to bottom, and we want users to think that 0 degress is to the right, and 90 degress is up.
+            if (Math.abs(angle_in_degrees) > Math.abs(max_angle_diff)) {
+                return
+            }
+
+            // Determine the distance.
+            let distance = (diff.x*diff.x) + (diff.y * diff.y)
 
             // We want to skip elements that are in the opposite direction and that are overlaid directly on top of us.
             // For example an image when hovered over may load in a video on top.
@@ -742,7 +759,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle_in_degrees)
+                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle_in_degrees, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
@@ -790,7 +807,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle_in_degrees)
+                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle_in_degrees, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()

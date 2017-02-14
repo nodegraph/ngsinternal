@@ -64,6 +64,10 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kPosition;
 
   static const char* kAngleInDegrees;
+  static const char* kMaxWidthDifference;
+  static const char* kMaxHeightDifference;
+  static const char* kMaxAngleDifference;
+
   static const char* kScrollDirection;
   static const char* kDirections;
 
