@@ -234,17 +234,17 @@ void QMLAppEntity::expose_to_qml() {
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
   NodeGraphController* ng_controller = get_node_graph_controller();
-  TaskQueuer* web_worker = get_app_worker();
-  BrowserRecorder* web_recorder = get_app_recorder();
+  TaskQueuer* task_queuer = get_app_worker();
+  BrowserRecorder* browser_recorder = get_app_recorder();
   DownloadManager* download_manager = get_download_manager();
   NodeGraphView* view = get_node_graph_view();
   BaseNodeGraphManipulator* base_manipulator = get_manipulator();
   NodeGraphManipulator* ng_manipulator = static_cast<NodeGraphManipulator*>(base_manipulator);
   NodeGraphManipulatorImp* manipulator = ng_manipulator->get_imp();
 
-  // Clean and open the socket on web_worker.
-  web_worker->clean_state();
-  web_worker->open();
+  // Clean and open the socket on task_queuer.
+  task_queuer->clean_state();
+  task_queuer->open();
 
   // Register gl types.
   qRegisterMetaType<GLsizei>("GLsizei");
@@ -261,8 +261,8 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("license_checker"), license_checker);
   context->setContextProperty(QStringLiteral("file_model"), file_model);
   context->setContextProperty(QStringLiteral("node_graph_item"), node_graph);
-  context->setContextProperty(QStringLiteral("web_worker"), web_worker);
-  context->setContextProperty(QStringLiteral("web_recorder"), web_recorder);
+  context->setContextProperty(QStringLiteral("task_queuer"), task_queuer);
+  context->setContextProperty(QStringLiteral("browser_recorder"), browser_recorder);
   context->setContextProperty(QStringLiteral("download_manager"), download_manager);
   context->setContextProperty(QStringLiteral("manipulator"), manipulator);
 

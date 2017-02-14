@@ -31,12 +31,12 @@ Rectangle {
     function on_closing(close) {
     	// Stop the web driver service.
     	if (num_close_tries == 0) {
-    		web_worker.force_stack_reset()
-    		web_worker.queue_stop_service()
+    		task_queuer.force_stack_reset()
+    		task_queuer.queue_stop_service()
     		close.accepted = false
     		num_close_tries += 1
     		close_timer.start()
-    	} else if (web_worker.is_waiting_for_response()){
+    	} else if (task_queuer.is_waiting_for_response()){
     		close.accepted = false
     		num_close_tries += 1
     		close_timer.start()
@@ -48,14 +48,14 @@ Rectangle {
     	
 //        if (!tried_closing_browser) {
 //        	// Force close the browser.
-//        	web_worker.force_close_browser()
+//        	task_queuer.force_close_browser()
 //        	tried_closing_browser = true
 //        	close.accepted = false
 //            close_timer.start()
-//        } else if (web_worker.is_open()) {
+//        } else if (task_queuer.is_open()) {
 //            // Close down the websocket connection to nodejs.
 //            // Also terminate nodejs.
-//            web_worker.close()
+//            task_queuer.close()
 //            close.accepted = false
 //            close_timer.start()
 //        } else {
@@ -215,9 +215,9 @@ Rectangle {
         node_graph_item.group_node_context_menu_requested.connect(ng_menu_list_stack_page.on_group_node_context_menu)
 
         // Web actions mode.
-        web_worker.show_web_action_menu.connect(web_menu_list_stack_page.on_show_web_action_menu)
-        web_worker.select_option_texts.connect(web_menu_list_stack_page.on_select_option_texts)
-        web_recorder.web_action_ignored.connect(web_menu_list_stack_page.on_action_ignored)
+        task_queuer.show_web_action_menu.connect(web_menu_list_stack_page.on_show_web_action_menu)
+        task_queuer.select_option_texts.connect(web_menu_list_stack_page.on_select_option_texts)
+        browser_recorder.web_action_ignored.connect(web_menu_list_stack_page.on_action_ignored)
         
         // Download manager connections.
         download_manager.download_queued.connect(downloads_page.on_download_queued)

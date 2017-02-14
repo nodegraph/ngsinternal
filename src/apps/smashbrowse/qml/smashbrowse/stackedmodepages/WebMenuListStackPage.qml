@@ -41,7 +41,7 @@ BaseStackPage{
         push_page.set_value("www.")
         push_page.set_title("enter url")
         push_page.callback = function(url) {
-        		web_recorder.record_navigate_to(url)
+        		browser_recorder.record_navigate_to(url)
         		main_bar.switch_to_current_mode()
         	}
         stack_view.push_page(push_page)
@@ -54,7 +54,7 @@ BaseStackPage{
         push_page.set_value("")
         push_page.set_title("type text")
         push_page.callback = function(text) {
-        		web_recorder.record_type_text(text)
+        		browser_recorder.record_type_text(text)
         		main_bar.switch_to_current_mode()
         	}
         stack_view.push_page(push_page)
@@ -67,7 +67,7 @@ BaseStackPage{
         push_page.set_value("")
         push_page.set_title("type password")
         push_page.callback = function(text) {
-        		web_recorder.record_type_password(text)
+        		browser_recorder.record_type_password(text)
         		main_bar.switch_to_current_mode()
         	}
         stack_view.push_page(push_page)
@@ -75,7 +75,7 @@ BaseStackPage{
     }
 
     function on_choose_from_dropdown() {
-    	web_worker.queue_emit_option_texts()
+    	task_queuer.queue_emit_option_texts()
     }
     
     // Receive option texts from the app worker.
@@ -85,7 +85,7 @@ BaseStackPage{
         push_page.visible = true
         push_page.set_title("select dropdown option")
         push_page.callback = function(option_text) {
-        		web_recorder.record_select_from_dropdown(option_text)
+        		browser_recorder.record_select_from_dropdown(option_text)
         		main_bar.switch_to_current_mode()
         	}
         push_page.set_option_texts(option_texts)

@@ -9,7 +9,7 @@ ListModel {
         image_url: "qrc:///icons/ic_mouse_white_48dp.png"
         title: "Click"
         description: "Click on an element."
-        script: "web_recorder.record_click();
+        script: "browser_recorder.record_click();
         		main_bar.switch_to_current_mode();"
     }
     
@@ -17,7 +17,7 @@ ListModel {
         image_url: "qrc:///icons/ic_mouse_white_48dp.png"
         title: "Control Click"
         description: "Control click on an element to open it in a new tab."
-        script: "web_recorder.record_ctrl_click();
+        script: "browser_recorder.record_ctrl_click();
         		main_bar.switch_to_current_mode();"
     }
 
@@ -32,7 +32,7 @@ ListModel {
         image_url: "qrc:///icons/ic_keyboard_white_48dp.png"
         title: "Press Enter/Submit"
         description: "Type enter or submit into an input field."
-        script: "web_recorder.record_type_enter();
+        script: "browser_recorder.record_type_enter();
         		main_bar.switch_to_current_mode();"
     }
     
@@ -63,7 +63,7 @@ ListModel {
         image_url: "qrc:///icons/ic_mouse_white_48dp.png"
         title: "Hover the Mouse"
         description: "Hovers the mouse over the element."
-        script: "web_recorder.record_mouse_over();
+        script: "browser_recorder.record_mouse_over();
                 main_bar.switch_to_current_mode();"
     }
 
