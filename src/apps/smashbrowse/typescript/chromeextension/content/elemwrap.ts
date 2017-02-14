@@ -239,13 +239,28 @@ class ElemWrap {
         let frame_index_path = PageWrap.get_frame_index_path(window)
         // XPath.
         let xpath = this.get_xpath()
+        // Href.
+        let href = this.get_anchor_url()
         // Bounds.
         let box = new Box(this.get_box()) // This should be in page space.
         box.to_client_space(window)
         box.to_global_client_space(window)
         let z_index = this.get_z_index()
         // Form the info.
-        return { frame_index_path: frame_index_path, xpath: xpath, box: box, z_index: z_index }
+        return { frame_index_path: frame_index_path, xpath: xpath, href: href, box: box, z_index: z_index }
+    }
+
+    get_anchor_url(): string {
+        let e = this.element
+        while (!(e instanceof HTMLAnchorElement)) {
+            if (!e.parentElement) {
+                return ""
+            }
+            e = e.parentElement
+        }
+
+        let a = <HTMLAnchorElement>e
+        return a.href
     }
 
     //----------------------------------------------------------------------------------------

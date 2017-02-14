@@ -28,7 +28,7 @@ BaseEditPage {
 	    	Layout.maximumWidth: app_settings.page_content_width
 	    	Item {Layout.fillWidth: true}
 	    	AppLabel {
-	    		text: qsTr("checked if true")
+	    		text: qsTr("check if true")
 	    	}
 	    	Rectangle {
 	            color: "transparent"

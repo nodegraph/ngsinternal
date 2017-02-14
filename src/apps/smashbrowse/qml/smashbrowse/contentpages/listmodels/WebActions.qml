@@ -40,20 +40,18 @@ ListModel {
     }
     
     ListElement {
+        image_url: "qrc:///icons/ic_format_list_bulleted_white_48dp.png"
+        title: "Download..."
+        description: "Download media or other data."
+        script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsExtract')"
+    }
+    
+    ListElement {
         image_url: "qrc:///icons/ic_gavel_white_48dp.png"
         title: "Perform Action on Browser Window..."
         description: "Perform an action on the browser."
         script: "push_by_names('Perform Action', 'NodeMenuListPage', 'WebActionsBrowserWindow')"
     }
     
-    ListElement {
-        image_url: "qrc:///icons/ic_format_list_bulleted_white_48dp.png"
-        title: "Extract Info..."
-        description: "Extract info from the current element or browser"
-        script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsExtract')"
-    }
-    
-    
-
 }
 

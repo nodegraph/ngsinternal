@@ -19,6 +19,9 @@ const char* Message::kFrameIndexPath = "frame_index_path";
 const char* Message::kMessageType = "msg_type";
 
 const char* Message::kURL = "url";
+const char* Message::kHREF = "href";
+const char* Message::kUseCurrentElement = "use_current_element";
+
 const char* Message::kDirectory = "directory";
 const char* Message::kFilename = "filename";
 

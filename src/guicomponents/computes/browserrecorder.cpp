@@ -111,8 +111,13 @@ void BrowserRecorder::record_accept_save_dialog() {
   finish();
 }
 
-void BrowserRecorder::record_download_video() {
+void BrowserRecorder::record_download_video(bool use_current_element) {
   check_busy();
+
+  QJsonObject args;
+  args.insert(Message::kUseCurrentElement, use_current_element);
+
+  _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kDownloadVideoCompute);
   finish();
 }

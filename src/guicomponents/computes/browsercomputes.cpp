@@ -274,6 +274,13 @@ void DownloadVideoCompute::create_inputs_outputs(const EntityConfig& config) {
   {
     EntityConfig c = config;
     c.expose_plug = false;
+    c.unconnected_value = false;
+    create_input(Message::kUseCurrentElement, c);
+  }
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
     c.unconnected_value = 0;
     create_input(Message::kMaxWidth, c);
   }
@@ -300,6 +307,7 @@ QJsonObject DownloadVideoCompute::init_hints() {
   BrowserCompute::init_hints(m);
 
   add_hint(m, Message::kDirectory, GUITypes::HintKey::DescriptionHint, "The directory to save the video to. Leave empty to use the default directory.");
+  add_hint(m, Message::kUseCurrentElement, GUITypes::HintKey::DescriptionHint, "Whether to download the video from the current element or the page.");
   add_hint(m, Message::kMaxWidth, GUITypes::HintKey::DescriptionHint, "The maximum video width (in pixels) to download. Zero will download the largest.");
   add_hint(m, Message::kMaxHeight, GUITypes::HintKey::DescriptionHint, "The maximum video height (in pixels) to download. Zero will download the largest.");
   add_hint(m, Message::kMaxFilesize, GUITypes::HintKey::DescriptionHint, "The maximum video filesize (in megabytes) to download. Zero will download the largest.");
@@ -310,13 +318,18 @@ bool DownloadVideoCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
-
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
 
-  // Set the url chain property to the current url.
-  _worker->queue_get_current_url(tc);
-  _worker->queue_copy_chain_property(tc, Message::kValue, Message::kURL);
+  QJsonValue incoming = _inputs->get_input_value(Message::kUseCurrentElement);
+  if (incoming.toBool()) {
+    _worker->queue_get_current_element(tc);
+    _worker->queue_copy_chain_property(tc, Message::kHREF, Message::kURL);
+  } else {
+    // Set the url chain property to the current url.
+    _worker->queue_get_current_url(tc);
+    _worker->queue_copy_chain_property(tc, Message::kValue, Message::kURL);
+  }
 
   // Download the video.
   _worker->queue_download_video(tc);
