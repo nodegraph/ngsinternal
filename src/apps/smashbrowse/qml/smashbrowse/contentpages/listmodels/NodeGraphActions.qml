@@ -10,7 +10,7 @@ ListModel {
     ListElement {
         //image_url: "qrc:///icons/ic_arrow_upward_white_48dp.png"
         image_url: "qrc:///icons/ic_arrow_upward_white_48dp.png"
-        title: "Surface"
+        title: "Surface (LMBx2)"
         description: "Surface out of the current group."
         script: "ng_controller.surface_from_group();
                  main_bar.switch_to_current_mode();"

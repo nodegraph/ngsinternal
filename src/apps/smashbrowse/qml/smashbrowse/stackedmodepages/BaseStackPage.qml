@@ -43,8 +43,11 @@ Rectangle{
     
     function show_busy_page() {
     	if (is_busy()) {
+    		console.log('current task is cacelable: ' + web_worker.current_task_is_cancelable())
+    	
 	        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/ProcessingPage.qml", ng_menu_list_stack_page, {})
-	        push_page.set_title("Processing Nodes")
+	        push_page.set_title('processing nodes')
+	        push_page.set_cancelable(web_worker.current_task_is_cancelable())
 	        stack_view.push_page(push_page)
 	        push_page.visible = true
 	        return true;

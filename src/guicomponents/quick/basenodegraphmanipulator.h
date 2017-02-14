@@ -32,6 +32,7 @@ class BaseNodeGraphManipulator: public Component {
   virtual void continue_cleaning_to_ultimate_targets() = 0;
   virtual void continue_cleaning_to_ultimate_targets_on_idle() = 0;
   virtual bool is_busy_cleaning() = 0;
+  virtual bool current_task_is_cancelable() = 0;
 
   // Update current compute markers on nodes.
   virtual void set_processing_node(Entity* entity) = 0;

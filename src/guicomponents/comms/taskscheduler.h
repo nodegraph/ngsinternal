@@ -10,11 +10,19 @@ class QString;
 namespace ngs {
 
 class BaseNodeGraphManipulator;
-
 class TaskContext;
 class Message;
 
-typedef std::function<void()> Task;
+//typedef std::function<void()> Task;
+
+class COMMS_EXPORT Task {
+ public:
+  Task(const std::function<void()>& f = std::function<void()>(), bool cancelable = true);
+  ~Task();
+  void operator()();
+  std::function<void()> f;
+  bool cancelable; // Whether this task can be cancelled.
+};
 
 class COMMS_EXPORT TaskScheduler : public Component {
  public:
@@ -36,6 +44,7 @@ class COMMS_EXPORT TaskScheduler : public Component {
 
   // Task queue info.
   bool is_busy() const {external(); return _waiting_for_response || (!_stack.empty());}
+  bool current_task_is_cancelable() const {return _current_task.cancelable;}
 
  private:
   typedef std::deque<Task> Queue;
@@ -68,6 +77,8 @@ class COMMS_EXPORT TaskScheduler : public Component {
 
   // Whether we're connected for receiving text messages from the socket.
   bool _connected;
+
+  Task _current_task;
 
   // Friends.
   friend class TaskContext;

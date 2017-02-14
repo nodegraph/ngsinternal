@@ -38,6 +38,7 @@ Q_OBJECT
   Q_INVOKABLE void force_close_browser();
   Q_INVOKABLE void force_stack_reset();
   Q_INVOKABLE bool is_busy_cleaning();
+  Q_INVOKABLE bool current_task_is_cancelable();
   Q_INVOKABLE bool is_waiting_for_response();
 
   Q_INVOKABLE void queue_stop_service();

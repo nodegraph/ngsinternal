@@ -29,6 +29,10 @@ Rectangle {
     function get_title() {
         return stack_view_header.title_text
     }
+    
+    function set_cancelable(c) {
+    	stop_button.visible = c
+    }
 
     // The stack view header.
     AppStackViewHeader {
@@ -48,6 +52,13 @@ Rectangle {
             width: app_settings.menu_page_width
             color: "transparent"
         }
+        
+        AppText  {
+            id: description
+            anchors.horizontalCenter: parent.horizontalCenter // used when the text is actually a single line
+            Layout.maximumWidth: parent.width
+            text: "The node graph is currently cleaning nodes."
+        }
 
         // Buttons.
         RowLayout {
@@ -55,7 +66,9 @@ Rectangle {
         	
             Item {Layout.fillWidth: true}
             AppLabelButton {
-                text: "stop processing"
+            	id: stop_button
+                text: "stop cleaning"
+                visible: true
                 onClicked: {
                     web_worker.force_stack_reset()
                     page.Stack.view.pop_page()
@@ -68,7 +81,8 @@ Rectangle {
                 width: app_settings.button_spacing
             }
             AppLabelButton {
-                text: "wait for process to finish"
+            	id: continue_button
+                text: "continue cleaning"
                 onClicked: {
                     page.Stack.view.pop_page()
                     main_bar.switch_to_current_mode()

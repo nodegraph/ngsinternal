@@ -11,6 +11,18 @@
 
 namespace ngs {
 
+Task::Task(const std::function<void()>& f, bool cancelable)
+    : f(f),
+      cancelable(cancelable) {
+}
+
+Task::~Task() {
+}
+
+void Task::operator()() {
+  f();
+}
+
 TaskScheduler::TaskScheduler(Entity* parent)
     : Component(parent, kIID(), kDID()),
       _manipulator(this),
@@ -18,7 +30,8 @@ TaskScheduler::TaskScheduler(Entity* parent)
       _next_msg_id(0),
       _ignore_outstanding_response(false),
       _outstanding_response_id(-1),
-      _connected(false) {
+      _connected(false),
+      _current_task(){
   get_dep_loader()->register_fixed_dep(_manipulator, Path());
 }
 
@@ -114,9 +127,9 @@ void TaskScheduler::run_next_task() {
   }
 
   // Pop a task and run it..
-  Task task = get_top_queue().front();
+  _current_task = get_top_queue().front();
   get_top_queue().pop_front();
-  task();
+  _current_task();
 }
 
 // Returns the task id that the caller should return to us after receiving a response.

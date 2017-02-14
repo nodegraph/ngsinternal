@@ -223,6 +223,12 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
   if (!get_current_interaction()) {
     return;
   }
+  if (_manipulator->is_busy_cleaning()) {
+    emit set_error_message("Please while the node graph finishes cleaning.");
+    emit show_error_page();
+    return;
+  }
+
   MouseInfo info = get_mouse_info(event, _device_pixel_ratio);
 
   // Note that mousePressEvent is called twice before a double click is triggered.
@@ -231,7 +237,7 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
       _manipulator->dive_into_group(_last_node_shape->get_name());
     }
   } else {
-    _selection->clear_selection();
+    _manipulator->surface_from_group();
   }
   update();
 }
@@ -344,6 +350,11 @@ void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
 void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
   internal();
   if (!get_current_interaction()) {
+    return;
+  }
+  if (_manipulator->is_busy_cleaning()) {
+    emit set_error_message("Please while the node graph finishes cleaning.");
+    emit show_error_page();
     return;
   }
   // See if the pressed key is a hotkey that we can handle.
@@ -771,8 +782,6 @@ void NodeGraphQuickItem::destroy_selection() {
 }
 
 void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
-
-
   // Find the child group.
   Entity* group_entity =_factory->get_current_group()->get_child(child_group_name);
   if (!group_entity) {

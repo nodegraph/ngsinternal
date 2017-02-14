@@ -72,7 +72,7 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
 
 }
 
-bool NodeGraphManipulatorImp::start_waiting(std::function<void()> on_idle) {
+bool NodeGraphManipulatorImp::start_waiting(const std::function<void()>& on_idle) {
   if (_idle_timer.isActive()) {
     // We already waiting for something.
     return false;
@@ -252,10 +252,14 @@ void NodeGraphManipulatorImp::continue_cleaning_to_ultimate_targets() {
 }
 
 bool NodeGraphManipulatorImp::is_busy_cleaning() {
-  if (_ultimate_targets.size()) {
+  if (_ultimate_targets.size() || _scheduler->is_busy()) {
     return true;
   }
   return false;
+}
+
+bool NodeGraphManipulatorImp::current_task_is_cancelable() {
+  return _scheduler->current_task_is_cancelable();
 }
 
 void NodeGraphManipulatorImp::set_processing_node(Entity* entity) {
@@ -798,6 +802,10 @@ void NodeGraphManipulator::continue_cleaning_to_ultimate_targets() {
 
 bool NodeGraphManipulator::is_busy_cleaning() {
   return _imp->is_busy_cleaning();
+}
+
+bool NodeGraphManipulator::current_task_is_cancelable() {
+  return _imp->current_task_is_cancelable();
 }
 
 void NodeGraphManipulator::set_processing_node(Entity* entity) {

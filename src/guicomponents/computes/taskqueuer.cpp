@@ -110,6 +110,10 @@ bool TaskQueuer::is_busy_cleaning() {
   return _manipulator->is_busy_cleaning();
 }
 
+bool TaskQueuer::current_task_is_cancelable() {
+  return _manipulator->current_task_is_cancelable();
+}
+
 bool TaskQueuer::is_waiting_for_response() {
   return _scheduler->is_waiting_for_response();
 }
@@ -284,16 +288,16 @@ void TaskQueuer::queue_wait_for_chrome_connection(TaskContext& tc) {
 }
 
 void TaskQueuer::queue_open_browser(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::open_browser_task,this), "queue_open_browser");
+  _scheduler->queue_task(tc, Task(std::bind(&TaskQueuer::open_browser_task,this), false), "queue_open_browser");
   queue_wait_for_chrome_connection(tc);
 }
 
 void TaskQueuer::queue_close_browser(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::close_browser_task,this), "queue_close_browser");
+  _scheduler->queue_task(tc, Task(std::bind(&TaskQueuer::close_browser_task,this), false), "queue_close_browser");
 }
 
 void TaskQueuer::queue_release_browser(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::release_browser_task,this), "queue_close_browser");
+  _scheduler->queue_task(tc, Task(std::bind(&TaskQueuer::release_browser_task,this), false), "queue_close_browser");
 }
 
 void TaskQueuer::queue_is_browser_open(TaskContext& tc) {

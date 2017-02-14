@@ -41,7 +41,7 @@ Q_OBJECT
   COMPONENT_ID(InvalidComponent, InvalidComponent);
   NodeGraphManipulatorImp(Entity* app_root);
 
-  bool start_waiting(std::function<void()> on_idle);
+  bool start_waiting(const std::function<void()>& on_idle);
 
   virtual void initialize_wires();
 
@@ -57,6 +57,7 @@ Q_OBJECT
   virtual void continue_cleaning_to_ultimate_targets();
   virtual void continue_cleaning_to_ultimate_targets_on_idle();
   virtual bool is_busy_cleaning();
+  virtual bool current_task_is_cancelable();
 
   // Update current compute markers on nodes.
   virtual void set_processing_node(Entity* entity);
@@ -171,6 +172,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void continue_cleaning_to_ultimate_targets();
   virtual void continue_cleaning_to_ultimate_targets_on_idle();
   virtual bool is_busy_cleaning();
+  virtual bool current_task_is_cancelable();
 
   // Update current compute markers on nodes.
   virtual void set_processing_node(Entity* entity);
