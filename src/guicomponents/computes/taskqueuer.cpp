@@ -654,14 +654,14 @@ void TaskQueuer::determine_angle_in_degrees_task() {
   double diff_y = global_y - center_y;
 
   double theta = atan2(diff_y, diff_x);
-  double angle_in_degrees = -1 * theta / 3.141592653 * 180.0; // -1 is because y increases from top to bottom, and we want users to think that 0 degress is to the right, and 90 degress is up.
+  double degrees = -1 * theta / 3.141592653 * 180.0; // -1 is because y increases from top to bottom, and we want users to think that 0 degress is to the right, and 90 degress is up.
 
   std::cerr << "---------------------------------------------------------------\n";
   std::cerr << "Box center is: " << center_x << "," << center_y << "\n";
   std::cerr << "The click pos: " << global_x << "," << global_y << "\n";
-  std::cerr << "The angle in degrees is: " << angle_in_degrees << "\n";
+  std::cerr << "The angle in degrees is: " << degrees << "\n";
 
-  _chain_state.insert(Message::kAngleInDegrees, angle_in_degrees);
+  _chain_state.insert(Message::kAngle, degrees);
   _scheduler->run_next_task();
 }
 
@@ -913,7 +913,7 @@ void TaskQueuer::find_element_by_type_task() {
 
 void TaskQueuer::shift_element_by_type_task() {
   QJsonObject args;
-  args.insert(Message::kAngleInDegrees, _chain_state.value(Message::kAngleInDegrees));
+  args.insert(Message::kAngle, _chain_state.value(Message::kAngle));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
   args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
@@ -925,7 +925,7 @@ void TaskQueuer::shift_element_by_type_task() {
 
 void TaskQueuer::shift_element_by_values_task() {
   QJsonObject args;
-  args.insert(Message::kAngleInDegrees, _chain_state.value(Message::kAngleInDegrees));
+  args.insert(Message::kAngle, _chain_state.value(Message::kAngle));
   args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
   args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
   args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));

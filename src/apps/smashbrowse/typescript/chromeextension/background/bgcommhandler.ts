@@ -230,9 +230,9 @@ class BgCommHandler {
         return best
     }
 
-    static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], angle_in_degrees: number, max_width_diff: number, max_height_diff: number, max_angle_diff: number) {
+    static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], angle: number, max_width_diff: number, max_height_diff: number, max_angle_diff: number) {
 
-        //console.log('angle in degress: ' + angle_in_degrees)
+        //console.log('angle in degress: ' + angle)
         //console.log('max_width_diff: ' + max_width_diff)
         //console.log('max_height_diff: ' + max_height_diff)
         //console.log('max_angle_diff: ' + max_angle_diff)
@@ -244,7 +244,7 @@ class BgCommHandler {
         let src_box = new Box(src.box)
         let src_center = src_box.get_center()
 
-        let theta = angle_in_degrees / 180.0 * Math.PI
+        let theta = angle / 180.0 * Math.PI
         let dir = new Point({x: Math.cos(theta), y: -1 * Math.sin(theta)}) // -1 is because y increases from top to bottom.
         let perp_dir = new Point({x: -dir.y, y: dir.x})
 
@@ -276,8 +276,8 @@ class BgCommHandler {
             let perp_dist = (diff.x * perp_dir.x) + (diff.y * perp_dir.y)
             // Next determine the angle in radians.
             let theta = Math.atan2(perp_dist, parallel_dist);
-            let angle_in_degrees = -1 * theta / 3.141592653 * 180.0; // -1 is because y increases from top to bottom, and we want users to think that 0 degress is to the right, and 90 degress is up.
-            if (Math.abs(angle_in_degrees) > Math.abs(max_angle_diff)) {
+            let angle = -1 * theta / 3.141592653 * 180.0; // -1 is because y increases from top to bottom, and we want users to think that 0 degress is to the right, and 90 degress is up.
+            if (Math.abs(angle) > Math.abs(max_angle_diff)) {
                 return
             }
 
@@ -805,7 +805,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle_in_degrees, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
+                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()
@@ -949,7 +949,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle_in_degrees, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
+                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
                             // Wipe out the queue.
                             this.clear_tasks()

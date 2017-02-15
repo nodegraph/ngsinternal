@@ -570,7 +570,7 @@ void ShiftElementByTypeCompute::create_inputs_outputs(const EntityConfig& config
     c.expose_plug = false;
     c.unconnected_value = 0;
 
-    create_input(Message::kAngleInDegrees, c);
+    create_input(Message::kAngle, c);
     create_input(Message::kWrapType, c);
   }
   {
@@ -598,14 +598,14 @@ QJsonObject ShiftElementByTypeCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kAngleInDegrees, GUITypes::HintKey::DescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
+  add_hint(m, Message::kAngle, GUITypes::HintKey::DescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
 
   add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
   add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
 
   add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
   add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference of the next element from the chosen angle in which to shift.");
+  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
 
   return m;
 }
@@ -632,7 +632,7 @@ void ShiftElementByValuesCompute::create_inputs_outputs(const EntityConfig& conf
     c.expose_plug = false;
     c.unconnected_value = 0;
 
-    create_input(Message::kAngleInDegrees, c);
+    create_input(Message::kAngle, c);
     create_input(Message::kWrapType, c);\
   }
 
@@ -672,7 +672,7 @@ QJsonObject ShiftElementByValuesCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
 
-  add_hint(m, Message::kAngleInDegrees, GUITypes::HintKey::DescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
+  add_hint(m, Message::kAngle, GUITypes::HintKey::DescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
 
   add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
   add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
@@ -682,7 +682,7 @@ QJsonObject ShiftElementByValuesCompute::init_hints() {
 
   add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
   add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference of the next element from the chosen angle in which to shift.");
+  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
   return m;
 }
 
@@ -738,7 +738,7 @@ QJsonObject ShiftElementByTypeAlongRowsCompute::init_hints() {
 
   add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
   add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference of the next element from the chosen angle in which to shift.");
+  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
 
   return m;
 }
@@ -811,7 +811,7 @@ QJsonObject ShiftElementByValuesAlongRowsCompute::init_hints() {
 
   add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
   add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference of the next element from the chosen angle in which to shift.");
+  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
   return m;
 }
 

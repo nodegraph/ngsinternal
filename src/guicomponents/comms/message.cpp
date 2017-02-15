@@ -56,7 +56,7 @@ const char* Message::kText = "text";
 const char* Message::kOptionText = "option_text";
 const char* Message::kPosition = "position";
 
-const char* Message::kAngleInDegrees = "angle_in_degrees";
+const char* Message::kAngle = "angle";
 const char* Message::kMaxWidthDifference = "max_width_difference";
 const char* Message::kMaxHeightDifference = "max_height_difference";
 const char* Message::kMaxAngleDifference = "max_angle_difference";
