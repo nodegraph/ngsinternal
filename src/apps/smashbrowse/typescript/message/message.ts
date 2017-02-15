@@ -16,6 +16,8 @@ interface IElementInfo {
     // Frame and element info.
     frame_index_path: string
     xpath: string
+    // Href from parenting anchor, empty if no parenting anchor.
+    href: string
     // Dimension and stacking order.
     box: IBox // These are the bounds in global client space.
     z_index: number

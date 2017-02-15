@@ -96,10 +96,12 @@ static enum ChromeRequestType {
   // Shift the current element.
   kShiftElementByType(21),
   kShiftElementByValues(22),
+  kShiftElementByTypeAlongRows(23),
+  kShiftElementByValuesAlongRows(24),
 
   // Info Request.
-  kGetCrosshairInfo(23),
-  kGetDropDownInfo(24);
+  kGetCrosshairInfo(25),
+  kGetDropDownInfo(26);
 
   private final int value;
   ChromeRequestType(final int newValue) {value = newValue;}

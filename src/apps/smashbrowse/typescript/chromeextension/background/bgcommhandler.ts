@@ -182,6 +182,54 @@ class BgCommHandler {
         return best
     }
 
+    static find_next_along_rows(src: IElementInfo, candidates: IElementInfo[], max_width_diff: number, max_height_diff: number, max_angle_diff: number) {
+        let next: IElementInfo = BgCommHandler.find_closest_neighbor(src, candidates, 0, max_width_diff, max_height_diff, max_angle_diff);
+        if (next) {
+            return next
+        }
+
+        // Otherwise we need to find the first element of rows below the current row.
+        let best: IElementInfo = null
+
+        let src_box = new Box(src.box)
+        const src_bottom = src_box.bottom
+
+        // Note the return in the forEach loop acts like a continue statement.
+        candidates.forEach((dest) => {
+            
+            // Check the size of the dest element.
+            let dest_box = new Box(dest.box)
+            let size_diff_x = dest_box.get_width() - src_box.get_width()
+            let size_diff_y = dest_box.get_height() - src_box.get_height()
+            if (Math.abs(size_diff_x) > Math.abs(max_width_diff)) {
+                return
+            }
+            if (Math.abs(size_diff_y) > Math.abs(max_height_diff)) {
+                return
+            }
+
+            // Make sure the dest element is below our current row.
+            if (dest.box.top < src_bottom) {
+                return
+            }
+
+            // If best hasn't been set yet, we take the first dest element.
+            if (!best) {
+                best = dest
+                return
+            }
+
+            // If the dest element is more top-left than our current best, it becomes the next best element.
+            if (dest.box.top <= best.box.top) {
+                if (dest.box.left <= best.box.left) {
+                    best = dest
+                    return
+                }
+            }
+        })
+        return best
+    }
+
     static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], angle_in_degrees: number, max_width_diff: number, max_height_diff: number, max_angle_diff: number) {
 
         //console.log('angle in degress: ' + angle_in_degrees)
@@ -192,8 +240,6 @@ class BgCommHandler {
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
         let best_distance = 0
-        const off_axis_weight = 10 // This weight seems to work best. This makes our magnitube be the hamiltonian distance.
-        const off_size_weight = 1000
 
         let src_box = new Box(src.box)
         let src_center = src_box.get_center()
@@ -785,6 +831,102 @@ class BgCommHandler {
                 this.run_next_task()
             } break
             case ChromeRequestType.kShiftElementByValues: {
+                this.clear_tasks()
+                // Make sure we have a current element to shift from.
+                this.queue_get_current_element()
+                this.queue(() => {
+                    if (!this.found_elem) {
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        this.run_next_task()
+                    }
+                })
+                // Now get all the possible elements that we can shift to.
+                this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
+                // Select one to shift to.
+                this.queue(() => {
+                    if (this.found_elems.length == 0) {
+                        // Wipe out the queue.
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
+                        if (!best) {
+                            // Wipe out the queue.
+                            this.clear_tasks()
+                            let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values in the specified direction.")
+                            this.bg_comm.send_to_nodejs(response)
+                        } else {
+                            this.found_elem = best
+                            this.run_next_task()
+                        }
+                    }
+                })
+                // Shift the element.
+                this.queue_set_current_element()
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
+            } break
+            case ChromeRequestType.kShiftElementByTypeAlongRows: {
+                this.clear_tasks()
+                // Make sure we have a current element to shift from.
+                this.queue_get_current_element()
+                this.queue(() => {
+                    if (!this.found_elem) {
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        this.run_next_task()
+                    }
+                })
+                // Now get all the possible elements that we can shift to.
+                this.queue_find_all_elements_by_type(req.args.wrap_type)
+                // Select one to shift to.
+                this.queue(() => {
+                    if (this.found_elems.length == 0) {
+                        // Wipe out the queue.
+                        this.clear_tasks()
+                        let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
+                        if (!best) {
+                            // Wipe out the queue.
+                            this.clear_tasks()
+                            let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to in the specified direction.")
+                            this.bg_comm.send_to_nodejs(response)
+                        } else {
+                            this.found_elem = best
+                            this.run_next_task()
+                        }
+                    }
+                })
+                // Shift the element.
+                this.queue_set_current_element()
+                this.queue(() => {
+                    if (this.found_elem) {
+                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                        this.bg_comm.send_to_nodejs(response)
+                    } else {
+                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        this.bg_comm.send_to_nodejs(response)
+                    }
+                })
+                this.run_next_task()
+            } break
+            case ChromeRequestType.kShiftElementByValuesAlongRows: {
                 this.clear_tasks()
                 // Make sure we have a current element to shift from.
                 this.queue_get_current_element()

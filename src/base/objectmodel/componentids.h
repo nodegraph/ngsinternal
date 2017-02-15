@@ -243,15 +243,17 @@ COMPONENT_ENTRY2(FindElementByTypeCompute, 87)\
 /* Shift Element. */\
 COMPONENT_ENTRY2(ShiftElementByTypeCompute, 88)\
 COMPONENT_ENTRY2(ShiftElementByValuesCompute, 89)\
+COMPONENT_ENTRY2(ShiftElementByTypeAlongRowsCompute, 90)\
+COMPONENT_ENTRY2(ShiftElementByValuesAlongRowsCompute, 91)\
 /* Extract Info. */\
-COMPONENT_ENTRY2(GetActiveTabTitleCompute, 90)\
-COMPONENT_ENTRY2(GetCurrentURLCompute, 91)\
-COMPONENT_ENTRY2(DownloadVideoCompute, 92)\
+COMPONENT_ENTRY2(GetActiveTabTitleCompute, 92)\
+COMPONENT_ENTRY2(GetCurrentURLCompute, 93)\
+COMPONENT_ENTRY2(DownloadVideoCompute, 94)\
 /* Perform action on Element. */\
-COMPONENT_ENTRY2(MouseActionCompute, 93)\
-COMPONENT_ENTRY2(TextActionCompute, 94)\
-COMPONENT_ENTRY2(PasswordActionCompute, 95)\
-COMPONENT_ENTRY2(ElementActionCompute, 96)\
+COMPONENT_ENTRY2(MouseActionCompute, 95)\
+COMPONENT_ENTRY2(TextActionCompute, 96)\
+COMPONENT_ENTRY2(PasswordActionCompute, 97)\
+COMPONENT_ENTRY2(ElementActionCompute, 98)\
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()

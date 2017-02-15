@@ -152,6 +152,47 @@ class ElemWrap {
         return Math.max(0, bottom - top)
     }
 
+    // Returns false if the element is totally out of screen bounds.
+    // Returns true when the element is partially or completely in bounds
+    in_screen_bounds(): boolean {
+        const e_rect = this.element.getBoundingClientRect();
+        let v = this.get_closest_scroll(true)
+        let h = this.get_closest_scroll(false)
+        const v_rect = v.element.getBoundingClientRect();
+        const h_rect = h.element.getBoundingClientRect();
+
+        if (v_rect) {
+            if (e_rect.bottom < v_rect.top) {
+                return false
+            } 
+            if (e_rect.top >= v_rect.bottom) {
+                return false
+            }
+            if (e_rect.right < v_rect.left) {
+                return false
+            }
+            if (e_rect.left >= v_rect.right) {
+                return false
+            }
+        }
+
+        if (h_rect) {
+            if (e_rect.bottom < h_rect.top) {
+                return false
+            } 
+            if (e_rect.top >= h_rect.bottom) {
+                return false
+            }
+            if (e_rect.right < h_rect.left) {
+                return false
+            }
+            if (e_rect.left >= h_rect.right) {
+                return false
+            }
+        }
+        return true
+    }
+
     is_visible(): boolean {
         if (this.element instanceof HTMLElement) {
             let he = <HTMLElement>this.element

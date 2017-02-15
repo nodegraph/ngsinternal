@@ -25,5 +25,6 @@ WebActionsNavigate 1.0 WebActionsNavigate.qml
 WebActionsFindElementByPosition 1.0 WebActionsFindElementByPosition.qml
 WebActionsFindElementByTraits 1.0 WebActionsFindElementByTraits.qml
 WebActionsShift 1.0 WebActionsShift.qml
+WebActionsShiftAlongRows 1.0 WebActionsShiftAlongRows.qml
 WebActionsPerformAction 1.0 WebActionsPerformAction.qml
 WebActionsPerformScroll 1.0 WebActionsPerformScroll.qml

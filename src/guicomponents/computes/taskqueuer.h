@@ -128,6 +128,8 @@ Q_OBJECT
   void queue_find_element_by_type(TaskContext& tc);
   void queue_shift_element_by_type(TaskContext& tc);
   void queue_shift_element_by_values(TaskContext& tc);
+  void queue_shift_element_by_type_along_rows(TaskContext& tc);
+  void queue_shift_element_by_values_along_rows(TaskContext& tc);
 
   // Queue Perform Action Tasks.
   void queue_perform_mouse_action(TaskContext& tc);
@@ -237,6 +239,8 @@ signals:
   void find_element_by_type_task();
   void shift_element_by_type_task();
   void shift_element_by_values_task();
+  void shift_element_by_type_along_rows_task();
+  void shift_element_by_values_along_rows_task();
 
   void perform_mouse_action_task();
   void perform_hover_action_task();

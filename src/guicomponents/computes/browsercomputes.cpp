@@ -94,6 +94,7 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
   std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::receive_chain_state,this,std::placeholders::_1);
   _worker->queue_receive_chain_state(tc, callback);
   _worker->queue_scroll_element_into_view(tc);
+  _worker->queue_update_element(tc);
   _worker->queue_update_current_tab(tc);
 }
 
@@ -587,7 +588,7 @@ void ShiftElementByTypeCompute::create_inputs_outputs(const EntityConfig& config
   {
     EntityConfig c = config;
     c.expose_plug = false;
-    c.unconnected_value = 15;
+    c.unconnected_value = 5;
     create_input(Message::kMaxAngleDifference, c);
   }
 }
@@ -660,7 +661,7 @@ void ShiftElementByValuesCompute::create_inputs_outputs(const EntityConfig& conf
   {
     EntityConfig c = config;
     c.expose_plug = false;
-    c.unconnected_value = 15;
+    c.unconnected_value = 5;
     create_input(Message::kMaxAngleDifference, c);
   }
 
@@ -696,6 +697,134 @@ bool ShiftElementByValuesCompute::update_state() {
   return false;
 }
 
+// ---------------------------------------------------------------------------------------------------
+
+void ShiftElementByTypeAlongRowsCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    create_input(Message::kWrapType, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 20;
+    create_input(Message::kMaxWidthDifference, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 20;
+    create_input(Message::kMaxHeightDifference, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 1;
+    create_input(Message::kMaxAngleDifference, c);
+  }
+}
+
+const QJsonObject ShiftElementByTypeAlongRowsCompute::_hints = ShiftElementByTypeAlongRowsCompute::init_hints();
+QJsonObject ShiftElementByTypeAlongRowsCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
+
+  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
+  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
+  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference of the next element from the chosen angle in which to shift.");
+
+  return m;
+}
+
+bool ShiftElementByTypeAlongRowsCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_shift_element_by_type_along_rows(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
+
+// ---------------------------------------------------------------------------------------------------
+
+void ShiftElementByValuesAlongRowsCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kWrapType, c);\
+  }
+
+  {
+    QJsonArray string_arr;
+    string_arr.push_back("example");
+
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = string_arr;
+    create_input(Message::kTargetValues, c);
+  }
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 20;
+    create_input(Message::kMaxWidthDifference, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 20;
+    create_input(Message::kMaxHeightDifference, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 1;
+    create_input(Message::kMaxAngleDifference, c);
+  }
+
+}
+
+const QJsonObject ShiftElementByValuesAlongRowsCompute::_hints = ShiftElementByValuesAlongRowsCompute::init_hints();
+QJsonObject ShiftElementByValuesAlongRowsCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
+
+  add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
+  add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
+
+  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
+  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
+  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference of the next element from the chosen angle in which to shift.");
+  return m;
+}
+
+bool ShiftElementByValuesAlongRowsCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  BrowserCompute::pre_update_state(tc);
+  _worker->queue_shift_element_by_values_along_rows(tc);
+  BrowserCompute::post_update_state(tc);
+  return false;
+}
 
 // ---------------------------------------------------------------------------------------------------
 

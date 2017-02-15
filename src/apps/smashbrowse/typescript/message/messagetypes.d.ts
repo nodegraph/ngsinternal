@@ -83,10 +83,12 @@ declare const enum ChromeRequestType {
   // Shift the current element.
   kShiftElementByType = 21,
   kShiftElementByValues = 22,
+  kShiftElementByTypeAlongRows = 23,
+  kShiftElementByValuesAlongRows = 24,
 
   // Info Request.
-  kGetCrosshairInfo = 23,
-  kGetDropDownInfo = 24
+  kGetCrosshairInfo = 25,
+  kGetDropDownInfo = 26
 }
 
 declare const enum PlatformRequestType {

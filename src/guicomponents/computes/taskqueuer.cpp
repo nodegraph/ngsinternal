@@ -418,6 +418,14 @@ void TaskQueuer::queue_shift_element_by_values(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::shift_element_by_values_task,this), "queue_shift_element_by_values");
 }
 
+void TaskQueuer::queue_shift_element_by_type_along_rows(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::shift_element_by_type_along_rows_task,this), "queue_shift_element_by_type_along_rows");
+}
+
+void TaskQueuer::queue_shift_element_by_values_along_rows(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::shift_element_by_values_along_rows_task,this), "queue_shift_element_by_values_along_rows");
+}
+
 // ---------------------------------------------------------------------------------
 // Queue Perform Action Tasks.
 // ---------------------------------------------------------------------------------
@@ -924,6 +932,29 @@ void TaskQueuer::shift_element_by_values_task() {
   args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
   args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
   Message req(ChromeRequestType::kShiftElementByValues);
+  req.insert(Message::kArgs, args);
+  send_msg_task(req);
+}
+
+void TaskQueuer::shift_element_by_type_along_rows_task() {
+  QJsonObject args;
+  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
+  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
+  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
+  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
+  Message req(ChromeRequestType::kShiftElementByTypeAlongRows);
+  req.insert(Message::kArgs, args);
+  send_msg_task(req);
+}
+
+void TaskQueuer::shift_element_by_values_along_rows_task() {
+  QJsonObject args;
+  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
+  args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
+  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
+  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
+  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
+  Message req(ChromeRequestType::kShiftElementByValuesAlongRows);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }
