@@ -549,7 +549,8 @@ void TaskQueuer::handle_response(const Message& msg) {
   // Get the response id. This is supposed to match with the request id.
   int resp_id = msg.value(Message::kID).toInt();
 
-  // Check for any errors.
+  // When the success value of a ResponseMessage is false,
+  // an error will be shown in the gui and all processing will stop.
   QString error;
   if (!msg.value(Message::kSuccess).toBool()) {
     error = msg.value(Message::kValue).toString();
