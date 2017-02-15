@@ -48,6 +48,9 @@ Q_OBJECT
   const MouseInfo& get_last_press_info() const { return _last_press;}
   const Dep<GroupInteraction>& get_current_interaction() const;
 
+  // Misc.
+  Q_INVOKABLE void copy_to_clipboard(const QString& text);
+
   // View and Edit.
   Q_INVOKABLE void view_node();
   Q_INVOKABLE void edit_node();

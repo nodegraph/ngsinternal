@@ -25,6 +25,7 @@
 #include <QtCore/QRunnable>
 #include <QtGui/QGuiApplication>
 #include <QtGui/QScreen>
+#include <QtGui/QClipboard>
 
 namespace ngs {
 
@@ -87,6 +88,11 @@ NodeGraphQuickItem::NodeGraphQuickItem(Entity* parent)
 
 NodeGraphQuickItem::~NodeGraphQuickItem() {
   setParentItem(NULL);
+}
+
+void NodeGraphQuickItem::copy_to_clipboard(const QString& text) {
+  QClipboard *clipboard = QGuiApplication::clipboard();
+  clipboard->setText(text);
 }
 
 //  #if ARCH == ARCH_ANDROID

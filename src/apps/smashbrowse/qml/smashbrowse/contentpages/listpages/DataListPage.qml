@@ -56,6 +56,30 @@ BaseListPage {
     	return expose_plug_check_box.get_exposed()
     }
     
+    function on_copy_data_path() {
+    	if (list_view.model.count == 0) {
+    		return
+    	}
+    	var name = list_view.model.get(list_view.currentIndex).name
+    	var path = get_stack_view().get_title_path(1, get_stack_view().depth)
+        path.push(name)
+        // Strip off the first name which identifies the output plug or the data.
+        path.shift()
+        node_graph_item.copy_to_clipboard(path.join('/'))
+    }
+    
+    function on_copy_data_value() {
+    	if (list_view.model.count == 0) {
+    		return
+    	}
+    	var name = list_view.model.get(list_view.currentIndex).name
+    	var path = get_stack_view().get_title_path(1, get_stack_view().depth)
+    	path.push(name)
+    	
+    	var value = get_stack_page().get_string_for_value(path)
+    	node_graph_item.copy_to_clipboard(value)
+    }
+    
 	Rectangle {
 		anchors.top: list_view.bottom
     	color: "#FFFFFFFF"
@@ -72,6 +96,38 @@ BaseListPage {
             right: list_view.right
             bottom: edit_bar.top
         }
+    }
+    
+    RowLayout {
+    	id: copy_bar
+    	Layout.maximumWidth: list_view.width
+    	visible: !modifiable
+    	
+    	anchors {
+            left: list_view.left
+            right: list_view.right
+            bottom: parent.bottom
+        }
+        
+        Item {Layout.fillWidth: true}
+        AppLabelButton {
+            text: "copy data path"
+            onClicked: {
+                on_copy_data_path()
+            }
+        }
+        Rectangle {
+            color: "transparent"
+            height: app_settings.action_bar_height
+            width: app_settings.button_spacing
+        }
+        AppLabelButton {
+            text: "copy data value"
+            onClicked: {
+                on_copy_data_value()
+            }
+        }
+        Item {Layout.fillWidth: true}
     }
 	
 	// Buttons.
