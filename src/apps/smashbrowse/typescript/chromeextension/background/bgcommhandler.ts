@@ -800,16 +800,18 @@ class BgCommHandler {
                 // Select one to shift to.
                 this.queue(() => {
                     if (this.found_elems.length == 0) {
+                        // Unable to find any candidate elements to shift to.
                         // Wipe out the queue.
                         this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
+                        let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
+                            // Unable to find the next element.
                             // Wipe out the queue.
                             this.clear_tasks()
-                            let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to in the specified direction.")
+                            let response = new ResponseMessage(req.id, true, false)
                             this.bg_comm.send_to_nodejs(response)
                         } else {
                             this.found_elem = best
@@ -824,7 +826,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_nodejs(response)
                     }
                 })
@@ -848,16 +850,18 @@ class BgCommHandler {
                 // Select one to shift to.
                 this.queue(() => {
                     if (this.found_elems.length == 0) {
+                        // Unable to find any candidate elements to shift to.
                         // Wipe out the queue.
                         this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
+                        let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
                             // Wipe out the queue.
+                            // Unable to find the next element.
                             this.clear_tasks()
-                            let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values in the specified direction.")
+                            let response = new ResponseMessage(req.id, true, false)
                             this.bg_comm.send_to_nodejs(response)
                         } else {
                             this.found_elem = best
@@ -872,7 +876,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_nodejs(response)
                     }
                 })
@@ -896,16 +900,18 @@ class BgCommHandler {
                 // Select one to shift to.
                 this.queue(() => {
                     if (this.found_elems.length == 0) {
+                        // Unable to find any candidate elements to shift to.
                         // Wipe out the queue.
                         this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to.")
+                        let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
+                            // Unable to find the next element.
                             // Wipe out the queue.
                             this.clear_tasks()
-                            let response = new ResponseMessage(req.id, false, "Unable to find any elements to shift to in the specified direction.")
+                            let response = new ResponseMessage(req.id, true, false)
                             this.bg_comm.send_to_nodejs(response)
                         } else {
                             this.found_elem = best
@@ -920,7 +926,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_nodejs(response)
                     }
                 })
@@ -944,16 +950,18 @@ class BgCommHandler {
                 // Select one to shift to.
                 this.queue(() => {
                     if (this.found_elems.length == 0) {
+                        // Unable to find any candidate elements to shift to.
                         // Wipe out the queue.
                         this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values to shift to.")
+                        let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
                         let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
+                            // Unable to find the next element.
                             // Wipe out the queue.
                             this.clear_tasks()
-                            let response = new ResponseMessage(req.id, false, "Unable to find any elements with the given values in the specified direction.")
+                            let response = new ResponseMessage(req.id, true, false)
                             this.bg_comm.send_to_nodejs(response)
                         } else {
                             this.found_elem = best
@@ -968,7 +976,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
                         this.bg_comm.send_to_nodejs(response)
                     } else {
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
+                        let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_nodejs(response)
                     }
                 })

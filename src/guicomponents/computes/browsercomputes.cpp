@@ -105,7 +105,14 @@ void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
   QJsonValue incoming = _inputs->get_input_value("in");
-  set_output("out", incoming);
+  if (incoming.isObject()) {
+    QJsonObject obj = incoming.toObject();
+    obj.insert(Compute::kValueProperty, chain_state.value("value"));
+    set_output("out", obj);
+  } else {
+    set_output("out", incoming);
+  }
+
 }
 
 //--------------------------------------------------------------------------------
