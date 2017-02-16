@@ -57,8 +57,6 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kTextAction;
   static const char* kElementAction;
 
-  static const char* kTextDataName;
-
   static const char* kText;
   static const char* kOptionText;
   static const char* kPosition;
@@ -105,7 +103,7 @@ class COMMS_EXPORT Message: public QJsonObject {
 
   static const char* kHTTPRequestMethod;
   static const char* kPayload;
-  static const char* kOutputPropertyName;
+  //static const char* kOutputPropertyName;
 
   static const char* kTopic;
   static const char* kMessage;

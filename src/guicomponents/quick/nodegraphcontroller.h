@@ -38,7 +38,6 @@ Q_OBJECT
   Q_INVOKABLE void create_for_each_group_node(bool centered);
   Q_INVOKABLE void create_script_group_node(bool centered);
   Q_INVOKABLE void create_browser_group_node(bool centered);
-  Q_INVOKABLE void create_firebase_group_node(bool centered);
   Q_INVOKABLE void create_mqtt_group_node(bool centered);
 
   // Create interface nodes.
@@ -76,10 +75,6 @@ Q_OBJECT
 
   // Data compute nodes.
   Q_INVOKABLE void create_merge_node(bool centered);
-
-  // Firebase compute nodes.
-  Q_INVOKABLE void create_firebase_write_data_node(bool centered);
-  Q_INVOKABLE void create_firebase_read_data_node(bool centered);
 
   // Http compute nodes.
   Q_INVOKABLE void create_http_node(bool centered);

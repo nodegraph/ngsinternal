@@ -4,7 +4,6 @@
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/entergroupcompute.h>
-#include <guicomponents/computes/firebasecomputes.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/messagereceiver.h>
@@ -495,7 +494,7 @@ Entity* NodeGraphManipulatorImp::create_browser_node(bool centered, ComponentDID
   }
 
   // Create the node.
-  Entity* _node = create_compute_node(centered, EntityDID::kBrowserComputeNodeEntity, compute_did, name, group_entity);
+  Entity* _node = create_compute_node(centered, EntityDID::kComputeNodeEntity, compute_did, name, group_entity);
 
   // Initialize and update the wires.
   _node->initialize_wires();
@@ -703,23 +702,6 @@ void NodeGraphManipulatorImp::set_mqtt_override(const Path& node_path, const QSt
   compute->set_override(topic, payload);
 }
 
-void NodeGraphManipulatorImp::set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) {
-  // Find the entity.
-  Entity* entity = _app_root->has_entity(node_path);
-  if (!entity) {
-    return;
-  }
-
-  // Make sure we have the right compute.
-  if (!entity->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kFirebaseReadDataCompute)) {
-    return;
-  }
-
-  // Set the override.
-  Dep<FirebaseReadDataCompute> compute = get_dep<FirebaseReadDataCompute>(entity);
-  compute->set_override(data_path, value);
-}
-
 void NodeGraphManipulatorImp::send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj) {
   emit post_value(post_type, title, obj);
 }
@@ -907,10 +889,6 @@ void NodeGraphManipulator::bubble_group_dirtiness(Entity* dirty_node_entity) {
 
 void NodeGraphManipulator::set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) {
   _imp->set_mqtt_override(node_path, topic, payload);
-}
-
-void NodeGraphManipulator::set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) {
-  _imp->set_firebase_override(node_path, data_path, value);
 }
 
 void NodeGraphManipulator::send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj) {

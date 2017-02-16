@@ -50,8 +50,6 @@ const char* Message::kMouseAction = "mouse_action";
 const char* Message::kTextAction = "text_action";
 const char* Message::kElementAction = "element_action";
 
-const char* Message::kTextDataName = "text_data_name";
-
 const char* Message::kText = "text";
 const char* Message::kOptionText = "option_text";
 const char* Message::kPosition = "position";
@@ -96,7 +94,7 @@ const char* Message::kStorageBucket = "storageBucket";
 
 const char* Message::kHTTPRequestMethod = "request_method";
 const char* Message::kPayload = "payload";
-const char* Message::kOutputPropertyName = "output_property_name";
+//const char* Message::kOutputPropertyName = "output_property_name";
 
 const char* Message::kTopic = "topic";
 const char* Message::kMessage = "message";

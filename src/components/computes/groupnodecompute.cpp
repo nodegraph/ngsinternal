@@ -270,7 +270,6 @@ void GroupNodeCompute::reset_accumulate_data_nodes() {
         did == EntityDID::kGroupNodeEntity ||
         did == EntityDID::kScriptGroupNodeEntity ||
         did == EntityDID::kBrowserGroupNodeEntity ||
-        did == EntityDID::kFirebaseGroupNodeEntity ||
         did == EntityDID::kMQTTGroupNodeEntity ||
         did == EntityDID::kForEachGroupNodeEntity ||
         did == EntityDID::kIfGroupNodeEntity) {

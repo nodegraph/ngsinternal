@@ -196,13 +196,10 @@ void HTTPWorker::finished_request() {
 
     QJsonDocument doc = QJsonDocument::fromJson(data);
     if (doc.isObject()) {
-      std::cerr << "reply is an object\n";
       _chain_state.insert("value", doc.object());
     } else if (doc.isArray()) {
-      std::cerr << "reply is an array\n";
       _chain_state.insert("value", doc.array());
     } else {
-      std::cerr << "reply is a string\n";
       _chain_state.insert("value", QString(data));
     }
     // Run the next task.

@@ -1044,7 +1044,6 @@ void NodeGraphQuickItem::explode_group(Entity* e) {
 
   EntityDID did = e->get_did();
   if ((did == EntityDID::kBrowserGroupNodeEntity) ||
-      (did == EntityDID::kFirebaseGroupNodeEntity) ||
       (did == EntityDID::kMQTTGroupNodeEntity)) {
     QString msg = "Special protocol groups for the browser or mqtt cannot be exploded.";
     emit set_error_message(msg);

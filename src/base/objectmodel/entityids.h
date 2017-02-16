@@ -70,27 +70,22 @@ ENTITY_ENTRY2(ForEachGroupNodeEntity, 21)\
 ENTITY_ENTRY2(WhileGroupNodeEntity, 22)\
 ENTITY_ENTRY2(ScriptGroupNodeEntity, 23)\
 ENTITY_ENTRY2(BrowserGroupNodeEntity, 24)\
-ENTITY_ENTRY2(FirebaseGroupNodeEntity, 25)\
-ENTITY_ENTRY2(MQTTGroupNodeEntity, 26)\
+ENTITY_ENTRY2(MQTTGroupNodeEntity, 25)\
 /* Data Nodes. */\
-ENTITY_ENTRY2(DataNodeEntity, 27)\
+ENTITY_ENTRY2(DataNodeEntity, 26)\
 /* Input Nodes. */\
-ENTITY_ENTRY2(InputNodeEntity, 28)\
+ENTITY_ENTRY2(InputNodeEntity, 27)\
 /* Output Nodes. */\
-ENTITY_ENTRY2(OutputNodeEntity, 29)\
+ENTITY_ENTRY2(OutputNodeEntity, 28)\
 /* Dot Node. */\
-ENTITY_ENTRY2(DotNodeEntity, 30)\
+ENTITY_ENTRY2(DotNodeEntity, 29)\
 /* Wait Nodes. */\
-ENTITY_ENTRY2(WaitNodeEntity, 31)\
+ENTITY_ENTRY2(WaitNodeEntity, 30)\
 /* Compute Nodes. */\
-ENTITY_ENTRY2(ComputeNodeEntity, 32)\
-ENTITY_ENTRY2(BrowserComputeNodeEntity, 33)\
-ENTITY_ENTRY2(FirebaseComputeNodeEntity, 34)\
-ENTITY_ENTRY2(MQTTComputeNodeEntity, 35)\
-ENTITY_ENTRY2(LoopComputeNodeEntity, 36)\
+ENTITY_ENTRY2(ComputeNodeEntity, 31)\
 /* Macro Node. */\
-ENTITY_ENTRY2(UserMacroNodeEntity, 37)\
-ENTITY_ENTRY2(AppMacroNodeEntity, 38)\
+ENTITY_ENTRY2(UserMacroNodeEntity, 32)\
+ENTITY_ENTRY2(AppMacroNodeEntity, 33)\
 
 
 enum class EntityDID: size_t {

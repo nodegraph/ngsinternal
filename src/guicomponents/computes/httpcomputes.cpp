@@ -1,5 +1,6 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
+#include <components/computes/jsonutils.h>
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
@@ -84,8 +85,6 @@ void HTTPCompute::create_inputs_outputs(const EntityConfig& config) {
   create_input(Message::kPayload, c);
   c.unconnected_value = 0;
   create_input(Message::kHTTPRequestMethod, c);
-  c.unconnected_value = "reply";
-  create_input(Message::kOutputPropertyName, c);
 }
 
 const QJsonObject HTTPCompute::_hints = HTTPCompute::init_hints();
@@ -103,9 +102,6 @@ QJsonObject HTTPCompute::init_hints() {
   add_hint(m, Message::kHTTPRequestMethod, GUITypes::HintKey::DescriptionHint,
            "The value to send with the HTTP request. This should be an expression in javascript.");
 
-  add_hint(m, Message::kOutputPropertyName, GUITypes::HintKey::DescriptionHint,
-           "The name of the property to add to our output. The value of the property will be the HTTP reply.");
-
   return m;
 }
 
@@ -116,14 +112,9 @@ void HTTPCompute::on_get_outputs(const QJsonObject& chain_state) {
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
   QJsonValue incoming = _inputs->get_input_value("in");
-  QString prop_name = _inputs->get_input_value(Message::kOutputPropertyName).toString();
-  if (incoming.isObject()) {
-    QJsonObject obj = incoming.toObject();
-    obj.insert(prop_name, chain_state.value("value"));
-    set_output("out", obj);
-  } else {
-    set_output("out", incoming);
-  }
+  QJsonObject obj = JSONUtils::convert_to_object(incoming);
+  obj.insert("value", chain_state.value("value"));
+  set_output("out", obj);
 }
 
 bool HTTPCompute::update_state() {

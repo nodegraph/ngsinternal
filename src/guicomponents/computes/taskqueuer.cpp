@@ -5,8 +5,6 @@
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/message.h>
 
-#include <guicomponents/computes/firebasecomputes.h>
-
 #include <guicomponents/quick/basenodegraphmanipulator.h>
 
 #include <base/objectmodel/basefactory.h>
@@ -569,16 +567,6 @@ void TaskQueuer::handle_info(const Message& msg) {
   if (info_type == to_underlying(InfoType::kShowWebActionMenu)) {
     _global_mouse_pos = msg.value(Message::kValue).toObject().value(Message::kGlobalMousePosition).toObject();
     emit show_web_action_menu();
-  } else if (info_type == to_underlying(InfoType::kFirebaseChanged)) {
-    if (!msg.value(Message::kValue).isObject()) {
-      return;
-    }
-    QJsonObject obj = msg.value(Message::kValue).toObject();
-    QString data_path = obj.value(Message::kDataPath).toString();
-    QJsonValue value = obj.value(Message::kValue);
-    QString node_path_str = obj.value(Message::kNodePath).toString();
-    Path node_path = Path::string_to_path(node_path_str.toStdString());
-    _manipulator->set_firebase_override(node_path, data_path, value);
   } else {
       std::cerr << "comm->app: received info: " << msg.to_string().toStdString() << "\n";
   }

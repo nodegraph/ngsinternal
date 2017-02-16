@@ -1,5 +1,6 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
+#include <components/computes/jsonutils.h>
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
@@ -129,8 +130,6 @@ void MQTTSubscribeCompute::create_inputs_outputs(const EntityConfig& config) {
   c.expose_plug = false;
   c.unconnected_value = "topic";
   create_input(Message::kTopic, c);
-  c.unconnected_value = "message";
-  create_input(Message::kOutputPropertyName, c);
 }
 
 void MQTTSubscribeCompute::on_finished_task() {
@@ -140,18 +139,15 @@ void MQTTSubscribeCompute::on_finished_task() {
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
   QJsonValue in = _inputs->get_input_value("in");
-  if (in.isObject()) {
-    QJsonObject obj = in.toObject();
-    if (_override.isNull() || _override.isUndefined()) {
-      // Do nothing.
-    } else if (_override.isString()) {
-      QString prop_name = _inputs->get_input_value(Message::kOutputPropertyName).toString();
-      obj.insert(prop_name, _override.toString());
-    } else {
-      std::cerr << "Error: the MQTTSubscribe's override has an improper type. It should be a string.";
-    }
-    set_output("out", obj);
+  QJsonObject obj = JSONUtils::convert_to_object(in);
+  if (_override.isNull() || _override.isUndefined()) {
+    // Do nothing.
+  } else if (_override.isString()) {
+    obj.insert("value", _override.toString());
+  } else {
+    std::cerr << "Error: the MQTTSubscribe's override has an improper type. It should be a string.";
   }
+  set_output("out", obj);
 }
 
 const QJsonObject MQTTSubscribeCompute::_hints = MQTTSubscribeCompute::init_hints();
@@ -160,8 +156,6 @@ QJsonObject MQTTSubscribeCompute::init_hints() {
   BaseMQTTCompute::init_hints(m);
 
   add_hint(m, Message::kTopic, GUITypes::HintKey::DescriptionHint, "The topic to subscribe to.");
-  add_hint(m, Message::kOutputPropertyName, GUITypes::HintKey::DescriptionHint,
-           "The name of the property to add to our output. The value of the property will be the latest message.");
 
   return m;
 }

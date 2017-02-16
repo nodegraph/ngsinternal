@@ -1,5 +1,6 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
+#include <components/computes/jsonutils.h>
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
@@ -105,14 +106,9 @@ void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
   QJsonValue incoming = _inputs->get_input_value("in");
-  if (incoming.isObject()) {
-    QJsonObject obj = incoming.toObject();
-    obj.insert(Compute::kValueProperty, chain_state.value("value"));
-    set_output("out", obj);
-  } else {
-    set_output("out", incoming);
-  }
-
+  QJsonObject obj = JSONUtils::convert_to_object(incoming);
+  obj.insert("value", chain_state.value("value"));
+  set_output("out", obj);
 }
 
 //--------------------------------------------------------------------------------
@@ -946,9 +942,6 @@ void ElementActionCompute::create_inputs_outputs(const EntityConfig& config) {
     c.unconnected_value = "";
 
     create_input(Message::kOptionText, c); // Only used when the element action is set to choose an option from a drop down field.
-
-    c.unconnected_value = "extracted_text";
-    create_input(Message::kTextDataName, c); // Only used when the element action is set to get_text.
   }
 }
 
@@ -965,8 +958,6 @@ QJsonObject ElementActionCompute::init_hints() {
   add_hint(m, Message::kScrollDirection, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::DirectionType));
   add_hint(m, Message::kScrollDirection, GUITypes::HintKey::DescriptionHint, "The direction to scroll.");
 
-  add_hint(m, Message::kTextDataName, GUITypes::HintKey::DescriptionHint, "The name used to reference the extracted text data.");
-
   return m;
 }
 
@@ -977,14 +968,9 @@ void ElementActionCompute::receive_chain_state(const QJsonObject& chain_state) {
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
   QJsonValue incoming = _inputs->get_input_value("in");
-  QString text_data_name = _inputs->get_input_value(Message::kTextDataName).toString();
-  if (incoming.isObject()) {
-    QJsonObject obj = incoming.toObject();
-    obj.insert(text_data_name, chain_state.value("value"));
-    set_output("out", obj);
-  } else {
-    set_output("out", incoming);
-  }
+  QJsonObject obj = JSONUtils::convert_to_object(incoming);
+  obj.insert("value", chain_state.value("value"));
+  set_output("out", obj);
 }
 
 bool ElementActionCompute::update_state() {

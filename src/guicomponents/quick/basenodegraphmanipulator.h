@@ -74,7 +74,6 @@ class BaseNodeGraphManipulator: public Component {
 
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload) = 0;
-  virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value) = 0;
 
   virtual void send_post_value_signal(int post_type, const QString& title, const QJsonObject& value) = 0;
 };

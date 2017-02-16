@@ -46,13 +46,11 @@
 #include <entities/componentinstancer.h>
 
 #include <guicomponents/computes/browsercomputes.h>
-#include <guicomponents/computes/firebasecomputes.h>
 #include <guicomponents/computes/httpcomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/entermqttgroupcompute.h>
-#include <guicomponents/computes/enterfirebasegroupcompute.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/postnodecompute.h>
 

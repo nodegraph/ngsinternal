@@ -125,9 +125,8 @@ enum class InfoType : int {
   kPageIsReady = 1,
   kBgIsConnected = 2,
   kShowWebActionMenu = 3,
-  kFirebaseChanged = 4,
-  kTabCreated = 5,
-  kTabDestroyed = 6
+  kTabCreated = 4,
+  kTabDestroyed = 5
 };
 
 enum class MessageType : int {

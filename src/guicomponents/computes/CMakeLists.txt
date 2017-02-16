@@ -12,13 +12,11 @@ set(sources
     taskqueuer.cpp
     httpworker.cpp
     browsercomputes.cpp
-    firebasecomputes.cpp
     httpcomputes.cpp
     mqttcomputes.cpp
     browserrecorder.cpp
     entergroupcompute.cpp
     entermqttgroupcompute.cpp
-    enterfirebasegroupcompute.cpp
     enterbrowsergroupcompute.cpp
     waitnodecompute.cpp
     postnodecompute.cpp
@@ -26,11 +24,9 @@ set(sources
    
 set(headers
     browsercomputes.h
-    firebasecomputes.h
     httpcomputes.h
     mqttcomputes.h
     entergroupcompute.h
-    enterfirebasegroupcompute.h
     enterbrowsergroupcompute.h
     )
 

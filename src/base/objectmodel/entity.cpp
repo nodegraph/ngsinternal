@@ -62,7 +62,6 @@ std::unordered_set<EntityDID> Entity::get_group_context_dids() const {
     EntityDID did = e->get_did();
     // Check for Groups which have special nodes which only they can contain.
     if (did == EntityDID::kBrowserGroupNodeEntity ||
-        did == EntityDID::kFirebaseGroupNodeEntity ||
         did == EntityDID::kMQTTGroupNodeEntity) {
       dids.insert(did);
     }
@@ -80,7 +79,6 @@ bool Entity::has_group_related_did() const {
       (did == EntityDID::kWhileGroupNodeEntity) ||
       (did == EntityDID::kScriptGroupNodeEntity) ||
       (did == EntityDID::kBrowserGroupNodeEntity) ||
-      (did == EntityDID::kFirebaseGroupNodeEntity) ||
       (did == EntityDID::kMQTTGroupNodeEntity)||
       has_macro_related_did()) {
     return true;

@@ -99,7 +99,7 @@ Q_OBJECT
 
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
-  virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
+
 
   virtual void send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj);
 
@@ -214,7 +214,6 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
 
   // Specialized Node Overrides.
   virtual void set_mqtt_override(const Path& node_path, const QString& topic, const QString& payload);
-  virtual void set_firebase_override(const Path& node_path, const QString& data_path, const QJsonValue& value);
 
   virtual void send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj);
   NodeGraphManipulatorImp* get_imp() {return _imp;}

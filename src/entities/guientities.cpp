@@ -63,7 +63,6 @@
 #include <guicomponents/computes/downloadmanager.h>
 #include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
-#include <guicomponents/computes/enterfirebasegroupcompute.h>
 #include <guicomponents/computes/entermqttgroupcompute.h>
 
 #include <guicomponents/computes/browsercomputes.h>
@@ -529,7 +528,7 @@ void ForEachGroupNodeEntity::create_internals(const EntityConfig& config) {
     elements->create_internals(config2);
   }
   {
-    ComputeNodeEntity* element = new_ff LoopComputeNodeEntity(this, "element");
+    ComputeNodeEntity* element = new_ff ComputeNodeEntity(this, "element");
     EntityConfig config2;
     config2.visible = true;
     config2.compute_did = ComponentDID::kLoopDataNodeCompute;
@@ -626,30 +625,6 @@ void BrowserGroupNodeEntity::create_internals(const EntityConfig& config) {
   ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit");
   config2.compute_did = ComponentDID::kExitBrowserGroupCompute;
   exit->create_internals(config2);
-}
-
-void FirebaseGroupNodeEntity::create_internals(const EntityConfig& config) {
-  // Our components.
-  (new_ff GroupNodeCompute(this))->create_inputs_outputs(config);
-  new_ff Inputs(this);
-  new_ff Outputs(this);
-  // Gui related.
-  if (config.visible) {
-    new_ff GroupInteraction(this);
-    new_ff CompShapeCollective(this);
-    new_ff GroupNodeShape(this);
-    new_ff InputTopology(this);
-    new_ff OutputTopology(this);
-  }
-  // Sub Components.
-  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "enter");
-  EntityConfig config2;
-  config2.compute_did = ComponentDID::kEnterFirebaseGroupCompute;
-  config2.visible = false;
-  enter->create_internals(config2);
-  surround_with_input_nodes(enter);
-
-  create_default_exit(this);
 }
 
 void MQTTGroupNodeEntity::create_internals(const EntityConfig& config) {
