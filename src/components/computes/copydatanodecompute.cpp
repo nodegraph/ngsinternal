@@ -26,7 +26,7 @@ void CopyDataNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   {
     EntityConfig c = config;
     c.expose_plug = false;
-    c.unconnected_value = "/result";
+    c.unconnected_value = "value";
     create_input("source_path", c);
   }
   {
