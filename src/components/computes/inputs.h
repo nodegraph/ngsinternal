@@ -28,8 +28,8 @@ class COMPUTES_EXPORT Inputs: public Flux<InputTraits> {
   virtual void set_editable_inputs(const QJsonObject& inputs);
 
   // Get values from inputs.
-  QJsonValue get_input_value(const std::string& input_name, const std::string& port_name="out") const;
-  QJsonObject get_input_values(const std::string& port_name="out") const;
+  QJsonValue get_input_value(const std::string& input_name) const;
+  QJsonObject get_input_values() const;
 
   friend class GroupNodeCompute;
 };
