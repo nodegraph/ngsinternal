@@ -5,6 +5,11 @@
 
 namespace ngs {
 
+// Names for entities which act like folders.
+OBJECTMODEL_EXPORT extern const char* kInputsFolderName;
+OBJECTMODEL_EXPORT extern const char* kOutputsFolderName;
+OBJECTMODEL_EXPORT extern const char* kLinksFolderName;
+
 // These macros should be used in class declarations.
 // These IDs are used heavily in serialization and identifying
 // components in Entities.

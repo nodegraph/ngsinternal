@@ -76,10 +76,10 @@ void CompShapeCollective::collect_comp_shapes() {
   internal();
   for (auto &iter: our_entity()->get_children()) {
     // Skip this group's inputs and outputs.
-    if (iter.first == "inputs") {
+    if (iter.first == kInputsFolderName) {
       continue;
     }
-    if (iter.first == "outputs") {
+    if (iter.first == kOutputsFolderName) {
       continue;
     }
     collect_comp_shapes(iter.second);
@@ -101,8 +101,8 @@ void CompShapeCollective::collect_comp_shapes(Entity* entity) {
   // If it's some type of group node we don't dive into it.
   // We only show its inputs and outputs.
   if (entity->has_comp_with_iid(ComponentIID::kIGroupInteraction)) {
-    collect_comp_shapes(entity->get_entity(Path({".","inputs"})));
-    collect_comp_shapes(entity->get_entity(Path({".","outputs"})));
+    collect_comp_shapes(entity->get_entity(Path({".",kInputsFolderName})));
+    collect_comp_shapes(entity->get_entity(Path({".",kOutputsFolderName})));
     return;
   }
 

@@ -3,6 +3,11 @@
 
 namespace ngs {
 
+// Names for entities which act like folders.
+const char* kInputsFolderName = "inputs";
+const char* kOutputsFolderName = "outputs";
+const char* kLinksFolderName = "links";
+
 const char* get_entity_did_name(EntityDID did) {
   #undef ENTITY_ENTRY1
   #undef ENTITY_ENTRY2

@@ -8,8 +8,8 @@
 
 namespace ngs {
 
-const char* InputTraits::folder_name = "inputs";
-const char* OutputTraits::folder_name = "outputs";
+const char* InputTraits::folder_name = kInputsFolderName;
+const char* OutputTraits::folder_name = kOutputsFolderName;
 
 
 template<class Traits>

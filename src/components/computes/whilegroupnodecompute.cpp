@@ -60,7 +60,7 @@ bool WhileGroupNodeCompute::update_state() {
   // If the "condition" input is false then we copy the value from "in" to "out".
   // We set the value to zero for all other outputs.
   if (!condition_value.toBool()) {
-    Entity* outputs = get_entity(Path( { ".", "outputs" }));
+    Entity* outputs = get_entity(Path( { ".", kOutputsFolderName }));
     for (auto &iter : outputs->get_children()) {
       Entity* output_entity = iter.second;
       const std::string& output_name = output_entity->get_name();

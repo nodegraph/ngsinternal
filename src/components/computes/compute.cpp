@@ -41,8 +41,8 @@ Compute::~Compute() {
 
 void Compute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  create_namespace("inputs");
-  create_namespace("outputs");
+  create_namespace(kInputsFolderName);
+  create_namespace(kOutputsFolderName);
 }
 
 void Compute::set_self_dirty(bool dirty) {
@@ -165,12 +165,12 @@ Entity* Compute::create_namespace(const std::string& name) {
 
 Entity* Compute::get_inputs_space() {
   external();
-  return our_entity()->get_child("inputs");
+  return our_entity()->get_child(kInputsFolderName);
 }
 
 Entity* Compute::get_outputs_space() {
   external();
-  return our_entity()->get_child("outputs");
+  return our_entity()->get_child(kOutputsFolderName);
 }
 
 void Compute::add_hint(QJsonObject& node_hints, const std::string& name, GUITypes::HintKey hint_type, const QJsonValue& value) {

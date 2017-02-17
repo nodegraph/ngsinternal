@@ -618,13 +618,13 @@ void Entity::paste_without_merging(SimpleLoader& loader) {
     // GroupNodeEntity's links, inputs, and outputs folders.
     // Skip the inputs and outputs folders.
     // We rely on GroupNodeShape::update_wires to create them for us.
-    if ((iter.first == "inputs") || (iter.first == "outputs") ){
+    if ((iter.first == kInputsFolderName) || (iter.first == kOutputsFolderName) ){
       continue;
     }
     // For the links folder we paste_with_out_merging the contents of the folder.
-    else if (iter.first == "links") {
+    else if (iter.first == kLinksFolderName) {
       Entity* src_links_folder = iter.second;
-      Entity* target_links_folder = get_child("links");
+      Entity* target_links_folder = get_child(kLinksFolderName);
       const NameToChildMap src_links = src_links_folder->get_children();
       for (auto &iter2: src_links) {
         Entity* child = iter2.second;

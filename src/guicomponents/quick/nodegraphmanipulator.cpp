@@ -503,7 +503,7 @@ Entity* NodeGraphManipulatorImp::create_browser_node(bool centered, ComponentDID
   // Set the values on all the inputs from the chain_state.
   for (QJsonObject::const_iterator iter = chain_state.constBegin(); iter != chain_state.constEnd(); ++iter) {
     // Find the input entity.
-    Path path( { ".", "inputs" });
+    Path path( { ".", kInputsFolderName });
     path.push_back(iter.key().toStdString());
     Entity* input_entity = _node->has_entity(path);
     // Skip this key if the entity doesn't exist.
@@ -564,7 +564,7 @@ void NodeGraphManipulatorImp::link_to_closest_node(Entity* downstream) {
     input_compute->link_output_compute(output_compute);
 
     // Create a link.
-    Entity* links_folder = current_group->get_entity(Path( { ".", "links" }));
+    Entity* links_folder = current_group->get_entity(Path( { ".", kLinksFolderName }));
     Entity* link = factory->instance_entity(links_folder, EntityDID::kLinkEntity, "link");
     link->create_internals();
 
@@ -595,7 +595,7 @@ void NodeGraphManipulatorImp::destroy_link(Entity* input_entity) {
 }
 
 Entity* NodeGraphManipulatorImp::create_link(Entity* group) {
-  Entity* links_folder = group->get_entity(Path({".","links"}));
+  Entity* links_folder = group->get_entity(Path({".",kLinksFolderName}));
   Entity* link = _factory->instance_entity(links_folder, EntityDID::kLinkEntity, "link");
   link->create_internals();
 
@@ -660,11 +660,11 @@ void NodeGraphManipulatorImp::copy_description_to_input_node(Entity* input_entit
   const QJsonValue& unconnected_value = input_compute->get_unconnected_value();
 
   // Set the description on the input node.
-  Dep<InputCompute> desc_param = get_dep<InputCompute>(input_node_entity->get_child("inputs")->get_child("description"));
+  Dep<InputCompute> desc_param = get_dep<InputCompute>(input_node_entity->get_child(kInputsFolderName)->get_child("description"));
   desc_param->set_unconnected_value(description);
 
   // Set the unconnected value on the input node.
-  Dep<InputCompute> default_param = get_dep<InputCompute>(input_node_entity->get_child("inputs")->get_child("default_value"));
+  Dep<InputCompute> default_param = get_dep<InputCompute>(input_node_entity->get_child(kInputsFolderName)->get_child("default_value"));
   default_param->set_unconnected_value(unconnected_value);
 }
 

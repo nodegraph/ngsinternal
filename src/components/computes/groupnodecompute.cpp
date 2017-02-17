@@ -23,8 +23,8 @@ GroupNodeCompute::WireUpdater::WireUpdater(GroupNodeCompute* target):
 void GroupNodeCompute::WireUpdater::update_wires() {
   // Make sure the inputs and outputs on this group match up
   // with the input and output nodes inside this group.
-  Entity* inputs_space = _target->get_entity(Path({".","inputs"}));
-  Entity* outputs_space = _target->get_entity(Path({".","outputs"}));
+  Entity* inputs_space = _target->get_entity(Path({".",kInputsFolderName}));
+  Entity* outputs_space = _target->get_entity(Path({".",kOutputsFolderName}));
 
   std::unordered_set<std::string> exposed_inputs;
   std::unordered_set<std::string> exposed_outputs;
@@ -56,7 +56,7 @@ void GroupNodeCompute::WireUpdater::update_wires() {
         outer->set_unconnected_value(inner->get_inputs()->get_input_value("default_value"));
       }
       // Make sure the hints match.
-      Entity* input_node_description = node->get_entity(Path({".","inputs","description"}));
+      Entity* input_node_description = node->get_entity(Path({".",kInputsFolderName,"description"}));
       Dep<InputCompute> param = get_dep<InputCompute>(input_node_description);
       QJsonValue description = param->get_unconnected_value();
 
@@ -126,7 +126,7 @@ GroupNodeCompute::~GroupNodeCompute() {
 void GroupNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
-  create_namespace("links");
+  create_namespace(kLinksFolderName);
 }
 
 const std::unordered_set<std::string>& GroupNodeCompute::get_fixed_inputs() const {
@@ -244,7 +244,7 @@ void GroupNodeCompute::copy_inputs_to_input_nodes() {
 }
 
 void GroupNodeCompute::copy_output_nodes_to_outputs() {
-  Entity* outputs = get_entity(Path({".","outputs"}));
+  Entity* outputs = get_entity(Path({".",kOutputsFolderName}));
   for (auto &iter: outputs->get_children()) {
     Entity* output_entity = iter.second;
     const std::string& output_name = output_entity->get_name();
@@ -263,7 +263,7 @@ bool GroupNodeCompute::update_state() {
 
   // Find all of our output entities.
   // For each one if there is an associated output node, we clean it and cache the result.
-  Entity* outputs = get_entity(Path({".","outputs"}));
+  Entity* outputs = get_entity(Path({".",kOutputsFolderName}));
   for (auto &iter: outputs->get_children()) {
     Entity* output_entity = iter.second;
     const std::string& output_name = output_entity->get_name();

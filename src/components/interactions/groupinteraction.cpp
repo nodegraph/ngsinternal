@@ -55,7 +55,7 @@ GroupInteraction::~GroupInteraction(){
 
 bool GroupInteraction::update_state() {
   internal();
-  _links_folder = get_entity(Path({".","links"}));
+  _links_folder = get_entity(Path({".",kLinksFolderName}));
   return true;
 }
 

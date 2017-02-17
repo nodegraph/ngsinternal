@@ -57,10 +57,10 @@ void GraphBuilder::build_stress_graph() {
       // Link up the node.
       if (y > 0) {
         // Connect links to the previous row.
-        Dep<OutputCompute> op0 = get_dep<OutputCompute>(node->get_entity(Path({".","outputs","c"})));
-        Dep<OutputCompute> op1 = get_dep<OutputCompute>(node->get_entity(Path({".","outputs","d"})));
-        Dep<InputCompute> ip0 = get_dep<InputCompute>(prev_row[x]->get_entity(Path({".","inputs","a"})));
-        Dep<InputCompute> ip1 = get_dep<InputCompute>(prev_row[x]->get_entity(Path({".","inputs","b"})));
+        Dep<OutputCompute> op0 = get_dep<OutputCompute>(node->get_entity(Path({".",kOutputsFolderName,"c"})));
+        Dep<OutputCompute> op1 = get_dep<OutputCompute>(node->get_entity(Path({".",kOutputsFolderName,"d"})));
+        Dep<InputCompute> ip0 = get_dep<InputCompute>(prev_row[x]->get_entity(Path({".",kInputsFolderName,"a"})));
+        Dep<InputCompute> ip1 = get_dep<InputCompute>(prev_row[x]->get_entity(Path({".",kInputsFolderName,"b"})));
 
         ip0->link_output_compute(op0);
         ip1->link_output_compute(op1);
@@ -87,23 +87,23 @@ void GraphBuilder::build_test_graph() {
   Entity* d1 = _manipulator->create_node(true, EntityDID::kDotNodeEntity, "dot1", root_group);
   Entity* d2 = _manipulator->create_node(true, EntityDID::kDotNodeEntity, "dot2", root_group);
 
-  Entity* n1_ipe1 = n1->get_entity(Path({".","inputs","a"}));
-  Entity* n1_ipe2 = n1->get_entity(Path({".","inputs","b"}));
+  Entity* n1_ipe1 = n1->get_entity(Path({".",kInputsFolderName,"a"}));
+  Entity* n1_ipe2 = n1->get_entity(Path({".",kInputsFolderName,"b"}));
 
-  Entity* n2_ipe1 = n2->get_entity(Path({".","inputs","a"}));
-  Entity* n2_ipe2 = n2->get_entity(Path({".","inputs","b"}));
+  Entity* n2_ipe1 = n2->get_entity(Path({".",kInputsFolderName,"a"}));
+  Entity* n2_ipe2 = n2->get_entity(Path({".",kInputsFolderName,"b"}));
 
-  Entity* n3_ipe1 = n3->get_entity(Path({".","inputs","a"}));
-  Entity* n3_ipe2 = n3->get_entity(Path({".","inputs","b"}));
+  Entity* n3_ipe1 = n3->get_entity(Path({".",kInputsFolderName,"a"}));
+  Entity* n3_ipe2 = n3->get_entity(Path({".",kInputsFolderName,"b"}));
 
-  Entity* n1_ope1 = n1->get_entity(Path({".","outputs","c"}));
-  Entity* n1_ope2 = n1->get_entity(Path({".","outputs","d"}));
+  Entity* n1_ope1 = n1->get_entity(Path({".",kOutputsFolderName,"c"}));
+  Entity* n1_ope2 = n1->get_entity(Path({".",kOutputsFolderName,"d"}));
 
-  Entity* n2_ope1 = n2->get_entity(Path({".","outputs","c"}));
-  Entity* n2_ope2 = n2->get_entity(Path({".","outputs","d"}));
+  Entity* n2_ope1 = n2->get_entity(Path({".",kOutputsFolderName,"c"}));
+  Entity* n2_ope2 = n2->get_entity(Path({".",kOutputsFolderName,"d"}));
 
-  Entity* n3_ope1 = n3->get_entity(Path({".","outputs","c"}));
-  Entity* n3_ope2 = n3->get_entity(Path({".","outputs","d"}));
+  Entity* n3_ope1 = n3->get_entity(Path({".",kOutputsFolderName,"c"}));
+  Entity* n3_ope2 = n3->get_entity(Path({".",kOutputsFolderName,"d"}));
 
   get_app_root()->initialize_wires();
 
@@ -175,23 +175,23 @@ void GraphBuilder::build_test_graph() {
     Entity* o1 = _manipulator->create_node(true, EntityDID::kOutputNodeEntity, "output1", sub_group);
     o1->create_internals();
 
-    Entity* n1_ipe1 = n1->get_entity(Path({".","inputs","a"}));
-    Entity* n1_ipe2 = n1->get_entity(Path({".","inputs","b"}));
+    Entity* n1_ipe1 = n1->get_entity(Path({".",kInputsFolderName,"a"}));
+    Entity* n1_ipe2 = n1->get_entity(Path({".",kInputsFolderName,"b"}));
 
-    Entity* n2_ipe1 = n2->get_entity(Path({".","inputs","a"}));
-    Entity* n2_ipe2 = n2->get_entity(Path({".","inputs","b"}));
+    Entity* n2_ipe1 = n2->get_entity(Path({".",kInputsFolderName,"a"}));
+    Entity* n2_ipe2 = n2->get_entity(Path({".",kInputsFolderName,"b"}));
 
-    Entity* n3_ipe1 = n3->get_entity(Path({".","inputs","a"}));
-    Entity* n3_ipe2 = n3->get_entity(Path({".","inputs","b"}));
+    Entity* n3_ipe1 = n3->get_entity(Path({".",kInputsFolderName,"a"}));
+    Entity* n3_ipe2 = n3->get_entity(Path({".",kInputsFolderName,"b"}));
 
-    Entity* n1_ope1 = n1->get_entity(Path({".","outputs","c"}));
-    Entity* n1_ope2 = n1->get_entity(Path({".","outputs","d"}));
+    Entity* n1_ope1 = n1->get_entity(Path({".",kOutputsFolderName,"c"}));
+    Entity* n1_ope2 = n1->get_entity(Path({".",kOutputsFolderName,"d"}));
 
-    Entity* n2_ope1 = n2->get_entity(Path({".","outputs","c"}));
-    Entity* n2_ope2 = n2->get_entity(Path({".","outputs","d"}));
+    Entity* n2_ope1 = n2->get_entity(Path({".",kOutputsFolderName,"c"}));
+    Entity* n2_ope2 = n2->get_entity(Path({".",kOutputsFolderName,"d"}));
 
-    Entity* n3_ope1 = n3->get_entity(Path({".","outputs","c"}));
-    Entity* n3_ope2 = n3->get_entity(Path({".","outputs","d"}));
+    Entity* n3_ope1 = n3->get_entity(Path({".",kOutputsFolderName,"c"}));
+    Entity* n3_ope2 = n3->get_entity(Path({".",kOutputsFolderName,"d"}));
 
     get_app_root()->initialize_wires();
 

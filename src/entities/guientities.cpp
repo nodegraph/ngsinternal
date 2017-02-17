@@ -139,7 +139,7 @@ void create_default_enter_and_exit(Entity* group) {
 void surround_with_input_nodes(Entity* node) {
   QMLAppEntity* app_root = static_cast<QMLAppEntity*>(node->get_app_root());
   BaseNodeGraphManipulator* manipulator = app_root->get_manipulator();
-  Entity* inputs = node->get_child("inputs");
+  Entity* inputs = node->get_child(kInputsFolderName);
   const Entity::NameToChildMap& children = inputs->get_children();
   for (auto &iter: children) {
     // Create the input node.
@@ -149,7 +149,7 @@ void surround_with_input_nodes(Entity* node) {
     input_node->create_internals(config);
 
     // Connect the input to the output from the input node.
-    OutputEntity* output = static_cast<OutputEntity*>(input_node->get_child("outputs")->get_child("out"));
+    OutputEntity* output = static_cast<OutputEntity*>(input_node->get_child(kOutputsFolderName)->get_child("out"));
     InputEntity* input = static_cast<InputEntity*>(iter.second);
     manipulator->connect_plugs(input, output);
 
@@ -404,7 +404,7 @@ void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>
 
     // Find the relevant links to save.
     std::unordered_set<Entity*> links_to_save;
-    Entity* links_folder = get_child("links");
+    Entity* links_folder = get_child(kLinksFolderName);
     if (links_folder) {
       const NameToChildMap &links = links_folder->get_children();
       NameToChildMap::const_iterator iter;
@@ -755,8 +755,8 @@ void UserMacroNodeEntity::save(SimpleSaver& saver) const {
 
   // We only save our inputs and outputs namespace child entities.
   // The rest of the children will be loaded from the macro file.
-  Entity* inputs = get_child("inputs");
-  Entity* outputs = get_child("outputs");
+  Entity* inputs = get_child(kInputsFolderName);
+  Entity* outputs = get_child(kOutputsFolderName);
 
   // Determine if we have inputs and outputs.
   size_t num_children = 0;
@@ -868,8 +868,8 @@ void UserMacroNodeEntity::load_internals(const std::string& macro_name) {
         loader2.rewind(name);
         loader2.rewind(did);
         if (did == EntityDID::kBaseNamespaceEntity) {
-          if (name == "inputs") {
-            Entity* inputs = get_child("inputs");
+          if (name == kInputsFolderName) {
+            Entity* inputs = get_child(kInputsFolderName);
             if (inputs) {
               // Skip the inputs entity.
               {
@@ -881,8 +881,8 @@ void UserMacroNodeEntity::load_internals(const std::string& macro_name) {
               entities_loaded.insert(inputs);
               continue;
             }
-          } else if (name == "outputs") {
-            Entity* outputs = get_child("outputs");
+          } else if (name == kOutputsFolderName) {
+            Entity* outputs = get_child(kOutputsFolderName);
             if (outputs) {
               // Skip the outputs entity.
               {
