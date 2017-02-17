@@ -74,11 +74,18 @@ QJsonObject ScriptNodeCompute::init_hints() {
 }
 
 QJsonObject ScriptNodeCompute::get_context() {
-  return _context->get_context();
+  if (_context) {
+    return _context->get_context();
+  }
+  // Return an empty object if we are not inside a looping group.
+  return QJsonObject();
 }
 
 void ScriptNodeCompute::set_context(const QJsonObject& context) {
-  _context->set_context(context);
+  if (_context) {
+    _context->set_context(context);
+  }
+  // Does nothing if we are not inside a looping group.
 }
 
 QJsonObject ScriptNodeCompute::get_input() {
