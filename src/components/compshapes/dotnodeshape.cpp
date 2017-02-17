@@ -94,22 +94,6 @@ void DotNodeShape::load(SimpleLoader& loader) {
   loader.load(_pos.y);
 }
 
-size_t DotNodeShape::get_input_order(const std::string& input_name) const {
-  external();
-  if (input_name == "in") {
-    return 0;
-  }
-  return -1;
-}
-
-size_t DotNodeShape::get_output_order(const std::string& output_name) const {
-  external();
-  if (output_name == "out") {
-    return 0;
-  }
-  return -1;
-}
-
 void DotNodeShape::update_circles_cache() {
   internal();
   NodeShape::update_circles_cache();

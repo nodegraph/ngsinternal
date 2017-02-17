@@ -31,10 +31,6 @@ class COMPSHAPES_EXPORT DotNodeShape: public NodeShape {
   virtual void save(SimpleSaver& saver) const;
   virtual void load(SimpleLoader& loader);
 
-  // Input and Output Ordering.
-  virtual size_t get_input_order(const std::string& input_name) const;
-  virtual size_t get_output_order(const std::string& output_name) const;
-
   // Num inputs and outputs.
   virtual size_t get_num_linkable_inputs() const {return 1;} // number of inputs with input plugs
   virtual size_t get_num_linkable_outputs() const {return 1;} // number of outputs with output plugs
