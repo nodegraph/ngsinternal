@@ -2,7 +2,9 @@
 #include <components/computes/computes_export.h>
 #include <components/computes/flux.h>
 
+class QString;
 class QJsonValue;
+class QJsonArray;
 class QJsonObject;
 
 namespace ngs {
@@ -27,8 +29,17 @@ class COMPUTES_EXPORT Inputs: public Flux<InputTraits> {
   virtual QJsonObject get_editable_inputs() const;
   virtual void set_editable_inputs(const QJsonObject& inputs);
 
-  // Get values from inputs.
+  // Get value from inputs.
   QJsonValue get_input_value(const std::string& input_name) const;
+
+  // Get value from input, but also do a conversion to a certain json type.
+  double get_input_double(const std::string& input_name) const;
+  bool get_input_boolean(const std::string& input_name) const;
+  QString get_input_string(const std::string& input_name) const;
+  QJsonArray get_input_array(const std::string& input_name) const;
+  QJsonObject get_input_object(const std::string& input_name) const;
+
+  // Get all values.
   QJsonObject get_input_values() const;
 
   friend class GroupNodeCompute;

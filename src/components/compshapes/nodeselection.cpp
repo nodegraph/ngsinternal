@@ -281,12 +281,6 @@ void NodeSelection::destroy_selection() {
         continue;
       }
     }
-    if (group->get_did() == EntityDID::kForEachGroupNodeEntity) {
-      const std::string& name = e->get_name();
-      if ( (name == "in") || (name == "out") || (name == "element")) {
-        continue;
-      }
-    }
     if (group->get_did() == EntityDID::kWhileGroupNodeEntity) {
       const std::string& name = e->get_name();
       if ( (name == "in") || (name == "out") ) {

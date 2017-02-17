@@ -86,39 +86,48 @@ enum class ComponentIID : size_t {
   kIOutputs = 18,
 
   // ---------------------------------------------
+  // Group Node.
+  // ---------------------------------------------
+  // Script context. (Used to hold state between iteractions in looping groups.)
+  kIScriptLoopContext = 19,
+
+  // ---------------------------------------------
   // Node Graph Interaction.
   // ---------------------------------------------
 
   // Node Graph Logic.
-  kIGraphBuilder = 19,
-  kIGroupInteraction = 20,
-  kINodeSelection = 21,
-  kIBaseNodeGraphManipulator = 22,
-  kINodeGraphController = 23,
+  kIGraphBuilder = 20,
+  kIGroupInteraction = 21,
+  kINodeSelection = 22,
+  kIBaseNodeGraphManipulator = 23,
+  kINodeGraphController = 24,
 
   // ---------------------------------------------
   // Node Graph Compute Management.
   // ---------------------------------------------
 
   // App Communication.
-  kIMessageSender = 24,
-  kIMessageReceiver = 25,
+  kIMessageSender = 25,
+  kIMessageReceiver = 26,
 
   // Special Processes.
-  kIAcceptSaveProcess = 26,
-  kIJavaProcess = 27,
-  kIDownloadManager = 28,
+  kIAcceptSaveProcess = 27,
+  kIJavaProcess = 28,
+  kIDownloadManager = 29,
 
   // Task Management.
-  kITaskQueuer = 29,
-  kITaskScheduler = 30,
+  kITaskQueuer = 30,
+  kITaskScheduler = 31,
 
   // Task Management Helpers.
-  kIHTTPWorker = 31,
-  kIBrowserRecorder = 32,
+  kIHTTPWorker = 32,
+  kIBrowserRecorder = 33,
 
   // Node Computes.
-  kICompute = 33,
+  kICompute = 34,
+
+
+
 };
 
 #define COMPONENT_ENTRY1(NAME) k##NAME,
@@ -164,93 +173,91 @@ COMPONENT_ENTRY2(InputTopology, 24)\
 COMPONENT_ENTRY2(OutputTopology, 25)\
 COMPONENT_ENTRY2(Inputs, 26)\
 COMPONENT_ENTRY2(Outputs, 27)\
-/* Node Graph Interaction. */\
+/* Group Node. */\
+COMPONENT_ENTRY2(ScriptLoopContext, 28)\
+/* Node Graph Interaction. -----------*/\
 /* Node Graph Logic. */\
-COMPONENT_ENTRY2(GraphBuilder, 28)\
-COMPONENT_ENTRY2(GroupInteraction, 29)\
-COMPONENT_ENTRY2(NodeSelection, 30)\
-COMPONENT_ENTRY2(NodeGraphManipulator, 31)\
-COMPONENT_ENTRY2(NodeGraphController, 32)\
+COMPONENT_ENTRY2(GraphBuilder, 29)\
+COMPONENT_ENTRY2(GroupInteraction, 30)\
+COMPONENT_ENTRY2(NodeSelection, 31)\
+COMPONENT_ENTRY2(NodeGraphManipulator, 32)\
+COMPONENT_ENTRY2(NodeGraphController, 33)\
 /* Node Graph Compute Management.*/\
 /* App Communication. */\
-COMPONENT_ENTRY2(MessageSender, 33)\
-COMPONENT_ENTRY2(MessageReceiver, 34)\
+COMPONENT_ENTRY2(MessageSender, 34)\
+COMPONENT_ENTRY2(MessageReceiver, 35)\
 /* Special Processes. */\
-COMPONENT_ENTRY2(AcceptSaveProcess, 35)\
-COMPONENT_ENTRY2(JavaProcess, 36)\
-COMPONENT_ENTRY2(DownloadManager, 37)\
+COMPONENT_ENTRY2(AcceptSaveProcess, 36)\
+COMPONENT_ENTRY2(JavaProcess, 37)\
+COMPONENT_ENTRY2(DownloadManager, 38)\
 /* Task Management. */\
-COMPONENT_ENTRY2(TaskQueuer, 38)\
-COMPONENT_ENTRY2(TaskScheduler,39)\
+COMPONENT_ENTRY2(TaskQueuer, 39)\
+COMPONENT_ENTRY2(TaskScheduler,40)\
 /* Task Management Helpers.*/\
-COMPONENT_ENTRY2(HTTPWorker, 40)\
-COMPONENT_ENTRY2(BrowserRecorder, 41)\
+COMPONENT_ENTRY2(HTTPWorker, 41)\
+COMPONENT_ENTRY2(BrowserRecorder, 42)\
 /* Node Computes. */\
-COMPONENT_ENTRY2(InputCompute, 42)\
-COMPONENT_ENTRY2(OutputCompute, 43)\
-COMPONENT_ENTRY2(InputNodeCompute, 44)\
-COMPONENT_ENTRY2(OutputNodeCompute, 45)\
-COMPONENT_ENTRY2(DotNodeCompute, 46)\
+COMPONENT_ENTRY2(InputCompute, 43)\
+COMPONENT_ENTRY2(OutputCompute, 44)\
+COMPONENT_ENTRY2(InputNodeCompute, 45)\
+COMPONENT_ENTRY2(OutputNodeCompute, 46)\
+COMPONENT_ENTRY2(DotNodeCompute, 47)\
 /* Group Computes. */\
-COMPONENT_ENTRY2(GroupNodeCompute, 47)\
-COMPONENT_ENTRY2(IfGroupNodeCompute, 48)\
-COMPONENT_ENTRY2(ForEachGroupNodeCompute, 49)\
+COMPONENT_ENTRY2(GroupNodeCompute, 48)\
+COMPONENT_ENTRY2(IfGroupNodeCompute, 49)\
 COMPONENT_ENTRY2(WhileGroupNodeCompute, 50)\
-COMPONENT_ENTRY2(ScriptGroupNodeCompute, 51)\
 /* Enter Group Computes. */\
-COMPONENT_ENTRY2(EnterGroupCompute, 52)\
-COMPONENT_ENTRY2(EnterMQTTGroupCompute, 53)\
-COMPONENT_ENTRY2(EnterBrowserGroupCompute, 54)\
+COMPONENT_ENTRY2(EnterGroupCompute, 51)\
+COMPONENT_ENTRY2(EnterMQTTGroupCompute, 52)\
+COMPONENT_ENTRY2(EnterBrowserGroupCompute, 53)\
 /* Exit Group Computes. */\
-COMPONENT_ENTRY2(ExitGroupCompute, 55)\
-COMPONENT_ENTRY2(ExitBrowserGroupCompute, 56)\
+COMPONENT_ENTRY2(ExitGroupCompute, 54)\
+COMPONENT_ENTRY2(ExitBrowserGroupCompute, 55)\
 /* Protocol Based Computes. */\
-COMPONENT_ENTRY2(HTTPCompute, 57)\
-COMPONENT_ENTRY2(MQTTPublishCompute, 58)\
-COMPONENT_ENTRY2(MQTTSubscribeCompute, 59)\
+COMPONENT_ENTRY2(HTTPCompute, 56)\
+COMPONENT_ENTRY2(MQTTPublishCompute, 57)\
+COMPONENT_ENTRY2(MQTTSubscribeCompute, 58)\
 /* Data Op Computes. */\
-COMPONENT_ENTRY2(MockNodeCompute, 60)\
-COMPONENT_ENTRY2(DataNodeCompute, 61)\
-COMPONENT_ENTRY2(CopyDataNodeCompute, 62)\
-COMPONENT_ENTRY2(EraseDataNodeCompute, 63)\
-COMPONENT_ENTRY2(LoopDataNodeCompute, 64)\
-COMPONENT_ENTRY2(AccumulateDataNodeCompute, 65)\
-COMPONENT_ENTRY2(MergeNodeCompute, 66)\
-COMPONENT_ENTRY2(ScriptNodeCompute, 67)\
-COMPONENT_ENTRY2(PostNodeCompute, 68)\
-COMPONENT_ENTRY2(WaitNodeCompute, 69)\
+COMPONENT_ENTRY2(MockNodeCompute, 59)\
+COMPONENT_ENTRY2(DataNodeCompute, 60)\
+COMPONENT_ENTRY2(CopyDataNodeCompute, 61)\
+COMPONENT_ENTRY2(EraseDataNodeCompute, 62)\
+COMPONENT_ENTRY2(MergeNodeCompute, 63)\
+COMPONENT_ENTRY2(ScriptNodeCompute, 64)\
+COMPONENT_ENTRY2(PostNodeCompute, 65)\
+COMPONENT_ENTRY2(WaitNodeCompute, 66)\
 /* Perform action on Browser. */\
-COMPONENT_ENTRY2(OpenBrowserCompute, 70)\
-COMPONENT_ENTRY2(CloseBrowserCompute, 71)\
-COMPONENT_ENTRY2(ReleaseBrowserCompute, 72)\
-COMPONENT_ENTRY2(IsBrowserOpenCompute, 73)\
-COMPONENT_ENTRY2(ResizeBrowserCompute, 74)\
-COMPONENT_ENTRY2(DestroyCurrentTabCompute, 75)\
-COMPONENT_ENTRY2(OpenTabCompute, 76)\
-COMPONENT_ENTRY2(AcceptSaveDialogCompute, 77)\
+COMPONENT_ENTRY2(OpenBrowserCompute, 67)\
+COMPONENT_ENTRY2(CloseBrowserCompute, 68)\
+COMPONENT_ENTRY2(ReleaseBrowserCompute, 69)\
+COMPONENT_ENTRY2(IsBrowserOpenCompute, 70)\
+COMPONENT_ENTRY2(ResizeBrowserCompute, 71)\
+COMPONENT_ENTRY2(DestroyCurrentTabCompute, 72)\
+COMPONENT_ENTRY2(OpenTabCompute, 73)\
+COMPONENT_ENTRY2(AcceptSaveDialogCompute, 74)\
 /* Navigate. */\
-COMPONENT_ENTRY2(NavigateToCompute, 78)\
-COMPONENT_ENTRY2(NavigateBackCompute, 79)\
-COMPONENT_ENTRY2(NavigateForwardCompute, 80)\
-COMPONENT_ENTRY2(NavigateRefreshCompute, 81)\
+COMPONENT_ENTRY2(NavigateToCompute, 75)\
+COMPONENT_ENTRY2(NavigateBackCompute, 76)\
+COMPONENT_ENTRY2(NavigateForwardCompute, 77)\
+COMPONENT_ENTRY2(NavigateRefreshCompute, 78)\
 /* Find Elements. */\
-COMPONENT_ENTRY2(FindElementByPositionCompute, 82)\
-COMPONENT_ENTRY2(FindElementByValuesCompute, 83)\
-COMPONENT_ENTRY2(FindElementByTypeCompute, 84)\
+COMPONENT_ENTRY2(FindElementByPositionCompute, 79)\
+COMPONENT_ENTRY2(FindElementByValuesCompute, 80)\
+COMPONENT_ENTRY2(FindElementByTypeCompute, 81)\
 /* Shift Element. */\
-COMPONENT_ENTRY2(ShiftElementByTypeCompute, 85)\
-COMPONENT_ENTRY2(ShiftElementByValuesCompute, 86)\
-COMPONENT_ENTRY2(ShiftElementByTypeAlongRowsCompute, 87)\
-COMPONENT_ENTRY2(ShiftElementByValuesAlongRowsCompute, 88)\
+COMPONENT_ENTRY2(ShiftElementByTypeCompute, 82)\
+COMPONENT_ENTRY2(ShiftElementByValuesCompute, 83)\
+COMPONENT_ENTRY2(ShiftElementByTypeAlongRowsCompute, 84)\
+COMPONENT_ENTRY2(ShiftElementByValuesAlongRowsCompute, 85)\
 /* Extract Info. */\
-COMPONENT_ENTRY2(GetActiveTabTitleCompute, 89)\
-COMPONENT_ENTRY2(GetCurrentURLCompute, 90)\
-COMPONENT_ENTRY2(DownloadVideoCompute, 91)\
+COMPONENT_ENTRY2(GetActiveTabTitleCompute, 86)\
+COMPONENT_ENTRY2(GetCurrentURLCompute, 87)\
+COMPONENT_ENTRY2(DownloadVideoCompute, 88)\
 /* Perform action on Element. */\
-COMPONENT_ENTRY2(MouseActionCompute, 92)\
-COMPONENT_ENTRY2(TextActionCompute, 93)\
-COMPONENT_ENTRY2(PasswordActionCompute, 94)\
-COMPONENT_ENTRY2(ElementActionCompute, 95)\
+COMPONENT_ENTRY2(MouseActionCompute, 89)\
+COMPONENT_ENTRY2(TextActionCompute, 90)\
+COMPONENT_ENTRY2(PasswordActionCompute, 91)\
+COMPONENT_ENTRY2(ElementActionCompute, 92)\
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()

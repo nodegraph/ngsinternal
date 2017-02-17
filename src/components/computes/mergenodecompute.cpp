@@ -41,23 +41,15 @@ bool MergeNodeCompute::update_state() {
   Compute::update_state();
 
   // This will hold our final output.
-  QJsonValue output;
+  QJsonObject output;
 
   // If our "in" input is connected, we merge that value in.
-  {
-    const Dep<InputCompute>& c = _inputs->get("in");
-    if (c->is_connected()) {
-      output = JSONUtils::deep_merge(output, c->get_output("out"));
-    }
-  }
+  QJsonObject in = _inputs->get_input_object("in");
+  output = JSONUtils::deep_merge(output, in).toObject();
 
   // If our "source" input is connected, we merge that value in.
-  {
-    const Dep<InputCompute>& c = _inputs->get("source");
-    if (c->is_connected()) {
-      output = JSONUtils::deep_merge(output, c->get_output("out"));
-    }
-  }
+  QJsonObject src = _inputs->get_input_object("source");
+  output = JSONUtils::deep_merge(output, src).toObject();
 
   set_output("out", output);
   return true;

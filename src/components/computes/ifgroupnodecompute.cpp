@@ -25,11 +25,11 @@ bool IfGroupNodeCompute::update_state() {
   Compute::update_state();
 
   // Get the path to the condition in the in input.
-  QString condition_path_string = _inputs->get("condition_path")->get_output("out").toString();
+  QString condition_path_string = _inputs->get_input_string("condition_path");
   Path condition_path(Path::split_string(condition_path_string.toStdString()));
 
   // Get the value of the condition.
-  QJsonObject in_obj = _inputs->get("in")->get_output("out").toObject();
+  QJsonObject in_obj = _inputs->get_input_object("in");
   QJsonValue condition_value = JSONUtils::extract_value(in_obj, condition_path, false);
 
   // If the "condition" input is false then we copy the value from "in" to "out".
@@ -43,7 +43,7 @@ bool IfGroupNodeCompute::update_state() {
       Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
       if (output_name == "out") {
         // We copy the value from in to out.
-        set_output("out", _inputs->get("in")->get_output("out"));
+        set_output("out", _inputs->get_input_object("in"));
       } else {
         // We set the value to zero for all other outputs.
         set_output(output_name, 0);

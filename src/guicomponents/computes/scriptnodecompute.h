@@ -9,6 +9,8 @@ class QJsonValue;
 
 namespace ngs {
 
+class ScriptLoopContext;
+
 class GUICOMPUTES_EXPORT ScriptNodeCompute: public QObject, public Compute  {
   Q_OBJECT
  public:
@@ -22,10 +24,16 @@ class GUICOMPUTES_EXPORT ScriptNodeCompute: public QObject, public Compute  {
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
 
-  Q_INVOKABLE QJsonValue get_input();
-  Q_INVOKABLE void set_output_value(const QJsonValue& value);
+  // Script API.
+  // Note that we need to return the json objects by value. Otherwise the js/qml side will get undefined as the value.
+  Q_INVOKABLE QJsonObject get_context();
+  Q_INVOKABLE void set_context(const QJsonObject& context);
+  Q_INVOKABLE QJsonObject get_input();
+  Q_INVOKABLE void set_output(const QJsonObject& value);
 
 protected:
+  Dep<ScriptLoopContext> _context;
+
   // Our state.
   virtual bool update_state();
 };

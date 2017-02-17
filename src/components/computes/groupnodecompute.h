@@ -50,7 +50,6 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   // Copying values between inside and outside the group.
   void copy_inputs_to_input_nodes();
   void copy_output_nodes_to_outputs();
-  void reset_accumulate_data_nodes();
 
 
   Dep<BaseFactory> _factory;

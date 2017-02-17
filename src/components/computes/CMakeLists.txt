@@ -8,19 +8,17 @@ set(sources
 	dotnodecompute.cpp
 	groupnodecompute.cpp
 	ifgroupnodecompute.cpp
-	foreachgroupnodecompute.cpp
 	whilegroupnodecompute.cpp
 	inputcompute.cpp
 	datanodecompute.cpp
 	copydatanodecompute.cpp
 	erasedatanodecompute.cpp
-	loopdatanodecompute.cpp
-	accumulatedatanodecompute.cpp
 	inputnodecompute.cpp
     mocknodecompute.cpp
     outputcompute.cpp
     outputnodecompute.cpp
     jsonutils.cpp
+    scriptloopcontext.cpp
     )
     
 set(moc_headers
@@ -38,19 +36,17 @@ set(headers
 	dotnodecompute.h
 	groupnodecompute.h
 	ifgroupnodecompute.h
-	foreachgroupnodecompute.h
 	whilegroupnodecompute.h
 	inputcompute.h
 	datanodecompute.h
 	copydatanodecompute.h
 	erasedatanodecompute.h
-	loopdatanodecompute.h
-	accumulatedatanodecompute.h
 	inputnodecompute.h
 	mocknodecompute.h
 	outputcompute.h
 	outputnodecompute.h
 	jsonutils.h
+	scriptloopcontext.h
     )
     
 add_library(ngs_computes  ${sources} ${headers})

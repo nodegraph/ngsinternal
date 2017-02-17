@@ -1,8 +1,10 @@
 #include <components/computes/inputs.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
+#include <components/computes/jsonutils.h>
 
 #include <QtCore/QJsonValue>
+#include <QtCore/QJsonArray>
 #include <QtCore/QJsonObject>
 
 
@@ -75,6 +77,26 @@ QJsonValue Inputs::get_input_value(const std::string& input_name) const {
     return QJsonValue();
   }
   return input->get_output("out");
+}
+
+double Inputs::get_input_double(const std::string& input_name) const {
+  return JSONUtils::convert_to_double(get_input_value(input_name));
+}
+
+bool Inputs::get_input_boolean(const std::string& input_name) const {
+  return JSONUtils::convert_to_bool(get_input_value(input_name));
+}
+
+QString Inputs::get_input_string(const std::string& input_name) const {
+  return JSONUtils::convert_to_string(get_input_value(input_name));
+}
+
+QJsonArray Inputs::get_input_array(const std::string& input_name) const {
+  return JSONUtils::convert_to_array(get_input_value(input_name));
+}
+
+QJsonObject Inputs::get_input_object(const std::string& input_name) const {
+  return JSONUtils::convert_to_object(get_input_value(input_name));
 }
 
 QJsonObject Inputs::get_input_values() const {

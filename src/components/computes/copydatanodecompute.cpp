@@ -60,14 +60,14 @@ bool CopyDataNodeCompute::update_state() {
   Compute::update_state();
 
   // Our input object.
-  QJsonObject in_obj = _inputs->get_input_value("in").toObject();
+  QJsonObject in_obj = _inputs->get_input_object("in");
 
   // The source path.
-  QString src_path_string = _inputs->get("source_path")->get_output("out").toString();
+  QString src_path_string = _inputs->get_input_string("source_path");
   Path src_path(Path::split_string(src_path_string.toStdString()));
 
   // The dest path.
-  QString dest_path_string = _inputs->get("destination_path")->get_output("out").toString();
+  QString dest_path_string = _inputs->get_input_string("destination_path");
   Path dest_path(Path::split_string(dest_path_string.toStdString()));
 
   // Get the source value.

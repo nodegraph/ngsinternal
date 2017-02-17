@@ -61,12 +61,6 @@ void NodeGraphController::create_if_group_node(bool centered) {
 void NodeGraphController::create_while_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kWhileGroupNodeEntity);
 }
-void NodeGraphController::create_for_each_group_node(bool centered) {
-  _manipulator->create_node(centered, EntityDID::kForEachGroupNodeEntity);
-}
-void NodeGraphController::create_script_group_node(bool centered) {
-  _manipulator->create_node(centered, EntityDID::kScriptGroupNodeEntity);
-}
 void NodeGraphController::create_browser_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kBrowserGroupNodeEntity);
 }
@@ -94,10 +88,6 @@ void NodeGraphController::create_object_input_node(bool centered) {
 
 void NodeGraphController::create_output_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kOutputNodeEntity);
-}
-
-void NodeGraphController::create_accumulate_data_node(bool centered) {
-  _manipulator->create_compute_node(centered, EntityDID::kComputeNodeEntity, ComponentDID::kAccumulateDataNodeCompute);
 }
 
 // Create data nodes.

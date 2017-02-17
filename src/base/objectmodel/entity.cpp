@@ -75,9 +75,7 @@ bool Entity::has_group_related_did() const {
   if ((did == EntityDID::kBaseGroupNodeEntity) ||
       (did == EntityDID::kGroupNodeEntity) ||
       (did == EntityDID::kIfGroupNodeEntity) ||
-      (did == EntityDID::kForEachGroupNodeEntity) ||
       (did == EntityDID::kWhileGroupNodeEntity) ||
-      (did == EntityDID::kScriptGroupNodeEntity) ||
       (did == EntityDID::kBrowserGroupNodeEntity) ||
       (did == EntityDID::kMQTTGroupNodeEntity)||
       has_macro_related_did()) {

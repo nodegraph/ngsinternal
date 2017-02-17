@@ -105,8 +105,7 @@ void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonValue incoming = _inputs->get_input_value("in");
-  QJsonObject obj = JSONUtils::convert_to_object(incoming);
+  QJsonObject obj = _inputs->get_input_object("in");
   obj.insert("value", chain_state.value("value"));
   set_output("out", obj);
 }
@@ -201,9 +200,7 @@ void GetActiveTabTitleCompute::receive_chain_state(const QJsonObject& chain_stat
   QString title = chain_state["value"].toString();
   std::cerr << "Got browser title: " << title.toStdString() << "\n";
   // Grab the incoming object.
-  QJsonValue incoming = _inputs->get_input_value("in");
-  // Add the url into the incoming object under the key, "value".
-  QJsonObject obj = incoming.toObject();
+  QJsonObject obj = _inputs->get_input_object("in");
   obj.insert("value", title);
   set_output("out", obj);
 }
@@ -325,8 +322,8 @@ bool DownloadVideoCompute::update_state(){
   TaskContext tc(_scheduler);
   BrowserCompute::pre_update_state(tc);
 
-  QJsonValue incoming = _inputs->get_input_value(Message::kUseCurrentElement);
-  if (incoming.toBool()) {
+  bool use_element = _inputs->get_input_boolean(Message::kUseCurrentElement);
+  if (use_element) {
     _worker->queue_get_current_element(tc);
     _worker->queue_copy_chain_property(tc, Message::kHREF, Message::kURL);
   } else {
@@ -425,9 +422,7 @@ void GetCurrentURLCompute::receive_chain_state(const QJsonObject& chain_state) {
   QString url = chain_state["value"].toString();
   std::cerr << "Got final url: " << url.toStdString() << "\n";
   // Grab the incoming object.
-  QJsonValue incoming = _inputs->get_input_value("in");
-  // Add the url into the incoming object under the key, "value".
-  QJsonObject obj = incoming.toObject();
+  QJsonObject obj = _inputs->get_input_object("in");
   obj.insert("value", url);
   set_output("out", obj);
 }
@@ -967,8 +962,7 @@ void ElementActionCompute::receive_chain_state(const QJsonObject& chain_state) {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonValue incoming = _inputs->get_input_value("in");
-  QJsonObject obj = JSONUtils::convert_to_object(incoming);
+  QJsonObject obj = _inputs->get_input_object("in");
   obj.insert("value", chain_state.value("value"));
   set_output("out", obj);
 }

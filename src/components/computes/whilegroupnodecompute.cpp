@@ -6,8 +6,7 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/outputnodecompute.h>
-#include <components/computes/loopdatanodecompute.h>
-#include <components/computes/accumulatedatanodecompute.h>
+#include <components/computes/scriptloopcontext.h>
 
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/outputshape.h>
@@ -31,16 +30,31 @@ void WhileGroupNodeCompute::set_self_dirty(bool dirty) {
   _restart_loop = true;
 }
 
+void WhileGroupNodeCompute::reset_loop_context() {
+  // Reset our script loop context.
+  Dep<ScriptLoopContext> c = get_dep<ScriptLoopContext>(Path({"."}));
+  c->reset();
+
+  // Reset the script loop context on any child group nodes.
+  const Entity::NameToChildMap &children = our_entity()->get_children();
+  for (auto &iter: children) {
+    if (iter.second->get_did() == EntityDID::kWhileGroupNodeEntity) {
+      Dep<WhileGroupNodeCompute> w = get_dep<WhileGroupNodeCompute>(iter.second);
+      w->reset_loop_context();
+    }
+  }
+}
+
 bool WhileGroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
   // Get the path to the condition in the in input.
-  QString condition_path_string = _inputs->get("condition_path")->get_output("out").toString();
+  QString condition_path_string = _inputs->get_input_string("condition_path");
   Path condition_path(Path::split_string(condition_path_string.toStdString()));
 
   // Get the value of the condition.
-  QJsonObject in_obj = _inputs->get("in")->get_output("out").toObject();
+  QJsonObject in_obj = _inputs->get_input_object("in");
   QJsonValue condition_value = JSONUtils::extract_value(in_obj, condition_path, false);
 
   // If the "condition" input is false then we copy the value from "in" to "out".
@@ -54,7 +68,7 @@ bool WhileGroupNodeCompute::update_state() {
       Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
       if (output_name == "out") {
         // We copy the value from in to out.
-        set_output("out", _inputs->get("in")->get_output("out"));
+        set_output("out", _inputs->get_input_object("in"));
       } else {
         // We set the value to zero for all other outputs.
         set_output(output_name, 0);
@@ -67,7 +81,7 @@ bool WhileGroupNodeCompute::update_state() {
     if (_restart_loop) {
       // If we get then we're just starting our loop.
       // Reset all the accumulate data nodes.
-      reset_accumulate_data_nodes();
+      reset_loop_context();
       _restart_loop = false;
       _do_next = true;
     }

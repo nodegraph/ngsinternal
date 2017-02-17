@@ -57,11 +57,11 @@ QJsonObject WaitNodeCompute::init_hints() {
 bool WaitNodeCompute::update_state() {
   internal();
   Compute::update_state();
-  set_output("out", _inputs->get_input_value("in"));
+  set_output("out", _inputs->get_input_object("in"));
 
   // Timer logic.
   if (_restart_timer) {
-    double time = _inputs->get_input_value("time_in_milliseconds").toDouble();
+    double time = _inputs->get_input_double("time_in_milliseconds");
     _wait_timer.start(time);
     _restart_timer = false;
   }

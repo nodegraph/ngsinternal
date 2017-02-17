@@ -59,9 +59,12 @@ class COMPUTES_EXPORT Flux: public Component {
   virtual const std::unordered_map<std::string, Dep<typename Traits::IOCompute> >& get_all() const;
 
   virtual bool has(const std::string& name) const;
-  virtual const Dep<typename Traits::IOCompute>& get(const std::string& name) const;
+
 
  protected:
+
+  virtual const Dep<typename Traits::IOCompute>& get(const std::string& name) const;
+
   // Our state.
   virtual void update_wires();
   virtual void gather(std::unordered_map<std::string, size_t>& exposed_ordering,

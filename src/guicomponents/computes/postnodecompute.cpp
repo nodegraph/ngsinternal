@@ -81,7 +81,7 @@ bool PostNodeCompute::update_state() {
   Compute::update_state();
 
   // Copy the input to the output.
-  QJsonValue in = _inputs->get_input_value("in");
+  QJsonObject in = _inputs->get_input_object("in");
   set_output("out", in);
 
   // Get the title text.
@@ -95,7 +95,7 @@ bool PostNodeCompute::update_state() {
   Path path(Path::split_string(path_string.toStdString()));
 
   // Get the value of the property.
-  QJsonObject in_obj = _inputs->get("in")->get_output("out").toObject();
+  QJsonObject in_obj = _inputs->get_input_object("in");
   QJsonValue value = JSONUtils::extract_value(in_obj, path);
 
   // Wrap the value in an object.

@@ -51,10 +51,10 @@ bool EraseDataNodeCompute::update_state() {
   Compute::update_state();
 
   // Our input object.
-  QJsonObject in_obj = _inputs->get_input_value("in").toObject();
+  QJsonObject in_obj = _inputs->get_input_object("in");
 
   // The source path.
-  QString path_string = _inputs->get("path")->get_output("out").toString();
+  QString path_string = _inputs->get_input_string("path");
   Path path(Path::split_string(path_string.toStdString()));
 
   // Get the source value.

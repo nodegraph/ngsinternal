@@ -7,7 +7,6 @@ set(sources
     javaprocess.cpp
     messagesender.cpp
     messagereceiver.cpp
-    scriptgroupnodecompute.cpp
     scriptnodecompute.cpp
     taskqueuer.cpp
     httpworker.cpp
@@ -42,7 +41,6 @@ set(moc_headers
     taskqueuer.h
     httpworker.h
     entermqttgroupcompute.h
-    scriptgroupnodecompute.h
     browserrecorder.h
     scriptnodecompute.h
     waitnodecompute.h

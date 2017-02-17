@@ -19,19 +19,11 @@ ListModel {
     ListElement {
     	letters: "Mg"
         title: "Merge Node"
-        description: "Merges data from two inputs and outputs it."
+        description: "Merges data from two inputs."
         script: "ng_controller.create_merge_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
 
-    ListElement {
-    	letters: "Ad"
-        title: "Accumulate Data Node"
-        description: "Merges all values passing through this node on all iterations while looping."
-        script: "ng_controller.create_accumulate_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
-    }
-    
     ListElement {
     	letters: "Sr"
         title: "Script Node"

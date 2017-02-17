@@ -34,7 +34,6 @@
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/groupnodecompute.h>
 #include <components/computes/ifgroupnodecompute.h>
-#include <components/computes/foreachgroupnodecompute.h>
 #include <components/computes/whilegroupnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/datanodecompute.h>
@@ -44,13 +43,12 @@
 #include <components/computes/outputnodecompute.h>
 #include <components/computes/inputs.h>
 #include <components/computes/outputs.h>
-#include <components/computes/loopdatanodecompute.h>
 #include <gui/widget/nodegrapheditor.h>
 
 #include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
 #include <base/objectmodel/appconfig.h>
-#include <components/computes/accumulatedatanodecompute.h>
+#include <components/computes/scriptloopcontext.h>
 
 #include <guicomponents/computes/browserrecorder.h>
 #include <guicomponents/computes/httpworker.h>
@@ -64,10 +62,8 @@
 #include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/entermqttgroupcompute.h>
-
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
-#include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/computes/waitnodecompute.h>
 
@@ -499,58 +495,12 @@ void IfGroupNodeEntity::create_internals(const EntityConfig& config) {
   create_default_enter_and_exit(this);
 }
 
-void ForEachGroupNodeEntity::create_internals(const EntityConfig& config) {
-  // Our components.
-  (new_ff ForEachGroupNodeCompute(this))->create_inputs_outputs(config);
-  new_ff Inputs(this);
-  new_ff Outputs(this);
-  // Gui related.
-  if (config.visible) {
-    new_ff GroupInteraction(this);
-    new_ff CompShapeCollective(this);
-    new_ff GroupNodeShape(this);
-    new_ff InputTopology(this);
-    new_ff OutputTopology(this);
-  }
-  // Sub Components.
-  {
-    InputNodeEntity* in = new_ff InputNodeEntity(this, "in");
-    EntityConfig config2;
-    config2.visible = true;
-    config2.unconnected_value = QJsonObject();
-    in->create_internals(config2);
-  }
-  {
-    InputNodeEntity* elements = new_ff InputNodeEntity(this, "elements_path");
-    EntityConfig config2;
-    config2.visible = false;
-    config2.unconnected_value = "/elements";
-    elements->create_internals(config2);
-  }
-  {
-    ComputeNodeEntity* element = new_ff ComputeNodeEntity(this, "element");
-    EntityConfig config2;
-    config2.visible = true;
-    config2.compute_did = ComponentDID::kLoopDataNodeCompute;
-    element->create_internals(config2);
-  }
-  {
-    OutputNodeEntity* out = new_ff OutputNodeEntity(this, "out");
-    EntityConfig config2;
-    config2.visible = true;
-    out->create_internals(config2);
-  }
-
-  create_default_exit(this);
-
-  create_default_enter_and_exit(this);
-}
-
 void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
   (new_ff WhileGroupNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
+  new_ff ScriptLoopContext(this);
   // Gui related.
   if (config.visible) {
     new_ff GroupInteraction(this);
@@ -583,23 +533,6 @@ void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
 
   create_default_exit(this);
 
-  create_default_enter_and_exit(this);
-}
-
-void ScriptGroupNodeEntity::create_internals(const EntityConfig& config) {
-  // Our components.
-  (new_ff ScriptGroupNodeCompute(this))->create_inputs_outputs(config);
-  new_ff Inputs(this);
-  new_ff Outputs(this);
-  // Gui related.
-  if (config.visible) {
-    new_ff GroupInteraction(this);
-    new_ff CompShapeCollective(this);
-    new_ff GroupNodeShape(this);
-    new_ff InputTopology(this);
-    new_ff OutputTopology(this);
-  }
-  // Sub Components.
   create_default_enter_and_exit(this);
 }
 

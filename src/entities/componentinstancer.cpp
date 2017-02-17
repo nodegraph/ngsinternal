@@ -23,7 +23,6 @@
 #include <components/computes/compute.h>
 #include <components/computes/groupnodecompute.h>
 #include <components/computes/ifgroupnodecompute.h>
-#include <components/computes/foreachgroupnodecompute.h>
 #include <components/computes/whilegroupnodecompute.h>
 #include <components/computes/mergenodecompute.h>
 #include <components/computes/datanodecompute.h>
@@ -37,7 +36,6 @@
 #include <components/computes/outputcompute.h>
 #include <components/computes/inputs.h>
 #include <components/computes/outputs.h>
-#include <components/computes/loopdatanodecompute.h>
 #include <components/interactions/viewcontrols.h>
 #include <components/interactions/graphbuilder.h>
 
@@ -64,7 +62,7 @@
 #include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/messagereceiver.h>
 #include <base/objectmodel/appconfig.h>
-#include <components/computes/accumulatedatanodecompute.h>
+#include <components/computes/scriptloopcontext.h>
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/httpworker.h>
@@ -77,7 +75,6 @@
 #include <guicomponents/computes/downloadmanager.h>
 #include <guicomponents/computes/javaprocess.h>
 #include <guicomponents/computes/browserrecorder.h>
-#include <guicomponents/computes/scriptgroupnodecompute.h>
 #include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/computes/waitnodecompute.h>
 #include <iostream>

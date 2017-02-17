@@ -89,24 +89,10 @@ class ENTITIES_EXPORT IfGroupNodeEntity : public GroupNodeEntity {
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
-class ENTITIES_EXPORT ForEachGroupNodeEntity : public GroupNodeEntity {
- public:
-  ENTITY_ID(ForEachGroupNodeEntity)
- ForEachGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
-  virtual void create_internals(const EntityConfig& configs = EntityConfig());
-};
-
 class ENTITIES_EXPORT WhileGroupNodeEntity : public GroupNodeEntity {
  public:
   ENTITY_ID(WhileGroupNodeEntity)
  WhileGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
-  virtual void create_internals(const EntityConfig& configs = EntityConfig());
-};
-
-class ENTITIES_EXPORT ScriptGroupNodeEntity : public GroupNodeEntity {
- public:
-  ENTITY_ID(ScriptGroupNodeEntity)
- ScriptGroupNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 

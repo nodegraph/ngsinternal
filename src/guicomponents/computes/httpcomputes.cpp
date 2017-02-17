@@ -111,8 +111,7 @@ void HTTPCompute::on_get_outputs(const QJsonObject& chain_state) {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonValue incoming = _inputs->get_input_value("in");
-  QJsonObject obj = JSONUtils::convert_to_object(incoming);
+  QJsonObject obj = _inputs->get_input_object("in");
   obj.insert("value", chain_state.value("value"));
   set_output("out", obj);
 }

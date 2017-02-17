@@ -111,8 +111,8 @@ bool MQTTPublishCompute::update_state() {
   internal();
   BaseMQTTCompute::update_state();
 
-  QString topic = _inputs->get_input_value(Message::kTopic).toString();
-  QString message = _inputs->get_input_value(Message::kMessage).toString();
+  QString topic = _inputs->get_input_string(Message::kTopic);
+  QString message = _inputs->get_input_string(Message::kMessage);
 
   TaskContext tc(_scheduler);
   _enter->queue_publish_task(tc, topic, message);
@@ -138,8 +138,7 @@ void MQTTSubscribeCompute::on_finished_task() {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonValue in = _inputs->get_input_value("in");
-  QJsonObject obj = JSONUtils::convert_to_object(in);
+  QJsonObject obj = _inputs->get_input_object("in");
   if (_override.isNull() || _override.isUndefined()) {
     // Do nothing.
   } else if (_override.isString()) {
@@ -181,7 +180,7 @@ void MQTTSubscribeCompute::clear_override() {
 bool MQTTSubscribeCompute::update_state() {
   internal();
   BaseMQTTCompute::update_state();
-  _topic = _inputs->get_input_value(Message::kTopic).toString();
+  _topic = _inputs->get_input_string(Message::kTopic);
 
   TaskContext tc(_scheduler);
   if (!_enter->is_subscribed(this, _topic.toStdString())) {

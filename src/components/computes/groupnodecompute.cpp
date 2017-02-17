@@ -8,7 +8,6 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/outputnodecompute.h>
-#include <components/computes/accumulatedatanodecompute.h>
 
 #include <components/compshapes/inputshape.h>
 #include <components/compshapes/outputshape.h>
@@ -252,30 +251,6 @@ void GroupNodeCompute::copy_output_nodes_to_outputs() {
     Entity* output_node = our_entity()->get_child(output_name);
     Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
     set_output(output_name, output_node_compute->get_output("out"));
-  }
-}
-
-void GroupNodeCompute::reset_accumulate_data_nodes() {
-  // Reset all the Accumulate nodes directly inside this group.
-  // Because of dirtiness propagation, this will also get called on all inner groups recursively.
-  const Entity::NameToChildMap &children = our_entity()->get_children();
-  for (auto &iter: children) {
-    if (our_entity()->has_comp_with_did(ComponentIID::kICompute, ComponentDID::kAccumulateDataNodeCompute)) {
-      Dep<AccumulateDataNodeCompute> c = get_dep<AccumulateDataNodeCompute>(iter.second);
-      c->clear_override();
-    }
-    // Recurse into all group node types.
-    EntityDID did = iter.second->get_did();
-    if (did == EntityDID::kBaseGroupNodeEntity ||
-        did == EntityDID::kGroupNodeEntity ||
-        did == EntityDID::kScriptGroupNodeEntity ||
-        did == EntityDID::kBrowserGroupNodeEntity ||
-        did == EntityDID::kMQTTGroupNodeEntity ||
-        did == EntityDID::kForEachGroupNodeEntity ||
-        did == EntityDID::kIfGroupNodeEntity) {
-      Dep<GroupNodeCompute> c = get_dep<GroupNodeCompute>(iter.second);
-      c->reset_accumulate_data_nodes();
-    }
   }
 }
 

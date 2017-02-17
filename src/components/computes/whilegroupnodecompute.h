@@ -11,6 +11,8 @@ class COMPUTES_EXPORT WhileGroupNodeCompute: public GroupNodeCompute {
   virtual ~WhileGroupNodeCompute();
 
  protected:
+  virtual void reset_loop_context();
+
   // Our state.
   virtual bool update_state();
   virtual void set_self_dirty(bool dirty);
