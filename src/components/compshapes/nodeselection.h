@@ -57,7 +57,6 @@ class COMPSHAPES_EXPORT NodeSelection: public Component {
 
   const DepUSet<NodeShape>& get_selected() const;
   void clear_selection();
-  void destroy_selection();
 
   // Clear all references to nodes.
   void clear_all();

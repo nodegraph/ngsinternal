@@ -782,7 +782,44 @@ void NodeGraphQuickItem::set_input_exposure(const QString& node_path, const QJso
 
 void NodeGraphQuickItem::destroy_selection() {
   external();
-  _selection->destroy_selection();
+
+  // Copy the current selection.
+  const DepUSet<NodeShape> selection = _selection->get_selected();
+
+  // Clear the selection.
+  _selection->clear_selection();
+
+  // Destroy the selected nodes.
+  for(const Dep<NodeShape>& cs: selection) {
+    if (!cs) {
+      continue;
+    }
+    Entity* e = cs->our_entity();
+    Entity* group = e->get_parent();
+
+    // Nodes that are not visible can never be selected. However just in case we skip invisible nodes.
+    if (!cs->is_visible()) {
+      continue;
+    }
+
+    // Nodes in certain groups cannot be destroyed.
+    if (group->get_did() == EntityDID::kIfGroupNodeEntity) {
+      const std::string& name = e->get_name();
+      if ( (name == "in") || (name == "out") ) {
+        continue;
+      }
+    }
+    if (group->get_did() == EntityDID::kWhileGroupNodeEntity) {
+      const std::string& name = e->get_name();
+      if ( (name == "in") || (name == "out") ) {
+        continue;
+      }
+    }
+
+    // Otherwise we destroy it.
+    delete_ff(e);
+  }
+
   get_app_root()->clean_dead_entities();
   update();
 }
@@ -931,7 +968,7 @@ void NodeGraphQuickItem::copy() {
 void NodeGraphQuickItem::cut() {
   external();
   _selection->copy();
-  _selection->destroy_selection();
+  destroy_selection();
   // Clean out dead links and update the shape collective.
   const Dep<GroupInteraction>& interaction = get_current_interaction();
   interaction->clean_dead_links();

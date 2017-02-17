@@ -259,43 +259,6 @@ void NodeSelection::clear_selection() {
   _selected_nodes.clear();
 }
 
-void NodeSelection::destroy_selection() {
-  external();
-
-  for(const Dep<NodeShape>& cs: _selected_nodes) {
-    if (!cs) {
-      continue;
-    }
-    Entity* e = cs->our_entity();
-    Entity* group = e->get_parent();
-
-    // Nodes that are not visible can never be selected. However just in case we skip invisible nodes.
-    if (!cs->is_visible()) {
-      continue;
-    }
-
-    // Nodes in certain groups cannot be destroyed.
-    if (group->get_did() == EntityDID::kIfGroupNodeEntity) {
-      const std::string& name = e->get_name();
-      if ( (name == "in") || (name == "out") ) {
-        continue;
-      }
-    }
-    if (group->get_did() == EntityDID::kWhileGroupNodeEntity) {
-      const std::string& name = e->get_name();
-      if ( (name == "in") || (name == "out") ) {
-        continue;
-      }
-    }
-
-    // Otherwise we destroy it.
-    delete_ff(e);
-  }
-  _selected_nodes.clear();
-  // Shoud any of our cached Dep<> references, reference a destroyed node they
-  // will become null.
-}
-
 // Clear all references to nodes.
 void NodeSelection::clear_all() {
   external();
