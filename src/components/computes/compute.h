@@ -20,8 +20,15 @@ namespace ngs {
 class InputCompute;
 class BaseNodeGraphManipulator;
 
+// The main input and main output are known to our nodegraph system
+// and various logic uses that knowledge.
+// Other inputs and outputs are only used within that specific compute.
 class COMPUTES_EXPORT Compute: public Component {
  public:
+
+  static const char* kMainInputName;
+  static const char* kMainOutputName;
+
   COMPONENT_ID(Compute, InvalidComponent);
   Compute(Entity* entity, ComponentDID derived_id);
   virtual ~Compute();
@@ -40,6 +47,7 @@ class COMPUTES_EXPORT Compute: public Component {
   // Access outputs.
   virtual const QJsonObject& get_outputs() const;
   virtual QJsonValue get_output(const std::string& name) const;
+  virtual QJsonValue get_main_output() const;
 
   // Get our hints.
   virtual const QJsonObject& get_hints() const {return _hints;}
@@ -65,9 +73,14 @@ class COMPUTES_EXPORT Compute: public Component {
   // Plugs.
   Entity* create_input(const std::string& name, const EntityConfig& config);
   Entity* create_output(const std::string& name, const EntityConfig& config);
+
+  Entity* create_main_input();
+  Entity* create_main_output();
+
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
   Entity* get_outputs_space();
+  Entity* get_links_space();
 
   // Used by derived classes.
   static void add_hint(QJsonObject& map, const std::string& name, GUITypes::HintKey hint_type, const QJsonValue& value);

@@ -19,6 +19,9 @@
 
 namespace ngs {
 
+const char* Compute::kMainInputName = "in";
+const char* Compute::kMainOutputName = "out";
+
 struct InputComputeComparator {
   bool operator()(const Dep<InputCompute>& left, const Dep<InputCompute>& right) const {
     return left->get_name() < right->get_name();
@@ -118,6 +121,10 @@ QJsonValue Compute::get_output(const std::string& name) const{
   return _outputs.value(name.c_str());
 }
 
+QJsonValue Compute::get_main_output() const {
+  return get_output(kMainOutputName);
+}
+
 void Compute::set_output(const std::string& name, const QJsonValue& value) {
   internal();
   _outputs.insert(name.c_str(), value);
@@ -155,6 +162,18 @@ Entity* Compute::create_output(const std::string& name, const EntityConfig& conf
   return output;
 }
 
+Entity* Compute::create_main_input() {
+  EntityConfig c;
+  c.unconnected_value = QJsonObject();
+  return create_input(kMainInputName, c);
+}
+
+Entity* Compute::create_main_output() {
+  EntityConfig c;
+  c.unconnected_value = QJsonObject();
+  return create_output(kMainOutputName, c);
+}
+
 Entity* Compute::create_namespace(const std::string& name) {
   external();
   Dep<BaseFactory> factory = get_dep<BaseFactory>(Path());
@@ -171,6 +190,11 @@ Entity* Compute::get_inputs_space() {
 Entity* Compute::get_outputs_space() {
   external();
   return our_entity()->get_child(kOutputsFolderName);
+}
+
+Entity* Compute::get_links_space() {
+  external();
+  return our_entity()->get_child(kLinksFolderName);
 }
 
 void Compute::add_hint(QJsonObject& node_hints, const std::string& name, GUITypes::HintKey hint_type, const QJsonValue& value) {
@@ -195,7 +219,7 @@ bool Compute::eval_js_with_inputs(const QString& text, QJsonValue& result, QStri
   // Add the input values into the context.
   for (auto &iter: _inputs->get_all()) {
     const Dep<InputCompute>& input = iter.second;
-    QJsonValue value = input->get_output("out");
+    QJsonValue value = input->get_main_output();
     const std::string& input_name = input->get_name();
     QJSValue jsvalue = engine.toScriptValue(value);
     engine.globalObject().setProperty(QString::fromStdString(input_name), jsvalue);
