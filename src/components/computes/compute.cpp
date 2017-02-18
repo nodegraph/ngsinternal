@@ -83,9 +83,9 @@ bool Compute::clean_finalize() {
   internal();
   Component::clean_finalize();
   // Notify the gui side that a computation is now processing on the compute side.
-  if (_manipulator) {
-    _manipulator->clear_processing_node();
-  }
+  //if (_manipulator) {
+  //  _manipulator->clear_processing_node();
+  //}
   return true;
 }
 
