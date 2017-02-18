@@ -71,6 +71,12 @@ BaseStackPage{
     }
     
     function rename_node() {
+    	if (!node_graph_item.can_rename_node()) {
+    		error_page.set_error_message("This node's name cannot be changed. The surrounding group looks for it under this name.")
+    		main_bar.switch_to_last_mode()
+    		error_page.show_page()
+    		return
+    	}
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/EnterStringPage.qml", page, {})
         push_page.visible = true
         push_page.set_value("new_name")

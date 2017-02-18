@@ -809,6 +809,9 @@ void NodeGraphQuickItem::destroy_selection() {
 
     // Nodes in certain groups cannot be destroyed.
     if (e->is_topologically_fixed()) {
+      QString msg = "Some nodes are required by the surrounding group and cannot be removed.";
+      emit set_error_message(msg);
+      emit show_error_page();
       continue;
     }
 
@@ -1130,13 +1133,26 @@ void NodeGraphQuickItem::edit_node_poke() {
   emit edit_node_inputs(node_path, compute->get_editable_inputs(), compute->get_hints(), compute->get_input_exposure());
 }
 
+bool NodeGraphQuickItem::can_rename_node() {
+  if (!_last_node_shape) {
+    return false;
+  }
+  // Nodes in certain groups cannot be renamed.
+  if (_last_node_shape->our_entity()->is_topologically_fixed()) {
+    return false;
+  }
+  return true;
+}
+
 void NodeGraphQuickItem::rename_node(const QString& next_name) {
   if (!_last_node_shape) {
-    std::cerr << "error there was no last clicked node\n";
     return;
   }
   // Nodes in certain groups cannot be renamed.
   if (_last_node_shape->our_entity()->is_topologically_fixed()) {
+    QString msg = "This node's name cannot be changed. The surrounding group looks for it under this name.";
+    emit set_error_message(msg);
+    emit show_error_page();
     return;
   }
 
