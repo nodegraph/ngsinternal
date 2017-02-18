@@ -87,10 +87,7 @@ QJsonObject ScriptNodeCompute::get_context() {
 
 void ScriptNodeCompute::set_context(const QJsonObject& context) {
   if (_context) {
-    std::cerr << "1111\n";
     _context->set_context(context);
-  } else {
-    std::cerr << "2222\n";
   }
   // Does nothing if we don't have a group with a context surrounding us.
 }
