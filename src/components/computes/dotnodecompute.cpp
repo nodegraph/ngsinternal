@@ -16,31 +16,24 @@ DotNodeCompute::~DotNodeCompute() {
 void DotNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = true;
-  c.unconnected_value = QJsonObject();
-
+  create_main_input(config);
+  create_main_output(config);
   // The type of the input and output is set to be an object.
   // This allows us to connect our input and output to any plug types,
   // as the input computes will convert values automatically.
-  create_input("in", c);
-  create_output("out", c);
 }
 
 const QJsonObject DotNodeCompute::_hints = DotNodeCompute::init_hints();
 QJsonObject DotNodeCompute::init_hints() {
   QJsonObject m;
-
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
-
+  add_main_input_hint(m);
   return m;
 }
 
 bool DotNodeCompute::update_state() {
   internal();
   Compute::update_state();
-  set_output("out", _inputs->get_input_value("in"));
+  set_main_output(_inputs->get_main_input_object());
   return true;
 }
 

@@ -29,17 +29,12 @@ BaseMQTTCompute::~BaseMQTTCompute() {
 void BaseMQTTCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = true;
-  c.unconnected_value = QJsonObject();
-
-  create_input("in", c);
-  create_output("out", c);
+  create_main_input(config);
+  create_main_output(config);
 }
 
 void BaseMQTTCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_main_input_hint(m);
 }
 
 void BaseMQTTCompute::update_wires() {
@@ -78,8 +73,8 @@ void BaseMQTTCompute::on_finished_task() {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonValue incoming = _inputs->get_input_value("in");
-  set_output("out", incoming);
+  QJsonObject incoming = _inputs->get_main_input_object();
+  set_main_output(incoming);
 }
 
 //--------------------------------------------------------------------------------
@@ -138,7 +133,7 @@ void MQTTSubscribeCompute::on_finished_task() {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonObject obj = _inputs->get_input_object("in");
+  QJsonObject obj = _inputs->get_main_input_object();
   if (_override.isNull() || _override.isUndefined()) {
     // Do nothing.
   } else if (_override.isString()) {
@@ -146,7 +141,7 @@ void MQTTSubscribeCompute::on_finished_task() {
   } else {
     std::cerr << "Error: the MQTTSubscribe's override has an improper type. It should be a string.";
   }
-  set_output("out", obj);
+  set_main_output(obj);
 }
 
 const QJsonObject MQTTSubscribeCompute::_hints = MQTTSubscribeCompute::init_hints();

@@ -54,10 +54,10 @@ bool WhileGroupNodeCompute::update_state() {
   Path condition_path(Path::split_string(condition_path_string.toStdString()));
 
   // Get the value of the condition.
-  QJsonObject in_obj = _inputs->get_input_object("in");
+  QJsonObject in_obj = _inputs->get_main_input_object();
   QJsonValue condition_value = JSONUtils::extract_value(in_obj, condition_path, false);
 
-  // If the "condition" input is false then we copy the value from "in" to "out".
+  // If the "condition" input is false then we copy the value from the main input to the main output.
   // We set the value to zero for all other outputs.
   if (!condition_value.toBool()) {
     Entity* outputs = get_entity(Path( { ".", kOutputsFolderName }));
@@ -66,9 +66,9 @@ bool WhileGroupNodeCompute::update_state() {
       const std::string& output_name = output_entity->get_name();
       Entity* output_node = our_entity()->get_child(output_name);
       Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
-      if (output_name == "out") {
+      if (output_name == kMainOutputName) {
         // We copy the value from in to out.
-        set_output("out", _inputs->get_input_object("in"));
+        set_main_output(_inputs->get_main_input_object());
       } else {
         // We set the value to zero for all other outputs.
         set_output(output_name, 0);
@@ -106,8 +106,8 @@ bool WhileGroupNodeCompute::update_state() {
       return false;
     }
 
-    // Check the "out" value to see if the value at condition_path is false.
-    QJsonObject out_obj = get_output("out").toObject();
+    // Check the main output value to see if the value at condition_path is false.
+    QJsonObject out_obj = get_main_output().toObject();
     QJsonValue condition_value = JSONUtils::extract_value(out_obj, condition_path, false);
     if (!condition_value.toBool()) {
       break;

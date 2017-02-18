@@ -119,6 +119,7 @@ class OBJECTMODEL_EXPORT Entity {
   void destroy_all_children_except(const std::unordered_set<EntityDID>& dids);
   void rename_child(const std::string& prev_name, const std::string& next_name);
   const NameToChildMap& get_children() const;
+  bool is_topologically_fixed() const;
 
   // Our children's names.
   bool has_child_name(const std::string& name) const;

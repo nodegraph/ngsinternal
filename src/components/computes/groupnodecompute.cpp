@@ -43,7 +43,11 @@ void GroupNodeCompute::WireUpdater::update_wires() {
         // Otherwise we create an input plug.
         InputEntity* input = static_cast<InputEntity*>(_target->_factory->instance_entity(inputs_space, EntityDID::kInputEntity, child_name));
         EntityConfig config;
-        config.expose_plug = false;
+        if (child_name == kMainInputNodeName) {
+          config.expose_plug = true;
+        } else {
+          config.expose_plug = false;
+        }
         input->create_internals(config);
         input->initialize_wires();
         // Grab the computes on the input and the input node inside the group.
@@ -236,8 +240,8 @@ void GroupNodeCompute::copy_inputs_to_input_nodes() {
     // especially when the group contains asynchronous web action nodes.
     Dep<InputNodeCompute> input_node_compute = get_dep<InputNodeCompute>(input_node);
     if (input_node_compute) {
-      if (input_node_compute->get_override() != input->get_output("out")) {
-        input_node_compute->set_override(input->get_output("out"));
+      if (input_node_compute->get_override() != input->get_main_output()) {
+        input_node_compute->set_override(input->get_main_output());
       }
     }
   }
@@ -250,7 +254,7 @@ void GroupNodeCompute::copy_output_nodes_to_outputs() {
     const std::string& output_name = output_entity->get_name();
     Entity* output_node = our_entity()->get_child(output_name);
     Dep<OutputNodeCompute> output_node_compute = get_dep<OutputNodeCompute>(output_node);
-    set_output(output_name, output_node_compute->get_output("out"));
+    set_output(output_name, output_node_compute->get_main_output());
   }
 }
 

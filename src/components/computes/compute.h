@@ -69,13 +69,14 @@ class COMPUTES_EXPORT Compute: public Component {
   // Our outputs. These are called during cleaning, so they don't dirty the instance's state.
   virtual void set_outputs(const QJsonObject& outputs);
   virtual void set_output(const std::string& name, const QJsonValue& value);
+  virtual void set_main_output(const QJsonValue& value);
 
   // Plugs.
   Entity* create_input(const std::string& name, const EntityConfig& config);
   Entity* create_output(const std::string& name, const EntityConfig& config);
 
-  Entity* create_main_input();
-  Entity* create_main_output();
+  Entity* create_main_input(const EntityConfig& config);
+  Entity* create_main_output(const EntityConfig& config);
 
   Entity* create_namespace(const std::string& name);
   Entity* get_inputs_space();
@@ -85,6 +86,7 @@ class COMPUTES_EXPORT Compute: public Component {
   // Used by derived classes.
   static void add_hint(QJsonObject& map, const std::string& name, GUITypes::HintKey hint_type, const QJsonValue& value);
   static void remove_hint(QJsonObject& node_hints, const std::string& name);
+  static void add_main_input_hint(QJsonObject& map);
 
  protected:
   Dep<Inputs> _inputs;

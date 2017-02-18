@@ -19,27 +19,20 @@ OutputNodeCompute::~OutputNodeCompute() {
 void OutputNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = true;
-  // We take the unconnected value from the config.
-
-  create_input("in", c);
+  create_main_input(config);
 }
 
 const QJsonObject OutputNodeCompute::_hints = OutputNodeCompute::init_hints();
 QJsonObject OutputNodeCompute::init_hints() {
   QJsonObject m;
-
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
-
+  add_main_input_hint(m);
   return m;
 }
 
 bool OutputNodeCompute::update_state() {
   internal();
   Compute::update_state();
-  set_output("out", _inputs->get_exposed().at("in")->get_output("out"));
+  set_main_output(_inputs->get_main_input_object());
   return true;
 }
 

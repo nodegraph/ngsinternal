@@ -24,18 +24,9 @@ WaitNodeCompute::~WaitNodeCompute() {
 void WaitNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
+  create_main_input(config);
+  create_main_output(config);
 
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    c.unconnected_value = QJsonObject();
-
-    // The type of the input and output is set to be an object.
-    // This allows us to connect our input and output to any plug types,
-    // as the input computes will convert values automatically.
-    create_input("in", c);
-    create_output("out", c);
-  }
   {
     EntityConfig c = config;
     c.expose_plug = false;
@@ -47,17 +38,15 @@ void WaitNodeCompute::create_inputs_outputs(const EntityConfig& config) {
 const QJsonObject WaitNodeCompute::_hints = WaitNodeCompute::init_hints();
 QJsonObject WaitNodeCompute::init_hints() {
   QJsonObject m;
-
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_main_input_hint(m);
   add_hint(m, "time_in_milliseconds", GUITypes::HintKey::DescriptionHint, "The time to wait specified in milliseconds.");
-
   return m;
 }
 
 bool WaitNodeCompute::update_state() {
   internal();
   Compute::update_state();
-  set_output("out", _inputs->get_input_object("in"));
+  set_main_output(_inputs->get_main_input_object());
 
   // Timer logic.
   if (_restart_timer) {

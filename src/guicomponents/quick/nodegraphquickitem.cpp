@@ -803,17 +803,8 @@ void NodeGraphQuickItem::destroy_selection() {
     }
 
     // Nodes in certain groups cannot be destroyed.
-    if (group->get_did() == EntityDID::kIfGroupNodeEntity) {
-      const std::string& name = e->get_name();
-      if ( (name == "in") || (name == "out") ) {
-        continue;
-      }
-    }
-    if (group->get_did() == EntityDID::kWhileGroupNodeEntity) {
-      const std::string& name = e->get_name();
-      if ( (name == "in") || (name == "out") ) {
-        continue;
-      }
+    if (e->is_topologically_fixed()) {
+      continue;
     }
 
     // Otherwise we destroy it.
@@ -1139,6 +1130,11 @@ void NodeGraphQuickItem::rename_node(const QString& next_name) {
     std::cerr << "error there was no last clicked node\n";
     return;
   }
+  // Nodes in certain groups cannot be renamed.
+  if (_last_node_shape->our_entity()->is_topologically_fixed()) {
+    return;
+  }
+
   _last_node_shape->our_entity()->rename(next_name.toStdString());
   _last_node_shape->dirty_state();
   update();

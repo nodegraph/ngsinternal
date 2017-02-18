@@ -10,6 +10,11 @@ OBJECTMODEL_EXPORT extern const char* kInputsFolderName;
 OBJECTMODEL_EXPORT extern const char* kOutputsFolderName;
 OBJECTMODEL_EXPORT extern const char* kLinksFolderName;
 
+// Names for special entities in groups.
+OBJECTMODEL_EXPORT extern const char* kMainInputNodeName;
+OBJECTMODEL_EXPORT extern const char* kMainOutputNodeName;
+OBJECTMODEL_EXPORT extern const char* kMainConditionPathNodeName;
+
 // These macros should be used in class declarations.
 // These IDs are used heavily in serialization and identifying
 // components in Entities.

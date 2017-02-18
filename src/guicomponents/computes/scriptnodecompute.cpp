@@ -30,13 +30,9 @@ ScriptNodeCompute::~ScriptNodeCompute() {
 void ScriptNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
+  create_main_input(config);
+  create_main_output(config);
 
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    c.unconnected_value = QJsonObject();
-    create_input("in", c);
-  }
   {
     EntityConfig c = config;
     c.expose_plug = false;
@@ -56,18 +52,12 @@ void ScriptNodeCompute::create_inputs_outputs(const EntityConfig& config) {
     c.unconnected_value = example;
     create_input("script", c);
   }
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    create_output("out", c);
-  }
 }
 
 const QJsonObject ScriptNodeCompute::_hints = ScriptNodeCompute::init_hints();
 QJsonObject ScriptNodeCompute::init_hints() {
   QJsonObject m;
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
-
+  add_main_input_hint(m);
   add_hint(m, "script", GUITypes::HintKey::MultiLineHint, true);
   add_hint(m, "script", GUITypes::HintKey::DescriptionHint, "Script to compute the output value.\nPredeclared variables are. \ncontext: a modifiable javascript object which holds state across loop iterations. \ninput: the unmodifiable input object.\noutput: the modifiable output object.");
   return m;
@@ -89,11 +79,11 @@ void ScriptNodeCompute::set_context(const QJsonObject& context) {
 }
 
 QJsonObject ScriptNodeCompute::get_input() {
-  return _inputs->get_input_object("in");
+  return _inputs->get_main_input_object();
 }
 
 void ScriptNodeCompute::set_output(const QJsonObject& value) {
-  _outputs.insert("out", value);
+  set_main_output(value);
 }
 
 bool ScriptNodeCompute::update_state() {
@@ -105,9 +95,8 @@ bool ScriptNodeCompute::update_state() {
   QQmlContext eval_context(engine.rootContext());
   // Expose our set_output method to the script.
   eval_context.setContextObject(this);
-  // Add our single input into the context.
-  //eval_context.setContextProperty("from", 111);
-  //eval_context.setContextProperty("in", _inputs->get_input_value("in").toVariant());
+  // Note we add other properties into the context as follows.
+  //eval_context.setContextProperty("test", 111);
 
   // Create the expression.
   QString body = _inputs->get_input_string("script");

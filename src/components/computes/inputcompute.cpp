@@ -34,12 +34,12 @@ bool InputCompute::update_state() {
 
   // Merge in information from the upstream output.
   if (_upstream) {
-    QJsonValue out = _upstream->get_output("out");
+    QJsonValue out = _upstream->get_main_output();
     output = JSONUtils::deep_merge(output, out);
   }
 
   // Cache the result in our outputs.
-  set_output("out", output);
+  set_main_output(output);
   return true;
 }
 

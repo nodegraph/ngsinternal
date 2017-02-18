@@ -17,17 +17,12 @@ DataNodeCompute::~DataNodeCompute() {
 void DataNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
+  create_main_output(config);
   {
     EntityConfig c = config;
     c.expose_plug = false;
     // We take the unconnected value from the config.
     create_input("data", c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    c.unconnected_value = QJsonObject();
-    create_output("out", c);
   }
 }
 
@@ -43,7 +38,7 @@ QJsonObject DataNodeCompute::init_hints() {
 bool DataNodeCompute::update_state() {
   Compute::update_state();
   QJsonValue value = _inputs->get_input_value("data");
-  set_output("out", value);
+  set_main_output(value);
   return true;
 }
 

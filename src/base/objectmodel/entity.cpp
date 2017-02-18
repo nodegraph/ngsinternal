@@ -252,6 +252,18 @@ const Entity::NameToChildMap& Entity::get_children() const {
   return _children;
 }
 
+// Nodes in certain groups cannot be destroyed or renamed.
+bool Entity::is_topologically_fixed() const {
+  Entity* group = get_parent();
+  if (group->get_did() == EntityDID::kIfGroupNodeEntity || group->get_did() == EntityDID::kWhileGroupNodeEntity) {
+    const std::string& name = get_name();
+    if ((name == kMainInputNodeName) || (name == kMainOutputNodeName) || (name == kMainConditionPathNodeName)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Entity* Entity::get_app_root() const {
   if (!get_parent()) {
     return const_cast<Entity*>(this);

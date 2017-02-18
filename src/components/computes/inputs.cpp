@@ -76,7 +76,7 @@ QJsonValue Inputs::get_input_value(const std::string& input_name) const {
     std::cerr << "Warning: couldn't find input: " << input_name << "\n";
     return QJsonValue();
   }
-  return input->get_output("out");
+  return input->get_main_output();
 }
 
 double Inputs::get_input_double(const std::string& input_name) const {
@@ -99,10 +99,14 @@ QJsonObject Inputs::get_input_object(const std::string& input_name) const {
   return JSONUtils::convert_to_object(get_input_value(input_name));
 }
 
+QJsonObject Inputs::get_main_input_object() const {
+  return get_input_object(Compute::kMainInputName);
+}
+
 QJsonObject Inputs::get_input_values() const {
   QJsonObject result;
   for (auto &iter: _all) {
-    result.insert(iter.first.c_str(), iter.second->get_output("out"));
+    result.insert(iter.first.c_str(), iter.second->get_main_output());
   }
   return result;
 }

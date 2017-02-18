@@ -130,6 +130,11 @@ void Compute::set_output(const std::string& name, const QJsonValue& value) {
   _outputs.insert(name.c_str(), value);
 }
 
+void Compute::set_main_output(const QJsonValue& value) {
+  internal();
+  _outputs.insert(kMainOutputName, value);
+}
+
 Entity* Compute::create_input(const std::string& name, const EntityConfig& config) {
   external();
 
@@ -162,14 +167,14 @@ Entity* Compute::create_output(const std::string& name, const EntityConfig& conf
   return output;
 }
 
-Entity* Compute::create_main_input() {
-  EntityConfig c;
+Entity* Compute::create_main_input(const EntityConfig& config) {
+  EntityConfig c = config;
   c.unconnected_value = QJsonObject();
   return create_input(kMainInputName, c);
 }
 
-Entity* Compute::create_main_output() {
-  EntityConfig c;
+Entity* Compute::create_main_output(const EntityConfig& config) {
+  EntityConfig c = config;
   c.unconnected_value = QJsonObject();
   return create_output(kMainOutputName, c);
 }
@@ -205,6 +210,10 @@ void Compute::add_hint(QJsonObject& node_hints, const std::string& name, GUIType
 
 void Compute::remove_hint(QJsonObject& node_hints, const std::string& name) {
   node_hints.remove(name.c_str());
+}
+
+void Compute::add_main_input_hint(QJsonObject& map) {
+  add_hint(map, kMainInputName, GUITypes::HintKey::DescriptionHint, "The main input object that the node operates on.");
 }
 
 void Compute::on_error(const QString& error_message) {

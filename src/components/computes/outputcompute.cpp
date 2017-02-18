@@ -21,7 +21,7 @@ bool OutputCompute::update_state() {
 
   // Using our name we query our nodes compute results.
   const std::string& our_name = our_entity()->get_name();
-  set_output("out", _node_compute->get_output(our_name));
+  set_main_output(_node_compute->get_output(our_name));
   return true;
 }
 

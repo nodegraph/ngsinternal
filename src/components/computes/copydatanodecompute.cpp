@@ -17,12 +17,9 @@ CopyDataNodeCompute::~CopyDataNodeCompute() {
 void CopyDataNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    c.unconnected_value = QJsonObject();
-    create_input("in", c);
-  }
+  create_main_input(config);
+  create_main_output(config);
+
   {
     EntityConfig c = config;
     c.expose_plug = false;
@@ -35,24 +32,14 @@ void CopyDataNodeCompute::create_inputs_outputs(const EntityConfig& config) {
     c.unconnected_value = "/copy";
     create_input("destination_path", c);
   }
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    c.unconnected_value = QJsonObject();
-    create_output("out", c);
-  }
-
 }
 
 const QJsonObject CopyDataNodeCompute::_hints = CopyDataNodeCompute::init_hints();
 QJsonObject CopyDataNodeCompute::init_hints() {
   QJsonObject m;
-
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The input object within which to copy and paste a value.");
+  add_main_input_hint(m);
   add_hint(m, "source_path", GUITypes::HintKey::DescriptionHint, "The source path from which we want to copy data.");
   add_hint(m, "destination_path", GUITypes::HintKey::DescriptionHint, "The target path to which we want to paste data.");
-
   return m;
 }
 
@@ -60,7 +47,7 @@ bool CopyDataNodeCompute::update_state() {
   Compute::update_state();
 
   // Our input object.
-  QJsonObject in_obj = _inputs->get_input_object("in");
+  QJsonObject in_obj = _inputs->get_main_input_object();
 
   // The source path.
   QString src_path_string = _inputs->get_input_string("source_path");
@@ -77,7 +64,7 @@ bool CopyDataNodeCompute::update_state() {
   in_obj = JSONUtils::embed_value(in_obj, dest_path, src_value);
 
   // Set the output.
-  set_output("out", in_obj);
+  set_main_output(in_obj);
   return true;
 }
 

@@ -92,17 +92,17 @@ void TestDeps::set_up() {
   _mock_c_compute = get_dep<OutputCompute>(_mock->get_entity(Path({".",kOutputsFolderName,"c"})));
   _mock_d_compute = get_dep<OutputCompute>(_mock->get_entity(Path({".",kOutputsFolderName,"d"})));
 
-  _dot_a_in_compute = get_dep<InputCompute>(_dot_a->get_entity(Path({".",kInputsFolderName,"in"})));
-  _dot_a_out_compute = get_dep<OutputCompute>(_dot_a->get_entity(Path({".",kOutputsFolderName,"out"})));
+  _dot_a_in_compute = get_dep<InputCompute>(_dot_a->get_entity(Path({".",kInputsFolderName, Compute::kMainInputName})));
+  _dot_a_out_compute = get_dep<OutputCompute>(_dot_a->get_entity(Path({".",kOutputsFolderName,Compute::kMainOutputName})));
 
-  _dot_b_in_compute = get_dep<InputCompute>(_dot_b->get_entity(Path({".",kInputsFolderName,"in"})));
-  _dot_b_out_compute = get_dep<OutputCompute>(_dot_b->get_entity(Path({".",kOutputsFolderName,"out"})));
+  _dot_b_in_compute = get_dep<InputCompute>(_dot_b->get_entity(Path({".",kInputsFolderName,Compute::kMainInputName})));
+  _dot_b_out_compute = get_dep<OutputCompute>(_dot_b->get_entity(Path({".",kOutputsFolderName,Compute::kMainOutputName})));
 
-  _dot_c_in_compute = get_dep<InputCompute>(_dot_c->get_entity(Path({".",kInputsFolderName,"in"})));
-  _dot_c_out_compute = get_dep<OutputCompute>(_dot_c->get_entity(Path({".",kOutputsFolderName,"out"})));
+  _dot_c_in_compute = get_dep<InputCompute>(_dot_c->get_entity(Path({".",kInputsFolderName,Compute::kMainInputName})));
+  _dot_c_out_compute = get_dep<OutputCompute>(_dot_c->get_entity(Path({".",kOutputsFolderName,Compute::kMainOutputName})));
 
-  _dot_d_in_compute = get_dep<InputCompute>(_dot_d->get_entity(Path({".",kInputsFolderName,"in"})));
-  _dot_d_out_compute = get_dep<OutputCompute>(_dot_d->get_entity(Path({".",kOutputsFolderName,"out"})));
+  _dot_d_in_compute = get_dep<InputCompute>(_dot_d->get_entity(Path({".",kInputsFolderName,Compute::kMainInputName})));
+  _dot_d_out_compute = get_dep<OutputCompute>(_dot_d->get_entity(Path({".",kOutputsFolderName,Compute::kMainOutputName})));
 
   // verify everything is dirty
   verify_all(true);

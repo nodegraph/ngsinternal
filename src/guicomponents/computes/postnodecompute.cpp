@@ -31,13 +31,9 @@ PostNodeCompute::~PostNodeCompute() {
 void PostNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
+  create_main_input(config);
+  create_main_output(config);
 
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    c.unconnected_value = QJsonObject();
-    create_input("in", c);
-  }
   {
     EntityConfig c = config;
     c.expose_plug = false;
@@ -56,17 +52,12 @@ void PostNodeCompute::create_inputs_outputs(const EntityConfig& config) {
       c.unconnected_value = "";
       create_input("property_path", c);
   }
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    create_output("out", c);
-  }
 }
 
 const QJsonObject PostNodeCompute::_hints = PostNodeCompute::init_hints();
 QJsonObject PostNodeCompute::init_hints() {
   QJsonObject m;
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main input from which a property will be posted.");
+  add_main_input_hint(m);
 
   add_hint(m, "post_type", GUITypes::HintKey::DescriptionHint, "The type of post to make.");
   add_hint(m, "post_type", GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::PostType));
@@ -81,8 +72,8 @@ bool PostNodeCompute::update_state() {
   Compute::update_state();
 
   // Copy the input to the output.
-  QJsonObject in = _inputs->get_input_object("in");
-  set_output("out", in);
+  QJsonObject in = _inputs->get_main_input_object();
+  set_main_output(in);
 
   // Get the title text.
   QString title = _inputs->get_input_value("title").toString();
@@ -95,7 +86,7 @@ bool PostNodeCompute::update_state() {
   Path path(Path::split_string(path_string.toStdString()));
 
   // Get the value of the property.
-  QJsonObject in_obj = _inputs->get_input_object("in");
+  QJsonObject in_obj = _inputs->get_main_input_object();
   QJsonValue value = JSONUtils::extract_value(in_obj, path);
 
   // Wrap the value in an object.

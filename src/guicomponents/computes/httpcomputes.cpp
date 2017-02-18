@@ -30,17 +30,12 @@ BaseHTTPCompute::~BaseHTTPCompute() {
 void BaseHTTPCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = true;
-  c.unconnected_value = QJsonObject();
-
-  create_input("in", c);
-  create_output("out", c);
+  create_main_input(config);
+  create_main_output(config);
 }
 
 void BaseHTTPCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_main_input_hint(m);
 }
 
 void BaseHTTPCompute::dump_map(const QJsonObject& inputs) const {
@@ -67,8 +62,8 @@ void BaseHTTPCompute::on_get_outputs(const QJsonObject& chain_state) {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonValue incoming = _inputs->get_input_value("in");
-  set_output("out", incoming);
+  QJsonObject incoming = _inputs->get_main_input_object();
+  set_main_output(incoming);
 }
 
 //--------------------------------------------------------------------------------
@@ -111,9 +106,9 @@ void HTTPCompute::on_get_outputs(const QJsonObject& chain_state) {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonObject obj = _inputs->get_input_object("in");
+  QJsonObject obj = _inputs->get_main_input_object();
   obj.insert("value", chain_state.value("value"));
-  set_output("out", obj);
+  set_main_output(obj);
 }
 
 bool HTTPCompute::update_state() {

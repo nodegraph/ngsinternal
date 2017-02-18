@@ -39,7 +39,10 @@ class COMPUTES_EXPORT Inputs: public Flux<InputTraits> {
   QJsonArray get_input_array(const std::string& input_name) const;
   QJsonObject get_input_object(const std::string& input_name) const;
 
-  // Get all values.
+  // Get the main input as an object.
+  QJsonObject get_main_input_object() const;
+
+  // Get all input values.
   QJsonObject get_input_values() const;
 
   friend class GroupNodeCompute;

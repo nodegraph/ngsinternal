@@ -31,17 +31,12 @@ BrowserCompute::~BrowserCompute() {
 void BrowserCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = true;
-  c.unconnected_value = QJsonObject();
-
-  create_input("in", c);
-  create_output("out", c);
+  create_main_input(config);
+  create_main_output(config);
 }
 
 void BrowserCompute::init_hints(QJsonObject& m) {
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main object that flows through this node. This cannot be set manually.");
+  add_main_input_hint(m);
 }
 
 void BrowserCompute::dump_map(const QJsonObject& inputs) const {
@@ -105,9 +100,9 @@ void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonObject obj = _inputs->get_input_object("in");
+  QJsonObject obj = _inputs->get_main_input_object();
   obj.insert("value", chain_state.value("value"));
-  set_output("out", obj);
+  set_main_output(obj);
 }
 
 //--------------------------------------------------------------------------------
@@ -200,9 +195,9 @@ void GetActiveTabTitleCompute::receive_chain_state(const QJsonObject& chain_stat
   QString title = chain_state["value"].toString();
   std::cerr << "Got browser title: " << title.toStdString() << "\n";
   // Grab the incoming object.
-  QJsonObject obj = _inputs->get_input_object("in");
+  QJsonObject obj = _inputs->get_main_input_object();
   obj.insert("value", title);
-  set_output("out", obj);
+  set_main_output(obj);
 }
 
 bool GetActiveTabTitleCompute::update_state(){
@@ -422,9 +417,9 @@ void GetCurrentURLCompute::receive_chain_state(const QJsonObject& chain_state) {
   QString url = chain_state["value"].toString();
   std::cerr << "Got final url: " << url.toStdString() << "\n";
   // Grab the incoming object.
-  QJsonObject obj = _inputs->get_input_object("in");
+  QJsonObject obj = _inputs->get_main_input_object();
   obj.insert("value", url);
-  set_output("out", obj);
+  set_main_output(obj);
 }
 
 
@@ -962,9 +957,9 @@ void ElementActionCompute::receive_chain_state(const QJsonObject& chain_state) {
 
   // This copies the incoming data, to our output.
   // Derived classes will in add in extra data, extracted from the web.
-  QJsonObject obj = _inputs->get_input_object("in");
+  QJsonObject obj = _inputs->get_main_input_object();
   obj.insert("value", chain_state.value("value"));
-  set_output("out", obj);
+  set_main_output(obj);
 }
 
 bool ElementActionCompute::update_state() {

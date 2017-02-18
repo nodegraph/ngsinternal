@@ -17,33 +17,21 @@ EraseDataNodeCompute::~EraseDataNodeCompute() {
 void EraseDataNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    c.unconnected_value = QJsonObject();
-    create_input("in", c);
-  }
+  create_main_input(config);
+  create_main_output(config);
   {
     EntityConfig c = config;
     c.expose_plug = false;
     c.unconnected_value = "value";
     create_input("path", c);
   }
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    c.unconnected_value = QJsonObject();
-    create_output("out", c);
-  }
 }
 
 const QJsonObject EraseDataNodeCompute::_hints = EraseDataNodeCompute::init_hints();
 QJsonObject EraseDataNodeCompute::init_hints() {
   QJsonObject m;
-
-  add_hint(m, "in", GUITypes::HintKey::DescriptionHint, "The main input object this node acts on.");
+  add_main_input_hint(m);
   add_hint(m, "path", GUITypes::HintKey::DescriptionHint, "The path at which to erase data.");
-
   return m;
 }
 
@@ -51,7 +39,7 @@ bool EraseDataNodeCompute::update_state() {
   Compute::update_state();
 
   // Our input object.
-  QJsonObject in_obj = _inputs->get_input_object("in");
+  QJsonObject in_obj = _inputs->get_main_input_object();
 
   // The source path.
   QString path_string = _inputs->get_input_string("path");
@@ -64,7 +52,7 @@ bool EraseDataNodeCompute::update_state() {
   in_obj = JSONUtils::erase_value(in_obj, path);
 
   // Set the output.
-  set_output("out", in_obj);
+  set_main_output(in_obj);
   return true;
 }
 

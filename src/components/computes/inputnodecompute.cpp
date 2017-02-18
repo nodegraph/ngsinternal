@@ -21,6 +21,7 @@ InputNodeCompute::~InputNodeCompute() {
 void InputNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   Compute::create_inputs_outputs(config);
+  create_main_output(config);
   {
     EntityConfig c = config;
     c.expose_plug = false;
@@ -32,11 +33,6 @@ void InputNodeCompute::create_inputs_outputs(const EntityConfig& config) {
     c.expose_plug = false;
     c.unconnected_value = "";
     create_input("description", c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = true;
-    create_output("out", c);
   }
 }
 
@@ -61,7 +57,7 @@ bool InputNodeCompute::update_state() {
     output = JSONUtils::deep_merge(output, _override);
   }
 
-  set_output("out", output);
+  set_main_output(output);
   return true;
 }
 

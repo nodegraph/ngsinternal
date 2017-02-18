@@ -149,7 +149,7 @@ void surround_with_input_nodes(Entity* node) {
     input_node->create_internals(config);
 
     // Connect the input to the output from the input node.
-    OutputEntity* output = static_cast<OutputEntity*>(input_node->get_child(kOutputsFolderName)->get_child("out"));
+    OutputEntity* output = static_cast<OutputEntity*>(input_node->get_child(kOutputsFolderName)->get_child(kMainOutputNodeName));
     InputEntity* input = static_cast<InputEntity*>(iter.second);
     manipulator->connect_plugs(input, output);
 
@@ -470,21 +470,21 @@ void IfGroupNodeEntity::create_internals(const EntityConfig& config) {
   }
   // Sub Components.
   {
-    InputNodeEntity* in = new_ff InputNodeEntity(this, "in");
+    InputNodeEntity* in = new_ff InputNodeEntity(this, kMainInputNodeName);
     EntityConfig config2;
     config2.visible = true;
     config2.unconnected_value = QJsonObject();
     in->create_internals(config2);
   }
   {
-    InputNodeEntity* condition = new_ff InputNodeEntity(this, "condition_path");
+    InputNodeEntity* condition = new_ff InputNodeEntity(this, kMainConditionPathNodeName);
     EntityConfig config2;
     config2.visible = false;
     config2.unconnected_value = "value";
     condition->create_internals(config2);
   }
   {
-    OutputNodeEntity* out = new_ff OutputNodeEntity(this, "out");
+    OutputNodeEntity* out = new_ff OutputNodeEntity(this, kMainOutputNodeName);
     EntityConfig config2;
     config2.visible = true;
     out->create_internals(config2);
@@ -511,21 +511,21 @@ void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
   }
   // Sub Components.
   {
-    InputNodeEntity* in = new_ff InputNodeEntity(this, "in");
+    InputNodeEntity* in = new_ff InputNodeEntity(this, kMainInputNodeName);
     EntityConfig config2;
     config2.visible = true;
     config2.unconnected_value = QJsonObject();
     in->create_internals(config2);
   }
   {
-    InputNodeEntity* condition = new_ff InputNodeEntity(this, "condition_path");
+    InputNodeEntity* condition = new_ff InputNodeEntity(this, kMainConditionPathNodeName);
     EntityConfig config2;
     config2.visible = false;
     config2.unconnected_value = "value";
     condition->create_internals(config2);
   }
   {
-    OutputNodeEntity* out = new_ff OutputNodeEntity(this, "out");
+    OutputNodeEntity* out = new_ff OutputNodeEntity(this, kMainOutputNodeName);
     EntityConfig config2;
     config2.visible = true;
     out->create_internals(config2);
