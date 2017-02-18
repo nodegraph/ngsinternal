@@ -196,11 +196,11 @@ void HTTPWorker::finished_request() {
 
     QJsonDocument doc = QJsonDocument::fromJson(data);
     if (doc.isObject()) {
-      _chain_state.insert("value", doc.object());
+      _chain_state.insert(Message::kValue, doc.object());
     } else if (doc.isArray()) {
-      _chain_state.insert("value", doc.array());
+      _chain_state.insert(Message::kValue, doc.array());
     } else {
-      _chain_state.insert("value", QString(data));
+      _chain_state.insert(Message::kValue, QString(data));
     }
     // Run the next task.
     _scheduler->run_next_task();

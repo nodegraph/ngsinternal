@@ -22,6 +22,8 @@ namespace ngs {
 const char* Compute::kMainInputName = "in";
 const char* Compute::kMainOutputName = "out";
 
+const char* Compute::kValuePropertyName = "value";
+
 struct InputComputeComparator {
   bool operator()(const Dep<InputCompute>& left, const Dep<InputCompute>& right) const {
     return left->get_name() < right->get_name();

@@ -1,5 +1,7 @@
 #pragma once
 #include <components/computes/computes_export.h>
+#include <components/computes/compute.h>
+
 #include <QtCore/QJsonValue>
 
 class QString;

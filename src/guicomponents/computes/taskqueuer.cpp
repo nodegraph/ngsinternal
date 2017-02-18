@@ -537,7 +537,7 @@ void TaskQueuer::handle_response(const Message& msg) {
     QJsonObject obj = value.toObject();
     JSONUtils::shallow_object_merge(_chain_state, obj);
   } else if (!value.isUndefined()) {
-    _chain_state.insert("value", value);
+    _chain_state.insert(Message::kValue, value);
   }
 
   // -----------------------------------------------------

@@ -29,6 +29,8 @@ class COMPUTES_EXPORT Compute: public Component {
   static const char* kMainInputName;
   static const char* kMainOutputName;
 
+  static const char* kValuePropertyName;
+
   COMPONENT_ID(Compute, InvalidComponent);
   Compute(Entity* entity, ComponentDID derived_id);
   virtual ~Compute();

@@ -52,7 +52,7 @@ void JSONUtils::test_convert_to_bool() {
   obj.insert("a", 0);
   assert(convert_to_bool(obj) == false);
   // Check recursion on multi-element obj for one type (numbers).
-  obj.insert("value", 1);
+  obj.insert(Compute::kValuePropertyName, 1);
   assert(convert_to_bool(obj) == true);
 
   std::cerr << "convert_to_bool test passed\n";
@@ -91,9 +91,9 @@ void JSONUtils::test_convert_to_double() {
   obj.insert("a", 1);
   assert(convert_to_double(obj) == 1.0);
   // Check recursion on multi-element obj for one type (numbers).
-  obj.insert("value", 0);
+  obj.insert(Compute::kValuePropertyName, 0);
   assert(convert_to_double(obj) == 0.0);
-  obj.insert("value", 1);
+  obj.insert(Compute::kValuePropertyName, 1);
   assert(convert_to_double(obj) == 1.0);
 
   std::cerr << "convert_to_double test passed\n";
@@ -131,9 +131,9 @@ void JSONUtils::test_convert_to_string() {
   obj.insert("a", 1);
   assert(convert_to_string(obj) == "1");
   // Check recursion on multi-element obj for one type (numbers).
-  obj.insert("value", 0);
+  obj.insert(Compute::kValuePropertyName, 0);
   assert(convert_to_string(obj) == "0");
-  obj.insert("value", 1);
+  obj.insert(Compute::kValuePropertyName, 1);
   assert(convert_to_string(obj) == "1");
 
   std::cerr << "convert_to_string test passed\n";
@@ -145,17 +145,17 @@ void JSONUtils::test_convert_to_object() {
   assert(convert_to_object(QJsonValue::Undefined) == QJsonObject());
   {
     QJsonObject expected;
-    expected.insert("value", false);
+    expected.insert(Compute::kValuePropertyName, false);
     assert(convert_to_object(false) == expected);
-    expected.insert("value", true);
+    expected.insert(Compute::kValuePropertyName, true);
     assert(convert_to_object(true) == expected);
-    expected.insert("value", 0);
+    expected.insert(Compute::kValuePropertyName, 0);
     assert(convert_to_object(0.0) == expected);
-    expected.insert("value", 123);
+    expected.insert(Compute::kValuePropertyName, 123);
     assert(convert_to_object(123.0) == expected);
-    expected.insert("value", "");
+    expected.insert(Compute::kValuePropertyName, "");
     assert(convert_to_object("") == expected);
-    expected.insert("value", "test");
+    expected.insert(Compute::kValuePropertyName, "test");
     assert(convert_to_object("test") == expected);
   }
 
@@ -183,8 +183,8 @@ void JSONUtils::test_convert_to_object() {
     expected.insert("a", 0);
     assert(convert_to_object(obj) == expected);
     // Check recursion on multi-element obj for one type (numbers).
-    obj.insert("value", 1);
-    expected.insert("value", 1);
+    obj.insert(Compute::kValuePropertyName, 1);
+    expected.insert(Compute::kValuePropertyName, 1);
     assert(convert_to_object(obj) == expected);
   }
 
@@ -350,12 +350,12 @@ void JSONUtils::test_deep_merge_array_to_object() {
     target.insert("0", 0);
     target.insert("1", 1);
     target.insert("2", 2);
-    target.insert("value", "aaa");
+    target.insert(Compute::kValuePropertyName, "aaa");
     QJsonObject target2;
     target2.insert("0", 0);
     target2.insert("1", 1);
     target2.insert("2", 2);
-    target2.insert("value", "bbb");
+    target2.insert(Compute::kValuePropertyName, "bbb");
     target.insert("3", target2);
   }
 
@@ -376,12 +376,12 @@ void JSONUtils::test_deep_merge_array_to_object() {
     expected.insert("0", 0);
     expected.insert("1", 11);
     expected.insert("2", 22);
-    expected.insert("value", "aaa");
+    expected.insert(Compute::kValuePropertyName, "aaa");
     QJsonObject expected2;
     expected2.insert("0", 0);
     expected2.insert("1", 44);
     expected2.insert("2", 55);
-    expected2.insert("value", "bbb");
+    expected2.insert(Compute::kValuePropertyName, "bbb");
     expected.insert("3", expected2);
   }
 
@@ -520,8 +520,8 @@ bool JSONUtils::convert_to_bool(const QJsonValue& source) {
         QJsonValue val = obj.begin().value();
         return convert_to_bool(val);
       } else {
-        // If the object has more than one property, we convert a property named "value".
-        QJsonObject::iterator iter = obj.find("value");
+        // If the object has more than one property, we convert a property with the name kValuePropertyName.
+        QJsonObject::iterator iter = obj.find(Compute::kValuePropertyName);
         if (iter != obj.end()) {
           return convert_to_bool(iter.value());
         } else {
@@ -591,8 +591,8 @@ double JSONUtils::convert_to_double(const QJsonValue& source) {
         QJsonValue val = obj.begin().value();
         return convert_to_double(val);
       } else {
-        // If the object has more than one property, we convert a property named "value".
-        QJsonObject::iterator iter = obj.find("value");
+        // If the object has more than one property, we convert a property with the name kValuePropertyName.
+        QJsonObject::iterator iter = obj.find(Compute::kValuePropertyName);
         if (iter != obj.end()) {
           return convert_to_double(iter.value());
         } else {
@@ -651,8 +651,8 @@ QString JSONUtils::convert_to_string(const QJsonValue& source) {
         QJsonValue val = obj.begin().value();
         return convert_to_string(val);
       } else {
-        // If the object has more than one property, we convert a property named "value".
-        QJsonObject::iterator iter = obj.find("value");
+        // If the object has more than one property, we convert a property with the name kValuePropertyName.
+        QJsonObject::iterator iter = obj.find(Compute::kValuePropertyName);
         if (iter != obj.end()) {
           return convert_to_string(iter.value());
         } else {
@@ -677,19 +677,19 @@ QJsonObject JSONUtils::convert_to_object(const QJsonValue& source) {
     }
     case QJsonValue::Bool: {
       QJsonObject obj;
-      obj.insert("value", source);
+      obj.insert(Compute::kValuePropertyName, source);
       return obj;
       break;
     }
     case QJsonValue::Double: {
       QJsonObject obj;
-      obj.insert("value", source);
+      obj.insert(Compute::kValuePropertyName, source);
       return obj;
       break;
     }
     case QJsonValue::String: {
       QJsonObject obj;
-      obj.insert("value", source);
+      obj.insert(Compute::kValuePropertyName, source);
       return obj;
       break;
     }

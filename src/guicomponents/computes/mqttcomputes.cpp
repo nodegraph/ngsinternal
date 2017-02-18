@@ -137,7 +137,7 @@ void MQTTSubscribeCompute::on_finished_task() {
   if (_override.isNull() || _override.isUndefined()) {
     // Do nothing.
   } else if (_override.isString()) {
-    obj.insert("value", _override.toString());
+    obj.insert(Message::kValue, _override.toString());
   } else {
     std::cerr << "Error: the MQTTSubscribe's override has an improper type. It should be a string.";
   }

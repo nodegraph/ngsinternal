@@ -55,7 +55,7 @@ void EnterBrowserGroupCompute::receive_chain_state(const QJsonObject& chain_stat
   // If the browser successfully, then we call clean_finalize directly here.
   // Note that our update_state() always returns false, so the app will continuously try to clean it until it returns true.
   // The other way to stop it is to call clean_finalize(), which marks ourself as clean, so the next cleaning wave will skip us.
-  bool opened = chain_state.value("value").toBool();
+  bool opened = chain_state.value(Message::kValue).toBool();
   if (opened) {
     clean_finalize();
   }
@@ -103,7 +103,7 @@ bool ExitBrowserGroupCompute::update_state() {
 }
 
 void ExitBrowserGroupCompute::receive_chain_state(const QJsonObject& chain_state) {
-  bool closed = chain_state.value("value").toBool();
+  bool closed = chain_state.value(Message::kValue).toBool();
   if (closed) {
     clean_finalize();
   }

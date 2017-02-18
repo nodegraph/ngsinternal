@@ -480,7 +480,7 @@ void IfGroupNodeEntity::create_internals(const EntityConfig& config) {
     InputNodeEntity* condition = new_ff InputNodeEntity(this, kMainConditionPathNodeName);
     EntityConfig config2;
     config2.visible = false;
-    config2.unconnected_value = "value";
+    config2.unconnected_value = Compute::kValuePropertyName;
     condition->create_internals(config2);
   }
   {
@@ -521,7 +521,7 @@ void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
     InputNodeEntity* condition = new_ff InputNodeEntity(this, kMainConditionPathNodeName);
     EntityConfig config2;
     config2.visible = false;
-    config2.unconnected_value = "value";
+    config2.unconnected_value = Compute::kValuePropertyName;
     condition->create_internals(config2);
   }
   {

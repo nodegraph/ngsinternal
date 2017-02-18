@@ -91,7 +91,7 @@ bool PostNodeCompute::update_state() {
 
   // Wrap the value in an object.
   QJsonObject obj;
-  obj.insert("value", value);
+  obj.insert(Message::kValue, value);
 
   // Post the value.
   _manipulator->send_post_value_signal(post_type, title, obj);
