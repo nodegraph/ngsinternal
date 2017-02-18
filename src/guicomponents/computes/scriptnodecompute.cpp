@@ -20,6 +20,7 @@ ScriptNodeCompute::ScriptNodeCompute(Entity* entity):
   QObject(),
   Compute(entity, kDID()),
   _context(this) {
+  // The context is set when update_wires is called.
   // In derived classes the input and output param names should be set here.
   get_dep_loader()->register_fixed_dep(_context, Path({".."}));
 }
@@ -63,19 +64,35 @@ QJsonObject ScriptNodeCompute::init_hints() {
   return m;
 }
 
+// Not all group nodes have a script loop context, so this method
+// search for the closest one surrounding us.
+Dep<ScriptLoopContext> ScriptNodeCompute::get_closest_context() {
+  Entity* group = our_entity()->get_parent();
+  while(group) {
+    if (group->has_comp_with_did(ComponentIID::kIScriptLoopContext, ComponentDID::kScriptLoopContext)) {
+      return get_dep<ScriptLoopContext>(group);
+    }
+    group = group->get_parent();
+  }
+  return Dep<ScriptLoopContext>(NULL);
+}
+
 QJsonObject ScriptNodeCompute::get_context() {
   if (_context) {
     return _context->get_context();
   }
-  // Return an empty object if we are not inside a looping group.
+  // Return an empty object if we don't have a group with a context surrounding us.
   return QJsonObject();
 }
 
 void ScriptNodeCompute::set_context(const QJsonObject& context) {
   if (_context) {
+    std::cerr << "1111\n";
     _context->set_context(context);
+  } else {
+    std::cerr << "2222\n";
   }
-  // Does nothing if we are not inside a looping group.
+  // Does nothing if we don't have a group with a context surrounding us.
 }
 
 QJsonObject ScriptNodeCompute::get_input() {
@@ -84,6 +101,11 @@ QJsonObject ScriptNodeCompute::get_input() {
 
 void ScriptNodeCompute::set_output(const QJsonObject& value) {
   set_main_output(value);
+}
+
+void ScriptNodeCompute::update_wires() {
+  std::cerr << "script group node is updating wires\n";
+  _context = get_closest_context();
 }
 
 bool ScriptNodeCompute::update_state() {

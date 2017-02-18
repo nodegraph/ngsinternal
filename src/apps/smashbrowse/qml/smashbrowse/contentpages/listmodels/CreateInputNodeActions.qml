@@ -32,8 +32,8 @@ ListModel {
     }
     ListElement {
     	letters: "Oi"
-        title: "Adds an object input (param) to the group."
-        description: "Relays data from outside a group to inside the group."
+        title: "Object Input Node"
+        description: "Adds an object input (param) to the group."
         script: "ng_controller.create_object_input_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }

@@ -18,8 +18,7 @@ namespace ngs {
 WhileGroupNodeCompute::WhileGroupNodeCompute(Entity* entity, ComponentDID did):
     GroupNodeCompute(entity, did),
     _infinite_counter(0),
-    _restart_loop(true),
-    _do_next(false){
+    _do_next(false) {
 }
 
 WhileGroupNodeCompute::~WhileGroupNodeCompute() {
@@ -27,7 +26,6 @@ WhileGroupNodeCompute::~WhileGroupNodeCompute() {
 
 void WhileGroupNodeCompute::set_self_dirty(bool dirty) {
   GroupNodeCompute::set_self_dirty(dirty);
-  _restart_loop = true;
 }
 
 void WhileGroupNodeCompute::reset_loop_context() {
@@ -78,11 +76,11 @@ bool WhileGroupNodeCompute::update_state() {
   }
 
   while (true) {
-    if (_restart_loop) {
+    if (_restart_compute) {
       // If we get then we're just starting our loop.
       // Reset all the accumulate data nodes.
       reset_loop_context();
-      _restart_loop = false;
+      _restart_compute = false;
       _do_next = true;
     }
 
@@ -126,7 +124,7 @@ bool WhileGroupNodeCompute::update_state() {
     _do_next = true;
   }
 
-  _restart_loop = true;
+  _restart_compute = true;
   _do_next = false;
   return true;
 }

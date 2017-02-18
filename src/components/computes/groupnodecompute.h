@@ -29,6 +29,7 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
 
   // Clean the group interface.
   virtual bool clean_inputs();
+  virtual bool dirty_input_nodes();
 
   // Manage hints for the inputs on the group.
   virtual const QJsonObject& get_hints() const {return _node_hints;}
@@ -55,6 +56,8 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   Dep<BaseFactory> _factory;
   QJsonObject _node_hints;
   WireUpdater* _wire_updater;
+
+  bool _restart_compute;
 };
 
 }

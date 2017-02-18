@@ -34,7 +34,10 @@ class GUICOMPUTES_EXPORT ScriptNodeCompute: public QObject, public Compute  {
 protected:
   Dep<ScriptLoopContext> _context;
 
+  Dep<ScriptLoopContext> get_closest_context();
+
   // Our state.
+  virtual void update_wires();
   virtual bool update_state();
 };
 
