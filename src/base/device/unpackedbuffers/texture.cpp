@@ -499,18 +499,14 @@ PackedTexture* Texture::create_packed_texture() const {
         }
 
         // Read the pixels.
-        std::wcerr << "00000\n";
         gpu(glReadPixels(0, 0, width, height, packed_format, packed_type, data));
       }
 #else
       // Read the pixels.
-      std::wcerr << "00000\n";
       gpu(glReadPixels(0, 0, width, height, packed_format, packed_type, data));
 #endif
-      std::cerr << "11111\n";
       // Restore the viewport's size.
       gpu(glViewport(viewport[0], viewport[1], viewport[2], viewport[3]));
-      std::cerr << "22222\n";
       // Bind the default frame buffer back.
       fbo->unbind();
       delete_ff(fbo);
