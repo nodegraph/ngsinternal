@@ -393,8 +393,24 @@ void GroupNodeEntity::create_internals(const EntityConfig& config) {
     new_ff InputTopology(this);
     new_ff OutputTopology(this);
   }
-  // Sub Components.
   create_default_enter_and_exit(this);
+
+  // These sub components are not required for the functionality of the group.
+  // They are just added in for convenience. The user may destroy or rename them.
+  {
+    InputNodeEntity* in = new_ff InputNodeEntity(this, kMainInputNodeName);
+    EntityConfig config2;
+    config2.visible = true;
+    config2.unconnected_value = QJsonObject();
+    in->create_internals(config2);
+  }
+  {
+    OutputNodeEntity* out = new_ff OutputNodeEntity(this, kMainOutputNodeName);
+    EntityConfig config2;
+    config2.visible = true;
+    out->create_internals(config2);
+  }
+
 }
 
 void GroupNodeEntity::copy(SimpleSaver& saver, const std::unordered_set<Entity*>& children) const {
@@ -490,8 +506,6 @@ void IfGroupNodeEntity::create_internals(const EntityConfig& config) {
     out->create_internals(config2);
   }
 
-  create_default_exit(this);
-
   create_default_enter_and_exit(this);
 }
 
@@ -531,8 +545,6 @@ void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
     out->create_internals(config2);
   }
 
-  create_default_exit(this);
-
   create_default_enter_and_exit(this);
 }
 
@@ -558,6 +570,22 @@ void BrowserGroupNodeEntity::create_internals(const EntityConfig& config) {
   ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit");
   config2.compute_did = ComponentDID::kExitBrowserGroupCompute;
   exit->create_internals(config2);
+
+  // These sub components are not required for the functionality of the browser group.
+  // They are just added in for convenience. The user may destroy or rename them.
+  {
+    InputNodeEntity* in = new_ff InputNodeEntity(this, kMainInputNodeName);
+    EntityConfig config2;
+    config2.visible = true;
+    config2.unconnected_value = QJsonObject();
+    in->create_internals(config2);
+  }
+  {
+    OutputNodeEntity* out = new_ff OutputNodeEntity(this, kMainOutputNodeName);
+    EntityConfig config2;
+    config2.visible = true;
+    out->create_internals(config2);
+  }
 }
 
 void MQTTGroupNodeEntity::create_internals(const EntityConfig& config) {
@@ -580,8 +608,23 @@ void MQTTGroupNodeEntity::create_internals(const EntityConfig& config) {
   config2.visible = false;
   enter->create_internals(config2);
   surround_with_input_nodes(enter);
-
   create_default_exit(this);
+
+  // These sub components are not required for the functionality of the mqtt group.
+  // They are just added in for convenience. The user may destroy or rename them.
+  {
+    InputNodeEntity* in = new_ff InputNodeEntity(this, kMainInputNodeName);
+    EntityConfig config2;
+    config2.visible = true;
+    config2.unconnected_value = QJsonObject();
+    in->create_internals(config2);
+  }
+  {
+    OutputNodeEntity* out = new_ff OutputNodeEntity(this, kMainOutputNodeName);
+    EntityConfig config2;
+    config2.visible = true;
+    out->create_internals(config2);
+  }
 }
 
 void LinkEntity::create_internals(const EntityConfig& config) {
