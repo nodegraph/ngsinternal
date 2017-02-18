@@ -396,13 +396,16 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
   }
 
   if (kc == Qt::Key_C  && !ctrl) {
-    clean_group();
+    // We don't allow this, as it's too easy to perform accidentally.
+    //clean_group();
     return;
   } else if (kc == Qt::Key_R  && !ctrl) {
-    reclean_group();
+    // We don't allow this, as it's too easy to perform accidentally.
+    //reclean_group();
     return;
   } else if (kc == Qt::Key_D  && !ctrl) {
-    dirty_group();
+    // We don't allow this, as it's too easy to perform accidentally.
+    //dirty_group();
     return;
   } else if (kc == Qt::Key_F && !ctrl) {
     frame_all();
@@ -427,6 +430,8 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
     return;
   } else if (kc == Qt::Key_P && !ctrl) {
     collapse_to_group();
+  } else if (kc == Qt::Key_Delete || kc == Qt::Key_Backspace) {
+    destroy_selection();
   }
 
   update();
