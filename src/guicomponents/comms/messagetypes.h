@@ -17,7 +17,7 @@ enum class WebDriverRequestType : int {
   kOpenBrowser = 4,
   kCloseBrowser = 5,
   kReleaseBrowser = 6,
-  kResizeBrowser = 7,
+  kSetBrowserSize = 7,
   kGetBrowserSize = 8,
 
   // Web Page Navigation.

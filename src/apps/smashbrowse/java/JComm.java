@@ -122,7 +122,7 @@ public class JComm {
 			break;
 		}
 		
-	    case kResizeBrowser: {
+	    case kSetBrowserSize: {
 	    	int width = req.get_args().getAsJsonObject().get("width").getAsInt();
 	    	int height = req.get_args().getAsJsonObject().get("height").getAsInt();
 	        web_driver.resize_browser(width, height);

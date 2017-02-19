@@ -735,7 +735,7 @@ void TaskQueuer::resize_browser_task() {
   args.insert(Message::kWidth,_chain_state.value(Message::kWidth));
   args.insert(Message::kHeight, _chain_state.value(Message::kHeight));
 
-  Message req(WebDriverRequestType::kResizeBrowser);
+  Message req(WebDriverRequestType::kSetBrowserSize);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }

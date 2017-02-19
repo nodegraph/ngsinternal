@@ -49,7 +49,7 @@ ListModel {
     ListElement {
         image_url: "qrc:///icons/ic_format_list_bulleted_white_48dp.png"
         title: "Extract Text, Video and Images"
-        description: "Extract text, videos and images from the page or browser."
+        description: "Extract text, videos and images from the current element or browser window."
         script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsExtract')"
     }
     
