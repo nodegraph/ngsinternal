@@ -36,8 +36,8 @@ ListModel {
     
     ListElement {
     	letters: "Ot"
-        title: "Open Tab"
-        description: "Open Tab."
+        title: "Open New Tab"
+        description: "Open a new Tab."
         script: "browser_recorder.record_open_tab();
                  main_bar.switch_to_node_graph();"
     }
