@@ -44,6 +44,17 @@ Rectangle {
     function set_description(desc) {
         description.text = desc
     }
+    
+    function accept_data() {
+    	page.Stack.view.pop_page()
+        page.callback(get_value())
+    }
+    
+    Keys.onReleased: {
+        if ((event.key == Qt.Key_Return) || (event.key == Qt.Key_Enter)) {
+        	accept_data()
+        }
+    }
 
     // The stack view header.
     AppStackViewHeader {
@@ -96,11 +107,7 @@ Rectangle {
             AppLabelButton {
                 text: "accept"
                 onClicked: {
-                	page.Stack.view.pop_page()
-                    page.callback(get_value())
-                    //page.Stack.view.pop_page()
-                    //main_bar.switch_to_current_mode()
-                    //node_graph_item.update()
+                	accept_data()
                 }
             }
             Rectangle {
