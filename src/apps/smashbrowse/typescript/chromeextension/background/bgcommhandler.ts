@@ -533,6 +533,14 @@ class BgCommHandler {
                 }
                 BrowserWrap.get_zoom(this.bg_comm.get_current_tab_id(), done_get_zoom);
             } break
+            case ChromeRequestType.kSetZoom: {
+                let done_set_zoom = () => {
+                    // Send response to nodejs.
+                    let response = new ResponseMessage(req.id, true, true)
+                    this.bg_comm.send_to_nodejs(response)
+                }
+                BrowserWrap.set_zoom(this.bg_comm.get_current_tab_id(), req.args.zoom, done_set_zoom);
+            } break
             case ChromeRequestType.kUpdateCurrentTab: {
                 this.clear_tasks()
                 this.bg_comm.update_current_tab_id()

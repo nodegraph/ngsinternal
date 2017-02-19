@@ -1,5 +1,5 @@
 import java.net.Socket;
-
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -129,6 +129,16 @@ public class JComm {
 	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
 	        System.out.println(resp.to_string());
 	        break;
+	    }
+	    
+	    case kGetBrowserSize: {
+	    	org.openqa.selenium.Dimension d = web_driver.get_browser_size();
+	    	JsonObject obj = new JsonObject();
+	    	obj.addProperty("width", d.width);
+	    	obj.addProperty("height", d.height);
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(obj));
+	        System.out.println(resp.to_string());
+	    	break;
 	    }
 	    
 	    case kNavigateTo: {

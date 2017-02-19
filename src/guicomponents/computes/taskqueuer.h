@@ -97,6 +97,7 @@ Q_OBJECT
   void queue_release_browser(TaskContext& tc);
   void queue_is_browser_open(TaskContext& tc);
   void queue_resize_browser(TaskContext& tc);
+  void queue_get_browser_size(TaskContext& tc);
   void queue_get_active_tab_title(TaskContext& tc);
 
   void queue_update_current_tab(TaskContext& tc);
@@ -207,6 +208,7 @@ signals:
   void release_browser_task();
   void is_browser_open_task();
   void resize_browser_task();
+  void get_browser_size_task();
   void get_active_tab_title_task();
   void update_current_tab_in_browser_controller_task();
   void update_current_tab_in_chrome_extension_task();

@@ -48,8 +48,8 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_format_list_bulleted_white_48dp.png"
-        title: "Download..."
-        description: "Download media or other data."
+        title: "Extract Text, Video and Images"
+        description: "Extract text, videos and images from the page or browser."
         script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsExtract')"
     }
     

@@ -72,9 +72,6 @@ void BrowserRecorder::record_is_browser_open() {
 
 void BrowserRecorder::record_resize_browser() {
   check_busy();
-  //int width = _model->get_work_setting(FileModel::kBrowserWidthRole).toInt();
-  //int height = _model->get_work_setting(FileModel::kBrowserHeightRole).toInt();
-
   QJsonObject dims;
   dims.insert(Message::kWidth, 1024);
   dims.insert(Message::kHeight, 1150);
@@ -84,6 +81,12 @@ void BrowserRecorder::record_resize_browser() {
 
   _worker->queue_merge_chain_state(tc, args);
   _worker->queue_build_compute_node(tc, ComponentDID::kResizeBrowserCompute);
+  finish();
+}
+
+void BrowserRecorder::record_get_browser_size() {
+  check_busy();
+  _worker->queue_build_compute_node(tc, ComponentDID::kGetBrowserSizeCompute);
   finish();
 }
 

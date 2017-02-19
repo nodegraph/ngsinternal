@@ -232,32 +232,33 @@ COMPONENT_ENTRY2(CloseBrowserCompute, 68)\
 COMPONENT_ENTRY2(ReleaseBrowserCompute, 69)\
 COMPONENT_ENTRY2(IsBrowserOpenCompute, 70)\
 COMPONENT_ENTRY2(ResizeBrowserCompute, 71)\
-COMPONENT_ENTRY2(DestroyCurrentTabCompute, 72)\
-COMPONENT_ENTRY2(OpenTabCompute, 73)\
-COMPONENT_ENTRY2(AcceptSaveDialogCompute, 74)\
+COMPONENT_ENTRY2(GetBrowserSizeCompute, 72)\
+COMPONENT_ENTRY2(DestroyCurrentTabCompute, 73)\
+COMPONENT_ENTRY2(OpenTabCompute, 74)\
+COMPONENT_ENTRY2(AcceptSaveDialogCompute, 75)\
 /* Navigate. */\
-COMPONENT_ENTRY2(NavigateToCompute, 75)\
-COMPONENT_ENTRY2(NavigateBackCompute, 76)\
-COMPONENT_ENTRY2(NavigateForwardCompute, 77)\
-COMPONENT_ENTRY2(NavigateRefreshCompute, 78)\
+COMPONENT_ENTRY2(NavigateToCompute, 76)\
+COMPONENT_ENTRY2(NavigateBackCompute, 77)\
+COMPONENT_ENTRY2(NavigateForwardCompute, 78)\
+COMPONENT_ENTRY2(NavigateRefreshCompute, 79)\
 /* Find Elements. */\
-COMPONENT_ENTRY2(FindElementByPositionCompute, 79)\
-COMPONENT_ENTRY2(FindElementByValuesCompute, 80)\
-COMPONENT_ENTRY2(FindElementByTypeCompute, 81)\
+COMPONENT_ENTRY2(FindElementByPositionCompute, 80)\
+COMPONENT_ENTRY2(FindElementByValuesCompute, 81)\
+COMPONENT_ENTRY2(FindElementByTypeCompute, 82)\
 /* Shift Element. */\
-COMPONENT_ENTRY2(ShiftElementByTypeCompute, 82)\
-COMPONENT_ENTRY2(ShiftElementByValuesCompute, 83)\
-COMPONENT_ENTRY2(ShiftElementByTypeAlongRowsCompute, 84)\
-COMPONENT_ENTRY2(ShiftElementByValuesAlongRowsCompute, 85)\
+COMPONENT_ENTRY2(ShiftElementByTypeCompute, 83)\
+COMPONENT_ENTRY2(ShiftElementByValuesCompute, 84)\
+COMPONENT_ENTRY2(ShiftElementByTypeAlongRowsCompute, 85)\
+COMPONENT_ENTRY2(ShiftElementByValuesAlongRowsCompute, 86)\
 /* Extract Info. */\
-COMPONENT_ENTRY2(GetActiveTabTitleCompute, 86)\
-COMPONENT_ENTRY2(GetCurrentURLCompute, 87)\
-COMPONENT_ENTRY2(DownloadVideoCompute, 88)\
+COMPONENT_ENTRY2(GetActiveTabTitleCompute, 87)\
+COMPONENT_ENTRY2(GetCurrentURLCompute, 88)\
+COMPONENT_ENTRY2(DownloadVideoCompute, 89)\
 /* Perform action on Element. */\
-COMPONENT_ENTRY2(MouseActionCompute, 89)\
-COMPONENT_ENTRY2(TextActionCompute, 90)\
-COMPONENT_ENTRY2(PasswordActionCompute, 91)\
-COMPONENT_ENTRY2(ElementActionCompute, 92)\
+COMPONENT_ENTRY2(MouseActionCompute, 90)\
+COMPONENT_ENTRY2(TextActionCompute, 91)\
+COMPONENT_ENTRY2(PasswordActionCompute, 92)\
+COMPONENT_ENTRY2(ElementActionCompute, 93)\
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()

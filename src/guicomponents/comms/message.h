@@ -42,7 +42,6 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kNext;
 
   static const char* kApplicationName;
-  static const char* kWindowTitle;
   static const char* kAllMatchingWindows;
   static const char* kKeys;
 

@@ -145,6 +145,10 @@ public class WebDriverWrap {
         _web_driver.manage().window().setSize(d);
     }
     
+    Dimension get_browser_size() {
+    	return _web_driver.manage().window().getSize();
+    }
+    
     //------------------------------------------------------------------------------------------------
     // Browser Navigation.
     //------------------------------------------------------------------------------------------------

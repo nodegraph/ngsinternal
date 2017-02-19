@@ -306,6 +306,10 @@ void TaskQueuer::queue_resize_browser(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::resize_browser_task,this), "queue_resize_browser");
 }
 
+void TaskQueuer::queue_get_browser_size(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::get_browser_size_task,this), "queue_get_browser_size");
+}
+
 void TaskQueuer::queue_get_active_tab_title(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::get_active_tab_title_task,this), "queue_resize_browser");
 }
@@ -441,13 +445,6 @@ void TaskQueuer::queue_perform_mouse_action(TaskContext& tc) {
 
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_mouse_action_task,this), "queue_perform_action_task");
-  queue_block_events(tc); // After we're done interacting with the page, block events on the page.
-  queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
-
-  queue_update_element(tc); // Our actions may have moved elements arounds, so we update our overlays.
-
-  // Force wait so that the webpage can react to the mouse action. Note this is real and makes the mouse click work 100% of the time.
-  queue_wait(tc);
 }
 
 void TaskQueuer::queue_perform_mouse_hover(TaskContext& tc) {
@@ -463,18 +460,12 @@ void TaskQueuer::queue_perform_text_action(TaskContext& tc) {
   queue_get_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_text_action_task,this), "queue_perform_text_action");
-  queue_block_events(tc);
-  queue_wait_until_loaded(tc);
-  queue_update_element(tc);
 }
 
 void TaskQueuer::queue_perform_element_action(TaskContext& tc) {
   queue_get_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_element_action_task,this), "queue_perform_element_action");
-  queue_block_events(tc);
-  queue_wait_until_loaded(tc);
-  queue_update_element(tc);
 }
 
 // ---------------------------------------------------------------------------------
@@ -532,11 +523,17 @@ void TaskQueuer::handle_response(const Message& msg) {
 
   QJsonValue value = msg.value(Message::kValue);
 
+  // Note that if the value is an object it gets exploded into its properties.
+  // Then each of these properties is added into the chain state.
+  // This allows various properties to persist between calls.
+
   if (value.isObject()) {
+    std::cerr << "111\n";
     // Merge the values into the chain_state.
     QJsonObject obj = value.toObject();
     JSONUtils::shallow_object_merge(_chain_state, obj);
   } else if (!value.isUndefined()) {
+    std::cerr << "222\n";
     _chain_state.insert(Message::kValue, value);
   }
 
@@ -740,6 +737,11 @@ void TaskQueuer::resize_browser_task() {
 
   Message req(WebDriverRequestType::kResizeBrowser);
   req.insert(Message::kArgs, args);
+  send_msg_task(req);
+}
+
+void TaskQueuer::get_browser_size_task() {
+  Message req(WebDriverRequestType::kGetBrowserSize);
   send_msg_task(req);
 }
 

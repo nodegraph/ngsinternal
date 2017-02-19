@@ -37,12 +37,16 @@ class BrowserWrap {
 
     // Callback receives an array of cookies.
     static get_all_cookies(callback: (cookies: chrome.cookies.Cookie[]) => void) {
-        chrome.cookies.getAll({}, callback);
+        chrome.cookies.getAll({}, callback)
     }
 
     // Callback receives the zoom as a number.
     static get_zoom(tab_id: number, callback: (zoom: number)=>void) {
-        chrome.tabs.getZoom(tab_id, callback);
+        chrome.tabs.getZoom(tab_id, callback)
+    }
+
+    static set_zoom(tab_id: number, zoom: number, callback: ()=>void) {
+        chrome.tabs.setZoom(tab_id, zoom, callback)
     }
 
     // Callback receives zero arguments and is called after each

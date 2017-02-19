@@ -42,5 +42,12 @@ ListModel {
                  main_bar.switch_to_node_graph();"
     }
     
+    ListElement {
+        letters: "Rz"
+        title: "Get Browser Size"
+        description: "Get the current size of the browser."
+        script: "browser_recorder.record_get_browser_size();
+                 main_bar.switch_to_node_graph();"
+    }
 
 }

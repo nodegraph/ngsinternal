@@ -23,22 +23,23 @@ declare const enum WebDriverRequestType {
   kCloseBrowser = 5,
   kReleaseBrowser = 6,
   kResizeBrowser = 7,
+  kGetBrowserSize = 8,
 
   // Web Page Navigation.
-  kNavigateTo = 8,
-  kNavigateBack = 9,
-  kNavigateForward = 10,
-  kNavigateRefresh = 11,
-  kGetCurrentURL = 12,
+  kNavigateTo = 9,
+  kNavigateBack = 10,
+  kNavigateForward = 11,
+  kNavigateRefresh = 12,
+  kGetCurrentURL = 13,
 
   // Web Page Tabs.
-  kUpdateCurrentTab = 13,
-  kDestroyCurrentTab = 14,
+  kUpdateCurrentTab = 14,
+  kDestroyCurrentTab = 15,
 
   // Actions.
-  kPerformMouseAction = 15,
-  kPerformTextAction = 16,
-  kPerformElementAction = 17,
+  kPerformMouseAction = 16,
+  kPerformTextAction = 17,
+  kPerformElementAction = 18,
 }
 
 declare const enum ChromeRequestType {
@@ -51,44 +52,45 @@ declare const enum ChromeRequestType {
 
   // Zoom.
   kGetZoom = 4,
+  kSetZoom = 5,
 
   // Event Control.
-  kBlockEvents = 5,
-  kUnblockEvents = 6,
-  kWaitUntilLoaded = 7,
+  kBlockEvents = 6,
+  kUnblockEvents = 7,
+  kWaitUntilLoaded = 8,
 
   // Tabs.
-  kUpdateCurrentTab = 8,
-  kOpenTab = 9,
-  kGetActiveTabTitle = 10,
+  kUpdateCurrentTab = 9,
+  kOpenTab = 10,
+  kGetActiveTabTitle = 11,
 
   // Current element on Page.
-  kUpdateElement = 11,
-  kClearElement = 12,
-  kGetElement = 13,
-  kSetElement = 14,
-  kHasElement = 15,
+  kUpdateElement = 12,
+  kClearElement = 13,
+  kGetElement = 14,
+  kSetElement = 15,
+  kHasElement = 16,
 
   // Extract info from element.
-  kGetElementValues = 16,
+  kGetElementValues = 17,
 
   // Act on element.
-  kScrollElementIntoView = 17,
+  kScrollElementIntoView = 18,
 
   // Find the current element.
-  kFindElementByPosition = 18,
-  kFindElementByValues = 19,
-  kFindElementByType = 20,
+  kFindElementByPosition = 19,
+  kFindElementByValues = 20,
+  kFindElementByType = 21,
 
   // Shift the current element.
-  kShiftElementByType = 21,
-  kShiftElementByValues = 22,
-  kShiftElementByTypeAlongRows = 23,
-  kShiftElementByValuesAlongRows = 24,
+  kShiftElementByType = 22,
+  kShiftElementByValues = 23,
+  kShiftElementByTypeAlongRows = 24,
+  kShiftElementByValuesAlongRows = 25,
 
   // Info Request.
-  kGetCrosshairInfo = 25,
-  kGetDropDownInfo = 26
+  kGetCrosshairInfo = 26,
+  kGetDropDownInfo = 27
 }
 
 declare const enum PlatformRequestType {

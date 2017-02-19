@@ -832,6 +832,7 @@ QJsonValue JSONUtils::deep_merge(const QJsonValue& target, const QJsonValue& sou
 
 void JSONUtils::shallow_object_merge(QJsonObject& target, const QJsonObject& source) {
   for (QJsonObject::const_iterator iter = source.constBegin(); iter != source.constEnd(); ++iter) {
+    std::cerr << "merging in property: " << iter.key().toStdString() << "\n";
     target.insert(iter.key(), iter.value());
   }
 }

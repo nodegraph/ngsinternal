@@ -35,7 +35,6 @@ const char* Message::kDimensions = "dimensions";
 const char* Message::kNext = "next";
 
 const char* Message::kApplicationName = "application_name";
-const char* Message::kWindowTitle = "window_title";
 const char* Message::kAllMatchingWindows = "all_matching_windows";
 const char* Message::kKeys = "keys";
 
