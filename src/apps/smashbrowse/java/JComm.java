@@ -287,7 +287,32 @@ public class JComm {
 	            }
 	        }
 	        break;
-	    } 
+	    }
+	    
+	    case kPerformImageAction: {
+	    	MessageEnums.ImageActionType image_action_type = MessageEnums.ImageActionType.get_enum(req.get_args().getAsJsonObject().get("image_action").getAsInt());
+	    	String frame_index_path = req.get_args().getAsJsonObject().get("frame_index_path").getAsString();
+	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
+	    	switch (image_action_type) {
+	            case kGetImageURL: {
+	            	String url = web_driver.get_image_url(frame_index_path, xpath);
+	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(url));
+	                System.out.println(resp.to_string());
+	            	break;
+	            }
+	            case kDownloadImage: {
+	            	String dir = req.get_args().getAsJsonObject().get("download_directory").getAsString();
+	            	String image_url = web_driver.get_image_url(frame_index_path, xpath);
+	            	String filename = image_url.substring(image_url.lastIndexOf('/') + 1);
+	            	String format = filename.substring(filename.lastIndexOf('.') + 1);
+	            	boolean downloaded = web_driver.download_image(image_url, format, filename);
+	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(downloaded));
+	                System.out.println(resp.to_string());
+	            	break;
+	            }
+	    	}
+	    }
+	    
 		}	
 	}
 	

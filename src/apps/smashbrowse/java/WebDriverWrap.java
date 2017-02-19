@@ -14,13 +14,17 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.JavascriptExecutor;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Stack;
 import java.util.Set;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.imageio.ImageIO;
 
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -415,6 +419,23 @@ public class WebDriverWrap {
     	}
     	JavascriptExecutor js = (JavascriptExecutor) _web_driver;
     	js.executeScript(script);
+    }
+    
+    String get_image_url(String frame_index_path, String xpath) {
+        return get_element(frame_index_path, xpath).getAttribute("src");
+    }
+    
+    // image_url is the url of the image.
+    // format is something like "png".
+    // filename is the filename to save to on the local computer.
+    boolean download_image(String image_url, String format, String filename) {
+    	try {
+		    URL url = new URL(image_url);
+		    BufferedImage image = ImageIO.read(url);
+		    return ImageIO.write(image, format, new File(filename));
+    	} catch(Exception e) {
+    	}
+    	return false;
     }
     
     //------------------------------------------------------------------------------------------------

@@ -40,6 +40,7 @@ declare const enum WebDriverRequestType {
   kPerformMouseAction = 16,
   kPerformTextAction = 17,
   kPerformElementAction = 18,
+  kPerformImageAction = 19,
 }
 
 declare const enum ChromeRequestType {
@@ -125,6 +126,11 @@ declare const enum ElementActionType {
   kGetText = 0,
   kChooseOption = 1,
   kScroll = 2
+}
+
+declare const enum ImageActionType {
+  kGetImageURL = 0,
+  kDownloadImage = 1,
 }
 
 declare const enum InfoType {
