@@ -15,6 +15,8 @@ add_custom_command(
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(CMAKE_JAVA_COMPILE_FLAGS -g:none)
+else ()
+    set(CMAKE_JAVA_COMPILE_FLAGS -g)
 endif()
 
 add_jar(jcomm 
