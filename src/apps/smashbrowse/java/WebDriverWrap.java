@@ -114,7 +114,7 @@ public class WebDriverWrap {
 	                ); // Extension for downloading.
 	        //chrome_opts.addArguments("--ignore-certificate-errors");
 	        //chrome_opts.addArguments("--allow-insecure-localhost");
-	        chrome_opts.addArguments("--disable-web-security");
+	        //chrome_opts.addArguments("--disable-web-security");
 	        chrome_opts.addArguments("--user-data-dir=" + chrome_user_data_dir);
 	        chrome_opts.addArguments("--first-run");
 		}
