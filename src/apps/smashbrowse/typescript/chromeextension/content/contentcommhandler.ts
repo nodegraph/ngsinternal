@@ -17,8 +17,31 @@ class ContentCommHandler {
         console.error('Got unexpected reponse message from bg.')
     }
 
-    handle_bg_info(info: InfoMessage) {
-        console.error('Got unexpected info message from bg.')
+    handle_bg_info(info: InfoMessage, send_response: (response: any) => void) {
+        switch (info.info) {
+            case InfoType.kCollectIFrameIndexPaths: {
+                let frame_index_path = PageWrap.get_frame_index_path(window)
+                send_response(frame_index_path)
+                break
+            }
+            case InfoType.kCollectIFrameOffsets: {
+                let frames = document.getElementsByTagName("iframe")
+                let offsets: { frame_index_path: string, bounds: IBox }[] = []
+                for (let i = 0; i < frames.length; i++) {
+                    let frame_index_path = PageWrap.get_frame_index_path(frames[i].contentWindow)
+                    let rect = frames[i].getBoundingClientRect()
+                    let bounds = {left: rect.left, right: rect.right, bottom: rect.bottom, top: rect.top}
+                    offsets.push({frame_index_path: frame_index_path, bounds: bounds})
+                }
+                send_response(offsets)
+                break
+            }
+            case InfoType.kDistributeIFrameOffsets: {
+                PageWrap.local_to_global_offset = info.value
+                send_response(true)
+                break
+            }
+        }        
     }
 
     handle_bg_request(req: RequestMessage, send_response: (response: any) => void) {
@@ -167,7 +190,7 @@ class ContentCommHandler {
                 // Get the center of the current element in global client space.
                 let elem_box = new Box(elem_wrap.get_box())
                 elem_box.to_client_space(window)
-                elem_box.to_global_client_space(window)
+                elem_box.add_offset(PageWrap.get_offset()) // convert local to global client space
                 let pos = elem_box.get_center()
 
                 // Get the crosshair info using the center point.

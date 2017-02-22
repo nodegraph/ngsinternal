@@ -392,6 +392,10 @@ void TaskQueuer::queue_get_current_url(TaskContext& tc) {
 // Queue Set Tasks.
 // ---------------------------------------------------------------------------------
 
+void TaskQueuer:: queue_update_frame_offsets(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::update_frame_offsets_task, this), "queue_update_frame_offsets");
+}
+
 void TaskQueuer::queue_update_element(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::update_element_task, this), "queue_update_overlays");
 }
@@ -862,6 +866,11 @@ void TaskQueuer::get_current_url_task() {
 // ------------------------------------------------------------------------
 // Set Creation/Modification Tasks.
 // ------------------------------------------------------------------------
+
+void TaskQueuer::update_frame_offsets_task() {
+  Message req(ChromeRequestType::kUpdateIFrameOffsets);
+  send_msg_task(req);
+}
 
 void TaskQueuer::update_element_task() {
   Message req(ChromeRequestType::kUpdateElement);

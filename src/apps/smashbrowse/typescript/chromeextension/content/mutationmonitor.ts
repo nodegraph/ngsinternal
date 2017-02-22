@@ -342,7 +342,8 @@ class MutationMonitor {
 
     adjust_page() {
         //this.disable_hover()
-        this.disable_zoom()
+        //this.disable_zoom()
+
         //this.disable_scrollbars()
         //this.add_video_controls()
         //this.show_hidden()
@@ -350,6 +351,9 @@ class MutationMonitor {
 
     on_loaded() {
         this.adjust_page()
+        
+        // Hide scroll bars.
+        window.document.documentElement.style.overflow = "hidden"
 
         // Start mutation to timer, to try and detect when page is fully loaded.
         this.start_mutation_timer()

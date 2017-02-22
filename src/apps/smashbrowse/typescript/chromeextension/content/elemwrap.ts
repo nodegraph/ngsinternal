@@ -285,7 +285,7 @@ class ElemWrap {
         // Bounds.
         let box = new Box(this.get_box()) // This should be in page space.
         box.to_client_space(window)
-        box.to_global_client_space(window)
+        box.add_offset(PageWrap.get_offset()) // convert local to global client space
         let z_index = this.get_z_index()
         // Form the info.
         return { frame_index_path: frame_index_path, xpath: xpath, href: href, box: box, z_index: z_index }

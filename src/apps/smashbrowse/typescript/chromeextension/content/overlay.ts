@@ -19,11 +19,9 @@ class Overlay {
     // Our ElemWrap.
     private elem_wrap: ElemWrap
     private color: string
-    private css_class_name: string
     
     constructor(class_name: string, color: string,  elem_wrap: ElemWrap=null) {
         // Primary roperty.
-        this.css_class_name = class_name
         this.color = color
         this.elem_wrap = elem_wrap // Note the elem wrap is allowed to be null as well.
 

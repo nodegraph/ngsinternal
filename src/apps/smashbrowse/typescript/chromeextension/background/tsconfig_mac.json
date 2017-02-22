@@ -15,6 +15,7 @@
         "../../message/message.d.ts",
         "../../message/messagetypes.d.ts",
 
+        "frameinfos.ts",
         "browserwrap.ts",
         "bgcomm.ts",
         "bgcommhandler.ts",

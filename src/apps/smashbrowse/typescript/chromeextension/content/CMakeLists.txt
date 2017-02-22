@@ -3,7 +3,6 @@
 get_tsconfig_files(cnt_ts)
 message("content files are: ${cnt_ts}")
 
-
 # Add our build dir prefix to the ts filenames.
 string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" cnt_js "${cnt_ts}")
 

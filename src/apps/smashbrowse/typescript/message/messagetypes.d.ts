@@ -91,7 +91,8 @@ declare const enum ChromeRequestType {
 
   // Info Request.
   kGetCrosshairInfo = 26,
-  kGetDropDownInfo = 27
+  kGetDropDownInfo = 27,
+  kUpdateIFrameOffsets = 28,
 }
 
 declare const enum PlatformRequestType {
@@ -139,7 +140,10 @@ declare const enum InfoType {
   kBgIsConnected = 2,
   kShowWebActionMenu = 3,
   kTabCreated = 4,
-  kTabDestroyed = 5
+  kTabDestroyed = 5,
+  kCollectIFrameIndexPaths = 6,
+  kCollectIFrameOffsets = 7,
+  kDistributeIFrameOffsets = 8
 }
 
 declare const enum MessageType {

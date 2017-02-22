@@ -14,6 +14,7 @@ class EventBlocker {
 
     // The events that we will block.
     static event_types = [
+        'touchmove',
         'message',
         'contextmenu',
         'scroll',

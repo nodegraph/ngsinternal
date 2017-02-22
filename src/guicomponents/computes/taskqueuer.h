@@ -122,6 +122,7 @@ Q_OBJECT
   void queue_get_current_url(TaskContext& tc);
 
   // Queue Set Tasks.
+  void queue_update_frame_offsets(TaskContext& tc);
   void queue_update_element(TaskContext& tc);
   void queue_clear_element(TaskContext& tc);
   void queue_find_element_by_position(TaskContext& tc);
@@ -234,6 +235,7 @@ signals:
   void get_current_url_task();
 
   // Set Creation/Modification Tasks.
+  void update_frame_offsets_task();
   void update_element_task();
   void clear_element_task();
   void find_element_by_position_task();

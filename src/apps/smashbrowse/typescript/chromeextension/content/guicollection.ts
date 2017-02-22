@@ -52,7 +52,10 @@ class GUICollection {
 
         // Get the click position in global client space.
         let global_client_click = new Point({ x: e.clientX, y: e.clientY })
-        global_client_click.to_global_client_space(window)
+
+        console.log('on context menu ... offset is: ' + JSON.stringify(PageWrap.get_offset()))
+
+        global_client_click = global_client_click.add(PageWrap.get_offset()) // convert local to global client space
 
         // Update the click box overly with local page space coordinates.
         let local_page_click = new Point({ x: e.pageX, y: e.pageY })
@@ -96,7 +99,7 @@ class GUICollection {
 
     get_crosshair_info(global_client_click: Point): IClickInfo {
         let local_page_click = new Point(global_client_click)
-        local_page_click.to_local_client_space(window)
+        local_page_click = local_page_click.subtract(PageWrap.get_offset()) // convert global to local client space
         local_page_click.to_page_space(window)
 
         // Get the text and image values.

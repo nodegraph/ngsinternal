@@ -5,6 +5,7 @@ class BgCommHandler {
     browser_wrap: BrowserWrap
 
     // Our Members.
+    private frame_infos: FrameInfos
 
     // Members used to collected info from our frames.
     private collected_elems: IElementInfo[] = []
@@ -31,6 +32,7 @@ class BgCommHandler {
     constructor(bc: BgComm, bw: BrowserWrap) {
         this.bg_comm = bc
         this.browser_wrap = bw
+        this.frame_infos = new FrameInfos() 
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -65,6 +67,107 @@ class BgCommHandler {
     // Initiate collection from all frames.
     // ------------------------------------------------------------------------------------------------------------------
 
+    collect_iframe_index_paths() {
+        let f = (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
+
+            // Initialize the iframe hierarchy.
+            this.frame_infos.initialize(details)
+
+            // Initialize our response counters, so that we know when all responses have come back.
+            this.response_count = 0
+            this.expected_response_count = details.length
+
+            // Wrap the given response collector in logic to increment the response counters.
+            let make_collector = (frame_id: number) => {
+                let collector_wrap = (response: any) => {
+                    console.log("got iframe index paths reponse: " + JSON.stringify(response))
+                    this.frame_infos.set_index_path(frame_id, response)
+                    this.response_count += 1
+                    if (this.response_count == this.expected_response_count) {
+                        console.log('1111111111111: done get iframe index paths')
+                        this.run_next_task()
+                    }
+                }
+                return collector_wrap
+            }
+
+            // Now send a message to each frame.
+            details.forEach((frame: chrome.webNavigation.GetAllFrameResultDetails) => {
+                let collector = make_collector(frame.frameId)
+                let msg = new InfoMessage(-1, InfoType.kCollectIFrameIndexPaths, {frame_id: frame.frameId})
+                chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
+            });
+        }
+        chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, f);
+    }
+    
+    // This assumes collect_iframe_index_paths has already been run.
+    collect_iframe_offsets() {
+        let f = (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
+
+            // Initialize our response counters, so that we know when all responses have come back.
+            this.response_count = 0
+            this.expected_response_count = details.length
+
+            // Wrap the given response collector in logic to increment the response counters.
+            let make_collector = (frame_id: number) => {
+                let collector_wrap = (response: any) => {
+                    console.log("got iframe offsets reponse: " + JSON.stringify(response))
+                    for (let offset of response) {
+                        this.frame_infos.set_bounds(offset.frame_index_path, offset.bounds)
+                    }
+
+                    this.response_count += 1
+                    if (this.response_count == this.expected_response_count) {
+                        console.log('222222222222: done get iframe offsets')
+                        this.run_next_task()
+                    }
+                }
+                return collector_wrap
+            }
+
+            // Now send a message to each frame.
+            details.forEach((frame: chrome.webNavigation.GetAllFrameResultDetails) => {
+                let collector = make_collector(frame.frameId)
+                let msg = new InfoMessage(-1, InfoType.kCollectIFrameOffsets, {frame_id: frame.frameId})
+                chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
+            });
+        }
+        chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, f);
+    }
+
+    distribute_iframe_offsets() {
+        let f = (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
+
+            // Initialize our response counters, so that we know when all responses have come back.
+            this.response_count = 0
+            this.expected_response_count = details.length
+
+            // Wrap the given response collector in logic to increment the response counters.
+            let make_collector = (frame_id: number) => {
+                let collector_wrap = (response: any) => {
+                    // We don't do anything.
+                    console.log("got distribute iframe reponse: " + JSON.stringify(response))
+                    this.response_count += 1
+                    if (this.response_count == this.expected_response_count) {
+                        console.log('333333: done distributing offsets')
+                        this.run_next_task()
+                    }
+                }
+                return collector_wrap
+            }
+
+            // Now send a message to each frame.
+            details.forEach((frame: chrome.webNavigation.GetAllFrameResultDetails) => {
+                let collector = make_collector(frame.frameId)
+                let offset = this.frame_infos.get_info_by_id(frame.frameId).get_offset()
+                let msg = new InfoMessage(-1, InfoType.kDistributeIFrameOffsets, offset)
+                chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
+            });
+        }
+        chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, f);
+    }
+    
     collect_from_frames(msg: BaseMessage, response_collector: (response: any) => void = function(){}) {
         chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
             // Initialize our response counters, so that we know when all responses have come back.
@@ -83,6 +186,12 @@ class BgCommHandler {
                 chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector_wrap);
             });
         });
+    }
+
+    queue_iframe_info_sharing() {
+        this.queue(() => {this.collect_iframe_index_paths()})
+        this.queue(() => {this.collect_iframe_offsets()})
+        this.queue(() => {this.distribute_iframe_offsets()})
     }
 
     queue_collect_void_from_frames(msg: BaseMessage) {
@@ -598,7 +707,16 @@ class BgCommHandler {
                     })
                 this.run_next_task()
             } break
-
+            case ChromeRequestType.kUpdateIFrameOffsets: {
+                console.log("got request XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                this.clear_tasks()
+                this.queue_iframe_info_sharing()
+                this.queue(() => {
+                    let response = new ResponseMessage(req.id, true, true)
+                    this.bg_comm.send_to_nodejs(response)
+                })
+                this.run_next_task()
+            } break
             case ChromeRequestType.kUpdateElement: {
                 this.clear_tasks()
                 this.queue_update_element()

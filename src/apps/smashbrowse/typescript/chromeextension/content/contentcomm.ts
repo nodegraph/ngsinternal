@@ -37,7 +37,7 @@ class ContentComm {
                 this.handler.handle_bg_response(<ResponseMessage>msg)
                 break
             case MessageType.kInfoMessage:
-                this.handler.handle_bg_info(<InfoMessage>msg)
+                this.handler.handle_bg_info(<InfoMessage>msg, send_response)
                 break
         }
     }

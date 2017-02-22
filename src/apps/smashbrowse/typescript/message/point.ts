@@ -15,38 +15,38 @@ class Point {
     // Local page space: The origin is at the top left of our local document page, and is agnostic to scroll.
     // Global page space: Is not used, as many parenting frames can be scrolled and gets complicated.
 
-    // Assumes we are in local client space.
-    to_global_client_space(local_win: Window): void {
-        this.to_global_client_space_helper(local_win, true)
-    }
-    // Assumes we are in global client space.
-    to_local_client_space(local_win: Window): void {
-        this.to_global_client_space_helper(local_win, false)
-    }
-    // Local to global client space transform helper.
-    private to_global_client_space_helper(local_win: Window, to: boolean) {
-        let win = local_win
-        let factor = 1
-        if (!to) {
-            factor = -1
-        }
-        while (win.parent != win) {
-            var frames = win.parent.document.getElementsByTagName('iframe');
-            let found = false
-            for (let i = 0; i < frames.length; i++) {
-                if (frames[i].contentWindow === win) {
-                    this.x += factor * frames[i].getBoundingClientRect().left
-                    this.y += factor * frames[i].getBoundingClientRect().top
-                    found = true
-                    break;
-                }
-            }
-            if (!found) {
-                console.error('Error Point::to_global_client_space did not find parenting frame')
-            }
-            win = win.parent
-        }
-    }
+    // // Assumes we are in local client space.
+    // to_global_client_space(local_win: Window): void {
+    //     this.to_global_client_space_helper(local_win, true)
+    // }
+    // // Assumes we are in global client space.
+    // to_local_client_space(local_win: Window): void {
+    //     this.to_global_client_space_helper(local_win, false)
+    // }
+    // // Local to global client space transform helper.
+    // private to_global_client_space_helper(local_win: Window, to: boolean) {
+    //     let win = local_win
+    //     let factor = 1
+    //     if (!to) {
+    //         factor = -1
+    //     }
+    //     while (win.parent != win) {
+    //         var frames = win.parent.document.getElementsByTagName('iframe');
+    //         let found = false
+    //         for (let i = 0; i < frames.length; i++) {
+    //             if (frames[i].contentWindow === win) {
+    //                 this.x += factor * frames[i].getBoundingClientRect().left
+    //                 this.y += factor * frames[i].getBoundingClientRect().top
+    //                 found = true
+    //                 break;
+    //             }
+    //         }
+    //         if (!found) {
+    //             console.error('Error Point::to_global_client_space did not find parenting frame')
+    //         }
+    //         win = win.parent
+    //     }
+    // }
 
     // Assumes we are in page space and converts to client space.
     to_client_space(local_win: Window) : void {

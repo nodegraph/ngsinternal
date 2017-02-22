@@ -13,6 +13,8 @@ declare class Box {
     constructor(box: IBox)
 
     reset(): void
+    add_offset(p: IPoint): void
+    subtract_offset(p: IPoint): void
 
     get_as_string(): string
 
@@ -30,8 +32,8 @@ declare class Box {
 
     get_relative_point(p: Point): Point
 
-    to_global_client_space(local_win: Window): void
-    to_local_client_space(local_win: Window): void
+    //to_global_client_space(local_win: Window): void
+    //to_local_client_space(local_win: Window): void
     to_client_space(local_win: Window): void
     to_page_space(local_win: Window): void
 

@@ -312,8 +312,8 @@ public class WebDriverWrap {
             _web_driver.switchTo().frame(iframes.get(frame_index));
             
             // Debug dump of the name of the frame after switching.
-            String next_frame_info = (String) je.executeScript("return self.frameElement.className + \"--\" + self.name + \" w--\" + self.frameElement.clientWidth + \" h--\" + self.frameElement.clientHeight");
-            System.err.println("frame class--name is: " + next_frame_info);
+            //String next_frame_info = (String) je.executeScript("return self.frameElement.className + \"--\" + self.name + \" w--\" + self.frameElement.clientWidth + \" h--\" + self.frameElement.clientHeight");
+            //System.err.println("frame class--name is: " + next_frame_info);
         }
     }
     
@@ -399,21 +399,24 @@ public class WebDriverWrap {
     
     void scroll(MessageEnums.DirectionType dir) {
     	String script = "";
+    	//String prefix = "window.document.documentElement.style.overflow = 'auto';"; // show scrollbar
+    	//String suffix = "window.document.documentElement.style.overflow = 'hidden';"; // hide scrollbar
+    	
     	switch (dir) {
         	case down: {
-        		script = "this.gui_collection.overlay_sets.scroll_down(0, 0);";
+        		script = "window.scrollBy(0, window.document.documentElement.clientHeight * 0.80);";
         		break;
         	}
         	case up: {
-        		script = "this.gui_collection.overlay_sets.scroll_up(0, 0);";
+        		script = "window.scrollBy(0, window.document.documentElement.clientHeight * -0.80);";
         		break;
         	}
         	case right: {
-        		script = "this.gui_collection.overlay_sets.scroll_right(0, 0);";
+        		script = "window.scrollBy(window.document.documentElement.clientWidth * 0.80, 0);";
         		break;
         	}
         	case left: {
-        		script = "this.gui_collection.overlay_sets.scroll_left(0, 0);";
+        		script = "window.scrollBy(window.document.documentElement.clientWidth * -0.80, 0);";
         		break;
         	}
     	}

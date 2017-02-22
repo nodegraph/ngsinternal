@@ -3,6 +3,9 @@
 class PageWrap {
     // Our Dependencies.
     private gui_collection: GUICollection // This is like our owning parent.
+
+    // Our members.
+    static local_to_global_offset: IPoint = {x: 0, y: 0}
     
     // Constructor.
     constructor(gc: GUICollection) {
@@ -12,6 +15,10 @@ class PageWrap {
     //---------------------------------------------------------------------------------
     // Page Properties.
     //---------------------------------------------------------------------------------
+
+    static get_offset() {
+        return PageWrap.local_to_global_offset
+    }
 
     // Returns the page height.
     static get_height() {
@@ -35,21 +42,21 @@ class PageWrap {
     }
 
     static scroll_into_view(win: Window) {
-        while (win.parent != win) {
-            var frames = win.parent.document.getElementsByTagName('iframe');
-            let found = false
-            for (let i = 0; i < frames.length; i++) {
-                if (frames[i].contentWindow === win) {
-                    found = true
-                    frames[i].scrollIntoView(true)
-                    break;
-                }
-            }
-            if (!found) {
-                console.error('Error did not find parenting frame.')
-            }
-            win = win.parent
-        }
+        // while (win.parent != win) {
+        //     var frames = win.parent.document.getElementsByTagName('iframe');
+        //     let found = false
+        //     for (let i = 0; i < frames.length; i++) {
+        //         if (frames[i].contentWindow === win) {
+        //             found = true
+        //             frames[i].scrollIntoView(true)
+        //             break;
+        //         }
+        //     }
+        //     if (!found) {
+        //         console.error('Error did not find parenting frame.')
+        //     }
+        //     win = win.parent
+        // }
     }
 
     // Get frame index path as string.
@@ -73,10 +80,10 @@ class PageWrap {
         let path: number[] = []
         let totals: number[] = [] // debugging
         while (win.parent != win) {
-            var frames = win.parent.document.getElementsByTagName('iframe');
+            var frames = win.parent.frames
             let found = false
             for (let i = 0; i < frames.length; i++) {
-                if (frames[i].contentWindow === win) {
+                if (frames[i] === win) {
                     path.unshift(i)
                     totals.unshift(frames.length)
                     found = true
@@ -99,7 +106,7 @@ class PageWrap {
 
     static get_global_client_frame_bounds(frame_window: Window) {
         let box = PageWrap.get_local_client_frame_bounds(frame_window)
-        box.to_global_client_space(frame_window)
+        box.add_offset(PageWrap.get_offset())
         return box
     }
 
@@ -122,11 +129,11 @@ class PageWrap {
 
             // Get the frame index as a number.
             let frame_index = Number(splits[i])
-            var frames = win.document.getElementsByTagName('iframe');
+            var frames = win.frames
             if (frames.length <= frame_index) {
                 console.error("Error: could not find frame index.")
             }
-            win = frames[frame_index].contentWindow
+            win = frames[frame_index]
         }
         return win
     }
