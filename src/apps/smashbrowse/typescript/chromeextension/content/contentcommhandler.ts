@@ -39,7 +39,7 @@ class ContentCommHandler {
             case InfoType.kDistributeIFrameOffsets: {
                 PageWrap.local_to_global_offset = info.value.offset
                 PageWrap.fe_index_path = info.value.fe_index_path
-                console.log('frame index path: ' + PageWrap.get_fw_index_path(window) + ' fe_index_path: ' + PageWrap.fe_index_path)
+                //console.log('frame index path: ' + PageWrap.get_fw_index_path(window) + ' fe_index_path: ' + PageWrap.fe_index_path)
                 send_response(true)
                 break
             }

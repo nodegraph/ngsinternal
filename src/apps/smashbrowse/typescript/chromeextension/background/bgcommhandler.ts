@@ -88,10 +88,9 @@ class BgCommHandler {
                     }
                     this.response_count += 1
                     if (this.response_count == this.expected_response_count) {
-
-                        this.frame_infos.check()
-                        this.frame_infos.dump_tree()
-                        this.frame_infos.dump_array()
+                        //this.frame_infos.dump_parenting()
+                        //this.frame_infos.dump_tree()
+                        //this.frame_infos.dump_array()
                         this.run_next_task()
                     }
                 }
@@ -172,7 +171,7 @@ class BgCommHandler {
                 let info = this.frame_infos.get_info_by_id(frame.frameId)
                 let offset = info.calculate_offset()
                 let fe_index_path = info.calculate_fe_index_path()
-                console.log('distributing frame index path: ' + info.fw_index_path + ' element index path: ' + fe_index_path)
+                //console.log('distributing frame index path: ' + info.fw_index_path + ' element index path: ' + fe_index_path)
                 let msg = new InfoMessage(-1, InfoType.kDistributeIFrameOffsets, {fe_index_path: fe_index_path, offset: offset})
                 chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
             });
@@ -779,7 +778,6 @@ class BgCommHandler {
                 this.run_next_task()
             } break
             case ChromeRequestType.kScrollElementIntoView: {
-                console.log('bgcommhandler got kScrollElementIntoView')
                 this.clear_tasks()
                 this.queue_scroll_element_into_view()
                 this.queue(() => {

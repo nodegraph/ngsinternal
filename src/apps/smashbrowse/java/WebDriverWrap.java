@@ -354,7 +354,7 @@ public class WebDriverWrap {
         				"var client_x = rect.left + arguments[1]; " +
         				"var client_y = rect.top + arguments[2]; " +
         				"var element = document.elementFromPoint(client_x, client_y);" +
-        				"console.log('rect: ' + rect.left + ',' + rect.right + ',' + rect.top + ',' + rect.bottom);" +
+        				//"console.log('rect: ' + rect.left + ',' + rect.right + ',' + rect.top + ',' + rect.bottom);" +
         				"return element;";
         Object obj = js.executeScript(script, we.element, we.local_x, we.local_y);
         //System.err.println("script returned: " + obj.toString());

@@ -99,7 +99,7 @@ class BgComm {
         
         this.nodejs_port = BgComm.extract_port_from_url(tab.url)
         if (this.nodejs_port != -1) {
-        	console.log("found nodejs port")
+        	//console.log("found nodejs port")
             this.connect_to_nodejs()
             //chrome.tabs.onUpdated.removeListener(this.on_tab_updated_bound)
             this.tab_ids = [tab.id]
@@ -112,7 +112,7 @@ class BgComm {
         if (index != -1) {
             return Number(url.substring(index + 1))
         } else {
-            console.error("Error: no port number present")
+            //console.error("Error: no port number present")
             return -1
         }
     }
@@ -170,8 +170,7 @@ class BgComm {
     // Receive messages from nodejs. They will be forward to the content script.
     receive_from_nodejs(event: MessageEvent) {
         let msg = BaseMessage.create_from_string(event.data);
-        //let request = JSON.parse(event.data);
-        console.log("bg received message from nodejs: " + event.data)
+        //console.log("bg received message from nodejs: " + event.data)
         if (msg.get_msg_type() != MessageType.kRequestMessage) {
             console.error('bgcomm was expecting a request message')
             return

@@ -131,10 +131,10 @@ class FrameInfos {
             console.log("Error: found more than one root frame: " + root_count)
         }
 
-        this.dump_tree()
+        //this.dump_tree()
     }
 
-    check() {
+    dump_parenting() {
         for (let child of this.infos) {
             let parent = child
             console.log('----------------------')
@@ -146,7 +146,7 @@ class FrameInfos {
     }
 
     dump(info: FrameInfo) {
-        console.log('fpath: ' + info.fw_index_path)
+        console.log('tree element: ' + info.fw_index_path)
         for (let child of info.children) {
             this.dump(child)
         }
