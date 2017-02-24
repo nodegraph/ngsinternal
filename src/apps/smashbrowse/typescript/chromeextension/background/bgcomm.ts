@@ -46,7 +46,6 @@ class BgComm {
         this.tab_ids = this.tab_ids.concat(this.created_tab_ids)
         this.created_tab_ids.length = 0
         chrome.tabs.update(this.get_current_tab_id(), {active: true, pinned: true});
-
         console.log('adding created_tab_ids: ' + JSON.stringify(this.created_tab_ids) + ' to yield tab_ids: ' + JSON.stringify(this.tab_ids))
     }
 

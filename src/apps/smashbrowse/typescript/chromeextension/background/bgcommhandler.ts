@@ -67,7 +67,7 @@ class BgCommHandler {
     // Initiate collection from all frames.
     // ------------------------------------------------------------------------------------------------------------------
 
-    collect_iframe_index_paths() {
+    collect_fw_index_paths() {
         let f = (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
 
             // Initialize the iframe hierarchy.
@@ -79,12 +79,19 @@ class BgCommHandler {
 
             // Wrap the given response collector in logic to increment the response counters.
             let make_collector = (frame_id: number) => {
-                let collector_wrap = (response: any) => {
-                    console.log("got iframe index paths reponse: " + JSON.stringify(response))
-                    this.frame_infos.set_index_path(frame_id, response)
+                let collector_wrap = (response: string) => {
+                    let info = this.frame_infos.get_info_by_id(frame_id)
+                    if (!info) {
+                        console.error("could not find frame info by id: " + frame_id)
+                    } else {
+                        info.fw_index_path = response
+                    }
                     this.response_count += 1
                     if (this.response_count == this.expected_response_count) {
-                        console.log('1111111111111: done get iframe index paths')
+
+                        this.frame_infos.check()
+                        this.frame_infos.dump_tree()
+                        this.frame_infos.dump_array()
                         this.run_next_task()
                     }
                 }
@@ -101,7 +108,7 @@ class BgCommHandler {
         chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, f);
     }
     
-    // This assumes collect_iframe_index_paths has already been run.
+    // This assumes collect_fw_index_paths has already been run.
     collect_iframe_offsets() {
         let f = (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
 
@@ -111,15 +118,19 @@ class BgCommHandler {
 
             // Wrap the given response collector in logic to increment the response counters.
             let make_collector = (frame_id: number) => {
-                let collector_wrap = (response: any) => {
-                    console.log("got iframe offsets reponse: " + JSON.stringify(response))
-                    for (let offset of response) {
-                        this.frame_infos.set_bounds(offset.frame_index_path, offset.bounds)
+                let collector_wrap = (response: { fw_index_path: string, element_index: number, bounds: IBox }[]) => {
+                    for (let r of response) {
+                        let info = this.frame_infos.get_info_by_fw_index_path(r.fw_index_path)
+                        if (!info) {
+                            console.error("could not find frame info by index path: " + r.fw_index_path)
+                            continue
+                        }
+                        info.element_index = r.element_index
+                        info.bounds = r.bounds
                     }
 
                     this.response_count += 1
                     if (this.response_count == this.expected_response_count) {
-                        console.log('222222222222: done get iframe offsets')
                         this.run_next_task()
                     }
                 }
@@ -147,10 +158,8 @@ class BgCommHandler {
             let make_collector = (frame_id: number) => {
                 let collector_wrap = (response: any) => {
                     // We don't do anything.
-                    console.log("got distribute iframe reponse: " + JSON.stringify(response))
                     this.response_count += 1
                     if (this.response_count == this.expected_response_count) {
-                        console.log('333333: done distributing offsets')
                         this.run_next_task()
                     }
                 }
@@ -160,8 +169,11 @@ class BgCommHandler {
             // Now send a message to each frame.
             details.forEach((frame: chrome.webNavigation.GetAllFrameResultDetails) => {
                 let collector = make_collector(frame.frameId)
-                let offset = this.frame_infos.get_info_by_id(frame.frameId).get_offset()
-                let msg = new InfoMessage(-1, InfoType.kDistributeIFrameOffsets, offset)
+                let info = this.frame_infos.get_info_by_id(frame.frameId)
+                let offset = info.calculate_offset()
+                let fe_index_path = info.calculate_fe_index_path()
+                console.log('distributing frame index path: ' + info.fw_index_path + ' element index path: ' + fe_index_path)
+                let msg = new InfoMessage(-1, InfoType.kDistributeIFrameOffsets, {fe_index_path: fe_index_path, offset: offset})
                 chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
             });
         }
@@ -189,7 +201,7 @@ class BgCommHandler {
     }
 
     queue_iframe_info_sharing() {
-        this.queue(() => {this.collect_iframe_index_paths()})
+        this.queue(() => {this.collect_fw_index_paths()})
         this.queue(() => {this.collect_iframe_offsets()})
         this.queue(() => {this.distribute_iframe_offsets()})
     }
@@ -251,20 +263,6 @@ class BgCommHandler {
         return best
     }
 
-    static get_array_from_frame_index_path(path: string) {
-        let arr: number[] = []
-        let splits = path.split('/')
-        for (let i=0; i<splits.length; i++) {
-            // Note when empty strings are split on '/', you get an array with one element which is an empty string.
-            if (splits[i] === '') {
-                continue
-            }
-            // Get the frame index as a number.
-            arr.push(Number(splits[i]))
-        }
-        return arr
-    }
-
     // This method is supposed to find the topmost frame, in a set of overlapping frames.
     // This will take some time to implement so for now it simply looks at the frame index path_length
     // and choose the shortest path, or if there are multiple paths with the same length then it
@@ -276,7 +274,7 @@ class BgCommHandler {
         let best: IClickInfo = null
         let best_path_length: number = null
         elems.forEach((elem) => {
-            let path_arr = BgCommHandler.get_array_from_frame_index_path(elem.frame_index_path)
+            let path_arr = get_array_from_index_path(elem.fw_index_path)
             let path_length = path_arr.length
             if (best === null) {
                 best = elem
@@ -341,11 +339,6 @@ class BgCommHandler {
 
     static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], angle: number, max_width_diff: number, max_height_diff: number, max_angle_diff: number) {
 
-        //console.log('angle in degress: ' + angle)
-        //console.log('max_width_diff: ' + max_width_diff)
-        //console.log('max_height_diff: ' + max_height_diff)
-        //console.log('max_angle_diff: ' + max_angle_diff)
-
         // Loop through each one trying to find the best one.
         let best: IElementInfo = null
         let best_distance = 0
@@ -360,7 +353,7 @@ class BgCommHandler {
         // Note the return in the forEach loop acts like a continue statement.
         candidates.forEach((dest) => {
             // Skip the dest element if its equal to the src element.
-            if ((dest.frame_index_path == src.frame_index_path) && (dest.xpath == src.xpath)) {
+            if ((dest.fw_index_path == src.fw_index_path) && (dest.xpath == src.xpath)) {
                 return
             }
 
@@ -594,8 +587,6 @@ class BgCommHandler {
     // Main message handler.
     // ------------------------------------------------------------------------------------------------------------------
     handle_nodejs_request(req: RequestMessage) {
-        //console.log('handling request from nodejs: ' + JSON.stringify(req))
-
         // We intercept certain requests before it gets to the content script,
         // because content scripts can't use the chrome.* APIs except for parts of chrome.extension for message passing.
 
@@ -708,7 +699,6 @@ class BgCommHandler {
                 this.run_next_task()
             } break
             case ChromeRequestType.kUpdateIFrameOffsets: {
-                console.log("got request XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                 this.clear_tasks()
                 this.queue_iframe_info_sharing()
                 this.queue(() => {
@@ -760,7 +750,8 @@ class BgCommHandler {
                     	// We don't error out if there is no current element.
                     	// We just return a dummy info instead.
                         let dummy: IElementInfo = {
-                            frame_index_path: "-1",
+                            fw_index_path: "-1",
+                            fe_index_path: "-1",
                             xpath: "",
                             href: "",
                             box: {left: 0, right: 0, bottom: 0, top: 0},
@@ -809,7 +800,7 @@ class BgCommHandler {
                     this.collected_elems.forEach((info: IElementInfo) => {
                         let box = new Box(info.box)
                         let point = new Point(req.args.global_mouse_position)
-                        let path_length = info.frame_index_path.split('/').length
+                        let path_length = info.fw_index_path.split('/').length
                         let area = box.get_area()
                         // Examine elements which contain our point of interest.
                         if (box.contains_point(point)) {

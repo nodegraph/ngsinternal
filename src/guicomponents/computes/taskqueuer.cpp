@@ -961,7 +961,8 @@ void TaskQueuer::shift_element_by_values_along_rows_task() {
 
 void TaskQueuer::perform_mouse_action_task() {
   QJsonObject args;
-  args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
+  args.insert(Message::kFWIndexPath, _chain_state.value(Message::kFWIndexPath));
+  args.insert(Message::kFEIndexPath, _chain_state.value(Message::kFEIndexPath));
   args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
 
   args.insert(Message::kMouseAction, _chain_state.value(Message::kMouseAction));
@@ -974,7 +975,8 @@ void TaskQueuer::perform_mouse_action_task() {
 
 void TaskQueuer::perform_hover_action_task() {
   QJsonObject args;
-  args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
+  args.insert(Message::kFWIndexPath, _chain_state.value(Message::kFWIndexPath));
+  args.insert(Message::kFEIndexPath, _chain_state.value(Message::kFEIndexPath));
   args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
 
   args.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
@@ -987,7 +989,8 @@ void TaskQueuer::perform_hover_action_task() {
 
 void TaskQueuer::perform_text_action_task() {
   QJsonObject args;
-  args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
+  args.insert(Message::kFWIndexPath, _chain_state.value(Message::kFWIndexPath));
+  args.insert(Message::kFEIndexPath, _chain_state.value(Message::kFEIndexPath));
   args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
 
   args.insert(Message::kTextAction, _chain_state.value(Message::kTextAction));
@@ -1000,7 +1003,8 @@ void TaskQueuer::perform_text_action_task() {
 
 void TaskQueuer::perform_element_action_task() {
   QJsonObject args;
-  args.insert(Message::kFrameIndexPath, _chain_state.value(Message::kFrameIndexPath));
+  args.insert(Message::kFWIndexPath, _chain_state.value(Message::kFWIndexPath));
+  args.insert(Message::kFEIndexPath, _chain_state.value(Message::kFEIndexPath));
   args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
 
   args.insert(Message::kElementAction, _chain_state.value(Message::kElementAction));

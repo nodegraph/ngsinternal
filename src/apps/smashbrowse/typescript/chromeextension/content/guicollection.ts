@@ -52,9 +52,6 @@ class GUICollection {
 
         // Get the click position in global client space.
         let global_client_click = new Point({ x: e.clientX, y: e.clientY })
-
-        console.log('on context menu ... offset is: ' + JSON.stringify(PageWrap.get_offset()))
-
         global_client_click = global_client_click.add(PageWrap.get_offset()) // convert local to global client space
 
         // Update the click box overly with local page space coordinates.
@@ -90,7 +87,7 @@ class GUICollection {
                     let option = <HTMLOptionElement>(element.options[i])
                     option_values.push(option.value)
                     option_texts.push(option.text)
-                    console.log('option value,text: ' + option.value + "," + option.text)
+                    //console.log('option value,text: ' + option.value + "," + option.text)
                 }
             }
         }
@@ -118,7 +115,8 @@ class GUICollection {
         let local_mouse_position = elem.get_box().get_relative_point(local_page_click)
 
         let args: IClickInfo = {
-            frame_index_path: PageWrap.get_frame_index_path(window),
+            fw_index_path: PageWrap.get_fw_index_path(window),
+            fe_index_path: PageWrap.fe_index_path,
             xpath: xpath,
             // Click pos.
             global_mouse_position: global_client_click,

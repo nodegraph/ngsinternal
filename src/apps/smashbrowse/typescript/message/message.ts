@@ -14,7 +14,8 @@ interface IPoint {
 // Info about an html element in the browser. 
 interface IElementInfo {
     // Frame and element info.
-    frame_index_path: string
+    fw_index_path: string // An array of indices into nested windows (obtained by window.frames in javascript).
+    fe_index_path: string // An array of indices into nested HTMLIFrameElements (obtained by document.getElementsByTagName('iframe') in javascript).
     xpath: string
     // Href from parenting anchor, empty if no parenting anchor.
     href: string
@@ -30,18 +31,19 @@ interface IPoint{
 
 interface IClickInfo {
     // Frame and element info.
-    frame_index_path: string,
-    xpath: string,
+    fw_index_path: string // An array of indices into nested windows (obtained by window.frames in javascript).
+    fe_index_path: string // An array of indices into nested HTMLIFrameElements (obtained by document.getElementsByTagName('iframe') in javascript).
+    xpath: string
     // Click pos.
-    global_mouse_position: IPoint, // In global client space.
-    local_mouse_position: IPoint, // In local space relative to the element of interest. (Calculated by subtracting the click pos from the element pos in page space coordinates.)
+    global_mouse_position: IPoint // In global client space.
+    local_mouse_position: IPoint // In local space relative to the element of interest. (Calculated by subtracting the click pos from the element pos in page space coordinates.)
     // Text and image values under click.
-    text_values: string[],
-    image_values: string[],
+    text_values: string[]
+    image_values: string[]
 }
 
 interface IDropDownInfo {
-    option_values: string[],
+    option_values: string[]
     option_texts: string[]
 }
 
@@ -140,3 +142,18 @@ class InfoMessage extends BaseMessage {
     }
 }
 
+// Converts a string composed of numbers separated by / into an array of numbers.
+// Usually used to convert an FW or FE index path into an array of numbers.
+function get_array_from_index_path(path: string) {
+    let arr: number[] = []
+    let splits = path.split('/')
+    for (let i=0; i<splits.length; i++) {
+        // Note when empty strings are split on '/', you get an array with one element which is an empty string.
+        if (splits[i] === '') {
+            continue
+        }
+        // Get the frame index as a number.
+        arr.push(Number(splits[i]))
+    }
+    return arr
+}

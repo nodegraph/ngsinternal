@@ -4,7 +4,8 @@
 
 declare interface IElementInfo {
     // Frame and element info.
-    frame_index_path: string
+    fw_index_path: string // An array of indices into nested windows (obtained by window.frames in javascript).
+    fe_index_path: string // An array of indices into nested HTMLIFrameElements (obtained by document.getElementsByTagName('iframe') in javascript).
     xpath: string
     // Href from parenting anchor, empty if no parenting anchor.
     href: string
@@ -15,13 +16,14 @@ declare interface IElementInfo {
 
 declare interface IClickInfo {
     // Frame and element info.
-    frame_index_path: string,
-    xpath: string,
+    fw_index_path: string // An array of indices into nested windows (obtained by window.frames in javascript).
+    fe_index_path: string // An array of indices into nested HTMLIFrameElements (obtained by document.getElementsByTagName('iframe') in javascript).
+    xpath: string
     // Click pos.
-    global_mouse_position: IPoint, // In global client space.
-    local_mouse_position: IPoint, // In local space relative to the element of interest. (Calculated by subtracting the click pos from the element pos in page space coordinates.)
+    global_mouse_position: IPoint // In global client space.
+    local_mouse_position: IPoint // In local space relative to the element of interest. (Calculated by subtracting the click pos from the element pos in page space coordinates.)
     // Text and image values under click.
-    text_values: string[],
+    text_values: string[]
     image_values: string[]
 }
 
@@ -58,3 +60,5 @@ declare class InfoMessage extends BaseMessage {
     value: any
     constructor(id: Number, info: InfoType, value?: any)
 }
+
+declare function get_array_from_index_path(path: string): number[];

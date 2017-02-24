@@ -9,8 +9,6 @@ declare class Point {
     constructor(point: IPoint)
     to_string(): string
     
-    //to_global_client_space(local_win: Window): void
-    //to_local_client_space(local_win: Window): void
     to_client_space(local_win: Window) : void
     to_page_space(local_win: Window) : void
     

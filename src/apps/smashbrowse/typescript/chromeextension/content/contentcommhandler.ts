@@ -20,24 +20,26 @@ class ContentCommHandler {
     handle_bg_info(info: InfoMessage, send_response: (response: any) => void) {
         switch (info.info) {
             case InfoType.kCollectIFrameIndexPaths: {
-                let frame_index_path = PageWrap.get_frame_index_path(window)
-                send_response(frame_index_path)
+                let fw_index_path = PageWrap.get_fw_index_path(window)
+                send_response(fw_index_path)
                 break
             }
             case InfoType.kCollectIFrameOffsets: {
-                let frames = document.getElementsByTagName("iframe")
-                let offsets: { frame_index_path: string, bounds: IBox }[] = []
-                for (let i = 0; i < frames.length; i++) {
-                    let frame_index_path = PageWrap.get_frame_index_path(frames[i].contentWindow)
-                    let rect = frames[i].getBoundingClientRect()
+                let elements = document.getElementsByTagName("iframe")
+                let offsets: { fw_index_path: string, element_index: number, bounds: IBox }[] = []
+                for (let i = 0; i < elements.length; i++) {
+                    let fw_index_path = PageWrap.get_fw_index_path(elements[i].contentWindow)
+                    let rect = elements[i].getBoundingClientRect()
                     let bounds = {left: rect.left, right: rect.right, bottom: rect.bottom, top: rect.top}
-                    offsets.push({frame_index_path: frame_index_path, bounds: bounds})
+                    offsets.push({fw_index_path: fw_index_path, element_index: i, bounds: bounds})
                 }
                 send_response(offsets)
                 break
             }
             case InfoType.kDistributeIFrameOffsets: {
-                PageWrap.local_to_global_offset = info.value
+                PageWrap.local_to_global_offset = info.value.offset
+                PageWrap.fe_index_path = info.value.fe_index_path
+                console.log('frame index path: ' + PageWrap.get_fw_index_path(window) + ' fe_index_path: ' + PageWrap.fe_index_path)
                 send_response(true)
                 break
             }
@@ -45,8 +47,6 @@ class ContentCommHandler {
     }
 
     handle_bg_request(req: RequestMessage, send_response: (response: any) => void) {
-        let frame_index_path = PageWrap.get_frame_index_path(window) 
-        //console.log('content script ' + frame_index_path + ' received message from bg: ' + JSON.stringify(req))
         let success_msg = new ResponseMessage(req.id, true)
         switch (req.request) {
             case ChromeRequestType.kBlockEvents: {
@@ -84,7 +84,8 @@ class ContentCommHandler {
                 // Clear out our current element, if any.
                 this.gui_collection.page_overlays.clear_elem_wrap()
                 // Now if our frame matches the request, then try to find the element.
-                if (req.args.frame_index_path == frame_index_path) {
+                let fe_index_path = PageWrap.get_fw_index_path(window) 
+                if (req.args.fw_index_path == fe_index_path) {
                     let elem_wraps = this.gui_collection.page_wrap.get_visible_by_xpath(req.args.xpath)
                     if (elem_wraps.length == 1) {
                         this.gui_collection.page_overlays.set_elem_wrap(elem_wraps[0])
@@ -92,9 +93,9 @@ class ContentCommHandler {
                         let info = elem_wraps[0].get_info()
                         send_response(info)
                     } else if (elem_wraps.length > 1) {
-                        console.error("More than one element matches the xpath of the element we want to make current: " + frame_index_path)
+                        console.error("More than one element matches the xpath of the element we want to make current: " + fe_index_path)
                     } else {
-                        console.error("No element matches the xpath of the element we want to make current: " + frame_index_path)
+                        console.error("No element matches the xpath of the element we want to make current: " + fe_index_path)
                     }
                 }
             } break

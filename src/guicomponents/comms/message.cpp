@@ -15,7 +15,8 @@ const char* Message::kValue = "value";
 
 const char* Message::kInfo = "info";
 
-const char* Message::kFrameIndexPath = "frame_index_path";
+const char* Message::kFWIndexPath = "fw_index_path";
+const char* Message::kFEIndexPath = "fe_index_path";
 const char* Message::kMessageType = "msg_type";
 
 const char* Message::kURL = "url";

@@ -1,6 +1,7 @@
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.Dimension;
@@ -37,6 +38,18 @@ public class WebDriverWrap {
 	private String _chrome_ext_dir; // chrome extension dir
 	private int _app_socket_port = -1;
 	private Stack<String> _window_handles;
+	
+	public class WebElementWithPos {
+		WebElement element;
+		int local_x;
+		int local_y;
+		
+		public WebElementWithPos(WebElement element, int local_x, int local_y) {
+			this.element = element;
+			this.local_x = local_x;
+			this.local_y = local_y;
+		}
+	}
 	
 	public WebDriverWrap(String settings_dir, 
 					String chrome_ext_dir,
@@ -261,14 +274,14 @@ public class WebDriverWrap {
     // Browser Frames.
     //------------------------------------------------------------------------------------------------
 	
-    // Negative numbers in the frame_index_path will make the path equivalent to an empty path.
+    // Negative numbers in the fe_index_path will make the path equivalent to an empty path.
     // Empty paths switch the frame to the top frame.
-    void switch_to_frame(String frame_index_path) {
-        System.err.println("switching to frame_index_path: " + frame_index_path);
+    void switch_to_frame(String fe_index_path) {
+        System.err.println("switching to fe_index_path: " + fe_index_path);
         _web_driver.switchTo().defaultContent();
 
         // Loop through each sub frame.
-        String[] splits = frame_index_path.split("/");
+        String[] splits = fe_index_path.split("/");
         for (String split: splits) {
 
             // Note when empty strings are split on '/', you get an array with one element which is an empty string.
@@ -281,7 +294,7 @@ public class WebDriverWrap {
             try {
             	frame_index = Integer.parseInt(split);
             } catch (java.lang.NumberFormatException e) {
-            	System.err.println("invalid frame_index_path");
+            	System.err.println("invalid fe_index_path");
             }
 
             // Stop going deeper if get a negative index.
@@ -307,7 +320,7 @@ public class WebDriverWrap {
             
             // We switch to the frame by using it's WebElement instead of by its index.
             // For example as follows: this.driver.switchTo().frame(frame_index)
-            // This is because otherwise it doesn't match up with the frame_index_path produced in PageWrap.get_frame_index_path().
+            // This is because otherwise it doesn't match up with the fe_index_path produced in PageWrap.get_fe_index_path().
             System.err.println("switching to index: " + frame_index);
             _web_driver.switchTo().frame(iframes.get(frame_index));
             
@@ -315,51 +328,77 @@ public class WebDriverWrap {
             //String next_frame_info = (String) je.executeScript("return self.frameElement.className + \"--\" + self.name + \" w--\" + self.frameElement.clientWidth + \" h--\" + self.frameElement.clientHeight");
             //System.err.println("frame class--name is: " + next_frame_info);
         }
+        
+        //System.err.println("switch to frame with contents: " + _web_driver.getPageSource());
     }
     
     //------------------------------------------------------------------------------------------------
     // Dom Elements.
     //------------------------------------------------------------------------------------------------
 
-    WebElement get_element(String frame_index_path, String xpath) {
-        switch_to_frame(frame_index_path);
+    WebElement get_element(String fe_index_path, String xpath) {
+        switch_to_frame(fe_index_path);
         return _web_driver.findElement(By.xpath(xpath));
     }
 
-    List<WebElement> get_elements(String frame_index_path, String xpath) {
-        switch_to_frame(frame_index_path);
+    List<WebElement> get_elements(String fe_index_path, String xpath) {
+        switch_to_frame(fe_index_path);
         return _web_driver.findElements(By.xpath(xpath));
     }
-
-    WebElement get_element_css(String frame_index_path, String css) {
-        switch_to_frame(frame_index_path);
-        return _web_driver.findElement(By.cssSelector(css));
-    }
     
+    // Finds an element that is on top of given element and position.
+    // For example sometimes there will be a transparent div overlayed on top of images and text for ads.
+    void switch_to_top_most_element(WebElementWithPos we) {
+        JavascriptExecutor js = (JavascriptExecutor) _web_driver;
+        String script = "var rect = arguments[0].getBoundingClientRect(); " +
+        				"var client_x = rect.left + arguments[1]; " +
+        				"var client_y = rect.top + arguments[2]; " +
+        				"var element = document.elementFromPoint(client_x, client_y);" +
+        				"console.log('rect: ' + rect.left + ',' + rect.right + ',' + rect.top + ',' + rect.bottom);" +
+        				"return element;";
+        Object obj = js.executeScript(script, we.element, we.local_x, we.local_y);
+        //System.err.println("script returned: " + obj.toString());
+        WebElement top_element = (WebElement)obj;
+        if (!top_element.equals(we.element)) {
+        	Point t = top_element.getLocation();
+        	Point e = we.element.getLocation();
+        	int diff_x = e.x - t.x;
+        	int diff_y = e.y - t.y;
+        	
+        	we.element = top_element;
+        	we.local_x += diff_x;
+        	we.local_y += diff_y;
+        }
+    }
+
     //------------------------------------------------------------------------------------------------
     // Actions on Dom Elements.
     //------------------------------------------------------------------------------------------------
     
-    void send_key(String frame_index_path, String xpath, String key) {
-        get_element(frame_index_path, xpath).sendKeys(key);
+    void send_key(String fe_index_path, String xpath, String key) {
+        get_element(fe_index_path, xpath).sendKeys(key);
     }
 
-    String get_text(String frame_index_path, String xpath) {
-        return get_element(frame_index_path, xpath).getText();
+    String get_text(String fe_index_path, String xpath) {
+        return get_element(fe_index_path, xpath).getText();
     }
 
-    void send_text(String frame_index_path, String xpath, String text) {
-        get_element(frame_index_path, xpath).sendKeys(Keys.HOME, Keys.chord(Keys.SHIFT, Keys.END), text);
+    void send_text(String fe_index_path, String xpath, String text) {
+        get_element(fe_index_path, xpath).sendKeys(Keys.HOME, Keys.chord(Keys.SHIFT, Keys.END), text);
     }
     
-    void click_on_element(String frame_index_path, String xpath, int local_mouse_position_x, int local_mouse_position_y, boolean hold_ctrl) {
-        WebElement element = get_element(frame_index_path, xpath);
-        Dimension dim = element.getSize();
+    void click_on_element(String fe_index_path, String xpath, int local_x, int local_y, boolean hold_ctrl) {
+        WebElement e = get_element(fe_index_path, xpath);
+        WebElementWithPos we = new WebElementWithPos(e, local_x, local_y);
+        switch_to_top_most_element(we);
+        
+        Dimension dim = we.element.getSize();
+        System.err.println("click elem dim is: " + dim.getWidth() + "," + dim.getHeight());
         Actions seq = new Actions(_web_driver);
-        if ((local_mouse_position_x >= 0) && (local_mouse_position_y >= 0) && (local_mouse_position_x < dim.width) && (local_mouse_position_y < dim.height)) {
-            seq = seq.moveToElement(element, local_mouse_position_x, local_mouse_position_y);
+        if ((we.local_x >= 0) && (we.local_y >= 0) && (we.local_x < dim.width) && (we.local_y < dim.height)) {
+            seq = seq.moveToElement(we.element, we.local_x, we.local_y);
         } else {
-            seq = seq.moveToElement(element, dim.width/2, dim.height/2);
+            seq = seq.moveToElement(we.element, dim.width/2, dim.height/2);
         }
         if (hold_ctrl) {
             if (FSWrap.platform_is_windows()) {
@@ -379,21 +418,24 @@ public class WebDriverWrap {
         seq.perform();
     }
 
-    void mouse_over_element(String frame_index_path, String xpath, int local_mouse_position_x, int local_mouse_position_y) {
-        WebElement element = get_element(frame_index_path, xpath);
-        Dimension dim = element.getSize();
+    void mouse_over_element(String fe_index_path, String xpath, int local_x, int local_y) {
+        WebElement e = get_element(fe_index_path, xpath);
+        WebElementWithPos we = new WebElementWithPos(e, local_x, local_y);
+        switch_to_top_most_element(we);
+        
+        Dimension dim = we.element.getSize();
         Actions seq = new Actions(_web_driver);
         
-        if ((local_mouse_position_x >= 0) && (local_mouse_position_y >= 0) && (local_mouse_position_x < dim.width) && (local_mouse_position_y < dim.height)) {
-        	seq = seq.moveToElement(element, local_mouse_position_x, local_mouse_position_y);
+        if ((we.local_x >= 0) && (we.local_y >= 0) && (we.local_x < dim.width) && (we.local_y < dim.height)) {
+        	seq = seq.moveToElement(we.element, we.local_x, we.local_y);
         } else {
-        	seq = seq.moveToElement(element, dim.width/2, dim.height/2);
+        	seq = seq.moveToElement(we.element, dim.width/2, dim.height/2);
         }
         seq.perform();
     }
     
-    void choose_option(String frame_index_path, String xpath, String option_text) {
-        WebElement element = get_element(frame_index_path, xpath);
+    void choose_option(String fe_index_path, String xpath, String option_text) {
+        WebElement element = get_element(fe_index_path, xpath);
         element.findElement(By.xpath("option[normalize-space(text())=\"" + option_text + "\"]")).click();
     }
     
@@ -424,8 +466,8 @@ public class WebDriverWrap {
     	js.executeScript(script);
     }
     
-    String get_image_url(String frame_index_path, String xpath) {
-        return get_element(frame_index_path, xpath).getAttribute("src");
+    String get_image_url(String fe_index_path, String xpath) {
+        return get_element(fe_index_path, xpath).getAttribute("src");
     }
     
     // image_url is the url of the image.
@@ -441,84 +483,4 @@ public class WebDriverWrap {
     	return false;
     }
     
-    //------------------------------------------------------------------------------------------------
-    // Multimedia Actions.
-    //------------------------------------------------------------------------------------------------
-    
-    void download_files() {
-
-        // Navigate to the settings page.
-        navigate_to("chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/settingsPanel.html");
-        
-        // Click on the behavior tab.
-        WebElement element = get_element("", "//*[@id=\"content\"]/ul/li[3]/a");
-        Actions seq = new Actions(_web_driver);
-        seq = seq.moveToElement(element, 10, 10);
-        seq = seq.click();
-        seq.perform();
-        
-        // Enter a number into the concurrent downloads input.
-        element = get_element("", "//*[@id=\"content\"]/div[2]/div[3]/div[1]/input");
-        element.sendKeys(Keys.HOME, Keys.chord(Keys.SHIFT, Keys.END), "1000", Keys.RETURN);
-
-        // Navigate to the main page.
-        navigate_to("chrome-extension://lmjnegcaeklhafolokijcfjliaokphfk/data/mainPanel.html");
-
-        // Click the other tabs button.
-        element = get_element_css("", "#content-footer > div.groups > div.group.group-inactive.ng-binding");
-        seq = new Actions(_web_driver);
-        seq = seq.moveToElement(element, 10, 10 );
-        seq = seq.click();
-        seq.perform();
-        
-        // Find the elements which contain the size and format of the videos.
-        List<WebElement> elements = get_elements("", "//*[@id=\"content-hits\"]/div[1]/child::*/div/div/div/div[2]/div[2]");
-        
-        // Extract the raw size and format text from the web element.
-        System.err.println("the number of video files is: " + elements.size());
-        Stack<String> size_and_formats = new Stack<String>();
-        Stack<String> video_names = new Stack<String>();
-        for (WebElement e: elements) {
-        	size_and_formats.push(e.getText());
-        }
-        
-        // Parse the size and formats from the match text.
-        String pattern = "([0-9\\.]*) (\\w\\w) - (\\w+)";
-        Pattern r = Pattern.compile(pattern);
-        
-        Stack<Float> sizes = new Stack<Float>();
-        Stack<String> formats = new Stack<String>();
-        for (String t: size_and_formats) {
-        	Matcher m = r.matcher(t);
-            if (!m.find()) {
-                continue;
-            }
-            if (m.group(2).toLowerCase().equals("kb")) {
-                sizes.push(Float.parseFloat(m.group(1)) / 1000);
-            } else if (m.group(2).toLowerCase().equals("mb")) {
-                sizes.push(Float.parseFloat(m.group(1)));
-            } else {
-                System.err.println("error: unknown byte units -->" + m.group(2) + "<--");
-            }
-            formats.push(m.group(3));
-            System.err.println("matches: **" + m.group(0) + "**" + m.group(1) + "**" + m.group(2) + "**" + m.group(3));
-        }
-        
-        // Find the largest video file.
-        float best_size = -1;
-        int best_index = -1;
-        for (int j = 0; j < size_and_formats.size(); j++) {
-            if (sizes.get(j)>best_size) {
-                best_size = sizes.get(j);
-                best_index = j;
-            }
-        }
-        System.err.println("the best index is: " + best_index + " with size of: " + best_size);
-
-        // Click it.
-        seq = new Actions(_web_driver);
-        seq = seq.moveToElement(elements.get(best_index), 10, 10);
-        seq = seq.click();
-        seq.perform(); 
-    }
 }

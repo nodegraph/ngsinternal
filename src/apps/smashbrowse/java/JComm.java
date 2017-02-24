@@ -195,26 +195,26 @@ public class JComm {
 	    
 	    case kPerformMouseAction: {
 	    	MessageEnums.MouseActionType mouse_action_type = MessageEnums.MouseActionType.get_enum(req.get_args().getAsJsonObject().get("mouse_action").getAsInt());
-	    	String frame_index_path = req.get_args().getAsJsonObject().get("frame_index_path").getAsString();
+	    	String fe_index_path = req.get_args().getAsJsonObject().get("fe_index_path").getAsString();
 	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
 	    	JsonObject pos = req.get_args().getAsJsonObject().get("local_mouse_position").getAsJsonObject();
 	    	int local_mouse_position_x = pos.get("x").getAsInt();
 	    	int local_mouse_position_y = pos.get("y").getAsInt();
 	    	switch (mouse_action_type) {
 	            case kSendClick: {
-	                web_driver.click_on_element(frame_index_path, xpath, local_mouse_position_x, local_mouse_position_y, false);
+	                web_driver.click_on_element(fe_index_path, xpath, local_mouse_position_x, local_mouse_position_y, false);
 	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
 	                System.out.println(resp.to_string());
 	                break;
 	            } 
 	            case kSendCtrlClick: {
-	                web_driver.click_on_element(frame_index_path, xpath, local_mouse_position_x, local_mouse_position_y, true);
+	                web_driver.click_on_element(fe_index_path, xpath, local_mouse_position_x, local_mouse_position_y, true);
 	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
 	                System.out.println(resp.to_string());
 	                break;
 	            }
 	            case kMouseOver: {
-	                web_driver.mouse_over_element(frame_index_path, xpath, local_mouse_position_x, local_mouse_position_y);
+	                web_driver.mouse_over_element(fe_index_path, xpath, local_mouse_position_x, local_mouse_position_y);
 	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
 	                System.out.println(resp.to_string());
 	                break;
@@ -230,18 +230,18 @@ public class JComm {
 	    
 	    case kPerformTextAction: {
 	    	MessageEnums.TextActionType text_action_type = MessageEnums.TextActionType.get_enum(req.get_args().getAsJsonObject().get("text_action").getAsInt());
-	    	String frame_index_path = req.get_args().getAsJsonObject().get("frame_index_path").getAsString();
+	    	String fe_index_path = req.get_args().getAsJsonObject().get("fe_index_path").getAsString();
 	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
 	        switch (text_action_type) {
 	            case kSendText: {
 	            	String text = req.get_args().getAsJsonObject().get("text").getAsString();
-	            	web_driver.send_text(frame_index_path, xpath, text);
+	            	web_driver.send_text(fe_index_path, xpath, text);
 	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
 	                System.out.println(resp.to_string());
 	            	break;
 	            }
 	            case kSendEnter: {
-	                web_driver.send_key(frame_index_path, xpath, Keys.RETURN.toString());
+	                web_driver.send_key(fe_index_path, xpath, Keys.RETURN.toString());
 	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
 	                System.out.println(resp.to_string());
 	                break;
@@ -257,18 +257,18 @@ public class JComm {
 	    
 	    case kPerformElementAction: {
 	    	MessageEnums.ElementActionType element_action_type = MessageEnums.ElementActionType.get_enum(req.get_args().getAsJsonObject().get("element_action").getAsInt());
-	    	String frame_index_path = req.get_args().getAsJsonObject().get("frame_index_path").getAsString();
+	    	String fe_index_path = req.get_args().getAsJsonObject().get("fe_index_path").getAsString();
 	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
 	        switch (element_action_type) {
 	            case kGetText: {
-	                String text = web_driver.get_text(frame_index_path, xpath);
+	                String text = web_driver.get_text(fe_index_path, xpath);
 	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(text));
 	                System.out.println(resp.to_string());
 	                break;
 	            } 
 	            case kChooseOption: {
 	            	String option_text = req.get_args().getAsJsonObject().get("option_text").getAsString();
-	                web_driver.choose_option(frame_index_path, xpath, option_text);
+	                web_driver.choose_option(fe_index_path, xpath, option_text);
 	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
 	                System.out.println(resp.to_string());
 	                break;
@@ -277,7 +277,7 @@ public class JComm {
 	                // Scroll actions need to be performed by the extension
 	                // so we pass it through.
 	            	MessageEnums.DirectionType dir = MessageEnums.DirectionType.get_enum(req.get_args().getAsJsonObject().get("scroll_direction").getAsInt());
-	            	web_driver.switch_to_frame(frame_index_path);
+	            	web_driver.switch_to_frame(fe_index_path);
 	            	web_driver.scroll(dir);
 	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
 	                System.out.println(resp.to_string());
@@ -294,18 +294,18 @@ public class JComm {
 	    
 	    case kPerformImageAction: {
 	    	MessageEnums.ImageActionType image_action_type = MessageEnums.ImageActionType.get_enum(req.get_args().getAsJsonObject().get("image_action").getAsInt());
-	    	String frame_index_path = req.get_args().getAsJsonObject().get("frame_index_path").getAsString();
+	    	String fe_index_path = req.get_args().getAsJsonObject().get("fe_index_path").getAsString();
 	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
 	    	switch (image_action_type) {
 	            case kGetImageURL: {
-	            	String url = web_driver.get_image_url(frame_index_path, xpath);
+	            	String url = web_driver.get_image_url(fe_index_path, xpath);
 	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(url));
 	                System.out.println(resp.to_string());
 	            	break;
 	            }
 	            case kDownloadImage: {
 	            	String dir = req.get_args().getAsJsonObject().get("download_directory").getAsString();
-	            	String image_url = web_driver.get_image_url(frame_index_path, xpath);
+	            	String image_url = web_driver.get_image_url(fe_index_path, xpath);
 	            	String filename = image_url.substring(image_url.lastIndexOf('/') + 1);
 	            	String format = filename.substring(filename.lastIndexOf('.') + 1);
 	            	boolean downloaded = web_driver.download_image(image_url, format, filename);

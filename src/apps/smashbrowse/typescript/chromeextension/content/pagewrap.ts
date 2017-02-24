@@ -6,6 +6,7 @@ class PageWrap {
 
     // Our members.
     static local_to_global_offset: IPoint = {x: 0, y: 0}
+    static fe_index_path: string
     
     // Constructor.
     constructor(gc: GUICollection) {
@@ -62,8 +63,8 @@ class PageWrap {
     // Get frame index path as string.
     // Note that there is no leading '/'. 
     // This helps when splitting the string, as there won't be empty elements.
-    static get_frame_index_path(win: Window) {
-        let ipath = this.get_frame_index_path_as_array(win)
+    static get_fw_index_path(win: Window) {
+        let ipath = this.get_fw_index_path_as_array(win)
         let spath: string = ''
         for (let i = 0; i < ipath.length; i++) {
             if (i != 0) {
@@ -74,9 +75,9 @@ class PageWrap {
         return spath
     }
 
-    // Get our frame_index_path as zero-based indexes.
-    // An empty frame_index_path means we are in the top window.
-    static get_frame_index_path_as_array(win: Window) {
+    // Get our fw_index_path as zero-based indexes.
+    // An empty fw_index_path means we are in the top window.
+    static get_fw_index_path_as_array(win: Window) {
         let path: number[] = []
         let totals: number[] = [] // debugging
         while (win.parent != win) {
@@ -110,15 +111,15 @@ class PageWrap {
         return box
     }
 
-    static get_frame_window(frame_index_path: string) {
+    static get_frame_window(fw_index_path: string) {
         // Go to the root window.
         let win = window
         while(win.parent != win) {
             win = win.parent
         }
 
-        // Split the frame_index_path.
-        let splits = frame_index_path.split('/')
+        // Split the fw_index_path.
+        let splits = fw_index_path.split('/')
 
         // Traverse down the tree of frames starting at the root.
         for (let i=0; i<splits.length; i++) {
@@ -176,6 +177,8 @@ class PageWrap {
         // declare Document.msElementsFromPoint(x: number, y: number){} // The DefinitelyTyped libraries seem to be missing this call.
         let hack: any = document
         let nodes: NodeList = hack.elementsFromPoint(client_pos.x, client_pos.y)
+        //let nodes = window.document.elementsFromPoint(client_pos.x, client_pos.y)
+        
 
         // Convert to elem wraps.
         let elem_wraps: ElemWrap[] = []

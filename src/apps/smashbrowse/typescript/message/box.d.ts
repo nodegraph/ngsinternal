@@ -32,8 +32,6 @@ declare class Box {
 
     get_relative_point(p: Point): Point
 
-    //to_global_client_space(local_win: Window): void
-    //to_local_client_space(local_win: Window): void
     to_client_space(local_win: Window): void
     to_page_space(local_win: Window): void
 

@@ -68,47 +68,6 @@ class Box {
         return rel
     }
 
-    // Our definitions.
-    // Local client space: The origin is at the top left of our local frame or window.
-    // Global client space: The origin is at the top left of our top window in the browser.
-    // Local page space: The origin is at the top left of our local document page, and is agnostic to scroll.
-    // Global page space: Is not used, as many parenting frames can be scrolled and gets complicated.
-
-    // // Assumes we are in local client space.
-    // to_global_client_space(local_win: Window): void {
-    //     this.to_global_client_space_helper(local_win, true)
-    // }
-    // // Assumes we are in global client space.
-    // to_local_client_space(local_win: Window): void {
-    //     this.to_global_client_space_helper(local_win, false)
-    // }
-    // // Local to global client space transform helper.
-    // private to_global_client_space_helper(local_win: Window, to: boolean): void {
-    //     let win = local_win
-    //     let factor = 1
-    //     if (!to) {
-    //         factor = -1
-    //     }
-    //     while (win.parent != win) {
-    //         var frames = win.parent.document.getElementsByTagName('iframe');
-    //         let found = false
-    //         for (let i = 0; i < frames.length; i++) {
-    //             if (frames[i].contentWindow === win) {
-    //                 this.left += factor * frames[i].getBoundingClientRect().left
-    //                 this.right += factor * frames[i].getBoundingClientRect().left
-    //                 this.top += factor * frames[i].getBoundingClientRect().top
-    //                 this.bottom += factor * frames[i].getBoundingClientRect().top
-    //                 found = true
-    //                 break;
-    //             }
-    //         }
-    //         if (!found) {
-    //             console.error('Error box::to_global_client_space did not find parenting frame')
-    //         }
-    //         win = win.parent
-    //     }
-    // }
-
     //Assumes we are in local page space and converts to local client space.
     to_client_space(local_win: Window): void {
         this.left -= local_win.scrollX

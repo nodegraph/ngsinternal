@@ -57,11 +57,6 @@ class ElemWrap {
         return this.valid
     }
 
-    // get_frame_index_path(): number[] {
-    //     let local_window: Window = this.element.ownerDocument.defaultView
-    //     return PageWrap.get_frame_index_path(local_window)
-    // }
-
     // Update all internal state.
     update(): void {
         if (document.body.contains(this.element)) {
@@ -277,7 +272,7 @@ class ElemWrap {
 
     get_info(): IElementInfo {
         // Frame index path.
-        let frame_index_path = PageWrap.get_frame_index_path(window)
+        let fw_index_path = PageWrap.get_fw_index_path(window)
         // XPath.
         let xpath = this.get_xpath()
         // Href.
@@ -288,7 +283,7 @@ class ElemWrap {
         box.add_offset(PageWrap.get_offset()) // convert local to global client space
         let z_index = this.get_z_index()
         // Form the info.
-        return { frame_index_path: frame_index_path, xpath: xpath, href: href, box: box, z_index: z_index }
+        return { fw_index_path: fw_index_path, fe_index_path: PageWrap.fe_index_path, xpath: xpath, href: href, box: box, z_index: z_index }
     }
 
     get_anchor_url(): string {
