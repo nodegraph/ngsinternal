@@ -137,8 +137,16 @@ public class WebDriverWrap {
         //_web_driver = new ChromeDriver(capabilities);
         _web_driver = new RemoteWebDriver(_service.getUrl(), capabilities);
         
+        //_web_driver.manage().window().setSize(new Dimension(1024,1150));
+        
         // The url on the command line doesn't seem to work, so we navigate to it.
         navigate_to(url);
+        
+        // Open up a new window.
+        JavascriptExecutor js = (JavascriptExecutor) _web_driver;
+        String script = "window.open('https://www.google.com', '_blank_smash_browse', 'toolbar=no,scrollbars=no,resizable=no,height=1024,width=1150');";
+        js.executeScript(script);
+        
         return true;
 	}
 	
@@ -225,8 +233,7 @@ public class WebDriverWrap {
         _web_driver.switchTo().window(_window_handles.lastElement());
     }
 
-	void update_current_tab() { 
-		System.err.println("java updating current tab XXXXX");
+	void update_current_tab() {
         Set<String> handles = _web_driver.getWindowHandles();
         // Check for newly added tabs.
         int num_created = 0;
@@ -268,7 +275,23 @@ public class WebDriverWrap {
         
 	    // Switch to the latest tab.
 	    _web_driver.switchTo().window(_window_handles.lastElement());
+	    
+	    
+	    destroy_first_window();
     }
+	
+	// Used to destroy the first window which will show the browser toolbar with extensions.
+	void destroy_first_window() {
+		// Switch to the first window.
+		_web_driver.switchTo().window(_window_handles.firstElement());
+		String url = _web_driver.getCurrentUrl();
+		if (url.startsWith("https://www.google.com/?")) {
+			_web_driver.close();
+		}
+		
+		// Switch to the last window.
+		_web_driver.switchTo().window(_window_handles.lastElement());
+	}
 	
     //------------------------------------------------------------------------------------------------
     // Browser Frames.
@@ -359,7 +382,7 @@ public class WebDriverWrap {
         Object obj = js.executeScript(script, we.element, we.local_x, we.local_y);
         //System.err.println("script returned: " + obj.toString());
         WebElement top_element = (WebElement)obj;
-        if (!top_element.equals(we.element)) {
+        if ((top_element != null) && !top_element.equals(we.element)) {
         	Point t = top_element.getLocation();
         	Point e = we.element.getLocation();
         	int diff_x = e.x - t.x;
