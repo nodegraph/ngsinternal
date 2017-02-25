@@ -1,6 +1,7 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
 #include <components/computes/jsonutils.h>
+#include <components/computes/inputnodecompute.h>
 
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/basefactory.h>
@@ -20,7 +21,9 @@ BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
       _worker(this),
       _scheduler(this),
-      _enter(this) {
+      _enter(this),
+      _browser_width(this),
+      _browser_height(this) {
   get_dep_loader()->register_fixed_dep(_worker, Path());
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
 }
@@ -47,7 +50,7 @@ void BrowserCompute::dump_map(const QJsonObject& inputs) const {
 
 void BrowserCompute::update_wires() {
   // This caches the dep, and will only dirty this component when it changes.
-  _enter = find_enter_node();
+  find_dep_nodes();
 }
 
 Entity* BrowserCompute::find_group_context() const {
@@ -62,17 +65,30 @@ Entity* BrowserCompute::find_group_context() const {
   return NULL;
 }
 
-Dep<EnterBrowserGroupCompute> BrowserCompute::find_enter_node() {
+void BrowserCompute::find_dep_nodes() {
   Entity* group = find_group_context();
   Entity* enter = group->get_child("enter");
+  Entity* width = group->get_child("browser_width");
+  Entity* height = group->get_child("browser_height");
   assert(enter);
-  return get_dep<EnterBrowserGroupCompute>(enter);
+  _enter = get_dep<EnterBrowserGroupCompute>(enter);
+  _browser_width = get_dep<InputNodeCompute>(width);
+  _browser_height = get_dep<InputNodeCompute>(height);
 }
 
 void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
   // Make sure the browser is open.
   _worker->queue_open_browser(tc);
+
+  // Make sure the browser is of the right size.
+  double width = _browser_width->get_output("out").toDouble();
+  double height = _browser_height->get_output("out").toDouble();
+  QJsonObject size_obj;
+  size_obj.insert(Message::kWidth, width);
+  size_obj.insert(Message::kHeight, height);
+  _worker->queue_merge_chain_state(tc, size_obj);
+  _worker->queue_resize_browser(tc);
 
   // Merge chain state.
   QJsonObject inputs = _inputs->get_input_values();

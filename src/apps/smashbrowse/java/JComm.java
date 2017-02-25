@@ -40,12 +40,19 @@ public class JComm {
 		
 		// Get other directories.
 		working_dir = System.getProperty("user.dir");
+		working_dir = working_dir.replace('\\', '/');
         System.err.println("user dir is: " + working_dir);
+        
 		chrome_ext_dir = working_dir + java.io.File.separator + "chromeextension";
         System.err.println("chrome ext dir is: " + chrome_ext_dir);
+        
+        int bin_pos =working_dir.lastIndexOf("/");
+        String base_loc = working_dir.substring(0, bin_pos);
+        String app_page = "file:///" + base_loc + "/html/smashbrowse.html";
+        String blank_page = "file:///" + base_loc + "/html/blank.html";
 		
 		// Create our webdriver wrapper.
-	    web_driver = new WebDriverWrap(settings_dir, chrome_ext_dir, app_socket_port);
+	    web_driver = new WebDriverWrap(settings_dir, chrome_ext_dir, app_socket_port, app_page, blank_page);
 		
 		// We use gson to convert between json and java objects.
 		gson = new Gson();

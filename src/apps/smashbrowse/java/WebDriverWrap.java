@@ -39,6 +39,9 @@ public class WebDriverWrap {
 	private int _app_socket_port = -1;
 	private Stack<String> _window_handles;
 	
+	private String _app_page;
+	private String _blank_page;
+	
 	public class WebElementWithPos {
 		WebElement element;
 		int local_x;
@@ -53,11 +56,15 @@ public class WebDriverWrap {
 	
 	public WebDriverWrap(String settings_dir, 
 					String chrome_ext_dir,
-					int app_socket_port) {
+					int app_socket_port,
+					String app_page,
+					String blank_page) {
 		_web_driver = null;
 		_settings_dir = settings_dir;
 		_chrome_ext_dir = chrome_ext_dir;
 		_app_socket_port = app_socket_port;
+		_app_page = app_page;
+		_blank_page = blank_page;
 		
 		_window_handles = new Stack<String>();
 		
@@ -116,7 +123,7 @@ public class WebDriverWrap {
 		
 		ChromeOptions chrome_opts = new ChromeOptions();
 		String app_port = Integer.toString(_app_socket_port);
-		String url = "https://www.google.com/?" + app_port;
+		String url = _blank_page + "?" + app_port;
 		{
 			// Create a new chrome user data dir for this browser instance.
 			String chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(_settings_dir);
@@ -129,7 +136,9 @@ public class WebDriverWrap {
 	        //chrome_opts.addArguments("--allow-insecure-localhost");
 	        //chrome_opts.addArguments("--disable-web-security");
 	        chrome_opts.addArguments("--user-data-dir=" + chrome_user_data_dir);
-	        chrome_opts.addArguments("--first-run");
+	        //chrome_opts.addArguments("--first-run");
+	        chrome_opts.addArguments("--no-first-run");
+	        //chrome_opts.addArguments("--app=http://www.google.com");
 		}
 		
 		capabilities.setCapability(ChromeOptions.CAPABILITY, chrome_opts);
@@ -137,15 +146,26 @@ public class WebDriverWrap {
         //_web_driver = new ChromeDriver(capabilities);
         _web_driver = new RemoteWebDriver(_service.getUrl(), capabilities);
         
-        //_web_driver.manage().window().setSize(new Dimension(1024,1150));
+        _web_driver.manage().window().setSize(new Dimension(1,1));
         
         // The url on the command line doesn't seem to work, so we navigate to it.
         navigate_to(url);
         
-        // Open up a new window.
+        // Open up a new window. This will often overlap and hide our first window.
+        // This is useful because we're for a popup to popup in the first window before closing it.
         JavascriptExecutor js = (JavascriptExecutor) _web_driver;
-        String script = "window.open('https://www.google.com', '_blank_smash_browse', 'toolbar=no,scrollbars=no,resizable=no,height=1024,width=1150');";
+        String script = "window.open('"+ _app_page +"', '_blank', 'toolbar=no,scrollbars=no,resizable=no,width=1024,height=1150');";
         js.executeScript(script);
+        
+        // This wait allows the "Disable developer mode extensions" popup to popup in our first browser window.
+        // Now when we close this window it will automatically act as if the cancel button
+        // was pressed in this popup. It will now no longer popup again.
+        try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         return true;
 	}
@@ -285,12 +305,15 @@ public class WebDriverWrap {
 		// Switch to the first window.
 		_web_driver.switchTo().window(_window_handles.firstElement());
 		String url = _web_driver.getCurrentUrl();
-		if (url.startsWith("https://www.google.com/?")) {
+		System.err.println("first url page is: " + url);
+		System.err.println("app page is: " + _app_page);
+		if (url.startsWith(_blank_page + "?")) {
 			_web_driver.close();
 		}
 		
 		// Switch to the last window.
 		_web_driver.switchTo().window(_window_handles.lastElement());
+		_web_driver.manage().window().setSize(new Dimension(1024,1150));
 	}
 	
     //------------------------------------------------------------------------------------------------

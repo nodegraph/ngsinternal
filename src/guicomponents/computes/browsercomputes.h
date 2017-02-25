@@ -11,6 +11,7 @@ class TaskQueuer;
 class TaskScheduler;
 class TaskContext;
 class EnterBrowserGroupCompute;
+class InputNodeCompute;
 
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  public:
@@ -34,11 +35,13 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   void dump_map(const QJsonObject& inputs) const;
 
   Entity* find_group_context() const;
-  Dep<EnterBrowserGroupCompute> find_enter_node();
+  void find_dep_nodes();
 
   Dep<TaskQueuer> _worker;
   Dep<TaskScheduler> _scheduler;
   Dep<EnterBrowserGroupCompute> _enter;
+  Dep<InputNodeCompute> _browser_width;
+  Dep<InputNodeCompute> _browser_height;
 };
 
 class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {

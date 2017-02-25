@@ -571,6 +571,21 @@ void BrowserGroupNodeEntity::create_internals(const EntityConfig& config) {
   config2.compute_did = ComponentDID::kExitBrowserGroupCompute;
   exit->create_internals(config2);
 
+  {
+    InputNodeEntity* in = new_ff InputNodeEntity(this, "browser_width");
+    EntityConfig config2;
+    config2.visible = false;
+    config2.unconnected_value = 1024;
+    in->create_internals(config2);
+  }
+  {
+    InputNodeEntity* in = new_ff InputNodeEntity(this, "browser_height");
+    EntityConfig config2;
+    config2.visible = false;
+    config2.unconnected_value = 1150;
+    in->create_internals(config2);
+  }
+
   // These sub components are not required for the functionality of the browser group.
   // They are just added in for convenience. The user may destroy or rename them.
   {

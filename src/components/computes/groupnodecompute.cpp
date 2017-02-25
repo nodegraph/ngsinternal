@@ -282,6 +282,7 @@ bool GroupNodeCompute::update_state() {
   // Dirty the input nodes, if we're restarting the group's compute.
   if (_restart_compute) {
     dirty_input_nodes();
+    _restart_compute = false;
   }
 
   // Bring input values from outside the group to the inside.
