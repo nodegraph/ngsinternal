@@ -41,6 +41,7 @@ public class WebDriverWrap {
 	
 	private String _app_page;
 	private String _blank_page;
+	private String _wait_page;
 	
 	public class WebElementWithPos {
 		WebElement element;
@@ -54,19 +55,30 @@ public class WebDriverWrap {
 		}
 	}
 	
-	public WebDriverWrap(String settings_dir, 
-					String chrome_ext_dir,
-					int app_socket_port,
-					String app_page,
-					String blank_page) {
+	public WebDriverWrap(String settings_dir,
+					int app_socket_port) {
 		_web_driver = null;
 		_settings_dir = settings_dir;
-		_chrome_ext_dir = chrome_ext_dir;
 		_app_socket_port = app_socket_port;
-		_app_page = app_page;
-		_blank_page = blank_page;
 		
 		_window_handles = new Stack<String>();
+		
+		// Get working directory.
+		String working_dir = System.getProperty("user.dir");
+		working_dir = working_dir.replace('\\', '/');
+        System.err.println("user dir is: " + working_dir);
+        
+        // Determine chome extension dir.
+        _chrome_ext_dir = working_dir + java.io.File.separator + "chromeextension";
+        System.err.println("chrome ext dir is: " + _chrome_ext_dir);
+        
+        // Determine our html page locations.
+        int bin_pos =working_dir.lastIndexOf("/");
+        String base_loc = working_dir.substring(0, bin_pos);
+        base_loc = "file:///" + base_loc;
+        _app_page = base_loc + "/html/smashbrowse.html";
+        _blank_page = base_loc + "/html/blank.html";
+        _wait_page = base_loc + "/html/wait.html";
 		
 		// Build the webdriver service and start it.
 		_service = new ChromeDriverService.Builder()
@@ -123,7 +135,7 @@ public class WebDriverWrap {
 		
 		ChromeOptions chrome_opts = new ChromeOptions();
 		String app_port = Integer.toString(_app_socket_port);
-		String url = _blank_page + "?" + app_port;
+		String url = _wait_page + "?" + app_port;
 		{
 			// Create a new chrome user data dir for this browser instance.
 			String chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(_settings_dir);
@@ -145,17 +157,22 @@ public class WebDriverWrap {
         
         //_web_driver = new ChromeDriver(capabilities);
         _web_driver = new RemoteWebDriver(_service.getUrl(), capabilities);
+        _web_driver.manage().window().setSize(new Dimension(1024,1150));
         
-        _web_driver.manage().window().setSize(new Dimension(1,1));
+        
+        //WebElement tempElement = _web_driver.findElement(By.cssSelector("body"));
+		//tempElement.click();
+		//tempElement.sendKeys(Keys.chord(Keys.CONTROL, "N"));
         
         // The url on the command line doesn't seem to work, so we navigate to it.
         navigate_to(url);
         
         // Open up a new window. This will often overlap and hide our first window.
-        // This is useful because we're for a popup to popup in the first window before closing it.
+        // This is useful because we're waiting for a popup to popup in the first window before closing it.
         JavascriptExecutor js = (JavascriptExecutor) _web_driver;
-        String script = "window.open('"+ _app_page +"', '_blank', 'toolbar=no,scrollbars=no,resizable=no,width=1024,height=1150');";
+        String script = "window.open('"+ _app_page +"', '_blank', 'noopener=yes,dependent=no,location=yes,toolbar=yes,scrollbars=yes,resizable=no,width=1024,height=1150');";
         js.executeScript(script);
+        
         
         // This wait allows the "Disable developer mode extensions" popup to popup in our first browser window.
         // Now when we close this window it will automatically act as if the cancel button
@@ -307,7 +324,7 @@ public class WebDriverWrap {
 		String url = _web_driver.getCurrentUrl();
 		System.err.println("first url page is: " + url);
 		System.err.println("app page is: " + _app_page);
-		if (url.startsWith(_blank_page + "?")) {
+		if (url.startsWith(_wait_page + "?")) {
 			_web_driver.close();
 		}
 		
