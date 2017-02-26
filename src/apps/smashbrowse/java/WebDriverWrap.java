@@ -41,7 +41,9 @@ public class WebDriverWrap {
 	
 	private String _app_page;
 	private String _blank_page;
-	private String _wait_page;
+	private String _socket_connect_page;
+	
+	private boolean _use_hack;
 	
 	public class WebElementWithPos {
 		WebElement element;
@@ -78,7 +80,17 @@ public class WebDriverWrap {
         base_loc = "file:///" + base_loc;
         _app_page = base_loc + "/html/smashbrowse.html";
         _blank_page = base_loc + "/html/blank.html";
-        _wait_page = base_loc + "/html/wait.html";
+        
+        // The hack to close the "Disable developer mode extensions" bubble only seems to work on windows.
+        // we now only use this on windows, because on osx when we do this the CTRL-click won't open the link at all 
+        // (it should open it in a new browser)
+        // also on osx it won't close the first windows
+        _use_hack = FSWrap.platform_is_windows();
+        if (_use_hack) {
+        	_socket_connect_page = base_loc + "/html/wait.html";
+        } else {
+        	_socket_connect_page = base_loc + "/html/smashbrowse.html";
+        }
 		
 		// Build the webdriver service and start it.
 		_service = new ChromeDriverService.Builder()
@@ -135,7 +147,7 @@ public class WebDriverWrap {
 		
 		ChromeOptions chrome_opts = new ChromeOptions();
 		String app_port = Integer.toString(_app_socket_port);
-		String url = _wait_page + "?" + app_port;
+		String url = _socket_connect_page + "?" + app_port;
 		{
 			// Create a new chrome user data dir for this browser instance.
 			String chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(_settings_dir);
@@ -167,7 +179,7 @@ public class WebDriverWrap {
         // The url on the command line doesn't seem to work, so we navigate to it.
         navigate_to(url);
         
-        if (FSWrap.platform_is_windows()) {
+        if (_use_hack) {
 	        // Open up a new window. This will often overlap and hide our first window.
 	        // This is useful because we're waiting for a popup to popup in the first window before closing it.
 	        JavascriptExecutor js = (JavascriptExecutor) _web_driver;
@@ -315,7 +327,7 @@ public class WebDriverWrap {
 	    // Switch to the latest tab.
 	    _web_driver.switchTo().window(_window_handles.lastElement());
 	    
-	    if (FSWrap.platform_is_windows()) {
+	    if (_use_hack) {
 	    	destroy_first_window();
 	    }
     }
@@ -326,8 +338,8 @@ public class WebDriverWrap {
 		_web_driver.switchTo().window(_window_handles.firstElement());
 		String url = _web_driver.getCurrentUrl();
 		System.err.println("first url page is: " + url);
-		System.err.println("wait page is: " + _wait_page);
-		if (url.startsWith(_wait_page + "?")) {
+		System.err.println("wait page is: " + _socket_connect_page);
+		if (url.startsWith(_socket_connect_page + "?")) {
 			_web_driver.close();
 		}
 		
