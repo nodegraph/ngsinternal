@@ -76,6 +76,9 @@ class PageOverlays {
 
             const point = elem_wrap.get_box().get_center()
             this.element_cross_overlay.update_dom_elements(point)
+        } else {
+            const point = new Point({x: -1, y:-1})
+            this.element_cross_overlay.update_dom_elements(point)
         }
     }
 
@@ -107,6 +110,11 @@ class PageOverlays {
 
     update_crosshair(page_pos: Point): void {
         this.click_cross_overlay.update_dom_elements(page_pos)
+    }
+
+    clear_crosshair(): void {
+        const point = new Point({x: -1, y:-1})
+        this.click_cross_overlay.update_dom_elements(point)
     }
 
 }

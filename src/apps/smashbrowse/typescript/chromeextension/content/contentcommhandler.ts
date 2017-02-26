@@ -65,6 +65,7 @@ class ContentCommHandler {
             case ChromeRequestType.kUpdateElement: {
                 // There is no information to send back from this call.
                 this.gui_collection.page_overlays.update_element_overlay()
+                this.gui_collection.page_overlays.clear_crosshair()
             } break
             case ChromeRequestType.kClearElement: {
                 // There is no information to send back from this call.

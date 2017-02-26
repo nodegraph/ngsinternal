@@ -77,6 +77,19 @@ class CrossOverlay {
     update_dom_elements(page_pos: Point): void {
         this.page_pos = page_pos
 
+        if (this.page_pos.x < 0 || this.page_pos.y < 0) {
+            this.horizontal.style.left = '0px'
+            this.horizontal.style.top = '0px'
+            this.horizontal.style.width = '0px'
+            this.horizontal.style.height = '0px'
+
+            this.vertical.style.left = '0px'
+            this.vertical.style.top = '0px'
+            this.vertical.style.width = '0px'
+            this.vertical.style.height = '0px'
+            return
+        }
+
         // Set the color of the dom elements.
         this.horizontal.style.outlineColor = this.color
         this.vertical.style.outlineColor = this.color
