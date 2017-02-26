@@ -78,13 +78,13 @@ class CrossOverlay {
         this.page_pos = page_pos
 
         if (this.page_pos.x < 0 || this.page_pos.y < 0) {
-            this.horizontal.style.left = '0px'
-            this.horizontal.style.top = '0px'
+            this.horizontal.style.left = '-10px'
+            this.horizontal.style.top = '-10px'
             this.horizontal.style.width = '0px'
             this.horizontal.style.height = '0px'
 
-            this.vertical.style.left = '0px'
-            this.vertical.style.top = '0px'
+            this.vertical.style.left = '-10px'
+            this.vertical.style.top = '-10px'
             this.vertical.style.width = '0px'
             this.vertical.style.height = '0px'
             return

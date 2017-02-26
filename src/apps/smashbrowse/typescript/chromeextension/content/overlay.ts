@@ -108,23 +108,23 @@ class Overlay {
     // Updates the dom elements to reflect new position and size.
     update_dom_elements(color: string): void {
         if (!this.elem_wrap) {
-            this.left.style.left = '0px'
-            this.left.style.top = '0px'
+            this.left.style.left = '-10px'
+            this.left.style.top = '-10px'
             this.left.style.width = '0px'
             this.left.style.height = '0px'
 
-            this.right.style.left = '0px'
-            this.right.style.top = '0px'
+            this.right.style.left = '-10px'
+            this.right.style.top = '-10px'
             this.right.style.width = '0px'
             this.right.style.height = '0px'
 
-            this.top.style.left = '0px'
-            this.top.style.top = '0px'
+            this.top.style.left = '-10px'
+            this.top.style.top = '-10px'
             this.top.style.width = '0px'
             this.top.style.height = '0px'
 
-            this.bottom.style.left = '0px'
-            this.bottom.style.top = '0px'
+            this.bottom.style.left = '-10px'
+            this.bottom.style.top = '-10px'
             this.bottom.style.width = '0px'
             this.bottom.style.height = '0px'
             return
