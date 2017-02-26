@@ -167,21 +167,23 @@ public class WebDriverWrap {
         // The url on the command line doesn't seem to work, so we navigate to it.
         navigate_to(url);
         
-        // Open up a new window. This will often overlap and hide our first window.
-        // This is useful because we're waiting for a popup to popup in the first window before closing it.
-        JavascriptExecutor js = (JavascriptExecutor) _web_driver;
-        String script = "window.open('"+ _app_page +"', '_blank', 'noopener=yes,dependent=no,location=yes,toolbar=yes,scrollbars=yes,resizable=no,width=1024,height=1150');";
-        js.executeScript(script);
-        
-        
-        // This wait allows the "Disable developer mode extensions" popup to popup in our first browser window.
-        // Now when we close this window it will automatically act as if the cancel button
-        // was pressed in this popup. It will now no longer popup again.
-        try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+        if (FSWrap.platform_is_windows()) {
+	        // Open up a new window. This will often overlap and hide our first window.
+	        // This is useful because we're waiting for a popup to popup in the first window before closing it.
+	        JavascriptExecutor js = (JavascriptExecutor) _web_driver;
+	        String script = "window.open('"+ _app_page +"', '_blank', 'noopener=yes,dependent=no,location=yes,toolbar=yes,scrollbars=yes,resizable=no,width=1024,height=1150');";
+	        js.executeScript(script);
+	        
+	        
+	        // This wait allows the "Disable developer mode extensions" popup to popup in our first browser window.
+	        // Now when we close this window it will automatically act as if the cancel button
+	        // was pressed in this popup. It will now no longer popup again.
+	        try {
+				Thread.sleep(4000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
         
         return true;
@@ -313,8 +315,9 @@ public class WebDriverWrap {
 	    // Switch to the latest tab.
 	    _web_driver.switchTo().window(_window_handles.lastElement());
 	    
-	    
-	    destroy_first_window();
+	    if (FSWrap.platform_is_windows()) {
+	    	destroy_first_window();
+	    }
     }
 	
 	// Used to destroy the first window which will show the browser toolbar with extensions.
@@ -323,7 +326,7 @@ public class WebDriverWrap {
 		_web_driver.switchTo().window(_window_handles.firstElement());
 		String url = _web_driver.getCurrentUrl();
 		System.err.println("first url page is: " + url);
-		System.err.println("app page is: " + _app_page);
+		System.err.println("wait page is: " + _wait_page);
 		if (url.startsWith(_wait_page + "?")) {
 			_web_driver.close();
 		}

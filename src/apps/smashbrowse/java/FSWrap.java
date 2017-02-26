@@ -54,7 +54,7 @@ public class FSWrap {
 		if (platform.startsWith("Windows")) {
 			return true;
 		} else {
-			return true;
+			return false;
 		}
 	}
 	

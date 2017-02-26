@@ -7,8 +7,11 @@
 add_custom_command (
 	OUTPUT bundle_smashbrowse_cmd
 	
-	# Copy the bin dir into the bundle.
+	# Copy the bin dir from the install folder into the bundle.
 	COMMAND cp -fr ${CMAKE_BINARY_DIR}/install/bin/* ${SMASHBROWSE_BIN_DIR}/.
+	
+	# Copy the html folder from the install folder into the bundle.
+	COMMAND cp -fr ${CMAKE_BINARY_DIR}/install/html ${SMASHBROWSE_BIN_DIR}/..
 )
 
 add_custom_target (bundle_smashbrowse
