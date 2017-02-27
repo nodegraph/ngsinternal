@@ -445,6 +445,7 @@ void TaskQueuer::queue_perform_mouse_action(TaskContext& tc) {
   queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
 
   // Force wait so that the webpage can react to the mouse hover. Note this is real and makes the mouse click work 100% of the time.
+  // For example this allows the page to display an animated video under mouse hover.
   queue_wait(tc);
 
   queue_unblock_events(tc);

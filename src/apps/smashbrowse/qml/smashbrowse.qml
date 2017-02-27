@@ -44,24 +44,6 @@ Rectangle {
     		node_graph_item.parent = null
     		close_timer.stop()
     	}
-    	
-    	
-//        if (!tried_closing_browser) {
-//        	// Force close the browser.
-//        	task_queuer.force_close_browser()
-//        	tried_closing_browser = true
-//        	close.accepted = false
-//            close_timer.start()
-//        } else if (task_queuer.is_open()) {
-//            // Close down the websocket connection to nodejs.
-//            // Also terminate nodejs.
-//            task_queuer.close()
-//            close.accepted = false
-//            close_timer.start()
-//        } else {
-//        	node_graph_item.parent = null
-//        	tried_closing_browser = false
-//        }
     }
 
     // Timer that delays closing/exit a bit so we can clean up.

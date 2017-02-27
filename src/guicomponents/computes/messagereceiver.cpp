@@ -112,7 +112,6 @@ void MessageReceiver::on_text_received(const QString & text) {
   Message msg(text);
   MessageType type = msg.get_msg_type();
   if (type == MessageType::kRequestMessage) {
-    // We shouldn't be getting request message from nodejs.
     std::cerr << "Error: App should not be receiving request messages.\n";
     assert(false);
   } else if (type == MessageType::kResponseMessage) {

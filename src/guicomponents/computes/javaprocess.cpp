@@ -68,7 +68,6 @@ void JavaProcess::on_read_standard_output() {
   QDebug debug = qDebug();
   debug.noquote();
 
-  //debug << "nodejs state: " << _process->state();
   QString output(_process->readAllStandardOutput());
   // Usually there is a newline at the end of the data.
   // However sometimes the newline comes later over the stream.

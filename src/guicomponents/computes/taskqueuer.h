@@ -21,7 +21,6 @@ class Compute;
 class BaseFactory;
 class BaseNodeGraphManipulator;
 
-// This class communicates with the nodejs process.
 class GUICOMPUTES_EXPORT TaskQueuer : public QObject, public Component {
 Q_OBJECT
  public:

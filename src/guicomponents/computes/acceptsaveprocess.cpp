@@ -63,7 +63,6 @@ void AcceptSaveProcess::on_read_standard_output() {
   QDebug debug = qDebug();
   debug.noquote();
 
-  //debug << "nodejs state: " << _process->state();
   QString output(_process->readAllStandardOutput());
 
   // Dump any std output from the process.

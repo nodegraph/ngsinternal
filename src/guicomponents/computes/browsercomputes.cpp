@@ -111,6 +111,7 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
   _worker->queue_scroll_element_into_view(tc);
   _worker->queue_update_element(tc);
   _worker->queue_update_current_tab(tc);
+  _worker->queue_wait_until_loaded(tc); // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
   _worker->queue_update_frame_offsets(tc);
 }
 

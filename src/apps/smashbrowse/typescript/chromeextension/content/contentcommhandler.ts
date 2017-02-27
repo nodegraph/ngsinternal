@@ -33,7 +33,8 @@ class ContentCommHandler {
                     let bounds = {left: rect.left, right: rect.right, bottom: rect.bottom, top: rect.top}
                     offsets.push({fw_index_path: fw_index_path, element_index: i, bounds: bounds})
                 }
-                send_response(offsets)
+                let fw_index_path = PageWrap.get_fw_index_path(window)
+                send_response({fw_index_path: fw_index_path, offsets: offsets})
                 break
             }
             case InfoType.kDistributeIFrameOffsets: {

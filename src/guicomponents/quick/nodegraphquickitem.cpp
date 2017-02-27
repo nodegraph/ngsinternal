@@ -230,7 +230,7 @@ void NodeGraphQuickItem::mouseDoubleClickEvent(QMouseEvent * event) {
     return;
   }
   if (_manipulator->is_busy_cleaning()) {
-    emit set_error_message("Please while the node graph finishes cleaning.");
+    emit set_error_message("Please wait while the node graph finishes cleaning.");
     emit show_error_page();
     return;
   }
@@ -359,7 +359,7 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
     return;
   }
   if (_manipulator->is_busy_cleaning()) {
-    emit set_error_message("Please while the node graph finishes cleaning.");
+    emit set_error_message("Please wait while the node graph finishes cleaning.");
     emit show_error_page();
     return;
   }

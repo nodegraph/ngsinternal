@@ -7,7 +7,6 @@
 
 namespace ngs {
 
-// This class communicates with the nodejs process.
 class OBJECTMODEL_EXPORT AppConfig : public Component {
  public:
 

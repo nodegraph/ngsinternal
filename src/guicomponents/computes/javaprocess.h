@@ -16,7 +16,6 @@ namespace ngs {
 class Message;
 class BaseNodeGraphManipulator;
 
-// This class communicates with the nodejs process.
 class GUICOMPUTES_EXPORT JavaProcess : public QObject, public Component {
 Q_OBJECT
  public:
@@ -37,7 +36,6 @@ Q_OBJECT
  protected:
 
  private slots:
-  // Slots for handling nodejs process.
   void on_started();
   void on_error(QProcess::ProcessError error);
   void on_state_changed(QProcess::ProcessState);
@@ -47,7 +45,7 @@ Q_OBJECT
  private:
   // Our fixed dependencies.
   Dep<BaseNodeGraphManipulator> _manipulator;
-  //Our nodejs process.
+  //Our process.
   QProcess* _process;
   int _msg_id;
 };

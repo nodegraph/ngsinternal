@@ -180,7 +180,7 @@ void MessageSender::close() {
   external();
   _server->close();
 
-  // Make sure the nodejs process is stopped as well.
+  // Make sure the java process is stopped as well.
   if (_java_process && _java_process->is_running()) {
     _java_process->stop_process();
   }

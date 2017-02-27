@@ -21,7 +21,6 @@ class BaseNodeGraphManipulator;
 class LicenseChecker;
 class FileModel;
 
-// This class communicates with the nodejs process.
 class GUICOMPUTES_EXPORT DownloadManager : public QObject, public Component {
 Q_OBJECT
  public:

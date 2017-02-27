@@ -22,6 +22,7 @@ class COMMS_EXPORT Task {
   void operator()();
   std::function<void()> f;
   bool cancelable; // Whether this task can be cancelled.
+  std::string about;
 };
 
 class COMMS_EXPORT TaskScheduler : public Component {

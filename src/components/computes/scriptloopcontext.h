@@ -8,7 +8,6 @@
 
 namespace ngs {
 
-// This class communicates with the nodejs process.
 class COMPUTES_EXPORT ScriptLoopContext : public Component {
  public:
   COMPONENT_ID(ScriptLoopContext, ScriptLoopContext)

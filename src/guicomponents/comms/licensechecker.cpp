@@ -25,7 +25,7 @@
 
 namespace ngs {
 
-//This is the routine to check the license in nodejs/javascript.
+//This is the routine to check the license in javascript.
 /*
 function check_license(edition, license) {
   var product_id

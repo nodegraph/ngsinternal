@@ -16,7 +16,6 @@ namespace ngs {
 class TaskQueuer;
 class TaskScheduler;
 
-// This class communicates with the nodejs process.
 class GUICOMPUTES_EXPORT MessageReceiver : public QObject, public Component {
 Q_OBJECT
  public:

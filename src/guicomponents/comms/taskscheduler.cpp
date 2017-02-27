@@ -102,6 +102,7 @@ void TaskScheduler::queue_task(TaskContext& tc, Task task, const std::string& ab
   // original task context, the top queue is not the right one for it. The top one used to be
   // the right one for it before the Sub-TaskContext was created and destroyed. This is why
   // we have to the select the appropriate queue with tc.stack_index.
+  task.about = about;
   _stack[tc.stack_index].push_back(task);
 
   // Run the worker if we're all clear to run.
@@ -128,6 +129,7 @@ void TaskScheduler::run_next_task() {
 
   // Pop a task and run it..
   _current_task = get_top_queue().front();
+  std::cerr << "current task: " << _current_task.about << "\n";
   get_top_queue().pop_front();
   _current_task();
 }

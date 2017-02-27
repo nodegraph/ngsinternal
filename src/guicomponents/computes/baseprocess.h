@@ -6,7 +6,6 @@
 
 namespace ngs {
 
-// This class communicates with the nodejs process.
 class GUICOMPUTES_EXPORT BaseProcess : public QObject {
 Q_OBJECT
  public:

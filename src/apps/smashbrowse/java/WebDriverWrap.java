@@ -86,6 +86,7 @@ public class WebDriverWrap {
         // (it should open it in a new browser)
         // also on osx it won't close the first windows
         _use_hack = FSWrap.platform_is_windows();
+        _use_hack = false;
         if (_use_hack) {
         	_socket_connect_page = base_loc + "/html/wait.html";
         } else {
@@ -294,11 +295,17 @@ public class WebDriverWrap {
         	if (index_from_top >= 1) {
         		continue;
         	}
-        	// Otherwise we incorporate this handle as well.
-            this._window_handles.push(handle);
-            System.err.println("found handle: " + handle);
-            // Note there should ideally be one created handle per call to this method.
-            num_created++;
+        	
+        	_web_driver.switchTo().window(handle);
+        	String url = get_current_url();
+        	// Skip tabs or windows which hold chrome debugging tools.
+            // These usually have urls that start with: chrome:// or chrome-devtools://
+        	if (!url.startsWith("chrome://") &&  !url.startsWith("chrome-devtools://")) {
+            	// Otherwise we incorporate this handle as well.
+                this._window_handles.push(handle);
+                // Note there should ideally be one created handle per call to this method.
+                num_created++;
+        	}
         }
         if (num_created > 1) {
             System.err.println("WebDriverWrap.update_current_tab: found more than new tab was created.");

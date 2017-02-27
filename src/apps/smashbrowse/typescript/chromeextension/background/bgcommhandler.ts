@@ -76,6 +76,8 @@ class BgCommHandler {
             // Initialize our response counters, so that we know when all responses have come back.
             this.response_count = 0
             this.expected_response_count = details.length
+            
+            console.log('expection num responses 111: ' + this.expected_response_count)
 
             // Wrap the given response collector in logic to increment the response counters.
             let make_collector = (frame_id: number) => {
@@ -84,6 +86,7 @@ class BgCommHandler {
                     if (!info) {
                         console.error("could not find frame info by id: " + frame_id)
                     } else {
+                    	console.log("got fw path 111: " + response)
                         info.fw_index_path = response
                     }
                     this.response_count += 1
@@ -91,6 +94,8 @@ class BgCommHandler {
                         //this.frame_infos.dump_parenting()
                         //this.frame_infos.dump_tree()
                         //this.frame_infos.dump_array()
+
+                        console.log('done getting fw index paths')
                         this.run_next_task()
                     }
                 }
@@ -114,22 +119,31 @@ class BgCommHandler {
             // Initialize our response counters, so that we know when all responses have come back.
             this.response_count = 0
             this.expected_response_count = details.length
+            
+            console.log('expection num responses 222: ' + this.expected_response_count)
 
             // Wrap the given response collector in logic to increment the response counters.
             let make_collector = (frame_id: number) => {
-                let collector_wrap = (response: { fw_index_path: string, element_index: number, bounds: IBox }[]) => {
-                    for (let r of response) {
+                let collector_wrap = (response: {fw_index_path: string, offsets: { fw_index_path: string, element_index: number, bounds: IBox }[]}) => {
+                    console.log('got response from: ' + response.fw_index_path)
+                    for (let r of response.offsets) {
                         let info = this.frame_infos.get_info_by_fw_index_path(r.fw_index_path)
                         if (!info) {
                             console.error("could not find frame info by index path: " + r.fw_index_path)
+                            console.log('bounds: ' + JSON.stringify(r.bounds))
                             continue
+                        } else {
+                            console.log("got fw path 222: " + r.fw_index_path)
+                            console.log('bounds: ' + JSON.stringify(r.bounds))
                         }
+
                         info.element_index = r.element_index
                         info.bounds = r.bounds
                     }
 
                     this.response_count += 1
                     if (this.response_count == this.expected_response_count) {
+                        console.log('done getting iframe offsets')
                         this.run_next_task()
                     }
                 }
@@ -159,6 +173,7 @@ class BgCommHandler {
                     // We don't do anything.
                     this.response_count += 1
                     if (this.response_count == this.expected_response_count) {
+                        console.log('done distributing iframe offsets')
                         this.run_next_task()
                     }
                 }
@@ -201,6 +216,7 @@ class BgCommHandler {
 
     queue_iframe_info_sharing() {
         this.queue(() => {this.collect_fw_index_paths()})
+        this.queue(() => {this.collect_iframe_offsets()})
         this.queue(() => {this.collect_iframe_offsets()})
         this.queue(() => {this.distribute_iframe_offsets()})
     }
@@ -585,7 +601,7 @@ class BgCommHandler {
     // ------------------------------------------------------------------------------------------------------------------
     // Main message handler.
     // ------------------------------------------------------------------------------------------------------------------
-    handle_nodejs_request(req: RequestMessage) {
+    handle_app_request(req: RequestMessage) {
         // We intercept certain requests before it gets to the content script,
         // because content scripts can't use the chrome.* APIs except for parts of chrome.extension for message passing.
 
@@ -597,17 +613,17 @@ class BgCommHandler {
 
             case ChromeRequestType.kClearAllCookies: {
                 let done_clear_all_cookies = () => {
-                    // Send response to nodejs.
+                    // Send response to app.
                     let response = new ResponseMessage(req.id, true)
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 }
                 BrowserWrap.clear_all_cookies(done_clear_all_cookies)
             } break
             case ChromeRequestType.kGetAllCookies: {
                 let done_get_all_cookies = (cookies: chrome.cookies.Cookie[]) => {
-                    // Send response to nodejs.
+                    // Send response to app.
                     let response = new ResponseMessage(req.id, true, cookies)
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 }
                 BrowserWrap.get_all_cookies(done_get_all_cookies);
             } break
@@ -617,26 +633,26 @@ class BgCommHandler {
                 let done_set_all_cookies = () => {
                     count += 1
                     if (count == cookies.length) {
-                        // Send response to nodejs.
+                        // Send response to app.
                         let response = new ResponseMessage(req.id, true)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 }
                 BrowserWrap.set_all_cookies(cookies, done_set_all_cookies)
             } break
             case ChromeRequestType.kGetZoom: {
                 let done_get_zoom = (zoom: number) => {
-                    // Send response to nodejs.
+                    // Send response to app.
                     let response = new ResponseMessage(req.id, true, { 'zoom': zoom })
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 }
                 BrowserWrap.get_zoom(this.bg_comm.get_current_tab_id(), done_get_zoom);
             } break
             case ChromeRequestType.kSetZoom: {
                 let done_set_zoom = () => {
-                    // Send response to nodejs.
+                    // Send response to app.
                     let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 }
                 BrowserWrap.set_zoom(this.bg_comm.get_current_tab_id(), req.args.zoom, done_set_zoom);
             } break
@@ -644,16 +660,16 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.bg_comm.update_current_tab_id()
                 let response = new ResponseMessage(req.id, true, true)
-                this.bg_comm.send_to_nodejs(response)
+                this.bg_comm.send_to_app(response)
             } break
             case ChromeRequestType.kOpenTab: {
                 //let response = new ResponseMessage(req.id, true, true)
-                //this.bg_comm.send_to_nodejs(response)
+                //this.bg_comm.send_to_app(response)
                 chrome.tabs.create({'url': 'http://www.google.com'}, 
                     (tab) => {
                         // Tab opened successfully.
                         let response = new ResponseMessage(req.id, true, true)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     });
             } break
             case ChromeRequestType.kGetActiveTabTitle: {
@@ -663,7 +679,7 @@ class BgCommHandler {
                             console.log('Error: More than 1 tab is active. Choosing the first one.')
                         }
                         let response = new ResponseMessage(req.id, true, tabs[0].title)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     });
             } break
 
@@ -676,7 +692,7 @@ class BgCommHandler {
                 this.queue_block_events()
                 this.queue(() => {
                     let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()
             } break
@@ -685,7 +701,7 @@ class BgCommHandler {
                 this.queue_unblock_events()
                 this.queue(() => {
                     let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()
             } break
@@ -693,7 +709,7 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.queue_wait_until_loaded(() => {
                         let response = new ResponseMessage(req.id, true, true)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     })
                 this.run_next_task()
             } break
@@ -702,7 +718,7 @@ class BgCommHandler {
                 this.queue_iframe_info_sharing()
                 this.queue(() => {
                     let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()
             } break
@@ -711,7 +727,7 @@ class BgCommHandler {
                 this.queue_update_element()
                 this.queue(() => {
                     let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()
             } break
@@ -720,7 +736,7 @@ class BgCommHandler {
                 this.queue_clear_element()
                 this.queue(() => {
                     let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()
             } break
@@ -730,10 +746,10 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -744,7 +760,7 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                     	// We don't error out if there is no current element.
                     	// We just return a dummy info instead.
@@ -757,7 +773,7 @@ class BgCommHandler {
                             z_index: 0
                         }
                         let response = new ResponseMessage(req.id, true, dummy)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -769,10 +785,10 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -783,7 +799,7 @@ class BgCommHandler {
                 this.queue(() => {
                     // Note if there is no current element, there is nothing to scroll, but we always return success/true.
                     let response = new ResponseMessage(req.id, true, {})
-                    this.bg_comm.send_to_nodejs(response)
+                    this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()
             } break
@@ -830,17 +846,17 @@ class BgCommHandler {
                         // Wipe out the queue.
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given values.")
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.queue_set_current_element()
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -856,17 +872,17 @@ class BgCommHandler {
                         // Wipe out the queue.
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given values.")
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.queue_set_current_element()
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -882,17 +898,17 @@ class BgCommHandler {
                         // Wipe out the queue.
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given type.")
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.queue_set_current_element()
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -905,7 +921,7 @@ class BgCommHandler {
                     if (!this.found_elem) {
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         this.run_next_task()
                     }
@@ -919,7 +935,7 @@ class BgCommHandler {
                         // Wipe out the queue.
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
@@ -927,7 +943,7 @@ class BgCommHandler {
                             // Wipe out the queue.
                             this.clear_tasks()
                             let response = new ResponseMessage(req.id, true, false)
-                            this.bg_comm.send_to_nodejs(response)
+                            this.bg_comm.send_to_app(response)
                         } else {
                             this.found_elem = best
                             this.run_next_task()
@@ -939,10 +955,10 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -955,7 +971,7 @@ class BgCommHandler {
                     if (!this.found_elem) {
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         this.run_next_task()
                     }
@@ -969,7 +985,7 @@ class BgCommHandler {
                         // Wipe out the queue.
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
@@ -977,7 +993,7 @@ class BgCommHandler {
                             // Unable to find the next element.
                             this.clear_tasks()
                             let response = new ResponseMessage(req.id, true, false)
-                            this.bg_comm.send_to_nodejs(response)
+                            this.bg_comm.send_to_app(response)
                         } else {
                             this.found_elem = best
                             this.run_next_task()
@@ -989,10 +1005,10 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -1005,7 +1021,7 @@ class BgCommHandler {
                     if (!this.found_elem) {
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         this.run_next_task()
                     }
@@ -1019,7 +1035,7 @@ class BgCommHandler {
                         // Wipe out the queue.
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
@@ -1027,7 +1043,7 @@ class BgCommHandler {
                             // Wipe out the queue.
                             this.clear_tasks()
                             let response = new ResponseMessage(req.id, true, false)
-                            this.bg_comm.send_to_nodejs(response)
+                            this.bg_comm.send_to_app(response)
                         } else {
                             this.found_elem = best
                             this.run_next_task()
@@ -1039,10 +1055,10 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -1055,7 +1071,7 @@ class BgCommHandler {
                     if (!this.found_elem) {
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         this.run_next_task()
                     }
@@ -1069,7 +1085,7 @@ class BgCommHandler {
                         // Wipe out the queue.
                         this.clear_tasks()
                         let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
@@ -1077,7 +1093,7 @@ class BgCommHandler {
                             // Wipe out the queue.
                             this.clear_tasks()
                             let response = new ResponseMessage(req.id, true, false)
-                            this.bg_comm.send_to_nodejs(response)
+                            this.bg_comm.send_to_app(response)
                         } else {
                             this.found_elem = best
                             this.run_next_task()
@@ -1089,10 +1105,10 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.found_elem) {
                         let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -1103,13 +1119,13 @@ class BgCommHandler {
             //     this.queue(() => {
             //         if (this.collected_elems.length == 1) {
             //             let response = new ResponseMessage(req.id, true, this.collected_elems[0])
-            //             this.bg_comm.send_to_nodejs(response)
+            //             this.bg_comm.send_to_app(response)
             //         } else if (this.collected_elems.length > 1) {
             //             let response = new ResponseMessage(req.id, false, "Performed element action on multiple elements: " + this.collected_elems.length)
-            //             this.bg_comm.send_to_nodejs(response)
+            //             this.bg_comm.send_to_app(response)
             //         } else {
             //             let response = new ResponseMessage(req.id, false, "No current element to perform element action on.")
-            //             this.bg_comm.send_to_nodejs(response)
+            //             this.bg_comm.send_to_app(response)
             //         }
             //     })
             //     this.run_next_task()
@@ -1120,14 +1136,14 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.collected_clicks.length == 1) {
                         let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else if (this.collected_clicks.length > 1) {
                         let best = BgCommHandler.find_top_iframe(this.collected_clicks)
                         let response = new ResponseMessage(req.id, true, best)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, "The crosshair click point did not intersect any elements.")
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -1138,14 +1154,14 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.collected_clicks.length == 1) {
                         let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else if (this.collected_clicks.length > 1) {
                         let best = BgCommHandler.find_top_iframe(this.collected_clicks)
                         let response = new ResponseMessage(req.id, true, best)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, "The element's center point did not intersect any elements.")
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()
@@ -1156,13 +1172,13 @@ class BgCommHandler {
                 this.queue(() => {
                     if (this.collected_drop_downs.length == 1) {
                         let response = new ResponseMessage(req.id, true, this.collected_drop_downs[0])
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else if (this.collected_drop_downs.length > 1) {
                         let response = new ResponseMessage(req.id, false, "Received drop down info from multiple elements: " + this.collected_drop_downs.length)
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     } else {
                         let response = new ResponseMessage(req.id, false, "Did not receive any drop down info from any elements.")
-                        this.bg_comm.send_to_nodejs(response)
+                        this.bg_comm.send_to_app(response)
                     }
                 })
                 this.run_next_task()

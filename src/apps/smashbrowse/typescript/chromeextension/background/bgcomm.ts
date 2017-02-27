@@ -1,14 +1,14 @@
 
 //Class which handles communication between:
-// 1) this background script and nodejs
-// 2) this background script and the content script
+// 1) this background script and our app
+// 2) this background script and all the content scripts running in their respective frames
 class BgComm {
     // Our dependencies.
     private handler: BgCommHandler
 
     // Our members.
-    private nodejs_socket: WebSocket // socket to communicate with the nodejs app
-    private nodejs_port: number
+    private app_socket: WebSocket // socket to communicate with our app
+    private app_port: number
 
     // Our internal state.
     // This is an array of tab_ids in order from the oldest to the newest created tab.
@@ -19,9 +19,9 @@ class BgComm {
     constructor() {
         // Our dependencies.
         
-        // Our nodejs data.
-        this.nodejs_socket = null
-        this.nodejs_port = -1
+        // Our app socket.
+        this.app_socket = null
+        this.app_port = -1
 
         // Connect to the content scripts.
         this.connect_to_content()
@@ -50,10 +50,16 @@ class BgComm {
     }
 
     on_tab_created(tab: chrome.tabs.Tab) {
-        console.log('new tab created: ' + tab.id)
+        console.log('new tab created: ' + tab.id + ' with url: ' + tab.url)
+        // Skip tabs or windows which hold chrome debugging tools.
+        // These usually have urls that start with: chrome:// or chrome-devtools://
+        // In these case the tab.url will empty.
+        if (!tab.url) {
+            return
+        }
         this.created_tab_ids.push(tab.id)
         chrome.tabs.update(tab.id, {pinned: true});
-        this.send_to_nodejs(new InfoMessage(-1, InfoType.kTabCreated))
+        this.send_to_app(new InfoMessage(-1, InfoType.kTabCreated))
     }
 
     on_tab_removed(tab_id: number, remove_info: any) {
@@ -79,7 +85,7 @@ class BgComm {
         }
 
         console.log('tab removed: ' + tab_id + ' to yield: ' + JSON.stringify(this.tab_ids))
-        this.send_to_nodejs(new InfoMessage(-1, InfoType.kTabDestroyed))
+        this.send_to_app(new InfoMessage(-1, InfoType.kTabDestroyed))
     }
 
     on_tab_updated(tabId: number, change_info: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {
@@ -88,19 +94,19 @@ class BgComm {
         // accidentally destroyed by the user. We want to keep the destroying under our control.
         chrome.tabs.update(tabId, {pinned: true});
 
-        // Hack to retrieve the nodejs port.
+        // Hack to retrieve the app's socket port.
         // The very first opened tab's url will have the port number embedded into the url.
-        if (this.nodejs_port != -1) {
+        if (this.app_port != -1) {
             return
         }
         if (!tab.url) {
             return
         }
         
-        this.nodejs_port = BgComm.extract_port_from_url(tab.url)
-        if (this.nodejs_port != -1) {
-        	//console.log("found nodejs port")
-            this.connect_to_nodejs()
+        this.app_port = BgComm.extract_port_from_url(tab.url)
+        if (this.app_port != -1) {
+        	//console.log("found app port")
+            this.connect_to_app()
             //chrome.tabs.onUpdated.removeListener(this.on_tab_updated_bound)
             this.tab_ids = [tab.id]
             BrowserWrap.close_other_tabs(this.get_current_tab_id())
@@ -121,61 +127,61 @@ class BgComm {
     // Communication between background and nodej.
     //------------------------------------------------------------------------------------------------
 
-    // Setup communication channel to nodejs.
-    connect_to_nodejs(): void {
-        // Return if we haven't received our nodejs port number yet.
-        if (this.nodejs_port == -1) {
+    // Setup communication channel to app.
+    connect_to_app(): void {
+        // Return if we haven't received our app port number yet.
+        if (this.app_port == -1) {
             return
         }
         // If we're already connected, just return.
-        if (this.nodejs_socket && (this.nodejs_socket.readyState == WebSocket.OPEN)) {
+        if (this.app_socket && (this.app_socket.readyState == WebSocket.OPEN)) {
             return
         }
         // Otherwise try to connect.
         try {
-            this.nodejs_socket = new WebSocket('ws://localhost:' + this.nodejs_port)
-            this.nodejs_socket.onerror = (error: ErrorEvent) => {
-                console.error("Error: nodejs socket error: " + JSON.stringify(error))
+            this.app_socket = new WebSocket('ws://localhost:' + this.app_port)
+            this.app_socket.onerror = (error: ErrorEvent) => {
+                console.error("Error: app socket error: " + JSON.stringify(error))
             }
-            this.nodejs_socket.onopen = (event: Event) => {
-                console.log('nodejs sockected connected ... testing sending info over it')
+            this.app_socket.onopen = (event: Event) => {
+                console.log('app sockected connected ... testing sending info over it')
                 // BgComm is now connected.
-                this.send_to_nodejs(new InfoMessage(-1, InfoType.kBgIsConnected))
-                console.log('nodejs sockected connected ... done sending over it')
+                this.send_to_app(new InfoMessage(-1, InfoType.kBgIsConnected))
+                console.log('app sockected connected ... done sending over it')
             }
-            this.nodejs_socket.onclose = (event: Event) => {
-            	console.log('nodejs sockect is now closed')
+            this.app_socket.onclose = (event: Event) => {
+            	console.log('app sockect is now closed')
             }
-            this.nodejs_socket.onmessage = (event: MessageEvent) => { this.receive_from_nodejs(event) }
+            this.app_socket.onmessage = (event: MessageEvent) => { this.receive_from_app(event) }
         } catch (e) {
             console.error("Error: trying to connect to port error: " + JSON.stringify(e))
-            this.nodejs_socket = null
+            this.app_socket = null
         }
     }
 
-    // Send message to nodejs.
-    send_to_nodejs(msg: BaseMessage): void {
-        // If we're not connected to nodejs yet, then just return.
-        if (!this.nodejs_socket || (this.nodejs_socket.readyState != WebSocket.OPEN)) {
-            console.log('nodejs socket is not connected, unable to send: ' + msg.to_string())
+    // Send message to app.
+    send_to_app(msg: BaseMessage): void {
+        // If we're not connected to the app yet, then just return.
+        if (!this.app_socket || (this.app_socket.readyState != WebSocket.OPEN)) {
+            console.log('app socket is not connected, unable to send: ' + msg.to_string())
             return
         }
-        this.nodejs_socket.send(JSON.stringify(msg));
+        this.app_socket.send(JSON.stringify(msg));
     }
 
-    register_nodejs_request_handler(handler: BgCommHandler) {
+    register_app_request_handler(handler: BgCommHandler) {
         this.handler = handler
     }
 
-    // Receive messages from nodejs. They will be forward to the content script.
-    receive_from_nodejs(event: MessageEvent) {
+    // Receive messages from the app. They will be forward to the content script.
+    receive_from_app(event: MessageEvent) {
         let msg = BaseMessage.create_from_string(event.data);
-        //console.log("bg received message from nodejs: " + event.data)
+        //console.log("bg received message from app: " + event.data)
         if (msg.get_msg_type() != MessageType.kRequestMessage) {
             console.error('bgcomm was expecting a request message')
             return
         }
-        this.handler.handle_nodejs_request(<RequestMessage>msg)
+        this.handler.handle_app_request(<RequestMessage>msg)
     }
 
     //------------------------------------------------------------------------------------------------
@@ -217,8 +223,8 @@ class BgComm {
             return
         }
 
-        // Pass the message to nodejs.
-        this.send_to_nodejs(msg);
+        // Pass the message to the app.
+        this.send_to_app(msg);
     }
 
 }
