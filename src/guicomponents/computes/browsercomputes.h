@@ -21,7 +21,8 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
-  virtual void receive_chain_state(const QJsonObject& chain_state);
+  virtual void on_response(const QJsonObject& chain_state);
+  virtual void on_finished(const QJsonObject& chain_state);
 
   static void init_hints(QJsonObject& m);
   virtual void update_wires();
@@ -30,6 +31,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   // Our state.
   virtual void pre_update_state(TaskContext& tc);
   virtual void handle_response(TaskContext& tc);
+  virtual void handle_finished(TaskContext& tc);
   virtual void post_update_state(TaskContext& tc);
 
   void dump_map(const QJsonObject& inputs) const;
@@ -94,7 +96,7 @@ class GUICOMPUTES_EXPORT GetBrowserSizeCompute: public BrowserCompute {
   COMPONENT_ID(Compute, GetBrowserSizeCompute);
   GetBrowserSizeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-  virtual void receive_chain_state(const QJsonObject& chain_state);
+  virtual void on_response(const QJsonObject& chain_state);
 
   static QJsonObject init_hints();
   static const QJsonObject _hints;

@@ -102,7 +102,12 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
 }
 
 void BrowserCompute::handle_response(TaskContext& tc) {
-  std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::receive_chain_state,this,std::placeholders::_1);
+  std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::on_response,this,std::placeholders::_1);
+  _worker->queue_receive_chain_state(tc, callback);
+}
+
+void BrowserCompute::handle_finished(TaskContext& tc) {
+  std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::on_finished,this,std::placeholders::_1);
   _worker->queue_receive_chain_state(tc, callback);
 }
 
@@ -113,11 +118,11 @@ void BrowserCompute::post_update_state(TaskContext& tc) {
   _worker->queue_update_current_tab(tc);
   _worker->queue_wait_until_loaded(tc); // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
   _worker->queue_update_frame_offsets(tc);
+  handle_finished(tc);
 }
 
-void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
+void BrowserCompute::on_response(const QJsonObject& chain_state) {
   internal();
-  clean_finalize();
 
   // Be default we copy the value property from the chain state
   // and paste it into our output object which is just a copy
@@ -134,6 +139,10 @@ void BrowserCompute::receive_chain_state(const QJsonObject& chain_state) {
 
   // Set our main output.
   set_main_output(obj);
+}
+
+void BrowserCompute::on_finished(const QJsonObject& chain_state) {
+  clean_finalize();
 }
 
 //--------------------------------------------------------------------------------
@@ -235,7 +244,7 @@ QJsonObject GetBrowserSizeCompute::init_hints() {
   return m;
 }
 
-void GetBrowserSizeCompute::receive_chain_state(const QJsonObject& chain_state) {
+void GetBrowserSizeCompute::on_response(const QJsonObject& chain_state) {
   internal();
   clean_finalize();
 
