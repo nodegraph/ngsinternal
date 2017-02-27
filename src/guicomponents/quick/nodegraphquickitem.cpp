@@ -352,15 +352,17 @@ void NodeGraphQuickItem::wheelEvent(QWheelEvent *event) {
   update();
 }
 
+#define if_busy_return() \
+    if (_manipulator->is_busy_cleaning()) {\
+        emit set_error_message("Please wait while the node graph finishes cleaning.");\
+        emit show_error_page();\
+        return;\
+      }
+
 // Key overrides.
 void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
   internal();
   if (!get_current_interaction()) {
-    return;
-  }
-  if (_manipulator->is_busy_cleaning()) {
-    emit set_error_message("Please wait while the node graph finishes cleaning.");
-    emit show_error_page();
     return;
   }
   // See if the pressed key is a hotkey that we can handle.
@@ -371,66 +373,84 @@ void NodeGraphQuickItem::keyPressEvent(QKeyEvent * event) {
   Entity* entity = get_current_interaction()->entity_hit(mouse_info);
   if (entity) {
     if (kc == Qt::Key_E && !ctrl) {
+      if_busy_return();
       _last_node_shape = get_dep<NodeShape>(entity);
       edit_node();
       return;
     } else if (kc == Qt::Key_V && !ctrl) {
+      if_busy_return();
       _last_node_shape = get_dep<NodeShape>(entity);
       view_node();
       return;
     } else if (kc == Qt::Key_C && !ctrl) {
+      if_busy_return();
       _last_node_shape = get_dep<NodeShape>(entity);
       clean_node();
       return;
     } else if (kc == Qt::Key_R && !ctrl) {
+      if_busy_return();
       _last_node_shape = get_dep<NodeShape>(entity);
       reclean_node();
       return;
     } else if (kc == Qt::Key_D && !ctrl) {
+      if_busy_return();
       _last_node_shape = get_dep<NodeShape>(entity);
       dirty_node();
       return;
     } else if (kc == Qt::Key_X && !ctrl) {
+      if_busy_return();
       explode_group(entity);
     }
   }
 
   if (kc == Qt::Key_C  && !ctrl) {
     // We don't allow this, as it's too easy to perform accidentally.
+    //if_busy_return();
     //clean_group();
     return;
   } else if (kc == Qt::Key_R  && !ctrl) {
     // We don't allow this, as it's too easy to perform accidentally.
+    //if_busy_return();
     //reclean_group();
     return;
   } else if (kc == Qt::Key_D  && !ctrl) {
     // We don't allow this, as it's too easy to perform accidentally.
+    //if_busy_return();
     //dirty_group();
     return;
   } else if (kc == Qt::Key_F && !ctrl) {
+    if_busy_return();
     frame_all();
     return;
   } else if (kc == Qt::Key_F && ctrl) {
+    if_busy_return();
     frame_selected();
     return;
   } else if (kc == Qt::Key_C && ctrl) {
+    if_busy_return();
     copy();
     return;
   } else if (kc == Qt::Key_X && ctrl) {
+    if_busy_return();
     cut();
     return;
   } else if (kc == Qt::Key_V && ctrl) {
+    if_busy_return();
     paste(true);
     return;
   } else if (kc == Qt::Key_A && ctrl) {
+    if_busy_return();
     select_all();
     return;
   } else if (kc == Qt::Key_D && ctrl) {
+    if_busy_return();
     deselect_all();
     return;
   } else if (kc == Qt::Key_P && !ctrl) {
+    if_busy_return();
     collapse_to_group();
   } else if (kc == Qt::Key_Delete || kc == Qt::Key_Backspace) {
+    if_busy_return();
     destroy_selection();
   }
 
