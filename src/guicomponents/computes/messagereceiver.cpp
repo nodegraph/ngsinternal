@@ -110,9 +110,8 @@ void MessageReceiver::on_state_changed(QAbstractSocket::SocketState s) {
 void MessageReceiver::on_text_received(const QString & text) {
   Message msg(text);
 
-  std::cerr << "-----------------------------------------------\n";
-  std::cerr << "app has received a message: \n";
-  std::cerr << "-----------------------------------------------\n";
+  std::cerr << "----------------------------------------------------\n";
+  std::cerr << "app has received a message:   <----\n";
   msg.dump();
 
   MessageType type = msg.get_msg_type();

@@ -137,9 +137,8 @@ QWebSocketServer* MessageSender::get_web_socket_server() const {
 void MessageSender::send_msg(const Message& msg) const {
   external();
 
-  std::cerr << "-----------------------------------------------\n";
-  std::cerr << "app is sending a message: \n";
-  std::cerr << "-----------------------------------------------\n";
+  std::cerr << "----------------------------------------------------\n";
+  std::cerr << "app is sending a message:   ----> \n";
   msg.dump();
 
   ReceiverType rec = msg.get_receiver_type();

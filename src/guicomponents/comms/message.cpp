@@ -246,22 +246,24 @@ ReceiverType Message::get_receiver_type() const {
 }
 
 void Message::dump() const {
-  std::cerr << "id: " << get_id() << "\n";
+
+  std::cerr << "----------------------------------------------------\n";
+  std::cerr << Message::kID << ": " << get_id() << "\n";
 
   MessageType msg_type = static_cast<MessageType>(value(Message::kMessageType).toInt());
-  std::cerr << "msg_type: " << message_type_to_string(msg_type) << "\n";
+  std::cerr << Message::kMessageType << ": " << message_type_to_string(msg_type) << "\n";
 
   ReceiverType receiver_type = static_cast<ReceiverType>(value(Message::kReceiverType).toInt());
-  std::cerr << "receiver type: " << receiver_type_to_string(receiver_type) << "\n";
+  std::cerr << Message::kReceiverType << ": " << receiver_type_to_string(receiver_type) << "\n";
 
   const_iterator iter = begin();
   while (iter != end()) {
 
-    if (iter.key() == "receiver_type") {
+    if (iter.key() == Message::kReceiverType) {
     } else if (iter.key() == Message::kID) {
     } else if (iter.key() == Message::kMessageType) {
     } else if (iter.key() == Message::kRequest) {
-      std::cerr << "request: ";
+      std::cerr << Message::kRequest << ": ";
       switch(receiver_type) {
         case ReceiverType::Unknown: {
           std::cerr << "unknown" << "\n";
@@ -288,23 +290,51 @@ void Message::dump() const {
       }
     }  else if (iter.key() == Message::kInfo) {
       InfoType t = static_cast<InfoType>(iter.value().toInt());
-      std::cerr << "info: " << info_type_to_string(t) << "\n";
+      std::cerr << Message::kInfo << ": " << info_type_to_string(t) << "\n";
     } else if (iter.key() == Message::kSuccess) {
-      std::cerr << "success: " << iter.value().toBool() << "\n";
+      std::cerr << Message::kSuccess << ": " << iter.value().toBool() << "\n";
     } else if (iter.key() == Message::kValue) {
       if (iter.value().isObject() || iter.value().isArray()) {
         QJsonDocument doc(iter.value().toObject());
-        std::cerr << "value: " << doc.toJson().toStdString() << "\n";
+        std::cerr << Message::kValue << ": " << doc.toJson().toStdString() << "\n";
       } else {
-        std::cerr << "value: " << iter.value().toString().toStdString() << "\n";
+        std::cerr << Message::kValue << ": " << iter.value().toString().toStdString() << "\n";
       }
     } else if (iter.key() == Message::kArgs) {
       if (iter.value().isObject()) {
-        QJsonDocument doc(iter.value().toObject());
-        std::cerr << "args: " << doc.toJson().toStdString() << "\n";
+        QJsonObject args = iter.value().toObject();
+        const_iterator iter2 = args.begin();
+        while(iter2 != args.end()) {
+          if (iter2.key() == Message::kMouseAction) {
+            MouseActionType t = static_cast<MouseActionType>(iter2.value().toInt());
+            std::cerr << Message::kMouseAction << ": " << mouse_action_type_to_string(t) << "\n";
+          } else if (iter2.key() == Message::kTextAction) {
+            TextActionType t = static_cast<TextActionType>(iter2.value().toInt());
+            std::cerr << Message::kTextAction << ": " << text_action_type_to_string(t) << "\n";
+          } else if (iter2.key() == Message::kElementAction) {
+            ElementActionType t = static_cast<ElementActionType>(iter2.value().toInt());
+            std::cerr << Message::kElementAction << ": " << element_action_type_to_string(t) << "\n";
+          } /*else if (iter2.key() == Message::kImageAction) {
+
+          }*/ else if (iter2.key() == Message::kWrapType) {
+            WrapType t = static_cast<WrapType>(iter2.value().toInt());
+            std::cerr << Message::kWrapType << ": " << wrap_type_to_string(t) << "\n";
+          } else if (iter2.key() == Message::kScrollDirection) {
+            DirectionType t = static_cast<DirectionType>(iter2.value().toInt());
+            std::cerr << Message::kScrollDirection << ": " << direction_type_to_string(t) << "\n";
+          } else if (iter2.key() == Message::kHTTPRequestMethod) {
+            HTTPSendType t = static_cast<HTTPSendType>(iter2.value().toInt());
+            std::cerr << Message::kHTTPRequestMethod << ": " << http_send_type_to_string(t) << "\n";
+          } else {
+            QJsonDocument doc(iter2.value().toObject());
+            std::cerr << iter2.key().toStdString() << ": " << doc.toJson().toStdString() << "\n";
+          }
+          iter2++;
+        }
+
       } else if (iter.value().isArray()) {
         QJsonDocument doc(iter.value().toArray());
-        std::cerr << "args: " << doc.toJson().toStdString() << "\n";
+        std::cerr << Message::kArgs << ": " << doc.toJson().toStdString() << "\n";
       } else {
         std::cerr << "Error: args should always be an object.\n";
       }
@@ -314,7 +344,7 @@ void Message::dump() const {
 
     iter++;
   }
-  std::cerr << "--------------------------\n";
+  std::cerr << "----------------------------------------------------\n";
 }
 
 }
