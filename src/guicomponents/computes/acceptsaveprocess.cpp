@@ -38,7 +38,7 @@ void AcceptSaveProcess::on_error(QProcess::ProcessError error) {
 void AcceptSaveProcess::on_state_changed(QProcess::ProcessState state) {
   internal();
   if (state == QProcess::NotRunning) {
-    Message response(true, true);
+    Message response(ReceiverType::Platform, true, true);
     response.insert(Message::kID, _msg_id);
     _manipulator->receive_message(response.to_string());
   }

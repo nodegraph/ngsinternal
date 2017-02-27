@@ -1,8 +1,11 @@
 #include <guicomponents/comms/message.h>
-#include <iostream>
-#include <cassert>
+#include <guicomponents/comms/messagetypestrings.h>
 
 #include <QtCore/QJsonDocument>
+#include <QtCore/QJsonArray>
+
+#include <iostream>
+#include <cassert>
 
 namespace ngs {
 
@@ -18,6 +21,7 @@ const char* Message::kInfo = "info";
 const char* Message::kFWIndexPath = "fw_index_path";
 const char* Message::kFEIndexPath = "fe_index_path";
 const char* Message::kMessageType = "msg_type";
+const char* Message::kReceiverType = "receiver_type";
 
 const char* Message::kURL = "url";
 const char* Message::kHREF = "href";
@@ -106,8 +110,7 @@ const char* Message::kPort = "port";
 const char* Message::kClientID = "client_id";
 
 Message::Message()
-    : QJsonObject(),
-      _receiver_type(ReceiverType::Unknown){
+    : QJsonObject() {
 }
 
 Message::Message(const QString& json) {
@@ -117,39 +120,37 @@ Message::Message(const QString& json) {
   assert(check_contents());
 }
 
-Message::Message(WebDriverRequestType rt, const QJsonObject& args):
-  _receiver_type(ReceiverType::WebDriver) {
-  init_request(to_underlying(rt),args);
+Message::Message(WebDriverRequestType rt, const QJsonObject& args) {
+  init_request(ReceiverType::WebDriver, to_underlying(rt),args);
 }
 
-Message::Message(ChromeRequestType rt, const QJsonObject& args):
-      _receiver_type(ReceiverType::Chrome) {
-  init_request(to_underlying(rt),args);
+Message::Message(ChromeRequestType rt, const QJsonObject& args) {
+  init_request(ReceiverType::Chrome, to_underlying(rt),args);
 }
 
-Message::Message(PlatformRequestType rt, const QJsonObject& args):
-      _receiver_type(ReceiverType::Platform) {
-  init_request(to_underlying(rt),args);
+Message::Message(PlatformRequestType rt, const QJsonObject& args) {
+  init_request(ReceiverType::Platform, to_underlying(rt),args);
 }
 
-Message::Message(FirebaseRequestType rt, const QJsonObject& args):
-      _receiver_type(ReceiverType::Firebase) {
-  init_request(to_underlying(rt),args);
+Message::Message(FirebaseRequestType rt, const QJsonObject& args) {
+  init_request(ReceiverType::Firebase, to_underlying(rt),args);
 }
 
-void Message::init_request(int rt, const QJsonObject& args) {
+void Message::init_request(ReceiverType receiver_type, int request_type, const QJsonObject& args) {
   insert(Message::kID, -1);
-  insert(Message::kMessageType, static_cast<int>(MessageType::kRequestMessage));
+  insert(Message::kReceiverType, to_underlying(receiver_type));
+  insert(Message::kMessageType, to_underlying(MessageType::kRequestMessage));
 
-  insert(Message::kRequest, rt);
+  insert(Message::kRequest, request_type);
   insert(Message::kArgs, args);
 
   assert(check_contents());
 }
 
-Message::Message(bool success, const QJsonValue& value) {
+Message::Message(ReceiverType receiver_type, bool success, const QJsonValue& value) {
   insert(Message::kID, -1);
-  insert(Message::kMessageType, static_cast<int>(MessageType::kResponseMessage));
+  insert(Message::kReceiverType, to_underlying(receiver_type));
+  insert(Message::kMessageType, to_underlying(MessageType::kResponseMessage));
 
   insert(Message::kSuccess, success);
   insert(Message::kValue, value);
@@ -157,11 +158,12 @@ Message::Message(bool success, const QJsonValue& value) {
   assert(check_contents());
 }
 
-Message::Message(InfoType it, const QJsonValue& value) {
+Message::Message(ReceiverType receiver_type, InfoType it, const QJsonValue& value) {
   insert(Message::kID, -1);
-  insert(Message::kMessageType, static_cast<int>(MessageType::kResponseMessage));
+  insert(Message::kReceiverType, to_underlying(receiver_type));
+  insert(Message::kMessageType, to_underlying(MessageType::kResponseMessage));
 
-  insert(Message::kInfo, static_cast<int>(it));
+  insert(Message::kInfo, to_underlying(it));
   insert(Message::kValue, value);
 
   assert(check_contents());
@@ -185,6 +187,10 @@ bool Message::check_contents() {
     std::cerr << "Error: message is missing msg_type.\n";
     return false;
   }
+  if (!contains(Message::kReceiverType)) {
+      std::cerr << "Error: message is missing receiver_type.\n";
+      return false;
+    }
 
   MessageType msg_type = static_cast<MessageType>(value(Message::kMessageType).toInt());
   switch(msg_type) {
@@ -235,8 +241,80 @@ MessageType Message::get_msg_type() const {
   return static_cast<MessageType>(value(Message::kMessageType).toInt());
 }
 
-Message::ReceiverType Message::get_receiver_type() const {
-  return _receiver_type;
+ReceiverType Message::get_receiver_type() const {
+  return static_cast<ReceiverType>(value(Message::kReceiverType).toInt());
+}
+
+void Message::dump() const {
+  std::cerr << "id: " << get_id() << "\n";
+
+  MessageType msg_type = static_cast<MessageType>(value(Message::kMessageType).toInt());
+  std::cerr << "msg_type: " << message_type_to_string(msg_type) << "\n";
+
+  ReceiverType receiver_type = static_cast<ReceiverType>(value(Message::kReceiverType).toInt());
+  std::cerr << "receiver type: " << receiver_type_to_string(receiver_type) << "\n";
+
+  const_iterator iter = begin();
+  while (iter != end()) {
+
+    if (iter.key() == "receiver_type") {
+    } else if (iter.key() == Message::kID) {
+    } else if (iter.key() == Message::kMessageType) {
+    } else if (iter.key() == Message::kRequest) {
+      std::cerr << "request: ";
+      switch(receiver_type) {
+        case ReceiverType::Unknown: {
+          std::cerr << "unknown" << "\n";
+        } break;
+        case ReceiverType::WebDriver: {
+          WebDriverRequestType t = static_cast<WebDriverRequestType>(iter.value().toInt());
+          std::cerr << web_driver_request_type_to_string(t) << "\n";
+        } break;
+        case ReceiverType::Chrome: {
+          ChromeRequestType t = static_cast<ChromeRequestType>(iter.value().toInt());
+          std::cerr << chrome_request_type_to_string(t) << "\n";
+        } break;
+        case ReceiverType::Platform: {
+          PlatformRequestType t = static_cast<PlatformRequestType>(iter.value().toInt());
+          std::cerr << platform_request_type_to_string(t) << "\n";
+        } break;
+        case ReceiverType::Firebase: {
+          FirebaseRequestType t = static_cast<FirebaseRequestType>(iter.value().toInt());
+          std::cerr << firebase_request_type_to_string(t) << "\n";
+        } break;
+        default: {
+          assert(false);
+        } break;
+      }
+    }  else if (iter.key() == Message::kInfo) {
+      InfoType t = static_cast<InfoType>(iter.value().toInt());
+      std::cerr << "info: " << info_type_to_string(t) << "\n";
+    } else if (iter.key() == Message::kSuccess) {
+      std::cerr << "success: " << iter.value().toBool() << "\n";
+    } else if (iter.key() == Message::kValue) {
+      if (iter.value().isObject() || iter.value().isArray()) {
+        QJsonDocument doc(iter.value().toObject());
+        std::cerr << "value: " << doc.toJson().toStdString() << "\n";
+      } else {
+        std::cerr << "value: " << iter.value().toString().toStdString() << "\n";
+      }
+    } else if (iter.key() == Message::kArgs) {
+      if (iter.value().isObject()) {
+        QJsonDocument doc(iter.value().toObject());
+        std::cerr << "args: " << doc.toJson().toStdString() << "\n";
+      } else if (iter.value().isArray()) {
+        QJsonDocument doc(iter.value().toArray());
+        std::cerr << "args: " << doc.toJson().toStdString() << "\n";
+      } else {
+        std::cerr << "Error: args should always be an object.\n";
+      }
+    } else {
+      std::cerr << "found unexpected property: " << iter.key().toStdString() << "\n";
+    }
+
+    iter++;
+  }
+  std::cerr << "--------------------------\n";
 }
 
 }

@@ -4,6 +4,7 @@ set(sources
     licensechecker.cpp
     filemodel.cpp
     message.cpp
+    messagetypestrings.cpp
     taskscheduler.cpp
     guitypes.cpp
     )
@@ -11,6 +12,7 @@ set(sources
 set(headers
     commtypes.h
     messagetypes.h
+    messagetypestrings.h
     taskscheduler.h
 )
     

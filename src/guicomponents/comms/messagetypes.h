@@ -5,6 +5,14 @@ namespace ngs {
 // move away from qml to javascript/typescript oriented gui framework, where we want our json
 // message to only contain pure javascript primitive types.
 
+enum class ReceiverType : int  {
+  Unknown = 0,
+  WebDriver = 1,
+  Chrome = 2,
+  Platform = 3,
+  Firebase = 4,
+};
+
 enum class WebDriverRequestType : int {
   kUnknownWebDriverRequest = 0,
 

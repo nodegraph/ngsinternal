@@ -48,10 +48,12 @@ interface IDropDownInfo {
 }
 
 class BaseMessage {
+    receiver_type: ReceiverType
     msg_type: MessageType
     id: Number // RequestMessage and ResponseMessage id should match. (-1 means we don't care/track about it.)
 
     constructor(id: Number) {
+        this.receiver_type = ReceiverType.Chrome
         this.msg_type = MessageType.kUnformedMessage
         this.id = id
     }

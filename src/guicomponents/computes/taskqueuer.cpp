@@ -188,7 +188,8 @@ void TaskQueuer::send_msg_task(Message& msg) {
   int id = _scheduler->wait_for_response();
   msg.insert(Message::kID, id);
   _msg_sender->send_msg(msg);
-  std::cerr << "sending app --> commhub: " << msg.to_string().toStdString() << "\n";
+  _last_query = msg;
+  //std::cerr << "raw msg sent by app: " << msg.to_string().toStdString() << "\n";
 }
 
 // ---------------------------------------------------------------------------------

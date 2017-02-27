@@ -279,6 +279,9 @@ signals:
   // The 'value' value from responses will get merged into this state overriding previous values.
   QJsonObject _chain_state;
 
+  // The last query we sent.
+  Message _last_query;
+
   // The last response we got.
   Message _last_response;
 };

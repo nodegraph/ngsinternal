@@ -25,6 +25,7 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kFWIndexPath;
   static const char* kFEIndexPath;
   static const char* kMessageType;
+  static const char* kReceiverType;
 
   static const char* kURL;
   static const char* kHREF;
@@ -114,14 +115,6 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kPort;
   static const char* kClientID;
 
-  enum class ReceiverType : int  {
-    Unknown = 0,
-    WebDriver = 1,
-    Chrome = 2,
-    Platform = 3,
-    Firebase = 4,
-  };
-
   Message();
   Message(const QString& json); // Initialize from a json string typcially coming from another process outside the native app.
   Message(const QJsonObject& other);
@@ -131,14 +124,14 @@ class COMMS_EXPORT Message: public QJsonObject {
   Message(ChromeRequestType rt, const QJsonObject& args = QJsonObject());
   Message(PlatformRequestType rt, const QJsonObject& args = QJsonObject());
   Message(FirebaseRequestType rt, const QJsonObject& args = QJsonObject());
-  void init_request(int rt, const QJsonObject& args);
+  void init_request(ReceiverType receiver_type, int request_type, const QJsonObject& args);
 
   // Initializes a response message.
   // The success arg is whether the app should continue sending more requests in this sequence.
   // False means some unrecoverable error has occured.
-  Message(bool success, const QJsonValue& value = QJsonValue());
+  Message(ReceiverType receiver_type, bool success, const QJsonValue& value = QJsonValue());
   // Initializes an info message.
-  Message(InfoType it, const QJsonValue& value = QJsonValue());
+  Message(ReceiverType receiver_type, InfoType it, const QJsonValue& value = QJsonValue());
 
   virtual ~Message();
 
@@ -148,9 +141,10 @@ class COMMS_EXPORT Message: public QJsonObject {
   virtual MessageType get_msg_type() const;
   virtual ReceiverType get_receiver_type() const;
 
+  virtual void dump() const;
+
  private:
   bool check_contents();
-  ReceiverType _receiver_type;
 };
 
 }

@@ -136,23 +136,29 @@ QWebSocketServer* MessageSender::get_web_socket_server() const {
 
 void MessageSender::send_msg(const Message& msg) const {
   external();
-  Message::ReceiverType rec = msg.get_receiver_type();
+
+  std::cerr << "-----------------------------------------------\n";
+  std::cerr << "app is sending a message: \n";
+  std::cerr << "-----------------------------------------------\n";
+  msg.dump();
+
+  ReceiverType rec = msg.get_receiver_type();
   switch (rec) {
-    case Message::ReceiverType::Unknown: {
+    case ReceiverType::Unknown: {
       break;
     }
-    case Message::ReceiverType::WebDriver: {
+    case ReceiverType::WebDriver: {
       _java_process->send_msg(msg);
       break;
     }
-    case Message::ReceiverType::Chrome: {
+    case ReceiverType::Chrome: {
       size_t num_bytes = _client->sendTextMessage(msg.to_string());
       if (num_bytes == 0) {
         std::cerr << "Error: Unable to send msg from app to commhub. The commhub process may have terminated.\n";
       }
       break;
     }
-    case Message::ReceiverType::Platform: {
+    case ReceiverType::Platform: {
       if (msg[Message::kRequest].toDouble() == to_underlying(PlatformRequestType::kAcceptSaveDialog)) {
         _accept_save_process->start_process(msg.get_id());
       } else if (msg[Message::kRequest].toDouble() == to_underlying(PlatformRequestType::kDownloadVideo)) {
@@ -160,7 +166,7 @@ void MessageSender::send_msg(const Message& msg) const {
       }
       break;
     }
-    case Message::ReceiverType::Firebase: {
+    case ReceiverType::Firebase: {
       break;
     }
   }

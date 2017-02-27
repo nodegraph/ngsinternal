@@ -41,8 +41,8 @@ Q_OBJECT
   void separate_messages(const QString& text);
 
   // Our fixed dependencies.
-  Dep<TaskQueuer> _app_worker;
-  Dep<TaskScheduler> _task_queue; // The node js process we want to connect to.
+  Dep<TaskQueuer> _queuer;
+  Dep<TaskScheduler> _scheduler; // The node js process we want to connect to.
 
   QWebSocket* _web_socket; // Borrowed reference.
   bool _connected; // Whether our slot is connected to receive text from the socket.

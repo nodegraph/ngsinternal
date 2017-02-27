@@ -33,11 +33,11 @@ class Grabber : public Component {
 MessageReceiver::MessageReceiver(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
-      _app_worker(this),
-      _task_queue(this),
+      _queuer(this),
+      _scheduler(this),
       _connected(false) {
-  get_dep_loader()->register_fixed_dep(_app_worker, Path());
-  get_dep_loader()->register_fixed_dep(_task_queue, Path());
+  get_dep_loader()->register_fixed_dep(_queuer, Path());
+  get_dep_loader()->register_fixed_dep(_scheduler, Path());
 }
 
 MessageReceiver::~MessageReceiver() {
@@ -108,16 +108,21 @@ void MessageReceiver::on_state_changed(QAbstractSocket::SocketState s) {
 }
 
 void MessageReceiver::on_text_received(const QString & text) {
-  std::cerr << "msg receiver got text: -->" << text.toStdString() << "<--\n";
   Message msg(text);
+
+  std::cerr << "-----------------------------------------------\n";
+  std::cerr << "app has received a message: \n";
+  std::cerr << "-----------------------------------------------\n";
+  msg.dump();
+
   MessageType type = msg.get_msg_type();
   if (type == MessageType::kRequestMessage) {
     std::cerr << "Error: App should not be receiving request messages.\n";
     assert(false);
   } else if (type == MessageType::kResponseMessage) {
-    _app_worker->handle_response(msg);
+    _queuer->handle_response(msg);
   } else if (type == MessageType::kInfoMessage) {
-    _app_worker->handle_info(msg);
+    _queuer->handle_info(msg);
   } else {
     std::cerr << "Error: Got message of unknown type!\n";
   }

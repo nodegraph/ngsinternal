@@ -124,7 +124,7 @@ void DownloadManager::download(int msg_id, const QJsonObject& args) {
 
   // We don't wait for the download to finish.
   // We send the success response back right away.
-  Message response(true, true);
+  Message response(ReceiverType::Platform, true, true);
   response.insert(Message::kID, msg_id);
   _manipulator->receive_message(response.to_string());
 }

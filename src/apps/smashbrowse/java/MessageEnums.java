@@ -14,6 +14,23 @@ public class MessageEnums {
 // message to only contain pure javascript primitive types.
 
 
+static enum ReceiverType {
+  Unknown(0),
+  WebDriver(1),
+  Chrome(2),
+  Platform(3),
+  Firebase(4),;
+
+  private final int value;
+  ReceiverType(final int newValue) {value = newValue;}
+  public int get_value() {return value;}
+  
+  private static HashMap<Integer, ReceiverType> map = new HashMap<Integer, ReceiverType>();
+  static {for (ReceiverType e : ReceiverType.values()) {map.put(e.value, e);}}
+  public static ReceiverType get_enum(int value) {return map.get(value);}
+}
+
+
 static enum WebDriverRequestType {
   kUnknownWebDriverRequest(0),
 

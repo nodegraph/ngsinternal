@@ -8,6 +8,7 @@ public class BaseMessage {
     BaseMessage(int id, MessageEnums.MessageType msg_type) {
     	obj = new JsonObject();
     	set_id(id);
+    	set_receiver_type(MessageEnums.ReceiverType.WebDriver);
     	set_msg_type(msg_type);
     }
     
@@ -27,8 +28,16 @@ public class BaseMessage {
     	return obj.getAsJsonPrimitive("id").getAsInt();
     }
     
+    void set_receiver_type(MessageEnums.ReceiverType receiver_type) {
+    	obj.addProperty("receiver_type", receiver_type.get_value());
+    }
+    
+    MessageEnums.ReceiverType get_receiver_type() {
+    	return MessageEnums.ReceiverType.get_enum(obj.get("receiver_type").getAsInt());
+    }
+    
     void set_msg_type(MessageEnums.MessageType msg_type) {
-    	obj.addProperty("msg_type", msg_type.ordinal());
+    	obj.addProperty("msg_type", msg_type.get_value());
     }
     
     MessageEnums.MessageType get_msg_type() {
