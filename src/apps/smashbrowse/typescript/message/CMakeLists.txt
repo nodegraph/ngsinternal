@@ -48,3 +48,13 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 add_custom_target(msg_js ALL DEPENDS ${msg_js} ${msg_js_min})
+
+set(dest "bin/chromeextension")
+
+# Install the compiled chrome extension plus the css files.
+INSTALL(FILES 
+            ${msg_js_min}
+		DESTINATION ${dest}
+		COMPONENT chrome_ext_background
+    	PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+		)

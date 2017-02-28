@@ -24,10 +24,13 @@ add_custom_command(
         
     COMMAND java
     ARGS -jar ${closure_compiler_jar} 
+         --debug
+         --formatting=PRETTY_PRINT
+         #--use_types_for_optimization false
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS
-         --js ${msg_js_lib} ${cnt_js} 
+         --js ${cnt_js} 
          --js_output_file ${cnt_js_min}
         
     DEPENDS ${cnt_ts} tsconfig.json ${msg_js_lib}

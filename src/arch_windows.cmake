@@ -27,7 +27,7 @@ set(tsconfig_json "tsconfig.json")
 # ---------------------------------------------------------
 # Closure Compiler
 # ---------------------------------------------------------
-set(closure_compiler_jar "${PLATFORM_ROOT}/srcdeps/ngsexternal/closure_compiler/closure-compiler-v20160822.jar")
+set(closure_compiler_jar "${PLATFORM_ROOT}/srcdeps/ngsexternal/closure_compiler/closure-compiler-v20170218.jar")
 
 
 # ---------------------------------------------------------
