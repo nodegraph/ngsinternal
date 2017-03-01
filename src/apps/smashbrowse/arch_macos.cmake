@@ -1,3 +1,16 @@
+# To install do.
+# ninja install
+# ninja fill_smashbrowse
+
+# If smashbrowse.app doesn't seem to be updating then do.
+# ninja wipe_smashbrowse
+# ninja install
+# ninja fill_smashbrowse
+
+# Todo.
+# fill_smashbrowse is time consuming and it's mostly copying files which don't change
+# make another fill command which copies the most frequently changing files like jcomm.jar
+
 # Command to install dependent libraries into the the app.
 set(app ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents)
 add_custom_command(
@@ -15,7 +28,7 @@ add_custom_command(
 	#
 	COMMAND cp -fRL "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson" ${app}/Resources/gson
 	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/chromeextension ${app}/Resources/chromeextension
-	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/bin/* ${app}/Resources
+	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/bin/* ${app}/MacOS
 )
 
 

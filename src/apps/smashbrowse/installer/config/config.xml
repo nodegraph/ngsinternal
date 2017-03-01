@@ -8,7 +8,7 @@
     <TargetDir>@HomeDir@/IfwExamples/online</TargetDir>
     <RemoteRepositories>
         <Repository>
-            <Url>file:///D:/repositories/smashbrowse</Url>
+            <Url>file:///Users/raindrop/repositories/smashbrowse</Url>
         </Repository>
     </RemoteRepositories>
 </Installer>

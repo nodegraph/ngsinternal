@@ -119,17 +119,20 @@ void JavaProcess::start_process(int app_server_port) {
 
 
   QString bin_dir = AppConfig::get_app_bin_dir();
-
+  QString jars = "jcomm.jar";
 #if (ARCH == ARCH_WINDOWS)
   bin_dir += "\..";
   QString jre_bin_dir = bin_dir + "\jre\bin";
   QString java_binary_path = jre_bin_dir + QDir::separator() + "java.exe";
   QString sep = ";";
+
+  jars = "bin/" + jars;
 #elif (ARCH == ARCH_MACOS)
   bin_dir += "/../Resources";
   QString jre_bin_dir = bin_dir + "/jre/bin";
   QString java_binary_path = jre_bin_dir + QDir::separator() + "java";
   QString sep = ":";
+  jars = "MacOS/" + jars;
 #endif
 
   // Set the working directory.
@@ -150,7 +153,7 @@ void JavaProcess::start_process(int app_server_port) {
   QStringList args;
   args.append("-cp");
   // Our main jar.
-  QString jars = "jcomm.jar";
+
   // Gson.
   jars += sep + "gson/gson-2.8.0.jar";
   // Selenium.

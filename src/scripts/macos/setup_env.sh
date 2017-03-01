@@ -53,6 +53,9 @@ PATH=/Users/raindrop/installs/macosunpacks/SourceTree.app/Contents/MacOS:${PATH}
 # Node and typesript
 PATH=/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/bin:${PATH}
 
+# Qt Installer Framework
+PATH=/Users/raindrop/installs/macos/QtIFW2.0.3/bin:${PATH}
+
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"
 
