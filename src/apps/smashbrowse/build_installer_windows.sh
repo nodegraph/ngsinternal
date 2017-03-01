@@ -53,10 +53,10 @@ package ()
 	cd bin
 	
 	# The primary is our ngs libraries and executables.
-	cp -fr +(smash*|ngs*|test*) $PACKAGES/com.smashbrowse.primary/data/bin
+	cp -fr +(smash*|jcomm.jar|ngs*|test*) $PACKAGES/com.smashbrowse.primary/data/bin
 	
 	# The secondary is the third party libraries and executables.
-	cp -fr !(smash*|ngs*|test*) $PACKAGES/com.smashbrowse.secondary/data/bin
+	cp -fr !(smash*|jcomm.jar|ngs*|test*) $PACKAGES/com.smashbrowse.secondary/data/bin
 	
 	# Now copy in the xml files from ngsinternal.
 	cp -fr $NGSINTERNAL/. $PACKAGES_ROOT
@@ -77,6 +77,6 @@ update_repo ()
 create_installer ()
 {
 	cd $PACKAGES_ROOT
-	binarycreator --online-only -c 'config/config.xml' -p packages installer.exe
+	binarycreator --online-only -c 'config/config.xml' -p packages smashbrowse
 }
 

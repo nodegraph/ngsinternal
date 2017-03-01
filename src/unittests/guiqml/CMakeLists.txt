@@ -36,13 +36,15 @@ endif ()
 target_link_libraries(testguiqml ngs_memoryallocator ngs_gui ngs_entities)
 
 # Install.
-INSTALL(TARGETS testguiqml
-  RUNTIME DESTINATION bin
-  COMPONENT unittests
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  BUNDLE DESTINATION .
-)
+if (NOT (${ARCH} STREQUAL ARCH_MACOS))
+	INSTALL(TARGETS testguiqml
+	  RUNTIME DESTINATION bin
+	  COMPONENT unittests
+	  LIBRARY DESTINATION lib
+	  ARCHIVE DESTINATION lib
+	  BUNDLE DESTINATION .
+	)
+endif()
 
 
 # you may need to install these yum packages

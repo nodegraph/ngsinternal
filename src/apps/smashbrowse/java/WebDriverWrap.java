@@ -43,6 +43,8 @@ public class WebDriverWrap {
 	private String _blank_page;
 	private String _socket_connect_page;
 	
+	private String _driver_location;
+	
 	private boolean _use_hack;
 	
 	public class WebElementWithPos {
@@ -73,10 +75,13 @@ public class WebDriverWrap {
         // Determine chome extension dir.
         if (FSWrap.platform_is_windows()) {
         	_chrome_ext_dir = working_dir + "/../chromeextension";
+        	_driver_location = working_dir + "/chromedriver";
         } else {
         	_chrome_ext_dir = working_dir + "/../Resources/chromeextension";
+        	_driver_location = working_dir + "/../Resources/bin/chromedriver";
         }
         System.err.println("chrome ext dir is: " + _chrome_ext_dir);
+        System.setProperty("webdriver.chrome.driver", _driver_location);
         
         // Determine our html page locations.
         int bin_pos =working_dir.lastIndexOf("/");

@@ -26,6 +26,7 @@ Q_OBJECT
   void set_process_name(const QString& process_name);
   void set_program(const QString& program);
   void set_args(const QStringList& args);
+  void set_working_dir(const QString& dir);
 
   // Comms.
   void disconnect_stderr();
@@ -45,6 +46,7 @@ Q_OBJECT
   QString _process_name;
   QString _program;
   QStringList _args;
+  QString _working_dir;
 
   bool _show_stream_activity;
   QString _last_stderr;

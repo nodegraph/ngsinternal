@@ -22,10 +22,12 @@ target_link_libraries(testmemorytracker
 	${ios_libs})
     
 # Install.
-INSTALL(TARGETS testmemorytracker
-  RUNTIME DESTINATION bin
-  COMPONENT unittests
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  BUNDLE DESTINATION .
-)
+if (NOT (${ARCH} STREQUAL ARCH_MACOS))
+	INSTALL(TARGETS testmemorytracker
+	  RUNTIME DESTINATION bin
+	  COMPONENT unittests
+	  LIBRARY DESTINATION lib
+	  ARCHIVE DESTINATION lib
+	  BUNDLE DESTINATION .
+	)
+endif()

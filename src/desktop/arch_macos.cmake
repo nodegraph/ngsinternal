@@ -29,7 +29,7 @@ INSTALL(FILES
 
 INSTALL(
   FILES
-      "${PLATFORM_ROOT}/srcdeps/ngsexternal/youtube-dl/macos/2017.01.31/youtube-dl"
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/youtube-dl/macos/2017.02.28/youtube-dl"
   RENAME "ngs_helper"
   PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
   DESTINATION bin

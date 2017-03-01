@@ -29,13 +29,15 @@ target_link_libraries(testguiqt
 	ngs_entities
 	${ios_libs})
 
-INSTALL(TARGETS testguiqt
-  RUNTIME DESTINATION bin
-  COMPONENT unittests
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  BUNDLE DESTINATION .
-)
+if (NOT (${ARCH} STREQUAL ARCH_MACOS))
+	INSTALL(TARGETS testguiqt
+	  RUNTIME DESTINATION bin
+	  COMPONENT unittests
+	  LIBRARY DESTINATION lib
+	  ARCHIVE DESTINATION lib
+	  BUNDLE DESTINATION .
+	)
+endif()
 
 
 

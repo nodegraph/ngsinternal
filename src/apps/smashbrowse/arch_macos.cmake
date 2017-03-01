@@ -15,9 +15,6 @@
 set(app ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents)
 add_custom_command(
 	OUTPUT copy_other_files
-	#COMMAND rm -fr ${app}/Frameworks/*
-	#COMMAND rm -fr ${app}/PlugIns/*
-	#COMMAND rm -fr ${app}/Resources/*
 	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 
 	#
 	COMMAND cp -fRL ${CMAKE_CURRENT_SOURCE_DIR}/html ${app}/Resources
@@ -28,7 +25,7 @@ add_custom_command(
 	#
 	COMMAND cp -fRL "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson" ${app}/Resources/gson
 	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/chromeextension ${app}/Resources/chromeextension
-	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/bin/* ${app}/MacOS
+	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/bin ${app}/Resources
 )
 
 

@@ -69,6 +69,7 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
 endif ()
 
 # Install.
+if (NOT (${ARCH} STREQUAL ARCH_MACOS))
 INSTALL(TARGETS testqml
   RUNTIME DESTINATION bin
   COMPONENT unittests
@@ -77,6 +78,7 @@ INSTALL(TARGETS testqml
   BUNDLE DESTINATION .
   RESOURCE DESTINATION Resources
 )
+endif()
 
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	

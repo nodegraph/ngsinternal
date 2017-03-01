@@ -1,0 +1,13 @@
+# Install.
+INSTALL(TARGETS smashbrowse
+  RUNTIME DESTINATION bin
+  COMPONENT smashbrowse
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
+)
+
+# Install the html files.
+INSTALL(DIRECTORY html
+		DESTINATION .
+		COMPONENT smashbrowse)
