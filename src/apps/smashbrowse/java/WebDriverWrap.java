@@ -74,21 +74,19 @@ public class WebDriverWrap {
         
         // Determine chome extension dir.
         if (FSWrap.platform_is_windows()) {
-        	_chrome_ext_dir = working_dir + "/../chromeextension";
-        	_driver_location = working_dir + "/chromedriver";
+        	_chrome_ext_dir = working_dir + "/chromeextension";
+        	_driver_location = working_dir + "/bin/chromedriver.exe";
         } else {
-        	_chrome_ext_dir = working_dir + "/../Resources/chromeextension";
-        	_driver_location = working_dir + "/../Resources/bin/chromedriver";
+        	_chrome_ext_dir = working_dir + "/chromeextension";
+        	_driver_location = working_dir + "/bin/chromedriver";
         }
         System.err.println("chrome ext dir is: " + _chrome_ext_dir);
         System.setProperty("webdriver.chrome.driver", _driver_location);
         
         // Determine our html page locations.
-        int bin_pos =working_dir.lastIndexOf("/");
-        String base_loc = working_dir.substring(0, bin_pos);
+        String base_loc = working_dir;
         if (FSWrap.platform_is_windows()) {
         } else {
-        	base_loc += "/Resources";
         }
         base_loc = "file:///" + base_loc;
         _app_page = base_loc + "/html/smashbrowse.html";
