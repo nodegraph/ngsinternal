@@ -71,12 +71,20 @@ public class WebDriverWrap {
         System.err.println("user dir is: " + working_dir);
         
         // Determine chome extension dir.
-        _chrome_ext_dir = working_dir + java.io.File.separator + ".." + java.io.File.separator + "chromeextension";
+        if (FSWrap.platform_is_windows()) {
+        	_chrome_ext_dir = working_dir + "/../chromeextension";
+        } else {
+        	_chrome_ext_dir = working_dir + "/../Resources/chromeextension";
+        }
         System.err.println("chrome ext dir is: " + _chrome_ext_dir);
         
         // Determine our html page locations.
         int bin_pos =working_dir.lastIndexOf("/");
         String base_loc = working_dir.substring(0, bin_pos);
+        if (FSWrap.platform_is_windows()) {
+        } else {
+        	base_loc += "/Resources";
+        }
         base_loc = "file:///" + base_loc;
         _app_page = base_loc + "/html/smashbrowse.html";
         _blank_page = base_loc + "/html/blank.html";

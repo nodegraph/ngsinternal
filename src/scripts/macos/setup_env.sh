@@ -50,6 +50,9 @@ export JAVA_HOME="/c/Program Files (x86)/Java/jdk1.7.0_55"
 # SourceTree
 PATH=/Users/raindrop/installs/macosunpacks/SourceTree.app/Contents/MacOS:${PATH}
 
+# Node and typesript
+PATH=/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/bin:${PATH}
+
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"
 

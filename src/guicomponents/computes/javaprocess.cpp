@@ -117,23 +117,30 @@ void JavaProcess::start_process(int app_server_port) {
   connect(_process, SIGNAL(readyReadStandardError()), this, SLOT(on_read_standard_error()));
   connect(_process, SIGNAL(readyReadStandardOutput()), this, SLOT(on_read_standard_output()));
 
-  // Set the working directory.
+
   QString bin_dir = AppConfig::get_app_bin_dir();
+
+#if (ARCH == ARCH_WINDOWS)
+  bin_dir += "\..";
+  QString jre_bin_dir = bin_dir + "\jre\bin";
+  QString java_binary_path = jre_bin_dir + QDir::separator() + "java.exe";
+  QString sep = ";";
+#elif (ARCH == ARCH_MACOS)
+  bin_dir += "/../Resources";
+  QString jre_bin_dir = bin_dir + "/jre/bin";
+  QString java_binary_path = jre_bin_dir + QDir::separator() + "java";
+  QString sep = ":";
+#endif
+
+  // Set the working directory.
   _process->setWorkingDirectory(bin_dir);
 
   // Add our app's jre to the path.
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   QString path = env.value("PATH");
 
-#if (ARCH == ARCH_WINDOWS)
-  QString jre_bin_dir = bin_dir + QDir::separator() + ".." + QDir::separator() + "jre" + QDir::separator() + "bin";
-  QString java_binary_path = jre_bin_dir + QDir::separator() + "java.exe";
-  QString sep = ";";
-#elif (ARCH == ARCH_MACOS)
-  QString jre_bin_dir = bin_dir + QDir::separator() + ".." + QDir::separator() + "jre" + QDir::separator() + "bin";
-  QString java_binary_path = jre_bin_dir + QDir::separator() + "java";
-  QString sep = ":";
-#endif
+  std::cerr << "jre dir is: " << jre_bin_dir.toStdString() << "\n";
+  std::cerr << "java bin path: " << java_binary_path.toStdString() << "\n";
   path = jre_bin_dir + sep + path;
   env.insert("PATH", path);
   _process->setProcessEnvironment(env);
@@ -145,43 +152,43 @@ void JavaProcess::start_process(int app_server_port) {
   // Our main jar.
   QString jars = "jcomm.jar";
   // Gson.
-  jars += sep + "../gson/gson-2.8.0.jar";
+  jars += sep + "gson/gson-2.8.0.jar";
   // Selenium.
-  jars += sep + "../selenium/client-combined-3.0.1-nodeps.jar";
-  jars += sep + "../selenium/lib/client-combined-3.0.1-nodeps.jar";
-  jars += sep + "../selenium/lib/cglib-nodep-3.2.4.jar";
-  jars += sep + "../selenium/lib/commons-codec-1.10.jar";
-  jars += sep + "../selenium/lib/commons-exec-1.3.jar";
-  jars += sep + "../selenium/lib/commons-io-2.5.jar";
-  jars += sep + "../selenium/lib/commons-lang3-3.4.jar";
-  jars += sep + "../selenium/lib/commons-logging-1.2.jar";
-  jars += sep + "../selenium/lib/cssparser-0.9.20.jar";
-  jars += sep + "../selenium/lib/gson-2.3.1.jar";
-  jars += sep + "../selenium/lib/guava-19.0.jar";
-  jars += sep + "../selenium/lib/hamcrest-core-1.3.jar";
-  jars += sep + "../selenium/lib/hamcrest-library-1.3.jar";
-  jars += sep + "../selenium/lib/htmlunit-2.23.jar";
-  jars += sep + "../selenium/lib/htmlunit-core-js-2.23.jar";
-  jars += sep + "../selenium/lib/httpclient-4.5.2.jar";
-  jars += sep + "../selenium/lib/httpcore-4.4.4.jar";
-  jars += sep + "../selenium/lib/httpmime-4.5.2.jar";
-  jars += sep + "../selenium/lib/javax.servlet-api-3.1.0.jar";
-  jars += sep + "../selenium/lib/jetty-io-9.2.13.v20150730.jar";
-  jars += sep + "../selenium/lib/jetty-util-9.2.13.v20150730.jar";
-  jars += sep + "../selenium/lib/jna-4.1.0.jar";
-  jars += sep + "../selenium/lib/jna-platform-4.1.0.jar";
-  jars += sep + "../selenium/lib/junit-4.12.jar";
-  jars += sep + "../selenium/lib/neko-htmlunit-2.23.jar";
-  jars += sep + "../selenium/lib/netty-3.5.7.Final.jar";
-  jars += sep + "../selenium/lib/phantomjsdriver-1.3.0.jar";
-  jars += sep + "../selenium/lib/sac-1.3.jar";
-  jars += sep + "../selenium/lib/serializer-2.7.2.jar";
-  jars += sep + "../selenium/lib/websocket-api-9.2.15.v20160210.jar";
-  jars += sep + "../selenium/lib/websocket-client-9.2.15.v20160210.jar";
-  jars += sep + "../selenium/lib/websocket-common-9.2.15.v20160210.jar";
-  jars += sep + "../selenium/lib/xalan-2.7.2.jar";
-  jars += sep + "../selenium/lib/xercesImpl-2.11.0.jar";
-  jars += sep + "../selenium/lib/xml-apis-1.4.01.jar";
+  jars += sep + "selenium/client-combined-3.0.1-nodeps.jar";
+  jars += sep + "selenium/lib/client-combined-3.0.1-nodeps.jar";
+  jars += sep + "selenium/lib/cglib-nodep-3.2.4.jar";
+  jars += sep + "selenium/lib/commons-codec-1.10.jar";
+  jars += sep + "selenium/lib/commons-exec-1.3.jar";
+  jars += sep + "selenium/lib/commons-io-2.5.jar";
+  jars += sep + "selenium/lib/commons-lang3-3.4.jar";
+  jars += sep + "selenium/lib/commons-logging-1.2.jar";
+  jars += sep + "selenium/lib/cssparser-0.9.20.jar";
+  jars += sep + "selenium/lib/gson-2.3.1.jar";
+  jars += sep + "selenium/lib/guava-19.0.jar";
+  jars += sep + "selenium/lib/hamcrest-core-1.3.jar";
+  jars += sep + "selenium/lib/hamcrest-library-1.3.jar";
+  jars += sep + "selenium/lib/htmlunit-2.23.jar";
+  jars += sep + "selenium/lib/htmlunit-core-js-2.23.jar";
+  jars += sep + "selenium/lib/httpclient-4.5.2.jar";
+  jars += sep + "selenium/lib/httpcore-4.4.4.jar";
+  jars += sep + "selenium/lib/httpmime-4.5.2.jar";
+  jars += sep + "selenium/lib/javax.servlet-api-3.1.0.jar";
+  jars += sep + "selenium/lib/jetty-io-9.2.13.v20150730.jar";
+  jars += sep + "selenium/lib/jetty-util-9.2.13.v20150730.jar";
+  jars += sep + "selenium/lib/jna-4.1.0.jar";
+  jars += sep + "selenium/lib/jna-platform-4.1.0.jar";
+  jars += sep + "selenium/lib/junit-4.12.jar";
+  jars += sep + "selenium/lib/neko-htmlunit-2.23.jar";
+  jars += sep + "selenium/lib/netty-3.5.7.Final.jar";
+  jars += sep + "selenium/lib/phantomjsdriver-1.3.0.jar";
+  jars += sep + "selenium/lib/sac-1.3.jar";
+  jars += sep + "selenium/lib/serializer-2.7.2.jar";
+  jars += sep + "selenium/lib/websocket-api-9.2.15.v20160210.jar";
+  jars += sep + "selenium/lib/websocket-client-9.2.15.v20160210.jar";
+  jars += sep + "selenium/lib/websocket-common-9.2.15.v20160210.jar";
+  jars += sep + "selenium/lib/xalan-2.7.2.jar";
+  jars += sep + "selenium/lib/xercesImpl-2.11.0.jar";
+  jars += sep + "selenium/lib/xml-apis-1.4.01.jar";
   args.append(jars);
   // The main class.
   args.append("JComm");

@@ -43,7 +43,7 @@ elseif (${ARCH} STREQUAL ARCH_IOS)
 		ngs_entities
 		Qt5::Quick
 		${ios_libs}
-		)
+		)		
 elseif (${ARCH} STREQUAL ARCH_WINDOWS)
     list(APPEND sources packaging/windows/smashbrowse.rc)
     # WIN32 makes the console go away, when running app.
@@ -83,25 +83,13 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
 		Qt5AndroidExtras )
 endif ()
 
-# Install.
-INSTALL(TARGETS smashbrowse
-  RUNTIME DESTINATION bin
-  COMPONENT smashbrowse
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  BUNDLE DESTINATION .
-  
-)
-
-# Install the html files.
-INSTALL(DIRECTORY html
-		DESTINATION .
-		COMPONENT smashbrowse)
 
 if (${ARCH} MATCHES "ARCH_WINRT")
 	include("./arch_winrt.cmake")	
 elseif (${ARCH} MATCHES "ARCH_ANDROID")
 	include("./arch_android.cmake")
+elseif (${ARCH} MATCHES "ARCH_WINDOWS")
+	include("./arch_windows.cmake")
 elseif (${ARCH} MATCHES "ARCH_MACOS")
 	include("./arch_macos.cmake")
 elseif (${ARCH} MATCHES "ARCH_IOS")

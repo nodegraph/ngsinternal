@@ -44,17 +44,17 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 		ngs_entities
 		ngs_quick
 		)
+	# Install.
+	INSTALL(TARGETS smashdownloader
+	  RUNTIME DESTINATION bin
+	  COMPONENT smashdownloader
+	  LIBRARY DESTINATION lib
+	  ARCHIVE DESTINATION lib
+	  BUNDLE DESTINATION .
+	)
 endif ()
 
-# Install.
-INSTALL(TARGETS smashdownloader
-  RUNTIME DESTINATION bin
-  COMPONENT smashdownloader
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  BUNDLE DESTINATION .
-  
-)
+
 
 
 if (${ARCH} MATCHES "ARCH_MACOS")

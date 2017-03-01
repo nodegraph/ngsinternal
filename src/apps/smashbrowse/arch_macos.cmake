@@ -1,50 +1,34 @@
-# Note to build os macos do the following:
-# 1) ninja
-# 2) ninja install
-# 3) ninja bundle_smashbrowse
-# 4) ninja package_smashbrowse
-
-add_custom_command (
-	OUTPUT bundle_smashbrowse_cmd
-	
-	# Copy the bin dir from the install folder into the bundle.
-	COMMAND cp -fr ${CMAKE_BINARY_DIR}/install/bin/* ${SMASHBROWSE_BIN_DIR}/.
-	
-	# Copy the html folder from the install folder into the bundle.
-	COMMAND cp -fr ${CMAKE_BINARY_DIR}/install/html ${SMASHBROWSE_BIN_DIR}/..
+# Command to install dependent libraries into the the app.
+set(app ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents)
+add_custom_command(
+	OUTPUT copy_other_files
+	#COMMAND rm -fr ${app}/Frameworks/*
+	#COMMAND rm -fr ${app}/PlugIns/*
+	#COMMAND rm -fr ${app}/Resources/*
+	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 
+	#
+	COMMAND cp -fRL ${CMAKE_CURRENT_SOURCE_DIR}/html ${app}/Resources
+	COMMAND mkdir -p ${app}/Resources/jre
+	COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/* ${app}/Resources/jre
+	COMMAND mkdir -p ${app}/Resources/selenium
+	COMMAND cp -fRL ${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/* ${app}/Resources/selenium
+	#
+	COMMAND cp -fRL "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson" ${app}/Resources/gson
+	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/chromeextension ${app}/Resources/chromeextension
+	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/bin/* ${app}/Resources
 )
 
-add_custom_target (bundle_smashbrowse
-   DEPENDS bundle_smashbrowse_cmd
+
+# Custom target which fills out smashbrowse with other dependencies and files.
+add_custom_target (fill_smashbrowse
+   DEPENDS copy_other_files
+)		
+
+add_custom_command(
+	OUTPUT wipe_app_bundle
+	COMMAND rm -fr ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app
 )
 
-add_custom_command (
-	OUTPUT package_smashbrowse_cmd
-	
-	# Remove previous dmg files.
-	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashbrowse.dmg
-	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashbrowse.dmg.shadow
-	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashbrowse_app.dmg
-	
-	
-	# Note we want macdeployqt to strip our binaries However it seems to produce stripped binary of our old code.
-	# So instead we have wipe out the build dir, and call ninja install. This makes macdeployqt produce the right result.
-	#COMMAND sudo rm -fr ${CMAKE_BINARY_DIR}/build
-	#COMMAND cd ${CMAKE_BINARY_DIR}
-	#COMMAND ninja install
-	#COMMAND cd ${CMAKE_BINARY_DIR}
-	
-	COMMAND ${QT5_DIR}/bin/macdeployqt ${CMAKE_BINARY_DIR}/build/smashbrowse.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -dmg -verbose=3
-	
-	# Update the dmg with an application folder and icons.
-	COMMAND ${CMAKE_SOURCE_DIR}/apps/shared/update_dmg.sh 
-				${CMAKE_BINARY_DIR}/build/smashbrowse.dmg 
-				${CMAKE_BINARY_DIR}/build/smashbrowse_app.dmg 
-				${CMAKE_SOURCE_DIR}/external/images/octopus_blue.icns
-				smashbrowse
+add_custom_target (wipe_smashbrowse
+   DEPENDS wipe_app_bundle
 )
-
-add_custom_target (package_smashbrowse
-   DEPENDS package_smashbrowse_cmd
-)
-
