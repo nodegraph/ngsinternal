@@ -43,6 +43,8 @@ set PATH="C:\Program Files (x86)\CMake\bin";%PATH%
 set PATH=D:\installs\windows\msys2;%PATH%
 set PATH=D:\installs\windows\Perl64\bin;%PATH%
 
+set PATH=D:\installs\windows\QtIFW2.0.3\bin;%PATH%
+
 rem set PATH="C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin";%PATH%
 rem set PATH="D:\installs\windowsunpack\nasm-2.12.01";%PATH%
 

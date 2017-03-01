@@ -71,7 +71,7 @@ public class WebDriverWrap {
         System.err.println("user dir is: " + working_dir);
         
         // Determine chome extension dir.
-        _chrome_ext_dir = working_dir + java.io.File.separator + "chromeextension";
+        _chrome_ext_dir = working_dir + java.io.File.separator + ".." + java.io.File.separator + "chromeextension";
         System.err.println("chrome ext dir is: " + _chrome_ext_dir);
         
         // Determine our html page locations.

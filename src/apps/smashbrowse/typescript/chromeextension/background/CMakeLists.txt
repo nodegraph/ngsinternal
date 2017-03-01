@@ -37,7 +37,7 @@ add_custom_command(
 )
 add_custom_target(chrome_ext_bg ALL DEPENDS ${bg_js} ${bg_js_min})
 
-set(dest "bin/chromeextension")
+set(dest "chromeextension")
 
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 

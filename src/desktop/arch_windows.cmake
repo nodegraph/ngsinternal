@@ -177,7 +177,7 @@ INSTALL(FILES
 INSTALL(
   DIRECTORY
       "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson"
-  DESTINATION bin
+  DESTINATION .
   COMPONENT thirdparty_java
 )
 
@@ -187,8 +187,8 @@ INSTALL(
 
 INSTALL(
   DIRECTORY 
-      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1"
-  DESTINATION bin
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/"
+  DESTINATION selenium
   COMPONENT thirdparty_java
 )
 		
@@ -197,8 +197,8 @@ INSTALL(
 # ------------------------------------------------------------------
 		
 INSTALL(DIRECTORY 
-			"C:/Program Files/Java/jre1.8.0_102"
-		DESTINATION bin
+			"C:/Program Files/Java/jre1.8.0_102/"
+		DESTINATION jre
 		USE_SOURCE_PERMISSIONS
 		COMPONENT thirdparty_java
 		CONFIGURATIONS Debug Release		

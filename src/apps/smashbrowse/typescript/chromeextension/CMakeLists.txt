@@ -1,7 +1,7 @@
 add_subdirectory(background)
 add_subdirectory(content)
 
-set(dest "bin/chromeextension")
+set(dest "chromeextension")
 
 # Install static chrome extension files.
 INSTALL(FILES 

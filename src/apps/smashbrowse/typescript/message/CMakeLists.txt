@@ -49,7 +49,7 @@ add_custom_command(
 )
 add_custom_target(msg_js ALL DEPENDS ${msg_js} ${msg_js_min})
 
-set(dest "bin/chromeextension")
+set(dest "chromeextension")
 
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 
