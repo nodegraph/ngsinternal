@@ -166,6 +166,11 @@ void DownloadVideoProcess::start() {
 #if (ARCH == ARCH_WINDOWS)
   QString program = "ngs_helper.dll";
 #elif (ARCH == ARCH_MACOS)
+  // Working dir on macos.
+  QString working_dir = AppConfig::get_app_bin_dir();
+  working_dir += "/../Resources/bin";
+  set_working_dir(working_dir);
+  // Program on macos.
   QString program = "./ngs_helper";
 #endif
 

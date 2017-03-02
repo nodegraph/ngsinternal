@@ -121,11 +121,7 @@ void BaseProcess::start() {
     return;
   }
 
-  std::cerr << "aaa\n";
-
   _process = new_ff QProcess(this);
-
-  std::cerr << "bbb\n";
 
   // Connect to signals.
   connect(_process, SIGNAL(started()), this, SLOT(on_started()));
@@ -134,25 +130,15 @@ void BaseProcess::start() {
   connect(_process, SIGNAL(readyReadStandardError()), this, SLOT(on_stderr()));
   connect(_process, SIGNAL(readyReadStandardOutput()), this, SLOT(on_stdout()));
 
-  std::cerr << "ccc\n";
-
   _process->setProgram(_program);
   _process->setArguments(_args);
   _process->setWorkingDirectory(_working_dir);
-
-  std::cerr << "ddd\n";
-
   _process->start();
-
-  std::cerr << "eee\n";
 
   // We wait processing events until it's running.
   while(!is_running()) {
-    std::cerr << "fff\n";
     qApp->processEvents();
   }
-
-  std::cerr << "ggg\n";
 }
 
 void BaseProcess::stop() {
