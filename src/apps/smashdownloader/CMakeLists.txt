@@ -25,7 +25,16 @@ if (${ARCH} STREQUAL ARCH_LINUX)
 		ngs_entities
 		)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
-	add_executable(smashdownloader MACOSX_BUNDLE ${sources})
+	# Don't add the path into MACOSX_BUNDLE_ICON_FILE as this goes into the info.plist file.
+	set(MACOSX_BUNDLE_ICON_FILE octopus_blue.icns)
+	
+	# Set a variable to the full path of the icon file.
+	set(icon_file ${CMAKE_CURRENT_SOURCE_DIR}/../smashbrowse/packaging/macos/octopus_blue.icns)
+	
+	# Install it to the Resources dir.
+	set_source_files_properties(${icon_file} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+	add_executable(smashdownloader MACOSX_BUNDLE ${icon_file} ${sources} )
+	
 	target_link_libraries(smashdownloader 
 		ngs_gui 
 		ngs_entities
