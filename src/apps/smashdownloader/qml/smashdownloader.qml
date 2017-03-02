@@ -120,6 +120,7 @@ Rectangle {
         // Download manager connections.
         download_manager.download_queued.connect(downloads_page.on_download_queued)
         download_manager.download_started.connect(downloads_page.on_download_started)
+        download_manager.download_progress.connect(downloads_page.on_download_progress)
         download_manager.download_finished.connect(downloads_page.on_download_finished)
         download_manager.download_errored.connect(downloads_page.on_download_errored)
 
