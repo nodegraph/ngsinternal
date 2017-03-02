@@ -1,7 +1,7 @@
 # To create the repo and installer do the following.
 # The installer will be in the package dir.
 
-# source build_installer_windows.sh package
+# source build_installer_windows.sh package [release]
 # source build_installer_windows.sh create_repo
 # source build_installer_windows.sh create_installer
 

@@ -11,4 +11,6 @@
             <Url>REPOSITORY_URL</Url>
         </Repository>
     </RemoteRepositories>
+    <InstallerApplicationIcon>octopus_blue</InstallerApplicationIcon>
+    <WizardStyle>Modern</WizardStyle>
 </Installer>
