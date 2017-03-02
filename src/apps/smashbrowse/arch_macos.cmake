@@ -7,10 +7,6 @@
 # ninja install
 # ninja fill_smashbrowse
 
-# Todo.
-# fill_smashbrowse is time consuming and it's mostly copying files which don't change
-# make another fill command which copies the most frequently changing files like jcomm.jar
-
 # Command to install dependent libraries into the the app.
 set(app ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents)
 add_custom_command(

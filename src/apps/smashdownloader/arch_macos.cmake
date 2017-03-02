@@ -1,48 +1,32 @@
-# Note to build os macos do the following:
-# 1) ninja
-# 2) ninja install
-# 3) ninja bundle_smashdownloader
-# 4) ninja package_smashdownloader
+# To install do.
+# ninja install
+# ninja fill_smashdownloader
 
-add_custom_command (
-	OUTPUT bundle_smashdownloader_cmd
-	
-	# Copy the bin dir into the bundle.
-	COMMAND cp -f ${CMAKE_BINARY_DIR}/install/bin/ffmpeg ${SMASHDOWNLOADER_BIN_DIR}
-	COMMAND cp -f ${CMAKE_BINARY_DIR}/install/bin/ngs_helper ${SMASHDOWNLOADER_BIN_DIR}
+# If smashbrowse.app doesn't seem to be updating then do.
+# ninja wipe_smashdownloader
+# ninja install
+# ninja fill_smashdownloader
+
+# Command to install dependent libraries into the the app.
+set(app ${CMAKE_CURRENT_BINARY_DIR}/smashdownloader.app/Contents)
+add_custom_command(
+	OUTPUT fill_smashdownloader_cmd
+	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/smashdownloader.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 
+	COMMAND mkdir -p ${app}/Resources
+	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/bin ${app}/Resources
 )
 
-add_custom_target (bundle_smashdownloader
-   DEPENDS bundle_smashdownloader_cmd
+# Custom target which fills out smashdownloader with other dependencies and files.
+add_custom_target (fill_smashdownloader
+   DEPENDS fill_smashdownloader_cmd
+)	
+
+add_custom_command(
+	OUTPUT wipe_smashdownloader_cmd
+	COMMAND rm -fr ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app
 )
 
-add_custom_command (
-	OUTPUT package_smashdownloader_cmd
-	
-	# Remove previous dmg files.
-	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashdownloader.dmg
-	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashdownloader.dmg.shadow
-	COMMAND rm -f ${CMAKE_BINARY_DIR}/build/smashdownloader_app.dmg
-	
-	
-	# Note we want macdeployqt to strip our binaries However it seems to produce stripped binary of our old code.
-	# So instead we have wipe out the build dir, and call ninja install. This makes macdeployqt produce the right result.
-	#COMMAND sudo rm -fr ${CMAKE_BINARY_DIR}/build
-	#COMMAND cd ${CMAKE_BINARY_DIR}
-	#COMMAND ninja install
-	#COMMAND cd ${CMAKE_BINARY_DIR}
-	
-	COMMAND ${QT5_DIR}/bin/macdeployqt ${CMAKE_BINARY_DIR}/build/smashdownloader.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -dmg -verbose=3
-	
-	# Update the dmg with an application folder and icons.
-	COMMAND ${CMAKE_SOURCE_DIR}/apps/shared/update_dmg.sh 
-				${CMAKE_BINARY_DIR}/build/smashdownloader.dmg 
-				${CMAKE_BINARY_DIR}/build/smashdownloader_app.dmg 
-				${CMAKE_SOURCE_DIR}/external/images/octopus_blue.icns
-				smashdownloader
-)
-
-add_custom_target (package_smashdownloader
-   DEPENDS package_smashdownloader_cmd
+add_custom_target (wipe_smashdownloader
+   DEPENDS wipe_app_bundle
 )
 

@@ -19,6 +19,12 @@ if [ $# -eq 0 ]
     echo "one of the following arguments required: package, create_repo, update_repo or create_installer"
 fi
 
+if [[ -z "$2" && ($2 = "release") ]]; then
+	RELEASE=1
+else 
+	RELEASE=0
+fi
+
 if [ $1 = "package" ]; then
 	package
 elif [ $1 = "create_repo" ]; then

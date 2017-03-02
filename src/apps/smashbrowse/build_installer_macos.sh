@@ -13,15 +13,21 @@ shopt -s extglob
 NGSINTERNAL=~raindrop/src/ngsinternal/src/apps/smashbrowse/installer
 INSTALL=~raindrop/dev/macos/debug/apps/smashbrowse/smashbrowse.app
 
-PACKAGES_ROOT=~raindrop/temp
+PACKAGES_ROOT=~raindrop/smashbrowse_pack
 PACKAGES=$PACKAGES_ROOT/packages
-REPOSITORY=~raindrop/repositories/smashbrowse
+REPOSITORY=~raindrop/smashbrowse_repo
 
 DATA_PREFIX=data/smashbrowse.app/Contents
 
 if [ $# -eq 0 ]
   then
     echo "one of the following arguments required: package, create_repo, update_repo or create_installer"
+fi
+
+if [[ -z "$2" && ($2 = "release") ]]; then
+	RELEASE=1
+else 
+	RELEASE=0
 fi
 
 if [ $1 = "package" ]; then
@@ -108,6 +114,16 @@ package ()
 	# Now copy in the xml files from ngsinternal.
 	cp -fr $NGSINTERNAL/. $PACKAGES_ROOT
 	echo 'finished copying package xml files'
+	
+	# Modify the config.xml with property repository url.
+	if [ $RELEASE -eq 1 ]; then
+		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashbrowse.com\/macos/repository/g' $PACKAGES_ROOT/config/config.xml
+	else
+		sed -i -e 's/REPOSITORY_URL/file:\/\/\/Users\/raindrop\/smashbrowse_repo/g' $PACKAGES_ROOT/config/config.xml
+	fi
+	
+	# Change modern style to mac style.
+	sed -i -e 's/Modern/Mac/g' $PACKAGES_ROOT/config/config.xml
 }
 
 # -------------------------------------------------------------------------
