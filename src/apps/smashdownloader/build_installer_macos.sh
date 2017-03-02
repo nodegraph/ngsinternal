@@ -74,14 +74,20 @@ package ()
 	cd Contents/Resources
 	cp -fr qml $PACKAGES/com.smashdownloader.secondary/${DATA_PREFIX}/Resources
 	cp -fr qt.conf $PACKAGES/com.smashdownloader.secondary/${DATA_PREFIX}/Resources
+	# Copy the app bundle icon.
+	cp -fr octopus_blue.icns $PACKAGES/com.smashdownloader.secondary/${DATA_PREFIX}/Resources
+	# Copy the bin dir.
 	cd bin
 	cp -fr +(jcomm.jar|ngs_*) $PACKAGES/com.smashdownloader.primary/${DATA_PREFIX}/Resources/bin
 	cp -fr !(jcomm.jar|ngs_*) $PACKAGES/com.smashdownloader.secondary/${DATA_PREFIX}/Resources/bin
-	cd ..
+	cp -fr Info.plist $PACKAGES/com.smashdownloader.secondary/${DATA_PREFIX}
+	# Copy Contents/Info.plist
+	cd ../../
+	cp -fr Info.plist $PACKAGES/com.smashdownloader.secondary/${DATA_PREFIX}
 	echo 'finished copying Resources dir'
 	
 	# Elements in Plugins.
-	cd ../PlugIns
+	cd PlugIns
 	cp -fr * $PACKAGES/com.smashdownloader.secondary/${DATA_PREFIX}/PlugIns
 	echo 'finished copying Plugins dir'
 	
