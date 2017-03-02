@@ -9,7 +9,9 @@
     },
     
     "files": [
-	    "/Users/raindrop/installs/macos/DefinitelyTyped/chrome/chrome.d.ts",
+        "../../../../../external/DefinitelyTyped/filewriter/index.d.ts",
+    	"../../../../../external/DefinitelyTyped/filesystem/index.d.ts",
+        "../../../../../external/DefinitelyTyped/chrome/index.d.ts",
 
         "../../message/point.d.ts",
         "../../message/box.d.ts",

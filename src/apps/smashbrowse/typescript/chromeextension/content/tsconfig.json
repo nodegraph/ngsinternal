@@ -9,9 +9,9 @@
     },
     
     "files": [
-        "D:/dev/windows/DefinitelyTyped/filewriter/index.d.ts",
-    	"D:/dev/windows/DefinitelyTyped/filesystem/index.d.ts",
-        "D:/dev/windows/DefinitelyTyped/chrome/index.d.ts",
+        "../../../../../external/DefinitelyTyped/filewriter/index.d.ts",
+    	"../../../../../external/DefinitelyTyped/filesystem/index.d.ts",
+        "../../../../../external/DefinitelyTyped/chrome/index.d.ts",
         
         "../../message/point.d.ts",
         "../../message/box.d.ts",
