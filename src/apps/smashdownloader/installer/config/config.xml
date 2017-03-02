@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
-    <Name>Smash Browse</Name>
+    <Name>Smash Downloader</Name>
     <Version>1.0.0</Version>
-    <Title>Smash Browse</Title>
-    <Publisher>Smash Browse</Publisher>
-    <StartMenuDir>Smash Browse</StartMenuDir>
-    <TargetDir>@ApplicationsDir@/SmashBrowse</TargetDir>
+    <Title>Smash Downloader</Title>
+    <Publisher>Smash Downloader</Publisher>
+    <StartMenuDir>Smash Downloader</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/SmashDownloader</TargetDir>
     <RemoteRepositories>
         <Repository>
             <Url>REPOSITORY_URL</Url>

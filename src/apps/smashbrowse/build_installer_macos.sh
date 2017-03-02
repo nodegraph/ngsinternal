@@ -10,11 +10,6 @@ REPOSITORY=~raindrop/repositories/smashbrowse
 
 DATA_PREFIX=data/smashbrowse.app/Contents
 
-
-
-
-
-
 if [ $# -eq 0 ]
   then
     echo "one of the following arguments required: package, create_repo, update_repo or create_installer"
@@ -23,13 +18,10 @@ fi
 if [ $1 = "package" ]; then
 	package
 elif [ $1 = "create_repo" ]; then
-	echo "creating repo.."
 	create_repo
 elif [ $1 = "update_repo" ]; then
-	echo "updating repo.."
 	update_repo
 elif [ $1 = "create_installer" ]; then
-	echo "creating installer.."
 	create_installer
 else
   echo "incorrect arguments given."
@@ -114,6 +106,7 @@ package ()
 # -------------------------------------------------------------------------
 create_repo ()
 {
+	echo "creating repo.."
 	rm -fr $REPOSITORY
 	cd $PACKAGES_ROOT
 	repogen -p packages $REPOSITORY
@@ -124,6 +117,7 @@ create_repo ()
 # -------------------------------------------------------------------------
 update_repo ()
 {
+	echo "updating repo.."
 	cd $PACKAGES_ROOT
 	repogen --update-new-components -p packages $REPOSITORY
 }
@@ -133,6 +127,7 @@ update_repo ()
 # -------------------------------------------------------------------------
 create_installer ()
 {
+	echo "creating installer.."
 	cd $PACKAGES_ROOT
 	binarycreator --online-only -c 'config/config.xml' -p packages smashbrowse
 }

@@ -1,14 +1,20 @@
 
-NGSINTERNAL=/d/src/ngsinternal/src/apps/smashbrowse/installer
+NGSINTERNAL=/d/src/ngsinternal/src/apps/smashdownloader/installer
 INSTALL=/d/b1/install
 
-PACKAGES_ROOT=/d/smashbrowse_pack/
+PACKAGES_ROOT=/d/smashdownloader_pack
 PACKAGES=$PACKAGES_ROOT/packages
-REPOSITORY=/d/smashbrowse_repo
+REPOSITORY=/d/smashdownloader_repo
 
 if [ $# -eq 0 ]
   then
     echo "one of the following arguments required: package, create_repo, update_repo or create_installer"
+fi
+
+if [[ -z "$2" && ($2 = "release") ]]; then
+	RELEASE=1
+else 
+	RELEASE=0
 fi
 
 if [ $1 = "package" ]; then
@@ -35,39 +41,27 @@ package ()
 	cd $INSTALL;
 	
 	# Create the package dirs.
-	mkdir -p $PACKAGES/com.smashbrowse.chromeextension/data
-	mkdir -p $PACKAGES/com.smashbrowse.gson/data
-	mkdir -p $PACKAGES/com.smashbrowse.html/data
-	mkdir -p $PACKAGES/com.smashbrowse.jre/data
-	mkdir -p $PACKAGES/com.smashbrowse.selenium/data
-	mkdir -p $PACKAGES/com.smashbrowse.primary/data/bin
-	mkdir -p $PACKAGES/com.smashbrowse.secondary/data/bin
+	mkdir -p $PACKAGES/com.smashdownloader.primary/data/bin
+	mkdir -p $PACKAGES/com.smashdownloader.secondary/data/bin
 	
 	# Most dirs correspond one to one with their packages.
-	cp -fr chromeextension $PACKAGES/com.smashbrowse.chromeextension/data
-	cp -fr gson $PACKAGES/com.smashbrowse.gson/data
-	cp -fr html $PACKAGES/com.smashbrowse.html/data
-	cp -fr jre $PACKAGES/com.smashbrowse.jre/data
-	cp -fr selenium $PACKAGES/com.smashbrowse.selenium/data
-	
-	
 	# However the bin dir is split into 2 packages.
 	cd bin
 	
 	# The primary is our ngs libraries and executables.
-	cp -fr +(smash*|jcomm.jar|ngs*|test*) $PACKAGES/com.smashbrowse.primary/data/bin
+	cp -fr +(smash*|jcomm.jar|ngs*|test*) $PACKAGES/com.smashdownloader.primary/data/bin
 	
 	# The secondary is the third party libraries and executables.
-	cp -fr !(smash*|jcomm.jar|ngs*|test*) $PACKAGES/com.smashbrowse.secondary/data/bin
+	cp -fr !(smash*|jcomm.jar|ngs*|test*) $PACKAGES/com.smashdownloader.secondary/data/bin
 	
 	# Now copy in the xml files from ngsinternal.
 	cp -fr $NGSINTERNAL/. $PACKAGES_ROOT
 	
 	# Modify the config.xml with property repository url.
 	if [ $RELEASE -eq 1 ]; then
-		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashbrowse.com\/repository/g' $PACKAGES_ROOT/config/config.xml
+		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashdownloader.com\/repository/g' $PACKAGES_ROOT/config/config.xml
 	else
-		sed -i -e 's/REPOSITORY_URL/file:\/\/\/D:\/smashbrowse_repo/g' $PACKAGES_ROOT/config/config.xml
+		sed -i -e 's/REPOSITORY_URL/file:\/\/\/D:\/smashdownloader_repo/g' $PACKAGES_ROOT/config/config.xml
 	fi
 }
 
@@ -99,6 +93,6 @@ create_installer ()
 {
 	echo "creating installer.."
 	cd $PACKAGES_ROOT
-	binarycreator --online-only -c 'config/config.xml' -p packages smashbrowse
+	binarycreator --online-only -c 'config/config.xml' -p packages smashdownloader
 }
 
