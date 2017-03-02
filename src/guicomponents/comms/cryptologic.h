@@ -21,6 +21,8 @@ class COMMS_EXPORT CryptoLogic: public QObject, public Component {
   CryptoLogic(Entity* app_root);
   virtual ~CryptoLogic();
 
+  Q_INVOKABLE void enable_encryption(bool enable) {_use_encryption = enable;}
+
   // Password Setup.
   Q_INVOKABLE void create_crypto(const QString& chosen_password);
   Q_INVOKABLE void save_crypto() const;

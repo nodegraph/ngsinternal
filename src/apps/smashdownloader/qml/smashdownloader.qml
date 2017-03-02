@@ -127,6 +127,9 @@ Rectangle {
         // Hook up some pre-close tasks.
         quick_view.closing.connect(app_window.on_closing)
         
+        // Disable encryption.
+        crypto_logic.enable_encryption(false)
+        
         // Load our license.
         license_checker.load()
         app_utils.check_license(on_license_checked)
