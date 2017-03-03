@@ -11,7 +11,7 @@
 set(app ${CMAKE_CURRENT_BINARY_DIR}/smashdownloader.app/Contents)
 add_custom_command(
 	OUTPUT fill_smashdownloader_cmd
-	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/smashdownloader.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 
+	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/smashdownloader.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 -always-overwrite
 	COMMAND mkdir -p ${app}/Resources
 	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/bin ${app}/Resources
 )

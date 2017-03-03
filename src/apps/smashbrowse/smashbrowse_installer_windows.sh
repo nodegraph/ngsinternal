@@ -1,9 +1,9 @@
 # To create the repo and installer do the following.
 # The installer will be in the package dir.
 
-# source build_installer_windows.sh package [release]
-# source build_installer_windows.sh create_repo
-# source build_installer_windows.sh create_installer
+# smashbrowse_installer_windows.sh package [release/debug]
+# smashbrowse_installer_windows.sh create_repo [release/debug]
+# smashbrowse_installer_windows.sh create_installer [release/debug]
 
 
 
@@ -14,28 +14,7 @@ PACKAGES_ROOT=/d/smashbrowse_pack/
 PACKAGES=$PACKAGES_ROOT/packages
 REPOSITORY=/d/smashbrowse_repo
 
-if [ $# -eq 0 ]
-  then
-    echo "one of the following arguments required: package, create_repo, update_repo or create_installer"
-fi
 
-if [[ -z "$2" && ($2 = "release") ]]; then
-	RELEASE=1
-else 
-	RELEASE=0
-fi
-
-if [ $1 = "package" ]; then
-	package
-elif [ $1 = "create_repo" ]; then
-	create_repo
-elif [ $1 = "update_repo" ]; then
-	update_repo
-elif [ $1 = "create_installer" ]; then
-	create_installer
-else
-  echo "incorrect arguments given."
-fi
 
 # -------------------------------------------------------------------------
 # Create our packages.
@@ -81,7 +60,7 @@ package ()
 	if [ $RELEASE -eq 1 ]; then
 		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashbrowse.com\/repository/g' $PACKAGES_ROOT/config/config.xml
 	else
-		sed -i -e 's/REPOSITORY_URL/file:\/\/\/D:\/smashbrowse_repo/g' $PACKAGES_ROOT/config/config.xml
+		sed -i -e 's/REPOSITORY_URL/file:\/\/\/D:\/smashbrowse_repo_debug/g' $PACKAGES_ROOT/config/config.xml
 	fi
 }
 
@@ -115,4 +94,36 @@ create_installer ()
 	cd $PACKAGES_ROOT
 	binarycreator --online-only -c 'config/config.xml' -p packages smashbrowse
 }
+
+# -------------------------------------------------------------------------
+# Main Logic.
+# -------------------------------------------------------------------------
+
+if [ "$#" -ne 2 ]; then
+    echo "2 arguments are required: "
+    echo "[1]: package, create_repo, update_repo or create_installer"
+    echo "[2]: debug, release"
+fi
+
+if [ $2 = "release" ]; then
+	RELEASE=1
+	PACKAGES_ROOT=${PACKAGES_ROOT}_release
+	REPOSITORY=${REPOSITORY}_release
+else 
+	RELEASE=0
+	PACKAGES_ROOT=${PACKAGES_ROOT}_debug
+	REPOSITORY=${REPOSITORY}_debug
+fi
+
+if [ $1 = "package" ]; then
+	package
+elif [ $1 = "create_repo" ]; then
+	create_repo
+elif [ $1 = "update_repo" ]; then
+	update_repo
+elif [ $1 = "create_installer" ]; then
+	create_installer
+else
+  echo "incorrect arguments given."
+fi
 

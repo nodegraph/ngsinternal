@@ -11,7 +11,7 @@
 set(app ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents)
 add_custom_command(
 	OUTPUT copy_other_files
-	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 
+	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 -always-overwrite
 	#
 	COMMAND cp -fRL ${CMAKE_CURRENT_SOURCE_DIR}/html ${app}/Resources
 	COMMAND mkdir -p ${app}/Resources/jre
