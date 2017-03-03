@@ -13,4 +13,16 @@ rm -fr /d/wr64;
 mkdir /d/wr64;
 cd /d/wr64;
 cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release /d/src/ngsinternal/src;
+
+# build
 ninja install;
+
+# smashbrowse installers and repos
+smashbrowse_installer_windows.sh package release
+smashbrowse_installer_windows.sh create_repo release
+smashbrowse_installer_windows.sh create_installer release
+
+# smashbrowse installers and repos
+smashdownloader_installer_windows.sh package release
+smashdownloader_installer_windows.sh create_repo release
+smashdownloader_installer_windows.sh create_installer release
