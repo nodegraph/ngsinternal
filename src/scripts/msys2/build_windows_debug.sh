@@ -13,4 +13,16 @@ rm -fr /d/wd64;
 mkdir /d/wd64;
 cd /d/wd64;
 cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug /d/src/ngsinternal/src;
+
+# build
 ninja install;
+
+# smashbrowse installers and repos
+smashbrowse_installer_windows.sh package debug
+smashbrowse_installer_windows.sh create_repo debug
+smashbrowse_installer_windows.sh create_installer debug
+
+# smashbrowse installers and repos
+smashdownloader_installer_windows.sh package debug
+smashdownloader_installer_windows.sh create_repo debug
+smashdownloader_installer_windows.sh create_installer debug
