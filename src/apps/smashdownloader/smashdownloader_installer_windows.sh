@@ -46,7 +46,7 @@ package ()
 	
 	# Modify the config.xml with property repository url.
 	if [ $RELEASE -eq 1 ]; then
-		sed -i -e 's/REPOSITORY_URL/http:\/\/www.smashdownloader.com\/repos\/windows\/smashdownloader_repo_release/g' $PACK/config/config.xml
+		sed -i -e 's/REPOSITORY_URL/http:\/\/www.smashdownloader.com\/windows\/smashdownloader_repo_release/g' $PACK/config/config.xml
 	else
 		sed -i -e 's/REPOSITORY_URL/file:\/\/\/D:\/smashdownloader_repo_debug/g' $PACK/config/config.xml
 	fi
