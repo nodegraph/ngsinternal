@@ -77,6 +77,12 @@ PATH="/c/Program Files/Java/jdk1.8.0_74/bin":${PATH}
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"
 
+
+# Our scripts.
+PATH=${SRC_ROOT}/ngsinternal/src/apps/smashbrowse:${PATH}
+PATH=${SRC_ROOT}/ngsinternal/src/apps/smashdownloader:${PATH}
+
+
 echo setting up for ${ARCH} ${ARCH_BITS}
 
 # ARCH specific paths.

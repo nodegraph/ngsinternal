@@ -5,14 +5,14 @@
 # smashdownloader_installer_windows.sh create_repo [release/debug]
 # smashdownloader_installer_windows.sh create_installer [release/debug]
 
+# Activate bash globbing syntax.
+shopt -s extglob
 
+PACK_STRUCTURE=/d/src/ngsinternal/src/apps/smashdownloader/installer
+BUNDLE=/d/b1/install
 
-NGSINTERNAL=/d/src/ngsinternal/src/apps/smashdownloader/installer
-INSTALL=/d/b1/install
-
-PACKAGES_ROOT=/d/smashdownloader_pack
-PACKAGES=$PACKAGES_ROOT/packages
-REPOSITORY=/d/smashdownloader_repo
+PACK=/d/smashdownloader_pack
+REPO=/d/smashdownloader_repo
 
 
 
@@ -22,33 +22,33 @@ REPOSITORY=/d/smashdownloader_repo
 package ()
 {
 	echo "packaging.."
-	rm -fr $PACKAGES_ROOT
+	rm -fr $PACK
 
 	# Go to the install dir created from ninja install.
-	cd $INSTALL;
+	cd $BUNDLE;
 	
 	# Create the package dirs.
-	mkdir -p $PACKAGES/com.smashdownloader.primary/data/bin
-	mkdir -p $PACKAGES/com.smashdownloader.secondary/data/bin
+	mkdir -p ${PACK}/packages/com.smashdownloader.primary/data/bin
+	mkdir -p ${PACK}/packages/com.smashdownloader.secondary/data/bin
 	
 	# Most dirs correspond one to one with their packages.
 	# However the bin dir is split into 2 packages.
 	cd bin
 	
 	# The primary is our ngs libraries and executables.
-	cp -fr +(smash*|jcomm.jar|ngs*|test*) $PACKAGES/com.smashdownloader.primary/data/bin
+	cp -fr +(smash*|jcomm.jar|ngs*|test*) ${PACK}/packages/com.smashdownloader.primary/data/bin
 	
 	# The secondary is the third party libraries and executables.
-	cp -fr !(smash*|jcomm.jar|ngs*|test*) $PACKAGES/com.smashdownloader.secondary/data/bin
+	cp -fr !(smash*|jcomm.jar|ngs*|test*) ${PACK}/packages/com.smashdownloader.secondary/data/bin
 	
 	# Now copy in the xml files from ngsinternal.
-	cp -fr $NGSINTERNAL/. $PACKAGES_ROOT
+	cp -fr $PACK_STRUCTURE/. $PACK
 	
 	# Modify the config.xml with property repository url.
 	if [ $RELEASE -eq 1 ]; then
-		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashdownloader.com\/repository/g' $PACKAGES_ROOT/config/config.xml
+		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashdownloader.com\/repository/g' $PACK/config/config.xml
 	else
-		sed -i -e 's/REPOSITORY_URL/file:\/\/\/D:\/smashdownloader_repo_debug/g' $PACKAGES_ROOT/config/config.xml
+		sed -i -e 's/REPOSITORY_URL/file:\/\/\/D:\/smashdownloader_repo_debug/g' $PACK/config/config.xml
 	fi
 }
 
@@ -58,9 +58,9 @@ package ()
 create_repo ()
 {
 	echo "creating repo.."
-	rm -fr $REPOSITORY
-	cd $PACKAGES_ROOT
-	repogen -p packages $REPOSITORY
+	rm -fr $REPO
+	cd $PACK
+	repogen -p packages $REPO
 }
 
 # -------------------------------------------------------------------------
@@ -69,8 +69,8 @@ create_repo ()
 update_repo ()
 {
 	echo "updating repo.."
-	cd $PACKAGES_ROOT
-	repogen --update-new-components -p packages $REPOSITORY
+	cd $PACK
+	repogen --update-new-components -p packages $REPO
 }
 
 # -------------------------------------------------------------------------
@@ -79,7 +79,7 @@ update_repo ()
 create_installer ()
 {
 	echo "creating installer.."
-	cd $PACKAGES_ROOT
+	cd $PACK
 	binarycreator --online-only -c 'config/config.xml' -p packages smashdownloader
 }
 
@@ -90,16 +90,17 @@ if [ "$#" -ne 2 ]; then
     echo "2 arguments are required: "
     echo "[1]: package, create_repo, update_repo or create_installer"
     echo "[2]: debug, release"
+    exit 1
 fi
 
 if [ $2 = "release" ]; then
 	RELEASE=1
-	PACKAGES_ROOT=${PACKAGES_ROOT}_release
-	REPOSITORY=${REPOSITORY}_release
+	PACK=${PACK}_release
+	REPO=${REPO}_release
 else 
 	RELEASE=0
-	PACKAGES_ROOT=${PACKAGES_ROOT}_debug
-	REPOSITORY=${REPOSITORY}_debug
+	PACK=${PACK}_debug
+	REPO=${REPO}_debug
 fi
 
 if [ $1 = "package" ]; then
