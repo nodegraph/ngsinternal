@@ -9,13 +9,7 @@
 shopt -s extglob
 
 PACK_STRUCTURE=~raindrop/src/ngsinternal/src/apps/smashbrowse/installer
-BUNDLE=~raindrop/dev/macos/debug/apps/smashbrowse/smashbrowse.app
-
-PACK=~raindrop/smashbrowse_pack
-REPO=~raindrop/smashbrowse_repo
-
 DATA_PREFIX=data/smashbrowse.app/Contents
-
 
 
 # -------------------------------------------------------------------------
@@ -27,7 +21,7 @@ package ()
 	rm -fr $PACK
 
 	# Go to the install dir created from ninja install.
-	cd $BUNDLE;
+	cd $CMAKE_BUILD_ROOT/apps/smashbrowse/smashbrowse.app;
 	
 	# Create the package dirs.
 	mkdir -p ${PACK}/packages/com.smashbrowse.chromeextension/${DATA_PREFIX}/Resources/
@@ -100,9 +94,9 @@ package ()
 	
 	# Modify the config.xml with property repository url.
 	if [ $RELEASE -eq 1 ]; then
-		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashbrowse.com\/macos/repository/g' $PACK/config/config.xml
+		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashbrowse.com\/macos/smashbrowse_repo/g' $PACK/config/config.xml
 	else
-		sed -i -e 's/REPOSITORY_URL/file:\/\/\/Users\/raindrop\/smashbrowse_repo_debug/g' $PACK/config/config.xml
+		sed -i -e "s#REPOSITORY_URL#file://${REPO}#g" $PACK/config/config.xml
 	fi
 	
 	# Change modern style to mac style.
@@ -143,7 +137,7 @@ create_installer ()
 # -------------------------------------------------------------------------
 # Main Logic.
 # -------------------------------------------------------------------------
-if [ "$#" -lt 2 ]; then
+if [ "$#" -ne 3 ]; then
     echo "at least 2 arguments are required: "
     echo "[1]: package, create_repo, update_repo or create_installer"
     echo "[2]: debug, release"
@@ -153,18 +147,14 @@ fi
 
 if [ $2 = "release" ]; then
 	RELEASE=1
-	PACK=${PACK}_release
-	REPO=${REPO}_release
 else 
 	RELEASE=0
-	PACK=${PACK}_debug
-	REPO=${REPO}_debug
 fi
 
-if [ ! -z "$3" ]; then
-	echo "cmake build root set to: " $3
-	CMAKE_BUILD_ROOT=$3
-fi
+echo "cmake build root set to: " $3
+CMAKE_BUILD_ROOT=$3
+PACK=${CMAKE_BUILD_ROOT}/smashbrowse_pack
+REPO=${CMAKE_BUILD_ROOT}/smashbrowse_repo
 
 if [ $1 = "package" ]; then
 	package
