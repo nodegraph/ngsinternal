@@ -214,6 +214,15 @@ INSTALL(FILES
 		CONFIGURATIONS Debug Release)
 		
 # ------------------------------------------------------------------
+# Icon for shortcut on windows.
+# ------------------------------------------------------------------
+INSTALL(FILES
+			${PROJECT_SOURCE_DIR}/external/images/octopus_blue.ico
+		DESTINATION bin
+		COMPONENT thirdparty
+		CONFIGURATIONS Debug Release)
+		
+# ------------------------------------------------------------------
 # GLEW	
 # ------------------------------------------------------------------
 
