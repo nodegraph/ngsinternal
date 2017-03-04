@@ -42,7 +42,7 @@ package ()
 	# Now copy in the xml files from PACK_STRUCTURE.
 	cp -fr $PACK_STRUCTURE/. $PACK
 	
-	# Modify the config.xml with property repository url.
+	# Replace RESPOSITY_URL in the config.xml.
 	if [ $RELEASE -eq 1 ]; then
 		sed -i -e 's/REPOSITORY_URL/http:\/\/www.smashdownloader.com\/windows\/smashdownloader_repo/g' $PACK/config/config.xml
 	else
@@ -51,6 +51,9 @@ package ()
 		echo "LOC is: " $LOC
 		sed -i -e "s#REPOSITORY_URL#file:///$LOC#g" $PACK/config/config.xml
 	fi
+	
+	# Replace LAUNCH_PROGRAM in the config.xml.
+	sed -i -e 's/LAUNCH_PROGRAM/bin\/smashdownloader.exe/g' $PACK/config/config.xml
 }
 
 # -------------------------------------------------------------------------

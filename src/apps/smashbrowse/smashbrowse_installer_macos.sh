@@ -92,15 +92,20 @@ package ()
 	rm -fr $PACK/packages/com.smashbrowse.vc
 	echo 'finished copying package xml files'
 	
-	# Modify the config.xml with property repository url.
+	# Replace RESPOSITY_URL in the config.xml.
 	if [ $RELEASE -eq 1 ]; then
 		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashbrowse.com\/macos/smashbrowse_repo/g' $PACK/config/config.xml
 	else
 		sed -i -e "s#REPOSITORY_URL#file://${REPO}#g" $PACK/config/config.xml
 	fi
 	
+	# Replace LAUNCH_PROGRAM in the config.xml.
+	sed -i -e 's/LAUNCH_PROGRAM/smashbrowse.app/g' $PACK/config/config.xml
+	
 	# Change modern style to mac style.
 	sed -i -e 's/Modern/Mac/g' $PACK/config/config.xml
+	
+
 }
 
 # -------------------------------------------------------------------------

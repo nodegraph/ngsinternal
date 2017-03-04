@@ -13,4 +13,7 @@
     </RemoteRepositories>
     <InstallerApplicationIcon>octopus_blue</InstallerApplicationIcon>
     <WizardStyle>Modern</WizardStyle>
+    
+    <RunProgram>@TargetDir@/LAUNCH_PROGRAM</RunProgram>
+    
 </Installer>
