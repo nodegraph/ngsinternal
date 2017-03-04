@@ -205,6 +205,15 @@ INSTALL(DIRECTORY
 		)
 		
 # ------------------------------------------------------------------
+# MSVC Redistributable.
+# ------------------------------------------------------------------
+INSTALL(FILES
+			"D:/downloaded_software/visual_studio/redistributables/2015_update_3/vc_redist.x64.exe"
+		DESTINATION bin
+		COMPONENT thirdparty
+		CONFIGURATIONS Debug Release)
+		
+# ------------------------------------------------------------------
 # GLEW	
 # ------------------------------------------------------------------
 
