@@ -10,13 +10,13 @@ export ARCH=ARCH_WINDOWS;
 export ARCH_BITS=x64;
 source /d/src/ngsinternal/src/scripts/msys2/setup_env.sh;
 
-// recreate our previous root build root and cd into it 
+# recreate our previous root build root and cd into it 
 CMAKE_BUILD_ROOT=/d/wd64
 rm -fr $CMAKE_BUILD_ROOT
 mkdir -p $CMAKE_BUILD_ROOT
 cd $CMAKE_BUILD_ROOT
 
-// create our ninja files
+# create our ninja files
 cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug /d/src/ngsinternal/src;
 
 # build

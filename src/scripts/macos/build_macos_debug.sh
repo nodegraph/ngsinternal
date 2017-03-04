@@ -10,13 +10,13 @@ export ARCH=ARCH_MACOS
 export ARCH_BITS=x64
 source ~/src/ngsinternal/src/scripts/macos/setup_env.sh
 
-// recreate our previous root build root and cd into it 
+# recreate our previous root build root and cd into it 
 CMAKE_BUILD_ROOT=~raindrop/dev/macos/macos_debug_jenkins
 sudo rm -fr $CMAKE_BUILD_ROOT
 mkdir -p $CMAKE_BUILD_ROOT
 cd $CMAKE_BUILD_ROOT
 
-// create our ninja files
+# create our ninja files
 cmake -G "Eclipse CDT4 - Ninja" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Debug ~/src/ngsinternal/src
 
 # build
