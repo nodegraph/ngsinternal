@@ -126,10 +126,11 @@ create_installer ()
 # -------------------------------------------------------------------------
 # Main Logic.
 # -------------------------------------------------------------------------
-if [ "$#" -ne 2 ]; then
-    echo "2 arguments are required: "
+if [ "$#" -lt 2 ]; then
+    echo "at least 2 arguments are required: "
     echo "[1]: package, create_repo, update_repo or create_installer"
     echo "[2]: debug, release"
+    echo "[3]: the cmake build dir root"
     exit 1
 fi
 
@@ -141,6 +142,11 @@ else
 	RELEASE=0
 	PACK=${PACK}_debug
 	REPO=${REPO}_debug
+fi
+
+if [ ! -z "$3" ]; then
+	echo "cmake build root set to: " $3
+	CMAKE_BUILD_ROOT=$3
 fi
 
 if [ $1 = "package" ]; then
