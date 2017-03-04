@@ -9,10 +9,14 @@ echo "MACOS DEBUG"
 export ARCH=ARCH_MACOS
 export ARCH_BITS=x64
 source ~/src/ngsinternal/src/scripts/macos/setup_env.sh
-cd ~/dev/macos
-sudo rm -fr macos_debug_jenkins
-mkdir macos_debug_jenkins
-cd macos_debug_jenkins
+
+// recreate our previous root build root and cd into it 
+CMAKE_BUILD_ROOT=~raindrop/dev/macos/macos_debug_jenkins
+sudo rm -fr $CMAKE_BUILD_ROOT
+mkdir -p $CMAKE_BUILD_ROOT
+cd $CMAKE_BUILD_ROOT
+
+// create our ninja files
 cmake -G "Eclipse CDT4 - Ninja" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Debug ~/src/ngsinternal/src
 
 # build
@@ -21,11 +25,11 @@ ninja fill_smashbrowse
 ninja fill_smashdownloader
 
 # smashbrowse installers and repos
-smashbrowse_installer_macos.sh package debug
-smashbrowse_installer_macos.sh create_repo debug
-smashbrowse_installer_macos.sh create_installer debug
+smashbrowse_installer_macos.sh package debug $CMAKE_BUILD_ROOT
+smashbrowse_installer_macos.sh create_repo debug $CMAKE_BUILD_ROOT
+smashbrowse_installer_macos.sh create_installer debug $CMAKE_BUILD_ROOT
 
 # smashdownloader installers and repos
-smashdownloader_installer_macos.sh package debug
-smashdownloader_installer_macos.sh create_repo debug
-smashdownloader_installer_macos.sh create_installer debug
+smashdownloader_installer_macos.sh package debug $CMAKE_BUILD_ROOT
+smashdownloader_installer_macos.sh create_repo debug $CMAKE_BUILD_ROOT
+smashdownloader_installer_macos.sh create_installer debug $CMAKE_BUILD_ROOT

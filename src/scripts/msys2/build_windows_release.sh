@@ -9,20 +9,25 @@ echo "WINDOWS RELEASE";
 export ARCH=ARCH_WINDOWS;
 export ARCH_BITS=x64;
 source /d/src/ngsinternal/src/scripts/msys2/setup_env.sh;
-rm -fr /d/wr64;
-mkdir /d/wr64;
-cd /d/wr64;
+
+// recreate our previous root build root and cd into it 
+CMAKE_BUILD_ROOT=/d/wr64
+rm -fr $CMAKE_BUILD_ROOT
+mkdir -p $CMAKE_BUILD_ROOT
+cd $CMAKE_BUILD_ROOT
+
+// create our ninja files
 cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release /d/src/ngsinternal/src;
 
 # build
 ninja install;
 
 # smashbrowse installers and repos
-smashbrowse_installer_windows.sh package release
-smashbrowse_installer_windows.sh create_repo release
-smashbrowse_installer_windows.sh create_installer release
+smashbrowse_installer_windows.sh package release $CMAKE_BUILD_ROOT
+smashbrowse_installer_windows.sh create_repo release $CMAKE_BUILD_ROOT
+smashbrowse_installer_windows.sh create_installer release $CMAKE_BUILD_ROOT
 
 # smashbrowse installers and repos
-smashdownloader_installer_windows.sh package release
-smashdownloader_installer_windows.sh create_repo release
-smashdownloader_installer_windows.sh create_installer release
+smashdownloader_installer_windows.sh package release $CMAKE_BUILD_ROOT
+smashdownloader_installer_windows.sh create_repo release $CMAKE_BUILD_ROOT
+smashdownloader_installer_windows.sh create_installer release $CMAKE_BUILD_ROOT
