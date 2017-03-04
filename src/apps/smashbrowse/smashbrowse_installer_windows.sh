@@ -48,7 +48,7 @@ package ()
 	# The secondary is the third party libraries and executables.
 	cp -fr !(smash*|jcomm.jar|ngs*|test*) ${PACK}/packages/com.smashbrowse.secondary/data/bin
 	
-	# Now copy in the xml files from ngsinternal.
+	# Now copy in the xml files from PACK_STRUCTURE.
 	cp -fr $PACK_STRUCTURE/. $PACK
 	
 	# Modify the config.xml with property repository url.

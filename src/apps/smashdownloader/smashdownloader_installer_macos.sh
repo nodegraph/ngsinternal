@@ -77,8 +77,10 @@ package ()
 	cp -fr !(libngs_*) ${PACK}/packages/com.smashdownloader.secondary/${DATA_PREFIX}/Frameworks
 	echo 'finished copying Frameworks dir'
 	
-	# Now copy in the xml files from ngsinternal.
+	# Now copy in the xml files from PACK_STRUCTURE.
 	cp -fr $PACK_STRUCTURE/. $PACK
+	# Remove the vc++ runtime package on macos.
+	rm -fr $PACK/packages/com.smashdownloader.vc
 	echo 'finished copying package xml files'
 	
 	# Modify the config.xml with property repository url.
