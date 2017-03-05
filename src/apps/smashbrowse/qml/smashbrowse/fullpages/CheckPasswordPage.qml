@@ -23,6 +23,7 @@ Rectangle {
 
     // Properties.
     color: app_settings.menu_stack_bg_color
+    property bool update_license: false
     
 	function initiate_license_check() {
 		status_label.on_mouse_pressed()
@@ -53,7 +54,7 @@ Rectangle {
         // Hide this page.
         check_password_page.visible = false
 
-        if (!upgrade_license_check_box.checked) {
+        if (!update_license) {
             // Erase the password from this page.
             password_field.text = ""
             
@@ -107,34 +108,42 @@ Rectangle {
 	    
 	    AppSpacer{}
 		    
-        RowLayout {
+        // Continue button.
+        AppLabelButton {
+            id: update_license_button
             anchors.horizontalCenter: parent.horizontalCenter
-            AppLabel {
-                id: upgrade_license_label
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: "upgrade license "
-                anchors {
-                    leftMargin: app_settings.page_left_margin
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
-            AppCheckBox {
-                id: upgrade_license_check_box
-                checked: false
-                anchors {
-                	left: upgrade_license_label.right
-                    leftMargin: app_settings.page_left_margin / 2
-                    rightMargin: app_settings.page_right_margin
-                }
-            }
+            text: "update license"
+            onClicked: {
+	            	update_license = true 
+	            	initiate_license_check()
+            	}
         }
+        
+        
+        // Continue button.
+        AppLabelButton {
+            id: update_app_button
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "update app"
+            onClicked: {
+	            	if (quick_view.app_update_is_available()) {
+	            		quick_view.start_app_update()
+	            	} else {
+	            		status_label.text = "no updates available"
+	            	}
+            	}
+        }
+        
 
         // Continue button.
         AppLabelButton {
             id: continue_button
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "continue"
-            onClicked: initiate_license_check()
+            text: "start app"
+            onClicked: {
+	            	update_license = false
+	            	initiate_license_check()
+            	}
         }
 
         // Shows status of password processing.

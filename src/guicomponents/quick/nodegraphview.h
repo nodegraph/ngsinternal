@@ -14,6 +14,7 @@ namespace ngs {
 class NodeGraphQuickItem;
 
 class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
+  Q_OBJECT
  public:
 
   COMPONENT_ID(NodeGraphView, NodeGraphView);
@@ -23,6 +24,9 @@ class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
 
   // Overrides.
   QSGTexture* create_texture_from_id(uint id, const QSize &size, CreateTextureOptions options = CreateTextureOption()) const;
+
+  Q_INVOKABLE bool app_update_is_available();
+  Q_INVOKABLE void start_app_update();
 
  private:
 

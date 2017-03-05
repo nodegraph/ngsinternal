@@ -1,6 +1,7 @@
 #include <guicomponents/quick/nodegraphview.h>
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
+#include <base/objectmodel/appconfig.h>
 
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/comms/filemodel.h>
@@ -32,6 +33,45 @@ NodeGraphView::~NodeGraphView() {
 
 QSGTexture* NodeGraphView::create_texture_from_id(uint id, const QSize &size, CreateTextureOptions options) const {
   return createTextureFromId(id, size, options);
+}
+
+bool NodeGraphView::app_update_is_available() {
+  QString dir = AppConfig::get_app_bin_dir();
+  dir += "\\..";
+  QString program = dir + "\\maintenancetool.exe";
+
+  QProcess process;
+  process.setWorkingDirectory(dir);
+  process.setProgram(program);
+  QStringList args;
+  args.push_back("--checkupdates");
+  process.setArguments(args);
+  process.start();
+  process.waitForFinished();
+  if (process.error() != QProcess::UnknownError) {
+    std::cerr << "app update query error: " << process.error() << "\n";
+    return false;
+  }
+
+  QByteArray data = process.readAllStandardOutput();
+  std::string output = data.toStdString();
+  //std::cerr << "got back data: " << output << "\n";
+
+  const size_t pos1 = output.find("<updates>");
+  const size_t pos2 = output.find("</updates>");
+  if ((pos1 == std::string::npos) || (pos2 == std::string::npos)) {
+    return false;
+  }
+  return true;
+}
+
+void NodeGraphView::start_app_update() {
+  QString dir = AppConfig::get_app_bin_dir();
+  dir += "\\..";
+
+  QStringList args("--updater");
+  bool success = QProcess::startDetached(dir+"\\maintenancetool.exe", args);
+  qApp->quit();
 }
 
 }
