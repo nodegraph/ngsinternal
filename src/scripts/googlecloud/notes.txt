@@ -25,3 +25,5 @@ gsutil -m cp -r /Users/raindrop/dev/macos/macos_release_jenkins/smashdownloader_
 // Make all files public.
 gsutil -m acl set -R -a public-read gs://www.smashbrowse.com
 gsutil -m acl set -R -a public-read gs://www.smashdownloader.com
+
+
