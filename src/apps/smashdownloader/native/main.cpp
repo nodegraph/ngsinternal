@@ -132,22 +132,60 @@ int main(int argc, char *argv[]) {
     app_root->init_view(format);
 
     if (first_instance) {
-      // Show our splash page, while loading the real qml app.
-      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPage.qml")));
-      view->rootObject()->setProperty("ngs_version", NGS_VERSION);
-      view->rootObject()->setProperty("app_name", "Smash Downloader");
-      view->show();
-      view->update();
-      app.processEvents();
+      //if (NodeGraphView::app_update_is_available()) {
+      if (true) {
+        QQmlContext* context = view->engine()->rootContext();
+        context->setContextProperty(QStringLiteral("quick_view"), view);
 
-      // Expose some object to qml before loading our main app.
-      app_root->expose_to_qml();
+        // Show our splash page, while loading the real qml app.
+        view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPageWithUpdate.qml")));
+        view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+        view->rootObject()->setProperty("app_name", "Smash Downloader");
+        view->show();
+        view->update();
+        app.processEvents();
 
-      // Show our main app.
-      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashdownloader.qml")));
-      view->rootObject()->setProperty("version_number", NGS_VERSION);
-      view->show();
-      view->update();
+        // Run the splash screen event loop.
+        execReturn = app.exec();
+
+        // If we're not updating, then start the app.
+        if (!view->update_is_starting()) {
+          {
+            // Expose some object to qml before loading our main app.
+            app_root->expose_to_qml();
+            // Show our main app.
+            view->setSource(QUrl(QStringLiteral("qrc:/qml/smashdownloader.qml")));
+            view->rootObject()->setProperty("version_number", NGS_VERSION);
+            view->show();
+            view->update();
+          }
+          // Run the main event loop.
+          execReturn = app.exec();
+        }
+
+      } else {
+        // Show our splash page, while loading the real qml app.
+        view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPage.qml")));
+        view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+        view->rootObject()->setProperty("app_name", "Smash Downloader");
+        view->show();
+        view->update();
+
+        // Make the splash screen show up.
+        app.processEvents();
+
+        // Expose some object to qml before loading our main app.
+        app_root->expose_to_qml();
+
+        // Show our main app.
+        view->setSource(QUrl(QStringLiteral("qrc:/qml/smashdownloader.qml")));
+        view->rootObject()->setProperty("version_number", NGS_VERSION);
+        view->show();
+        view->update();
+
+        // Run the main event loop.
+        execReturn = app.exec();
+      }
 
       // Embed the node graph quick item into the node graph page.
       //app_root->embed_node_graph();
@@ -157,10 +195,12 @@ int main(int argc, char *argv[]) {
       view->rootObject()->setProperty("ngs_version", NGS_VERSION);
       view->show();
       view->update();
+
+      // Run the main event loop.
+      execReturn = app.exec();
     }
 
-    // Run the Qt loop.
-    execReturn = app.exec();
+
 
     // Cleanup.
     delete_ff(app_root);

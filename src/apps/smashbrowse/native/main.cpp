@@ -157,8 +157,11 @@ int main(int argc, char *argv[]) {
         view->rootObject()->setProperty("app_name", "Smash Browse");
         view->show();
         view->update();
+
         // Run the splash screen event loop.
         execReturn = app.exec();
+
+        // If we're not updating, then start the app.
         if (!view->update_is_starting()) {
           {
             // Expose some object to qml before loading our main app.
@@ -178,6 +181,7 @@ int main(int argc, char *argv[]) {
         view->rootObject()->setProperty("app_name", "Smash Browse");
         view->show();
         view->update();
+
         // Make the splash screen show up.
         app.processEvents();
         {
