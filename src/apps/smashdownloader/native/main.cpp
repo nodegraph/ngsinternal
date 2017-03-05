@@ -132,8 +132,7 @@ int main(int argc, char *argv[]) {
     app_root->init_view(format);
 
     if (first_instance) {
-      //if (NodeGraphView::app_update_is_available()) {
-      if (true) {
+      if (NodeGraphView::app_update_is_available()) {
         QQmlContext* context = view->engine()->rootContext();
         context->setContextProperty(QStringLiteral("quick_view"), view);
 
