@@ -11,4 +11,6 @@
     
     <Dependencies>com.smashdownloader.secondary</Dependencies>
     
+    <SortingPriority>1</SortingPriority>
+    
 </Package>

@@ -10,4 +10,7 @@
     <Script>installscript.qs</Script>
     
     <Dependencies>com.smashbrowse.secondary</Dependencies>
+    
+    <SortingPriority>0</SortingPriority>
+    
 </Package>
