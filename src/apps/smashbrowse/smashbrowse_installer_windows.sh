@@ -62,7 +62,7 @@ package ()
 	fi
 	
 	# Replace LAUNCH_PROGRAM in the config.xml.
-	sed -i -e 's/LAUNCH_PROGRAM/bin\\smashbrowse.exe/g' $PACK/config/config.xml
+	sed -i -e 's/LAUNCH_PROGRAM/bin\/smashbrowse.exe/g' $PACK/config/config.xml
 }
 
 # -------------------------------------------------------------------------
