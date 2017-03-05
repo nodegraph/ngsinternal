@@ -86,7 +86,7 @@ package ()
 	fi
 	
 	# Replace LAUNCH_PROGRAM in the config.xml.
-	sed -i -e 's/LAUNCH_PROGRAM/smashdownloader.app/g' $PACK/config/config.xml
+	sed -i -e 's#LAUNCH_PROGRAM#smashdownloader.app/Contents/MacOS/smashdownloader#g' $PACK/config/config.xml
 	
 	# Change modern style to mac style.
 	sed -i -e 's/Modern/Mac/g' $PACK/config/config.xml
