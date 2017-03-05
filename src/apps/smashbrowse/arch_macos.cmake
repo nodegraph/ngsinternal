@@ -11,7 +11,14 @@
 set(app ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents)
 add_custom_command(
 	OUTPUT copy_other_files
-	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 -always-overwrite
+	# We need to append the flag -always-overwrite but there is a bug where the
+	# the libs won't be copied properly, so we have to manually remove files/folders.
+	COMMAND rm -fr ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents/Frameworks
+	COMMAND rm -fr ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents/Plugins
+	COMMAND rm -fr ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents/Resources
+	COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents/Resources
+	COMMAND cp ${CMAKE_SOURCE_DIR}/external/images/octopus_blue.icns ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app/Contents/Resources
+	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/smashbrowse.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 
 	#
 	COMMAND cp -fRL ${CMAKE_CURRENT_SOURCE_DIR}/html ${app}/Resources
 	COMMAND mkdir -p ${app}/Resources/jre
