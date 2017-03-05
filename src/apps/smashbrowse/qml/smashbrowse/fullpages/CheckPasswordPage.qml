@@ -117,29 +117,13 @@ Rectangle {
 	            	update_license = true 
 	            	initiate_license_check()
             	}
-        }
-        
-        
-        // Continue button.
-        AppLabelButton {
-            id: update_app_button
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "update app"
-            onClicked: {
-	            	if (quick_view.app_update_is_available()) {
-	            		quick_view.start_app_update()
-	            	} else {
-	            		status_label.text = "no updates available"
-	            	}
-            	}
-        }
-        
+        }        
 
         // Continue button.
         AppLabelButton {
             id: continue_button
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "start app"
+            text: "login"
             onClicked: {
 	            	update_license = false
 	            	initiate_license_check()

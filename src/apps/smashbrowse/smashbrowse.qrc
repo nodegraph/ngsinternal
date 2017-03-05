@@ -148,6 +148,7 @@
         <file>qml/smashbrowse/fullpages/LimitPage.qml</file>
         <file>qml/smashbrowse/fullpages/AlreadyRunningPage.qml</file>
         <file>qml/smashbrowse/fullpages/SplashPage.qml</file>
+        <file>qml/smashbrowse/fullpages/SplashPageWithUpdate.qml</file>
         
         <!-- Mode Pages -->
         <file>qml/smashbrowse/modepages/qmldir</file>

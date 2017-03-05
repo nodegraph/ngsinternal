@@ -147,34 +147,61 @@ int main(int argc, char *argv[]) {
     app_root->init_view(format);
 
     if (first_instance) {
-      // Show our splash page, while loading the real qml app.
-      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPage.qml")));
-      view->rootObject()->setProperty("ngs_version", NGS_VERSION);
-      view->rootObject()->setProperty("app_name", "Smash Browse");
-      view->show();
-      view->update();
-      app.processEvents();
-
-      // Expose some object to qml before loading our main app.
-      app_root->expose_to_qml();
-
-      // Show our main app.
-      view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse.qml")));
-
-      // Embed the node graph quick item into the node graph page.
-      app_root->embed_node_graph();
+      //if (NodeGraphView::app_update_is_available()) {
+      if (true) {
+        QQmlContext* context = view->engine()->rootContext();
+        context->setContextProperty(QStringLiteral("quick_view"), view);
+        // Show our splash page with the option to update the app.
+        view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPageWithUpdate.qml")));
+        view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+        view->rootObject()->setProperty("app_name", "Smash Browse");
+        view->show();
+        view->update();
+        // Run the splash screen event loop.
+        execReturn = app.exec();
+        if (!view->update_is_starting()) {
+          {
+            // Expose some object to qml before loading our main app.
+            app_root->expose_to_qml();
+            // Show our main app.
+            view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse.qml")));
+            // Embed the node graph quick item into the node graph page.
+            app_root->embed_node_graph();
+          }
+          // Run the main event loop.
+          execReturn = app.exec();
+        }
+      } else {
+        // Show our splash page, while loading the real qml app.
+        view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/SplashPage.qml")));
+        view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+        view->rootObject()->setProperty("app_name", "Smash Browse");
+        view->show();
+        view->update();
+        // Make the splash screen show up.
+        app.processEvents();
+        {
+          // Expose some object to qml before loading our main app.
+          app_root->expose_to_qml();
+          // Show our main app.
+          view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse.qml")));
+          // Embed the node graph quick item into the node graph page.
+          app_root->embed_node_graph();
+        }
+        // Run the main event loop.
+        execReturn = app.exec();
+      }
     } else {
       // Show page with warning about multiple instances.
       view->setSource(QUrl(QStringLiteral("qrc:/qml/smashbrowse/fullpages/AlreadyRunningPage.qml")));
       view->rootObject()->setProperty("ngs_version", NGS_VERSION);
       view->show();
       view->update();
+      // Run the Qt loop.
+      execReturn = app.exec();
     }
 
     // test_json_utils();
-
-    // Run the Qt loop.
-    execReturn = app.exec();
 
     // Cleanup.
     delete_ff(app_root);

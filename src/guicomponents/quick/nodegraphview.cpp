@@ -2,6 +2,7 @@
 #include <base/memoryallocator/taggednew.h>
 #include <base/objectmodel/deploader.h>
 #include <base/objectmodel/appconfig.h>
+#include <entities/guientities.h>
 
 #include <guicomponents/quick/nodegraphquickitem.h>
 #include <guicomponents/comms/filemodel.h>
@@ -20,7 +21,8 @@ namespace ngs {
 
 NodeGraphView::NodeGraphView(Entity* entity)
     : QQuickView(NULL),
-      Component(entity, kIID(), kDID()) {
+      Component(entity, kIID(), kDID()),
+      _update_is_starting(false) {
 
   // Set the app icon.
   QIcon icon(":images/octopus_blue.png");
@@ -65,13 +67,25 @@ bool NodeGraphView::app_update_is_available() {
   return true;
 }
 
+void NodeGraphView::close_splash_page() {
+  qApp->quit();
+}
+
 void NodeGraphView::start_app_update() {
+  _update_is_starting = true;
+
   QString dir = AppConfig::get_app_bin_dir();
   dir += "\\..";
 
   QStringList args("--updater");
   bool success = QProcess::startDetached(dir+"\\maintenancetool.exe", args);
-  qApp->quit();
+  qApp->exit();
 }
+
+bool NodeGraphView::update_is_starting() {
+  return _update_is_starting;
+}
+
+
 
 }
