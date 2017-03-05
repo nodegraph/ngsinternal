@@ -43,7 +43,7 @@ package ()
 	cd bin
 	
 	# The primary is our ngs libraries and executables.
-	cp -fr +(smash*|jcomm.jar|ngs*|test*) ${PACK}/packages/com.smashbrowse.primary/data/bin
+	cp -fr +(smashbrowse.exe|jcomm.jar|ngs*) ${PACK}/packages/com.smashbrowse.primary/data/bin
 	
 	# The secondary is the third party libraries and executables.
 	cp -fr !(smash*|jcomm.jar|ngs*|test*) ${PACK}/packages/com.smashbrowse.secondary/data/bin

@@ -34,7 +34,7 @@ package ()
 	cd bin
 	
 	# The primary is our ngs libraries and executables.
-	cp -fr +(smash*|jcomm.jar|ngs*|test*) ${PACK}/packages/com.smashdownloader.primary/data/bin
+	cp -fr +(smashdownloader.exe|jcomm.jar|ngs*) ${PACK}/packages/com.smashdownloader.primary/data/bin
 	
 	# The secondary is the third party libraries and executables.
 	cp -fr !(smash*|jcomm.jar|ngs*|test*) ${PACK}/packages/com.smashdownloader.secondary/data/bin
