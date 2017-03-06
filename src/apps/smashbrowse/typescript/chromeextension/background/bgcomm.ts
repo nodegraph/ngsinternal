@@ -144,7 +144,7 @@ class BgComm {
         console.log('trying to connect to app')
         // Otherwise try to connect.
         try {
-            this.app_socket = new WebSocket('wss://localhost:' + this.app_port)
+            this.app_socket = new WebSocket('ws://localhost:' + this.app_port)
             this.app_socket.onerror = (error: ErrorEvent) => {
                 console.error("Error: app socket error: " + JSON.stringify(error))
             }

@@ -36,7 +36,7 @@ MessageSender::MessageSender(Entity* parent)
   get_dep_loader()->register_fixed_dep(_java_process, Path());
   get_dep_loader()->register_fixed_dep(_download_manager, Path());
 
-#define USE_SSL
+//#define USE_SSL
   // Using ssl doesn't seem to work on macos. It's not clear whether qt has a bug
   // or whether chrome is not permitting the connection.
   // Note this does work on windows however.
