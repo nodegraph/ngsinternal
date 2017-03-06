@@ -36,6 +36,7 @@ MessageSender::MessageSender(Entity* parent)
   get_dep_loader()->register_fixed_dep(_java_process, Path());
   get_dep_loader()->register_fixed_dep(_download_manager, Path());
 
+#define USE_SSL
   // Using ssl doesn't seem to work on macos. It's not clear whether qt has a bug
   // or whether chrome is not permitting the connection.
   // Note this does work on windows however.
@@ -44,7 +45,7 @@ MessageSender::MessageSender(Entity* parent)
 #ifndef USE_SSL
   _server  = new_ff QWebSocketServer(QStringLiteral("Smash Browser Server"), QWebSocketServer::NonSecureMode);
 #else
-  _server  = new_ff QWebSocketServer(QStringLiteral("Smash Browser Server"), QWebSocketServer::NonSecureMode);
+  _server  = new_ff QWebSocketServer(QStringLiteral("Smash Browser Server"), QWebSocketServer::SecureMode);
 
   assert(QSslSocket::supportsSsl());
   QSslConfiguration sslConfiguration;

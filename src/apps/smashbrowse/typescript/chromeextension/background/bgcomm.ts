@@ -105,7 +105,7 @@ class BgComm {
         
         this.app_port = BgComm.extract_port_from_url(tab.url)
         if (this.app_port != -1) {
-        	//console.log("found app port")
+        	console.log("found app port")
             this.connect_to_app()
             //chrome.tabs.onUpdated.removeListener(this.on_tab_updated_bound)
             this.tab_ids = [tab.id]
@@ -137,9 +137,10 @@ class BgComm {
         if (this.app_socket && (this.app_socket.readyState == WebSocket.OPEN)) {
             return
         }
+        console.log('trying to connect to app')
         // Otherwise try to connect.
         try {
-            this.app_socket = new WebSocket('ws://localhost:' + this.app_port)
+            this.app_socket = new WebSocket('wss://localhost:' + this.app_port)
             this.app_socket.onerror = (error: ErrorEvent) => {
                 console.error("Error: app socket error: " + JSON.stringify(error))
             }
