@@ -24,3 +24,16 @@ mutation_monitor = new MutationMonitor(content_comm, gui_collection)
 // Start listening for mutations on page load.
 document.addEventListener('DOMContentLoaded', ()=>{mutation_monitor.on_loaded()}, false);
 
+// // Modify the dom to remove the elements to allow the user to install our extension.
+// document.addEventListener('DOMContentLoaded', () => {
+//     let text = document.getElementById('smash_browse_install_text')
+//     let button = document.getElementById('smash_browse_install_button')
+
+//     if (text) {
+//         text.parentNode.removeChild(text)
+//     }
+//     if (button) {
+//         button.parentNode.removeChild(button)
+//     }
+// }, false)
+

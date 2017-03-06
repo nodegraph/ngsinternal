@@ -84,10 +84,8 @@ public class WebDriverWrap {
         System.setProperty("webdriver.chrome.driver", _driver_location);
         
         // Determine our html page locations.
-        String base_loc = working_dir;
-        if (FSWrap.platform_is_windows()) {
-        } else {
-        }
+        String base_loc;
+        base_loc = working_dir;
         base_loc = "file:///" + base_loc;
         _app_page = base_loc + "/html/smashbrowse.html";
         _blank_page = base_loc + "/html/blank.html";
@@ -163,18 +161,24 @@ public class WebDriverWrap {
 		{
 			// Create a new chrome user data dir for this browser instance.
 			String chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(_settings_dir);
+			
+			// Specify the start up page even though it doesn't navigate to it.
 	        chrome_opts.addArguments(url);
-	        chrome_opts.addArguments("--load-extension=" 
-	                + _chrome_ext_dir
-	                //+ ","
-	                ); // Extension for downloading.
+	        
+	        // Load extensions. Separate multiple extension with a comma and not spaces between them.
+			chrome_opts.addArguments("--load-extension=" + _chrome_ext_dir); 
+	        
 	        //chrome_opts.addArguments("--ignore-certificate-errors");
 	        //chrome_opts.addArguments("--allow-insecure-localhost");
 	        //chrome_opts.addArguments("--disable-web-security");
 	        chrome_opts.addArguments("--user-data-dir=" + chrome_user_data_dir);
+	        
 	        //chrome_opts.addArguments("--first-run");
 	        chrome_opts.addArguments("--no-first-run");
 	        //chrome_opts.addArguments("--app=http://www.google.com");
+	        
+	        //chrome_opts.addArguments("--incognito");
+	        
 		}
 		
 		capabilities.setCapability(ChromeOptions.CAPABILITY, chrome_opts);

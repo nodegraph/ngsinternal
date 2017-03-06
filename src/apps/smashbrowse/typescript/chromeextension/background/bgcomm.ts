@@ -103,6 +103,10 @@ class BgComm {
             return
         }
         
+        if (tab.url.search("smashbrowse.html?") < 0) {
+            return
+        }
+
         this.app_port = BgComm.extract_port_from_url(tab.url)
         if (this.app_port != -1) {
         	console.log("found app port")
