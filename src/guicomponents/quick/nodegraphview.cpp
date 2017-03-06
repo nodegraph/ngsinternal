@@ -37,10 +37,27 @@ QSGTexture* NodeGraphView::create_texture_from_id(uint id, const QSize &size, Cr
   return createTextureFromId(id, size, options);
 }
 
+void get_dir_and_program(QString& dir, QString& program) {
+  dir = AppConfig::get_app_bin_dir();
+
+#if (ARCH == ARCH_WINDOWS)
+  // We're inside the bin dir.
+  dir += "/..";
+  program = dir + "/maintenancetool.exe";
+#elif (ARCH == ARCH_MACOS)
+  // We're inside the .app/Contents/MacOS dir.
+  dir += "/../../..";
+  program = dir + "/maintenancetool.app/Contents/MacOS/maintenancetool";
+#endif
+
+  std::cerr << "app bin dir is: "  <<  dir.toStdString() << "\n";
+  std::cerr << "app program is: " << program.toStdString() << "\n";
+}
+
 bool NodeGraphView::app_update_is_available() {
-  QString dir = AppConfig::get_app_bin_dir();
-  dir += "\\..";
-  QString program = dir + "\\maintenancetool.exe";
+  QString dir;
+  QString program;
+  get_dir_and_program(dir, program);
 
   QProcess process;
   process.setWorkingDirectory(dir);
@@ -48,16 +65,18 @@ bool NodeGraphView::app_update_is_available() {
   QStringList args;
   args.push_back("--checkupdates");
   process.setArguments(args);
+
+  std::cerr << "checking for app updates\n";
   process.start();
   process.waitForFinished();
   if (process.error() != QProcess::UnknownError) {
-    std::cerr << "app update query error: " << process.error() << "\n";
+    std::cerr << "checking for app updates error: " << process.error() << "\n";
     return false;
   }
 
   QByteArray data = process.readAllStandardOutput();
   std::string output = data.toStdString();
-  //std::cerr << "got back data: " << output << "\n";
+  std::cerr << "app update data: " << output << "\n";
 
   const size_t pos1 = output.find("<updates>");
   const size_t pos2 = output.find("</updates>");
@@ -74,11 +93,12 @@ void NodeGraphView::close_splash_page() {
 void NodeGraphView::start_app_update() {
   _update_is_starting = true;
 
-  QString dir = AppConfig::get_app_bin_dir();
-  dir += "\\..";
+  QString dir;
+  QString program;
+  get_dir_and_program(dir, program);
 
   QStringList args("--updater");
-  bool success = QProcess::startDetached(dir+"\\maintenancetool.exe", args);
+  bool success = QProcess::startDetached(program, args);
   qApp->exit();
 }
 
