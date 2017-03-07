@@ -45,7 +45,9 @@ public class WebDriverWrap {
 	
 	private String _driver_location;
 	
+	// Variables for hack to close the "disable developer mode extensions" popup.
 	private boolean _use_hack;
+	private boolean _destroy_first_window;
 	
 	public class WebElementWithPos {
 		WebElement element;
@@ -101,6 +103,7 @@ public class WebDriverWrap {
         // also on osx it won't close the first windows
         _use_hack = FSWrap.platform_is_windows();
         _use_hack = true;
+        _destroy_first_window = false;
         if (_use_hack) {
         	_socket_connect_page = base_loc + "/html/wait.html";
         } else {
@@ -204,6 +207,8 @@ public class WebDriverWrap {
         navigate_to(url);
         
         if (_use_hack) {
+        	_destroy_first_window = true;
+        	
 	        // Open up a new window. This will often overlap and hide our first window.
 	        // This is useful because we're waiting for a popup to popup in the first window before closing it.
 	        JavascriptExecutor js = (JavascriptExecutor) _web_driver;
@@ -357,22 +362,19 @@ public class WebDriverWrap {
 	    // Switch to the latest tab.
 	    _web_driver.switchTo().window(_window_handles.lastElement());
 	    
-	    if (_use_hack) {
+	    if (_use_hack && _destroy_first_window) {
 	    	destroy_first_window();
 	    }
     }
 	
 	// Used to destroy the first window which will show the browser toolbar with extensions.
 	void destroy_first_window() {
+		_destroy_first_window = false;
+		
 		// Switch to the first window.
 		_web_driver.switchTo().window(_window_handles.firstElement());
-		String url = _web_driver.getCurrentUrl();
-		System.err.println("first url page is: " + url);
-		System.err.println("wait page is: " + _socket_connect_page);
-		if (url.startsWith(_socket_connect_page + "?")) {
-			System.err.println("closing first window!!!!!!");
-			_web_driver.close();
-		}
+		System.err.println("closing first window!!!!!!");
+		_web_driver.close();
 		
 		// Switch to the last window.
 		_web_driver.switchTo().window(_window_handles.lastElement());
