@@ -37,6 +37,17 @@ class BgComm {
         })
     }
 
+
+    tab_is_trackable(tab: chrome.tabs.Tab) {
+        // Tabs or windows which hold chrome debugging tools will not be tracked.
+        // These usually have urls that start with: chrome:// or chrome-devtools://
+        if (tab.url.startsWith("chrome://") || 
+            tab.url.startsWith("chrome-devtools://")) {
+            return false
+        }
+        return true
+    }
+
     get_current_tab_id() {
         return this.tab_ids[this.tab_ids.length-1]
     }
@@ -51,12 +62,11 @@ class BgComm {
 
     on_tab_created(tab: chrome.tabs.Tab) {
         console.log('new tab created: ' + tab.id + ' with url: ' + tab.url)
-        // Skip tabs or windows which hold chrome debugging tools.
-        // These usually have urls that start with: chrome:// or chrome-devtools://
-        // In these case the tab.url will empty.
-        if (!tab.url) {
+        if (!this.tab_is_trackable(tab)) {
             return
         }
+
+        // Queue the newly created tab to be merged in later.
         this.created_tab_ids.push(tab.id)
         chrome.tabs.update(tab.id, {pinned: true});
         this.send_to_app(new InfoMessage(-1, InfoType.kTabCreated))
@@ -89,7 +99,7 @@ class BgComm {
     }
 
     on_tab_updated(tabId: number, change_info: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {
-
+        console.log('tab updated: ' + tab.id + ' with url: ' + tab.url)
         // We don't allow the user to unpin the tabs, because when the tabs are unpinned they can be
         // accidentally destroyed by the user. We want to keep the destroying under our control.
         chrome.tabs.update(tabId, {pinned: true});
@@ -103,7 +113,7 @@ class BgComm {
             return
         }
         
-        if (tab.url.search("smashbrowse.html?") < 0) {
+        if ( (tab.url.search("smashbrowse.html?") < 0) && ((tab.url.search("wait.html?") < 0))) {
             return
         }
 
@@ -216,12 +226,14 @@ class BgComm {
 
     // Receive a message from on of the frames.
     receive_from_content(msg: BaseMessage, sender: chrome.runtime.MessageSender, send_response: (response: any) => void) {
-        console.log("bg received from frameid: " + sender.frameId + " of tab: " + sender.tab.id + " with msg: " + JSON.stringify(msg))
+        console.log("bg received from frameid: " + sender.frameId + " of tab id: " + sender.tab.id + " with msg: " + JSON.stringify(msg))
 
         // // The first tab to send us a content message will be the tab that we pay attention to.
         // if (!this.tab_id) {
         //     this.tab_id = sender.tab.id
         // }
+
+        console.log('current tab id: ' + this.get_current_tab_id())
 
         // Skip messages from tabs that we're not interested in.
         if (this.get_current_tab_id() != sender.tab.id) {

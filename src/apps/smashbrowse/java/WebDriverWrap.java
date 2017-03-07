@@ -87,6 +87,8 @@ public class WebDriverWrap {
         String base_loc;
         base_loc = working_dir;
         base_loc = "file:///" + base_loc;
+        
+        //base_loc = "http://www.smashbrowse.com/product";
         _app_page = base_loc + "/html/smashbrowse.html";
         _blank_page = base_loc + "/html/blank.html";
         
@@ -95,7 +97,7 @@ public class WebDriverWrap {
         // (it should open it in a new browser)
         // also on osx it won't close the first windows
         _use_hack = FSWrap.platform_is_windows();
-        _use_hack = false;
+        _use_hack = true;
         if (_use_hack) {
         	_socket_connect_page = base_loc + "/html/wait.html";
         } else {
@@ -178,6 +180,9 @@ public class WebDriverWrap {
 	        //chrome_opts.addArguments("--app=http://www.google.com");
 	        
 	        //chrome_opts.addArguments("--incognito");
+	        
+	        //chrome_opts.addArguments("--allow-file-access-from-files");
+	        //chrome_opts.addArguments("--enable-local-file-accesses");
 	        
 		}
 		
