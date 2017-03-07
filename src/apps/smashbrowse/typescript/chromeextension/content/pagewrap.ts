@@ -1,4 +1,6 @@
 
+interface Window { [key: string]: any } 
+
 // The class encapsulates the properties of a web page.
 class PageWrap {
     // Our Dependencies.
@@ -74,6 +76,8 @@ class PageWrap {
         }
         return spath
     }
+
+    
 
     // Get our fw_index_path as zero-based indexes.
     // An empty fw_index_path means we are in the top window.
