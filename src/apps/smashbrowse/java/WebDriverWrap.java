@@ -91,7 +91,7 @@ public class WebDriverWrap {
         	base_loc = "file://" + working_dir; // Note 2 forward slashes as working_dir already starts with a slash.
         }
         
-        //base_loc = "http://www.smashbrowse.com/product";
+        //base_loc = "https://www.smashbrowse.com/product";
         _app_page = base_loc + "/html/smashbrowse.html";
         _blank_page = base_loc + "/html/blank.html";
         

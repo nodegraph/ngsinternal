@@ -94,7 +94,7 @@ package ()
 	
 	# Replace RESPOSITY_URL in the config.xml.
 	if [ $RELEASE -eq 1 ]; then
-		sed -i -e 's#REPOSITORY_URL#http://www.smashbrowse.com/macos/smashbrowse_repo#g' $PACK/config/config.xml
+		sed -i -e 's#REPOSITORY_URL#https://www.smashbrowse.com/macos/smashbrowse_repo#g' $PACK/config/config.xml
 	else
 		sed -i -e "s#REPOSITORY_URL#file://${REPO}#g" $PACK/config/config.xml
 	fi

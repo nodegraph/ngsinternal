@@ -44,7 +44,7 @@ package ()
 	
 	# Replace RESPOSITY_URL in the config.xml.
 	if [ $RELEASE -eq 1 ]; then
-		sed -i -e 's/REPOSITORY_URL/http:\/\/www.smashdownloader.com\/windows\/smashdownloader_repo/g' $PACK/config/config.xml
+		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashdownloader.com\/windows\/smashdownloader_repo/g' $PACK/config/config.xml
 	else
 		# Format the repo path for windows.
 		LOC=`echo "$REPO" | sed 's/^\///' | sed 's/^./\0:/'`

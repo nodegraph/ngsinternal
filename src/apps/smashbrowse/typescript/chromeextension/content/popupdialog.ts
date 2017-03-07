@@ -91,7 +91,7 @@ class WaitPopup extends BasePopup {
         this.popup.innerHTML = '\
         <center>\
         <p class="smash_browse_label_text">Please wait for page to finish loading.</p>\
-        <img src="' + hourglass_url + '" alt="www.smashbrowse.com" style="width:120px;height:120px;" />\
+        <img src="' + hourglass_url + '" style="width:120px;height:120px;" />\
         </center>'
     }
 }

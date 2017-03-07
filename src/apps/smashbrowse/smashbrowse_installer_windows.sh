@@ -53,7 +53,7 @@ package ()
 	
 	# Replace RESPOSITY_URL in the config.xml.
 	if [ $RELEASE -eq 1 ]; then
-		sed -i -e 's/REPOSITORY_URL/http:\/\/www.smashbrowse.com\/windows\/smashbrowse_repo/g' $PACK/config/config.xml
+		sed -i -e 's/REPOSITORY_URL/https:\/\/www.smashbrowse.com\/windows\/smashbrowse_repo/g' $PACK/config/config.xml
 	else
 		# Format the repo path for windows.
 		LOC=`echo "$REPO" | sed 's/^\///' | sed 's/^./\0:/'`
