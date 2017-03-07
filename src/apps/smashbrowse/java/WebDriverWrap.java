@@ -85,8 +85,11 @@ public class WebDriverWrap {
         
         // Determine our html page locations.
         String base_loc;
-        base_loc = working_dir;
-        base_loc = "file:///" + base_loc;
+        if (FSWrap.platform_is_windows()) {
+        	base_loc = "file:///" + working_dir; // Note 3 forward slashes as working_dir starts with a drive letter like D:.
+        } else {
+        	base_loc = "file://" + working_dir; // Note 2 forward slashes as working_dir already starts with a slash.
+        }
         
         //base_loc = "http://www.smashbrowse.com/product";
         _app_page = base_loc + "/html/smashbrowse.html";
@@ -367,6 +370,7 @@ public class WebDriverWrap {
 		System.err.println("first url page is: " + url);
 		System.err.println("wait page is: " + _socket_connect_page);
 		if (url.startsWith(_socket_connect_page + "?")) {
+			System.err.println("closing first window!!!!!!");
 			_web_driver.close();
 		}
 		
