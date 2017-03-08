@@ -28,6 +28,8 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.chrome.ChromeDriverService;
 
 
@@ -206,7 +208,13 @@ public class WebDriverWrap {
         
         
         // Enable incognito mode for our web extension.
+        
+        // Goto to the extensions page. There will only be one extension, ours.
         _web_driver.get("chrome://extensions-frame");
+        // Wait for the checkbox to appears, as sometimes it won't be ready in time.
+        WebDriverWait wait = new WebDriverWait(_web_driver, 10);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//label[@class='incognito-control']/input[@type='checkbox']")));
+        // Now click it.
         WebElement checkbox = _web_driver.findElement(By.xpath("//label[@class='incognito-control']/input[@type='checkbox']"));
         if (!checkbox.isSelected()) {
             checkbox.click();
