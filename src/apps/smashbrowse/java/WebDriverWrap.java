@@ -46,8 +46,10 @@ public class WebDriverWrap {
 	private String _driver_location;
 	
 	// Variables for hack to close the "disable developer mode extensions" popup.
-	private boolean _use_hack;
-	private boolean _destroy_first_window;
+	private boolean _open_post_window; // Indicates whether to open another window after the first browser window is opened.
+	private boolean _destroy_first_window; // Indicates whether to destory the first window.
+	
+	private long _open_count;
 	
 	public class WebElementWithPos {
 		WebElement element;
@@ -68,6 +70,8 @@ public class WebDriverWrap {
 		_app_socket_port = app_socket_port;
 		
 		_window_handles = new Stack<String>();
+		
+		_open_count = 0;
 		
 		// Get working directory.
 		String working_dir = System.getProperty("user.dir");
@@ -101,14 +105,10 @@ public class WebDriverWrap {
         // we now only use this on windows, because on osx when we do this the CTRL-click won't open the link at all 
         // (it should open it in a new browser)
         // also on osx it won't close the first windows
-        _use_hack = FSWrap.platform_is_windows();
-        _use_hack = true;
+        _open_post_window = false;
         _destroy_first_window = false;
-        if (_use_hack) {
-        	_socket_connect_page = base_loc + "/html/wait.html";
-        } else {
-        	_socket_connect_page = base_loc + "/html/smashbrowse.html";
-        }
+        _socket_connect_page = base_loc + "/html/wait.html";
+        //_socket_connect_page = base_loc + "/html/smashbrowse.html";
 		
 		// Build the webdriver service and start it.
 		_service = new ChromeDriverService.Builder()
@@ -185,7 +185,8 @@ public class WebDriverWrap {
 	        chrome_opts.addArguments("--no-first-run");
 	        //chrome_opts.addArguments("--app=http://www.google.com");
 	        
-	        //chrome_opts.addArguments("--incognito");
+	        chrome_opts.addArguments("--incognito");
+	        chrome_opts.addArguments("--enable-extensions");
 	        
 	        //chrome_opts.addArguments("--allow-file-access-from-files");
 	        //chrome_opts.addArguments("--enable-local-file-accesses");
@@ -203,31 +204,56 @@ public class WebDriverWrap {
 		//tempElement.click();
 		//tempElement.sendKeys(Keys.chord(Keys.CONTROL, "N"));
         
+        
+        // Enable incognito mode for our web extension.
+        _web_driver.get("chrome://extensions-frame");
+        WebElement checkbox = _web_driver.findElement(By.xpath("//label[@class='incognito-control']/input[@type='checkbox']"));
+        if (!checkbox.isSelected()) {
+            checkbox.click();
+        }
+        
         // The url on the command line doesn't seem to work, so we navigate to it.
         navigate_to(url);
         
-        if (_use_hack) {
-        	_destroy_first_window = true;
-        	
-	        // Open up a new window. This will often overlap and hide our first window.
-	        // This is useful because we're waiting for a popup to popup in the first window before closing it.
-	        JavascriptExecutor js = (JavascriptExecutor) _web_driver;
-	        String script = "window.open('"+ _app_page +"', '_blank', 'noopener=yes,dependent=no,location=yes,toolbar=yes,scrollbars=yes,resizable=no,width=1024,height=1150');";
-	        js.executeScript(script);
-	        
-	        
-	        // This wait allows the "Disable developer mode extensions" popup to popup in our first browser window.
-	        // Now when we close this window it will automatically act as if the cancel button
-	        // was pressed in this popup. It will now no longer popup again.
-	        try {
-				Thread.sleep(4000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+        _open_post_window = true;
         
         return true;
+	}
+	
+	boolean open_browser_post() {
+		if (!_open_post_window) {
+			return true;
+		}
+		
+		_open_post_window = false;
+    	_destroy_first_window = true;
+    	
+    	System.err.println("opening up new window for hack");
+    	
+        // Open up a new window. This will often overlap and hide our first window.
+        // This is useful because we're waiting for a popup to popup in the first window before closing it.
+        JavascriptExecutor js = (JavascriptExecutor) _web_driver;
+        // We always open in a uniquely named window (smash_browse_#).
+        String script = "window.open('"+ _app_page +"', '" + "smash_browse_" + (++_open_count) + "', 'noopener=yes,dependent=no,location=yes,toolbar=yes,scrollbars=yes,resizable=no,width=1024,height=1150');";
+        js.executeScript(script);
+        
+        System.err.println("executed script: " + script);
+        
+        
+        System.err.println("now waiting 4 seconds");
+        
+        // This wait allows the "Disable developer mode extensions" popup to popup in our first browser window.
+        // Now when we close this window it will automatically act as if the cancel button
+        // was pressed in this popup. It will now no longer popup again.
+//        try {
+//			Thread.sleep(15000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+        
+        System.err.println("done waiting 4 seconds");
+		return true;
 	}
 	
     void close_browser() {
@@ -314,6 +340,7 @@ public class WebDriverWrap {
     }
 
 	void update_current_tab() {
+		System.err.println("updating current tab !!!!!!!!!");
         Set<String> handles = _web_driver.getWindowHandles();
         // Check for newly added tabs.
         int num_created = 0;
@@ -362,7 +389,7 @@ public class WebDriverWrap {
 	    // Switch to the latest tab.
 	    _web_driver.switchTo().window(_window_handles.lastElement());
 	    
-	    if (_use_hack && _destroy_first_window) {
+	    if (_destroy_first_window) {
 	    	destroy_first_window();
 	    }
     }

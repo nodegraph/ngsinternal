@@ -29,6 +29,7 @@ const char* web_driver_request_type_to_string(WebDriverRequestType t) {
     // Browser Requests.
     case WebDriverRequestType::kIsBrowserOpen: return "kIsBrowserOpen";
     case WebDriverRequestType::kOpenBrowser: return "kOpenBrowser";
+    case WebDriverRequestType::kOpenBrowserPost: return "kOpenBrowserPost";
     case WebDriverRequestType::kCloseBrowser: return "kCloseBrowser";
     case WebDriverRequestType::kReleaseBrowser: return "kReleaseBrowser";
     case WebDriverRequestType::kSetBrowserSize: return "kSetBrowserSize";

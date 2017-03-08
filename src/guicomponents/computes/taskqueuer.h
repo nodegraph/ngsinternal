@@ -204,6 +204,7 @@ signals:
   // Browser Tasks.
   void wait_for_chrome_connection_task();
   void open_browser_task();
+  void open_browser_post_task();
   void close_browser_task();
   void release_browser_task();
   void is_browser_open_task();

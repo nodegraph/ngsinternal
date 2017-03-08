@@ -289,6 +289,7 @@ void TaskQueuer::queue_wait_for_chrome_connection(TaskContext& tc) {
 void TaskQueuer::queue_open_browser(TaskContext& tc) {
   _scheduler->queue_task(tc, Task(std::bind(&TaskQueuer::open_browser_task,this), false), "queue_open_browser");
   queue_wait_for_chrome_connection(tc);
+  _scheduler->queue_task(tc, Task(std::bind(&TaskQueuer::open_browser_post_task,this), false), "queue_open_browser_post");
 }
 
 void TaskQueuer::queue_close_browser(TaskContext& tc) {
@@ -733,6 +734,11 @@ void TaskQueuer::wait_for_chrome_connection_task() {
 
 void TaskQueuer::open_browser_task() {
   Message req(WebDriverRequestType::kOpenBrowser);
+  send_msg_task(req);
+}
+
+void TaskQueuer::open_browser_post_task() {
+  Message req(WebDriverRequestType::kOpenBrowserPost);
   send_msg_task(req);
 }
 

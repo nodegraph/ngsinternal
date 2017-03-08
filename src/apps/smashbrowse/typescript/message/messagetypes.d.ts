@@ -28,27 +28,28 @@ declare const enum WebDriverRequestType {
   // Browser Requests.
   kIsBrowserOpen = 3,
   kOpenBrowser = 4,
-  kCloseBrowser = 5,
-  kReleaseBrowser = 6,
-  kSetBrowserSize = 7,
-  kGetBrowserSize = 8,
+  kOpenBrowserPost = 5,
+  kCloseBrowser = 6,
+  kReleaseBrowser = 7,
+  kSetBrowserSize = 8,
+  kGetBrowserSize = 9,
 
   // Web Page Navigation.
-  kNavigateTo = 9,
-  kNavigateBack = 10,
-  kNavigateForward = 11,
-  kNavigateRefresh = 12,
-  kGetCurrentURL = 13,
+  kNavigateTo = 10,
+  kNavigateBack = 11,
+  kNavigateForward = 12,
+  kNavigateRefresh = 13,
+  kGetCurrentURL = 14,
 
   // Web Page Tabs.
-  kUpdateCurrentTab = 14,
-  kDestroyCurrentTab = 15,
+  kUpdateCurrentTab = 15,
+  kDestroyCurrentTab = 16,
 
   // Actions.
-  kPerformMouseAction = 16,
-  kPerformTextAction = 17,
-  kPerformElementAction = 18,
-  kPerformImageAction = 19,
+  kPerformMouseAction = 17,
+  kPerformTextAction = 18,
+  kPerformElementAction = 19,
+  kPerformImageAction = 20,
 }
 
 declare const enum ChromeRequestType {

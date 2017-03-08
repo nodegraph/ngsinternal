@@ -99,6 +99,13 @@ public class JComm {
 			break;
 		}
 		
+		case kOpenBrowserPost: {
+			web_driver.open_browser_post();
+			ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	        System.out.println(resp.to_string());
+			break;
+		}
+		
 		case kCloseBrowser: {
 	    	boolean open = web_driver.browser_is_open();
 	    	if (open) {

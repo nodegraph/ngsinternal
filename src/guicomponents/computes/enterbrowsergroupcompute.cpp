@@ -40,7 +40,6 @@ bool EnterBrowserGroupCompute::update_state() {
 
   TaskContext tc(_scheduler);
   _worker->queue_open_browser(tc);
-  _worker->queue_wait_until_loaded(tc);
 
   std::function<void(const QJsonObject&)> callback = std::bind(&EnterBrowserGroupCompute::receive_chain_state, this, std::placeholders::_1);
   _worker->queue_receive_chain_state(tc, callback);
