@@ -4,14 +4,17 @@
 # Typically this is done by running all the jenkins jobs.
 
 # Generally the site is deployed as follows.
-deploy_site.sh build_site
-deploy_site.sh gather_binaries
-deploy_site.sh deploy
+# deploy_site.sh build_site
+# deploy_site.sh gather_binaries
+# deploy_site.sh deploy_site
+
+echo 'whoami: '
+echo `whoami`
 
 
 SRC_ROOT=/d/src/
 WINDOWS_BUILD_ROOT=/d/wr64
-MACOS_BUILD_ROOT="//PACMAN/Macintosh HD/Users/raindrop/dev/macos/macos_release_jenkins"
+MACOS_BUILD_ROOT="//PACMAN/dev/macos/macos_release_jenkins"
 
 build_site () 
 {
@@ -50,7 +53,7 @@ gather_binaries ()
 }
 
 # Deploy the jekyll site to firebase hosting.
-deploy ()
+deploy_site ()
 {
 	cd ${SRC_ROOT}/smashbrowse_site
 	firebase deploy
@@ -63,8 +66,8 @@ if [ $1 = "build_site" ]; then
 	build_site
 elif [ $1 = "gather_binaries" ]; then
 	gather_binaries
-elif [ $1 = "deploy" ]; then
-	deploy
+elif [ $1 = "deploy_site" ]; then
+	deploy_site
 else
   echo "incorrect arguments given."
 fi
