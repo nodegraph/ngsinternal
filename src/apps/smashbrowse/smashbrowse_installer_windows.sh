@@ -93,7 +93,7 @@ create_installer ()
 {
 	echo "creating installer.."
 	cd $PACK
-	binarycreator --online-only -c 'config/config.xml' -p packages smashbrowse
+	binarycreator --online-only -c 'config/config.xml' -p packages smashbrowse.exe
 }
 
 # -------------------------------------------------------------------------
