@@ -857,11 +857,13 @@ Entity* NodeGraphManipulator::create_compute_node(bool centered, EntityDID entit
 }
 
 Entity* NodeGraphManipulator::create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
-  return _imp->create_user_macro_node(centered, macro_name, name, group_entity);
+  // Name the node with the same name as the macro name.
+  return _imp->create_user_macro_node(centered, macro_name, macro_name, group_entity);
 }
 
 Entity* NodeGraphManipulator::create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
-  return _imp->create_app_macro_node(centered, macro_name, name, group_entity);
+  // Name the node with the same name as the macro name.
+  return _imp->create_app_macro_node(centered, macro_name, macro_name, group_entity);
 }
 
 Entity* NodeGraphManipulator::create_input_node(bool centered, const QJsonValue& value, const std::string& name, Entity* group_entity) {
