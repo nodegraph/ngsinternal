@@ -186,14 +186,6 @@ class INTERACTIONS_EXPORT GroupInteraction: public Component {
   // These are our interaction states.
   // Note that we don't have one for panning and zooming, as that's available in all states by just using the middle mouse button.
   enum InteractionState {
-    kBottomLeftCornerResizing,
-    kBottomRightCornerResizing,
-    kTopLeftCornerResizing,
-    kTopRightCornerResizing,
-    kLeftEdgeResizing,
-    kRightEdgeResizing,
-    kBottomEdgeResizing,
-    kTopEdgeResizing,
     kNodeSelectionAndDragging, // when nodes are selected and we may be dragging them soon.
     kDraggingLinkTail, // when we're dragging the tail end of a link.
     kDraggingLinkHead, // when we're dragging the head end of a link.

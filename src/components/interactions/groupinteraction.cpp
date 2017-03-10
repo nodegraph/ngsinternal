@@ -460,18 +460,6 @@ void GroupInteraction::released(const MouseInfo& mouse_info) {
 
   } else if (updated_mouse_info.left_button) {
 
-    if ((_state == kLeftEdgeResizing)||
-        (_state == kRightEdgeResizing)||
-        (_state == kBottomEdgeResizing)||
-        (_state == kTopEdgeResizing)||
-        (_state == kBottomLeftCornerResizing)||
-        (_state == kBottomRightCornerResizing)||
-        (_state == kTopLeftCornerResizing)||
-        (_state == kTopRightCornerResizing)) {
-      _state = kNodeSelectionAndDragging;
-      return;
-    }
-
     // Panning a selection of nodes.
     if ((_state == kNodeSelectionAndDragging) && (_panning_selection)) {
 
