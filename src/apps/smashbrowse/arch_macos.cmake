@@ -29,6 +29,7 @@ add_custom_command(
 	COMMAND cp -fRL "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson" ${app}/Resources/gson
 	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/chromeextension ${app}/Resources/chromeextension
 	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/bin ${app}/Resources
+	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/appmacros ${app}/Resources
 )
 
 
