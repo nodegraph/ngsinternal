@@ -59,10 +59,8 @@
 #include <guicomponents/computes/acceptsaveprocess.h>
 #include <guicomponents/computes/javaprocess.h>
 #include <guicomponents/computes/downloadmanager.h>
-#include <guicomponents/computes/entergroupcompute.h>
-#include <guicomponents/computes/enterbrowsergroupcompute.h>
-#include <guicomponents/computes/entermqttgroupcompute.h>
 #include <guicomponents/computes/browsercomputes.h>
+#include <guicomponents/computes/mqtthostcompute.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/computes/waitnodecompute.h>
@@ -107,33 +105,6 @@ namespace ngs {
 // -----------------------------------------------------------------------------------------------------------
 // Helpers.
 // -----------------------------------------------------------------------------------------------------------
-
-void create_default_enter(Entity* group) {
-  // The default enter compute does nothing.
-  // This just reserves their namespace to prevent the user from creating other nodes in their place.
-  // Then our code doesn't need check if the enter node is the one we expect.
-  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(group, "enter");
-  EntityConfig config;
-  config.compute_did = ComponentDID::kEnterGroupCompute;
-  config.visible = false;
-  enter->create_internals(config);
-}
-
-void create_default_exit(Entity* group) {
-  // The default exit compute does nothing.
-  // This just reserves their namespace to prevent the user from creating other nodes in their place.
-  // Then our code doesn't need check if the enter node is the one we expect.
-  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(group, "exit");
-  EntityConfig config;
-  config.compute_did = ComponentDID::kExitGroupCompute;
-  config.visible = false;
-  exit->create_internals(config);
-}
-
-void create_default_enter_and_exit(Entity* group) {
-  create_default_enter(group);
-  create_default_exit(group);
-}
 
 // Create and connect an input node to each input for a node.
 void surround_with_input_nodes(Entity* node) {
@@ -393,7 +364,6 @@ void GroupNodeEntity::create_internals(const EntityConfig& config) {
     new_ff InputTopology(this);
     new_ff OutputTopology(this);
   }
-  create_default_enter_and_exit(this);
 
   // These sub components are not required for the functionality of the group.
   // They are just added in for convenience. The user may destroy or rename them.
@@ -505,8 +475,6 @@ void IfGroupNodeEntity::create_internals(const EntityConfig& config) {
     config2.visible = true;
     out->create_internals(config2);
   }
-
-  create_default_enter_and_exit(this);
 }
 
 void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
@@ -544,8 +512,6 @@ void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
     config2.visible = true;
     out->create_internals(config2);
   }
-
-  create_default_enter_and_exit(this);
 }
 
 void BrowserGroupNodeEntity::create_internals(const EntityConfig& config) {
@@ -562,15 +528,6 @@ void BrowserGroupNodeEntity::create_internals(const EntityConfig& config) {
     new_ff OutputTopology(this);
   }
   // Sub Components.
-  ComputeNodeEntity* sub = new_ff ComputeNodeEntity(this, "enter");
-  EntityConfig config2;
-  config2.compute_did = ComponentDID::kEnterBrowserGroupCompute;
-  config2.visible = false;
-  sub->create_internals(config2);
-  ComputeNodeEntity* exit = new_ff ComputeNodeEntity(this, "exit");
-  config2.compute_did = ComponentDID::kExitBrowserGroupCompute;
-  exit->create_internals(config2);
-
   {
     InputNodeEntity* in = new_ff InputNodeEntity(this, "browser_width");
     EntityConfig config2;
@@ -617,13 +574,12 @@ void MQTTGroupNodeEntity::create_internals(const EntityConfig& config) {
     new_ff OutputTopology(this);
   }
   // Sub Components.
-  ComputeNodeEntity* enter = new_ff ComputeNodeEntity(this, "enter");
+  ComputeNodeEntity* host = new_ff ComputeNodeEntity(this, "host");
   EntityConfig config2;
-  config2.compute_did = ComponentDID::kEnterMQTTGroupCompute;
+  config2.compute_did = ComponentDID::kMQTTHostCompute;
   config2.visible = false;
-  enter->create_internals(config2);
-  surround_with_input_nodes(enter);
-  create_default_exit(this);
+  host->create_internals(config2);
+  surround_with_input_nodes(host);
 
   // These sub components are not required for the functionality of the mqtt group.
   // They are just added in for convenience. The user may destroy or rename them.
@@ -804,7 +760,6 @@ void UserMacroNodeEntity::create_internals(const EntityConfig& config) {
     new_ff OutputTopology(this);
   }
   // Sub Components.
-  create_default_enter_and_exit(this);
 }
 
 void UserMacroNodeEntity::save(SimpleSaver& saver) const {

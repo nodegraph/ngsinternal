@@ -8,8 +8,7 @@
 
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/mqttcomputes.h>
-#include <guicomponents/computes/entermqttgroupcompute.h>
-
+#include <guicomponents/computes/mqtthostcompute.h>
 #include <functional>
 
 namespace ngs {
@@ -39,7 +38,7 @@ void BaseMQTTCompute::init_hints(QJsonObject& m) {
 
 void BaseMQTTCompute::update_wires() {
   // This caches the dep, and will only dirty this component when it changes.
-  _enter = find_enter_node();
+  _enter = find_host_node();
 }
 
 Entity* BaseMQTTCompute::find_group_context() const {
@@ -54,11 +53,11 @@ Entity* BaseMQTTCompute::find_group_context() const {
   return NULL;
 }
 
-Dep<EnterMQTTGroupCompute> BaseMQTTCompute::find_enter_node() {
+Dep<MQTTHostCompute> BaseMQTTCompute::find_host_node() {
   Entity* group = find_group_context();
-  Entity* enter = group->get_child("enter");
-  assert(enter);
-  return get_dep<EnterMQTTGroupCompute>(enter);
+  Entity* host = group->get_child("host");
+  assert(host);
+  return get_dep<MQTTHostCompute>(host);
 }
 
 void BaseMQTTCompute::append_callback_tasks(TaskContext& tc) {

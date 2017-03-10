@@ -14,9 +14,7 @@ set(sources
     httpcomputes.cpp
     mqttcomputes.cpp
     browserrecorder.cpp
-    entergroupcompute.cpp
-    entermqttgroupcompute.cpp
-    enterbrowsergroupcompute.cpp
+    mqtthostcompute.cpp
     waitnodecompute.cpp
     postnodecompute.cpp
     )
@@ -25,8 +23,6 @@ set(headers
     browsercomputes.h
     httpcomputes.h
     mqttcomputes.h
-    entergroupcompute.h
-    enterbrowsergroupcompute.h
     )
 
     
@@ -40,7 +36,7 @@ set(moc_headers
     messagereceiver.h
     taskqueuer.h
     httpworker.h
-    entermqttgroupcompute.h
+    mqtthostcompute.h
     browserrecorder.h
     scriptnodecompute.h
     waitnodecompute.h

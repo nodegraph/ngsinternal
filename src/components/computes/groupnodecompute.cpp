@@ -315,7 +315,7 @@ bool GroupNodeCompute::update_state() {
   copy_output_nodes_to_outputs();
 
   // Run our exit node if needed.
-  _manipulator->clean_exit_node(our_entity());
+  _manipulator->exit_group_prep(our_entity());
   return true;
 }
 

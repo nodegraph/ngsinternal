@@ -8,7 +8,6 @@
 #include <guicomponents/comms/guitypes.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/browsercomputes.h>
-#include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/taskqueuer.h>
 
 #include <functional>
@@ -21,7 +20,6 @@ BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
       _worker(this),
       _scheduler(this),
-      _enter(this),
       _browser_width(this),
       _browser_height(this) {
   get_dep_loader()->register_fixed_dep(_worker, Path());
@@ -67,11 +65,9 @@ Entity* BrowserCompute::find_group_context() const {
 
 void BrowserCompute::find_dep_nodes() {
   Entity* group = find_group_context();
-  Entity* enter = group->get_child("enter");
+
   Entity* width = group->get_child("browser_width");
   Entity* height = group->get_child("browser_height");
-  assert(enter);
-  _enter = get_dep<EnterBrowserGroupCompute>(enter);
   _browser_width = get_dep<InputNodeCompute>(width);
   _browser_height = get_dep<InputNodeCompute>(height);
 }
@@ -89,6 +85,7 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
   size_obj.insert(Message::kHeight, height);
   _worker->queue_merge_chain_state(tc, size_obj);
   _worker->queue_resize_browser(tc);
+  std::cerr << "queued browser size to: " << width << ", " << height << "\n";
 
   // Merge chain state.
   QJsonObject inputs = _inputs->get_input_values();
@@ -152,7 +149,7 @@ bool OpenBrowserCompute::update_state() {
   BrowserCompute::update_state();
 
   TaskContext tc(_scheduler);
-  pre_update_state(tc);
+  //pre_update_state(tc);
   _worker->queue_open_browser(tc);
   handle_response(tc);
   post_update_state(tc);
@@ -165,10 +162,26 @@ bool CloseBrowserCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_close_browser(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
+  {
+    // Determine whether we are nested recusively inside muliple browser groups.
+    // We do this by counting the number surrounding browser groups.
+    Entity* parent = our_entity()->get_parent();
+    size_t count = 0;
+    while(parent) {
+      if (parent->get_did() == EntityDID::kBrowserGroupNodeEntity) {
+        count++;
+      }
+      parent = parent->get_parent();
+    }
+    std::cerr << "NNNNNNNNNNNNNNNNNNNNNNNNNNN num browser groups: " << count << "\n";
+    // If we're not nested, then we can close the browser.
+    if (count <= 1) {
+      std::cerr << "closing browser!!!!!!!!!!!!\n";
+      _worker->queue_close_browser(tc);
+    }
+  }
+  //post_update_state(tc);
+  return true;
 }
 
 bool ReleaseBrowserCompute::update_state() {

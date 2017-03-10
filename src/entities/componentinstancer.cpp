@@ -47,9 +47,6 @@
 #include <guicomponents/computes/httpcomputes.h>
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/mqttcomputes.h>
-#include <guicomponents/computes/entergroupcompute.h>
-#include <guicomponents/computes/entermqttgroupcompute.h>
-#include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/postnodecompute.h>
 
 #include <guicomponents/quick/fborenderer.h>
@@ -75,6 +72,7 @@
 #include <guicomponents/computes/downloadmanager.h>
 #include <guicomponents/computes/javaprocess.h>
 #include <guicomponents/computes/browserrecorder.h>
+#include <guicomponents/computes/mqtthostcompute.h>
 #include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/computes/waitnodecompute.h>
 #include <iostream>

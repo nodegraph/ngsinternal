@@ -1,11 +1,10 @@
 #include <guicomponents/quick/nodegraphmanipulator.h>
 
 #include <guicomponents/quick/nodegraphquickitem.h>
+#include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/mqttcomputes.h>
-#include <guicomponents/computes/entergroupcompute.h>
 #include <guicomponents/computes/browsercomputes.h>
-#include <guicomponents/computes/enterbrowsergroupcompute.h>
 #include <guicomponents/computes/messagereceiver.h>
 
 #include <components/compshapes/nodeselection.h>
@@ -56,6 +55,7 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
       _factory(this),
       _selection(this),
       _ng_quick(this),
+      _queuer(this),
       _scheduler(this),
       _msg_receiver(this),
       _file_model(this) {
@@ -101,6 +101,7 @@ void NodeGraphManipulatorImp::initialize_wires() {
   _factory = get_dep<BaseFactory>(_app_root);
   _selection = get_dep<NodeSelection>(_app_root);
   _ng_quick = get_dep<NodeGraphQuickItem>(_app_root);
+  _queuer = get_dep<TaskQueuer>(_app_root);
   _scheduler = get_dep<TaskScheduler>(_app_root);
   _msg_receiver = get_dep<MessageReceiver>(_app_root);
   _file_model = get_dep<FileModel>(_app_root);
@@ -130,6 +131,8 @@ void NodeGraphManipulatorImp::set_ultimate_targets(Entity* entity, bool force_st
 }
 
 void NodeGraphManipulatorImp::set_ultimate_targets(const std::unordered_set<Entity*>& entities, bool force_stack_reset) {
+  std::cerr << "appending to ultimate targets: " << entities.size() << "\n";
+
   DepUSet<Compute> computes;
   for (Entity* entity: entities) {
     Dep<Compute> c = get_dep<Compute>(entity);
@@ -143,17 +146,29 @@ void NodeGraphManipulatorImp::set_ultimate_targets(const std::unordered_set<Enti
 
   // Clear the error marker on nodes.
   _selection->clear_error_node();
-  // This may be called while we are already trying to clean another ultimate target.
-  // Hence we force a stack reset to clear out any pre-existing tasks.
-  if (force_stack_reset) {
-    _scheduler->force_stack_reset();
+
+//  // This may be called while we are already trying to clean another ultimate target.
+//  // Hence we force a stack reset to clear out any pre-existing tasks.
+//  if (force_stack_reset) {
+//    _scheduler->force_stack_reset();
+//  }
+
+
+  // Remove any computes which are already in the ultimate targets.
+  for (auto &c: _ultimate_targets) {
+    if (computes.count(c) > 0) {
+      computes.erase(c);
+    }
   }
+
   // Set and try cleaning the ultimate target.
-  _ultimate_targets = computes;
+  for (auto &c: computes) {
+    _ultimate_targets.push_back(c);
+  }
 
   _app_root->clean_wires();
 
-  continue_cleaning_to_ultimate_targets();
+  continue_cleaning_to_ultimate_targets_on_idle();
 }
 
 void NodeGraphManipulatorImp::set_inputs_as_ultimate_targets(Entity* node_entity) {
@@ -176,7 +191,7 @@ void NodeGraphManipulatorImp::clear_ultimate_targets() {
 
 void NodeGraphManipulatorImp::prune_clean_or_dead() {
   // Remove any ultimate targets that are already clean.
-  DepUSet<Compute>::iterator iter = _ultimate_targets.begin();
+  std::vector<Dep<Compute> >::iterator iter = _ultimate_targets.begin();
   while (iter != _ultimate_targets.end()) {
     if (!(*iter)) {
       // If the compute has been destoryed, then we erase it.
@@ -308,35 +323,30 @@ void NodeGraphManipulatorImp::update_clean_marker(Entity* entity, bool clean) {
   // components. But now it is cleaning in a bad state.
 }
 
-void NodeGraphManipulatorImp::clean_enter_node(Entity* group) {
-  // Special case for browser group nodes.
-  // We always run the enter node's compute, but we don't dirty or clean it as it
-  // affects the group's dirtiness especially when just browsing the groups in the ui.
+void NodeGraphManipulatorImp::enter_group_prep(Entity* group) {
   if (group->get_did() == EntityDID::kBrowserGroupNodeEntity) {
-    Entity* enter = group->get_child("enter");
-    Dep<EnterBrowserGroupCompute> enter_compute = get_dep<EnterBrowserGroupCompute>(enter);
-    if (enter_compute->is_state_dirty() == false) {
-      enter_compute->update_state();
-      return;
-    }
+    TaskContext tc(_scheduler);
+    _queuer->queue_open_browser(tc);
   }
-
-  // For all group types we, try to clean the enter node.
-  Entity* node = group->get_child("enter");
-  if (!node) {
-    return;
-  }
-  set_ultimate_targets(node);
 }
 
-void NodeGraphManipulatorImp::clean_exit_node(Entity* group) {
-  // Special case for browser group nodes.
-  // We always run the exit node's compute, but we don't dirty or clean it as it
-  // affects the group's dirtiness especially when just browsing the groups in the ui.
+void NodeGraphManipulatorImp::exit_group_prep(Entity* group) {
   if (group->get_did() == EntityDID::kBrowserGroupNodeEntity) {
-    Entity* exit = group->get_child("exit");
-    Dep<ExitBrowserGroupCompute> exit_compute = get_dep<ExitBrowserGroupCompute>(exit);
-    exit_compute->update_state();
+    // Determine whether we are nested recusively inside muliple browser groups.
+    // We do this by counting the number surrounding browser groups.
+    Entity* parent = group;
+    size_t count = 0;
+    while(parent) {
+      if (parent->get_did() == EntityDID::kBrowserGroupNodeEntity) {
+        count++;
+      }
+      parent = parent->get_parent();
+    }
+    // If we're not nested, then we can close the browser.
+    if (count <= 1) {
+      TaskContext tc(_scheduler);
+      _queuer->queue_close_browser(tc);
+    }
   }
 }
 
@@ -348,12 +358,12 @@ void NodeGraphManipulatorImp::dive_into_group(const std::string& child_group_nam
   }
 
   _ng_quick->dive_into_group(child_group_name);
-  clean_enter_node(group);
+  enter_group_prep(group);
 }
 
 void NodeGraphManipulatorImp::surface_from_group() {
   Entity* group_entity = _factory->get_current_group();
-  clean_exit_node(group_entity);
+  exit_group_prep(group_entity);
   _ng_quick->surface();
 }
 
@@ -810,12 +820,12 @@ void NodeGraphManipulator::update_clean_marker(Entity* entity, bool clean) {
   _imp->update_clean_marker(entity, clean);
 }
 
-void NodeGraphManipulator::clean_enter_node(Entity* group) {
-  _imp->clean_enter_node(group);
+void NodeGraphManipulator::enter_group_prep(Entity* group) {
+  _imp->enter_group_prep(group);
 }
 
-void NodeGraphManipulator::clean_exit_node(Entity* group) {
-  _imp->clean_exit_node(group);
+void NodeGraphManipulator::exit_group_prep(Entity* group) {
+  _imp->exit_group_prep(group);
 }
 
 void NodeGraphManipulator::dive_into_group(const std::string& child_group_name) {

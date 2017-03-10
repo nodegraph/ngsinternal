@@ -3,7 +3,6 @@
 #include <guicomponents/quick/fboworker.h>
 #include <guicomponents/quick/texturedisplaynode.h>
 #include <guicomponents/quick/basenodegraphmanipulator.h>
-#include <guicomponents/computes/entergroupcompute.h>
 #include <components/computes/groupnodecompute.h>
 #include <guicomponents/comms/licensechecker.h>
 

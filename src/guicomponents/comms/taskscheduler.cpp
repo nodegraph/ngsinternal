@@ -31,7 +31,7 @@ TaskScheduler::TaskScheduler(Entity* parent)
       _ignore_outstanding_response(false),
       _outstanding_response_id(-1),
       _connected(false),
-      _current_task(){
+      _current_task() {
   get_dep_loader()->register_fixed_dep(_manipulator, Path());
 }
 
@@ -130,6 +130,8 @@ void TaskScheduler::run_next_task() {
   // Pop a task and run it..
   _current_task = get_top_queue().front();
   std::cerr << "current task: " << _current_task.about << "\n";
+  std::cerr << "num stacks: " << _stack.size() << "\n";
+  std::cerr << "num tasks in top stack: " << get_top_queue().size() << "\n";
   get_top_queue().pop_front();
   _current_task();
 }

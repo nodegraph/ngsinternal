@@ -19,6 +19,7 @@ namespace ngs {
 class BaseFactory;
 class NodeSelection;
 class NodeGraphQuickItem;
+class TaskQueuer;
 class TaskScheduler;
 class Compute;
 class MessageReceiver;
@@ -67,8 +68,8 @@ Q_OBJECT
   virtual void update_clean_marker(Entity* entity, bool clean);
 
   // Group logic.
-  virtual void clean_enter_node(Entity* group);
-  virtual void clean_exit_node(Entity* group);
+  virtual void enter_group_prep(Entity* group);
+  virtual void exit_group_prep(Entity* group);
   virtual void dive_into_group(const std::string& child_group_name);
   virtual void surface_from_group();
 
@@ -126,6 +127,7 @@ private slots:
   Dep<BaseFactory> _factory;
   Dep<NodeSelection> _selection;
   Dep<NodeGraphQuickItem> _ng_quick;
+  Dep<TaskQueuer> _queuer;
   Dep<TaskScheduler> _scheduler;
   Dep<MessageReceiver> _msg_receiver;
   Dep<FileModel> _file_model;
@@ -134,7 +136,7 @@ private slots:
   // Note that there maybe many asynchronous computes which cause each cleaning pass over the dependencies
   // to finish early (returning false). Holding this reference to the ultimate component we want to clean
   // allows us to restart the cleaning process once other asynchronous cleaning processes finish.
-  DepUSet<Compute> _ultimate_targets;
+  std::vector<Dep<Compute> > _ultimate_targets;
 
   // Wait for ultimate targets to become clean.
   QTimer _idle_timer;
@@ -182,8 +184,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void update_clean_marker(Entity* entity, bool clean);
 
   // Group logic.
-  virtual void clean_enter_node(Entity* group);
-  virtual void clean_exit_node(Entity* group);
+  virtual void enter_group_prep(Entity* group);
+  virtual void exit_group_prep(Entity* group);
   virtual void dive_into_group(const std::string& child_group_name);
   virtual void surface_from_group();
 

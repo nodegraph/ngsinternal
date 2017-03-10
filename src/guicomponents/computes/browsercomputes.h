@@ -10,7 +10,7 @@ class Entity;
 class TaskQueuer;
 class TaskScheduler;
 class TaskContext;
-class EnterBrowserGroupCompute;
+class OpenBrowserCompute;
 class InputNodeCompute;
 
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
@@ -41,7 +41,6 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   Dep<TaskQueuer> _worker;
   Dep<TaskScheduler> _scheduler;
-  Dep<EnterBrowserGroupCompute> _enter;
   Dep<InputNodeCompute> _browser_width;
   Dep<InputNodeCompute> _browser_height;
 };
@@ -50,16 +49,14 @@ class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, OpenBrowserCompute);
   OpenBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
- protected:
-  virtual bool update_state();
+  virtual bool update_state(); // made public
 };
 
 class GUICOMPUTES_EXPORT CloseBrowserCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, CloseBrowserCompute);
   CloseBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
- protected:
-  virtual bool update_state();
+  virtual bool update_state(); // made public
 };
 
 class GUICOMPUTES_EXPORT ReleaseBrowserCompute: public BrowserCompute {

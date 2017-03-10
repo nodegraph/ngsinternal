@@ -206,14 +206,8 @@ COMPONENT_ENTRY2(DotNodeCompute, 47)\
 COMPONENT_ENTRY2(GroupNodeCompute, 48)\
 COMPONENT_ENTRY2(IfGroupNodeCompute, 49)\
 COMPONENT_ENTRY2(WhileGroupNodeCompute, 50)\
-/* Enter Group Computes. */\
-COMPONENT_ENTRY2(EnterGroupCompute, 51)\
-COMPONENT_ENTRY2(EnterMQTTGroupCompute, 52)\
-COMPONENT_ENTRY2(EnterBrowserGroupCompute, 53)\
-/* Exit Group Computes. */\
-COMPONENT_ENTRY2(ExitGroupCompute, 54)\
-COMPONENT_ENTRY2(ExitBrowserGroupCompute, 55)\
 /* Protocol Based Computes. */\
+COMPONENT_ENTRY2(MQTTHostCompute, 51)\
 COMPONENT_ENTRY2(HTTPCompute, 56)\
 COMPONENT_ENTRY2(MQTTPublishCompute, 57)\
 COMPONENT_ENTRY2(MQTTSubscribeCompute, 58)\
@@ -259,6 +253,9 @@ COMPONENT_ENTRY2(MouseActionCompute, 90)\
 COMPONENT_ENTRY2(TextActionCompute, 91)\
 COMPONENT_ENTRY2(PasswordActionCompute, 92)\
 COMPONENT_ENTRY2(ElementActionCompute, 93)\
+
+// Numbers that are currently unused:
+// 52, 53, 54, 55
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()

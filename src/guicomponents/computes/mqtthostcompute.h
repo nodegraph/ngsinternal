@@ -1,6 +1,6 @@
 #pragma once
 #include <guicomponents/computes/guicomputes_export.h>
-#include <guicomponents/computes/entergroupcompute.h>
+#include <components/computes/compute.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
@@ -15,7 +15,7 @@ class TaskScheduler;
 class Inputs;
 class TaskContext;
 
-class GUICOMPUTES_EXPORT EnterMQTTGroupCompute : public QObject, public EnterGroupCompute {
+class GUICOMPUTES_EXPORT MQTTHostCompute : public QObject, public Compute {
 Q_OBJECT
  public:
 
@@ -28,9 +28,9 @@ Q_OBJECT
     QString client_id;
   };
 
-  COMPONENT_ID(Compute, EnterMQTTGroupCompute);
-  EnterMQTTGroupCompute(Entity* entity);
-  virtual ~EnterMQTTGroupCompute();
+  COMPONENT_ID(Compute, MQTTHostCompute);
+  MQTTHostCompute(Entity* entity);
+  virtual ~MQTTHostCompute();
 
   // Inputs and Outputs.
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());

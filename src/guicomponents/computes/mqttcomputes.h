@@ -9,7 +9,7 @@ namespace ngs {
 class Entity;
 class TaskScheduler;
 class TaskContext;
-class EnterMQTTGroupCompute;
+class MQTTHostCompute;
 
 class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
  public:
@@ -28,10 +28,10 @@ class GUICOMPUTES_EXPORT BaseMQTTCompute: public Compute {
 
 
   Entity* find_group_context() const;
-  Dep<EnterMQTTGroupCompute> find_enter_node();
+  Dep<MQTTHostCompute> find_host_node();
 
   Dep<TaskScheduler> _scheduler;
-  Dep<EnterMQTTGroupCompute> _enter; // This is not serialized and is gathered at runtime.
+  Dep<MQTTHostCompute> _enter; // This is not serialized and is gathered at runtime.
 };
 
 class GUICOMPUTES_EXPORT MQTTPublishCompute: public BaseMQTTCompute {

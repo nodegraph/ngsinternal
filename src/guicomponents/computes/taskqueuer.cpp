@@ -290,6 +290,7 @@ void TaskQueuer::queue_open_browser(TaskContext& tc) {
   _scheduler->queue_task(tc, Task(std::bind(&TaskQueuer::open_browser_task,this), false), "queue_open_browser");
   queue_wait_for_chrome_connection(tc);
   _scheduler->queue_task(tc, Task(std::bind(&TaskQueuer::open_browser_post_task,this), false), "queue_open_browser_post");
+  queue_update_current_tab(tc);
 }
 
 void TaskQueuer::queue_close_browser(TaskContext& tc) {
