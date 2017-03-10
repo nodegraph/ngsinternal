@@ -29,6 +29,7 @@ package ()
 	mkdir -p ${PACK}/packages/com.smashbrowse.html/${DATA_PREFIX}/Resources/
 	mkdir -p ${PACK}/packages/com.smashbrowse.jre/${DATA_PREFIX}/Resources/
 	mkdir -p ${PACK}/packages/com.smashbrowse.selenium/${DATA_PREFIX}/Resources/
+	mkdir -p ${PACK}/packages/com.smashbrowse.appmacros/${DATA_PREFIX}/Resources/
 	
 	mkdir -p ${PACK}/packages/com.smashbrowse.primary/${DATA_PREFIX}/Resources/
 	mkdir -p ${PACK}/packages/com.smashbrowse.primary/${DATA_PREFIX}/Resources/bin
@@ -49,6 +50,7 @@ package ()
 	cp -fr html ${PACK}/packages/com.smashbrowse.html/${DATA_PREFIX}/Resources
 	cp -fr jre ${PACK}/packages/com.smashbrowse.jre/${DATA_PREFIX}/Resources
 	cp -fr selenium ${PACK}/packages/com.smashbrowse.selenium/${DATA_PREFIX}/Resources
+	cp -fr appmacros ${PACK}/packages/com.smashbrowse.appmacros/${DATA_PREFIX}/Resources
 	
 	
 	

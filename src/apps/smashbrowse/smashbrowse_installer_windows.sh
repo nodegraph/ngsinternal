@@ -30,6 +30,7 @@ package ()
 	mkdir -p ${PACK}/packages/com.smashbrowse.selenium/data
 	mkdir -p ${PACK}/packages/com.smashbrowse.primary/data/bin
 	mkdir -p ${PACK}/packages/com.smashbrowse.secondary/data/bin
+	mkdir -p ${PACK}/packages/com.smashbrowse.appmacros/data
 	
 	# Most dirs correspond one to one with their packages.
 	cp -fr chromeextension ${PACK}/packages/com.smashbrowse.chromeextension/data
@@ -37,6 +38,7 @@ package ()
 	cp -fr html ${PACK}/packages/com.smashbrowse.html/data
 	cp -fr jre ${PACK}/packages/com.smashbrowse.jre/data
 	cp -fr selenium ${PACK}/packages/com.smashbrowse.selenium/data
+	cp -fr appmacros ${PACK}/packages/com.smashbrowse.appmacros/data
 	
 	
 	# However the bin dir is split into 2 packages.

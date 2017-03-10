@@ -10,9 +10,9 @@
 
 namespace ngs {
 
-const QString AppConfig::kAppDataDir = "app_data";
-const QString AppConfig::kAppMacrosDir = "app_macros";
-const QString AppConfig::kUserMacrosDir = "user_macros";
+const QString AppConfig::kAppDataDir = "appdata";
+const QString AppConfig::kAppMacrosDir = "appmacros";
+const QString AppConfig::kUserMacrosDir = "usermacros";
 
 AppConfig::AppConfig(Entity* parent)
     : Component(parent, kIID(), kDID()) {
@@ -58,7 +58,13 @@ QString AppConfig::get_app_data_dir() {
 }
 
 QString AppConfig::get_app_macros_dir() {
-  return get_app_bin_dir() + "/../" + kAppMacrosDir;
+  QString dir = get_app_bin_dir();
+#if (ARCH == ARCH_WINDOWS)
+  dir += "/../" + kAppMacrosDir;
+#elif (ARCH == ARCH_MACOS)
+  dir += "/../Resources/" + kAppMacrosDir;
+#endif
+  return dir;
 }
 
 QString AppConfig::get_user_macros_dir() {

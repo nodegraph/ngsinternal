@@ -4,7 +4,7 @@
 
 INSTALL(
   DIRECTORY
-      "${PLATFORM_ROOT}/srcdeps/ngsexternal/app_macros"
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/appmacros"
   DESTINATION .
   COMPONENT smashbrowse
 )
