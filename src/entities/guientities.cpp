@@ -666,7 +666,8 @@ void OutputNodeEntity::create_internals(const EntityConfig& config) {
 
   // Gui components.
   if (config.visible) {
-    new_ff OutputNodeShape(this);
+    OutputNodeShape* os = new_ff OutputNodeShape(this);
+    os->set_pos(glm::vec2(0, -700));
     new_ff InputTopology(this);
     new_ff OutputTopology(this);
   }
