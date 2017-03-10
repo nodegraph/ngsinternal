@@ -25,14 +25,14 @@ AppConfig::AppConfig(Entity* parent)
       QDir().mkpath(app_data_dir);
     }
   }
-  // Make sure the macros dir exists.
-  {
-    QString app_macros_dir = get_app_macros_dir();
-    QFileInfo info(app_macros_dir);
-    if (!info.exists()) {
-      QDir().mkpath(app_macros_dir);
-    }
-  }
+//  // Make sure the macros dir exists.
+//  {
+//    QString app_macros_dir = get_app_macros_dir();
+//    QFileInfo info(app_macros_dir);
+//    if (!info.exists()) {
+//      QDir().mkpath(app_macros_dir);
+//    }
+//  }
   // Make sure the user macros dir exists.
   {
     QString user_macros_dir = get_user_macros_dir();
@@ -58,7 +58,7 @@ QString AppConfig::get_app_data_dir() {
 }
 
 QString AppConfig::get_app_macros_dir() {
-  return get_user_app_dir() + "/" + kAppMacrosDir;
+  return get_app_bin_dir() + "/../" + kAppMacrosDir;
 }
 
 QString AppConfig::get_user_macros_dir() {
