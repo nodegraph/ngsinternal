@@ -713,8 +713,8 @@ QJsonObject ShiftElementByTypeCompute::init_hints() {
   add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
   add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
 
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
+  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
+  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
   add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
 
   return m;
@@ -791,8 +791,8 @@ QJsonObject ShiftElementByValuesCompute::init_hints() {
   add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
   add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
 
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
+  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
+  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
   add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
   return m;
 }
@@ -848,8 +848,8 @@ QJsonObject ShiftElementByTypeAlongRowsCompute::init_hints() {
   add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
   add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
 
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
+  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
+  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
   add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
 
   return m;
@@ -922,8 +922,8 @@ QJsonObject ShiftElementByValuesAlongRowsCompute::init_hints() {
   add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
   add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
 
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element from the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element from the current element's height.");
+  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
+  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
   add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
   return m;
 }

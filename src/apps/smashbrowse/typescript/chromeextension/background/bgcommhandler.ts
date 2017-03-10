@@ -318,15 +318,19 @@ class BgCommHandler {
 
         // Note the return in the forEach loop acts like a continue statement.
         candidates.forEach((dest) => {
-            
-            // Check the size of the dest element.
             let dest_box = new Box(dest.box)
-            let size_diff_x = dest_box.get_width() - src_box.get_width()
-            let size_diff_y = dest_box.get_height() - src_box.get_height()
-            if (Math.abs(size_diff_x) > Math.abs(max_width_diff)) {
+            
+            // Determine if the candidate is of the right size.
+            let dest_width = dest_box.get_width()
+            let dest_height = dest_box.get_height()
+            let min_width_pixels = src_box.get_width() * (1.0 - (max_width_diff * 0.01))
+            let max_width_pixels = src_box.get_width() * (1.0 + (max_width_diff * 0.01))
+            let min_height_pixels = src_box.get_height() * (1.0 - (max_height_diff * 0.01));
+            let max_height_pixels = src_box.get_height() * (1.0 + (max_height_diff * 0.01));
+            if ((dest_width < min_width_pixels) || (dest_width > max_width_pixels)) {
                 return
             }
-            if (Math.abs(size_diff_y) > Math.abs(max_height_diff)) {
+            if ((dest_height < min_height_pixels) || (dest_height > max_height_pixels)) {
                 return
             }
 
@@ -372,18 +376,22 @@ class BgCommHandler {
                 return
             }
 
-            // Determine the direction and magnitude.
+            // Determine the candidates center point information.
             let dest_box = new Box(dest.box)
             let dest_center:Point = dest_box.get_center()
             let diff = dest_center.subtract(src_center)
             
-            // Determine the size weight for the size difference.
-            let size_diff_x = dest_box.get_width() - src_box.get_width()
-            let size_diff_y = dest_box.get_height() - src_box.get_height()
-            if (Math.abs(size_diff_x) > Math.abs(max_width_diff)) {
+            // Determine if the candidate is of the right size.
+            let dest_width = dest_box.get_width()
+            let dest_height = dest_box.get_height()
+            let min_width_pixels = src_box.get_width() * (1.0 - (max_width_diff * 0.01))
+            let max_width_pixels = src_box.get_width() * (1.0 + (max_width_diff * 0.01))
+            let min_height_pixels = src_box.get_height() * (1.0 - (max_height_diff * 0.01));
+            let max_height_pixels = src_box.get_height() * (1.0 + (max_height_diff * 0.01));
+            if ((dest_width < min_width_pixels) || (dest_width > max_width_pixels)) {
                 return
             }
-            if (Math.abs(size_diff_y) > Math.abs(max_height_diff)) {
+            if ((dest_height < min_height_pixels) || (dest_height > max_height_pixels)) {
                 return
             }
 
@@ -987,7 +995,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_app(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
+                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
                             // Wipe out the queue.
                             // Unable to find the next element.
@@ -1087,7 +1095,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, false)
                         this.bg_comm.send_to_app(response)
                     } else {
-                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
+                        let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                         if (!best) {
                             // Unable to find the next element.
                             // Wipe out the queue.
