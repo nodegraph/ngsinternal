@@ -380,7 +380,7 @@ void FileModel::load_graph() {
   }
 }
 
-bool FileModel::save_graph() {
+bool FileModel::save_graph() const {
   external();
   if (_working_row < 0) {
     return false;
@@ -460,7 +460,7 @@ void FileModel::load_graph(int row) {
   save_model();
 }
 
-std::string FileModel::graph_to_string(int row) {
+std::string FileModel::graph_to_string(int row) const {
   // Save the graph to a string.
   std::stringstream ss;
   {
@@ -487,7 +487,7 @@ std::string FileModel::graph_to_string(int row) {
   return ss.str();
 }
 
-bool FileModel::save_graph(int row) {
+bool FileModel::save_graph(int row) const{
 
   std::cerr << "trying to save a graph with " << get_root_group()->get_num_nodes() << " nodes\n";
 
@@ -499,7 +499,7 @@ bool FileModel::save_graph(int row) {
   }
 
   external();
-  _working_row = row;
+  //_working_row = row;
 
   // Save the graph to a string.
   std::string contents = graph_to_string(row);

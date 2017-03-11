@@ -157,7 +157,7 @@ Q_OBJECT
   virtual void mouseDoubleClickEvent(QMouseEvent * event);
   virtual void mouseMoveEvent(QMouseEvent * event);
   virtual void mousePressEvent(QMouseEvent * event);
-  virtual void mouseReleaseEvent(QMouseEvent * event);// saves node graph
+  virtual void mouseReleaseEvent(QMouseEvent * event);
   virtual void wheelEvent(QWheelEvent *event);
 
   // Hover overrides.
@@ -168,7 +168,7 @@ Q_OBJECT
   virtual void keyReleaseEvent(QKeyEvent * event);
 
   // Touch overrides
-  virtual void touchEvent(QTouchEvent * event);// saves node graph
+  virtual void touchEvent(QTouchEvent * event);
 
  private:
 

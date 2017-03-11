@@ -57,8 +57,8 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   Q_INVOKABLE void load_graph();
   Q_INVOKABLE void load_graph(int row);
 
-  Q_INVOKABLE bool save_graph();
-  Q_INVOKABLE bool save_graph(int row);
+  Q_INVOKABLE bool save_graph() const;
+  Q_INVOKABLE bool save_graph(int row) const;
 
   Q_INVOKABLE bool destroy_graph();
   Q_INVOKABLE bool destroy_graph(int row);
@@ -69,7 +69,7 @@ class COMMS_EXPORT FileModel: public QStandardItemModel, public Component {
   Q_INVOKABLE QStringList get_user_macro_names() const;
   Q_INVOKABLE QStringList get_app_macro_names() const;
 
-  std::string graph_to_string(int row);
+  std::string graph_to_string(int row) const;
 
   Q_INVOKABLE QVariantMap get_default_settings() {return _default_settings;} // This has to be returned by value, otherwise QML gets 'undefined'.
   Q_INVOKABLE void create_graph(const QVariantMap& info);

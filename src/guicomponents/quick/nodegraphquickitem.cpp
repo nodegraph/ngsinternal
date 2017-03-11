@@ -933,7 +933,7 @@ bool NodeGraphQuickItem::save() {
     size_t num_nodes = get_root_group()->get_num_nodes();
     QString msg = "Unable to save graph.\n";
     msg += "With the Lite license, only graphs with a maximum of " + QString::number(FileModel::kMaxSaveableNodes)+ " nodes can be saved.";
-    msg += " There are currently " + QString::number(num_nodes) + " nodes in this graph.";
+    msg += " There are currently " + QString::number(num_nodes) + " nodes in this graph. Some are invisible.";
     emit set_error_message(msg);
     emit show_error_page();
     return false;
