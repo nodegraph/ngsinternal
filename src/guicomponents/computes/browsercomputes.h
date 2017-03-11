@@ -39,7 +39,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   Entity* find_group_context() const;
   void find_dep_nodes();
 
-  Dep<TaskQueuer> _worker;
+  Dep<TaskQueuer> _queuer;
   Dep<TaskScheduler> _scheduler;
   Dep<InputNodeCompute> _browser_width;
   Dep<InputNodeCompute> _browser_height;

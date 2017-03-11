@@ -200,7 +200,7 @@ void QMLAppEntity::expose_to_qml() {
   FileModel* file_model = get_file_model();
   NodeGraphQuickItem* node_graph = get_node_graph_quick_item();
   NodeGraphController* ng_controller = get_node_graph_controller();
-  TaskQueuer* task_queuer = get_app_worker();
+  TaskQueuer* task_queuer = get_task_queuer();
   BrowserRecorder* browser_recorder = get_app_recorder();
   DownloadManager* download_manager = get_download_manager();
   NodeGraphView* view = get_node_graph_view();
@@ -292,7 +292,7 @@ FileModel* QMLAppEntity::get_file_model() {
   return get<FileModel>();
 }
 
-TaskQueuer* QMLAppEntity::get_app_worker() {
+TaskQueuer* QMLAppEntity::get_task_queuer() {
   return get<TaskQueuer>();
 }
 

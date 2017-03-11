@@ -43,7 +43,7 @@ class ENTITIES_EXPORT QMLAppEntity : public Entity {
   CryptoLogic* get_crypto_logic();
   LicenseChecker* get_license_checker();
   FileModel* get_file_model();
-  TaskQueuer* get_app_worker();
+  TaskQueuer* get_task_queuer();
   BrowserRecorder* get_app_recorder();
   DownloadManager* get_download_manager();
   NodeGraphQuickItem* get_node_graph_quick_item();

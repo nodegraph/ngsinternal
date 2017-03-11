@@ -18,11 +18,11 @@ namespace ngs {
 
 BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
-      _worker(this),
+      _queuer(this),
       _scheduler(this),
       _browser_width(this),
       _browser_height(this) {
-  get_dep_loader()->register_fixed_dep(_worker, Path());
+  get_dep_loader()->register_fixed_dep(_queuer, Path());
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
 }
 
@@ -75,7 +75,7 @@ void BrowserCompute::find_dep_nodes() {
 void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
   // Make sure the browser is open.
-  _worker->queue_open_browser(tc);
+  _queuer->queue_open_browser(tc);
 
   // Make sure the browser is of the right size.
   double width = _browser_width->get_output("out").toDouble();
@@ -83,38 +83,38 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
   QJsonObject size_obj;
   size_obj.insert(Message::kWidth, width);
   size_obj.insert(Message::kHeight, height);
-  _worker->queue_merge_chain_state(tc, size_obj);
-  _worker->queue_resize_browser(tc);
+  _queuer->queue_merge_chain_state(tc, size_obj);
+  _queuer->queue_resize_browser(tc);
   std::cerr << "queued browser size to: " << width << ", " << height << "\n";
 
   // Merge chain state.
   QJsonObject inputs = _inputs->get_input_values();
-  _worker->queue_merge_chain_state(tc, inputs);
+  _queuer->queue_merge_chain_state(tc, inputs);
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.
   // For examples ads may rotate and flip content.
-  _worker->queue_wait_until_loaded(tc);
+  _queuer->queue_wait_until_loaded(tc);
 
 
 }
 
 void BrowserCompute::handle_response(TaskContext& tc) {
   std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::on_response,this,std::placeholders::_1);
-  _worker->queue_receive_chain_state(tc, callback);
+  _queuer->queue_receive_chain_state(tc, callback);
 }
 
 void BrowserCompute::handle_finished(TaskContext& tc) {
   std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::on_finished,this,std::placeholders::_1);
-  _worker->queue_receive_chain_state(tc, callback);
+  _queuer->queue_receive_chain_state(tc, callback);
 }
 
 void BrowserCompute::post_update_state(TaskContext& tc) {
   internal();
-  _worker->queue_scroll_element_into_view(tc);
-  _worker->queue_update_element(tc);
-  _worker->queue_update_current_tab(tc);
-  _worker->queue_wait_until_loaded(tc); // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
-  _worker->queue_update_frame_offsets(tc);
+  _queuer->queue_scroll_element_into_view(tc);
+  _queuer->queue_update_element(tc);
+  _queuer->queue_update_current_tab(tc);
+  _queuer->queue_wait_until_loaded(tc); // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
+  _queuer->queue_update_frame_offsets(tc);
   handle_finished(tc);
 }
 
@@ -150,7 +150,7 @@ bool OpenBrowserCompute::update_state() {
 
   TaskContext tc(_scheduler);
   //pre_update_state(tc);
-  _worker->queue_open_browser(tc);
+  _queuer->queue_open_browser(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -177,7 +177,7 @@ bool CloseBrowserCompute::update_state() {
     // If we're not nested, then we can close the browser.
     if (count <= 1) {
       std::cerr << "closing browser!!!!!!!!!!!!\n";
-      _worker->queue_close_browser(tc);
+      _queuer->queue_close_browser(tc);
     }
   }
   //post_update_state(tc);
@@ -190,8 +190,8 @@ bool ReleaseBrowserCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_release_browser(tc);
-  _worker->queue_open_browser(tc);
+  _queuer->queue_release_browser(tc);
+  _queuer->queue_open_browser(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -203,7 +203,7 @@ bool IsBrowserOpenCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_is_browser_open(tc);
+  _queuer->queue_is_browser_open(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -239,7 +239,7 @@ bool ResizeBrowserCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_resize_browser(tc);
+  _queuer->queue_resize_browser(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -288,7 +288,7 @@ bool GetBrowserSizeCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_get_browser_size(tc);
+  _queuer->queue_get_browser_size(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -312,7 +312,7 @@ bool GetActiveTabTitleCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_get_active_tab_title(tc);
+  _queuer->queue_get_active_tab_title(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -336,7 +336,7 @@ bool DestroyCurrentTabCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_destroy_current_tab(tc);
+  _queuer->queue_destroy_current_tab(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -348,7 +348,7 @@ bool OpenTabCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_open_tab(tc);
+  _queuer->queue_open_tab(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -360,7 +360,7 @@ bool AcceptSaveDialogCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_accept_save_dialog(tc);
+  _queuer->queue_accept_save_dialog(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -429,16 +429,16 @@ bool DownloadVideoCompute::update_state(){
 
   bool use_element = _inputs->get_input_boolean(Message::kUseCurrentElement);
   if (use_element) {
-    _worker->queue_get_current_element(tc);
-    _worker->queue_copy_chain_property(tc, Message::kHREF, Message::kURL);
+    _queuer->queue_get_current_element(tc);
+    _queuer->queue_copy_chain_property(tc, Message::kHREF, Message::kURL);
   } else {
     // Set the url chain property to the current url.
-    _worker->queue_get_current_url(tc);
-    _worker->queue_copy_chain_property(tc, Message::kValue, Message::kURL);
+    _queuer->queue_get_current_url(tc);
+    _queuer->queue_copy_chain_property(tc, Message::kValue, Message::kURL);
   }
 
   // Download the video.
-  _worker->queue_download_video(tc);
+  _queuer->queue_download_video(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -468,8 +468,8 @@ bool NavigateToCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_navigate_to(tc);
-  _worker->queue_wait_until_loaded(tc);
+  _queuer->queue_navigate_to(tc);
+  _queuer->queue_wait_until_loaded(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -481,7 +481,7 @@ bool NavigateBackCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_navigate_back(tc);
+  _queuer->queue_navigate_back(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -493,7 +493,7 @@ bool NavigateForwardCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_navigate_forward(tc);
+  _queuer->queue_navigate_forward(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -505,7 +505,7 @@ bool NavigateRefreshCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_navigate_refresh(tc);
+  _queuer->queue_navigate_refresh(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -517,7 +517,7 @@ bool GetCurrentURLCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_get_current_url(tc);
+  _queuer->queue_get_current_url(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -582,7 +582,7 @@ bool FindElementByPositionCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_find_element_by_position(tc);
+  _queuer->queue_find_element_by_position(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -629,7 +629,7 @@ bool FindElementByValuesCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_find_element_by_values(tc);
+  _queuer->queue_find_element_by_values(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -663,7 +663,7 @@ bool FindElementByTypeCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_find_element_by_type(tc);
+  _queuer->queue_find_element_by_type(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -726,7 +726,7 @@ bool ShiftElementByTypeCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_shift_element_by_type(tc);
+  _queuer->queue_shift_element_by_type(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -803,7 +803,7 @@ bool ShiftElementByValuesCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_shift_element_by_values(tc);
+  _queuer->queue_shift_element_by_values(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -861,7 +861,7 @@ bool ShiftElementByTypeAlongRowsCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_shift_element_by_type_along_rows(tc);
+  _queuer->queue_shift_element_by_type_along_rows(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -934,7 +934,7 @@ bool ShiftElementByValuesAlongRowsCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_shift_element_by_values_along_rows(tc);
+  _queuer->queue_shift_element_by_values_along_rows(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -984,7 +984,7 @@ bool MouseActionCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_perform_mouse_action(tc);
+  _queuer->queue_perform_mouse_action(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -992,13 +992,13 @@ bool MouseActionCompute::update_state() {
 
 void MouseActionCompute::post_update_state(TaskContext& tc) {
   internal();
-  _worker->queue_block_events(tc); // After we're done interacting with the page, block events on the page.
-  _worker->queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
+  _queuer->queue_block_events(tc); // After we're done interacting with the page, block events on the page.
+  _queuer->queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
 
-  _worker->queue_update_element(tc); // Our actions may have moved elements arounds, so we update our overlays.
+  _queuer->queue_update_element(tc); // Our actions may have moved elements arounds, so we update our overlays.
 
   // Force wait so that the webpage can react to the mouse action. Note this is real and makes the mouse click work 100% of the time.
-  _worker-> queue_wait(tc);
+  _queuer-> queue_wait(tc);
 
   // Do the base logic.
   BrowserCompute::post_update_state(tc);
@@ -1039,16 +1039,16 @@ bool TextActionCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_perform_text_action(tc);
+  _queuer->queue_perform_text_action(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
 }
 
 void TextActionCompute::post_update_state(TaskContext& tc) {
-  _worker->queue_block_events(tc);
-  _worker->queue_wait_until_loaded(tc);
-  _worker->queue_update_element(tc);
+  _queuer->queue_block_events(tc);
+  _queuer->queue_wait_until_loaded(tc);
+  _queuer->queue_update_element(tc);
 
   // Do the base logic.
   BrowserCompute::post_update_state(tc);
@@ -1103,7 +1103,7 @@ bool ElementActionCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _worker->queue_perform_element_action(tc);
+  _queuer->queue_perform_element_action(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -1113,9 +1113,9 @@ void ElementActionCompute::post_update_state(TaskContext& tc) {
   internal();
 
   // Special
-  _worker->queue_block_events(tc);
-  _worker->queue_wait_until_loaded(tc);
-  _worker->queue_update_element(tc);
+  _queuer->queue_block_events(tc);
+  _queuer->queue_wait_until_loaded(tc);
+  _queuer->queue_update_element(tc);
 
   // Do the base logic.
   BrowserCompute::post_update_state(tc);

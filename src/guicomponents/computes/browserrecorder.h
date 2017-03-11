@@ -111,7 +111,7 @@ Q_OBJECT
     void build_web_node(ComponentDID compute_did, const QVariantMap& chain_state);
 
   // Our fixed dependencies.
-  Dep<TaskQueuer> _worker;
+  Dep<TaskQueuer> _queuer;
   Dep<TaskScheduler> _scheduler;
   Dep<FileModel> _model;
 };
