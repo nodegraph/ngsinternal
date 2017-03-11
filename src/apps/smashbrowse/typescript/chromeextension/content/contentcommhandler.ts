@@ -19,12 +19,12 @@ class ContentCommHandler {
 
     handle_bg_info(info: InfoMessage, send_response: (response: any) => void) {
         switch (info.info) {
-            case InfoType.kCollectIFrameIndexPaths: {
+            case InfoType.kCollectFrameIndexPaths: {
                 let fw_index_path = PageWrap.get_fw_index_path(window)
                 send_response(fw_index_path)
                 break
             }
-            case InfoType.kCollectIFrameOffsets: {
+            case InfoType.kCollectFrameOffsets: {
                 let elements = document.getElementsByTagName("iframe")
                 let offsets: { fw_index_path: string, element_index: number, bounds: IBox }[] = []
                 for (let i = 0; i < elements.length; i++) {
@@ -37,7 +37,7 @@ class ContentCommHandler {
                 send_response({fw_index_path: fw_index_path, offsets: offsets})
                 break
             }
-            case InfoType.kDistributeIFrameOffsets: {
+            case InfoType.kDistributeFrameOffsets: {
                 PageWrap.local_to_global_offset = info.value.offset
                 PageWrap.fe_index_path = info.value.fe_index_path
                 //console.log('frame index path: ' + PageWrap.get_fw_index_path(window) + ' fe_index_path: ' + PageWrap.fe_index_path)

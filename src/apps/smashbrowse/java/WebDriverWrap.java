@@ -457,18 +457,18 @@ public class WebDriverWrap {
             System.err.println("current frame name is: " + name);
 
             // Debug dump of the number of frames.
-            List<WebElement> iframes = _web_driver.findElements(By.tagName("iframe"));
-            System.err.println("num frames: " + iframes.size());
+            List<WebElement> frames = _web_driver.findElements(By.tagName("iframe"));
+            System.err.println("num frames: " + frames.size());
 
             // Debug dump of the number of frames.
-            //List<WebElement> frames = _web_driver.findElements(By.tagName("frame"));
-            //System.err.println("num frames: " + frames.size());
+            //List<WebElement> old_frames = _web_driver.findElements(By.tagName("frame"));
+            //System.err.println("num old frames: " + old_frames.size());
             
             // We switch to the frame by using it's WebElement instead of by its index.
             // For example as follows: this.driver.switchTo().frame(frame_index)
             // This is because otherwise it doesn't match up with the fe_index_path produced in PageWrap.get_fe_index_path().
             System.err.println("switching to index: " + frame_index);
-            _web_driver.switchTo().frame(iframes.get(frame_index));
+            _web_driver.switchTo().frame(frames.get(frame_index));
             
             // Debug dump of the name of the frame after switching.
             //String next_frame_info = (String) je.executeScript("return self.frameElement.className + \"--\" + self.name + \" w--\" + self.frameElement.clientWidth + \" h--\" + self.frameElement.clientHeight");

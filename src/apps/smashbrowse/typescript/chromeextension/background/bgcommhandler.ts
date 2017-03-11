@@ -70,7 +70,7 @@ class BgCommHandler {
     collect_fw_index_paths() {
         let f = (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
 
-            // Initialize the iframe hierarchy.
+            // Initialize the frame hierarchy.
             this.frame_infos.initialize(details)
 
             // Initialize our response counters, so that we know when all responses have come back.
@@ -105,7 +105,7 @@ class BgCommHandler {
             // Now send a message to each frame.
             details.forEach((frame: chrome.webNavigation.GetAllFrameResultDetails) => {
                 let collector = make_collector(frame.frameId)
-                let msg = new InfoMessage(-1, InfoType.kCollectIFrameIndexPaths, {frame_id: frame.frameId})
+                let msg = new InfoMessage(-1, InfoType.kCollectFrameIndexPaths, {frame_id: frame.frameId})
                 chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
             });
         }
@@ -113,7 +113,7 @@ class BgCommHandler {
     }
     
     // This assumes collect_fw_index_paths has already been run.
-    collect_iframe_offsets() {
+    collect_frame_offsets() {
         let f = (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
 
             // Initialize our response counters, so that we know when all responses have come back.
@@ -143,7 +143,7 @@ class BgCommHandler {
 
                     this.response_count += 1
                     if (this.response_count == this.expected_response_count) {
-                        console.log('done getting iframe offsets')
+                        console.log('done getting frame offsets')
                         this.run_next_task()
                     }
                 }
@@ -153,14 +153,14 @@ class BgCommHandler {
             // Now send a message to each frame.
             details.forEach((frame: chrome.webNavigation.GetAllFrameResultDetails) => {
                 let collector = make_collector(frame.frameId)
-                let msg = new InfoMessage(-1, InfoType.kCollectIFrameOffsets, {frame_id: frame.frameId})
+                let msg = new InfoMessage(-1, InfoType.kCollectFrameOffsets, {frame_id: frame.frameId})
                 chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
             });
         }
         chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, f);
     }
 
-    distribute_iframe_offsets() {
+    distribute_frame_offsets() {
         let f = (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
 
             // Initialize our response counters, so that we know when all responses have come back.
@@ -173,7 +173,7 @@ class BgCommHandler {
                     // We don't do anything.
                     this.response_count += 1
                     if (this.response_count == this.expected_response_count) {
-                        console.log('done distributing iframe offsets')
+                        console.log('done distributing frame offsets')
                         this.run_next_task()
                     }
                 }
@@ -187,7 +187,7 @@ class BgCommHandler {
                 let offset = info.calculate_offset()
                 let fe_index_path = info.calculate_fe_index_path()
                 //console.log('distributing frame index path: ' + info.fw_index_path + ' element index path: ' + fe_index_path)
-                let msg = new InfoMessage(-1, InfoType.kDistributeIFrameOffsets, {fe_index_path: fe_index_path, offset: offset})
+                let msg = new InfoMessage(-1, InfoType.kDistributeFrameOffsets, {fe_index_path: fe_index_path, offset: offset})
                 chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
             });
         }
@@ -214,11 +214,11 @@ class BgCommHandler {
         });
     }
 
-    queue_iframe_info_sharing() {
+    queue_frame_info_sharing() {
         this.queue(() => {this.collect_fw_index_paths()})
-        this.queue(() => {this.collect_iframe_offsets()})
-        this.queue(() => {this.collect_iframe_offsets()})
-        this.queue(() => {this.distribute_iframe_offsets()})
+        this.queue(() => {this.collect_frame_offsets()})
+        this.queue(() => {this.collect_frame_offsets()})
+        this.queue(() => {this.distribute_frame_offsets()})
     }
 
     queue_collect_void_from_frames(msg: BaseMessage) {
@@ -283,9 +283,9 @@ class BgCommHandler {
     // and choose the shortest path, or if there are multiple paths with the same length then it
     // chooses the first one it encounters.
     // The other issue that needs to be investigated is that we seem to be getting frames that aren't
-    // really visible and often they would be clipped by their parent iframes but our logic currently
+    // really visible and often they would be clipped by their parent frames but our logic currently
     // doesn't take this into account.
-    static find_top_iframe(elems: IClickInfo[]): IClickInfo {
+    static find_top_frame(elems: IClickInfo[]): IClickInfo {
         let best: IClickInfo = null
         let best_path_length: number = null
         elems.forEach((elem) => {
@@ -721,9 +721,9 @@ class BgCommHandler {
                     })
                 this.run_next_task()
             } break
-            case ChromeRequestType.kUpdateIFrameOffsets: {
+            case ChromeRequestType.kUpdateFrameOffsets: {
                 this.clear_tasks()
-                this.queue_iframe_info_sharing()
+                this.queue_frame_info_sharing()
                 this.queue(() => {
                     let response = new ResponseMessage(req.id, true, true)
                     this.bg_comm.send_to_app(response)
@@ -1146,7 +1146,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
                         this.bg_comm.send_to_app(response)
                     } else if (this.collected_clicks.length > 1) {
-                        let best = BgCommHandler.find_top_iframe(this.collected_clicks)
+                        let best = BgCommHandler.find_top_frame(this.collected_clicks)
                         let response = new ResponseMessage(req.id, true, best)
                         this.bg_comm.send_to_app(response)
                     } else {
@@ -1164,7 +1164,7 @@ class BgCommHandler {
                         let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
                         this.bg_comm.send_to_app(response)
                     } else if (this.collected_clicks.length > 1) {
-                        let best = BgCommHandler.find_top_iframe(this.collected_clicks)
+                        let best = BgCommHandler.find_top_frame(this.collected_clicks)
                         let response = new ResponseMessage(req.id, true, best)
                         this.bg_comm.send_to_app(response)
                     } else {

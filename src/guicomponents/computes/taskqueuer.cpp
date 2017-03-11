@@ -877,7 +877,7 @@ void TaskQueuer::get_current_url_task() {
 // ------------------------------------------------------------------------
 
 void TaskQueuer::update_frame_offsets_task() {
-  Message req(ChromeRequestType::kUpdateIFrameOffsets);
+  Message req(ChromeRequestType::kUpdateFrameOffsets);
   send_msg_task(req);
 }
 

@@ -664,12 +664,12 @@ class ElemWrap {
         return ''
     }
 
-    is_iframe(): string {
-        if (this.element.tagName.toLowerCase() == 'iframe') {
-            return 'iframe'
-        }
-        return ''
-    }
+    // is_iframe(): string {
+    //     if (this.element.tagName.toLowerCase() == 'iframe') {
+    //         return 'iframe'
+    //     }
+    //     return ''
+    // }
 
 
     //Retrieves the opacity value directly on an element in the dom hierarchy.

@@ -109,7 +109,7 @@ const char* chrome_request_type_to_string(ChromeRequestType t) {
     // Info Request.
     case ChromeRequestType::kGetCrosshairInfo: return "kGetCrosshairInfo";
     case ChromeRequestType::kGetDropDownInfo: return "kGetDropDownInfo";
-    case ChromeRequestType::kUpdateIFrameOffsets: return "kUpdateIFrameOffsets";
+    case ChromeRequestType::kUpdateFrameOffsets: return "kUpdateFrameOffsets";
 
     default: {
       assert(false);
@@ -206,9 +206,9 @@ const char* info_type_to_string(InfoType t) {
     case InfoType::kShowWebActionMenu: return "kShowWebActionMenu";
     case InfoType::kTabCreated: return "kTabCreated";
     case InfoType::kTabDestroyed: return "kTabDestroyed";
-    case InfoType::kCollectIFrameIndexPaths: return "kCollectIFrameIndexPaths";
-    case InfoType::kCollectIFrameOffsets: return "kCollectIFrameOffsets";
-    case InfoType::kDistributeIFrameOffsets: return "kDistributeIFrameOffsets";
+    case InfoType::kCollectFrameIndexPaths: return "kCollectFrameIndexPaths";
+    case InfoType::kCollectFrameOffsets: return "kCollectFrameOffsets";
+    case InfoType::kDistributeFrameOffsets: return "kDistributeFrameOffsets";
 
     default: {
       assert(false);
