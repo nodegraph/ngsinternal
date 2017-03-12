@@ -117,6 +117,8 @@ class OBJECTMODEL_EXPORT Entity {
   void reparent_child(Entity* child, Entity* next_parent);
   void destroy_all_children();
   void destroy_all_children_except(const std::unordered_set<EntityDID>& dids);
+  void destroy_all_children_except(const std::unordered_set<std::string>& names);
+  void destroy_all_children_except_topologically_fixed();
   void rename_child(const std::string& prev_name, const std::string& next_name);
   const NameToChildMap& get_children() const;
   bool is_topologically_fixed() const;

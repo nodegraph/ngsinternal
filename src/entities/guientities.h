@@ -181,14 +181,14 @@ class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
   Compute* get_compute();
 };
 
-class ENTITIES_EXPORT UserMacroNodeEntity : public Entity {
+class ENTITIES_EXPORT UserMacroNodeEntity : public GroupNodeEntity {
  public:
   ENTITY_ID(UserMacroNodeEntity);
-  UserMacroNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  UserMacroNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
+
   virtual void save(SimpleSaver& saver) const;
   virtual void load_helper(SimpleLoader& loader);
-
   virtual void load_internals(const std::string& macro_name);
  private:
   virtual std::string get_macro_dir() const;

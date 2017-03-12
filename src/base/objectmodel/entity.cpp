@@ -238,6 +238,28 @@ void Entity::destroy_all_children_except(const std::unordered_set<EntityDID>& di
   }
 }
 
+void Entity::destroy_all_children_except(const std::unordered_set<std::string>& names) {
+  // The order of deletion of child entities is random.
+  // Deleting children will modify our children's set so we make a copy.
+  NameToChildMap copy = _children;
+  for (auto &e : copy) {
+    if (!names.count(e.second->get_name())) {
+      delete_ff(e.second);
+    }
+  }
+}
+
+void Entity::destroy_all_children_except_topologically_fixed() {
+  // The order of deletion of child entities is random.
+  // Deleting children will modify our children's set so we make a copy.
+  NameToChildMap copy = _children;
+  for (auto &e : copy) {
+    if (!e.second->is_topologically_fixed()) {
+      delete_ff(e.second);
+    }
+  }
+}
+
 void Entity::rename_child(const std::string& prev_name, const std::string& next_name) {
   if (!has_child_name(prev_name)) {
     return;
@@ -255,7 +277,13 @@ const Entity::NameToChildMap& Entity::get_children() const {
 // Nodes in certain groups cannot be destroyed or renamed.
 bool Entity::is_topologically_fixed() const {
   Entity* group = get_parent();
-  if (group->get_did() == EntityDID::kIfGroupNodeEntity || group->get_did() == EntityDID::kWhileGroupNodeEntity) {
+  if (group->get_did() == EntityDID::kGroupNodeEntity ||
+      group->get_did() == EntityDID::kIfGroupNodeEntity ||
+      group->get_did() == EntityDID::kWhileGroupNodeEntity ||
+      group->get_did() == EntityDID::kBrowserGroupNodeEntity ||
+      group->get_did() == EntityDID::kMQTTGroupNodeEntity  ||
+      group->get_did() == EntityDID::kUserMacroNodeEntity ||
+      group->get_did() == EntityDID::kAppMacroNodeEntity) {
     const std::string& name = get_name();
     if ((name == kMainInputNodeName) || (name == kMainOutputNodeName) || (name == kMainConditionPathNodeName)) {
       return true;

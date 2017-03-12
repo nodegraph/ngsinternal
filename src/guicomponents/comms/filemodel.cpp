@@ -587,8 +587,8 @@ void FileModel::create_graph(const QVariantMap& arg) {
   setItem(_working_row, 0, item);
 
   // Clear the existing nodes.
-  // Most of the child entities of the root group entity are nodes.
-  get_root_group()->destroy_all_children();
+  // Most of the child entities of the root group entity are nodes
+  get_root_group()->destroy_all_children_except_topologically_fixed();
   // Except for the entities which act as namespaces. So we recreated them here.
   get_dep<Compute>(get_root_group())->create_inputs_outputs(EntityConfig());
 

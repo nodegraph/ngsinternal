@@ -745,13 +745,10 @@ void OutputLabelEntity::create_internals(const EntityConfig& config) {
 }
 
 void UserMacroNodeEntity::create_internals(const EntityConfig& config) {
-  // This was copied from GroupNodeEntity::create_internals().
-
   // Our components.
   (new_ff GroupNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
-
   // Gui related.
   if (config.visible) {
     new_ff GroupInteraction(this);
@@ -760,7 +757,8 @@ void UserMacroNodeEntity::create_internals(const EntityConfig& config) {
     new_ff InputTopology(this);
     new_ff OutputTopology(this);
   }
-  // Sub Components.
+
+  // Unlike our base class don't create the in and out nodes.
 }
 
 void UserMacroNodeEntity::save(SimpleSaver& saver) const {

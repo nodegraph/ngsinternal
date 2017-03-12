@@ -1106,13 +1106,13 @@ void NodeGraphQuickItem::explode_group(Entity* e) {
     return;
   }
 
-  if ((e->get_did() == EntityDID::kAppMacroNodeEntity) ||
-      (e->get_did() == EntityDID::kUserMacroNodeEntity)) {
-    QString msg = "App and user macros cannot be exploded.";
-    emit set_error_message(msg);
-    emit show_error_page();
-    return;
-  }
+//  if ((e->get_did() == EntityDID::kAppMacroNodeEntity) ||
+//      (e->get_did() == EntityDID::kUserMacroNodeEntity)) {
+//    QString msg = "App and user macros cannot be exploded.";
+//    emit set_error_message(msg);
+//    emit show_error_page();
+//    return;
+//  }
 
   // Otherwise explode the selected.
   get_current_interaction()->explode(e);
