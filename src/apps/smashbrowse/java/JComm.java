@@ -59,7 +59,11 @@ public class JComm {
 			try {
 				handle_request(req);
 			} catch (Throwable e) {
+				// Print the stack trace to the standard error stream.
 				e.printStackTrace();
+				// Send a response message containing the error to the standard output stream.
+				ResponseMessage resp = new ResponseMessage(req.get_id(), false, gson.toJsonTree(e.getMessage()));
+		        System.out.println(resp.to_string());
 			}
 		}
 
