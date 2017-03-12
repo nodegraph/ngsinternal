@@ -441,14 +441,6 @@ class BgCommHandler {
         return best
     }
 
-    static elements_in_row(e1: IElementInfo, e2: IElementInfo) {
-        return (e1.box.top <= e2.box.bottom) && (e2.box.top <= e1.box.bottom)
-    }
-
-    static elements_in_column(e1: IElementInfo, e2: IElementInfo) {
-        return (e1.box.left <= e2.box.right) && (e2.box.left <= e1.box.right)
-    }
-
     // ------------------------------------------------------------------------------------------------------------------
     // Task queue methods.
     // ------------------------------------------------------------------------------------------------------------------
