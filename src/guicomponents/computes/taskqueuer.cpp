@@ -126,26 +126,6 @@ void TaskQueuer::queue_emit_option_texts() {
   queue_emit_option_texts(tc);
 }
 
-void TaskQueuer::firebase_init(const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket) {
-  TaskContext tc(_scheduler);
-  QJsonObject args;
-  args.insert(Message::kApiKey, api_key);
-  args.insert(Message::kAuthDomain, auth_domain);
-  args.insert(Message::kDatabaseURL, database_url);
-  args.insert(Message::kStorageBucket, storage_bucket);
-  queue_merge_chain_state(tc, args);
-  queue_firebase_init(tc);
-}
-
-void TaskQueuer::firebase_sign_in(const QString& email, const QString& password) {
-  TaskContext tc(_scheduler);
-  QJsonObject args;
-  args.insert(Message::kEmail, email);
-  args.insert(Message::kPassword, password);
-  queue_merge_chain_state(tc, args);
-  queue_firebase_sign_in(tc);
-}
-
 bool TaskQueuer::is_polling() {
   return _poll_timer.isActive();
 }
@@ -489,42 +469,6 @@ void TaskQueuer::queue_perform_element_scroll(TaskContext& tc) {
 void TaskQueuer::queue_emit_option_texts(TaskContext& tc) {
   queue_get_drop_down_info(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::emit_option_texts_task,this), "queue_emit_option_texts");
-}
-
-// ---------------------------------------------------------------------------------
-// Queue firebase actions.
-// ---------------------------------------------------------------------------------
-
-void TaskQueuer::queue_firebase_init(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::firebase_init_task,this), "queue_firebase_init");
-}
-
-void TaskQueuer::queue_firebase_destroy(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::firebase_destroy_task,this), "queue_firebase_destroy");
-}
-
-void TaskQueuer::queue_firebase_sign_in(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::firebase_sign_in_task,this), "queue_firebase_sign_in");
-}
-
-void TaskQueuer::queue_firebase_sign_out(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::firebase_sign_out_task,this), "queue_firebase_sign_out");
-}
-
-void TaskQueuer::queue_firebase_write_data(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::firebase_write_data_task,this), "queue_firebase_write_data");
-}
-
-void TaskQueuer::queue_firebase_read_data(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::firebase_read_data_task,this), "queue_firebase_read_data");
-}
-
-void TaskQueuer::queue_firebase_subscribe(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::firebase_subscribe_task,this), "queue_firebase_subscribe");
-}
-
-void TaskQueuer::queue_firebase_unsubscribe(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::firebase_unsubscribe_task,this), "queue_firebase_unsubscribe");
 }
 
 // ------------------------------------------------------------------------

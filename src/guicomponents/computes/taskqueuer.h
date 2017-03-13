@@ -43,10 +43,6 @@ Q_OBJECT
   Q_INVOKABLE void queue_stop_service();
   Q_INVOKABLE void queue_emit_option_texts();
 
-
-  void firebase_init(const QString& api_key, const QString& auth_domain, const QString& database_url, const QString& storage_bucket);
-  void firebase_sign_in(const QString& email, const QString& password);
-
   // Handle Incoming messages. Note the same messages are also handled by the AppTaskQueue.
   void handle_response(const Message& sm);
   void handle_info(const Message& msg);
@@ -141,15 +137,6 @@ Q_OBJECT
 
   // Queue other actions.
   void queue_emit_option_texts(TaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
-
-  void queue_firebase_init(TaskContext& tc);
-  void queue_firebase_destroy(TaskContext& tc);
-  void queue_firebase_sign_in(TaskContext& tc);
-  void queue_firebase_sign_out(TaskContext& tc);
-  void queue_firebase_write_data(TaskContext& tc);
-  void queue_firebase_read_data(TaskContext& tc);
-  void queue_firebase_subscribe(TaskContext& tc);
-  void queue_firebase_unsubscribe(TaskContext& tc);
 
 signals:
   void show_web_action_menu();
