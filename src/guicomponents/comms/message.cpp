@@ -326,7 +326,9 @@ void Message::dump() const {
             HTTPSendType t = static_cast<HTTPSendType>(iter2.value().toInt());
             std::cerr << Message::kHTTPRequestMethod << ": " << http_send_type_to_string(t) << "\n";
           } else {
-            QJsonDocument doc(iter2.value().toObject());
+            QJsonObject obj;
+            obj.insert("doc", iter2.value());
+            QJsonDocument doc(obj);
             std::cerr << iter2.key().toStdString() << ": " << doc.toJson().toStdString() << "\n";
           }
           iter2++;
