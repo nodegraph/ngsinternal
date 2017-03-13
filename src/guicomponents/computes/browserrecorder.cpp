@@ -43,35 +43,47 @@ void BrowserRecorder::initialize_wires() {
 // // Record Browser Actions.
 // -----------------------------------------------------------------
 
-#define check_busy()   if (_scheduler->is_busy()) {emit web_action_ignored(); return;} TaskContext tc(_scheduler);
+#define start() \
+  /* Return if the scheduler is busy. */\
+  if (_scheduler->is_busy()) {\
+    emit web_action_ignored();\
+    return;\
+  }\
+  /* Create our task context. */\
+  TaskContext tc(_scheduler);\
+  /* Clear the chain state so that any unset values
+   * will take on default values of the node we're creating.*/\
+  _queuer->queue_clear_chain_state(tc);
+
+
 #define finish()
 
 void BrowserRecorder::record_open_browser() {
-  check_busy();
+  start();
   _queuer->queue_build_compute_node(tc, ComponentDID::kOpenBrowserCompute);
   finish();
 }
 
 void BrowserRecorder::record_close_browser() {
-  check_busy();
+  start();
   _queuer->queue_build_compute_node(tc, ComponentDID::kCloseBrowserCompute);
   finish();
 }
 
 void BrowserRecorder::record_release_browser() {
-  check_busy();
+  start();
   _queuer->queue_build_compute_node(tc, ComponentDID::kReleaseBrowserCompute);
   finish();
 }
 
 void BrowserRecorder::record_is_browser_open() {
-  check_busy();
+  start();
   _queuer->queue_build_compute_node(tc, ComponentDID::kIsBrowserOpenCompute);
   finish();
 }
 
 void BrowserRecorder::record_resize_browser() {
-  check_busy();
+  start();
   QJsonObject dims;
   dims.insert(Message::kWidth, 1024);
   dims.insert(Message::kHeight, 1150);
@@ -85,37 +97,37 @@ void BrowserRecorder::record_resize_browser() {
 }
 
 void BrowserRecorder::record_get_browser_size() {
-  check_busy();
+  start();
   _queuer->queue_build_compute_node(tc, ComponentDID::kGetBrowserSizeCompute);
   finish();
 }
 
 void BrowserRecorder::record_get_browser_title() {
-  check_busy();
+  start();
   _queuer->queue_build_compute_node(tc, ComponentDID::kGetActiveTabTitleCompute);
   finish();
 }
 
 void BrowserRecorder::record_destroy_current_tab() {
-  check_busy();
+  start();
   _queuer->queue_build_compute_node(tc, ComponentDID::kDestroyCurrentTabCompute);
   finish();
 }
 
 void BrowserRecorder::record_open_tab() {
-  check_busy();
+  start();
   _queuer->queue_build_compute_node(tc, ComponentDID::kOpenTabCompute);
   finish();
 }
 
 void BrowserRecorder::record_accept_save_dialog() {
-  check_busy();
+  start();
   _queuer->queue_build_compute_node(tc, ComponentDID::kAcceptSaveDialogCompute);
   finish();
 }
 
 void BrowserRecorder::record_download_video(bool use_current_element) {
-  check_busy();
+  start();
 
   QJsonObject args;
   args.insert(Message::kUseCurrentElement, use_current_element);
@@ -130,7 +142,7 @@ void BrowserRecorder::record_download_video(bool use_current_element) {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_navigate_to(const QString& url) {
-  check_busy()
+  start()
   QString decorated_url = get_proper_url(url).toString();
 
   QJsonObject args;
@@ -142,25 +154,25 @@ void BrowserRecorder::record_navigate_to(const QString& url) {
 }
 
 void BrowserRecorder::record_navigate_back() {
-  check_busy()
+  start()
   _queuer->queue_build_compute_node(tc, ComponentDID::kNavigateBackCompute);
   finish();
 }
 
 void BrowserRecorder::record_navigate_forward() {
-  check_busy()
+  start()
   _queuer->queue_build_compute_node(tc, ComponentDID::kNavigateForwardCompute);
   finish();
 }
 
 void BrowserRecorder::record_navigate_refresh() {
-  check_busy()
+  start()
   _queuer->queue_build_compute_node(tc, ComponentDID::kNavigateRefreshCompute);
   finish();
 }
 
 void BrowserRecorder::record_get_current_url() {
-  check_busy()
+  start()
   _queuer->queue_build_compute_node(tc, ComponentDID::kGetCurrentURLCompute);
   finish();
 }
@@ -170,7 +182,7 @@ void BrowserRecorder::record_get_current_url() {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_find_text_element_by_position() {
-  check_busy()
+  start()
   _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
@@ -180,7 +192,7 @@ void BrowserRecorder::record_find_text_element_by_position() {
 }
 
 void BrowserRecorder::record_find_image_element_by_position() {
-  check_busy()
+  start()
   _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
@@ -190,7 +202,7 @@ void BrowserRecorder::record_find_image_element_by_position() {
 }
 
 void BrowserRecorder::record_find_input_element_by_position() {
-  check_busy()
+  start()
   _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
@@ -200,7 +212,7 @@ void BrowserRecorder::record_find_input_element_by_position() {
 }
 
 void BrowserRecorder::record_find_select_element_by_position() {
-  check_busy()
+  start()
   _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
@@ -214,7 +226,7 @@ void BrowserRecorder::record_find_select_element_by_position() {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_find_element_by_text() {
-  check_busy()
+  start()
   _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
@@ -225,7 +237,7 @@ void BrowserRecorder::record_find_element_by_text() {
 }
 
 void BrowserRecorder::record_find_element_by_images() {
-  check_busy()
+  start()
   _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
@@ -240,7 +252,7 @@ void BrowserRecorder::record_find_element_by_images() {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_find_element_by_text_type() {
-  check_busy()
+  start()
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
   _queuer->queue_merge_chain_state(tc, args);
@@ -249,7 +261,7 @@ void BrowserRecorder::record_find_element_by_text_type() {
 }
 
 void BrowserRecorder::record_find_element_by_image_type() {
-  check_busy()
+  start()
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
   _queuer->queue_merge_chain_state(tc, args);
@@ -258,7 +270,7 @@ void BrowserRecorder::record_find_element_by_image_type() {
 }
 
 void BrowserRecorder::record_find_element_by_input_type() {
-  check_busy()
+  start()
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
   _queuer->queue_merge_chain_state(tc, args);
@@ -267,7 +279,7 @@ void BrowserRecorder::record_find_element_by_input_type() {
 }
 
 void BrowserRecorder::record_find_element_by_select_type() {
-  check_busy()
+  start()
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
   _queuer->queue_merge_chain_state(tc, args);
@@ -280,7 +292,7 @@ void BrowserRecorder::record_find_element_by_select_type() {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_shift_to_text_type() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   _queuer->queue_get_crosshair_info(tc);
   _queuer->queue_determine_angle_in_degress(tc);
@@ -292,7 +304,7 @@ void BrowserRecorder::record_shift_to_text_type() {
 }
 
 void BrowserRecorder::record_shift_to_image_type() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   _queuer->queue_get_crosshair_info(tc);
   _queuer->queue_determine_angle_in_degress(tc);
@@ -304,7 +316,7 @@ void BrowserRecorder::record_shift_to_image_type() {
 }
 
 void BrowserRecorder::record_shift_to_input_type() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   _queuer->queue_get_crosshair_info(tc);
   _queuer->queue_determine_angle_in_degress(tc);
@@ -316,7 +328,7 @@ void BrowserRecorder::record_shift_to_input_type() {
 }
 
 void BrowserRecorder::record_shift_to_select_type() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   _queuer->queue_get_crosshair_info(tc);
   _queuer->queue_determine_angle_in_degress(tc);
@@ -332,7 +344,7 @@ void BrowserRecorder::record_shift_to_select_type() {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_shift_to_text_type_along_rows() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::text));
@@ -342,7 +354,7 @@ void BrowserRecorder::record_shift_to_text_type_along_rows() {
 }
 
 void BrowserRecorder::record_shift_to_image_type_along_rows() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::image));
@@ -352,7 +364,7 @@ void BrowserRecorder::record_shift_to_image_type_along_rows() {
 }
 
 void BrowserRecorder::record_shift_to_input_type_along_rows() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::input));
@@ -362,7 +374,7 @@ void BrowserRecorder::record_shift_to_input_type_along_rows() {
 }
 
 void BrowserRecorder::record_shift_to_select_type_along_rows() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   QJsonObject args;
   args.insert(Message::kWrapType, to_underlying(WrapType::select));
@@ -376,7 +388,7 @@ void BrowserRecorder::record_shift_to_select_type_along_rows() {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_shift_to_text_values() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   _queuer->queue_get_crosshair_info(tc);
   _queuer->queue_determine_angle_in_degress(tc);
@@ -390,7 +402,7 @@ void BrowserRecorder::record_shift_to_text_values() {
 }
 
 void BrowserRecorder::record_shift_to_image_values(){
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   _queuer->queue_get_crosshair_info(tc);
   _queuer->queue_determine_angle_in_degress(tc);
@@ -408,7 +420,7 @@ void BrowserRecorder::record_shift_to_image_values(){
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_shift_to_text_values_along_rows() {
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   _queuer->queue_get_element_values(tc);
   QJsonObject args;
@@ -420,7 +432,7 @@ void BrowserRecorder::record_shift_to_text_values_along_rows() {
 }
 
 void BrowserRecorder::record_shift_to_image_values_along_rows(){
-  check_busy()
+  start()
   _queuer->queue_get_current_element(tc);
   _queuer->queue_get_element_values(tc);
   QJsonObject args;
@@ -436,7 +448,7 @@ void BrowserRecorder::record_shift_to_image_values_along_rows(){
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_click() {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendClick));
@@ -446,7 +458,7 @@ void BrowserRecorder::record_click() {
 }
 
 void BrowserRecorder::record_ctrl_click() {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
   args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendCtrlClick));
@@ -456,7 +468,7 @@ void BrowserRecorder::record_ctrl_click() {
 }
 
 void BrowserRecorder::record_mouse_over() {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
@@ -471,7 +483,7 @@ void BrowserRecorder::record_mouse_over() {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_type_text(const QString& text) {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
@@ -483,7 +495,7 @@ void BrowserRecorder::record_type_text(const QString& text) {
 }
 
 void BrowserRecorder::record_type_enter() {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
@@ -494,7 +506,7 @@ void BrowserRecorder::record_type_enter() {
 }
 
 void BrowserRecorder::record_type_password(const QString& text) {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
@@ -510,7 +522,7 @@ void BrowserRecorder::record_type_password(const QString& text) {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_extract_text() {
-  check_busy()
+  start()
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
@@ -521,7 +533,7 @@ void BrowserRecorder::record_extract_text() {
 }
 
 void BrowserRecorder::record_select_from_dropdown(const QString& option_text) {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
@@ -537,7 +549,7 @@ void BrowserRecorder::record_select_from_dropdown(const QString& option_text) {
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_scroll_down() {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
@@ -548,7 +560,7 @@ void BrowserRecorder::record_scroll_down() {
 }
 
 void BrowserRecorder::record_scroll_up() {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
@@ -559,7 +571,7 @@ void BrowserRecorder::record_scroll_up() {
 }
 
 void BrowserRecorder::record_scroll_right() {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
@@ -570,7 +582,7 @@ void BrowserRecorder::record_scroll_right() {
 }
 
 void BrowserRecorder::record_scroll_left() {
-  check_busy();
+  start();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;

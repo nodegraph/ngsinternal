@@ -204,8 +204,16 @@ void TaskQueuer::queue_get_drop_down_info(TaskContext& tc) {
 // Queue Framework Tasks.
 // ---------------------------------------------------------------------------------
 
+void TaskQueuer::queue_overwrite_chain_state(TaskContext& tc, const QJsonObject& map) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::overwrite_chain_state_task,this, map), "queue_overwrite_chain_state");
+}
+
 void TaskQueuer::queue_merge_chain_state(TaskContext& tc, const QJsonObject& map) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::merge_chain_state_task,this, map), "queue_merge_chain_state");
+}
+
+void TaskQueuer::queue_clear_chain_state(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::clear_chain_state_task,this), "queue_clear_chain_state");
 }
 
 void TaskQueuer::queue_copy_chain_property(TaskContext& tc, const QString& src_prop, const QString& dest_prop) {
@@ -570,9 +578,20 @@ void TaskQueuer::scroll_element_into_view_task() {
 // Infrastructure Tasks.
 // ------------------------------------------------------------------------
 
+void TaskQueuer::overwrite_chain_state_task(const QJsonObject& map) {
+  _chain_state = map;
+  _scheduler->run_next_task();
+}
+
 void TaskQueuer::merge_chain_state_task(const QJsonObject& map) {
   // Merge the values into the chain_state.
   JSONUtils::shallow_object_merge(_chain_state, map);
+  _scheduler->run_next_task();
+}
+
+void TaskQueuer::clear_chain_state_task() {
+  // Merge the values into the chain_state.
+  _chain_state = QJsonObject();
   _scheduler->run_next_task();
 }
 

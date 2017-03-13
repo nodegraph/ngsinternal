@@ -69,7 +69,9 @@ Q_OBJECT
   void queue_get_drop_down_info(TaskContext& tc);
 
   // Queue Framework Tasks.
+  void queue_overwrite_chain_state(TaskContext& tc, const QJsonObject& map);
   void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
+  void queue_clear_chain_state(TaskContext& tc);
   void queue_copy_chain_property(TaskContext& tc, const QString& src_prop, const QString& dest_prop);
   void queue_determine_angle_in_degress(TaskContext& tc);
   void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did);
@@ -171,7 +173,9 @@ signals:
   void scroll_element_into_view_task();
 
   // Infrastructure Tasks.
+  void overwrite_chain_state_task(const QJsonObject& map);
   void merge_chain_state_task(const QJsonObject& map);
+  void clear_chain_state_task();
   void copy_chain_property_task(const QString& src_prop, const QString& dest_prop);
   void determine_angle_in_degrees_task();
   void receive_chain_state_task(std::function<void(const QJsonObject&)> on_finished_sequence);

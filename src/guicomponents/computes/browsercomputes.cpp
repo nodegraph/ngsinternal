@@ -83,13 +83,13 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
   QJsonObject size_obj;
   size_obj.insert(Message::kWidth, width);
   size_obj.insert(Message::kHeight, height);
-  _queuer->queue_merge_chain_state(tc, size_obj);
+  _queuer->queue_overwrite_chain_state(tc, size_obj);
   _queuer->queue_resize_browser(tc);
   std::cerr << "queued browser size to: " << width << ", " << height << "\n";
 
   // Merge chain state.
   QJsonObject inputs = _inputs->get_input_values();
-  _queuer->queue_merge_chain_state(tc, inputs);
+  _queuer->queue_overwrite_chain_state(tc, inputs);
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.
   // For examples ads may rotate and flip content.
