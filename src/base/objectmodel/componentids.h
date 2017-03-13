@@ -253,6 +253,8 @@ COMPONENT_ENTRY2(MouseActionCompute, 90)\
 COMPONENT_ENTRY2(TextActionCompute, 91)\
 COMPONENT_ENTRY2(PasswordActionCompute, 92)\
 COMPONENT_ENTRY2(ElementActionCompute, 93)\
+/* Scroll. */\
+COMPONENT_ENTRY2(ElementScrollCompute, 94)\
 
 // Numbers that are currently unused:
 // 52, 53, 54, 55

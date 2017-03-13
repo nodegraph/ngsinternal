@@ -79,24 +79,26 @@ enum class ChromeRequestType : int {
   // Extract info from element.
   kGetElementValues = 17,
 
-  // Act on element.
+  // Scroll an element.
   kScrollElementIntoView = 18,
+  kScrollElement = 19,
 
   // Find the current element.
-  kFindElementByPosition = 19,
-  kFindElementByValues = 20,
-  kFindElementByType = 21,
+  kFindElementByPosition = 20,
+  kFindElementByValues = 21,
+  kFindElementByType = 22,
 
   // Shift the current element.
-  kShiftElementByType = 22,
-  kShiftElementByValues = 23,
-  kShiftElementByTypeAlongRows = 24,
-  kShiftElementByValuesAlongRows = 25,
+  kShiftElementByType = 23,
+  kShiftElementByValues = 24,
+  kShiftElementByTypeAlongRows = 25,
+  kShiftElementByValuesAlongRows = 26,
 
   // Info Request.
-  kGetCrosshairInfo = 26,
-  kGetDropDownInfo = 27,
-  kUpdateFrameOffsets = 28,
+  kGetCrosshairInfo = 27,
+  kGetDropDownInfo = 28,
+  kUpdateFrameOffsets = 29,
+
 };
 
 enum class PlatformRequestType : int {
@@ -129,8 +131,7 @@ enum class TextActionType : int {
 
 enum class ElementActionType : int {
   kGetText = 0,
-  kChooseOption = 1,
-  kScroll = 2
+  kChooseOption = 1
 };
 
 enum class ImageActionType : int {

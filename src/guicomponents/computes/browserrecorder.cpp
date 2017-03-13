@@ -532,15 +532,18 @@ void BrowserRecorder::record_select_from_dropdown(const QString& option_text) {
   finish();
 }
 
+// -----------------------------------------------------------------
+// Record Element Scroll Actions.
+// -----------------------------------------------------------------
+
 void BrowserRecorder::record_scroll_down() {
   check_busy();
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
-  args.insert(Message::kElementAction, to_underlying(ElementActionType::kScroll));
   args.insert(Message::kScrollDirection, to_underlying(DirectionType::down));
   _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
   finish();
 }
 
@@ -549,10 +552,9 @@ void BrowserRecorder::record_scroll_up() {
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
-  args.insert(Message::kElementAction, to_underlying(ElementActionType::kScroll));
   args.insert(Message::kScrollDirection, to_underlying(DirectionType::up));
   _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
   finish();
 }
 
@@ -561,10 +563,9 @@ void BrowserRecorder::record_scroll_right() {
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
-  args.insert(Message::kElementAction, to_underlying(ElementActionType::kScroll));
   args.insert(Message::kScrollDirection, to_underlying(DirectionType::right));
   _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
   finish();
 }
 
@@ -573,10 +574,9 @@ void BrowserRecorder::record_scroll_left() {
   _queuer->queue_get_crosshair_info(tc);
 
   QJsonObject args;
-  args.insert(Message::kElementAction, to_underlying(ElementActionType::kScroll));
   args.insert(Message::kScrollDirection, to_underlying(DirectionType::left));
   _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
   finish();
 }
 

@@ -116,6 +116,48 @@ class ContentCommHandler {
                     send_response(info)
                 }
             } break
+            case ChromeRequestType.kScrollElement: {
+                // Only one or none of the frames should have an element.
+                let elem_wrap = this.gui_collection.page_overlays.get_elem_wrap()
+                
+                // If the xpath is not empty then we are that one element.
+                if (elem_wrap) {
+                    
+                    switch (req.args.scroll_direction) {
+                        case DirectionType.down: {
+                            let scroll = elem_wrap.get_closest_scroll(true)
+                            if (scroll) {
+                                scroll.scroll_down()
+                            }
+                        } break
+                        case DirectionType.up: {
+                            let scroll = elem_wrap.get_closest_scroll(true)
+                            if (scroll) {
+                                scroll.scroll_up()
+                            }
+                        } break
+                        case DirectionType.left: {
+                            let scroll = elem_wrap.get_closest_scroll(false)
+                            if (scroll) {
+                                scroll.scroll_left()
+                            }
+                        } break
+                        case DirectionType.right: {
+                            let scroll = elem_wrap.get_closest_scroll(false)
+                            if (scroll) {
+                                scroll.scroll_right()
+                            }
+                        } break
+                        default: {
+                            console.log("Error: unknown direction type: " + req.args.scroll_direction)
+                        }
+                    }
+                    
+                    // Get the info.
+                    let info = elem_wrap.get_info()
+                    send_response(info)
+                }
+            } break
             case ChromeRequestType.kFindElementByValues: {
                 let elem_wraps: ElemWrap[] = this.gui_collection.page_wrap.get_by_all_values(req.args.wrap_type, req.args.target_values)
                 if (elem_wraps.length > 0) {
@@ -138,35 +180,6 @@ class ContentCommHandler {
                     send_response(infos)
                 }
             } break
-            // case ChromeRequestType.kPerformElementAction: {
-            //     // On the content script side we only handle the scrolling actions.
-            //     // When scrolling there may be AJAX requests dynamically loading elements into the scrolled page.
-            //     // In this case the scroll may not move fully to the requested position.
-            //     // The user must submit another scroll request in this case to go further.
-            //     if (this.gui_collection.overlay_sets.get_num_sets() == 0) {
-            //         return
-            //     }
-            //     if (req.args.element_action == ElementActionType.kScroll) {
-            //         switch (req.args.scroll_direction) {
-            //             case DirectionType.down: {
-            //                 this.gui_collection.overlay_sets.scroll_down(0, 0);
-            //             } break
-            //             case DirectionType.up: {
-            //                 this.gui_collection.overlay_sets.scroll_up(0, 0);
-            //             } break
-            //             case DirectionType.right: {
-            //                 this.gui_collection.overlay_sets.scroll_right(0, 0);
-            //             } break
-            //             case DirectionType.left: {
-            //                 this.gui_collection.overlay_sets.scroll_left(0, 0);
-            //             } break
-            //         }
-            //     }
-            //     // Only one of the frames will actually send a response back to bgcomm.
-            //     let elem_wrap = this.gui_collection.overlay_sets.get_elem_wrap(0, 0)
-            //     let info = elem_wrap.get_info()
-            //     send_response(info)
-            // } break
             case ChromeRequestType.kGetCrosshairInfo: {
                 let pos = new Point(req.args.global_mouse_position)
                 // Get the frame bounds in global client space.

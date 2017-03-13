@@ -349,4 +349,21 @@ class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
   virtual void post_update_state(TaskContext& tc);
 };
 
+class GUICOMPUTES_EXPORT ElementScrollCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ElementScrollCompute);
+  ElementScrollCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+
+  //virtual void receive_chain_state(const QJsonObject& chain_state);
+
+ protected:
+  virtual bool update_state();
+  virtual void post_update_state(TaskContext& tc);
+};
+
 }

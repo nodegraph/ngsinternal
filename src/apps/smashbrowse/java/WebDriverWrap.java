@@ -585,32 +585,32 @@ public class WebDriverWrap {
         element.findElement(By.xpath("option[normalize-space(text())=\"" + option_text + "\"]")).click();
     }
     
-    void scroll(MessageEnums.DirectionType dir) {
-    	String script = "";
-    	//String prefix = "window.document.documentElement.style.overflow = 'auto';"; // show scrollbar
-    	//String suffix = "window.document.documentElement.style.overflow = 'hidden';"; // hide scrollbar
-    	
-    	switch (dir) {
-        	case down: {
-        		script = "window.scrollBy(0, window.document.documentElement.clientHeight * 0.80);";
-        		break;
-        	}
-        	case up: {
-        		script = "window.scrollBy(0, window.document.documentElement.clientHeight * -0.80);";
-        		break;
-        	}
-        	case right: {
-        		script = "window.scrollBy(window.document.documentElement.clientWidth * 0.80, 0);";
-        		break;
-        	}
-        	case left: {
-        		script = "window.scrollBy(window.document.documentElement.clientWidth * -0.80, 0);";
-        		break;
-        	}
-    	}
-    	JavascriptExecutor js = (JavascriptExecutor) _web_driver;
-    	js.executeScript(script);
-    }
+//    void scroll(MessageEnums.DirectionType dir) {
+//    	String script = "";
+//    	//String prefix = "window.document.documentElement.style.overflow = 'auto';"; // show scrollbar
+//    	//String suffix = "window.document.documentElement.style.overflow = 'hidden';"; // hide scrollbar
+//    	
+//    	switch (dir) {
+//        	case down: {
+//        		script = "window.scrollBy(0, window.document.documentElement.clientHeight * 0.80);";
+//        		break;
+//        	}
+//        	case up: {
+//        		script = "window.scrollBy(0, window.document.documentElement.clientHeight * -0.80);";
+//        		break;
+//        	}
+//        	case right: {
+//        		script = "window.scrollBy(window.document.documentElement.clientWidth * 0.80, 0);";
+//        		break;
+//        	}
+//        	case left: {
+//        		script = "window.scrollBy(window.document.documentElement.clientWidth * -0.80, 0);";
+//        		break;
+//        	}
+//    	}
+//    	JavascriptExecutor js = (JavascriptExecutor) _web_driver;
+//    	js.executeScript(script);
+//    }
     
     String get_image_url(String fe_index_path, String xpath) {
         return get_element(fe_index_path, xpath).getAttribute("src");

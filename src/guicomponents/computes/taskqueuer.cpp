@@ -476,6 +476,12 @@ void TaskQueuer::queue_perform_element_action(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_element_action_task,this), "queue_perform_element_action");
 }
 
+void TaskQueuer::queue_perform_element_scroll(TaskContext& tc) {
+  queue_get_current_element(tc);
+  queue_unblock_events(tc);
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_element_scroll_task,this), "queue_perform_element_scroll");
+}
+
 // ---------------------------------------------------------------------------------
 // Queue other actions.
 // ---------------------------------------------------------------------------------
@@ -1018,9 +1024,21 @@ void TaskQueuer::perform_element_action_task() {
 
   args.insert(Message::kElementAction, _chain_state.value(Message::kElementAction));
   args.insert(Message::kOptionText, _chain_state.value(Message::kOptionText)); // Used for selecting element from dropdowns.
-  args.insert(Message::kScrollDirection, _chain_state.value(Message::kScrollDirection)); // Used for the scrolling directions.
 
   Message req(WebDriverRequestType::kPerformElementAction);
+  req.insert(Message::kArgs, args);
+  send_msg_task(req);
+}
+
+void TaskQueuer::perform_element_scroll_task() {
+  QJsonObject args;
+  args.insert(Message::kFWIndexPath, _chain_state.value(Message::kFWIndexPath));
+  args.insert(Message::kFEIndexPath, _chain_state.value(Message::kFEIndexPath));
+  args.insert(Message::kXPath, _chain_state.value(Message::kXPath));
+
+  args.insert(Message::kScrollDirection, _chain_state.value(Message::kScrollDirection));
+
+  Message req(ChromeRequestType::kScrollElement);
   req.insert(Message::kArgs, args);
   send_msg_task(req);
 }

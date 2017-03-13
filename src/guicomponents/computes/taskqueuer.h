@@ -137,6 +137,7 @@ Q_OBJECT
   void queue_perform_mouse_hover(TaskContext& tc);
   void queue_perform_text_action(TaskContext& tc);
   void queue_perform_element_action(TaskContext& tc);
+  void queue_perform_element_scroll(TaskContext& tc);
 
   // Queue other actions.
   void queue_emit_option_texts(TaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
@@ -250,6 +251,7 @@ signals:
   void perform_hover_action_task();
   void perform_text_action_task();
   void perform_element_action_task();
+  void perform_element_scroll_task();
 
   //void mouse_hover_task();
 

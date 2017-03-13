@@ -1070,7 +1070,6 @@ void ElementActionCompute::create_inputs_outputs(const EntityConfig& config) {
     c.unconnected_value = 0;
 
     create_input(Message::kElementAction, c);
-    create_input(Message::kScrollDirection, c);  // Only used when the element action is set to scroll.
   }
   {
     EntityConfig c = config;
@@ -1090,9 +1089,6 @@ QJsonObject ElementActionCompute::init_hints() {
   add_hint(m, Message::kElementAction, GUITypes::HintKey::DescriptionHint, "The type of element action to perform.");
 
   add_hint(m, Message::kOptionText, GUITypes::HintKey::DescriptionHint, "The text to select from dropdowns.");
-
-  add_hint(m, Message::kScrollDirection, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::DirectionType));
-  add_hint(m, Message::kScrollDirection, GUITypes::HintKey::DescriptionHint, "The direction to scroll.");
 
   return m;
 }
@@ -1115,10 +1111,59 @@ void ElementActionCompute::post_update_state(TaskContext& tc) {
   // Special
   _queuer->queue_block_events(tc);
   _queuer->queue_wait_until_loaded(tc);
-  _queuer->queue_update_element(tc);
 
   // Do the base logic.
   BrowserCompute::post_update_state(tc);
+}
+
+void ElementScrollCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kScrollDirection, c);  // Only used when the element action is set to scroll.
+  }
+}
+
+const QJsonObject ElementScrollCompute::_hints = ElementScrollCompute::init_hints();
+QJsonObject ElementScrollCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+
+  add_hint(m, Message::kScrollDirection, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::DirectionType));
+  add_hint(m, Message::kScrollDirection, GUITypes::HintKey::DescriptionHint, "The direction in which to scroll.");
+
+  return m;
+}
+
+bool ElementScrollCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  pre_update_state(tc);
+  _queuer->queue_perform_element_scroll(tc);
+  handle_response(tc);
+  post_update_state(tc);
+  return false;
+}
+
+void ElementScrollCompute::post_update_state(TaskContext& tc) {
+  internal();
+
+  // Special
+  _queuer->queue_block_events(tc);
+  _queuer->queue_wait_until_loaded(tc);
+
+  // Do most of the logic from the base class.
+  //_queuer->queue_scroll_element_into_view(tc);
+  _queuer->queue_update_element(tc);
+  _queuer->queue_update_current_tab(tc);
+  _queuer->queue_wait_until_loaded(tc); // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
+  _queuer->queue_update_frame_offsets(tc);
+  handle_finished(tc);
 }
 
 }

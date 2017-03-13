@@ -92,8 +92,9 @@ const char* chrome_request_type_to_string(ChromeRequestType t) {
     // Extract info from element.
     case ChromeRequestType::kGetElementValues: return "kGetElementValues";
 
-    // Act on element.
+    // Scroll an element.
     case ChromeRequestType::kScrollElementIntoView: return "kScrollElementIntoView";
+    case ChromeRequestType::kScrollElement: return "kScroll";
 
     // Find the current element.
     case ChromeRequestType::kFindElementByPosition: return "kFindElementByPosition";
@@ -177,7 +178,6 @@ const char* element_action_type_to_string(ElementActionType t) {
   switch(t) {
     case ElementActionType::kGetText: return "kGetText";
     case ElementActionType::kChooseOption: return "kChooseOption";
-    case ElementActionType::kScroll: return "kScroll";
 
     default: {
       assert(false);

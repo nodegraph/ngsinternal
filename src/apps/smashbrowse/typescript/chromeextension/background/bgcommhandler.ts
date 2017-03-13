@@ -550,6 +550,25 @@ class BgCommHandler {
         })
     }
 
+    queue_scroll_element(dir: DirectionType) {
+        this.found_elem = null
+        this.error_msg = ""
+        this.collected_elems.length = 0
+        let req = new RequestMessage(-1, ChromeRequestType.kScrollElement, {scroll_direction: dir})
+        this.queue_collect_elements_from_frames(req)
+        this.queue(() => {
+            if (this.collected_elems.length == 1) {
+                // Make a deep copy of the current element info.
+                this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
+            } else if (this.collected_elems.length == 0) {
+                this.error_msg = "Unable to find the current element."
+            } else {
+                this.error_msg = "There were multiple current elements."
+            }
+            this.run_next_task()
+        })
+    }
+
     // Result will be in this.found_elem. Error will be in this.error_msg.
     // Note this uses the dynamic value of this.found_elem to set the current element.
     queue_set_current_element() {
@@ -796,6 +815,16 @@ class BgCommHandler {
             case ChromeRequestType.kScrollElementIntoView: {
                 this.clear_tasks()
                 this.queue_scroll_element_into_view()
+                this.queue(() => {
+                    // Note if there is no current element, there is nothing to scroll, but we always return success/true.
+                    let response = new ResponseMessage(req.id, true, {})
+                    this.bg_comm.send_to_app(response)
+                })
+                this.run_next_task()
+            } break
+            case ChromeRequestType.kScrollElement: {
+                this.clear_tasks()
+                this.queue_scroll_element(req.args.scroll_direction)
                 this.queue(() => {
                     // Note if there is no current element, there is nothing to scroll, but we always return success/true.
                     let response = new ResponseMessage(req.id, true, {})

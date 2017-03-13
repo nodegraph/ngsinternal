@@ -278,16 +278,16 @@ public class JComm {
 	                System.out.println(resp.to_string());
 	                break;
 	            }
-	            case kScroll: {
-	                // Scroll actions need to be performed by the extension
-	                // so we pass it through.
-	            	MessageEnums.DirectionType dir = MessageEnums.DirectionType.get_enum(req.get_args().getAsJsonObject().get("scroll_direction").getAsInt());
-	            	web_driver.switch_to_frame(fe_index_path);
-	            	web_driver.scroll(dir);
-	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
-	                System.out.println(resp.to_string());
-	            	break;
-	            } 
+//	            case kScroll: {
+//	                // Scroll actions need to be performed by the extension
+//	                // so we pass it through.
+//	            	MessageEnums.DirectionType dir = MessageEnums.DirectionType.get_enum(req.get_args().getAsJsonObject().get("scroll_direction").getAsInt());
+//	            	web_driver.switch_to_frame(fe_index_path);
+//	            	web_driver.scroll(dir);
+//	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+//	                System.out.println(resp.to_string());
+//	            	break;
+//	            } 
 	            default: {
 	                ResponseMessage resp = new ResponseMessage(req.get_id(), false, gson.toJsonTree("unknown element action"));
 	                System.out.println(resp.to_string());
