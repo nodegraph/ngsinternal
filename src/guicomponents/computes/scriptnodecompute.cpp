@@ -43,7 +43,7 @@ void ScriptNodeCompute::create_inputs_outputs(const EntityConfig& config) {
                       "if (context.count != undefined) {\n"
                       "  context.count += 1;\n"
                       "} else {\n"
-                      "  context.count = 0;\n"
+                      "  context.count = 1;\n"
                       "}\n"
                       "\n"
                       "// Output usage example:\n"
