@@ -120,9 +120,6 @@ Rectangle {
                 onClicked: {
                 	page.Stack.view.pop_page()
                     page.callback(option_ids[combo_box.currentIndex], get_value())
-                    //page.Stack.view.pop_page()
-                    //main_bar.switch_to_current_mode()
-                    //node_graph_item.update()
                 }
             }
             Rectangle {
