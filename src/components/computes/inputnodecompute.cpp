@@ -51,10 +51,13 @@ bool InputNodeCompute::update_state() {
 
   // Start with our default value.
   QJsonValue output = _inputs->get_input_value("default_value");
-
-  // If there is an override then merge that in.
-  if (!_override.isNull() && !_override.isUndefined()) {
-    output = JSONUtils::deep_merge(output, _override);
+  // If we are not inside the root group, but some other child group,
+  // then the group may set an override from the corresponding group's input param.
+  if (!our_entity()->get_parent()->is_root_group()) {
+    // If there is an override then merge that in.
+    if (!_override.isNull() && !_override.isUndefined()) {
+      output = JSONUtils::deep_merge(output, _override);
+    }
   }
 
   set_main_output(output);

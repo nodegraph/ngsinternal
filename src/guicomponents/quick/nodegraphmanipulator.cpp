@@ -452,9 +452,13 @@ Entity* NodeGraphManipulatorImp::create_user_macro_node(bool centered, const std
   }
 
   Entity* e = _factory->instance_entity(group_entity, EntityDID::kUserMacroNodeEntity, name);
-  static_cast<UserMacroNodeEntity*>(e)->load_internals(macro_name);
+  UserMacroNodeEntity* u = static_cast<UserMacroNodeEntity*>(e);
+  u->load_internals(macro_name);
   e->create_internals();
   finish_creating_node(e, centered);
+
+  Dep<GroupNodeCompute> g = get_dep<GroupNodeCompute>(u);
+  g->revert_params_to_defaults();
   return e;
 }
 
@@ -464,9 +468,13 @@ Entity* NodeGraphManipulatorImp::create_app_macro_node(bool centered, const std:
   }
 
   Entity* e = _factory->instance_entity(group_entity, EntityDID::kAppMacroNodeEntity, name);
-  static_cast<AppMacroNodeEntity*>(e)->load_internals(macro_name);
+  AppMacroNodeEntity* a = static_cast<AppMacroNodeEntity*>(e);
+  a->load_internals(macro_name);
   e->create_internals();
   finish_creating_node(e, centered);
+
+  Dep<GroupNodeCompute> g = get_dep<GroupNodeCompute>(a);
+  g->revert_params_to_defaults();
   return e;
 }
 

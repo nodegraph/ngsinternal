@@ -115,6 +115,29 @@ void GroupNodeCompute::WireUpdater::update_wires() {
   }
 }
 
+void GroupNodeCompute::WireUpdater::revert_params_to_defaults() {
+  // Copy the default value of input nodes to the groups inputs.
+  Entity* inputs_space = _target->get_entity(Path({".",kInputsFolderName}));
+  const Entity::NameToChildMap& params = inputs_space->get_children();
+  const Entity::NameToChildMap& nodes = _target->our_entity()->get_children();
+
+  for (auto &input_entity: params) {
+    // Outer is the param on the group node.
+    Dep<InputCompute> outer = get_dep<InputCompute>(input_entity.second);
+    std::string name = input_entity.first;
+    // Inner is our input node inside the group.
+    Entity* node_entity = nodes.at(name);
+    assert(node_entity);
+    Dep<InputNodeCompute> inner = get_dep<InputNodeCompute>(node_entity);
+    // Inner param is the default value param on the inner node.
+    Dep<InputCompute> inner_param = inner->get_inputs()->get("default_value");
+    // We clean it. This won't start any asynchronous processes as it's the top level input node in the group.
+    inner_param->clean_state();
+    QJsonValue inner_value = inner_param->get_main_output();
+    outer->set_unconnected_value(inner_value);
+  }
+}
+
 GroupNodeCompute::GroupNodeCompute(Entity* entity, ComponentDID did):
     Compute(entity, did),
     _factory(this),
@@ -154,6 +177,10 @@ void GroupNodeCompute::remove_param_hints(const std::string& name) {
   // Only dirty this component if we actually remove something.
   external();
   Compute::remove_hint(_node_hints, name);
+}
+
+void GroupNodeCompute::revert_params_to_defaults() {
+  _wire_updater->revert_params_to_defaults();
 }
 
 void GroupNodeCompute::dirty_all_nodes_in_group() {

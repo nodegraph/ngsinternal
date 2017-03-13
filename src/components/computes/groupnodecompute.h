@@ -17,6 +17,7 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
    public:
     WireUpdater(GroupNodeCompute* target);
     void update_wires();
+    void revert_params_to_defaults();
     GroupNodeCompute* _target;
   };
 
@@ -35,6 +36,7 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   virtual const QJsonObject& get_hints() const {return _node_hints;}
   virtual void add_param_hints(const std::string& name, const QJsonValue& param_hints);
   virtual void remove_param_hints(const std::string& name);
+  virtual void revert_params_to_defaults();
 
   // Internal nodes.
   virtual void dirty_all_nodes_in_group();

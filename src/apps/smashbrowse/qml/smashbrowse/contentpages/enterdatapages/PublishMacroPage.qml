@@ -128,7 +128,6 @@ Rectangle {
                     if (overwrite_check_box.checked) {
                     	node_graph_item.publish(macro_name)
                     	page.Stack.view.pop_page()
-                    	console.log(node_graph_item.get_macro_names())
                     } else {
 	                    if (!node_graph_item.macro_exists(macro_name)) {
 	                    	node_graph_item.publish(macro_name)
