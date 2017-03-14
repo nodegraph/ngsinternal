@@ -356,6 +356,107 @@ class BgCommHandler {
         return best
     }
 
+    static find_next_along_column(src: IElementInfo, candidates: IElementInfo[], max_width_diff: number, max_height_diff: number) {
+        let best: IElementInfo = null
+
+        let src_box = new Box(src.box)
+        const src_bottom = src_box.bottom
+
+        // Note the return in the forEach loop acts like a continue statement.
+        candidates.forEach((candidate) => {
+            let candidate_box = new Box(candidate.box)
+            
+            // The dest box must be align with the src box.
+            if (candidate_box.left != src_box.left) {
+                return
+            }
+
+            // Determine if the candidate is of the right size.
+            let dest_width = candidate_box.get_width()
+            let dest_height = candidate_box.get_height()
+            let min_width_pixels = src_box.get_width() * (1.0 - (max_width_diff * 0.01))
+            let max_width_pixels = src_box.get_width() * (1.0 + (max_width_diff * 0.01))
+            let min_height_pixels = src_box.get_height() * (1.0 - (max_height_diff * 0.01));
+            let max_height_pixels = src_box.get_height() * (1.0 + (max_height_diff * 0.01));
+            if ((dest_width < min_width_pixels) || (dest_width > max_width_pixels)) {
+                return
+            }
+            if ((dest_height < min_height_pixels) || (dest_height > max_height_pixels)) {
+                return
+            }
+
+            // Make sure the dest element is below our current row.
+            if (candidate.box.top < src_bottom) {
+                return
+            }
+
+            // If best hasn't been set yet, we take the first dest element.
+            if (!best) {
+                best = candidate
+                return
+            }
+
+            // If the dest element is above our current best, it becomes the next best element.
+            if (candidate.box.top <= best.box.top) {
+                best = candidate
+                return
+            }
+        })
+        return best
+    }
+
+    static find_first_column_elements(candidates: IElementInfo[], min_elements_per_column: number = 5, max_diff_between_elements: number = 500) {
+
+        let columns: Map<number, IElementInfo[]> = new Map<number,IElementInfo[]>();
+
+        // Group the elements into columns.
+        candidates.forEach((candidate) => {
+            let candidate_box = new Box(candidate.box)
+            if (!columns.has(candidate_box.left)) {
+                columns.set(candidate_box.left, [])
+            }
+            let elements = columns.get(candidate_box.left)
+            elements.push(candidate)
+        })
+        
+        // Remove columns with less than min_elements_per_column
+        let keys_to_remove: number[] = []
+        columns.forEach((elements: IElementInfo[], key: number) => {
+            if (elements.length < min_elements_per_column) {
+                keys_to_remove.push(key)
+            }
+        })
+        for (let key of keys_to_remove) {
+            columns.delete(key)
+        }
+        
+        // Sort the elements in the columns vertically.
+        columns.forEach((elements: IElementInfo[], key: number) => {
+            elements.sort((e1, e2) => {return e1.box.top - e2.box.top});
+        })
+
+        // Collect the starting elements of each column.
+        let first_elements: IElementInfo[]
+        columns.forEach((elements: IElementInfo[], key: number) => {
+            first_elements.push(elements[0])
+        })
+
+        // A given column may be split into multiple groups.
+        // Find the starting points of internal splits and append them.
+        columns.forEach((elements: IElementInfo[], key: number) => {
+            if (elements.length < 2) {
+                return
+            }
+            for (let i = 1; i < elements.length; i++) {
+                if ((elements[i].box.top - elements[i-1].box.bottom) > max_diff_between_elements) {
+                    first_elements.push(elements[i])
+                }
+            }
+        })
+
+        return first_elements
+    }
+
     static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], angle: number, max_width_diff: number, max_height_diff: number, max_angle_diff: number) {
 
         // Loop through each one trying to find the best one.
@@ -1142,23 +1243,6 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            // case ChromeRequestType.kPerformElementAction: {
-            //     this.clear_tasks()
-            //     this.queue_collect_elements_from_frames(req)
-            //     this.queue(() => {
-            //         if (this.collected_elems.length == 1) {
-            //             let response = new ResponseMessage(req.id, true, this.collected_elems[0])
-            //             this.bg_comm.send_to_app(response)
-            //         } else if (this.collected_elems.length > 1) {
-            //             let response = new ResponseMessage(req.id, false, "Performed element action on multiple elements: " + this.collected_elems.length)
-            //             this.bg_comm.send_to_app(response)
-            //         } else {
-            //             let response = new ResponseMessage(req.id, false, "No current element to perform element action on.")
-            //             this.bg_comm.send_to_app(response)
-            //         }
-            //     })
-            //     this.run_next_task()
-            // } break
             case ChromeRequestType.kGetCrosshairInfo: {
                 this.clear_tasks()
                 this.queue_collect_click_from_frames(req)
