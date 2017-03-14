@@ -94,7 +94,9 @@ ENTITY_ENTRY2(ComputeNodeEntity, 29)\
 /* Macro Node. */\
 ENTITY_ENTRY2(UserMacroNodeEntity, 30)\
 ENTITY_ENTRY2(AppMacroNodeEntity, 31)\
-
+/* Password Nodes. */\
+ENTITY_ENTRY2(PasswordInputNodeEntity, 32)\
+ENTITY_ENTRY2(PasswordDataNodeEntity, 33)\
 
 enum class EntityDID: size_t {
   ENTITY_ENTRIES()

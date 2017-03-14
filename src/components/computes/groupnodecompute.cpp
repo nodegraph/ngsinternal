@@ -35,7 +35,7 @@ void GroupNodeCompute::WireUpdater::update_wires() {
     const std::string& child_name = iter.first;
     Entity* node = iter.second;
     EntityDID did = node->get_did();
-    if (did == EntityDID::kInputNodeEntity) {
+    if (did == EntityDID::kInputNodeEntity || did == EntityDID::kPasswordInputNodeEntity) {
       // Update the set of exposed_inputs.
       exposed_inputs.insert(child_name);
       // If we already have an input plug corresponding to the input node, then make sure the hints are synced up.

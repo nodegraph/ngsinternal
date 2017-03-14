@@ -645,9 +645,35 @@ void DataNodeEntity::create_internals(const EntityConfig& config) {
   }
 }
 
+void PasswordDataNodeEntity::create_internals(const EntityConfig& config) {
+  // Our components.
+  (new_ff PasswordDataNodeCompute(this))->create_inputs_outputs(config);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  // Gui components.
+  if (config.visible) {
+    new_ff InputNodeShape(this);
+    new_ff InputTopology(this);
+    new_ff OutputTopology(this);
+  }
+}
+
 void InputNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
   (new_ff InputNodeCompute(this))->create_inputs_outputs(config);
+  new_ff Inputs(this);
+  new_ff Outputs(this);
+  // Gui components.
+  if (config.visible) {
+    new_ff InputNodeShape(this);
+    new_ff InputTopology(this);
+    new_ff OutputTopology(this);
+  }
+}
+
+void PasswordInputNodeEntity::create_internals(const EntityConfig& config) {
+  // Our components.
+  (new_ff PasswordInputNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
   new_ff Outputs(this);
   // Gui components.

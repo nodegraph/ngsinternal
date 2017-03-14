@@ -11,8 +11,8 @@ namespace ngs {
 // with an input plug on the surrounding group.
 // The InputComputer mainly passes these calls onto its parent group node.
 
-InputNodeCompute::InputNodeCompute(Entity* entity):
-    Compute(entity, kDID()) {
+InputNodeCompute::InputNodeCompute(Entity* entity, ComponentDID did):
+    Compute(entity, did) {
 }
 
 InputNodeCompute::~InputNodeCompute() {
@@ -77,6 +77,23 @@ const QJsonValue& InputNodeCompute::get_override() const {
 void InputNodeCompute::clear_override() {
   internal();
   _override = QJsonValue();
+}
+
+// --------------------------------------------------------------------------------------
+
+
+PasswordInputNodeCompute::PasswordInputNodeCompute(Entity* entity):
+    InputNodeCompute(entity, kDID()) {
+}
+
+PasswordInputNodeCompute::~PasswordInputNodeCompute() {
+}
+
+const QJsonObject PasswordInputNodeCompute::_hints = PasswordInputNodeCompute::init_hints();
+QJsonObject PasswordInputNodeCompute::init_hints() {
+  QJsonObject m = InputNodeCompute::init_hints();
+  add_hint(m, "default_value", GUITypes::HintKey::PasswordHint, true);
+  return m;
 }
 
 }

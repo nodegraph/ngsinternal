@@ -478,12 +478,40 @@ Entity* NodeGraphManipulatorImp::create_app_macro_node(bool centered, const std:
   return e;
 }
 
+Entity* NodeGraphManipulatorImp::create_password_input_node(bool centered, const QJsonValue& unconnected_value, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
+  Entity* e = _factory->instance_entity(group_entity, EntityDID::kPasswordInputNodeEntity, name);
+  EntityConfig config;
+  config.unconnected_value = unconnected_value;
+
+  e->create_internals(config);
+  finish_creating_node(e, centered);
+  return e;
+}
+
 Entity* NodeGraphManipulatorImp::create_input_node(bool centered, const QJsonValue& unconnected_value, const std::string& name, Entity* group_entity) {
   if (!group_entity) {
     group_entity = _factory->get_current_group();
   }
 
   Entity* e = _factory->instance_entity(group_entity, EntityDID::kInputNodeEntity, name);
+  EntityConfig config;
+  config.unconnected_value = unconnected_value;
+
+  e->create_internals(config);
+  finish_creating_node(e, centered);
+  return e;
+}
+
+Entity* NodeGraphManipulatorImp::create_password_data_node(bool centered, const QJsonValue& unconnected_value, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
+  Entity* e = _factory->instance_entity(group_entity, EntityDID::kPasswordDataNodeEntity, name);
   EntityConfig config;
   config.unconnected_value = unconnected_value;
 
@@ -874,8 +902,16 @@ Entity* NodeGraphManipulator::create_app_macro_node(bool centered, const std::st
   return _imp->create_app_macro_node(centered, macro_name, macro_name, group_entity);
 }
 
+Entity* NodeGraphManipulator::create_password_input_node(bool centered, const QJsonValue& value, const std::string& name, Entity* group_entity) {
+  return _imp->create_password_input_node(centered, value, name, group_entity);
+}
+
 Entity* NodeGraphManipulator::create_input_node(bool centered, const QJsonValue& value, const std::string& name, Entity* group_entity) {
   return _imp->create_input_node(centered, value, name, group_entity);
+}
+
+Entity* NodeGraphManipulator::create_password_data_node(bool centered, const QJsonValue& value, const std::string& name, Entity* group_entity) {
+  return _imp->create_password_data_node(centered, value, name, group_entity);
 }
 
 Entity* NodeGraphManipulator::create_data_node(bool centered, const QJsonValue& value, const std::string& name, Entity* group_entity) {

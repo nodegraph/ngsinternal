@@ -255,6 +255,9 @@ COMPONENT_ENTRY2(PasswordActionCompute, 92)\
 COMPONENT_ENTRY2(ElementActionCompute, 93)\
 /* Scroll. */\
 COMPONENT_ENTRY2(ElementScrollCompute, 94)\
+/* Password based input nodes. */\
+COMPONENT_ENTRY2(PasswordInputNodeCompute, 95)\
+COMPONENT_ENTRY2(PasswordDataNodeCompute, 96)\
 
 // Numbers that are currently unused:
 // 52, 53, 54, 55

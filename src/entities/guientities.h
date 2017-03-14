@@ -131,10 +131,24 @@ class ENTITIES_EXPORT DataNodeEntity : public Entity {
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 
+class ENTITIES_EXPORT PasswordDataNodeEntity : public DataNodeEntity {
+ public:
+  ENTITY_ID(PasswordDataNodeEntity)
+ PasswordDataNodeEntity(Entity* parent, const std::string& name):DataNodeEntity(parent, name){}
+  virtual void create_internals(const EntityConfig& configs = EntityConfig());
+};
+
 class ENTITIES_EXPORT InputNodeEntity : public Entity {
  public:
   ENTITY_ID(InputNodeEntity)
   InputNodeEntity(Entity* parent, const std::string& name):Entity(parent, name){}
+  virtual void create_internals(const EntityConfig& configs = EntityConfig());
+};
+
+class ENTITIES_EXPORT PasswordInputNodeEntity : public InputNodeEntity {
+ public:
+  ENTITY_ID(PasswordInputNodeEntity)
+ PasswordInputNodeEntity(Entity* parent, const std::string& name):InputNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 };
 

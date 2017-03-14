@@ -82,8 +82,13 @@ Q_OBJECT
   virtual Entity* create_compute_node(bool centered, EntityDID entity_did, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
+
+  virtual Entity* create_password_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
+
+  virtual Entity* create_password_data_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_data_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
+
   virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name = "", Entity* group_entity=NULL);
 
   // Link a node.
@@ -198,8 +203,13 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual Entity* create_compute_node(bool centered, EntityDID entity_did, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL);
+
+  virtual Entity* create_password_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
+
+  virtual Entity* create_password_data_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
   virtual Entity* create_data_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL);
+
   virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name = "", Entity* group_entity=NULL);
 
   // Link a node.

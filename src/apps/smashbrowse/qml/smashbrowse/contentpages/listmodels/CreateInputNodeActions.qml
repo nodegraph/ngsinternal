@@ -3,10 +3,10 @@ import QtQuick 2.6
 ListModel {
 
 	ListElement {
-    	letters: "Ni"
-        title: "Number Input Node"
-        description: "Adds a number input (param) to the group."
-        script: "ng_controller.create_number_input_node(center_new_nodes);
+    	letters: "Pi"
+        title: "Password Input Node"
+        description: "Adds a password input (param) to the group."
+        script: "ng_controller.create_password_input_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     ListElement {
@@ -14,6 +14,13 @@ ListModel {
         title: "String Input Node"
         description: "Adds a string input (param) to the group."
         script: "ng_controller.create_string_input_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+    	letters: "Ni"
+        title: "Number Input Node"
+        description: "Adds a number input (param) to the group."
+        script: "ng_controller.create_number_input_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     ListElement {

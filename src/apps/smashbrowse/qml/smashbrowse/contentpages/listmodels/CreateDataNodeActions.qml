@@ -3,10 +3,10 @@ import QtQuick 2.6
 ListModel {
 
     ListElement {
-    	letters: "Nm"
-        title: "Number Data Node"
-        description: "Outputs a number value."
-        script: "ng_controller.create_number_data_node(center_new_nodes);
+    	letters: "Pw"
+        title: "Password Data Node"
+        description: "Outputs a string value."
+        script: "ng_controller.create_password_data_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     ListElement {
@@ -14,6 +14,13 @@ ListModel {
         title: "String Data Node"
         description: "Outputs a string value."
         script: "ng_controller.create_string_data_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    ListElement {
+    	letters: "Nm"
+        title: "Number Data Node"
+        description: "Outputs a number value."
+        script: "ng_controller.create_number_data_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     ListElement {

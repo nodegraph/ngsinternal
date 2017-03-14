@@ -7,7 +7,7 @@ namespace ngs {
 class COMPUTES_EXPORT DataNodeCompute: public Compute {
  public:
   COMPONENT_ID(Compute, DataNodeCompute);
-  DataNodeCompute(Entity* entity);
+  DataNodeCompute(Entity* entity, ComponentDID did = kDID());
   virtual ~DataNodeCompute();
 
   // Our topology.
@@ -21,6 +21,19 @@ class COMPUTES_EXPORT DataNodeCompute: public Compute {
  protected:
   // Our state.
   virtual bool update_state();
+};
+
+class COMPUTES_EXPORT PasswordDataNodeCompute: public DataNodeCompute {
+ public:
+  COMPONENT_ID(Compute, PasswordDataNodeCompute);
+  PasswordDataNodeCompute(Entity* entity);
+  virtual ~PasswordDataNodeCompute();
+
+  // Our hints.
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+
 };
 
 }

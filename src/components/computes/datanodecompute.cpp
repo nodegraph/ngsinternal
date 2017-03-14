@@ -7,8 +7,8 @@
 
 namespace ngs {
 
-DataNodeCompute::DataNodeCompute(Entity* entity)
-    : Compute(entity, kDID()) {
+DataNodeCompute::DataNodeCompute(Entity* entity, ComponentDID did)
+    : Compute(entity, did) {
 }
 
 DataNodeCompute::~DataNodeCompute() {
@@ -40,6 +40,22 @@ bool DataNodeCompute::update_state() {
   QJsonValue value = _inputs->get_input_value("data");
   set_main_output(value);
   return true;
+}
+
+// ---------------------------------------------------------------------------------------
+
+PasswordDataNodeCompute::PasswordDataNodeCompute(Entity* entity)
+    : DataNodeCompute(entity, kDID()) {
+}
+
+PasswordDataNodeCompute::~PasswordDataNodeCompute() {
+}
+
+const QJsonObject PasswordDataNodeCompute::_hints = PasswordDataNodeCompute::init_hints();
+QJsonObject PasswordDataNodeCompute::init_hints() {
+  QJsonObject m = DataNodeCompute::init_hints();
+  add_hint(m, "data", GUITypes::HintKey::PasswordHint, true);
+  return m;
 }
 
 }

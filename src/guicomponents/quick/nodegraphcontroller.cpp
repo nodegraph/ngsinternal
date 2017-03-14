@@ -69,11 +69,14 @@ void NodeGraphController::create_mqtt_group_node(bool centered) {
 }
 
 // Create interface nodes.
-void NodeGraphController::create_number_input_node(bool centered) {
-  _manipulator->create_input_node(centered, QJsonValue(0));
+void NodeGraphController::create_password_input_node(bool centered) {
+  _manipulator->create_password_input_node(centered, QJsonValue(""));
 }
 void NodeGraphController::create_string_input_node(bool centered) {
   _manipulator->create_input_node(centered, QJsonValue(""));
+}
+void NodeGraphController::create_number_input_node(bool centered) {
+  _manipulator->create_input_node(centered, QJsonValue(0));
 }
 void NodeGraphController::create_boolean_input_node(bool centered) {
   _manipulator->create_input_node(centered, QJsonValue(false));
@@ -91,11 +94,14 @@ void NodeGraphController::create_output_node(bool centered) {
 }
 
 // Create data nodes.
-void NodeGraphController::create_number_data_node(bool centered) {
-  _manipulator->create_data_node(centered, 0);
+void NodeGraphController::create_password_data_node(bool centered) {
+  _manipulator->create_password_data_node(centered, "");
 }
 void NodeGraphController::create_string_data_node(bool centered) {
   _manipulator->create_data_node(centered, "");
+}
+void NodeGraphController::create_number_data_node(bool centered) {
+  _manipulator->create_data_node(centered, 0);
 }
 void NodeGraphController::create_boolean_data_node(bool centered) {
   _manipulator->create_data_node(centered, false);

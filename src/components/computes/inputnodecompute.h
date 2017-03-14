@@ -8,7 +8,7 @@ namespace ngs {
 class COMPUTES_EXPORT InputNodeCompute: public Compute {
  public:
   COMPONENT_ID(Compute, InputNodeCompute);
-  InputNodeCompute(Entity* entity);
+  InputNodeCompute(Entity* entity, ComponentDID did = kDID());
   virtual ~InputNodeCompute();
 
   // Our topology.
@@ -32,5 +32,18 @@ class COMPUTES_EXPORT InputNodeCompute: public Compute {
   // This is not serialized.
   QJsonValue _override;
 };
+
+class COMPUTES_EXPORT PasswordInputNodeCompute: public InputNodeCompute {
+ public:
+  COMPONENT_ID(Compute, PasswordInputNodeCompute);
+  PasswordInputNodeCompute(Entity* entity);
+  virtual ~PasswordInputNodeCompute();
+
+  // Our hints.
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+};
+
 
 }
