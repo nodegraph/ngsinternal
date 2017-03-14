@@ -387,13 +387,19 @@ void TaskQueuer:: queue_update_frame_offsets(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::update_frame_offsets_task, this), "queue_update_frame_offsets");
 }
 
-void TaskQueuer::queue_update_element(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::update_element_task, this), "queue_update_overlays");
+void TaskQueuer::queue_set_element(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::set_element_task, this), "queue_set_element");
 }
 
 void TaskQueuer::queue_clear_element(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::clear_element_task, this), "queue_clear_element");
 }
+
+void TaskQueuer::queue_update_element(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::update_element_task, this), "queue_update_overlays");
+}
+
+
 
 void TaskQueuer::queue_find_element_by_position(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::find_element_by_position_task,this), "queue_find_element_by_values");
@@ -858,13 +864,18 @@ void TaskQueuer::update_frame_offsets_task() {
   send_msg_task(req);
 }
 
-void TaskQueuer::update_element_task() {
-  Message req(ChromeRequestType::kUpdateElement);
+void TaskQueuer::set_element_task() {
+  Message req(ChromeRequestType::kSetElement);
   send_msg_task(req);
 }
 
 void TaskQueuer::clear_element_task() {
   Message req(ChromeRequestType::kClearElement);
+  send_msg_task(req);
+}
+
+void TaskQueuer::update_element_task() {
+  Message req(ChromeRequestType::kUpdateElement);
   send_msg_task(req);
 }
 

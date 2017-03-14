@@ -664,4 +664,18 @@ void BrowserRecorder::record_scroll_left() {
   finish();
 }
 
+// -----------------------------------------------------------------
+// Set Element.
+// -----------------------------------------------------------------
+void BrowserRecorder::record_set_element() {
+  start();
+  _queuer->queue_get_crosshair_info(tc);
+
+  QJsonObject args;
+  args.insert(Message::kElementInfo, "");
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kSetElementCompute);
+  finish();
+}
+
 }

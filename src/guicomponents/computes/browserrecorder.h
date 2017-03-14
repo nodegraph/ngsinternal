@@ -110,6 +110,9 @@ Q_OBJECT
   Q_INVOKABLE void record_scroll_right();
   Q_INVOKABLE void record_scroll_left();
 
+  // Set Element.
+  Q_INVOKABLE void record_set_element();
+
   signals:
     void web_action_ignored();
 

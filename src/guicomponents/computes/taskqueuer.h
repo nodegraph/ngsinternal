@@ -120,8 +120,9 @@ Q_OBJECT
 
   // Queue Set Tasks.
   void queue_update_frame_offsets(TaskContext& tc);
-  void queue_update_element(TaskContext& tc);
+  void queue_set_element(TaskContext& tc);
   void queue_clear_element(TaskContext& tc);
+  void queue_update_element(TaskContext& tc);
   void queue_find_element_by_position(TaskContext& tc);
   void queue_find_element_by_values(TaskContext& tc);
   void queue_find_element_by_type(TaskContext& tc);
@@ -230,8 +231,9 @@ signals:
 
   // Set Creation/Modification Tasks.
   void update_frame_offsets_task();
-  void update_element_task();
+  void set_element_task();
   void clear_element_task();
+  void update_element_task();
   void find_element_by_position_task();
   void find_element_by_values_task();
   void find_element_by_type_task();

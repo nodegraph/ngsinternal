@@ -50,6 +50,8 @@ const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";
 const char* Message::kTargetValues = "target_values";
 
+const char* Message::kElementInfo = "element_info";
+
 const char* Message::kMouseAction = "mouse_action";
 const char* Message::kTextAction = "text_action";
 const char* Message::kElementAction = "element_action";

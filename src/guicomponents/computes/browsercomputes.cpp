@@ -523,18 +523,37 @@ bool GetCurrentURLCompute::update_state() {
   return false;
 }
 
-//void GetCurrentURLCompute::receive_chain_state(const QJsonObject& chain_state) {
-//  internal();
-//  clean_finalize();
-//
-//  // Grab the url from the chain state.
-//  QString url = chain_state[Message::kURL].toString();
-//  std::cerr << "Got final url: " << url.toStdString() << "\n";
-//  // Grab the incoming object.
-//  QJsonObject obj = _inputs->get_main_input_object();
-//  obj.insert(Message::kValue, url);
-//  set_main_output(obj);
-//}
+void SetElementCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = QJsonObject();
+    create_input(Message::kElementInfo, c);
+  }
+}
+
+const QJsonObject SetElementCompute::_hints = SetElementCompute::init_hints();
+QJsonObject SetElementCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "Object containing values identifying the element to make current.");
+  return m;
+}
+
+
+bool SetElementCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  pre_update_state(tc);
+  _queuer->queue_set_element(tc);
+  handle_response(tc);
+  post_update_state(tc);
+  return false;
+}
 
 
 void FindElementByPositionCompute::create_inputs_outputs(const EntityConfig& config) {
