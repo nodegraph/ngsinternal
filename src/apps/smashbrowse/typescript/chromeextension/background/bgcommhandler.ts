@@ -15,7 +15,8 @@ class BgCommHandler {
 
 
     // Caches used in our calculations.
-    private found_elem: IElementInfo = null
+    private best_elem: IElementInfo = null
+    private current_elem: IElementInfo = null
     private found_elems: IElementInfo[] = []
     private error_msg: string = ""
 
@@ -614,7 +615,7 @@ class BgCommHandler {
 
     // Result will be in this.found_elem. Error will be in this.error_msg.
     queue_get_current_element() {
-        this.found_elem = null
+        this.current_elem = null
         this.error_msg = ""
         this.collected_elems.length = 0
         let req = new RequestMessage(-1, ChromeRequestType.kGetElement)
@@ -622,7 +623,7 @@ class BgCommHandler {
         this.queue(() => {
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
-                this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
+                this.current_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
             } else if (this.collected_elems.length == 0) {
                 this.error_msg = "Unable to find the current element."
             } else {
@@ -632,8 +633,71 @@ class BgCommHandler {
         })
     }
 
+    queue_get_current_element_or_fail(req_id: number) {
+        this.queue_get_current_element()
+        this.queue(() => {
+            if (!this.current_elem) {
+                this.clear_tasks()
+                let response = new ResponseMessage(req_id, false, this.error_msg)
+                this.bg_comm.send_to_app(response)
+            } else {
+                this.run_next_task()
+            }
+        })
+    }
+
+    queue_set_current_element_no_fail(req_id: number) {
+        this.queue_set_current_element()
+        this.queue(() => {
+            if (this.current_elem) {
+                let response = new ResponseMessage(req_id, true, this.current_elem)
+                this.bg_comm.send_to_app(response)
+            } else {
+                let response = new ResponseMessage(req_id, true, false)
+                this.bg_comm.send_to_app(response)
+            }
+        })
+        this.run_next_task()
+    }
+
+    queue_current_element_or_fail(req_id: number) {
+        this.queue(() => {
+            if (this.current_elem) {
+                let response = new ResponseMessage(req_id, true, this.current_elem)
+                this.bg_comm.send_to_app(response)
+            } else {
+                let response = new ResponseMessage(req_id, false, this.error_msg)
+                this.bg_comm.send_to_app(response)
+            }
+        })
+        this.run_next_task()
+    }
+
+    queue_fail_if_no_found_elements(req_id: number) {
+        if (this.found_elems.length == 0) {
+            this.clear_tasks()
+            let response = new ResponseMessage(req_id, true, false)
+            this.bg_comm.send_to_app(response)
+        } else {
+            this.run_next_task()
+        }
+    }
+
+    queue_set_current_element_from_best(req_id: number) {
+        if (!this.best_elem) {
+            // Unable to find the next element.
+            // Wipe out the queue.
+            this.clear_tasks()
+            let response = new ResponseMessage(req_id, true, false)
+            this.bg_comm.send_to_app(response)
+        } else {
+            this.current_elem = this.best_elem
+            this.run_next_task()
+        }
+    }
+
     queue_scroll_element_into_view() {
-        this.found_elem = null
+        this.current_elem = null
         this.error_msg = ""
         this.collected_elems.length = 0
         let req = new RequestMessage(-1, ChromeRequestType.kScrollElementIntoView)
@@ -641,7 +705,7 @@ class BgCommHandler {
         this.queue(() => {
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
-                this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
+                this.current_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
             } else if (this.collected_elems.length == 0) {
                 this.error_msg = "Unable to find the current element."
             } else {
@@ -652,7 +716,7 @@ class BgCommHandler {
     }
 
     queue_scroll_element(dir: DirectionType) {
-        this.found_elem = null
+        this.current_elem = null
         this.error_msg = ""
         this.collected_elems.length = 0
         let req = new RequestMessage(-1, ChromeRequestType.kScrollElement, {scroll_direction: dir})
@@ -660,7 +724,7 @@ class BgCommHandler {
         this.queue(() => {
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
-                this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
+                this.current_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
             } else if (this.collected_elems.length == 0) {
                 this.error_msg = "Unable to find the current element."
             } else {
@@ -679,14 +743,14 @@ class BgCommHandler {
         // We skip using queue_collect_elements_from_frames, because we need to dynamically create the message
         // using the current value of this.found_elem.
         this.queue(() => {
-            let req = new RequestMessage(-1, ChromeRequestType.kSetElement, this.found_elem)
+            let req = new RequestMessage(-1, ChromeRequestType.kSetElement, this.current_elem)
             this.collected_elems.length = 0
             this.collect_from_frames(req, (elems: IElementInfo[]) => {this.collect_elements(elems)})
         })
         this.queue(() => {
             if (this.collected_elems.length == 1) {
                 // Make a deep copy of the current element info.
-                this.found_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
+                this.current_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
             } else if (this.collected_elems.length == 0) {
                 this.error_msg = "Unable to find the element to make current."
             } else {
@@ -863,23 +927,14 @@ class BgCommHandler {
             case ChromeRequestType.kGetElement: {
                 this.clear_tasks()
                 this.queue_get_current_element()
-                this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
+                this.queue_current_element_or_fail(req.id)
             } break
             case ChromeRequestType.kHasElement: {
                 this.clear_tasks()
                 this.queue_get_current_element()
                 this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
+                    if (this.current_elem) {
+                        let response = new ResponseMessage(req.id, true, this.current_elem)
                         this.bg_comm.send_to_app(response)
                     } else {
                     	// We don't error out if there is no current element.
@@ -900,18 +955,9 @@ class BgCommHandler {
             } break
             case ChromeRequestType.kSetElement: {
                 this.clear_tasks()
-                this.found_elem = req.args
+                this.current_elem = req.args
                 this.queue_set_current_element()
-                this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
+                this.queue_current_element_or_fail(req.id)
             } break
             case ChromeRequestType.kScrollElementIntoView: {
                 this.clear_tasks()
@@ -968,9 +1014,9 @@ class BgCommHandler {
                             }
                         }
                     });
-                    this.found_elem = JSON.parse(JSON.stringify(best))
+                    this.current_elem = JSON.parse(JSON.stringify(best))
 
-                    if (this.found_elem != null) {
+                    if (this.current_elem != null) {
                         this.run_next_task()
                     } else {
                         // Wipe out the queue.
@@ -980,23 +1026,14 @@ class BgCommHandler {
                     }
                 })
                 this.queue_set_current_element()
-                this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
+                this.queue_current_element_or_fail(req.id)
             } break
             case ChromeRequestType.kFindElementByValues: {
                 this.clear_tasks()
                 this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
                 this.queue(() => {
                     if (this.found_elems.length > 0) {
-                        this.found_elem = BgCommHandler.find_top_leftmost(this.found_elems)
+                        this.current_elem = BgCommHandler.find_top_leftmost(this.found_elems)
                         this.run_next_task()
                     } else {
                         // Wipe out the queue.
@@ -1006,23 +1043,14 @@ class BgCommHandler {
                     }
                 })
                 this.queue_set_current_element()
-                this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
+                this.queue_current_element_or_fail(req.id)
             } break
             case ChromeRequestType.kFindElementByType: {
                 this.clear_tasks()
                 this.queue_find_all_elements_by_type(req.args.wrap_type)
                 this.queue(() => {
                     if (this.found_elems.length > 0) {
-                        this.found_elem = BgCommHandler.find_top_leftmost(this.found_elems)
+                        this.current_elem = BgCommHandler.find_top_leftmost(this.found_elems)
                         this.run_next_task()
                     } else {
                         // Wipe out the queue.
@@ -1032,216 +1060,75 @@ class BgCommHandler {
                     }
                 })
                 this.queue_set_current_element()
-                this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
+                this.queue_current_element_or_fail(req.id)
             } break
             case ChromeRequestType.kShiftElementByType: {
                 this.clear_tasks()
                 // Make sure we have a current element to shift from.
-                this.queue_get_current_element()
-                this.queue(() => {
-                    if (!this.found_elem) {
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        this.run_next_task()
-                    }
-                })
+                this.queue_get_current_element_or_fail(req.id)
                 // Now get all the possible elements that we can shift to.
                 this.queue_find_all_elements_by_type(req.args.wrap_type)
-                // Select one to shift to.
+                // Fail if no elements found.
+                this.queue_fail_if_no_found_elements(req.id)
+                // Find the best element.
                 this.queue(() => {
-                    if (this.found_elems.length == 0) {
-                        // Unable to find any candidate elements to shift to.
-                        // Wipe out the queue.
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
-                        if (!best) {
-                            // Unable to find the next element.
-                            // Wipe out the queue.
-                            this.clear_tasks()
-                            let response = new ResponseMessage(req.id, true, false)
-                            this.bg_comm.send_to_app(response)
-                        } else {
-                            this.found_elem = best
-                            this.run_next_task()
-                        }
-                    }
+                    this.best_elem = BgCommHandler.find_closest_neighbor(this.current_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                 })
+                // Set the current element to be the best element.
+                this.queue_set_current_element_from_best(req.id)
                 // Shift the element.
-                this.queue_set_current_element()
-                this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
+                this.queue_set_current_element_no_fail(req.id)
             } break
             case ChromeRequestType.kShiftElementByValues: {
                 this.clear_tasks()
                 // Make sure we have a current element to shift from.
-                this.queue_get_current_element()
-                this.queue(() => {
-                    if (!this.found_elem) {
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        this.run_next_task()
-                    }
-                })
+                this.queue_get_current_element_or_fail(req.id)
                 // Now get all the possible elements that we can shift to.
                 this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
+                // Fail if no elements found.
+                this.queue_fail_if_no_found_elements(req.id)
                 // Select one to shift to.
                 this.queue(() => {
-                    if (this.found_elems.length == 0) {
-                        // Unable to find any candidate elements to shift to.
-                        // Wipe out the queue.
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let best: IElementInfo = BgCommHandler.find_closest_neighbor(this.found_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
-                        if (!best) {
-                            // Wipe out the queue.
-                            // Unable to find the next element.
-                            this.clear_tasks()
-                            let response = new ResponseMessage(req.id, true, false)
-                            this.bg_comm.send_to_app(response)
-                        } else {
-                            this.found_elem = best
-                            this.run_next_task()
-                        }
-                    }
+                    this.best_elem = BgCommHandler.find_closest_neighbor(this.current_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                 })
+                // Set the current element to be the best element.
+                this.queue_set_current_element_from_best(req.id)
                 // Shift the element.
-                this.queue_set_current_element()
-                this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
+                this.queue_set_current_element_no_fail(req.id)
             } break
             case ChromeRequestType.kShiftElementByTypeAlongRows: {
                 this.clear_tasks()
                 // Make sure we have a current element to shift from.
-                this.queue_get_current_element()
-                this.queue(() => {
-                    if (!this.found_elem) {
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        this.run_next_task()
-                    }
-                })
+                this.queue_get_current_element_or_fail(req.id)
                 // Now get all the possible elements that we can shift to.
                 this.queue_find_all_elements_by_type(req.args.wrap_type)
+                // Fail if no elements found.
+                this.queue_fail_if_no_found_elements(req.id)
                 // Select one to shift to.
                 this.queue(() => {
-                    if (this.found_elems.length == 0) {
-                        // Unable to find any candidate elements to shift to.
-                        // Wipe out the queue.
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
-                        if (!best) {
-                            // Unable to find the next element.
-                            // Wipe out the queue.
-                            this.clear_tasks()
-                            let response = new ResponseMessage(req.id, true, false)
-                            this.bg_comm.send_to_app(response)
-                        } else {
-                            this.found_elem = best
-                            this.run_next_task()
-                        }
-                    }
+                    this.best_elem = BgCommHandler.find_next_along_rows(this.current_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                 })
+                // Set the current element to be the best element.
+                this.queue_set_current_element_from_best(req.id)
                 // Shift the element.
-                this.queue_set_current_element()
-                this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
+                this.queue_set_current_element_no_fail(req.id)
             } break
             case ChromeRequestType.kShiftElementByValuesAlongRows: {
                 this.clear_tasks()
                 // Make sure we have a current element to shift from.
-                this.queue_get_current_element()
-                this.queue(() => {
-                    if (!this.found_elem) {
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, this.error_msg)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        this.run_next_task()
-                    }
-                })
+                this.queue_get_current_element_or_fail(req.id)
                 // Now get all the possible elements that we can shift to.
                 this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
+                // Fail if no elements found.
+                this.queue_fail_if_no_found_elements(req.id)
                 // Select one to shift to.
                 this.queue(() => {
-                    if (this.found_elems.length == 0) {
-                        // Unable to find any candidate elements to shift to.
-                        // Wipe out the queue.
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let best: IElementInfo = BgCommHandler.find_next_along_rows(this.found_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
-                        if (!best) {
-                            // Unable to find the next element.
-                            // Wipe out the queue.
-                            this.clear_tasks()
-                            let response = new ResponseMessage(req.id, true, false)
-                            this.bg_comm.send_to_app(response)
-                        } else {
-                            this.found_elem = best
-                            this.run_next_task()
-                        }
-                    }
+                    this.best_elem = BgCommHandler.find_next_along_rows(this.current_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
                 })
+                // Set the current element to be the best element.
+                this.queue_set_current_element_from_best(req.id)
                 // Shift the element.
-                this.queue_set_current_element()
-                this.queue(() => {
-                    if (this.found_elem) {
-                        let response = new ResponseMessage(req.id, true, this.found_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, true, false)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
+                this.queue_set_current_element_no_fail(req.id)
             } break
             case ChromeRequestType.kGetCrosshairInfo: {
                 this.clear_tasks()
