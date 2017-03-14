@@ -384,6 +384,50 @@ void BrowserRecorder::record_shift_to_select_type_along_rows() {
 }
 
 // -----------------------------------------------------------------
+// Shift by type along columns.
+// -----------------------------------------------------------------
+
+void BrowserRecorder::record_shift_to_text_type_along_columns() {
+  start()
+  _queuer->queue_get_current_element(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::text));
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongColumnsCompute);
+  finish();
+}
+
+void BrowserRecorder::record_shift_to_image_type_along_columns() {
+  start()
+  _queuer->queue_get_current_element(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::image));
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongColumnsCompute);
+  finish();
+}
+
+void BrowserRecorder::record_shift_to_input_type_along_columns() {
+  start()
+  _queuer->queue_get_current_element(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::input));
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongColumnsCompute);
+  finish();
+}
+
+void BrowserRecorder::record_shift_to_select_type_along_columns() {
+  start()
+  _queuer->queue_get_current_element(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::select));
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongColumnsCompute);
+  finish();
+}
+
+// -----------------------------------------------------------------
 // Shift to element by values.
 // -----------------------------------------------------------------
 
@@ -440,6 +484,34 @@ void BrowserRecorder::record_shift_to_image_values_along_rows(){
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
   _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesAlongRowsCompute);
+  finish();
+}
+
+// -----------------------------------------------------------------
+// Shift by values along columns.
+// -----------------------------------------------------------------
+
+void BrowserRecorder::record_shift_to_text_values_along_columns() {
+  start()
+  _queuer->queue_get_current_element(tc);
+  _queuer->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::text));
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesAlongColumnsCompute);
+  finish();
+}
+
+void BrowserRecorder::record_shift_to_image_values_along_columns(){
+  start()
+  _queuer->queue_get_current_element(tc);
+  _queuer->queue_get_element_values(tc);
+  QJsonObject args;
+  args.insert(Message::kWrapType, to_underlying(WrapType::image));
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesAlongColumnsCompute);
   finish();
 }
 

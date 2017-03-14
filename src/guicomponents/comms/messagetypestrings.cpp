@@ -106,6 +106,8 @@ const char* chrome_request_type_to_string(ChromeRequestType t) {
     case ChromeRequestType::kShiftElementByValues: return "kShiftElementByValues";
     case ChromeRequestType::kShiftElementByTypeAlongRows: return "kShiftElementByTypeAlongRows";
     case ChromeRequestType::kShiftElementByValuesAlongRows: return "kShiftElementByValuesAlongRows";
+    case ChromeRequestType::kShiftElementByTypeAlongColumns: return "kShiftElementByTypeAlongColumns";
+    case ChromeRequestType::kShiftElementByValuesAlongColumns: return "kShiftElementByValuesAlongColumns";
 
     // Info Request.
     case ChromeRequestType::kGetCrosshairInfo: return "kGetCrosshairInfo";

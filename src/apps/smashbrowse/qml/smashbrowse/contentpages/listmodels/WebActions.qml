@@ -40,6 +40,13 @@ ListModel {
     }
     
     ListElement {
+        image_url: "qrc:///icons/ic_arrow_forward_white_48dp.png"
+        title: "Shift Element Along Columns..."
+        description: "Shift to the next element on this column."
+        script: "push_by_names('Shift Element Along Columns', 'WebMenuListPage', 'WebActionsShiftAlongColumns')"
+    }
+    
+    ListElement {
         image_url: "qrc:///icons/ic_gavel_white_48dp.png"
         title: "Perform Action on Element..."
         description: "Perform an action on the current element."

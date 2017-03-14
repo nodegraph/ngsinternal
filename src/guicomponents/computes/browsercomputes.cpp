@@ -942,6 +942,137 @@ bool ShiftElementByValuesAlongRowsCompute::update_state() {
 
 // ---------------------------------------------------------------------------------------------------
 
+void ShiftElementByTypeAlongColumnsCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    create_input(Message::kWrapType, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 20;
+    create_input(Message::kMaxWidthDifference, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 20;
+    create_input(Message::kMaxHeightDifference, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 1;
+    create_input(Message::kMaxAngleDifference, c);
+  }
+}
+
+const QJsonObject ShiftElementByTypeAlongColumnsCompute::_hints = ShiftElementByTypeAlongColumnsCompute::init_hints();
+QJsonObject ShiftElementByTypeAlongColumnsCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
+
+  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
+  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
+  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "This is currently not used.");
+
+  return m;
+}
+
+bool ShiftElementByTypeAlongColumnsCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  pre_update_state(tc);
+  _queuer->queue_shift_element_by_type_along_columns(tc);
+  handle_response(tc);
+  post_update_state(tc);
+  return false;
+}
+
+// ---------------------------------------------------------------------------------------------------
+
+void ShiftElementByValuesAlongColumnsCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kWrapType, c);\
+  }
+
+  {
+    QJsonArray string_arr;
+    string_arr.push_back("example");
+
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = string_arr;
+    create_input(Message::kTargetValues, c);
+  }
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 20;
+    create_input(Message::kMaxWidthDifference, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 20;
+    create_input(Message::kMaxHeightDifference, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 1;
+    create_input(Message::kMaxAngleDifference, c);
+  }
+
+}
+
+const QJsonObject ShiftElementByValuesAlongColumnsCompute::_hints = ShiftElementByValuesAlongColumnsCompute::init_hints();
+QJsonObject ShiftElementByValuesAlongColumnsCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
+
+  add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
+  add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
+
+  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
+  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
+  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "This is currently not used.");
+  return m;
+}
+
+bool ShiftElementByValuesAlongColumnsCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  pre_update_state(tc);
+  _queuer->queue_shift_element_by_values_along_columns(tc);
+  handle_response(tc);
+  post_update_state(tc);
+  return false;
+}
+
+// ---------------------------------------------------------------------------------------------------
+
 void MouseActionCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);

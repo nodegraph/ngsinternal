@@ -74,6 +74,12 @@ Q_OBJECT
   Q_INVOKABLE void record_shift_to_input_type_along_rows();
   Q_INVOKABLE void record_shift_to_select_type_along_rows();
 
+  // Shift by type along columns.
+  Q_INVOKABLE void record_shift_to_text_type_along_columns();
+  Q_INVOKABLE void record_shift_to_image_type_along_columns();
+  Q_INVOKABLE void record_shift_to_input_type_along_columns();
+  Q_INVOKABLE void record_shift_to_select_type_along_columns();
+
   // Shift by values.
   Q_INVOKABLE void record_shift_to_text_values();
   Q_INVOKABLE void record_shift_to_image_values();
@@ -81,6 +87,10 @@ Q_OBJECT
   // Shift by values along rows.
   Q_INVOKABLE void record_shift_to_text_values_along_rows();
   Q_INVOKABLE void record_shift_to_image_values_along_rows();
+
+  // Shift by values along columns.
+  Q_INVOKABLE void record_shift_to_text_values_along_columns();
+  Q_INVOKABLE void record_shift_to_image_values_along_columns();
 
   // Record Mouse Actions.
   Q_INVOKABLE void record_click();

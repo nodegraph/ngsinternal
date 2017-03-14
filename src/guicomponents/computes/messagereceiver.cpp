@@ -112,6 +112,7 @@ void MessageReceiver::on_text_received(const QString & text) {
 
   std::cerr << "----------------------------------------------------\n";
   std::cerr << "app has received a message:   <----\n";
+  std::cerr << text.toStdString() << "\n";
   msg.dump();
 
   MessageType type = msg.get_msg_type();

@@ -244,20 +244,22 @@ COMPONENT_ENTRY2(ShiftElementByTypeCompute, 83)\
 COMPONENT_ENTRY2(ShiftElementByValuesCompute, 84)\
 COMPONENT_ENTRY2(ShiftElementByTypeAlongRowsCompute, 85)\
 COMPONENT_ENTRY2(ShiftElementByValuesAlongRowsCompute, 86)\
+COMPONENT_ENTRY2(ShiftElementByTypeAlongColumnsCompute, 87)\
+COMPONENT_ENTRY2(ShiftElementByValuesAlongColumnsCompute, 88)\
 /* Extract Info. */\
-COMPONENT_ENTRY2(GetActiveTabTitleCompute, 87)\
-COMPONENT_ENTRY2(GetCurrentURLCompute, 88)\
-COMPONENT_ENTRY2(DownloadVideoCompute, 89)\
+COMPONENT_ENTRY2(GetActiveTabTitleCompute, 89)\
+COMPONENT_ENTRY2(GetCurrentURLCompute, 90)\
+COMPONENT_ENTRY2(DownloadVideoCompute, 91)\
 /* Perform action on Element. */\
-COMPONENT_ENTRY2(MouseActionCompute, 90)\
-COMPONENT_ENTRY2(TextActionCompute, 91)\
-COMPONENT_ENTRY2(PasswordActionCompute, 92)\
-COMPONENT_ENTRY2(ElementActionCompute, 93)\
+COMPONENT_ENTRY2(MouseActionCompute, 92)\
+COMPONENT_ENTRY2(TextActionCompute, 93)\
+COMPONENT_ENTRY2(PasswordActionCompute, 94)\
+COMPONENT_ENTRY2(ElementActionCompute, 95)\
 /* Scroll. */\
-COMPONENT_ENTRY2(ElementScrollCompute, 94)\
+COMPONENT_ENTRY2(ElementScrollCompute, 96)\
 /* Password based input nodes. */\
-COMPONENT_ENTRY2(PasswordInputNodeCompute, 95)\
-COMPONENT_ENTRY2(PasswordDataNodeCompute, 96)\
+COMPONENT_ENTRY2(PasswordInputNodeCompute, 97)\
+COMPONENT_ENTRY2(PasswordDataNodeCompute, 98)\
 
 // Numbers that are currently unused:
 // 52, 53, 54, 55

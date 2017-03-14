@@ -291,6 +291,32 @@ class GUICOMPUTES_EXPORT ShiftElementByValuesAlongRowsCompute: public BrowserCom
   virtual bool update_state();
 };
 
+class GUICOMPUTES_EXPORT ShiftElementByTypeAlongColumnsCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ShiftElementByTypeAlongColumnsCompute);
+  ShiftElementByTypeAlongColumnsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
+  virtual bool update_state();
+};
+
+class GUICOMPUTES_EXPORT ShiftElementByValuesAlongColumnsCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ShiftElementByValuesAlongColumnsCompute);
+  ShiftElementByValuesAlongColumnsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
+  virtual bool update_state();
+};
+
 class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, MouseActionCompute);

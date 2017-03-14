@@ -294,12 +294,10 @@ void Message::dump() const {
     } else if (iter.key() == Message::kSuccess) {
       std::cerr << Message::kSuccess << ": " << iter.value().toBool() << "\n";
     } else if (iter.key() == Message::kValue) {
-      if (iter.value().isObject() || iter.value().isArray()) {
-        QJsonDocument doc(iter.value().toObject());
-        std::cerr << Message::kValue << ": " << doc.toJson().toStdString() << "\n";
-      } else {
-        std::cerr << Message::kValue << ": " << iter.value().toString().toStdString() << "\n";
-      }
+      QJsonObject obj;
+      obj.insert("doc", iter.value());
+      QJsonDocument doc(obj);
+      std::cerr << Message::kValue << ": " << doc.toJson().toStdString() << "\n";
     } else if (iter.key() == Message::kArgs) {
       if (iter.value().isObject()) {
         QJsonObject args = iter.value().toObject();
