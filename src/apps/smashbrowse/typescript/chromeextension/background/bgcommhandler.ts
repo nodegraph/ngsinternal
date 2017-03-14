@@ -646,7 +646,7 @@ class BgCommHandler {
         })
     }
 
-    queue_set_current_element_no_fail(req_id: number) {
+    queue_broadcast_current_element_no_fail(req_id: number) {
         this.queue_set_current_element()
         this.queue(() => {
             if (this.current_elem) {
@@ -660,7 +660,7 @@ class BgCommHandler {
         this.run_next_task()
     }
 
-    queue_current_element_or_fail(req_id: number) {
+    queue_current_element_exists_or_fail(req_id: number) {
         this.queue(() => {
             if (this.current_elem) {
                 let response = new ResponseMessage(req_id, true, this.current_elem)
@@ -927,7 +927,7 @@ class BgCommHandler {
             case ChromeRequestType.kGetElement: {
                 this.clear_tasks()
                 this.queue_get_current_element()
-                this.queue_current_element_or_fail(req.id)
+                this.queue_current_element_exists_or_fail(req.id)
             } break
             case ChromeRequestType.kHasElement: {
                 this.clear_tasks()
@@ -957,7 +957,7 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.current_elem = req.args
                 this.queue_set_current_element()
-                this.queue_current_element_or_fail(req.id)
+                this.queue_current_element_exists_or_fail(req.id)
             } break
             case ChromeRequestType.kScrollElementIntoView: {
                 this.clear_tasks()
@@ -1026,7 +1026,7 @@ class BgCommHandler {
                     }
                 })
                 this.queue_set_current_element()
-                this.queue_current_element_or_fail(req.id)
+                this.queue_current_element_exists_or_fail(req.id)
             } break
             case ChromeRequestType.kFindElementByValues: {
                 this.clear_tasks()
@@ -1043,7 +1043,7 @@ class BgCommHandler {
                     }
                 })
                 this.queue_set_current_element()
-                this.queue_current_element_or_fail(req.id)
+                this.queue_current_element_exists_or_fail(req.id)
             } break
             case ChromeRequestType.kFindElementByType: {
                 this.clear_tasks()
@@ -1060,7 +1060,7 @@ class BgCommHandler {
                     }
                 })
                 this.queue_set_current_element()
-                this.queue_current_element_or_fail(req.id)
+                this.queue_current_element_exists_or_fail(req.id)
             } break
             case ChromeRequestType.kShiftElementByType: {
                 this.clear_tasks()
@@ -1077,7 +1077,7 @@ class BgCommHandler {
                 // Set the current element to be the best element.
                 this.queue_set_current_element_from_best(req.id)
                 // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
+                this.queue_broadcast_current_element_no_fail(req.id)
             } break
             case ChromeRequestType.kShiftElementByValues: {
                 this.clear_tasks()
@@ -1094,7 +1094,7 @@ class BgCommHandler {
                 // Set the current element to be the best element.
                 this.queue_set_current_element_from_best(req.id)
                 // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
+                this.queue_broadcast_current_element_no_fail(req.id)
             } break
             case ChromeRequestType.kShiftElementByTypeAlongRows: {
                 this.clear_tasks()
@@ -1111,7 +1111,7 @@ class BgCommHandler {
                 // Set the current element to be the best element.
                 this.queue_set_current_element_from_best(req.id)
                 // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
+                this.queue_broadcast_current_element_no_fail(req.id)
             } break
             case ChromeRequestType.kShiftElementByValuesAlongRows: {
                 this.clear_tasks()
@@ -1128,7 +1128,7 @@ class BgCommHandler {
                 // Set the current element to be the best element.
                 this.queue_set_current_element_from_best(req.id)
                 // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
+                this.queue_broadcast_current_element_no_fail(req.id)
             } break
             case ChromeRequestType.kGetCrosshairInfo: {
                 this.clear_tasks()
