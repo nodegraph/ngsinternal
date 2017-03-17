@@ -1,25 +1,25 @@
 # Extract the ts files from tsconfig.json.
 # Note that for cmake to pick up changes in tsconfig.json you need to touch this file.
-get_tsconfig_files(bg_ts)
+get_tsconfig_files(ts_files)
 
 # Add our build dir prefix to the ts filenames.
-string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" bg_js "${bg_ts}")
+string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" js_files "${ts_files}")
 
 # Change the .ts suffix to .js in our ts filenames.
-string(REGEX REPLACE "(\\.ts)" ".js" bg_js "${bg_js}")
+string(REGEX REPLACE "(\\.ts)" ".js" js_files "${js_files}")
 
 # The name of the merged result. This is currently not used.
-set(bg_js_merged ${CMAKE_CURRENT_BINARY_DIR}/background.js)
+set(merged ${CMAKE_CURRENT_BINARY_DIR}/background.js)
 
 # The merged and minified result.
-set(bg_js_min ${CMAKE_CURRENT_BINARY_DIR}/bg.js)
+set(minimized ${CMAKE_CURRENT_BINARY_DIR}/bg.js)
 
 # Custom build command.
 add_custom_command(
-    OUTPUT ${bg_js} ${bg_js_min}
+    OUTPUT ${js_files} ${minimized}
     
     COMMAND tsc
-    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/${tsconfig_json} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${bg_js_merged}
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/${tsconfig_json} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${merged}
     
     COMMAND java
     ARGS -jar ${closure_compiler_jar}
@@ -29,19 +29,19 @@ add_custom_command(
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS
-         --js ${bg_js} 
-         --js_output_file ${bg_js_min}
+         --js ${js_files} 
+         --js_output_file ${minimized}
     
-    DEPENDS ${bg_ts} tsconfig.json ${msg_js_lib}
+    DEPENDS ${ts_files} tsconfig.json
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-add_custom_target(chrome_ext_bg ALL DEPENDS ${bg_js} ${bg_js_min})
+add_custom_target(chrome_ext_background ALL DEPENDS ${js_files} ${minimized})
 
 set(dest "chromeextension")
 
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 
-            ${bg_js_min}
+            ${minimized}
 		DESTINATION ${dest}
 		COMPONENT chrome_ext_background
     	PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE

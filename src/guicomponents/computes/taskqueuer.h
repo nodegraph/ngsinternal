@@ -47,6 +47,7 @@ Q_OBJECT
   void handle_response(const Message& sm);
   void handle_info(const Message& msg);
   const Message& get_last_response() const{external(); return _last_response;}
+  const QJsonObject& get_last_click_info() const {return _last_click_info;}
 
   // Polling Control.
   // Polling is used to ensure that the browser is open and of the expected dimensions.
@@ -69,6 +70,7 @@ Q_OBJECT
   void queue_get_drop_down_info(TaskContext& tc);
 
   // Queue Framework Tasks.
+  void queue_merge_last_click_info_into_chain_state(TaskContext& tc);
   void queue_overwrite_chain_state(TaskContext& tc, const QJsonObject& map);
   void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
   void queue_clear_chain_state(TaskContext& tc);
@@ -120,6 +122,7 @@ Q_OBJECT
 
   // Queue Set Tasks.
   void queue_update_frame_offsets(TaskContext& tc);
+  void queue_get_all_elements(TaskContext& tc);
   void queue_set_element(TaskContext& tc);
   void queue_clear_element(TaskContext& tc);
   void queue_update_element(TaskContext& tc);
@@ -176,6 +179,7 @@ signals:
   void scroll_element_into_view_task();
 
   // Infrastructure Tasks.
+  void merge_last_click_info_into_chain_state_task();
   void overwrite_chain_state_task(const QJsonObject& map);
   void merge_chain_state_task(const QJsonObject& map);
   void clear_chain_state_task();
@@ -231,6 +235,7 @@ signals:
 
   // Set Creation/Modification Tasks.
   void update_frame_offsets_task();
+  void get_all_elements_task();
   void set_element_task();
   void clear_element_task();
   void update_element_task();
@@ -273,8 +278,9 @@ signals:
   QTimer _poll_timer;
   QTimer _wait_timer;
 
-  // State to bring up the web actions menu, and handle menu activations.
-  QJsonObject _global_mouse_pos;
+  // State from the right click in the browser window.
+  // This is used to fill in various parameters when creating new nodes.
+  QJsonObject _last_click_info;
 
   // The 'value' value from responses will get merged into this state overriding previous values.
   QJsonObject _chain_state;

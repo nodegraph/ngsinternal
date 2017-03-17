@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "none",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": false,
+        "sourceMap": true
+    },
+    "files": [
+    	"../message/point.d.ts",
+        "../message/box.d.ts",
+        "../message/message.d.ts",
+        "../message/messagetypes.d.ts",
+    
+        "nodescripts.ts"
+    ]
+}

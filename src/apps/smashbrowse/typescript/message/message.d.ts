@@ -6,25 +6,24 @@ declare interface IElementInfo {
     // Frame and element info.
     fw_index_path: string // An array of indices into nested windows (obtained by window.frames in javascript).
     fe_index_path: string // An array of indices into nested HTMLIFrameElements (obtained by document.getElementsByTagName('iframe') in javascript).
+    // XPath.
     xpath: string
+    // Geometry.
+    box: IBox // These are the bounds in global client space.
+    // Tag name.
+    tag_name: string
+    // Text gather elements children.
+    text: string
+    // Image on element.
+    image: string
     // Href from parenting anchor, empty if no parenting anchor.
     href: string
-    // Dimension and stacking order.
-    box: IBox // These are the bounds in global client space.
-    z_index: number
 }
 
-declare interface IClickInfo {
-    // Frame and element info.
-    fw_index_path: string // An array of indices into nested windows (obtained by window.frames in javascript).
-    fe_index_path: string // An array of indices into nested HTMLIFrameElements (obtained by document.getElementsByTagName('iframe') in javascript).
-    xpath: string
+declare interface IClickInfo extends IElementInfo {
     // Click pos.
     global_mouse_position: IPoint // In global client space.
     local_mouse_position: IPoint // In local space relative to the element of interest. (Calculated by subtracting the click pos from the element pos in page space coordinates.)
-    // Text and image values under click.
-    text_values: string[]
-    image_values: string[]
 }
 
 interface IDropDownInfo {

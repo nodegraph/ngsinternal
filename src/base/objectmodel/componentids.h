@@ -263,6 +263,11 @@ COMPONENT_ENTRY2(ElementScrollCompute, 97)\
 /* Password based input nodes. */\
 COMPONENT_ENTRY2(PasswordInputNodeCompute, 98)\
 COMPONENT_ENTRY2(PasswordDataNodeCompute, 99)\
+/* New filtering based architecture. */\
+COMPONENT_ENTRY2(GetAllElementsCompute, 100)\
+COMPONENT_ENTRY2(FilterByTypeAndValueNodeCompute, 101)\
+COMPONENT_ENTRY2(FilterByPositionNodeCompute, 102)\
+COMPONENT_ENTRY2(FilterByDimensionsNodeCompute, 103)\
 
 // Numbers that are currently unused:
 // 52, 53, 54, 55

@@ -5,6 +5,8 @@
 #include <guicomponents/computes/messagereceiver.h>
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/taskqueuer.h>
+#include <guicomponents/computes/browserrecorder.h>
+
 #include <openssl/aes.h>
 #include <QtWebSockets/QWebSocket>
 
@@ -34,10 +36,8 @@ MessageReceiver::MessageReceiver(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
       _queuer(this),
-      _scheduler(this),
       _connected(false) {
   get_dep_loader()->register_fixed_dep(_queuer, Path());
-  get_dep_loader()->register_fixed_dep(_scheduler, Path());
 }
 
 MessageReceiver::~MessageReceiver() {
@@ -112,8 +112,12 @@ void MessageReceiver::on_text_received(const QString & text) {
 
   std::cerr << "----------------------------------------------------\n";
   std::cerr << "app has received a message:   <----\n";
-  std::cerr << text.toStdString() << "\n";
-  msg.dump();
+  if (text.size() < 5000) {
+    //std::cerr << text.toStdString() << "\n";
+    msg.dump();
+  } else {
+    std::cerr << "----------------------------------------------------\n";
+  }
 
   MessageType type = msg.get_msg_type();
   if (type == MessageType::kRequestMessage) {

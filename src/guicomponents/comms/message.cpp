@@ -15,6 +15,7 @@ const char* Message::kXPath = "xpath";
 
 const char* Message::kSuccess = "success";
 const char* Message::kValue = "value";
+const char* Message::kTargetValue = "target_value";
 
 const char* Message::kInfo = "info";
 
@@ -46,6 +47,8 @@ const char* Message::kKeys = "keys";
 const char* Message::kTimeInMilliseconds = "time_in_milliseconds";
 
 const char* Message::kWrapType = "wrap_type";
+const char* Message::kElementType = "element_type";
+
 const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";
 const char* Message::kTargetValues = "target_values";

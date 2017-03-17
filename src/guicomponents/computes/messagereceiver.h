@@ -14,7 +14,6 @@ class QWebSocket;
 namespace ngs {
 
 class TaskQueuer;
-class TaskScheduler;
 
 class GUICOMPUTES_EXPORT MessageReceiver : public QObject, public Component {
 Q_OBJECT
@@ -42,7 +41,6 @@ Q_OBJECT
 
   // Our fixed dependencies.
   Dep<TaskQueuer> _queuer;
-  Dep<TaskScheduler> _scheduler; // The node js process we want to connect to.
 
   QWebSocket* _web_socket; // Borrowed reference.
   bool _connected; // Whether our slot is connected to receive text from the socket.

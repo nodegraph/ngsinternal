@@ -1,31 +1,27 @@
 
 // This class wraps the dom element with extra functionality.
 class ElemWrap {
-    // Our dependencies.
-    
     // Our members.
-    private element: Element // The actual dom element.
-    private page_box: Box // Our bounds in page space.
-    private wrap_type: WrapType // Our wrapping type.
-    private getter: () => string // Cached values getter for our specific wrapping type.
-    private valid: boolean
+    protected element: Element // The actual dom element.
+    protected page_box: Box // Our bounds in page space.
+    protected valid: boolean // We become invalid once element disappears.
+
+    static image_getter: (wrap: ElemWrap) => string
+    static text_getter: (wrap: ElemWrap) => string
+    static input_getter: (wrap: ElemWrap) => string
+    static select_getter: (wrap: ElemWrap) => string
     
     // Constructor.
     constructor(element: Element) {
-        // Our Dependencies.
-        
-        // Our Members.
         this.element = element
-
-        // Cached values, which need to be updated when the element changes.
         this.page_box = new Box({left: 0, right: 0, top: 0, bottom: 0})
-
-        // Our wrap type and getter should stay fixed throughout our lifetime.
-        this.wrap_type = this.calculate_wrap_type()
-        this.getter = ElemWrap.get_getter_from_wrap_type(this.wrap_type)
-
-        // Become invalid once element disappears.
         this.valid = true
+
+        // Functors used in filtering.
+        ElemWrap.image_getter = (wrap: ElemWrap)=> {return wrap.get_image()}
+        ElemWrap.text_getter = (wrap: ElemWrap)=> {return wrap.get_text()}
+        ElemWrap.input_getter = (wrap: ElemWrap)=> {if (wrap.get_tag_name() == 'input') {return 'input'} return ''}
+        ElemWrap.select_getter = (wrap: ElemWrap)=> {if (wrap.get_tag_name() == 'select') {return 'select'} return ''}
 
         // Update.
         this.update()
@@ -41,16 +37,8 @@ class ElemWrap {
         return this.element
     }
 
-    get_wrap_type() {
-        return this.wrap_type
-    }
-
     get_box() {
         return this.page_box
-    }
-
-    get_getter(): () => string {
-        return this.getter
     }
 
     is_valid() {
@@ -75,38 +63,15 @@ class ElemWrap {
         return false
     }
 
-    // Get our wrap type.
-    private calculate_wrap_type(): WrapType {
-        if (this.get_text()) {
-            return WrapType.text
+    // Get our parenting ElemWrap.
+    get_parent(): ElemWrap {
+        if (!this.element.parentElement) {
+            return null
         }
-        if (this.get_image()) {
-            return WrapType.image
-        }
-        if (this.is_input()) {
-            return WrapType.input
-        }
-        if (this.is_select()) {
-            return WrapType.select
-        }
-        return -1
+        return new ElemWrap(this.element.parentElement)
     }
 
-    static get_getter_from_wrap_type(wrap_type: WrapType): () => string {
-        // Note this returns functions that are not bound to this.
-        // This means that these functions can be called by many instances.
-        switch (wrap_type) {
-            case WrapType.text:
-                return ElemWrap.prototype.get_text
-            case WrapType.image:
-                return ElemWrap.prototype.get_image
-            case WrapType.input:
-                return ElemWrap.prototype.is_input
-            case WrapType.select:
-                return ElemWrap.prototype.is_select
-        }
-        return null
-    }
+
 
     //----------------------------------------------------------------------------------------
     // Geometry Related.
@@ -271,114 +236,31 @@ class ElemWrap {
     }
 
     get_info(): IElementInfo {
-        // Frame index path.
         let fw_index_path = PageWrap.get_fw_index_path(window)
-        // XPath.
         let xpath = this.get_xpath()
-        // Href.
         let href = this.get_anchor_url()
+        let image = this.get_image()
+        let text = this.get_text()
+        let tag_name = this.get_tag_name()
+
         // Bounds.
         let box = new Box(this.get_box()) // This should be in page space.
         box.to_client_space(window)
         box.add_offset(PageWrap.get_offset()) // convert local to global client space
-        let z_index = this.get_z_index()
+
         // Form the info.
-        return { fw_index_path: fw_index_path, fe_index_path: PageWrap.fe_index_path, xpath: xpath, href: href, box: box, z_index: z_index }
-    }
-
-    get_anchor_url(): string {
-        let e = this.element
-        while (!(e instanceof HTMLAnchorElement)) {
-            if (!e.parentElement) {
-                return ""
-            }
-            e = e.parentElement
+        return {
+            fw_index_path: fw_index_path,
+            fe_index_path: PageWrap.fe_index_path,
+            xpath: xpath,
+            box: box,
+            tag_name: tag_name,
+            href: href,
+            image: image,
+            text: text,
         }
-
-        let a = <HTMLAnchorElement>e
-        return a.href
     }
 
-    //----------------------------------------------------------------------------------------
-    // Element Shifting.
-    //----------------------------------------------------------------------------------------
-
-    // // Returns the next topmost element on one side of us.
-    // get_neighboring_elem_wrap(getter: () => string, side: DirectionType, page_wrap: PageWrap): ElemWrap {
-    //     let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
-
-    //     // Get all elem wraps intersecting the beam.
-    //     let elem_wraps: ElemWrap[] = page_wrap.get_intersecting_with(beam)
-
-    //     // Select out those elem wraps returning any value with getter.
-    //     let candidates: ElemWrap[] = []
-    //     for (let i = 0; i < elem_wraps.length; i++) {
-    //         if (elem_wraps[i].get_id() == this.get_id()) {
-    //             continue
-    //         }
-    //         let value = getter.call(elem_wraps[i])
-    //         if (value) {
-    //             candidates.push(elem_wraps[i])
-    //         }
-    //     }
-
-    //     // Find the closest candidate to us.
-    //     let min_dist: number = 99999999
-    //     let min_candidate: ElemWrap = null
-    //     for (let i = 0; i < candidates.length; i++) {
-    //         let dist = candidates[i].page_box.is_oriented_on(side, this.page_box)
-    //         // A dist greater than zero means it's properly oriented.
-    //         if (dist > 0) {
-    //             // Is this closer than any other candidate.
-    //             if (!min_candidate || dist < min_dist) {
-    //                 min_candidate = candidates[i]
-    //                 min_dist = dist
-    //             }
-    //         }
-    //     }
-
-    //     // Return our result.
-    //     return min_candidate
-    // }
-
-    // shift(dir: DirectionType, wrap_type: WrapType, page_wrap: PageWrap): void {
-    //     // Find the proper getter for the type we're shifting to.
-    //     let getter: () => string = ElemWrap.get_getter_from_wrap_type(wrap_type)
-    //     let elem_wrap: ElemWrap = this.get_neighboring_elem_wrap(getter, dir, page_wrap)
-    //     if (elem_wrap) {
-    //         this.element = elem_wrap.element
-    //     }
-    // }
-
-
-    // //Returns the next topmost element on one side of us.
-    // get_similar_neighbors(side: DirectionType, match_criteria: MatchCriteria, page_wrap: PageWrap): ElemWrap[] {
-    //     let beam = this.page_box.get_beam(side, PageWrap.get_bounds())
-
-    //     // Get all elem wraps intersecting the beam.
-    //     let elem_wraps = page_wrap.get_intersecting_with(beam)
-
-    //     // Select out those elem wraps returning any value with getter.
-    //     let getter: () => string = this.get_getter()
-    //     let candidates: ElemWrap[] = []
-    //     for (let i = 0; i < elem_wraps.length; i++) {
-    //         let value = getter.call(elem_wraps[i])
-    //         if (value) {
-    //             candidates.push(elem_wraps[i])
-    //         }
-    //     }
-
-    //     // Find the candidates which match us.
-    //     let matches: ElemWrap[] = []
-    //     for (let i = 0; i < candidates.length; i++) {
-    //         if (match_criteria.matches(this, candidates[i])) {
-    //             matches.push(candidates[i])
-    //         }
-    //     }
-
-    //     // Return our result.
-    //     return matches
-    // }
 
 
     //----------------------------------------------------------------------------------------
@@ -486,45 +368,42 @@ class ElemWrap {
         this.element.scrollLeft -= this.get_horizontal_scroll_amount()
     }
 
-
     //----------------------------------------------------------------------------------------
-    // Element Behavioral Properties.
+    // Important Element Values.
     //----------------------------------------------------------------------------------------
 
-    //This is detects the back ground element of web pages and also popup divs.
-    //It's heuristic is to detect fully opaque elements.
-    //Note this is just a heuristic and may need changes in the future.
-    is_back_plate(): boolean {
-        let bg: string = this.get_background_color()
-        if (bg == 'rgba(0, 0, 0, 0)') {
-            return false
+    get_tag_name(): string {
+        return this.element.tagName.toLowerCase()
+    }
+
+    get_input(): string {
+        if (this.get_tag_name() === 'input') {
+            return this.get_text()
         }
-        let opacity: number = Number(this.get_opacity())
-        if (opacity != 1) {
-            return false
+        return ''
+    }
+
+    get_select(): string {
+        if (this.get_tag_name() === 'select') {
+            let s = <HTMLSelectElement>this.element
+            return s.options[s.selectedIndex].textContent
         }
-        if (bg.startsWith('rgba(')) {
-            let sub = bg.slice(5, -1)
-            let colors = sub.split(',')
-            if (!colors[3].startsWith('1')) {
-                return false
+        return ''
+    }
+
+
+    get_anchor_url(): string {
+        let e = this.element
+        while (!(e instanceof HTMLAnchorElement)) {
+            if (!e.parentElement) {
+                return ''
             }
+            e = e.parentElement
         }
-        return true
+
+        let a = <HTMLAnchorElement>e
+        return a.href
     }
-
-    get_parent(): ElemWrap {
-        if (!this.element.parentElement) {
-            return null
-        }
-        return new ElemWrap(this.element.parentElement)
-    }
-
-
-
-    //----------------------------------------------------------------------------------------
-    // Element Properties/Values.
-    //----------------------------------------------------------------------------------------
 
     //Retrieves the image value directly on an element in the dom hierarchy.
     //Note that there may multiple images (ie overlapping image) however they
@@ -563,12 +442,13 @@ class ElemWrap {
                     return background_image + "::" + scaling + "::" + offset
                 }
             }
+            return ''
         }
 
         // Otherwise we query the computed style for the background image.
         let after_style: CSSStyleDeclaration = window.getComputedStyle(this.element, ':after');
         let style: CSSStyleDeclaration = window.getComputedStyle(this.element, null)
-        let result = ""
+        let result = ''
         // Check the :after pseudo element first.
         if (after_style) {
             result = get_image_from_style(after_style)
@@ -582,11 +462,15 @@ class ElemWrap {
         return result
     }
 
+    get_text(): string {
+        return ElemWrap.gather_element_text(this.element)
+    }
+
     //Retrieves the text value directly under an element in the dom hierarchy.
     //Note that there may be multiple texts (ie muliple paragraphs) however they
     //will always be returned as one string from this function.
     static gather_element_text(elem: Element) {
-        let text = ""
+        let text = ''
 
         // Loop through children accumulating text node values.
         for (let c = 0; c < elem.childNodes.length; c++) {
@@ -630,47 +514,9 @@ class ElemWrap {
         return text
     }
 
-
-    get_text(): string {
-        return ElemWrap.gather_element_text(this.element)
-    }
-
-    get_text_or_image(): string {
-        let text = this.get_text()
-        if (text) {
-            return text
-        }
-        let image = this.get_image()
-        if (image) {
-            return image
-        }
-    }
-
-    get_tag_name(): string {
-        return this.element.tagName.toLowerCase()
-    }
-
-    is_input(): string {
-        if (this.element.tagName.toLowerCase() == 'input') {
-            return 'input'
-        }
-        return ''
-    }
-
-    is_select(): string {
-        if (this.element.tagName.toLowerCase() == 'select') {
-            return 'select'
-        }
-        return ''
-    }
-
-    // is_iframe(): string {
-    //     if (this.element.tagName.toLowerCase() == 'iframe') {
-    //         return 'iframe'
-    //     }
-    //     return ''
-    // }
-
+    //----------------------------------------------------------------------------------------
+    // Experimental Property Getters.
+    //----------------------------------------------------------------------------------------
 
     //Retrieves the opacity value directly on an element in the dom hierarchy.
     get_opacity(): string {
@@ -701,8 +547,29 @@ class ElemWrap {
         return ""
     }
 
-
+    //This is detects the back ground element of web pages and also popup divs.
+    //It's heuristic is to detect fully opaque elements.
+    //Note this is just a heuristic and may need changes in the future.
+    is_back_plate(): boolean {
+        let bg: string = this.get_background_color()
+        if (bg == 'rgba(0, 0, 0, 0)') {
+            return false
+        }
+        let opacity: number = Number(this.get_opacity())
+        if (opacity != 1) {
+            return false
+        }
+        if (bg.startsWith('rgba(')) {
+            let sub = bg.slice(5, -1)
+            let colors = sub.split(',')
+            if (!colors[3].startsWith('1')) {
+                return false
+            }
+        }
+        return true
+    }
 }
+
 
 
 

@@ -1,22 +1,18 @@
 # Extract the ts files from tsconfig.json.
 # Note that for cmake to pick up changes in tsconfig.json you need to touch this file.
-get_tsconfig_files(msg_ts)
+get_tsconfig_files(ts_files)
 
 # Add our build dir prefix to the ts filenames.
-string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" msg_js "${msg_ts}")
+string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1" js_files "${ts_files}")
 
 # Change the .ts suffix to .js in our ts filenames.
-string(REGEX REPLACE "(\\.ts)" ".js" msg_js "${msg_js}")
+string(REGEX REPLACE "(\\.ts)" ".js" js_files "${js_files}")
 
 # The name of the merged result. This is currently not used.
-set(msg_js_merged ${CMAKE_CURRENT_BINARY_DIR}/msg.js)
+set(merged ${CMAKE_CURRENT_BINARY_DIR}/msg.js)
 
 # The merged and minified result.
-set(msg_js_min ${CMAKE_CURRENT_BINARY_DIR}/m.js)
-
-# The main lib that other's will use.
-# Make msg_js_merged available to other dirs besides the message dir.
-set(msg_js_lib ${CMAKE_CURRENT_BINARY_DIR}/point.js ${CMAKE_CURRENT_BINARY_DIR}/box.js ${CMAKE_CURRENT_BINARY_DIR}/message.js PARENT_SCOPE)
+set(minimized ${CMAKE_CURRENT_BINARY_DIR}/m.js)
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/generator.cmake.in"
@@ -31,29 +27,29 @@ add_custom_command(
 
 # Custom build command.
 add_custom_command(
-    OUTPUT ${msg_js} ${msg_js_min}
+    OUTPUT ${js_files} ${minimized}
     
     COMMAND tsc
-    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/${tsconfig_json} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${msg_js_merged}
+    ARGS --project ${CMAKE_CURRENT_SOURCE_DIR}/${tsconfig_json} --outDir ${CMAKE_CURRENT_BINARY_DIR} #--outFile ${merged}
     
     COMMAND java
     ARGS -jar ${closure_compiler_jar}
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS
-         --js ${msg_js}
-         --js_output_file ${msg_js_min}
+         --js ${js_files}
+         --js_output_file ${minimized}
     
-    DEPENDS ${msg_ts} tsconfig.json
+    DEPENDS ${ts_files} tsconfig.json
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-add_custom_target(msg_js ALL DEPENDS ${msg_js} ${msg_js_min})
+add_custom_target(message ALL DEPENDS ${js_files} ${minimized})
 
 set(dest "chromeextension")
 
 # Install the compiled chrome extension plus the css files.
 INSTALL(FILES 
-            ${msg_js_min}
+            ${minimized}
 		DESTINATION ${dest}
 		COMPONENT chrome_ext_background
     	PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE

@@ -200,6 +200,14 @@ class GUICOMPUTES_EXPORT GetCurrentURLCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
+class GUICOMPUTES_EXPORT GetAllElementsCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, GetAllElementsCompute);
+  GetAllElementsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+ protected:
+  virtual bool update_state();
+};
+
 class GUICOMPUTES_EXPORT SetElementCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, SetElementCompute);

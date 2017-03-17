@@ -111,7 +111,14 @@ Q_OBJECT
   Q_INVOKABLE void record_scroll_left();
 
   // Set Element.
+  Q_INVOKABLE void record_get_all_elements();
   Q_INVOKABLE void record_set_element();
+
+  Q_INVOKABLE void record_filter_by_type();
+  Q_INVOKABLE void record_filter_by_value();
+  Q_INVOKABLE void record_filter_by_position();
+  Q_INVOKABLE void record_filter_by_dimensions();
+
 
   signals:
     void web_action_ignored();

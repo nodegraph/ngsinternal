@@ -16,13 +16,118 @@
 
 namespace ngs {
 
-ScriptNodeCompute::ScriptNodeCompute(Entity* entity):
+BaseScriptNodeCompute::BaseScriptNodeCompute(Entity* entity, ComponentDID did):
   QObject(),
-  Compute(entity, kDID()),
+  Compute(entity, did),
   _context(this) {
   // The context is set when update_wires is called.
   // In derived classes the input and output param names should be set here.
   get_dep_loader()->register_fixed_dep(_context, Path({".."}));
+}
+
+BaseScriptNodeCompute::~BaseScriptNodeCompute() {
+}
+
+void BaseScriptNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  Compute::create_inputs_outputs(config);
+  create_main_input(config);
+  create_main_output(config);
+}
+
+const QJsonObject BaseScriptNodeCompute::_hints = BaseScriptNodeCompute::init_hints();
+QJsonObject BaseScriptNodeCompute::init_hints() {
+  QJsonObject m;
+  add_main_input_hint(m);
+  return m;
+}
+
+// Not all group nodes have a script loop context, so this method
+// search for the closest one surrounding us.
+Dep<ScriptLoopContext> BaseScriptNodeCompute::get_closest_context() {
+  Entity* group = our_entity()->get_parent();
+  while(group) {
+    if (group->has_comp_with_did(ComponentIID::kIScriptLoopContext, ComponentDID::kScriptLoopContext)) {
+      return get_dep<ScriptLoopContext>(group);
+    }
+    group = group->get_parent();
+  }
+  return Dep<ScriptLoopContext>(NULL);
+}
+
+QJsonObject BaseScriptNodeCompute::get_context() {
+  if (_context) {
+    return _context->get_context();
+  }
+  // Return an empty object if we don't have a group with a context surrounding us.
+  return QJsonObject();
+}
+
+void BaseScriptNodeCompute::set_context(const QJsonObject& context) {
+  if (_context) {
+    _context->set_context(context);
+  }
+  // Does nothing if we don't have a group with a context surrounding us.
+}
+
+QJsonObject BaseScriptNodeCompute::get_input() {
+  return _inputs->get_main_input_object();
+}
+
+void BaseScriptNodeCompute::set_output(const QJsonObject& value) {
+  set_main_output(value);
+}
+
+void BaseScriptNodeCompute::update_wires() {
+  std::cerr << "script group node is updating wires\n";
+  _context = get_closest_context();
+}
+
+bool BaseScriptNodeCompute::update_state() {
+  internal();
+  Compute::update_state();
+
+  QQmlEngine engine;
+  // Create a new context to run our javascript expression.
+  QQmlContext eval_context(engine.rootContext());
+  // Expose our set_output method to the script.
+  eval_context.setContextObject(this);
+  // Add other properties into the context.
+  expose_to_eval_context(eval_context);
+
+  // Create the expression.
+
+  // Script prefix.
+  QString prefix = "var context = get_context();\n"
+      "var input = get_input();\n"
+      "var output = input;\n";
+  // Script suffix.
+  QString suffix = "set_context(context);\n"
+      "set_output(output);\n";
+  // The full script.
+  QString script = prefix + "\n" + _script_body + "\n" + suffix; // The extra \n is for safety, as the user may omit them.
+  QQmlExpression expr(&eval_context, NULL, script);
+
+
+  // Evaluate the expression.
+  bool value_is_undefined = false;
+  QVariant result = expr.evaluate(&value_is_undefined);
+  // Check for errors.
+  if (expr.hasError()) {
+    std::cerr << "Error: expression has an error: " << expr.error().toString().toStdString() << "\n";
+    // Also show the error marker on the node.
+    _manipulator->set_error_node(expr.error().toString());
+    _manipulator->clear_ultimate_targets();
+    return false;
+  }
+  std::cerr << "Finished evaluating expression\n";
+  return true;
+}
+
+// ---------------------------------------------------------------------------------------
+
+ScriptNodeCompute::ScriptNodeCompute(Entity* entity):
+    BaseScriptNodeCompute(entity, kDID()) {
 }
 
 ScriptNodeCompute::~ScriptNodeCompute() {
@@ -30,9 +135,7 @@ ScriptNodeCompute::~ScriptNodeCompute() {
 
 void ScriptNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
-  Compute::create_inputs_outputs(config);
-  create_main_input(config);
-  create_main_output(config);
+  BaseScriptNodeCompute::create_inputs_outputs(config);
 
   {
     EntityConfig c = config;
@@ -64,84 +167,10 @@ QJsonObject ScriptNodeCompute::init_hints() {
   return m;
 }
 
-// Not all group nodes have a script loop context, so this method
-// search for the closest one surrounding us.
-Dep<ScriptLoopContext> ScriptNodeCompute::get_closest_context() {
-  Entity* group = our_entity()->get_parent();
-  while(group) {
-    if (group->has_comp_with_did(ComponentIID::kIScriptLoopContext, ComponentDID::kScriptLoopContext)) {
-      return get_dep<ScriptLoopContext>(group);
-    }
-    group = group->get_parent();
-  }
-  return Dep<ScriptLoopContext>(NULL);
-}
-
-QJsonObject ScriptNodeCompute::get_context() {
-  if (_context) {
-    return _context->get_context();
-  }
-  // Return an empty object if we don't have a group with a context surrounding us.
-  return QJsonObject();
-}
-
-void ScriptNodeCompute::set_context(const QJsonObject& context) {
-  if (_context) {
-    _context->set_context(context);
-  }
-  // Does nothing if we don't have a group with a context surrounding us.
-}
-
-QJsonObject ScriptNodeCompute::get_input() {
-  return _inputs->get_main_input_object();
-}
-
-void ScriptNodeCompute::set_output(const QJsonObject& value) {
-  set_main_output(value);
-}
-
-void ScriptNodeCompute::update_wires() {
-  std::cerr << "script group node is updating wires\n";
-  _context = get_closest_context();
-}
-
 bool ScriptNodeCompute::update_state() {
   internal();
-  Compute::update_state();
-
-  QQmlEngine engine;
-  // Create a new context to run our javascript expression.
-  QQmlContext eval_context(engine.rootContext());
-  // Expose our set_output method to the script.
-  eval_context.setContextObject(this);
-  // Note we add other properties into the context as follows.
-  //eval_context.setContextProperty("test", 111);
-
-  // Create the expression.
-  QString body = _inputs->get_input_string("script");
-  // Script prefix.
-  QString prefix = "var context = get_context();\n"
-      "var input = get_input();\n"
-      "var output = input;\n";
-  // Script suffix.
-  QString suffix = "set_context(context);\n"
-      "set_output(output);\n";
-  // The full script.
-  QString script = prefix + "\n" + body + "\n" + suffix; // The extra \n is for safety, as the user may omit them.
-
-  QQmlExpression expr(&eval_context, NULL, script);
-  // Evaluate the expression.
-  bool value_is_undefined = false;
-  QVariant result = expr.evaluate(&value_is_undefined);
-  // Check for errors.
-  if (expr.hasError()) {
-    std::cerr << "Error: expression has an error: " << expr.error().toString().toStdString() << "\n";
-    // Also show the error marker on the node.
-    _manipulator->set_error_node(expr.error().toString());
-    _manipulator->clear_ultimate_targets();
-    return false;
-  }
-  return true;
+  _script_body = _inputs->get_input_string("script");
+  return BaseScriptNodeCompute::update_state();
 }
 
 }

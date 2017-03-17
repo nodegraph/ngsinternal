@@ -89,6 +89,8 @@ const char* chrome_request_type_to_string(ChromeRequestType t) {
     case ChromeRequestType::kSetElement: return "kSetElement";
     case ChromeRequestType::kHasElement: return "kHasElement";
 
+    case ChromeRequestType::kGetAllElements: return "kGetAllElements";
+
     // Extract info from element.
     case ChromeRequestType::kGetElementValues: return "kGetElementValues";
 

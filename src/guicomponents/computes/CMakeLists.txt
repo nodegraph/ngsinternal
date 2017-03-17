@@ -17,6 +17,7 @@ set(sources
     mqtthostcompute.cpp
     waitnodecompute.cpp
     postnodecompute.cpp
+    filternodecomputes.cpp
     )
    
 set(headers
@@ -41,6 +42,7 @@ set(moc_headers
     scriptnodecompute.h
     waitnodecompute.h
     postnodecompute.h
+    filternodecomputes.h
     )
     
 qt5_wrap_cpp(moc_imps ${moc_headers})
@@ -64,6 +66,8 @@ target_link_libraries(ngs_guicomputes
 	Qt5::Network
 	Qt5::WebSockets
 ) 
+
+add_dependencies(ngs_guicomputes ${CMAKE_BINARY_DIR}/apps/smashbrowse/typescript/nodescripts/nodescripts.h)
 
 if (${ARCH} STREQUAL ARCH_WINDOWS)
     target_link_libraries(ngs_guicomputes 

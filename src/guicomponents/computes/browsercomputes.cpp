@@ -523,6 +523,19 @@ bool GetCurrentURLCompute::update_state() {
   return false;
 }
 
+
+bool GetAllElementsCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  pre_update_state(tc);
+  _queuer->queue_get_all_elements(tc);
+  handle_response(tc);
+  post_update_state(tc);
+  return false;
+}
+
 void SetElementCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);

@@ -59,7 +59,8 @@ class GUICollection {
         this.page_overlays.update_crosshair(local_page_click)
 
         // Send the request to the app.
-        let im = new InfoMessage(0, InfoType.kShowWebActionMenu, { global_mouse_position: global_client_click })
+        let smallest = PageWrap.get_smallest_element(local_page_click)
+        let im = new InfoMessage(0, InfoType.kShowWebActionMenu, smallest.get_info())
         this.content_comm.send_to_bg(im)
 
         // Prevent default behavior of the event.
@@ -69,8 +70,8 @@ class GUICollection {
 
     on_mouse_over(e: MouseEvent): void {
         let point = new Point({ x: e.pageX, y: e.pageY })
-        let text_elem_wrap = this.page_wrap.get_top_elem_wrap_at(point, WrapType.text)
-        let image_elem_wrap = this.page_wrap.get_top_elem_wrap_at(point, WrapType.image)
+        let text_elem_wrap = PageWrap.get_smallest_element_with_text(point)
+        let image_elem_wrap = PageWrap.get_smallest_element_with_images(point)
         this.page_overlays.update_overlays(text_elem_wrap, image_elem_wrap)
     }
 
@@ -100,32 +101,39 @@ class GUICollection {
         local_page_click.to_page_space(window)
 
         // Get the text and image values.
-        let elem_wraps = this.page_wrap.get_visible_overlapping_at(local_page_click)
-        let text_values = PageWrap.get_text_values_at(elem_wraps, local_page_click)
-        let image_values = PageWrap.get_image_values_at(elem_wraps, local_page_click)
-
-        // PageWrap.get_visible_overlapping_at(..) should be returning the elements in paint order.
-        // So we take the first one.
-        if (elem_wraps.length == 0) {
-            return null
+        let smallest = PageWrap.get_smallest_element(local_page_click)
+        if (!smallest) {
+            return {
+                fw_index_path: '',
+                fe_index_path: '',
+                xpath: '',
+                box: {left: 0, right: 0, top: 0, bottom: 0},
+                tag_name: '',
+                text: '',
+                image: '',
+                href: '',
+                global_mouse_position: {x: 0, y: 0},
+                local_mouse_position: {x: 0, y: 0},
+            }
         }
 
-        let elem = elem_wraps[0]
-        let xpath = elem.get_xpath()
-        let local_mouse_position = elem.get_box().get_relative_point(local_page_click)
-
-        let args: IClickInfo = {
-            fw_index_path: PageWrap.get_fw_index_path(window),
-            fe_index_path: PageWrap.fe_index_path,
-            xpath: xpath,
-            // Click pos.
+        let xpath = smallest.get_xpath()
+        let local_mouse_position = smallest.get_box().get_relative_point(local_page_click)
+        let info = smallest.get_info()
+        
+        let click_info: IClickInfo = {
+            fw_index_path: info.fw_index_path,
+            fe_index_path: info.fe_index_path,
+            xpath: info.xpath,
+            box: info.box,
+            tag_name: info.tag_name,
+            text: info.text,
+            image: info.image,
+            href: info.href,
             global_mouse_position: global_client_click,
             local_mouse_position: local_mouse_position,
-            // Text and image values under click.
-            text_values: text_values,
-            image_values: image_values,
         }
-        return args
+        return click_info
     }
 
 }

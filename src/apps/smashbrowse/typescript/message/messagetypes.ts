@@ -81,30 +81,32 @@ const enum ChromeRequestType {
   kSetElement = 15,
   kHasElement = 16,
 
+  kGetAllElements = 17,
+
   // Extract info from element.
-  kGetElementValues = 17,
+  kGetElementValues = 18,
 
   // Scroll an element.
-  kScrollElementIntoView = 18,
-  kScrollElement = 19,
+  kScrollElementIntoView = 19,
+  kScrollElement = 20,
 
   // Find the current element.
-  kFindElementByPosition = 20,
-  kFindElementByValues = 21,
-  kFindElementByType = 22,
+  kFindElementByPosition = 21,
+  kFindElementByValues = 22,
+  kFindElementByType = 23,
 
   // Shift the current element.
-  kShiftElementByType = 23,
-  kShiftElementByValues = 24,
-  kShiftElementByTypeAlongRows = 25,
-  kShiftElementByValuesAlongRows = 26,
-  kShiftElementByTypeAlongColumns = 27,
-  kShiftElementByValuesAlongColumns = 28,
+  kShiftElementByType = 24,
+  kShiftElementByValues = 25,
+  kShiftElementByTypeAlongRows = 26,
+  kShiftElementByValuesAlongRows = 27,
+  kShiftElementByTypeAlongColumns = 28,
+  kShiftElementByValuesAlongColumns = 29,
 
   // Info Request.
-  kGetCrosshairInfo = 29,
-  kGetDropDownInfo = 30,
-  kUpdateFrameOffsets = 31,
+  kGetCrosshairInfo = 30,
+  kGetDropDownInfo = 31,
+  kUpdateFrameOffsets = 32,
 
 }
 

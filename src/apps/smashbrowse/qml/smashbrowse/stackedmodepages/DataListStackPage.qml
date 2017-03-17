@@ -481,9 +481,9 @@ BaseStackPage{
         case GUITypes.Number:
             return value.toString()
         case GUITypes.Object:
-            return "folder of values"
+            return "object with " + Object.keys(value).length +" properties"
         case GUITypes.Array:
-            return "array of values"
+            return "array of " + value.length + " values"
         case GUITypes.Undefined:
             return "undefined"
         case GUITypes.Null:

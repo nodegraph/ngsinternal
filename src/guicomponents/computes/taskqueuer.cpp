@@ -204,6 +204,10 @@ void TaskQueuer::queue_get_drop_down_info(TaskContext& tc) {
 // Queue Framework Tasks.
 // ---------------------------------------------------------------------------------
 
+void TaskQueuer::queue_merge_last_click_info_into_chain_state(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::merge_last_click_info_into_chain_state_task,this), "queue_overwrite_chain_state");
+}
+
 void TaskQueuer::queue_overwrite_chain_state(TaskContext& tc, const QJsonObject& map) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::overwrite_chain_state_task,this, map), "queue_overwrite_chain_state");
 }
@@ -387,6 +391,10 @@ void TaskQueuer:: queue_update_frame_offsets(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::update_frame_offsets_task, this), "queue_update_frame_offsets");
 }
 
+void TaskQueuer::queue_get_all_elements(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::get_all_elements_task, this), "queue_set_element");
+}
+
 void TaskQueuer::queue_set_element(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::set_element_task, this), "queue_set_element");
 }
@@ -542,7 +550,7 @@ void TaskQueuer::handle_info(const Message& msg) {
   std::cerr << "commhub --> app: info: " << msg.to_string().toStdString() << "\n";
   int info_type = msg.value(Message::kInfo).toInt();
   if (info_type == to_underlying(InfoType::kShowWebActionMenu)) {
-    _global_mouse_pos = msg.value(Message::kValue).toObject().value(Message::kGlobalMousePosition).toObject();
+    _last_click_info = msg.value(Message::kValue).toObject();
     emit show_web_action_menu();
   } else {
       std::cerr << "comm->app: received info: " << msg.to_string().toStdString() << "\n";
@@ -555,7 +563,7 @@ void TaskQueuer::handle_info(const Message& msg) {
 
 void TaskQueuer::get_crosshair_info_task() {
   QJsonObject args;
-  args.insert(Message::kGlobalMousePosition, _global_mouse_pos);
+  args.insert(Message::kGlobalMousePosition, _last_click_info.value(Message::kGlobalMousePosition));
   Message req(ChromeRequestType::kGetCrosshairInfo,args);
   send_msg_task(req);
 }
@@ -591,6 +599,12 @@ void TaskQueuer::scroll_element_into_view_task() {
 // ------------------------------------------------------------------------
 // Infrastructure Tasks.
 // ------------------------------------------------------------------------
+
+void TaskQueuer::merge_last_click_info_into_chain_state_task() {
+  // Merge the values into the chain_state.
+  JSONUtils::shallow_object_merge(_chain_state, _last_click_info);
+  _scheduler->run_next_task();
+}
 
 void TaskQueuer::overwrite_chain_state_task(const QJsonObject& map) {
   _chain_state = map;
@@ -651,7 +665,8 @@ void TaskQueuer::build_compute_node_task(ComponentDID compute_did) {
   std::cerr << "building compute node!!\n";
   Entity* node = _manipulator->create_browser_node(true, compute_did, _chain_state);
   _manipulator->link_to_closest_node(node);
-  _manipulator->set_ultimate_targets(node, false);
+  //_manipulator->set_ultimate_targets(node, false);
+  _scheduler->run_next_task();
 }
 
 void TaskQueuer::reset_task() {
@@ -861,6 +876,11 @@ void TaskQueuer::get_current_url_task() {
 
 void TaskQueuer::update_frame_offsets_task() {
   Message req(ChromeRequestType::kUpdateFrameOffsets);
+  send_msg_task(req);
+}
+
+void TaskQueuer::get_all_elements_task() {
+  Message req(ChromeRequestType::kGetAllElements);
   send_msg_task(req);
 }
 

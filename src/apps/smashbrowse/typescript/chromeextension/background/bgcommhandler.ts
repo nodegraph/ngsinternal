@@ -200,10 +200,12 @@ class BgCommHandler {
             // Initialize our response counters, so that we know when all responses have come back.
             this.response_count = 0
             this.expected_response_count = details.length
+            console.log('expecting num responses: ' + this.expected_response_count)
             // Wrap the given response collector in logic to increment the response counters.
             let collector_wrap = (response: any) => {
                 response_collector(response)
                 this.response_count += 1
+                console.log('got response count: ' + this.response_count)
                 if (this.response_count == this.expected_response_count) {
                     this.run_next_task()
                 }
@@ -267,9 +269,7 @@ class BgCommHandler {
             if (best === null) {
                 best = elem
             } else {
-                if ((elem.box.left == best.box.left) && (elem.box.top == best.box.top) && (elem.z_index > best.z_index)) {
-                    best = elem
-                } else if (elem.box.top < best.box.top) {
+                if (elem.box.top < best.box.top) {
                     best = elem
                 } else if ((elem.box.top == best.box.top) && (elem.box.left < best.box.left)) {
                     best = elem
@@ -524,10 +524,7 @@ class BgCommHandler {
             } else if (Math.abs(distance - best_distance) < 0.0001) {
                 // If the distance and best_distance are very close check their z_index values or their sizes.
                 // We choose the one with larger z_index or smaller size.
-                if (dest.z_index && best.z_index && (dest.z_index > best.z_index)) {
-                    best = dest
-                    best_distance = distance
-                } else {
+                {
                     let dest_area = (dest.box.right - dest.box.left) * (dest.box.bottom - dest.box.top)
                     let best_area = (best.box.right - best.box.left) * (best.box.bottom - best.box.top)
                     if (dest_area < best_area) {
@@ -787,6 +784,18 @@ class BgCommHandler {
         })
     }
 
+    queue_find_all_elements() {
+        this.found_elems = []
+        this.collected_elems.length = 0
+        let req = new RequestMessage(-1, ChromeRequestType.kGetAllElements)
+        this.queue_collect_elements_from_frames(req)
+        this.queue(() => {
+            console.log('found num elements: ' + this.collected_elems.length)
+            this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
+            this.run_next_task()
+        })
+    }
+
     // ------------------------------------------------------------------------------------------------------------------
     // Main message handler.
     // ------------------------------------------------------------------------------------------------------------------
@@ -933,6 +942,7 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.queue_get_current_element()
                 this.queue_current_element_exists_or_fail(req.id)
+                this.run_next_task()
             } break
             case ChromeRequestType.kHasElement: {
                 this.clear_tasks()
@@ -948,9 +958,10 @@ class BgCommHandler {
                             fw_index_path: "-1",
                             fe_index_path: "-1",
                             xpath: "",
-                            href: "",
                             box: {left: 0, right: 0, bottom: 0, top: 0},
-                            z_index: 0
+                            href: "",
+                            image: "",
+                            text: ""
                         }
                         let response = new ResponseMessage(req.id, true, dummy)
                         this.bg_comm.send_to_app(response)
@@ -963,6 +974,16 @@ class BgCommHandler {
                 this.current_elem = req.args
                 this.queue_set_current_element()
                 this.queue_current_element_exists_or_fail(req.id)
+                this.run_next_task()
+            } break
+            case ChromeRequestType.kGetAllElements: {
+                this.clear_tasks()
+                this.queue_find_all_elements()
+                this.queue(() => {
+                    let response = new ResponseMessage(req.id, true, this.found_elems)
+                    this.bg_comm.send_to_app(response)
+                })
+                this.run_next_task()
             } break
             case ChromeRequestType.kScrollElementIntoView: {
                 this.clear_tasks()

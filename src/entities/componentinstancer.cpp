@@ -48,6 +48,7 @@
 #include <guicomponents/computes/scriptnodecompute.h>
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/postnodecompute.h>
+#include <guicomponents/computes/filternodecomputes.h>
 
 #include <guicomponents/quick/fborenderer.h>
 #include <guicomponents/quick/fboworker.h>

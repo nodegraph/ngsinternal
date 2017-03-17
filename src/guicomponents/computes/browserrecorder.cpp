@@ -667,6 +667,12 @@ void BrowserRecorder::record_scroll_left() {
 // -----------------------------------------------------------------
 // Set Element.
 // -----------------------------------------------------------------
+void BrowserRecorder::record_get_all_elements() {
+  start();
+  _queuer->queue_build_compute_node(tc, ComponentDID::kGetAllElementsCompute);
+  finish();
+}
+
 void BrowserRecorder::record_set_element() {
   start();
   _queuer->queue_get_crosshair_info(tc);
@@ -675,6 +681,120 @@ void BrowserRecorder::record_set_element() {
   args.insert(Message::kElementInfo, "");
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kSetElementCompute);
+  finish();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+void BrowserRecorder::record_filter_by_type() {
+  start();
+  QJsonObject args;
+  {
+    // Initial values for the type.
+    WrapType type = WrapType::input;
+
+    // Get the image and text value from the last click info.
+    const QJsonObject info = _queuer->get_last_click_info();
+    QString image = info.value("image").toString();
+    QString text = info.value("text").toString();
+    QString tag_name = info.value("tag_name").toString();
+
+    // If either the image or text values are non empty then we can easily predict
+    // the desired parameter values for the node.
+    if (!image.isEmpty()) {
+      type = WrapType::image;
+    } else if (!text.isEmpty()) {
+      type = WrapType::text;
+    } else if (tag_name == "input") {
+      type = WrapType::input;
+    } else if (tag_name == "select") {
+      type = WrapType::select;
+    }
+    args.insert(Message::kElementType, to_underlying(type));
+    args.insert(Message::kTargetValue, "");
+  }
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByTypeAndValueNodeCompute);
+  finish();
+}
+
+void BrowserRecorder::record_filter_by_value() {
+  start();
+  QJsonObject args;
+  {
+    // Initial values for type and value.
+    WrapType type = WrapType::input;
+    QString value = "";
+
+    // Get the image and text value from the last click info.
+    const QJsonObject info = _queuer->get_last_click_info();
+    QString image = info.value("image").toString();
+    QString text = info.value("text").toString();
+    QString tag_name = info.value("tag_name").toString();
+
+    // If either the image or text values are non empty then we can easily predict
+    // the desired parameter values for the node.
+    if (!image.isEmpty()) {
+      type = WrapType::image;
+      value = image;
+    } else if (!text.isEmpty()) {
+      type = WrapType::text;
+      value = text;
+    } else if (tag_name == "input") {
+      type = WrapType::input;
+      value = "";
+    } else if (tag_name == "select") {
+      type = WrapType::select;
+      value = "";
+    }
+    args.insert(Message::kElementType, to_underlying(type));
+    args.insert(Message::kTargetValue, value);
+  }
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByTypeAndValueNodeCompute);
+  finish();
+}
+
+void BrowserRecorder::record_filter_by_position() {
+  start();
+  QJsonObject args;
+  {
+    const QJsonObject info = _queuer->get_last_click_info();
+    args.insert(Message::kGlobalMousePosition, info.value(Message::kGlobalMousePosition));
+  }
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByPositionNodeCompute);
+  finish();
+}
+
+void BrowserRecorder::record_filter_by_dimensions() {
+  start();
+  QJsonObject args;
+  {
+    const QJsonObject info = _queuer->get_last_click_info();
+    double left = info.value("box").toObject().value("left").toDouble();
+    double right = info.value("box").toObject().value("right").toDouble();
+    double top = info.value("box").toObject().value("top").toDouble();
+    double bottom = info.value("box").toObject().value("bottom").toDouble();
+
+    double width = right - left;
+    double height = bottom - top;
+
+    args.insert(Message::kWidth, width);
+    args.insert(Message::kHeight, height);
+  }
+  _queuer->queue_merge_chain_state(tc, args);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByDimensionsNodeCompute);
   finish();
 }
 

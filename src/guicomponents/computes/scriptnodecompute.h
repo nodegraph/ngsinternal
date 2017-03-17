@@ -6,17 +6,18 @@
 #include <QtCore/QObject>
 
 class QJsonValue;
+class QQmlContext;
 
 namespace ngs {
 
 class ScriptLoopContext;
 
-class GUICOMPUTES_EXPORT ScriptNodeCompute: public QObject, public Compute  {
+class GUICOMPUTES_EXPORT BaseScriptNodeCompute: public QObject, public Compute  {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, ScriptNodeCompute);
-  ScriptNodeCompute(Entity* entity);
-  virtual ~ScriptNodeCompute();
+  COMPONENT_ID(Compute, InvalidComponent);
+  BaseScriptNodeCompute(Entity* entity, ComponentDID did = kDID());
+  virtual ~BaseScriptNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
@@ -33,11 +34,32 @@ class GUICOMPUTES_EXPORT ScriptNodeCompute: public QObject, public Compute  {
 
 protected:
   Dep<ScriptLoopContext> _context;
-
   Dep<ScriptLoopContext> get_closest_context();
 
   // Our state.
   virtual void update_wires();
+  virtual bool update_state();
+
+  virtual void expose_to_eval_context(QQmlContext& context) {}
+
+  QString _script_body;
+};
+
+class GUICOMPUTES_EXPORT ScriptNodeCompute: public BaseScriptNodeCompute {
+  Q_OBJECT
+ public:
+  COMPONENT_ID(Compute, ScriptNodeCompute);
+  ScriptNodeCompute(Entity* entity);
+  virtual ~ScriptNodeCompute();
+
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+
+protected:
+  // Our state.
   virtual bool update_state();
 };
 

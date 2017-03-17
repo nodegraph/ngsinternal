@@ -44,24 +44,6 @@ class PageWrap {
         return new Box({left:0, right: this.get_width(), top:0, bottom: this.get_height()})
     }
 
-    static scroll_into_view(win: Window) {
-        // while (win.parent != win) {
-        //     var frames = win.parent.document.getElementsByTagName('iframe');
-        //     let found = false
-        //     for (let i = 0; i < frames.length; i++) {
-        //         if (frames[i].contentWindow === win) {
-        //             found = true
-        //             frames[i].scrollIntoView(true)
-        //             break;
-        //         }
-        //     }
-        //     if (!found) {
-        //         console.error('Error did not find parenting frame.')
-        //     }
-        //     win = win.parent
-        // }
-    }
-
     // Get frame index path as string.
     // Note that there is no leading '/'. 
     // This helps when splitting the string, as there won't be empty elements.
@@ -76,8 +58,6 @@ class PageWrap {
         }
         return spath
     }
-
-    
 
     // Get our fw_index_path as zero-based indexes.
     // An empty fw_index_path means we are in the top window.
@@ -170,98 +150,17 @@ class PageWrap {
     }
 
     //---------------------------------------------------------------------------------
-    // Find elem wraps by mouse position.
+    // Find single element under the mouse position.
     //---------------------------------------------------------------------------------
-
-    // Returns an array of all elem wraps which overlap at the given mouse point.
-    // Note this will miss out on reporting svg elements.
-    get_overlapping_at(page_pos: Point): ElemWrap[] {
-        let client_pos = new Point(page_pos)
-        client_pos.to_client_space(window)
-        // declare Document.msElementsFromPoint(x: number, y: number){} // The DefinitelyTyped libraries seem to be missing this call.
-        let hack: any = document
-        let nodes: NodeList = hack.elementsFromPoint(client_pos.x, client_pos.y)
-        //let nodes = window.document.elementsFromPoint(client_pos.x, client_pos.y)
-        
-
-        // Convert to elem wraps.
-        let elem_wraps: ElemWrap[] = []
-        for (let i = 0; i < nodes.length; i++) {
-            if (!(nodes[i] instanceof Element)) {
-                continue
-            }
-            let element = <Element>(nodes[i])
-            // We skip any elements that are a part of our own smash browse gui elements.
-            if (this.gui_collection.contains_element(element)) {
-                continue
-            }
-            elem_wraps.push(new ElemWrap(element))
-        }
-        return elem_wraps
-    }
-
-    // Returns the elem wraps in z-order under the given page point, until we become
-    // fully opaque. Usually we will hit an opaque background plate.
-    // The document.elementsFromPoint seems to skip svg elem wraps, so we add these in manually.
-    get_visible_overlapping_at(page_pos: Point): ElemWrap[] {
-        let elem_wraps = this.get_overlapping_at(page_pos)
-
-        // Debug settings.
-        //        if (false) {
-        //            console.log('num elem wraps: ' + elem_wraps.length)
-        //            for (let i = 0; i < elem_wraps.length; i++) {
-        //                let wrapper = elem_wraps[i]
-        //                console.log('elem wrap[' + i + ']: opacity' + wrapper.get_opacity()
-        //                    + ' bg: ' + wrapper.get_background_color() + ' xpath: ' + wrapper.get_xpath())
-        //            }
-        //        }
-
-        // Trim it to point where we reach the back plate of the page.
-        for (let i = 0; i < elem_wraps.length; i++) {
-            let wrapper = elem_wraps[i]
-            if (wrapper.is_back_plate()) {
-                elem_wraps.length = i + 1
-                break
-            }
-        }
-
-        // Splice out any invisible elem wraps.
-        for (let i = 0; i < elem_wraps.length; i++) {
-            if (!elem_wraps[i].is_visible()) {
-                elem_wraps.splice(i, 1)
-                i -= 1
-            }
-        }
-
-        // Build xpath to find all svg elem wraps.
-        let svgs: ElemWrap[] = this.get_svgs() //this.get_visible_by_xpath(xpath)
-
-        // Loop over the elem wraps.
-        let svg: ElemWrap = null
-        for (let i = 0; i < svgs.length; i++) {
-            svg = svgs[i]
-
-            // Make sure the svg is visible.
-            if (!svg.is_visible()) {
-                continue
-            }
-
-            // Make sure the svg contains the page point.
-            if (!svg.contains_point(page_pos)) {
-                continue
-            }
-
-            // Add the svg to the elem wraps.
-            elem_wraps.unshift(svg)
-        }
-        return elem_wraps
-    }
-
+    
     // Returns first elem wrap for which getter returns a "true-thy" value.
-    get_first_elem_wrap_at(getter: () => string, page_pos: Point) {
-        let elem_wraps = this.get_visible_overlapping_at(page_pos)
+    static get_smallest_element_with_text(page_pos: Point) {
+        let elem_wraps = PageWrap.get_visible_elements(page_pos)
+        // This currently assumes that elements are sorted.
+        // The ordering comes from ElementsFromPoint however SVG are added the end due to a bug in Chrome.
+        // See the use of ElementsFromPoint.
         for (let i = 0; i < elem_wraps.length; i++) {
-            let value = getter.call(elem_wraps[i])
+            let value = elem_wraps[i].get_text()
             if (value) {
                 return elem_wraps[i]
             }
@@ -269,74 +168,152 @@ class PageWrap {
         return null
     }
 
-    // Returns the top elem wrap, according to z-order.
-    get_top_elem_wrap_at(page_pos: Point, wrap_type: WrapType): ElemWrap {
-        let getter = ElemWrap.get_getter_from_wrap_type(wrap_type)
-        let candidate = this.get_first_elem_wrap_at(getter, page_pos)
-        if (!candidate) {
-            return null
+    static get_smallest_element_with_images(page_pos: Point) {
+        let elem_wraps = PageWrap.get_visible_elements(page_pos)
+        // This currently assumes that elements are sorted.
+        // The ordering comes from ElementsFromPoint however SVG are added the end due to a bug in Chrome.
+        // See the use of ElementsFromPoint.
+        for (let i = 0; i < elem_wraps.length; i++) {
+            let value = elem_wraps[i].get_image()
+            if (value) {
+                return elem_wraps[i]
+            }
         }
-        return candidate
+        return null
+    }
+
+    static get_smallest_input_element(page_pos: Point) {
+        let elem_wraps = PageWrap.get_visible_elements(page_pos)
+        // This currently assumes that elements are sorted.
+        // The ordering comes from ElementsFromPoint however SVG are added the end due to a bug in Chrome.
+        // See the use of ElementsFromPoint.
+        for (let i = 0; i < elem_wraps.length; i++) {
+            let value = elem_wraps[i].get_tag_name()
+            if (value == 'input') {
+                return elem_wraps[i]
+            }
+        }
+        return null
+    }
+
+    static get_smallest_select_element(page_pos: Point) {
+        let elem_wraps = PageWrap.get_visible_elements(page_pos)
+        // This currently assumes that elements are sorted.
+        // The ordering comes from ElementsFromPoint however SVG are added the end due to a bug in Chrome.
+        // See the use of ElementsFromPoint.
+        for (let i = 0; i < elem_wraps.length; i++) {
+            let value = elem_wraps[i].get_tag_name()
+            if (value == 'select') {
+                return elem_wraps[i]
+            }
+        }
+        return null
+    }
+
+    static get_smallest_element(page_pos: Point) {
+        let elem_wraps = PageWrap.get_visible_elements(page_pos)
+        // This currently assumes that elements are sorted.
+        // The ordering comes from ElementsFromPoint however SVG are added the end due to a bug in Chrome.
+        // See the use of ElementsFromPoint.
+        for (let i = 0; i < elem_wraps.length; i++) {
+            if (elem_wraps[i].get_image()) {
+                return elem_wraps[i]
+            } else if (elem_wraps[i].get_text()) {
+                return elem_wraps[i]
+            } else if (elem_wraps[i].get_tag_name() == 'input') {
+                return elem_wraps[i]
+            } else if (elem_wraps[i].get_tag_name() == 'select') {
+                return elem_wraps[i]
+            }
+        }
+        return null
     }
 
     //---------------------------------------------------------------------------------
-    //Find elem wraps by non mouse values.
+    // Find multiple elements under the mouse position.
     //---------------------------------------------------------------------------------
 
-    get_svgs(): ElemWrap[] {
+    // Returns an array of all elem wraps which overlap at the given mouse point.
+    // You should not assume that the array is sorted with respect to z-index.
+    // SVG elements may be duplicated.
+    static get_elements(page_pos: Point): ElemWrap[] {
+        let client_pos = new Point(page_pos)
+        client_pos.to_client_space(window)
+        
+        // Find elements underneath the point. 
+        // Note that from our testing elementsFromPoint is not able to find svg elements that use <use xlink:href=..> internally.
+        // However it does seem to be able to find other svg elements which do not use references internally.
+        let elements = document.elementsFromPoint(client_pos.x, client_pos.y)
+
+        // Prune out any elements that are a part of our own smash browse gui elements.
+        for (var i = elements.length - 1; i >= 0; i--) {
+            if (gui_collection.contains_element(elements[i])) {
+                elements.splice(i, 1)
+            }
+        }
+
+        // Find all svg elements.
+        let svg_elements = PageWrap.get_svgs()
+
+        // Filter down to those that intersect our point.
+        for (let i = svg_elements.length - 1; i >= 0; i--) {
+            let wrap = new ElemWrap(svg_elements[i])
+            if (!wrap.contains_point(page_pos)) {
+                svg_elements.splice(i, 1)
+            }
+        }
+
+        // Join the elements together. Note that there can be duplicated SVG elements in here,
+        // if the SVG is found elementsFromPoint because we later search for SVGs again.
+        elements = elements.concat(svg_elements)
+
+        // Convert the elements to elem wraps.
+        let elem_wraps: ElemWrap[] = []
+        for (let i = 0; i < elements.length; i++) {
+            elem_wraps.push(new ElemWrap(elements[i]))
+        }
+        return elem_wraps
+    }
+
+    // Returns an array of visible elem wraps which overlap the given mouse point.
+    // You should not assume that the array is sorted with respect to z-index.
+    // SVG elements may be duplicated.
+    static get_visible_elements(page_pos: Point): ElemWrap[] {
+        let elem_wraps = PageWrap.get_elements(page_pos)
+        for (let i = elem_wraps.length - 1; i >= 0; i--) {
+            if (!elem_wraps[i].is_valid()) {
+                elem_wraps.splice(i, 1)
+            }
+        }
+        return elem_wraps
+    }
+
+    //---------------------------------------------------------------------------------
+    // Find multiple elements from xpath..
+    //---------------------------------------------------------------------------------
+
+    static get_svgs(): SVGElement[] {
         let xpath = "//*[local-name() = 'svg']"
         let set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
         // Convert to elem wraps.
-        let elem_wraps: ElemWrap[] = []
+        let elem_wraps: SVGElement[] = []
         for (let i = 0; i < set.snapshotLength; i++) {
             let item = set.snapshotItem(i)
             // We skip any elements that are a part of our own smash browse gui elements.
-            if (this.gui_collection.contains_element(item)) {
+            if (gui_collection.contains_element(item)) {
                 continue
             }
             if (!(item instanceof SVGElement)) {
                 continue
             }
-            // Create the elem wrap.
-            let ew = new ElemWrap(<SVGElement>item)
-            // Drop it if it's not visible.
-            if (!ew.is_visible()) {
-                continue
-            }
             // Otherwise we collect it.
-            elem_wraps.push(ew)
-        }
-        return elem_wraps
-    }
-
-    get_videos(): ElemWrap[] {
-        let xpath = "//*[local-name() = 'video']"
-        let set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
-        // Convert to elem wraps.
-        let elem_wraps: ElemWrap[] = []
-        for (let i = 0; i < set.snapshotLength; i++) {
-            let item = set.snapshotItem(i)
-            // We skip any elements that are a part of our own smash browse gui elements.
-            if (this.gui_collection.contains_element(item)) {
-                continue
-            }
-            if (!(item instanceof HTMLVideoElement)) {
-                continue
-            }
-            // Create the elem wrap.
-            let ew = new ElemWrap(<HTMLVideoElement>item)
-            // Drop it if it's not visible.
-            if (!ew.is_visible()) {
-                continue
-            }
-            // Otherwise we collect it.
-            elem_wraps.push(ew)
+            elem_wraps.push(<SVGElement>item)
         }
         return elem_wraps
     }
 
     // Returns an array of elem wraps with the given xpath.
-    get_visible_by_xpath(xpath: string): ElemWrap[] {
+    static get_visible_by_xpath(xpath: string): ElemWrap[] {
         let set = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
         // Convert to elem wraps.
         let elem_wraps: ElemWrap[] = []
@@ -348,7 +325,7 @@ class PageWrap {
             // Cast to an Element.
             let element = <Element>(item)
             // We skip any elements that are a part of our own smash browse gui elements.
-            if (this.gui_collection.contains_element(element)) {
+            if (gui_collection.contains_element(element)) {
                 continue
             }
             // Create the elem wrap.
@@ -363,187 +340,62 @@ class PageWrap {
         return elem_wraps
     }
 
+    //---------------------------------------------------------------------------------
+    // Find all elements.
+    //---------------------------------------------------------------------------------
+
     // Returns an array of all the elem wraps.
-    get_all_visible(): ElemWrap[] {
+    static get_all_visible(): ElemWrap[] {
         let xpath = "//*";
-        return this.get_visible_by_xpath(xpath)
+        return PageWrap.get_visible_by_xpath(xpath)
     }
+
+    //---------------------------------------------------------------------------------
+    // Filter Elements.
+    //---------------------------------------------------------------------------------
 
     // Returns all elem wraps which intersect with the given box.
-    get_intersecting_with(page_box: Box): ElemWrap[] {
-        let intersecting: ElemWrap[] = []
-        let elem_wraps = this.get_all_visible()
-        for (let i = 0; i < elem_wraps.length; i++) {
-            if (page_box.intersects(elem_wraps[i].get_box())) {
-                intersecting.push(elem_wraps[i])
-            }
-        }
-        return intersecting
-    }
-
-    // Returns all elem wraps which are contained in the given box.
-    get_contained_in(page_box: Box): ElemWrap[] {
-        let contained: ElemWrap[] = []
-        let elem_wraps = this.get_all_visible()
-        for (let i = 0; i < elem_wraps.length; i++) {
-            if (page_box.contains(elem_wraps[i].get_box())) {
-                contained.push(elem_wraps[i])
-            }
-        }
-        return contained
-    }
-
-    // Returns elem wraps which match any of the target values.
-    get_by_any_value(wrap_type: WrapType, target_values: string[]): ElemWrap[] {
-        let getter = ElemWrap.get_getter_from_wrap_type(wrap_type)
-
-        // Get all elem wraps.
-        let elem_wraps = this.get_all_visible()
-
-        // Loop over the elem wraps.
-        let wrapper: ElemWrap = null
-        let value: string = null
+    static filter_by_box_intersection(elem_wraps: ElemWrap[], page_box: Box): ElemWrap[] {
         let matches: ElemWrap[] = []
         for (let i = 0; i < elem_wraps.length; i++) {
-            wrapper = elem_wraps[i]
-
-            // Make sure the wrapper is visible.
-            if (!wrapper.is_visible()) {
-                continue
-            }
-
-            // Skip the elem wrap if it's part of the smash browse menu.
-            if (this.gui_collection.contains_element(wrapper.get_element())) {
-                continue
-            }
-
-            // See if this elem wrap value matches something in target_values
-            value = getter.call(wrapper)
-
-            // If taget_values is an empty array we match any truthful value.
-            if ((target_values.length == 0) && value) {
-                matches.push(wrapper)
-            }
-            // Otherwise we match any value in the target_values.
-            else if (target_values.indexOf(value) >= 0) {
-                matches.push(wrapper)
+            if (page_box.intersects(elem_wraps[i].get_box())) {
+                matches.push(elem_wraps[i])
             }
         }
         return matches
     }
 
-    // Returns an array of elem wraps selected by the matcher.
-    get_by_all_values(wrap_type: WrapType, target_values: string[]): ElemWrap[] {
-        // Get our initial candiate elem wraps.
-        let candidates: ElemWrap[] = this.get_by_any_value(wrap_type, target_values)
-        console.log('num candidates: ' + candidates.length)
-
-        // Get our getter.
-        let getter: () => string = ElemWrap.get_getter_from_wrap_type(wrap_type)
-
-        // Determines arrays of surrounding elem wraps for each elem wrap.
-        let overlaps: string[][] = []
-        for (let i = 0; i < candidates.length; i++) {
-            overlaps.push([])
-            for (let j = 0; j < candidates.length; j++) {
-                if (candidates[j].intersects(candidates[i])) {
-                    overlaps[i].push(getter.call(candidates[j]))
-                }
-            }
-        }
-        console.log('num overlaps: ' + overlaps.length)
-
-        // Find the elem wraps which have surrounding elem wraps matching the target_values.
-        let matching: ElemWrap[] = []
-        for (let i = 0; i < overlaps.length; i++) {
-            let found = true
-            for (let j = 0; j < target_values.length; j++) {
-                if (overlaps[i].indexOf(target_values[j]) < 0) {
-                    found = false
-                    break
-                }
-            }
-            if (found) {
-                matching.push(candidates[i])
-            }
-        }
-        console.log('num matching: ' + matching.length)
-
-        // Initialize eliminated to all false.
-        let eliminated: boolean[] = []
-        for (let i = 0; i < matching.length; i++) {
-            eliminated.push(false)
-        }
-        console.log('num eliminated: ' + eliminated.length)
-
-        // Coalesce all contained elem wraps together
-        // and find the smallest most internal element
-        for (let i = 0; i < matching.length; i++) {
-            if (eliminated[i]) {
-                continue
-            }
-            for (let j = 0; j < matching.length; j++) {
-                if (j == i) {
-                    continue
-                }
-                if (eliminated[j]) {
-                    continue
-                }
-                if (matching[j].contains(matching[i])) {
-                    eliminated[j] = true
-                }
-            }
-        }
-
-        // Extract the non eliminated elem wraps out.
-        let results: ElemWrap[] = []
-        for (let i = 0; i < eliminated.length; i++) {
-            if (!eliminated[i]) {
-                results.push(matching[i])
-            }
-        }
-        console.log('num results: ' + results.length)
-
-        // Phew we're done!
-        return results
-    }
-
-    //---------------------------------------------------------------------------------
-    // Value extraction.
-    //---------------------------------------------------------------------------------
-
-    // Returns an array of values obtained by looping through the 
-    // elem wraps and retrieving values using the supplied getter.
-    static extract_values(elem_wraps: ElemWrap[], getter: () => string): string[] {
-        let values: string[] = []
+    // Returns all elem wraps which are contained in the given box.
+    static filter_by_box_containment(elem_wraps: ElemWrap[], page_box: Box): ElemWrap[] {
+        let matches: ElemWrap[] = []
         for (let i = 0; i < elem_wraps.length; i++) {
-            let value = getter.call(elem_wraps[i])
-            if (!value || Utils.is_all_whitespace(value)) {
-                continue
+            if (page_box.contains(elem_wraps[i].get_box())) {
+                matches.push(elem_wraps[i])
             }
-            if (values.indexOf(value) >= 0) {
-                continue
-            }
-            values.push(value)
         }
-        return values
+        return matches
     }
 
-    // Returns an array of images values from elem wraps under the given page point.
-    static get_image_values_at(elem_wraps: ElemWrap[], page_pos: Point): string[] {
-        let values = PageWrap.extract_values(elem_wraps, ElemWrap.prototype.get_image)
-        return values
-    }
+    // Returns elem wraps which match the target value.
+    static filter_by_value(elem_wraps: ElemWrap[], value_getter: (wrap: ElemWrap)=>string, target_value: string): ElemWrap[] {
+        // Loop over the elem wraps.
+        let wrap: ElemWrap[] = []
+        for (let i = 0; i < elem_wraps.length; i++) {
+            let wrapper = elem_wraps[i]
 
-    // Returns an array of text values from elem wraps under the given page point.
-    static get_text_values_at(elem_wraps: ElemWrap[], page_pos: Point): string[] {
-        let values = PageWrap.extract_values(elem_wraps, ElemWrap.prototype.get_text)
-        // Values will contain text from bigger overlapping divs with text.
-        // Unlike images text won't overlap, so we only want the first text.
-        if (values.length > 1) {
-            values.length = 1
+            // See if this elem wrap's value matches our value.
+            let value = value_getter(wrapper)
+
+            // If the target_value is an empty string we match any non empty string value.
+            if ((!target_value) && value) {
+                wrap.push(wrapper)
+            }
+            // Otherwise the value must match the target value.
+            else if (target_value == value) {
+                wrap.push(wrapper)
+            }
         }
-        return values
+        return wrap
     }
 
 }

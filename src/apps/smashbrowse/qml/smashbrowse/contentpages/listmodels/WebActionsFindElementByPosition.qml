@@ -4,6 +4,46 @@ ListModel {
 
     function update(props) {
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_title_white_48dp.png"
+        title: "Get All Elements"
+        description: "Find the text element at the crosshair."
+        script: "browser_recorder.record_get_all_elements();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_title_white_48dp.png"
+        title: "Filter Elements by Type"
+        description: "Filter the elements by element type and or value."
+        script: "browser_recorder.record_filter_by_type();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_title_white_48dp.png"
+        title: "Filter Elements by Value"
+        description: "Filter the elements by element type and or value."
+        script: "browser_recorder.record_filter_by_value();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_title_white_48dp.png"
+        title: "Filter Elements by Position"
+        description: "Filter the elements by whether they contain the specified point."
+        script: "browser_recorder.record_filter_by_position();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_title_white_48dp.png"
+        title: "Filter Elements by Dimensions"
+        description: "Filter the elements by their dimenions."
+        script: "browser_recorder.record_filter_by_dimensions();
+        		 main_bar.switch_to_current_mode();"
+    }
 
     ListElement {
         image_url: "qrc:///icons/ic_title_white_48dp.png"

@@ -88,7 +88,7 @@ class ContentCommHandler {
                 // Now if our frame matches the request, then try to find the element.
                 let fe_index_path = PageWrap.get_fw_index_path(window) 
                 if (req.args.fw_index_path == fe_index_path) {
-                    let elem_wraps = this.gui_collection.page_wrap.get_visible_by_xpath(req.args.xpath)
+                    let elem_wraps = PageWrap.get_visible_by_xpath(req.args.xpath)
                     if (elem_wraps.length == 1) {
                         this.gui_collection.page_overlays.set_elem_wrap(elem_wraps[0])
                         // We send the element info back to bg comm. Only one of these frames should be returning a value.
@@ -107,9 +107,7 @@ class ContentCommHandler {
                 
                 // If the xpath is not empty then we are that one element.
                 if (elem_wrap) {
-                    // Scroll our frame into view.
-                    PageWrap.scroll_into_view(window)
-                    // Scroll our elememt into view in our frame.
+                    // Scroll our elememt into view.
                     elem_wrap.scroll_into_view()
                     // Get the info.
                     let info = elem_wrap.get_info()
@@ -159,26 +157,52 @@ class ContentCommHandler {
                 }
             } break
             case ChromeRequestType.kFindElementByValues: {
-                let elem_wraps: ElemWrap[] = this.gui_collection.page_wrap.get_by_all_values(req.args.wrap_type, req.args.target_values)
-                if (elem_wraps.length > 0) {
-                    let infos : IElementInfo[] = []
-                    elem_wraps.forEach((e)=>{
-                        let info = e.get_info()
-                        infos.push(info)
-                    })
-                    send_response(infos)
-                }
+                // let elem_wraps: ElemWrap[] = this.gui_collection.page_wrap.get_by_all_values(req.args.wrap_type, req.args.target_values)
+                // if (elem_wraps.length > 0) {
+                //     let infos : IElementInfo[] = []
+                //     elem_wraps.forEach((e)=>{
+                //         let info = e.get_info()
+                //         infos.push(info)
+                //     })
+                //     send_response(infos)
+                // }
             } break
             case ChromeRequestType.kFindElementByType: {
-                let elem_wraps = this.gui_collection.page_wrap.get_by_any_value(req.args.wrap_type, [])
-                if (elem_wraps.length > 0) {
-                    let infos : IElementInfo[] = []
-                    elem_wraps.forEach((e)=>{
-                        let info = e.get_info()
-                        infos.push(info)
-                    })
-                    send_response(infos)
-                }
+                // let elem_wraps: ElemWrap[] = this.gui_collection.page_wrap.get_all_visible()
+                // elem_wraps = PageWrap.filter_out_our_gui(elem_wraps)
+                // switch (req.args.wrap_type) {
+                //     case WrapType.image: {
+                //         elem_wraps = PageWrap.filter_by_value(elem_wraps, ElemWrap.image_getter, '')
+                //     }break
+                //     case WrapType.text: {
+                //         elem_wraps = PageWrap.filter_by_value(elem_wraps, ElemWrap.text_getter, '')
+                //     }break
+                //     case WrapType.input: {
+                //         elem_wraps = PageWrap.filter_by_value(elem_wraps, ElemWrap.input_getter, '')
+                //     }break
+                //     case WrapType.select: {
+                //         elem_wraps = PageWrap.filter_by_value(elem_wraps, ElemWrap.select_getter, '')
+                //     }break
+                // }
+                 
+                // if (elem_wraps.length > 0) {
+                //     let infos : IElementInfo[] = []
+                //     elem_wraps.forEach((e)=>{
+                //         let info = e.get_info()
+                //         infos.push(info)
+                //     })
+                //     send_response(infos)
+                // }
+            } break
+            case ChromeRequestType.kGetAllElements: {
+                let elem_wraps: ElemWrap[] = PageWrap.get_all_visible()
+                // Convert to IElementInfos.
+                let infos : IElementInfo[] = []
+                elem_wraps.forEach((e)=>{
+                    let info = e.get_info()
+                    infos.push(info)
+                })
+                send_response(infos)
             } break
             case ChromeRequestType.kGetCrosshairInfo: {
                 let pos = new Point(req.args.global_mouse_position)

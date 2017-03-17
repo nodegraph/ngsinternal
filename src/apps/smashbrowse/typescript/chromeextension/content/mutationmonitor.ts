@@ -299,14 +299,6 @@ class MutationMonitor {
     }
 
     // Not really tested.
-    add_video_controls() {
-        let videos = this.gui_collection.page_wrap.get_videos()
-        for (let v = 0; v<videos.length; v++) {
-            videos[v].get_element().setAttribute("controls", "controls")
-        }
-    }
-
-    // Not really tested.
     adjust_display_property(rules: CSSRuleList): void {
         if (!rules) {
             return
