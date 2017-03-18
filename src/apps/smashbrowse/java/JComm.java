@@ -265,12 +265,6 @@ public class JComm {
 	    	String fe_index_path = req.get_args().getAsJsonObject().get("fe_index_path").getAsString();
 	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
 	        switch (element_action_type) {
-	            case kGetText: {
-	                String text = web_driver.get_text(fe_index_path, xpath);
-	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(text));
-	                System.out.println(resp.to_string());
-	                break;
-	            } 
 	            case kChooseOption: {
 	            	String option_text = req.get_args().getAsJsonObject().get("option_text").getAsString();
 	                web_driver.choose_option(fe_index_path, xpath, option_text);

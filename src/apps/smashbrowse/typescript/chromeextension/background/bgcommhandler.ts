@@ -5,7 +5,7 @@ class BgCommHandler {
     browser_wrap: BrowserWrap
 
     // Our Members.
-    private frame_infos: FrameInfos
+    private frame_infos: FrameInfos = new FrameInfos() 
 
     // Members used to collected info from our frames.
     private collected_elems: IElementInfo[] = []
@@ -13,19 +13,11 @@ class BgCommHandler {
     private collected_clicks: IClickInfo[] = []
     private collected_drop_downs: IDropDownInfo[] = []
 
-
-    // Caches used in our calculations.
-    private best_elem: IElementInfo = null
-    private current_elem: IElementInfo = null
-    private found_elems: IElementInfo[] = []
-    private error_msg: string = ""
-
     // Timer.
     private timer: number
 
     // Task Queue.
     private tasks: (() => void)[] = []
-
     private response_count: number = 0
     private expected_response_count: number = 0
 
@@ -33,7 +25,6 @@ class BgCommHandler {
     constructor(bc: BgComm, bw: BrowserWrap) {
         this.bg_comm = bc
         this.browser_wrap = bw
-        this.frame_infos = new FrameInfos() 
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -65,7 +56,7 @@ class BgCommHandler {
     }
 
     // ------------------------------------------------------------------------------------------------------------------
-    // Initiate collection from all frames.
+    // Frame Window and Frame Element Index Path Info Distribution.
     // ------------------------------------------------------------------------------------------------------------------
 
     collect_fw_index_paths() {
@@ -194,6 +185,10 @@ class BgCommHandler {
         }
         chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, f);
     }
+
+    // ------------------------------------------------------------------------------------------------------------------
+    // Specialized method to collect from our frames use by various methods below.
+    // ------------------------------------------------------------------------------------------------------------------
     
     collect_from_frames(msg: BaseMessage, response_collector: (response: any) => void = function(){}) {
         chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, (details: chrome.webNavigation.GetAllFrameResultDetails[]) => {
@@ -216,6 +211,38 @@ class BgCommHandler {
             });
         });
     }
+
+    // ------------------------------------------------------------------------------------------------------------------
+    // Base Task Queue methods.
+    // ------------------------------------------------------------------------------------------------------------------
+
+    // Functor Queue.
+    queue(task: () => void) {
+        this.tasks.push(task)
+    }
+
+    queue_debug_msg(msg: string) {
+        this.queue(()=> {
+            console.log(msg)
+            this.run_next_task()
+        })
+    }
+
+    clear_tasks() {
+        this.tasks.length = 0
+    }
+
+    run_next_task() {
+        if (this.tasks.length == 0) {
+            return
+        }
+        let t = this.tasks.shift()
+        t()
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------
+    // Base Collection/Distribution Task Queue Methods.
+    // ------------------------------------------------------------------------------------------------------------------
 
     queue_frame_info_sharing() {
         this.queue(() => {this.collect_fw_index_paths()})
@@ -260,328 +287,8 @@ class BgCommHandler {
     }
 
     // ------------------------------------------------------------------------------------------------------------------
-    // Static element methods.
+    // Specialized Task Queue Methods.
     // ------------------------------------------------------------------------------------------------------------------
-
-    static find_top_leftmost(elems: IElementInfo[]): IElementInfo {
-        let best: IElementInfo = null
-        elems.forEach((elem) => {
-            if (best === null) {
-                best = elem
-            } else {
-                if (elem.box.top < best.box.top) {
-                    best = elem
-                } else if ((elem.box.top == best.box.top) && (elem.box.left < best.box.left)) {
-                    best = elem
-                }
-            }
-        })
-        return best
-    }
-
-    // This method is supposed to find the topmost frame, in a set of overlapping frames.
-    // This will take some time to implement so for now it simply looks at the frame index path_length
-    // and choose the shortest path, or if there are multiple paths with the same length then it
-    // chooses the first one it encounters.
-    // The other issue that needs to be investigated is that we seem to be getting frames that aren't
-    // really visible and often they would be clipped by their parent frames but our logic currently
-    // doesn't take this into account.
-    static find_top_frame(elems: IClickInfo[]): IClickInfo {
-        let best: IClickInfo = null
-        let best_path_length: number = null
-        elems.forEach((elem) => {
-            let path_arr = get_array_from_index_path(elem.fw_index_path)
-            let path_length = path_arr.length
-            if (best === null) {
-                best = elem
-                best_path_length = path_length
-            } else {
-                if (path_length < best_path_length) {
-                    best = elem
-                    best_path_length = path_length
-                }
-            }
-        })
-        return best
-    }
-
-    static find_next_along_rows(src: IElementInfo, candidates: IElementInfo[], max_width_diff: number, max_height_diff: number, max_angle_diff: number) {
-        let next: IElementInfo = BgCommHandler.find_closest_neighbor(src, candidates, 0, max_width_diff, max_height_diff, max_angle_diff);
-        if (next) {
-            return next
-        }
-
-        // Otherwise we need to find the first element of rows below the current row.
-        let best: IElementInfo = null
-
-        let src_box = new Box(src.box)
-        const src_bottom = src_box.bottom
-
-        // Note the return in the forEach loop acts like a continue statement.
-        candidates.forEach((dest) => {
-            let dest_box = new Box(dest.box)
-            
-            // Determine if the candidate is of the right size.
-            let dest_width = dest_box.get_width()
-            let dest_height = dest_box.get_height()
-            let min_width_pixels = src_box.get_width() * (1.0 - (max_width_diff * 0.01))
-            let max_width_pixels = src_box.get_width() * (1.0 + (max_width_diff * 0.01))
-            let min_height_pixels = src_box.get_height() * (1.0 - (max_height_diff * 0.01));
-            let max_height_pixels = src_box.get_height() * (1.0 + (max_height_diff * 0.01));
-            if ((dest_width < min_width_pixels) || (dest_width > max_width_pixels)) {
-                return
-            }
-            if ((dest_height < min_height_pixels) || (dest_height > max_height_pixels)) {
-                return
-            }
-
-            // Make sure the dest element is below our current row.
-            if (dest.box.top < src_bottom) {
-                return
-            }
-
-            // If best hasn't been set yet, we take the first dest element.
-            if (!best) {
-                best = dest
-                return
-            }
-
-            // If the dest element is more top-left than our current best, it becomes the next best element.
-            if (dest.box.top <= best.box.top) {
-                if (dest.box.left <= best.box.left) {
-                    best = dest
-                    return
-                }
-            }
-        })
-        return best
-    }
-
-    static find_next_along_column(src: IElementInfo, candidates: IElementInfo[], max_width_diff: number, max_height_diff: number) {
-        let best: IElementInfo = null
-
-        let src_box = new Box(src.box)
-        const src_bottom = src_box.bottom
-
-        // Note the return in the forEach loop acts like a continue statement.
-        candidates.forEach((candidate) => {
-            let candidate_box = new Box(candidate.box)
-            
-            // The dest box must be align with the src box.
-            if (candidate_box.left != src_box.left) {
-                return
-            }
-
-            // Determine if the candidate is of the right size.
-            let dest_width = candidate_box.get_width()
-            let dest_height = candidate_box.get_height()
-            let min_width_pixels = src_box.get_width() * (1.0 - (max_width_diff * 0.01))
-            let max_width_pixels = src_box.get_width() * (1.0 + (max_width_diff * 0.01))
-            let min_height_pixels = src_box.get_height() * (1.0 - (max_height_diff * 0.01));
-            let max_height_pixels = src_box.get_height() * (1.0 + (max_height_diff * 0.01));
-            if ((dest_width < min_width_pixels) || (dest_width > max_width_pixels)) {
-                return
-            }
-            if ((dest_height < min_height_pixels) || (dest_height > max_height_pixels)) {
-                return
-            }
-
-            // Make sure the dest element is below our current row.
-            if (candidate.box.top < src_bottom) {
-                return
-            }
-
-            // If best hasn't been set yet, we take the first dest element.
-            if (!best) {
-                best = candidate
-                return
-            }
-
-            // If the dest element is above our current best, it becomes the next best element.
-            if (candidate.box.top <= best.box.top) {
-                best = candidate
-                return
-            }
-        })
-        return best
-    }
-
-    static find_first_column_elements(candidates: IElementInfo[], min_elements_per_column: number = 5, max_diff_between_elements: number = 500) {
-
-        let columns: Map<number, IElementInfo[]> = new Map<number,IElementInfo[]>();
-
-        // Group the elements into columns.
-        candidates.forEach((candidate) => {
-            let candidate_box = new Box(candidate.box)
-            if (!columns.has(candidate_box.left)) {
-                columns.set(candidate_box.left, [])
-            }
-            let elements = columns.get(candidate_box.left)
-            elements.push(candidate)
-        })
-        
-        // Remove columns with less than min_elements_per_column
-        let keys_to_remove: number[] = []
-        columns.forEach((elements: IElementInfo[], key: number) => {
-            if (elements.length < min_elements_per_column) {
-                keys_to_remove.push(key)
-            }
-        })
-        for (let key of keys_to_remove) {
-            columns.delete(key)
-        }
-        
-        // Sort the elements in the columns vertically.
-        columns.forEach((elements: IElementInfo[], key: number) => {
-            elements.sort((e1, e2) => {return e1.box.top - e2.box.top});
-        })
-
-        // Collect the starting elements of each column.
-        let first_elements: IElementInfo[]
-        columns.forEach((elements: IElementInfo[], key: number) => {
-            first_elements.push(elements[0])
-        })
-
-        // A given column may be split into multiple groups.
-        // Find the starting points of internal splits and append them.
-        columns.forEach((elements: IElementInfo[], key: number) => {
-            if (elements.length < 2) {
-                return
-            }
-            for (let i = 1; i < elements.length; i++) {
-                if ((elements[i].box.top - elements[i-1].box.bottom) > max_diff_between_elements) {
-                    first_elements.push(elements[i])
-                }
-            }
-        })
-
-        return first_elements
-    }
-
-    static find_closest_neighbor(src: IElementInfo, candidates: IElementInfo[], angle: number, max_width_diff: number, max_height_diff: number, max_angle_diff: number) {
-
-        // Loop through each one trying to find the best one.
-        let best: IElementInfo = null
-        let best_distance = 0
-
-        let src_box = new Box(src.box)
-        let src_center = src_box.get_center()
-
-        let theta = angle / 180.0 * Math.PI
-        let dir = new Point({x: Math.cos(theta), y: -1 * Math.sin(theta)}) // -1 is because y increases from top to bottom.
-        let perp_dir = new Point({x: -dir.y, y: dir.x})
-
-        // Note the return in the forEach loop acts like a continue statement.
-        candidates.forEach((dest) => {
-            // Skip the dest element if its equal to the src element.
-            if ((dest.fw_index_path == src.fw_index_path) && (dest.xpath == src.xpath)) {
-                return
-            }
-
-            // Determine the candidates center point information.
-            let dest_box = new Box(dest.box)
-            let dest_center:Point = dest_box.get_center()
-            let diff = dest_center.subtract(src_center)
-            
-            // Determine if the candidate is of the right size.
-            let dest_width = dest_box.get_width()
-            let dest_height = dest_box.get_height()
-            let min_width_pixels = src_box.get_width() * (1.0 - (max_width_diff * 0.01))
-            let max_width_pixels = src_box.get_width() * (1.0 + (max_width_diff * 0.01))
-            let min_height_pixels = src_box.get_height() * (1.0 - (max_height_diff * 0.01));
-            let max_height_pixels = src_box.get_height() * (1.0 + (max_height_diff * 0.01));
-            if ((dest_width < min_width_pixels) || (dest_width > max_width_pixels)) {
-                return
-            }
-            if ((dest_height < min_height_pixels) || (dest_height > max_height_pixels)) {
-                return
-            }
-
-            // Determine the angle difference from the desired angle.
-            // First determine the x and y in the tilted frame of the desired angle.
-            let parallel_dist = (diff.x * dir.x) + (diff.y * dir.y)
-            let perp_dist = (diff.x * perp_dir.x) + (diff.y * perp_dir.y)
-            // Next determine the angle in radians.
-            let theta = Math.atan2(perp_dist, parallel_dist);
-            let angle = -1 * theta / 3.141592653 * 180.0; // -1 is because y increases from top to bottom, and we want users to think that 0 degress is to the right, and 90 degress is up.
-            if (Math.abs(angle) > Math.abs(max_angle_diff)) {
-                return
-            }
-
-            // Determine the distance.
-            let distance = (diff.x*diff.x) + (diff.y * diff.y)
-
-            // We want to skip elements that are in the opposite direction and that are overlaid directly on top of us.
-            // For example an image when hovered over may load in a video on top.
-            if (parallel_dist < 5) {
-                return
-            }
-
-            // Update best if the dest is closer to the src element.
-            if (!best) {
-                best = dest
-                best_distance = distance
-            } else if (Math.abs(distance - best_distance) < 0.0001) {
-                // If the distance and best_distance are very close check their z_index values or their sizes.
-                // We choose the one with larger z_index or smaller size.
-                {
-                    let dest_area = (dest.box.right - dest.box.left) * (dest.box.bottom - dest.box.top)
-                    let best_area = (best.box.right - best.box.left) * (best.box.bottom - best.box.top)
-                    if (dest_area < best_area) {
-                        best = dest
-                        best_distance = distance
-                    }
-                }
-            } else if (distance < best_distance) {
-                best = dest
-                best_distance = distance
-            }
-        })
-        return best
-    }
-
-    // ------------------------------------------------------------------------------------------------------------------
-    // Task queue methods.
-    // ------------------------------------------------------------------------------------------------------------------
-
-    // Functor Queue.
-    queue(task: () => void) {
-        this.tasks.push(task)
-    }
-
-    queue_debug_msg(msg: string) {
-        this.queue(()=> {
-            console.log(msg)
-            this.run_next_task()
-        })
-    }
-
-    clear_tasks() {
-        this.tasks.length = 0
-    }
-
-    run_next_task() {
-        if (this.tasks.length == 0) {
-            return
-        }
-        let t = this.tasks.shift()
-        t()
-    }
-
-    // ------------------------------------------------------------------------------------------------------------------
-    // Helper methods.
-    // ------------------------------------------------------------------------------------------------------------------
-
-    // Other.
-    queue_block_events() {
-        let req = new RequestMessage(-1, ChromeRequestType.kBlockEvents)
-        this.queue_collect_void_from_frames(req)
-    }
-
-    queue_unblock_events() {
-        let req = new RequestMessage(-1, ChromeRequestType.kUnblockEvents)
-        this.queue_collect_void_from_frames(req)
-    }
 
     // Note this method modifies the stack while executing.
     // It continually pushes a task to query the frames about whether they are busy.
@@ -596,203 +303,6 @@ class BgCommHandler {
             } else if (this.timer == null) {
                 this.timer = setInterval(() => { this.queue_wait_until_loaded(callback); this.run_next_task() }, 1000)
             }
-        })
-    }
-
-    // Element mutation methods.
-    queue_update_element() {
-        let req = new RequestMessage(-1, ChromeRequestType.kUpdateElement)
-        this.queue_collect_void_from_frames(req)
-    }
-
-    queue_clear_element() {
-        let req = new RequestMessage(-1, ChromeRequestType.kClearElement)
-        this.queue_collect_void_from_frames(req)
-    }
-
-    // Result will be in this.found_elem. Error will be in this.error_msg.
-    queue_get_current_element() {
-        this.current_elem = null
-        this.error_msg = ""
-        this.collected_elems.length = 0
-        let req = new RequestMessage(-1, ChromeRequestType.kGetElement)
-        this.queue_collect_elements_from_frames(req)
-        this.queue(() => {
-            if (this.collected_elems.length == 1) {
-                // Make a deep copy of the current element info.
-                this.current_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
-            } else if (this.collected_elems.length == 0) {
-                this.error_msg = "Unable to find the current element."
-            } else {
-                this.error_msg = "There were multiple current elements."
-            }
-            this.run_next_task()
-        })
-    }
-
-    queue_get_current_element_or_fail(req_id: number) {
-        this.queue_get_current_element()
-        this.queue(() => {
-            if (!this.current_elem) {
-                this.clear_tasks()
-                let response = new ResponseMessage(req_id, false, this.error_msg)
-                this.bg_comm.send_to_app(response)
-            } else {
-                this.run_next_task()
-            }
-        })
-    }
-
-    queue_current_element_exists_or_fail(req_id: number) {
-        this.queue(() => {
-            if (this.current_elem) {
-                let response = new ResponseMessage(req_id, true, this.current_elem)
-                this.bg_comm.send_to_app(response)
-            } else {
-                let response = new ResponseMessage(req_id, false, this.error_msg)
-                this.bg_comm.send_to_app(response)
-            }
-        })
-        this.run_next_task()
-    }
-
-    queue_fail_if_no_found_elements(req_id: number) {
-        this.queue(() => {
-            if (this.found_elems.length == 0) {
-                this.clear_tasks()
-                let response = new ResponseMessage(req_id, true, "no elements found")
-                this.bg_comm.send_to_app(response)
-            } else {
-                this.run_next_task()
-            }
-        })
-    }
-
-    queue_set_current_element_from_best(req_id: number) {
-        this.queue(() => {
-            if (!this.best_elem) {
-                // Unable to find the next element.
-                // Wipe out the queue.
-                this.clear_tasks()
-                let response = new ResponseMessage(req_id, true, "unable to set the next current element because there is no valid candidate")
-                this.bg_comm.send_to_app(response)
-            } else {
-                this.current_elem = this.best_elem
-                this.run_next_task()
-            }
-        })
-    }
-
-    queue_scroll_element_into_view() {
-        this.current_elem = null
-        this.error_msg = ""
-        this.collected_elems.length = 0
-        let req = new RequestMessage(-1, ChromeRequestType.kScrollElementIntoView)
-        this.queue_collect_elements_from_frames(req)
-        this.queue(() => {
-            if (this.collected_elems.length == 1) {
-                // Make a deep copy of the current element info.
-                this.current_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
-            } else if (this.collected_elems.length == 0) {
-                this.error_msg = "Unable to find the current element."
-            } else {
-                this.error_msg = "There were multiple current elements."
-            }
-            this.run_next_task()
-        })
-    }
-
-    queue_scroll_element(dir: DirectionType) {
-        this.current_elem = null
-        this.error_msg = ""
-        this.collected_elems.length = 0
-        let req = new RequestMessage(-1, ChromeRequestType.kScrollElement, {scroll_direction: dir})
-        this.queue_collect_elements_from_frames(req)
-        this.queue(() => {
-            if (this.collected_elems.length == 1) {
-                // Make a deep copy of the current element info.
-                this.current_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
-            } else if (this.collected_elems.length == 0) {
-                this.error_msg = "Unable to find the current element."
-            } else {
-                this.error_msg = "There were multiple current elements."
-            }
-            this.run_next_task()
-        })
-    }
-
-    // Result will be in this.found_elem. Error will be in this.error_msg.
-    // Note this uses the dynamic value of this.found_elem to set the current element.
-    queue_set_current_element() {
-        this.error_msg = ""
-        this.collected_elems.length = 0
-        
-        // We skip using queue_collect_elements_from_frames, because we need to dynamically create the message
-        // using the current value of this.found_elem.
-        this.queue(() => {
-            let req = new RequestMessage(-1, ChromeRequestType.kSetElement, this.current_elem)
-            this.collected_elems.length = 0
-            this.collect_from_frames(req, (elems: IElementInfo[]) => {this.collect_elements(elems)})
-        })
-        this.queue(() => {
-            if (this.collected_elems.length == 1) {
-                // Make a deep copy of the current element info.
-                this.current_elem = JSON.parse(JSON.stringify(this.collected_elems[0]))
-            } else if (this.collected_elems.length == 0) {
-                this.error_msg = "Unable to find the element to make current."
-            } else {
-                this.error_msg = "There were multiple elements matching the make current request."
-            }
-            this.run_next_task()
-        })
-    }
-
-    queue_set_current_element_no_fail(req_id: number) {
-        this.queue_set_current_element()
-        this.queue(() => {
-            if (this.current_elem) {
-                let response = new ResponseMessage(req_id, true, this.current_elem)
-                this.bg_comm.send_to_app(response)
-            } else {
-                let response = new ResponseMessage(req_id, true, "no current element to broadcast")
-                this.bg_comm.send_to_app(response)
-            }
-        })
-        this.run_next_task()
-    }
-
-    queue_find_all_elements_by_type(wrap_type: WrapType) {
-        this.found_elems = []
-        this.collected_elems.length = 0
-        let req = new RequestMessage(-1, ChromeRequestType.kFindElementByType, { wrap_type: wrap_type })
-        this.queue_collect_elements_from_frames(req)
-        this.queue(() => {
-            console.log('found all elements by type!')
-            this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
-            this.run_next_task()
-        })
-    }
-
-    queue_find_all_elements_by_values(wrap_type: WrapType, target_values: string[]) {
-        this.found_elems = []
-        this.collected_elems.length = 0
-        let req = new RequestMessage(-1, ChromeRequestType.kFindElementByValues, { wrap_type: wrap_type, target_values: target_values })
-        this.queue_collect_elements_from_frames(req)
-        this.queue(() => {
-            this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
-            this.run_next_task()
-        })
-    }
-
-    queue_find_all_elements() {
-        this.found_elems = []
-        this.collected_elems.length = 0
-        let req = new RequestMessage(-1, ChromeRequestType.kGetAllElements)
-        this.queue_collect_elements_from_frames(req)
-        this.queue(() => {
-            console.log('found num elements: ' + this.collected_elems.length)
-            this.found_elems = JSON.parse(JSON.stringify(this.collected_elems))
-            this.run_next_task()
         })
     }
 
@@ -884,31 +394,12 @@ class BgCommHandler {
             // --------------------------------------------------------------
             // Requests that are broadcast to all frames.
             // --------------------------------------------------------------
-
-            case ChromeRequestType.kBlockEvents: {
-                this.clear_tasks()
-                this.queue_block_events()
-                this.queue(() => {
-                    let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_app(response)
-                })
-                this.run_next_task()
-            } break
-            case ChromeRequestType.kUnblockEvents: {
-                this.clear_tasks()
-                this.queue_unblock_events()
-                this.queue(() => {
-                    let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_app(response)
-                })
-                this.run_next_task()
-            } break
             case ChromeRequestType.kWaitUntilLoaded: {
                 this.clear_tasks()
                 this.queue_wait_until_loaded(() => {
-                        let response = new ResponseMessage(req.id, true, true)
-                        this.bg_comm.send_to_app(response)
-                    })
+                    let response = new ResponseMessage(req.id, true, true)
+                    this.bg_comm.send_to_app(response)
+                })
                 this.run_next_task()
             } break
             case ChromeRequestType.kUpdateFrameOffsets: {
@@ -920,332 +411,27 @@ class BgCommHandler {
                 })
                 this.run_next_task()
             } break
-            case ChromeRequestType.kUpdateElement: {
-                this.clear_tasks()
-                this.queue_update_element()
-                this.queue(() => {
-                    let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_app(response)
-                })
-                this.run_next_task()
-            } break
-            case ChromeRequestType.kClearElement: {
-                this.clear_tasks()
-                this.queue_clear_element()
-                this.queue(() => {
-                    let response = new ResponseMessage(req.id, true, true)
-                    this.bg_comm.send_to_app(response)
-                })
-                this.run_next_task()
-            } break
-            case ChromeRequestType.kGetElement: {
-                this.clear_tasks()
-                this.queue_get_current_element()
-                this.queue_current_element_exists_or_fail(req.id)
-                this.run_next_task()
-            } break
-            case ChromeRequestType.kHasElement: {
-                this.clear_tasks()
-                this.queue_get_current_element()
-                this.queue(() => {
-                    if (this.current_elem) {
-                        let response = new ResponseMessage(req.id, true, this.current_elem)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                    	// We don't error out if there is no current element.
-                    	// We just return a dummy info instead.
-                        let dummy: IElementInfo = {
-                            fw_index_path: "-1",
-                            fe_index_path: "-1",
-                            xpath: "",
-                            box: {left: 0, right: 0, bottom: 0, top: 0},
-                            href: "",
-                            image: "",
-                            text: ""
-                        }
-                        let response = new ResponseMessage(req.id, true, dummy)
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
-            } break
-            case ChromeRequestType.kSetElement: {
-                this.clear_tasks()
-                this.current_elem = req.args
-                this.queue_set_current_element()
-                this.queue_current_element_exists_or_fail(req.id)
-                this.run_next_task()
-            } break
             case ChromeRequestType.kGetAllElements: {
                 this.clear_tasks()
-                this.queue_find_all_elements()
+                this.queue_collect_elements_from_frames(req)
                 this.queue(() => {
-                    let response = new ResponseMessage(req.id, true, this.found_elems)
+                    let response = new ResponseMessage(req.id, true, {elements: this.collected_elems})
                     this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()
             } break
-            case ChromeRequestType.kScrollElementIntoView: {
-                this.clear_tasks()
-                this.queue_scroll_element_into_view()
-                this.queue(() => {
-                    // Note if there is no current element, there is nothing to scroll, but we always return success/true.
-                    let response = new ResponseMessage(req.id, true, {})
-                    this.bg_comm.send_to_app(response)
-                })
-                this.run_next_task()
-            } break
+            case ChromeRequestType.kBlockEvents:
+            case ChromeRequestType.kUnblockEvents:
+            case ChromeRequestType.kHighlightElements:
+            case ChromeRequestType.kUpdateElementHighlights: 
+            case ChromeRequestType.kClearElementHighlights:
+            case ChromeRequestType.kScrollElementIntoView: 
             case ChromeRequestType.kScrollElement: {
                 this.clear_tasks()
-                this.queue_scroll_element(req.args.scroll_direction)
+                this.queue_collect_void_from_frames(req)
                 this.queue(() => {
-                    // Note if there is no current element, there is nothing to scroll, but we always return success/true.
-                    let response = new ResponseMessage(req.id, true, {})
+                    let response = new ResponseMessage(req.id, true, true)
                     this.bg_comm.send_to_app(response)
-                })
-                this.run_next_task()
-            } break
-            case ChromeRequestType.kFindElementByPosition: {
-                this.clear_tasks()
-                this.queue_find_all_elements_by_type(req.args.wrap_type)
-                this.queue(() => {
-                    // Loop through all the found elements of the given wrap type.
-                    let best: IElementInfo = null
-                    let best_area = 0
-                    let best_path_length = 0
-                    this.collected_elems.forEach((info: IElementInfo) => {
-                        let box = new Box(info.box)
-                        let point = new Point(req.args.global_mouse_position)
-                        let path_length = info.fw_index_path.split('/').length
-                        let area = box.get_area()
-                        // Examine elements which contain our point of interest.
-                        if (box.contains_point(point)) {
-                            if (best == null) {
-                                // The first element is automatically the best.
-                                best = info
-                                best_area = box.get_area()
-                                best_path_length = path_length
-                            } else if (path_length < best_path_length) {
-                                // If the candidate's frame index path length is smaller, then it is now the best.
-                                best = info
-                                best_area = box.get_area()
-                                best_path_length = path_length
-                            } else if (path_length == best_path_length) {
-                                // Otherwise if the candidate has a smaller area, then it is now the best.
-                                if (area < best_area) {
-                                    best = info
-                                    best_area = area
-                                    best_path_length = path_length
-                                }
-                            }
-                        }
-                    });
-                    this.current_elem = JSON.parse(JSON.stringify(best))
-
-                    if (this.current_elem != null) {
-                        this.run_next_task()
-                    } else {
-                        // Wipe out the queue.
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given values.")
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.queue_set_current_element()
-                this.queue_current_element_exists_or_fail(req.id)
-            } break
-            case ChromeRequestType.kFindElementByValues: {
-                this.clear_tasks()
-                this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
-                this.queue(() => {
-                    if (this.found_elems.length > 0) {
-                        this.current_elem = BgCommHandler.find_top_leftmost(this.found_elems)
-                        this.run_next_task()
-                    } else {
-                        // Wipe out the queue.
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given values.")
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.queue_set_current_element()
-                this.queue_current_element_exists_or_fail(req.id)
-            } break
-            case ChromeRequestType.kFindElementByType: {
-                this.clear_tasks()
-                this.queue_find_all_elements_by_type(req.args.wrap_type)
-                this.queue(() => {
-                    if (this.found_elems.length > 0) {
-                        this.current_elem = BgCommHandler.find_top_leftmost(this.found_elems)
-                        this.run_next_task()
-                    } else {
-                        // Wipe out the queue.
-                        this.clear_tasks()
-                        let response = new ResponseMessage(req.id, false, "Unable to find any elements which match the given type.")
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.queue_set_current_element()
-                this.queue_current_element_exists_or_fail(req.id)
-            } break
-            case ChromeRequestType.kShiftElementByType: {
-                this.clear_tasks()
-                // Make sure we have a current element to shift from.
-                this.queue_get_current_element_or_fail(req.id)
-                // Now get all the possible elements that we can shift to.
-                this.queue_find_all_elements_by_type(req.args.wrap_type)
-                // Fail if no elements found.
-                this.queue_fail_if_no_found_elements(req.id)
-                // Find the best element.
-                this.queue(() => {
-                    this.best_elem = BgCommHandler.find_closest_neighbor(this.current_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
-                    this.run_next_task()
-                })
-                // Set the current element to be the best element.
-                this.queue_set_current_element_from_best(req.id)
-                // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
-            } break
-            case ChromeRequestType.kShiftElementByValues: {
-                this.clear_tasks()
-                // Make sure we have a current element to shift from.
-                this.queue_get_current_element_or_fail(req.id)
-                // Now get all the possible elements that we can shift to.
-                this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
-                // Fail if no elements found.
-                this.queue_fail_if_no_found_elements(req.id)
-                // Select one to shift to.
-                this.queue(() => {
-                    this.best_elem = BgCommHandler.find_closest_neighbor(this.current_elem, this.found_elems, req.args.angle, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
-                    this.run_next_task()
-                })
-                // Set the current element to be the best element.
-                this.queue_set_current_element_from_best(req.id)
-                // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
-            } break
-            case ChromeRequestType.kShiftElementByTypeAlongRows: {
-                this.clear_tasks()
-                // Make sure we have a current element to shift from.
-                this.queue_get_current_element_or_fail(req.id)
-                // Now get all the possible elements that we can shift to.
-                this.queue_find_all_elements_by_type(req.args.wrap_type)
-                // Fail if no elements found.
-                this.queue_fail_if_no_found_elements(req.id)
-                // Select one to shift to.
-                this.queue(() => {
-                    this.best_elem = BgCommHandler.find_next_along_rows(this.current_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
-                    this.run_next_task()
-                })
-                // Set the current element to be the best element.
-                this.queue_set_current_element_from_best(req.id)
-                // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
-            } break
-            case ChromeRequestType.kShiftElementByValuesAlongRows: {
-                this.clear_tasks()
-                // Make sure we have a current element to shift from.
-                this.queue_get_current_element_or_fail(req.id)
-                // Now get all the possible elements that we can shift to.
-                this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
-                // Fail if no elements found.
-                this.queue_fail_if_no_found_elements(req.id)
-                // Select one to shift to.
-                this.queue(() => {
-                    this.best_elem = BgCommHandler.find_next_along_rows(this.current_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference, req.args.max_angle_difference)
-                    this.run_next_task()
-                })
-                // Set the current element to be the best element.
-                this.queue_set_current_element_from_best(req.id)
-                // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
-            } break
-            case ChromeRequestType.kShiftElementByTypeAlongColumns: {
-                this.clear_tasks()
-                // Make sure we have a current element to shift from.
-                this.queue_get_current_element_or_fail(req.id)
-                // Now get all the possible elements that we can shift to.
-                this.queue_find_all_elements_by_type(req.args.wrap_type)
-                // Fail if no elements found.
-                this.queue_fail_if_no_found_elements(req.id)
-                // Select one to shift to.
-                this.queue(() => {
-                    this.best_elem = BgCommHandler.find_next_along_column(this.current_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference)
-                    this.run_next_task()
-                })
-                // Set the current element to be the best element.
-                this.queue_set_current_element_from_best(req.id)
-                // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
-            } break
-            case ChromeRequestType.kShiftElementByValuesAlongColumns: {
-                this.clear_tasks()
-                // Make sure we have a current element to shift from.
-                this.queue_get_current_element_or_fail(req.id)
-                // Now get all the possible elements that we can shift to.
-                this.queue_find_all_elements_by_values(req.args.wrap_type, req.args.target_values)
-                // Fail if no elements found.
-                this.queue_fail_if_no_found_elements(req.id)
-                // Select one to shift to.
-                this.queue(() => {
-                    this.best_elem = BgCommHandler.find_next_along_column(this.current_elem, this.found_elems, req.args.max_width_difference, req.args.max_height_difference)
-                    this.run_next_task()
-                })
-                // Set the current element to be the best element.
-                this.queue_set_current_element_from_best(req.id)
-                // Shift the element.
-                this.queue_set_current_element_no_fail(req.id)
-            } break
-            case ChromeRequestType.kGetCrosshairInfo: {
-                this.clear_tasks()
-                this.queue_collect_click_from_frames(req)
-                this.queue(() => {
-                    if (this.collected_clicks.length == 1) {
-                        let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
-                        this.bg_comm.send_to_app(response)
-                    } else if (this.collected_clicks.length > 1) {
-                        let best = BgCommHandler.find_top_frame(this.collected_clicks)
-                        let response = new ResponseMessage(req.id, true, best)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, false, "The crosshair click point did not intersect any elements.")
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
-            } break
-            case ChromeRequestType.kGetElementValues: {
-                this.clear_tasks()
-                this.queue_collect_click_from_frames(req)
-                this.queue(() => {
-                    if (this.collected_clicks.length == 1) {
-                        let response = new ResponseMessage(req.id, true, this.collected_clicks[0])
-                        this.bg_comm.send_to_app(response)
-                    } else if (this.collected_clicks.length > 1) {
-                        let best = BgCommHandler.find_top_frame(this.collected_clicks)
-                        let response = new ResponseMessage(req.id, true, best)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, false, "The element's center point did not intersect any elements.")
-                        this.bg_comm.send_to_app(response)
-                    }
-                })
-                this.run_next_task()
-            } break
-            case ChromeRequestType.kGetDropDownInfo: {
-                this.clear_tasks()
-                this.queue_collect_drop_down_from_frames(req)
-                this.queue(() => {
-                    if (this.collected_drop_downs.length == 1) {
-                        let response = new ResponseMessage(req.id, true, this.collected_drop_downs[0])
-                        this.bg_comm.send_to_app(response)
-                    } else if (this.collected_drop_downs.length > 1) {
-                        let response = new ResponseMessage(req.id, false, "Received drop down info from multiple elements: " + this.collected_drop_downs.length)
-                        this.bg_comm.send_to_app(response)
-                    } else {
-                        let response = new ResponseMessage(req.id, false, "Did not receive any drop down info from any elements.")
-                        this.bg_comm.send_to_app(response)
-                    }
                 })
                 this.run_next_task()
             } break

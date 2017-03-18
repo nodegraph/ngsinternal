@@ -74,39 +74,18 @@ declare const enum ChromeRequestType {
   kOpenTab = 10,
   kGetActiveTabTitle = 11,
 
-  // Current element on Page.
-  kUpdateElement = 12,
-  kClearElement = 13,
-  kGetElement = 14,
-  kSetElement = 15,
-  kHasElement = 16,
+  // Element Overlays. These simply act as highlights in the browser.
+  kHighlightElements = 12,
+  kUpdateElementHighlights = 13,
+  kClearElementHighlights = 14,
 
+  // Scrolling.
+  kScrollElementIntoView = 15,
+  kScrollElement = 16,
+
+  // Others.
   kGetAllElements = 17,
-
-  // Extract info from element.
-  kGetElementValues = 18,
-
-  // Scroll an element.
-  kScrollElementIntoView = 19,
-  kScrollElement = 20,
-
-  // Find the current element.
-  kFindElementByPosition = 21,
-  kFindElementByValues = 22,
-  kFindElementByType = 23,
-
-  // Shift the current element.
-  kShiftElementByType = 24,
-  kShiftElementByValues = 25,
-  kShiftElementByTypeAlongRows = 26,
-  kShiftElementByValuesAlongRows = 27,
-  kShiftElementByTypeAlongColumns = 28,
-  kShiftElementByValuesAlongColumns = 29,
-
-  // Info Request.
-  kGetCrosshairInfo = 30,
-  kGetDropDownInfo = 31,
-  kUpdateFrameOffsets = 32,
+  kUpdateFrameOffsets = 18,
 
 }
 
@@ -139,8 +118,7 @@ declare const enum TextActionType {
 }
 
 declare const enum ElementActionType {
-  kGetText = 0,
-  kChooseOption = 1
+  kChooseOption = 0
 }
 
 declare const enum ImageActionType {

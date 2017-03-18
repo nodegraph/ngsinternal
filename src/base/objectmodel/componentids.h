@@ -196,81 +196,66 @@ COMPONENT_ENTRY2(TaskScheduler,40)\
 /* Task Management Helpers.*/\
 COMPONENT_ENTRY2(HTTPWorker, 41)\
 COMPONENT_ENTRY2(BrowserRecorder, 42)\
-/* Node Computes. */\
+/* Input/Output Computes. */\
 COMPONENT_ENTRY2(InputCompute, 43)\
 COMPONENT_ENTRY2(OutputCompute, 44)\
+/* Input/Output Node Computes. */\
 COMPONENT_ENTRY2(InputNodeCompute, 45)\
 COMPONENT_ENTRY2(OutputNodeCompute, 46)\
-COMPONENT_ENTRY2(DotNodeCompute, 47)\
+COMPONENT_ENTRY2(PasswordInputNodeCompute, 47)\
+COMPONENT_ENTRY2(PasswordDataNodeCompute, 48)\
 /* Group Computes. */\
-COMPONENT_ENTRY2(GroupNodeCompute, 48)\
-COMPONENT_ENTRY2(IfGroupNodeCompute, 49)\
-COMPONENT_ENTRY2(WhileGroupNodeCompute, 50)\
+COMPONENT_ENTRY2(GroupNodeCompute, 49)\
+COMPONENT_ENTRY2(IfGroupNodeCompute, 50)\
+COMPONENT_ENTRY2(WhileGroupNodeCompute, 51)\
 /* Protocol Based Computes. */\
-COMPONENT_ENTRY2(MQTTHostCompute, 51)\
-COMPONENT_ENTRY2(HTTPCompute, 56)\
-COMPONENT_ENTRY2(MQTTPublishCompute, 57)\
-COMPONENT_ENTRY2(MQTTSubscribeCompute, 58)\
+COMPONENT_ENTRY2(MQTTHostCompute, 52)\
+COMPONENT_ENTRY2(HTTPCompute, 53)\
+COMPONENT_ENTRY2(MQTTPublishCompute, 54)\
+COMPONENT_ENTRY2(MQTTSubscribeCompute, 55)\
 /* Data Op Computes. */\
-COMPONENT_ENTRY2(MockNodeCompute, 59)\
-COMPONENT_ENTRY2(DataNodeCompute, 60)\
-COMPONENT_ENTRY2(CopyDataNodeCompute, 61)\
-COMPONENT_ENTRY2(EraseDataNodeCompute, 62)\
-COMPONENT_ENTRY2(MergeNodeCompute, 63)\
-COMPONENT_ENTRY2(ScriptNodeCompute, 64)\
-COMPONENT_ENTRY2(PostNodeCompute, 65)\
-COMPONENT_ENTRY2(WaitNodeCompute, 66)\
-/* Perform action on Browser. */\
-COMPONENT_ENTRY2(OpenBrowserCompute, 67)\
-COMPONENT_ENTRY2(CloseBrowserCompute, 68)\
-COMPONENT_ENTRY2(ReleaseBrowserCompute, 69)\
-COMPONENT_ENTRY2(IsBrowserOpenCompute, 70)\
-COMPONENT_ENTRY2(ResizeBrowserCompute, 71)\
-COMPONENT_ENTRY2(GetBrowserSizeCompute, 72)\
-COMPONENT_ENTRY2(DestroyCurrentTabCompute, 73)\
-COMPONENT_ENTRY2(OpenTabCompute, 74)\
-COMPONENT_ENTRY2(AcceptSaveDialogCompute, 75)\
+COMPONENT_ENTRY2(DotNodeCompute, 56)\
+COMPONENT_ENTRY2(MockNodeCompute, 57)\
+COMPONENT_ENTRY2(DataNodeCompute, 58)\
+COMPONENT_ENTRY2(CopyDataNodeCompute, 59)\
+COMPONENT_ENTRY2(EraseDataNodeCompute, 60)\
+COMPONENT_ENTRY2(MergeNodeCompute, 61)\
+COMPONENT_ENTRY2(ScriptNodeCompute, 62)\
+COMPONENT_ENTRY2(PostNodeCompute, 63)\
+COMPONENT_ENTRY2(WaitNodeCompute, 64)\
 /* Navigate. */\
-COMPONENT_ENTRY2(NavigateToCompute, 76)\
-COMPONENT_ENTRY2(NavigateBackCompute, 77)\
-COMPONENT_ENTRY2(NavigateForwardCompute, 78)\
-COMPONENT_ENTRY2(NavigateRefreshCompute, 79)\
-/* Find Elements. */\
-COMPONENT_ENTRY2(FindElementByPositionCompute, 80)\
-COMPONENT_ENTRY2(FindElementByValuesCompute, 81)\
-COMPONENT_ENTRY2(FindElementByTypeCompute, 82)\
-/* Shift Element. */\
-COMPONENT_ENTRY2(ShiftElementByTypeCompute, 83)\
-COMPONENT_ENTRY2(ShiftElementByValuesCompute, 84)\
-COMPONENT_ENTRY2(ShiftElementByTypeAlongRowsCompute, 85)\
-COMPONENT_ENTRY2(ShiftElementByValuesAlongRowsCompute, 86)\
-COMPONENT_ENTRY2(ShiftElementByTypeAlongColumnsCompute, 87)\
-COMPONENT_ENTRY2(ShiftElementByValuesAlongColumnsCompute, 88)\
-/* Find Element Clusters. */\
-/* Set and clear the current element.*/\
-COMPONENT_ENTRY2(SetElementCompute, 89)\
-/* Extract Info. */\
-COMPONENT_ENTRY2(GetActiveTabTitleCompute, 90)\
-COMPONENT_ENTRY2(GetCurrentURLCompute, 91)\
-COMPONENT_ENTRY2(DownloadVideoCompute, 92)\
+COMPONENT_ENTRY2(NavigateToCompute, 65)\
+COMPONENT_ENTRY2(NavigateBackCompute, 66)\
+COMPONENT_ENTRY2(NavigateForwardCompute, 67)\
+COMPONENT_ENTRY2(NavigateRefreshCompute, 68)\
+/* Perform action on Browser. */\
+COMPONENT_ENTRY2(OpenBrowserCompute, 69)\
+COMPONENT_ENTRY2(CloseBrowserCompute, 70)\
+COMPONENT_ENTRY2(ReleaseBrowserCompute, 71)\
+COMPONENT_ENTRY2(IsBrowserOpenCompute, 72)\
+COMPONENT_ENTRY2(ResizeBrowserCompute, 73)\
+COMPONENT_ENTRY2(GetBrowserSizeCompute, 74)\
+COMPONENT_ENTRY2(DestroyCurrentTabCompute, 75)\
+COMPONENT_ENTRY2(OpenTabCompute, 76)\
+COMPONENT_ENTRY2(AcceptSaveDialogCompute, 77)\
+/* Extract Info From Browser. */\
+COMPONENT_ENTRY2(GetActiveTabTitleCompute, 78)\
+COMPONENT_ENTRY2(GetCurrentURLCompute, 79)\
+COMPONENT_ENTRY2(DownloadVideoCompute, 80)\
 /* Perform action on Element. */\
-COMPONENT_ENTRY2(MouseActionCompute, 93)\
-COMPONENT_ENTRY2(TextActionCompute, 94)\
-COMPONENT_ENTRY2(PasswordActionCompute, 95)\
-COMPONENT_ENTRY2(ElementActionCompute, 96)\
-/* Scroll. */\
-COMPONENT_ENTRY2(ElementScrollCompute, 97)\
-/* Password based input nodes. */\
-COMPONENT_ENTRY2(PasswordInputNodeCompute, 98)\
-COMPONENT_ENTRY2(PasswordDataNodeCompute, 99)\
+COMPONENT_ENTRY2(MouseActionCompute, 81)\
+COMPONENT_ENTRY2(TextActionCompute, 82)\
+COMPONENT_ENTRY2(PasswordActionCompute, 83)\
+COMPONENT_ENTRY2(ElementActionCompute, 84)\
+COMPONENT_ENTRY2(ElementScrollCompute, 85)\
 /* New filtering based architecture. */\
-COMPONENT_ENTRY2(GetAllElementsCompute, 100)\
-COMPONENT_ENTRY2(FilterByTypeAndValueNodeCompute, 101)\
-COMPONENT_ENTRY2(FilterByPositionNodeCompute, 102)\
-COMPONENT_ENTRY2(FilterByDimensionsNodeCompute, 103)\
+COMPONENT_ENTRY2(HighlightElementsCompute, 86)\
+COMPONENT_ENTRY2(GetAllElementsCompute, 87)\
+COMPONENT_ENTRY2(FilterByTypeAndValueNodeCompute, 88)\
+COMPONENT_ENTRY2(FilterByPositionNodeCompute, 89)\
+COMPONENT_ENTRY2(FilterByDimensionsNodeCompute, 90)\
 
-// Numbers that are currently unused:
-// 52, 53, 54, 55
+// Numbers that are currently unused: closed bounds = [] open bounds = ()
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()

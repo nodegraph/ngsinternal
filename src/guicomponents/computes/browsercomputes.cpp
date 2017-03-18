@@ -24,6 +24,8 @@ BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
       _browser_height(this) {
   get_dep_loader()->register_fixed_dep(_queuer, Path());
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
+
+  _response_value_properties_to_merge.push_back(Message::kValue);
 }
 
 BrowserCompute::~BrowserCompute() {
@@ -74,6 +76,7 @@ void BrowserCompute::find_dep_nodes() {
 
 void BrowserCompute::pre_update_state(TaskContext& tc) {
   internal();
+
   // Make sure the browser is open.
   _queuer->queue_open_browser(tc);
 
@@ -85,17 +88,15 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
   size_obj.insert(Message::kHeight, height);
   _queuer->queue_overwrite_chain_state(tc, size_obj);
   _queuer->queue_resize_browser(tc);
-  std::cerr << "queued browser size to: " << width << ", " << height << "\n";
 
-  // Merge chain state.
+  // Overwrite the chain state with our input values.
   QJsonObject inputs = _inputs->get_input_values();
   _queuer->queue_overwrite_chain_state(tc, inputs);
+
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.
   // For examples ads may rotate and flip content.
   _queuer->queue_wait_until_loaded(tc);
-
-
 }
 
 void BrowserCompute::handle_response(TaskContext& tc) {
@@ -125,14 +126,14 @@ void BrowserCompute::on_response(const QJsonObject& chain_state) {
   // and paste it into our output object which is just a copy
   // of our input object.
 
-  // Our main output is intially a copy of the main input object.
+  // Initialize our main output value to be the main input value.
   QJsonObject obj = _inputs->get_main_input_object();
 
-  // Get the value property from the chain state.
-  QJsonValue value = chain_state.value(Message::kValue);
-
-  // Copy the value property.
-  obj.insert(Message::kValue, value);
+  // Copy properties from the response value into our output value.
+  for (const std::string& prop: _response_value_properties_to_merge) {
+    QJsonValue value = chain_state.value(prop.c_str());
+    obj.insert(prop.c_str(), value);
+  }
 
   // Set our main output.
   set_main_output(obj);
@@ -427,18 +428,23 @@ bool DownloadVideoCompute::update_state(){
   TaskContext tc(_scheduler);
   pre_update_state(tc);
 
-  bool use_element = _inputs->get_input_boolean(Message::kUseCurrentElement);
-  if (use_element) {
-    _queuer->queue_get_current_element(tc);
-    _queuer->queue_copy_chain_property(tc, Message::kHREF, Message::kURL);
+  QJsonObject in = _inputs->get_input_object("in");
+  QJsonArray elements = in.value("elements").toArray();
+
+  if (elements.size() > 0) {
+    for (int i=0; i<elements.size(); ++i) {
+      QJsonObject args;
+      args.insert(Message::kHREF, elements.at(i).toObject().value(Message::kHREF));
+      _queuer->queue_merge_chain_state(tc, args);
+      _queuer->queue_download_video(tc);
+    }
   } else {
     // Set the url chain property to the current url.
     _queuer->queue_get_current_url(tc);
     _queuer->queue_copy_chain_property(tc, Message::kValue, Message::kURL);
+    _queuer->queue_download_video(tc);
   }
 
-  // Download the video.
-  _queuer->queue_download_video(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -536,7 +542,7 @@ bool GetAllElementsCompute::update_state() {
   return false;
 }
 
-void SetElementCompute::create_inputs_outputs(const EntityConfig& config) {
+void HighlightElementsCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
   {
@@ -547,8 +553,8 @@ void SetElementCompute::create_inputs_outputs(const EntityConfig& config) {
   }
 }
 
-const QJsonObject SetElementCompute::_hints = SetElementCompute::init_hints();
-QJsonObject SetElementCompute::init_hints() {
+const QJsonObject HighlightElementsCompute::_hints = HighlightElementsCompute::init_hints();
+QJsonObject HighlightElementsCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
   add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "Object containing values identifying the element to make current.");
@@ -556,548 +562,13 @@ QJsonObject SetElementCompute::init_hints() {
 }
 
 
-bool SetElementCompute::update_state() {
+bool HighlightElementsCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_set_element(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
-}
-
-
-void FindElementByPositionCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-    create_input(Message::kWrapType, c);
-  }
-
-  {
-    QJsonObject pos;
-    pos.insert("x", 0);
-    pos.insert("y", 0);
-
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = pos;
-
-    create_input(Message::kGlobalMousePosition, c);
-  }
-}
-
-const QJsonObject FindElementByPositionCompute::_hints = FindElementByPositionCompute::init_hints();
-QJsonObject FindElementByPositionCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of the elements to put into the set.");
-
-  add_hint(m, Message::kGlobalMousePosition, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::Number));
-  add_hint(m, Message::kGlobalMousePosition, GUITypes::HintKey::DescriptionHint, "The position to look for the element at.");
-
-  return m;
-}
-
-
-bool FindElementByPositionCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  pre_update_state(tc);
-  _queuer->queue_find_element_by_position(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
-}
-
-void FindElementByValuesCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-    create_input(Message::kWrapType, c);
-  }
-  {
-    QJsonArray string_arr;
-    string_arr.push_back("example");
-
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = string_arr;
-    create_input(Message::kTargetValues, c);
-  }
-}
-
-const QJsonObject FindElementByValuesCompute::_hints = FindElementByValuesCompute::init_hints();
-QJsonObject FindElementByValuesCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of the elements to put into the set.");
-
-  add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
-  add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
-  return m;
-}
-
-
-bool FindElementByValuesCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  pre_update_state(tc);
-  _queuer->queue_find_element_by_values(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
-}
-
-void FindElementByTypeCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  EntityConfig c = config;
-  c.expose_plug = false;
-  c.unconnected_value = 0;
-
-  create_input(Message::kWrapType, c);
-
-}
-
-const QJsonObject FindElementByTypeCompute::_hints = FindElementByTypeCompute::init_hints();
-QJsonObject FindElementByTypeCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The element type to use when creating the set.");
-  return m;
-}
-
-bool FindElementByTypeCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  pre_update_state(tc);
-  _queuer->queue_find_element_by_type(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
-}
-
-// ---------------------------------------------------------------------------------------------------
-
-void ShiftElementByTypeCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-
-    create_input(Message::kAngle, c);
-    create_input(Message::kWrapType, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxWidthDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxHeightDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 5;
-    create_input(Message::kMaxAngleDifference, c);
-  }
-}
-
-const QJsonObject ShiftElementByTypeCompute::_hints = ShiftElementByTypeCompute::init_hints();
-QJsonObject ShiftElementByTypeCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kAngle, GUITypes::HintKey::DescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
-
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
-
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
-
-  return m;
-}
-
-bool ShiftElementByTypeCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  pre_update_state(tc);
-  _queuer->queue_shift_element_by_type(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
-}
-
-// ---------------------------------------------------------------------------------------------------
-
-void ShiftElementByValuesCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-
-    create_input(Message::kAngle, c);
-    create_input(Message::kWrapType, c);\
-  }
-
-  {
-    QJsonArray string_arr;
-    string_arr.push_back("example");
-
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = string_arr;
-    create_input(Message::kTargetValues, c);
-  }
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxWidthDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxHeightDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 5;
-    create_input(Message::kMaxAngleDifference, c);
-  }
-
-}
-
-const QJsonObject ShiftElementByValuesCompute::_hints = ShiftElementByValuesCompute::init_hints();
-QJsonObject ShiftElementByValuesCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kAngle, GUITypes::HintKey::DescriptionHint, "The direction in degrees in which to shift the element to. (0 is right, 90 is up, 180 is left, 270 is down)");
-
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
-
-  add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
-  add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
-
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
-  return m;
-}
-
-bool ShiftElementByValuesCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  pre_update_state(tc);
-  _queuer->queue_shift_element_by_values(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
-}
-
-// ---------------------------------------------------------------------------------------------------
-
-void ShiftElementByTypeAlongRowsCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    create_input(Message::kWrapType, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxWidthDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxHeightDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 1;
-    create_input(Message::kMaxAngleDifference, c);
-  }
-}
-
-const QJsonObject ShiftElementByTypeAlongRowsCompute::_hints = ShiftElementByTypeAlongRowsCompute::init_hints();
-QJsonObject ShiftElementByTypeAlongRowsCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
-
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
-
-  return m;
-}
-
-bool ShiftElementByTypeAlongRowsCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  pre_update_state(tc);
-  _queuer->queue_shift_element_by_type_along_rows(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
-}
-
-// ---------------------------------------------------------------------------------------------------
-
-void ShiftElementByValuesAlongRowsCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-    create_input(Message::kWrapType, c);\
-  }
-
-  {
-    QJsonArray string_arr;
-    string_arr.push_back("example");
-
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = string_arr;
-    create_input(Message::kTargetValues, c);
-  }
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxWidthDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxHeightDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 1;
-    create_input(Message::kMaxAngleDifference, c);
-  }
-
-}
-
-const QJsonObject ShiftElementByValuesAlongRowsCompute::_hints = ShiftElementByValuesAlongRowsCompute::init_hints();
-QJsonObject ShiftElementByValuesAlongRowsCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
-
-  add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
-  add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
-
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "The max angle difference (in degrees) of the next element from the chosen angle in which to shift.");
-  return m;
-}
-
-bool ShiftElementByValuesAlongRowsCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  pre_update_state(tc);
-  _queuer->queue_shift_element_by_values_along_rows(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
-}
-
-// ---------------------------------------------------------------------------------------------------
-
-void ShiftElementByTypeAlongColumnsCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    create_input(Message::kWrapType, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxWidthDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxHeightDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 1;
-    create_input(Message::kMaxAngleDifference, c);
-  }
-}
-
-const QJsonObject ShiftElementByTypeAlongColumnsCompute::_hints = ShiftElementByTypeAlongColumnsCompute::init_hints();
-QJsonObject ShiftElementByTypeAlongColumnsCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
-
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "This is currently not used.");
-
-  return m;
-}
-
-bool ShiftElementByTypeAlongColumnsCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  pre_update_state(tc);
-  _queuer->queue_shift_element_by_type_along_columns(tc);
-  handle_response(tc);
-  post_update_state(tc);
-  return false;
-}
-
-// ---------------------------------------------------------------------------------------------------
-
-void ShiftElementByValuesAlongColumnsCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 0;
-    create_input(Message::kWrapType, c);\
-  }
-
-  {
-    QJsonArray string_arr;
-    string_arr.push_back("example");
-
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = string_arr;
-    create_input(Message::kTargetValues, c);
-  }
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxWidthDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 20;
-    create_input(Message::kMaxHeightDifference, c);
-  }
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = 1;
-    create_input(Message::kMaxAngleDifference, c);
-  }
-
-}
-
-const QJsonObject ShiftElementByValuesAlongColumnsCompute::_hints = ShiftElementByValuesAlongColumnsCompute::init_hints();
-QJsonObject ShiftElementByValuesAlongColumnsCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "The type of elements to shift to.");
-
-  add_hint(m, Message::kTargetValues, GUITypes::HintKey::DescriptionHint, "The texts or image urls used to find elements.");
-  add_hint(m, Message::kTargetValues, GUITypes::HintKey::ElementJSTypeHint, to_underlying(GUITypes::JSType::String));
-
-  add_hint(m, Message::kMaxWidthDifference, GUITypes::HintKey::DescriptionHint, "The max width difference of the next element as a percentage of the current element's width.");
-  add_hint(m, Message::kMaxHeightDifference, GUITypes::HintKey::DescriptionHint, "The max height difference of the next element as a percentage of the current element's height.");
-  add_hint(m, Message::kMaxAngleDifference, GUITypes::HintKey::DescriptionHint, "This is currently not used.");
-  return m;
-}
-
-bool ShiftElementByValuesAlongColumnsCompute::update_state() {
-  internal();
-  BrowserCompute::update_state();
-
-  TaskContext tc(_scheduler);
-  pre_update_state(tc);
-  _queuer->queue_shift_element_by_values_along_columns(tc);
+  _queuer->queue_highlight_elements(tc);
   handle_response(tc);
   post_update_state(tc);
   return false;

@@ -46,52 +46,6 @@ Q_OBJECT
   Q_INVOKABLE void record_navigate_forward();
   Q_INVOKABLE void record_get_current_url();
 
-  // Find element by position.
-  Q_INVOKABLE void record_find_text_element_by_position();
-  Q_INVOKABLE void record_find_image_element_by_position();
-  Q_INVOKABLE void record_find_input_element_by_position();
-  Q_INVOKABLE void record_find_select_element_by_position();
-
-  // Find the first element by values.
-  Q_INVOKABLE void record_find_element_by_text();
-  Q_INVOKABLE void record_find_element_by_images();
-
-  // Find the first element by type.
-  Q_INVOKABLE void record_find_element_by_text_type();
-  Q_INVOKABLE void record_find_element_by_image_type();
-  Q_INVOKABLE void record_find_element_by_input_type();
-  Q_INVOKABLE void record_find_element_by_select_type();
-
-  // Shift by type.
-  Q_INVOKABLE void record_shift_to_text_type();
-  Q_INVOKABLE void record_shift_to_image_type();
-  Q_INVOKABLE void record_shift_to_input_type();
-  Q_INVOKABLE void record_shift_to_select_type();
-
-  // Shift by type along rows.
-  Q_INVOKABLE void record_shift_to_text_type_along_rows();
-  Q_INVOKABLE void record_shift_to_image_type_along_rows();
-  Q_INVOKABLE void record_shift_to_input_type_along_rows();
-  Q_INVOKABLE void record_shift_to_select_type_along_rows();
-
-  // Shift by type along columns.
-  Q_INVOKABLE void record_shift_to_text_type_along_columns();
-  Q_INVOKABLE void record_shift_to_image_type_along_columns();
-  Q_INVOKABLE void record_shift_to_input_type_along_columns();
-  Q_INVOKABLE void record_shift_to_select_type_along_columns();
-
-  // Shift by values.
-  Q_INVOKABLE void record_shift_to_text_values();
-  Q_INVOKABLE void record_shift_to_image_values();
-
-  // Shift by values along rows.
-  Q_INVOKABLE void record_shift_to_text_values_along_rows();
-  Q_INVOKABLE void record_shift_to_image_values_along_rows();
-
-  // Shift by values along columns.
-  Q_INVOKABLE void record_shift_to_text_values_along_columns();
-  Q_INVOKABLE void record_shift_to_image_values_along_columns();
-
   // Record Mouse Actions.
   Q_INVOKABLE void record_click();
   Q_INVOKABLE void record_ctrl_click();
@@ -103,7 +57,6 @@ Q_OBJECT
   Q_INVOKABLE void record_type_password(const QString& text);
 
   // Record Element Actions.
-  Q_INVOKABLE void record_extract_text();
   Q_INVOKABLE void record_select_from_dropdown(const QString& option_text);
   Q_INVOKABLE void record_scroll_down();
   Q_INVOKABLE void record_scroll_up();
@@ -112,12 +65,13 @@ Q_OBJECT
 
   // Set Element.
   Q_INVOKABLE void record_get_all_elements();
-  Q_INVOKABLE void record_set_element();
+  Q_INVOKABLE void record_set_element_overlays();
 
   Q_INVOKABLE void record_filter_by_type();
   Q_INVOKABLE void record_filter_by_value();
   Q_INVOKABLE void record_filter_by_position();
   Q_INVOKABLE void record_filter_by_dimensions();
+  Q_INVOKABLE void record_highlight_elements();
 
 
   signals:

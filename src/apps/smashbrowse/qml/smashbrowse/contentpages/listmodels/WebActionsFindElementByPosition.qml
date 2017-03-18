@@ -44,6 +44,14 @@ ListModel {
         script: "browser_recorder.record_filter_by_dimensions();
         		 main_bar.switch_to_current_mode();"
     }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_title_white_48dp.png"
+        title: "Highlight Elements"
+        description: "Highlight the elements with a border in the browser."
+        script: "browser_recorder.record_highlight_elements();
+        		 main_bar.switch_to_current_mode();"
+    }
 
     ListElement {
         image_url: "qrc:///icons/ic_title_white_48dp.png"

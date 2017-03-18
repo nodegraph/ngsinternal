@@ -82,38 +82,17 @@ const char* chrome_request_type_to_string(ChromeRequestType t) {
     case ChromeRequestType::kOpenTab: return "kOpenTab";
     case ChromeRequestType::kGetActiveTabTitle: return "kGetActiveTabTitle";
 
-    // Current element on Page.
-    case ChromeRequestType::kUpdateElement: return "kUpdateElement";
-    case ChromeRequestType::kClearElement: return "kClearElement";
-    case ChromeRequestType::kGetElement: return "kGetElement";
-    case ChromeRequestType::kSetElement: return "kSetElement";
-    case ChromeRequestType::kHasElement: return "kHasElement";
-
-    case ChromeRequestType::kGetAllElements: return "kGetAllElements";
-
-    // Extract info from element.
-    case ChromeRequestType::kGetElementValues: return "kGetElementValues";
+    // Element Overlays..
+    case ChromeRequestType::kUpdateElementHighlights: return "kUpdateElement";
+    case ChromeRequestType::kClearElementHighlights: return "kClearElement";
+    case ChromeRequestType::kHighlightElements: return "kSetElement";
 
     // Scroll an element.
     case ChromeRequestType::kScrollElementIntoView: return "kScrollElementIntoView";
     case ChromeRequestType::kScrollElement: return "kScroll";
 
-    // Find the current element.
-    case ChromeRequestType::kFindElementByPosition: return "kFindElementByPosition";
-    case ChromeRequestType::kFindElementByValues: return "kFindElementByValues";
-    case ChromeRequestType::kFindElementByType: return "kFindElementByType";
-
-    // Shift the current element.
-    case ChromeRequestType::kShiftElementByType: return "kShiftElementByType";
-    case ChromeRequestType::kShiftElementByValues: return "kShiftElementByValues";
-    case ChromeRequestType::kShiftElementByTypeAlongRows: return "kShiftElementByTypeAlongRows";
-    case ChromeRequestType::kShiftElementByValuesAlongRows: return "kShiftElementByValuesAlongRows";
-    case ChromeRequestType::kShiftElementByTypeAlongColumns: return "kShiftElementByTypeAlongColumns";
-    case ChromeRequestType::kShiftElementByValuesAlongColumns: return "kShiftElementByValuesAlongColumns";
-
     // Info Request.
-    case ChromeRequestType::kGetCrosshairInfo: return "kGetCrosshairInfo";
-    case ChromeRequestType::kGetDropDownInfo: return "kGetDropDownInfo";
+    case ChromeRequestType::kGetAllElements: return "kGetAllElements";
     case ChromeRequestType::kUpdateFrameOffsets: return "kUpdateFrameOffsets";
 
     default: {
@@ -180,7 +159,6 @@ const char* text_action_type_to_string(TextActionType t) {
 
 const char* element_action_type_to_string(ElementActionType t) {
   switch(t) {
-    case ElementActionType::kGetText: return "kGetText";
     case ElementActionType::kChooseOption: return "kChooseOption";
 
     default: {

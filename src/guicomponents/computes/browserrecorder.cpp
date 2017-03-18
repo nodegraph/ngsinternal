@@ -178,352 +178,17 @@ void BrowserRecorder::record_get_current_url() {
 }
 
 // -----------------------------------------------------------------
-// Find element by position.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_find_text_element_by_position() {
-  start()
-  _queuer->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByPositionCompute);
-  finish();
-}
-
-void BrowserRecorder::record_find_image_element_by_position() {
-  start()
-  _queuer->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByPositionCompute);
-  finish();
-}
-
-void BrowserRecorder::record_find_input_element_by_position() {
-  start()
-  _queuer->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::input));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByPositionCompute);
-  finish();
-}
-
-void BrowserRecorder::record_find_select_element_by_position() {
-  start()
-  _queuer->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::select));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByPositionCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Find the first element by values.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_find_element_by_text() {
-  start()
-  _queuer->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByValuesCompute);
-  finish();
-}
-
-void BrowserRecorder::record_find_element_by_images() {
-  start()
-  _queuer->queue_get_crosshair_info(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByValuesCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Find the first element by type.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_find_element_by_text_type() {
-  start()
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByTypeCompute);
-  finish();
-}
-
-void BrowserRecorder::record_find_element_by_image_type() {
-  start()
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByTypeCompute);
-  finish();
-}
-
-void BrowserRecorder::record_find_element_by_input_type() {
-  start()
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::input));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByTypeCompute);
-  finish();
-}
-
-void BrowserRecorder::record_find_element_by_select_type() {
-  start()
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::select));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFindElementByTypeCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Shift by type.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_shift_to_text_type() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_crosshair_info(tc);
-  _queuer->queue_determine_angle_in_degress(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_image_type() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_crosshair_info(tc);
-  _queuer->queue_determine_angle_in_degress(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_input_type() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_crosshair_info(tc);
-  _queuer->queue_determine_angle_in_degress(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::input));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_select_type() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_crosshair_info(tc);
-  _queuer->queue_determine_angle_in_degress(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::select));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Shift by type along rows.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_shift_to_text_type_along_rows() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongRowsCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_image_type_along_rows() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongRowsCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_input_type_along_rows() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::input));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongRowsCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_select_type_along_rows() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::select));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongRowsCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Shift by type along columns.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_shift_to_text_type_along_columns() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongColumnsCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_image_type_along_columns() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongColumnsCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_input_type_along_columns() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::input));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongColumnsCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_select_type_along_columns() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::select));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByTypeAlongColumnsCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Shift to element by values.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_shift_to_text_values() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_crosshair_info(tc);
-  _queuer->queue_determine_angle_in_degress(tc);
-  _queuer->queue_get_element_values(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_image_values(){
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_crosshair_info(tc);
-  _queuer->queue_determine_angle_in_degress(tc);
-  _queuer->queue_get_element_values(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Shift by values along rows.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_shift_to_text_values_along_rows() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_element_values(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesAlongRowsCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_image_values_along_rows(){
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_element_values(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesAlongRowsCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
-// Shift by values along columns.
-// -----------------------------------------------------------------
-
-void BrowserRecorder::record_shift_to_text_values_along_columns() {
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_element_values(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::text));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_copy_chain_property(tc, Message::kTextValues, Message::kTargetValues);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesAlongColumnsCompute);
-  finish();
-}
-
-void BrowserRecorder::record_shift_to_image_values_along_columns(){
-  start()
-  _queuer->queue_get_current_element(tc);
-  _queuer->queue_get_element_values(tc);
-  QJsonObject args;
-  args.insert(Message::kWrapType, to_underlying(WrapType::image));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_copy_chain_property(tc, Message::kImageValues, Message::kTargetValues);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kShiftElementByValuesAlongColumnsCompute);
-  finish();
-}
-
-// -----------------------------------------------------------------
 // Record Mouse Actions.
 // -----------------------------------------------------------------
 
 void BrowserRecorder::record_click() {
   start();
-  _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
-  args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendClick));
+  {
+    const QJsonObject info = _queuer->get_last_click_info();
+    args.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
+    args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendClick));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
   finish();
@@ -531,9 +196,12 @@ void BrowserRecorder::record_click() {
 
 void BrowserRecorder::record_ctrl_click() {
   start();
-  _queuer->queue_get_crosshair_info(tc);
   QJsonObject args;
-  args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendCtrlClick));
+  {
+    const QJsonObject info = _queuer->get_last_click_info();
+    args.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
+    args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendCtrlClick));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
   finish();
@@ -541,10 +209,12 @@ void BrowserRecorder::record_ctrl_click() {
 
 void BrowserRecorder::record_mouse_over() {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
+  {
+    const QJsonObject info = _queuer->get_last_click_info();
+    args.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
+    args.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
   finish();
@@ -556,11 +226,11 @@ void BrowserRecorder::record_mouse_over() {
 
 void BrowserRecorder::record_type_text(const QString& text) {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kText, text);
-  args.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
+  {
+    args.insert(Message::kText, text);
+    args.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kTextActionCompute);
   finish();
@@ -568,10 +238,10 @@ void BrowserRecorder::record_type_text(const QString& text) {
 
 void BrowserRecorder::record_type_enter() {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kTextAction, to_underlying(TextActionType::kSendEnter));
+  {
+    args.insert(Message::kTextAction, to_underlying(TextActionType::kSendEnter));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kTextActionCompute);
   finish();
@@ -579,11 +249,11 @@ void BrowserRecorder::record_type_enter() {
 
 void BrowserRecorder::record_type_password(const QString& text) {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kText, text);
-  args.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
+  {
+    args.insert(Message::kText, text);
+    args.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kPasswordActionCompute);
   finish();
@@ -593,24 +263,13 @@ void BrowserRecorder::record_type_password(const QString& text) {
 // Record Element Actions.
 // -----------------------------------------------------------------
 
-void BrowserRecorder::record_extract_text() {
-  start()
-  _queuer->queue_get_crosshair_info(tc);
-
-  QJsonObject args;
-  args.insert(Message::kElementAction, to_underlying(ElementActionType::kGetText));
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
-  finish();
-}
-
 void BrowserRecorder::record_select_from_dropdown(const QString& option_text) {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kElementAction, to_underlying(ElementActionType::kChooseOption));
-  args.insert(Message::kOptionText, option_text);
+  {
+    args.insert(Message::kElementAction, to_underlying(ElementActionType::kChooseOption));
+    args.insert(Message::kOptionText, option_text);
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
   finish();
@@ -622,10 +281,10 @@ void BrowserRecorder::record_select_from_dropdown(const QString& option_text) {
 
 void BrowserRecorder::record_scroll_down() {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kScrollDirection, to_underlying(DirectionType::down));
+  {
+    args.insert(Message::kScrollDirection, to_underlying(DirectionType::down));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
   finish();
@@ -633,10 +292,10 @@ void BrowserRecorder::record_scroll_down() {
 
 void BrowserRecorder::record_scroll_up() {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kScrollDirection, to_underlying(DirectionType::up));
+  {
+    args.insert(Message::kScrollDirection, to_underlying(DirectionType::up));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
   finish();
@@ -644,10 +303,10 @@ void BrowserRecorder::record_scroll_up() {
 
 void BrowserRecorder::record_scroll_right() {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kScrollDirection, to_underlying(DirectionType::right));
+  {
+    args.insert(Message::kScrollDirection, to_underlying(DirectionType::right));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
   finish();
@@ -655,10 +314,10 @@ void BrowserRecorder::record_scroll_right() {
 
 void BrowserRecorder::record_scroll_left() {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kScrollDirection, to_underlying(DirectionType::left));
+  {
+    args.insert(Message::kScrollDirection, to_underlying(DirectionType::left));
+  }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
   finish();
@@ -673,14 +332,14 @@ void BrowserRecorder::record_get_all_elements() {
   finish();
 }
 
-void BrowserRecorder::record_set_element() {
+void BrowserRecorder::record_set_element_overlays() {
   start();
-  _queuer->queue_get_crosshair_info(tc);
-
   QJsonObject args;
-  args.insert(Message::kElementInfo, "");
+  {
+    args.insert(Message::kElementInfo, "");
+  }
   _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kSetElementCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kHighlightElementsCompute);
   finish();
 }
 
@@ -795,6 +454,12 @@ void BrowserRecorder::record_filter_by_dimensions() {
   }
   _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByDimensionsNodeCompute);
+  finish();
+}
+
+void BrowserRecorder::record_highlight_elements() {
+  start();
+  _queuer->queue_build_compute_node(tc, ComponentDID::kHighlightElementsCompute);
   finish();
 }
 

@@ -62,12 +62,7 @@ Q_OBJECT
   // ---------------------------------------------------------------------------------
 
   // Queue Element Tasks.
-  void queue_get_current_element(TaskContext& tc);
-  void queue_has_current_element(TaskContext& tc);
   void queue_scroll_element_into_view(TaskContext& tc);
-  void queue_get_crosshair_info(TaskContext& tc);
-  void queue_get_element_values(TaskContext& tc);
-  void queue_get_drop_down_info(TaskContext& tc);
 
   // Queue Framework Tasks.
   void queue_merge_last_click_info_into_chain_state(TaskContext& tc);
@@ -123,18 +118,9 @@ Q_OBJECT
   // Queue Set Tasks.
   void queue_update_frame_offsets(TaskContext& tc);
   void queue_get_all_elements(TaskContext& tc);
-  void queue_set_element(TaskContext& tc);
+  void queue_highlight_elements(TaskContext& tc);
   void queue_clear_element(TaskContext& tc);
   void queue_update_element(TaskContext& tc);
-  void queue_find_element_by_position(TaskContext& tc);
-  void queue_find_element_by_values(TaskContext& tc);
-  void queue_find_element_by_type(TaskContext& tc);
-  void queue_shift_element_by_type(TaskContext& tc);
-  void queue_shift_element_by_values(TaskContext& tc);
-  void queue_shift_element_by_type_along_rows(TaskContext& tc);
-  void queue_shift_element_by_values_along_rows(TaskContext& tc);
-  void queue_shift_element_by_type_along_columns(TaskContext& tc);
-  void queue_shift_element_by_values_along_columns(TaskContext& tc);
 
   // Queue Perform Action Tasks.
   void queue_perform_mouse_action(TaskContext& tc);
@@ -171,11 +157,6 @@ signals:
   void send_msg_task(Message& msg);
 
   // Element Tasks.
-  void get_crosshair_info_task();
-  void get_element_values_task();
-  void get_drop_down_info_task();
-  void get_current_element_info();
-  void has_current_element_info();
   void scroll_element_into_view_task();
 
   // Infrastructure Tasks.
@@ -236,18 +217,9 @@ signals:
   // Set Creation/Modification Tasks.
   void update_frame_offsets_task();
   void get_all_elements_task();
-  void set_element_task();
+  void highlight_elements_task();
   void clear_element_task();
   void update_element_task();
-  void find_element_by_position_task();
-  void find_element_by_values_task();
-  void find_element_by_type_task();
-  void shift_element_by_type_task();
-  void shift_element_by_values_task();
-  void shift_element_by_type_along_rows_task();
-  void shift_element_by_values_along_rows_task();
-  void shift_element_by_type_along_columns_task();
-  void shift_element_by_values_along_columns_task();
 
   void perform_mouse_action_task();
   void perform_hover_action_task();

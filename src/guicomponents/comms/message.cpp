@@ -48,6 +48,7 @@ const char* Message::kTimeInMilliseconds = "time_in_milliseconds";
 
 const char* Message::kWrapType = "wrap_type";
 const char* Message::kElementType = "element_type";
+const char* Message::kElements = "elements";
 
 const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";

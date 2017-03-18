@@ -236,28 +236,26 @@ class ElemWrap {
     }
 
     get_info(): IElementInfo {
-        let fw_index_path = PageWrap.get_fw_index_path(window)
-        let xpath = this.get_xpath()
-        let href = this.get_anchor_url()
-        let image = this.get_image()
-        let text = this.get_text()
-        let tag_name = this.get_tag_name()
-
         // Bounds.
         let box = new Box(this.get_box()) // This should be in page space.
         box.to_client_space(window)
         box.add_offset(PageWrap.get_offset()) // convert local to global client space
 
+        let options = this.get_options()
+
         // Form the info.
         return {
-            fw_index_path: fw_index_path,
+            fw_index_path: PageWrap.get_fw_index_path(window),
             fe_index_path: PageWrap.fe_index_path,
-            xpath: xpath,
+            xpath: this.get_xpath(),
             box: box,
-            tag_name: tag_name,
-            href: href,
-            image: image,
-            text: text,
+            tag_name: this.get_tag_name(),
+            href: this.get_anchor_url(),
+            image: this.get_image(),
+            text: this.get_text(),
+            input: this.get_input(),
+            option_values: options.option_values,
+            option_texts: options.option_texts
         }
     }
 
@@ -376,13 +374,6 @@ class ElemWrap {
         return this.element.tagName.toLowerCase()
     }
 
-    get_input(): string {
-        if (this.get_tag_name() === 'input') {
-            return this.get_text()
-        }
-        return ''
-    }
-
     get_select(): string {
         if (this.get_tag_name() === 'select') {
             let s = <HTMLSelectElement>this.element
@@ -462,19 +453,14 @@ class ElemWrap {
         return result
     }
 
-    get_text(): string {
-        return ElemWrap.gather_element_text(this.element)
-    }
-
-    //Retrieves the text value directly under an element in the dom hierarchy.
-    //Note that there may be multiple texts (ie muliple paragraphs) however they
-    //will always be returned as one string from this function.
-    static gather_element_text(elem: Element) {
+    // Retrieves the text value from children directly under this element in the dom hierarchy.
+    // The text from all immediate children will be concatenated.
+    get_text() {
         let text = ''
 
         // Loop through children accumulating text node values.
-        for (let c = 0; c < elem.childNodes.length; c++) {
-            let child = elem.childNodes[c]
+        for (let c = 0; c < this.element.childNodes.length; c++) {
+            let child = this.element.childNodes[c]
             if (child.nodeType == Node.TEXT_NODE) {
                 if (child instanceof Attr) {
                     let attr: Attr = <Attr>(child)
@@ -491,27 +477,50 @@ class ElemWrap {
             }
         }
 
-        if (elem.tagName.toLowerCase() == 'input') {
-           let value = elem.getAttribute('value')
-           if (!Utils.is_all_whitespace(value)) {
-               text += value
-           }
-        }
-
-        let before_style = window.getComputedStyle(elem, ':before');
+        let before_style = window.getComputedStyle(this.element, ':before');
         let value: string = before_style.content
         value = Utils.strip_quotes(value)
         if (!Utils.is_all_whitespace(value)) {
             text = value + text
         }
 
-        let after_style = window.getComputedStyle(elem, ':after');
+        let after_style = window.getComputedStyle(this.element, ':after');
         value = after_style.content
         value = Utils.strip_quotes(value)
         if (!Utils.is_all_whitespace(value)) {
             text += value
         }
         return text
+    }
+
+    get_input() {
+        let text = ''
+        if (this.element.tagName.toLowerCase() == 'input') {
+           let value = this.element.getAttribute('value')
+           if (!Utils.is_all_whitespace(value)) {
+               text += value
+           }
+        }
+        return text
+    }
+
+    get_options(): IDropDownInfo {
+        // The option values and texts of the select dropdown.
+        let option_values: string[] = []
+        let option_texts: string[] = []
+
+        // Extract the option values and texts from the select element.
+        let element = this.get_element()
+        if (element instanceof HTMLSelectElement) {
+            let select: HTMLSelectElement = <HTMLSelectElement>element
+            for (let i = 0; i < element.options.length; i++) {
+                let option = <HTMLOptionElement>(element.options[i])
+                option_values.push(option.value)
+                option_texts.push(option.text)
+                //console.log('option value,text: ' + option.value + "," + option.text)
+            }
+        }
+        return { option_values: option_values, option_texts: option_texts }
     }
 
     //----------------------------------------------------------------------------------------

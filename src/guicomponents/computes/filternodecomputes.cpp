@@ -25,7 +25,7 @@ namespace ngs {
 FilterByTypeAndValueNodeCompute::FilterByTypeAndValueNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.value = filter_by_type_and_value(input.value, element_type, target_value)";
+  _script_body += "output.elements = filter_by_type_and_value(input.elements, element_type, target_value)";
 }
 
 FilterByTypeAndValueNodeCompute::~FilterByTypeAndValueNodeCompute() {
@@ -71,7 +71,7 @@ void FilterByTypeAndValueNodeCompute::expose_to_eval_context(QQmlContext& eval_c
 FilterByPositionNodeCompute::FilterByPositionNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.value = filter_by_position(input.value, global_mouse_position)";
+  _script_body += "output.elements = filter_by_position(input.elements, global_mouse_position)";
 }
 
 FilterByPositionNodeCompute::~FilterByPositionNodeCompute() {
@@ -96,11 +96,7 @@ void FilterByPositionNodeCompute::create_inputs_outputs(const EntityConfig& conf
 const QJsonObject FilterByPositionNodeCompute::_hints = FilterByPositionNodeCompute::init_hints();
 QJsonObject FilterByPositionNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
-
-  add_hint(m, Message::kElementType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
-  add_hint(m, Message::kElementType, GUITypes::HintKey::DescriptionHint, "The type of element to match.");
-
-  add_hint(m, Message::kTargetValue, GUITypes::HintKey::DescriptionHint, "The image or text value to match. Matches all non empty values if left blank.");
+  add_hint(m, Message::kGlobalMousePosition, GUITypes::HintKey::DescriptionHint, "The global mouse position in browser space.");
   return m;
 }
 
@@ -114,7 +110,7 @@ void FilterByPositionNodeCompute::expose_to_eval_context(QQmlContext& eval_conte
 FilterByDimensionsNodeCompute::FilterByDimensionsNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.value = filter_by_dimensions(input.value, width, height, max_width_difference, max_height_difference)";
+  _script_body += "output.elements = filter_by_dimensions(input.elements, width, height, max_width_difference, max_height_difference)";
 }
 
 FilterByDimensionsNodeCompute::~FilterByDimensionsNodeCompute() {

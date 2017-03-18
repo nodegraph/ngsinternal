@@ -18,6 +18,11 @@ declare interface IElementInfo {
     image: string
     // Href from parenting anchor, empty if no parenting anchor.
     href: string
+    // Input text.
+    input: string
+    // Select options values and text.
+    option_values: string[]
+    option_texts: string[]
 }
 
 declare interface IClickInfo extends IElementInfo {

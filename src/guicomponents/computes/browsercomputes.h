@@ -39,6 +39,9 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   Entity* find_group_context() const;
   void find_dep_nodes();
 
+  // Response value properties to merge into the main input coming into this node.
+  std::vector<std::string> _response_value_properties_to_merge;
+
   Dep<TaskQueuer> _queuer;
   Dep<TaskScheduler> _scheduler;
   Dep<InputNodeCompute> _browser_width;
@@ -203,132 +206,18 @@ class GUICOMPUTES_EXPORT GetCurrentURLCompute: public BrowserCompute {
 class GUICOMPUTES_EXPORT GetAllElementsCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, GetAllElementsCompute);
-  GetAllElementsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  GetAllElementsCompute(Entity* entity)
+      : BrowserCompute(entity, kDID()) {
+    _response_value_properties_to_merge.push_back(Message::kElements);
+  }
  protected:
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT SetElementCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT HighlightElementsCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, SetElementCompute);
-  SetElementCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT FindElementByPositionCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, FindElementByPositionCompute);
-  FindElementByPositionCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT FindElementByValuesCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, FindElementByValuesCompute);
-  FindElementByValuesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT FindElementByTypeCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, FindElementByTypeCompute);
-  FindElementByTypeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT ShiftElementByTypeCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, ShiftElementByTypeCompute);
-  ShiftElementByTypeCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT ShiftElementByValuesCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, ShiftElementByValuesCompute);
-  ShiftElementByValuesCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT ShiftElementByTypeAlongRowsCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, ShiftElementByTypeAlongRowsCompute);
-  ShiftElementByTypeAlongRowsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT ShiftElementByValuesAlongRowsCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, ShiftElementByValuesAlongRowsCompute);
-  ShiftElementByValuesAlongRowsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT ShiftElementByTypeAlongColumnsCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, ShiftElementByTypeAlongColumnsCompute);
-  ShiftElementByTypeAlongColumnsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
- protected:
-  virtual bool update_state();
-};
-
-class GUICOMPUTES_EXPORT ShiftElementByValuesAlongColumnsCompute: public BrowserCompute {
- public:
-  COMPONENT_ID(Compute, ShiftElementByValuesAlongColumnsCompute);
-  ShiftElementByValuesAlongColumnsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, HighlightElementsCompute);
+  HighlightElementsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();

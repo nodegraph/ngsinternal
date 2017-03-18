@@ -176,28 +176,8 @@ void TaskQueuer::send_msg_task(Message& msg) {
 // Queue Element Tasks.
 // ---------------------------------------------------------------------------------
 
-void TaskQueuer::queue_get_current_element(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::get_current_element_info,this), "queue_get_current_element");
-}
-
-void TaskQueuer::queue_has_current_element(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::has_current_element_info,this), "queue_has_current_element");
-}
-
 void TaskQueuer::queue_scroll_element_into_view(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::scroll_element_into_view_task,this), "queue_scroll_element_into_view");
-}
-
-void TaskQueuer::queue_get_crosshair_info(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::get_crosshair_info_task,this), "queue_get_crosshair_info");
-}
-
-void TaskQueuer::queue_get_element_values(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::get_element_values_task,this), "queue_get_element_values");
-}
-
-void TaskQueuer::queue_get_drop_down_info(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::get_drop_down_info_task,this), "queue_get_crosshair_info");
 }
 
 // ---------------------------------------------------------------------------------
@@ -395,8 +375,8 @@ void TaskQueuer::queue_get_all_elements(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::get_all_elements_task, this), "queue_set_element");
 }
 
-void TaskQueuer::queue_set_element(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::set_element_task, this), "queue_set_element");
+void TaskQueuer::queue_highlight_elements(TaskContext& tc) {
+  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::highlight_elements_task, this), "queue_highlight_elements");
 }
 
 void TaskQueuer::queue_clear_element(TaskContext& tc) {
@@ -407,51 +387,11 @@ void TaskQueuer::queue_update_element(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::update_element_task, this), "queue_update_overlays");
 }
 
-
-
-void TaskQueuer::queue_find_element_by_position(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::find_element_by_position_task,this), "queue_find_element_by_values");
-}
-
-void TaskQueuer::queue_find_element_by_values(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::find_element_by_values_task,this), "queue_find_element_by_values");
-}
-
-void TaskQueuer::queue_find_element_by_type(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::find_element_by_type_task,this), "queue_find_element_by_type");
-}
-
-void TaskQueuer::queue_shift_element_by_type(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::shift_element_by_type_task,this), "queue_shift_element_by_type");
-}
-
-void TaskQueuer::queue_shift_element_by_values(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::shift_element_by_values_task,this), "queue_shift_element_by_values");
-}
-
-void TaskQueuer::queue_shift_element_by_type_along_rows(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::shift_element_by_type_along_rows_task,this), "queue_shift_element_by_type_along_rows");
-}
-
-void TaskQueuer::queue_shift_element_by_values_along_rows(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::shift_element_by_values_along_rows_task,this), "queue_shift_element_by_values_along_rows");
-}
-
-void TaskQueuer::queue_shift_element_by_type_along_columns(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::shift_element_by_type_along_columns_task,this), "queue_shift_element_by_type_along_rows");
-}
-
-void TaskQueuer::queue_shift_element_by_values_along_columns(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::shift_element_by_values_along_columns_task,this), "queue_shift_element_by_values_along_rows");
-}
-
 // ---------------------------------------------------------------------------------
 // Queue Perform Action Tasks.
 // ---------------------------------------------------------------------------------
 
 void TaskQueuer::queue_perform_mouse_action(TaskContext& tc) {
-  queue_get_current_element(tc);
-
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_hover_action_task,this), "perform_hover_action_task");
   queue_block_events(tc); // After we're done interacting with the page, block events on the page.
@@ -466,7 +406,6 @@ void TaskQueuer::queue_perform_mouse_action(TaskContext& tc) {
 }
 
 void TaskQueuer::queue_perform_mouse_hover(TaskContext& tc) {
-  queue_has_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_hover_action_task,this), "queue_perform_hover");
   queue_block_events(tc);
@@ -475,19 +414,16 @@ void TaskQueuer::queue_perform_mouse_hover(TaskContext& tc) {
 }
 
 void TaskQueuer::queue_perform_text_action(TaskContext& tc) {
-  queue_get_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_text_action_task,this), "queue_perform_text_action");
 }
 
 void TaskQueuer::queue_perform_element_action(TaskContext& tc) {
-  queue_get_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_element_action_task,this), "queue_perform_element_action");
 }
 
 void TaskQueuer::queue_perform_element_scroll(TaskContext& tc) {
-  queue_get_current_element(tc);
   queue_unblock_events(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::perform_element_scroll_task,this), "queue_perform_element_scroll");
 }
@@ -497,7 +433,6 @@ void TaskQueuer::queue_perform_element_scroll(TaskContext& tc) {
 // ---------------------------------------------------------------------------------
 
 void TaskQueuer::queue_emit_option_texts(TaskContext& tc) {
-  queue_get_drop_down_info(tc);
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::emit_option_texts_task,this), "queue_emit_option_texts");
 }
 
@@ -516,12 +451,10 @@ void TaskQueuer::handle_response(const Message& msg) {
   // This allows various properties to persist between calls.
 
   if (value.isObject()) {
-    std::cerr << "111\n";
     // Merge the values into the chain_state.
     QJsonObject obj = value.toObject();
     JSONUtils::shallow_object_merge(_chain_state, obj);
   } else if (!value.isUndefined()) {
-    std::cerr << "222\n";
     _chain_state.insert(Message::kValue, value);
   }
 
@@ -560,35 +493,6 @@ void TaskQueuer::handle_info(const Message& msg) {
 // ------------------------------------------------------------------------
 // Element Tasks.
 // ------------------------------------------------------------------------
-
-void TaskQueuer::get_crosshair_info_task() {
-  QJsonObject args;
-  args.insert(Message::kGlobalMousePosition, _last_click_info.value(Message::kGlobalMousePosition));
-  Message req(ChromeRequestType::kGetCrosshairInfo,args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::get_element_values_task() {
-  Message req(ChromeRequestType::kGetElementValues);
-  send_msg_task(req);
-}
-
-void TaskQueuer::get_drop_down_info_task() {
-  Message req(ChromeRequestType::kGetDropDownInfo);
-  send_msg_task(req);
-}
-
-void TaskQueuer::get_current_element_info() {
-  QJsonObject args;
-  Message req(ChromeRequestType::kGetElement,args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::has_current_element_info() {
-  QJsonObject args;
-  Message req(ChromeRequestType::kHasElement,args);
-  send_msg_task(req);
-}
 
 void TaskQueuer::scroll_element_into_view_task() {
   QJsonObject args;
@@ -884,118 +788,20 @@ void TaskQueuer::get_all_elements_task() {
   send_msg_task(req);
 }
 
-void TaskQueuer::set_element_task() {
-  Message req(ChromeRequestType::kSetElement);
+void TaskQueuer::highlight_elements_task() {
+  QJsonObject args;
+  args.insert(Message::kElements, _chain_state.value(Compute::kMainInputName).toObject().value(Message::kElements));
+  Message req(ChromeRequestType::kHighlightElements, args);
   send_msg_task(req);
 }
 
 void TaskQueuer::clear_element_task() {
-  Message req(ChromeRequestType::kClearElement);
+  Message req(ChromeRequestType::kClearElementHighlights);
   send_msg_task(req);
 }
 
 void TaskQueuer::update_element_task() {
-  Message req(ChromeRequestType::kUpdateElement);
-  send_msg_task(req);
-}
-
-void TaskQueuer::find_element_by_position_task() {
-  QJsonObject args;
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kGlobalMousePosition, _chain_state.value(Message::kGlobalMousePosition));
-
-  Message req(ChromeRequestType::kFindElementByPosition);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::find_element_by_values_task() {
-  QJsonObject args;
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
-
-  Message req(ChromeRequestType::kFindElementByValues);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::find_element_by_type_task() {
-  QJsonObject args;
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-
-  Message req(ChromeRequestType::kFindElementByType);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::shift_element_by_type_task() {
-  QJsonObject args;
-  args.insert(Message::kAngle, _chain_state.value(Message::kAngle));
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
-  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
-  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
-  Message req(ChromeRequestType::kShiftElementByType);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::shift_element_by_values_task() {
-  QJsonObject args;
-  args.insert(Message::kAngle, _chain_state.value(Message::kAngle));
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
-  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
-  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
-  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
-  Message req(ChromeRequestType::kShiftElementByValues);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::shift_element_by_type_along_rows_task() {
-  QJsonObject args;
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
-  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
-  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
-  Message req(ChromeRequestType::kShiftElementByTypeAlongRows);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::shift_element_by_values_along_rows_task() {
-  QJsonObject args;
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
-  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
-  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
-  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
-  Message req(ChromeRequestType::kShiftElementByValuesAlongRows);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::shift_element_by_type_along_columns_task() {
-  QJsonObject args;
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
-  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
-  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
-  Message req(ChromeRequestType::kShiftElementByTypeAlongColumns);
-  req.insert(Message::kArgs, args);
-  send_msg_task(req);
-}
-
-void TaskQueuer::shift_element_by_values_along_columns_task() {
-  QJsonObject args;
-  args.insert(Message::kWrapType, _chain_state.value(Message::kWrapType));
-  args.insert(Message::kTargetValues, _chain_state.value(Message::kTargetValues));
-  args.insert(Message::kMaxWidthDifference, _chain_state.value(Message::kMaxWidthDifference));
-  args.insert(Message::kMaxHeightDifference, _chain_state.value(Message::kMaxHeightDifference));
-  args.insert(Message::kMaxAngleDifference, _chain_state.value(Message::kMaxAngleDifference));
-  Message req(ChromeRequestType::kShiftElementByValuesAlongColumns);
-  req.insert(Message::kArgs, args);
+  Message req(ChromeRequestType::kUpdateElementHighlights);
   send_msg_task(req);
 }
 
@@ -1079,7 +885,8 @@ void TaskQueuer::perform_element_scroll_task() {
 //}
 
 void TaskQueuer::emit_option_texts_task() {
-  QJsonArray vals = _chain_state.value(Message::kOptionTexts).toArray();
+  const QJsonObject& last_click = get_last_click_info();
+  QJsonArray vals = last_click.value(Message::kOptionTexts).toArray();
   QStringList options;
   for (QJsonArray::const_iterator iter = vals.constBegin(); iter != vals.constEnd(); ++iter) {
     options.push_back(iter->toString());
