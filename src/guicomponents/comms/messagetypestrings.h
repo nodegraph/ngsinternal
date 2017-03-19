@@ -16,7 +16,7 @@ COMMS_EXPORT const char* element_action_type_to_string(ElementActionType t);
 COMMS_EXPORT const char* image_action_type_to_string(ImageActionType t);
 COMMS_EXPORT const char* info_type_to_string(InfoType t);
 COMMS_EXPORT const char* message_type_to_string(MessageType t);
-COMMS_EXPORT const char* wrap_type_to_string(WrapType t);
+COMMS_EXPORT const char* element_type_to_string(ElementType t);
 COMMS_EXPORT const char* direction_type_to_string(DirectionType t);
 COMMS_EXPORT const char* http_send_type_to_string(HTTPSendType t);
 COMMS_EXPORT const char* license_edition_to_string(LicenseEdition t);

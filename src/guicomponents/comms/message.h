@@ -50,9 +50,9 @@ class COMMS_EXPORT Message: public QJsonObject {
 
   static const char* kTimeInMilliseconds;
 
-  static const char* kWrapType;
   static const char* kElementType;
   static const char* kElements;
+  static const char* kClusters;
 
   static const char* kTextValues;
   static const char* kImageValues;

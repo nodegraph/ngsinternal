@@ -19,22 +19,22 @@ class Utils {
 
     static value_is_more_extreme(value: number, extreme: number, side: DirectionType) {
         switch (side) {
-            case DirectionType.left:
+            case DirectionType.kLeft:
                 if (value < extreme) {
                     return true
                 }
                 break
-            case DirectionType.right:
+            case DirectionType.kRight:
                 if (value > extreme) {
                     return true
                 }
                 break
-            case DirectionType.up:
+            case DirectionType.kUp:
                 if (value < extreme) {
                     return true
                 }
                 break
-            case DirectionType.down:
+            case DirectionType.kDown:
                 if (value > extreme) {
                     return true
                 }

@@ -8,7 +8,7 @@ public class BaseMessage {
     BaseMessage(int id, MessageEnums.MessageType msg_type) {
     	obj = new JsonObject();
     	set_id(id);
-    	set_receiver_type(MessageEnums.ReceiverType.WebDriver);
+    	set_receiver_type(MessageEnums.ReceiverType.kWebDriver);
     	set_msg_type(msg_type);
     }
     

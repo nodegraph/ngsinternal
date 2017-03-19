@@ -13,9 +13,9 @@ ListModel {
 
 	ListElement {
         image_url: "qrc:///icons/ic_picture_in_picture_white_48dp.png"
-        title: "Find Element By Position..."
+        title: "Find and Filter Elements..."
         description: "Find an element by position."
-        script: "push_by_names('Find Element By Position', 'WebMenuListPage', 'WebActionsFindElementByPosition')"
+        script: "push_by_names('Filter Elements', 'NodeMenuListPage', 'FilterElements')"
     }
 
     ListElement {

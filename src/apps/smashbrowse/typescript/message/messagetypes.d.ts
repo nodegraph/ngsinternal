@@ -11,11 +11,11 @@
 // message to only contain pure javascript primitive types.
 
 declare const enum ReceiverType {
-  Unknown = 0,
-  WebDriver = 1,
-  Chrome = 2,
-  Platform = 3,
-  Firebase = 4,
+  kUnknown = 0,
+  kWebDriver = 1,
+  kChrome = 2,
+  kPlatform = 3,
+  kFirebase = 4,
 }
 
 declare const enum WebDriverRequestType {
@@ -96,14 +96,14 @@ declare const enum PlatformRequestType {
 }
 
 declare const enum FirebaseRequestType {
-    kFirebaseInit = 0,
-    kFirebaseDestroy = 1,
-    kFirebaseSignIn = 2,
-    kFirebaseSignOut = 3,
-    kFirebaseWriteData = 4,
-    kFirebaseReadData = 5,
-    kFirebaseSubscribe = 6,
-    kFirebaseUnsubscribe = 7
+  kFirebaseInit = 0,
+  kFirebaseDestroy = 1,
+  kFirebaseSignIn = 2,
+  kFirebaseSignOut = 3,
+  kFirebaseWriteData = 4,
+  kFirebaseReadData = 5,
+  kFirebaseSubscribe = 6,
+  kFirebaseUnsubscribe = 7
 }
 
 declare const enum MouseActionType {
@@ -145,18 +145,18 @@ declare const enum MessageType {
   kInfoMessage = 3
 }
 
-declare const enum WrapType {
-  text = 0,
-  image = 1,
-  input = 2,
-  select = 3
+declare const enum ElementType {
+  kText = 0,
+  kImage = 1,
+  kInput = 2,
+  kSelect = 3
 }
 
 declare const enum DirectionType {
-  left = 0,
-  right = 1,
-  up = 2,
-  down = 3
+  kLeft = 0,
+  kRight = 1,
+  kUp = 2,
+  kDown = 3
 }
 
 declare const enum HTTPSendType {

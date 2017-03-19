@@ -46,9 +46,9 @@ const char* Message::kKeys = "keys";
 
 const char* Message::kTimeInMilliseconds = "time_in_milliseconds";
 
-const char* Message::kWrapType = "wrap_type";
 const char* Message::kElementType = "element_type";
 const char* Message::kElements = "elements";
+const char* Message::kClusters = "clusters";
 
 const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";
@@ -127,19 +127,19 @@ Message::Message(const QString& json) {
 }
 
 Message::Message(WebDriverRequestType rt, const QJsonObject& args) {
-  init_request(ReceiverType::WebDriver, to_underlying(rt),args);
+  init_request(ReceiverType::kWebDriver, to_underlying(rt),args);
 }
 
 Message::Message(ChromeRequestType rt, const QJsonObject& args) {
-  init_request(ReceiverType::Chrome, to_underlying(rt),args);
+  init_request(ReceiverType::kChrome, to_underlying(rt),args);
 }
 
 Message::Message(PlatformRequestType rt, const QJsonObject& args) {
-  init_request(ReceiverType::Platform, to_underlying(rt),args);
+  init_request(ReceiverType::kPlatform, to_underlying(rt),args);
 }
 
 Message::Message(FirebaseRequestType rt, const QJsonObject& args) {
-  init_request(ReceiverType::Firebase, to_underlying(rt),args);
+  init_request(ReceiverType::kFirebase, to_underlying(rt),args);
 }
 
 void Message::init_request(ReceiverType receiver_type, int request_type, const QJsonObject& args) {
@@ -271,22 +271,22 @@ void Message::dump() const {
     } else if (iter.key() == Message::kRequest) {
       std::cerr << Message::kRequest << ": ";
       switch(receiver_type) {
-        case ReceiverType::Unknown: {
+        case ReceiverType::kUnknown: {
           std::cerr << "unknown" << "\n";
         } break;
-        case ReceiverType::WebDriver: {
+        case ReceiverType::kWebDriver: {
           WebDriverRequestType t = static_cast<WebDriverRequestType>(iter.value().toInt());
           std::cerr << web_driver_request_type_to_string(t) << "\n";
         } break;
-        case ReceiverType::Chrome: {
+        case ReceiverType::kChrome: {
           ChromeRequestType t = static_cast<ChromeRequestType>(iter.value().toInt());
           std::cerr << chrome_request_type_to_string(t) << "\n";
         } break;
-        case ReceiverType::Platform: {
+        case ReceiverType::kPlatform: {
           PlatformRequestType t = static_cast<PlatformRequestType>(iter.value().toInt());
           std::cerr << platform_request_type_to_string(t) << "\n";
         } break;
-        case ReceiverType::Firebase: {
+        case ReceiverType::kFirebase: {
           FirebaseRequestType t = static_cast<FirebaseRequestType>(iter.value().toInt());
           std::cerr << firebase_request_type_to_string(t) << "\n";
         } break;
@@ -320,9 +320,9 @@ void Message::dump() const {
             std::cerr << Message::kElementAction << ": " << element_action_type_to_string(t) << "\n";
           } /*else if (iter2.key() == Message::kImageAction) {
 
-          }*/ else if (iter2.key() == Message::kWrapType) {
-            WrapType t = static_cast<WrapType>(iter2.value().toInt());
-            std::cerr << Message::kWrapType << ": " << wrap_type_to_string(t) << "\n";
+          }*/ else if (iter2.key() == Message::kElementType) {
+            ElementType t = static_cast<ElementType>(iter2.value().toInt());
+            std::cerr << Message::kElementType << ": " << element_type_to_string(t) << "\n";
           } else if (iter2.key() == Message::kScrollDirection) {
             DirectionType t = static_cast<DirectionType>(iter2.value().toInt());
             std::cerr << Message::kScrollDirection << ": " << direction_type_to_string(t) << "\n";

@@ -83,7 +83,7 @@ class ContentCommHandler {
             } break
             case ChromeRequestType.kUpdateElementHighlights: {
                 this.gui_collection.page_overlays.update_element_overlays()
-                this.gui_collection.page_overlays.clear_crosshair()
+                //this.gui_collection.page_overlays.clear_crosshair()
             } break
             case ChromeRequestType.kClearElementHighlights: {
                 this.gui_collection.page_overlays.clear_element_overlays()
@@ -102,25 +102,25 @@ class ContentCommHandler {
                     break
                 } else {
                     switch (req.args.scroll_direction) {
-                        case DirectionType.down: {
+                        case DirectionType.kDown: {
                             let scroll = elem_wrap.get_closest_scroll(true)
                             if (scroll) {
                                 scroll.scroll_down()
                             }
                         } break
-                        case DirectionType.up: {
+                        case DirectionType.kUp: {
                             let scroll = elem_wrap.get_closest_scroll(true)
                             if (scroll) {
                                 scroll.scroll_up()
                             }
                         } break
-                        case DirectionType.left: {
+                        case DirectionType.kLeft: {
                             let scroll = elem_wrap.get_closest_scroll(false)
                             if (scroll) {
                                 scroll.scroll_left()
                             }
                         } break
-                        case DirectionType.right: {
+                        case DirectionType.kRight: {
                             let scroll = elem_wrap.get_closest_scroll(false)
                             if (scroll) {
                                 scroll.scroll_right()

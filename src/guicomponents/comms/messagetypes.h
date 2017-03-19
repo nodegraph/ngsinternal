@@ -6,11 +6,11 @@ namespace ngs {
 // message to only contain pure javascript primitive types.
 
 enum class ReceiverType : int  {
-  Unknown = 0,
-  WebDriver = 1,
-  Chrome = 2,
-  Platform = 3,
-  Firebase = 4,
+  kUnknown = 0,
+  kWebDriver = 1,
+  kChrome = 2,
+  kPlatform = 3,
+  kFirebase = 4,
 };
 
 enum class WebDriverRequestType : int {
@@ -91,14 +91,14 @@ enum class PlatformRequestType : int {
 };
 
 enum class FirebaseRequestType : int {
-    kFirebaseInit = 0,
-    kFirebaseDestroy = 1,
-    kFirebaseSignIn = 2,
-    kFirebaseSignOut = 3,
-    kFirebaseWriteData = 4,
-    kFirebaseReadData = 5,
-    kFirebaseSubscribe = 6,
-    kFirebaseUnsubscribe = 7
+  kFirebaseInit = 0,
+  kFirebaseDestroy = 1,
+  kFirebaseSignIn = 2,
+  kFirebaseSignOut = 3,
+  kFirebaseWriteData = 4,
+  kFirebaseReadData = 5,
+  kFirebaseSubscribe = 6,
+  kFirebaseUnsubscribe = 7
 };
 
 enum class MouseActionType : int {
@@ -140,18 +140,18 @@ enum class MessageType : int {
   kInfoMessage = 3
 };
 
-enum class WrapType : int {
-  text = 0,
-  image = 1,
-  input = 2,
-  select = 3
+enum class ElementType : int {
+  kText = 0,
+  kImage = 1,
+  kInput = 2,
+  kSelect = 3
 };
 
 enum class DirectionType : int {
-  left = 0,
-  right = 1,
-  up = 2,
-  down = 3
+  kLeft = 0,
+  kRight = 1,
+  kUp = 2,
+  kDown = 3
 };
 
 enum class HTTPSendType: int {

@@ -345,7 +345,7 @@ void NodeGraphManipulatorImp::exit_group_prep(Entity* group) {
     // If we're not nested, then we can close the browser.
     if (count <= 1) {
       TaskContext tc(_scheduler);
-      _queuer->queue_close_browser(tc);
+      _queuer->queue_send_msg(tc, Message(WebDriverRequestType::kCloseBrowser), false);
     }
   }
 }

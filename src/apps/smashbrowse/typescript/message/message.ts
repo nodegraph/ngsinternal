@@ -57,7 +57,7 @@ class BaseMessage {
     id: Number // RequestMessage and ResponseMessage id should match. (-1 means we don't care/track about it.)
 
     constructor(id: Number) {
-        this.receiver_type = ReceiverType.Chrome
+        this.receiver_type = ReceiverType.kChrome
         this.msg_type = MessageType.kUnformedMessage
         this.id = id
     }

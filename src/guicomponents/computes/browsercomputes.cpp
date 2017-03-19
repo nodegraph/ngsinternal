@@ -9,6 +9,7 @@
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/taskqueuer.h>
+#include <guicomponents/computes/messagesender.h>
 
 #include <functional>
 
@@ -20,12 +21,12 @@ BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
     : Compute(entity, did),
       _queuer(this),
       _scheduler(this),
+      _msg_sender(this),
       _browser_width(this),
       _browser_height(this) {
   get_dep_loader()->register_fixed_dep(_queuer, Path());
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
-
-  _response_value_properties_to_merge.push_back(Message::kValue);
+  get_dep_loader()->register_fixed_dep(_msg_sender, Path());
 }
 
 BrowserCompute::~BrowserCompute() {
@@ -51,6 +52,21 @@ void BrowserCompute::dump_map(const QJsonObject& inputs) const {
 void BrowserCompute::update_wires() {
   // This caches the dep, and will only dirty this component when it changes.
   find_dep_nodes();
+}
+
+QJsonObject BrowserCompute::get_params() const {
+  QJsonObject params = _inputs->get_input_values();
+  QJsonObject in = params.value(Compute::kMainInputName).toObject();
+  std::vector<QString> keys;
+  for (QJsonObject::iterator iter = in.begin(); iter != in.end(); iter++) {
+    if ((iter.key().toStdString() == Message::kValue) ||
+        (iter.key().toStdString() == Message::kElements) ||
+        (iter.key().toStdString() == Message::kClusters)) {
+      continue;
+    }
+    in.remove(iter.key());
+  }
+  return in;
 }
 
 Entity* BrowserCompute::find_group_context() const {
@@ -81,45 +97,44 @@ void BrowserCompute::pre_update_state(TaskContext& tc) {
   _queuer->queue_open_browser(tc);
 
   // Make sure the browser is of the right size.
-  double width = _browser_width->get_output("out").toDouble();
-  double height = _browser_height->get_output("out").toDouble();
-  QJsonObject size_obj;
-  size_obj.insert(Message::kWidth, width);
-  size_obj.insert(Message::kHeight, height);
-  _queuer->queue_overwrite_chain_state(tc, size_obj);
-  _queuer->queue_resize_browser(tc);
-
-  // Overwrite the chain state with our input values.
-  QJsonObject inputs = _inputs->get_input_values();
-  _queuer->queue_overwrite_chain_state(tc, inputs);
+  {
+    double width = _browser_width->get_output("out").toDouble();
+    double height = _browser_height->get_output("out").toDouble();
+    QJsonObject args;
+    args.insert(Message::kWidth, width);
+    args.insert(Message::kHeight, height);
+    Message req(WebDriverRequestType::kSetBrowserSize, args);
+    _queuer->queue_send_msg(tc, req);
+  }
 
   // Make sure nothing is loading right now.
   // Note in general a page may start loading content at random times.
   // For examples ads may rotate and flip content.
-  _queuer->queue_wait_until_loaded(tc);
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
 }
 
 void BrowserCompute::handle_response(TaskContext& tc) {
-  std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::on_response,this,std::placeholders::_1);
-  _queuer->queue_receive_chain_state(tc, callback);
+  std::function<void(const std::deque<QJsonObject>&)> callback = std::bind(&BrowserCompute::on_response,this,std::placeholders::_1);
+  _queuer->queue_receive_results(tc, callback);
 }
 
 void BrowserCompute::handle_finished(TaskContext& tc) {
-  std::function<void(const QJsonObject&)> callback = std::bind(&BrowserCompute::on_finished,this,std::placeholders::_1);
-  _queuer->queue_receive_chain_state(tc, callback);
+  std::function<void(const std::deque<QJsonObject>&)> callback = std::bind(&BrowserCompute::on_finished,this,std::placeholders::_1);
+  _queuer->queue_receive_results(tc, callback);
 }
 
 void BrowserCompute::post_update_state(TaskContext& tc) {
   internal();
-  _queuer->queue_scroll_element_into_view(tc);
-  _queuer->queue_update_element(tc);
+  //_queuer->queue_scroll_element_into_view(tc);
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateElementHighlights));
   _queuer->queue_update_current_tab(tc);
-  _queuer->queue_wait_until_loaded(tc); // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
-  _queuer->queue_update_frame_offsets(tc);
+  // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateFrameOffsets));
   handle_finished(tc);
 }
 
-void BrowserCompute::on_response(const QJsonObject& chain_state) {
+void BrowserCompute::on_response(const std::deque<QJsonObject>& last_results) {
   internal();
 
   // Be default we copy the value property from the chain state
@@ -127,19 +142,16 @@ void BrowserCompute::on_response(const QJsonObject& chain_state) {
   // of our input object.
 
   // Initialize our main output value to be the main input value.
-  QJsonObject obj = _inputs->get_main_input_object();
+  QJsonObject out = _inputs->get_main_input_object();
 
-  // Copy properties from the response value into our output value.
-  for (const std::string& prop: _response_value_properties_to_merge) {
-    QJsonValue value = chain_state.value(prop.c_str());
-    obj.insert(prop.c_str(), value);
-  }
+  // Merge the last result into our output.
+  JSONUtils::shallow_object_merge(out, last_results.back());
 
   // Set our main output.
-  set_main_output(obj);
+  set_main_output(out);
 }
 
-void BrowserCompute::on_finished(const QJsonObject& chain_state) {
+void BrowserCompute::on_finished(const std::deque<QJsonObject>& last_results) {
   clean_finalize();
 }
 
@@ -178,7 +190,7 @@ bool CloseBrowserCompute::update_state() {
     // If we're not nested, then we can close the browser.
     if (count <= 1) {
       std::cerr << "closing browser!!!!!!!!!!!!\n";
-      _queuer->queue_close_browser(tc);
+      _queuer->queue_send_msg(tc, Message(WebDriverRequestType::kCloseBrowser), false);
     }
   }
   //post_update_state(tc);
@@ -191,8 +203,14 @@ bool ReleaseBrowserCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_release_browser(tc);
-  _queuer->queue_open_browser(tc);
+  {
+    _queuer->queue_send_msg(tc, Message(WebDriverRequestType::kReleaseBrowser));
+    {
+      auto f = [this](){_msg_sender->clear_web_socket();};
+      _scheduler->queue_task(tc, Task(f), "clear web socket");
+    }
+    _queuer->queue_open_browser(tc);
+  }
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -204,7 +222,9 @@ bool IsBrowserOpenCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_is_browser_open(tc);
+  {
+    _queuer->queue_send_msg(tc, Message(WebDriverRequestType::kIsBrowserOpen));
+  }
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -227,10 +247,8 @@ const QJsonObject ResizeBrowserCompute::_hints = ResizeBrowserCompute::init_hint
 QJsonObject ResizeBrowserCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-
   add_hint(m, Message::kWidth, GUITypes::HintKey::DescriptionHint, "The desired width of the browser.");
   add_hint(m, Message::kHeight, GUITypes::HintKey::DescriptionHint, "The desired height of the browser.");
-
   return m;
 }
 
@@ -240,7 +258,11 @@ bool ResizeBrowserCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_resize_browser(tc);
+
+  QJsonObject params = get_params();
+  Message req(WebDriverRequestType::kSetBrowserSize, params);
+  _queuer->queue_send_msg(tc, req);
+
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -289,7 +311,9 @@ bool GetBrowserSizeCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_get_browser_size(tc);
+  {
+    _queuer->queue_send_msg(tc, Message(WebDriverRequestType::kGetBrowserSize));
+  }
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -313,7 +337,9 @@ bool GetActiveTabTitleCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_get_active_tab_title(tc);
+  {
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kGetActiveTabTitle));
+  }
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -337,7 +363,9 @@ bool DestroyCurrentTabCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_destroy_current_tab(tc);
+  {
+    _queuer->queue_send_msg(tc, Message(WebDriverRequestType::kDestroyCurrentTab));
+  }
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -349,7 +377,9 @@ bool OpenTabCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_open_tab(tc);
+  {
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kOpenTab));
+  }
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -361,7 +391,7 @@ bool AcceptSaveDialogCompute::update_state(){
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_accept_save_dialog(tc);
+  _queuer->queue_send_msg(tc, Message(PlatformRequestType::kAcceptSaveDialog));
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -376,13 +406,6 @@ void DownloadVideoCompute::create_inputs_outputs(const EntityConfig& config) {
     c.expose_plug = false;
     c.unconnected_value = "";
     create_input(Message::kDirectory, c);
-  }
-
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = false;
-    create_input(Message::kUseCurrentElement, c);
   }
 
   {
@@ -412,9 +435,7 @@ const QJsonObject DownloadVideoCompute::_hints = DownloadVideoCompute::init_hint
 QJsonObject DownloadVideoCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-
   add_hint(m, Message::kDirectory, GUITypes::HintKey::DescriptionHint, "The directory to save the video to. Leave empty to use the default directory.");
-  add_hint(m, Message::kUseCurrentElement, GUITypes::HintKey::DescriptionHint, "Whether to download the video from the current element or the page.");
   add_hint(m, Message::kMaxWidth, GUITypes::HintKey::DescriptionHint, "The maximum video width (in pixels) to download. Zero will download the largest.");
   add_hint(m, Message::kMaxHeight, GUITypes::HintKey::DescriptionHint, "The maximum video height (in pixels) to download. Zero will download the largest.");
   add_hint(m, Message::kMaxFilesize, GUITypes::HintKey::DescriptionHint, "The maximum video filesize (in megabytes) to download. Zero will download the largest.");
@@ -428,21 +449,45 @@ bool DownloadVideoCompute::update_state(){
   TaskContext tc(_scheduler);
   pre_update_state(tc);
 
-  QJsonObject in = _inputs->get_input_object("in");
-  QJsonArray elements = in.value("elements").toArray();
+  QJsonObject inputs = get_params();
+  QJsonArray elements = inputs.value(Compute::kMainInputName).toObject().value(Message::kElements).toArray();
 
   if (elements.size() > 0) {
     for (int i=0; i<elements.size(); ++i) {
       QJsonObject args;
-      args.insert(Message::kHREF, elements.at(i).toObject().value(Message::kHREF));
-      _queuer->queue_merge_chain_state(tc, args);
-      _queuer->queue_download_video(tc);
+      QJsonObject elem = elements[i].toObject();
+      // Note this task uses the URL property even though it is not a paremeter
+      // on the DownloadVideoCompute node. This is so that we can always set it
+      // to the current URL.
+      args.insert(Message::kURL, elem.value(Message::kHREF));
+      args.insert(Message::kDirectory, inputs.value(Message::kDirectory));
+      args.insert(Message::kMaxWidth, inputs.value(Message::kMaxWidth));
+      args.insert(Message::kMaxHeight, inputs.value(Message::kMaxHeight));
+      args.insert(Message::kMaxFilesize, inputs.value(Message::kMaxFilesize));
+
+      Message req(PlatformRequestType::kDownloadVideo, args);
+      _queuer->queue_send_msg(tc, req);
     }
   } else {
+
     // Set the url chain property to the current url.
-    _queuer->queue_get_current_url(tc);
-    _queuer->queue_copy_chain_property(tc, Message::kValue, Message::kURL);
-    _queuer->queue_download_video(tc);
+    Message req(WebDriverRequestType::kGetCurrentURL);
+    _queuer->queue_send_msg(tc, req);
+
+    auto download_from_page = [this, &inputs, &tc](){
+      QJsonObject args;
+      const std::deque<QJsonObject> &results = _queuer->get_last_results();
+      args.insert(Message::kURL, results.back().value(Message::kValue));
+      args.insert(Message::kDirectory, inputs.value(Message::kDirectory));
+      args.insert(Message::kMaxWidth, inputs.value(Message::kMaxWidth));
+      args.insert(Message::kMaxHeight, inputs.value(Message::kMaxHeight));
+      args.insert(Message::kMaxFilesize, inputs.value(Message::kMaxFilesize));
+
+      Message req(PlatformRequestType::kDownloadVideo, args);
+      _queuer->queue_send_msg(tc, req);
+    };
+
+    _scheduler->queue_task(tc, Task(download_from_page), "download_from_page");
   }
 
   handle_response(tc);
@@ -474,8 +519,12 @@ bool NavigateToCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_navigate_to(tc);
-  _queuer->queue_wait_until_loaded(tc);
+
+  QJsonObject params = get_params();
+  Message req(WebDriverRequestType::kNavigateTo, params);
+  _queuer->queue_send_msg(tc, req);
+
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -487,7 +536,10 @@ bool NavigateBackCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_navigate_back(tc);
+
+  Message req(WebDriverRequestType::kNavigateBack);
+  _queuer->queue_send_msg(tc, req);
+
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -499,7 +551,10 @@ bool NavigateForwardCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_navigate_forward(tc);
+
+  Message req(WebDriverRequestType::kNavigateForward);
+  _queuer->queue_send_msg(tc, req);
+
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -511,7 +566,10 @@ bool NavigateRefreshCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_navigate_refresh(tc);
+
+  Message req(WebDriverRequestType::kNavigateRefresh);
+  _queuer->queue_send_msg(tc, req);
+
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -523,7 +581,10 @@ bool GetCurrentURLCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_get_current_url(tc);
+
+  Message req(WebDriverRequestType::kGetCurrentURL);
+  _queuer->queue_send_msg(tc, req);
+
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -536,31 +597,13 @@ bool GetAllElementsCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_get_all_elements(tc);
+  {
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kGetAllElements));
+  }
   handle_response(tc);
   post_update_state(tc);
   return false;
 }
-
-void HighlightElementsCompute::create_inputs_outputs(const EntityConfig& config) {
-  external();
-  BrowserCompute::create_inputs_outputs(config);
-  {
-    EntityConfig c = config;
-    c.expose_plug = false;
-    c.unconnected_value = QJsonObject();
-    create_input(Message::kElementInfo, c);
-  }
-}
-
-const QJsonObject HighlightElementsCompute::_hints = HighlightElementsCompute::init_hints();
-QJsonObject HighlightElementsCompute::init_hints() {
-  QJsonObject m;
-  BrowserCompute::init_hints(m);
-  add_hint(m, Message::kWrapType, GUITypes::HintKey::DescriptionHint, "Object containing values identifying the element to make current.");
-  return m;
-}
-
 
 bool HighlightElementsCompute::update_state() {
   internal();
@@ -568,7 +611,11 @@ bool HighlightElementsCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_highlight_elements(tc);
+  {
+    QJsonObject params = get_params();
+    Message req(ChromeRequestType::kHighlightElements, params);
+    _queuer->queue_send_msg(tc, req);
+  }
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -618,19 +665,56 @@ bool MouseActionCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_perform_mouse_action(tc);
+
+  MouseActionType type = static_cast<MouseActionType>(_inputs->get_input_value(Message::kMouseAction).toInt());
+  if (type != MouseActionType::kMouseOver) {
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
+    queue_perform_hover(tc);
+    // After we're done interacting with the page, block events on the page.
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
+
+    // Our hover may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
+
+    // Force wait so that the webpage can react to the mouse hover. Note this is real and makes the mouse click work 100% of the time.
+    // For example this allows the page to display an animated video under mouse hover.
+    _queuer->queue_wait(tc);
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
+    queue_perform_action(tc);
+  } else {
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
+    queue_perform_action(tc);
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
+  }
+
   handle_response(tc);
   post_update_state(tc);
   return false;
 }
 
+void MouseActionCompute::queue_perform_hover(TaskContext& tc) {
+  QJsonObject params = get_params();
+  params.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
+  Message req(WebDriverRequestType::kPerformMouseAction, params);
+  _queuer->queue_send_msg(tc, req);
+}
+
+void MouseActionCompute::queue_perform_action(TaskContext& tc) {
+  QJsonObject params = get_params();
+  Message req(WebDriverRequestType::kPerformMouseAction, params);
+  _queuer->queue_send_msg(tc, req);
+}
+
 void MouseActionCompute::post_update_state(TaskContext& tc) {
   internal();
-  _queuer->queue_block_events(tc); // After we're done interacting with the page, block events on the page.
-  _queuer->queue_wait_until_loaded(tc); // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
 
-  _queuer->queue_update_element(tc); // Our actions may have moved elements arounds, so we update our overlays.
-
+  // After we're done interacting with the page, block events on the page.
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
+  // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
+  // Our actions may have moved elements arounds, so we update our overlays.
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateElementHighlights));
   // Force wait so that the webpage can react to the mouse action. Note this is real and makes the mouse click work 100% of the time.
   _queuer-> queue_wait(tc);
 
@@ -673,16 +757,20 @@ bool TextActionCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_perform_text_action(tc);
+
+  QJsonObject params = get_params();
+  Message req(WebDriverRequestType::kPerformTextAction, params);
+  _queuer->queue_send_msg(tc, req);
+
   handle_response(tc);
   post_update_state(tc);
   return false;
 }
 
 void TextActionCompute::post_update_state(TaskContext& tc) {
-  _queuer->queue_block_events(tc);
-  _queuer->queue_wait_until_loaded(tc);
-  _queuer->queue_update_element(tc);
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateElementHighlights));
 
   // Do the base logic.
   BrowserCompute::post_update_state(tc);
@@ -733,7 +821,13 @@ bool ElementActionCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_perform_element_action(tc);
+
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
+
+  QJsonObject params = get_params();
+  Message req(WebDriverRequestType::kPerformElementAction, params);
+  _queuer->queue_send_msg(tc, req);
+
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -743,8 +837,8 @@ void ElementActionCompute::post_update_state(TaskContext& tc) {
   internal();
 
   // Special
-  _queuer->queue_block_events(tc);
-  _queuer->queue_wait_until_loaded(tc);
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
 
   // Do the base logic.
   BrowserCompute::post_update_state(tc);
@@ -778,7 +872,13 @@ bool ElementScrollCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
-  _queuer->queue_perform_element_scroll(tc);
+
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
+
+  QJsonObject params = get_params();
+  Message req(ChromeRequestType::kScrollElement, params);
+  _queuer->queue_send_msg(tc, req);
+
   handle_response(tc);
   post_update_state(tc);
   return false;
@@ -788,15 +888,16 @@ void ElementScrollCompute::post_update_state(TaskContext& tc) {
   internal();
 
   // Special
-  _queuer->queue_block_events(tc);
-  _queuer->queue_wait_until_loaded(tc);
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
 
   // Do most of the logic from the base class.
   //_queuer->queue_scroll_element_into_view(tc);
-  _queuer->queue_update_element(tc);
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateElementHighlights));
   _queuer->queue_update_current_tab(tc);
-  _queuer->queue_wait_until_loaded(tc); // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
-  _queuer->queue_update_frame_offsets(tc);
+  // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateFrameOffsets));
   handle_finished(tc);
 }
 

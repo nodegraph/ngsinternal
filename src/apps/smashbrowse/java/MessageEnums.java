@@ -15,11 +15,11 @@ public class MessageEnums {
 
 
 static enum ReceiverType {
-  Unknown(0),
-  WebDriver(1),
-  Chrome(2),
-  Platform(3),
-  Firebase(4),;
+  kUnknown(0),
+  kWebDriver(1),
+  kChrome(2),
+  kPlatform(3),
+  kFirebase(4),;
 
   private final int value;
   ReceiverType(final int newValue) {value = newValue;}
@@ -136,14 +136,14 @@ static enum PlatformRequestType {
 
 
 static enum FirebaseRequestType {
-    kFirebaseInit(0),
-    kFirebaseDestroy(1),
-    kFirebaseSignIn(2),
-    kFirebaseSignOut(3),
-    kFirebaseWriteData(4),
-    kFirebaseReadData(5),
-    kFirebaseSubscribe(6),
-    kFirebaseUnsubscribe(7);
+  kFirebaseInit(0),
+  kFirebaseDestroy(1),
+  kFirebaseSignIn(2),
+  kFirebaseSignOut(3),
+  kFirebaseWriteData(4),
+  kFirebaseReadData(5),
+  kFirebaseSubscribe(6),
+  kFirebaseUnsubscribe(7);
 
   private final int value;
   FirebaseRequestType(final int newValue) {value = newValue;}
@@ -248,27 +248,27 @@ static enum MessageType {
 }
 
 
-static enum WrapType {
-  text(0),
-  image(1),
-  input(2),
-  select(3);
+static enum ElementType {
+  kText(0),
+  kImage(1),
+  kInput(2),
+  kSelect(3);
 
   private final int value;
-  WrapType(final int newValue) {value = newValue;}
+  ElementType(final int newValue) {value = newValue;}
   public int get_value() {return value;}
   
-  private static HashMap<Integer, WrapType> map = new HashMap<Integer, WrapType>();
-  static {for (WrapType e : WrapType.values()) {map.put(e.value, e);}}
-  public static WrapType get_enum(int value) {return map.get(value);}
+  private static HashMap<Integer, ElementType> map = new HashMap<Integer, ElementType>();
+  static {for (ElementType e : ElementType.values()) {map.put(e.value, e);}}
+  public static ElementType get_enum(int value) {return map.get(value);}
 }
 
 
 static enum DirectionType {
-  left(0),
-  right(1),
-  up(2),
-  down(3);
+  kLeft(0),
+  kRight(1),
+  kUp(2),
+  kDown(3);
 
   private final int value;
   DirectionType(final int newValue) {value = newValue;}

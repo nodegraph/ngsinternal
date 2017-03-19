@@ -51,9 +51,6 @@ void BrowserRecorder::initialize_wires() {
   }\
   /* Create our task context. */\
   TaskContext tc(_scheduler);\
-  /* Clear the chain state so that any unset values
-   * will take on default values of the node we're creating.*/\
-  _queuer->queue_clear_chain_state(tc);
 
 
 #define finish()
@@ -88,11 +85,10 @@ void BrowserRecorder::record_resize_browser() {
   dims.insert(Message::kWidth, 1024);
   dims.insert(Message::kHeight, 1150);
 
-  QJsonObject args;
-  args.insert(Message::kDimensions, dims);
+  QJsonObject params;
+  params.insert(Message::kDimensions, dims);
 
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kResizeBrowserCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kResizeBrowserCompute, params);
   finish();
 }
 
@@ -128,11 +124,6 @@ void BrowserRecorder::record_accept_save_dialog() {
 
 void BrowserRecorder::record_download_video(bool use_current_element) {
   start();
-
-  QJsonObject args;
-  args.insert(Message::kUseCurrentElement, use_current_element);
-
-  _queuer->queue_merge_chain_state(tc, args);
   _queuer->queue_build_compute_node(tc, ComponentDID::kDownloadVideoCompute);
   finish();
 }
@@ -145,11 +136,10 @@ void BrowserRecorder::record_navigate_to(const QString& url) {
   start()
   QString decorated_url = get_proper_url(url).toString();
 
-  QJsonObject args;
-  args.insert(Message::kURL, decorated_url);
+  QJsonObject params;
+  params.insert(Message::kURL, decorated_url);
 
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kNavigateToCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kNavigateToCompute, params);
   finish();
 }
 
@@ -183,40 +173,37 @@ void BrowserRecorder::record_get_current_url() {
 
 void BrowserRecorder::record_click() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
     const QJsonObject info = _queuer->get_last_click_info();
-    args.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
-    args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendClick));
+    params.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
+    params.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendClick));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_ctrl_click() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
     const QJsonObject info = _queuer->get_last_click_info();
-    args.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
-    args.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendCtrlClick));
+    params.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
+    params.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendCtrlClick));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_mouse_over() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
     const QJsonObject info = _queuer->get_last_click_info();
-    args.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
-    args.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
+    params.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
+    params.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute, params);
   finish();
 }
 
@@ -226,36 +213,33 @@ void BrowserRecorder::record_mouse_over() {
 
 void BrowserRecorder::record_type_text(const QString& text) {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
-    args.insert(Message::kText, text);
-    args.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
+    params.insert(Message::kText, text);
+    params.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kTextActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kTextActionCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_type_enter() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
-    args.insert(Message::kTextAction, to_underlying(TextActionType::kSendEnter));
+    params.insert(Message::kTextAction, to_underlying(TextActionType::kSendEnter));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kTextActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kTextActionCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_type_password(const QString& text) {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
-    args.insert(Message::kText, text);
-    args.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
+    params.insert(Message::kText, text);
+    params.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kPasswordActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kPasswordActionCompute, params);
   finish();
 }
 
@@ -265,13 +249,12 @@ void BrowserRecorder::record_type_password(const QString& text) {
 
 void BrowserRecorder::record_select_from_dropdown(const QString& option_text) {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
-    args.insert(Message::kElementAction, to_underlying(ElementActionType::kChooseOption));
-    args.insert(Message::kOptionText, option_text);
+    params.insert(Message::kElementAction, to_underlying(ElementActionType::kChooseOption));
+    params.insert(Message::kOptionText, option_text);
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementActionCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kElementActionCompute, params);
   finish();
 }
 
@@ -281,45 +264,41 @@ void BrowserRecorder::record_select_from_dropdown(const QString& option_text) {
 
 void BrowserRecorder::record_scroll_down() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
-    args.insert(Message::kScrollDirection, to_underlying(DirectionType::down));
+    params.insert(Message::kScrollDirection, to_underlying(DirectionType::kDown));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_scroll_up() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
-    args.insert(Message::kScrollDirection, to_underlying(DirectionType::up));
+    params.insert(Message::kScrollDirection, to_underlying(DirectionType::kUp));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_scroll_right() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
-    args.insert(Message::kScrollDirection, to_underlying(DirectionType::right));
+    params.insert(Message::kScrollDirection, to_underlying(DirectionType::kRight));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_scroll_left() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
-    args.insert(Message::kScrollDirection, to_underlying(DirectionType::left));
+    params.insert(Message::kScrollDirection, to_underlying(DirectionType::kLeft));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute, params);
   finish();
 }
 
@@ -334,12 +313,11 @@ void BrowserRecorder::record_get_all_elements() {
 
 void BrowserRecorder::record_set_element_overlays() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
-    args.insert(Message::kElementInfo, "");
+    params.insert(Message::kElementInfo, "");
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kHighlightElementsCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kHighlightElementsCompute, params);
   finish();
 }
 
@@ -357,10 +335,10 @@ void BrowserRecorder::record_set_element_overlays() {
 
 void BrowserRecorder::record_filter_by_type() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
     // Initial values for the type.
-    WrapType type = WrapType::input;
+    ElementType type = ElementType::kInput;
 
     // Get the image and text value from the last click info.
     const QJsonObject info = _queuer->get_last_click_info();
@@ -371,28 +349,27 @@ void BrowserRecorder::record_filter_by_type() {
     // If either the image or text values are non empty then we can easily predict
     // the desired parameter values for the node.
     if (!image.isEmpty()) {
-      type = WrapType::image;
+      type = ElementType::kImage;
     } else if (!text.isEmpty()) {
-      type = WrapType::text;
+      type = ElementType::kText;
     } else if (tag_name == "input") {
-      type = WrapType::input;
+      type = ElementType::kInput;
     } else if (tag_name == "select") {
-      type = WrapType::select;
+      type = ElementType::kSelect;
     }
-    args.insert(Message::kElementType, to_underlying(type));
-    args.insert(Message::kTargetValue, "");
+    params.insert(Message::kElementType, to_underlying(type));
+    params.insert(Message::kTargetValue, "");
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByTypeAndValueNodeCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByTypeAndValueNodeCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_filter_by_value() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
     // Initial values for type and value.
-    WrapType type = WrapType::input;
+    ElementType type = ElementType::kInput;
     QString value = "";
 
     // Get the image and text value from the last click info.
@@ -404,41 +381,39 @@ void BrowserRecorder::record_filter_by_value() {
     // If either the image or text values are non empty then we can easily predict
     // the desired parameter values for the node.
     if (!image.isEmpty()) {
-      type = WrapType::image;
+      type = ElementType::kImage;
       value = image;
     } else if (!text.isEmpty()) {
-      type = WrapType::text;
+      type = ElementType::kText;
       value = text;
     } else if (tag_name == "input") {
-      type = WrapType::input;
+      type = ElementType::kInput;
       value = "";
     } else if (tag_name == "select") {
-      type = WrapType::select;
+      type = ElementType::kSelect;
       value = "";
     }
-    args.insert(Message::kElementType, to_underlying(type));
-    args.insert(Message::kTargetValue, value);
+    params.insert(Message::kElementType, to_underlying(type));
+    params.insert(Message::kTargetValue, value);
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByTypeAndValueNodeCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByTypeAndValueNodeCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_filter_by_position() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
     const QJsonObject info = _queuer->get_last_click_info();
-    args.insert(Message::kGlobalMousePosition, info.value(Message::kGlobalMousePosition));
+    params.insert(Message::kGlobalMousePosition, info.value(Message::kGlobalMousePosition));
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByPositionNodeCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByPositionNodeCompute, params);
   finish();
 }
 
 void BrowserRecorder::record_filter_by_dimensions() {
   start();
-  QJsonObject args;
+  QJsonObject params;
   {
     const QJsonObject info = _queuer->get_last_click_info();
     double left = info.value("box").toObject().value("left").toDouble();
@@ -449,11 +424,10 @@ void BrowserRecorder::record_filter_by_dimensions() {
     double width = right - left;
     double height = bottom - top;
 
-    args.insert(Message::kWidth, width);
-    args.insert(Message::kHeight, height);
+    params.insert(Message::kWidth, width);
+    params.insert(Message::kHeight, height);
   }
-  _queuer->queue_merge_chain_state(tc, args);
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByDimensionsNodeCompute);
+  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByDimensionsNodeCompute, params);
   finish();
 }
 

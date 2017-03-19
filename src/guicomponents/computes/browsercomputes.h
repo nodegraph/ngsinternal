@@ -12,6 +12,7 @@ class TaskScheduler;
 class TaskContext;
 class OpenBrowserCompute;
 class InputNodeCompute;
+class MessageSender;
 
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  public:
@@ -21,11 +22,13 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
-  virtual void on_response(const QJsonObject& chain_state);
-  virtual void on_finished(const QJsonObject& chain_state);
+  virtual void on_response(const std::deque<QJsonObject>& last_results);
+  virtual void on_finished(const std::deque<QJsonObject>& last_results);
 
   static void init_hints(QJsonObject& m);
   virtual void update_wires();
+
+  QJsonObject get_params() const;
 
  protected:
   // Our state.
@@ -39,11 +42,9 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   Entity* find_group_context() const;
   void find_dep_nodes();
 
-  // Response value properties to merge into the main input coming into this node.
-  std::vector<std::string> _response_value_properties_to_merge;
-
   Dep<TaskQueuer> _queuer;
   Dep<TaskScheduler> _scheduler;
+  Dep<MessageSender> _msg_sender;
   Dep<InputNodeCompute> _browser_width;
   Dep<InputNodeCompute> _browser_height;
 };
@@ -53,6 +54,7 @@ class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {
   COMPONENT_ID(Compute, OpenBrowserCompute);
   OpenBrowserCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual bool update_state(); // made public
+  void wait_for_chrome_connection_task();
 };
 
 class GUICOMPUTES_EXPORT CloseBrowserCompute: public BrowserCompute {
@@ -206,10 +208,7 @@ class GUICOMPUTES_EXPORT GetCurrentURLCompute: public BrowserCompute {
 class GUICOMPUTES_EXPORT GetAllElementsCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, GetAllElementsCompute);
-  GetAllElementsCompute(Entity* entity)
-      : BrowserCompute(entity, kDID()) {
-    _response_value_properties_to_merge.push_back(Message::kElements);
-  }
+  GetAllElementsCompute(Entity* entity): BrowserCompute(entity, kDID()) {}
  protected:
   virtual bool update_state();
 };
@@ -218,11 +217,6 @@ class GUICOMPUTES_EXPORT HighlightElementsCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, HighlightElementsCompute);
   HighlightElementsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
-  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
-
-  static QJsonObject init_hints();
-  static const QJsonObject _hints;
-  virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -238,6 +232,8 @@ class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
   virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
+  virtual void queue_perform_hover(TaskContext& tc);
+  virtual void queue_perform_action(TaskContext& tc);
   virtual void post_update_state(TaskContext& tc);
 };
 

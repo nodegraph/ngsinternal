@@ -5,11 +5,11 @@ namespace ngs {
 
 const char* receiver_type_to_string(ReceiverType t) {
   switch(t) {
-    case ReceiverType::Unknown: return "Unknown";
-    case ReceiverType::WebDriver: return "WebDriver";
-    case ReceiverType::Chrome: return "Chrome";
-    case ReceiverType::Platform: return "Platform";
-    case ReceiverType::Firebase: return "Firebase";
+    case ReceiverType::kUnknown: return "kUnknown";
+    case ReceiverType::kWebDriver: return "kWebDriver";
+    case ReceiverType::kChrome: return "kChrome";
+    case ReceiverType::kPlatform: return "kPlatform";
+    case ReceiverType::kFirebase: return "kFirebase";
 
     default: {
       assert(false);
@@ -213,12 +213,12 @@ const char* message_type_to_string(MessageType t) {
   return "";
 }
 
-const char* wrap_type_to_string(WrapType t) {
+const char* element_type_to_string(ElementType t) {
   switch (t) {
-    case WrapType::text: return "text";
-    case WrapType::image: return "image";
-    case WrapType::input: return "input";
-    case WrapType::select: return "select";
+    case ElementType::kText: return "kText";
+    case ElementType::kImage: return "kImage";
+    case ElementType::kInput: return "kInput";
+    case ElementType::kSelect: return "kSelect";
 
     default: {
       assert(false);
@@ -229,10 +229,10 @@ const char* wrap_type_to_string(WrapType t) {
 
 const char* direction_type_to_string(DirectionType t) {
   switch (t) {
-    case DirectionType::left: return "left";
-    case DirectionType::right: return "right";
-    case DirectionType::up: return "up";
-    case DirectionType::down: return "down";
+    case DirectionType::kLeft: return "kLeft";
+    case DirectionType::kRight: return "kRight";
+    case DirectionType::kUp: return "kUp";
+    case DirectionType::kDown: return "kDown";
 
     default: {
       assert(false);

@@ -48,6 +48,7 @@ Q_OBJECT
   void handle_info(const Message& msg);
   const Message& get_last_response() const{external(); return _last_response;}
   const QJsonObject& get_last_click_info() const {return _last_click_info;}
+  const std::deque<QJsonObject>& get_last_results() const {return _last_results;}
 
   // Polling Control.
   // Polling is used to ensure that the browser is open and of the expected dimensions.
@@ -61,73 +62,24 @@ Q_OBJECT
   // Queue Tasks.
   // ---------------------------------------------------------------------------------
 
+  void queue_send_msg(TaskContext& tc, const Message& msg, bool cancelable = true);
+
   // Queue Element Tasks.
   void queue_scroll_element_into_view(TaskContext& tc);
 
   // Queue Framework Tasks.
-  void queue_merge_last_click_info_into_chain_state(TaskContext& tc);
-  void queue_overwrite_chain_state(TaskContext& tc, const QJsonObject& map);
-  void queue_merge_chain_state(TaskContext& tc, const QJsonObject& map);
-  void queue_clear_chain_state(TaskContext& tc);
-  void queue_copy_chain_property(TaskContext& tc, const QString& src_prop, const QString& dest_prop);
-  void queue_determine_angle_in_degress(TaskContext& tc);
-  void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did);
-  void queue_receive_chain_state(TaskContext& tc, std::function<void(const QJsonObject&)> receive_chain_state);
+  void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did, const QJsonObject& params = QJsonObject());
+  void queue_receive_results(TaskContext& tc, std::function<void(const std::deque<QJsonObject>&)> receive_results);
   void queue_reset(TaskContext& tc);
-
-  // Queue Cookie Tasks.
-  void queue_get_all_cookies(TaskContext& tc);
-  void queue_clear_all_cookies(TaskContext& tc);
-  void queue_set_all_cookies(TaskContext& tc);
-
-  // Web Driver Service Tasks.
-  void queue_start_service(TaskContext& tc);
-  void queue_stop_service(TaskContext& tc);
 
   // Queue Browser Tasks.
   void queue_wait_for_chrome_connection(TaskContext& tc);
   void queue_open_browser(TaskContext& tc);
-  void queue_close_browser(TaskContext& tc);
-  void queue_release_browser(TaskContext& tc);
-  void queue_is_browser_open(TaskContext& tc);
-  void queue_resize_browser(TaskContext& tc);
-  void queue_get_browser_size(TaskContext& tc);
-  void queue_get_active_tab_title(TaskContext& tc);
 
   void queue_update_current_tab(TaskContext& tc);
-  void queue_update_current_tab_in_browser_controller(TaskContext& tc);
-  void queue_update_current_tab_in_chrome_extension(TaskContext& tc);
-  void queue_destroy_current_tab(TaskContext& tc);
-  void queue_open_tab(TaskContext& tc);
-  void queue_download_video(TaskContext& tc);
-  void queue_accept_save_dialog(TaskContext& tc);
 
   // Queue Page Content Tasks.
-  void queue_block_events(TaskContext& tc);
-  void queue_unblock_events(TaskContext& tc);
-  void queue_wait_until_loaded(TaskContext& tc);
   void queue_wait(TaskContext& tc);
-
-  // Queue Navigate Tasks.
-  void queue_navigate_to(TaskContext& tc);
-  void queue_navigate_back(TaskContext& tc);
-  void queue_navigate_forward(TaskContext& tc);
-  void queue_navigate_refresh(TaskContext& tc);
-  void queue_get_current_url(TaskContext& tc);
-
-  // Queue Set Tasks.
-  void queue_update_frame_offsets(TaskContext& tc);
-  void queue_get_all_elements(TaskContext& tc);
-  void queue_highlight_elements(TaskContext& tc);
-  void queue_clear_element(TaskContext& tc);
-  void queue_update_element(TaskContext& tc);
-
-  // Queue Perform Action Tasks.
-  void queue_perform_mouse_action(TaskContext& tc);
-  void queue_perform_mouse_hover(TaskContext& tc);
-  void queue_perform_text_action(TaskContext& tc);
-  void queue_perform_element_action(TaskContext& tc);
-  void queue_perform_element_scroll(TaskContext& tc);
 
   // Queue other actions.
   void queue_emit_option_texts(TaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
@@ -143,16 +95,6 @@ signals:
  private:
   void reset_state();
 
-  // -----------------------------------------------------------------------------
-  // Tasks can use the _chain_state to build up new request messages to send out over the
-  // socket. However note that each task should only send out 1 request message at maximum.
-  // This is because each message is accompanied by a response message. Instead of sending
-  // out another message another task should be queued up to send our the next requests.
-  // If a task doesn't send out a request message, then it should call run_next_task
-  // to keep the queue alive. When request messages are sent out the responses keep
-  // the queue processing alive.
-  // -----------------------------------------------------------------------------
-
   // Socket Messaging Tasks.
   void send_msg_task(Message& msg);
 
@@ -160,86 +102,20 @@ signals:
   void scroll_element_into_view_task();
 
   // Infrastructure Tasks.
-  void merge_last_click_info_into_chain_state_task();
-  void overwrite_chain_state_task(const QJsonObject& map);
-  void merge_chain_state_task(const QJsonObject& map);
-  void clear_chain_state_task();
-  void copy_chain_property_task(const QString& src_prop, const QString& dest_prop);
-  void determine_angle_in_degrees_task();
-  void receive_chain_state_task(std::function<void(const QJsonObject&)> on_finished_sequence);
+  void receive_results_task(std::function<void(const std::deque<QJsonObject>&)> on_finished_sequence);
   void start_sequence_task();
   void finished_sequence_task(std::function<void()> on_finished_sequence);
-  void build_compute_node_task(ComponentDID compute_did);
+  void build_compute_node_task(ComponentDID compute_did, const QJsonObject& params);
   void reset_task();
-
-  // Cookie Tasks.
-  void get_all_cookies_task();
-  void clear_all_cookies_task();
-  void set_all_cookies_task();
-
-  // Web Driver Service.
-  void start_service_task();
-  void stop_service_task();
 
   // Browser Tasks.
   void wait_for_chrome_connection_task();
-  void open_browser_task();
-  void open_browser_post_task();
-  void close_browser_task();
-  void release_browser_task();
-  void is_browser_open_task();
-  void resize_browser_task();
-  void get_browser_size_task();
-  void get_active_tab_title_task();
-  void update_current_tab_in_browser_controller_task();
-  void update_current_tab_in_chrome_extension_task();
-  void destroy_current_tab_task();
-  void open_tab_task();
-  void download_video_task();
-  void accept_save_dialog_task();
 
   // Page Content Tasks.
-  void block_events_task();
-  void unblock_events_task();
-  void wait_until_loaded_task();
   void wait_task();
 
-  // Browser Reset and Shutdown Tasks.
-  void reset_browser_task();
-
-  // Navigation Tasks.
-  void navigate_to_task();
-  void navigate_back_task();
-  void navigate_forward_task();
-  void navigate_refresh_task();
-  void get_current_url_task();
-
-  // Set Creation/Modification Tasks.
-  void update_frame_offsets_task();
-  void get_all_elements_task();
-  void highlight_elements_task();
-  void clear_element_task();
-  void update_element_task();
-
-  void perform_mouse_action_task();
-  void perform_hover_action_task();
-  void perform_text_action_task();
-  void perform_element_action_task();
-  void perform_element_scroll_task();
-
-  //void mouse_hover_task();
-
   void emit_option_texts_task();
-
-
-  void firebase_init_task();
-  void firebase_destroy_task();
-  void firebase_sign_in_task();
-  void firebase_sign_out_task();
-  void firebase_write_data_task();
-  void firebase_read_data_task();
-  void firebase_subscribe_task();
-  void firebase_unsubscribe_task();
+  void cache_results(const QJsonObject& results);
 
   // Our fixed dependencies.
   Dep<MessageSender> _msg_sender;
@@ -254,8 +130,9 @@ signals:
   // This is used to fill in various parameters when creating new nodes.
   QJsonObject _last_click_info;
 
-  // The 'value' value from responses will get merged into this state overriding previous values.
-  QJsonObject _chain_state;
+  // The results from responses will get merged into this state overriding previous values.
+  static const size_t kMaxLastResults = 10;
+  std::deque<QJsonObject> _last_results;
 
   // The last query we sent.
   Message _last_query;

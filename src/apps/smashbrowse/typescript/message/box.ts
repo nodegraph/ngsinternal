@@ -125,22 +125,22 @@ class Box {
     //Returns true if this page box is on one side of another page box.
     is_oriented_on(side: DirectionType, other: IBox): number {
         switch (side) {
-            case DirectionType.left:
+            case DirectionType.kLeft:
                 if (this.right < other.right) {
                     return other.right - this.right
                 }
                 break
-            case DirectionType.right:
+            case DirectionType.kRight:
                 if (this.left > other.left) {
                     return this.left - other.left
                 }
                 break
-            case DirectionType.up:
+            case DirectionType.kUp:
                 if (this.bottom < other.bottom) {
                     return other.bottom - this.bottom
                 }
                 break
-            case DirectionType.down:
+            case DirectionType.kDown:
                 if (this.top > other.top) {
                     return this.top - other.top
                 }
@@ -153,16 +153,16 @@ class Box {
     get_beam(side: DirectionType, page_dim: Box) : Box {
         let beam = new Box(this)
         switch (side) {
-            case DirectionType.left:
+            case DirectionType.kLeft:
                 beam.left = 0
                 break
-            case DirectionType.right:
+            case DirectionType.kRight:
                 beam.right = page_dim.get_width()
                 break
-            case DirectionType.up:
+            case DirectionType.kUp:
                 beam.top = 0
                 break
-            case DirectionType.down:
+            case DirectionType.kDown:
                 beam.bottom = page_dim.get_height()
                 break
             default:
@@ -174,13 +174,13 @@ class Box {
     //Returns a side value.
     get_extreme(side: DirectionType) : number {
         switch (side) {
-            case DirectionType.left:
+            case DirectionType.kLeft:
                 return this.left
-            case DirectionType.right:
+            case DirectionType.kRight:
                 return this.right
-            case DirectionType.up:
+            case DirectionType.kUp:
                 return this.top
-            case DirectionType.down:
+            case DirectionType.kDown:
                 return this.bottom
             default:
                 console.log("Error: Box.get_extreme(side) was given an unknown side argument: " + side)
