@@ -94,6 +94,7 @@ const char* chrome_request_type_to_string(ChromeRequestType t) {
     // Info Request.
     case ChromeRequestType::kGetAllElements: return "kGetAllElements";
     case ChromeRequestType::kUpdateFrameOffsets: return "kUpdateFrameOffsets";
+    case ChromeRequestType::kReleaseBrowser: return "kReleaseBrowser";
 
     default: {
       assert(false);

@@ -235,7 +235,7 @@ COMPONENT_ENTRY2(ReleaseBrowserCompute, 71)\
 COMPONENT_ENTRY2(IsBrowserOpenCompute, 72)\
 COMPONENT_ENTRY2(ResizeBrowserCompute, 73)\
 COMPONENT_ENTRY2(GetBrowserSizeCompute, 74)\
-COMPONENT_ENTRY2(DestroyCurrentTabCompute, 75)\
+COMPONENT_ENTRY2(CloseTabCompute, 75)\
 COMPONENT_ENTRY2(OpenTabCompute, 76)\
 COMPONENT_ENTRY2(AcceptSaveDialogCompute, 77)\
 /* Extract Info From Browser. */\

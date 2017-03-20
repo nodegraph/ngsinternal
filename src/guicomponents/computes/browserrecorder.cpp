@@ -112,7 +112,7 @@ void BrowserRecorder::record_get_browser_title() {
 
 void BrowserRecorder::record_destroy_current_tab() {
   start();
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kDestroyCurrentTabCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kCloseTabCompute);
   _manipulator->link_to_closest_node(node);
   finish();
 }

@@ -37,6 +37,18 @@ class PageOverlays {
         this.crosshair_overlay = new CrossOverlay('smash_browse_text_box', DistinctColors.text_color)
     }
 
+    // Disables overlays. Used when the browser has been released.
+    uninitialize(): void {
+        this.crosshair_overlay.destroy()
+        this.crosshair_overlay = null
+
+        this.text_box_overlay.destroy()
+        this.text_box_overlay = null
+
+        this.image_box_overlay.destroy()
+        this.image_box_overlay = null
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Element overlays.
     // ---------------------------------------------------------------------------------------------

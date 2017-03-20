@@ -141,6 +141,9 @@ class ContentCommHandler {
                 })
                 send_response(infos)
             } break
+            case ChromeRequestType.kReleaseBrowser: {
+                this.gui_collection.page_overlays.uninitialize()
+            } break
         }
     }
 

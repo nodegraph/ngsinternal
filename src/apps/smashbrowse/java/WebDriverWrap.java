@@ -273,6 +273,21 @@ public class WebDriverWrap {
     
     void release_browser() {
     	if (browser_is_open()) {
+    		
+            // Goto to the extensions page. There will only be one extension, ours.
+            _web_driver.get("chrome://extensions-frame");
+            // Wait for the checkbox to appears, as sometimes it won't be ready in time.
+            WebDriverWait wait = new WebDriverWait(_web_driver, 10);
+            String xpath = "//*[@id='chmloafcpkncilcdppohneohkdlgoneb']/div/div[2]/div/label/input";
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+            // Now click it.
+            WebElement checkbox = _web_driver.findElement(By.xpath(xpath));
+            if (checkbox.isSelected()) {
+                checkbox.click();
+            }
+            // Navigate back to previous page.
+            navigate_back();
+    		
     		_web_driver = null;
     	}
     	_window_handles.clear();

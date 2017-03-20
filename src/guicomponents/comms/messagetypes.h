@@ -81,7 +81,7 @@ enum class ChromeRequestType : int {
   // Others.
   kGetAllElements = 17,
   kUpdateFrameOffsets = 18,
-
+  kReleaseBrowser = 19,
 };
 
 enum class PlatformRequestType : int {

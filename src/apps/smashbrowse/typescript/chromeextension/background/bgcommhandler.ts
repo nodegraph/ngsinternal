@@ -373,7 +373,7 @@ class BgCommHandler {
             case ChromeRequestType.kOpenTab: {
                 //let response = new ResponseMessage(req.id, true, {value: true})
                 //this.bg_comm.send_to_app(response)
-                chrome.tabs.create({'url': 'http://www.google.com'}, 
+                chrome.tabs.create({'url': req.args.url}, 
                     (tab) => {
                         // Tab opened successfully.
                         let response = new ResponseMessage(req.id, true, {value: true})
@@ -426,7 +426,8 @@ class BgCommHandler {
             case ChromeRequestType.kUpdateElementHighlights: 
             case ChromeRequestType.kClearElementHighlights:
             case ChromeRequestType.kScrollElementIntoView: 
-            case ChromeRequestType.kScrollElement: {
+            case ChromeRequestType.kScrollElement: 
+            case ChromeRequestType.kReleaseBrowser: {
                 this.clear_tasks()
                 this.queue_collect_void_from_frames(req)
                 this.queue(() => {

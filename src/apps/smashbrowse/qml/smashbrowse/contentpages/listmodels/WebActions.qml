@@ -48,7 +48,7 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_gavel_white_48dp.png"
-        title: "Perform Action on Element..."
+        title: "Perform Element Actions..."
         description: "Perform an action on the current element."
         script: "push_by_names('Perform Action', 'WebMenuListPage', 'WebActionsPerformAction')"
     }
@@ -62,8 +62,8 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_gavel_white_48dp.png"
-        title: "Perform Action on Browser Window..."
-        description: "Perform an action on the browser."
+        title: "Perform Browser/Tab Actions..."
+        description: "Perform an action on the browser and its tabs."
         script: "push_by_names('Perform Action', 'NodeMenuListPage', 'WebActionsBrowserWindow')"
     }
     

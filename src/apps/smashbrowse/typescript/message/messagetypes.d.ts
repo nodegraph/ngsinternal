@@ -86,7 +86,7 @@ declare const enum ChromeRequestType {
   // Others.
   kGetAllElements = 17,
   kUpdateFrameOffsets = 18,
-
+  kReleaseBrowser = 19,
 }
 
 declare const enum PlatformRequestType {

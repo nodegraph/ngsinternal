@@ -108,7 +108,7 @@ static enum ChromeRequestType {
   // Others.
   kGetAllElements(17),
   kUpdateFrameOffsets(18),
-;
+  kReleaseBrowser(19),;
 
   private final int value;
   ChromeRequestType(final int newValue) {value = newValue;}

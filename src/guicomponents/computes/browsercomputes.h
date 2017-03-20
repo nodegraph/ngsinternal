@@ -32,10 +32,10 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
  protected:
   // Our state.
-  virtual void pre_update_state(TaskContext& tc);
+  virtual void queue_start_update(TaskContext& tc);
   virtual void queue_on_results(TaskContext& tc);
   virtual void queue_on_finished(TaskContext& tc);
-  virtual void post_update_state(TaskContext& tc);
+  virtual void queue_end_update(TaskContext& tc);
 
   void dump_map(const QJsonObject& inputs) const;
 
@@ -116,10 +116,10 @@ class GUICOMPUTES_EXPORT GetActiveTabTitleCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT DestroyCurrentTabCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT CloseTabCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, DestroyCurrentTabCompute);
-  DestroyCurrentTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, CloseTabCompute);
+  CloseTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
@@ -133,6 +133,11 @@ class GUICOMPUTES_EXPORT OpenTabCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, OpenTabCompute);
   OpenTabCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
 };
@@ -234,7 +239,7 @@ class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
   virtual bool update_state();
   virtual void queue_perform_hover(TaskContext& tc);
   virtual void queue_perform_action(TaskContext& tc);
-  virtual void post_update_state(TaskContext& tc);
+  virtual void queue_end_update(TaskContext& tc);
 };
 
 class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
@@ -248,7 +253,7 @@ class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
   virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
-  virtual void post_update_state(TaskContext& tc);
+  virtual void queue_end_update(TaskContext& tc);
 };
 
 // This class is exactly like TextActionCompute except that
@@ -275,7 +280,7 @@ class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
   virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
-  virtual void post_update_state(TaskContext& tc);
+  virtual void queue_end_update(TaskContext& tc);
 };
 
 class GUICOMPUTES_EXPORT ElementScrollCompute: public BrowserCompute {
@@ -289,7 +294,7 @@ class GUICOMPUTES_EXPORT ElementScrollCompute: public BrowserCompute {
   virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
-  virtual void post_update_state(TaskContext& tc);
+  virtual void queue_end_update(TaskContext& tc);
 };
 
 class GUICOMPUTES_EXPORT ElementScrollIntoViewCompute: public BrowserCompute {
@@ -298,7 +303,7 @@ class GUICOMPUTES_EXPORT ElementScrollIntoViewCompute: public BrowserCompute {
   ElementScrollIntoViewCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
   virtual bool update_state();
-  virtual void post_update_state(TaskContext& tc);
+  virtual void queue_end_update(TaskContext& tc);
 };
 
 }
