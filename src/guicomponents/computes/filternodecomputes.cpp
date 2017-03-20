@@ -162,7 +162,7 @@ void FindClosestNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   BaseScriptNodeCompute::create_inputs_outputs(config);
   {
     EntityConfig c = config;
-    c.expose_plug = false;
+    c.expose_plug = true;
     c.unconnected_value = QJsonObject();
     create_input(Message::kAnchorElements, c);
   }

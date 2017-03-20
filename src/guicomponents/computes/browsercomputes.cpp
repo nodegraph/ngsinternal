@@ -728,7 +728,7 @@ void MouseActionCompute::post_update_state(TaskContext& tc) {
   // Our actions may have moved elements arounds, so we update our overlays.
   _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateElementHighlights));
   // Force wait so that the webpage can react to the mouse action. Note this is real and makes the mouse click work 100% of the time.
-  _queuer-> queue_wait(tc);
+  _queuer->queue_wait(tc);
 
   // Do the base logic.
   BrowserCompute::post_update_state(tc);
@@ -769,6 +769,8 @@ bool TextActionCompute::update_state() {
 
   TaskContext tc(_scheduler);
   pre_update_state(tc);
+
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
 
   QJsonObject params = get_params();
   Message req(WebDriverRequestType::kPerformTextAction, params);

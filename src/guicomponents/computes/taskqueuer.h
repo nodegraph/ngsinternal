@@ -54,6 +54,7 @@ Q_OBJECT
   void handle_info(const Message& msg);
 
   // Get internal state.
+  Q_INVOKABLE QJsonObject get_last_click_info() {return _last_click_info;} // Qt doesn't like getting references to QJsonObjects.
   const QJsonObject& get_last_click_info() const {return _last_click_info;}
   const std::deque<QJsonObject>& get_last_results() const {return _last_results;}
 

@@ -4,9 +4,11 @@
 // If the target value is empty, then any non empty image or text will be matched.
 // The target value parameter is only used for image and text types.
 function filter_by_type_and_value(elements: IElementInfo[], type: ElementType, target_value: string) {
-    console.log('num elements: ' + elements.length)
-    console.log('elem type: ' + type)
-    console.log('target value: ' + target_value)
+    // The elements may be be undefined if the main input to the node is missing the elements property.
+    if (elements == undefined) {
+        return []
+    }
+
     let matches: IElementInfo[] = []
     switch (type) {
         case ElementType.kImage: {
@@ -57,7 +59,11 @@ function filter_by_type_and_value(elements: IElementInfo[], type: ElementType, t
 
 // Returns all elements whose bounds contains the mouse position.
 function filter_by_position(elements: IElementInfo[], global_mouse_position: { x: number, y: number }) {
-    console.log('filtering by position: ' + global_mouse_position.x + ',' + global_mouse_position.y)
+    // The elements may be be undefined if the main input to the node is missing the elements property.
+    if (elements == undefined) {
+        return []
+    }
+
     let matches: IElementInfo[] = []
     for (let e of elements) {
         if (e.box.left > global_mouse_position.x) {
@@ -79,6 +85,10 @@ function filter_by_position(elements: IElementInfo[], global_mouse_position: { x
 }
 
 function filter_by_dimensions(elements: IElementInfo[], width: number, height: number, max_width_diff: number, max_height_diff: number) {
+    // The elements may be be undefined if the main input to the node is missing the elements property.
+    if (elements == undefined) {
+        return []
+    }
 
     let min_width_pixels = width * (1.0 - (max_width_diff * 0.01))
     let max_width_pixels = width * (1.0 + (max_width_diff * 0.01))
@@ -101,6 +111,16 @@ function filter_by_dimensions(elements: IElementInfo[], width: number, height: n
 }
 
 function find_closest_to_anchors(elements: IElementInfo[], anchor_elements: IElementInfo[]) {
+    // The elements may be be undefined if the main input to the node is missing the elements property.
+    if (elements == undefined) {
+        return []
+    }
+    // The anchor_elements may be be undefined if the anchor_elements input to the node is missing the elements property.
+    if (anchor_elements == undefined) {
+        return []
+    }
+
+
     // Determine of centers of the target elements.
     let anchor_centers: IPoint[] = []
     for (let anchor of anchor_elements) {
@@ -136,6 +156,11 @@ function find_closest_to_anchors(elements: IElementInfo[], anchor_elements: IEle
 }
 
 function find_extremes(elements: IElementInfo[], getter: (info: IElementInfo)=>number, smallest: boolean) {
+    // The elements may be be undefined if the main input to the node is missing the elements property.
+    if (elements == undefined) {
+        return []
+    }
+
     let best: IElementInfo[] = []
     let best_value: number = null
     for (let e of elements) {
@@ -167,6 +192,11 @@ function find_extremes(elements: IElementInfo[], getter: (info: IElementInfo)=>n
 }
 
 function find_sidemost(elements: IElementInfo[], dir: DirectionType) {
+    // The elements may be be undefined if the main input to the node is missing the elements property.
+    if (elements == undefined) {
+        return []
+    }
+
     switch (dir) {
         case DirectionType.kUp:
             return find_extremes(elements, (e: IElementInfo):number =>{return e.box.top}, true)
@@ -184,10 +214,15 @@ function find_sidemost(elements: IElementInfo[], dir: DirectionType) {
 }
 
 function isolate_element(elements: IElementInfo[], element_index: number) {
+    // The elements may be be undefined if the main input to the node is missing the elements property.
+    if (elements == undefined) {
+        return []
+    }
+
     if (elements.length > element_index) {
         return [elements[element_index]]
     }
-    return elements
+    return []
 }
 
 

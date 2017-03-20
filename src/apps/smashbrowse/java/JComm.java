@@ -78,7 +78,7 @@ public class JComm {
 		JsonObject in = args.getAsJsonObject().get("in").getAsJsonObject();
 		JsonArray elements = in.get("elements").getAsJsonArray();
 		if (elements.size() == 0) {
-			return new JsonObject();
+			return null;
 		}
 		return elements.get(0).getAsJsonObject();
 	}
@@ -221,6 +221,13 @@ public class JComm {
 	    case kPerformMouseAction: {
 	    	MessageEnums.MouseActionType mouse_action_type = MessageEnums.MouseActionType.get_enum(req.get_args().getAsJsonObject().get("mouse_action").getAsInt());
 	    	JsonObject element = get_first_element(req.get_args());
+	    	if (element == null) {
+	    		results.addProperty("value", "There were no elements to perform the mouse action on.");
+	    		ResponseMessage resp = new ResponseMessage(req.get_id(), false, results);
+	    		System.out.println(resp.to_string());
+	    		break;
+	    	}
+	    	
 	    	String fe_index_path = element.get("fe_index_path").getAsString();
 	    	String xpath = element.get("xpath").getAsString();
 	    	JsonObject pos = req.get_args().getAsJsonObject().get("local_mouse_position").getAsJsonObject();
@@ -258,6 +265,13 @@ public class JComm {
 	    case kPerformTextAction: {
 	    	MessageEnums.TextActionType text_action_type = MessageEnums.TextActionType.get_enum(req.get_args().getAsJsonObject().get("text_action").getAsInt());
 	    	JsonObject element = get_first_element(req.get_args());
+	    	if (element == null) {
+	    		results.addProperty("value", "There were no elements to perform the text action on.");
+	    		ResponseMessage resp = new ResponseMessage(req.get_id(), false, results);
+	    		System.out.println(resp.to_string());
+	    		break;
+	    	}
+	    	
 	    	String fe_index_path = element.get("fe_index_path").getAsString();
 	    	String xpath = element.get("xpath").getAsString();
 	        switch (text_action_type) {
@@ -287,6 +301,13 @@ public class JComm {
 	    case kPerformElementAction: {
 	    	MessageEnums.ElementActionType element_action_type = MessageEnums.ElementActionType.get_enum(req.get_args().getAsJsonObject().get("element_action").getAsInt());
 	    	JsonObject element = get_first_element(req.get_args());
+	    	if (element == null) {
+	    		results.addProperty("value", "There were no elements to perform the element action on.");
+	    		ResponseMessage resp = new ResponseMessage(req.get_id(), false, results);
+	    		System.out.println(resp.to_string());
+	    		break;
+	    	}
+	    	
 	    	String fe_index_path = element.get("fe_index_path").getAsString();
 	    	String xpath = element.get("xpath").getAsString();
 	        switch (element_action_type) {
@@ -320,6 +341,13 @@ public class JComm {
 	    case kPerformImageAction: {
 	    	MessageEnums.ImageActionType image_action_type = MessageEnums.ImageActionType.get_enum(req.get_args().getAsJsonObject().get("image_action").getAsInt());
 	    	JsonObject element = get_first_element(req.get_args());
+	    	if (element == null) {
+	    		results.addProperty("value", "There were no elements to perform the image action on.");
+	    		ResponseMessage resp = new ResponseMessage(req.get_id(), false, results);
+	    		System.out.println(resp.to_string());
+	    		break;
+	    	}
+	    	
 	    	String fe_index_path = element.get("fe_index_path").getAsString();
 	    	String xpath = element.get("xpath").getAsString();
 	    	switch (image_action_type) {
