@@ -5,7 +5,8 @@
 #include <base/objectmodel/componentids.h>
 #include <base/objectmodel/entityids.h>
 
-class QJsonObject;
+#include <QtCore/QJsonObject>
+
 class QJsonValue;
 class QString;
 
@@ -63,7 +64,7 @@ class BaseNodeGraphManipulator: public Component {
   virtual Entity* create_password_data_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL) = 0;
   virtual Entity* create_data_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL) = 0;
 
-  virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name = "", Entity* group_entity=NULL) = 0;
+  virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state = QJsonObject(), const std::string& name = "", Entity* group_entity=NULL) = 0;
 
   // Link a node.
   virtual void link_to_closest_node(Entity* node) = 0;

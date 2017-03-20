@@ -64,7 +64,6 @@ class ContentCommHandler {
     // Note that when send_response is not called directly during the function execution, 
     // the Chrome API will invoke it automatically with the argument set to undefined.
     handle_bg_request(req: RequestMessage, send_response: (response: any) => void) {
-        let success_msg = new ResponseMessage(req.id, true)
         switch (req.request) {
             case ChromeRequestType.kBlockEvents: {
                 this.gui_collection.event_blocker.block_events()
@@ -79,7 +78,7 @@ class ContentCommHandler {
             } break
             case ChromeRequestType.kHighlightElements: {
                 this.gui_collection.page_overlays.clear_element_overlays()
-                this.gui_collection.page_overlays.create_element_overlays(req.args.elements)
+                this.gui_collection.page_overlays.create_element_overlays(req.args.in.elements)
             } break
             case ChromeRequestType.kUpdateElementHighlights: {
                 this.gui_collection.page_overlays.update_element_overlays()
@@ -89,7 +88,7 @@ class ContentCommHandler {
                 this.gui_collection.page_overlays.clear_element_overlays()
             } break
             case ChromeRequestType.kScrollElementIntoView: {
-                let elem_wrap = this.get_first_element_from_args(req.args.elements)
+                let elem_wrap = this.get_first_element_from_args(req.args.in.elements)
                 if (!elem_wrap) {
                     break
                 } else {
@@ -97,7 +96,7 @@ class ContentCommHandler {
                 }
             } break
             case ChromeRequestType.kScrollElement: {
-                let elem_wrap = this.get_first_element_from_args(req.args.elements)
+                let elem_wrap = this.get_first_element_from_args(req.args.in.elements)
                 if (!elem_wrap) {
                     break
                 } else {

@@ -25,7 +25,6 @@
 
 namespace ngs {
 
-const int TaskQueuer::kPollInterval = 1000;
 const int TaskQueuer::kWaitInterval = 2000;
 
 TaskQueuer::TaskQueuer(Entity* parent)
@@ -40,11 +39,6 @@ TaskQueuer::TaskQueuer(Entity* parent)
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
   get_dep_loader()->register_fixed_dep(_manipulator, Path());
 
-  // Setup the poll timer.
-  _poll_timer.setSingleShot(false);
-  _poll_timer.setInterval(kPollInterval);
-  connect(&_poll_timer,SIGNAL(timeout()),this,SLOT(on_poll()));
-
   // Setup the wait timer.
   _wait_timer.setSingleShot(false);
   _wait_timer.setInterval(kWaitInterval);
@@ -57,23 +51,12 @@ TaskQueuer::~TaskQueuer() {
 void TaskQueuer::open() {
   external();
   _msg_sender->open();
-
-  // The logic to always hover over the current element has not been fully implemented.
-  //_poll_timer.start();
 }
 
 void TaskQueuer::close() {
   external();
   _msg_sender->close();
-
-  // The logic to always hover over the current element has not been fully implemented.
-  //_poll_timer.stop();
 }
-
-//bool NodeJSWorker::is_open() {
-//  external();
-//  return _msg_sender->is_open();
-//}
 
 void TaskQueuer::open_browser() {
   TaskContext tc(_scheduler);
@@ -121,38 +104,10 @@ void TaskQueuer::queue_stop_service() {
   queue_send_msg(tc, Message(WebDriverRequestType::kStopService));
 }
 
-void TaskQueuer::queue_emit_option_texts() {
-  TaskContext tc(_scheduler);
-  queue_emit_option_texts(tc);
-}
-
-bool TaskQueuer::is_polling() {
-  return _poll_timer.isActive();
-}
-
-void TaskQueuer::start_polling() {
-  _poll_timer.start();
-}
-
-void TaskQueuer::stop_polling() {
-  _poll_timer.stop();
-}
-
-void TaskQueuer::reset_state() {
-    // State for message queuing.
-    _last_results.clear();
-}
 
 // -----------------------------------------------------------------
 // Our Slots.
 // -----------------------------------------------------------------
-
-void TaskQueuer::on_poll() {
-    if (!_scheduler->is_busy()) {
-      TaskContext tc(_scheduler);
-      //queue_perform_mouse_hover(tc);
-    }
-}
 
 void TaskQueuer::on_done_wait() {
   _wait_timer.stop();
@@ -173,38 +128,12 @@ void TaskQueuer::send_msg_task(Message& msg) {
 }
 
 
-void TaskQueuer::queue_send_msg(TaskContext& tc, const Message& msg, bool cancelable) {
-  _scheduler->queue_task(tc, Task(std::bind(&TaskQueuer::send_msg_task,this, msg), cancelable), "queue_send_msg_task");
+void TaskQueuer::queue_send_msg(TaskContext& tc, const Message& msg, bool cancelable, const std::string& notes) {
+  _scheduler->queue_task(tc, Task(std::bind(&TaskQueuer::send_msg_task,this, msg), cancelable), notes);
 }
 
 // ---------------------------------------------------------------------------------
-// Queue Element Tasks.
-// ---------------------------------------------------------------------------------
-
-void TaskQueuer::queue_scroll_element_into_view(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::scroll_element_into_view_task,this), "queue_scroll_element_into_view");
-}
-
-// ---------------------------------------------------------------------------------
-// Queue Framework Tasks.
-// ---------------------------------------------------------------------------------
-
-void TaskQueuer::queue_build_compute_node(TaskContext& tc, ComponentDID compute_did, const QJsonObject& params) {
-  std::stringstream ss;
-  ss << "queue build compute node with did: " << (size_t)compute_did;
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::build_compute_node_task,this, compute_did, params), ss.str());
-}
-
-void TaskQueuer::queue_receive_results(TaskContext& tc, std::function<void(const std::deque<QJsonObject>&)> receive_results) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::receive_results_task,this,receive_results), "queue_receive_results");
-}
-
-void TaskQueuer::queue_reset(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::reset_task, this), "reset");
-}
-
-// ---------------------------------------------------------------------------------
-// Queue Browser Tasks.
+// Browser Side Tasks.
 // ---------------------------------------------------------------------------------
 
 void TaskQueuer::queue_wait_for_chrome_connection(TaskContext& tc) {
@@ -224,19 +153,11 @@ void TaskQueuer::queue_update_current_tab(TaskContext& tc) {
 }
 
 // ---------------------------------------------------------------------------------
-// Queue Page Content Tasks.
+// System Side Tasks.
 // ---------------------------------------------------------------------------------
 
 void TaskQueuer::queue_wait(TaskContext& tc) {
   _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::wait_task, this), "queue_wait");
-}
-
-// ---------------------------------------------------------------------------------
-// Queue other actions.
-// ---------------------------------------------------------------------------------
-
-void TaskQueuer::queue_emit_option_texts(TaskContext& tc) {
-  _scheduler->queue_task(tc, (Task)std::bind(&TaskQueuer::emit_option_texts_task,this), "queue_emit_option_texts");
 }
 
 // ------------------------------------------------------------------------
@@ -244,9 +165,6 @@ void TaskQueuer::queue_emit_option_texts(TaskContext& tc) {
 // ------------------------------------------------------------------------
 
 void TaskQueuer::handle_response(const Message& msg) {
-  // Update the last message.
-  _last_response = msg;
-
   QJsonValue value = msg.value(Message::kValue);
 
   // Note that if the value is an object it gets exploded into its properties.
@@ -293,39 +211,6 @@ void TaskQueuer::handle_info(const Message& msg) {
 }
 
 // ------------------------------------------------------------------------
-// Element Tasks.
-// ------------------------------------------------------------------------
-
-void TaskQueuer::scroll_element_into_view_task() {
-  QJsonObject args;
-  Message req(ChromeRequestType::kScrollElementIntoView,args);
-  send_msg_task(req);
-}
-
-// ------------------------------------------------------------------------
-// Infrastructure Tasks.
-// ------------------------------------------------------------------------
-
-void TaskQueuer::receive_results_task(std::function<void(const std::deque<QJsonObject>&)> receive_results) {
-  receive_results(_last_results);
-  _scheduler->run_next_task();
-}
-
-void TaskQueuer::build_compute_node_task(ComponentDID compute_did, const QJsonObject& params) {
-  std::cerr << "building compute node!!\n";
-  Entity* node = _manipulator->create_browser_node(true, compute_did, params);
-  _manipulator->link_to_closest_node(node);
-  //_manipulator->set_ultimate_targets(node, false);
-  _scheduler->run_next_task();
-}
-
-void TaskQueuer::reset_task() {
-  reset_state();
-  TaskContext tc(_scheduler);
-  queue_open_browser(tc);
-}
-
-// ------------------------------------------------------------------------
 // Wait and Sleep Tasks.
 // ------------------------------------------------------------------------
 
@@ -341,17 +226,6 @@ void TaskQueuer::wait_for_chrome_connection_task() {
 // ------------------------------------------------------------------------
 // Last Results related tasks.
 // ------------------------------------------------------------------------
-
-void TaskQueuer::emit_option_texts_task() {
-  const QJsonObject& last_click = get_last_click_info();
-  QJsonArray vals = last_click.value(Message::kOptionTexts).toArray();
-  QStringList options;
-  for (QJsonArray::const_iterator iter = vals.constBegin(); iter != vals.constEnd(); ++iter) {
-    options.push_back(iter->toString());
-  }
-  emit select_option_texts(options);
-  _scheduler->run_next_task();
-}
 
 void TaskQueuer::cache_results(const QJsonObject& results) {
   _last_results.push_back(results);

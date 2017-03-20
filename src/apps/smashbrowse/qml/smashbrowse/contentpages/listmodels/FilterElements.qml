@@ -46,6 +46,54 @@ ListModel {
     }
     
     ListElement {
+    	letters: "Fc"
+        title: "Find closest element."
+        description: "Find closest element to the specified anchoring elements."
+        script: "browser_recorder.record_find_closest();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Fl"
+        title: "Filter to leftmost elements."
+        description: "Filter the elements to only the leftmost elements."
+        script: "browser_recorder.record_filter_to_leftmost();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Fr"
+        title: "Filter to rightmost elements."
+        description: "Filter the elements to only the rightmost elements."
+        script: "browser_recorder.record_filter_to_rightmost();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Ft"
+        title: "Filter to topmost elements."
+        description: "Filter the elements to only the topmost elements."
+        script: "browser_recorder.record_filter_to_topmost();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Fb"
+        title: "Filter to bottommost elements."
+        description: "Filter the elements to only the bottommost elements."
+        script: "browser_recorder.record_filter_to_bottommost();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Ie"
+        title: "Isolate element."
+        description: "Isolate an element at the given index."
+        script: "browser_recorder.record_isolate_element();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
     	letters: "He"
         title: "Highlight Elements"
         description: "Highlight the elements with a border in the browser."

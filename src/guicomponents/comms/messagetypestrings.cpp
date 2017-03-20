@@ -83,13 +83,13 @@ const char* chrome_request_type_to_string(ChromeRequestType t) {
     case ChromeRequestType::kGetActiveTabTitle: return "kGetActiveTabTitle";
 
     // Element Overlays..
-    case ChromeRequestType::kUpdateElementHighlights: return "kUpdateElement";
-    case ChromeRequestType::kClearElementHighlights: return "kClearElement";
-    case ChromeRequestType::kHighlightElements: return "kSetElement";
+    case ChromeRequestType::kUpdateElementHighlights: return "kUpdateElementHighlights";
+    case ChromeRequestType::kClearElementHighlights: return "kClearElementHighlights";
+    case ChromeRequestType::kHighlightElements: return "kHighlightElements";
 
     // Scroll an element.
     case ChromeRequestType::kScrollElementIntoView: return "kScrollElementIntoView";
-    case ChromeRequestType::kScrollElement: return "kScroll";
+    case ChromeRequestType::kScrollElement: return "kScrollElement";
 
     // Info Request.
     case ChromeRequestType::kGetAllElements: return "kGetAllElements";

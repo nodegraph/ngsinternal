@@ -322,7 +322,7 @@ class BgCommHandler {
             case ChromeRequestType.kClearAllCookies: {
                 let done_clear_all_cookies = () => {
                     // Send response to app.
-                    let response = new ResponseMessage(req.id, true)
+                    let response = new ResponseMessage(req.id, true, {value: true})
                     this.bg_comm.send_to_app(response)
                 }
                 BrowserWrap.clear_all_cookies(done_clear_all_cookies)
@@ -330,7 +330,7 @@ class BgCommHandler {
             case ChromeRequestType.kGetAllCookies: {
                 let done_get_all_cookies = (cookies: chrome.cookies.Cookie[]) => {
                     // Send response to app.
-                    let response = new ResponseMessage(req.id, true, cookies)
+                    let response = new ResponseMessage(req.id, true, {value: cookies})
                     this.bg_comm.send_to_app(response)
                 }
                 BrowserWrap.get_all_cookies(done_get_all_cookies);
@@ -342,7 +342,7 @@ class BgCommHandler {
                     count += 1
                     if (count == cookies.length) {
                         // Send response to app.
-                        let response = new ResponseMessage(req.id, true)
+                        let response = new ResponseMessage(req.id, true, {value: true})
                         this.bg_comm.send_to_app(response)
                     }
                 }
@@ -351,7 +351,7 @@ class BgCommHandler {
             case ChromeRequestType.kGetZoom: {
                 let done_get_zoom = (zoom: number) => {
                     // Send response to app.
-                    let response = new ResponseMessage(req.id, true, { 'zoom': zoom })
+                    let response = new ResponseMessage(req.id, true, { value: zoom })
                     this.bg_comm.send_to_app(response)
                 }
                 BrowserWrap.get_zoom(this.bg_comm.get_current_tab_id(), done_get_zoom);
@@ -359,7 +359,7 @@ class BgCommHandler {
             case ChromeRequestType.kSetZoom: {
                 let done_set_zoom = () => {
                     // Send response to app.
-                    let response = new ResponseMessage(req.id, true, true)
+                    let response = new ResponseMessage(req.id, true, {value: true})
                     this.bg_comm.send_to_app(response)
                 }
                 BrowserWrap.set_zoom(this.bg_comm.get_current_tab_id(), req.args.zoom, done_set_zoom);
@@ -367,16 +367,16 @@ class BgCommHandler {
             case ChromeRequestType.kUpdateCurrentTab: {
                 this.clear_tasks()
                 this.bg_comm.update_current_tab_id()
-                let response = new ResponseMessage(req.id, true, true)
+                let response = new ResponseMessage(req.id, true, {value: true})
                 this.bg_comm.send_to_app(response)
             } break
             case ChromeRequestType.kOpenTab: {
-                //let response = new ResponseMessage(req.id, true, true)
+                //let response = new ResponseMessage(req.id, true, {value: true})
                 //this.bg_comm.send_to_app(response)
                 chrome.tabs.create({'url': 'http://www.google.com'}, 
                     (tab) => {
                         // Tab opened successfully.
-                        let response = new ResponseMessage(req.id, true, true)
+                        let response = new ResponseMessage(req.id, true, {value: true})
                         this.bg_comm.send_to_app(response)
                     });
             } break
@@ -386,7 +386,7 @@ class BgCommHandler {
                         if (tabs.length > 1) {
                             console.log('Error: More than 1 tab is active. Choosing the first one.')
                         }
-                        let response = new ResponseMessage(req.id, true, tabs[0].title)
+                        let response = new ResponseMessage(req.id, true, {value: tabs[0].title})
                         this.bg_comm.send_to_app(response)
                     });
             } break
@@ -397,7 +397,7 @@ class BgCommHandler {
             case ChromeRequestType.kWaitUntilLoaded: {
                 this.clear_tasks()
                 this.queue_wait_until_loaded(() => {
-                    let response = new ResponseMessage(req.id, true, true)
+                    let response = new ResponseMessage(req.id, true, {value: true})
                     this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()
@@ -406,7 +406,7 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.queue_frame_info_sharing()
                 this.queue(() => {
-                    let response = new ResponseMessage(req.id, true, true)
+                    let response = new ResponseMessage(req.id, true, {value: true})
                     this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()
@@ -430,7 +430,7 @@ class BgCommHandler {
                 this.clear_tasks()
                 this.queue_collect_void_from_frames(req)
                 this.queue(() => {
-                    let response = new ResponseMessage(req.id, true, true)
+                    let response = new ResponseMessage(req.id, true, {value: true})
                     this.bg_comm.send_to_app(response)
                 })
                 this.run_next_task()

@@ -49,6 +49,8 @@ const char* Message::kTimeInMilliseconds = "time_in_milliseconds";
 const char* Message::kElementType = "element_type";
 const char* Message::kElements = "elements";
 const char* Message::kClusters = "clusters";
+const char* Message::kAnchorElements = "anchor_elements";
+const char* Message::kElementIndex = "element_index";
 
 const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";
@@ -71,6 +73,8 @@ const char* Message::kMaxAngleDifference = "max_angle_difference";
 
 const char* Message::kScrollDirection = "scroll_direction";
 const char* Message::kDirections = "directions";
+const char* Message::kDirection = "direction";
+
 const char* Message::kAllowInternalElements = "allow_internal_elements";
 
 const char* Message::kMatchCriteria = "match_criteria";

@@ -70,12 +70,32 @@ void BaseScriptNodeCompute::set_context(const QJsonObject& context) {
   // Does nothing if we don't have a group with a context surrounding us.
 }
 
-QJsonObject BaseScriptNodeCompute::get_input() {
+QJsonObject BaseScriptNodeCompute::get_main_input() {
   return _inputs->get_main_input_object();
 }
 
-void BaseScriptNodeCompute::set_output(const QJsonObject& value) {
-  set_main_output(value);
+void BaseScriptNodeCompute::set_main_output(const QJsonObject& value) {
+  Compute::set_main_output(value);
+}
+
+void BaseScriptNodeCompute::post(int post_type, const QString& title, const QJsonValue& value) {
+  // Wrap the value in an object.
+  QJsonObject obj;
+  obj.insert(Message::kValue, value);
+  // Post.
+  _manipulator->send_post_value_signal(post_type, title, obj);
+}
+
+void BaseScriptNodeCompute::expose_to_eval_context(QQmlContext& eval_context) {
+  QJsonObject inputs = _inputs->get_input_values();
+  QJsonObject::iterator iter;
+  for (iter = inputs.begin(); iter != inputs.end(); iter++) {
+    if (iter.key() == Compute::kMainInputName) {
+      continue;
+    }
+    eval_context.setContextProperty(iter.key(), inputs.value(iter.key()));
+  }
+
 }
 
 void BaseScriptNodeCompute::update_wires() {
@@ -98,14 +118,18 @@ bool BaseScriptNodeCompute::update_state() {
   // Create the expression.
 
   // Script prefix.
+  // Note: Ideally we could have used "in" and "out" as the variable names.
+  // but the evaluator doesn't seem to like it. It seems it may already be defined in context.
   QString prefix = "var context = get_context();\n"
-      "var input = get_input();\n"
+      "var input = get_main_input();\n"
       "var output = input;\n";
   // Script suffix.
   QString suffix = "set_context(context);\n"
-      "set_output(output);\n";
+      "set_main_output(output);\n";
   // The full script.
   QString script = prefix + "\n" + _script_body + "\n" + suffix; // The extra \n is for safety, as the user may omit them.
+
+  std::cerr << "evaluating script: " << script.toStdString() << "\n";
   QQmlExpression expr(&eval_context, NULL, script);
 
 

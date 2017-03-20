@@ -56,7 +56,7 @@ declare class RequestMessage extends BaseMessage {
 declare class ResponseMessage extends BaseMessage {
     success: boolean // Whether the app should continue sending more requests in this sequence. False means some unrecoverable error has occured.
     value: any // The return value in response to a previous request.
-    constructor(id: Number, success: boolean, value?: any)
+    constructor(id: Number, success: boolean, value: any)
 }
 
 declare class InfoMessage extends BaseMessage {

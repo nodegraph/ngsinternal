@@ -26,14 +26,14 @@ public class RequestMessage extends BaseMessage {
     	return MessageEnums.WebDriverRequestType.get_enum(obj.get("request").getAsInt());
     }
     
-    void set_args(JsonElement args) {
+    void set_args(JsonObject args) {
     	obj.add("args", args);
     }
     
     // JsonObject is derived from JsonElement.
     // We don't use JsonObject in our args interface because the args can also be a primitie like an int.
-    JsonElement get_args() {
-    	return obj.get("args");
+    JsonObject get_args() {
+    	return obj.get("args").getAsJsonObject();
     }
 
 }

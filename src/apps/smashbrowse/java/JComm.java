@@ -12,6 +12,7 @@ import org.openqa.selenium.Keys;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 
@@ -62,7 +63,9 @@ public class JComm {
 				// Print the stack trace to the standard error stream.
 				e.printStackTrace();
 				// Send a response message containing the error to the standard output stream.
-				ResponseMessage resp = new ResponseMessage(req.get_id(), false, gson.toJsonTree(e.getMessage()));
+				JsonObject results = new JsonObject();
+				results.addProperty("value", e.getMessage());
+				ResponseMessage resp = new ResponseMessage(req.get_id(), false, results);
 		        System.out.println(resp.to_string());
 			}
 		}
@@ -71,41 +74,56 @@ public class JComm {
 
 	}
 	
+	static JsonObject get_first_element(JsonObject args) {
+		JsonObject in = args.getAsJsonObject().get("in").getAsJsonObject();
+		JsonArray elements = in.get("elements").getAsJsonArray();
+		if (elements.size() == 0) {
+			return new JsonObject();
+		}
+		return elements.get(0).getAsJsonObject();
+	}
+	
 	static void handle_request(RequestMessage req) {
+		
+		JsonObject results = new JsonObject();
+		results.addProperty("value", true);
+		
 		MessageEnums.WebDriverRequestType request_type = req.get_request_type();
 		switch (request_type) {
 		
 		case kStartService: {
 			boolean started = web_driver.start_service();
-			ResponseMessage resp = new ResponseMessage(req.get_id(), started, gson.toJsonTree(started));
+			results.addProperty("value", started);
+			ResponseMessage resp = new ResponseMessage(req.get_id(), started, results);
 	        System.out.println(resp.to_string());
 	        break;
 		}
 		
 		case kStopService: {
 			web_driver.stop_service();
-			ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+			ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	        break;
 		}
 		
 		case kIsBrowserOpen: {
 	        boolean open = web_driver.browser_is_open();
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), open, gson.toJsonTree(open));
+			results.addProperty("value", open);
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), open, results);
 	        System.out.println(resp.to_string());
 	        break;
 	    } 
 		
 		case kOpenBrowser: {
 			web_driver.open_browser();
-			ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+			ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 			break;
 		}
 		
 		case kOpenBrowserPost: {
 			web_driver.open_browser_post();
-			ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+			ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 			break;
 		}
@@ -115,14 +133,14 @@ public class JComm {
 	    	if (open) {
 	    		web_driver.close_browser();
 	    	}
-	    	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	    	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	        break;
 	    }
 		
 		case kReleaseBrowser: {
 			web_driver.release_browser();
-			ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+			ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 			break;
 		}
@@ -131,7 +149,7 @@ public class JComm {
 	    	int width = req.get_args().getAsJsonObject().get("width").getAsInt();
 	    	int height = req.get_args().getAsJsonObject().get("height").getAsInt();
 	        web_driver.resize_browser(width, height);
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	        break;
 	    }
@@ -141,7 +159,8 @@ public class JComm {
 	    	JsonObject obj = new JsonObject();
 	    	obj.addProperty("width", d.width);
 	    	obj.addProperty("height", d.height);
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(obj));
+			results.add("value", obj);
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	    	break;
 	    }
@@ -149,28 +168,28 @@ public class JComm {
 	    case kNavigateTo: {
 	    	String url = req.get_args().getAsJsonObject().get("url").getAsString();
 	    	web_driver.navigate_to(url);
-	    	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	    	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	    	System.out.println(resp.to_string());
 	    	break;
 	    }
 	    
 	    case kNavigateBack: {
 	        web_driver.navigate_back();
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	        break;
 	    }
 	    
 	    case kNavigateForward: {
 	        web_driver.navigate_forward();
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	        break;
 	    }
 	    
 	    case kNavigateRefresh: {
 	        web_driver.navigate_refresh();
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	        break;
 	    }
@@ -178,7 +197,8 @@ public class JComm {
 	    case kGetCurrentURL: {
 	        String url = web_driver.get_current_url();
 	        System.err.println("The extracted url: -->" + url + "<--");
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(url));
+			results.addProperty("value", url);
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	        break;
 	    } 
@@ -186,46 +206,48 @@ public class JComm {
 	    case kUpdateCurrentTab: {
 	        web_driver.update_current_tab();
 	        // Todo: Note this message needs to go to the chrome extension as well.
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	        break;
 	    }
 	    
 	    case kDestroyCurrentTab: {
 	        web_driver.destroy_current_tab();
-	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	        ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	        System.out.println(resp.to_string());
 	        break;
 	    }
 	    
 	    case kPerformMouseAction: {
 	    	MessageEnums.MouseActionType mouse_action_type = MessageEnums.MouseActionType.get_enum(req.get_args().getAsJsonObject().get("mouse_action").getAsInt());
-	    	String fe_index_path = req.get_args().getAsJsonObject().get("fe_index_path").getAsString();
-	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
+	    	JsonObject element = get_first_element(req.get_args());
+	    	String fe_index_path = element.get("fe_index_path").getAsString();
+	    	String xpath = element.get("xpath").getAsString();
 	    	JsonObject pos = req.get_args().getAsJsonObject().get("local_mouse_position").getAsJsonObject();
 	    	int local_mouse_position_x = pos.get("x").getAsInt();
 	    	int local_mouse_position_y = pos.get("y").getAsInt();
 	    	switch (mouse_action_type) {
 	            case kSendClick: {
 	                web_driver.click_on_element(fe_index_path, xpath, local_mouse_position_x, local_mouse_position_y, false);
-	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	                System.out.println(resp.to_string());
 	                break;
 	            } 
 	            case kSendCtrlClick: {
 	                web_driver.click_on_element(fe_index_path, xpath, local_mouse_position_x, local_mouse_position_y, true);
-	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	                System.out.println(resp.to_string());
 	                break;
 	            }
 	            case kMouseOver: {
 	                web_driver.mouse_over_element(fe_index_path, xpath, local_mouse_position_x, local_mouse_position_y);
-	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	                System.out.println(resp.to_string());
 	                break;
 	            }
 	            default: {
-	                ResponseMessage resp = new ResponseMessage(req.get_id(), false, gson.toJsonTree("unknown mouse action"));
+	            	results.addProperty("value", "unknown mouse action");
+	                ResponseMessage resp = new ResponseMessage(req.get_id(), false, results);
 	                System.out.println(resp.to_string());
 	                break;
 	            }
@@ -235,24 +257,26 @@ public class JComm {
 	    
 	    case kPerformTextAction: {
 	    	MessageEnums.TextActionType text_action_type = MessageEnums.TextActionType.get_enum(req.get_args().getAsJsonObject().get("text_action").getAsInt());
-	    	String fe_index_path = req.get_args().getAsJsonObject().get("fe_index_path").getAsString();
-	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
+	    	JsonObject element = get_first_element(req.get_args());
+	    	String fe_index_path = element.get("fe_index_path").getAsString();
+	    	String xpath = element.get("xpath").getAsString();
 	        switch (text_action_type) {
 	            case kSendText: {
 	            	String text = req.get_args().getAsJsonObject().get("text").getAsString();
 	            	web_driver.send_text(fe_index_path, xpath, text);
-	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	                System.out.println(resp.to_string());
 	            	break;
 	            }
 	            case kSendEnter: {
 	                web_driver.send_key(fe_index_path, xpath, Keys.RETURN.toString());
-	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	                System.out.println(resp.to_string());
 	                break;
 	            }
 	            default: {
-	                ResponseMessage resp = new ResponseMessage(req.get_id(), false, gson.toJsonTree("unknown text action"));
+	            	results.addProperty("value", "unknown text action");
+	                ResponseMessage resp = new ResponseMessage(req.get_id(), false, results);
 	                System.out.println(resp.to_string());
 	                break;
 	            }
@@ -262,13 +286,14 @@ public class JComm {
 	    
 	    case kPerformElementAction: {
 	    	MessageEnums.ElementActionType element_action_type = MessageEnums.ElementActionType.get_enum(req.get_args().getAsJsonObject().get("element_action").getAsInt());
-	    	String fe_index_path = req.get_args().getAsJsonObject().get("fe_index_path").getAsString();
-	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
+	    	JsonObject element = get_first_element(req.get_args());
+	    	String fe_index_path = element.get("fe_index_path").getAsString();
+	    	String xpath = element.get("xpath").getAsString();
 	        switch (element_action_type) {
 	            case kChooseOption: {
 	            	String option_text = req.get_args().getAsJsonObject().get("option_text").getAsString();
 	                web_driver.choose_option(fe_index_path, xpath, option_text);
-	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	                System.out.println(resp.to_string());
 	                break;
 	            }
@@ -278,12 +303,13 @@ public class JComm {
 //	            	MessageEnums.DirectionType dir = MessageEnums.DirectionType.get_enum(req.get_args().getAsJsonObject().get("scroll_direction").getAsInt());
 //	            	web_driver.switch_to_frame(fe_index_path);
 //	            	web_driver.scroll(dir);
-//	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(true));
+//	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 //	                System.out.println(resp.to_string());
 //	            	break;
 //	            } 
 	            default: {
-	                ResponseMessage resp = new ResponseMessage(req.get_id(), false, gson.toJsonTree("unknown element action"));
+	            	results.addProperty("value", "unknown element action");
+	                ResponseMessage resp = new ResponseMessage(req.get_id(), false, results);
 	                System.out.println(resp.to_string());
 	                break;
 	            }
@@ -293,12 +319,14 @@ public class JComm {
 	    
 	    case kPerformImageAction: {
 	    	MessageEnums.ImageActionType image_action_type = MessageEnums.ImageActionType.get_enum(req.get_args().getAsJsonObject().get("image_action").getAsInt());
-	    	String fe_index_path = req.get_args().getAsJsonObject().get("fe_index_path").getAsString();
-	    	String xpath = req.get_args().getAsJsonObject().get("xpath").getAsString();
+	    	JsonObject element = get_first_element(req.get_args());
+	    	String fe_index_path = element.get("fe_index_path").getAsString();
+	    	String xpath = element.get("xpath").getAsString();
 	    	switch (image_action_type) {
 	            case kGetImageURL: {
 	            	String url = web_driver.get_image_url(fe_index_path, xpath);
-	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(url));
+	            	results.addProperty("value", url);
+	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	                System.out.println(resp.to_string());
 	            	break;
 	            }
@@ -308,7 +336,8 @@ public class JComm {
 	            	String filename = image_url.substring(image_url.lastIndexOf('/') + 1);
 	            	String format = filename.substring(filename.lastIndexOf('.') + 1);
 	            	boolean downloaded = web_driver.download_image(image_url, format, filename);
-	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, gson.toJsonTree(downloaded));
+	            	results.addProperty("value", downloaded);
+	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	                System.out.println(resp.to_string());
 	            	break;
 	            }

@@ -29,8 +29,9 @@ class GUICOMPUTES_EXPORT BaseScriptNodeCompute: public QObject, public Compute  
   // Note that we need to return the json objects by value. Otherwise the js/qml side will get undefined as the value.
   Q_INVOKABLE QJsonObject get_context();
   Q_INVOKABLE void set_context(const QJsonObject& context);
-  Q_INVOKABLE QJsonObject get_input();
-  Q_INVOKABLE void set_output(const QJsonObject& value);
+  Q_INVOKABLE virtual QJsonObject get_main_input();
+  Q_INVOKABLE virtual void set_main_output(const QJsonObject& value);
+  Q_INVOKABLE virtual void post(int post_type, const QString& title, const QJsonValue& value);
 
 protected:
   Dep<ScriptLoopContext> _context;
@@ -40,7 +41,7 @@ protected:
   virtual void update_wires();
   virtual bool update_state();
 
-  virtual void expose_to_eval_context(QQmlContext& context) {}
+  virtual void expose_to_eval_context(QQmlContext& context);
 
   QString _script_body;
 };

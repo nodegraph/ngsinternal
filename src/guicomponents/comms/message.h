@@ -53,6 +53,8 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kElementType;
   static const char* kElements;
   static const char* kClusters;
+  static const char* kAnchorElements;
+  static const char* kElementIndex;
 
   static const char* kTextValues;
   static const char* kImageValues;
@@ -75,6 +77,7 @@ class COMMS_EXPORT Message: public QJsonObject {
 
   static const char* kScrollDirection;
   static const char* kDirections;
+  static const char* kDirection;
 
   static const char* kAllowInternalElements;
 

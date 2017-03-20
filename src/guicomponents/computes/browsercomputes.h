@@ -22,7 +22,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
-  virtual void on_response(const std::deque<QJsonObject>& last_results);
+  virtual void on_results(const std::deque<QJsonObject>& last_results);
   virtual void on_finished(const std::deque<QJsonObject>& last_results);
 
   static void init_hints(QJsonObject& m);
@@ -33,8 +33,8 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  protected:
   // Our state.
   virtual void pre_update_state(TaskContext& tc);
-  virtual void handle_response(TaskContext& tc);
-  virtual void handle_finished(TaskContext& tc);
+  virtual void queue_on_results(TaskContext& tc);
+  virtual void queue_on_finished(TaskContext& tc);
   virtual void post_update_state(TaskContext& tc);
 
   void dump_map(const QJsonObject& inputs) const;
@@ -273,9 +273,6 @@ class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
   static QJsonObject init_hints();
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
-
-  //virtual void receive_chain_state(const QJsonObject& chain_state);
-
  protected:
   virtual bool update_state();
   virtual void post_update_state(TaskContext& tc);
@@ -290,9 +287,15 @@ class GUICOMPUTES_EXPORT ElementScrollCompute: public BrowserCompute {
   static QJsonObject init_hints();
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
+  virtual bool update_state();
+  virtual void post_update_state(TaskContext& tc);
+};
 
-  //virtual void receive_chain_state(const QJsonObject& chain_state);
-
+class GUICOMPUTES_EXPORT ElementScrollIntoViewCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ElementScrollIntoViewCompute);
+  ElementScrollIntoViewCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
   virtual bool update_state();
   virtual void post_update_state(TaskContext& tc);

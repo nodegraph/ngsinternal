@@ -198,7 +198,6 @@ Rectangle {
 
         // Web actions mode.
         task_queuer.show_web_action_menu.connect(web_menu_list_stack_page.on_show_web_action_menu)
-        task_queuer.select_option_texts.connect(web_menu_list_stack_page.on_select_option_texts)
         browser_recorder.web_action_ignored.connect(web_menu_list_stack_page.on_action_ignored)
         
         // Download manager connections.

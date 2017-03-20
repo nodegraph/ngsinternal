@@ -6,23 +6,23 @@ public class ResponseMessage extends BaseMessage {
     	super(obj);
     }
     
-    public ResponseMessage(int id, boolean success) {
+    public ResponseMessage(int id, boolean no_errors) {
         super(id, MessageEnums.MessageType.kResponseMessage);
-        set_success(success);
+        set_no_errors(no_errors);
         set_value(new JsonObject());
     }
     
-    public ResponseMessage(int id, boolean success, JsonElement value) {
+    public ResponseMessage(int id, boolean success, JsonObject value) {
         super(id, MessageEnums.MessageType.kResponseMessage);
-        set_success(success);
+        set_no_errors(success);
         set_value(value);
     }
     
-    void set_success(boolean success) {
+    void set_no_errors(boolean success) {
     	obj.addProperty("success", success);
     }
     
-    boolean get_success() {
+    boolean get_no_errors() {
     	return obj.get("success").getAsBoolean();
     }
     

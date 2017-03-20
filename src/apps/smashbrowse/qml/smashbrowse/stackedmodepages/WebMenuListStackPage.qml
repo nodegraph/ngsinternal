@@ -75,11 +75,8 @@ BaseStackPage{
     }
 
     function on_choose_from_dropdown() {
-    	task_queuer.queue_emit_option_texts()
-    }
-    
-    // Receive option texts from the app worker.
-    function on_select_option_texts(option_texts) {
+    	var last_click_info = task_queuer.get_last_click_info()
+    	var option_texts = last_click_info.option_texts
     	console.log('got option texts: ' + option_texts)
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
         push_page.visible = true

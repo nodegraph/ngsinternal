@@ -13,6 +13,7 @@ class Compute;
 class BaseFactory;
 class TaskQueuer;
 class TaskScheduler;
+class BaseNodeGraphManipulator;
 
 class GUICOMPUTES_EXPORT BrowserRecorder : public QObject, public Component {
 Q_OBJECT
@@ -65,12 +66,18 @@ Q_OBJECT
 
   // Set Element.
   Q_INVOKABLE void record_get_all_elements();
-  Q_INVOKABLE void record_set_element_overlays();
 
   Q_INVOKABLE void record_filter_by_type();
   Q_INVOKABLE void record_filter_by_value();
   Q_INVOKABLE void record_filter_by_position();
   Q_INVOKABLE void record_filter_by_dimensions();
+  Q_INVOKABLE void record_find_closest();
+  Q_INVOKABLE void record_filter_to_leftmost();
+  Q_INVOKABLE void record_filter_to_rightmost();
+  Q_INVOKABLE void record_filter_to_topmost();
+  Q_INVOKABLE void record_filter_to_bottommost();
+
+  Q_INVOKABLE void record_isolate_element();
   Q_INVOKABLE void record_highlight_elements();
 
 
@@ -88,6 +95,7 @@ Q_OBJECT
   Dep<TaskQueuer> _queuer;
   Dep<TaskScheduler> _scheduler;
   Dep<FileModel> _model;
+  Dep<BaseNodeGraphManipulator> _manipulator;
 };
 
 }

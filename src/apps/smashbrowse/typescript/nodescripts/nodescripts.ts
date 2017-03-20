@@ -3,10 +3,13 @@
 // Returns all elements with the specified type and target value.
 // If the target value is empty, then any non empty image or text will be matched.
 // The target value parameter is only used for image and text types.
-function filter_by_type_and_value(elements: IElementInfo[], type: WrapType, target_value: string) {
+function filter_by_type_and_value(elements: IElementInfo[], type: ElementType, target_value: string) {
+    console.log('num elements: ' + elements.length)
+    console.log('elem type: ' + type)
+    console.log('target value: ' + target_value)
     let matches: IElementInfo[] = []
     switch (type) {
-        case WrapType.image: {
+        case ElementType.kImage: {
             for (let e of elements) {
                 if (!target_value) {
                     if (e.image) {
@@ -19,7 +22,7 @@ function filter_by_type_and_value(elements: IElementInfo[], type: WrapType, targ
                 }
             }
         } break
-        case WrapType.text: {
+        case ElementType.kText: {
             for (let e of elements) {
                 if (!target_value) {
                     if (e.text) {
@@ -34,14 +37,14 @@ function filter_by_type_and_value(elements: IElementInfo[], type: WrapType, targ
                 }
             }
         } break
-        case WrapType.input: {
+        case ElementType.kInput: {
             for (let e of elements) {
                 if (e.tag_name == 'input') {
                     matches.push(e)
                 }
             }
         } break
-        case WrapType.select: {
+        case ElementType.kSelect: {
             for (let e of elements) {
                 if (e.tag_name == 'select') {
                     matches.push(e)
@@ -95,6 +98,96 @@ function filter_by_dimensions(elements: IElementInfo[], width: number, height: n
         matches.push(e)
     }
     return matches
+}
+
+function find_closest_to_anchors(elements: IElementInfo[], anchor_elements: IElementInfo[]) {
+    // Determine of centers of the target elements.
+    let anchor_centers: IPoint[] = []
+    for (let anchor of anchor_elements) {
+        let x = (anchor.box.right + anchor.box.left) / 2.0
+        let y = (anchor.box.bottom + anchor.box.top) / 2.0
+        anchor_centers.push({x: x, y: y})
+    }
+
+    // Loop through the input elements to find the closest one to our target elements.
+    let best: IElementInfo = null
+    let best_dist: number = null
+    for (let e of elements) {
+        let x = (e.box.right + e.box.left) / 2.0
+        let y = (e.box.bottom + e.box.top) / 2.0
+        let dist = 0;
+        for (let c of anchor_centers) {
+            dist += Math.sqrt((x-c.x)*(x-c.x) + (y-c.y)*(y-c.y))
+        }
+
+        if (best == null) {
+            best = e;
+            best_dist = dist;
+        } else if (dist < best_dist) {
+            best = e;
+            best_dist = dist;
+        }
+    }
+
+    if (best == null) {
+        return []
+    }
+    return [best]
+}
+
+function find_extremes(elements: IElementInfo[], getter: (info: IElementInfo)=>number, smallest: boolean) {
+    let best: IElementInfo[] = []
+    let best_value: number = null
+    for (let e of elements) {
+        let value = getter(e)
+        if (best_value == null) {
+            best.push(e)
+            best_value = value
+        } else if (smallest) {
+            // This branch is for when we're finding the smallest values.
+            if (value < best_value) {
+                best.length = 0
+                best.push(e);
+                best_value = value;
+            } else if (value == best_value) {
+                best.push(e)
+            }
+        } else {
+            // This branch is for when we're finding the largest values.
+            if (value > best_value) {
+                best.length = 0
+                best.push(e);
+                best_value = value;
+            } else if (value == best_value) {
+                best.push(e)
+            }
+        }
+    }
+    return best
+}
+
+function find_sidemost(elements: IElementInfo[], dir: DirectionType) {
+    switch (dir) {
+        case DirectionType.kUp:
+            return find_extremes(elements, (e: IElementInfo):number =>{return e.box.top}, true)
+        case DirectionType.kDown:
+            return find_extremes(elements, (e: IElementInfo):number =>{return e.box.bottom}, false)
+        case DirectionType.kLeft:
+            return find_extremes(elements, (e: IElementInfo):number =>{return e.box.left}, true)
+        case DirectionType.kRight:
+            return find_extremes(elements, (e: IElementInfo):number =>{return e.box.right}, false)
+        default: {
+            console.log('unknown direction encountered')
+        }
+    }
+    return elements
+}
+
+function isolate_element(elements: IElementInfo[], element_index: number) {
+    if (elements.length > element_index) {
+        return [elements[element_index]]
+    }
+    return elements
 }
 
 

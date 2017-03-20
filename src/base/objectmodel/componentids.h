@@ -248,12 +248,16 @@ COMPONENT_ENTRY2(TextActionCompute, 82)\
 COMPONENT_ENTRY2(PasswordActionCompute, 83)\
 COMPONENT_ENTRY2(ElementActionCompute, 84)\
 COMPONENT_ENTRY2(ElementScrollCompute, 85)\
+COMPONENT_ENTRY2(ElementScrollIntoViewCompute, 86)\
 /* New filtering based architecture. */\
-COMPONENT_ENTRY2(HighlightElementsCompute, 86)\
-COMPONENT_ENTRY2(GetAllElementsCompute, 87)\
-COMPONENT_ENTRY2(FilterByTypeAndValueNodeCompute, 88)\
-COMPONENT_ENTRY2(FilterByPositionNodeCompute, 89)\
-COMPONENT_ENTRY2(FilterByDimensionsNodeCompute, 90)\
+COMPONENT_ENTRY2(HighlightElementsCompute, 87)\
+COMPONENT_ENTRY2(GetAllElementsCompute, 88)\
+COMPONENT_ENTRY2(FilterByTypeAndValueNodeCompute, 89)\
+COMPONENT_ENTRY2(FilterByPositionNodeCompute, 90)\
+COMPONENT_ENTRY2(FilterByDimensionsNodeCompute, 91)\
+COMPONENT_ENTRY2(FindClosestNodeCompute, 92)\
+COMPONENT_ENTRY2(IsolateElementNodeCompute, 93)\
+COMPONENT_ENTRY2(FilterToSideMostNodeCompute, 94)\
 
 // Numbers that are currently unused: closed bounds = [] open bounds = ()
 

@@ -7,7 +7,7 @@
 #include <guicomponents/comms/taskscheduler.h>
 #include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/taskqueuer.h>
-#include <guicomponents/quick/nodegraphmanipulator.h>
+#include <guicomponents/quick/basenodegraphmanipulator.h>
 
 #include <QtCore/QUrl>
 
@@ -26,10 +26,12 @@ BrowserRecorder::BrowserRecorder(Entity* parent)
       Component(parent, kIID(), kDID()),
       _queuer(this),
       _scheduler(this),
-      _model(this) {
+      _model(this),
+      _manipulator(this) {
   get_dep_loader()->register_fixed_dep(_queuer, Path());
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
   get_dep_loader()->register_fixed_dep(_model, Path());
+  get_dep_loader()->register_fixed_dep(_manipulator, Path());
 }
 
 BrowserRecorder::~BrowserRecorder() {
@@ -49,33 +51,34 @@ void BrowserRecorder::initialize_wires() {
     emit web_action_ignored();\
     return;\
   }\
-  /* Create our task context. */\
-  TaskContext tc(_scheduler);\
-
 
 #define finish()
 
 void BrowserRecorder::record_open_browser() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kOpenBrowserCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kOpenBrowserCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_close_browser() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kCloseBrowserCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kCloseBrowserCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_release_browser() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kReleaseBrowserCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kReleaseBrowserCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_is_browser_open() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kIsBrowserOpenCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsBrowserOpenCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -88,43 +91,50 @@ void BrowserRecorder::record_resize_browser() {
   QJsonObject params;
   params.insert(Message::kDimensions, dims);
 
-  _queuer->queue_build_compute_node(tc, ComponentDID::kResizeBrowserCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kResizeBrowserCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_get_browser_size() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kGetBrowserSizeCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kGetBrowserSizeCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_get_browser_title() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kGetActiveTabTitleCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kGetActiveTabTitleCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_destroy_current_tab() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kDestroyCurrentTabCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kDestroyCurrentTabCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_open_tab() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kOpenTabCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kOpenTabCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_accept_save_dialog() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kAcceptSaveDialogCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kAcceptSaveDialogCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_download_video(bool use_current_element) {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kDownloadVideoCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kDownloadVideoCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -139,31 +149,36 @@ void BrowserRecorder::record_navigate_to(const QString& url) {
   QJsonObject params;
   params.insert(Message::kURL, decorated_url);
 
-  _queuer->queue_build_compute_node(tc, ComponentDID::kNavigateToCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kNavigateToCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_navigate_back() {
   start()
-  _queuer->queue_build_compute_node(tc, ComponentDID::kNavigateBackCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kNavigateBackCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_navigate_forward() {
   start()
-  _queuer->queue_build_compute_node(tc, ComponentDID::kNavigateForwardCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kNavigateForwardCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_navigate_refresh() {
   start()
-  _queuer->queue_build_compute_node(tc, ComponentDID::kNavigateRefreshCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kNavigateRefreshCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_get_current_url() {
   start()
-  _queuer->queue_build_compute_node(tc, ComponentDID::kGetCurrentURLCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kGetCurrentURLCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -179,7 +194,8 @@ void BrowserRecorder::record_click() {
     params.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
     params.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendClick));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kMouseActionCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -191,7 +207,8 @@ void BrowserRecorder::record_ctrl_click() {
     params.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
     params.insert(Message::kMouseAction, to_underlying(MouseActionType::kSendCtrlClick));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kMouseActionCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -203,7 +220,8 @@ void BrowserRecorder::record_mouse_over() {
     params.insert(Message::kMouseAction, info.value(Message::kLocalMousePosition));
     params.insert(Message::kMouseAction, to_underlying(MouseActionType::kMouseOver));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kMouseActionCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kMouseActionCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -218,7 +236,8 @@ void BrowserRecorder::record_type_text(const QString& text) {
     params.insert(Message::kText, text);
     params.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kTextActionCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kTextActionCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -228,7 +247,8 @@ void BrowserRecorder::record_type_enter() {
   {
     params.insert(Message::kTextAction, to_underlying(TextActionType::kSendEnter));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kTextActionCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kTextActionCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -239,7 +259,8 @@ void BrowserRecorder::record_type_password(const QString& text) {
     params.insert(Message::kText, text);
     params.insert(Message::kTextAction, to_underlying(TextActionType::kSendText));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kPasswordActionCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kPasswordActionCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -254,7 +275,8 @@ void BrowserRecorder::record_select_from_dropdown(const QString& option_text) {
     params.insert(Message::kElementAction, to_underlying(ElementActionType::kChooseOption));
     params.insert(Message::kOptionText, option_text);
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementActionCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kElementActionCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -268,7 +290,8 @@ void BrowserRecorder::record_scroll_down() {
   {
     params.insert(Message::kScrollDirection, to_underlying(DirectionType::kDown));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kElementScrollCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -278,7 +301,8 @@ void BrowserRecorder::record_scroll_up() {
   {
     params.insert(Message::kScrollDirection, to_underlying(DirectionType::kUp));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kElementScrollCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -288,7 +312,8 @@ void BrowserRecorder::record_scroll_right() {
   {
     params.insert(Message::kScrollDirection, to_underlying(DirectionType::kRight));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kElementScrollCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -298,7 +323,8 @@ void BrowserRecorder::record_scroll_left() {
   {
     params.insert(Message::kScrollDirection, to_underlying(DirectionType::kLeft));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kElementScrollCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kElementScrollCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -307,17 +333,8 @@ void BrowserRecorder::record_scroll_left() {
 // -----------------------------------------------------------------
 void BrowserRecorder::record_get_all_elements() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kGetAllElementsCompute);
-  finish();
-}
-
-void BrowserRecorder::record_set_element_overlays() {
-  start();
-  QJsonObject params;
-  {
-    params.insert(Message::kElementInfo, "");
-  }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kHighlightElementsCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kGetAllElementsCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -360,7 +377,8 @@ void BrowserRecorder::record_filter_by_type() {
     params.insert(Message::kElementType, to_underlying(type));
     params.insert(Message::kTargetValue, "");
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByTypeAndValueNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByTypeAndValueNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -396,7 +414,8 @@ void BrowserRecorder::record_filter_by_value() {
     params.insert(Message::kElementType, to_underlying(type));
     params.insert(Message::kTargetValue, value);
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByTypeAndValueNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByTypeAndValueNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -407,7 +426,8 @@ void BrowserRecorder::record_filter_by_position() {
     const QJsonObject info = _queuer->get_last_click_info();
     params.insert(Message::kGlobalMousePosition, info.value(Message::kGlobalMousePosition));
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByPositionNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByPositionNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
@@ -427,13 +447,73 @@ void BrowserRecorder::record_filter_by_dimensions() {
     params.insert(Message::kWidth, width);
     params.insert(Message::kHeight, height);
   }
-  _queuer->queue_build_compute_node(tc, ComponentDID::kFilterByDimensionsNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByDimensionsNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_find_closest() {
+  start();
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFindClosestNodeCompute);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_filter_to_leftmost() {
+  start();
+  QJsonObject params;
+  {
+    params.insert(Message::kDirection, to_underlying(DirectionType::kLeft));
+  }
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterToSideMostNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_filter_to_rightmost() {
+  start();
+  QJsonObject params;
+  {
+    params.insert(Message::kDirection, to_underlying(DirectionType::kRight));
+  }
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterToSideMostNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_filter_to_topmost() {
+  start();
+  QJsonObject params;
+  {
+    params.insert(Message::kDirection, to_underlying(DirectionType::kUp));
+  }
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterToSideMostNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_filter_to_bottommost() {
+  start();
+  QJsonObject params;
+  {
+    params.insert(Message::kDirection, to_underlying(DirectionType::kDown));
+  }
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterToSideMostNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_isolate_element() {
+  start();
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateElementNodeCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 
 void BrowserRecorder::record_highlight_elements() {
   start();
-  _queuer->queue_build_compute_node(tc, ComponentDID::kHighlightElementsCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kHighlightElementsCompute);
+  _manipulator->link_to_closest_node(node);
   finish();
 }
 

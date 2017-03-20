@@ -26,95 +26,76 @@ Q_OBJECT
  public:
   COMPONENT_ID(TaskQueuer, TaskQueuer)
 
+  static const int kWaitInterval;
+
   explicit TaskQueuer(Entity* parent);
   virtual ~TaskQueuer();
 
+  // Socket Connections.
   Q_INVOKABLE void open();
   Q_INVOKABLE void close();
-  //Q_INVOKABLE bool is_open();
+
+  // Browser.
   Q_INVOKABLE void open_browser();
   Q_INVOKABLE void close_browser();
   Q_INVOKABLE void force_close_browser();
+
+  // Task State.
   Q_INVOKABLE void force_stack_reset();
   Q_INVOKABLE bool is_busy_cleaning();
   Q_INVOKABLE bool current_task_is_cancelable();
   Q_INVOKABLE bool is_waiting_for_response();
 
+  // Web Driver Service.
   Q_INVOKABLE void queue_stop_service();
-  Q_INVOKABLE void queue_emit_option_texts();
 
-  // Handle Incoming messages. Note the same messages are also handled by the AppTaskQueue.
+  // Handle Incoming messages.
   void handle_response(const Message& sm);
   void handle_info(const Message& msg);
-  const Message& get_last_response() const{external(); return _last_response;}
+
+  // Get internal state.
   const QJsonObject& get_last_click_info() const {return _last_click_info;}
   const std::deque<QJsonObject>& get_last_results() const {return _last_results;}
-
-  // Polling Control.
-  // Polling is used to ensure that the browser is open and of the expected dimensions.
-  static const int kPollInterval;
-  static const int kWaitInterval;
-  bool is_polling();
-  void start_polling();
-  void stop_polling();
 
   // ---------------------------------------------------------------------------------
   // Queue Tasks.
   // ---------------------------------------------------------------------------------
 
-  void queue_send_msg(TaskContext& tc, const Message& msg, bool cancelable = true);
+  // Most tasks are about sending messages to the WebDriver or the chrome extension.
+  void queue_send_msg(TaskContext& tc, const Message& msg, bool cancelable = true, const std::string& notes = "send msg");
 
-  // Queue Element Tasks.
-  void queue_scroll_element_into_view(TaskContext& tc);
-
-  // Queue Framework Tasks.
-  void queue_build_compute_node(TaskContext& tc, ComponentDID compute_did, const QJsonObject& params = QJsonObject());
-  void queue_receive_results(TaskContext& tc, std::function<void(const std::deque<QJsonObject>&)> receive_results);
-  void queue_reset(TaskContext& tc);
-
-  // Queue Browser Tasks.
+  // Browser side tasks that are used often from browser nodes.
+  // These could be broken out later.
   void queue_wait_for_chrome_connection(TaskContext& tc);
   void queue_open_browser(TaskContext& tc);
-
   void queue_update_current_tab(TaskContext& tc);
 
-  // Queue Page Content Tasks.
+  // System side tasks. These can be broken out later.
   void queue_wait(TaskContext& tc);
-
-  // Queue other actions.
-  void queue_emit_option_texts(TaskContext& tc); // Used to extract options from dropdowns and emit back to qml.
 
 signals:
   void show_web_action_menu();
   void select_option_texts(QStringList option_texts);
 
  private slots:
-  void on_poll();
   void on_done_wait();
 
  private:
-  void reset_state();
 
   // Socket Messaging Tasks.
   void send_msg_task(Message& msg);
 
-  // Element Tasks.
-  void scroll_element_into_view_task();
-
   // Infrastructure Tasks.
-  void receive_results_task(std::function<void(const std::deque<QJsonObject>&)> on_finished_sequence);
   void start_sequence_task();
   void finished_sequence_task(std::function<void()> on_finished_sequence);
-  void build_compute_node_task(ComponentDID compute_did, const QJsonObject& params);
-  void reset_task();
 
-  // Browser Tasks.
+  // Browser Side Tasks.
   void wait_for_chrome_connection_task();
 
-  // Page Content Tasks.
+  // System Side Tasks.
   void wait_task();
 
-  void emit_option_texts_task();
+  // After tasks finished, their results get cached.
   void cache_results(const QJsonObject& results);
 
   // Our fixed dependencies.
@@ -122,8 +103,7 @@ signals:
   Dep<TaskScheduler> _scheduler;
   Dep<BaseNodeGraphManipulator> _manipulator;
 
-  // Poll timer.
-  QTimer _poll_timer;
+  // Our wait timer.
   QTimer _wait_timer;
 
   // State from the right click in the browser window.
@@ -136,9 +116,6 @@ signals:
 
   // The last query we sent.
   Message _last_query;
-
-  // The last response we got.
-  Message _last_response;
 };
 
 
