@@ -256,8 +256,11 @@ COMPONENT_ENTRY2(FilterByTypeAndValueNodeCompute, 89)\
 COMPONENT_ENTRY2(FilterByPositionNodeCompute, 90)\
 COMPONENT_ENTRY2(FilterByDimensionsNodeCompute, 91)\
 COMPONENT_ENTRY2(FindClosestNodeCompute, 92)\
-COMPONENT_ENTRY2(IsolateElementNodeCompute, 93)\
+COMPONENT_ENTRY2(FilterByIndexNodeCompute, 93)\
 COMPONENT_ENTRY2(FilterToSideMostNodeCompute, 94)\
+COMPONENT_ENTRY2(ExtractPropertyNodeCompute, 95)\
+COMPONENT_ENTRY2(EmbedPropertyNodeCompute, 96)\
+COMPONENT_ENTRY2(ErasePropertyNodeCompute, 97)\
 
 // Numbers that are currently unused: closed bounds = [] open bounds = ()
 

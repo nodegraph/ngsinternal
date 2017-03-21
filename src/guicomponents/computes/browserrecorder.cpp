@@ -503,9 +503,9 @@ void BrowserRecorder::record_filter_to_bottommost() {
   finish();
 }
 
-void BrowserRecorder::record_isolate_element() {
+void BrowserRecorder::record_filter_by_index() {
   start();
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateElementNodeCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByIndexNodeCompute);
   _manipulator->link_to_closest_node(node);
   finish();
 }

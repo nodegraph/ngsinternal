@@ -197,4 +197,106 @@ bool ScriptNodeCompute::update_state() {
   return BaseScriptNodeCompute::update_state();
 }
 
+// ---------------------------------------------------------------------------------------
+
+ExtractPropertyNodeCompute::ExtractPropertyNodeCompute(Entity* entity):
+  BaseScriptNodeCompute(entity, kDID()) {
+}
+
+ExtractPropertyNodeCompute::~ExtractPropertyNodeCompute() {
+}
+
+void ExtractPropertyNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BaseScriptNodeCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "input.value";
+    create_input(Message::kInputExpression, c);
+  }
+}
+
+const QJsonObject ExtractPropertyNodeCompute::_hints = ExtractPropertyNodeCompute::init_hints();
+QJsonObject ExtractPropertyNodeCompute::init_hints() {
+  QJsonObject m = BaseScriptNodeCompute::init_hints();
+  add_hint(m, Message::kInputExpression, GUITypes::HintKey::DescriptionHint, "The expression on our main input from which we copy to the main output's value property.");
+  return m;
+}
+
+bool ExtractPropertyNodeCompute::update_state() {
+  internal();
+  QString input_expr = _inputs->get_input_value(Message::kInputExpression).toString();
+  _script_body = "output.value = " + input_expr + "\n";
+  return BaseScriptNodeCompute::update_state();
+}
+
+// ---------------------------------------------------------------------------------------
+
+EmbedPropertyNodeCompute::EmbedPropertyNodeCompute(Entity* entity):
+  BaseScriptNodeCompute(entity, kDID()) {
+}
+
+EmbedPropertyNodeCompute::~EmbedPropertyNodeCompute() {
+}
+
+void EmbedPropertyNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BaseScriptNodeCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "output.value";
+    create_input(Message::kOutputExpression, c);
+  }
+}
+
+const QJsonObject EmbedPropertyNodeCompute::_hints = EmbedPropertyNodeCompute::init_hints();
+QJsonObject EmbedPropertyNodeCompute::init_hints() {
+  QJsonObject m = BaseScriptNodeCompute::init_hints();
+  add_hint(m, Message::kOutputExpression, GUITypes::HintKey::DescriptionHint, "The expression on our main output to which the main input's value property will be copied.");
+  return m;
+}
+
+bool EmbedPropertyNodeCompute::update_state() {
+  internal();
+  QString output_expr = _inputs->get_input_value(Message::kOutputExpression).toString();
+  _script_body = output_expr + " = input.value\n";
+  return BaseScriptNodeCompute::update_state();
+}
+
+// ---------------------------------------------------------------------------------------
+
+ErasePropertyNodeCompute::ErasePropertyNodeCompute(Entity* entity):
+  BaseScriptNodeCompute(entity, kDID()) {
+}
+
+ErasePropertyNodeCompute::~ErasePropertyNodeCompute() {
+}
+
+void ErasePropertyNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BaseScriptNodeCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "output.value";
+    create_input(Message::kOutputExpression, c);
+  }
+}
+
+const QJsonObject ErasePropertyNodeCompute::_hints = ErasePropertyNodeCompute::init_hints();
+QJsonObject ErasePropertyNodeCompute::init_hints() {
+  QJsonObject m = BaseScriptNodeCompute::init_hints();
+  add_hint(m, Message::kOutputExpression, GUITypes::HintKey::DescriptionHint, "The expression on our main output referring to the property we want to have erased.");
+  return m;
+}
+
+bool ErasePropertyNodeCompute::update_state() {
+  internal();
+  QString output_expr = _inputs->get_input_value(Message::kOutputExpression).toString();
+  _script_body = "delete " + output_expr + "\n";
+  return BaseScriptNodeCompute::update_state();
+}
+
 }

@@ -20,7 +20,6 @@ DownloadManager::DownloadManager(Entity* parent)
       _manipulator(this),
       _license_checker(this),
       _file_model(this),
-      _last_msg_id(-1),
       _num_rows(0) {
   get_dep_loader()->register_fixed_dep(_manipulator, Path());
   get_dep_loader()->register_fixed_dep(_license_checker, Path());
@@ -64,7 +63,7 @@ int DownloadManager::get_num_running() const {
   return count;
 }
 
-void DownloadManager::download_on_the_side(const QString& url) {
+void DownloadManager::download(const QString& url, const QString& download_dir, int max_width, int max_height, int max_filesize) {
   DownloadVideoProcess *p = new_ff DownloadVideoProcess();
 
   // Connect to signals.
@@ -74,30 +73,7 @@ void DownloadManager::download_on_the_side(const QString& url) {
   connect(p, SIGNAL(errored(const QString&)), this, SLOT(on_errored(const QString&)));
 
   // Setup the arguments.
-  p->set_url(url);
-  QString dir = _file_model->get_default_download_dir();
-  p->set_dir(dir);
-
-  // Queue the process.
-  _processes.insert({p->get_id(),p});
-  // Emit queued signal.
-  emit download_queued(p->get_id(), url, dir);
-  // Update our id_to_row.
-  _id_to_row[p->get_id()] = _num_rows++;
-}
-
-void DownloadManager::download(int msg_id, const QJsonObject& args) {
-  _last_msg_id = msg_id;
-  DownloadVideoProcess *p = new_ff DownloadVideoProcess();
-
-  // Connect to signals.
-  connect(p, SIGNAL(started(const QString&)), this, SLOT(on_started(const QString&)));
-  connect(p, SIGNAL(progress(const  QString&)), this, SLOT(on_progress(const  QString&)));
-  connect(p, SIGNAL(finished()), this, SLOT(on_finished()));
-  connect(p, SIGNAL(errored(const QString&)), this, SLOT(on_errored(const QString&)));
-
-  // Setup the arguments.
-  QString path = args[Message::kDirectory].toString();
+  QString path = download_dir;
 
   // Combine the directory parameter with the default donwload directory.
   QDir dir(path);
@@ -109,24 +85,18 @@ void DownloadManager::download(int msg_id, const QJsonObject& args) {
 
   // Setup the download process.
   p->set_dir(path);
-  p->set_url(args[Message::kURL].toString());
-  p->set_max_width(args[Message::kMaxWidth].toInt());
-  p->set_max_height(args[Message::kMaxHeight].toInt());
-  p->set_max_filesize(args[Message::kMaxFilesize].toInt());
+  p->set_url(url);
+  p->set_max_width(max_width);
+  p->set_max_height(max_height);
+  p->set_max_filesize(max_filesize);
 
   // Queue the process.
   _processes.insert({p->get_id(),p});
 
   // Emit queued signal.
-  emit download_queued(p->get_id(), args[Message::kURL].toString(), path);
+  emit download_queued(p->get_id(), url, path);
   // Update our id_to_row.
   _id_to_row[p->get_id()] = _num_rows++;
-
-  // We don't wait for the download to finish.
-  // We send the success response back right away.
-  Message response(ReceiverType::kPlatform, true, true);
-  response.insert(Message::kID, msg_id);
-  _manipulator->receive_message(response.to_string());
 }
 
 int DownloadManager::get_sender_id() const {

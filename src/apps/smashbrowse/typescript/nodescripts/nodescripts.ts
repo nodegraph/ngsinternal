@@ -110,7 +110,7 @@ function filter_by_dimensions(elements: IElementInfo[], width: number, height: n
     return matches
 }
 
-function find_closest_to_anchors(elements: IElementInfo[], anchor_elements: IElementInfo[]) {
+function sort_by_distance_to_anchors(elements: IElementInfo[], anchor_elements: IElementInfo[]) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {
         return []
@@ -129,9 +129,14 @@ function find_closest_to_anchors(elements: IElementInfo[], anchor_elements: IEle
         anchor_centers.push({x: x, y: y})
     }
 
-    // Loop through the input elements to find the closest one to our target elements.
-    let best: IElementInfo = null
-    let best_dist: number = null
+    
+    interface IDist {
+        dist: number
+        elem: IElementInfo
+    }
+
+    // Calculates the distances.
+    let distances: IDist[] = []
     for (let e of elements) {
         let x = (e.box.right + e.box.left) / 2.0
         let y = (e.box.bottom + e.box.top) / 2.0
@@ -139,20 +144,20 @@ function find_closest_to_anchors(elements: IElementInfo[], anchor_elements: IEle
         for (let c of anchor_centers) {
             dist += Math.sqrt((x-c.x)*(x-c.x) + (y-c.y)*(y-c.y))
         }
-
-        if (best == null) {
-            best = e;
-            best_dist = dist;
-        } else if (dist < best_dist) {
-            best = e;
-            best_dist = dist;
-        }
+        distances.push({dist: dist, elem: e})
     }
 
-    if (best == null) {
-        return []
+    // Sort the distances.
+    distances.sort((a: IDist, b: IDist):number => {
+        return a.dist - b.dist
+    })
+
+    // Extract the element infos.
+    let sorted: IElementInfo[] = []
+    for (let d of distances) {
+        sorted.push(d.elem)
     }
-    return [best]
+    return sorted
 }
 
 function find_extremes(elements: IElementInfo[], getter: (info: IElementInfo)=>number, smallest: boolean) {
@@ -213,16 +218,18 @@ function find_sidemost(elements: IElementInfo[], dir: DirectionType) {
     return elements
 }
 
-function isolate_element(elements: IElementInfo[], element_index: number) {
+function filter_by_index(elements: IElementInfo[], start_index: number, num_indices: number) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {
         return []
     }
 
-    if (elements.length > element_index) {
-        return [elements[element_index]]
+    let matches: IElementInfo[] = []
+    let end_index = start_index + num_indices
+    for (let i = start_index; i<end_index && i<elements.length; i++) {
+        matches.push(elements[i])
     }
-    return []
+    return matches
 }
 
 

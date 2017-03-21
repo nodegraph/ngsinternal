@@ -10,6 +10,7 @@
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/computes/messagesender.h>
+#include <guicomponents/computes/downloadmanager.h>
 
 #include <functional>
 
@@ -434,6 +435,12 @@ bool AcceptSaveDialogCompute::update_state(){
   return false;
 }
 
+DownloadVideoCompute::DownloadVideoCompute(Entity* entity):
+    BrowserCompute(entity, kDID()),
+    _download_manager(this) {
+  get_dep_loader()->register_fixed_dep(_download_manager, Path());
+}
+
 void DownloadVideoCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
@@ -472,7 +479,7 @@ const QJsonObject DownloadVideoCompute::_hints = DownloadVideoCompute::init_hint
 QJsonObject DownloadVideoCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
-  add_hint(m, Message::kDirectory, GUITypes::HintKey::DescriptionHint, "The directory to save the video to. Leave empty to use the default directory.");
+  add_hint(m, Message::kDirectory, GUITypes::HintKey::DescriptionHint, "The relative or absolute directory to save the video to. Leave empty to use the default directory.");
   add_hint(m, Message::kMaxWidth, GUITypes::HintKey::DescriptionHint, "The maximum video width (in pixels) to download. Zero will download the largest.");
   add_hint(m, Message::kMaxHeight, GUITypes::HintKey::DescriptionHint, "The maximum video height (in pixels) to download. Zero will download the largest.");
   add_hint(m, Message::kMaxFilesize, GUITypes::HintKey::DescriptionHint, "The maximum video filesize (in megabytes) to download. Zero will download the largest.");
@@ -490,38 +497,40 @@ bool DownloadVideoCompute::update_state(){
   QJsonArray elements = inputs.value(Compute::kMainInputName).toObject().value(Message::kElements).toArray();
 
   if (elements.size() > 0) {
-    for (int i=0; i<elements.size(); ++i) {
-      QJsonObject args;
-      QJsonObject elem = elements[i].toObject();
-      // Note this task uses the URL property even though it is not a paremeter
-      // on the DownloadVideoCompute node. This is so that we can always set it
-      // to the current URL.
-      args.insert(Message::kURL, elem.value(Message::kHREF));
-      args.insert(Message::kDirectory, inputs.value(Message::kDirectory));
-      args.insert(Message::kMaxWidth, inputs.value(Message::kMaxWidth));
-      args.insert(Message::kMaxHeight, inputs.value(Message::kMaxHeight));
-      args.insert(Message::kMaxFilesize, inputs.value(Message::kMaxFilesize));
+    std::cerr << "Downloading from element href links.\n";
 
-      Message req(PlatformRequestType::kDownloadVideo, args);
-      _queuer->queue_send_msg(tc, req);
-    }
+    auto download_from_links = [this, inputs, elements](){
+      for (int i=0; i<elements.size(); ++i) {
+        QJsonObject args;
+        QJsonObject elem = elements[i].toObject();
+
+        QString url = elem.value(Message::kHREF).toString();
+        QString dir = inputs.value(Message::kDirectory).toString();
+        int max_width = inputs.value(Message::kMaxWidth).toInt();
+        int max_height = inputs.value(Message::kMaxHeight).toInt();
+        int max_filesize = inputs.value(Message::kMaxFilesize).toInt();
+        _download_manager->download(url, dir, max_width, max_height, max_filesize);
+      }
+      _scheduler->run_next_task();
+    };
+    _scheduler->queue_task(tc, Task(download_from_links), "download_from_links");
   } else {
-
-    // Set the url chain property to the current url.
+    std::cerr << "Downloading from page.\n";
     Message req(WebDriverRequestType::kGetCurrentURL);
     _queuer->queue_send_msg(tc, req);
 
-    auto download_from_page = [this, &inputs, &tc](){
+    auto download_from_page = [this, inputs](){
       QJsonObject args;
       const std::deque<QJsonObject> &results = _queuer->get_last_results();
-      args.insert(Message::kURL, results.back().value(Message::kValue));
-      args.insert(Message::kDirectory, inputs.value(Message::kDirectory));
-      args.insert(Message::kMaxWidth, inputs.value(Message::kMaxWidth));
-      args.insert(Message::kMaxHeight, inputs.value(Message::kMaxHeight));
-      args.insert(Message::kMaxFilesize, inputs.value(Message::kMaxFilesize));
 
-      Message req(PlatformRequestType::kDownloadVideo, args);
-      _queuer->queue_send_msg(tc, req);
+      QString url = results.back().value(Message::kValue).toString();
+      QString dir = inputs.value(Message::kDirectory).toString();
+      int max_width = inputs.value(Message::kMaxWidth).toInt();
+      int max_height = inputs.value(Message::kMaxHeight).toInt();
+      int max_filesize = inputs.value(Message::kMaxFilesize).toInt();
+      _download_manager->download(url, dir, max_width, max_height, max_filesize);
+
+      _scheduler->run_next_task();
     };
 
     _scheduler->queue_task(tc, Task(download_from_page), "download_from_page");

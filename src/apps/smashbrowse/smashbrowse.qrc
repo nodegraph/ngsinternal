@@ -127,10 +127,6 @@
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsExtract.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/FilterElements.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsFindElementByTraits.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShift.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftAlongRows.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/WebActionsShiftAlongColumns.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformAction.qml</file>
 		<file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformScroll.qml</file>
         

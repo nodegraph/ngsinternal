@@ -46,11 +46,15 @@ const char* Message::kKeys = "keys";
 
 const char* Message::kTimeInMilliseconds = "time_in_milliseconds";
 
+const char* Message::kInputExpression = "input_expression";
+const char* Message::kOutputExpression = "output_expression";
+
 const char* Message::kElementType = "element_type";
 const char* Message::kElements = "elements";
 const char* Message::kClusters = "clusters";
 const char* Message::kAnchorElements = "anchor_elements";
-const char* Message::kElementIndex = "element_index";
+const char* Message::kStartIndex = "start_index";
+const char* Message::kNumIndices = "num_indices";
 
 const char* Message::kTextValues = "text_values";
 const char* Message::kImageValues = "image_values";
@@ -157,7 +161,7 @@ void Message::init_request(ReceiverType receiver_type, int request_type, const Q
   assert(check_contents());
 }
 
-Message::Message(ReceiverType receiver_type, bool success, const QJsonValue& value) {
+Message::Message(ReceiverType receiver_type, bool success, const QJsonObject& value) {
   insert(Message::kID, -1);
   insert(Message::kReceiverType, to_underlying(receiver_type));
   insert(Message::kMessageType, to_underlying(MessageType::kResponseMessage));

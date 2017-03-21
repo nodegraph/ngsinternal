@@ -81,12 +81,12 @@ class GUICOMPUTES_EXPORT FilterToSideMostNodeCompute: public BaseScriptNodeCompu
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
-class GUICOMPUTES_EXPORT IsolateElementNodeCompute: public BaseScriptNodeCompute  {
+class GUICOMPUTES_EXPORT FilterByIndexNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, IsolateElementNodeCompute);
-  IsolateElementNodeCompute(Entity* entity);
-  virtual ~IsolateElementNodeCompute();
+  COMPONENT_ID(Compute, FilterByIndexNodeCompute);
+  FilterByIndexNodeCompute(Entity* entity);
+  virtual ~FilterByIndexNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 

@@ -23,8 +23,5 @@ WebActionsBrowserWindow 1.0 WebActionsBrowserWindow.qml
 WebActionsExtract 1.0 WebActionsExtract.qml
 WebActionsNavigate 1.0 WebActionsNavigate.qml
 FilterElements 1.0 FilterElements.qml
-WebActionsFindElementByTraits 1.0 WebActionsFindElementByTraits.qml
-WebActionsShift 1.0 WebActionsShift.qml
-WebActionsShiftAlongRows 1.0 WebActionsShiftAlongRows.qml
 WebActionsPerformAction 1.0 WebActionsPerformAction.qml
 WebActionsPerformScroll 1.0 WebActionsPerformScroll.qml

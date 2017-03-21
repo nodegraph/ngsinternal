@@ -33,21 +33,47 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Cp"
-        image_url: "qrc:///icons/ic_details_white_48dp.png"
-        title: "Copy Data Node"
-        description: "Copies a property in the data to another location."
-        script: "ng_controller.create_copy_data_node(center_new_nodes);
+    	letters: "Xp"
+        title: "Extract Property Node"
+        description: "Extract a property from within the input data."
+        script: "ng_controller.create_extract_property_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     
     ListElement {
-    	letters: "Er"
-        title: "Erase Data Node"
-        description: "Erases a property in the data."
-        script: "ng_controller.create_erase_data_node(center_new_nodes);
+    	letters: "Mp"
+        title: "Embed Property Node"
+        description: "Embed the value property to another location in the output data."
+        script: "ng_controller.create_embed_property_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
+    
+    ListElement {
+    	letters: "Ep"
+        title: "Erase Property Node"
+        description: "Erase the specified property in the output data."
+        script: "ng_controller.create_erase_property_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
+    
+    //ListElement {
+    //	letters: "Cp"
+    //    image_url: "qrc:///icons/ic_details_white_48dp.png"
+    //    title: "Copy Data Node"
+    //    description: "Copies a property in the data to another location."
+    //    script: "ng_controller.create_copy_data_node(center_new_nodes);
+    //             main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    //}
+    
+    //ListElement {
+    //	letters: "Er"
+    //    title: "Erase Data Node"
+    //    description: "Erases a property in the data."
+    //    script: "ng_controller.create_erase_data_node(center_new_nodes);
+    //             main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    //}
+    
+    
 
 	ListElement {
     	letters: "Po"

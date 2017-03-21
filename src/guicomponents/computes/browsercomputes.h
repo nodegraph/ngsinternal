@@ -13,6 +13,7 @@ class TaskContext;
 class OpenBrowserCompute;
 class InputNodeCompute;
 class MessageSender;
+class DownloadManager;
 
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  public:
@@ -153,7 +154,7 @@ class GUICOMPUTES_EXPORT AcceptSaveDialogCompute: public BrowserCompute {
 class GUICOMPUTES_EXPORT DownloadVideoCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, DownloadVideoCompute);
-  DownloadVideoCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  DownloadVideoCompute(Entity* entity);
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
@@ -161,6 +162,8 @@ class GUICOMPUTES_EXPORT DownloadVideoCompute: public BrowserCompute {
   virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
+
+  Dep<DownloadManager> _download_manager;
 };
 
 class GUICOMPUTES_EXPORT NavigateToCompute: public BrowserCompute {

@@ -116,7 +116,7 @@ BaseListPage {
         	//console.log("drop html: " + drop.html)
         	//console.log("drop keys: " + drop.keys)
             if (drop.hasText) {
-                download_manager.download_on_the_side(drop.text)
+                download_manager.download(drop.text)
                 drop.accept()
             }
         }

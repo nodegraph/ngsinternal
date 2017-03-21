@@ -35,8 +35,7 @@ Q_OBJECT
   int get_num_running() const;
 
   // Actions.
-  Q_INVOKABLE void download_on_the_side(const QString& url);
-  void download(int msg_id, const QJsonObject& args);
+  Q_INVOKABLE void download(const QString& url, const QString& download_dir = "", int max_width = 0, int max_height = 0, int max_filesize = 0);
 
   Q_INVOKABLE void reveal_file(const QString& dir, const QString &filename);
   static QString find_best_matching_file(const QString& dir, const QString& filename);
@@ -69,9 +68,6 @@ signals:
 
   // A map of ids to download video processes.
   std::unordered_map<long long, DownloadVideoProcess*> _processes;
-
-  // Msg id for the last download request.
-  int _last_msg_id;
 
   // Timer to check when is room to start running the next queued process.
   QTimer _poll_timer;

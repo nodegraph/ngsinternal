@@ -50,11 +50,15 @@ class COMMS_EXPORT Message: public QJsonObject {
 
   static const char* kTimeInMilliseconds;
 
+  static const char* kInputExpression;
+  static const char* kOutputExpression;
+
   static const char* kElementType;
   static const char* kElements;
   static const char* kClusters;
   static const char* kAnchorElements;
-  static const char* kElementIndex;
+  static const char* kStartIndex;
+  static const char* kNumIndices;
 
   static const char* kTextValues;
   static const char* kImageValues;
@@ -138,7 +142,7 @@ class COMMS_EXPORT Message: public QJsonObject {
   // Initializes a response message.
   // The success arg is whether the app should continue sending more requests in this sequence.
   // False means some unrecoverable error has occured.
-  Message(ReceiverType receiver_type, bool success, const QJsonValue& value = QJsonValue());
+  Message(ReceiverType receiver_type, bool success, const QJsonObject& value = QJsonObject());
   // Initializes an info message.
   Message(ReceiverType receiver_type, InfoType it, const QJsonValue& value = QJsonValue());
 

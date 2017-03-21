@@ -77,7 +77,7 @@ Q_OBJECT
   Q_INVOKABLE void record_filter_to_topmost();
   Q_INVOKABLE void record_filter_to_bottommost();
 
-  Q_INVOKABLE void record_isolate_element();
+  Q_INVOKABLE void record_filter_by_index();
   Q_INVOKABLE void record_highlight_elements();
 
 

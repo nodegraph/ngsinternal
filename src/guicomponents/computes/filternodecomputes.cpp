@@ -151,7 +151,7 @@ QJsonObject FilterByDimensionsNodeCompute::init_hints() {
 FindClosestNodeCompute::FindClosestNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.elements = find_closest_to_anchors(input.elements, anchor_elements.elements)";
+  _script_body += "output.elements = sort_by_distance_to_anchors(input.elements, anchor_elements.elements)";
 }
 
 FindClosestNodeCompute::~FindClosestNodeCompute() {
@@ -207,30 +207,37 @@ QJsonObject FilterToSideMostNodeCompute::init_hints() {
 
 // ----------------------------------------------------------------------------------------------------
 
-IsolateElementNodeCompute::IsolateElementNodeCompute(Entity* entity):
+FilterByIndexNodeCompute::FilterByIndexNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.elements = isolate_element(input.elements, element_index)";
+  _script_body += "output.elements = filter_by_index(input.elements, start_index, num_indices)";
 }
 
-IsolateElementNodeCompute::~IsolateElementNodeCompute() {
+FilterByIndexNodeCompute::~FilterByIndexNodeCompute() {
 }
 
-void IsolateElementNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+void FilterByIndexNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BaseScriptNodeCompute::create_inputs_outputs(config);
   {
     EntityConfig c = config;
     c.expose_plug = false;
     c.unconnected_value = 0;
-    create_input(Message::kElementIndex, c);
+    create_input(Message::kStartIndex, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 1;
+    create_input(Message::kNumIndices, c);
   }
 }
 
-const QJsonObject IsolateElementNodeCompute::_hints = IsolateElementNodeCompute::init_hints();
-QJsonObject IsolateElementNodeCompute::init_hints() {
+const QJsonObject FilterByIndexNodeCompute::_hints = FilterByIndexNodeCompute::init_hints();
+QJsonObject FilterByIndexNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
-  add_hint(m, Message::kElementIndex, GUITypes::HintKey::DescriptionHint, "The index of the element to isolate from the elements array.");
+  add_hint(m, Message::kStartIndex, GUITypes::HintKey::DescriptionHint, "The starting index from which to extract elements.");
+  add_hint(m, Message::kNumIndices, GUITypes::HintKey::DescriptionHint, "The total number of elements to extract.");
   return m;
 }
 

@@ -23,7 +23,7 @@ void EraseDataNodeCompute::create_inputs_outputs(const EntityConfig& config) {
     EntityConfig c = config;
     c.expose_plug = false;
     c.unconnected_value = kValuePropertyName;
-    create_input("path", c);
+    create_input("data_path", c);
   }
 }
 
@@ -31,7 +31,7 @@ const QJsonObject EraseDataNodeCompute::_hints = EraseDataNodeCompute::init_hint
 QJsonObject EraseDataNodeCompute::init_hints() {
   QJsonObject m;
   add_main_input_hint(m);
-  add_hint(m, "path", GUITypes::HintKey::DescriptionHint, "The path at which to erase data.");
+  add_hint(m, "data_path", GUITypes::HintKey::DescriptionHint, "The path at which to erase data.");
   return m;
 }
 

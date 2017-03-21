@@ -87,9 +87,9 @@ ListModel {
     
     ListElement {
     	letters: "Ie"
-        title: "Isolate element."
-        description: "Isolate an element at the given index."
-        script: "browser_recorder.record_isolate_element();
+        title: "Filter by index."
+        description: "Isolate elements with indices in the specified range."
+        script: "browser_recorder.record_filter_by_index();
         		 main_bar.switch_to_current_mode();"
     }
     
