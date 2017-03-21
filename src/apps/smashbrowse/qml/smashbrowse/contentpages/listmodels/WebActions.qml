@@ -15,7 +15,7 @@ ListModel {
         image_url: "qrc:///icons/ic_picture_in_picture_white_48dp.png"
         title: "Find and Filter Elements..."
         description: "Find and Filter Elements from the current web page."
-        script: "push_by_names('Filter Elements', 'NodeMenuListPage', 'FilterElements')"
+        script: "push_by_names('Filter Elements', 'NodeMenuListPage', 'WebActionsFilterElements')"
     }
     
     ListElement {

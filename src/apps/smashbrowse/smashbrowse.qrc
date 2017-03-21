@@ -126,7 +126,7 @@
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsBrowserWindow.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsExtract.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>
-        <file>qml/smashbrowse/contentpages/listmodels/FilterElements.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsFilterElements.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformAction.qml</file>
 		<file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformScroll.qml</file>
         
