@@ -352,7 +352,7 @@ bool GetBrowserSizeCompute::update_state(){
 //  set_main_output(obj);
 //}
 
-bool GetActiveTabTitleCompute::update_state(){
+bool GetTitleCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
@@ -676,7 +676,7 @@ bool NavigateRefreshCompute::update_state() {
   return false;
 }
 
-bool GetCurrentURLCompute::update_state() {
+bool GetURLCompute::update_state() {
   internal();
   BrowserCompute::update_state();
 

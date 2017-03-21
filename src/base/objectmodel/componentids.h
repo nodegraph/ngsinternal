@@ -242,8 +242,8 @@ COMPONENT_ENTRY2(CloseTabCompute, 75)\
 COMPONENT_ENTRY2(OpenTabCompute, 76)\
 COMPONENT_ENTRY2(AcceptSaveDialogCompute, 77)\
 /* Extract Info From Browser. */\
-COMPONENT_ENTRY2(GetActiveTabTitleCompute, 78)\
-COMPONENT_ENTRY2(GetCurrentURLCompute, 79)\
+COMPONENT_ENTRY2(GetTitleCompute, 78)\
+COMPONENT_ENTRY2(GetURLCompute, 79)\
 COMPONENT_ENTRY2(DownloadVideosCompute, 80)\
 COMPONENT_ENTRY2(DownloadImagesCompute, 98)\
 /* Perform action on Element. */\

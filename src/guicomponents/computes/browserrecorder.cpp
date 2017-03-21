@@ -103,9 +103,9 @@ void BrowserRecorder::record_get_browser_size() {
   finish();
 }
 
-void BrowserRecorder::record_get_browser_title() {
+void BrowserRecorder::record_get_title() {
   start();
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kGetActiveTabTitleCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kGetTitleCompute);
   _manipulator->link_to_closest_node(node);
   finish();
 }
@@ -182,9 +182,9 @@ void BrowserRecorder::record_navigate_refresh() {
   finish();
 }
 
-void BrowserRecorder::record_get_current_url() {
+void BrowserRecorder::record_get_url() {
   start()
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kGetCurrentURLCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kGetURLCompute);
   _manipulator->link_to_closest_node(node);
   finish();
 }

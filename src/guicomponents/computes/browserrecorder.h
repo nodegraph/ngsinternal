@@ -34,7 +34,7 @@ Q_OBJECT
   Q_INVOKABLE void record_is_browser_open();
   Q_INVOKABLE void record_resize_browser();
   Q_INVOKABLE void record_get_browser_size();
-  Q_INVOKABLE void record_get_browser_title();
+  Q_INVOKABLE void record_get_title();
   Q_INVOKABLE void record_destroy_current_tab();
   Q_INVOKABLE void record_open_tab();
   Q_INVOKABLE void record_accept_save_dialog();
@@ -46,7 +46,7 @@ Q_OBJECT
   Q_INVOKABLE void record_navigate_refresh();
   Q_INVOKABLE void record_navigate_back();
   Q_INVOKABLE void record_navigate_forward();
-  Q_INVOKABLE void record_get_current_url();
+  Q_INVOKABLE void record_get_url();
 
   // Record Mouse Actions.
   Q_INVOKABLE void record_click();

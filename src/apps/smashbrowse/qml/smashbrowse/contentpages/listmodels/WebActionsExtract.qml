@@ -28,17 +28,17 @@ ListModel {
 
     ListElement {
         image_url: "qrc:///icons/ic_link_white_48dp.png"
-        title: "Get Current URL"
-        description: "Get current url."
-        script: "browser_recorder.record_get_current_url();
+        title: "Get URL"
+        description: "Get the url of the current tab."
+        script: "browser_recorder.record_get_url();
                  main_bar.switch_to_node_graph();"
     }
     
     ListElement {
         image_url: "qrc:///icons/ic_title_white_48dp.png"
-        title: "Get Current Title"
-        description: "Get Current Title of Browser"
-        script: "browser_recorder.record_get_browser_title();
+        title: "Get Title"
+        description: "Get the title of the current tab."
+        script: "browser_recorder.record_get_title();
                  main_bar.switch_to_node_graph();"
     }
     

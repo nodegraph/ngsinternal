@@ -109,10 +109,10 @@ class GUICOMPUTES_EXPORT GetBrowserSizeCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT GetActiveTabTitleCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT GetTitleCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, GetActiveTabTitleCompute);
-  GetActiveTabTitleCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, GetTitleCompute);
+  GetTitleCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   //virtual void receive_chain_state(const QJsonObject& chain_state);
  protected:
   virtual bool update_state();
@@ -219,10 +219,10 @@ class GUICOMPUTES_EXPORT NavigateRefreshCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT GetCurrentURLCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT GetURLCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, GetCurrentURLCompute);
-  GetCurrentURLCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+  COMPONENT_ID(Compute, GetURLCompute);
+  GetURLCompute(Entity* entity): BrowserCompute(entity, kDID()){}
   //virtual void receive_chain_state(const QJsonObject& chain_state);
  protected:
   virtual bool update_state();
