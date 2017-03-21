@@ -438,13 +438,13 @@ bool AcceptSaveDialogCompute::update_state(){
   return false;
 }
 
-DownloadVideoCompute::DownloadVideoCompute(Entity* entity):
+DownloadVideosCompute::DownloadVideosCompute(Entity* entity):
     BrowserCompute(entity, kDID()),
     _download_manager(this) {
   get_dep_loader()->register_fixed_dep(_download_manager, Path());
 }
 
-void DownloadVideoCompute::create_inputs_outputs(const EntityConfig& config) {
+void DownloadVideosCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
 
@@ -478,8 +478,8 @@ void DownloadVideoCompute::create_inputs_outputs(const EntityConfig& config) {
 
 }
 
-const QJsonObject DownloadVideoCompute::_hints = DownloadVideoCompute::init_hints();
-QJsonObject DownloadVideoCompute::init_hints() {
+const QJsonObject DownloadVideosCompute::_hints = DownloadVideosCompute::init_hints();
+QJsonObject DownloadVideosCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
   add_hint(m, Message::kDirectory, GUITypes::HintKey::DescriptionHint, "The relative or absolute directory to save the video to. Leave empty to use the default directory.");
@@ -489,7 +489,7 @@ QJsonObject DownloadVideoCompute::init_hints() {
   return m;
 }
 
-bool DownloadVideoCompute::update_state(){
+bool DownloadVideosCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
@@ -544,13 +544,13 @@ bool DownloadVideoCompute::update_state(){
   return false;
 }
 
-DownloadImageCompute::DownloadImageCompute(Entity* entity):
+DownloadImagesCompute::DownloadImagesCompute(Entity* entity):
     BrowserCompute(entity, kDID()),
     _file_model(this) {
   get_dep_loader()->register_fixed_dep(_file_model, Path());
 }
 
-void DownloadImageCompute::create_inputs_outputs(const EntityConfig& config) {
+void DownloadImagesCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BrowserCompute::create_inputs_outputs(config);
   {
@@ -561,15 +561,15 @@ void DownloadImageCompute::create_inputs_outputs(const EntityConfig& config) {
   }
 }
 
-const QJsonObject DownloadImageCompute::_hints = DownloadImageCompute::init_hints();
-QJsonObject DownloadImageCompute::init_hints() {
+const QJsonObject DownloadImagesCompute::_hints = DownloadImagesCompute::init_hints();
+QJsonObject DownloadImagesCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
   add_hint(m, Message::kDirectory, GUITypes::HintKey::DescriptionHint, "The relative or absolute directory to save the image to. Leave empty to use the default directory.");
   return m;
 }
 
-bool DownloadImageCompute::update_state(){
+bool DownloadImagesCompute::update_state(){
   internal();
   BrowserCompute::update_state();
 
@@ -588,7 +588,7 @@ bool DownloadImageCompute::update_state(){
   QJsonObject params = get_params();
   // Overwrite the directory param.
   params.insert(Message::kDirectory, path);
-  Message req(WebDriverRequestType::kDownloadImage, params);
+  Message req(WebDriverRequestType::kDownloadImages, params);
   _queuer->queue_send_msg(tc, req, true, "download images");
 
   queue_on_results(tc);

@@ -44,7 +44,7 @@ enum class WebDriverRequestType : int {
   kPerformMouseAction = 17,
   kPerformTextAction = 18,
   kPerformElementAction = 19,
-  kDownloadImage = 20,
+  kDownloadImages = 20,
 };
 
 enum class ChromeRequestType : int {
@@ -87,7 +87,6 @@ enum class ChromeRequestType : int {
 enum class PlatformRequestType : int {
   kUnknownPlatformRequest = 0,
   kAcceptSaveDialog = 1,
-  kDownloadVideo = 2,
 };
 
 enum class FirebaseRequestType : int {

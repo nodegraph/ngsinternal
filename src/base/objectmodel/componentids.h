@@ -223,6 +223,9 @@ COMPONENT_ENTRY2(MergeNodeCompute, 61)\
 COMPONENT_ENTRY2(ScriptNodeCompute, 62)\
 COMPONENT_ENTRY2(PostNodeCompute, 63)\
 COMPONENT_ENTRY2(WaitNodeCompute, 64)\
+COMPONENT_ENTRY2(ExtractPropertyNodeCompute, 95)\
+COMPONENT_ENTRY2(EmbedPropertyNodeCompute, 96)\
+COMPONENT_ENTRY2(ErasePropertyNodeCompute, 97)\
 /* Navigate. */\
 COMPONENT_ENTRY2(NavigateToCompute, 65)\
 COMPONENT_ENTRY2(NavigateBackCompute, 66)\
@@ -241,7 +244,8 @@ COMPONENT_ENTRY2(AcceptSaveDialogCompute, 77)\
 /* Extract Info From Browser. */\
 COMPONENT_ENTRY2(GetActiveTabTitleCompute, 78)\
 COMPONENT_ENTRY2(GetCurrentURLCompute, 79)\
-COMPONENT_ENTRY2(DownloadVideoCompute, 80)\
+COMPONENT_ENTRY2(DownloadVideosCompute, 80)\
+COMPONENT_ENTRY2(DownloadImagesCompute, 98)\
 /* Perform action on Element. */\
 COMPONENT_ENTRY2(MouseActionCompute, 81)\
 COMPONENT_ENTRY2(TextActionCompute, 82)\
@@ -258,12 +262,11 @@ COMPONENT_ENTRY2(FilterByDimensionsNodeCompute, 91)\
 COMPONENT_ENTRY2(FindClosestNodeCompute, 92)\
 COMPONENT_ENTRY2(FilterByIndexNodeCompute, 93)\
 COMPONENT_ENTRY2(FilterToSideMostNodeCompute, 94)\
-COMPONENT_ENTRY2(ExtractPropertyNodeCompute, 95)\
-COMPONENT_ENTRY2(EmbedPropertyNodeCompute, 96)\
-COMPONENT_ENTRY2(ErasePropertyNodeCompute, 97)\
-COMPONENT_ENTRY2(DownloadImageCompute, 98)\
 
-// Numbers that are currently unused: closed bounds = [] open bounds = ()
+
+// Numbers currently in use are: [0-98]
+// Note that in our notation we use [ and ] for closed left and right bounds respectively.
+// We use ( and ) for open left and right bounds respectively.
 
 enum class ComponentDID : size_t {
   COMPONENT_ENTRIES()

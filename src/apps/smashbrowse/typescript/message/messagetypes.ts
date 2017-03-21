@@ -49,7 +49,7 @@ const enum WebDriverRequestType {
   kPerformMouseAction = 17,
   kPerformTextAction = 18,
   kPerformElementAction = 19,
-  kDownloadImage = 20,
+  kDownloadImages = 20,
 }
 
 const enum ChromeRequestType {
@@ -92,7 +92,6 @@ const enum ChromeRequestType {
 const enum PlatformRequestType {
   kUnknownPlatformRequest = 0,
   kAcceptSaveDialog = 1,
-  kDownloadVideo = 2,
 }
 
 const enum FirebaseRequestType {

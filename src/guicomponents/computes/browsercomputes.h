@@ -152,10 +152,10 @@ class GUICOMPUTES_EXPORT AcceptSaveDialogCompute: public BrowserCompute {
   virtual bool update_state();
 };
 
-class GUICOMPUTES_EXPORT DownloadVideoCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT DownloadVideosCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, DownloadVideoCompute);
-  DownloadVideoCompute(Entity* entity);
+  COMPONENT_ID(Compute, DownloadVideosCompute);
+  DownloadVideosCompute(Entity* entity);
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();
@@ -167,10 +167,10 @@ class GUICOMPUTES_EXPORT DownloadVideoCompute: public BrowserCompute {
   Dep<DownloadManager> _download_manager;
 };
 
-class GUICOMPUTES_EXPORT DownloadImageCompute: public BrowserCompute {
+class GUICOMPUTES_EXPORT DownloadImagesCompute: public BrowserCompute {
  public:
-  COMPONENT_ID(Compute, DownloadImageCompute);
-  DownloadImageCompute(Entity* entity);
+  COMPONENT_ID(Compute, DownloadImagesCompute);
+  DownloadImagesCompute(Entity* entity);
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
   static QJsonObject init_hints();

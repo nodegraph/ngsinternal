@@ -62,7 +62,7 @@ static enum WebDriverRequestType {
   kPerformMouseAction(17),
   kPerformTextAction(18),
   kPerformElementAction(19),
-  kDownloadImage(20),;
+  kDownloadImages(20),;
 
   private final int value;
   WebDriverRequestType(final int newValue) {value = newValue;}
@@ -122,8 +122,7 @@ static enum ChromeRequestType {
 
 static enum PlatformRequestType {
   kUnknownPlatformRequest(0),
-  kAcceptSaveDialog(1),
-  kDownloadVideo(2),;
+  kAcceptSaveDialog(1),;
 
   private final int value;
   PlatformRequestType(final int newValue) {value = newValue;}

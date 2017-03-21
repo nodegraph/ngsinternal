@@ -338,7 +338,7 @@ public class JComm {
 	        break;
 	    }
 	    
-	    case kDownloadImage: {
+	    case kDownloadImages: {
 			JsonObject in = req.get_args().getAsJsonObject().get("in").getAsJsonObject();
 			JsonArray elements = in.get("elements").getAsJsonArray();
 			

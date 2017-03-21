@@ -50,7 +50,7 @@ const char* web_driver_request_type_to_string(WebDriverRequestType t) {
     case WebDriverRequestType::kPerformMouseAction: return "kPerformMouseAction";
     case WebDriverRequestType::kPerformTextAction: return "kPerformTextAction";
     case WebDriverRequestType::kPerformElementAction: return "kPerformElementAction";
-    case WebDriverRequestType::kDownloadImage: return "kPerformImageAction";
+    case WebDriverRequestType::kDownloadImages: return "kPerformImageAction";
 
     default: {
       assert(false);
@@ -108,7 +108,6 @@ const char* platform_request_type_to_string(PlatformRequestType t) {
   switch(t) {
     case PlatformRequestType::kUnknownPlatformRequest: return "kUnknownPlatformRequest";
     case PlatformRequestType::kAcceptSaveDialog: return "kAcceptSaveDialog";
-    case PlatformRequestType::kDownloadVideo: return "kDownloadVideo";
     default: {
       assert(false);
     }
