@@ -261,6 +261,7 @@ COMPONENT_ENTRY2(FilterToSideMostNodeCompute, 94)\
 COMPONENT_ENTRY2(ExtractPropertyNodeCompute, 95)\
 COMPONENT_ENTRY2(EmbedPropertyNodeCompute, 96)\
 COMPONENT_ENTRY2(ErasePropertyNodeCompute, 97)\
+COMPONENT_ENTRY2(DownloadImageCompute, 98)\
 
 // Numbers that are currently unused: closed bounds = [] open bounds = ()
 

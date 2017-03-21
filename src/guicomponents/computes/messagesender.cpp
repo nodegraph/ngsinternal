@@ -161,9 +161,6 @@ void MessageSender::send_msg(const Message& msg) const {
     case ReceiverType::kPlatform: {
       if (msg[Message::kRequest].toDouble() == to_underlying(PlatformRequestType::kAcceptSaveDialog)) {
         _accept_save_process->start_process(msg.get_id());
-      } else if (msg[Message::kRequest].toDouble() == to_underlying(PlatformRequestType::kDownloadVideo)) {
-        //std::cerr << "starting to downloading video: " << msg.to_string().toStdString() << "\n";
-        //_download_manager->download(msg.get_id(), msg[Message::kArgs].toObject());
       }
       break;
     }

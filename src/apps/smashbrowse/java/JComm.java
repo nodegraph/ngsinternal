@@ -338,38 +338,54 @@ public class JComm {
 	        break;
 	    }
 	    
-	    case kPerformImageAction: {
-	    	MessageEnums.ImageActionType image_action_type = MessageEnums.ImageActionType.get_enum(req.get_args().getAsJsonObject().get("image_action").getAsInt());
-	    	JsonObject element = get_first_element(req.get_args());
-	    	if (element == null) {
-	    		results.addProperty("value", "There were no elements to perform the image action on.");
-	    		ResponseMessage resp = new ResponseMessage(req.get_id(), false, results);
-	    		System.out.println(resp.to_string());
-	    		break;
-	    	}
-	    	
-	    	String fe_index_path = element.get("fe_index_path").getAsString();
-	    	String xpath = element.get("xpath").getAsString();
-	    	switch (image_action_type) {
-	            case kGetImageURL: {
-	            	String url = web_driver.get_image_url(fe_index_path, xpath);
-	            	results.addProperty("value", url);
-	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
-	                System.out.println(resp.to_string());
-	            	break;
-	            }
-	            case kDownloadImage: {
-	            	String dir = req.get_args().getAsJsonObject().get("download_directory").getAsString();
-	            	String image_url = web_driver.get_image_url(fe_index_path, xpath);
-	            	String filename = image_url.substring(image_url.lastIndexOf('/') + 1);
-	            	String format = filename.substring(filename.lastIndexOf('.') + 1);
-	            	boolean downloaded = web_driver.download_image(image_url, format, filename);
-	            	results.addProperty("value", downloaded);
-	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
-	                System.out.println(resp.to_string());
-	            	break;
-	            }
-	    	}
+	    case kDownloadImage: {
+			JsonObject in = req.get_args().getAsJsonObject().get("in").getAsJsonObject();
+			JsonArray elements = in.get("elements").getAsJsonArray();
+			
+			String directory = req.get_args().getAsJsonObject().get("directory").getAsString();
+			for (int i=0; i<elements.size(); i++) {
+				System.err.println("directory: " + directory);
+				
+				// Get the image url.
+	        	String image_url = elements.get(i).getAsJsonObject().get("image").getAsString();
+	        	if (image_url.isEmpty()) {
+	        		continue;
+	        	}
+	        	
+	        	// String the query parameters from the url.
+	        	int query_pos = image_url.lastIndexOf('?');
+	        	if (query_pos >= 0) {
+	        		image_url = image_url.substring(0, query_pos);
+	        	}
+	        	System.err.println("image_url: " + image_url);
+	        	
+	        	// Get the base filename and extension.
+	        	String base_filename = image_url.substring(image_url.lastIndexOf('/') + 1);
+	        	String format_ext = "png";
+	        	int period_pos = base_filename.lastIndexOf('.');
+	        	if (period_pos >= 0) {
+	        		format_ext = base_filename.substring(period_pos + 1);
+	        		base_filename = base_filename.substring(0, period_pos);
+	        	}
+	        	System.err.println("base_filename:--" + base_filename + "--");
+	        	System.err.println("format_ext:--" + format_ext + "--");
+	        	
+	        	boolean downloaded = web_driver.download_image(image_url, directory, base_filename, format_ext);
+			}
+        	
+        	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
+            System.out.println(resp.to_string());
+        	break;
+        	
+//        	String image_url = element.get("image").getAsString();
+//        	String filename = image_url.substring(image_url.lastIndexOf('/') + 1);
+//        	filename = dir + "/" + filename;
+//        	String format = filename.substring(filename.lastIndexOf('.') + 1);
+//        	boolean downloaded = web_driver.download_image(image_url, format, filename);
+//        	results.addProperty("value", downloaded);
+//        	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
+//            System.out.println(resp.to_string());
+//        	break;
 	    }
 	    
 		}	

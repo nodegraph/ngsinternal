@@ -14,6 +14,7 @@ class OpenBrowserCompute;
 class InputNodeCompute;
 class MessageSender;
 class DownloadManager;
+class FileModel;
 
 class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
  public:
@@ -164,6 +165,20 @@ class GUICOMPUTES_EXPORT DownloadVideoCompute: public BrowserCompute {
   virtual bool update_state();
 
   Dep<DownloadManager> _download_manager;
+};
+
+class GUICOMPUTES_EXPORT DownloadImageCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, DownloadImageCompute);
+  DownloadImageCompute(Entity* entity);
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+ protected:
+  virtual bool update_state();
+  Dep<FileModel> _file_model;
 };
 
 class GUICOMPUTES_EXPORT NavigateToCompute: public BrowserCompute {

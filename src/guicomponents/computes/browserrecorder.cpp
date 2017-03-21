@@ -131,9 +131,16 @@ void BrowserRecorder::record_accept_save_dialog() {
   finish();
 }
 
-void BrowserRecorder::record_download_video(bool use_current_element) {
+void BrowserRecorder::record_download_video() {
   start();
   Entity* node = _manipulator->create_browser_node(true, ComponentDID::kDownloadVideoCompute);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_download_image() {
+  start();
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kDownloadImageCompute);
   _manipulator->link_to_closest_node(node);
   finish();
 }

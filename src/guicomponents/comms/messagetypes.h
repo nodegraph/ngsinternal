@@ -44,7 +44,7 @@ enum class WebDriverRequestType : int {
   kPerformMouseAction = 17,
   kPerformTextAction = 18,
   kPerformElementAction = 19,
-  kPerformImageAction = 20,
+  kDownloadImage = 20,
 };
 
 enum class ChromeRequestType : int {
@@ -114,11 +114,6 @@ enum class TextActionType : int {
 
 enum class ElementActionType : int {
   kChooseOption = 0
-};
-
-enum class ImageActionType : int {
-  kGetImageURL = 0,
-  kDownloadImage = 1,
 };
 
 enum class InfoType : int {

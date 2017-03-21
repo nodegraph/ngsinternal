@@ -4,20 +4,20 @@ ListModel {
 
 	ListElement {
         image_url: "qrc:///icons/ic_wallpaper_white_48dp.png"
-        title: "Download Video From the Current Element"
-        description: "Download the best quality video and audio from the current element's link."
-        script: "browser_recorder.record_download_video(true);
+        title: "Download Video"
+        description: "Download the best quality video and audio from the elements in the main input or on this page."
+        script: "browser_recorder.record_download_video();
                  main_bar.switch_to_node_graph();"
     }
     
-   	ListElement {
+    ListElement {
         image_url: "qrc:///icons/ic_wallpaper_white_48dp.png"
-        title: "Download Video From Page"
-        description: "Download the the best quality video and audio from the current page."
-        script: "browser_recorder.record_download_video(false);
+        title: "Download Image"
+        description: "Download images from the elements in the main input."
+        script: "browser_recorder.record_download_image();
                  main_bar.switch_to_node_graph();"
     }
-
+    
 	ListElement {
         image_url: "qrc:///icons/ic_title_white_48dp.png"
         title: "Get Text"

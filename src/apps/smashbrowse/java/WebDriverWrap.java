@@ -627,19 +627,22 @@ public class WebDriverWrap {
 //    	js.executeScript(script);
 //    }
     
-    String get_image_url(String fe_index_path, String xpath) {
-        return get_element(fe_index_path, xpath).getAttribute("src");
-    }
-    
     // image_url is the url of the image.
     // format is something like "png".
     // filename is the filename to save to on the local computer.
-    boolean download_image(String image_url, String format, String filename) {
+    boolean download_image(String image_url, String directory, String base_filename, String format_ext) {
     	try {
 		    URL url = new URL(image_url);
 		    BufferedImage image = ImageIO.read(url);
-		    return ImageIO.write(image, format, new File(filename));
+		    if (!format_ext.equals("gif") && !format_ext.equals("png") && !format_ext.equals("jpg")) {
+		    	format_ext = "png";
+		    }
+		    File dir = new File(directory);
+		    dir.mkdirs();
+		    File file = File.createTempFile(base_filename, "."+format_ext, dir);
+		    return ImageIO.write(image, format_ext, file);
     	} catch(Exception e) {
+    		System.err.println("Error downloading image: " + e.getMessage());
     	}
     	return false;
     }

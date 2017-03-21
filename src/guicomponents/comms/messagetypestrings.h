@@ -13,7 +13,6 @@ COMMS_EXPORT const char* firebase_request_type_to_string(FirebaseRequestType t);
 COMMS_EXPORT const char* mouse_action_type_to_string(MouseActionType t);
 COMMS_EXPORT const char* text_action_type_to_string(TextActionType t);
 COMMS_EXPORT const char* element_action_type_to_string(ElementActionType t);
-COMMS_EXPORT const char* image_action_type_to_string(ImageActionType t);
 COMMS_EXPORT const char* info_type_to_string(InfoType t);
 COMMS_EXPORT const char* message_type_to_string(MessageType t);
 COMMS_EXPORT const char* element_type_to_string(ElementType t);

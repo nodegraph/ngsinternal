@@ -62,7 +62,7 @@ static enum WebDriverRequestType {
   kPerformMouseAction(17),
   kPerformTextAction(18),
   kPerformElementAction(19),
-  kPerformImageAction(20),;
+  kDownloadImage(20),;
 
   private final int value;
   WebDriverRequestType(final int newValue) {value = newValue;}
@@ -194,20 +194,6 @@ static enum ElementActionType {
   private static HashMap<Integer, ElementActionType> map = new HashMap<Integer, ElementActionType>();
   static {for (ElementActionType e : ElementActionType.values()) {map.put(e.value, e);}}
   public static ElementActionType get_enum(int value) {return map.get(value);}
-}
-
-
-static enum ImageActionType {
-  kGetImageURL(0),
-  kDownloadImage(1),;
-
-  private final int value;
-  ImageActionType(final int newValue) {value = newValue;}
-  public int get_value() {return value;}
-  
-  private static HashMap<Integer, ImageActionType> map = new HashMap<Integer, ImageActionType>();
-  static {for (ImageActionType e : ImageActionType.values()) {map.put(e.value, e);}}
-  public static ImageActionType get_enum(int value) {return map.get(value);}
 }
 
 

@@ -7,12 +7,15 @@
 #include <base/objectmodel/basefactory.h>
 #include <guicomponents/comms/guitypes.h>
 #include <guicomponents/comms/taskscheduler.h>
+#include <guicomponents/comms/filemodel.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/taskqueuer.h>
 #include <guicomponents/computes/messagesender.h>
 #include <guicomponents/computes/downloadmanager.h>
 
 #include <functional>
+
+#include <QtCore/QDir>
 
 namespace ngs {
 
@@ -535,6 +538,58 @@ bool DownloadVideoCompute::update_state(){
 
     _scheduler->queue_task(tc, Task(download_from_page), "download_from_page");
   }
+
+  queue_on_results(tc);
+  queue_end_update(tc);
+  return false;
+}
+
+DownloadImageCompute::DownloadImageCompute(Entity* entity):
+    BrowserCompute(entity, kDID()),
+    _file_model(this) {
+  get_dep_loader()->register_fixed_dep(_file_model, Path());
+}
+
+void DownloadImageCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BrowserCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "";
+    create_input(Message::kDirectory, c);
+  }
+}
+
+const QJsonObject DownloadImageCompute::_hints = DownloadImageCompute::init_hints();
+QJsonObject DownloadImageCompute::init_hints() {
+  QJsonObject m;
+  BrowserCompute::init_hints(m);
+  add_hint(m, Message::kDirectory, GUITypes::HintKey::DescriptionHint, "The relative or absolute directory to save the image to. Leave empty to use the default directory.");
+  return m;
+}
+
+bool DownloadImageCompute::update_state(){
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  queue_start_update(tc);
+
+  // Tweak the download directory on c++ because we don't access to the default download dir on the java side yet.
+  QString path = _inputs->get_input_value(Message::kDirectory).toString();
+  QDir dir(path);
+  if (dir.isRelative()) {
+    path = _file_model->get_default_download_dir() + QDir::separator() + dir.path();
+  } else {
+    path = dir.path();
+  }
+
+  QJsonObject params = get_params();
+  // Overwrite the directory param.
+  params.insert(Message::kDirectory, path);
+  Message req(WebDriverRequestType::kDownloadImage, params);
+  _queuer->queue_send_msg(tc, req, true, "download images");
 
   queue_on_results(tc);
   queue_end_update(tc);
