@@ -53,7 +53,7 @@ const QJsonObject FilterByTypeAndValueNodeCompute::_hints = FilterByTypeAndValue
 QJsonObject FilterByTypeAndValueNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
 
-  add_hint(m, Message::kElementType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::WrapType));
+  add_hint(m, Message::kElementType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::ElementType));
   add_hint(m, Message::kElementType, GUITypes::HintKey::DescriptionHint, "The type of element to match.");
 
   add_hint(m, Message::kTargetValue, GUITypes::HintKey::DescriptionHint, "The image or text value to match. Matches all non empty values if left blank.");

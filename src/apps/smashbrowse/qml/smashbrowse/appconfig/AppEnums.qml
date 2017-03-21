@@ -57,8 +57,8 @@ Item{
             return text_action_type_text[index]
         } else if (enum_hint_value_type == GUITypes.ElementActionType) {
             return element_action_type_text[index]
-        } else if (enum_hint_value_type == GUITypes.WrapType) {
-            return wrap_type_text[index]
+        } else if (enum_hint_value_type == GUITypes.ElementType) {
+            return element_type_text[index]
         } else if (enum_hint_value_type == GUITypes.DirectionType) {
             return direction_type_text[index]
         } else if (enum_hint_value_type == GUITypes.HTTPSendType) {
@@ -90,7 +90,7 @@ Item{
         'scroll'
     ]
 
-    property var wrap_type_text: [
+    property var element_type_text: [
         'text',
         'image',
         'input field',

@@ -38,9 +38,9 @@ BaseEditPage {
         } else if (type == GUITypes.ElementActionType) {
             console.log('edit setting options: ' + app_enums.element_action_type_text)
             cb.set_option_texts(app_enums.element_action_type_text)
-        } else if (type == GUITypes.WrapType) {
-            console.log('edit setting options: ' + app_enums.wrap_type_text)
-            cb.set_option_texts(app_enums.wrap_type_text)
+        } else if (type == GUITypes.ElementType) {
+            console.log('edit setting options: ' + app_enums.element_type_text)
+            cb.set_option_texts(app_enums.element_type_text)
         } else if (type == GUITypes.DirectionType) {
             console.log('edit setting options: ' + app_enums.direction_type_text)
             cb.set_option_texts(app_enums.direction_type_text)

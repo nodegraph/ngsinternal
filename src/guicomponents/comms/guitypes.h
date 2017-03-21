@@ -67,7 +67,7 @@ class COMMS_EXPORT GUITypes : public QObject
       MouseActionType = 3,
       TextActionType = 4,
       ElementActionType = 5,
-      WrapType = 6,
+      ElementType = 6,
       DirectionType = 7,
       HTTPSendType = 8,
       JSType = 9,
