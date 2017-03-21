@@ -46,6 +46,14 @@ ListModel {
     }
     
     ListElement {
+    	letters: "Fv"
+        title: "By Viewport"
+        description: "Filter the elements by whether they are overlapping the current viewport."
+        script: "browser_recorder.record_filter_by_viewport();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
     	letters: "Fc"
         title: "Find closest element."
         description: "Find closest element to the specified anchoring elements."

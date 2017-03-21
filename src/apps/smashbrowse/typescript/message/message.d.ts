@@ -23,6 +23,8 @@ declare interface IElementInfo {
     // Select options values and text.
     option_values: string[]
     option_texts: string[]
+    // True if visible in the viewport. False if scrolled off viewport.
+    in_viewport: boolean
 }
 
 declare interface IClickInfo extends IElementInfo {

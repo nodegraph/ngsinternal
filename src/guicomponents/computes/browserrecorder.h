@@ -72,6 +72,7 @@ Q_OBJECT
   Q_INVOKABLE void record_filter_by_value();
   Q_INVOKABLE void record_filter_by_position();
   Q_INVOKABLE void record_filter_by_dimensions();
+  Q_INVOKABLE void record_filter_by_viewport();
   Q_INVOKABLE void record_find_closest();
   Q_INVOKABLE void record_filter_to_leftmost();
   Q_INVOKABLE void record_filter_to_rightmost();

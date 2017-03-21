@@ -459,6 +459,13 @@ void BrowserRecorder::record_filter_by_dimensions() {
   finish();
 }
 
+void BrowserRecorder::record_filter_by_viewport() {
+  start();
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByViewportNodeCompute);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
 void BrowserRecorder::record_find_closest() {
   start();
   Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFindClosestNodeCompute);

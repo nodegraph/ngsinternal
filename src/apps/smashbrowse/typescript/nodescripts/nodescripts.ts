@@ -110,6 +110,24 @@ function filter_by_dimensions(elements: IElementInfo[], width: number, height: n
     return matches
 }
 
+// Filters elements which are in the current viewport.
+// Note that it simply looks at the in_viewport property,
+// so this applies to the time at which the elements were gathered.
+function filter_by_viewport(elements: IElementInfo[]) {
+    // The elements may be be undefined if the main input to the node is missing the elements property.
+    if (elements == undefined) {
+        return []
+    }
+
+    let matches: IElementInfo[] = []
+    for (let e of elements) {
+        if (e.in_viewport) {
+            matches.push(e)
+        }
+    }
+    return matches
+}
+
 function sort_by_distance_to_anchors(elements: IElementInfo[], anchor_elements: IElementInfo[]) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {

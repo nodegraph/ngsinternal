@@ -148,6 +148,28 @@ QJsonObject FilterByDimensionsNodeCompute::init_hints() {
 
 // ----------------------------------------------------------------------------------------------------
 
+FilterByViewportNodeCompute::FilterByViewportNodeCompute(Entity* entity):
+  BaseScriptNodeCompute(entity, kDID()) {
+  _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
+  _script_body += "output.elements = filter_by_viewport(input.elements)";
+}
+
+FilterByViewportNodeCompute::~FilterByViewportNodeCompute() {
+}
+
+void FilterByViewportNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BaseScriptNodeCompute::create_inputs_outputs(config);
+}
+
+const QJsonObject FilterByViewportNodeCompute::_hints = FilterByViewportNodeCompute::init_hints();
+QJsonObject FilterByViewportNodeCompute::init_hints() {
+  QJsonObject m = BaseScriptNodeCompute::init_hints();
+  return m;
+}
+
+// ----------------------------------------------------------------------------------------------------
+
 FindClosestNodeCompute::FindClosestNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);

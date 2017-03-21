@@ -53,6 +53,20 @@ class GUICOMPUTES_EXPORT FilterByDimensionsNodeCompute: public BaseScriptNodeCom
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
+class GUICOMPUTES_EXPORT FilterByViewportNodeCompute: public BaseScriptNodeCompute  {
+  Q_OBJECT
+ public:
+  COMPONENT_ID(Compute, FilterByViewportNodeCompute);
+  FilterByViewportNodeCompute(Entity* entity);
+  virtual ~FilterByViewportNodeCompute();
+
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+};
+
 class GUICOMPUTES_EXPORT FindClosestNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
