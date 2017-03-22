@@ -263,4 +263,33 @@ QJsonObject FilterByIndexNodeCompute::init_hints() {
   return m;
 }
 
+// ----------------------------------------------------------------------------------------------------
+
+JoinElementsNodeCompute::JoinElementsNodeCompute(Entity* entity):
+  BaseScriptNodeCompute(entity, kDID()) {
+  _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
+  _script_body += "output.elements = join_elements(input.elements, other.elements)";
+}
+
+JoinElementsNodeCompute::~JoinElementsNodeCompute() {
+}
+
+void JoinElementsNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BaseScriptNodeCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = true;
+    c.unconnected_value = QJsonObject();
+    create_input(Message::kOther, c);
+  }
+}
+
+const QJsonObject JoinElementsNodeCompute::_hints = JoinElementsNodeCompute::init_hints();
+QJsonObject JoinElementsNodeCompute::init_hints() {
+  QJsonObject m = BaseScriptNodeCompute::init_hints();
+  add_hint(m, Message::kOther, GUITypes::HintKey::DescriptionHint, "The elements to append to those in our main input.");
+  return m;
+}
+
 }

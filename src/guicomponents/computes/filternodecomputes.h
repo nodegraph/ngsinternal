@@ -109,4 +109,18 @@ class GUICOMPUTES_EXPORT FilterByIndexNodeCompute: public BaseScriptNodeCompute 
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
+class GUICOMPUTES_EXPORT JoinElementsNodeCompute: public BaseScriptNodeCompute  {
+  Q_OBJECT
+ public:
+  COMPONENT_ID(Compute, JoinElementsNodeCompute);
+  JoinElementsNodeCompute(Entity* entity);
+  virtual ~JoinElementsNodeCompute();
+
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+};
+
 }

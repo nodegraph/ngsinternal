@@ -524,6 +524,13 @@ void BrowserRecorder::record_filter_by_index() {
   finish();
 }
 
+void BrowserRecorder::record_join_elements() {
+  start();
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kJoinElementsNodeCompute);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
 void BrowserRecorder::record_highlight_elements() {
   start();
   Entity* node = _manipulator->create_browser_node(true, ComponentDID::kHighlightElementsCompute);

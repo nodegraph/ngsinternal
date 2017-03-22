@@ -22,6 +22,7 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kTargetValue;
 
   static const char* kInfo;
+  static const char* kOther;
 
   static const char* kFWIndexPath;
   static const char* kFEIndexPath;

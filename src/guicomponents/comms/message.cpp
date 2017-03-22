@@ -18,6 +18,7 @@ const char* Message::kValue = "value";
 const char* Message::kTargetValue = "target_value";
 
 const char* Message::kInfo = "info";
+const char* Message::kOther = "other";
 
 const char* Message::kFWIndexPath = "fw_index_path";
 const char* Message::kFEIndexPath = "fe_index_path";

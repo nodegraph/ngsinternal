@@ -15,7 +15,7 @@ ListModel {
     
     ListElement {
     	letters: "Ft"
-        title: "By Type"
+        title: "Filter By Type"
         description: "Filter the elements by the element type."
         script: "browser_recorder.record_filter_by_type();
         		 main_bar.switch_to_current_mode();"
@@ -23,7 +23,7 @@ ListModel {
     
     ListElement {
     	letters: "Fv"
-        title: "By Value"
+        title: "Filter By Value"
         description: "Filter the elements by the element value."
         script: "browser_recorder.record_filter_by_value();
         		 main_bar.switch_to_current_mode();"
@@ -31,7 +31,7 @@ ListModel {
     
     ListElement {
     	letters: "Fp"
-        title: "By Position"
+        title: "Filter By Position"
         description: "Filter the elements by whether they contain the specified point."
         script: "browser_recorder.record_filter_by_position();
         		 main_bar.switch_to_current_mode();"
@@ -39,7 +39,7 @@ ListModel {
     
     ListElement {
     	letters: "Fd"
-        title: "By Dimensions"
+        title: "Filter By Dimensions"
         description: "Filter the elements by their dimensions."
         script: "browser_recorder.record_filter_by_dimensions();
         		 main_bar.switch_to_current_mode();"
@@ -47,57 +47,65 @@ ListModel {
     
     ListElement {
     	letters: "Fv"
-        title: "By Viewport"
+        title: "Filter By Viewport"
         description: "Filter the elements by whether they are overlapping the current viewport."
         script: "browser_recorder.record_filter_by_viewport();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Fc"
-        title: "Find closest element."
-        description: "Find closest element to the specified anchoring elements."
+    	letters: "Sc"
+        title: "Sort By Distance."
+        description: "Sort elements by distance to the specified anchoring elements."
         script: "browser_recorder.record_find_closest();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
     	letters: "Fl"
-        title: "Filter to leftmost elements."
-        description: "Filter the elements to only the leftmost elements."
+        title: "Filter By Left Edge."
+        description: "Filter the elements by whether they lie on the left edge."
         script: "browser_recorder.record_filter_to_leftmost();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
     	letters: "Fr"
-        title: "Filter to rightmost elements."
-        description: "Filter the elements to only the rightmost elements."
+        title: "Filter By Right Edge."
+        description: "Filter the elements by whether they lie on the right edge."
         script: "browser_recorder.record_filter_to_rightmost();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
     	letters: "Ft"
-        title: "Filter to topmost elements."
-        description: "Filter the elements to only the topmost elements."
+        title: "Filter By Top Edge."
+        description: "Filter the elements by whether they lie on the top edge."
         script: "browser_recorder.record_filter_to_topmost();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
     	letters: "Fb"
-        title: "Filter to bottommost elements."
-        description: "Filter the elements to only the bottommost elements."
+        title: "Filter By Bottom Edge."
+        description: "Filter the elements by whether they lie on the bottom edge."
         script: "browser_recorder.record_filter_to_bottommost();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Ie"
-        title: "Filter by index."
+    	letters: "Fi"
+        title: "Filter By Index."
         description: "Isolate elements with indices in the specified range."
         script: "browser_recorder.record_filter_by_index();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Je"
+        title: "Join Elements."
+        description: "Join two sets of elements together."
+        script: "browser_recorder.record_join_elements();
         		 main_bar.switch_to_current_mode();"
     }
     

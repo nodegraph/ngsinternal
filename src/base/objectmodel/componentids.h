@@ -263,8 +263,9 @@ COMPONENT_ENTRY2(FindClosestNodeCompute, 92)\
 COMPONENT_ENTRY2(FilterByIndexNodeCompute, 93)\
 COMPONENT_ENTRY2(FilterToSideMostNodeCompute, 94)\
 COMPONENT_ENTRY2(FilterByViewportNodeCompute, 99)\
+COMPONENT_ENTRY2(JoinElementsNodeCompute, 100)\
 
-// Numbers currently in use are: [0-99]
+// Numbers currently in use are: [0-100]
 // Note that in our notation we use [ and ] for closed left and right bounds respectively.
 // We use ( and ) for open left and right bounds respectively.
 

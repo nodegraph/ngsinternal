@@ -128,6 +128,17 @@ function filter_by_viewport(elements: IElementInfo[]) {
     return matches
 }
 
+function join_elements(elements: IElementInfo[], other: IElementInfo[]) {
+    if ((elements == undefined) && (other == undefined)) {
+        return []
+    } else if (elements == undefined) {
+        return other
+    } else if (other == undefined) {
+        return elements
+    }
+    return elements.concat(other)
+}
+
 function sort_by_distance_to_anchors(elements: IElementInfo[], anchor_elements: IElementInfo[]) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {

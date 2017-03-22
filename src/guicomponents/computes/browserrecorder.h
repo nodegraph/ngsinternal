@@ -80,6 +80,7 @@ Q_OBJECT
   Q_INVOKABLE void record_filter_to_bottommost();
 
   Q_INVOKABLE void record_filter_by_index();
+  Q_INVOKABLE void record_join_elements();
   Q_INVOKABLE void record_highlight_elements();
 
 
