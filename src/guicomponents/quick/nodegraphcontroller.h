@@ -73,6 +73,9 @@ Q_OBJECT
   // Dot nodes.
   Q_INVOKABLE void create_dot_node(bool centered);
 
+  // Error nodes.
+  Q_INVOKABLE void create_error_node(bool centered);
+
   // Data compute nodes.
   Q_INVOKABLE void create_merge_node(bool centered);
 

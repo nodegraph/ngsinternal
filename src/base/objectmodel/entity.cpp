@@ -285,7 +285,7 @@ bool Entity::is_topologically_fixed() const {
       group->get_did() == EntityDID::kUserMacroNodeEntity ||
       group->get_did() == EntityDID::kAppMacroNodeEntity) {
     const std::string& name = get_name();
-    if ((name == kMainInputNodeName) || (name == kMainOutputNodeName) || (name == kMainConditionPathNodeName)) {
+    if ((name == kMainInputNodeName) || (name == kMainOutputNodeName)) {
       return true;
     }
   }

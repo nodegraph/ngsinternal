@@ -214,6 +214,7 @@ COMPONENT_ENTRY2(HTTPCompute, 53)\
 COMPONENT_ENTRY2(MQTTPublishCompute, 54)\
 COMPONENT_ENTRY2(MQTTSubscribeCompute, 55)\
 /* Data Op Computes. */\
+COMPONENT_ENTRY2(ErrorNodeCompute, 101)\
 COMPONENT_ENTRY2(DotNodeCompute, 56)\
 COMPONENT_ENTRY2(MockNodeCompute, 57)\
 COMPONENT_ENTRY2(DataNodeCompute, 58)\
@@ -265,7 +266,7 @@ COMPONENT_ENTRY2(FilterToSideMostNodeCompute, 94)\
 COMPONENT_ENTRY2(FilterByViewportNodeCompute, 99)\
 COMPONENT_ENTRY2(JoinElementsNodeCompute, 100)\
 
-// Numbers currently in use are: [0-100]
+// Numbers currently in use are: [0-101]
 // Note that in our notation we use [ and ] for closed left and right bounds respectively.
 // We use ( and ) for open left and right bounds respectively.
 

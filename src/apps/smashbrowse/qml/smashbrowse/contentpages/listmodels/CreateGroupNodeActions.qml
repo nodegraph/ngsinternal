@@ -13,7 +13,7 @@ ListModel {
     ListElement {
     	letters: "If"
         title: "If Group Node"
-        description: "This group runs when the property at condition_path evaluates to true."
+        description: "This group runs when the value property of the main input evaluates to true."
         script: "ng_controller.create_if_group_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
@@ -21,7 +21,7 @@ ListModel {
     ListElement {
     	letters: "Wl"
         title: "While Group Node"
-        description: "This group runs while the property at condition_path remains true."
+        description: "This group runs while the value property of the main input remains true."
         script: "ng_controller.create_while_group_node(center_new_nodes);
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }

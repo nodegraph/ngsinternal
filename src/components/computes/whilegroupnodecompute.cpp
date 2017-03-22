@@ -47,13 +47,9 @@ bool WhileGroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
 
-  // Get the path to the condition in the in input.
-  QString condition_path_string = _inputs->get_input_string("condition_path");
-  Path condition_path(Path::split_string(condition_path_string.toStdString()));
-
   // Get the value of the condition.
   QJsonObject in_obj = _inputs->get_main_input_object();
-  QJsonValue condition_value = JSONUtils::extract_value(in_obj, condition_path, false);
+  QJsonValue condition_value = in_obj.value("value");
 
   // If the "condition" input is false then we copy the value from the main input to the main output.
   // We set the value to zero for all other outputs.
@@ -106,7 +102,7 @@ bool WhileGroupNodeCompute::update_state() {
 
     // Check the main output value to see if the value at condition_path is false.
     QJsonObject out_obj = get_main_output().toObject();
-    QJsonValue condition_value = JSONUtils::extract_value(out_obj, condition_path, false);
+    QJsonValue condition_value = out_obj.value("value");
     if (!condition_value.toBool()) {
       break;
     }

@@ -48,7 +48,14 @@ ListModel {
                  main_bar.switch_to_mode(app_settings.node_graph_mode);"
     }
     
-
+	ListElement {
+    	image_url: "qrc:///icons/ic_details_white_48dp.png"
+    	letters: "Er"
+        title: "Error Node"
+        description: "When this node is reached an error is raised."
+        script: "ng_controller.create_error_node(center_new_nodes);
+                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+    }
 
 
 }

@@ -148,6 +148,10 @@ void NodeGraphController::create_dot_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kDotNodeEntity);
 }
 
+void NodeGraphController::create_error_node(bool centered) {
+  _manipulator->create_compute_node(centered, EntityDID::kComputeNodeEntity, ComponentDID::kErrorNodeCompute);
+}
+
 // Data compute nodes.
 void NodeGraphController::create_merge_node(bool centered) {
   _manipulator->create_compute_node(centered, EntityDID::kComputeNodeEntity, ComponentDID::kMergeNodeCompute);

@@ -463,13 +463,6 @@ void IfGroupNodeEntity::create_internals(const EntityConfig& config) {
     in->create_internals(config2);
   }
   {
-    InputNodeEntity* condition = new_ff InputNodeEntity(this, kMainConditionPathNodeName);
-    EntityConfig config2;
-    config2.visible = false;
-    config2.unconnected_value = Compute::kValuePropertyName;
-    condition->create_internals(config2);
-  }
-  {
     OutputNodeEntity* out = new_ff OutputNodeEntity(this, kMainOutputNodeName);
     EntityConfig config2;
     config2.visible = true;
@@ -498,13 +491,6 @@ void WhileGroupNodeEntity::create_internals(const EntityConfig& config) {
     config2.visible = true;
     config2.unconnected_value = QJsonObject();
     in->create_internals(config2);
-  }
-  {
-    InputNodeEntity* condition = new_ff InputNodeEntity(this, kMainConditionPathNodeName);
-    EntityConfig config2;
-    config2.visible = false;
-    config2.unconnected_value = Compute::kValuePropertyName;
-    condition->create_internals(config2);
   }
   {
     OutputNodeEntity* out = new_ff OutputNodeEntity(this, kMainOutputNodeName);

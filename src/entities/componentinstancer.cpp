@@ -31,6 +31,7 @@
 #include <components/computes/inputnodecompute.h>
 #include <components/computes/mocknodecompute.h>
 #include <components/computes/outputnodecompute.h>
+#include <components/computes/errornodecompute.h>
 #include <components/computes/dotnodecompute.h>
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>

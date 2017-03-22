@@ -11,7 +11,6 @@ const char* kLinksFolderName = "links";
 // Names for special entities in groups
 const char* kMainInputNodeName = "in";
 const char* kMainOutputNodeName = "out";
-const char* kMainConditionPathNodeName = "condition_path";
 
 const char* get_entity_did_name(EntityDID did) {
   #undef ENTITY_ENTRY1
