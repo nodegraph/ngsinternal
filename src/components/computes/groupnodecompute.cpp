@@ -56,8 +56,10 @@ void GroupNodeCompute::WireUpdater::update_wires() {
         // Note an input node's input is not connected to anything and cleaning it won't start any asynchronous processes.
         inner->get_inputs()->clean_wires();
         inner->get_inputs()->clean_state();
-        // Set the unconnected value;
-        outer->set_unconnected_value(inner->get_inputs()->get_input_value("default_value"));
+        // Skip setting the unconnected value, because this can be dangerous with passwords.
+        // We encountered a case where the password was getting set on the root group,
+        // and there is no way for the user to see or edit these param on the root group.
+        // outer->set_unconnected_value(inner->get_inputs()->get_input_value("default_value"));
       }
       // Make sure the hints match.
       Entity* input_node_description = node->get_entity(Path({".",kInputsFolderName,"description"}));
