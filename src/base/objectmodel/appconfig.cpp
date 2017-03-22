@@ -12,7 +12,8 @@ namespace ngs {
 
 const QString AppConfig::kAppDataDir = "appdata";
 const QString AppConfig::kAppMacrosDir = "appmacros";
-const QString AppConfig::kUserMacrosDir = "usermacros";
+const QString AppConfig::kPublicMacrosDir = "publicmacros";
+const QString AppConfig::kPrivateMacrosDir = "privatemacros";
 
 AppConfig::AppConfig(Entity* parent)
     : Component(parent, kIID(), kDID()) {
@@ -25,20 +26,20 @@ AppConfig::AppConfig(Entity* parent)
       QDir().mkpath(app_data_dir);
     }
   }
-//  // Make sure the macros dir exists.
-//  {
-//    QString app_macros_dir = get_app_macros_dir();
-//    QFileInfo info(app_macros_dir);
-//    if (!info.exists()) {
-//      QDir().mkpath(app_macros_dir);
-//    }
-//  }
-  // Make sure the user macros dir exists.
+  // Make sure the public macros dir exists.
   {
-    QString user_macros_dir = get_user_macros_dir();
-    QFileInfo info(user_macros_dir);
+    QString dir = get_public_macros_dir();
+    QFileInfo info(dir);
     if (!info.exists()) {
-      QDir().mkpath(user_macros_dir);
+      QDir().mkpath(dir);
+    }
+  }
+  // Make sure the private macros dir exists.
+  {
+    QString dir = get_public_macros_dir();
+    QFileInfo info(dir);
+    if (!info.exists()) {
+      QDir().mkpath(dir);
     }
   }
 }
@@ -67,8 +68,12 @@ QString AppConfig::get_app_macros_dir() {
   return dir;
 }
 
-QString AppConfig::get_user_macros_dir() {
-  return get_user_app_dir() + "/" + kUserMacrosDir;
+QString AppConfig::get_public_macros_dir() {
+  return get_user_app_dir() + "/" + kPublicMacrosDir;
+}
+
+QString AppConfig::get_private_macros_dir() {
+  return get_user_app_dir() + "/" + kPrivateMacrosDir;
 }
 
 QString AppConfig::get_fallback_download_dir() {

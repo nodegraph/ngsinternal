@@ -9,16 +9,30 @@ ListModel {
     
     ListElement {
         image_url: "qrc:///icons/ic_file_upload_white_48dp.png"
-        title: "Export a User Macro"
-        description: "Export the current graph as a user macro."
-        script: "file_menu_list_stack_page.on_publish_user_macro();"
+        title: "Export a Private Macro"
+        description: "Export the current graph as an encrypted private macro."
+        script: "file_menu_list_stack_page.on_publish_private_macro();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_file_upload_white_48dp.png"
+        title: "Export a Public Macro"
+        description: "Export the current graph as a non-encrypted public macro."
+        script: "file_menu_list_stack_page.on_publish_public_macro();"
     }
     
     ListElement {
         image_url: "qrc:///icons/ic_file_download_white_48dp.png"
-        title: "Import a User Macro"
-        description: "Import a user macro."
-        script: "file_menu_list_stack_page.on_import_user_macro();"
+        title: "Import a Private Macro"
+        description: "Import an encrypted private macro."
+        script: "file_menu_list_stack_page.on_import_private_macro();"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_file_download_white_48dp.png"
+        title: "Import a Public Macro"
+        description: "Import a non-encrypted public macro."
+        script: "file_menu_list_stack_page.on_import_public_macro();"
     }
     
     ListElement {

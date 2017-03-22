@@ -12,7 +12,8 @@ class OBJECTMODEL_EXPORT AppConfig : public Component {
 
   static const QString kAppDataDir;
   static const QString kAppMacrosDir;
-  static const QString kUserMacrosDir;
+  static const QString kPublicMacrosDir;
+  static const QString kPrivateMacrosDir;
 
   COMPONENT_ID(AppConfig, AppConfig)
 
@@ -24,7 +25,8 @@ class OBJECTMODEL_EXPORT AppConfig : public Component {
   static QString get_user_app_dir(); // The main user directory on the os.
   static QString get_app_data_dir(); // The app data dir inside the user dir.
   static QString get_app_macros_dir(); // The macros dir inside of the app data dir.
-  static QString get_user_macros_dir(); // The user macros dir inside of the app data dir.
+  static QString get_public_macros_dir(); // The public macros dir inside of the app data dir.
+  static QString get_private_macros_dir(); // The public macros dir inside of the app data dir.
   static QString get_fallback_download_dir();
 
   static QString get_smash_browse_url();

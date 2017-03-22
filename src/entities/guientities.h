@@ -195,26 +195,35 @@ class ENTITIES_EXPORT ComputeNodeEntity : public Entity {
   Compute* get_compute();
 };
 
-class ENTITIES_EXPORT UserMacroNodeEntity : public GroupNodeEntity {
+class ENTITIES_EXPORT PublicMacroNodeEntity : public GroupNodeEntity {
  public:
-  ENTITY_ID(UserMacroNodeEntity);
-  UserMacroNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
+  ENTITY_ID(PublicMacroNodeEntity);
+  PublicMacroNodeEntity(Entity* parent, const std::string& name):GroupNodeEntity(parent, name){}
   virtual void create_internals(const EntityConfig& configs = EntityConfig());
 
   virtual void save(SimpleSaver& saver) const;
   virtual void load_helper(SimpleLoader& loader);
   virtual void load_internals(const std::string& macro_name);
- private:
-  virtual std::string get_macro_dir() const;
+ protected:
   std::string _macro_name;
+ private:
+  virtual QByteArray load_file_contents() const;
 };
 
-class ENTITIES_EXPORT AppMacroNodeEntity : public UserMacroNodeEntity {
+class ENTITIES_EXPORT PrivateMacroNodeEntity : public PublicMacroNodeEntity {
+ public:
+  ENTITY_ID(PrivateMacroNodeEntity);
+  PrivateMacroNodeEntity(Entity* parent, const std::string& name):PublicMacroNodeEntity(parent, name){}
+ private:
+  virtual QByteArray load_file_contents() const;
+};
+
+class ENTITIES_EXPORT AppMacroNodeEntity : public PublicMacroNodeEntity {
  public:
   ENTITY_ID(AppMacroNodeEntity);
-  AppMacroNodeEntity(Entity* parent, const std::string& name):UserMacroNodeEntity(parent, name){}
+  AppMacroNodeEntity(Entity* parent, const std::string& name):PublicMacroNodeEntity(parent, name){}
  private:
-  virtual std::string get_macro_dir() const;
+  virtual QByteArray load_file_contents() const;
 };
 
 }

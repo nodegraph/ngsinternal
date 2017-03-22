@@ -43,8 +43,12 @@ void NodeGraphController::surface_from_group() {
   _manipulator->surface_from_group();
 }
 
-void NodeGraphController::create_user_macro_node(bool centered, const QString& macro_name) {
-  _manipulator->create_user_macro_node(centered, macro_name.toStdString());
+void NodeGraphController::create_public_macro_node(bool centered, const QString& macro_name) {
+  _manipulator->create_public_macro_node(centered, macro_name.toStdString());
+}
+
+void NodeGraphController::create_private_macro_node(bool centered, const QString& macro_name) {
+  _manipulator->create_private_macro_node(centered, macro_name.toStdString());
 }
 
 void NodeGraphController::create_app_macro_node(bool centered, const QString& macro_name) {

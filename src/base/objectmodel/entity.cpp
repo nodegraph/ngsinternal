@@ -86,7 +86,8 @@ bool Entity::has_group_related_did() const {
 
 bool Entity::has_macro_related_did() const {
   EntityDID did = get_did();
-  if ((did == EntityDID::kUserMacroNodeEntity)||
+  if ((did == EntityDID::kPublicMacroNodeEntity)||
+      (did == EntityDID::kPrivateMacroNodeEntity)||
       (did == EntityDID::kAppMacroNodeEntity)) {
     return true;
   }
@@ -282,7 +283,8 @@ bool Entity::is_topologically_fixed() const {
       group->get_did() == EntityDID::kWhileGroupNodeEntity ||
       group->get_did() == EntityDID::kBrowserGroupNodeEntity ||
       group->get_did() == EntityDID::kMQTTGroupNodeEntity  ||
-      group->get_did() == EntityDID::kUserMacroNodeEntity ||
+      group->get_did() == EntityDID::kPublicMacroNodeEntity ||
+      group->get_did() == EntityDID::kPrivateMacroNodeEntity ||
       group->get_did() == EntityDID::kAppMacroNodeEntity) {
     const std::string& name = get_name();
     if ((name == kMainInputNodeName) || (name == kMainOutputNodeName)) {

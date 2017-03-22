@@ -55,7 +55,8 @@ class BaseNodeGraphManipulator: public Component {
   // Node creation.
   virtual Entity* create_node(bool centered, EntityDID entity_did, const std::string& name = "", Entity* group_entity=NULL) = 0;
   virtual Entity* create_compute_node(bool centered, EntityDID entity_did, ComponentDID compute_did, const std::string& name = "", Entity* group_entity=NULL) = 0;
-  virtual Entity* create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL) = 0;
+  virtual Entity* create_public_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL) = 0;
+  virtual Entity* create_private_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL) = 0;
   virtual Entity* create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name = "", Entity* group_entity=NULL) = 0;
 
   virtual Entity* create_password_input_node(bool centered, const QJsonValue& value, const std::string& name = "", Entity* group_entity=NULL) = 0;

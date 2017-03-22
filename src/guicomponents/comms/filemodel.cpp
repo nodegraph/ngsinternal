@@ -389,8 +389,8 @@ bool FileModel::save_graph() const {
   return save_graph(_working_row);
 }
 
-bool FileModel::user_macro_exists(const QString& macro_name) const {
-  QString full = AppConfig::get_user_macros_dir() + "/" + macro_name;
+bool FileModel::public_macro_exists(const QString& macro_name) const {
+  QString full = AppConfig::get_public_macros_dir() + "/" + macro_name;
   QFileInfo info(full);
   if (info.exists()) {
     return true;
@@ -398,12 +398,29 @@ bool FileModel::user_macro_exists(const QString& macro_name) const {
   return false;
 }
 
-void FileModel::publish_user_macro(const QString& macro_name) {
+bool FileModel::private_macro_exists(const QString& macro_name) const {
+  QString full = AppConfig::get_private_macros_dir() + "/" + macro_name;
+  QFileInfo info(full);
+  if (info.exists()) {
+    return true;
+  }
+  return false;
+}
+
+void FileModel::publish_public_macro(const QString& macro_name) {
   external();
   if (_working_row < 0) {
     return;
   }
-  publish_user_macro(_working_row, macro_name);
+  publish_public_macro(_working_row, macro_name);
+}
+
+void FileModel::publish_private_macro(const QString& macro_name) {
+  external();
+  if (_working_row < 0) {
+    return;
+  }
+  publish_private_macro(_working_row, macro_name);
 }
 
 void FileModel::load_graph(int row) {
@@ -510,7 +527,7 @@ bool FileModel::save_graph(int row) const{
   return true;
 }
 
-void FileModel::publish_user_macro(int row, const QString& macro_name) {
+void FileModel::publish_public_macro(int row, const QString& macro_name) {
   external();
   _working_row = row;
 
@@ -518,13 +535,27 @@ void FileModel::publish_user_macro(int row, const QString& macro_name) {
   std::string contents = graph_to_string(row);
 
   // The name of the macro file will be the same as the title of graph used to create it.
-  QString full_name = AppConfig::get_user_macros_dir() + "/" + macro_name;
+  QString full_name = AppConfig::get_public_macros_dir() + "/" + macro_name;
 
   // Write out the file without any encryption.
   QFile file(full_name);
   file.open(QIODevice::WriteOnly);
   file.write(contents.c_str(), contents.size());
   file.close();
+}
+
+void FileModel::publish_private_macro(int row, const QString& macro_name) {
+  external();
+  _working_row = row;
+
+  // Save the graph to a string.
+  std::string contents = graph_to_string(row);
+
+  // The name of the macro file will be the same as the title of graph used to create it.
+  QString filename =  "../" + AppConfig::kPrivateMacrosDir + "/" + macro_name;
+
+  // Write file with encryption.
+  _crypto_logic->write_file(filename, contents);
 }
 
 QStringList get_files(const QString& dir_path) {
@@ -538,8 +569,12 @@ QStringList get_files(const QString& dir_path) {
   return filenames;
 }
 
-QStringList FileModel::get_user_macro_names() const {
-  return get_files(AppConfig::get_user_macros_dir());
+QStringList FileModel::get_public_macro_names() const {
+  return get_files(AppConfig::get_public_macros_dir());
+}
+
+QStringList FileModel::get_private_macro_names() const {
+  return get_files(AppConfig::get_private_macros_dir());
 }
 
 QStringList FileModel::get_app_macro_names() const {

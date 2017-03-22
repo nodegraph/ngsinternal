@@ -756,7 +756,7 @@ void OutputLabelEntity::create_internals(const EntityConfig& config) {
   }
 }
 
-void UserMacroNodeEntity::create_internals(const EntityConfig& config) {
+void PublicMacroNodeEntity::create_internals(const EntityConfig& config) {
   // Our components.
   (new_ff GroupNodeCompute(this))->create_inputs_outputs(config);
   new_ff Inputs(this);
@@ -773,7 +773,7 @@ void UserMacroNodeEntity::create_internals(const EntityConfig& config) {
   // Unlike our base class don't create the in and out nodes.
 }
 
-void UserMacroNodeEntity::save(SimpleSaver& saver) const {
+void PublicMacroNodeEntity::save(SimpleSaver& saver) const {
   pre_save(saver);
   save_components(saver);
 
@@ -804,11 +804,7 @@ void UserMacroNodeEntity::save(SimpleSaver& saver) const {
   saver.save(_macro_name);
 }
 
-std::string UserMacroNodeEntity::get_macro_dir() const {
-  return AppConfig::get_user_macros_dir().toStdString();
-}
-
-void UserMacroNodeEntity::load_helper(SimpleLoader& loader) {
+void PublicMacroNodeEntity::load_helper(SimpleLoader& loader) {
   // Load components.
   load_components(loader);
 
@@ -820,17 +816,21 @@ void UserMacroNodeEntity::load_helper(SimpleLoader& loader) {
   load_internals(_macro_name);
 }
 
-void UserMacroNodeEntity::load_internals(const std::string& macro_name) {
+QByteArray PublicMacroNodeEntity::load_file_contents() const {
+  // Read all the bytes from the file.
+  std::string filename = AppConfig::get_public_macros_dir().toStdString() + "/" + _macro_name;
+  QFile file(filename.c_str());
+  file.open(QIODevice::ReadOnly);
+  return file.readAll();
+}
+
+void PublicMacroNodeEntity::load_internals(const std::string& macro_name) {
   _macro_name = macro_name;
+
+  QByteArray contents = load_file_contents();
+
   // Load our other children from the macro file.
   {
-    // Read all the bytes from the file.
-    std::string filename = get_macro_dir() + "/" + _macro_name;
-    QFile file(filename.c_str());
-    file.open(QIODevice::ReadOnly);
-    QByteArray contents = file.readAll();
-    std::cerr << "file size: " << contents.size() << "\n";
-
     // Now load the data into the app root entity.
     Bits* bits = create_bits_from_raw(contents.data(),contents.size());
     SimpleLoader loader2(bits);
@@ -942,8 +942,20 @@ void UserMacroNodeEntity::load_internals(const std::string& macro_name) {
   }
 }
 
-std::string AppMacroNodeEntity::get_macro_dir() const {
-  return AppConfig::get_app_macros_dir().toStdString();
+QByteArray PrivateMacroNodeEntity::load_file_contents() const {
+  // Read all the bytes from the file.
+  std::string filename = "../" + AppConfig::kPrivateMacrosDir.toStdString() + "/" + _macro_name;
+  QMLAppEntity* app = static_cast<QMLAppEntity*>(this->get_app_root());
+  CryptoLogic * crypto_logic = app->get_crypto_logic();
+  return crypto_logic->load_file(filename.c_str());
+}
+
+QByteArray AppMacroNodeEntity::load_file_contents() const {
+  // Read all the bytes from the file.
+  std::string filename = AppConfig::get_app_macros_dir().toStdString() + "/" + _macro_name;
+  QFile file(filename.c_str());
+  file.open(QIODevice::ReadOnly);
+  return file.readAll();
 }
 
 }

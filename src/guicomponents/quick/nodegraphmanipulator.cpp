@@ -446,13 +446,29 @@ Entity* NodeGraphManipulatorImp::create_compute_node(bool centered, EntityDID en
   return e;
 }
 
-Entity* NodeGraphManipulatorImp::create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
+Entity* NodeGraphManipulatorImp::create_public_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
   if (!group_entity) {
     group_entity = _factory->get_current_group();
   }
 
-  Entity* e = _factory->instance_entity(group_entity, EntityDID::kUserMacroNodeEntity, name);
-  UserMacroNodeEntity* u = static_cast<UserMacroNodeEntity*>(e);
+  Entity* e = _factory->instance_entity(group_entity, EntityDID::kPublicMacroNodeEntity, name);
+  PublicMacroNodeEntity* u = static_cast<PublicMacroNodeEntity*>(e);
+  u->load_internals(macro_name);
+  e->create_internals();
+  finish_creating_node(e, centered);
+
+  Dep<GroupNodeCompute> g = get_dep<GroupNodeCompute>(u);
+  g->revert_params_to_defaults();
+  return e;
+}
+
+Entity* NodeGraphManipulatorImp::create_private_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
+  if (!group_entity) {
+    group_entity = _factory->get_current_group();
+  }
+
+  Entity* e = _factory->instance_entity(group_entity, EntityDID::kPrivateMacroNodeEntity, name);
+  PrivateMacroNodeEntity* u = static_cast<PrivateMacroNodeEntity*>(e);
   u->load_internals(macro_name);
   e->create_internals();
   finish_creating_node(e, centered);
@@ -892,9 +908,14 @@ Entity* NodeGraphManipulator::create_compute_node(bool centered, EntityDID entit
   return _imp->create_compute_node(centered, entity_did, compute_did, name, group_entity);
 }
 
-Entity* NodeGraphManipulator::create_user_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
+Entity* NodeGraphManipulator::create_public_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
   // Name the node with the same name as the macro name.
-  return _imp->create_user_macro_node(centered, macro_name, macro_name, group_entity);
+  return _imp->create_public_macro_node(centered, macro_name, macro_name, group_entity);
+}
+
+Entity* NodeGraphManipulator::create_private_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
+  // Name the node with the same name as the macro name.
+  return _imp->create_private_macro_node(centered, macro_name, macro_name, group_entity);
 }
 
 Entity* NodeGraphManipulator::create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {

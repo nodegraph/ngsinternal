@@ -28,7 +28,8 @@ Q_OBJECT
 //  HintKeyWrap hint_key_wrap;
 //  EnumHintValueWrap enum_hint_value_wrap;
 
-  Q_INVOKABLE void create_user_macro_node(bool centered, const QString& macro_name);
+  Q_INVOKABLE void create_public_macro_node(bool centered, const QString& macro_name);
+  Q_INVOKABLE void create_private_macro_node(bool centered, const QString& macro_name);
   Q_INVOKABLE void create_app_macro_node(bool centered, const QString& macro_name);
 
   // Group Nodes Creation.

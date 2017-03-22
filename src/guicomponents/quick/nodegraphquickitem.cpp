@@ -856,8 +856,9 @@ void NodeGraphQuickItem::dive_into_group(const std::string& child_group_name) {
   }
 
   // We don't allow diving into app and user macros.
-  if ( (group_entity->get_did() == EntityDID::kAppMacroNodeEntity) ||
-      (group_entity->get_did() == EntityDID::kUserMacroNodeEntity) ) {
+  if ((group_entity->get_did() == EntityDID::kPublicMacroNodeEntity) ||
+      (group_entity->get_did() == EntityDID::kPrivateMacroNodeEntity) ||
+      (group_entity->get_did() == EntityDID::kAppMacroNodeEntity)) {
     QString msg = "Diving into app and user macros is not permitted.";
     emit set_error_message(msg);
     emit show_error_page();
@@ -951,25 +952,6 @@ bool NodeGraphQuickItem::destroy_graph() {
     return false;
   }
   return true;
-}
-
-bool NodeGraphQuickItem::macro_exists(const QString& macro_name) const{
-  return _file_model->user_macro_exists(macro_name);
-}
-
-void NodeGraphQuickItem::publish(const QString& macro_name) {
-  external();
-  _file_model->publish_user_macro(macro_name);
-}
-
-QStringList NodeGraphQuickItem::get_user_macro_names() const {
-  external();
-  return _file_model->get_user_macro_names();
-}
-
-QStringList NodeGraphQuickItem::get_app_macro_names() const {
-  external();
-  return _file_model->get_app_macro_names();
 }
 
 void NodeGraphQuickItem::load() {

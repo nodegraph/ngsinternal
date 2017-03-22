@@ -25,6 +25,7 @@ Rectangle {
     // Properties.
     property bool create_file: true
     property alias name_field: name_field
+    property bool private_macro: true
 
     // Our Methods.
     function set_title(title) {
@@ -126,16 +127,30 @@ Rectangle {
                     var macro_name = name_field.text
                     
                     if (overwrite_check_box.checked) {
-                    	node_graph_item.publish(macro_name)
+                    	if (private_macro) {
+                    		file_model.publish_private_macro(macro_name)
+                    	} else {
+                    		file_model.publish_public_macro(macro_name)
+                    	}
                     	page.Stack.view.pop_page()
                     } else {
-	                    if (!node_graph_item.macro_exists(macro_name)) {
-	                    	node_graph_item.publish(macro_name)
-	                    	page.Stack.view.pop_page()
-	                    } else {
-	                    	status_label.text = "a macro with the same name exists already"
-	                    	update()
-	                    }
+                    	if (private_macro) {
+                    		if (!file_model.private_macro_exists(macro_name)) {
+                    			file_model.publish_private_macro(macro_name)
+	                    		page.Stack.view.pop_page()
+                    		} else {
+	                    		status_label.text = "a macro with the same name exists already"
+	                    		update()
+	                    	}
+                    	} else {
+                    		if (!file_model.public_macro_exists(macro_name)) {
+                    			file_model.publish_public_macro(macro_name)
+	                    		page.Stack.view.pop_page()
+                    		} else {
+	                    		status_label.text = "a macro with the same name exists already"
+	                    		update()
+	                    	}
+                    	}
                     }
                 }
             }

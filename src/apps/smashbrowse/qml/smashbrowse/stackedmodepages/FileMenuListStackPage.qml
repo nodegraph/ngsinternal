@@ -53,24 +53,49 @@ BaseStackPage{
     	on_finished_with_menu()
     }
     
-    function on_publish_user_macro() {
+    function on_publish_public_macro() {
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/PublishMacroPage.qml", page, {})
         push_page.visible = true
-        push_page.set_title("enter macro details")
+        push_page.private_macro = false
+        push_page.set_title("public macro details")
         stack_view.push_page(push_page)
     }
     
-    function on_import_user_macro() {
+    function on_publish_private_macro() {
+    	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/PublishMacroPage.qml", page, {})
+        push_page.visible = true
+        push_page.private_macro = true
+        push_page.set_title("private macro details")
+        stack_view.push_page(push_page)
+    }
+    
+    function on_import_public_macro() {
     	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
         push_page.visible = true
-        push_page.set_title("select a user macro")
+        push_page.set_title("select a public macro")
         push_page.callback = function(option_text) {
         		if (option_text != "") {
-        			ng_controller.create_user_macro_node(true, option_text)
+        			ng_controller.create_public_macro_node(true, option_text)
         		}
         		main_bar.switch_to_current_mode()
         	}
-        var macro_names = node_graph_item.get_user_macro_names()
+        var macro_names = file_model.get_public_macro_names()
+        push_page.set_option_texts(macro_names)
+        stack_view.push_page(push_page)
+        visible = true
+    }
+    
+    function on_import_private_macro() {
+    	var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/enterdatapages/SelectDropdownPage.qml", page, {})
+        push_page.visible = true
+        push_page.set_title("select a private macro")
+        push_page.callback = function(option_text) {
+        		if (option_text != "") {
+        			ng_controller.create_private_macro_node(true, option_text)
+        		}
+        		main_bar.switch_to_current_mode()
+        	}
+        var macro_names = file_model.get_private_macro_names()
         push_page.set_option_texts(macro_names)
         stack_view.push_page(push_page)
         visible = true
@@ -86,7 +111,7 @@ BaseStackPage{
         		}
         		main_bar.switch_to_current_mode()
         	}
-        var macro_names = node_graph_item.get_app_macro_names()
+        var macro_names = file_model.get_app_macro_names()
         push_page.set_option_texts(macro_names)
         stack_view.push_page(push_page)
         visible = true

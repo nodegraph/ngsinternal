@@ -124,7 +124,7 @@ std::string CryptoLogic::decrypt_data(const std::string& encrypted_data) const {
 void CryptoLogic::_write_file(const QString& filename, const std::string& data, bool encrypt) const {
   external();
   QString full_name = get_prefixed_file(filename);
-  //std::cerr << "saving to file: " << full_name.toStdString() << "\n";
+  std::cerr << "saving to encypted file: " << full_name.toStdString() << "\n";
 
   QFile file(full_name);
   file.open(QIODevice::WriteOnly);

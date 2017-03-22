@@ -87,13 +87,6 @@ Q_OBJECT
   Q_INVOKABLE bool destroy_graph();
   Q_INVOKABLE void load();
 
-  // Macros.
-  Q_INVOKABLE bool macro_exists(const QString& macro_name) const;
-  Q_INVOKABLE void publish(const QString& macro_name);
-  Q_INVOKABLE QStringList get_user_macro_names() const;
-  Q_INVOKABLE QStringList get_app_macro_names() const;
-
-
   // Copy and Paste.
   Q_INVOKABLE void copy();
   Q_INVOKABLE void cut();
