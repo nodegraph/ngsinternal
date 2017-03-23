@@ -26,7 +26,7 @@ namespace ngs {
 IsolateByTypeAndValueNodeCompute::IsolateByTypeAndValueNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.elements = filter_by_type_and_value(input.elements, element_type, target_value)\n";
+  _script_body += "output.elements = isolate_by_type_and_value(input.elements, element_type, target_value)\n";
 }
 
 IsolateByTypeAndValueNodeCompute::~IsolateByTypeAndValueNodeCompute() {
@@ -65,7 +65,7 @@ QJsonObject IsolateByTypeAndValueNodeCompute::init_hints() {
 IsolateByPositionNodeCompute::IsolateByPositionNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.elements = filter_by_position(input.elements, global_mouse_position)";
+  _script_body += "output.elements = isolate_by_position(input.elements, global_mouse_position)";
 }
 
 IsolateByPositionNodeCompute::~IsolateByPositionNodeCompute() {
@@ -100,7 +100,7 @@ QJsonObject IsolateByPositionNodeCompute::init_hints() {
 IsolateByDimensionsNodeCompute::IsolateByDimensionsNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.elements = filter_by_dimensions(input.elements, width, height, max_width_difference, max_height_difference)";
+  _script_body += "output.elements = isolate_by_dimensions(input.elements, width, height, max_width_difference, max_height_difference)";
 }
 
 IsolateByDimensionsNodeCompute::~IsolateByDimensionsNodeCompute() {
@@ -151,7 +151,7 @@ QJsonObject IsolateByDimensionsNodeCompute::init_hints() {
 IsolateByViewportNodeCompute::IsolateByViewportNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.elements = filter_by_viewport(input.elements)";
+  _script_body += "output.elements = isolate_by_viewport(input.elements)";
 }
 
 IsolateByViewportNodeCompute::~IsolateByViewportNodeCompute() {
@@ -202,7 +202,7 @@ QJsonObject SortByDistanceToAnchorsNodeCompute::init_hints() {
 IsolateByBoundaryNodeCompute::IsolateByBoundaryNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.elements = find_sidemost(input.elements, direction)";
+  _script_body += "output.elements = isolate_by_boundary(input.elements, direction)";
 }
 
 IsolateByBoundaryNodeCompute::~IsolateByBoundaryNodeCompute() {
@@ -232,7 +232,7 @@ QJsonObject IsolateByBoundaryNodeCompute::init_hints() {
 IsolateByIndexNodeCompute::IsolateByIndexNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.elements = filter_by_index(input.elements, start_index, num_indices)";
+  _script_body += "output.elements = isolate_by_index(input.elements, start_index, num_indices)";
 }
 
 IsolateByIndexNodeCompute::~IsolateByIndexNodeCompute() {

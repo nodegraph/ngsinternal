@@ -3,7 +3,7 @@
 // Returns all elements with the specified type and target value.
 // If the target value is empty, then any non empty image or text will be matched.
 // The target value parameter is only used for image and text types.
-function filter_by_type_and_value(elements: IElementInfo[], type: ElementType, target_value: string) {
+function isolate_by_type_and_value(elements: IElementInfo[], type: ElementType, target_value: string) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {
         return []
@@ -58,7 +58,7 @@ function filter_by_type_and_value(elements: IElementInfo[], type: ElementType, t
 }
 
 // Returns all elements whose bounds contains the mouse position.
-function filter_by_position(elements: IElementInfo[], global_mouse_position: { x: number, y: number }) {
+function isolate_by_position(elements: IElementInfo[], global_mouse_position: { x: number, y: number }) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {
         return []
@@ -84,7 +84,7 @@ function filter_by_position(elements: IElementInfo[], global_mouse_position: { x
     return matches
 }
 
-function filter_by_dimensions(elements: IElementInfo[], width: number, height: number, max_width_diff: number, max_height_diff: number) {
+function isolate_by_dimensions(elements: IElementInfo[], width: number, height: number, max_width_diff: number, max_height_diff: number) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {
         return []
@@ -113,7 +113,7 @@ function filter_by_dimensions(elements: IElementInfo[], width: number, height: n
 // Filters elements which are in the current viewport.
 // Note that it simply looks at the in_viewport property,
 // so this applies to the time at which the elements were gathered.
-function filter_by_viewport(elements: IElementInfo[]) {
+function isolate_by_viewport(elements: IElementInfo[]) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {
         return []
@@ -225,7 +225,7 @@ function find_extremes(elements: IElementInfo[], getter: (info: IElementInfo)=>n
     return best
 }
 
-function find_sidemost(elements: IElementInfo[], dir: DirectionType) {
+function isolate_by_boundary(elements: IElementInfo[], dir: DirectionType) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {
         return []
@@ -247,7 +247,7 @@ function find_sidemost(elements: IElementInfo[], dir: DirectionType) {
     return elements
 }
 
-function filter_by_index(elements: IElementInfo[], start_index: number, num_indices: number) {
+function isolate_by_index(elements: IElementInfo[], start_index: number, num_indices: number) {
     // The elements may be be undefined if the main input to the node is missing the elements property.
     if (elements == undefined) {
         return []
