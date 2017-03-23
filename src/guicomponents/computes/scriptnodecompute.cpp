@@ -122,7 +122,7 @@ bool BaseScriptNodeCompute::update_state() {
   // but the evaluator doesn't seem to like it. It seems it may already be defined in context.
   QString prefix = "var context = get_context();\n"
       "var input = get_main_input();\n"
-      "var output = input;\n";
+      "var output = JSON.parse(JSON.stringify(input))\n";
   // Script suffix.
   QString suffix = "set_context(context);\n"
       "set_main_output(output);\n";
