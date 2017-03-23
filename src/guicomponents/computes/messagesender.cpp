@@ -22,6 +22,8 @@
 
 namespace ngs {
 
+const size_t MessageSender::kMaxMsgSizeToOutput = 300;
+
 MessageSender::MessageSender(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
@@ -140,7 +142,12 @@ void MessageSender::send_msg(const Message& msg) const {
 
   std::cerr << "----------------------------------------------------\n";
   std::cerr << "app is sending a message:   ----> \n";
-  msg.dump();
+  if (msg.to_string().size() < kMaxMsgSizeToOutput) {
+    //std::cerr << text.toStdString() << "\n";
+    msg.dump();
+  } else {
+    std::cerr << "----------------------------------------------------\n";
+  }
 
   ReceiverType rec = msg.get_receiver_type();
   switch (rec) {

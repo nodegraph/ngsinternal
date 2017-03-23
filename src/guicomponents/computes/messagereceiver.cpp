@@ -32,6 +32,8 @@ class Grabber : public Component {
   Entity* _app_root;
 };
 
+const size_t MessageReceiver::kMaxMsgSizeToOutput = 300;
+
 MessageReceiver::MessageReceiver(Entity* parent)
     : QObject(NULL),
       Component(parent, kIID(), kDID()),
@@ -112,7 +114,7 @@ void MessageReceiver::on_text_received(const QString & text) {
 
   std::cerr << "----------------------------------------------------\n";
   std::cerr << "app has received a message:   <----\n";
-  if (text.size() < 5000) {
+  if (text.size() < kMaxMsgSizeToOutput) {
     //std::cerr << text.toStdString() << "\n";
     msg.dump();
   } else {

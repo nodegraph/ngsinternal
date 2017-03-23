@@ -27,6 +27,8 @@ Q_OBJECT
  public:
   COMPONENT_ID(MessageSender, MessageSender)
 
+  static const size_t kMaxMsgSizeToOutput;
+
   explicit MessageSender(Entity* parent);
   virtual ~MessageSender();
 

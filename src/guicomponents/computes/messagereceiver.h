@@ -20,6 +20,8 @@ Q_OBJECT
  public:
   COMPONENT_ID(MessageReceiver, MessageReceiver)
 
+  static const size_t kMaxMsgSizeToOutput;
+
   explicit MessageReceiver(Entity* parent);
   virtual ~MessageReceiver();
 
