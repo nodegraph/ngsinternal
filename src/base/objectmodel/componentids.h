@@ -257,13 +257,13 @@ COMPONENT_ENTRY2(ElementScrollIntoViewCompute, 86)\
 /* New filtering based architecture. */\
 COMPONENT_ENTRY2(HighlightElementsCompute, 87)\
 COMPONENT_ENTRY2(GetAllElementsCompute, 88)\
-COMPONENT_ENTRY2(FilterByTypeAndValueNodeCompute, 89)\
-COMPONENT_ENTRY2(FilterByPositionNodeCompute, 90)\
-COMPONENT_ENTRY2(FilterByDimensionsNodeCompute, 91)\
-COMPONENT_ENTRY2(FindClosestNodeCompute, 92)\
-COMPONENT_ENTRY2(FilterByIndexNodeCompute, 93)\
-COMPONENT_ENTRY2(FilterToSideMostNodeCompute, 94)\
-COMPONENT_ENTRY2(FilterByViewportNodeCompute, 99)\
+COMPONENT_ENTRY2(IsolateByTypeAndValueNodeCompute, 89)\
+COMPONENT_ENTRY2(IsolateByPositionNodeCompute, 90)\
+COMPONENT_ENTRY2(IsolateByDimensionsNodeCompute, 91)\
+COMPONENT_ENTRY2(SortByDistanceToAnchorsNodeCompute, 92)\
+COMPONENT_ENTRY2(IsolateByIndexNodeCompute, 93)\
+COMPONENT_ENTRY2(IsolateByBoundaryNodeCompute, 94)\
+COMPONENT_ENTRY2(IsolateByViewportNodeCompute, 99)\
 COMPONENT_ENTRY2(JoinElementsNodeCompute, 100)\
 
 // Numbers currently in use are: [0-101]

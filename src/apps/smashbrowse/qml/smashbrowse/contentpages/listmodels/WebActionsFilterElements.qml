@@ -14,97 +14,97 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Ft"
-        title: "Filter By Type"
-        description: "Filter the elements by the element type."
-        script: "browser_recorder.record_filter_by_type();
+    	letters: "Tp"
+        title: "Isolate By Type"
+        description: "Isolate the elements with a specific type."
+        script: "browser_recorder.record_isolate_by_type();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Fv"
-        title: "Filter By Value"
-        description: "Filter the elements by the element value."
-        script: "browser_recorder.record_filter_by_value();
+    	letters: "Vl"
+        title: "Isolate By Value"
+        description: "Isolate the elements with a specific value."
+        script: "browser_recorder.record_isolate_by_value();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Fp"
-        title: "Filter By Position"
-        description: "Filter the elements by whether they contain the specified point."
-        script: "browser_recorder.record_filter_by_position();
+    	letters: "Pn"
+        title: "Isolate By Position"
+        description: "Isolate the elements which contain a specific point."
+        script: "browser_recorder.record_isolate_by_position();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Fd"
-        title: "Filter By Dimensions"
-        description: "Filter the elements by their dimensions."
-        script: "browser_recorder.record_filter_by_dimensions();
+    	letters: "Dm"
+        title: "Isolate By Dimensions"
+        description: "Isolate the elements with specific dimensions with some tolerance."
+        script: "browser_recorder.record_isolate_by_dimensions();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Fv"
-        title: "Filter By Viewport"
-        description: "Filter the elements by whether they are overlapping the current viewport."
-        script: "browser_recorder.record_filter_by_viewport();
+    	letters: "Vp"
+        title: "Isolate By Viewport"
+        description: "Isolate the elements which are in the current viewport."
+        script: "browser_recorder.record_isolate_by_viewport();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Sc"
+    	letters: "Di"
         title: "Sort By Distance."
         description: "Sort elements by distance to the specified anchoring elements."
-        script: "browser_recorder.record_find_closest();
+        script: "browser_recorder.record_sort_by_distance_to_anchors();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Fl"
-        title: "Filter By Left Edge."
-        description: "Filter the elements by whether they lie on the left edge."
-        script: "browser_recorder.record_filter_to_leftmost();
+    	letters: "Le"
+        title: "Isolate Leftmost."
+        description: "Isolate the leftmost elements."
+        script: "browser_recorder.record_isolate_leftmost();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Fr"
-        title: "Filter By Right Edge."
-        description: "Filter the elements by whether they lie on the right edge."
-        script: "browser_recorder.record_filter_to_rightmost();
+    	letters: "Re"
+        title: "Isolate Rightmost."
+        description: "Isolate the rightmost elements."
+        script: "browser_recorder.record_isolate_rightmost();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Ft"
-        title: "Filter By Top Edge."
-        description: "Filter the elements by whether they lie on the top edge."
-        script: "browser_recorder.record_filter_to_topmost();
+    	letters: "Te"
+        title: "Isolate Topmost."
+        description: "Isolate the topmost elements."
+        script: "browser_recorder.record_isolate_topmost();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Fb"
-        title: "Filter By Bottom Edge."
-        description: "Filter the elements by whether they lie on the bottom edge."
-        script: "browser_recorder.record_filter_to_bottommost();
+    	letters: "Be"
+        title: "Isolate Bottommost."
+        description: "Isolate the bottommost elements."
+        script: "browser_recorder.record_isolate_bottommost();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
-    	letters: "Fi"
-        title: "Filter By Index."
-        description: "Isolate elements with indices in the specified range."
-        script: "browser_recorder.record_filter_by_index();
+    	letters: "Ix"
+        title: "Isolate By Index."
+        description: "Isolate elements with indices in a specific range."
+        script: "browser_recorder.record_isolate_by_index();
         		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {
     	letters: "Je"
         title: "Join Elements."
-        description: "Join two sets of elements together."
+        description: "Join two arrays of elements into one."
         script: "browser_recorder.record_join_elements();
         		 main_bar.switch_to_current_mode();"
     }

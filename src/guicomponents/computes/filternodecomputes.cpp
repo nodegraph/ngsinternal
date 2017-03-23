@@ -23,16 +23,16 @@
 
 namespace ngs {
 
-FilterByTypeAndValueNodeCompute::FilterByTypeAndValueNodeCompute(Entity* entity):
+IsolateByTypeAndValueNodeCompute::IsolateByTypeAndValueNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
   _script_body += "output.elements = filter_by_type_and_value(input.elements, element_type, target_value)\n";
 }
 
-FilterByTypeAndValueNodeCompute::~FilterByTypeAndValueNodeCompute() {
+IsolateByTypeAndValueNodeCompute::~IsolateByTypeAndValueNodeCompute() {
 }
 
-void FilterByTypeAndValueNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+void IsolateByTypeAndValueNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BaseScriptNodeCompute::create_inputs_outputs(config);
   {
@@ -49,8 +49,8 @@ void FilterByTypeAndValueNodeCompute::create_inputs_outputs(const EntityConfig& 
   }
 }
 
-const QJsonObject FilterByTypeAndValueNodeCompute::_hints = FilterByTypeAndValueNodeCompute::init_hints();
-QJsonObject FilterByTypeAndValueNodeCompute::init_hints() {
+const QJsonObject IsolateByTypeAndValueNodeCompute::_hints = IsolateByTypeAndValueNodeCompute::init_hints();
+QJsonObject IsolateByTypeAndValueNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
 
   add_hint(m, Message::kElementType, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::ElementType));
@@ -62,16 +62,16 @@ QJsonObject FilterByTypeAndValueNodeCompute::init_hints() {
 
 // -------------------------------------------------------------------------------------------
 
-FilterByPositionNodeCompute::FilterByPositionNodeCompute(Entity* entity):
+IsolateByPositionNodeCompute::IsolateByPositionNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
   _script_body += "output.elements = filter_by_position(input.elements, global_mouse_position)";
 }
 
-FilterByPositionNodeCompute::~FilterByPositionNodeCompute() {
+IsolateByPositionNodeCompute::~IsolateByPositionNodeCompute() {
 }
 
-void FilterByPositionNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+void IsolateByPositionNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BaseScriptNodeCompute::create_inputs_outputs(config);
   {
@@ -87,8 +87,8 @@ void FilterByPositionNodeCompute::create_inputs_outputs(const EntityConfig& conf
   }
 }
 
-const QJsonObject FilterByPositionNodeCompute::_hints = FilterByPositionNodeCompute::init_hints();
-QJsonObject FilterByPositionNodeCompute::init_hints() {
+const QJsonObject IsolateByPositionNodeCompute::_hints = IsolateByPositionNodeCompute::init_hints();
+QJsonObject IsolateByPositionNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
   add_hint(m, Message::kGlobalMousePosition, GUITypes::HintKey::DescriptionHint, "The global mouse position in browser space.");
   return m;
@@ -97,16 +97,16 @@ QJsonObject FilterByPositionNodeCompute::init_hints() {
 
 // ----------------------------------------------------------------------------------------------------
 
-FilterByDimensionsNodeCompute::FilterByDimensionsNodeCompute(Entity* entity):
+IsolateByDimensionsNodeCompute::IsolateByDimensionsNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
   _script_body += "output.elements = filter_by_dimensions(input.elements, width, height, max_width_difference, max_height_difference)";
 }
 
-FilterByDimensionsNodeCompute::~FilterByDimensionsNodeCompute() {
+IsolateByDimensionsNodeCompute::~IsolateByDimensionsNodeCompute() {
 }
 
-void FilterByDimensionsNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+void IsolateByDimensionsNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BaseScriptNodeCompute::create_inputs_outputs(config);
   {
@@ -135,8 +135,8 @@ void FilterByDimensionsNodeCompute::create_inputs_outputs(const EntityConfig& co
   }
 }
 
-const QJsonObject FilterByDimensionsNodeCompute::_hints = FilterByDimensionsNodeCompute::init_hints();
-QJsonObject FilterByDimensionsNodeCompute::init_hints() {
+const QJsonObject IsolateByDimensionsNodeCompute::_hints = IsolateByDimensionsNodeCompute::init_hints();
+QJsonObject IsolateByDimensionsNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
 
   add_hint(m, Message::kWidth, GUITypes::HintKey::DescriptionHint, "The width of element to match.");
@@ -148,38 +148,38 @@ QJsonObject FilterByDimensionsNodeCompute::init_hints() {
 
 // ----------------------------------------------------------------------------------------------------
 
-FilterByViewportNodeCompute::FilterByViewportNodeCompute(Entity* entity):
+IsolateByViewportNodeCompute::IsolateByViewportNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
   _script_body += "output.elements = filter_by_viewport(input.elements)";
 }
 
-FilterByViewportNodeCompute::~FilterByViewportNodeCompute() {
+IsolateByViewportNodeCompute::~IsolateByViewportNodeCompute() {
 }
 
-void FilterByViewportNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+void IsolateByViewportNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BaseScriptNodeCompute::create_inputs_outputs(config);
 }
 
-const QJsonObject FilterByViewportNodeCompute::_hints = FilterByViewportNodeCompute::init_hints();
-QJsonObject FilterByViewportNodeCompute::init_hints() {
+const QJsonObject IsolateByViewportNodeCompute::_hints = IsolateByViewportNodeCompute::init_hints();
+QJsonObject IsolateByViewportNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
   return m;
 }
 
 // ----------------------------------------------------------------------------------------------------
 
-FindClosestNodeCompute::FindClosestNodeCompute(Entity* entity):
+SortByDistanceToAnchorsNodeCompute::SortByDistanceToAnchorsNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
   _script_body += "output.elements = sort_by_distance_to_anchors(input.elements, anchor_elements.elements)";
 }
 
-FindClosestNodeCompute::~FindClosestNodeCompute() {
+SortByDistanceToAnchorsNodeCompute::~SortByDistanceToAnchorsNodeCompute() {
 }
 
-void FindClosestNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+void SortByDistanceToAnchorsNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BaseScriptNodeCompute::create_inputs_outputs(config);
   {
@@ -190,8 +190,8 @@ void FindClosestNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   }
 }
 
-const QJsonObject FindClosestNodeCompute::_hints = FindClosestNodeCompute::init_hints();
-QJsonObject FindClosestNodeCompute::init_hints() {
+const QJsonObject SortByDistanceToAnchorsNodeCompute::_hints = SortByDistanceToAnchorsNodeCompute::init_hints();
+QJsonObject SortByDistanceToAnchorsNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
   add_hint(m, Message::kAnchorElements, GUITypes::HintKey::DescriptionHint, "The anchoring elements from which distances will be measured.");
   return m;
@@ -199,16 +199,16 @@ QJsonObject FindClosestNodeCompute::init_hints() {
 
 // ----------------------------------------------------------------------------------------------------
 
-FilterToSideMostNodeCompute::FilterToSideMostNodeCompute(Entity* entity):
+IsolateByBoundaryNodeCompute::IsolateByBoundaryNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
   _script_body += "output.elements = find_sidemost(input.elements, direction)";
 }
 
-FilterToSideMostNodeCompute::~FilterToSideMostNodeCompute() {
+IsolateByBoundaryNodeCompute::~IsolateByBoundaryNodeCompute() {
 }
 
-void FilterToSideMostNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+void IsolateByBoundaryNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BaseScriptNodeCompute::create_inputs_outputs(config);
   {
@@ -219,8 +219,8 @@ void FilterToSideMostNodeCompute::create_inputs_outputs(const EntityConfig& conf
   }
 }
 
-const QJsonObject FilterToSideMostNodeCompute::_hints = FilterToSideMostNodeCompute::init_hints();
-QJsonObject FilterToSideMostNodeCompute::init_hints() {
+const QJsonObject IsolateByBoundaryNodeCompute::_hints = IsolateByBoundaryNodeCompute::init_hints();
+QJsonObject IsolateByBoundaryNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
   add_hint(m, Message::kDirection, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::DirectionType));
   add_hint(m, Message::kDirection, GUITypes::HintKey::DescriptionHint, "The direction in which to scroll.");
@@ -229,16 +229,16 @@ QJsonObject FilterToSideMostNodeCompute::init_hints() {
 
 // ----------------------------------------------------------------------------------------------------
 
-FilterByIndexNodeCompute::FilterByIndexNodeCompute(Entity* entity):
+IsolateByIndexNodeCompute::IsolateByIndexNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
   _script_body += "output.elements = filter_by_index(input.elements, start_index, num_indices)";
 }
 
-FilterByIndexNodeCompute::~FilterByIndexNodeCompute() {
+IsolateByIndexNodeCompute::~IsolateByIndexNodeCompute() {
 }
 
-void FilterByIndexNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+void IsolateByIndexNodeCompute::create_inputs_outputs(const EntityConfig& config) {
   external();
   BaseScriptNodeCompute::create_inputs_outputs(config);
   {
@@ -255,8 +255,8 @@ void FilterByIndexNodeCompute::create_inputs_outputs(const EntityConfig& config)
   }
 }
 
-const QJsonObject FilterByIndexNodeCompute::_hints = FilterByIndexNodeCompute::init_hints();
-QJsonObject FilterByIndexNodeCompute::init_hints() {
+const QJsonObject IsolateByIndexNodeCompute::_hints = IsolateByIndexNodeCompute::init_hints();
+QJsonObject IsolateByIndexNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
   add_hint(m, Message::kStartIndex, GUITypes::HintKey::DescriptionHint, "The starting index from which to extract elements.");
   add_hint(m, Message::kNumIndices, GUITypes::HintKey::DescriptionHint, "The total number of elements to extract.");

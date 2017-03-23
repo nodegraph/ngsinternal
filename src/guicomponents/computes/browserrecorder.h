@@ -68,18 +68,18 @@ Q_OBJECT
   // Set Element.
   Q_INVOKABLE void record_get_all_elements();
 
-  Q_INVOKABLE void record_filter_by_type();
-  Q_INVOKABLE void record_filter_by_value();
-  Q_INVOKABLE void record_filter_by_position();
-  Q_INVOKABLE void record_filter_by_dimensions();
-  Q_INVOKABLE void record_filter_by_viewport();
-  Q_INVOKABLE void record_find_closest();
-  Q_INVOKABLE void record_filter_to_leftmost();
-  Q_INVOKABLE void record_filter_to_rightmost();
-  Q_INVOKABLE void record_filter_to_topmost();
-  Q_INVOKABLE void record_filter_to_bottommost();
+  Q_INVOKABLE void record_isolate_by_type();
+  Q_INVOKABLE void record_isolate_by_value();
+  Q_INVOKABLE void record_isolate_by_position();
+  Q_INVOKABLE void record_isolate_by_dimensions();
+  Q_INVOKABLE void record_isolate_by_viewport();
+  Q_INVOKABLE void record_sort_by_distance_to_anchors();
+  Q_INVOKABLE void record_isolate_leftmost();
+  Q_INVOKABLE void record_isolate_rightmost();
+  Q_INVOKABLE void record_isolate_topmost();
+  Q_INVOKABLE void record_isolate_bottommost();
 
-  Q_INVOKABLE void record_filter_by_index();
+  Q_INVOKABLE void record_isolate_by_index();
   Q_INVOKABLE void record_join_elements();
   Q_INVOKABLE void record_highlight_elements();
 

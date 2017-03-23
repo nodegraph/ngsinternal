@@ -11,12 +11,12 @@ class QQmlContext;
 namespace ngs {
 
 
-class GUICOMPUTES_EXPORT FilterByTypeAndValueNodeCompute: public BaseScriptNodeCompute  {
+class GUICOMPUTES_EXPORT IsolateByTypeAndValueNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, FilterByTypeAndValueNodeCompute);
-  FilterByTypeAndValueNodeCompute(Entity* entity);
-  virtual ~FilterByTypeAndValueNodeCompute();
+  COMPONENT_ID(Compute, IsolateByTypeAndValueNodeCompute);
+  IsolateByTypeAndValueNodeCompute(Entity* entity);
+  virtual ~IsolateByTypeAndValueNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
@@ -25,12 +25,12 @@ class GUICOMPUTES_EXPORT FilterByTypeAndValueNodeCompute: public BaseScriptNodeC
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
-class GUICOMPUTES_EXPORT FilterByPositionNodeCompute: public BaseScriptNodeCompute  {
+class GUICOMPUTES_EXPORT IsolateByPositionNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, FilterByPositionNodeCompute);
-  FilterByPositionNodeCompute(Entity* entity);
-  virtual ~FilterByPositionNodeCompute();
+  COMPONENT_ID(Compute, IsolateByPositionNodeCompute);
+  IsolateByPositionNodeCompute(Entity* entity);
+  virtual ~IsolateByPositionNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
@@ -39,12 +39,12 @@ class GUICOMPUTES_EXPORT FilterByPositionNodeCompute: public BaseScriptNodeCompu
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
-class GUICOMPUTES_EXPORT FilterByDimensionsNodeCompute: public BaseScriptNodeCompute  {
+class GUICOMPUTES_EXPORT IsolateByDimensionsNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, FilterByDimensionsNodeCompute);
-  FilterByDimensionsNodeCompute(Entity* entity);
-  virtual ~FilterByDimensionsNodeCompute();
+  COMPONENT_ID(Compute, IsolateByDimensionsNodeCompute);
+  IsolateByDimensionsNodeCompute(Entity* entity);
+  virtual ~IsolateByDimensionsNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
@@ -53,12 +53,12 @@ class GUICOMPUTES_EXPORT FilterByDimensionsNodeCompute: public BaseScriptNodeCom
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
-class GUICOMPUTES_EXPORT FilterByViewportNodeCompute: public BaseScriptNodeCompute  {
+class GUICOMPUTES_EXPORT IsolateByViewportNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, FilterByViewportNodeCompute);
-  FilterByViewportNodeCompute(Entity* entity);
-  virtual ~FilterByViewportNodeCompute();
+  COMPONENT_ID(Compute, IsolateByViewportNodeCompute);
+  IsolateByViewportNodeCompute(Entity* entity);
+  virtual ~IsolateByViewportNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
@@ -67,12 +67,12 @@ class GUICOMPUTES_EXPORT FilterByViewportNodeCompute: public BaseScriptNodeCompu
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
-class GUICOMPUTES_EXPORT FindClosestNodeCompute: public BaseScriptNodeCompute  {
+class GUICOMPUTES_EXPORT SortByDistanceToAnchorsNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, FindClosestNodeCompute);
-  FindClosestNodeCompute(Entity* entity);
-  virtual ~FindClosestNodeCompute();
+  COMPONENT_ID(Compute, SortByDistanceToAnchorsNodeCompute);
+  SortByDistanceToAnchorsNodeCompute(Entity* entity);
+  virtual ~SortByDistanceToAnchorsNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
@@ -81,12 +81,12 @@ class GUICOMPUTES_EXPORT FindClosestNodeCompute: public BaseScriptNodeCompute  {
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
-class GUICOMPUTES_EXPORT FilterToSideMostNodeCompute: public BaseScriptNodeCompute  {
+class GUICOMPUTES_EXPORT IsolateByBoundaryNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, FilterToSideMostNodeCompute);
-  FilterToSideMostNodeCompute(Entity* entity);
-  virtual ~FilterToSideMostNodeCompute();
+  COMPONENT_ID(Compute, IsolateByBoundaryNodeCompute);
+  IsolateByBoundaryNodeCompute(Entity* entity);
+  virtual ~IsolateByBoundaryNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 
@@ -95,12 +95,12 @@ class GUICOMPUTES_EXPORT FilterToSideMostNodeCompute: public BaseScriptNodeCompu
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
-class GUICOMPUTES_EXPORT FilterByIndexNodeCompute: public BaseScriptNodeCompute  {
+class GUICOMPUTES_EXPORT IsolateByIndexNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
-  COMPONENT_ID(Compute, FilterByIndexNodeCompute);
-  FilterByIndexNodeCompute(Entity* entity);
-  virtual ~FilterByIndexNodeCompute();
+  COMPONENT_ID(Compute, IsolateByIndexNodeCompute);
+  IsolateByIndexNodeCompute(Entity* entity);
+  virtual ~IsolateByIndexNodeCompute();
 
   virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
 

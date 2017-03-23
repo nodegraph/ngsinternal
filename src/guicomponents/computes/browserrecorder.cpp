@@ -357,7 +357,7 @@ void BrowserRecorder::record_get_all_elements() {
 
 
 
-void BrowserRecorder::record_filter_by_type() {
+void BrowserRecorder::record_isolate_by_type() {
   start();
   QJsonObject params;
   {
@@ -384,12 +384,12 @@ void BrowserRecorder::record_filter_by_type() {
     params.insert(Message::kElementType, to_underlying(type));
     params.insert(Message::kTargetValue, "");
   }
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByTypeAndValueNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByTypeAndValueNodeCompute, params);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_filter_by_value() {
+void BrowserRecorder::record_isolate_by_value() {
   start();
   QJsonObject params;
   {
@@ -421,24 +421,24 @@ void BrowserRecorder::record_filter_by_value() {
     params.insert(Message::kElementType, to_underlying(type));
     params.insert(Message::kTargetValue, value);
   }
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByTypeAndValueNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByTypeAndValueNodeCompute, params);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_filter_by_position() {
+void BrowserRecorder::record_isolate_by_position() {
   start();
   QJsonObject params;
   {
     const QJsonObject info = _queuer->get_last_click_info();
     params.insert(Message::kGlobalMousePosition, info.value(Message::kGlobalMousePosition));
   }
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByPositionNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByPositionNodeCompute, params);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_filter_by_dimensions() {
+void BrowserRecorder::record_isolate_by_dimensions() {
   start();
   QJsonObject params;
   {
@@ -454,72 +454,72 @@ void BrowserRecorder::record_filter_by_dimensions() {
     params.insert(Message::kWidth, width);
     params.insert(Message::kHeight, height);
   }
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByDimensionsNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByDimensionsNodeCompute, params);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_filter_by_viewport() {
+void BrowserRecorder::record_isolate_by_viewport() {
   start();
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByViewportNodeCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByViewportNodeCompute);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_find_closest() {
+void BrowserRecorder::record_sort_by_distance_to_anchors() {
   start();
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFindClosestNodeCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kSortByDistanceToAnchorsNodeCompute);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_filter_to_leftmost() {
+void BrowserRecorder::record_isolate_leftmost() {
   start();
   QJsonObject params;
   {
     params.insert(Message::kDirection, to_underlying(DirectionType::kLeft));
   }
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterToSideMostNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByBoundaryNodeCompute, params);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_filter_to_rightmost() {
+void BrowserRecorder::record_isolate_rightmost() {
   start();
   QJsonObject params;
   {
     params.insert(Message::kDirection, to_underlying(DirectionType::kRight));
   }
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterToSideMostNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByBoundaryNodeCompute, params);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_filter_to_topmost() {
+void BrowserRecorder::record_isolate_topmost() {
   start();
   QJsonObject params;
   {
     params.insert(Message::kDirection, to_underlying(DirectionType::kUp));
   }
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterToSideMostNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByBoundaryNodeCompute, params);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_filter_to_bottommost() {
+void BrowserRecorder::record_isolate_bottommost() {
   start();
   QJsonObject params;
   {
     params.insert(Message::kDirection, to_underlying(DirectionType::kDown));
   }
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterToSideMostNodeCompute, params);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByBoundaryNodeCompute, params);
   _manipulator->link_to_closest_node(node);
   finish();
 }
 
-void BrowserRecorder::record_filter_by_index() {
+void BrowserRecorder::record_isolate_by_index() {
   start();
-  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kFilterByIndexNodeCompute);
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByIndexNodeCompute);
   _manipulator->link_to_closest_node(node);
   finish();
 }
