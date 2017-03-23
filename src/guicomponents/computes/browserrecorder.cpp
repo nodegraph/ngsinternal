@@ -517,6 +517,51 @@ void BrowserRecorder::record_isolate_bottommost() {
   finish();
 }
 
+void BrowserRecorder::record_isolate_on_left() {
+  start();
+  QJsonObject params;
+  {
+    params.insert(Message::kDirection, to_underlying(DirectionType::kLeft));
+  }
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateToOneSideNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_isolate_on_right() {
+  start();
+  QJsonObject params;
+  {
+    params.insert(Message::kDirection, to_underlying(DirectionType::kRight));
+  }
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateToOneSideNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_isolate_on_top() {
+  start();
+  QJsonObject params;
+  {
+    params.insert(Message::kDirection, to_underlying(DirectionType::kUp));
+  }
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateToOneSideNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_isolate_on_bottom() {
+  start();
+  QJsonObject params;
+  {
+    params.insert(Message::kDirection, to_underlying(DirectionType::kDown));
+  }
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateToOneSideNodeCompute, params);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+
 void BrowserRecorder::record_isolate_by_index() {
   start();
   Entity* node = _manipulator->create_browser_node(true, ComponentDID::kIsolateByIndexNodeCompute);
@@ -527,6 +572,20 @@ void BrowserRecorder::record_isolate_by_index() {
 void BrowserRecorder::record_join_elements() {
   start();
   Entity* node = _manipulator->create_browser_node(true, ComponentDID::kJoinElementsNodeCompute);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_prune_elements() {
+  start();
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kPruneElementsNodeCompute);
+  _manipulator->link_to_closest_node(node);
+  finish();
+}
+
+void BrowserRecorder::record_prune_duplicates() {
+  start();
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kPruneDuplicatesNodeCompute);
   _manipulator->link_to_closest_node(node);
   finish();
 }

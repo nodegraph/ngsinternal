@@ -31,6 +31,7 @@ class COMPUTES_EXPORT Inputs: public Flux<InputTraits> {
 
   // Get value from inputs.
   QJsonValue get_input_value(const std::string& input_name) const;
+  QJsonValue get_unset_value(const std::string& input_name) const;
 
   // Get value from input, but also do a conversion to a certain json type.
   double get_input_double(const std::string& input_name) const;

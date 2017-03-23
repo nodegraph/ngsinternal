@@ -19,6 +19,7 @@ const char* Message::kTargetValue = "target_value";
 
 const char* Message::kInfo = "info";
 const char* Message::kOther = "other";
+const char* Message::kPrune = "prune";
 
 const char* Message::kFWIndexPath = "fw_index_path";
 const char* Message::kFEIndexPath = "fe_index_path";
@@ -53,7 +54,7 @@ const char* Message::kOutputExpression = "output_expression";
 const char* Message::kElementType = "element_type";
 const char* Message::kElements = "elements";
 const char* Message::kClusters = "clusters";
-const char* Message::kAnchorElements = "anchor_elements";
+const char* Message::kAnchors = "anchors";
 const char* Message::kStartIndex = "start_index";
 const char* Message::kNumIndices = "num_indices";
 

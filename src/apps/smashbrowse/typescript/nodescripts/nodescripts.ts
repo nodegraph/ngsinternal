@@ -244,7 +244,71 @@ function isolate_by_boundary(elements: IElementInfo[], dir: DirectionType) {
             console.log('unknown direction encountered')
         }
     }
-    return elements
+    return []
+}
+
+function isolate_greater_than(elements: IElementInfo[], getter: (info: IElementInfo)=>number, limit: number) {
+    let matches: IElementInfo[] = []
+    for (let e of elements) {
+        if (getter(e) > limit) {
+            matches.push(e)
+        }
+    }
+    return matches
+}
+
+function isolate_less_than(elements: IElementInfo[], getter: (info: IElementInfo)=>number, limit: number) {
+    let matches: IElementInfo[] = []
+    for (let e of elements) {
+        if (getter(e) < limit) {
+            matches.push(e)
+        }
+    }
+    return matches
+}
+
+function isolate_to_one_side(elements: IElementInfo[], anchors: IElementInfo[], dir: DirectionType) {
+    if (elements == undefined) {
+        return []
+    }
+    if (anchors == undefined) {
+        return elements
+    }
+    
+    // Find the anchor bounds.
+    let left: number = anchors[0].box.left
+    let right: number = anchors[0].box.right
+    let bottom: number = anchors[0].box.bottom
+    let top: number = anchors[0].box.top
+    for (let i = 1; i < anchors.length; i++) {
+        if (anchors[i].box.left < left) {
+            left = anchors[i].box.left
+        }
+        if (anchors[i].box.right > right) {
+            right = anchors[i].box.right
+        }
+        if (anchors[i].box.top < top) {
+            top = anchors[i].box.top
+        }
+        if (anchors[i].box.bottom > bottom) {
+            bottom = anchors[i].box.bottom
+        }
+    }
+
+    switch (dir) {
+        case DirectionType.kUp:
+            return isolate_less_than(elements, (e: IElementInfo):number =>{return e.box.bottom}, top)
+        case DirectionType.kDown:
+            return isolate_greater_than(elements, (e: IElementInfo):number =>{return e.box.top}, bottom)
+        case DirectionType.kLeft:
+            return isolate_less_than(elements, (e: IElementInfo):number =>{return e.box.right}, left)
+        case DirectionType.kRight:
+            return isolate_greater_than(elements, (e: IElementInfo):number =>{return e.box.left}, right)
+        default: {
+            console.log('unknown direction encountered')
+        }
+    }
+    return []
 }
 
 function isolate_by_index(elements: IElementInfo[], start_index: number, num_indices: number) {
@@ -257,6 +321,45 @@ function isolate_by_index(elements: IElementInfo[], start_index: number, num_ind
     let end_index = start_index + num_indices
     for (let i = start_index; i<end_index && i<elements.length; i++) {
         matches.push(elements[i])
+    }
+    return matches
+}
+
+function prune_duplicates(elements: IElementInfo[]) {
+    // The elements may be be undefined if the main input to the node is missing the elements property.
+    if (elements == undefined) {
+        return []
+    }
+
+    let seen: Set<string> = new Set<string>()
+    let matches: IElementInfo[] = []
+    for (let e of elements) {
+        let key = e.fe_index_path + "--" + e.xpath
+        if (seen.has(key)) {
+            continue
+        }
+        seen.add(key)
+        matches.push(e)
+    }
+    return matches
+}
+
+function prune_elements(elements: IElementInfo[], prune: IElementInfo[]) {
+    // Create a set of the keys to remove.
+    let keys_to_prune: Set<string> = new Set<string>()
+    for (let e of prune) {
+        let key = e.fe_index_path + "--" + e.xpath
+        keys_to_prune.add(key)
+    }
+
+    // Loop through the elements, removing any that match the keys to discard.
+    let matches: IElementInfo[] = []
+    for (let e of elements) {
+        let key = e.fe_index_path + "--" + e.xpath
+        if (keys_to_prune.has(key)) {
+            continue
+        }
+        matches.push(e)
     }
     return matches
 }

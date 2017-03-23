@@ -62,6 +62,9 @@ class Utils {
         if ((text[0] == '"') && (text[text.length - 1] == '"')) {
             return text.slice(1, -1)
         }
+        if ((text[0] == "'") && (text[text.length - 1] == "'")) {
+            return text.slice(1, -1)
+        }
         return text
     }
 

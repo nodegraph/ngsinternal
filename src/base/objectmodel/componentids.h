@@ -263,10 +263,13 @@ COMPONENT_ENTRY2(IsolateByDimensionsNodeCompute, 91)\
 COMPONENT_ENTRY2(SortByDistanceToAnchorsNodeCompute, 92)\
 COMPONENT_ENTRY2(IsolateByIndexNodeCompute, 93)\
 COMPONENT_ENTRY2(IsolateByBoundaryNodeCompute, 94)\
+COMPONENT_ENTRY2(IsolateToOneSideNodeCompute, 104)\
 COMPONENT_ENTRY2(IsolateByViewportNodeCompute, 99)\
 COMPONENT_ENTRY2(JoinElementsNodeCompute, 100)\
+COMPONENT_ENTRY2(PruneElementsNodeCompute, 102)\
+COMPONENT_ENTRY2(PruneDuplicatesNodeCompute, 103)\
 
-// Numbers currently in use are: [0-101]
+// Numbers currently in use are: [0-104]
 // Note that in our notation we use [ and ] for closed left and right bounds respectively.
 // We use ( and ) for open left and right bounds respectively.
 

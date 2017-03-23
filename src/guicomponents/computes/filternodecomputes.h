@@ -95,6 +95,20 @@ class GUICOMPUTES_EXPORT IsolateByBoundaryNodeCompute: public BaseScriptNodeComp
   virtual const QJsonObject& get_hints() const {return _hints;}
 };
 
+class GUICOMPUTES_EXPORT IsolateToOneSideNodeCompute: public BaseScriptNodeCompute  {
+  Q_OBJECT
+ public:
+  COMPONENT_ID(Compute, IsolateToOneSideNodeCompute);
+  IsolateToOneSideNodeCompute(Entity* entity);
+  virtual ~IsolateToOneSideNodeCompute();
+
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+};
+
 class GUICOMPUTES_EXPORT IsolateByIndexNodeCompute: public BaseScriptNodeCompute  {
   Q_OBJECT
  public:
@@ -121,6 +135,28 @@ class GUICOMPUTES_EXPORT JoinElementsNodeCompute: public BaseScriptNodeCompute  
   static QJsonObject init_hints();
   static const QJsonObject _hints;
   virtual const QJsonObject& get_hints() const {return _hints;}
+};
+
+class GUICOMPUTES_EXPORT PruneElementsNodeCompute: public BaseScriptNodeCompute  {
+  Q_OBJECT
+ public:
+  COMPONENT_ID(Compute, PruneElementsNodeCompute);
+  PruneElementsNodeCompute(Entity* entity);
+  virtual ~PruneElementsNodeCompute();
+
+  virtual void create_inputs_outputs(const EntityConfig& config = EntityConfig());
+
+  static QJsonObject init_hints();
+  static const QJsonObject _hints;
+  virtual const QJsonObject& get_hints() const {return _hints;}
+};
+
+class GUICOMPUTES_EXPORT PruneDuplicatesNodeCompute: public BaseScriptNodeCompute  {
+  Q_OBJECT
+ public:
+  COMPONENT_ID(Compute, PruneDuplicatesNodeCompute);
+  PruneDuplicatesNodeCompute(Entity* entity);
+  virtual ~PruneDuplicatesNodeCompute();
 };
 
 }

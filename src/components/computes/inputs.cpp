@@ -79,6 +79,43 @@ QJsonValue Inputs::get_input_value(const std::string& input_name) const {
   return input->get_main_output();
 }
 
+QJsonValue Inputs::get_unset_value(const std::string& input_name) const {
+  const Dep<InputCompute>& input = get(input_name);
+  if (!input) {
+    std::cerr << "Warning: couldn't find input: " << input_name << "\n";
+    return QJsonValue();
+  }
+  QJsonValue temp = input->get_main_output();
+  switch (temp.type()) {
+    case QJsonValue::Bool: {
+      return false;
+      break;
+    }
+    case QJsonValue::Double: {
+      return 0.0;
+      break;
+    }
+    case QJsonValue::String: {
+      return "";
+      break;
+    }
+    case QJsonValue::Array: {
+      return QJsonArray();
+      break;
+    }
+    case QJsonValue::Object: {
+      return QJsonObject();
+      break;
+    }
+    case QJsonValue::Null:
+    case QJsonValue::Undefined: {
+      std::cerr << "Error: Found an input with a null or undefined type.\n";
+      break;
+    }
+  }
+  return QJsonValue();
+}
+
 double Inputs::get_input_double(const std::string& input_name) const {
   return JSONUtils::convert_to_double(get_input_value(input_name));
 }

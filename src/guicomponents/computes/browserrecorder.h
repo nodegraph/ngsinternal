@@ -78,9 +78,17 @@ Q_OBJECT
   Q_INVOKABLE void record_isolate_rightmost();
   Q_INVOKABLE void record_isolate_topmost();
   Q_INVOKABLE void record_isolate_bottommost();
+  Q_INVOKABLE void record_isolate_on_left();
+  Q_INVOKABLE void record_isolate_on_right();
+  Q_INVOKABLE void record_isolate_on_top();
+  Q_INVOKABLE void record_isolate_on_bottom();
+
 
   Q_INVOKABLE void record_isolate_by_index();
   Q_INVOKABLE void record_join_elements();
+  Q_INVOKABLE void record_prune_elements();
+  Q_INVOKABLE void record_prune_duplicates();
+
   Q_INVOKABLE void record_highlight_elements();
 
 

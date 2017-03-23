@@ -173,7 +173,7 @@ QJsonObject IsolateByViewportNodeCompute::init_hints() {
 SortByDistanceToAnchorsNodeCompute::SortByDistanceToAnchorsNodeCompute(Entity* entity):
   BaseScriptNodeCompute(entity, kDID()) {
   _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
-  _script_body += "output.elements = sort_by_distance_to_anchors(input.elements, anchor_elements.elements)";
+  _script_body += "output.elements = sort_by_distance_to_anchors(input.elements, anchors.elements)";
 }
 
 SortByDistanceToAnchorsNodeCompute::~SortByDistanceToAnchorsNodeCompute() {
@@ -186,14 +186,14 @@ void SortByDistanceToAnchorsNodeCompute::create_inputs_outputs(const EntityConfi
     EntityConfig c = config;
     c.expose_plug = true;
     c.unconnected_value = QJsonObject();
-    create_input(Message::kAnchorElements, c);
+    create_input(Message::kAnchors, c);
   }
 }
 
 const QJsonObject SortByDistanceToAnchorsNodeCompute::_hints = SortByDistanceToAnchorsNodeCompute::init_hints();
 QJsonObject SortByDistanceToAnchorsNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
-  add_hint(m, Message::kAnchorElements, GUITypes::HintKey::DescriptionHint, "The anchoring elements from which distances will be measured.");
+  add_hint(m, Message::kAnchors, GUITypes::HintKey::DescriptionHint, "The anchoring elements from which distances will be measured.");
   return m;
 }
 
@@ -224,6 +224,45 @@ QJsonObject IsolateByBoundaryNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
   add_hint(m, Message::kDirection, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::DirectionType));
   add_hint(m, Message::kDirection, GUITypes::HintKey::DescriptionHint, "The direction in which to scroll.");
+  return m;
+}
+
+// ----------------------------------------------------------------------------------------------------
+
+IsolateToOneSideNodeCompute::IsolateToOneSideNodeCompute(Entity* entity):
+  BaseScriptNodeCompute(entity, kDID()) {
+  _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
+  _script_body += "output.elements = isolate_to_one_side(input.elements, anchors.elements, direction)";
+}
+
+IsolateToOneSideNodeCompute::~IsolateToOneSideNodeCompute() {
+}
+
+void IsolateToOneSideNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BaseScriptNodeCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = true;
+    c.unconnected_value = QJsonObject();
+    create_input(Message::kAnchors, c);
+  }
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = 0;
+    create_input(Message::kDirection, c);
+  }
+}
+
+const QJsonObject IsolateToOneSideNodeCompute::_hints = IsolateToOneSideNodeCompute::init_hints();
+QJsonObject IsolateToOneSideNodeCompute::init_hints() {
+  QJsonObject m = BaseScriptNodeCompute::init_hints();
+
+  add_hint(m, Message::kAnchors, GUITypes::HintKey::DescriptionHint, "Elements will be isolated to one side of these anchor elements.");
+
+  add_hint(m, Message::kDirection, GUITypes::HintKey::EnumHint, to_underlying(GUITypes::EnumHintValue::DirectionType));
+  add_hint(m, Message::kDirection, GUITypes::HintKey::DescriptionHint, "The side around the anchor elements in which to isolate.");
   return m;
 }
 
@@ -290,6 +329,46 @@ QJsonObject JoinElementsNodeCompute::init_hints() {
   QJsonObject m = BaseScriptNodeCompute::init_hints();
   add_hint(m, Message::kOther, GUITypes::HintKey::DescriptionHint, "The elements to append to those in our main input.");
   return m;
+}
+
+// ----------------------------------------------------------------------------------------------------
+
+PruneElementsNodeCompute::PruneElementsNodeCompute(Entity* entity):
+  BaseScriptNodeCompute(entity, kDID()) {
+  _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
+  _script_body += "output.elements = prune_elements(input.elements, prune.elements)";
+}
+
+PruneElementsNodeCompute::~PruneElementsNodeCompute() {
+}
+
+void PruneElementsNodeCompute::create_inputs_outputs(const EntityConfig& config) {
+  external();
+  BaseScriptNodeCompute::create_inputs_outputs(config);
+  {
+    EntityConfig c = config;
+    c.expose_plug = true;
+    c.unconnected_value = QJsonObject();
+    create_input(Message::kPrune, c);
+  }
+}
+
+const QJsonObject PruneElementsNodeCompute::_hints = PruneElementsNodeCompute::init_hints();
+QJsonObject PruneElementsNodeCompute::init_hints() {
+  QJsonObject m = BaseScriptNodeCompute::init_hints();
+  add_hint(m, Message::kPrune, GUITypes::HintKey::DescriptionHint, "The elements to prune from those in our main input.");
+  return m;
+}
+
+// ----------------------------------------------------------------------------------------------------
+
+PruneDuplicatesNodeCompute::PruneDuplicatesNodeCompute(Entity* entity):
+  BaseScriptNodeCompute(entity, kDID()) {
+  _script_body = QString::fromUtf8((const char*)node_scripts, node_scripts_length);
+  _script_body += "output.elements = prune_duplicates(input.elements)";
+}
+
+PruneDuplicatesNodeCompute::~PruneDuplicatesNodeCompute() {
 }
 
 }

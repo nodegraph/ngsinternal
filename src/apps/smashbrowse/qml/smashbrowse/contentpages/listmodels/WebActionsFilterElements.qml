@@ -94,6 +94,38 @@ ListModel {
     }
     
     ListElement {
+    	letters: "Le"
+        title: "Isolate On Left."
+        description: "Isolate elements to the left of anchor elements."
+        script: "browser_recorder.record_isolate_on_left();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Re"
+        title: "Isolate On Right."
+        description: "Isolate elements to the right of anchor elements."
+        script: "browser_recorder.record_isolate_on_right();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Te"
+        title: "Isolate On Top."
+        description: "Isolate elements above anchor elements."
+        script: "browser_recorder.record_isolate_on_top();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Be"
+        title: "Isolate On Bottom."
+        description: "Isolate elements below anchor elements."
+        script: "browser_recorder.record_isolate_on_bottom();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
     	letters: "Ix"
         title: "Isolate By Index."
         description: "Isolate elements with indices in a specific range."
@@ -102,10 +134,26 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Je"
+    	letters: "Jo"
         title: "Join Elements."
         description: "Join two arrays of elements into one."
         script: "browser_recorder.record_join_elements();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Pr"
+        title: "Prune Elements."
+        description: "Prune specific elements."
+        script: "browser_recorder.record_prune_elements();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
+    	letters: "Pd"
+        title: "Prune Duplicates."
+        description: "Prune duplicate elements."
+        script: "browser_recorder.record_prune_duplicates();
         		 main_bar.switch_to_current_mode();"
     }
     

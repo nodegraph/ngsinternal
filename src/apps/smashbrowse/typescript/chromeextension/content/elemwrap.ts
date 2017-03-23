@@ -423,6 +423,45 @@ class ElemWrap {
                 result = get_image_from_style(style)
             }
         }
+
+        // Check for images in the content property of the style.
+        if (!result) {
+
+            let before_style = window.getComputedStyle(this.element, ':before');
+            let value: string = before_style.content
+            value = Utils.strip_quotes(value)
+            if (!Utils.is_all_whitespace(value)) {
+                // Sometimes the content property of the style actually denotes an image. Skip these for example.
+                // -webkit-image-set(url("https://ssl.gstatic.com/ui/v1/star/star-lit4.png") 1x, url("https://ssl.gstatic.com/ui/v1/star/star-lit4_2x.png") 2x)
+                let regex = /url\((.*?)\)/g
+                let matches = value.match(regex);
+                if (matches) {
+                    let regex2 = /\((.*?)\)/
+                    let matches2 = matches[matches.length-1].match(regex2)
+                    let url = Utils.strip_quotes(matches2[1])
+                    result = url + result
+                }
+            }
+
+            let after_style = window.getComputedStyle(this.element, ':after');
+            value = after_style.content
+            value = Utils.strip_quotes(value)
+            if (!Utils.is_all_whitespace(value)) {
+                // Sometimes the content property of the style actually denotes an image. Skip these for example.
+                // -webkit-image-set(url("https://ssl.gstatic.com/ui/v1/star/star-lit4.png") 1x, url("https://ssl.gstatic.com/ui/v1/star/star-lit4_2x.png") 2x)
+                let regex = /url\((.*?)\)/g
+                let matches = value.match(regex);
+                if (matches) {
+                    let regex2 = /\((.*?)\)/
+                    let matches2 = matches[matches.length-1].match(regex2)
+                    let url = Utils.strip_quotes(matches2[1])
+                    result += value
+                }
+            }
+
+        }
+
+
         return result
     }
 
@@ -454,15 +493,31 @@ class ElemWrap {
         let value: string = before_style.content
         value = Utils.strip_quotes(value)
         if (!Utils.is_all_whitespace(value)) {
-            text = value + text
+            // Sometimes the content property of the style actually denotes an image. Skip these for example.
+            // -webkit-image-set(url("https://ssl.gstatic.com/ui/v1/star/star-lit4.png") 1x, url("https://ssl.gstatic.com/ui/v1/star/star-lit4_2x.png") 2x)
+            let regex = /url\((.*?)\)/g
+            let matches = value.match(regex);
+            if (matches) {
+                console.log('found matches: ' + JSON.stringify(matches))
+            }
+            if (!matches) {
+                text = value + text
+            }
         }
 
         let after_style = window.getComputedStyle(this.element, ':after');
         value = after_style.content
         value = Utils.strip_quotes(value)
         if (!Utils.is_all_whitespace(value)) {
-            text += value
+            // Sometimes the content property of the style actually denotes an image. Skip these for example.
+            // -webkit-image-set(url("https://ssl.gstatic.com/ui/v1/star/star-lit4.png") 1x, url("https://ssl.gstatic.com/ui/v1/star/star-lit4_2x.png") 2x)
+            let regex = /url\((.*?)\)/g
+            let matches = value.match(regex);
+            if (!matches) {
+                text += value
+            }
         }
+
         return text
     }
 
