@@ -59,7 +59,10 @@ void GroupNodeCompute::WireUpdater::update_wires() {
         // Skip setting the unconnected value, because this can be dangerous with passwords.
         // We encountered a case where the password was getting set on the root group,
         // and there is no way for the user to see or edit these param on the root group.
-        outer->set_unconnected_value(inner->get_inputs()->get_unset_value("default_value"));
+        // However using the unset_value leaves everything at zero when importing macros.
+        // This is not good so we leave the old unsafe behavior in place for now.
+        outer->set_unconnected_value(inner->get_inputs()->get_input_value("default_value"));
+        //outer->set_unconnected_value(inner->get_inputs()->get_unset_value("default_value"));
       }
       // Make sure the hints match.
       Entity* input_node_description = node->get_entity(Path({".",kInputsFolderName,"description"}));
