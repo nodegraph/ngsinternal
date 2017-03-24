@@ -99,7 +99,6 @@ void BaseScriptNodeCompute::expose_to_eval_context(QQmlContext& eval_context) {
 }
 
 void BaseScriptNodeCompute::update_wires() {
-  std::cerr << "script group node is updating wires\n";
   _context = get_closest_context();
 }
 
@@ -129,7 +128,7 @@ bool BaseScriptNodeCompute::update_state() {
   // The full script.
   QString script = prefix + "\n" + _script_body + "\n" + suffix; // The extra \n is for safety, as the user may omit them.
 
-  std::cerr << "evaluating script: " << script.toStdString() << "\n";
+  //std::cerr << "evaluating script: " << script.toStdString() << "\n";
   QQmlExpression expr(&eval_context, NULL, script);
 
 
@@ -144,7 +143,6 @@ bool BaseScriptNodeCompute::update_state() {
     _manipulator->clear_ultimate_targets();
     return false;
   }
-  std::cerr << "Finished evaluating expression\n";
   return true;
 }
 

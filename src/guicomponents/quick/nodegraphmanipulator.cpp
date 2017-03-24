@@ -138,6 +138,7 @@ void NodeGraphManipulatorImp::set_ultimate_targets(const std::unordered_set<Enti
     Dep<Compute> c = get_dep<Compute>(entity);
     if (c->is_state_dirty()) {
       computes.insert(c);
+      c->reset_dirty_state(); // This resets things like loop counters in dirty loop-like computes.
     }
   }
   if (computes.empty()) {

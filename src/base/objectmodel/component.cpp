@@ -484,6 +484,27 @@ bool Component::clean_state() {
   return propagate_cleanliness();
 }
 
+void Component::reset_dirty_state() {
+  // If we're clean there is no need to continue.
+  if (!_dirty) {
+    return;
+  }
 
+  // Initialize our dirty state.
+  init_dirty_state();
+
+  // Recurse to our dependencies.
+  for (auto &iid_iter: _dependencies) {
+    const DepLinks& dep_iter = iid_iter.second;
+    for (auto &dep : dep_iter) {
+      // The dep is alive if it's lockable and the raw dependency pointer is non-null.
+      DepLinkPtr link = dep.second.lock();
+      if (link && link->dependency) {
+        Component* c = link->dependency;
+        c->reset_dirty_state();
+      }
+    }
+  }
+}
 
 }

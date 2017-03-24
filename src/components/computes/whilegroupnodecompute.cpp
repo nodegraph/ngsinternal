@@ -24,10 +24,6 @@ WhileGroupNodeCompute::WhileGroupNodeCompute(Entity* entity, ComponentDID did):
 WhileGroupNodeCompute::~WhileGroupNodeCompute() {
 }
 
-void WhileGroupNodeCompute::set_self_dirty(bool dirty) {
-  GroupNodeCompute::set_self_dirty(dirty);
-}
-
 void WhileGroupNodeCompute::reset_loop_context() {
   // Reset our script loop context.
   Dep<ScriptLoopContext> c = get_dep<ScriptLoopContext>(Path({"."}));
@@ -41,6 +37,12 @@ void WhileGroupNodeCompute::reset_loop_context() {
       w->reset_loop_context();
     }
   }
+}
+
+void WhileGroupNodeCompute::init_dirty_state() {
+  GroupNodeCompute::init_dirty_state();
+  reset_loop_context();
+  _do_next = true;
 }
 
 bool WhileGroupNodeCompute::update_state() {
@@ -72,14 +74,6 @@ bool WhileGroupNodeCompute::update_state() {
   }
 
   while (true) {
-    if (_restart_compute) {
-      // If we get then we're just starting our loop.
-      // Reset all the accumulate data nodes.
-      reset_loop_context();
-      _restart_compute = false;
-      _do_next = true;
-    }
-
     // Set the inputs dirty when starting an iteration of the loop,
     // so that we can perform the compute again.
     if (_do_next) {
@@ -119,8 +113,6 @@ bool WhileGroupNodeCompute::update_state() {
     // the next element yet.
     _do_next = true;
   }
-
-  _restart_compute = true;
   _do_next = false;
   return true;
 }

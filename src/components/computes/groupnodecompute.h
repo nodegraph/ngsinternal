@@ -41,14 +41,15 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   // Internal nodes.
   virtual void dirty_all_nodes_in_group();
   virtual void dirty_all_nodes_in_group_recursively();
+  virtual void reset_dirty_state_on_all_nodes_in_group();
+  virtual void reset_dirty_state_on_output_nodes();
 
  protected:
 
   // Our state.
   virtual void update_wires();
   virtual bool update_state();
-  virtual void propagate_dirtiness(Component* dependency);
-  virtual void set_self_dirty(bool dirty);
+  virtual void init_dirty_state();
 
   // Copying values between inside and outside the group.
   void copy_inputs_to_input_nodes();
@@ -58,8 +59,6 @@ class COMPUTES_EXPORT GroupNodeCompute: public Compute {
   Dep<BaseFactory> _factory;
   QJsonObject _node_hints;
   WireUpdater* _wire_updater;
-
-  bool _restart_compute;
 };
 
 }

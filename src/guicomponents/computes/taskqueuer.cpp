@@ -189,7 +189,8 @@ void TaskQueuer::handle_response(const Message& msg) {
   // an error will be shown in the gui and all processing will stop.
   QString error;
   if (!msg.value(Message::kSuccess).toBool()) {
-    error = msg.value(Message::kValue).toString();
+    QJsonObject obj = msg.value(Message::kValue).toObject();
+    error = obj.value(Message::kValue).toString();
     if (error.isEmpty()) {
       error = "An error has occured.";
     }

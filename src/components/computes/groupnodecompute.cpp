@@ -143,8 +143,7 @@ void GroupNodeCompute::WireUpdater::revert_params_to_defaults() {
 GroupNodeCompute::GroupNodeCompute(Entity* entity, ComponentDID did):
     Compute(entity, did),
     _factory(this),
-    _wire_updater(new_ff WireUpdater(this)),
-    _restart_compute(true) {
+    _wire_updater(new_ff WireUpdater(this)) {
   get_dep_loader()->register_fixed_dep(_factory, Path());
 }
 
@@ -227,13 +226,29 @@ void GroupNodeCompute::update_wires() {
   _inputs->update_wires();
 }
 
-void GroupNodeCompute::propagate_dirtiness(Component* dirty_source) {
-  Component::propagate_dirtiness(dirty_source);
+void GroupNodeCompute::reset_dirty_state_on_all_nodes_in_group() {
+  const Entity::NameToChildMap& children = our_entity()->get_children();
+  for (auto &iter : children) {
+    Dep<Compute> compute = get_dep<Compute>(iter.second);
+    if (compute) {
+      compute->reset_dirty_state();
+    }
+  }
 }
 
-void GroupNodeCompute::set_self_dirty(bool dirty) {
-  Compute::set_self_dirty(dirty);
-  _restart_compute = true;
+void GroupNodeCompute::reset_dirty_state_on_output_nodes() {
+  const Entity::NameToChildMap& children = our_entity()->get_children();
+  for (auto &iter : children) {
+    Dep<OutputNodeCompute> compute = get_dep<OutputNodeCompute>(iter.second);
+    if (compute) {
+      compute->reset_dirty_state();
+    }
+  }
+}
+
+void GroupNodeCompute::init_dirty_state() {
+  dirty_input_nodes();
+  reset_dirty_state_on_output_nodes();
 }
 
 // Note this method is called to make sure the inputs to the group we are currently inside is clean.
@@ -307,12 +322,6 @@ void GroupNodeCompute::copy_output_nodes_to_outputs() {
 bool GroupNodeCompute::update_state() {
   internal();
   Compute::update_state();
-
-  // Dirty the input nodes, if we're restarting the group's compute.
-  if (_restart_compute) {
-    dirty_input_nodes();
-    _restart_compute = false;
-  }
 
   // Bring input values from outside the group to the inside.
   copy_inputs_to_input_nodes();

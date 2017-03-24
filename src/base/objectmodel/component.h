@@ -134,6 +134,7 @@ class OBJECTMODEL_EXPORT Component {
   bool clean_state();
   bool is_state_dirty() const {return _dirty;}
 
+  void reset_dirty_state(); // Currently used to reset counters to zero in loop-like comonents.
 
   // GL.
   virtual bool is_initialized_gl() const {return is_initialized_gl_imp();}
@@ -272,6 +273,7 @@ class OBJECTMODEL_EXPORT Component {
   // This means that any values that it needs to perform its cleanup must be cached during the call to Component::update_state().
   virtual bool destroy_state() {return true;}
   virtual void finalize_state() {}
+  virtual void init_dirty_state() {}
 
   // ----------------------------------------------------------------------------------------------------------
   // Opengl Initialization.
