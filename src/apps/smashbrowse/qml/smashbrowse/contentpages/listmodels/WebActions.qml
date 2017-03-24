@@ -11,11 +11,27 @@ ListModel {
         script: "push_by_names('Navigate', 'WebMenuListPage', 'WebActionsNavigate')"
     }
 
+    ListElement {
+        image_url: "qrc:///icons/ic_location_searching_white_48dp.png"
+        title: "Get All Elements"
+        description: "Get all elements on the current page."
+        script: "browser_recorder.record_get_all_elements();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
 	ListElement {
         image_url: "qrc:///icons/ic_picture_in_picture_white_48dp.png"
-        title: "Find and Filter Elements..."
-        description: "Find and Filter Elements from the current web page."
+        title: "Filter Elements..."
+        description: "Filter the current set of elements."
         script: "push_by_names('Filter Elements', 'NodeMenuListPage', 'WebActionsFilterElements')"
+    }
+    
+    ListElement {
+        image_url: "qrc:///icons/ic_star_border_white_48dp.png"
+        title: "Highlight Elements"
+        description: "Highlight the current set of elements in the browser."
+        script: "browser_recorder.record_highlight_elements();
+        		 main_bar.switch_to_current_mode();"
     }
     
     ListElement {

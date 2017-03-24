@@ -127,6 +127,8 @@
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsExtract.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsNavigate.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsFilterElements.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsIsolateBoundaryElements.qml</file>
+        <file>qml/smashbrowse/contentpages/listmodels/WebActionsIsolateToOneSide.qml</file>
         <file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformAction.qml</file>
 		<file>qml/smashbrowse/contentpages/listmodels/WebActionsPerformScroll.qml</file>
         
@@ -281,6 +283,12 @@
         
         <file alias="icons/check-circle-outline-black.png">../../external/icons/check-circle-outline-black.png</file>
         <file alias="icons/check-circle-outline-white.png">../../external/icons/check-circle-outline-white.png</file>
+        
+        <file alias="icons/ic_location_searching_black_48dp.png">../../external/icons/ic_location_searching_black_48dp.png</file>
+        <file alias="icons/ic_location_searching_white_48dp.png">../../external/icons/ic_location_searching_white_48dp.png</file>
+        
+        <file alias="icons/ic_star_border_black_48dp.png">../../external/icons/ic_star_border_black_48dp.png</file>
+        <file alias="icons/ic_star_border_white_48dp.png">../../external/icons/ic_star_border_white_48dp.png</file>
         
         <!-- Web Browser Icons. -->
         <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>

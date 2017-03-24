@@ -4,15 +4,7 @@ ListModel {
 
     function update(props) {
     }
-    
-    ListElement {
-        letters: "AA"
-        title: "Find All Elements"
-        description: "Find all elements on the page."
-        script: "browser_recorder.record_get_all_elements();
-        		 main_bar.switch_to_current_mode();"
-    }
-    
+        
     ListElement {
     	letters: "Ty"
         title: "Isolate By Type"
@@ -54,77 +46,27 @@ ListModel {
     }
     
     ListElement {
+        letters: "Si"
+        title: "Isolate To One Side..."
+        description: "Isolate the elements which are off to one side of the anchor elements."
+        script: "push_by_names('Isolate to One Side', 'WebMenuListPage', 'WebActionsIsolateToOneSide')"
+    }
+    
+    ListElement {
+        letters: "Bd"
+        title: "Isolate Boundary Elements..."
+        description: "Isolate boundary elements in the current set of elements."
+        script: "push_by_names('Isolate Boundary Elements', 'WebMenuListPage', 'WebActionsIsolateBoundaryElements')"
+    }
+    
+    ListElement {
     	letters: "Di"
         title: "Sort By Distance."
         description: "Sort elements by distance to the specified anchoring elements."
         script: "browser_recorder.record_sort_by_distance_to_anchors();
         		 main_bar.switch_to_current_mode();"
     }
-    
-    ListElement {
-    	letters: "Lm"
-        title: "Isolate Leftmost."
-        description: "Isolate the leftmost elements."
-        script: "browser_recorder.record_isolate_leftmost();
-        		 main_bar.switch_to_current_mode();"
-    }
-    
-    ListElement {
-    	letters: "Rm"
-        title: "Isolate Rightmost."
-        description: "Isolate the rightmost elements."
-        script: "browser_recorder.record_isolate_rightmost();
-        		 main_bar.switch_to_current_mode();"
-    }
-    
-    ListElement {
-    	letters: "Tm"
-        title: "Isolate Topmost."
-        description: "Isolate the topmost elements."
-        script: "browser_recorder.record_isolate_topmost();
-        		 main_bar.switch_to_current_mode();"
-    }
-    
-    ListElement {
-    	letters: "Bm"
-        title: "Isolate Bottommost."
-        description: "Isolate the bottommost elements."
-        script: "browser_recorder.record_isolate_bottommost();
-        		 main_bar.switch_to_current_mode();"
-    }
-    
-    ListElement {
-    	letters: "Il"
-        title: "Isolate On Left."
-        description: "Isolate elements to the left of anchor elements."
-        script: "browser_recorder.record_isolate_on_left();
-        		 main_bar.switch_to_current_mode();"
-    }
-    
-    ListElement {
-    	letters: "Ir"
-        title: "Isolate On Right."
-        description: "Isolate elements to the right of anchor elements."
-        script: "browser_recorder.record_isolate_on_right();
-        		 main_bar.switch_to_current_mode();"
-    }
-    
-    ListElement {
-    	letters: "It"
-        title: "Isolate On Top."
-        description: "Isolate elements above anchor elements."
-        script: "browser_recorder.record_isolate_on_top();
-        		 main_bar.switch_to_current_mode();"
-    }
-    
-    ListElement {
-    	letters: "Ib"
-        title: "Isolate On Bottom."
-        description: "Isolate elements below anchor elements."
-        script: "browser_recorder.record_isolate_on_bottom();
-        		 main_bar.switch_to_current_mode();"
-    }
-    
+        
     ListElement {
     	letters: "Ix"
         title: "Isolate By Index."
@@ -156,12 +98,5 @@ ListModel {
         script: "browser_recorder.record_prune_duplicates();
         		 main_bar.switch_to_current_mode();"
     }
-    
-    ListElement {
-    	letters: "He"
-        title: "Highlight Elements"
-        description: "Highlight the elements with a border in the browser."
-        script: "browser_recorder.record_highlight_elements();
-        		 main_bar.switch_to_current_mode();"
-    }
+
 }

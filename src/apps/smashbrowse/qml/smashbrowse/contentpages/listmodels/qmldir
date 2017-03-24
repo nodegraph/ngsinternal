@@ -22,6 +22,10 @@ WebActions 1.0 WebActions.qml
 WebActionsBrowserWindow 1.0 WebActionsBrowserWindow.qml
 WebActionsExtract 1.0 WebActionsExtract.qml
 WebActionsNavigate 1.0 WebActionsNavigate.qml
-WebActionsFilterElements 1.0 WebActionsFilterElements.qml
 WebActionsPerformAction 1.0 WebActionsPerformAction.qml
 WebActionsPerformScroll 1.0 WebActionsPerformScroll.qml
+
+WebActionsFilterElements 1.0 WebActionsFilterElements.qml
+WebActionsIsolateSideMost 1.0 WebActionsIsolateSideMost.qml
+WebActionsIsolateBoundaryElements 1.0 WebActionsIsolateBoundaryElements.qml
+
