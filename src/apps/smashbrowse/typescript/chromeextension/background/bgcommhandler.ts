@@ -176,11 +176,13 @@ class BgCommHandler {
             details.forEach((frame: chrome.webNavigation.GetAllFrameResultDetails) => {
                 let collector = make_collector(frame.frameId)
                 let info = this.frame_infos.get_info_by_id(frame.frameId)
-                let offset = info.calculate_offset()
-                let fe_index_path = info.calculate_fe_index_path()
-                //console.log('distributing frame index path: ' + info.fw_index_path + ' element index path: ' + fe_index_path)
-                let msg = new InfoMessage(-1, InfoType.kDistributeFrameOffsets, {fe_index_path: fe_index_path, offset: offset})
-                chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
+                if (info) {
+                    let offset = info.calculate_offset()
+                    let fe_index_path = info.calculate_fe_index_path()
+                    //console.log('distributing frame index path: ' + info.fw_index_path + ' element index path: ' + fe_index_path)
+                    let msg = new InfoMessage(-1, InfoType.kDistributeFrameOffsets, {fe_index_path: fe_index_path, offset: offset})
+                    chrome.tabs.sendMessage(this.bg_comm.get_current_tab_id(), msg, { frameId: frame.frameId }, collector);
+                }
             });
         }
         chrome.webNavigation.getAllFrames({tabId: this.bg_comm.get_current_tab_id()}, f);
