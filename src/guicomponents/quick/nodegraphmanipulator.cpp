@@ -403,10 +403,6 @@ void NodeGraphManipulatorImp::finish_creating_node(Entity* entity, bool centered
 
     // We need let encompassing groups know that we are dirty.
     bubble_group_dirtiness(entity);
-
-    // Make sure the created node is selected.
-    _selection->clear_selection();
-    _selection->select(cs);
   }
 
   // A little overkill, but we clean the wires on everything in this group.
@@ -590,14 +586,47 @@ void NodeGraphManipulatorImp::link_to_closest_node(Entity* downstream) {
   Dep<BaseFactory> factory = get_dep<BaseFactory>(_app_root);
   Entity* current_group = factory->get_current_group();
 
-  // Get the current comp shape collective.
-  Dep<CompShapeCollective> collective = get_dep<CompShapeCollective>(current_group);
+  // Hopefully the user has only one node selected.
+  // If not we're grabbing one node at random.
+  const DepUSet<NodeShape>& selected = _selection->get_selected();
+  std::cerr << "num selected is: " << selected.size() << "\n";
 
-  // Find the lowest node that's where we'll link to.
-  Dep<CompShape> upstream_node = collective->get_lowest( { downstream });
+  Dep<NodeShape> upstream_node(this);
+  for (auto &n: selected) {
+
+    // Skip the downstream node which is what we're trying to connect.
+    if (n->our_entity() == downstream) {
+      continue;
+    }
+
+    // If the comp shape is not a node's linkable shape then continue.
+    if (!n->is_linkable()) {
+      continue;
+    }
+
+    // If the entity has no exposed outputs then continue.
+    Dep<OutputTopology> outputs = get_dep<OutputTopology>(n->our_entity());
+    if (outputs->get_num_exposed() == 0) {
+      continue;
+    }
+
+    // Otherwise we've found a candidate.
+    upstream_node = n;
+  }
+
+  // Get our downstream shape.
+  Dep<NodeShape> downstream_node = get_dep<NodeShape>(downstream);
+
+  /* Make sure the created node is selected.*/\
+  if (upstream_node) {
+    _selection->clear_selection();
+    _selection->select(downstream_node);
+  }
+
   if (!upstream_node) {
     return;
   }
+
   Entity* upstream = upstream_node->our_entity();
 
   // -------------------------------------------------------------------------
@@ -605,7 +634,6 @@ void NodeGraphManipulatorImp::link_to_closest_node(Entity* downstream) {
   // -------------------------------------------------------------------------
 
   // Position our node below the upstream.
-  Dep<NodeShape> downstream_node = get_dep<NodeShape>(downstream);
   glm::vec2 pos = upstream_node->get_pos();
   pos.y -= 700;
   downstream_node->set_pos(pos);
