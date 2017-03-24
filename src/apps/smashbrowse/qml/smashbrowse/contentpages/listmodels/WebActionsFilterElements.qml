@@ -6,7 +6,7 @@ ListModel {
     }
     
     ListElement {
-        letters: "Fa"
+        letters: "AA"
         title: "Find All Elements"
         description: "Find all elements on the page."
         script: "browser_recorder.record_get_all_elements();
@@ -14,7 +14,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Tp"
+    	letters: "Ty"
         title: "Isolate By Type"
         description: "Isolate the elements with a specific type."
         script: "browser_recorder.record_isolate_by_type();
@@ -22,7 +22,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Vl"
+    	letters: "Va"
         title: "Isolate By Value"
         description: "Isolate the elements with a specific value."
         script: "browser_recorder.record_isolate_by_value();
@@ -30,7 +30,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Pn"
+    	letters: "Po"
         title: "Isolate By Position"
         description: "Isolate the elements which contain a specific point."
         script: "browser_recorder.record_isolate_by_position();
@@ -62,7 +62,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Le"
+    	letters: "Lm"
         title: "Isolate Leftmost."
         description: "Isolate the leftmost elements."
         script: "browser_recorder.record_isolate_leftmost();
@@ -70,7 +70,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Re"
+    	letters: "Rm"
         title: "Isolate Rightmost."
         description: "Isolate the rightmost elements."
         script: "browser_recorder.record_isolate_rightmost();
@@ -78,7 +78,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Te"
+    	letters: "Tm"
         title: "Isolate Topmost."
         description: "Isolate the topmost elements."
         script: "browser_recorder.record_isolate_topmost();
@@ -86,7 +86,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Be"
+    	letters: "Bm"
         title: "Isolate Bottommost."
         description: "Isolate the bottommost elements."
         script: "browser_recorder.record_isolate_bottommost();
@@ -94,7 +94,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Le"
+    	letters: "Il"
         title: "Isolate On Left."
         description: "Isolate elements to the left of anchor elements."
         script: "browser_recorder.record_isolate_on_left();
@@ -102,7 +102,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Re"
+    	letters: "Ir"
         title: "Isolate On Right."
         description: "Isolate elements to the right of anchor elements."
         script: "browser_recorder.record_isolate_on_right();
@@ -110,7 +110,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Te"
+    	letters: "It"
         title: "Isolate On Top."
         description: "Isolate elements above anchor elements."
         script: "browser_recorder.record_isolate_on_top();
@@ -118,7 +118,7 @@ ListModel {
     }
     
     ListElement {
-    	letters: "Be"
+    	letters: "Ib"
         title: "Isolate On Bottom."
         description: "Isolate elements below anchor elements."
         script: "browser_recorder.record_isolate_on_bottom();
