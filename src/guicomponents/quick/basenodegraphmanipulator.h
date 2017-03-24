@@ -68,7 +68,7 @@ class BaseNodeGraphManipulator: public Component {
   virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state = QJsonObject(), const std::string& name = "", Entity* group_entity=NULL) = 0;
 
   // Link a node.
-  virtual void link_to_closest_node(Entity* node) = 0;
+  virtual void link_to_selected_node(Entity* node) = 0;
 
   // Link Manipulation.
   virtual void destroy_link(Entity* input_entity) = 0;

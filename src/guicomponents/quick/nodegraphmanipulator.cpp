@@ -581,7 +581,7 @@ Entity* NodeGraphManipulatorImp::create_browser_node(bool centered, ComponentDID
   return _node;
 }
 
-void NodeGraphManipulatorImp::link_to_closest_node(Entity* downstream) {
+void NodeGraphManipulatorImp::link_to_selected_node(Entity* downstream) {
   // Get the factory.
   Dep<BaseFactory> factory = get_dep<BaseFactory>(_app_root);
   Entity* current_group = factory->get_current_group();
@@ -917,8 +917,8 @@ void NodeGraphManipulator::surface_from_group() {
   _imp->surface_from_group();
 }
 
-void NodeGraphManipulator::link_to_closest_node(Entity* downstream_node) {
-  return _imp->link_to_closest_node(downstream_node);
+void NodeGraphManipulator::link_to_selected_node(Entity* downstream_node) {
+  return _imp->link_to_selected_node(downstream_node);
 }
 
 void NodeGraphManipulator::set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {

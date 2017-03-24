@@ -93,7 +93,7 @@ Q_OBJECT
   virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state = QJsonObject(), const std::string& name = "", Entity* group_entity=NULL);
 
   // Link a node.
-  virtual void link_to_closest_node(Entity* node);
+  virtual void link_to_selected_node(Entity* node);
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);
@@ -215,7 +215,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual Entity* create_browser_node(bool centered, ComponentDID compute_did, const QJsonObject& chain_state, const std::string& name = "", Entity* group_entity=NULL);
 
   // Link a node.
-  virtual void link_to_closest_node(Entity* node);
+  virtual void link_to_selected_node(Entity* node);
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);
