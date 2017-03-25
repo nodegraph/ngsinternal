@@ -25,7 +25,7 @@ endfunction()
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(TSC_DEBUG_ARGS)
 else ()
-    set(TSC_DEBUG_ARGS --debug)
+    set(TSC_DEBUG_ARGS --debug --formatting=PRETTY_PRINT)
 endif()
 
 # Sub Directories.

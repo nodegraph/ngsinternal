@@ -25,7 +25,6 @@ add_custom_command(
     COMMAND java
     ARGS -jar ${closure_compiler_jar} 
          ${TSC_DEBUG_ARGS}
-         --formatting=PRETTY_PRINT
          #--use_types_for_optimization false
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
