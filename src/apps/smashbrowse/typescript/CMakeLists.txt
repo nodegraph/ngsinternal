@@ -21,6 +21,13 @@ function(get_tsconfig_files ts_files)
     SET(${ts_files} ${tsconfig_files} PARENT_SCOPE)
 endfunction()
 
+# Debug args for typescript compilation used by all of our subdirs.
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    set(TSC_DEBUG_ARGS)
+else ()
+    set(TSC_DEBUG_ARGS --debug)
+endif()
+
 # Sub Directories.
 add_subdirectory(message) # This injects ${msg_js_lib} into this dir scope, so the following dirs can use it.
 add_subdirectory(chromeextension)

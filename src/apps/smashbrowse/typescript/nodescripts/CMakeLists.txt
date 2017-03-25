@@ -28,6 +28,7 @@ add_custom_command(
     
     COMMAND java
     ARGS -jar ${closure_compiler_jar}
+        ${TSC_DEBUG_ARGS}
          #--compilation_level WHITESPACE_ONLY
          --compilation_level SIMPLE_OPTIMIZATIONS 
          #--compilation_level ADVANCED_OPTIMIZATIONS
