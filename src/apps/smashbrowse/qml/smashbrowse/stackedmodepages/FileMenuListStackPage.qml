@@ -39,6 +39,9 @@ BaseStackPage{
     }
 
     function on_file_double_clicked(row) {
+    	// Make sure the browser is closed.
+		task_queuer.close_browser()
+		
         // Load the graph.
         file_model.load_graph(row)
         // Frame the graph.
@@ -118,6 +121,9 @@ BaseStackPage{
     }
     
     function on_destroy_current(){
+    	// Make sure the browser is closed.
+		task_queuer.close_browser()
+		
         // Destroy the graph.
         node_graph_item.destroy_graph()
         // Finished.
@@ -125,6 +131,9 @@ BaseStackPage{
     }
 
 	function on_create_graph_info(info) {
+		// Make sure the browser is closed.
+		task_queuer.close_browser()
+		
 		file_model.create_graph(info)
 		node_graph_item.update()
 		on_finished_with_menu()
