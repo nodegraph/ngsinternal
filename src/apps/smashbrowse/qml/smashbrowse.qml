@@ -31,12 +31,12 @@ Rectangle {
     function on_closing(close) {
     	// Stop the web driver service.
     	if (num_close_tries == 0) {
-    		task_queuer.force_stack_reset()
+    		manipulator.force_stack_reset()
     		task_queuer.queue_stop_service()
     		close.accepted = false
     		num_close_tries += 1
     		close_timer.start()
-    	} else if (task_queuer.is_waiting_for_response()){
+    	} else if (manipulator.is_waiting_for_response()){
     		close.accepted = false
     		num_close_tries += 1
     		close_timer.start()

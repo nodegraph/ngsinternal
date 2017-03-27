@@ -57,8 +57,11 @@ Q_OBJECT
   virtual void clear_ultimate_targets();
   virtual void continue_cleaning_to_ultimate_targets();
   virtual void continue_cleaning_to_ultimate_targets_on_idle();
-  virtual bool is_busy_cleaning();
-  virtual bool current_task_is_cancelable();
+
+  Q_INVOKABLE virtual bool is_busy_cleaning();
+  Q_INVOKABLE virtual bool current_task_is_cancelable();
+  Q_INVOKABLE virtual bool is_waiting_for_response();
+  Q_INVOKABLE virtual void force_stack_reset();
 
   // Update current compute markers on nodes.
   virtual void set_processing_node(Entity* entity);
@@ -181,6 +184,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
   virtual void continue_cleaning_to_ultimate_targets_on_idle();
   virtual bool is_busy_cleaning();
   virtual bool current_task_is_cancelable();
+  virtual bool is_waiting_for_response();
+  virtual void force_stack_reset();
 
   // Update current compute markers on nodes.
   virtual void set_processing_node(Entity* entity);

@@ -282,6 +282,15 @@ void NodeGraphManipulatorImp::set_processing_node(Entity* entity) {
   _ng_quick->update();
 }
 
+bool NodeGraphManipulatorImp::is_waiting_for_response() {
+  return _scheduler->is_waiting_for_response();
+}
+
+void NodeGraphManipulatorImp::force_stack_reset() {
+  clear_ultimate_targets();
+  _scheduler->force_stack_reset();
+}
+
 void NodeGraphManipulatorImp::clear_processing_node() {
   _selection->clear_processing_node();
   _ng_quick->update();
@@ -879,6 +888,14 @@ bool NodeGraphManipulator::is_busy_cleaning() {
 
 bool NodeGraphManipulator::current_task_is_cancelable() {
   return _imp->current_task_is_cancelable();
+}
+
+bool NodeGraphManipulator::is_waiting_for_response() {
+  return _imp->is_waiting_for_response();
+}
+
+void NodeGraphManipulator::force_stack_reset() {
+  return _imp->force_stack_reset();
 }
 
 void NodeGraphManipulator::set_processing_node(Entity* entity) {

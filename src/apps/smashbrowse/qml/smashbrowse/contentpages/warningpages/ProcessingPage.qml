@@ -70,7 +70,7 @@ Rectangle {
                 text: "stop cleaning"
                 visible: true
                 onClicked: {
-                    task_queuer.force_stack_reset()
+                    manipulator.force_stack_reset()
                     page.Stack.view.pop_page()
                     main_bar.switch_to_current_mode()
                 }

@@ -35,7 +35,7 @@ Rectangle{
     // Currently this only pertains to whether the task_queuer is busy cleaning asynchronously.
     // The other computes in the nodes currently all happen synchronously.
     function is_busy() {
-    	if (task_queuer.is_busy_cleaning()) {
+    	if (manipulator.is_busy_cleaning()) {
     		return true;
     	}
     	return false;
@@ -43,11 +43,11 @@ Rectangle{
     
     function show_busy_page() {
     	if (is_busy()) {
-    		console.log('current task is cacelable: ' + task_queuer.current_task_is_cancelable())
+    		console.log('current task is cancelable: ' + manipulator.current_task_is_cancelable())
     	
 	        var push_page = app_loader.load_component("qrc:///qml/smashbrowse/contentpages/warningpages/ProcessingPage.qml", ng_menu_list_stack_page, {})
 	        push_page.set_title('processing nodes')
-	        push_page.set_cancelable(task_queuer.current_task_is_cancelable())
+	        push_page.set_cancelable(manipulator.current_task_is_cancelable())
 	        stack_view.push_page(push_page)
 	        push_page.visible = true
 	        return true;

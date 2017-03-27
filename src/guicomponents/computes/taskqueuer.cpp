@@ -82,23 +82,6 @@ void TaskQueuer::force_close_browser() {
   }
 }
 
-void TaskQueuer::force_stack_reset() {
-  _manipulator->clear_ultimate_targets();
-  _scheduler->force_stack_reset();
-}
-
-bool TaskQueuer::is_busy_cleaning() {
-  return _manipulator->is_busy_cleaning();
-}
-
-bool TaskQueuer::current_task_is_cancelable() {
-  return _manipulator->current_task_is_cancelable();
-}
-
-bool TaskQueuer::is_waiting_for_response() {
-  return _scheduler->is_waiting_for_response();
-}
-
 void TaskQueuer::queue_stop_service() {
   TaskContext tc(_scheduler);
   queue_send_msg(tc, Message(WebDriverRequestType::kStopService));
