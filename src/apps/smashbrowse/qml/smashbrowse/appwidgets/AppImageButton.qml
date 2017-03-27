@@ -40,8 +40,10 @@ Button {
         anchors.fill: parent
         onPressAndHold: {
             mouse.accepted = true
-            app_tooltip.show(image_button,tooltip_text)
-            app_settings.vibrate()
+            if (app_tooltip.visible == false) {
+	            app_tooltip.show(image_button,tooltip_text)
+	            app_settings.vibrate()
+            }
         }
         onPressed: {
             app_settings.vibrate()

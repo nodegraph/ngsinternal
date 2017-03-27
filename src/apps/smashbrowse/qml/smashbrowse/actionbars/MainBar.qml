@@ -58,6 +58,29 @@ Rectangle {
     // Methods.
     // Set the current mode of the action bar.
     function on_switch_to_mode(m) {
+    	// If we're busy cleaning the node graph, there are certain tabs
+    	// that we can't go to because they may interrupt the cleaning.
+    	// For example, loading or destorying the file while the node graph
+    	// is cleaning is catastrophic.
+    	if (manipulator.is_busy_cleaning()) {
+    		// We allow going back and forth between things like the node graph
+    		// and the posts or downloads or viewing the outputs.
+    		if (m == app_settings.file_mode) {
+    		    app_tooltip.show(file_button, "please wait")
+            	app_settings.vibrate()
+    			return
+    		} else if (m == app_settings.edit_node_mode) {
+    		    app_tooltip.show(edit_node_button, "please wait")
+            	app_settings.vibrate()
+    			return
+    		} else if (m == app_settings.settings_mode) {
+    			app_tooltip.show(settings_button, "please wait")
+            	app_settings.vibrate()
+    			return
+    		}
+
+    	}
+    	
         clear_lit_buttons()
         if (m == app_settings.file_mode) {
             file_button.lit = true
