@@ -32,10 +32,20 @@ Rectangle {
     
     Timer {
         id: progress_timer
-        interval: 10
+        interval: 66
         running: false
         repeat: true
-        onTriggered: if (our_progress_bar.value >= 100) { our_progress_bar.value = 0} else {our_progress_bar.value += 1}
+        onTriggered: {
+        	if (manipulator.is_busy_cleaning()) {
+	        	if (our_progress_bar.value >= 100) { 
+	        		our_progress_bar.value = 0
+	        	} else {
+	        		our_progress_bar.value += 1
+	        	}
+        	} else {
+        		our_progress_bar.value = 0
+        	}
+        }
     }
 
     // URL loading progress overlay.
@@ -60,6 +70,10 @@ Rectangle {
                 color: "#FFFF0000"
             }
         }
+    }
+    
+    Component.onCompleted: {
+        start()
     }
 }
 
