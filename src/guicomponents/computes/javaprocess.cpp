@@ -55,7 +55,7 @@ void JavaProcess::on_read_standard_error() {
   debug.noquote();
 
   // Dump any std errors from the process.
-  QString error(_process->readAllStandardError());
+  QString error = QString::fromLocal8Bit(_process->readAllStandardError());
   if (!error.isEmpty()) {
     debug << "------------------ java error ------------------\n";
     debug << error;
@@ -68,7 +68,7 @@ void JavaProcess::on_read_standard_output() {
   QDebug debug = qDebug();
   debug.noquote();
 
-  QString output(_process->readAllStandardOutput());
+  QString output = QString::fromLocal8Bit(_process->readAllStandardOutput());
   // Usually there is a newline at the end of the data.
   // However sometimes the newline comes later over the stream.
   if (output.trimmed().isEmpty()) {

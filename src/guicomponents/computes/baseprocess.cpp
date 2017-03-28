@@ -85,7 +85,7 @@ void BaseProcess::on_state_changed(QProcess::ProcessState state) {
 }
 
 void BaseProcess::on_stderr() {
-  _last_stderr = _process->readAllStandardError();
+  _last_stderr = QString::fromLocal8Bit(_process->readAllStandardError());
 
   // Dump any std errors from the process.
   if (_show_stream_activity) {
@@ -101,7 +101,7 @@ void BaseProcess::on_stderr() {
 }
 
 void BaseProcess::on_stdout() {
-  _last_stdout = _process->readAllStandardOutput();
+  _last_stdout = QString::fromLocal8Bit(_process->readAllStandardOutput());
 
   // Dump any std output from the process.
   if (_show_stream_activity) {

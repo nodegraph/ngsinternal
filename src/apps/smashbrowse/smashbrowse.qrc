@@ -62,6 +62,7 @@
         <!-- ListPages -->
         <file>qml/smashbrowse/contentpages/listpages/qmldir</file>
         <file>qml/smashbrowse/contentpages/listpages/DownloadListPage.qml</file>
+        <file>qml/smashbrowse/contentpages/listpages/DownloadedListPage.qml</file>
         <file>qml/smashbrowse/contentpages/listpages/BaseListPage.qml</file>
         <file>qml/smashbrowse/contentpages/listpages/PostListPage.qml</file>
         <file>qml/smashbrowse/contentpages/listpages/DataListPage.qml</file>
@@ -259,6 +260,9 @@
         
         <file alias="icons/ic_crop_original_black_48dp.png">../../external/icons/ic_crop_original_black_48dp.png</file>
         <file alias="icons/ic_crop_original_white_48dp.png">../../external/icons/ic_crop_original_white_48dp.png</file>
+        
+        <file alias="icons/ic_music_video_black_48dp.png">../../external/icons/ic_music_video_black_48dp.png</file>
+        <file alias="icons/ic_music_video_white_48dp.png">../../external/icons/ic_music_video_white_48dp.png</file>
         
         <file alias="icons/ic_keyboard_arrow_left_black_48dp.png">../../external/icons/ic_keyboard_arrow_left_black_48dp.png</file>
         <file alias="icons/ic_keyboard_arrow_left_white_48dp.png">../../external/icons/ic_keyboard_arrow_left_white_48dp.png</file>

@@ -1,6 +1,8 @@
 module listpages
 
 DownloadListPage 1.0 DownloadListPage.qml
+DownloadedListPage 1.0 DownloadedListPage.qml
+
 BaseListPage 1.0 BaseListPage.qml
 PostListPage 1.0 PostListPage.qml
 DataListPage 1.0 DataListPage.qml

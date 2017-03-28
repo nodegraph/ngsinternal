@@ -100,7 +100,11 @@ Rectangle {
             more_menu_button.visible = false
         } else if (m == app_settings.downloads_mode) {
         	downloads_button.lit = true
-        	action_bar_title.text = "Downloads"
+        	action_bar_title.text = "Downloading"
+            more_menu_button.visible = false
+        } else if (m == app_settings.downloaded_mode) {
+        	downloaded_button.lit = true
+        	action_bar_title.text = "Downloaded"
             more_menu_button.visible = false
         } else if (m == app_settings.posts_mode) {
             posts_button.lit = true
@@ -151,6 +155,7 @@ Rectangle {
         view_node_button.lit = false
         edit_node_button.lit = false
         downloads_button.lit = false
+        downloaded_button.lit = false
         posts_button.lit = false
         settings_button.lit = false
     }
@@ -276,16 +281,35 @@ Rectangle {
         
         anchors {
         	verticalCenter: parent.verticalCenter
-        	right: posts_button.left
+        	right: downloaded_button.left
         	leftMargin: app_settings.action_bar_left_margin
     		rightMargin: app_settings.action_bar_right_margin
     	}
         
         image_url: "qrc:///icons/ic_file_download_white_48dp.png"
-        tooltip_text: "downloads"
+        tooltip_text: "downloading"
         
         onClicked: {
             on_switch_to_mode(app_settings.downloads_mode)
+        }
+    }
+    
+        // Downloaded Mode Button.
+    AppImageButton {
+        id: downloaded_button
+        
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: posts_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+    	}
+        
+        image_url: "qrc:///icons/ic_music_video_white_48dp.png"
+        tooltip_text: "downloaded"
+        
+        onClicked: {
+            on_switch_to_mode(app_settings.downloaded_mode)
         }
     }
 

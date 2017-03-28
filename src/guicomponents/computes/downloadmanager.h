@@ -37,21 +37,29 @@ Q_OBJECT
   // Actions.
   Q_INVOKABLE void download(const QString& url, const QString& download_dir = "", int max_width = 0, int max_height = 0, int max_filesize = 0);
 
-  Q_INVOKABLE void reveal_file(const QString& dir, const QString &filename);
+  Q_INVOKABLE void cancel_download(long long id);
+
+  Q_INVOKABLE void reveal_approximate_filename(const QString& dir, const QString &filename);
+  Q_INVOKABLE void reveal_exact_filename(const QString& dir, const QString &filename);
+
   static QString find_best_matching_file(const QString& dir, const QString& filename);
   static void reveal_file_on_platform(const QString& dir, const QString &filename);
 
 signals:
  void download_queued(long long id, const QString& url, const QString& dest_dir);
  void download_started(long long id, const QString& filename);
- void download_progress(long long id, const  QString& progress);
+ void download_progress(long long id, const  QString& percentage, const QString& file_size, const QString& speed, const QString& eta);
+ void download_complete(long long id, const  QString& percentage, const QString& file_size, const QString& time);
+ void download_merged(long long id, const QString& merged_filename);
  void download_finished(long long id);
  void download_errored(long long id, const QString& error);
 
  private slots:
   void on_poll();
   void on_started(const QString& filename);
-  void on_progress(const  QString& progress);
+  void on_progress(const  QString& percentage, const QString& file_size, const QString& speed, const QString& eta);
+  void on_complete(const  QString& percentage, const QString& file_size, const QString& time);
+  void on_merged(const QString& merged_filename);
   void on_errored(const QString& error);
   void on_finished();
 

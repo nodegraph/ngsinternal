@@ -27,7 +27,9 @@ Q_OBJECT
 
   signals:
   void started(const QString& filename);
-  void progress(const  QString& progress);
+  void progress(const  QString& percentage, const QString& file_size, const QString& speed, const QString& etc);
+  void complete(const  QString& percentage, const  QString& file_size, const  QString& time);
+  void merged(const QString& filename);
   void finished();
 
  protected:
@@ -52,10 +54,14 @@ Q_OBJECT
   QString _filename; // This is sent to us over stdout from the process.
   static const char* _already_downloaded_pattern;
   static const char* _progress_pattern;
+  static const char* _complete_pattern;
   static const char* _filename_pattern;
+  static const char* _merged_filename_pattern;
   const QRegExp _already_downloaded_regex;
   const QRegExp _progress_regex; // Extract progress info from stdout.
+  const QRegExp _complete_regex; // Extract the final progress info indicating download of a single file is complete.
   const QRegExp _filename_regex; // Extract filename info from stdout.
+  const QRegExp _merged_filename_regex; // Extract the merged filename info from stdout.
 };
 
 }

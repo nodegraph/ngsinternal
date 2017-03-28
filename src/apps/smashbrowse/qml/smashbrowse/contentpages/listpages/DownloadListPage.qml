@@ -29,8 +29,6 @@ BaseListPage {
     y: app_settings.page_y
     z: app_settings.page_z
     
-    property int _downloads_completed: 0
-        
     // Methods.
     function on_switch_to_mode(mode) {
         if (mode == app_settings.downloads_mode) {
@@ -42,47 +40,71 @@ BaseListPage {
     }
     
     function update_header() {
-    	stack_view_header.title_text = _downloads_completed.toString() + " completed"
+    	stack_view_header.title_text = "double click to cancel"
     }
     
     function on_download_double_clicked(row) {
     	var obj = model.get(row)
-    	download_manager.reveal_file(obj.dest_dir, obj.title)
+    	download_manager.cancel_download(obj.id)
+    	
+    	// Remove the element.
+    	model.remove(row,1)
     }
 
-    function on_download_queued(row, url, dest_dir) {
-        model.append({"title": url, "dest_dir": dest_dir, "description": "queued", "download_state": GUITypes.Queued})
-        // Check that we are at the right row.
-        if (row !== model.count -1) {
-        	console.log('row index mismatch detected')
-        }
+    function on_download_queued(id, url, dest_dir) {
+        model.append({"id": id, "title": url, "dest_dir": dest_dir, "description": "queued", "video_filename": "", "audio_filename": "", "merged_filename": "", "download_state": GUITypes.Queued})
     }
     
     function on_download_started(row, filename) {
+    	console.log("started new download!!!!!!!!")
         var obj = model.get(row)
-        obj.title = filename
+        if (obj.video_filename == "") {
+        	obj.video_filename = filename
+        	obj.title = filename
+        } else {
+        	obj.audio_filename = filename
+        	obj.title = filename
+        }
         obj.description = "downloading"
         obj.download_state = GUITypes.Downloading
     }
     
-    function on_download_progress(row, progress) {
+    function on_download_progress(row, percentage, file_size, speed, time) {
     	var obj = model.get(row)
-        obj.description = progress
+    	console.log('percentage: ' + percentage)
+    	console.log('file_size: ' + file_size)
+    	console.log('speed: ' + speed)
+        obj.description = percentage + "% of " + file_size + " completed at a speed of " + speed
         obj.download_state = GUITypes.Downloading
     }
+    
+    function on_download_complete(row, percentage, file_size, time) {
+    	var obj = model.get(row)
+        obj.description = percentage + "% of " + file_size + " completed in a time of " + time
+        obj.download_state = GUITypes.Downloading
+    }
+    
+    function on_download_merged(row, merged_filename) {
+        var obj = model.get(row)
+        obj.merged_filename = merged_filename
+    }
+    
     
     function on_download_finished(row) {
     	var obj = model.get(row)
     	if (obj.download_state == GUITypes.Errored) {
-    		obj.description = "Unable to download this file.\n" + obj.description
+    		obj.description = "Errors encountered downloading this file.\n" + obj.description
     	} else {
         	obj.description += "\nfinished"
         	obj.download_state = GUITypes.Finished
         }
         
-        // Update counter and header.
-        _downloads_completed += 1
-    	update_header()
+        console.log("finished video filename: " + obj.video_filename)
+        console.log("finished audio filename: " + obj.audio_filename)
+        console.log("finished merged filename: " + obj.merged_filename)
+        
+    	// Move the model object over to the downloaded_page.
+    	downloaded_page.on_download_finished(obj)
     	
     	// Remove the element.
     	model.remove(row,1)

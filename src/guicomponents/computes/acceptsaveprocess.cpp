@@ -52,7 +52,7 @@ void AcceptSaveProcess::on_read_standard_error() {
   debug.noquote();
 
   // Dump any std errors from the process.
-  QString error(_process->readAllStandardError());
+  QString error = QString::fromLocal8Bit(_process->readAllStandardError());
   if (!error.isEmpty()) {
     debug << "------------------accept save process error --------------------\n";
     debug << error;
@@ -65,7 +65,7 @@ void AcceptSaveProcess::on_read_standard_output() {
   QDebug debug = qDebug();
   debug.noquote();
 
-  QString output(_process->readAllStandardOutput());
+  QString output = QString::fromLocal8Bit(_process->readAllStandardOutput());
 
   // Dump any std output from the process.
   if (!output.isEmpty()) {

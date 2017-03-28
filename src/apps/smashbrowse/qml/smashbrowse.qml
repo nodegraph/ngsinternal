@@ -121,6 +121,11 @@ Rectangle {
     	id: downloads_page
         visible: false
     }
+    
+    DownloadedListPage {
+    	id: downloaded_page
+    	visible: false
+    }
 
     PostListPage {
         id: posts_page
@@ -186,6 +191,7 @@ Rectangle {
         main_bar.switch_to_mode.connect(view_data_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(edit_data_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(downloads_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(downloaded_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(ng_menu_list_stack_page.on_switch_to_mode)
@@ -204,6 +210,8 @@ Rectangle {
         download_manager.download_queued.connect(downloads_page.on_download_queued)
         download_manager.download_started.connect(downloads_page.on_download_started)
         download_manager.download_progress.connect(downloads_page.on_download_progress)
+        download_manager.download_complete.connect(downloads_page.on_download_complete)
+        download_manager.download_merged.connect(downloads_page.on_download_merged)
         download_manager.download_finished.connect(downloads_page.on_download_finished)
         download_manager.download_errored.connect(downloads_page.on_download_errored)
         

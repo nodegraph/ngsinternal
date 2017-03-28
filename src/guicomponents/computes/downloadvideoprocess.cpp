@@ -25,7 +25,9 @@ DownloadVideoProcess::DownloadVideoProcess()
       _max_filesize(-1),
       _already_downloaded_regex(_already_downloaded_pattern),
       _progress_regex(_progress_pattern),
-      _filename_regex(_filename_pattern){
+      _complete_regex(_complete_pattern),
+      _filename_regex(_filename_pattern),
+      _merged_filename_regex(_merged_filename_pattern) {
   // Set our process name.
   set_process_name("download video");
   // Stop outputting stream activity.
@@ -76,7 +78,9 @@ void DownloadVideoProcess::on_stderr() {
 
 const char* DownloadVideoProcess::_already_downloaded_pattern ="(.+)\\s*has already been downloaded";
 const char* DownloadVideoProcess::_filename_pattern = "Destination:\\s*(.+)";
-const char* DownloadVideoProcess::_progress_pattern = "(.*)";
+const char* DownloadVideoProcess::_progress_pattern = "(.+)% of ~?(.+) at (.+) ETA (.+)"; //3.1% of ~25.47KiB at 530.22KiB/s ETA 00:05
+const char* DownloadVideoProcess::_complete_pattern = "(.+)% of (.+) in (.+)"; //100% of 35.77MiB in 00:05
+const char* DownloadVideoProcess::_merged_filename_pattern = "\\[ffmpeg\\] Merging formats into \"(.+)\"";
 
 void DownloadVideoProcess::on_stdout() {
   if (_started) {
@@ -85,19 +89,37 @@ void DownloadVideoProcess::on_stdout() {
   }
 
   BaseProcess::on_stdout();
+
+  // Firstly, we split the lines on newlines.
   QStringList lines = _last_stdout.split('\n', QString::SkipEmptyParts);
 
-  for (QString & line: lines) {
+  for (QString & line : lines) {
 
-    // Multiple message lines from our process may get jammed together so we need to split them.
+    std::cerr << "received: " << line.toStdString() << "\n";
+
+    // The merged filename comes back through the following output.
+    // [ffmpeg] Merging formats into "BOMBTRACK AT RAD RACE'S  'LAST MAN STANDING 2017', BERLIN-209745487.mp4"
+    if (line.startsWith("[ffmpeg] Merging formats into ")) {
+      int pos = _merged_filename_regex.indexIn(line);
+      if (pos >= 0) {
+        QStringList list = _merged_filename_regex.capturedTexts();
+        // list[0] contains the full match. The other elements contain the submatches.
+        QString abs_path = list[1].trimmed();
+        QFileInfo info(abs_path);
+        QString dir = info.dir().path();
+        QString merged_filename = info.fileName();
+        emit merged (merged_filename);
+        continue;
+      }
+    }
+
+    // If the line starts with [download] there may be many jammed together as
+    // the the process backspaces and writes over the current line
+    // to show progress. We need to split them.
     QStringList splits = line.split("[download]", QString::SkipEmptyParts);
     for (QString &split: splits) {
 
       if (split.startsWith("Deleting original file")) {
-        continue;
-      }
-
-      if (split.startsWith("[ffmpeg]")) {
         continue;
       }
 
@@ -113,10 +135,10 @@ void DownloadVideoProcess::on_stdout() {
         QString abs_path = list[1].trimmed();
         QFileInfo info(abs_path);
         QString dir = info.dir().path();
-        QString base_name = info.baseName();
+        QString file_name = info.fileName();
         // Emit signal.
         _started = true;
-        emit started(base_name);
+        emit started(file_name);
         continue;
       }
 
@@ -130,31 +152,45 @@ void DownloadVideoProcess::on_stdout() {
         QString abs_path = list[1].trimmed();
         QFileInfo info(abs_path);
         QString dir = info.dir().path();
-        QString base_name = info.baseName();
+        QString fileName = info.fileName();
         // Emit signal.
         _started = true;
-        emit started(base_name);
+        emit started(fileName);
         continue;
       }
 
-      // Example progress message from std out.
-      // [download] 100% of 35.77MiB in 00:05
+      // Example progress messages.
+      // [download] 3.1% of ~25.47KiB at 530.22KiB/s ETA 00:05
       // [download] 0.0% of 87.34MiB at 857.15KiB/s ETA 01:44
-      // Note we use lastIndexIn because a number of these [download] message may arrive concatenated together.
       pos = _progress_regex.indexIn(split);
       if (pos >= 0) {
         QStringList list = _progress_regex.capturedTexts();
+        QString percentage = list[1].simplified();
+        QString file_size = list[2].simplified();
+        QString speed = list[3].simplified();
+        QString eta = list[4].simplified();
         // list[0] contains the full match. The other elements contain the submatches.
         QString msg = list[1];
         msg = msg.simplified(); // strip whitespace from the front and back
         // Emit signal.
-        emit progress(msg);
+        emit progress(percentage, file_size, speed, eta);
+        continue;
+      }
+
+      // Example final download complete message from std out.
+      // [download] 100% of 35.77MiB in 00:05
+      pos = _complete_regex.indexIn(split);
+      if (pos >= 0) {
+        QStringList list = _complete_regex.capturedTexts();
+        QString percentage = list[1].simplified();
+        QString file_size = list[2].simplified();
+        QString time = list[3].simplified();
+        // Emit signal.
+        emit complete(percentage, file_size, time);
         continue;
       }
     }
-
   }
-
 }
 
 void DownloadVideoProcess::start() {

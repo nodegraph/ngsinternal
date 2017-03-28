@@ -63,12 +63,19 @@ int DownloadManager::get_num_running() const {
   return count;
 }
 
+void DownloadManager::cancel_download(long long id) {
+  destroy_process(id);
+  remove_id_from_map(id);
+}
+
 void DownloadManager::download(const QString& url, const QString& download_dir, int max_width, int max_height, int max_filesize) {
   DownloadVideoProcess *p = new_ff DownloadVideoProcess();
 
   // Connect to signals.
   connect(p, SIGNAL(started(const QString&)), this, SLOT(on_started(const QString&)));
-  connect(p, SIGNAL(progress(const  QString&)), this, SLOT(on_progress(const  QString&)));
+  connect(p, SIGNAL(progress(const  QString&, const  QString&, const  QString&, const  QString&)), this, SLOT(on_progress(const  QString&, const  QString&, const  QString&, const  QString&)));
+  connect(p, SIGNAL(complete(const  QString&, const  QString&, const  QString&)), this, SLOT(on_complete(const  QString&, const  QString&, const  QString&)));
+  connect(p, SIGNAL(merged(const QString&)), this, SLOT(on_merged(const QString&)));
   connect(p, SIGNAL(finished()), this, SLOT(on_finished()));
   connect(p, SIGNAL(errored(const QString&)), this, SLOT(on_errored(const QString&)));
 
@@ -143,11 +150,25 @@ void DownloadManager::on_started(const QString& filename) {
   emit download_started(row, filename);
 }
 
-void DownloadManager::on_progress(const  QString& progress) {
+void DownloadManager::on_progress(const  QString& percentage, const QString& file_size, const QString& speed, const QString& eta) {
   internal();
   int id = get_sender_id();
   int row = get_row(id);
-  emit download_progress(row, progress);
+  emit download_progress(row, percentage, file_size, speed, eta);
+}
+
+void DownloadManager::on_complete(const  QString& percentage, const QString& file_size, const QString& time) {
+  internal();
+  int id = get_sender_id();
+  int row = get_row(id);
+  emit download_complete(row, percentage, file_size, time);
+}
+
+void DownloadManager::on_merged(const QString& merged_filename) {
+  internal();
+  int id = get_sender_id();
+  int row = get_row(id);
+  emit download_merged(row, merged_filename);
 }
 
 void DownloadManager::on_errored(const QString& error) {
@@ -172,7 +193,14 @@ void DownloadManager::on_finished() {
 // File Reveal Functionality.
 // ---------------------------------------------------------------------------------------------
 
-void DownloadManager::reveal_file(const QString& dir, const QString &filename) {
+
+
+void DownloadManager::reveal_approximate_filename(const QString& dir, const QString &filename) {
+  QString best_filename = find_best_matching_file(dir, filename);
+  DownloadManager::reveal_file_on_platform(dir, best_filename);
+}
+
+void DownloadManager::reveal_exact_filename(const QString& dir, const QString &filename) {
   DownloadManager::reveal_file_on_platform(dir, filename);
 }
 
@@ -202,25 +230,24 @@ QString DownloadManager::find_best_matching_file(const QString& dir, const QStri
   return largest_file;
 }
 
-void DownloadManager::reveal_file_on_platform(const QString& dir, const QString &similar_filename) {
+void DownloadManager::reveal_file_on_platform(const QString& dir, const QString &filename) {
   if (dir.isEmpty()) {
     return;
   }
-  QString best_filename = find_best_matching_file(dir, similar_filename);
 
 #if (ARCH == ARCH_WINDOWS)
   QString cmd = "explorer.exe";
   QStringList args;
-  if (!best_filename.isEmpty()) {
+  if (!filename.isEmpty()) {
     args.append("/select,");
   }
-  args.append(QDir::toNativeSeparators(dir) + QDir::separator() + best_filename);
+  args.append(QDir::toNativeSeparators(dir) + QDir::separator() + filename);
   QProcess::startDetached(cmd, args);
 #elif (ARCH == ARCH_MACOS)
   {
     QStringList args;
     args.append("-e");
-    QString cmd = "tell application \"Finder\" to reveal POSIX file \"" + dir + "/" + best_filename + "\"";
+    QString cmd = "tell application \"Finder\" to reveal POSIX file \"" + dir + "/" + filename + "\"";
     args.append(cmd);
     QProcess::execute("/usr/bin/osascript", args);
   }
