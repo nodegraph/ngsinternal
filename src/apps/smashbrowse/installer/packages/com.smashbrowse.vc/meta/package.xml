@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>vc++ runtime</DisplayName>
     <Description>The vc++ runtime library.</Description>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <ReleaseDate>2017-02-28</ReleaseDate>
     <Default>true</Default>
     

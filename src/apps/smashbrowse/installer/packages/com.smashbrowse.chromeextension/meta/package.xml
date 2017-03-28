@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>chromeextension</DisplayName>
     <Description>The main chrome extension.</Description>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <ReleaseDate>2017-02-28</ReleaseDate>
     <Default>true</Default>
     <ForcedInstallation>true</ForcedInstallation>
