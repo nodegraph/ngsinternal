@@ -71,12 +71,9 @@ Rectangle {
     	Component {
 	   		id: settings_button
 	   		AppImageButton {
-		        id: more_menu_button
+	   			x: app_settings.page_content_right - app_settings.image_button_width
 		        anchors {
-		        	right: parent.right
 		        	verticalCenter: parent.verticalCenter
-		        	leftMargin: app_settings.action_bar_left_margin
-		    		rightMargin: app_settings.action_bar_right_margin
 		        }
 		        
 		        image_url: "qrc:///icons/ic_settings_white_48dp.png"
@@ -91,11 +88,87 @@ Rectangle {
 		        }
 		    }
 		}
+		
+		Component {
+	   		id: downloaded_button
+	   		AppImageButton {
+	   			x: app_settings.page_content_right - 2*app_settings.image_button_width - app_settings.page_right_margin
+		        anchors {
+		        	verticalCenter: parent.verticalCenter
+		        }
+		        
+		        image_url: "qrc:///icons/ic_music_video_white_48dp.png"
+		        tooltip_text: "Settings"
+		        
+		        onClicked: {
+		            downloads_page.visible = false
+		            downloaded_page.visible = true
+		        }
+		    }
+		}
     	
         Component.onCompleted: {
-        	stack_view_header.title_text = "Smash Downloader"
+        	stack_view_header.title_text = "double click to cancel"
         	stack_view_header.show_back_button = false
         	settings_button.createObject(stack_view_header, {});
+        	downloaded_button.createObject(stack_view_header, {});
+    	}
+    }
+    
+    // Pages.
+    DownloadedListPage {
+    	id: downloaded_page
+        visible: false
+        x: 0
+	    y: 0
+	    z: 0
+        height: app_settings.screen_height
+    	width: app_settings.screen_width
+    	
+    	Component {
+	   		id: settings_button2
+	   		AppImageButton {
+	   			x: app_settings.page_content_right - app_settings.image_button_width
+		        anchors {
+		        	verticalCenter: parent.verticalCenter
+		        }
+		        
+		        image_url: "qrc:///icons/ic_settings_white_48dp.png"
+		        tooltip_text: "Settings"
+		        
+		        onClicked: {
+		            downloaded_page.visible = false
+		            
+		            download_settings.version_number = version_number
+		            download_settings.update_fields()
+		            download_settings.visible = true
+		        }
+		    }
+		}
+		
+		Component {
+	   		id: downloading_button
+	   		AppImageButton {
+	   			x: app_settings.page_content_right - 2*app_settings.image_button_width - app_settings.page_right_margin
+		        anchors {
+		        	verticalCenter: parent.verticalCenter
+		        }
+		        
+		        image_url: "qrc:///icons/ic_file_download_white_48dp.png"
+		        tooltip_text: "Settings"
+		        
+		        onClicked: {
+		            downloaded_page.visible = false
+		            downloads_page.visible = true
+		        }
+		    }
+		}
+    	
+        Component.onCompleted: {
+        	stack_view_header.title_text = "double click to reveal file"
+        	stack_view_header.show_back_button = false
+        	settings_button2.createObject(stack_view_header, {});
+        	downloading_button.createObject(stack_view_header, {});
     	}
     }
 

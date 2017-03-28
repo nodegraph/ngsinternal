@@ -59,6 +59,12 @@ BaseListPage {
     	} else {
     		model_obj.title = model_obj.video_filename 
     	}
+    	// If there's no file the title will be empty.
+    	// In this case we don't add this to our model.
+    	if (!model_obj.title) {
+    		return
+    	}
+    	
     	// Update the description.
     	var date = new Date().toLocaleString(Qt.locale(), "yyyy-MM-dd hh:mm:ss");
     	model_obj.description = "finished at: " + date
