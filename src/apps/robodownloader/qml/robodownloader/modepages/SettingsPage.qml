@@ -91,7 +91,7 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: advanced_label
-                text: "Use Advanced Features"
+                text: "Use Built-In Robot"
                 anchors {
                     left: parent.left
                     leftMargin: app_settings.page_left_margin
