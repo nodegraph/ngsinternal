@@ -173,7 +173,9 @@ public class WebDriverWrap {
 			String chrome_user_data_dir = FSWrap.create_chrome_user_data_dir(_settings_dir);
 			
 			// Specify the start up page even though it doesn't navigate to it.
-	        chrome_opts.addArguments(url);
+			// This doesn't work properly when there are spaces in the url.
+			// Which we have on windows file based urls. Like our app and wait pages.
+	        //chrome_opts.addArguments(url);
 	        
 	        // Load extensions. Separate multiple extension with a comma and not spaces between them.
 			chrome_opts.addArguments("--load-extension=" + _chrome_ext_dir); 
