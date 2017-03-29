@@ -67,8 +67,8 @@ Rectangle {
     		license_checker.save()
     		create_password_page.visible = false
     		
-	        // Switch to node graph mode.
-			main_bar.switch_to_node_graph()
+	        // Show the first page.
+			main_bar.switch_to_first_page()
 			// Load the last graph.
 			app_utils.load_last_graph()
 		} else {

@@ -33,7 +33,11 @@ Rectangle {
     
     function get_current_mode() {
     	if (mode_stack.length == 0) {
-    		return app_settings.node_graph_mode
+    		if (settings_page.advanced_features) {
+    			return app_settings.node_graph_mode
+    		} else {
+    			return app_settings.downloads_mode
+    		}
     	}
     	return mode_stack[mode_stack.length-1]
     }
@@ -53,6 +57,10 @@ Rectangle {
         	var num = mode_stack.length - 100 - 1
         	mode_stack.splice(0, num)
         }
+    }
+    
+    function clear_mode_stack() {
+    	mode_stack.length = 0
     }
     
     // Methods.
@@ -137,6 +145,15 @@ Rectangle {
         on_switch_to_mode(m)
     }
     
+    // Show the appropriate first page on app start app.
+    function switch_to_first_page() {
+    	if (settings_page.advanced_features) {
+    		switch_to_node_graph()
+    	} else {
+    		on_switch_to_mode(app_settings.downloads_mode)
+    	}
+    }
+    
     function switch_to_node_graph() {
     	on_switch_to_mode(app_settings.node_graph_mode)
     }
@@ -200,6 +217,7 @@ Rectangle {
     // File Mode Button.
     AppImageButton {
         id: file_button
+        visible: settings_page.advanced_features
 
         anchors {
         	verticalCenter: parent.verticalCenter
@@ -219,6 +237,7 @@ Rectangle {
     // Node Graph Mode Button.
     AppImageButton {
         id: node_graph_button
+        visible: settings_page.advanced_features
         
         anchors {
         	verticalCenter: parent.verticalCenter
@@ -238,6 +257,7 @@ Rectangle {
     // View Node Mode Button.
     AppImageButton {
         id: view_node_button
+        visible: settings_page.advanced_features
         
         anchors {
         	verticalCenter: parent.verticalCenter
@@ -258,10 +278,11 @@ Rectangle {
     // Edit Node Mode Button.
     AppImageButton {
         id: edit_node_button
+        visible: settings_page.advanced_features
         
         anchors {
         	verticalCenter: parent.verticalCenter
-        	right: downloads_button.left
+        	right: posts_button.left
         	leftMargin: app_settings.action_bar_left_margin
     		rightMargin: app_settings.action_bar_right_margin
     	}
@@ -272,6 +293,26 @@ Rectangle {
         onClicked: {
         	node_graph_item.edit_node_poke();
             on_switch_to_mode(app_settings.edit_node_mode)
+        }
+    }
+    
+    // Hot Posts Mode Button.
+    AppImageButton {
+        id: posts_button
+        visible: settings_page.advanced_features
+        
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: downloads_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+    	}
+        
+        image_url: "qrc:///icons/ic_whatshot_white_48dp.png"
+        tooltip_text: "posts"
+        
+        onClicked: {
+            on_switch_to_mode(app_settings.posts_mode)
         }
     }
     
@@ -300,7 +341,7 @@ Rectangle {
         
         anchors {
         	verticalCenter: parent.verticalCenter
-        	right: posts_button.left
+        	right: settings_button.left
         	leftMargin: app_settings.action_bar_left_margin
     		rightMargin: app_settings.action_bar_right_margin
     	}
@@ -313,24 +354,6 @@ Rectangle {
         }
     }
 
-    // Hot Posts Mode Button.
-    AppImageButton {
-        id: posts_button
-        
-        anchors {
-        	verticalCenter: parent.verticalCenter
-        	right: settings_button.left
-        	leftMargin: app_settings.action_bar_left_margin
-    		rightMargin: app_settings.action_bar_right_margin
-    	}
-        
-        image_url: "qrc:///icons/ic_whatshot_white_48dp.png"
-        tooltip_text: "posts"
-        
-        onClicked: {
-            on_switch_to_mode(app_settings.posts_mode)
-        }
-    }
 
     // Settings Mode Button.
     AppImageButton {

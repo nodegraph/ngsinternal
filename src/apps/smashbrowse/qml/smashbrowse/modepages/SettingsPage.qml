@@ -7,6 +7,8 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
+import Qt.labs.settings 1.0
+
 import smashbrowse.stackedmodepages 1.0
 import smashbrowse.appwidgets 1.0
 
@@ -24,6 +26,13 @@ Rectangle {
 
     // Appearance.
     color: app_settings.menu_stack_bg_color
+    
+    property bool advanced_features: settings.advanced_features
+    
+    Settings {
+    	id: settings
+        property alias advanced_features: advanced_check_box.checked
+    }
 
     // Methods.
     function on_switch_to_mode(mode) {
@@ -77,6 +86,32 @@ Rectangle {
 
         // Appearance.
         spacing: app_settings.column_layout_spacing
+        
+        // Advanced features check box.
+        RowLayout {
+            AppLabel {
+                id: advanced_label
+                text: "Use Advanced Features"
+                anchors {
+                    left: parent.left
+                    leftMargin: app_settings.page_left_margin
+                    rightMargin: app_settings.page_right_margin
+                }
+            }
+
+            AppCheckBox {
+                id: advanced_check_box
+                checked: advanced_features
+                anchors {
+                    left: advanced_label.right
+                    leftMargin: app_settings.page_left_margin
+                    rightMargin: app_settings.page_right_margin
+                }
+                onClicked: {
+                	main_bar.clear_mode_stack()
+                }
+            }
+        }
 
         RowLayout {
             AppLabel {
@@ -167,6 +202,9 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: lock_links_label
+                enabled: advanced_feautres
+	            opacity: advanced_features ? 1.0 : 0.5
+	            
                 text: "Lock Links"
                 anchors {
                     left: parent.left
@@ -177,6 +215,9 @@ Rectangle {
 
             AppCheckBox {
                 id: lock_links_check_box
+                enabled: advanced_feautres
+	            opacity: advanced_features ? 1.0 : 0.5
+	            
                 checked: false
                 anchors {
                     left: lock_links_label.right
@@ -189,6 +230,9 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: max_node_posts_label
+                enabled: advanced_feautres
+	            opacity: advanced_features ? 1.0 : 0.5
+	            
                 text: "Max Node Posts"
                 anchors {
                     left: parent.left
@@ -200,6 +244,9 @@ Rectangle {
             // Title Field.
             AppLineEdit {
                 id: max_node_posts_text_field
+                enabled: advanced_feautres
+	            opacity: advanced_features ? 1.0 : 0.5
+	            
                 text: '1000'
                 tool_bar: copy_paste_bar
                 validator: RegExpValidator{regExp: /\d+/}
@@ -215,6 +262,9 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: auto_run_label
+                enabled: advanced_feautres
+	            opacity: advanced_features ? 1.0 : 0.5
+	            
                 text: "Auto Run"
                 anchors {
                     left: parent.left
@@ -225,6 +275,9 @@ Rectangle {
 
             AppCheckBox {
                 id: auto_run_check_box
+                enabled: advanced_feautres
+	            opacity: advanced_features ? 1.0 : 0.5
+	            
                 checked: false
                 anchors {
                     left: auto_run_label.right
@@ -237,6 +290,9 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: auto_run_interval_label
+                enabled: advanced_feautres
+	            opacity: advanced_features ? 1.0 : 0.5
+	            
                 text: "Auto Run Interval (seconds)"
                 anchors {
                     left: parent.left
@@ -248,6 +304,9 @@ Rectangle {
             // Title Field.
             AppLineEdit {
                 id: auto_run_interval_text_field
+                enabled: advanced_feautres
+	            opacity: advanced_features ? 1.0 : 0.5
+	            
                 tool_bar: copy_paste_bar
                 text: '60'
                 validator: RegExpValidator{regExp: /\d+/}
