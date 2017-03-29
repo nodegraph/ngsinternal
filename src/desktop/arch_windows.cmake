@@ -281,7 +281,6 @@ function(create_cpack_config filename)
 endfunction(create_cpack_config) 
 
 set(package_type "smashbrowse")
-#set(package_type "smashdownloader")
 
 if(WIN32)
     # On Windows generate MSI packages
@@ -323,39 +322,6 @@ if(WIN32)
             thirdparty_java
             thirdparty_chromedriver
         )
-    elseif(${package_type} STREQUAL smashdownloader)
-        set(CPACK_GENERATOR "WIX")
-        set(CPACK_PACKAGE_NAME "Smash Downloader")
-        set(CPACK_PACKAGE_VERSION ${ngs_version})
-        set(CPACK_PACKAGE_VENDOR "Node Graph Software")
-        set(CPACK_PACKAGE_INSTALL_DIRECTORY "Smash Downloader")
-        
-        set(CPACK_WIX_TEMPLATE "${PROJECT_SOURCE_DIR}/desktop/wix.template.in")
-        set(CPACK_WIX_UPGRADE_GUID EA4311A8-3DE0-44B8-87F1-2FDCBF98F34B)
-        set(CPACK_WIX_PRODUCT_ICON ${PROJECT_SOURCE_DIR}/external/images/octopus_blue.ico)
-        set(CPACK_WIX_LICENSE_RTF ${PROJECT_SOURCE_DIR}/desktop/eula.rtf)
-        set(CPACK_WIX_UI_BANNER  ${PROJECT_SOURCE_DIR}/desktop/installer_banner_493x58.png)
-        set(CPACK_WIX_UI_DIALOG  ${PROJECT_SOURCE_DIR}/desktop/installer_bg_493x312.png)
-        
-        set(CPACK_WIX_UNINSTALL "1")
-        
-        set(CPACK_PACKAGE_DIRECTORY "d:/b1installers/smashdownloader")
-        
-        set(CPACK_WIX_PROGRAM_MENU_FOLDER "Smash Downloader")
-        
-        set_property(INSTALL "bin/smashdownloader.exe"
-            PROPERTY CPACK_DESKTOP_SHORTCUTS "Smash Downloader"
-        )
-        set_property(INSTALL "bin/smashdownloader.exe"
-            PROPERTY CPACK_START_MENU_SHORTCUTS "Smash Downloader"
-        )
-        set(CPACK_COMPONENTS_ALL
-            smashdownloader
-            gui
-            components 
-            base
-            thirdparty 
-        )
     endif()
     
 elseif(APPLE)
@@ -390,10 +356,6 @@ cpack_add_component(smashbrowse
                     DISPLAY_NAME "Smash Browse Application."
                     HIDDEN REQUIRED)
                     
-cpack_add_component(smashdownloader
-                    DISPLAY_NAME "Smash Downloader Application."
-                    HIDDEN REQUIRED)
-
 cpack_add_component(chrome_ext_background
                     DISPLAY_NAME "Chrome extension background."
                     HIDDEN REQUIRED)

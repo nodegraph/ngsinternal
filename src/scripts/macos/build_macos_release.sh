@@ -22,16 +22,10 @@ cmake -G "Eclipse CDT4 - Ninja" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Release ~/s
 # build
 ninja install
 ninja fill_smashbrowse
-ninja fill_smashdownloader
 
 # smashbrowse installers and repos
 smashbrowse_installer_macos.sh package release $CMAKE_BUILD_ROOT
 smashbrowse_installer_macos.sh create_repo release $CMAKE_BUILD_ROOT
 smashbrowse_installer_macos.sh create_installer release $CMAKE_BUILD_ROOT
-
-# smashdownloader installers and repos
-smashdownloader_installer_macos.sh package release $CMAKE_BUILD_ROOT
-smashdownloader_installer_macos.sh create_repo release $CMAKE_BUILD_ROOT
-smashdownloader_installer_macos.sh create_installer release $CMAKE_BUILD_ROOT
 
 

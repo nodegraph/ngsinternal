@@ -5,12 +5,10 @@
 
 // Copy local release repos to the cloud.
 gsutil -m cp -r D:\wr64\smashbrowse_repo gs://www.smashbrowse.com/windows
-gsutil -m cp -r D:\wr64\smashdownloader_repo gs://www.smashdownloader.com/windows
 
 
 // Make all files public.
 gsutil -m acl set -R -a public-read gs://www.smashbrowse.com
-gsutil -m acl set -R -a public-read gs://www.smashdownloader.com
 
 
 // ----------------------------------------------------------------------------------------
@@ -19,11 +17,9 @@ gsutil -m acl set -R -a public-read gs://www.smashdownloader.com
 
 // Copy local release repos to the cloud.
 gsutil -m cp -r /Users/raindrop/dev/macos/macos_release_jenkins/smashbrowse_repo gs://www.smashbrowse.com/macos
-gsutil -m cp -r /Users/raindrop/dev/macos/macos_release_jenkins/smashdownloader_repo gs://www.smashdownloader.com/macos
 
 
 // Make all files public.
 gsutil -m acl set -R -a public-read gs://www.smashbrowse.com
-gsutil -m acl set -R -a public-read gs://www.smashdownloader.com
 
 

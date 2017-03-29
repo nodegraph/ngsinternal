@@ -20,8 +20,6 @@ build_site ()
 {
 	cd ${SRC_ROOT}/smashbrowse_site;
 	jekyll build
-	cd ${SRC_ROOT}/smashdownloader_site;
-	jekyll build
 }
 
 # Copy the repos and installers into the jekyll built site.
@@ -29,36 +27,27 @@ gather_binaries ()
 {
 	# Clean the windows gathering dir.
 	rm -fr ${SRC_ROOT}/smashbrowse_site/_site/windows/*
-	rm -fr ${SRC_ROOT}/smashdownloader_site/_site/windows/*
 	
 	# Clean the macos gathering dir.
 	rm -fr ${SRC_ROOT}/smashbrowse_site/_site/macos/*
-	rm -fr ${SRC_ROOT}/smashdownloader_site/_site/windows/*
 
 	# Copy the windows repos.
 	cp -fr ${WINDOWS_BUILD_ROOT}/smashbrowse_repo ${SRC_ROOT}/smashbrowse_site/_site/windows/.
-	cp -fr ${WINDOWS_BUILD_ROOT}/smashdownloader_repo ${SRC_ROOT}/smashdownloader_site/_site/windows/.
 	
 	# Copy the windows installers.
 	cp -fr ${WINDOWS_BUILD_ROOT}/smashbrowse_pack/smashbrowse.exe ${SRC_ROOT}/smashbrowse_site/_site/windows/.
-	cp -fr ${WINDOWS_BUILD_ROOT}/smashdownloader_pack/smashdownloader.exe ${SRC_ROOT}/smashdownloader_site/_site/windows/.
 	
 	# Copy the macos repos.
 	cp -fr "${MACOS_BUILD_ROOT}/smashbrowse_repo" ${SRC_ROOT}/smashbrowse_site/_site/macos/.
-	cp -fr "${MACOS_BUILD_ROOT}/smashdownloader_repo" ${SRC_ROOT}/smashdownloader_site/_site/macos/.
 	
 	# Copy the macos installers.
 	cp -fr "${MACOS_BUILD_ROOT}/smashbrowse_pack/smashbrowse.dmg" ${SRC_ROOT}/smashbrowse_site/_site/macos/.
-	cp -fr "${MACOS_BUILD_ROOT}/smashdownloader_pack/smashdownloader.dmg" ${SRC_ROOT}/smashdownloader_site/_site/macos/.
 }
 
 # Deploy the jekyll site to firebase hosting.
 deploy_site ()
 {
 	cd ${SRC_ROOT}/smashbrowse_site
-	firebase deploy
-	
-	cd ${SRC_ROOT}/smashdownloader_site
 	firebase deploy
 }
 

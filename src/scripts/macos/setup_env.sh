@@ -58,7 +58,6 @@ PATH=/Users/raindrop/installs/macos/QtIFW2.0.3/bin:${PATH}
 
 # Our scripts.
 PATH=${SRC_ROOT}/ngsinternal/src/apps/smashbrowse:${PATH}
-PATH=${SRC_ROOT}/ngsinternal/src/apps/smashdownloader:${PATH}
 
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"

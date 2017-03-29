@@ -1,8 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-    <qresource prefix="/">
-        <file>qml/smashdownloader.qml</file>
-        
-        <file>qml/pages/qmldir</file>
-        <file>qml/pages/DownloadSettingsPage.qml</file>
-    </qresource>
-</RCC>

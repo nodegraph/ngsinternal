@@ -175,14 +175,10 @@ void LicenseChecker::check_license() {
 #if (ARCH == ARCH_WINDOWS)
   if (QCoreApplication::applicationName() == "SmashBrowse") {
     product_id = "tgctL";
-  } else if (QCoreApplication::applicationName() == "SmashDownloader") {
-    product_id = "mrsyb";
   }
 #elif (ARCH == ARCH_MACOS)
   if (QCoreApplication::applicationName() == "SmashBrowse") {
     product_id = "RMzG";
-  } else if (QCoreApplication::applicationName() == "SmashDownloader") {
-    product_id = "bHYBo";
   }
 #endif
 

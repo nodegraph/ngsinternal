@@ -27,7 +27,3 @@ smashbrowse_installer_windows.sh package debug $CMAKE_BUILD_ROOT
 smashbrowse_installer_windows.sh create_repo debug $CMAKE_BUILD_ROOT
 smashbrowse_installer_windows.sh create_installer debug $CMAKE_BUILD_ROOT
 
-# smashbrowse installers and repos
-smashdownloader_installer_windows.sh package debug $CMAKE_BUILD_ROOT
-smashdownloader_installer_windows.sh create_repo debug $CMAKE_BUILD_ROOT
-smashdownloader_installer_windows.sh create_installer debug $CMAKE_BUILD_ROOT
