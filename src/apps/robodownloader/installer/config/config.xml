@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Robo Downloader</Name>
+    <Version>1.0.0</Version>
+    <Title>Robo Downloader</Title>
+    <Publisher>Robo Downloader</Publisher>
+    <StartMenuDir>Robo Downloader</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/Robo Downloader</TargetDir>
+    <RemoteRepositories>
+        <Repository>
+            <Url>REPOSITORY_URL</Url>
+        </Repository>
+    </RemoteRepositories>
+    <InstallerApplicationIcon>robot_blue</InstallerApplicationIcon>
+    <WizardStyle>Modern</WizardStyle>
+    
+    <RunProgram>@TargetDir@/LAUNCH_PROGRAM</RunProgram>
+    
+</Installer>

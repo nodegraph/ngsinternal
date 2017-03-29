@@ -45,9 +45,9 @@ MessageSender::MessageSender(Entity* parent)
   // For now we keep it disabled for all platforms.
 
 #ifndef USE_SSL
-  _server  = new_ff QWebSocketServer(QStringLiteral("Smash Browser Server"), QWebSocketServer::NonSecureMode);
+  _server  = new_ff QWebSocketServer(QStringLiteral("Robo Downloaderr Server"), QWebSocketServer::NonSecureMode);
 #else
-  _server  = new_ff QWebSocketServer(QStringLiteral("Smash Browser Server"), QWebSocketServer::SecureMode);
+  _server  = new_ff QWebSocketServer(QStringLiteral("Robo Downloaderr Server"), QWebSocketServer::SecureMode);
 
   assert(QSslSocket::supportsSsl());
   QSslConfiguration sslConfiguration;
@@ -205,7 +205,7 @@ void MessageSender::open() {
   std::cerr << "MessageSender is opening for app: " << QCoreApplication::applicationName().toStdString() << "\n";
 
   // Make sure the java process has started.
-  if (!_java_process->is_running() && QCoreApplication::applicationName() == "SmashBrowse") {
+  if (!_java_process->is_running() && QCoreApplication::applicationName() == "Robo Downloader") {
     //_process->start_process();
     _java_process->start_process(_server_port);
   }

@@ -5,7 +5,7 @@
 # 2) Copy config.txt to that dir.
 # 3) Download "7zSD extra" from 7zip and extract it. 
 # 4) Now use the windows cmd shell to do the following.
-#    shell<<  copy /b 7zsd_LZMA2_x64.sfx + config.txt + install.7z "smashbrowse.exe"
+#    shell<<  copy /b 7zsd_LZMA2_x64.sfx + config.txt + install.7z "robodownloader.exe"
 
 
 
@@ -217,7 +217,7 @@ INSTALL(FILES
 # Icon for shortcut on windows.
 # ------------------------------------------------------------------
 INSTALL(FILES
-			${PROJECT_SOURCE_DIR}/external/images/octopus_blue.ico
+			${PROJECT_SOURCE_DIR}/external/images/robot_blue.ico
 		DESTINATION bin
 		COMPONENT thirdparty
 		CONFIGURATIONS Debug Release)
@@ -245,7 +245,7 @@ INSTALL(FILES
 #  DEPENDS install
 #  OUTPUT install_desktop_cmd
 #  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
-#  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/smashbrowse.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/smashbrowse/qml 
+#  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/robodownloader.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/robodownloader/qml 
 #  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
 #  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
 #  # chromedriver
@@ -280,38 +280,38 @@ function(create_cpack_config filename)
   include(CPack) 
 endfunction(create_cpack_config) 
 
-set(package_type "smashbrowse")
+set(package_type "robodownloader")
 
 if(WIN32)
     # On Windows generate MSI packages
-    if (${package_type} STREQUAL smashbrowse)
+    if (${package_type} STREQUAL robodownloader)
         set(CPACK_GENERATOR "WIX")
-        set(CPACK_PACKAGE_NAME "Smash Browse")
+        set(CPACK_PACKAGE_NAME "Robo Downloader")
         set(CPACK_PACKAGE_VERSION ${ngs_version})
         set(CPACK_PACKAGE_VENDOR "Node Graph Software")
-        set(CPACK_PACKAGE_INSTALL_DIRECTORY "Smash Browse")
+        set(CPACK_PACKAGE_INSTALL_DIRECTORY "Robo Downloader")
         
         set(CPACK_WIX_TEMPLATE "${PROJECT_SOURCE_DIR}/desktop/wix.template.in")
         set(CPACK_WIX_UPGRADE_GUID 1F015D65-E1C1-468F-A2A5-4E431E279F70)
-        set(CPACK_WIX_PRODUCT_ICON ${PROJECT_SOURCE_DIR}/external/images/octopus_blue.ico)
+        set(CPACK_WIX_PRODUCT_ICON ${PROJECT_SOURCE_DIR}/external/images/robot_blue.ico)
         set(CPACK_WIX_LICENSE_RTF ${PROJECT_SOURCE_DIR}/desktop/eula.rtf)
         set(CPACK_WIX_UI_BANNER  ${PROJECT_SOURCE_DIR}/desktop/installer_banner_493x58.png)
         set(CPACK_WIX_UI_DIALOG  ${PROJECT_SOURCE_DIR}/desktop/installer_bg_493x312.png)
         
         set(CPACK_WIX_UNINSTALL "1")
         
-        set(CPACK_PACKAGE_DIRECTORY "d:/b1installers/smashbrowse")
+        set(CPACK_PACKAGE_DIRECTORY "d:/b1installers/robodownloader")
         
-        set(CPACK_WIX_PROGRAM_MENU_FOLDER "Smash Browse")
+        set(CPACK_WIX_PROGRAM_MENU_FOLDER "Robo Downloader")
         
-        set_property(INSTALL "bin/smashbrowse.exe"
-            PROPERTY CPACK_DESKTOP_SHORTCUTS "Smash Browse"
+        set_property(INSTALL "bin/robodownloader.exe"
+            PROPERTY CPACK_DESKTOP_SHORTCUTS "Robo Downloader"
         )
-        set_property(INSTALL "bin/smashbrowse.exe"
-            PROPERTY CPACK_START_MENU_SHORTCUTS "Smash Browse"
+        set_property(INSTALL "bin/robodownloader.exe"
+            PROPERTY CPACK_START_MENU_SHORTCUTS "Robo Downloader"
         )
         set(CPACK_COMPONENTS_ALL
-            smashbrowse
+            robodownloader
             chrome_ext_background
             chrome_ext_content
             jcomm
@@ -352,8 +352,8 @@ endif()
 
 include(CPack)
 
-cpack_add_component(smashbrowse
-                    DISPLAY_NAME "Smash Browse Application."
+cpack_add_component(robodownloader
+                    DISPLAY_NAME "Robo Downloader Application."
                     HIDDEN REQUIRED)
                     
 cpack_add_component(chrome_ext_background

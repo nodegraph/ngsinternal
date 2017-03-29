@@ -29,7 +29,7 @@ SplashScreen::SplashScreen():
 
   // Load our logo.
   QPixmap logo;
-  logo.load(":/images/octopus_white.png");
+  logo.load(":/images/robot_white.png");
 
   // Our scaled logo.
   int min = std::min(_width, _height);

@@ -22,8 +22,8 @@ cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug /d/src/ngsinternal/src;
 # build
 ninja install;
 
-# smashbrowse installers and repos $CMAKE_BUILD_ROOT
-smashbrowse_installer_windows.sh package debug $CMAKE_BUILD_ROOT
-smashbrowse_installer_windows.sh create_repo debug $CMAKE_BUILD_ROOT
-smashbrowse_installer_windows.sh create_installer debug $CMAKE_BUILD_ROOT
+# robodownloader installers and repos $CMAKE_BUILD_ROOT
+robodownloader_installer_windows.sh package debug $CMAKE_BUILD_ROOT
+robodownloader_installer_windows.sh create_repo debug $CMAKE_BUILD_ROOT
+robodownloader_installer_windows.sh create_installer debug $CMAKE_BUILD_ROOT
 

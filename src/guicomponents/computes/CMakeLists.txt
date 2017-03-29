@@ -67,7 +67,7 @@ target_link_libraries(ngs_guicomputes
 	Qt5::WebSockets
 ) 
 
-add_dependencies(ngs_guicomputes ${CMAKE_BINARY_DIR}/apps/smashbrowse/typescript/nodescripts/nodescripts.h)
+add_dependencies(ngs_guicomputes ${CMAKE_BINARY_DIR}/apps/robodownloader/typescript/nodescripts/nodescripts.h)
 
 if (${ARCH} STREQUAL ARCH_WINDOWS)
     target_link_libraries(ngs_guicomputes 

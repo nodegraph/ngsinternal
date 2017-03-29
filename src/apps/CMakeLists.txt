@@ -1,4 +1,4 @@
-add_subdirectory(smashbrowse)
+add_subdirectory(robodownloader)
 add_subdirectory(testqml)
 
 

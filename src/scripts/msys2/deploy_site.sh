@@ -18,7 +18,7 @@ MACOS_BUILD_ROOT="//PACMAN/dev/macos/macos_release_jenkins"
 
 build_site () 
 {
-	cd ${SRC_ROOT}/smashbrowse_site;
+	cd ${SRC_ROOT}/robodownloader_site;
 	jekyll build
 }
 
@@ -26,28 +26,28 @@ build_site ()
 gather_binaries ()
 {
 	# Clean the windows gathering dir.
-	rm -fr ${SRC_ROOT}/smashbrowse_site/_site/windows/*
+	rm -fr ${SRC_ROOT}/robodownloader_site/_site/windows/*
 	
 	# Clean the macos gathering dir.
-	rm -fr ${SRC_ROOT}/smashbrowse_site/_site/macos/*
+	rm -fr ${SRC_ROOT}/robodownloader_site/_site/macos/*
 
 	# Copy the windows repos.
-	cp -fr ${WINDOWS_BUILD_ROOT}/smashbrowse_repo ${SRC_ROOT}/smashbrowse_site/_site/windows/.
+	cp -fr ${WINDOWS_BUILD_ROOT}/robodownloader_repo ${SRC_ROOT}/robodownloader_site/_site/windows/.
 	
 	# Copy the windows installers.
-	cp -fr ${WINDOWS_BUILD_ROOT}/smashbrowse_pack/smashbrowse.exe ${SRC_ROOT}/smashbrowse_site/_site/windows/.
+	cp -fr ${WINDOWS_BUILD_ROOT}/robodownloader_pack/robodownloader.exe ${SRC_ROOT}/robodownloader_site/_site/windows/.
 	
 	# Copy the macos repos.
-	cp -fr "${MACOS_BUILD_ROOT}/smashbrowse_repo" ${SRC_ROOT}/smashbrowse_site/_site/macos/.
+	cp -fr "${MACOS_BUILD_ROOT}/robodownloader_repo" ${SRC_ROOT}/robodownloader_site/_site/macos/.
 	
 	# Copy the macos installers.
-	cp -fr "${MACOS_BUILD_ROOT}/smashbrowse_pack/smashbrowse.dmg" ${SRC_ROOT}/smashbrowse_site/_site/macos/.
+	cp -fr "${MACOS_BUILD_ROOT}/robodownloader_pack/robodownloader.dmg" ${SRC_ROOT}/robodownloader_site/_site/macos/.
 }
 
 # Deploy the jekyll site to firebase hosting.
 deploy_site ()
 {
-	cd ${SRC_ROOT}/smashbrowse_site
+	cd ${SRC_ROOT}/robodownloader_site
 	firebase deploy
 }
 

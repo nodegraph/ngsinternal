@@ -8,7 +8,7 @@ add_custom_command (
 	COMMAND ${CMAKE_SOURCE_DIR}/apps/shared/update_dmg.sh 
 				${CMAKE_BINARY_DIR}/build/testqml.dmg 
 				${CMAKE_BINARY_DIR}/build/testqml_app.dmg 
-				${CMAKE_SOURCE_DIR}/external/images/octopus_blue.icns
+				${CMAKE_SOURCE_DIR}/external/images/robot_blue.icns
 				testqml
 )
 

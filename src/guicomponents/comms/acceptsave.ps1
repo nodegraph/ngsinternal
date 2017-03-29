@@ -124,7 +124,7 @@ $CancelButtonId = 0x02
 $YesButtonId = 0x01
 $NoButtonId = 0x00
 
-# These are the main windows of the non-smashbrowse and smashbrowse windows of chrome.
+# These are the main windows of the non-robodownloader and robodownloader windows of chrome.
 $main_chrome_handles = Get-Process "chrome" | ?{$_.MainWindowTitle} | %{$_.MainWindowHandle}
 "main chrome handles: " + $main_chrome_handles
 

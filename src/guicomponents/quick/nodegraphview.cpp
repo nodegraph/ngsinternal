@@ -25,7 +25,7 @@ NodeGraphView::NodeGraphView(Entity* entity)
       _update_is_starting(false) {
 
   // Set the app icon.
-  QIcon icon(":images/octopus_blue.png");
+  QIcon icon(":images/robot_blue.png");
   setIcon(icon);
   setTitle(QGuiApplication::applicationName());
 }

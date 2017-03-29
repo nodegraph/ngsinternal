@@ -173,11 +173,11 @@ void LicenseChecker::check_license() {
   QString product_id;
 
 #if (ARCH == ARCH_WINDOWS)
-  if (QCoreApplication::applicationName() == "SmashBrowse") {
+  if (QCoreApplication::applicationName() == "Robo Downloader") {
     product_id = "tgctL";
   }
 #elif (ARCH == ARCH_MACOS)
-  if (QCoreApplication::applicationName() == "SmashBrowse") {
+  if (QCoreApplication::applicationName() == "Robo Downloader") {
     product_id = "RMzG";
   }
 #endif
