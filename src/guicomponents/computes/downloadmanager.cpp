@@ -244,10 +244,16 @@ void DownloadManager::reveal_file_on_platform(const QString& dir, const QString 
   args.append(QDir::toNativeSeparators(dir) + QDir::separator() + filename);
   QProcess::startDetached(cmd, args);
 #elif (ARCH == ARCH_MACOS)
+  // Sometime filename will have a ./ in front.
+  // In this case osacript can't reveal the file properly.
+  // So must clean out all the . and .. from the full concatenated file as follows.
+  QString concat_filename = dir + "/" + filename;
+  QFileInfo info(concat_filename);
+  QString abs_filename = info.absoluteFilePath();
   {
     QStringList args;
     args.append("-e");
-    QString cmd = "tell application \"Finder\" to reveal POSIX file \"" + dir + "/" + filename + "\"";
+    QString cmd = "tell application \"Finder\" to reveal POSIX file \"" + abs_filename + "\"";
     args.append(cmd);
     QProcess::execute("/usr/bin/osascript", args);
   }
