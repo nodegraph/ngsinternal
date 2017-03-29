@@ -286,10 +286,10 @@ if(WIN32)
     # On Windows generate MSI packages
     if (${package_type} STREQUAL robodownloader)
         set(CPACK_GENERATOR "WIX")
-        set(CPACK_PACKAGE_NAME "Robo Downloader")
+        set(CPACK_PACKAGE_NAME "RoboDownloader")
         set(CPACK_PACKAGE_VERSION ${ngs_version})
         set(CPACK_PACKAGE_VENDOR "Node Graph Software")
-        set(CPACK_PACKAGE_INSTALL_DIRECTORY "Robo Downloader")
+        set(CPACK_PACKAGE_INSTALL_DIRECTORY "RoboDownloader")
         
         set(CPACK_WIX_TEMPLATE "${PROJECT_SOURCE_DIR}/desktop/wix.template.in")
         set(CPACK_WIX_UPGRADE_GUID 1F015D65-E1C1-468F-A2A5-4E431E279F70)
@@ -302,13 +302,13 @@ if(WIN32)
         
         set(CPACK_PACKAGE_DIRECTORY "d:/b1installers/robodownloader")
         
-        set(CPACK_WIX_PROGRAM_MENU_FOLDER "Robo Downloader")
+        set(CPACK_WIX_PROGRAM_MENU_FOLDER "RoboDownloader")
         
         set_property(INSTALL "bin/robodownloader.exe"
-            PROPERTY CPACK_DESKTOP_SHORTCUTS "Robo Downloader"
+            PROPERTY CPACK_DESKTOP_SHORTCUTS "RoboDownloader"
         )
         set_property(INSTALL "bin/robodownloader.exe"
-            PROPERTY CPACK_START_MENU_SHORTCUTS "Robo Downloader"
+            PROPERTY CPACK_START_MENU_SHORTCUTS "RoboDownloader"
         )
         set(CPACK_COMPONENTS_ALL
             robodownloader

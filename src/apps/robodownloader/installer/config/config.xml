@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
-    <Name>Robo Downloader</Name>
+    <Name>RoboDownloader</Name>
     <Version>1.0.0</Version>
-    <Title>Robo Downloader</Title>
-    <Publisher>Robo Downloader</Publisher>
-    <StartMenuDir>Robo Downloader</StartMenuDir>
-    <TargetDir>@ApplicationsDir@/Robo Downloader</TargetDir>
+    <Title>RoboDownloader</Title>
+    <Publisher>RoboDownloader</Publisher>
+    <StartMenuDir>RoboDownloader</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/RoboDownloader</TargetDir>
     <RemoteRepositories>
         <Repository>
             <Url>REPOSITORY_URL</Url>
