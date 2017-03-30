@@ -174,11 +174,11 @@ void LicenseChecker::check_license() {
 
 #if (ARCH == ARCH_WINDOWS)
   if (QCoreApplication::applicationName() == "Robo Downloader") {
-    product_id = "tgctL";
+    product_id = "DGtZ";
   }
 #elif (ARCH == ARCH_MACOS)
   if (QCoreApplication::applicationName() == "Robo Downloader") {
-    product_id = "RMzG";
+    product_id = "CYYwB";
   }
 #endif
 
