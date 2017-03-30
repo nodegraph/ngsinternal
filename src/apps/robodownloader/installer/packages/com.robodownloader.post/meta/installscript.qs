@@ -13,14 +13,14 @@ Component.prototype.createOperations = function()
     	// Create a shortcut in the start menu.
         component.addOperation("CreateShortcut", 
         	"@TargetDir@/bin/robodownloader.exe", 
-        	"@StartMenuDir@/robodownloader.lnk",
+        	"@StartMenuDir@/Robo Downloader.lnk",
             "workingDirectory=@TargetDir@/bin", 
             "iconPath=@TargetDir@/bin/robot_blue.ico");
             
         // Create a shortcut on the desktop.
         component.addOperation("CreateShortcut", 
         	"@TargetDir@/bin/robodownloader.exe", 
-        	"@DesktopDir@/robodownloader.lnk",
+        	"@DesktopDir@/Robo Downloader.lnk",
         	"workingDirectory=@TargetDir@/bin", 
             "iconPath=@TargetDir@/bin/robot_blue.ico");
             
