@@ -1,14 +1,16 @@
 # To create the repo and installer do the following.
 # The installer will be in the package dir.
 
-# robodownloader_installer_windows.sh package [release/debug]
-# robodownloader_installer_windows.sh create_repo [release/debug]
-# robodownloader_installer_windows.sh create_installer [release/debug]
+# robodownloader_installer_windows.sh package build_root
+# robodownloader_installer_windows.sh create_repo cmake_build_root
+# robodownloader_installer_windows.sh create_installer cmake_build_root
+
 
 # Activate bash globbing syntax.
 shopt -s extglob
 
 PACK_STRUCTURE=/d/src/ngsinternal/src/apps/robodownloader/installer
+
 
 
 # -------------------------------------------------------------------------
@@ -22,46 +24,27 @@ package ()
 	# Go to the install dir created from ninja install.
 	cd $CMAKE_BUILD_ROOT/install;
 	
-	# Create the package dirs.
-	mkdir -p ${PACK}/packages/com.robodownloader.chromeextension/data
-	mkdir -p ${PACK}/packages/com.robodownloader.gson/data
-	mkdir -p ${PACK}/packages/com.robodownloader.html/data
-	mkdir -p ${PACK}/packages/com.robodownloader.jre/data
-	mkdir -p ${PACK}/packages/com.robodownloader.selenium/data
-	mkdir -p ${PACK}/packages/com.robodownloader.primary/data/bin
-	mkdir -p ${PACK}/packages/com.robodownloader.secondary/data/bin
-	mkdir -p ${PACK}/packages/com.robodownloader.appmacros/data
+	# We only create one package for simplicity.
+	mkdir -p ${PACK}/packages/com.robodownloader.app/data
 	
-	# Most dirs correspond one to one with their packages.
-	cp -fr chromeextension ${PACK}/packages/com.robodownloader.chromeextension/data
-	cp -fr gson ${PACK}/packages/com.robodownloader.gson/data
-	cp -fr html ${PACK}/packages/com.robodownloader.html/data
-	cp -fr jre ${PACK}/packages/com.robodownloader.jre/data
-	cp -fr selenium ${PACK}/packages/com.robodownloader.selenium/data
-	cp -fr appmacros ${PACK}/packages/com.robodownloader.appmacros/data
-	
-	
-	# However the bin dir is split into 2 packages.
-	cd bin
-	
-	# The primary is our ngs libraries and executables.
-	cp -fr +(robodownloader.exe|jcomm.jar|ngs*) ${PACK}/packages/com.robodownloader.primary/data/bin
-	
-	# The secondary is the third party libraries and executables.
-	cp -fr !(smash*|jcomm.jar|ngs*|test*) ${PACK}/packages/com.robodownloader.secondary/data/bin
+	# Copy all of the files in install over to the package data.
+	cp -fr * ${PACK}/packages/com.robodownloader.app/data
 	
 	# Now copy in the xml files from PACK_STRUCTURE.
 	cp -fr $PACK_STRUCTURE/. $PACK
 	
-	# Replace RESPOSITY_URL in the config.xml.
-	if [ $RELEASE -eq 1 ]; then
-		sed -i -e 's/REPOSITORY_URL/https:\/\/www.robodownloader.com\/windows\/robodownloader_repo/g' $PACK/config/config.xml
-	else
-		# Format the repo path for windows.
-		LOC=`echo "$REPO" | sed 's/^\///' | sed 's/^./\0:/'`
-		echo "LOC is: " $LOC
-		sed -i -e "s#REPOSITORY_URL#file:///$LOC#g" $PACK/config/config.xml
-	fi
+	# We no longer use an online repo.
+	# We only do offline installers.
+	
+	## Replace RESPOSITY_URL in the config.xml.
+	#if [ $RELEASE -eq 1 ]; then
+	#	sed -i -e 's/REPOSITORY_URL/https:\/\/www.robodownloader.com\/windows\/robodownloader_repo/g' $PACK/config/config.xml
+	#else
+	#	# Format the repo path for windows.
+	#	LOC=`echo "$REPO" | sed 's/^\///' | sed 's/^./\0:/'`
+	#	echo "LOC is: " $LOC
+	#	sed -i -e "s#REPOSITORY_URL#file:///$LOC#g" $PACK/config/config.xml
+	#fi
 	
 	# Replace LAUNCH_PROGRAM in the config.xml.
 	sed -i -e 's/LAUNCH_PROGRAM/bin\/robodownloader.exe/g' $PACK/config/config.xml
@@ -93,32 +76,28 @@ update_repo ()
 # -------------------------------------------------------------------------
 create_installer ()
 {
-	echo "creating installer.."
+	echo "creating installer with name ${installer_base_name}"
 	cd $PACK
-	binarycreator --online-only -c 'config/config.xml' -p packages robodownloader.exe
+	binarycreator --offline-only -c 'config/config.xml' -p packages ${installer_base_name}.exe
 }
 
 # -------------------------------------------------------------------------
 # Main Logic.
 # -------------------------------------------------------------------------
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 2 ]; then
     echo "at least 2 arguments are required: "
     echo "[1]: package, create_repo, update_repo or create_installer"
-    echo "[2]: debug, release"
-    echo "[3]: the cmake build dir root"
+    echo "[2]: the cmake build dir root"
     exit 1
 fi
 
-if [ $2 = "release" ]; then
-	RELEASE=1
-else 
-	RELEASE=0
-fi
 
-echo "cmake build root set to: " $3
-CMAKE_BUILD_ROOT=$3
+echo "cmake build root set to: " $2
+CMAKE_BUILD_ROOT=$2
 PACK=${CMAKE_BUILD_ROOT}/robodownloader_pack
 REPO=${CMAKE_BUILD_ROOT}/robodownloader_repo
+
+source ${CMAKE_BUILD_ROOT}/ngsversion.sh
 
 if [ $1 = "package" ]; then
 	package

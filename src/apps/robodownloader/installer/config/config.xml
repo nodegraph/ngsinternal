@@ -6,11 +6,13 @@
     <Publisher>Robo Downloader</Publisher>
     <StartMenuDir>Robo Downloader</StartMenuDir>
     <TargetDir>@ApplicationsDir@/Robo Downloader</TargetDir>
+    <!--  We no longer do online repos.
     <RemoteRepositories>
         <Repository>
             <Url>REPOSITORY_URL</Url>
         </Repository>
     </RemoteRepositories>
+    -->
     <InstallerApplicationIcon>robot_blue</InstallerApplicationIcon>
     <WizardStyle>Modern</WizardStyle>
     

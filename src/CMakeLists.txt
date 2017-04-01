@@ -147,6 +147,11 @@ configure_file (
     "${PROJECT_BINARY_DIR}/ngsversion.h"
   )
   
+configure_file (
+    "${PROJECT_SOURCE_DIR}/ngsversion.sh.in"
+    "${PROJECT_BINARY_DIR}/ngsversion.sh"
+  )
+  
 # Find qt library.
 set(CMAKE_PREFIX_PATH ${QT5_DIR} /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework/Headers)
 find_package(Qt5Core)
