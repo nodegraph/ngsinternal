@@ -207,20 +207,30 @@ INSTALL(DIRECTORY
 # ------------------------------------------------------------------
 # MSVC Redistributable.
 # ------------------------------------------------------------------
+#INSTALL(FILES
+#			"D:/downloaded_software/visual_studio/redistributables/2015_update_3/vc_redist.x64.exe"
+#		DESTINATION bin
+#		COMPONENT thirdparty
+#		CONFIGURATIONS Debug Release)
+
+
+# ------------------------------------------------------------------
+# Shortcut to help users find our app.
+# ------------------------------------------------------------------
 INSTALL(FILES
-			"D:/downloaded_software/visual_studio/redistributables/2015_update_3/vc_redist.x64.exe"
-		DESTINATION bin
+			"${PROJECT_SOURCE_DIR}/scripts/windows/Robo Downloader.lnk"
+		DESTINATION .
 		COMPONENT thirdparty
 		CONFIGURATIONS Debug Release)
 		
 # ------------------------------------------------------------------
 # Icon for shortcut on windows.
 # ------------------------------------------------------------------
-INSTALL(FILES
-			${PROJECT_SOURCE_DIR}/external/images/robot_blue.ico
-		DESTINATION bin
-		COMPONENT thirdparty
-		CONFIGURATIONS Debug Release)
+#INSTALL(FILES
+#			${PROJECT_SOURCE_DIR}/external/images/robot_blue.ico
+#		DESTINATION bin
+#		COMPONENT thirdparty
+#		CONFIGURATIONS Debug Release)
 		
 # ------------------------------------------------------------------
 # GLEW	
