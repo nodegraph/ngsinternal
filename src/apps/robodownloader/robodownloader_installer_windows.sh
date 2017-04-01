@@ -24,7 +24,7 @@ package ()
 	# Go to the install dir created from ninja install.
 	cd $CMAKE_BUILD_ROOT/install;
 	
-	# We only create one package for simplicity.
+	# We only create one package with actual files for simplicity.
 	mkdir -p ${PACK}/packages/com.robodownloader.app/data
 	
 	# Copy all of the files in install over to the package data.
