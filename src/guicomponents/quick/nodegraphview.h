@@ -5,13 +5,13 @@
 #include <base/objectmodel/dep.h>
 
 #include <QtQuick/QQuickView>
+#include <QtNetwork/qnetworkaccessmanager.h>
+#include <QtNetwork/qnetworkreply.h>
 
 
 class QSGTexture;
 
 namespace ngs {
-
-class NodeGraphQuickItem;
 
 class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
   Q_OBJECT
@@ -31,10 +31,30 @@ class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
   Q_INVOKABLE void start_app_update();
   Q_INVOKABLE bool update_is_starting();
 
+  Q_INVOKABLE void report_app_usage();
+  Q_INVOKABLE void report_ng_usage();
 
+ private slots:
+   void on_app_usage_read();
+   void on_app_usage_write();
 
+   void on_ng_usage_read();
+   void on_ng_usage_write();
 
  private:
+
+   void send_get_request(const QString& url, const char* slot);
+   void send_put_request(const QString& url, const QByteArray& data, const char* slot);
+
+   bool read_number_fron_reply(QNetworkReply *reply, long& number);
+
+  static const QString kAppUsageURL;
+  static const QString kNGUsageURL;
+
+  QNetworkAccessManager _nam;
+  bool _app_usage_reported;
+  bool _ng_usage_reported;
+
 
   bool _update_is_starting;
 

@@ -6,6 +6,7 @@
 #include <guicomponents/computes/mqttcomputes.h>
 #include <guicomponents/computes/browsercomputes.h>
 #include <guicomponents/computes/messagereceiver.h>
+#include <guicomponents/quick/nodegraphview.h>
 
 #include <components/compshapes/nodeselection.h>
 #include <components/interactions/groupinteraction.h>
@@ -58,7 +59,8 @@ NodeGraphManipulatorImp::NodeGraphManipulatorImp(Entity* app_root)
       _queuer(this),
       _scheduler(this),
       _msg_receiver(this),
-      _file_model(this) {
+      _file_model(this),
+      _ng_view(this) {
 
   // Timer setup.
   _idle_timer.setSingleShot(true);
@@ -105,6 +107,7 @@ void NodeGraphManipulatorImp::initialize_wires() {
   _scheduler = get_dep<TaskScheduler>(_app_root);
   _msg_receiver = get_dep<MessageReceiver>(_app_root);
   _file_model = get_dep<FileModel>(_app_root);
+  _ng_view = get_dep<NodeGraphView>(_app_root);
 
   // Just to be safe when initialize_wires get called multiple times,
   // we disconnect possible pre-existing connections.
@@ -132,6 +135,7 @@ void NodeGraphManipulatorImp::set_ultimate_targets(Entity* entity, bool force_st
 
 void NodeGraphManipulatorImp::set_ultimate_targets(const std::unordered_set<Entity*>& entities, bool force_stack_reset) {
   std::cerr << "appending to ultimate targets: " << entities.size() << "\n";
+  _ng_view->report_ng_usage();
 
   DepUSet<Compute> computes;
   for (Entity* entity: entities) {

@@ -147,33 +147,37 @@ int main(int argc, char *argv[]) {
     app_root->init_view(format);
 
     if (first_instance) {
-      if (NodeGraphView::app_update_is_available()) {
-        QQmlContext* context = view->engine()->rootContext();
-        context->setContextProperty(QStringLiteral("quick_view"), view);
-        // Show our splash page with the option to update the app.
-        view->setSource(QUrl(QStringLiteral("qrc:/qml/robodownloader/fullpages/SplashPageWithUpdate.qml")));
-        view->rootObject()->setProperty("ngs_version", NGS_VERSION);
-        view->rootObject()->setProperty("app_name", "Robo Downloader");
-        view->show();
-        view->update();
+      view->report_app_usage();
 
-        // Run the splash screen event loop.
-        execReturn = app.exec();
+//      if (NodeGraphView::app_update_is_available()) {
+//        QQmlContext* context = view->engine()->rootContext();
+//        context->setContextProperty(QStringLiteral("quick_view"), view);
+//        // Show our splash page with the option to update the app.
+//        view->setSource(QUrl(QStringLiteral("qrc:/qml/robodownloader/fullpages/SplashPageWithUpdate.qml")));
+//        view->rootObject()->setProperty("ngs_version", NGS_VERSION);
+//        view->rootObject()->setProperty("app_name", "Robo Downloader");
+//        view->show();
+//        view->update();
+//
+//        // Run the splash screen event loop.
+//        execReturn = app.exec();
+//
+//        // If we're not updating, then start the app.
+//        if (!view->update_is_starting()) {
+//          {
+//            // Expose some object to qml before loading our main app.
+//            app_root->expose_to_qml();
+//            // Show our main app.
+//            view->setSource(QUrl(QStringLiteral("qrc:/qml/robodownloader.qml")));
+//            // Embed the node graph quick item into the node graph page.
+//            app_root->embed_node_graph();
+//          }
+//          // Run the main event loop.
+//          execReturn = app.exec();
+//        }
+//      } else
 
-        // If we're not updating, then start the app.
-        if (!view->update_is_starting()) {
-          {
-            // Expose some object to qml before loading our main app.
-            app_root->expose_to_qml();
-            // Show our main app.
-            view->setSource(QUrl(QStringLiteral("qrc:/qml/robodownloader.qml")));
-            // Embed the node graph quick item into the node graph page.
-            app_root->embed_node_graph();
-          }
-          // Run the main event loop.
-          execReturn = app.exec();
-        }
-      } else {
+      {
         // Show our splash page, while loading the real qml app.
         view->setSource(QUrl(QStringLiteral("qrc:/qml/robodownloader/fullpages/SplashPage.qml")));
         view->rootObject()->setProperty("ngs_version", NGS_VERSION);

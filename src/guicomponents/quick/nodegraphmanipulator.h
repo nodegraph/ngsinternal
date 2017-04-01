@@ -24,6 +24,7 @@ class TaskScheduler;
 class Compute;
 class MessageReceiver;
 class FileModel;
+class NodeGraphView;
 
 
 // This is the implementation class for the NodeGraphManipulator.
@@ -140,6 +141,7 @@ private slots:
   Dep<TaskScheduler> _scheduler;
   Dep<MessageReceiver> _msg_receiver;
   Dep<FileModel> _file_model;
+  Dep<NodeGraphView> _ng_view;
 
   // The ultimate compute (of a node) that we are trying to clean.
   // Note that there maybe many asynchronous computes which cause each cleaning pass over the dependencies
