@@ -171,7 +171,7 @@ void NodeGraphView::on_app_usage_read() {
     long number;
     if (read_number_fron_reply(reply, number)) {
       number += 1;
-      send_put_request(kAppUsageURL, QString::number(number).toUtf8(), SLOT(on_app_usage_write));
+      send_put_request(kAppUsageURL, QString::number(number).toUtf8(), SLOT(on_app_usage_write()));
     }
   }
 }
@@ -188,7 +188,7 @@ void NodeGraphView::on_ng_usage_read() {
     long number;
     if (read_number_fron_reply(reply, number)) {
       number += 1;
-      send_put_request(kNGUsageURL, QString::number(number).toUtf8(), SLOT(on_ng_usage_write));
+      send_put_request(kNGUsageURL, QString::number(number).toUtf8(), SLOT(on_ng_usage_write()));
     }
   }
 }
