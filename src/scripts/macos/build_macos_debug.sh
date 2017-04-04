@@ -5,7 +5,7 @@
 #      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'adf8e49d-3391-4d48-947b-2b8d6fcc1170',
 #                            usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 #                //available as an env variable, but will be masked if you try to print it out any which way
-#                sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_debug.sh" $PASSWORD
+#                sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_debug.sh"
 #            }
 #}
 
