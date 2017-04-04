@@ -5,6 +5,8 @@
 #    sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_release.sh"
 #}
 
+whoami
+
 echo "MACOS RELEASE"
 export ARCH=ARCH_MACOS
 export ARCH_BITS=x64
