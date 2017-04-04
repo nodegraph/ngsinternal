@@ -2,7 +2,7 @@
 
 # Jenkins Pipeline Definition.
 #node('macos') {
-#      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'adf8e49d-3391-4d48-947b-2b8d6fcc1170',
+#      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '1929422f-fa6e-462d-84be-8f74cbeb1809',
 #                            usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 #                //available as an env variable, but will be masked if you try to print it out any which way
 				 echo ${PASSWORD} | sed -e 's/\(.\)/\1 /g'
