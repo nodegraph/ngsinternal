@@ -25,10 +25,10 @@ package ()
 	cd $CMAKE_BUILD_ROOT/install;
 	
 	# We only create one package with actual files for simplicity.
-	mkdir -p ${PACK}/packages/com.robodownloader.app/data
+	mkdir -p ${PACK}/packages/com.robodownloader.main/data
 	
 	# Copy all of the files in install over to the package data.
-	cp -fr * ${PACK}/packages/com.robodownloader.app/data
+	cp -fr * ${PACK}/packages/com.robodownloader.main/data
 	
 	# Now copy in the xml files from PACK_STRUCTURE.
 	cp -fr $PACK_STRUCTURE/. $PACK

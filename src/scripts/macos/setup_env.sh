@@ -57,6 +57,7 @@ PATH=/Users/raindrop/installs/macosunpacks/node-v7.2.0-darwin-x64/bin:${PATH}
 PATH=/Users/raindrop/installs/macos/QtIFW2.0.3/bin:${PATH}
 
 # Our scripts.
+PATH=${SCRIPT_DIR}:${PATH}
 PATH=${SRC_ROOT}/ngsinternal/src/apps/robodownloader:${PATH}
 
 # Some aliases.

@@ -1,6 +1,19 @@
 # To create the repo and installer do the following.
 # The installer will be in the package dir.
 
+
+# Note if we have structured the internal dirs of our app properly,
+# then the codesigning process should yield files with no extended attributes.
+# To check if any files have extended attributes do:
+# find . -type f -print0 | xargs -0 ls -l@ | grep -e "-.*@"
+
+# This also works.
+# xattr -rl ../path/to/app
+
+
+#xattr -cr /Applications/DBeaver.app
+#sudo codesign --force --strict --sign - /Applications/DBeaver.app
+
 # robodownloader_installer_macos.sh package [release/debug]
 # robodownloader_installer_macos.sh create_repo [release/debug]
 # robodownloader_installer_macos.sh create_installer [release/debug]
@@ -9,105 +22,128 @@
 shopt -s extglob
 
 PACK_STRUCTURE=~raindrop/src/ngsinternal/src/apps/robodownloader/installer
-DATA_PREFIX=data/robodownloader.app/Contents
 
+sign_shallow () {
+	if [ 1 -gt "$#" ]; then
+	    echo "Error: sign_shallow requires a target to sign"
+	    echo "eg. sign_shallow best_app.app"
+	    echo "your call: '$@'"
+	    exit 1
+	fi
+	echo "signing: " + "$@"
+	codesign --force --strict --sign "Developer ID Application: Shingo Takagi" $@
+}
+
+sign_deep () {
+	if [ 1 -gt "$#" ]; then
+	    echo "Error: sign_deep requires a target to sign"
+	    echo "eg. sign_deep best_app.app"
+	    echo "your call: '$@'"
+	    exit 1
+	fi
+	
+	codesign --force --strict --deep --sign "Developer ID Application: Shingo Takagi" $@
+}
+
+verify_executable() {
+	if [ 1 -gt "$#" ]; then
+	    echo "Error: verify_executable requires a target to verify"
+	    echo "eg. verify_executable best_app.app"
+	    exit 1
+	fi
+
+	# Mimic what GateKeeper does and verify app.
+	codesign --verify --strict --deep --verbose=1 $@
+	
+	# Check if GateKeeper will accept signature.
+	spctl --verbose=4 -a -t exec -vv $@
+	
+	# The app should have any extended attributes.
+	xattr -rl $@
+}
+
+verify_dmg() {
+	if [ 1 -gt "$#" ]; then
+	    echo "Error: verify_dmg requires a target to verify"
+	    echo "eg. verify_dmg best_app.dmg"
+	    exit 1
+	fi
+
+	# Mimic what GateKeeper does and verify app.
+	codesign --verify --strict --deep --verbose=2 $@
+	
+	# Check if GateKeeper will accept signature when opening.
+	spctl -a -t open --context context:primary-signature -v $@
+}
+
+codesign_app () 
+{
+	# Do Frameworks first.
+	sign_shallow $1/Contents/Frameworks/*
+	
+	# Do Plugins next.
+	sign_shallow $1/Contents/Plugins/bearer/*
+	sign_shallow $1/Contents/Plugins/imageformats/*
+	sign_shallow $1/Contents/Plugins/platforms/*
+	sign_shallow $1/Contents/Plugins/printsupport/*
+	sign_shallow $1/Contents/Plugins/quick/*
+	
+	# Do MacOS next.
+	sign_shallow $1/Contents/MacOS/*
+	
+	# Although we have the JRE in Resources, we don't sign anything in Resources because it should be 
+	# considered as non executable data for codesigning's sake.
+	
+	# Finally sign the app.
+	sign_shallow $1
+	
+	# First sign will put extended attributes on jre files in Resources.
+	# We remove them.
+	xattr -cr $1
+	
+	# Verify app.
+	verify_executable $1
+}	
 
 # -------------------------------------------------------------------------
 # Create our packages.
 # -------------------------------------------------------------------------
-package ()
-{
+package () {
 	echo "packaging.."
+	
 	rm -fr $PACK
 
-	# Go to the install dir created from ninja install.
-	cd $CMAKE_BUILD_ROOT/apps/robodownloader/robodownloader.app;
+	# Go to the build dir containing our app.
+	cd $CMAKE_BUILD_ROOT/apps/robodownloader;
 	
-	# Create the package dirs.
-	mkdir -p ${PACK}/packages/com.robodownloader.chromeextension/${DATA_PREFIX}/Resources/
-	mkdir -p ${PACK}/packages/com.robodownloader.gson/${DATA_PREFIX}/Resources/
-	mkdir -p ${PACK}/packages/com.robodownloader.html/${DATA_PREFIX}/Resources/
-	mkdir -p ${PACK}/packages/com.robodownloader.jre/${DATA_PREFIX}/Resources/
-	mkdir -p ${PACK}/packages/com.robodownloader.selenium/${DATA_PREFIX}/Resources/
-	mkdir -p ${PACK}/packages/com.robodownloader.appmacros/${DATA_PREFIX}/Resources/
+	# Create the package dir.
+	mkdir -p ${PACK}/packages/com.robodownloader.main/data
 	
-	mkdir -p ${PACK}/packages/com.robodownloader.primary/${DATA_PREFIX}/Resources/
-	mkdir -p ${PACK}/packages/com.robodownloader.primary/${DATA_PREFIX}/Resources/bin
-	mkdir -p ${PACK}/packages/com.robodownloader.primary/${DATA_PREFIX}/MacOS/
-	mkdir -p ${PACK}/packages/com.robodownloader.primary/${DATA_PREFIX}/Frameworks
+	# Copy app over into the data dir.
+	CpMac -r  robodownloader.app ${PACK}/packages/com.robodownloader.main/data
 	
-	mkdir -p ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/Resources/
-	mkdir -p ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/Resources/bin
-	mkdir -p ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/MacOS/
-	mkdir -p ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/PlugIns
-	mkdir -p ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/Frameworks
-	echo 'finished making dirs'
-	
-	# Most dirs correspond one to one with their packages.
-	cd Contents/Resources
-	cp -fr chromeextension ${PACK}/packages/com.robodownloader.chromeextension/${DATA_PREFIX}/Resources
-	cp -fr gson ${PACK}/packages/com.robodownloader.gson/${DATA_PREFIX}/Resources
-	cp -fr html ${PACK}/packages/com.robodownloader.html/${DATA_PREFIX}/Resources
-	cp -fr jre ${PACK}/packages/com.robodownloader.jre/${DATA_PREFIX}/Resources
-	cp -fr selenium ${PACK}/packages/com.robodownloader.selenium/${DATA_PREFIX}/Resources
-	cp -fr appmacros ${PACK}/packages/com.robodownloader.appmacros/${DATA_PREFIX}/Resources
-	
-	
-	
-	# All the other files are split into 2 packages.
-	# The primary is our ngs libraries and executables.
-	# The secondary is the third party libraries and executables.
-	
-	# Left over elements in Resources.
-	cp -fr qml ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/Resources
-	cp -fr qt.conf ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/Resources
-	# Copy the app bundle icon.
-	cp -fr robot_blue.icns ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/Resources
-	# Copy the bin dir.
-	cd bin
-	cp -fr +(jcomm.jar|ngs_*) ${PACK}/packages/com.robodownloader.primary/${DATA_PREFIX}/Resources/bin
-	cp -fr !(jcomm.jar|ngs_*) ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/Resources/bin
-	# Copy Contents/Info.plist
-	cd ../../
-	cp -fr Info.plist ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}
-	echo 'finished copying Resources dir'
-	
-	# Elements in Plugins.
-	cd PlugIns
-	cp -fr * ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/PlugIns
-	echo 'finished copying Plugins dir'
-	
-	# Elements in MacOS.
-	cd ../MacOS
-	cp -fr * ${PACK}/packages/com.robodownloader.primary/${DATA_PREFIX}/MacOS
-	echo 'finished copying MacOs dir'
-	
-	# Elements in Frameworks.
-	cd ../Frameworks
-	cp -fr +(libngs_*) ${PACK}/packages/com.robodownloader.primary/${DATA_PREFIX}/Frameworks
-	cp -fr !(libngs_*) ${PACK}/packages/com.robodownloader.secondary/${DATA_PREFIX}/Frameworks
-	echo 'finished copying Frameworks dir'
-	
+	# Codesign it.
+	codesign_app ${PACK}/packages/com.robodownloader.main/data/robodownloader.app
+		
 	# Now copy in the xml files from PACK_STRUCTURE.
 	cp -fr $PACK_STRUCTURE/. $PACK
+	
 	# Remove the vc++ runtime package on macos.
 	rm -fr $PACK/packages/com.robodownloader.vc
 	echo 'finished copying package xml files'
 	
 	# Replace RESPOSITY_URL in the config.xml.
-	if [ $RELEASE -eq 1 ]; then
-		sed -i -e 's#REPOSITORY_URL#https://www.robodownloader.com/macos/robodownloader_repo#g' $PACK/config/config.xml
-	else
-		sed -i -e "s#REPOSITORY_URL#file://${REPO}#g" $PACK/config/config.xml
-	fi
+	#if [ $RELEASE -eq 1 ]; then
+	#	sed -i -e 's#REPOSITORY_URL#https://www.robodownloader.com/macos/robodownloader_repo#g' $PACK/config/config.xml
+	#else
+	#	sed -i -e "s#REPOSITORY_URL#file://${REPO}#g" $PACK/config/config.xml
+	#fi
 	
 	# Replace LAUNCH_PROGRAM in the config.xml.
 	sed -i -e 's#LAUNCH_PROGRAM#robodownloader.app/Contents/MacOS/robodownloader#g' $PACK/config/config.xml
 	
 	# Change modern style to mac style.
 	sed -i -e 's/Modern/Mac/g' $PACK/config/config.xml
-	
-
 }
 
 # -------------------------------------------------------------------------
@@ -138,30 +174,56 @@ create_installer ()
 {
 	echo "creating installer.."
 	cd $PACK
-	binarycreator --online-only -c 'config/config.xml' -p packages robodownloader.dmg
+	mkdir dmg_folder
+	binarycreator --offline-only -c 'config/config.xml' -p packages dmg_folder/${installer_base_name}
+	
+	# Code sign the installer.
+	sign_shallow dmg_folder/${installer_base_name}.app
+	
+	# Verify installer.
+	verify_executable dmg_folder/${installer_base_name}.app
+	
+	# Create DMG.
+	rm -f ${installer_base_name}.dmg
+	hdiutil create -volname ${installer_base_name} -srcfolder ./dmg_folder -format UDZO ${installer_base_name}.dmg
+	#hdiutil convert /path/to/rwimage.dmg -format UDRO -o /path/to/readonlyimage.dmg
+	
+	# Code sign the dmg.
+	xattr -rc ${installer_base_name}.dmg
+	codesign --deep --sign "Developer ID Application: Shingo Takagi" ${installer_base_name}.dmg
+	
+	# Verify the dmg.
+	verify_dmg ${installer_base_name}.dmg
+	
+	# Let's try a zip archive.
+	rm -f ${installer_base_name}.zip
+	zip -r ${installer_base_name}.zip ./dmg_folder
+	
+	# Code sign the zip.
+	xattr -rc ${installer_base_name}.zip
+	codesign --deep --sign "Developer ID Application: Shingo Takagi" ${installer_base_name}.zip
+	
+	# Verify the zip.
+	verify_dmg ${installer_base_name}.zip
+	
 }
 
 # -------------------------------------------------------------------------
 # Main Logic.
 # -------------------------------------------------------------------------
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 2 ]; then
     echo "at least 2 arguments are required: "
     echo "[1]: package, create_repo, update_repo or create_installer"
-    echo "[2]: debug, release"
-    echo "[3]: the cmake build dir root"
+    echo "[2]: the cmake build dir root"
     exit 1
 fi
 
-if [ $2 = "release" ]; then
-	RELEASE=1
-else 
-	RELEASE=0
-fi
-
-echo "cmake build root set to: " $3
-CMAKE_BUILD_ROOT=$3
+echo "cmake build root set to: " $2
+CMAKE_BUILD_ROOT=$2
 PACK=${CMAKE_BUILD_ROOT}/robodownloader_pack
 REPO=${CMAKE_BUILD_ROOT}/robodownloader_repo
+
+source ${CMAKE_BUILD_ROOT}/ngsversion.sh
 
 if [ $1 = "package" ]; then
 	package

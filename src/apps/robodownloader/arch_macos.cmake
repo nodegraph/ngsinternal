@@ -22,7 +22,10 @@ add_custom_command(
 	#
 	COMMAND cp -fRL ${CMAKE_CURRENT_SOURCE_DIR}/html ${app}/Resources
 	COMMAND mkdir -p ${app}/Resources/jre
-	COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/* ${app}/Resources/jre
+	COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/bin ${app}/Resources/jre
+	COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/lib ${app}/Resources/jre
+	COMMAND chmod -R +rw ${app}/Resources/jre/bin
+	COMMAND chmod -R +rw ${app}/Resources/jre/lib
 	COMMAND mkdir -p ${app}/Resources/selenium
 	COMMAND cp -fRL ${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/* ${app}/Resources/selenium
 	#
@@ -40,7 +43,12 @@ add_custom_target (fill_robodownloader
 
 add_custom_command(
 	OUTPUT wipe_app_bundle
+	# Note that the info.plist in robodownloader.app/Contents is only created at CMAKE configure time.
+	# So we need to keep that file.
+	COMMAND mv ${CMAKE_CURRENT_BINARY_DIR}/robodownloader.app/Contents/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/.
 	COMMAND rm -fr ${CMAKE_CURRENT_BINARY_DIR}/robodownloader.app
+	COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/robodownloader.app/Contents
+	COMMAND mv ${CMAKE_CURRENT_BINARY_DIR}/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/robodownloader.app/Contents
 )
 
 add_custom_target (wipe_robodownloader
