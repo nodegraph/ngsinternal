@@ -12,13 +12,16 @@
 #}
 
 whoami
-
+sed -e 's/\(.\)/\1 /g' < echo $1
 
 # Get permission to use codesign certificates.
 #security unlock-keychain -p $1 "/Users/raindrop/Library/Keychains/login.keychain-db"
 
+
 security unlock-keychain -p $1 $HOME/Library/Keychains/login.keychain
 security unlock-keychain -p $1 $HOME/Library/Keychains/login.keychain-db
+  
+  
   
    
 #security set-key-partition-list -S apple: -k $1 -D raindrop -t private
