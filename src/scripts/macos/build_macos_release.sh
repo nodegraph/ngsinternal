@@ -2,11 +2,7 @@
 
 # Jenkins Pipeline Definition.
 #node('macos') {
-#    sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_release.sh"
-#}
-
-#node('macos') {
-#      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'amazon',
+#      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '1929422f-fa6e-462d-84be-8f74cbeb1809',
 #                            usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 #                //available as an env variable, but will be masked if you try to print it out any which way
 #                sh 'echo $PASSWORD'
@@ -36,7 +32,7 @@ ninja install
 ninja fill_robodownloader
 
 # Codesign security.
-security set-key-partition-list -S apple: -k $1 -D raindrop -t private
+security set-key-partition-list -S apple-tool:,apple:,codesign: -k $1 -D raindrop -t private
 
 # robodownloader installers and repos
 robodownloader_installer_macos.sh package $CMAKE_BUILD_ROOT
