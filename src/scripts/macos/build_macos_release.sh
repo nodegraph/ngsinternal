@@ -17,12 +17,9 @@ whoami
 # Get permission to use codesign certificates.
 #security unlock-keychain -p $1 "/Users/raindrop/Library/Keychains/login.keychain-db"
 
-keychain=$HOME/Library/Keychains/login.keychain
-security unlock-keychain -p $1 ${keychain} &>/dev/null
-   
-if [ $? -ne 0 ];then
-	echo "Cannot open keychain ${keychain}"
-fi
+security unlock-keychain -p $1 $HOME/Library/Keychains/login.keychain
+security unlock-keychain -p $1 $HOME/Library/Keychains/login.keychain-db
+  
    
 #security set-key-partition-list -S apple: -k $1 -D raindrop -t private
 #security set-key-partition-list -s -k $1 -D raindrop -t private
