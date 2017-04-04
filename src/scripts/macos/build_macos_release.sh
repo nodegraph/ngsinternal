@@ -11,24 +11,14 @@
 
 whoami
 
-echo ${PASSWORD} | sed -e 's/\(.\)/\1 /g'
-echo ${USERNAME} | sed -e 's/\(.\)/\1 /g'
+# Debugging to see if username and passwords come through properly from the credentials.
+# echo ${PASSWORD} | sed -e 's/\(.\)/\1 /g'
+# echo ${USERNAME} | sed -e 's/\(.\)/\1 /g'
 
-echo ${env.PASSWORD} | sed -e 's/\(.\)/\1 /g'
-echo ${env.USERNAME} | sed -e 's/\(.\)/\1 /g'
-
+# Unlock our keychain so that we can codesign.
 security unlock-keychain -p $PASSWORD $HOME/Library/Keychains/login.keychain-db
 
-# Get permission to use codesign certificates.
-#security unlock-keychain -p $1 "/Users/raindrop/Library/Keychains/login.keychain-db"
-#security unlock-keychain -p $1 $HOME/Library/Keychains/login.keychain
-#security unlock-keychain -p $1 $HOME/Library/Keychains/login.keychain-db
-#security set-key-partition-list -S apple: -k $1 -D raindrop -t private
-#security set-key-partition-list -s -k $1 -D raindrop -t private
-
-
-
-
+# Setup our build env.
 echo "MACOS RELEASE"
 export ARCH=ARCH_MACOS
 export ARCH_BITS=x64
