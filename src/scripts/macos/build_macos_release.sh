@@ -5,6 +5,16 @@
 #    sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_release.sh"
 #}
 
+#node('macos') {
+#      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'amazon',
+#                            usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+#                //available as an env variable, but will be masked if you try to print it out any which way
+#                sh 'echo $PASSWORD'
+#                echo "${env.USERNAME}"
+#                sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_release.sh" $PASSWORD
+#            }
+#}
+
 whoami
 
 echo "MACOS RELEASE"
@@ -24,6 +34,9 @@ cmake -G "Eclipse CDT4 - Ninja" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Release ~/s
 # build
 ninja install
 ninja fill_robodownloader
+
+# Codesign security.
+security set-key-partition-list -S apple: -k $1 -D raindrop -t private
 
 # robodownloader installers and repos
 robodownloader_installer_macos.sh package $CMAKE_BUILD_ROOT
