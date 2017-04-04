@@ -31,8 +31,9 @@ cmake -G "Eclipse CDT4 - Ninja" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Release ~/s
 ninja install
 ninja fill_robodownloader
 
-# Codesign security.
-security set-key-partition-list -S apple-tool:,apple:,codesign: -k $1 -D raindrop -t private
+# Get permission to use codesign certificates.
+#security set-key-partition-list -S apple: -k $1 -D raindrop -t private
+security set-key-partition-list -s -k $1 -D raindrop -t private
 
 # robodownloader installers and repos
 robodownloader_installer_macos.sh package $CMAKE_BUILD_ROOT
