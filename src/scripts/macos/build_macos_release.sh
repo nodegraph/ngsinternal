@@ -32,8 +32,10 @@ ninja install
 ninja fill_robodownloader
 
 # Get permission to use codesign certificates.
+security unlock-keychain -p $1 "/Users/raindrop/Library/Keychains/login.keychain-db
+
 #security set-key-partition-list -S apple: -k $1 -D raindrop -t private
-security set-key-partition-list -s -k $1 -D raindrop -t private
+#security set-key-partition-list -s -k $1 -D raindrop -t private
 
 # robodownloader installers and repos
 robodownloader_installer_macos.sh package $CMAKE_BUILD_ROOT
