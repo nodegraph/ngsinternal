@@ -5,8 +5,8 @@
 #      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'adf8e49d-3391-4d48-947b-2b8d6fcc1170',
 #                            usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 #                //available as an env variable, but will be masked if you try to print it out any which way
-				 echo ${env.PASSWORD} | sed -e 's/\(.\)/\1 /g'
-				 echo ${env.USERNAME} | sed -e 's/\(.\)/\1 /g'
+				 echo ${PASSWORD} | sed -e 's/\(.\)/\1 /g'
+				 echo ${USERNAME} | sed -e 's/\(.\)/\1 /g'
 				 security unlock-keychain -p $PASSWORD $HOME/Library/Keychains/login.keychain-db
 #                sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_release.sh"
 #            }
