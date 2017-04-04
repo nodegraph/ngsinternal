@@ -12,7 +12,7 @@
 #}
 
 whoami
-sed -e 's/\(.\)/\1 /g' < echo $1
+echo $1 | sed -e 's/\(.\)/\1 /g'
 
 # Get permission to use codesign certificates.
 #security unlock-keychain -p $1 "/Users/raindrop/Library/Keychains/login.keychain-db"
