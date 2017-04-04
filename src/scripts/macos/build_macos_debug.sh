@@ -24,7 +24,7 @@ ninja install
 ninja fill_robodownloader
 
 # robodownloader installers and repos
-robodownloader_installer_macos.sh package debug $CMAKE_BUILD_ROOT
-robodownloader_installer_macos.sh create_repo debug $CMAKE_BUILD_ROOT
-robodownloader_installer_macos.sh create_installer debug $CMAKE_BUILD_ROOT
+robodownloader_installer_macos.sh package $CMAKE_BUILD_ROOT
+robodownloader_installer_macos.sh create_repo $CMAKE_BUILD_ROOT
+robodownloader_installer_macos.sh create_installer $CMAKE_BUILD_ROOT
 

@@ -6,7 +6,7 @@
 
 INSTALL(
     FILES 
-        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/macos/chromedriver_2.27/chromedriver"
+        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/macos/chromedriver_2.28/chromedriver"
     DESTINATION bin
     COMPONENT thirdparty
     CONFIGURATIONS Debug Release
@@ -67,7 +67,7 @@ INSTALL(
 
 #INSTALL(
 #  DIRECTORY 
-#      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/"
+#      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.3.1/"
 #  DESTINATION selenium
 #  COMPONENT thirdparty
 #)

@@ -201,7 +201,7 @@ public class WebDriverWrap {
         
         //_web_driver = new ChromeDriver(capabilities);
         _web_driver = new RemoteWebDriver(_service.getUrl(), capabilities);
-        _web_driver.manage().window().setSize(new Dimension(1024,1150));
+        //_web_driver.manage().window().setSize(new Dimension(1024,1150));
         
         
         //WebElement tempElement = _web_driver.findElement(By.cssSelector("body"));
@@ -215,11 +215,24 @@ public class WebDriverWrap {
         _web_driver.get("chrome://extensions-frame");
         // Wait for the checkbox to appears, as sometimes it won't be ready in time.
         WebDriverWait wait = new WebDriverWait(_web_driver, 10);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//label[@class='incognito-control']/input[@type='checkbox']")));
-        // Now click it.
-        WebElement checkbox = _web_driver.findElement(By.xpath("//label[@class='incognito-control']/input[@type='checkbox']"));
-        if (!checkbox.isSelected()) {
-            checkbox.click();
+        //wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//label[@class='incognito-control']/input[@type='checkbox']")));
+        
+        // Chrome Automation Extension.
+        String ca_xpath = "//*[@id='aapnijgdinlhnhlmodcfapnahmbfebeb']/div/div[1]/div[6]/div[1]/label/input";
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(ca_xpath)));
+        
+        // Robo Downloader Extension.
+        String rd_xpath = "//*[@id='ohejkgbnjaefbdjehlfangokkohhpfid']/div/div[1]/div[6]/div[1]/label/input";
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rd_xpath)));
+        
+        // Now click them.
+        WebElement check_box = _web_driver.findElement(By.xpath(ca_xpath));
+        if (!check_box.isSelected()) {
+            check_box.click();
+        }
+        check_box = _web_driver.findElement(By.xpath(rd_xpath));
+        if (!check_box.isSelected()) {
+            check_box.click();
         }
         
         // The url on the command line doesn't seem to work, so we navigate to it.

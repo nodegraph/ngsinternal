@@ -27,7 +27,7 @@ add_custom_command(
 	COMMAND chmod -R +rw ${app}/Resources/jre/bin
 	COMMAND chmod -R +rw ${app}/Resources/jre/lib
 	COMMAND mkdir -p ${app}/Resources/selenium
-	COMMAND cp -fRL ${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/* ${app}/Resources/selenium
+	COMMAND cp -fRL ${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.3.1/* ${app}/Resources/selenium
 	#
 	COMMAND cp -fRL "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson" ${app}/Resources/gson
 	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/chromeextension ${app}/Resources/chromeextension

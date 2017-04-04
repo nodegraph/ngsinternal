@@ -187,7 +187,7 @@ INSTALL(
 
 INSTALL(
   DIRECTORY 
-      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.0.1/"
+      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.3.1/"
   DESTINATION selenium
   COMPONENT thirdparty_java
 )
