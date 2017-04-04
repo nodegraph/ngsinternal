@@ -7,13 +7,13 @@
 #                //available as an env variable, but will be masked if you try to print it out any which way
 #                sh 'echo $PASSWORD'
 #                echo "${env.USERNAME}"
-#                sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_release.sh" $PASSWORD $USERNAME
+#                sh "source /Users/raindrop/src/ngsinternal/src/scripts/macos/build_macos_release.sh" ${env.PASSWORD} ${env.USERNAME}
 #            }
 #}
 
 whoami
-echo $2
-echo $1 | sed -e 's/\(.\)/\1 /g'
+echo "$2"
+echo "$1" | sed -e 's/\(.\)/\1 /g'
 
 # Get permission to use codesign certificates.
 #security unlock-keychain -p $1 "/Users/raindrop/Library/Keychains/login.keychain-db"
