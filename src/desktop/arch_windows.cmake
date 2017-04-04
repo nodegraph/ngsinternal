@@ -115,7 +115,7 @@ INSTALL(
 
 INSTALL(
     FILES 
-        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.27/chromedriver.exe"
+        "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.28/chromedriver.exe"
     DESTINATION bin
     COMPONENT thirdparty_chromedriver
     CONFIGURATIONS Debug Release
@@ -249,7 +249,7 @@ INSTALL(FILES
 #  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
 #  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
 #  # chromedriver
-#  COMMAND ${CMAKE_COMMAND} -E copy "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.27/chromedriver.exe" ${CMAKE_BINARY_DIR}/install/bin
+#  COMMAND ${CMAKE_COMMAND} -E copy "${PLATFORM_ROOT}/srcdeps/ngsexternal/browsercontroller/windows_x64/chromedriver_2.28/chromedriver.exe" ${CMAKE_BINARY_DIR}/install/bin
 #)
 
 #add_custom_target (install_desktop

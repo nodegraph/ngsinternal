@@ -218,17 +218,24 @@ public class WebDriverWrap {
         WebDriverWait wait = new WebDriverWait(_web_driver, 10);
         
         
-        // Find at least 2 incognito check boxes.
+        // On macos there will be a chrome automation extension. 
+        // On windows there will be no chrome automation extension.
+        // So on macos find 2 incognito check boxes
+        // On windows find 1 incognito check box.
+        int num_check_boxes = 2;
+        if (FSWrap.platform_is_windows()) {
+        	num_check_boxes = 1;
+        }
         String any_check_box_xpath = "//label[@class='incognito-control']/input[@type='checkbox']";
         List<WebElement> elements = _web_driver.findElements(By.xpath(any_check_box_xpath));
-        while (elements.size() < 2) {
+        while (elements.size() < num_check_boxes) {
         	elements = _web_driver.findElements(By.xpath(any_check_box_xpath));
         }
         
         System.err.println("Found num elements: " + elements.size());
         
         // Make sure the first two incognito check boxes are checked.
-		for (int i=0; i<2; i++) {
+		for (int i=0; i<num_check_boxes; i++) {
 			WebElement e = elements.get(i);
 			try {
 				wait.until(ExpectedConditions.elementToBeClickable(e));
