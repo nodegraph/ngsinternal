@@ -192,6 +192,8 @@ public class WebDriverWrap {
 	        chrome_opts.addArguments("--incognito");
 	        chrome_opts.addArguments("--enable-extensions");
 	        
+	        chrome_opts.addArguments("--na");
+	        
 	        //chrome_opts.addArguments("--allow-file-access-from-files");
 	        //chrome_opts.addArguments("--enable-local-file-accesses");
 	        
@@ -294,6 +296,9 @@ public class WebDriverWrap {
     		_web_driver.quit();
     	}
     	_window_handles.clear();
+    	
+    	// Try to destory the chrome user data dirs.
+    	FSWrap.destroy_chrome_user_data_dirs(_settings_dir);
     }
     
     void release_browser() {

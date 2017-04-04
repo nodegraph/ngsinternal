@@ -32,11 +32,12 @@ Rectangle {
     	// Stop the web driver service.
     	if (num_close_tries == 0) {
     		manipulator.force_stack_reset()
+    		task_queuer.close_browser()
     		task_queuer.queue_stop_service()
     		close.accepted = false
     		num_close_tries += 1
     		close_timer.start()
-    	} else if (manipulator.is_waiting_for_response()){
+    	} else if (manipulator.is_busy_cleaning() || manipulator.is_waiting_for_response()){
     		close.accepted = false
     		num_close_tries += 1
     		close_timer.start()

@@ -4,11 +4,11 @@ public class FSWrap {
 	
 	private static final String chrome_user_data_prefix = "chromeuserdata";
 	
-	public static boolean destory_file(File file) {
+	public static boolean destroy_file(File file) {
 		if (file.isDirectory()) {
 			File[] children = file.listFiles();
 			for (int i = 0; i < children.length; i++) {
-				boolean success = destory_file(children[i]);
+				boolean success = destroy_file(children[i]);
 				if (!success) {
 					return false;
 				}
@@ -29,7 +29,7 @@ public class FSWrap {
                 // It will raise an exception if another chrome session is currently using it.
                 if (dir.exists()) {
                 	System.err.println("attempt to destroy dir: " + dir);
-                    if (!FSWrap.destory_file(dir)) {
+                    if (!FSWrap.destroy_file(dir)) {
                     	System.err.println("error could not destroy dir: " + dir);
                     	i += 1;
                     	continue;
@@ -48,6 +48,16 @@ public class FSWrap {
         }
         return "";
     }
+	
+	public static void destroy_chrome_user_data_dirs(String settings_dir) {
+		File dir = new File(settings_dir);
+		File[] children = dir.listFiles();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].getName().startsWith(chrome_user_data_prefix)) {
+				FSWrap.destroy_file(children[i]);
+			}
+		}
+	}
 	
 	public static boolean platform_is_windows() {
 		String platform = System.getProperty("os.name");
