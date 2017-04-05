@@ -35,7 +35,7 @@ gather_binaries ()
 	cp -fr ${WINDOWS_BUILD_ROOT}/robodownloader_pack/robodownloader_*.exe ${SRC_ROOT}/robodownloader_binaries/windows/.
 	
 	# Copy the macos installers.
-	cp -fr "${MACOS_BUILD_ROOT}/robodownloader_pack/robodownloader_*.dmg" ${SRC_ROOT}/robodownloader_binaries/macos/.
+	cp -fr ${MACOS_BUILD_ROOT}/robodownloader_pack/robodownloader_*.dmg ${SRC_ROOT}/robodownloader_binaries/macos/.
 }
 
 # Deploy the jekyll site to firebase hosting.
