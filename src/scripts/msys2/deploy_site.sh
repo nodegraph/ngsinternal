@@ -26,22 +26,16 @@ build_site ()
 gather_binaries ()
 {
 	# Clean the windows gathering dir.
-	rm -fr ${SRC_ROOT}/robodownloader_site/_site/windows/*
+	rm -fr ${SRC_ROOT}/robodownloader_binaries/windows/*
 	
 	# Clean the macos gathering dir.
-	rm -fr ${SRC_ROOT}/robodownloader_site/_site/macos/*
+	rm -fr ${SRC_ROOT}/robodownloader_binaries/macos/*
 
-	# Copy the windows repos.
-	cp -fr ${WINDOWS_BUILD_ROOT}/robodownloader_repo ${SRC_ROOT}/robodownloader_site/_site/windows/.
-	
 	# Copy the windows installers.
-	cp -fr ${WINDOWS_BUILD_ROOT}/robodownloader_pack/robodownloader.exe ${SRC_ROOT}/robodownloader_site/_site/windows/.
-	
-	# Copy the macos repos.
-	cp -fr "${MACOS_BUILD_ROOT}/robodownloader_repo" ${SRC_ROOT}/robodownloader_site/_site/macos/.
+	cp -fr ${WINDOWS_BUILD_ROOT}/robodownloader_pack/robodownloader_*.exe ${SRC_ROOT}/robodownloader_binaries/windows/.
 	
 	# Copy the macos installers.
-	cp -fr "${MACOS_BUILD_ROOT}/robodownloader_pack/robodownloader.dmg" ${SRC_ROOT}/robodownloader_site/_site/macos/.
+	cp -fr "${MACOS_BUILD_ROOT}/robodownloader_pack/robodownloader_*.dmg" ${SRC_ROOT}/robodownloader_binaries/macos/.
 }
 
 # Deploy the jekyll site to firebase hosting.
