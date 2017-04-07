@@ -19,16 +19,6 @@ add_definitions("-DGLES_USE_ANGLE=${gles_use_angle}")
 # __int64=long long
 # __int32=int
 
-# ---------------------------------------------------------
-# Closure Compiler
-# ---------------------------------------------------------
-set(tsconfig_json "tsconfig.json")
-
-# ---------------------------------------------------------
-# Closure Compiler
-# ---------------------------------------------------------
-set(closure_compiler_jar "${PLATFORM_ROOT}/srcdeps/ngsexternal/closure_compiler/closure-compiler-v20170218.jar")
-
 
 # ---------------------------------------------------------
 # Qt Directory.

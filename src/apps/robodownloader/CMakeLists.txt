@@ -1,9 +1,8 @@
-qt5_add_resources(resources robodownloader.qrc)
+
 
 include_directories("${PROJECT_SOURCE_DIR}/apps/robodownloader")
 
 set(sources
-	${resources}
 	native/main.cpp
 )
 
@@ -19,8 +18,7 @@ list(APPEND sources ${moc_imps})
 if (${ARCH} STREQUAL ARCH_LINUX)
 	add_executable(robodownloader ${sources})
 	target_link_libraries(robodownloader 
-		ngs_gui 
-		ngs_entities
+		ngs_mainlib
 		)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 
@@ -35,8 +33,7 @@ elseif (${ARCH} STREQUAL ARCH_MACOS)
 	add_executable(robodownloader MACOSX_BUNDLE ${icon_file} ${sources} )
 	
 	target_link_libraries(robodownloader 
-		ngs_gui 
-		ngs_entities
+		ngs_mainlib
 		)
 elseif (${ARCH} STREQUAL ARCH_IOS)
 	file (GLOB icon_images ${CMAKE_CURRENT_SOURCE_DIR}/packaging/ios/icons/*.png)
@@ -49,8 +46,7 @@ elseif (${ARCH} STREQUAL ARCH_IOS)
 	# The target will pick up the bundle settings from above.
 	add_executable(robodownloader MACOSX_BUNDLE ${sources} ${icon_images} ${launch_images})
 	target_link_libraries(robodownloader 
-		ngs_gui 
-		ngs_entities
+		ngs_mainlib
 		Qt5::Quick
 		${ios_libs}
 		)		
@@ -64,8 +60,7 @@ elseif (${ARCH} STREQUAL ARCH_WINDOWS)
 	    add_executable(robodownloader WIN32 ${sources}) 
 	endif()
 	target_link_libraries(robodownloader 
-		ngs_gui 
-		ngs_entities
+		ngs_mainlib
 		ngs_quick
 		)
 elseif (${ARCH} STREQUAL ARCH_WINRT)
@@ -75,8 +70,8 @@ elseif (${ARCH} STREQUAL ARCH_WINRT)
 	    add_executable(robodownloader WIN32 ${sources}) 
 	endif()
 	target_link_libraries(robodownloader 
-		ngs_gui 
-		ngs_entities 
+		ngs_mainlib
+		ngs_mainlib 
 		)
 elseif (${ARCH} STREQUAL ARCH_ANDROID)
     list(APPEND sources 
@@ -87,8 +82,7 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
     	${moc_headers2})
     add_library(robodownloader SHARED ${sources} ${moc_imps2})
 	target_link_libraries(robodownloader 
-		ngs_gui 
-		ngs_entities
+		ngs_mainlib
 		Qt5::Network
 		Qt5AndroidExtras )
 endif ()
@@ -108,3 +102,4 @@ endif()
 
 add_subdirectory(typescript)
 add_subdirectory(java)
+add_subdirectory(mainlib)

@@ -208,6 +208,8 @@ void DownloadVideoProcess::start() {
   set_working_dir(working_dir);
   // Program on macos.
   QString program = "./ngs_helper";
+#else
+  QString program = "ngs_unavailable_on_this_platform";
 #endif
 
   // Set the program.

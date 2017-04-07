@@ -71,7 +71,7 @@ void HTTPWorker::queue_send_delete_request(TaskContext& tc, const QUrl& url) {
   _scheduler->queue_task(tc, (Task) std::bind(&HTTPWorker::send_delete_request_task, this, url), "queue_send_delete_request");
 }
 
-void HTTPWorker::queue_send_patch_request(TaskContext& tc, const QUrl& url, const const QByteArray &data) {
+void HTTPWorker::queue_send_patch_request(TaskContext& tc, const QUrl& url, const QByteArray &data) {
   _scheduler->queue_task(tc, (Task) std::bind(&HTTPWorker::send_patch_request_task, this, url, data), "queue_send_patch_request");
 }
 

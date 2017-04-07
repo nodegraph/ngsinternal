@@ -117,6 +117,21 @@ include_directories("${PROJECT_SOURCE_DIR}/external")
 
 # General lib dirs.
 link_directories("${PROJECT_BINARY_DIR}")
+
+
+# ---------------------------------------------------------
+# Closure Compiler
+# ---------------------------------------------------------
+set(tsconfig_json "tsconfig.json")
+
+# ---------------------------------------------------------
+# Closure Compiler
+# ---------------------------------------------------------
+set(closure_compiler_jar "${PLATFORM_ROOT}/srcdeps/ngsexternal/closure_compiler/closure-compiler-v20170218.jar")
+
+
+
+
  
 # Load the architecture specific cmake file.
 if (${ARCH} STREQUAL ARCH_LINUX)
@@ -219,10 +234,7 @@ add_subdirectory(guicomponents)
 add_subdirectory(entities)
 add_subdirectory(gui)
 add_subdirectory(unittests)
-
-if (NOT ${ARCH} STREQUAL ARCH_ANDROID)
 add_subdirectory(desktop)
-endif()
 
 
 

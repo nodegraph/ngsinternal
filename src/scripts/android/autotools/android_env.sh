@@ -1,6 +1,12 @@
 
 echo "android_env.sh is setting up environemnt variables"
 
+ANDROID_SDK_ROOT=C:/Users/Shingo/AppData/Local/Android/sdk
+ANDROID_NDK_ROOT=D:/installs/android/android-ndk-r14b
+ANDROID_TOOLCHAIN_ROOT=D:/installs/android/android_toolchain
+ANDROID_DEVICE_ID=004285223fcc4452
+
+
 # The following should already be defined.
 #echo "the android sdk root is: ${ANDROID_SDK_ROOT}"
 #echo "the android ndk root is: ${ANDROID_NDK_ROOT}"

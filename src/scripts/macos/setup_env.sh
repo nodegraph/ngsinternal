@@ -33,7 +33,7 @@ PATH=${PLATFORM_ROOT}/macosunpacks/ninja:${PATH}
 PATH=${PLATFORM_ROOT}/macosunpacks/Eclipse.app/Contents/MacOS:${PATH}
 
 # Ant
-PATH=${PLATFORM_ROOT}/macosunpacks/apache-ant-1.9.6/bin:${PATH}
+PATH=${PLATFORM_ROOT}/macosunpacks/apache-ant-1.10.1/bin:${PATH}
 
 # GitLab CI
 PATH=${PLATFORM_ROOT}/macosunpacks/gitlab_ci:${PATH}

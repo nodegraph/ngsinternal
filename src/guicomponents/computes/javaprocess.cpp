@@ -118,35 +118,34 @@ void JavaProcess::start_process(int app_server_port) {
   connect(_process, SIGNAL(readyReadStandardOutput()), this, SLOT(on_read_standard_output()));
 
 
-  QString bin_dir = AppConfig::get_app_bin_dir();
+  QString work_dir = AppConfig::get_app_bin_dir();
 
 #if (ARCH == ARCH_WINDOWS)
-  bin_dir += "\\..";
-  QString jre_bin_dir = bin_dir + "\\jre\\bin";
-  QString java_binary_path = jre_bin_dir + QDir::separator() + "java.exe";
+  work_dir += "\\..";
+  QString java_executable = "java.exe";
   QString sep = ";";
 #elif (ARCH == ARCH_MACOS)
-  bin_dir += "/../Resources";
-  QString jre_bin_dir = bin_dir + "/jre/bin";
-  QString java_binary_path = jre_bin_dir + QDir::separator() + "java";
+  work_dir += "/../Resources";
+  QString java_executable = "java";
+  QString sep = ":";
+#else
+  work_dir += "/../Unavailable";
+  QString java_executable = "java";
   QString sep = ":";
 #endif
 
   // Set the working directory.
-  _process->setWorkingDirectory(bin_dir);
+  _process->setWorkingDirectory(work_dir);
 
   // Add our app's jre to the path.
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   QString path = env.value("PATH");
 
-  std::cerr << "jre dir is: " << jre_bin_dir.toStdString() << "\n";
-  std::cerr << "java bin path: " << java_binary_path.toStdString() << "\n";
+  // Append to environment path.
+  //env.insert("PATH", path);
+  //_process->setProcessEnvironment(env);
 
-  path = jre_bin_dir + sep + path;
-  env.insert("PATH", path);
-  _process->setProcessEnvironment(env);
-
-  _process->setProgram(java_binary_path);
+  _process->setProgram(java_executable);
 
   QStringList args;
   args.append("-cp");

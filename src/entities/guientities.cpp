@@ -254,8 +254,8 @@ void QMLAppEntity::expose_to_qml() {
 
 #if (ARCH == ARCH_ANDROID)
     // Create our java bridge.
-    JavaBridge *java_bridge = new_ff JavaBridge(&app);
-    context->setContextProperty(QLatin1String("java_bridge"), java_bridge);
+    //JavaBridge *java_bridge = new_ff JavaBridge(&app);
+    //context->setContextProperty(QLatin1String("java_bridge"), java_bridge);
 #endif
 }
 

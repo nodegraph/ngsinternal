@@ -1,9 +1,18 @@
+# Make the toolchain by going into ndk/build/tools and doing the following:
+# cd D:\installs\android\android-ndk-r14b\build\tools
+# set PATH=%PATH%;D:\installs\android\android-ndk-r14b\prebuilt\windows-x86_64\bin
+# python make_standalone_toolchain.py --arch arm --api 21 --install-dir D:\installs\android\android_toolchain
+
+set(ANDROID_SDK_ROOT C:/Users/Shingo/AppData/Local/Android/sdk)
+set(ANDROID_NDK_ROOT D:/installs/android/android-ndk-r14b)
+set(ANDROID_TOOLCHAIN_ROOT D:/installs/android/android_toolchain)
+set(ANDROID_DEVICE_ID 004285223fcc4452)
 
 # grab some environment variables
-string(REPLACE "\\" "/" ANDROID_SDK_ROOT $ENV{ANDROID_SDK_ROOT})
-string(REPLACE "\\" "/" ANDROID_NDK_ROOT $ENV{ANDROID_NDK_ROOT})
-string(REPLACE "\\" "/" ANDROID_TOOLCHAIN_ROOT $ENV{ANDROID_TOOLCHAIN_ROOT})
-set(ANDROID_DEVICE_ID $ENV{ANDROID_DEVICE_ID})
+#string(REPLACE "\\" "/" ANDROID_SDK_ROOT $ENV{ANDROID_SDK_ROOT})
+#string(REPLACE "\\" "/" ANDROID_NDK_ROOT $ENV{ANDROID_NDK_ROOT})
+#string(REPLACE "\\" "/" ANDROID_TOOLCHAIN_ROOT $ENV{ANDROID_TOOLCHAIN_ROOT})
+#set(ANDROID_DEVICE_ID $ENV{ANDROID_DEVICE_ID})
 message("android device id is: $ENV{ANDROID_DEVICE_ID}")
 
 # check that we got the environment variables

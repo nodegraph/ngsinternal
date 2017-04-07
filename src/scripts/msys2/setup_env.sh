@@ -45,7 +45,7 @@ PATH=${PLATFORM_ROOT}/windowsunpack/ninja-win:${PATH}
 PATH=${PLATFORM_ROOT}/windowsunpack/eclipse:${PATH}
 
 # Ant
-PATH=${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin:${PATH}
+PATH=${PLATFORM_ROOT}/windowsunpack/apache-ant-1.10.1/bin:${PATH}
 
 # Android platform tools
 PATH=/d/installs/android/android-sdk/platform-tools:${PATH}

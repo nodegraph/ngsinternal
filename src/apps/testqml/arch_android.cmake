@@ -88,13 +88,13 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         DEPENDS prep_testqml
         OUTPUT install_testqml_cmd
         COMMAND ${ANDROID_DEPLOY_QT} 
-            #--verbose
+            --verbose
             --debug
             --output "${CMAKE_BINARY_DIR}/install_testqml"
             --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json" 
-            --android-platform android-23 
+            --android-platform android-21
             --deployment bundled 
-            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.10.1/bin/ant.bat"
             --device ${ANDROID_DEVICE_ID}
     )
 else()
@@ -102,13 +102,13 @@ else()
         DEPENDS prep_testqml
         OUTPUT install_testqml_cmd
         COMMAND ${ANDROID_DEPLOY_QT}
-            #--verbose
+            --verbose
             --release
             --output "${CMAKE_BINARY_DIR}/install_testqml"
             --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
-            --android-platform android-23
+            --android-platform android-21
             --deployment bundled
-            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.10.1/bin/ant.bat"
             --device ${ANDROID_DEVICE_ID}
             --storepass  ${PASSWORD}
             --sign ${PLATFORM_ROOT}/srcdeps/publishing/android/android_release.keystore ngsalias
@@ -136,9 +136,9 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
             --reinstall
             --output "${CMAKE_BINARY_DIR}/install_testqml"
             --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
-            --android-platform android-23 
+            --android-platform android-21
             --deployment bundled 
-            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.10.1/bin/ant.bat"
             --device ${ANDROID_DEVICE_ID}
     )
 else()
@@ -152,9 +152,9 @@ else()
             --release
             --output "${CMAKE_BINARY_DIR}/install_testqml"
             --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
-            --android-platform android-23
+            --android-platform android-21
             --deployment bundled
-            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+            --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.10.1/bin/ant.bat"
             --device ${ANDROID_DEVICE_ID}
             --storepass  ${PASSWORD}
             --sign ${PLATFORM_ROOT}/srcdeps/publishing/android/android_release.keystore ngsalias

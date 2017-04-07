@@ -94,7 +94,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   	    --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
   	    --android-platform android-23 
   	    --deployment bundled 
-  	    --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+  	    --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.10.1/bin/ant.bat"
   	    --device ${ANDROID_DEVICE_ID}
 )
 else()
@@ -108,7 +108,7 @@ else()
   	    --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
   	    --android-platform android-23
   	    --deployment bundled
-  	    --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+  	    --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.10.1/bin/ant.bat"
   	    --device ${ANDROID_DEVICE_ID}
   	    --storepass  ${PASSWORD}
   	    --sign ${PLATFORM_ROOT}/srcdeps/publishing/android/android_release.keystore ngsalias
@@ -139,7 +139,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   	    --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
   	    --android-platform android-23 
   	    --deployment bundled 
-  	    --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+  	    --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.10.1/bin/ant.bat"
   	    --device ${ANDROID_DEVICE_ID}
     )
 else()
@@ -155,7 +155,7 @@ else()
   	    --input "${ANDROID_PACKAGE_SOURCE_DIRECTORY}/deployment-settings.json"
   	    --android-platform android-23
   	    --deployment bundled
-  	    --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.9.6/bin/ant.bat"
+  	    --ant "${PLATFORM_ROOT}/windowsunpack/apache-ant-1.10.1/bin/ant.bat"
   	    --device ${ANDROID_DEVICE_ID}
   	    --storepass  ${PASSWORD}
   	    --sign ${PLATFORM_ROOT}/srcdeps/publishing/android/android_release.keystore ngsalias

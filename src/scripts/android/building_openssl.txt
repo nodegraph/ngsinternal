@@ -1,0 +1,4 @@
+This was built on mac using a github project which provided a script to build it.
+https://github.com/ekke/android-openssl-qt
+
+Just followed the instructions.

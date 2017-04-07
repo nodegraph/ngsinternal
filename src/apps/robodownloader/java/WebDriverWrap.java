@@ -225,9 +225,9 @@ public class WebDriverWrap {
         // So on macos find 2 incognito check boxes
         // On windows find 1 incognito check box.
         int num_check_boxes = 2;
-        if (FSWrap.platform_is_windows()) {
-        	num_check_boxes = 1;
-        }
+        //if (FSWrap.platform_is_windows()) {
+        //	num_check_boxes = 1;
+        //}
         String any_check_box_xpath = "//label[@class='incognito-control']/input[@type='checkbox']";
         List<WebElement> elements = _web_driver.findElements(By.xpath(any_check_box_xpath));
         while (elements.size() < num_check_boxes) {

@@ -47,6 +47,8 @@ if (${ARCH} STREQUAL ARCH_WINDOWS)
 	target_link_libraries(ngs_utils libsodium)
 elseif (${ARCH} STREQUAL ARCH_MACOS)
 	target_link_libraries(ngs_utils sodium)
+elseif (${ARCH} STREQUAL ARCH_ANDROID)
+    target_link_libraries(ngs_utils sodium)
 endif ()
 
 # Install.

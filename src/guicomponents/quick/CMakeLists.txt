@@ -57,6 +57,11 @@ elseif (${ARCH} STREQUAL ARCH_MACOS)
         crypto
         ssl
     ) 
+elseif (${ARCH} STREQUAL ARCH_ANDROID)
+    target_link_libraries(ngs_quick 
+        crypto
+        ssl
+    ) 
 endif()
 
  

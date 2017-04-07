@@ -153,7 +153,9 @@ INSTALL(FILES
 			"${QT5_DIR}/bin/Qt5Quickd.dll"
 			"${QT5_DIR}/bin/Qt5Qmld.dll"
 			"${QT5_DIR}/bin/Qt5Networkd.dll"
-			"${QT5_DIR}/bin/Qt5WebSocketsd.dll"			
+			"${QT5_DIR}/bin/Qt5WebSocketsd.dll"		
+			"${QT5_DIR}/bin/Qt5QuickControls2d.dll"
+			"${QT5_DIR}/bin/Qt5QuickTemplates2d.dll"		
 		DESTINATION bin
 		COMPONENT thirdparty
 		CONFIGURATIONS Debug)
@@ -165,7 +167,9 @@ INSTALL(FILES
 			"${QT5_DIR}/bin/Qt5Quick.dll"
 			"${QT5_DIR}/bin/Qt5Qml.dll"
 			"${QT5_DIR}/bin/Qt5Network.dll"
-			"${QT5_DIR}/bin/Qt5WebSockets.dll"			
+			"${QT5_DIR}/bin/Qt5WebSockets.dll"	
+			"${QT5_DIR}/bin/Qt5QuickControls2.dll"
+			"${QT5_DIR}/bin/Qt5QuickTemplates2.dll"		
 		DESTINATION bin
 		COMPONENT thirdparty
 		CONFIGURATIONS Release)
@@ -195,20 +199,22 @@ INSTALL(
 # ------------------------------------------------------------------
 # JRE. Install the version that's already installed on the dev machine.
 # ------------------------------------------------------------------
-		
-INSTALL(DIRECTORY 
-			"C:/Program Files/Java/jre1.8.0_102/"
-		DESTINATION jre
-		USE_SOURCE_PERMISSIONS
-		COMPONENT thirdparty_java
-		CONFIGURATIONS Debug Release		
-		)
+# We don't install the JRE anymore as it increases the binary size considerably.
+# Also most people won't be using it.
+	
+#INSTALL(DIRECTORY 
+#			"C:/Program Files/Java/jre1.8.0_102/"
+#		DESTINATION jre
+#		USE_SOURCE_PERMISSIONS
+#		COMPONENT thirdparty_java
+#		CONFIGURATIONS Debug Release		
+#		)
 		
 # ------------------------------------------------------------------
 # MSVC Redistributable.
 # ------------------------------------------------------------------
 INSTALL(FILES
-			"D:/downloaded_software/visual_studio/redistributables/2015_update_3/vc_redist.x64.exe"
+			"${PLATFORM_ROOT}/srcdeps/ngsexternal/vc_runtime/2015_update_3/vc_redist.x64.exe"
 		DESTINATION bin
 		COMPONENT thirdparty
 		CONFIGURATIONS Debug Release)
