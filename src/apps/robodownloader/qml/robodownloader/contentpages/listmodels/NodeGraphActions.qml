@@ -1,4 +1,4 @@
-import QtQuick 2.6
+import QtQuick 2.7
 
 // The first element contains the title to display in the stack view navigator.
 

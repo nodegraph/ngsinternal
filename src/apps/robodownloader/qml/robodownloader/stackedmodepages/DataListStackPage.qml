@@ -1,9 +1,9 @@
-import QtQuick 2.6
-import QtQuick.Controls 1.4
+import QtQuick 2.7
+import QtQuick.Controls 1.5
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Private 1.0
 
@@ -537,7 +537,7 @@ BaseStackPage{
     // Create a list model.
     function create_list_model() {
         var script = "
-                import QtQuick 2.6;
+                import QtQuick 2.7;
                 ListModel {
                 } "
         return Qt.createQmlObject(script, stack_page, "view_node_dynamic_content")
