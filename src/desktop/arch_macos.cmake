@@ -51,41 +51,6 @@ INSTALL(
 )
 
 # ------------------------------------------------------------------
-# GSON. Json library for java.
-# ------------------------------------------------------------------
-		
-#INSTALL(
-#  DIRECTORY
-#      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson"
-#  DESTINATION bin
-#  COMPONENT thirdparty
-#)
-
-# ------------------------------------------------------------------
-# Selenium Java Library.
-# ------------------------------------------------------------------
-
-#INSTALL(
-#  DIRECTORY 
-#      "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.3.1/"
-#  DESTINATION selenium
-#  COMPONENT thirdparty
-#)
-
-# ------------------------------------------------------------------
-# JRE. Install the version that's already installed on the dev machine.
-# ------------------------------------------------------------------
-		
-#INSTALL(DIRECTORY 
-#	"/Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/"
-#	#"/Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre"
-#	DESTINATION jre
-#	USE_SOURCE_PERMISSIONS
-#	COMPONENT thirdparty
-#	CONFIGURATIONS Debug Release		
-#)
-
-# ------------------------------------------------------------------
 # Simple ZIP Packaging
 # ------------------------------------------------------------------
 add_custom_command(

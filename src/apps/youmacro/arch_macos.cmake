@@ -19,19 +19,24 @@ add_custom_command(
 	COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/youmacro.app/Contents/Resources
 	COMMAND cp ${CMAKE_SOURCE_DIR}/external/images/robot_blue.icns ${CMAKE_CURRENT_BINARY_DIR}/youmacro.app/Contents/Resources
 	COMMAND ${QT5_DIR}/bin/macdeployqt ARGS ${CMAKE_CURRENT_BINARY_DIR}/youmacro.app -qmldir=${CMAKE_CURRENT_SOURCE_DIR}/qml -verbose=3 
-	#
+	# Copy html files.
 	COMMAND cp -fRL ${CMAKE_CURRENT_SOURCE_DIR}/html ${app}/Resources
-	COMMAND mkdir -p ${app}/Resources/jre
-	COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/bin ${app}/Resources/jre
-	COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/lib ${app}/Resources/jre
-	COMMAND chmod -R +rw ${app}/Resources/jre/bin
-	COMMAND chmod -R +rw ${app}/Resources/jre/lib
+	# Copy JRE
+	#COMMAND mkdir -p ${app}/Resources/jre
+	#COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/bin ${app}/Resources/jre
+	#COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/lib ${app}/Resources/jre
+	#COMMAND chmod -R +rw ${app}/Resources/jre/bin
+	#COMMAND chmod -R +rw ${app}/Resources/jre/lib
+	# Copy Selenium
 	COMMAND mkdir -p ${app}/Resources/selenium
 	COMMAND cp -fRL ${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.3.1/* ${app}/Resources/selenium
-	#
+	# Copy GSON.
 	COMMAND cp -fRL "${PLATFORM_ROOT}/srcdeps/ngsexternal/java/gson" ${app}/Resources/gson
+	# Copy chrome extension.
 	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/chromeextension ${app}/Resources/chromeextension
+	# Copy bin executables.
 	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/bin ${app}/Resources
+	# Copy app macros.
 	COMMAND cp -fRL ${CMAKE_BINARY_DIR}/install/appmacros ${app}/Resources
 )
 
