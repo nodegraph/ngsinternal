@@ -27,7 +27,8 @@ JavaProcess::JavaProcess(Entity* parent)
       Component(parent, kIID(), kDID()),
       _manipulator(this),
       _process(NULL),
-      _msg_id(-1){
+      _msg_id(-1),
+      _errored_out(false){
   get_dep_loader()->register_fixed_dep(_manipulator, Path());
 }
 
@@ -42,6 +43,7 @@ void JavaProcess::on_started() {
 
 void JavaProcess::on_error(QProcess::ProcessError error) {
   internal();
+  _errored_out = true;
   qDebug() << "java process error: " << error << "\n";
 }
 
@@ -200,7 +202,7 @@ void JavaProcess::start_process(int app_server_port) {
   _process->start();
 
   // We wait processing events until it's running.
-  while(!is_running()) {
+  while((!_errored_out) && (!is_running())) {
     qApp->processEvents();
   }
 }

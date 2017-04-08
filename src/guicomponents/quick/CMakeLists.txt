@@ -61,6 +61,7 @@ elseif (${ARCH} STREQUAL ARCH_ANDROID)
     target_link_libraries(ngs_quick 
         crypto
         ssl
+        Qt5::AndroidExtras
     ) 
 endif()
 

@@ -32,10 +32,8 @@ Rectangle {
 
     function on_virtual_keyboard_visibility_changed() {
         if (Qt.inputMethod.visible) {
-            console.log("qt inputmethod visible is true")
             visible = true
         } else {
-            console.log("qt inputmethod visible is false")
             visible = false
         }
     }

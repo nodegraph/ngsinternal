@@ -53,7 +53,7 @@ BaseStackPage{
     }
     
     function view_outputs(title, values) {
-        app_settings.vibrate()
+        quick_view.vibrate(10)
         stack_view.clear_pages()
         
     	_values = values
@@ -67,7 +67,7 @@ BaseStackPage{
     }
     
     function on_view_outputs(node_path, values) {
-        app_settings.vibrate()
+        quick_view.vibrate(10)
         stack_view.clear_pages()
         
     	_values = values
@@ -83,7 +83,7 @@ BaseStackPage{
 
     // Show data values with hints on how to show it.
     function on_edit_inputs(node_path, values, hints, exposure) {
-        app_settings.vibrate()
+        quick_view.vibrate(10)
         stack_view.clear_pages()
         
         //console.log('node path: ' + node_path)

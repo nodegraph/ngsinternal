@@ -33,7 +33,7 @@ Rectangle {
     }
     
     function show_page() {
-        app_settings.vibrate()
+        quick_view.vibrate(10)
         visible = true
     }
     

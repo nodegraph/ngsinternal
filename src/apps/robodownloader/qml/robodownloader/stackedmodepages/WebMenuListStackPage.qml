@@ -27,7 +27,7 @@ BaseStackPage{
     // -------------------------------------------------------------------------------------------
 
     function on_show_web_action_menu() {
-        app_settings.vibrate()
+        quick_view.vibrate(10)
         visible = true
         if (!show_busy_page()) {
 	        stack_view.clear_pages()

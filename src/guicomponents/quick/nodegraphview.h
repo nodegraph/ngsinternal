@@ -8,10 +8,31 @@
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include <QtNetwork/qnetworkreply.h>
 
+#include <QtCore/QObject>
+
+#if defined(Q_OS_ANDROID)
+#include <QtAndroidExtras/QAndroidJniEnvironment>
+#include <QtAndroidExtras/QAndroidJniObject>
+#endif
+
 
 class QSGTexture;
 
 namespace ngs {
+
+
+class Vibrator : public QObject {
+Q_OBJECT
+ public:
+  explicit Vibrator(QObject *parent = 0);
+ public slots:
+  void vibrate(int milliseconds);
+ private:
+#if defined(Q_OS_ANDROID)
+  QAndroidJniObject vibratorService;
+#endif
+};
+
 
 class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
   Q_OBJECT
@@ -33,6 +54,8 @@ class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
 
   Q_INVOKABLE void report_app_usage();
   Q_INVOKABLE void report_ng_usage();
+
+  Q_INVOKABLE void vibrate(int milliseconds) {_vibrator.vibrate(milliseconds);}
 
  private slots:
    void on_app_usage_read();
@@ -58,6 +81,7 @@ class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
 
   bool _update_is_starting;
 
+  Vibrator _vibrator;
 };
 
 }

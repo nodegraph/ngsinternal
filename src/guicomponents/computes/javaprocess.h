@@ -48,6 +48,7 @@ Q_OBJECT
   //Our process.
   QProcess* _process;
   int _msg_id;
+  bool _errored_out;
 };
 
 }

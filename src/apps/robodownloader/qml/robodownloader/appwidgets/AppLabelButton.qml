@@ -45,7 +45,7 @@ Button {
             mouse.accepted = true
             if (tooltip_text != "") {
                 app_tooltip.show(label_button,tooltip_text)
-                app_settings.vibrate()
+                quick_view.vibrate(10)
             }
         }
         onPressed: {

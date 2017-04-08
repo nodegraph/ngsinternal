@@ -42,11 +42,11 @@ Button {
             mouse.accepted = true
             if (app_tooltip.visible == false) {
 	            app_tooltip.show(image_button,tooltip_text)
-	            app_settings.vibrate()
+	            quick_view.vibrate(10)
             }
         }
         onPressed: {
-            app_settings.vibrate()
+            quick_view.vibrate(10)
             mouse.accepted = true
             image_button.clicked(mouse)
         }

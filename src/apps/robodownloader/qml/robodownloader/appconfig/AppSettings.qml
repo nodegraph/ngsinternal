@@ -164,21 +164,6 @@ Item{
     // Tooltip Properties.
     property color tooltip_bg_color: "#FF4CAF50" // a light green color
         
-        
-    function vibrate() {
-        // On android we vibrate.
-        if (Qt.platform.os == "android") {
-            java_bridge.vibrate(10)
-        }
-    }
-
-    function dismiss_keyboard_from_webview() {
-        // On android we have a special fix for Qt's android keyboard handling issues.
-        if (Qt.platform.os == "android") {
-            java_bridge.dismiss_keyboard_from_webview()
-        }
-    }
-    
     Component.onCompleted: {
     }
 }

@@ -101,7 +101,7 @@ Rectangle {
 
             AppCheckBox {
                 id: advanced_check_box
-                checked: advanced_features
+                checked: settings_page.advanced_features
                 anchors {
                     left: advanced_label.right
                     leftMargin: app_settings.page_left_margin
@@ -202,8 +202,8 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: lock_links_label
-                enabled: advanced_feautres
-	            opacity: advanced_features ? 1.0 : 0.5
+                enabled: settings_page.advanced_features
+	            opacity: settings_page.advanced_features ? 1.0 : 0.5
 	            
                 text: "Lock Links"
                 anchors {
@@ -215,8 +215,8 @@ Rectangle {
 
             AppCheckBox {
                 id: lock_links_check_box
-                enabled: advanced_feautres
-	            opacity: advanced_features ? 1.0 : 0.5
+                enabled: settings_page.advanced_features
+	            opacity: settings_page.advanced_features ? 1.0 : 0.5
 	            
                 checked: false
                 anchors {
@@ -230,8 +230,8 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: max_node_posts_label
-                enabled: advanced_feautres
-	            opacity: advanced_features ? 1.0 : 0.5
+                enabled: settings_page.advanced_features
+	            opacity: settings_page.advanced_features ? 1.0 : 0.5
 	            
                 text: "Max Node Posts"
                 anchors {
@@ -244,8 +244,8 @@ Rectangle {
             // Title Field.
             AppLineEdit {
                 id: max_node_posts_text_field
-                enabled: advanced_feautres
-	            opacity: advanced_features ? 1.0 : 0.5
+                enabled: settings_page.advanced_features
+	            opacity: settings_page.advanced_features ? 1.0 : 0.5
 	            
                 text: '1000'
                 tool_bar: copy_paste_bar
@@ -262,8 +262,8 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: auto_run_label
-                enabled: advanced_feautres
-	            opacity: advanced_features ? 1.0 : 0.5
+                enabled: settings_page.advanced_features
+	            opacity: settings_page.advanced_features ? 1.0 : 0.5
 	            
                 text: "Auto Run"
                 anchors {
@@ -275,8 +275,8 @@ Rectangle {
 
             AppCheckBox {
                 id: auto_run_check_box
-                enabled: advanced_feautres
-	            opacity: advanced_features ? 1.0 : 0.5
+                enabled: settings_page.advanced_features
+	            opacity: settings_page.advanced_features ? 1.0 : 0.5
 	            
                 checked: false
                 anchors {
@@ -290,8 +290,8 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: auto_run_interval_label
-                enabled: advanced_feautres
-	            opacity: advanced_features ? 1.0 : 0.5
+                enabled: settings_page.advanced_features
+	            opacity: settings_page.advanced_features ? 1.0 : 0.5
 	            
                 text: "Auto Run Interval (seconds)"
                 anchors {
@@ -304,8 +304,8 @@ Rectangle {
             // Title Field.
             AppLineEdit {
                 id: auto_run_interval_text_field
-                enabled: advanced_feautres
-	            opacity: advanced_features ? 1.0 : 0.5
+                enabled: settings_page.advanced_features
+	            opacity: settings_page.advanced_features ? 1.0 : 0.5
 	            
                 tool_bar: copy_paste_bar
                 text: '60'

@@ -31,7 +31,7 @@ BaseStackPage{
     // -------------------------------------------------------------------------------------------
 
     function on_node_context_menu() {
-        app_settings.vibrate()
+        quick_view.vibrate(10)
         center_new_nodes = false
         visible = true
         if (!show_busy_page()) {
@@ -41,7 +41,7 @@ BaseStackPage{
     }
 
     function on_group_node_context_menu(){
-        app_settings.vibrate()
+        quick_view.vibrate(10)
         center_new_nodes = false
        	visible = true
         if (!show_busy_page()) {
@@ -51,7 +51,7 @@ BaseStackPage{
     }
 
     function on_node_graph_context_menu() {
-        app_settings.vibrate()
+        quick_view.vibrate(10)
         center_new_nodes = false
         visible = true
         if (!show_busy_page()) {
@@ -61,7 +61,7 @@ BaseStackPage{
     }
 
     function show_options(model_name) {
-		app_settings.vibrate()
+		quick_view.vibrate(10)
 		center_new_nodes = true
         visible = true
         if (!show_busy_page()) {

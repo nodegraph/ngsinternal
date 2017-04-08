@@ -75,15 +75,15 @@ Rectangle {
     		// and the posts or downloads or viewing the outputs.
     		if (m == app_settings.file_mode) {
     		    app_tooltip.show(file_button, "please wait")
-            	app_settings.vibrate()
+            	quick_view.vibrate(10)
     			return
     		} else if (m == app_settings.edit_node_mode) {
     		    app_tooltip.show(edit_node_button, "please wait")
-            	app_settings.vibrate()
+            	quick_view.vibrate(10)
     			return
     		} else if (m == app_settings.settings_mode) {
     			app_tooltip.show(settings_button, "please wait")
-            	app_settings.vibrate()
+            	quick_view.vibrate(10)
     			return
     		}
 

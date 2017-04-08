@@ -13,7 +13,38 @@
 #include <QtQuick/QQuickItem>
 #include <QtGui/QScreen>
 
+#include <QtCore/QDebug>
+
 namespace ngs {
+
+Vibrator::Vibrator(QObject *parent) : QObject(parent)
+{
+#if defined(Q_OS_ANDROID)
+    QAndroidJniObject vibroString = QAndroidJniObject::fromString("vibrator");
+    QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
+    QAndroidJniObject appctx = activity.callObjectMethod("getApplicationContext","()Landroid/content/Context;");
+    vibratorService = appctx.callObjectMethod("getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;", vibroString.object<jstring>());
+#endif
+}
+#if defined(Q_OS_ANDROID)
+void Vibrator::vibrate(int milliseconds) {
+    if (vibratorService.isValid()) {
+        jlong ms = milliseconds;
+        jboolean hasvibro = vibratorService.callMethod<jboolean>("hasVibrator", "()Z");
+        vibratorService.callMethod<void>("vibrate", "(J)V", ms);
+    } else {
+        qDebug() << "No vibrator service available";
+    }
+}
+#else
+void Vibrator::vibrate(int milliseconds) {
+    Q_UNUSED(milliseconds);
+}
+#endif
+
+
+
+
 
 // Using the QQmlApplicationEngine would of allowed us to declare a ApplicationWindow on the QML side.
 // This would have been nicer but, it doesn't allow us to set the opengl context and version settings.
@@ -27,7 +58,8 @@ NodeGraphView::NodeGraphView(Entity* entity)
       Component(entity, kIID(), kDID()),
       _app_usage_reported(false),
       _ng_usage_reported(false),
-      _update_is_starting(false) {
+      _update_is_starting(false),
+      _vibrator(this) {
 
   // Set the app icon.
   QIcon icon(":images/robot_blue.png");
