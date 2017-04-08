@@ -124,29 +124,38 @@ void JavaProcess::start_process(int app_server_port) {
 
 #if (ARCH == ARCH_WINDOWS)
   work_dir += "\\..";
-  QString java_executable = "java.exe";
+  QString slash = "\\";
   QString sep = ";";
 #elif (ARCH == ARCH_MACOS)
   work_dir += "/../Resources";
-  QString java_executable = "java";
+  QString slash = "/";
   QString sep = ":";
 #else
   work_dir += "/../Unavailable";
-  QString java_executable = "java";
+  QString slash = "/";
   QString sep = ":";
 #endif
+
+  QString jre_bin_dir = work_dir + slash + "jre" + slash + "bin";
+  QString java_executable = jre_bin_dir + slash + "java";
 
   // Set the working directory.
   _process->setWorkingDirectory(work_dir);
 
-  // Add our app's jre to the path.
+  // Get the current PATH env value.
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   QString path = env.value("PATH");
 
-  // Append to environment path.
-  //env.insert("PATH", path);
-  //_process->setProcessEnvironment(env);
+  // Prepend the JRE bin dir to front of the PATH.
+  path = jre_bin_dir + sep + path;
 
+  // Set the path in the env object.
+  env.insert("PATH", path);
+
+  // Set the env object on the process.
+  _process->setProcessEnvironment(env);
+
+  // Set the executable.
   _process->setProgram(java_executable);
 
   QStringList args;

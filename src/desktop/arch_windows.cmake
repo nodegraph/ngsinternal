@@ -199,27 +199,22 @@ INSTALL(
 # ------------------------------------------------------------------
 # JRE. Install the version that's already installed on the dev machine.
 # ------------------------------------------------------------------
-# We don't install the JRE anymore as it increases the binary size considerably.
-# Also most people won't be using it.
-	
-#INSTALL(DIRECTORY 
-#			"C:/Program Files/Java/jre1.8.0_102/"
-#		DESTINATION jre
-#		USE_SOURCE_PERMISSIONS
-#		COMPONENT thirdparty_java
-#		CONFIGURATIONS Debug Release		
-#		)
+INSTALL(DIRECTORY 
+			"C:/Program Files/Java/jre1.8.0_102/"
+		DESTINATION jre
+		USE_SOURCE_PERMISSIONS
+		COMPONENT thirdparty_java
+		CONFIGURATIONS Debug Release		
+		)
 		
 # ------------------------------------------------------------------
 # MSVC Redistributable.
 # ------------------------------------------------------------------
-# We don't install the vc runtime anymore in order to keep the download small.
-
-#INSTALL(FILES
-#			"${PLATFORM_ROOT}/srcdeps/ngsexternal/vc_runtime/2015_update_3/vc_redist.x64.exe"
-#		DESTINATION bin
-#		COMPONENT thirdparty
-#		CONFIGURATIONS Debug Release)
+INSTALL(FILES
+			"${PLATFORM_ROOT}/srcdeps/ngsexternal/vc_runtime/2015_update_3/vc_redist.x64.exe"
+		DESTINATION bin
+		COMPONENT thirdparty
+		CONFIGURATIONS Debug Release)
 		
 # ------------------------------------------------------------------
 # Icon for shortcut on windows.

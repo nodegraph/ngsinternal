@@ -22,11 +22,11 @@ add_custom_command(
 	# Copy html files.
 	COMMAND cp -fRL ${CMAKE_CURRENT_SOURCE_DIR}/html ${app}/Resources
 	# Copy JRE
-	#COMMAND mkdir -p ${app}/Resources/jre
-	#COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/bin ${app}/Resources/jre
-	#COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/lib ${app}/Resources/jre
-	#COMMAND chmod -R +rw ${app}/Resources/jre/bin
-	#COMMAND chmod -R +rw ${app}/Resources/jre/lib
+	COMMAND mkdir -p ${app}/Resources/jre
+	COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/bin ${app}/Resources/jre
+	COMMAND cp -fRL /Users/raindrop/installs/macosunpacks/jre1.8.0_121.jre/Contents/Home/lib ${app}/Resources/jre
+	COMMAND chmod -R +rw ${app}/Resources/jre/bin
+	COMMAND chmod -R +rw ${app}/Resources/jre/lib
 	# Copy Selenium
 	COMMAND mkdir -p ${app}/Resources/selenium
 	COMMAND cp -fRL ${PLATFORM_ROOT}/srcdeps/ngsexternal/java/selenium-java-3.3.1/* ${app}/Resources/selenium

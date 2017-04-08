@@ -70,9 +70,9 @@ PATH="/c/Program Files (x86)/mosquitto":${PATH}
 # Note that a 64bit version of jdk8 is on the path also.
 # The 64bit version is neede for eclipse.
 # Putting the 32bit version of the jdk7 first messes up eclipse startup.
-export JAVA_HOME="/c/Program Files (x86)/Java/jdk1.7.0_55"
-#PATH="/c/Program Files (x86)/Java/jdk1.7.0_55/bin":${PATH}
-PATH="/c/Program Files/Java/jdk1.8.0_74/bin":${PATH}
+export JAVA_HOME="/c/Program Files/Java/jdk1.8.0_102"
+PATH="/c/Program Files/Java/jdk1.8.0_102/bin":${PATH}
+
 
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"
