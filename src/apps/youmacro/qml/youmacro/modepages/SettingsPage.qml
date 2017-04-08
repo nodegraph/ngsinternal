@@ -91,7 +91,7 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: advanced_label
-                text: "Use Built-In Robot"
+                text: "Use Node Graph Macros"
                 anchors {
                     left: parent.left
                     leftMargin: app_settings.page_left_margin
@@ -116,8 +116,6 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: max_concurrent_downloads_label
-                enabled: license_checker.has_valid_pro_license
-	        	opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
                 text: "Max Concurrent Downloads"
                 anchors {
                     left: parent.left
@@ -129,8 +127,6 @@ Rectangle {
             // Title Field.
             AppLineEdit {
                 id: max_concurrent_downloads_text_field
-                enabled: license_checker.has_valid_pro_license
-	        	opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
                 text: '1'
                 tool_bar: copy_paste_bar
                 validator: RegExpValidator{regExp: /\d+/}

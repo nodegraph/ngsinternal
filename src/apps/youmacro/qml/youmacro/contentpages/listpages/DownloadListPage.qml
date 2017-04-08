@@ -56,7 +56,6 @@ BaseListPage {
     }
     
     function on_download_started(row, filename) {
-    	console.log("started new download!!!!!!!!")
         var obj = model.get(row)
         if (obj.video_filename == "") {
         	obj.video_filename = filename
@@ -71,9 +70,9 @@ BaseListPage {
     
     function on_download_progress(row, percentage, file_size, speed, time) {
     	var obj = model.get(row)
-    	console.log('percentage: ' + percentage)
-    	console.log('file_size: ' + file_size)
-    	console.log('speed: ' + speed)
+    	//console.log('percentage: ' + percentage)
+    	//console.log('file_size: ' + file_size)
+    	//console.log('speed: ' + speed)
         obj.description = percentage + "% of " + file_size + " completed at a speed of " + speed
         obj.download_state = GUITypes.Downloading
     }
@@ -99,9 +98,9 @@ BaseListPage {
         	obj.download_state = GUITypes.Finished
         }
         
-        console.log("finished video filename: " + obj.video_filename)
-        console.log("finished audio filename: " + obj.audio_filename)
-        console.log("finished merged filename: " + obj.merged_filename)
+        //console.log("finished video filename: " + obj.video_filename)
+        //console.log("finished audio filename: " + obj.audio_filename)
+        //console.log("finished merged filename: " + obj.merged_filename)
         
     	// Move the model object over to the downloaded_page.
     	downloaded_page.on_download_finished(obj)

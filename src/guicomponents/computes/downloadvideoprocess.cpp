@@ -95,7 +95,7 @@ void DownloadVideoProcess::on_stdout() {
 
   for (QString & line : lines) {
 
-    std::cerr << "received: " << line.toStdString() << "\n";
+    //std::cerr << "received: " << line.toStdString() << "\n";
 
     // The merged filename comes back through the following output.
     // [ffmpeg] Merging formats into "BOMBTRACK AT RAD RACE'S  'LAST MAN STANDING 2017', BERLIN-209745487.mp4"

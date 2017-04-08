@@ -33,7 +33,7 @@
 namespace ngs {
 
 const QString FileModel::kAppFile = "model.dat"; // Stores the mapping between displayed filename and actual filename.
-const int FileModel::kMaxConcurrentDownloadsLite = 1;
+const int FileModel::kMaxConcurrentDownloadsLite = 20;
 const int FileModel::kMaxSaveableNodes = 20;
 
 FileModel::FileModel(Entity* app_root)
@@ -97,11 +97,8 @@ bool FileModel::links_are_locked() const {
 }
 
 int FileModel::get_max_concurrent_downloads() const {
-  if (_license_checker->has_valid_pro_license()) {
-    // Get the number of concurrent downloads from the settings.
-    return get_work_setting(FileModel::kMaxConcurrentDownloadsRole).toInt();
-  }
-  return kMaxConcurrentDownloadsLite;
+  // Get the number of concurrent downloads from the settings.
+  return get_work_setting(FileModel::kMaxConcurrentDownloadsRole).toInt();
 }
 
 QString FileModel::get_default_download_dir() const {
