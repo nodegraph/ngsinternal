@@ -109,15 +109,15 @@ Rectangle {
 	    AppSpacer{}
 		    
         // Continue button.
-        AppLabelButton {
-            id: update_license_button
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "update license"
-            onClicked: {
-	            	update_license = true 
-	            	initiate_license_check()
-            	}
-        }        
+        //AppLabelButton {
+        //    id: update_license_button
+        //    anchors.horizontalCenter: parent.horizontalCenter
+        //    text: "update license"
+        //    onClicked: {
+	    //        	update_license = true 
+	    //        	initiate_license_check()
+        //    	}
+        //}        
 
         // Continue button.
         AppLabelButton {

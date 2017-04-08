@@ -23,7 +23,7 @@ Rectangle {
     }
 
     Label {
-        font.pointSize: 25
+        font.pointSize: 50
         font.italic: false
         color: "white"
 
@@ -40,7 +40,7 @@ Rectangle {
         font.italic: false
         color: "white"
 
-        y: parent.height * 7/10
+        y: parent.height * 7.5/10
         text: "Version " + ngs_version
         anchors {
             horizontalCenter:  parent.horizontalCenter

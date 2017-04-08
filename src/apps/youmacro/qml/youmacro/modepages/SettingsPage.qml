@@ -141,8 +141,6 @@ Rectangle {
         
         AppLabel {
             id: default_download_dir_label
-            enabled: license_checker.has_valid_pro_license
-	        opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
             text: "Default Download Directory"
             anchors {
             	left: parent.left
@@ -158,8 +156,6 @@ Rectangle {
         		
 	        AppLineEdit {
 	            id: default_downloads_dir_text_field
-	            enabled: license_checker.has_valid_pro_license
-	            opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
 	            text: ''
 	            validator: RegExpValidator{regExp: /\d+/}
 	            inputMethodHints: Qt.ImhDigitsOnly
@@ -174,8 +170,6 @@ Rectangle {
 	        // File dialog button.
 	        AppLabelButton {
 	            id: file_dialog_button
-	            enabled: license_checker.has_valid_pro_license
-	            opacity: license_checker.has_valid_pro_license ? 1.0 : 0.5
 	            text: "..."
 	            onClicked: {
 	            	if (default_downloads_dir_text_field.text != "") {

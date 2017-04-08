@@ -102,15 +102,12 @@ int FileModel::get_max_concurrent_downloads() const {
 }
 
 QString FileModel::get_default_download_dir() const {
-  if (_license_checker->has_valid_pro_license()) {
-    // Get the number of concurrent downloads from the settings.
-    QString dir = get_work_setting(FileModel::kDefaultDownloadsDirRole).toString();
-    if (dir.isEmpty()) {
-      return AppConfig::get_fallback_download_dir();
-    }
-    return dir;
+  // Get the number of concurrent downloads from the settings.
+  QString dir = get_work_setting(FileModel::kDefaultDownloadsDirRole).toString();
+  if (dir.isEmpty()) {
+    return AppConfig::get_fallback_download_dir();
   }
-  return AppConfig::get_fallback_download_dir();
+  return dir;
 }
 
 void FileModel::on_item_changed(QStandardItem* item) {
@@ -506,11 +503,11 @@ bool FileModel::save_graph(int row) const{
   std::cerr << "trying to save a graph with " << get_root_group()->get_num_nodes() << " nodes\n";
 
   // A lite license only permits us to save graphs with a max of 10 nodes.
-  if (!_license_checker->has_valid_pro_license()) {
-    if (get_root_group()->get_num_nodes() > kMaxSaveableNodes) {
-      return false;
-    }
-  }
+//  if (!_license_checker->has_valid_pro_license()) {
+//    if (get_root_group()->get_num_nodes() > kMaxSaveableNodes) {
+//      return false;
+//    }
+//  }
 
   external();
   //_working_row = row;
