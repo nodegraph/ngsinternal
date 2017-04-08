@@ -6,7 +6,7 @@ INSTALL(
   DIRECTORY
       "${PLATFORM_ROOT}/srcdeps/ngsexternal/appmacros"
   DESTINATION .
-  COMPONENT robodownloader
+  COMPONENT youmacro
 )
 
 if (${ARCH} MATCHES "ARCH_WINDOWS")

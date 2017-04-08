@@ -1,0 +1,439 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/">
+    
+    	<!-- Accept Save Scripts for different OS'es-->
+    	<file alias="scripts/acceptsave.ps1">../../guicomponents/comms/acceptsave.ps1</file>
+    	<file alias="scripts/acceptsave.scpt">../../guicomponents/comms/acceptsave.scpt</file>
+    	
+    	<!-- SSL Certificates -->
+    	<file alias="ssl/cert.pem">../../guicomponents/computes/cert.pem</file>
+    	<file alias="ssl/key.pem">../../guicomponents/computes/key.pem</file>
+    
+        <!-- Main Window -->
+        <file>qml/youmacro.qml</file>
+        
+        <!-- Test Images -->
+        <file alias="images/robot_blue.ico">../../external/images/robot_blue.ico</file>
+        <file alias="images/robot_blue.png">../../external/images/robot_blue.png</file>
+        <file alias="images/robot_white.png">../../external/images/robot_white.png</file>
+        
+        <!-- Action Bars -->
+        <file>qml/youmacro/actionbars/qmldir</file>
+        <file>qml/youmacro/actionbars/MainBar.qml</file>
+        <file>qml/youmacro/actionbars/CopyPasteBar.qml</file>
+        <file>qml/youmacro/actionbars/Splitter.qml</file>
+        
+        <!-- Edit Data Pages -->
+        <file>qml/youmacro/contentpages/editdatapages/qmldir</file>
+        <file>qml/youmacro/contentpages/editdatapages/BaseEditPage.qml</file>
+        <file>qml/youmacro/contentpages/editdatapages/EditMultiLinePage.qml</file>
+        <file>qml/youmacro/contentpages/editdatapages/EditLinePage.qml</file>
+        <file>qml/youmacro/contentpages/editdatapages/EditPasswordPage.qml</file>
+        <file>qml/youmacro/contentpages/editdatapages/EditBooleanPage.qml</file>
+        <file>qml/youmacro/contentpages/editdatapages/EditNumberPage.qml</file>
+        <file>qml/youmacro/contentpages/editdatapages/EditEnumPage.qml</file>
+        <file>qml/youmacro/contentpages/editdatapages/ViewDescriptionPage.qml</file>
+        
+        <!-- Enter Data Pages -->
+        <file>qml/youmacro/contentpages/enterdatapages/qmldir</file>
+        <file>qml/youmacro/contentpages/enterdatapages/PublishMacroPage.qml</file>
+        <file>qml/youmacro/contentpages/enterdatapages/EnterNumberAndDropdownPage.qml</file>
+        <file>qml/youmacro/contentpages/enterdatapages/EnterStringAndDropdownPage.qml</file>
+        <file>qml/youmacro/contentpages/enterdatapages/EnterStringPage.qml</file>
+        <file>qml/youmacro/contentpages/enterdatapages/EnterPasswordPage.qml</file>
+        <file>qml/youmacro/contentpages/enterdatapages/EnterNumberPage.qml</file>
+        <file>qml/youmacro/contentpages/enterdatapages/CreateFilePage.qml</file>
+        <file>qml/youmacro/contentpages/enterdatapages/SelectDropdownPage.qml</file>
+        
+        <!-- Warning Pages -->
+        <file>qml/youmacro/contentpages/warningpages/qmldir</file>
+        <file>qml/youmacro/contentpages/warningpages/ProcessingPage.qml</file>
+        <file>qml/youmacro/contentpages/warningpages/IgnoredActionPage.qml</file>
+        
+        <!-- Stacked Pages -->
+        <file>qml/youmacro/stackedmodepages/qmldir</file>
+        <file>qml/youmacro/stackedmodepages/BaseStackPage.qml</file>
+        <file>qml/youmacro/stackedmodepages/NGMenuListStackPage.qml</file>
+        <file>qml/youmacro/stackedmodepages/DataListStackPage.qml</file>
+        <file>qml/youmacro/stackedmodepages/FileMenuListStackPage.qml</file>
+        <file>qml/youmacro/stackedmodepages/WebMenuListStackPage.qml</file>
+        
+        
+        <!-- ListPages -->
+        <file>qml/youmacro/contentpages/listpages/qmldir</file>
+        <file>qml/youmacro/contentpages/listpages/DownloadListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/DownloadedListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/BaseListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/PostListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/DataListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/FileListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/FileMenuListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/NGMenuListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/WebMenuListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/NodeMenuListPage.qml</file>
+        
+        <!-- Delegates -->
+        <file>qml/youmacro/contentpages/listdelegates/qmldir</file>
+        <file>qml/youmacro/contentpages/listdelegates/BaseListDelegate.qml</file>
+        <file>qml/youmacro/contentpages/listdelegates/BaseImageIconListDelegate.qml</file>
+        <file>qml/youmacro/contentpages/listdelegates/BaseTextIconListDelegate.qml</file>
+        <file>qml/youmacro/contentpages/listdelegates/DataListDelegate.qml</file>
+        <file>qml/youmacro/contentpages/listdelegates/MenuItemListDelegate.qml</file>
+        <file>qml/youmacro/contentpages/listdelegates/FileListDelegate.qml</file>
+        <file>qml/youmacro/contentpages/listdelegates/PostListDelegate.qml</file>
+        <file>qml/youmacro/contentpages/listdelegates/DownloadListDelegate.qml</file>
+        <file>qml/youmacro/contentpages/listdelegates/NodeMenuItemListDelegate.qml</file>
+        
+        <!-- AppWidgets -->
+        <file>qml/youmacro/appwidgets/qmldir</file>
+        <file>qml/youmacro/appwidgets/AppSpacer.qml</file>
+        <file>qml/youmacro/appwidgets/AppStackViewHeader.qml</file>
+        <file>qml/youmacro/appwidgets/AppStackView.qml</file>
+        <file>qml/youmacro/appwidgets/AppScrollView.qml</file>
+        <file>qml/youmacro/appwidgets/AppImageButton.qml</file>
+        <file>qml/youmacro/appwidgets/AppText.qml</file>
+        <file>qml/youmacro/appwidgets/AppMultiLineEdit.qml</file>
+        <file>qml/youmacro/appwidgets/AppLineEdit.qml</file>
+        <file>qml/youmacro/appwidgets/AppPasswordField.qml</file>
+        <file>qml/youmacro/appwidgets/AppTooltip.qml</file>
+        <file>qml/youmacro/appwidgets/AppMenu.qml</file>
+        <file>qml/youmacro/appwidgets/AppLoader.qml</file>
+        <file>qml/youmacro/appwidgets/AppLabelButton.qml</file>
+        <file>qml/youmacro/appwidgets/AppLabel.qml</file>
+        <file>qml/youmacro/appwidgets/AppCheckBox.qml</file>
+        <file>qml/youmacro/appwidgets/AppRadioButton.qml</file>
+        <file>qml/youmacro/appwidgets/AppComboBox.qml</file>
+        <file>qml/youmacro/appwidgets/AppExposePlugCheckBox.qml</file>
+        
+        <!-- MenuModels -->
+        <file>qml/youmacro/contentpages/listmodels/qmldir</file>
+        <file>qml/youmacro/contentpages/listmodels/CreateNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/CreateDataNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/CreateDataOpNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/CreateGroupNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/CreateInputNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/CreateProtocolNodeActions.qml</file>
+        
+        <file>qml/youmacro/contentpages/listmodels/NodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/GroupNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/NodeGraphActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/FrameNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/SelectNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/CopyPasteNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/ExplodeCollapseNodeActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/FileMenuActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/ImportExportActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/WebActions.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/WebActionsBrowserWindow.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/WebActionsExtract.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/WebActionsNavigate.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/WebActionsFilterElements.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/WebActionsIsolateBoundaryElements.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/WebActionsIsolateToOneSide.qml</file>
+        <file>qml/youmacro/contentpages/listmodels/WebActionsPerformAction.qml</file>
+		<file>qml/youmacro/contentpages/listmodels/WebActionsPerformScroll.qml</file>
+        
+        <!-- AppConfig -->
+        <file>qml/youmacro/appconfig/qmldir</file>
+        <file>qml/youmacro/appconfig/AppSettings.qml</file>
+        <file>qml/youmacro/appconfig/AppUnits.qml</file>
+        <file>qml/youmacro/appconfig/AppUtils.qml</file>
+        <file>qml/youmacro/appconfig/AppEnums.qml</file>
+        
+        <!-- Pages -->
+        <file>qml/youmacro/fullpages/qmldir</file>
+        <file>qml/youmacro/fullpages/LicensePage.qml</file>
+        <file>qml/youmacro/fullpages/CreatePasswordPage.qml</file>
+        <file>qml/youmacro/fullpages/CheckPasswordPage.qml</file>
+        <file>qml/youmacro/fullpages/LimitPage.qml</file>
+        <file>qml/youmacro/fullpages/AlreadyRunningPage.qml</file>
+        <file>qml/youmacro/fullpages/SplashPage.qml</file>
+        <file>qml/youmacro/fullpages/SplashPageWithUpdate.qml</file>
+        
+        <!-- Mode Pages -->
+        <file>qml/youmacro/modepages/qmldir</file>
+        <file>qml/youmacro/modepages/NodeGraphPage.qml</file>
+        <file>qml/youmacro/modepages/SettingsPage.qml</file>
+        <file>qml/youmacro/modepages/ErrorPage.qml</file>
+        
+        <!-- Tree View Icons. -->
+        <file alias="icons/ic_add_circle_outline_black_48dp.png">../../external/icons/ic_add_circle_outline_black_48dp.png</file>
+        <file alias="icons/ic_add_circle_outline_white_48dp.png">../../external/icons/ic_add_circle_outline_white_48dp.png</file>
+        <file alias="icons/ic_add_circle_black_48dp.png">../../external/icons/ic_add_circle_black_48dp.png</file>
+        <file alias="icons/ic_add_circle_white_48dp.png">../../external/icons/ic_add_circle_white_48dp.png</file>
+        
+        <file alias="icons/ic_remove_circle_outline_black_48dp.png">../../external/icons/ic_remove_circle_outline_black_48dp.png</file>
+        <file alias="icons/ic_remove_circle_outline_white_48dp.png">../../external/icons/ic_remove_circle_outline_white_48dp.png</file>
+        <file alias="icons/ic_remove_circle_black_48dp.png">../../external/icons/ic_remove_circle_black_48dp.png</file>
+        <file alias="icons/ic_remove_circle_white_48dp.png">../../external/icons/ic_remove_circle_white_48dp.png</file>
+        
+        <file alias="icons/ic_add_to_queue_black_48dp.png">../../external/icons/ic_add_to_queue_black_48dp.png</file>
+        <file alias="icons/ic_add_to_queue_white_48dp.png">../../external/icons/ic_add_to_queue_white_48dp.png</file>
+        
+        <file alias="icons/ic_remove_from_queue_black_48dp.png">../../external/icons/ic_remove_from_queue_black_48dp.png</file>
+        <file alias="icons/ic_remove_from_queue_white_48dp.png">../../external/icons/ic_remove_from_queue_white_48dp.png</file>
+        
+        <file alias="icons/ic_tv_black_48dp.png">../../external/icons/ic_tv_black_48dp.png</file>
+        <file alias="icons/ic_tv_white_48dp.png">../../external/icons/ic_tv_white_48dp.png</file>
+        
+        
+        <file alias="icons/ic_dvr_black_48dp.png">../../external/icons/ic_dvr_black_48dp.png</file>
+        <file alias="icons/ic_dvr_white_48dp.png">../../external/icons/ic_dvr_white_48dp.png</file>
+        
+        <file alias="icons/ic_file_download_black_48dp.png">../../external/icons/ic_file_download_black_48dp.png</file>
+        <file alias="icons/ic_file_download_white_48dp.png">../../external/icons/ic_file_download_white_48dp.png</file>
+        
+        <file alias="icons/ic_file_upload_black_48dp.png">../../external/icons/ic_file_upload_black_48dp.png</file>
+        <file alias="icons/ic_file_upload_white_48dp.png">../../external/icons/ic_file_upload_white_48dp.png</file>
+        
+        <file alias="icons/ic_cloud_done_black_48dp.png">../../external/icons/ic_cloud_done_black_48dp.png</file>
+        <file alias="icons/ic_cloud_done_white_48dp.png">../../external/icons/ic_cloud_done_white_48dp.png</file>
+        
+        <file alias="icons/ic_cloud_download_black_48dp.png">../../external/icons/ic_cloud_download_black_48dp.png</file>
+        <file alias="icons/ic_cloud_download_white_48dp.png">../../external/icons/ic_cloud_download_white_48dp.png</file>
+        
+        <file alias="icons/ic_cloud_upload_black_48dp.png">../../external/icons/ic_cloud_upload_black_48dp.png</file>
+        <file alias="icons/ic_cloud_upload_white_48dp.png">../../external/icons/ic_cloud_upload_white_48dp.png</file>
+        
+        <file alias="icons/ic_cloud_off_black_48dp.png">../../external/icons/ic_cloud_off_black_48dp.png</file>
+        <file alias="icons/ic_cloud_off_white_48dp.png">../../external/icons/ic_cloud_off_white_48dp.png</file>
+        
+        <file alias="icons/ic_cloud_queue_black_48dp.png">../../external/icons/ic_cloud_queue_black_48dp.png</file>
+        <file alias="icons/ic_cloud_queue_white_48dp.png">../../external/icons/ic_cloud_queue_white_48dp.png</file>
+        
+        <file alias="icons/ic_format_list_numbered_black_48dp.png">../../external/icons/ic_format_list_numbered_black_48dp.png</file>
+        <file alias="icons/ic_format_list_numbered_white_48dp.png">../../external/icons/ic_format_list_numbered_white_48dp.png</file>
+        
+        <file alias="icons/ic_format_line_spacing_black_48dp.png">../../external/icons/ic_format_line_spacing_black_48dp.png</file>
+        <file alias="icons/ic_format_line_spacing_white_48dp.png">../../external/icons/ic_format_line_spacing_white_48dp.png</file>
+        
+        <file alias="icons/ic_format_list_bulleted_black_48dp.png">../../external/icons/ic_format_list_bulleted_black_48dp.png</file>
+        <file alias="icons/ic_format_list_bulleted_white_48dp.png">../../external/icons/ic_format_list_bulleted_white_48dp.png</file>
+        
+        <file alias="icons/ic_bubble_chart_black_48dp.png">../../external/icons/ic_bubble_chart_black_48dp.png</file>
+        <file alias="icons/ic_bubble_chart_white_48dp.png">../../external/icons/ic_bubble_chart_white_48dp.png</file>
+        
+        <file alias="icons/ic_dehaze_black_48dp.png">../../external/icons/ic_dehaze_black_48dp.png</file>
+        <file alias="icons/ic_dehaze_white_48dp.png">../../external/icons/ic_dehaze_white_48dp.png</file>
+        
+        <file alias="icons/ic_photo_filter_black_48dp.png">../../external/icons/ic_photo_filter_black_48dp.png</file>
+        <file alias="icons/ic_photo_filter_white_48dp.png">../../external/icons/ic_photo_filter_white_48dp.png</file>
+        
+        <file alias="icons/ic_filter_1_black_48dp.png">../../external/icons/ic_filter_1_black_48dp.png</file>
+        <file alias="icons/ic_filter_1_white_48dp.png">../../external/icons/ic_filter_1_white_48dp.png</file>
+        
+        <file alias="icons/ic_graphic_eq_black_48dp.png">../../external/icons/ic_graphic_eq_black_48dp.png</file>
+        <file alias="icons/ic_graphic_eq_white_48dp.png">../../external/icons/ic_graphic_eq_white_48dp.png</file>
+        
+        <file alias="icons/ic_navigation_black_48dp.png">../../external/icons/ic_navigation_black_48dp.png</file>
+        <file alias="icons/ic_navigation_white_48dp.png">../../external/icons/ic_navigation_white_48dp.png</file>
+        
+        <file alias="icons/ic_open_with_black_48dp.png">../../external/icons/ic_open_with_black_48dp.png</file>
+        <file alias="icons/ic_open_with_white_48dp.png">../../external/icons/ic_open_with_white_48dp.png</file>
+        
+        <file alias="icons/ic_picture_in_picture_black_48dp.png">../../external/icons/ic_picture_in_picture_black_48dp.png</file>
+        <file alias="icons/ic_picture_in_picture_white_48dp.png">../../external/icons/ic_picture_in_picture_white_48dp.png</file>
+        
+        <file alias="icons/ic_picture_in_picture_alt_black_48dp.png">../../external/icons/ic_picture_in_picture_alt_black_48dp.png</file>
+        <file alias="icons/ic_picture_in_picture_alt_white_48dp.png">../../external/icons/ic_picture_in_picture_alt_white_48dp.png</file>
+        
+        <file alias="icons/ic_gavel_black_48dp.png">../../external/icons/ic_gavel_black_48dp.png</file>
+        <file alias="icons/ic_gavel_white_48dp.png">../../external/icons/ic_gavel_white_48dp.png</file>
+        
+        <file alias="icons/ic_link_black_48dp.png">../../external/icons/ic_link_black_48dp.png</file>
+        <file alias="icons/ic_link_white_48dp.png">../../external/icons/ic_link_white_48dp.png</file>
+        
+        <file alias="icons/ic_text_fields_black_48dp.png">../../external/icons/ic_text_fields_black_48dp.png</file>
+        <file alias="icons/ic_text_fields_white_48dp.png">../../external/icons/ic_text_fields_white_48dp.png</file>
+        
+        <file alias="icons/ic_title_black_48dp.png">../../external/icons/ic_title_black_48dp.png</file>
+        <file alias="icons/ic_title_white_48dp.png">../../external/icons/ic_title_white_48dp.png</file>
+        
+        <file alias="icons/ic_wallpaper_black_48dp.png">../../external/icons/ic_wallpaper_black_48dp.png</file>
+        <file alias="icons/ic_wallpaper_white_48dp.png">../../external/icons/ic_wallpaper_white_48dp.png</file>
+        
+        <file alias="icons/ic_mouse_black_48dp.png">../../external/icons/ic_mouse_black_48dp.png</file>
+        <file alias="icons/ic_mouse_white_48dp.png">../../external/icons/ic_mouse_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_black_48dp.png">../../external/icons/ic_keyboard_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_white_48dp.png">../../external/icons/ic_keyboard_white_48dp.png</file>
+        
+        <file alias="icons/ic_crop_original_black_48dp.png">../../external/icons/ic_crop_original_black_48dp.png</file>
+        <file alias="icons/ic_crop_original_white_48dp.png">../../external/icons/ic_crop_original_white_48dp.png</file>
+        
+        <file alias="icons/ic_music_video_black_48dp.png">../../external/icons/ic_music_video_black_48dp.png</file>
+        <file alias="icons/ic_music_video_white_48dp.png">../../external/icons/ic_music_video_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_arrow_left_black_48dp.png">../../external/icons/ic_keyboard_arrow_left_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_arrow_left_white_48dp.png">../../external/icons/ic_keyboard_arrow_left_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_arrow_right_black_48dp.png">../../external/icons/ic_keyboard_arrow_right_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_arrow_right_white_48dp.png">../../external/icons/ic_keyboard_arrow_right_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_arrow_down_black_48dp.png">../../external/icons/ic_keyboard_arrow_down_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_arrow_down_white_48dp.png">../../external/icons/ic_keyboard_arrow_down_white_48dp.png</file>
+        
+        <file alias="icons/ic_keyboard_arrow_up_black_48dp.png">../../external/icons/ic_keyboard_arrow_up_black_48dp.png</file>
+        <file alias="icons/ic_keyboard_arrow_up_white_48dp.png">../../external/icons/ic_keyboard_arrow_up_white_48dp.png</file>
+        
+        <file alias="icons/ic_crop_16_9_black_48dp.png">../../external/icons/ic_crop_16_9_black_48dp.png</file>
+        <file alias="icons/ic_crop_16_9_white_48dp.png">../../external/icons/ic_crop_16_9_white_48dp.png</file>
+        
+        <file alias="icons/ic_info_outline_black_48dp.png">../../external/icons/ic_info_outline_black_48dp.png</file>
+        <file alias="icons/ic_info_outline_white_48dp.png">../../external/icons/ic_info_outline_white_48dp.png</file>
+        
+        <file alias="icons/ic_highlight_off_black_48dp.png">../../external/icons/ic_highlight_off_black_48dp.png</file>
+        <file alias="icons/ic_highlight_off_white_48dp.png">../../external/icons/ic_highlight_off_white_48dp.png</file>
+        
+        <file alias="icons/check-circle-outline-black.png">../../external/icons/check-circle-outline-black.png</file>
+        <file alias="icons/check-circle-outline-white.png">../../external/icons/check-circle-outline-white.png</file>
+        
+        <file alias="icons/ic_location_searching_black_48dp.png">../../external/icons/ic_location_searching_black_48dp.png</file>
+        <file alias="icons/ic_location_searching_white_48dp.png">../../external/icons/ic_location_searching_white_48dp.png</file>
+        
+        <file alias="icons/ic_star_border_black_48dp.png">../../external/icons/ic_star_border_black_48dp.png</file>
+        <file alias="icons/ic_star_border_white_48dp.png">../../external/icons/ic_star_border_white_48dp.png</file>
+        
+        <!-- Web Browser Icons. -->
+        <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>
+        <file alias="icons/ic_cancel_white_48dp.png">../../external/icons/ic_cancel_white_48dp.png</file>
+        <file alias="icons/ic_check_black_48dp.png">../../external/icons/ic_check_black_48dp.png</file>
+        <file alias="icons/ic_check_white_48dp.png">../../external/icons/ic_check_white_48dp.png</file>
+        <file alias="icons/ic_refresh_black_48dp.png">../../external/icons/ic_refresh_black_48dp.png</file>
+        <file alias="icons/ic_refresh_white_48dp.png">../../external/icons/ic_refresh_white_48dp.png</file>
+        <file alias="icons/ic_close_black_48dp.png">../../external/icons/ic_close_black_48dp.png</file>
+        <file alias="icons/ic_close_white_48dp.png">../../external/icons/ic_close_white_48dp.png</file>
+        <file alias="icons/ic_arrow_back_black_48dp.png">../../external/icons/ic_arrow_back_black_48dp.png</file>
+        <file alias="icons/ic_arrow_back_white_48dp.png">../../external/icons/ic_arrow_back_white_48dp.png</file>
+        <file alias="icons/ic_arrow_forward_black_48dp.png">../../external/icons/ic_arrow_forward_black_48dp.png</file>
+        <file alias="icons/ic_arrow_forward_white_48dp.png">../../external/icons/ic_arrow_forward_white_48dp.png</file>
+        
+        <!-- Content Icons. -->
+        <file alias="icons/ic_select_all_black_48dp.png">../../external/icons/ic_select_all_black_48dp.png</file>
+        <file alias="icons/ic_select_all_white_48dp.png">../../external/icons/ic_select_all_white_48dp.png</file>
+        <file alias="icons/ic_content_paste_black_48dp.png">../../external/icons/ic_content_paste_black_48dp.png</file>
+        <file alias="icons/ic_content_paste_white_48dp.png">../../external/icons/ic_content_paste_white_48dp.png</file>
+        <file alias="icons/ic_content_copy_black_48dp.png">../../external/icons/ic_content_copy_black_48dp.png</file>
+        <file alias="icons/ic_content_copy_white_48dp.png">../../external/icons/ic_content_copy_white_48dp.png</file>
+        <file alias="icons/ic_content_cut_black_48dp.png">../../external/icons/ic_content_cut_black_48dp.png</file>
+        <file alias="icons/ic_content_cut_white_48dp.png">../../external/icons/ic_content_cut_white_48dp.png</file>
+        
+        <file alias="icons/ic_arrow_downward_black_48dp.png">../../external/icons/ic_arrow_downward_black_48dp.png</file>
+        <file alias="icons/ic_arrow_downward_white_48dp.png">../../external/icons/ic_arrow_downward_white_48dp.png</file>
+        <file alias="icons/ic_arrow_upward_black_48dp.png">../../external/icons/ic_arrow_upward_black_48dp.png</file>
+        <file alias="icons/ic_arrow_upward_white_48dp.png">../../external/icons/ic_arrow_upward_white_48dp.png</file>
+ 
+        <!-- Action Bar Icons. -->
+        <file alias="icons/ic_chevron_left_black_48dp.png">../../external/icons/ic_chevron_left_black_48dp.png</file>
+        <file alias="icons/ic_chevron_left_white_48dp.png">../../external/icons/ic_chevron_left_white_48dp.png</file>
+        <file alias="icons/ic_chevron_right_black_48dp.png">../../external/icons/ic_chevron_right_black_48dp.png</file>
+        <file alias="icons/ic_chevron_right_white_48dp.png">../../external/icons/ic_chevron_right_white_48dp.png</file>
+        <file alias="icons/ic_expand_less_black_48dp.png">../../external/icons/ic_expand_less_black_48dp.png</file>
+        <file alias="icons/ic_expand_less_white_48dp.png">../../external/icons/ic_expand_less_white_48dp.png</file>
+        <file alias="icons/ic_expand_more_black_48dp.png">../../external/icons/ic_expand_more_black_48dp.png</file>
+        <file alias="icons/ic_expand_more_white_48dp.png">../../external/icons/ic_expand_more_white_48dp.png</file>
+        <file alias="icons/ic_menu_black_48dp.png">../../external/icons/ic_menu_black_48dp.png</file>
+        <file alias="icons/ic_menu_white_48dp.png">../../external/icons/ic_menu_white_48dp.png</file>
+        <file alias="icons/ic_mode_edit_black_48dp.png">../../external/icons/ic_mode_edit_black_48dp.png</file>
+        <file alias="icons/ic_mode_edit_white_48dp.png">../../external/icons/ic_mode_edit_white_48dp.png</file>
+        <file alias="icons/ic_visibility_black_48dp.png">../../external/icons/ic_visibility_black_48dp.png</file>
+        <file alias="icons/ic_visibility_white_48dp.png">../../external/icons/ic_visibility_white_48dp.png</file>
+        <file alias="icons/ic_more_horiz_black_48dp.png">../../external/icons/ic_more_horiz_black_48dp.png</file>
+        <file alias="icons/ic_more_horiz_white_48dp.png">../../external/icons/ic_more_horiz_white_48dp.png</file>
+        <file alias="icons/ic_more_vert_black_48dp.png">../../external/icons/ic_more_vert_black_48dp.png</file>
+        <file alias="icons/ic_more_vert_white_48dp.png">../../external/icons/ic_more_vert_white_48dp.png</file>
+        <file alias="icons/ic_public_black_48dp.png">../../external/icons/ic_public_black_48dp.png</file>
+        <file alias="icons/ic_public_white_48dp.png">../../external/icons/ic_public_white_48dp.png</file>
+        <file alias="icons/ic_search_black_48dp.png">../../external/icons/ic_search_black_48dp.png</file>
+        <file alias="icons/ic_search_white_48dp.png">../../external/icons/ic_search_white_48dp.png</file>
+        <file alias="icons/ic_settings_black_48dp.png">../../external/icons/ic_settings_black_48dp.png</file>
+        <file alias="icons/ic_settings_white_48dp.png">../../external/icons/ic_settings_white_48dp.png</file>
+        <file alias="icons/ic_whatshot_black_48dp.png">../../external/icons/ic_whatshot_black_48dp.png</file>
+        <file alias="icons/ic_whatshot_white_48dp.png">../../external/icons/ic_whatshot_white_48dp.png</file>
+        <file alias="icons/ic_widgets_black_48dp.png">../../external/icons/ic_widgets_black_48dp.png</file>
+        <file alias="icons/ic_widgets_white_48dp.png">../../external/icons/ic_widgets_white_48dp.png</file>
+        <file alias="icons/ic_folder_open_black_48dp.png">../../external/icons/ic_folder_open_black_48dp.png</file>
+        <file alias="icons/ic_folder_open_white_48dp.png">../../external/icons/ic_folder_open_white_48dp.png</file>
+        
+        
+         
+        <!-- File Menu Icons. -->
+        <file alias="icons/ic_delete_forever_black_48dp.png">../../external/icons/ic_delete_forever_black_48dp.png</file>
+        <file alias="icons/ic_delete_forever_white_48dp.png">../../external/icons/ic_delete_forever_white_48dp.png</file>
+        <file alias="icons/ic_insert_drive_file_black_48dp.png">../../external/icons/ic_insert_drive_file_black_48dp.png</file>
+        <file alias="icons/ic_insert_drive_file_white_48dp.png">../../external/icons/ic_insert_drive_file_white_48dp.png</file>
+        <file alias="icons/ic_note_add_black_48dp.png">../../external/icons/ic_note_add_black_48dp.png</file>
+        <file alias="icons/ic_note_add_white_48dp.png">../../external/icons/ic_note_add_white_48dp.png</file>
+        <file alias="icons/ic_open_in_browser_black_48dp.png">../../external/icons/ic_open_in_browser_black_48dp.png</file>
+        <file alias="icons/ic_open_in_browser_white_48dp.png">../../external/icons/ic_open_in_browser_white_48dp.png</file>
+        <file alias="icons/ic_open_in_new_black_48dp.png">../../external/icons/ic_open_in_new_black_48dp.png</file>
+        <file alias="icons/ic_open_in_new_white_48dp.png">../../external/icons/ic_open_in_new_white_48dp.png</file>
+        <file alias="icons/ic_save_black_48dp.png">../../external/icons/ic_save_black_48dp.png</file>
+        <file alias="icons/ic_save_white_48dp.png">../../external/icons/ic_save_white_48dp.png</file>
+        
+        <file alias="icons/ic_import_export_black_48dp.png">../../external/icons/ic_import_export_black_48dp.png</file>
+        <file alias="icons/ic_import_export_white_48dp.png">../../external/icons/ic_import_export_white_48dp.png</file>
+        
+        <file alias="icons/ic_create_new_folder_black_48dp.png">../../external/icons/ic_create_new_folder_black_48dp.png</file>
+        <file alias="icons/ic_create_new_folder_white_48dp.png">../../external/icons/ic_create_new_folder_white_48dp.png</file>
+        <file alias="icons/ic_folder_black_48dp.png">../../external/icons/ic_folder_black_48dp.png</file>
+        <file alias="icons/ic_folder_white_48dp.png">../../external/icons/ic_folder_white_48dp.png</file>
+        
+        <file alias="icons/ic_archive_black_48dp.png">../../external/icons/ic_archive_black_48dp.png</file>
+        <file alias="icons/ic_archive_white_48dp.png">../../external/icons/ic_archive_white_48dp.png</file>
+        <file alias="icons/ic_unarchive_black_48dp.png">../../external/icons/ic_unarchive_black_48dp.png</file>
+        <file alias="icons/ic_unarchive_white_48dp.png">../../external/icons/ic_unarchive_white_48dp.png</file>
+        
+        <!-- Node Graph Menu Icons. -->
+        <file alias="icons/ic_lock_open_black_48dp.png">../../external/icons/ic_lock_open_black_48dp.png</file>
+        <file alias="icons/ic_lock_open_white_48dp.png">../../external/icons/ic_lock_open_white_48dp.png</file>
+        <file alias="icons/ic_lock_outline_black_48dp.png">../../external/icons/ic_lock_outline_black_48dp.png</file>
+        <file alias="icons/ic_lock_outline_white_48dp.png">../../external/icons/ic_lock_outline_white_48dp.png</file>
+        <file alias="icons/ic_build_black_48dp.png">../../external/icons/ic_build_black_48dp.png</file>
+        <file alias="icons/ic_build_white_48dp.png">../../external/icons/ic_build_white_48dp.png</file>
+        
+        <!-- Explode Collapse -->
+        <file alias="icons/ic_group_work_black_48dp.png">../../external/icons/ic_group_work_black_48dp.png</file>
+        <file alias="icons/ic_group_work_white_48dp.png">../../external/icons/ic_group_work_white_48dp.png</file>
+        <file alias="icons/ic_zoom_out_map_black_48dp.png">../../external/icons/ic_zoom_out_map_black_48dp.png</file>
+        <file alias="icons/ic_zoom_out_map_white_48dp.png">../../external/icons/ic_zoom_out_map_white_48dp.png</file>
+        
+        <!-- Selection -->
+        <file alias="icons/ic_border_clear_black_48dp.png">../../external/icons/ic_border_clear_black_48dp.png</file>
+        <file alias="icons/ic_border_clear_white_48dp.png">../../external/icons/ic_border_clear_white_48dp.png</file>
+        
+        <!-- Framing -->
+        <file alias="icons/ic_crop_free_black_48dp.png">../../external/icons/ic_crop_free_black_48dp.png</file>
+        <file alias="icons/ic_crop_free_white_48dp.png">../../external/icons/ic_crop_free_white_48dp.png</file>
+        <file alias="icons/ic_filter_center_focus_black_48dp.png">../../external/icons/ic_filter_center_focus_black_48dp.png</file>
+        <file alias="icons/ic_filter_center_focus_white_48dp.png">../../external/icons/ic_filter_center_focus_white_48dp.png</file>
+        
+        <!-- Node Icons -->
+        <file alias="icons/ic_details_black_48dp.png">../../external/icons/ic_details_black_48dp.png</file>
+        <file alias="icons/ic_details_white_48dp.png">../../external/icons/ic_details_white_48dp.png</file>
+        <file alias="icons/ic_crop_square_black_48dp.png">../../external/icons/ic_crop_square_black_48dp.png</file>
+        <file alias="icons/ic_crop_square_white_48dp.png">../../external/icons/ic_crop_square_white_48dp.png</file>
+        <file alias="icons/ic_fiber_manual_record_black_48dp.png">../../external/icons/ic_fiber_manual_record_black_48dp.png</file>
+        <file alias="icons/ic_fiber_manual_record_white_48dp.png">../../external/icons/ic_fiber_manual_record_white_48dp.png</file>
+        <file alias="icons/ic_gesture_black_48dp.png">../../external/icons/ic_gesture_black_48dp.png</file>
+        <file alias="icons/ic_gesture_white_48dp.png">../../external/icons/ic_gesture_white_48dp.png</file>
+        
+        <!-- Node Actions -->
+        <file alias="icons/ic_settings_system_daydream_black_48dp.png">../../external/icons/ic_settings_system_daydream_black_48dp.png</file>
+        <file alias="icons/ic_settings_system_daydream_white_48dp.png">../../external/icons/ic_settings_system_daydream_white_48dp.png</file>
+        
+        <!-- Data View Icons -->
+        <file alias="icons/ic_font_download_black_48dp.png">../../external/icons/ic_font_download_black_48dp.png</file>
+        <file alias="icons/ic_font_download_white_48dp.png">../../external/icons/ic_font_download_white_48dp.png</file>
+        <file alias="icons/ic_looks_one_black_48dp.png">../../external/icons/ic_looks_one_black_48dp.png</file>
+        <file alias="icons/ic_looks_one_white_48dp.png">../../external/icons/ic_looks_one_white_48dp.png</file>
+        <file alias="icons/ic_looks_3_black_48dp.png">../../external/icons/ic_looks_3_black_48dp.png</file>
+        <file alias="icons/ic_looks_3_white_48dp.png">../../external/icons/ic_looks_3_white_48dp.png</file>
+        <file alias="icons/ic_check_box_black_24dp.png">../../external/icons/ic_check_box_black_24dp.png</file>
+        <file alias="icons/ic_check_box_white_24dp.png">../../external/icons/ic_check_box_white_24dp.png</file>
+        <file alias="icons/ic_warning_black_48dp.png">../../external/icons/ic_warning_black_48dp.png</file>
+        <file alias="icons/ic_warning_white_48dp.png">../../external/icons/ic_warning_white_48dp.png</file>
+        
+        
+    </qresource>
+</RCC>

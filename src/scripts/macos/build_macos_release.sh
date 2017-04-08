@@ -35,11 +35,11 @@ cmake -G "Eclipse CDT4 - Ninja" -DARCH=ARCH_MACOS -DCMAKE_BUILD_TYPE=Release ~/s
 
 # build
 ninja install
-ninja fill_robodownloader
+ninja fill_youmacro
 
-# robodownloader installers and repos
-robodownloader_installer_macos.sh package $CMAKE_BUILD_ROOT
-robodownloader_installer_macos.sh create_repo $CMAKE_BUILD_ROOT
-robodownloader_installer_macos.sh create_installer $CMAKE_BUILD_ROOT
+# youmacro installers and repos
+youmacro_installer_macos.sh package $CMAKE_BUILD_ROOT
+youmacro_installer_macos.sh create_repo $CMAKE_BUILD_ROOT
+youmacro_installer_macos.sh create_installer $CMAKE_BUILD_ROOT
 
 

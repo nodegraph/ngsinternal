@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>YouMacro</Name>
+    <Version>1.0.0</Version>
+    <Title>YouMacro</Title>
+    <Publisher>YouMacro</Publisher>
+    <StartMenuDir>YouMacro</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/YouMacro</TargetDir>
+    <!--  We no longer do online repos.
+    <RemoteRepositories>
+        <Repository>
+            <Url>REPOSITORY_URL</Url>
+        </Repository>
+    </RemoteRepositories>
+    -->
+    <InstallerApplicationIcon>robot_blue</InstallerApplicationIcon>
+    <WizardStyle>Modern</WizardStyle>
+    
+    <RunProgram>@TargetDir@/LAUNCH_PROGRAM</RunProgram>
+    
+</Installer>

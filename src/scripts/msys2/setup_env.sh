@@ -79,7 +79,7 @@ alias cd_src="cd ${SRC_ROOT}"
 
 
 # Our scripts.
-PATH=${SRC_ROOT}/ngsinternal/src/apps/robodownloader:${PATH}
+PATH=${SRC_ROOT}/ngsinternal/src/apps/youmacro:${PATH}
 PATH=${SRC_ROOT}/ngsinternal/src/scripts/msys2:${PATH}
 
 echo setting up for ${ARCH} ${ARCH_BITS}

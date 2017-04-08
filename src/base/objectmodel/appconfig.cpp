@@ -82,7 +82,7 @@ QString AppConfig::get_fallback_download_dir() {
 
 QString AppConfig::get_smash_browse_url() {
   QString app_dir = get_app_bin_dir();
-  app_dir += QString("/../html/robodownloader.html");
+  app_dir += QString("/../html/youmacro.html");
   return app_dir;
 }
 

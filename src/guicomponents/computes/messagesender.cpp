@@ -205,7 +205,7 @@ void MessageSender::open() {
   std::cerr << "MessageSender is opening for app: " << QCoreApplication::applicationName().toStdString() << "\n";
 
   // Make sure the java process has started.
-  if (!_java_process->is_running() && QCoreApplication::applicationName() == "Robo Downloader") {
+  if (!_java_process->is_running() && QCoreApplication::applicationName() == "YouMacro") {
     //_process->start_process();
     _java_process->start_process(_server_port);
   }

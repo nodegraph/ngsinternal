@@ -58,7 +58,7 @@ PATH=/Users/raindrop/installs/macos/QtIFW2.0.3/bin:${PATH}
 
 # Our scripts.
 PATH=${SCRIPT_DIR}:${PATH}
-PATH=${SRC_ROOT}/ngsinternal/src/apps/robodownloader:${PATH}
+PATH=${SRC_ROOT}/ngsinternal/src/apps/youmacro:${PATH}
 
 # Some aliases.
 alias cd_src="cd ${SRC_ROOT}"

@@ -4,11 +4,11 @@
 // ----------------------------------------------------------------------------------------
 
 // Copy local release repos to the cloud.
-gsutil -m cp -r D:\wr64\robodownloader_repo gs://www.robodownloader.com/windows
+gsutil -m cp -r D:\wr64\youmacro_repo gs://www.youmacro.com/windows
 
 
 // Make all files public.
-gsutil -m acl set -R -a public-read gs://www.robodownloader.com
+gsutil -m acl set -R -a public-read gs://www.youmacro.com
 
 
 // ----------------------------------------------------------------------------------------
@@ -16,10 +16,10 @@ gsutil -m acl set -R -a public-read gs://www.robodownloader.com
 // ----------------------------------------------------------------------------------------
 
 // Copy local release repos to the cloud.
-gsutil -m cp -r /Users/raindrop/dev/macos/macos_release_jenkins/robodownloader_repo gs://www.robodownloader.com/macos
+gsutil -m cp -r /Users/raindrop/dev/macos/macos_release_jenkins/youmacro_repo gs://www.youmacro.com/macos
 
 
 // Make all files public.
-gsutil -m acl set -R -a public-read gs://www.robodownloader.com
+gsutil -m acl set -R -a public-read gs://www.youmacro.com
 
 

@@ -1,4 +1,4 @@
-# Make our main install_robodownloader output dir.
+# Make our main output dir.
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/install_testqml)
 
 
@@ -44,7 +44,7 @@ add_custom_target (unregister_testqml
 add_custom_command (
 	OUTPUT pack_testqml_cmd
 	COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_testqml/bin /p ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx /o /v
-    COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_robodownloader/bin /p ${CMAKE_BINARY_DIR}/install_robodownloader/robodownloader.appx /o /v
+    COMMAND MakeAppx pack /d ${CMAKE_BINARY_DIR}/install_youmacro/bin /p ${CMAKE_BINARY_DIR}/install_youmacro/youmacro.appx /o /v
 	COMMAND signtool sign /fd sha256 /f ${PLATFORM_ROOT}/srcdeps/publishing/winrt/MyKey.pfx /p ${PASSWORD} ${CMAKE_BINARY_DIR}/install_testqml/testqml.appx
 	)
 	

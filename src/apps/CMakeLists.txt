@@ -1,4 +1,4 @@
-add_subdirectory(robodownloader)
+add_subdirectory(youmacro)
 add_subdirectory(testqml)
 
 

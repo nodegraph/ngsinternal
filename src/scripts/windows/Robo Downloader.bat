@@ -1,1 +1,1 @@
-%~dp0/bin/robodownloader.exe
+%~dp0/bin/youmacro.exe

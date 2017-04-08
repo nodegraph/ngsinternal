@@ -1,4 +1,4 @@
-Robo Downloader
+YouMacro
 Copyright (c) 2016 Node Graph Software
 
 *** END USER LICENSE AGREEMENT ***
@@ -7,45 +7,45 @@ IMPORTANT: PLEASE READ THIS LICENSE CAREFULLY BEFORE USING THIS SOFTWARE.
 
 1. LICENSE
 
-By receiving, opening the file package, and/or using Robo Downloader containing this software, you agree that this End User User License Agreement(EULA) is a legally binding and valid contract and agree to be bound by it. You agree to abide by the intellectual property laws and all of the terms and conditions of this Agreement.
+By receiving, opening the file package, and/or using YouMacro containing this software, you agree that this End User User License Agreement(EULA) is a legally binding and valid contract and agree to be bound by it. You agree to abide by the intellectual property laws and all of the terms and conditions of this Agreement.
 
-Unless you have a different license agreement signed by Node Graph Software your use of Robo Downloader indicates your acceptance of this license agreement and warranty.
+Unless you have a different license agreement signed by Node Graph Software your use of YouMacro indicates your acceptance of this license agreement and warranty.
 
-Subject to the terms of this Agreement, Node Graph Software grants to you a limited, non-exclusive, non-transferable license, without right to sub-license, to use Robo Downloader in accordance with this Agreement and any other written agreement with Node Graph Software. Node Graph Software does not transfer the title of Robo Downloader to you; the license granted to you is not a sale. This agreement is a binding legal agreement between Node Graph Software and the purchasers or users of Robo Downloader.
+Subject to the terms of this Agreement, Node Graph Software grants to you a limited, non-exclusive, non-transferable license, without right to sub-license, to use YouMacro in accordance with this Agreement and any other written agreement with Node Graph Software. Node Graph Software does not transfer the title of YouMacro to you; the license granted to you is not a sale. This agreement is a binding legal agreement between Node Graph Software and the purchasers or users of YouMacro.
 
-If you do not agree to be bound by this agreement, remove Robo Downloader from your computer now and, if applicable, promptly return to Node Graph Software by mail any copies of Robo Downloader and related documentation and packaging in your possession.
+If you do not agree to be bound by this agreement, remove YouMacro from your computer now and, if applicable, promptly return to Node Graph Software by mail any copies of YouMacro and related documentation and packaging in your possession.
 
 2. DISTRIBUTION
 
-Robo Downloader and the license herein granted shall not be copied, shared, distributed, re-sold, offered for re-sale, transferred or sub-licensed in whole or in part except that you may make one copy for archive purposes only. For information about redistribution of Robo Downloader contact Node Graph Software.
+YouMacro and the license herein granted shall not be copied, shared, distributed, re-sold, offered for re-sale, transferred or sub-licensed in whole or in part except that you may make one copy for archive purposes only. For information about redistribution of YouMacro contact Node Graph Software.
 
 3. USER AGREEMENT
 
 3.1 Use
 
-Your license to use Robo Downloader is limited to the number of licenses purchased by you. You shall not allow others to use, copy or evaluate copies of Robo Downloader.
+Your license to use YouMacro is limited to the number of licenses purchased by you. You shall not allow others to use, copy or evaluate copies of YouMacro.
 
 3.2 Use Restrictions
 
-You shall use Robo Downloader in compliance with all applicable laws and not for any unlawful purpose. Without limiting the foregoing, use, display or distribution of Robo Downloader together with material that is pornographic, racist, vulgar, obscene, defamatory, libelous, abusive, promoting hatred, discriminating or displaying prejudice based on religion, ethnic heritage, race, sexual orientation or age is strictly prohibited.
+You shall use YouMacro in compliance with all applicable laws and not for any unlawful purpose. Without limiting the foregoing, use, display or distribution of YouMacro together with material that is pornographic, racist, vulgar, obscene, defamatory, libelous, abusive, promoting hatred, discriminating or displaying prejudice based on religion, ethnic heritage, race, sexual orientation or age is strictly prohibited.
 
-Each licensed copy of Robo Downloader may be used on one single computer location by one user. Use of Robo Downloader means that you have loaded, installed, or run Robo Downloader on a computer or similar device. If you install Robo Downloader onto a multi-user platform, server or network, each and every individual user of Robo Downloader must be licensed separately.
+Each licensed copy of YouMacro may be used on one single computer location by one user. Use of YouMacro means that you have loaded, installed, or run YouMacro on a computer or similar device. If you install YouMacro onto a multi-user platform, server or network, each and every individual user of YouMacro must be licensed separately.
 
-You may make one copy of Robo Downloader for backup purposes, providing you only have one copy installed on one computer being used by one person. Other users may not use your copy of Robo Downloader . The assignment, sublicense, networking, sale, or distribution of copies of Robo Downloader are strictly forbidden without the prior written consent of Node Graph Software. It is a violation of this agreement to assign, sell, share, loan, rent, lease, borrow, network or transfer the use of Robo Downloader. If any person other than yourself uses Robo Downloader registered in your name, regardless of whether it is at the same time or different times, then this agreement is being violated and you are responsible for that violation!
+You may make one copy of YouMacro for backup purposes, providing you only have one copy installed on one computer being used by one person. Other users may not use your copy of YouMacro . The assignment, sublicense, networking, sale, or distribution of copies of YouMacro are strictly forbidden without the prior written consent of Node Graph Software. It is a violation of this agreement to assign, sell, share, loan, rent, lease, borrow, network or transfer the use of YouMacro. If any person other than yourself uses YouMacro registered in your name, regardless of whether it is at the same time or different times, then this agreement is being violated and you are responsible for that violation!
 
 3.3 Copyright Restriction
 
-This Software contains copyrighted material, trade secrets and other proprietary material. You shall not, and shall not attempt to, modify, reverse engineer, disassemble or decompile Robo Downloader. Nor can you create any derivative works or other works that are based upon or derived from Robo Downloader in whole or in part.
+This Software contains copyrighted material, trade secrets and other proprietary material. You shall not, and shall not attempt to, modify, reverse engineer, disassemble or decompile YouMacro. Nor can you create any derivative works or other works that are based upon or derived from YouMacro in whole or in part.
 
-Node Graph Software's name, logo and graphics file that represents Robo Downloader shall not be used in any way to promote products developed with Robo Downloader . Node Graph Software retains sole and exclusive ownership of all right, title and interest in and to Robo Downloader and all Intellectual Property rights relating thereto.
+Node Graph Software's name, logo and graphics file that represents YouMacro shall not be used in any way to promote products developed with YouMacro . Node Graph Software retains sole and exclusive ownership of all right, title and interest in and to YouMacro and all Intellectual Property rights relating thereto.
 
-Copyright law and international copyright treaty provisions protect all parts of Robo Downloader, products and services. No program, code, part, image, audio sample, or text may be copied or used in any way by the user except as intended within the bounds of the single user program. All rights not expressly granted hereunder are reserved for Node Graph Software.
+Copyright law and international copyright treaty provisions protect all parts of YouMacro, products and services. No program, code, part, image, audio sample, or text may be copied or used in any way by the user except as intended within the bounds of the single user program. All rights not expressly granted hereunder are reserved for Node Graph Software.
 
 3.4 Limitation of Responsibility
 
 You will indemnify, hold harmless, and defend Node Graph Software , its employees, agents and distributors against any and all claims, proceedings, demand and costs resulting from or in any way connected with your use of Node Graph Software's Software.
 
-In no event (including, without limitation, in the event of negligence) will Node Graph Software , its employees, agents or distributors be liable for any consequential, incidental, indirect, special or punitive damages whatsoever (including, without limitation, damages for loss of profits, loss of use, business interruption, loss of information or data, or pecuniary loss), in connection with or arising out of or related to this Agreement, Robo Downloader or the use or inability to use Robo Downloader or the furnishing, performance or use of any other matters hereunder whether based upon contract, tort or any other theory including negligence.
+In no event (including, without limitation, in the event of negligence) will Node Graph Software , its employees, agents or distributors be liable for any consequential, incidental, indirect, special or punitive damages whatsoever (including, without limitation, damages for loss of profits, loss of use, business interruption, loss of information or data, or pecuniary loss), in connection with or arising out of or related to this Agreement, YouMacro or the use or inability to use YouMacro or the furnishing, performance or use of any other matters hereunder whether based upon contract, tort or any other theory including negligence.
 
 Node Graph Software's entire liability, without exception, is limited to the customers' reimbursement of the purchase price of the Software (maximum being the lesser of the amount paid by you and the suggested retail price as listed by Node Graph Software ) in exchange for the return of the product, all copies, registration papers and manuals, and all materials that constitute a transfer of license from the customer back to Node Graph Software.
 
@@ -59,13 +59,13 @@ This Agreement shall be governed by the law of the United States applicable ther
 
 3.7 Termination
 
-Any failure to comply with the terms and conditions of this Agreement will result in automatic and immediate termination of this license. Upon termination of this license granted herein for any reason, you agree to immediately cease use of Robo Downloader and destroy all copies of Robo Downloader supplied under this Agreement. The financial obligations incurred by you shall survive the expiration or termination of this license.
+Any failure to comply with the terms and conditions of this Agreement will result in automatic and immediate termination of this license. Upon termination of this license granted herein for any reason, you agree to immediately cease use of YouMacro and destroy all copies of YouMacro supplied under this Agreement. The financial obligations incurred by you shall survive the expiration or termination of this license.
 
 4. DISCLAIMER OF WARRANTY
 
-THIS SOFTWARE AND THE ACCOMPANYING FILES ARE SOLD "AS IS" AND WITHOUT WARRANTIES AS TO PERFORMANCE OR MERCHANTABILITY OR ANY OTHER WARRANTIES WHETHER EXPRESSED OR IMPLIED. THIS DISCLAIMER CONCERNS ALL FILES GENERATED AND EDITED BY Robo Downloader AS WELL.
+THIS SOFTWARE AND THE ACCOMPANYING FILES ARE SOLD "AS IS" AND WITHOUT WARRANTIES AS TO PERFORMANCE OR MERCHANTABILITY OR ANY OTHER WARRANTIES WHETHER EXPRESSED OR IMPLIED. THIS DISCLAIMER CONCERNS ALL FILES GENERATED AND EDITED BY YouMacro AS WELL.
 
 5. CONSENT OF USE OF DATA
 
-You agree that Node Graph Software may collect and use information gathered in any manner as part of the product support services provided to you, if any, related to Robo Downloader. Node Graph Software may also use this information to provide notices to you which may be of use or interest to you.
+You agree that Node Graph Software may collect and use information gathered in any manner as part of the product support services provided to you, if any, related to YouMacro. Node Graph Software may also use this information to provide notices to you which may be of use or interest to you.
  	

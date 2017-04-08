@@ -19,7 +19,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QJsonArray>
 
-#include <apps/robodownloader/typescript/nodescripts/nodescripts.h>
+#include <apps/youmacro/typescript/nodescripts/nodescripts.h>
 
 namespace ngs {
 

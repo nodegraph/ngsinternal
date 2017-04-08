@@ -1,0 +1,13 @@
+# Install.
+INSTALL(TARGETS youmacro
+  RUNTIME DESTINATION bin
+  COMPONENT youmacro
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  BUNDLE DESTINATION .
+)
+
+# Install the html files.
+INSTALL(DIRECTORY html
+		DESTINATION .
+		COMPONENT youmacro)

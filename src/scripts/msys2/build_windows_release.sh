@@ -22,8 +22,8 @@ cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release /d/src/ngsinternal/src;
 # build
 ninja install;
 
-# robodownloader installers and repos
-robodownloader_installer_windows.sh package $CMAKE_BUILD_ROOT
-robodownloader_installer_windows.sh create_repo $CMAKE_BUILD_ROOT
-robodownloader_installer_windows.sh create_installer $CMAKE_BUILD_ROOT
+# youmacro installers and repos
+youmacro_installer_windows.sh package $CMAKE_BUILD_ROOT
+youmacro_installer_windows.sh create_repo $CMAKE_BUILD_ROOT
+youmacro_installer_windows.sh create_installer $CMAKE_BUILD_ROOT
 

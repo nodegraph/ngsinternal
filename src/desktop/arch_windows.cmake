@@ -5,7 +5,7 @@
 # 2) Copy config.txt to that dir.
 # 3) Download "7zSD extra" from 7zip and extract it. 
 # 4) Now use the windows cmd shell to do the following.
-#    shell<<  copy /b 7zsd_LZMA2_x64.sfx + config.txt + install.7z "robodownloader.exe"
+#    shell<<  copy /b 7zsd_LZMA2_x64.sfx + config.txt + install.7z "youmacro.exe"
 
 
 
@@ -253,7 +253,7 @@ INSTALL(FILES
 #  DEPENDS install
 #  OUTPUT install_desktop_cmd
 #  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testqml.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/testqml/qml 
-#  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/robodownloader.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/robodownloader/qml 
+#  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/youmacro.exe --qmldir ${CMAKE_SOURCE_DIR}/apps/youmacro/qml 
 #  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqt.exe
 #  COMMAND ${QT5_DIR}/bin/windeployqt --${build_type} --verbose 3 --angle ${CMAKE_BINARY_DIR}/install/bin/testguiqml.exe
 #  # chromedriver
@@ -288,16 +288,16 @@ function(create_cpack_config filename)
   include(CPack) 
 endfunction(create_cpack_config) 
 
-set(package_type "robodownloader")
+set(package_type "youmacro")
 
 if(WIN32)
     # On Windows generate MSI packages
-    if (${package_type} STREQUAL robodownloader)
+    if (${package_type} STREQUAL youmacro)
         set(CPACK_GENERATOR "WIX")
-        set(CPACK_PACKAGE_NAME "Robo Downloader")
+        set(CPACK_PACKAGE_NAME "YouMacro")
         set(CPACK_PACKAGE_VERSION ${ngs_version})
         set(CPACK_PACKAGE_VENDOR "Node Graph Software")
-        set(CPACK_PACKAGE_INSTALL_DIRECTORY "Robo Downloader")
+        set(CPACK_PACKAGE_INSTALL_DIRECTORY "YouMacro")
         
         set(CPACK_WIX_TEMPLATE "${PROJECT_SOURCE_DIR}/desktop/wix.template.in")
         set(CPACK_WIX_UPGRADE_GUID 1F015D65-E1C1-468F-A2A5-4E431E279F70)
@@ -308,18 +308,18 @@ if(WIN32)
         
         set(CPACK_WIX_UNINSTALL "1")
         
-        set(CPACK_PACKAGE_DIRECTORY "d:/b1installers/robodownloader")
+        set(CPACK_PACKAGE_DIRECTORY "d:/b1installers/youmacro")
         
-        set(CPACK_WIX_PROGRAM_MENU_FOLDER "Robo Downloader")
+        set(CPACK_WIX_PROGRAM_MENU_FOLDER "YouMacro")
         
-        set_property(INSTALL "bin/robodownloader.exe"
-            PROPERTY CPACK_DESKTOP_SHORTCUTS "Robo Downloader"
+        set_property(INSTALL "bin/youmacro.exe"
+            PROPERTY CPACK_DESKTOP_SHORTCUTS "YouMacro"
         )
-        set_property(INSTALL "bin/robodownloader.exe"
-            PROPERTY CPACK_START_MENU_SHORTCUTS "Robo Downloader"
+        set_property(INSTALL "bin/youmacro.exe"
+            PROPERTY CPACK_START_MENU_SHORTCUTS "YouMacro"
         )
         set(CPACK_COMPONENTS_ALL
-            robodownloader
+            youmacro
             chrome_ext_background
             chrome_ext_content
             jcomm
@@ -360,8 +360,8 @@ endif()
 
 include(CPack)
 
-cpack_add_component(robodownloader
-                    DISPLAY_NAME "Robo Downloader Application."
+cpack_add_component(youmacro
+                    DISPLAY_NAME "YouMacro Application."
                     HIDDEN REQUIRED)
                     
 cpack_add_component(chrome_ext_background

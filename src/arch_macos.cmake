@@ -41,7 +41,7 @@ set(FREETYPE_GL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/macos/freetype-gl")
 set(LIBSODIUM_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/macos/libsodium-1.0.10")
 set(OPENSSL_DIR "${PLATFORM_ROOT}/srcdeps/ngsexternal/macos/openssl-1.0.2h")
 
-set(SMASHBROWSE_BIN_DIR "${PROJECT_BINARY_DIR}/build/robodownloader.app/Contents/MacOS")
+set(SMASHBROWSE_BIN_DIR "${PROJECT_BINARY_DIR}/build/youmacro.app/Contents/MacOS")
 
 
 # ---------------------------------------------------------

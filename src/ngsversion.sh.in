@@ -1,1 +1,1 @@
-installer_base_name="robodownloader_@ngs_version_major@.@ngs_version_minor@.@ngs_version_patch@.@ngs_version_tweak@"
+installer_base_name="youmacro_@ngs_version_major@.@ngs_version_minor@.@ngs_version_patch@.@ngs_version_tweak@"

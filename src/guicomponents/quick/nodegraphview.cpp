@@ -50,8 +50,8 @@ void Vibrator::vibrate(int milliseconds) {
 // This would have been nicer but, it doesn't allow us to set the opengl context and version settings.
 // Hence we use a QQuickView as the ApplicationWindow and then load QML components into that.
 
-const QString NodeGraphView::kAppUsageURL = "https://robodownloader-b4698.firebaseio.com/app_usage.json";
-const QString NodeGraphView::kNGUsageURL = "https://robodownloader-b4698.firebaseio.com/ng_usage.json";
+const QString NodeGraphView::kAppUsageURL = "https://youmacro-b4698.firebaseio.com/app_usage.json";
+const QString NodeGraphView::kNGUsageURL = "https://youmacro-b4698.firebaseio.com/ng_usage.json";
 
 NodeGraphView::NodeGraphView(Entity* entity)
     : QQuickView(NULL),
