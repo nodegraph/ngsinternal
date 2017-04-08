@@ -294,6 +294,9 @@
         <file alias="icons/ic_star_border_black_48dp.png">../../external/icons/ic_star_border_black_48dp.png</file>
         <file alias="icons/ic_star_border_white_48dp.png">../../external/icons/ic_star_border_white_48dp.png</file>
         
+        <file alias="icons/ic_toys_black_48dp.png">../../external/icons/ic_toys_black_48dp.png</file>
+        <file alias="icons/ic_toys_white_48dp.png">../../external/icons/ic_toys_white_48dp.png</file>
+        
         <!-- Web Browser Icons. -->
         <file alias="icons/ic_cancel_black_48dp.png">../../external/icons/ic_cancel_black_48dp.png</file>
         <file alias="icons/ic_cancel_white_48dp.png">../../external/icons/ic_cancel_white_48dp.png</file>
