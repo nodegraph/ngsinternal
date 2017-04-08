@@ -213,11 +213,13 @@ INSTALL(
 # ------------------------------------------------------------------
 # MSVC Redistributable.
 # ------------------------------------------------------------------
-INSTALL(FILES
-			"${PLATFORM_ROOT}/srcdeps/ngsexternal/vc_runtime/2015_update_3/vc_redist.x64.exe"
-		DESTINATION bin
-		COMPONENT thirdparty
-		CONFIGURATIONS Debug Release)
+# We don't install the vc runtime anymore in order to keep the download small.
+
+#INSTALL(FILES
+#			"${PLATFORM_ROOT}/srcdeps/ngsexternal/vc_runtime/2015_update_3/vc_redist.x64.exe"
+#		DESTINATION bin
+#		COMPONENT thirdparty
+#		CONFIGURATIONS Debug Release)
 		
 # ------------------------------------------------------------------
 # Icon for shortcut on windows.
