@@ -98,6 +98,8 @@ Rectangle {
             font.italic: false
             color: "white"
         }
+        
+        AppSpacer{}
 
 	    // Password field.
 	    AppPasswordField {
