@@ -77,10 +77,6 @@ Rectangle {
     		    app_tooltip.show(file_button, "please wait")
             	quick_view.vibrate(10)
     			return
-    		} else if (m == app_settings.edit_node_mode) {
-    		    app_tooltip.show(edit_node_button, "please wait")
-            	quick_view.vibrate(10)
-    			return
     		} else if (m == app_settings.settings_mode) {
     			app_tooltip.show(settings_button, "please wait")
             	quick_view.vibrate(10)
@@ -89,36 +85,38 @@ Rectangle {
 
     	}
     	
-        clear_lit_buttons()
         if (m == app_settings.file_mode) {
+        	clear_lit_buttons()
             file_button.lit = true
             action_bar_title.text = "Files"
             more_menu_button.visible = false
         } else if (m == app_settings.node_graph_mode) {
+        	clear_lit_buttons()
             node_graph_button.lit = true
             action_bar_title.text = "Node Graph"
             more_menu_button.visible = false
-        } else if (m == app_settings.view_node_mode) {
-            view_node_button.lit = true
-            action_bar_title.text = "Node Outputs"
+        } else if (m == app_settings.posts_mode) {
+            clear_lit_buttons()
+            posts_button.lit = true
+            action_bar_title.text = "Posts"
             more_menu_button.visible = false
-        } else if (m == app_settings.edit_node_mode) {
-            edit_node_button.lit = true
-            action_bar_title.text = "Node Params"
+        } else if (m == app_settings.macro_mode) {
+            clear_lit_buttons()
+            macro_button.lit = true
+            action_bar_title.text = "Macros"
             more_menu_button.visible = false
         } else if (m == app_settings.downloads_mode) {
+            clear_lit_buttons()
         	downloads_button.lit = true
         	action_bar_title.text = "Downloading"
             more_menu_button.visible = false
         } else if (m == app_settings.downloaded_mode) {
+            clear_lit_buttons()
         	downloaded_button.lit = true
         	action_bar_title.text = "Downloaded"
             more_menu_button.visible = false
-        } else if (m == app_settings.posts_mode) {
-            posts_button.lit = true
-            action_bar_title.text = "Posts"
-            more_menu_button.visible = false
         } else if (m == app_settings.settings_mode) {
+            clear_lit_buttons()
             settings_button.lit = true
             action_bar_title.text = "Settings"
             more_menu_button.visible = false
@@ -150,7 +148,7 @@ Rectangle {
     	if (settings_page.advanced_features) {
     		switch_to_node_graph()
     	} else {
-    		on_switch_to_mode(app_settings.downloads_mode)
+    		on_switch_to_mode(app_settings.macro_mode)
     	}
     }
     
@@ -169,11 +167,11 @@ Rectangle {
     function clear_lit_buttons() {
         file_button.lit = false
         node_graph_button.lit = false
-        view_node_button.lit = false
-        edit_node_button.lit = false
+        posts_button.lit = false
+        
+        macro_button.lit = false
         downloads_button.lit = false
         downloaded_button.lit = false
-        posts_button.lit = false
         settings_button.lit = false
     }
 
@@ -241,7 +239,7 @@ Rectangle {
         
         anchors {
         	verticalCenter: parent.verticalCenter
-        	right: view_node_button.left
+        	right: posts_button.left
         	leftMargin: app_settings.action_bar_left_margin
     		rightMargin: app_settings.action_bar_right_margin
         }
@@ -254,48 +252,6 @@ Rectangle {
         }
     }
 
-    // View Node Mode Button.
-    AppImageButton {
-        id: view_node_button
-        visible: settings_page.advanced_features
-        
-        anchors {
-        	verticalCenter: parent.verticalCenter
-        	right: edit_node_button.left
-        	leftMargin: app_settings.action_bar_left_margin
-    		rightMargin: app_settings.action_bar_right_margin
-      	}
-        
-        image_url: "qrc:///icons/ic_format_list_bulleted_white_48dp.png"
-        tooltip_text: "node outputs"
-        
-        onClicked: {
-        	node_graph_item.view_node_poke();
-            on_switch_to_mode(app_settings.view_node_mode)
-        }
-    }
-    
-    // Edit Node Mode Button.
-    AppImageButton {
-        id: edit_node_button
-        visible: settings_page.advanced_features
-        
-        anchors {
-        	verticalCenter: parent.verticalCenter
-        	right: posts_button.left
-        	leftMargin: app_settings.action_bar_left_margin
-    		rightMargin: app_settings.action_bar_right_margin
-    	}
-        
-        image_url: "qrc:///icons/ic_format_list_numbered_white_48dp.png"
-        tooltip_text: "node parameters"
-        
-        onClicked: {
-        	node_graph_item.edit_node_poke();
-            on_switch_to_mode(app_settings.edit_node_mode)
-        }
-    }
-    
     // Hot Posts Mode Button.
     AppImageButton {
         id: posts_button
@@ -303,7 +259,7 @@ Rectangle {
         
         anchors {
         	verticalCenter: parent.verticalCenter
-        	right: downloads_button.left
+        	right: macro_button.left
         	leftMargin: app_settings.action_bar_left_margin
     		rightMargin: app_settings.action_bar_right_margin
     	}
@@ -313,6 +269,25 @@ Rectangle {
         
         onClicked: {
             on_switch_to_mode(app_settings.posts_mode)
+        }
+    }
+    
+    // Downloads Mode Button.
+    AppImageButton {
+        id: macro_button
+        
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: downloads_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+    	}
+        
+        image_url: "qrc:///icons/ic_toys_white_48dp.png"
+        tooltip_text: "macros"
+        
+        onClicked: {
+            on_switch_to_mode(app_settings.macro_mode)
         }
     }
     

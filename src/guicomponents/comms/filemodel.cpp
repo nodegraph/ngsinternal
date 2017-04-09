@@ -33,7 +33,7 @@
 namespace ngs {
 
 const QString FileModel::kAppFile = "model.dat"; // Stores the mapping between displayed filename and actual filename.
-const int FileModel::kMaxConcurrentDownloadsLite = 20;
+const int FileModel::kMaxConcurrentDownloadsLite = 5;
 const int FileModel::kMaxSaveableNodes = 20;
 
 FileModel::FileModel(Entity* app_root)

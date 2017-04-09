@@ -57,6 +57,7 @@
         <file>qml/youmacro/stackedmodepages/DataListStackPage.qml</file>
         <file>qml/youmacro/stackedmodepages/FileMenuListStackPage.qml</file>
         <file>qml/youmacro/stackedmodepages/WebMenuListStackPage.qml</file>
+        <file>qml/youmacro/stackedmodepages/MacroListStackPage.qml</file>
         
         
         <!-- ListPages -->
@@ -67,6 +68,7 @@
         <file>qml/youmacro/contentpages/listpages/PostListPage.qml</file>
         <file>qml/youmacro/contentpages/listpages/DataListPage.qml</file>
         <file>qml/youmacro/contentpages/listpages/FileListPage.qml</file>
+        <file>qml/youmacro/contentpages/listpages/MacroListPage.qml</file>
         <file>qml/youmacro/contentpages/listpages/FileMenuListPage.qml</file>
         <file>qml/youmacro/contentpages/listpages/NGMenuListPage.qml</file>
         <file>qml/youmacro/contentpages/listpages/WebMenuListPage.qml</file>
@@ -80,6 +82,7 @@
         <file>qml/youmacro/contentpages/listdelegates/DataListDelegate.qml</file>
         <file>qml/youmacro/contentpages/listdelegates/MenuItemListDelegate.qml</file>
         <file>qml/youmacro/contentpages/listdelegates/FileListDelegate.qml</file>
+        <file>qml/youmacro/contentpages/listdelegates/MacroListDelegate.qml</file>
         <file>qml/youmacro/contentpages/listdelegates/PostListDelegate.qml</file>
         <file>qml/youmacro/contentpages/listdelegates/DownloadListDelegate.qml</file>
         <file>qml/youmacro/contentpages/listdelegates/NodeMenuItemListDelegate.qml</file>
@@ -107,6 +110,7 @@
         
         <!-- MenuModels -->
         <file>qml/youmacro/contentpages/listmodels/qmldir</file>
+        <file>qml/youmacro/contentpages/listmodels/CreateMacroActions.qml</file>
         <file>qml/youmacro/contentpages/listmodels/CreateNodeActions.qml</file>
         <file>qml/youmacro/contentpages/listmodels/CreateDataNodeActions.qml</file>
         <file>qml/youmacro/contentpages/listmodels/CreateDataOpNodeActions.qml</file>

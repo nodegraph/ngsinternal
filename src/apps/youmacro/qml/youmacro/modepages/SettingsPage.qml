@@ -91,7 +91,7 @@ Rectangle {
         RowLayout {
             AppLabel {
                 id: advanced_label
-                text: "Use Node Graph Macros"
+                text: "Use Advanced Features"
                 anchors {
                     left: parent.left
                     leftMargin: app_settings.page_left_margin

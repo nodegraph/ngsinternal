@@ -14,34 +14,68 @@ import youmacro.contentpages.listmodels 1.0
 
 BaseStackPage{
     id: page
-
+    
     // Framework Methods.
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.file_mode) {
+        if (mode == app_settings.macro_mode) {
             visible = true;
-            stack_view.push_by_names("manage files", "FileMenuListPage", "FileMenuActions")
+            on_open_file_list()
         } else {
             visible = false;
             stack_view.clear_pages()
         }
     }
-
-    // --------------------------------------------------------------------------------------------------------------------
-    // Main methods.
-    // --------------------------------------------------------------------------------------------------------------------
-
-    function on_finished_with_menu() {
-        main_bar.switch_to_mode(app_settings.node_graph_mode)
+    
+    function on_show_macro_list() {
+    	stack_view.push_by_names('Add Macro', 'NodeMenuListPage', 'CreateMacroActions')
     }
-
-    function on_file_single_clicked(row) {
-        // do nothing
+    
+    function on_edit_macro(row) {
+    	load_graph(row)
+    	node_graph_item.edit_main_macro_node()
     }
-
-    function on_file_double_clicked(row) {
-    	// Reset the task queue.
+    
+    function on_remove_macro(row) {
+    	load_graph(row)
+        node_graph_item.destroy_graph()
+    }
+    
+    function on_rename_macro(row) {
+    	load_graph(row)
+    	on_edit_file_info() 
+    }
+    
+    function on_stop() {
+        // Reset the task queue.
     	manipulator.force_stack_reset()
-    	
+    
+    	// Make sure the browser is closed.
+		task_queuer.close_browser()
+    }
+    
+    function create_macro(app_macro, title, description) {
+    	stack_view.pop()
+    	console.log("create macro called with type: " + app_macro)
+                    
+        // Graph Info.
+        var info = {}
+        info.title = title
+        info.description = description
+
+		// Create a new graph.
+        on_create_graph_info(info)
+        
+        // Insert and connect up the main macro.
+        ng_controller.create_main_macro_node(true, app_macro)
+        
+        // Save the graph.
+        node_graph_item.save() 
+    }
+    
+    function load_graph(row) {
+        // Reset the task queue.
+    	manipulator.force_stack_reset()
+    
     	// Make sure the browser is closed.
 		task_queuer.close_browser()
 		
@@ -50,8 +84,26 @@ BaseStackPage{
         // Frame the graph.
         node_graph_item.frame_all()
         node_graph_item.update()
-        // Finished.
-        on_finished_with_menu()
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------
+    // Main methods.
+    // --------------------------------------------------------------------------------------------------------------------
+
+    function on_finished_with_menu() {
+    	stack_view.pop()
+    }
+
+    function on_file_single_clicked(row) {
+        // do nothing
+    }
+
+    function on_file_double_clicked(row) {
+    	// Make sure the current row is loaded.
+		load_graph(row);
+		        
+        // Run the graph by cleaning the root group.
+        node_graph_item.reclean_group()
     }
     
     function on_save_current() {
@@ -149,7 +201,7 @@ BaseStackPage{
 	}
 
     function on_open_file_list() {
-        var push_page = app_loader.load_component("qrc:///qml/youmacro/contentpages/listpages/FileListPage.qml", page, {})
+        var push_page = app_loader.load_component("qrc:///qml/youmacro/contentpages/listpages/MacroListPage.qml", page, {})
         push_page.init()
         push_page.visible = true
         stack_view.push_page(push_page)

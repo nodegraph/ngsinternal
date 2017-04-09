@@ -54,6 +54,7 @@ Q_OBJECT
   // View and Edit.
   Q_INVOKABLE void view_node();
   Q_INVOKABLE void edit_node();
+  Q_INVOKABLE void edit_main_macro_node();
   Q_INVOKABLE void dirty_node();
   Q_INVOKABLE void dirty_group();
   Q_INVOKABLE void dirty_group_recursively();

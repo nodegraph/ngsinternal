@@ -31,6 +31,7 @@ Q_OBJECT
   Q_INVOKABLE void create_public_macro_node(bool centered, const QString& macro_name);
   Q_INVOKABLE void create_private_macro_node(bool centered, const QString& macro_name);
   Q_INVOKABLE void create_app_macro_node(bool centered, const QString& macro_name);
+  Q_INVOKABLE void create_main_macro_node(bool centered, const QString& macro_name);
 
   // Group Nodes Creation.
   Q_INVOKABLE void create_group_node(bool centered);

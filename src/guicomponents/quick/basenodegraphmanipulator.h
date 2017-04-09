@@ -72,6 +72,7 @@ class BaseNodeGraphManipulator: public Component {
 
   // Link a node.
   virtual void link_to_selected_node(Entity* node) = 0;
+  virtual Entity* create_link(Entity* input_entity, Entity* output_entity) = 0;
 
   // Link Manipulation.
   virtual void destroy_link(Entity* input_entity) = 0;

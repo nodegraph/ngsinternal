@@ -77,7 +77,7 @@ BaseStackPage{
     	
     	var data_path = []
     	var node_path_tail = get_node_path_tail()
-        view_object(node_path_tail + ' node', data_path)
+        view_object(node_path_tail, data_path)
         main_bar.switch_to_view_node_mode()
     }
 
@@ -99,7 +99,7 @@ BaseStackPage{
         
         var data_path = []
         var node_path_tail = get_node_path_tail()
-        edit_object(node_path_tail + ' node', data_path)
+        edit_object(node_path_tail, data_path)
         main_bar.switch_to_edit_node_mode()
     }
 

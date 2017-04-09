@@ -98,6 +98,7 @@ Q_OBJECT
 
   // Link a node.
   virtual void link_to_selected_node(Entity* node);
+  virtual Entity* create_link(Entity* input_entity, Entity* output_entity);
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);
@@ -223,6 +224,7 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
 
   // Link a node.
   virtual void link_to_selected_node(Entity* node);
+  virtual Entity* create_link(Entity* input_entity, Entity* output_entity);
 
   // Modify links.
   virtual void destroy_link(Entity* input_entity);

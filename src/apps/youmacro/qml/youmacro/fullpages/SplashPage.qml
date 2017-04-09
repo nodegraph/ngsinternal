@@ -41,7 +41,7 @@ Rectangle {
         color: "white"
 
         y: parent.height * 7.5/10
-        text: "Version " + ngs_version
+        text: ngs_version
         anchors {
             horizontalCenter:  parent.horizontalCenter
         }

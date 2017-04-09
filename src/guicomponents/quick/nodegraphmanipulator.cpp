@@ -594,6 +594,34 @@ Entity* NodeGraphManipulatorImp::create_browser_node(bool centered, ComponentDID
   return _node;
 }
 
+Entity* NodeGraphManipulatorImp::create_link(Entity* input_entity, Entity* output_entity) {
+  Dep<OutputCompute> output_compute = get_dep<OutputCompute>(output_entity);
+  Dep<InputCompute> input_compute = get_dep<InputCompute>(input_entity);
+
+  // Link the computes.
+  input_compute->link_output_compute(output_compute);
+
+  // Create a link.
+  Entity* current_group = _factory->get_current_group();
+  Entity* links_folder = current_group->get_entity(Path( { ".", kLinksFolderName }));
+  Entity* link = _factory->instance_entity(links_folder, EntityDID::kLinkEntity, "link");
+  link->create_internals();
+
+  // Link the link, input and output shapes.
+  Dep<OutputShape> output_shape = get_dep<OutputShape>(output_compute->our_entity());
+  Dep<InputShape> input_shape = get_dep<InputShape>(input_compute->our_entity());
+  Dep<LinkShape> link_shape = get_dep<LinkShape>(link);
+  link_shape->start_moving();
+  link_shape->link_input_shape(input_shape);
+  link_shape->link_output_shape(output_shape);
+  link_shape->finished_moving();
+
+  // Clean the wires in this group, as new nodes and links were created.
+  _factory->get_current_group()->clean_wires();
+
+  return link_shape->our_entity();
+}
+
 void NodeGraphManipulatorImp::link_to_selected_node(Entity* downstream) {
   // Get the factory.
   Dep<BaseFactory> factory = get_dep<BaseFactory>(_app_root);
@@ -942,6 +970,10 @@ void NodeGraphManipulator::link_to_selected_node(Entity* downstream_node) {
   return _imp->link_to_selected_node(downstream_node);
 }
 
+Entity* NodeGraphManipulator::create_link(Entity* input_entity, Entity* output_entity) {
+  return _imp->create_link(input_entity, output_entity);
+}
+
 void NodeGraphManipulator::set_input_topology(Entity* entity, const std::unordered_map<std::string, size_t>& ordering) {
   _imp->set_input_topology(entity, ordering);
 }
@@ -960,17 +992,17 @@ Entity* NodeGraphManipulator::create_compute_node(bool centered, EntityDID entit
 
 Entity* NodeGraphManipulator::create_public_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
   // Name the node with the same name as the macro name.
-  return _imp->create_public_macro_node(centered, macro_name, macro_name, group_entity);
+  return _imp->create_public_macro_node(centered, macro_name, name, group_entity);
 }
 
 Entity* NodeGraphManipulator::create_private_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
   // Name the node with the same name as the macro name.
-  return _imp->create_private_macro_node(centered, macro_name, macro_name, group_entity);
+  return _imp->create_private_macro_node(centered, macro_name, name, group_entity);
 }
 
 Entity* NodeGraphManipulator::create_app_macro_node(bool centered, const std::string& macro_name, const std::string& name, Entity* group_entity) {
   // Name the node with the same name as the macro name.
-  return _imp->create_app_macro_node(centered, macro_name, macro_name, group_entity);
+  return _imp->create_app_macro_node(centered, macro_name, name, group_entity);
 }
 
 Entity* NodeGraphManipulator::create_password_input_node(bool centered, const QJsonValue& value, const std::string& name, Entity* group_entity) {

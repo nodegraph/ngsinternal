@@ -95,14 +95,22 @@ Item{
     // Modes
     // -------------------------------------------------------------------
     
+    // Modes with buttons in the mainbar.
+    
     property int file_mode: 0
     property int node_graph_mode: 1
-    property int view_node_mode: 2
-    property int edit_node_mode: 3
+    property int posts_mode: 2
+
+	property int macro_mode: 3
     property int downloads_mode: 4
-    property int downloaded_mode: 5
-    property int posts_mode: 6
-    property int settings_mode: 7
+    property int downloaded_mode: 5    
+    property int settings_mode: 6
+    
+    // Modes without buttons in the mainbar.
+    property int view_node_mode: 7
+    property int edit_node_mode: 8
+    property int ng_menu_mode: 9
+    property int web_menu_mode: 10
     
     // -------------------------------------------------------------------
     // Layering.

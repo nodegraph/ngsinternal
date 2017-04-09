@@ -55,6 +55,17 @@ void NodeGraphController::create_app_macro_node(bool centered, const QString& ma
   _manipulator->create_app_macro_node(centered, macro_name.toStdString());
 }
 
+void NodeGraphController::create_main_macro_node(bool centered, const QString& macro_name) {
+  Entity* macro = _manipulator->create_app_macro_node(centered, macro_name.toStdString(), "main_macro");
+  Entity* macro_in = macro->get_entity(Path({".","inputs","in"}));
+  Entity* macro_out = macro->get_entity(Path({".","outputs","out"}));
+  Entity *upstream = get_entity(Path({"root","in","outputs","out"}));
+  Entity *downstream = get_entity(Path({"root","out","inputs","in"}));
+
+  _manipulator->create_link(macro_in, upstream);
+  _manipulator->create_link(downstream, macro_out);
+}
+
 // Group Nodes Creation.
 void NodeGraphController::create_group_node(bool centered) {
   _manipulator->create_node(centered, EntityDID::kGroupNodeEntity);

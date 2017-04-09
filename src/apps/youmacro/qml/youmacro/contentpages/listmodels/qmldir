@@ -1,5 +1,6 @@
 module menumodels
 
+CreateMacroActions 1.0 CreateMacroActions.qml
 CreateNodeActions 1.0 CreateNodeActions.qml
 CreateDataNodeActions 1.0 CreateDataNodeActions.qml
 CreateDataOpNodeActions 1.0 CreateDataOpNodeActions.qml

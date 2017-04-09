@@ -7,6 +7,7 @@ BaseListPage 1.0 BaseListPage.qml
 PostListPage 1.0 PostListPage.qml
 DataListPage 1.0 DataListPage.qml
 FileListPage 1.0 FileListPage.qml
+MacroListPage 1.0 MacroListPage.qml
 FileMenuListPage 1.0 FileMenuListPage.qml
 NGMenuListPage 1.0 NGMenuListPage.qml
 

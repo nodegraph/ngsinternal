@@ -180,11 +180,11 @@ BaseListPage {
         }
         AppLabelButton {
             text: "accept"
-            visible: array_or_object
             onClicked: {
             	var path = page.Stack.view.get_title_path(1, page.Stack.view.depth)
                 page.Stack.view._stack_page.set_exposed(path, get_exposed())
                 main_bar.switch_to_last_mode()
+                node_graph_item.save() 
             }
         }
         Item {Layout.fillWidth: true}

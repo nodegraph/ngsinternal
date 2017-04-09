@@ -783,6 +783,23 @@ void NodeGraphQuickItem::edit_node() {
   }
 }
 
+void NodeGraphQuickItem::edit_main_macro_node() {
+  Entity* e = has_entity(Path({"root","main_macro"}));
+  if (!e) {
+    return;
+  }
+  Dep<Compute> compute = get_dep<Compute>(e);
+  if (!compute) {
+    return;
+  }
+
+  emit edit_node_inputs("/root/main_macro",
+                        compute->get_editable_inputs(),
+                        compute->get_hints(),
+                        compute->get_input_exposure());
+}
+
+
 void NodeGraphQuickItem::set_editable_inputs(const QString& node_path, const QJsonObject& values) {
   Path path = Path::string_to_path(node_path.toStdString());
   Entity* entity = get_app_root()->get_entity(path);

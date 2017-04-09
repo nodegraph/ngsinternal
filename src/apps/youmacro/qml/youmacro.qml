@@ -118,6 +118,11 @@ Rectangle {
         visible: false
     }
     
+    MacroListStackPage {
+    	id: macro_list_stack_page
+    	visible: false
+    }
+    
     DownloadListPage {
     	id: downloads_page
         visible: false
@@ -189,12 +194,16 @@ Rectangle {
         // Mode change connections.
         main_bar.switch_to_mode.connect(file_menu_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(view_data_list_stack_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(edit_data_list_stack_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
+        
+		main_bar.switch_to_mode.connect(macro_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(downloads_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(downloaded_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
+        
+        // Modes without buttons.
+        main_bar.switch_to_mode.connect(view_data_list_stack_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(edit_data_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(ng_menu_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(web_menu_list_stack_page.on_switch_to_mode)
 
