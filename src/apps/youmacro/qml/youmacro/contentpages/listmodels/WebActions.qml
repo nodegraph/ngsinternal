@@ -35,6 +35,14 @@ ListModel {
     }
     
     ListElement {
+        image_url: "qrc:///icons/ic_star_border_white_48dp.png"
+        title: "Clear Element Highlights"
+        description: "Clear the current set of element highlights in the browser."
+        script: "browser_recorder.record_clear_element_highlights();
+        		 main_bar.switch_to_current_mode();"
+    }
+    
+    ListElement {
         image_url: "qrc:///icons/ic_gavel_white_48dp.png"
         title: "Perform Element Actions..."
         description: "Perform an action on the current element."

@@ -6,63 +6,49 @@ ListModel {
     	letters: "Dv"
         title: "YouTube - Download Vlogs"
         description: "Download the latest vlogs using the vlogger's name."
-        script: '_stack_page.create_macro("gmail_login", "GMail Login", "Log into GMail account.");'
+        script: '_stack_page.create_macro("youtube_download_vlogs", "YouTube - Download Vlogs", "Download the latest vlogs.");'
     }
     ListElement {
     	letters: "Dt"
         title: "YouTube - Download Trending Videos"
         description: "Download the latest trending videos."
-        script: "ng_controller.create_string_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+        script: '_stack_page.create_macro("youtube_download_trending", "YouTube - Download Trending Videos", "Download the latest trending videos.");'
     }
     ListElement {
     	letters: "Pr"
         title: "YouTube - Play Random Videos"
         description: "Play random videos"
-        script: "ng_controller.create_number_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+        script: '_stack_page.create_macro("youtube_play_random", "YouTube - Play Random Videos", "Play random videos from YouTube.");'
     }
     ListElement {
     	letters: "Dc"
-        title: "Vimeo - Download Creator Videos"
-        description: "Download the latest videos using the creator's name"
-        script: "ng_controller.create_number_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+        title: "Vimeo - Download Videos"
+        description: "Download the latest videos using the creator's id"
+        script: '_stack_page.create_macro("vimeo_download_videos", "Vimeo - Download Videos", "Download the latest from a creator.");'
     }
     ListElement {
     	letters: "Pv"
         title: "Vimeo - Download Trending Videos"
         description: "Download the latest trending videos."
-        script: "ng_controller.create_number_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
-    }
-    ListElement {
-    	letters: "Pv"
-        title: "Vimeo - Play Random Videos"
-        description: "Play Random videos."
-        script: "ng_controller.create_number_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+        script: '_stack_page.create_macro("vimeo_download_trending", "Vimeo - Download Trending Videos", "Download the latest trending videos.");'
     }
     ListElement {
     	letters: "Gl"
         title: "GMail - Login"
-        description: "Login into your GMail account."
-        script: "ng_controller.create_boolean_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+        description: "Log into your GMail account."
+        script: '_stack_page.create_macro("gmail_login", "GMail - Login", "Log into your GMail account.");'
     }
     ListElement {
     	letters: "Ol"
         title: "Outlook - Login"
-        description: "Login to your Outlook account."
-        script: "ng_controller.create_array_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+        description: "Log into your Outlook account."
+        script: '_stack_page.create_macro("outlook_login", "Outlook - Login", "Log into your Outlook account.");'
     }
     ListElement {
     	letters: "Yl"
         title: "Yahoo - Login"
-        description: "Login to your Yahoo account."
-        script: "ng_controller.create_object_data_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+        description: "Log into your Yahoo account."
+        script: '_stack_page.create_macro("yahoo_login", "Yahoo - Login", "Log into your Yahoo account.");'
     }
 
 }

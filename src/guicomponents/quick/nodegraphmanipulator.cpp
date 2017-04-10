@@ -23,6 +23,7 @@
 #include <components/computes/inputcompute.h>
 #include <components/computes/outputcompute.h>
 #include <components/computes/groupnodecompute.h>
+#include <components/computes/inputnodecompute.h>
 #include <components/computes/outputs.h>
 
 // CompShapes.
@@ -358,8 +359,23 @@ void NodeGraphManipulatorImp::exit_group_prep(Entity* group) {
     }
     // If we're not nested, then we can close the browser.
     if (count <= 1) {
+      // Determine whether to release the browser to the user instead of destorying it.
+      Entity* release_entity = group->has_entity(Path({".","release_on_exit"}));
+      bool release = false;
+      if (release_entity) {
+        Dep<InputNodeCompute> in = get_dep<InputNodeCompute>(release_entity);
+        release = in->get_output("out").toBool();
+        std::cerr << "found release input node with value: " << release << "\n";
+      } else {
+        std::cerr << "did not find release input node\n";
+      }
+
       TaskContext tc(_scheduler);
-      _queuer->queue_send_msg(tc, Message(WebDriverRequestType::kCloseBrowser), false);
+      if (!release) {
+        _queuer->queue_send_msg(tc, Message(WebDriverRequestType::kCloseBrowser), false);
+      } else {
+        _queuer->queue_send_msg(tc, Message(WebDriverRequestType::kReleaseBrowser), false);
+      }
     }
   }
 }

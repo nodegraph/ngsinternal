@@ -113,7 +113,9 @@ declare const enum MouseActionType {
 
 declare const enum TextActionType {
   kSendText = 0,
-  kSendEnter = 1
+  kSendEnter = 1,
+  kSendTextToActive = 2,
+  kSendEnterToActive = 3
 }
 
 declare const enum ElementActionType {

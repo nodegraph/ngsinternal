@@ -363,7 +363,7 @@ void FileModel::load_graph() {
     // Create the first graph file.
     QVariantMap info;
     info["title"] = "untitled";
-    info["description"] = "you can rename this file";
+    info["description"] = "this does nothing";
     create_graph(info);
 //    // Build the default graph.
 //    _graph_builder->build_test_graph();
@@ -452,7 +452,8 @@ void FileModel::load_graph(int row) {
 
   std::cerr << "starting load process\n";
 
-  //get_root_group()->destroy_all_children();
+  // For safety first destory all children.
+  get_root_group()->destroy_all_children();
   get_root_group()->load(loader);
 
   std::cerr << "finished loading components\n";

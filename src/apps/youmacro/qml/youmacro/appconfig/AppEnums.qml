@@ -82,6 +82,8 @@ Item{
     property var text_action_type_text: [
         'type letters',
         'press enter',
+        'type letters into active',
+        'press enter in active'
     ]
 
     property var element_action_type_text: [

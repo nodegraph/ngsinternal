@@ -27,7 +27,8 @@ BrowserCompute::BrowserCompute(Entity* entity, ComponentDID did)
       _scheduler(this),
       _msg_sender(this),
       _browser_width(this),
-      _browser_height(this) {
+      _browser_height(this),
+      _release(this){
   get_dep_loader()->register_fixed_dep(_queuer, Path());
   get_dep_loader()->register_fixed_dep(_scheduler, Path());
   get_dep_loader()->register_fixed_dep(_msg_sender, Path());
@@ -64,18 +65,19 @@ QJsonObject BrowserCompute::get_params() const {
   // Strip irrelevant properties from in.
   {
     QJsonObject in = params.value(Compute::kMainInputName).toObject();
-    std::vector<QString> keys;
+    QJsonObject stripped_in;
     for (QJsonObject::iterator iter = in.begin(); iter != in.end(); iter++) {
       if ((iter.key().toStdString() == Message::kValue) ||
           (iter.key().toStdString() == Message::kElements) ||
           (iter.key().toStdString() == Message::kClusters)) {
-        continue;
+        stripped_in.insert(iter.key(), iter.value());
       }
-      in.remove(iter.key());
     }
-    params.insert(Compute::kMainInputName, in);
+    // Qt 5.8 seems to have a bug where if you try to insert a child object,
+    // where the child object has had properties removed beforehand, it will crash here.
+    // So we only add child objects which were created by adding in properties.
+    params.insert(Compute::kMainInputName, stripped_in);
   }
-
   return params;
 }
 
@@ -96,8 +98,13 @@ void BrowserCompute::find_dep_nodes() {
 
   Entity* width = group->get_child("browser_width");
   Entity* height = group->get_child("browser_height");
+  Entity* release = group->get_child("release_on_exit");
+
   _browser_width = get_dep<InputNodeCompute>(width);
   _browser_height = get_dep<InputNodeCompute>(height);
+  if (release) {
+    _release = get_dep<InputNodeCompute>(release);
+  }
 }
 
 void BrowserCompute::queue_start_update(TaskContext& tc) {
@@ -715,6 +722,22 @@ bool HighlightElementsCompute::update_state() {
   {
     QJsonObject params = get_params();
     Message req(ChromeRequestType::kHighlightElements, params);
+    _queuer->queue_send_msg(tc, req);
+  }
+  queue_on_results(tc);
+  queue_end_update(tc);
+  return false;
+}
+
+bool ClearElementHighlightsCompute::update_state() {
+  internal();
+  BrowserCompute::update_state();
+
+  TaskContext tc(_scheduler);
+  queue_start_update(tc);
+  {
+    QJsonObject params = get_params();
+    Message req(ChromeRequestType::kClearElementHighlights, params);
     _queuer->queue_send_msg(tc, req);
   }
   queue_on_results(tc);

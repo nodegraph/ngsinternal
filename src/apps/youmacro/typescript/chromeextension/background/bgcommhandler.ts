@@ -295,6 +295,7 @@ class BgCommHandler {
     // Note this method modifies the stack while executing.
     // It continually pushes a task to query the frames about whether they are busy.
     queue_wait_until_loaded(callback: ()=>void) {
+        console.log('waiting for frames to finish loading')
         let req = new RequestMessage(-1, ChromeRequestType.kWaitUntilLoaded)
         this.queue_collect_bool_from_frames(req)
         this.queue(() => {

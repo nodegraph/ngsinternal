@@ -108,7 +108,9 @@ enum class MouseActionType : int {
 
 enum class TextActionType : int {
   kSendText = 0,
-  kSendEnter = 1
+  kSendEnter = 1,
+  kSendTextToActive = 2,
+  kSendEnterToActive = 3
 };
 
 enum class ElementActionType : int {

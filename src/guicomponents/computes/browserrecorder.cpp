@@ -597,4 +597,11 @@ void BrowserRecorder::record_highlight_elements() {
   finish();
 }
 
+void BrowserRecorder::record_clear_element_highlights() {
+  start();
+  Entity* node = _manipulator->create_browser_node(true, ComponentDID::kClearElementHighlightsCompute);
+  _manipulator->link_to_selected_node(node);
+  finish();
+}
+
 }

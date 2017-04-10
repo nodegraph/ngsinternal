@@ -308,13 +308,26 @@ public class WebDriverWrap {
             _web_driver.get("chrome://extensions-frame");
             // Wait for the checkbox to appears, as sometimes it won't be ready in time.
             WebDriverWait wait = new WebDriverWait(_web_driver, 10);
-            String xpath = "//*[@id='chmloafcpkncilcdppohneohkdlgoneb']/div/div[2]/div/label/input";
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
-            // Now click it.
-            WebElement checkbox = _web_driver.findElement(By.xpath(xpath));
-            if (checkbox.isSelected()) {
-                checkbox.click();
+            
+            // Find 2 enable checkes boxes for youmacro and selenium.
+            int num_check_boxes = 2;
+            String xpath = "//*/div/div[2]/div/label/input";
+            List<WebElement> elements = _web_driver.findElements(By.xpath(xpath));
+            while (elements.size() < num_check_boxes) {
+            	elements = _web_driver.findElements(By.xpath(xpath));
             }
+            
+            // Make sure both are disabled.
+    		for (int i=0; i<num_check_boxes; i++) {
+    			WebElement e = elements.get(i);
+    			try {
+    				wait.until(ExpectedConditions.elementToBeClickable(e));
+    		        if (e.isSelected()) {
+    		            e.click();
+    		        }
+    	        } catch (Throwable exception) {}
+            }
+            
             // Navigate back to previous page.
             navigate_back();
     		
@@ -569,6 +582,11 @@ public class WebDriverWrap {
     void send_key(String fe_index_path, String xpath, String key) {
         get_element(fe_index_path, xpath).sendKeys(key);
     }
+    
+    void send_key_to_active(String key) {
+    	WebElement active = _web_driver.switchTo().activeElement(); 
+        active.sendKeys(key);
+    }
 
     String get_text(String fe_index_path, String xpath) {
         return get_element(fe_index_path, xpath).getText();
@@ -576,6 +594,11 @@ public class WebDriverWrap {
 
     void send_text(String fe_index_path, String xpath, String text) {
         get_element(fe_index_path, xpath).sendKeys(Keys.HOME, Keys.chord(Keys.SHIFT, Keys.END), text);
+    }
+    
+    void send_text_to_active(String text) {
+    	WebElement active = _web_driver.switchTo().activeElement(); 
+    	active.sendKeys(text); 
     }
     
     void click_on_element(String fe_index_path, String xpath, int local_x, int local_y, boolean hold_ctrl) {

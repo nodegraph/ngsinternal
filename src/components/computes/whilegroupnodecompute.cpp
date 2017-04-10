@@ -52,10 +52,11 @@ bool WhileGroupNodeCompute::update_state() {
   // Get the value of the condition.
   QJsonObject in_obj = _inputs->get_main_input_object();
   QJsonValue condition_value = in_obj.value("value");
+  bool condition = JSONUtils::convert_to_bool(condition_value);
 
   // If the "condition" input is false then we copy the value from the main input to the main output.
   // We set the value to zero for all other outputs.
-  if (!condition_value.toBool()) {
+  if (!condition) {
     Entity* outputs = get_entity(Path( { ".", kOutputsFolderName }));
     for (auto &iter : outputs->get_children()) {
       Entity* output_entity = iter.second;

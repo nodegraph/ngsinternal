@@ -282,8 +282,21 @@ public class JComm {
 	                System.out.println(resp.to_string());
 	            	break;
 	            }
+	            case kSendTextToActive: {
+	            	String text = req.get_args().getAsJsonObject().get("text").getAsString();
+	            	web_driver.send_text_to_active(text);
+	            	ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
+	                System.out.println(resp.to_string());
+	            	break;
+	            }
 	            case kSendEnter: {
 	                web_driver.send_key(fe_index_path, xpath, Keys.RETURN.toString());
+	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
+	                System.out.println(resp.to_string());
+	                break;
+	            }
+	            case kSendEnterToActive: {
+	            	web_driver.send_key_to_active(Keys.RETURN.toString());
 	                ResponseMessage resp = new ResponseMessage(req.get_id(), true, results);
 	                System.out.println(resp.to_string());
 	                break;

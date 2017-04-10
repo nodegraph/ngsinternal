@@ -142,33 +142,48 @@ class ElemWrap {
         // If the :before and :after pseudo element and the element itself is not visible,
         // then we are are not visible.
 
-        // Check the :before pseudo element first.
-        let before_is_visible = true
-        let before_style = window.getComputedStyle(this.element, ':before');
-        if (before_style.visibility == "hidden" || (before_style.display == 'none')) {
-            before_is_visible = false
+        // // Check the :before pseudo element first.
+        // let before_is_visible = true
+        // let before_style = window.getComputedStyle(this.element, ':before');
+        // if (before_style.visibility == "hidden" || (before_style.display == 'none')) {
+        //     before_is_visible = false
+        // }
+
+        // // Check the :after pseudo element first.
+        // let after_is_visible = true
+        // let after_style = window.getComputedStyle(this.element, ':after');
+        // if (after_style.visibility == "hidden" || (after_style.display == 'none')) {
+        //     after_is_visible = false
+        // }
+
+        // // Now check the actual element.
+        // let main_is_visible = true
+        // let style = window.getComputedStyle(this.element, null)
+        // if (style.visibility != "visible") {
+        //     main_is_visible = false
+        // }
+
+        // // If all 3 are not visible then we're not visible.
+        // if (!before_is_visible && !after_is_visible && !main_is_visible) {
+        //     return false
+        // }
+
+        // Check if the element is being overlapped.
+        // If any of the 4 corners is visible, then we consider it visible.
+        this.element.getBoundingClientRect()
+        let elem_rect = this.element.getBoundingClientRect()
+        let corner_visible = false
+        if (this.element == document.elementFromPoint(elem_rect.left+1, elem_rect.top+1)) {
+            corner_visible = true
+        } else if (this.element != document.elementFromPoint(elem_rect.right-1, elem_rect.top+1)) {
+            corner_visible = true
+        } else if (this.element != document.elementFromPoint(elem_rect.left+1, elem_rect.bottom-1)) {
+            corner_visible = true
+        } else if (this.element != document.elementFromPoint(elem_rect.right-1, elem_rect.bottom-1)) {
+            corner_visible = true
         }
 
-        // Check the :after pseudo element first.
-        let after_is_visible = true
-        let after_style = window.getComputedStyle(this.element, ':after');
-        if (after_style.visibility == "hidden" || (after_style.display == 'none')) {
-            after_is_visible = false
-        }
-
-        // Now check the actual element.
-        let main_is_visible = true
-        let style = window.getComputedStyle(this.element, null)
-        if (style.visibility != "visible") {
-            main_is_visible = false
-        }
-
-        // If all 3 are not visible then we're not visible.
-        if (!before_is_visible && !after_is_visible && !main_is_visible) {
-            return false
-        }
-
-        return true
+        return corner_visible
     }
 
     get_z_index(): number {

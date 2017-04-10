@@ -90,7 +90,7 @@ Q_OBJECT
   Q_INVOKABLE void record_prune_duplicates();
 
   Q_INVOKABLE void record_highlight_elements();
-
+  Q_INVOKABLE void record_clear_element_highlights();
 
   signals:
     void web_action_ignored();

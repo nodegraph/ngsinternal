@@ -49,6 +49,7 @@ class GUICOMPUTES_EXPORT BrowserCompute: public Compute {
   Dep<MessageSender> _msg_sender;
   Dep<InputNodeCompute> _browser_width;
   Dep<InputNodeCompute> _browser_height;
+  Dep<InputNodeCompute> _release;
 };
 
 class GUICOMPUTES_EXPORT OpenBrowserCompute: public BrowserCompute {
@@ -240,6 +241,14 @@ class GUICOMPUTES_EXPORT HighlightElementsCompute: public BrowserCompute {
  public:
   COMPONENT_ID(Compute, HighlightElementsCompute);
   HighlightElementsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
+ protected:
+  virtual bool update_state();
+};
+
+class GUICOMPUTES_EXPORT ClearElementHighlightsCompute: public BrowserCompute {
+ public:
+  COMPONENT_ID(Compute, ClearElementHighlightsCompute);
+  ClearElementHighlightsCompute(Entity* entity): BrowserCompute(entity, kDID()){}
  protected:
   virtual bool update_state();
 };

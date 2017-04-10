@@ -256,6 +256,7 @@ COMPONENT_ENTRY2(ElementScrollCompute, 85)\
 COMPONENT_ENTRY2(ElementScrollIntoViewCompute, 86)\
 /* New filtering based architecture. */\
 COMPONENT_ENTRY2(HighlightElementsCompute, 87)\
+COMPONENT_ENTRY2(ClearElementHighlightsCompute, 105)\
 COMPONENT_ENTRY2(GetAllElementsCompute, 88)\
 COMPONENT_ENTRY2(IsolateByTypeAndValueNodeCompute, 89)\
 COMPONENT_ENTRY2(IsolateByPositionNodeCompute, 90)\
@@ -269,7 +270,7 @@ COMPONENT_ENTRY2(JoinElementsNodeCompute, 100)\
 COMPONENT_ENTRY2(PruneElementsNodeCompute, 102)\
 COMPONENT_ENTRY2(PruneDuplicatesNodeCompute, 103)\
 
-// Numbers currently in use are: [0-104]
+// Numbers currently in use are: [0-105]
 // Note that in our notation we use [ and ] for closed left and right bounds respectively.
 // We use ( and ) for open left and right bounds respectively.
 
