@@ -739,9 +739,7 @@ bool ClearElementHighlightsCompute::update_state() {
   TaskContext tc(_scheduler);
   queue_start_update(tc);
   {
-    QJsonObject params = get_params();
-    Message req(ChromeRequestType::kClearElementHighlights, params);
-    _queuer->queue_send_msg(tc, req);
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kClearElementHighlights));
   }
   queue_on_results(tc);
   queue_end_update(tc);
