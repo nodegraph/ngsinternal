@@ -38,7 +38,7 @@ Rectangle {
     function on_switch_to_mode(mode) {
         if (mode == app_settings.settings_mode) {
             if (file_model.get_working_row()>=0) {
-                stack_view_header.title_text = file_model.get_work_setting('title') + ' file'
+                stack_view_header.title_text = file_model.get_work_setting('title')
                 lock_links_check_box.checked = file_model.get_work_setting('lock_links')
                 max_concurrent_downloads_text_field.text = file_model.get_work_setting('max_concurrent_downloads')
                 max_node_posts_text_field.text = file_model.get_work_setting('max_node_posts')
