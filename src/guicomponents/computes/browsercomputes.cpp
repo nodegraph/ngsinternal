@@ -706,6 +706,9 @@ bool GetAllElementsCompute::update_state() {
   TaskContext tc(_scheduler);
   queue_start_update(tc);
   {
+    // Clear all of our element highlights as they affect the XPath of the elements.
+    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kClearElementHighlights));
+    // Get the info of all our elements, including their XPaths.
     _queuer->queue_send_msg(tc, Message(ChromeRequestType::kGetAllElements));
   }
   queue_on_results(tc);
