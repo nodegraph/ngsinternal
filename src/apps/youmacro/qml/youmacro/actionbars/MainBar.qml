@@ -95,15 +95,15 @@ Rectangle {
             node_graph_button.lit = true
             action_bar_title.text = "Node Graph"
             more_menu_button.visible = false
-        } else if (m == app_settings.posts_mode) {
-            clear_lit_buttons()
-            posts_button.lit = true
-            action_bar_title.text = "Posts"
-            more_menu_button.visible = false
         } else if (m == app_settings.macro_mode) {
             clear_lit_buttons()
             macro_button.lit = true
             action_bar_title.text = "Macros"
+            more_menu_button.visible = false
+        } else if (m == app_settings.posts_mode) {
+            clear_lit_buttons()
+            posts_button.lit = true
+            action_bar_title.text = "Posts"
             more_menu_button.visible = false
         } else if (m == app_settings.downloads_mode) {
             clear_lit_buttons()
@@ -167,9 +167,9 @@ Rectangle {
     function clear_lit_buttons() {
         file_button.lit = false
         node_graph_button.lit = false
-        posts_button.lit = false
         
         macro_button.lit = false
+        posts_button.lit = false
         downloads_button.lit = false
         downloaded_button.lit = false
         settings_button.lit = false
@@ -239,7 +239,7 @@ Rectangle {
         
         anchors {
         	verticalCenter: parent.verticalCenter
-        	right: posts_button.left
+        	right: macro_button.left
         	leftMargin: app_settings.action_bar_left_margin
     		rightMargin: app_settings.action_bar_right_margin
         }
@@ -251,15 +251,33 @@ Rectangle {
             on_switch_to_mode(app_settings.node_graph_mode)
         }
     }
-
-    // Hot Posts Mode Button.
+    
+    // Downloads Mode Button.
     AppImageButton {
-        id: posts_button
-        visible: settings_page.advanced_features
+        id: macro_button
         
         anchors {
         	verticalCenter: parent.verticalCenter
-        	right: macro_button.left
+        	right: posts_button.left
+        	leftMargin: app_settings.action_bar_left_margin
+    		rightMargin: app_settings.action_bar_right_margin
+    	}
+        
+        image_url: "qrc:///icons/ic_toys_white_48dp.png"
+        tooltip_text: "macros"
+        
+        onClicked: {
+            on_switch_to_mode(app_settings.macro_mode)
+        }
+    }
+    
+    // Hot Posts Mode Button.
+    AppImageButton {
+        id: posts_button
+        
+        anchors {
+        	verticalCenter: parent.verticalCenter
+        	right: downloads_button.left
         	leftMargin: app_settings.action_bar_left_margin
     		rightMargin: app_settings.action_bar_right_margin
     	}
@@ -272,24 +290,6 @@ Rectangle {
         }
     }
     
-    // Downloads Mode Button.
-    AppImageButton {
-        id: macro_button
-        
-        anchors {
-        	verticalCenter: parent.verticalCenter
-        	right: downloads_button.left
-        	leftMargin: app_settings.action_bar_left_margin
-    		rightMargin: app_settings.action_bar_right_margin
-    	}
-        
-        image_url: "qrc:///icons/ic_toys_white_48dp.png"
-        tooltip_text: "macros"
-        
-        onClicked: {
-            on_switch_to_mode(app_settings.macro_mode)
-        }
-    }
     
     // Downloads Mode Button.
     AppImageButton {
