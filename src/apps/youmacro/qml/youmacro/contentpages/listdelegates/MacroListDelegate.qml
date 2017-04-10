@@ -18,7 +18,7 @@ BaseImageIconListDelegate {
     id: delegate
     
     // Displayed Content.
-    _image_url: "qrc:///icons/ic_insert_drive_file_white_48dp.png"
+    _image_url: "qrc:///icons/ic_gesture_white_48dp.png"
     _title: title
     _content: description
     

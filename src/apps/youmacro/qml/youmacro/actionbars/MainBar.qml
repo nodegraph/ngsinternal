@@ -148,7 +148,8 @@ Rectangle {
     	if (settings_page.advanced_features) {
     		switch_to_node_graph()
     	} else {
-    		on_switch_to_mode(app_settings.macro_mode)
+    		// Most users will just be interested in manually drag and dropping videos.
+    		on_switch_to_mode(app_settings.downloads_mode)
     	}
     }
     
