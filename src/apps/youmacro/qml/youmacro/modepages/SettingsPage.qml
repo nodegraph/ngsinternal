@@ -27,12 +27,14 @@ Rectangle {
     // Appearance.
     color: app_settings.menu_stack_bg_color
     
-    property bool advanced_features: settings.advanced_features
+    property bool advanced_features: false
     
-    Settings {
-    	id: settings
-        property alias advanced_features: advanced_check_box.checked
-    }
+    // Uncomment the following to remember the advanced features settings across sessions.
+    //property bool advanced_features: settings.advanced_features
+    //Settings {
+    //	id: settings
+    //    property alias advanced_features: advanced_check_box.checked
+    //}
 
     // Methods.
     function on_switch_to_mode(mode) {
@@ -108,6 +110,7 @@ Rectangle {
                     rightMargin: app_settings.page_right_margin
                 }
                 onClicked: {
+                	settings_page.advanced_features = checked
                 	main_bar.clear_mode_stack()
                 }
             }
