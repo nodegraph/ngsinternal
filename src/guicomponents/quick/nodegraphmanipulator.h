@@ -115,6 +115,9 @@ Q_OBJECT
 
   virtual void send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj);
 
+
+  virtual void report_dl_usage();
+
   signals:
   void post_value(int post_type, QString title, QJsonObject obj);
 
@@ -240,6 +243,8 @@ class QUICK_EXPORT NodeGraphManipulator : public BaseNodeGraphManipulator {
 
   virtual void send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj);
   NodeGraphManipulatorImp* get_imp() {return _imp;}
+
+  virtual void report_dl_usage();
 
  protected:
   virtual void initialize_wires();

@@ -187,6 +187,9 @@ void DownloadManager::on_finished() {
   destroy_process(id);
   remove_id_from_map(id);
   emit download_finished(row);
+
+  // Report download usage.
+  _manipulator->report_dl_usage();
 }
 
 // ---------------------------------------------------------------------------------------------

@@ -54,6 +54,7 @@ class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
 
   Q_INVOKABLE void report_app_usage();
   Q_INVOKABLE void report_ng_usage();
+  Q_INVOKABLE void report_dl_usage();
 
   Q_INVOKABLE void vibrate(int milliseconds) {_vibrator.vibrate(milliseconds);}
 
@@ -64,6 +65,9 @@ class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
    void on_ng_usage_read();
    void on_ng_usage_write();
 
+   void on_dl_usage_read();
+   void on_dl_usage_write();
+
  private:
 
    void send_get_request(const QString& url, const char* slot);
@@ -73,11 +77,9 @@ class QUICK_EXPORT NodeGraphView: public QQuickView, public Component {
 
   static const QString kAppUsageURL;
   static const QString kNGUsageURL;
+  static const QString kDLUsageURL;
 
   QNetworkAccessManager _nam;
-  bool _app_usage_reported;
-  bool _ng_usage_reported;
-
 
   bool _update_is_starting;
 

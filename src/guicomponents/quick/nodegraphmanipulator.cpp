@@ -883,6 +883,10 @@ void NodeGraphManipulatorImp::on_auto_run_interval_changed(int i) {
   update_auto_run_timer();
 }
 
+void NodeGraphManipulatorImp::report_dl_usage() {
+  _ng_view->report_dl_usage();
+}
+
 // -----------------------------------------------------------------------------------
 // The NodeGraphManipulator.
 // -----------------------------------------------------------------------------------
@@ -1068,6 +1072,10 @@ void NodeGraphManipulator::set_mqtt_override(const Path& node_path, const QStrin
 
 void NodeGraphManipulator::send_post_value_signal(int post_type, const QString& title, const QJsonObject& obj) {
   _imp->send_post_value_signal(post_type, title, obj);
+}
+
+void NodeGraphManipulator::report_dl_usage() {
+  _imp->report_dl_usage();
 }
 
 }

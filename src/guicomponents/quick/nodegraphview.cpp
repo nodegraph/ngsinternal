@@ -50,14 +50,13 @@ void Vibrator::vibrate(int milliseconds) {
 // This would have been nicer but, it doesn't allow us to set the opengl context and version settings.
 // Hence we use a QQuickView as the ApplicationWindow and then load QML components into that.
 
-const QString NodeGraphView::kAppUsageURL = "https://youmacro-b4698.firebaseio.com/app_usage.json";
-const QString NodeGraphView::kNGUsageURL = "https://youmacro-b4698.firebaseio.com/ng_usage.json";
+const QString NodeGraphView::kAppUsageURL = "https://youmacro.firebaseio.com/app_usage.json";
+const QString NodeGraphView::kNGUsageURL = "https://youmacro.firebaseio.com/ng_usage.json";
+const QString NodeGraphView::kDLUsageURL = "https://youmacro.firebaseio.com/dl_usage.json";
 
 NodeGraphView::NodeGraphView(Entity* entity)
     : QQuickView(NULL),
       Component(entity, kIID(), kDID()),
-      _app_usage_reported(false),
-      _ng_usage_reported(false),
       _update_is_starting(false),
       _vibrator(this) {
 
@@ -176,19 +175,15 @@ bool NodeGraphView::read_number_fron_reply(QNetworkReply *reply, long& number) {
 }
 
 void NodeGraphView::report_app_usage() {
-  if (_app_usage_reported) {
-    return;
-  }
   send_get_request(kAppUsageURL, SLOT(on_app_usage_read()));
-  _app_usage_reported = true;
 }
 
 void NodeGraphView::report_ng_usage() {
-  if (_ng_usage_reported) {
-    return;
-  }
   send_get_request(kNGUsageURL, SLOT(on_ng_usage_read()));
-  _ng_usage_reported = true;
+}
+
+void NodeGraphView::report_dl_usage() {
+  send_get_request(kDLUsageURL, SLOT(on_dl_usage_read()));
 }
 
 void NodeGraphView::on_app_usage_read() {
@@ -225,12 +220,33 @@ void NodeGraphView::on_ng_usage_read() {
   }
 }
 
+void NodeGraphView::on_dl_usage_read() {
+  QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
+  if (!reply) {
+    return;
+  }
+
+  if (reply->error() == QNetworkReply::NoError) {
+    //std::cerr << "Content Type for reply: " << reply->header(QNetworkRequest::ContentTypeHeader).toString().toStdString() << "\n";
+
+    long number;
+    if (read_number_fron_reply(reply, number)) {
+      number += 1;
+      send_put_request(kDLUsageURL, QString::number(number).toUtf8(), SLOT(on_dl_usage_write()));
+    }
+  }
+}
+
 void NodeGraphView::on_app_usage_write() {
 }
 
 
 
 void NodeGraphView::on_ng_usage_write() {
+}
+
+void NodeGraphView::on_dl_usage_write() {
+
 }
 
 }
