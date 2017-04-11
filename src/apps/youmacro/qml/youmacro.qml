@@ -17,6 +17,8 @@ import youmacro.appconfig 1.0
 import youmacro.contentpages.listmodels 1.0
 import youmacro.contentpages.enterdatapages 1.0
 
+import GUITypes 1.0
+
 Rectangle {
     id: app_window
     anchors.fill: parent
@@ -191,12 +193,12 @@ Rectangle {
     }
 
     function update_dependencies() {
-        // Mode change connections.
+        // Modes with associated buttons..
         main_bar.switch_to_mode.connect(file_menu_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         
 		main_bar.switch_to_mode.connect(macro_list_stack_page.on_switch_to_mode)
+		main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(downloads_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(downloaded_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(settings_page.on_switch_to_mode)
@@ -207,10 +209,8 @@ Rectangle {
         main_bar.switch_to_mode.connect(ng_menu_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(web_menu_list_stack_page.on_switch_to_mode)
 
-        // Node graph connections.
-        node_graph_item.node_graph_context_menu_requested.connect(ng_menu_list_stack_page.on_node_graph_context_menu)
-        node_graph_item.node_context_menu_requested.connect(ng_menu_list_stack_page.on_node_context_menu)
-        node_graph_item.group_node_context_menu_requested.connect(ng_menu_list_stack_page.on_group_node_context_menu)
+		// Triggers to activate the modes without buttons.
+        node_graph_item.switch_to_mode.connect(main_bar.on_switch_to_mode)
 
         // Web actions mode.
         task_queuer.show_web_action_menu.connect(web_menu_list_stack_page.on_show_web_action_menu)
@@ -227,15 +227,24 @@ Rectangle {
         
         // Manipuloatr connections.
         manipulator.post_value.connect(posts_page.on_post_value)
+        
+        // Node viewing and editing.
+        node_graph_item.view_node_outputs.connect(view_data_list_stack_page.on_view_outputs)
+        node_graph_item.edit_node_inputs.connect(edit_data_list_stack_page.on_edit_inputs)
+        node_graph_item.set_error_message.connect(error_page.set_error_message)
+        node_graph_item.show_error_page.connect(error_page.show_page)
 
         // Copy paste menu.
         // Connection to bring up the copy paste menu on android.
         Qt.inputMethod.visibleChanged.connect(copy_paste_bar.on_virtual_keyboard_visibility_changed)
 
+        // Hook up some pre-close tasks.
+        quick_view.closing.connect(app_window.on_closing)
+
 		// Determine the next page to show.
 		if (license_checker.license_is_valid()) {
 			// Skip right to the node graph.
-			main_bar.switch_to_mode(app_settings.node_graph_mode)
+			main_bar.switch_to_node_graph()
 			app_utils.load_last_graph()
 			app_utils.frame_all_on_idle()
 		} else if (crypto_logic.crypto_exists()) {
@@ -247,14 +256,7 @@ Rectangle {
             create_password_page.visible = true
         }
 
-        // Hook up some pre-close tasks.
-        quick_view.closing.connect(app_window.on_closing)
 
-        // Node viewing and editing.
-        node_graph_item.view_node_outputs.connect(view_data_list_stack_page.on_view_outputs)
-        node_graph_item.edit_node_inputs.connect(edit_data_list_stack_page.on_edit_inputs)
-        node_graph_item.set_error_message.connect(error_page.set_error_message)
-        node_graph_item.show_error_page.connect(error_page.show_page)
     }
 
 //    // Prevent the android hardware back from closing the app.

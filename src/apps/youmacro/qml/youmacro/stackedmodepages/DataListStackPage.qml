@@ -33,13 +33,13 @@ BaseStackPage{
     // Framework Methods.
     function on_switch_to_mode(mode) {
         if (_allow_edits) {
-            if (mode == app_settings.edit_node_mode) {
+            if (mode == GUITypes.EditNodeMode) {
                 visible = true
             } else {
                 visible = false
             }
         } else {
-            if (mode == app_settings.view_node_mode) {
+            if (mode == GUITypes.ViewNodeMode) {
                 visible = true
             } else {
                 visible = false

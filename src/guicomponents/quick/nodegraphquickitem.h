@@ -121,9 +121,7 @@ Q_OBJECT
  signals:
 
  // Our signals.
- void node_graph_context_menu_requested(bool center);
- void group_node_context_menu_requested();
- void node_context_menu_requested();
+ void switch_to_mode(int mode);
 
  void view_node_outputs(const QString& node_path, const QJsonObject& results);
  void edit_node_inputs(const QString& node_path, const QJsonObject& values, const QJsonObject& hints, const QJsonObject& exposed_settings);

@@ -13,6 +13,7 @@ import youmacro.stackedmodepages 1.0
 import youmacro.appwidgets 1.0
 import youmacro.contentpages.listmodels 1.0
 
+import GUITypes 1.0
 
 BaseStackPage{
     id: page
@@ -22,8 +23,17 @@ BaseStackPage{
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
-    	// We always hide ourself, as there isn't actually a mode for us.
-        visible = false;
+    	console.log('ng menu list switching to mode: ' + mode)
+        if (mode == GUITypes.NGMenuMode) {
+            on_node_graph_context_menu()
+        } else if (mode == GUITypes.NodeMenuMode) {
+            on_node_context_menu()
+        } else if (mode == GUITypes.GroupNodeMenuMode) {
+            on_group_node_context_menu()
+        } else {
+            visible = false;
+            stack_view.clear_pages()
+        }
     }
 
     // -------------------------------------------------------------------------------------------

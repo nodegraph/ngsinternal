@@ -94,6 +94,28 @@ class COMMS_EXPORT GUITypes : public QObject
     };
     Q_ENUM(VideoDownloadState)
 
+
+    enum class AppMode: int {
+      // Modes with buttons in the mainbar.
+      FileMode = 0,
+      NodeGraphMode = 1,
+      MacroMode = 2,
+      PostsMode = 3,
+      DownloadsMode = 4,
+      DownloadedMode = 5,
+      SettingsMode = 6,
+
+      // Modes without buttons in the mainbar.
+      ViewNodeMode = 7,
+      EditNodeMode = 8,
+      NGMenuMode = 9,
+      NodeMenuMode = 10,
+      GroupNodeMenuMode = 11,
+      WebMenuMode = 12
+    };
+    Q_ENUM(AppMode)
+
+
     GUITypes();
 };
 

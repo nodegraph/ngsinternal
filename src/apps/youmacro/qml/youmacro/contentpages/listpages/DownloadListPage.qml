@@ -31,7 +31,7 @@ BaseListPage {
     
     // Methods.
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.downloads_mode) {
+        if (mode == GUITypes.DownloadsMode) {
             update_header()
             visible = true
         } else {

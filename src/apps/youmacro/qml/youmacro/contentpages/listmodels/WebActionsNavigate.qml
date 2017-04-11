@@ -17,7 +17,7 @@ ListModel {
         title: "Back"
         description: "Go back in the browser history."
         script: "browser_recorder.record_navigate_back();
-                 main_bar.switch_to_node_graph();"
+                 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -25,7 +25,7 @@ ListModel {
         title: "Forward"
         description: "Go forward in the browser history."
         script: "browser_recorder.record_navigate_forward();
-                 main_bar.switch_to_node_graph();"
+                 main_bar.switch_to_last_mode();"
     }
 
     ListElement {
@@ -33,7 +33,7 @@ ListModel {
         title: "Refresh"
         description: "Refresh the current web page."
         script: "browser_recorder.record_navigate_refresh();
-                 main_bar.switch_to_node_graph();"
+                 main_bar.switch_to_last_mode();"
     }
  
 }

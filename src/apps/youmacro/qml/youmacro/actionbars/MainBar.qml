@@ -7,6 +7,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 
 import youmacro.appwidgets 1.0
+import GUITypes 1.0
 
 Rectangle {
     id: main_bar
@@ -28,15 +29,14 @@ Rectangle {
     property var mode_stack: []
 
     Component.onCompleted: {
-    	on_switch_to_mode(app_settings.node_graph_mode)
     }
     
     function get_current_mode() {
     	if (mode_stack.length == 0) {
     		if (settings_page.advanced_features) {
-    			return app_settings.node_graph_mode
+    			return GUITypes.NodeGraphMode
     		} else {
-    			return app_settings.downloads_mode
+    			return GUITypes.DownloadsMode
     		}
     	}
     	return mode_stack[mode_stack.length-1]
@@ -66,6 +66,8 @@ Rectangle {
     // Methods.
     // Set the current mode of the action bar.
     function on_switch_to_mode(m) {
+    	console.log('switching to mode: ' + m)
+    
     	// If we're busy cleaning the node graph, there are certain tabs
     	// that we can't go to because they may interrupt the cleaning.
     	// For example, loading or destorying the file while the node graph
@@ -73,11 +75,11 @@ Rectangle {
     	if (manipulator.is_busy_cleaning()) {
     		// We allow going back and forth between things like the node graph
     		// and the posts or downloads or viewing the outputs.
-    		if (m == app_settings.file_mode) {
+    		if (m == GUITypes.FileMode) {
     		    app_tooltip.show(file_button, "please wait")
             	quick_view.vibrate(10)
     			return
-    		} else if (m == app_settings.settings_mode) {
+    		} else if (m == GUITypes.SettingsMode) {
     			app_tooltip.show(settings_button, "please wait")
             	quick_view.vibrate(10)
     			return
@@ -85,37 +87,37 @@ Rectangle {
 
     	}
     	
-        if (m == app_settings.file_mode) {
+        if (m == GUITypes.FileMode) {
         	clear_lit_buttons()
             file_button.lit = true
             action_bar_title.text = "Files"
             more_menu_button.visible = false
-        } else if (m == app_settings.node_graph_mode) {
+        } else if (m == GUITypes.NodeGraphMode) {
         	clear_lit_buttons()
             node_graph_button.lit = true
             action_bar_title.text = "Node Graph"
             more_menu_button.visible = false
-        } else if (m == app_settings.macro_mode) {
+        } else if (m == GUITypes.MacroMode) {
             clear_lit_buttons()
             macro_button.lit = true
             action_bar_title.text = "Macros"
             more_menu_button.visible = false
-        } else if (m == app_settings.posts_mode) {
+        } else if (m == GUITypes.PostsMode) {
             clear_lit_buttons()
             posts_button.lit = true
             action_bar_title.text = "Posts"
             more_menu_button.visible = false
-        } else if (m == app_settings.downloads_mode) {
+        } else if (m == GUITypes.DownloadsMode) {
             clear_lit_buttons()
         	downloads_button.lit = true
         	action_bar_title.text = "Downloading"
             more_menu_button.visible = false
-        } else if (m == app_settings.downloaded_mode) {
+        } else if (m == GUITypes.DownloadedMode) {
             clear_lit_buttons()
         	downloaded_button.lit = true
         	action_bar_title.text = "Downloaded"
             more_menu_button.visible = false
-        } else if (m == app_settings.settings_mode) {
+        } else if (m == GUITypes.SettingsMode) {
             clear_lit_buttons()
             settings_button.lit = true
             action_bar_title.text = "Settings"
@@ -126,10 +128,6 @@ Rectangle {
         // Update our mode stack.
         trim_mode_stack();
         push_mode(m);
-
-        // Make sure the node actions aren't showing.
-        ng_menu_list_stack_page.stack_view.clear_pages()
-        ng_menu_list_stack_page.visible = false
     }
     
     function switch_to_last_mode(m) {
@@ -149,20 +147,20 @@ Rectangle {
     		switch_to_node_graph()
     	} else {
     		// Most users will just be interested in manually drag and dropping videos.
-    		on_switch_to_mode(app_settings.downloads_mode)
+    		on_switch_to_mode(GUITypes.DownloadsMode)
     	}
     }
     
     function switch_to_node_graph() {
-    	on_switch_to_mode(app_settings.node_graph_mode)
+    	on_switch_to_mode(GUITypes.NodeGraphMode)
     }
     
     function switch_to_view_node_mode() {
-    	on_switch_to_mode(app_settings.view_node_mode)
+    	on_switch_to_mode(GUITypes.ViewNodeMode)
     }
     
     function switch_to_edit_node_mode() {
-    	on_switch_to_mode(app_settings.edit_node_mode)
+    	on_switch_to_mode(GUITypes.EditNodeMode)
     }
 
     function clear_lit_buttons() {
@@ -229,7 +227,7 @@ Rectangle {
         tooltip_text: "node graph files"
 
         onClicked: {
-            on_switch_to_mode(app_settings.file_mode)
+            on_switch_to_mode(GUITypes.FileMode)
         }
     }
 
@@ -249,7 +247,7 @@ Rectangle {
         tooltip_text: "node graph"
         
         onClicked: {
-            on_switch_to_mode(app_settings.node_graph_mode)
+            on_switch_to_mode(GUITypes.NodeGraphMode)
         }
     }
     
@@ -268,7 +266,7 @@ Rectangle {
         tooltip_text: "macros"
         
         onClicked: {
-            on_switch_to_mode(app_settings.macro_mode)
+            on_switch_to_mode(GUITypes.MacroMode)
         }
     }
     
@@ -287,7 +285,7 @@ Rectangle {
         tooltip_text: "posts"
         
         onClicked: {
-            on_switch_to_mode(app_settings.posts_mode)
+            on_switch_to_mode(GUITypes.PostsMode)
         }
     }
     
@@ -307,7 +305,7 @@ Rectangle {
         tooltip_text: "downloading"
         
         onClicked: {
-            on_switch_to_mode(app_settings.downloads_mode)
+            on_switch_to_mode(GUITypes.DownloadsMode)
         }
     }
     
@@ -326,7 +324,7 @@ Rectangle {
         tooltip_text: "downloaded"
         
         onClicked: {
-            on_switch_to_mode(app_settings.downloaded_mode)
+            on_switch_to_mode(GUITypes.DownloadedMode)
         }
     }
 
@@ -346,7 +344,7 @@ Rectangle {
             tooltip_text: "node graph settings"
         
         onClicked: {
-            on_switch_to_mode(app_settings.settings_mode)
+            on_switch_to_mode(GUITypes.SettingsMode)
         }
     }
 }

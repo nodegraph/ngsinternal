@@ -12,12 +12,14 @@ import youmacro.stackedmodepages 1.0
 import youmacro.appwidgets 1.0
 import youmacro.contentpages.listmodels 1.0
 
+import GUITypes 1.0
+
 BaseStackPage{
     id: page
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.file_mode) {
+        if (mode == GUITypes.FileMode) {
             visible = true;
             stack_view.push_by_names("manage files", "FileMenuListPage", "FileMenuActions")
         } else {
@@ -31,7 +33,7 @@ BaseStackPage{
     // --------------------------------------------------------------------------------------------------------------------
 
     function on_finished_with_menu() {
-        main_bar.switch_to_mode(app_settings.node_graph_mode)
+    	main_bar.switch_to_last_mode()
     }
 
     function on_file_single_clicked(row) {

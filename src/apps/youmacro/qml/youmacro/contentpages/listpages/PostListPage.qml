@@ -35,7 +35,7 @@ BaseListPage {
 
     // Methods.
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.posts_mode) {
+        if (mode == GUITypes.PostsMode) {
             update_header()
             visible = true;
         } else {

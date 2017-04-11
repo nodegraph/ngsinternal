@@ -14,6 +14,8 @@ import youmacro.fullpages 1.0
 import youmacro.appwidgets 1.0
 import youmacro.contentpages.listmodels 1.0
 
+import GUITypes 1.0
+
 // The Stack View.
 StackView {
     id: stack_view

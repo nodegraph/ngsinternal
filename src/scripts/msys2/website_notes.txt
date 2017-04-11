@@ -1,0 +1,18 @@
+
+
+Open BroadCaster Notes:
+- converting recorded mp4 to DNxHR for davinci resolve
+ffmpeg -i in.mp4 -c:v dnxhd -profile:v dnxhr_hq out.mov
+
+
+Resolve Notes:
+- render out 4k files to .mov with mp4
+
+
+This is how i enabled logging on firebase storage.
+See google cloud logging fore more info.
+gsutil logging set on -b gs://robodownloader-b4698.appspot.com  -o AccessLog gs://robodownloader-b4698.appspot.com
+gs://robodownloader-b4698.appspot.com
+
+Check if logging is enabled:
+gsutil logging get gs://robodownloader-b4698.appspot.com

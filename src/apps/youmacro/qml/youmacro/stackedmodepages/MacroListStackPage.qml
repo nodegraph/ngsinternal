@@ -12,12 +12,14 @@ import youmacro.stackedmodepages 1.0
 import youmacro.appwidgets 1.0
 import youmacro.contentpages.listmodels 1.0
 
+import GUITypes 1.0
+
 BaseStackPage{
     id: page
     
     // Framework Methods.
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.macro_mode) {
+        if (mode == GUITypes.MacroMode) {
             visible = true;
             on_open_file_list()
         } else {

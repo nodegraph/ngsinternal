@@ -603,17 +603,17 @@ void NodeGraphQuickItem::popup_context_menu() {
       // Send out context menu request signals.
       if (e->has_group_related_did() && (!e->has_macro_related_did())) {
         // Show the group context menu.
-        emit group_node_context_menu_requested();
+        emit switch_to_mode(to_underlying(GUITypes::AppMode::GroupNodeMenuMode));
       } else if (e->has<Compute>()) {
         Dep<CompShape> cs = get_dep<CompShape>(e);
         // Show the node context menu.
         if (cs->is_linkable()) {
-          emit node_context_menu_requested();
+          emit switch_to_mode(to_underlying(GUITypes::AppMode::NodeMenuMode));
         }
       }
     } else {
       // Show the node graph context menu.
-      emit node_graph_context_menu_requested(false);
+      emit switch_to_mode(to_underlying(GUITypes::AppMode::NGMenuMode));
     }
   }
 }

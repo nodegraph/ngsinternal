@@ -1,5 +1,6 @@
 import QtQuick 2.7
 
+import GUITypes 1.0
 import youmacro.appwidgets 1.0
 
 Rectangle {
@@ -32,7 +33,7 @@ Rectangle {
     	visible = false
     }
     function on_switch_to_mode(mode) {
-        if (mode == app_settings.node_graph_mode) {
+        if (mode == GUITypes.NodeGraphMode) {
             show_page()
         } else {
             hide_page()

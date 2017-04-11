@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import GUITypes 1.0
 
 // The first element contains the title to display in the stack view navigator.
 
@@ -45,7 +46,7 @@ ListModel {
         title: "Output Node"
         description: "Relays data from inside the group to the outside."
         script: "ng_controller.create_output_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+                 main_bar.switch_to_last_mode();"
     }
     
 	ListElement {
@@ -54,7 +55,7 @@ ListModel {
         title: "Error Node"
         description: "When this node is reached an error is raised."
         script: "ng_controller.create_error_node(center_new_nodes);
-                 main_bar.switch_to_mode(app_settings.node_graph_mode);"
+                 main_bar.switch_to_last_mode();"
     }
 
 
