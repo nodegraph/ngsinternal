@@ -196,7 +196,6 @@ Rectangle {
         // Modes with associated buttons..
         main_bar.switch_to_mode.connect(file_menu_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(node_graph_page.on_switch_to_mode)
-        
 		main_bar.switch_to_mode.connect(macro_list_stack_page.on_switch_to_mode)
 		main_bar.switch_to_mode.connect(posts_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(downloads_page.on_switch_to_mode)
@@ -206,8 +205,8 @@ Rectangle {
         // Modes without buttons.
         main_bar.switch_to_mode.connect(view_data_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(edit_data_list_stack_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(ng_menu_list_stack_page.on_switch_to_mode)
-        main_bar.switch_to_mode.connect(web_menu_list_stack_page.on_switch_to_mode)
+        main_bar.switch_to_mode.connect(ng_menu_list_stack_page.on_switch_to_mode) // Handles 3 menus: node graph, node and group node
+        main_bar.switch_to_mode.connect(web_menu_list_stack_page.on_switch_to_mode) // Handles the browser nodes menu.
 
 		// Triggers to activate the modes that down't have buttons in the mainbar.
         node_graph_item.switch_to_mode.connect(main_bar.on_switch_to_mode)
