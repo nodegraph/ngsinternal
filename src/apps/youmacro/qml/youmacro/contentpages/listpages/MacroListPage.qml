@@ -45,8 +45,8 @@ BaseListPage {
 		get_stack_page().on_edit_macro(list_view.currentIndex)
 	}
 	
-	function on_remove() {
-		get_stack_page().on_remove_macro(list_view.currentIndex)
+	function on_delete() {
+		get_stack_page().on_delete_macro(list_view.currentIndex)
 	}
 	
 	function on_rename() {
@@ -93,17 +93,6 @@ BaseListPage {
             width: app_settings.button_spacing
         }
         AppLabelButton {
-            text: "remove"
-            onClicked: {
-                on_remove()
-            }
-        }
-        Rectangle {
-            color: "transparent"
-            height: app_settings.action_bar_height
-            width: app_settings.button_spacing
-        }
-        AppLabelButton {
             text: "rename"
             onClicked: {
                 on_rename()
@@ -119,6 +108,17 @@ BaseListPage {
             text: "stop"
             onClicked: {
                 on_stop()
+            }
+        }
+        Rectangle {
+            color: "transparent"
+            height: app_settings.action_bar_height
+            width: app_settings.button_spacing
+        }
+        AppLabelButton {
+            text: "delete"
+            onClicked: {
+                on_delete()
             }
         }
         Item {Layout.fillWidth: true}

@@ -37,7 +37,7 @@ BaseStackPage{
     	node_graph_item.edit_main_macro_node()
     }
     
-    function on_remove_macro(row) {
+    function on_delete_macro(row) {
     	load_graph(row)
         node_graph_item.destroy_graph()
     }
