@@ -55,12 +55,12 @@ Rectangle{
         return false;
     }
     
-    function on_action_ignored() {
-        var push_page = app_loader.load_component("qrc:///qml/youmacro/contentpages/warningpages/IgnoredActionPage.qml", edit_data_list_stack_page, {})
-        push_page.visible = true
-        push_page.set_title("Busy")
-        stack_view.push_page(push_page)
-    }
+    //function on_action_ignored() {
+    //    var push_page = app_loader.load_component("qrc:///qml/youmacro/contentpages/warningpages/IgnoredActionPage.qml", edit_data_list_stack_page, {})
+    //    push_page.visible = true
+    //    push_page.set_title("Busy")
+    //    stack_view.push_page(push_page)
+    //}
 
     // The main stack view.
     AppStackView{

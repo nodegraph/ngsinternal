@@ -69,7 +69,7 @@ Q_OBJECT
   void queue_wait(TaskContext& tc);
 
 signals:
-  void show_web_action_menu();
+  void switch_to_mode(int mode);
   void select_option_texts(QStringList option_texts);
 
  private slots:

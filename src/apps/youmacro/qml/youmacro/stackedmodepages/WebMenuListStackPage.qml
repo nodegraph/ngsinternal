@@ -12,14 +12,19 @@ import youmacro.stackedmodepages 1.0
 import youmacro.appwidgets 1.0
 import youmacro.contentpages.listmodels 1.0
 
+import GUITypes 1.0
 
 BaseStackPage{
     id: page
 
     // Framework Methods.
     function on_switch_to_mode(mode) {
-    	// We always hide ourself, as there isn't actually a mode for us.
-        visible = false;
+    	if (mode == GUITypes.WebMenuMode) {
+			on_show_web_action_menu()
+    	} else {
+        	visible = false;
+        	stack_view.clear_pages()
+        }
     }
 
     // -------------------------------------------------------------------------------------------
@@ -42,7 +47,7 @@ BaseStackPage{
         push_page.set_title("enter url")
         push_page.callback = function(url) {
         		browser_recorder.record_navigate_to(url)
-        		main_bar.switch_to_current_mode()
+        		main_bar.switch_to_last_mode()
         	}
         stack_view.push_page(push_page)
         visible = true
@@ -55,7 +60,7 @@ BaseStackPage{
         push_page.set_title("type text")
         push_page.callback = function(text) {
         		browser_recorder.record_type_text(text)
-        		main_bar.switch_to_current_mode()
+        		main_bar.switch_to_last_mode()
         	}
         stack_view.push_page(push_page)
         visible = true
@@ -68,7 +73,7 @@ BaseStackPage{
         push_page.set_title("type password")
         push_page.callback = function(text) {
         		browser_recorder.record_type_password(text)
-        		main_bar.switch_to_current_mode()
+        		main_bar.switch_to_last_mode()
         	}
         stack_view.push_page(push_page)
         visible = true
@@ -83,7 +88,7 @@ BaseStackPage{
         push_page.set_title("select dropdown option")
         push_page.callback = function(option_text) {
         		browser_recorder.record_select_from_dropdown(option_text)
-        		main_bar.switch_to_current_mode()
+        		main_bar.switch_to_last_mode()
         	}
         push_page.set_option_texts(option_texts)
         stack_view.push_page(push_page)

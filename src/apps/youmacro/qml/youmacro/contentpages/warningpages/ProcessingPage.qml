@@ -72,7 +72,7 @@ Rectangle {
                 onClicked: {
                     manipulator.force_stack_reset()
                     page.Stack.view.pop_page()
-                    main_bar.switch_to_current_mode()
+                    main_bar.switch_to_last_mode()
                 }
             }
             Rectangle {
@@ -85,7 +85,7 @@ Rectangle {
                 text: "continue cleaning"
                 onClicked: {
                     page.Stack.view.pop_page()
-                    main_bar.switch_to_current_mode()
+                    main_bar.switch_to_last_mode()
                 }
             }
             Item {Layout.fillWidth: true}

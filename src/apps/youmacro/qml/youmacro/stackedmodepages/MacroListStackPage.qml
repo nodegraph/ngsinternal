@@ -137,7 +137,7 @@ BaseStackPage{
         		if (option_text != "") {
         			ng_controller.create_public_macro_node(true, option_text)
         		}
-        		main_bar.switch_to_current_mode()
+        		main_bar.switch_to_last_mode()
         	}
         var macro_names = file_model.get_public_macro_names()
         push_page.set_option_texts(macro_names)
@@ -153,7 +153,7 @@ BaseStackPage{
         		if (option_text != "") {
         			ng_controller.create_private_macro_node(true, option_text)
         		}
-        		main_bar.switch_to_current_mode()
+        		main_bar.switch_to_last_mode()
         	}
         var macro_names = file_model.get_private_macro_names()
         push_page.set_option_texts(macro_names)
@@ -169,7 +169,7 @@ BaseStackPage{
         		if (option_text != "") {
         			ng_controller.create_app_macro_node(true, option_text)
         		}
-        		main_bar.switch_to_current_mode()
+        		main_bar.switch_to_last_mode()
         	}
         var macro_names = file_model.get_app_macro_names()
         push_page.set_option_texts(macro_names)

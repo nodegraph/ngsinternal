@@ -10,7 +10,7 @@ ListModel {
         title: "Isolate By Type"
         description: "Isolate the elements with a specific type."
         script: "browser_recorder.record_isolate_by_type();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -18,7 +18,7 @@ ListModel {
         title: "Isolate By Value"
         description: "Isolate the elements with a specific value."
         script: "browser_recorder.record_isolate_by_value();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -26,7 +26,7 @@ ListModel {
         title: "Isolate By Position"
         description: "Isolate the elements which contain a specific point."
         script: "browser_recorder.record_isolate_by_position();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -34,7 +34,7 @@ ListModel {
         title: "Isolate By Dimensions"
         description: "Isolate the elements with specific dimensions with some tolerance."
         script: "browser_recorder.record_isolate_by_dimensions();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -42,7 +42,7 @@ ListModel {
         title: "Isolate By Viewport"
         description: "Isolate the elements which are in the current viewport."
         script: "browser_recorder.record_isolate_by_viewport();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -64,7 +64,7 @@ ListModel {
         title: "Sort By Distance."
         description: "Sort elements by distance to the specified anchoring elements."
         script: "browser_recorder.record_sort_by_distance_to_anchors();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
         
     ListElement {
@@ -72,7 +72,7 @@ ListModel {
         title: "Isolate By Index."
         description: "Isolate elements with indices in a specific range."
         script: "browser_recorder.record_isolate_by_index();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -80,7 +80,7 @@ ListModel {
         title: "Join Elements."
         description: "Join two arrays of elements into one."
         script: "browser_recorder.record_join_elements();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -88,7 +88,7 @@ ListModel {
         title: "Prune Elements."
         description: "Prune specific elements."
         script: "browser_recorder.record_prune_elements();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -96,7 +96,7 @@ ListModel {
         title: "Prune Duplicates."
         description: "Prune duplicate elements."
         script: "browser_recorder.record_prune_duplicates();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
 
 }

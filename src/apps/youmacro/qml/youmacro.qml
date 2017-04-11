@@ -209,12 +209,11 @@ Rectangle {
         main_bar.switch_to_mode.connect(ng_menu_list_stack_page.on_switch_to_mode)
         main_bar.switch_to_mode.connect(web_menu_list_stack_page.on_switch_to_mode)
 
-		// Triggers to activate the modes without buttons.
+		// Triggers to activate the modes that down't have buttons in the mainbar.
         node_graph_item.switch_to_mode.connect(main_bar.on_switch_to_mode)
+        task_queuer.switch_to_mode.connect(main_bar.on_switch_to_mode)
 
-        // Web actions mode.
-        task_queuer.show_web_action_menu.connect(web_menu_list_stack_page.on_show_web_action_menu)
-        browser_recorder.web_action_ignored.connect(web_menu_list_stack_page.on_action_ignored)
+        //browser_recorder.web_action_ignored.connect(web_menu_list_stack_page.on_action_ignored)
         
         // Download manager connections.
         download_manager.download_queued.connect(downloads_page.on_download_queued)

@@ -10,7 +10,7 @@ ListModel {
         title: "Isolate On Left."
         description: "Isolate elements to the left of anchor elements."
         script: "browser_recorder.record_isolate_on_left();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -18,7 +18,7 @@ ListModel {
         title: "Isolate On Right."
         description: "Isolate elements to the right of anchor elements."
         script: "browser_recorder.record_isolate_on_right();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -26,7 +26,7 @@ ListModel {
         title: "Isolate On Top."
         description: "Isolate elements above anchor elements."
         script: "browser_recorder.record_isolate_on_top();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -34,7 +34,7 @@ ListModel {
         title: "Isolate On Bottom."
         description: "Isolate elements below anchor elements."
         script: "browser_recorder.record_isolate_on_bottom();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     

@@ -83,7 +83,7 @@ BaseStackPage{
     function rename_node() {
     	if (!node_graph_item.can_rename_node()) {
     		error_page.set_error_message("This node's name cannot be changed. The surrounding group looks for it under this name.")
-    		main_bar.switch_to_current_mode()
+    		main_bar.switch_to_last_mode()
     		error_page.show_page()
     		return
     	}
@@ -93,7 +93,7 @@ BaseStackPage{
         push_page.set_title("enter new node name")
         push_page.callback = function(name) {
     		node_graph_item.rename_node(name)
-    		main_bar.switch_to_current_mode()
+    		main_bar.switch_to_last_mode()
     	}
         stack_view.push_page(push_page)
     }

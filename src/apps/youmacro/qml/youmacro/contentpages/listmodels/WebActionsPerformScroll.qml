@@ -10,7 +10,7 @@ ListModel {
         title: "Down"
         description: "Scroll down"
         script: "browser_recorder.record_scroll_down();
-        		main_bar.switch_to_current_mode();"
+        		main_bar.switch_to_last_mode();"
     }
 
     ListElement {
@@ -18,7 +18,7 @@ ListModel {
         title: "Up"
         description: "Scroll up."
         script: "browser_recorder.record_scroll_up();
-        		main_bar.switch_to_current_mode();"
+        		main_bar.switch_to_last_mode();"
     }
 
     ListElement {
@@ -26,7 +26,7 @@ ListModel {
         title: "Right"
         description: "Scroll right."
         script: "browser_recorder.record_scroll_right();
-        		main_bar.switch_to_current_mode();"
+        		main_bar.switch_to_last_mode();"
     }
 
     ListElement {
@@ -34,7 +34,7 @@ ListModel {
         title: "Left"
         description: "Scroll left."
         script: "browser_recorder.record_scroll_left();
-        		main_bar.switch_to_current_mode();"
+        		main_bar.switch_to_last_mode();"
     }
 
 }

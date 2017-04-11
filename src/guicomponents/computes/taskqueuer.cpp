@@ -188,7 +188,7 @@ void TaskQueuer::handle_info(const Message& msg) {
   int info_type = msg.value(Message::kInfo).toInt();
   if (info_type == to_underlying(InfoType::kShowWebActionMenu)) {
     _last_click_info = msg.value(Message::kValue).toObject();
-    emit show_web_action_menu();
+    emit switch_to_mode(to_underlying(GUITypes::AppMode::WebMenuMode));
   } else {
       std::cerr << "comm->app: received info: " << msg.to_string().toStdString() << "\n";
   }

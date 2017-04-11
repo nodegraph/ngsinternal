@@ -16,7 +16,7 @@ ListModel {
         title: "Get All Elements"
         description: "Get all elements on the current page."
         script: "browser_recorder.record_get_all_elements();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
 	ListElement {
@@ -31,7 +31,7 @@ ListModel {
         title: "Highlight Elements"
         description: "Highlight the current set of elements in the browser."
         script: "browser_recorder.record_highlight_elements();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -39,7 +39,7 @@ ListModel {
         title: "Clear Element Highlights"
         description: "Clear the current set of element highlights in the browser."
         script: "browser_recorder.record_clear_element_highlights();
-        		 main_bar.switch_to_current_mode();"
+        		 main_bar.switch_to_last_mode();"
     }
     
     ListElement {

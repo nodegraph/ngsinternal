@@ -10,7 +10,7 @@ ListModel {
         title: "Click"
         description: "Click on an element."
         script: "browser_recorder.record_click();
-        		main_bar.switch_to_current_mode();"
+        		main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -18,7 +18,7 @@ ListModel {
         title: "Control Click"
         description: "Control click on an element to open it in a new tab."
         script: "browser_recorder.record_ctrl_click();
-        		main_bar.switch_to_current_mode();"
+        		main_bar.switch_to_last_mode();"
     }
 
     ListElement {
@@ -33,7 +33,7 @@ ListModel {
         title: "Press Enter/Submit"
         description: "Type enter or submit into an input field."
         script: "browser_recorder.record_type_enter();
-        		main_bar.switch_to_current_mode();"
+        		main_bar.switch_to_last_mode();"
     }
     
     ListElement {
@@ -64,7 +64,7 @@ ListModel {
         title: "Hover the Mouse"
         description: "Hovers the mouse over the element."
         script: "browser_recorder.record_mouse_over();
-                main_bar.switch_to_current_mode();"
+                main_bar.switch_to_last_mode();"
     }
 
 }

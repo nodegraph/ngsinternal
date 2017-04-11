@@ -75,7 +75,7 @@ Rectangle {
                     var value = combo_box.currentText
                     select_page.callback(value)
                     select_page.Stack.view.pop_page()
-                    main_bar.switch_to_current_mode()
+                    main_bar.switch_to_last_mode()
                 }
             }
             Rectangle {
