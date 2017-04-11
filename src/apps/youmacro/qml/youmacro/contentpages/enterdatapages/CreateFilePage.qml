@@ -125,12 +125,16 @@ Rectangle {
                     info.title = title_field.text
                     info.description = description_field.text
 
+					var stack_page = create_file_page.Stack.view._stack_page
+					create_file_page.Stack.view.pop_page()
+
                     // Set values.
                     if (create_file == true) {
-                    	file_menu_list_stack_page.on_create_graph_info(info)
+                    	stack_page.on_create_graph_info(info)
                     } else {
-                        file_menu_list_stack_page.on_update_current_graph_info(info)
+                    	stack_page.on_update_current_graph_info(info)
                     }
+                    
                 }
             }
             Rectangle {

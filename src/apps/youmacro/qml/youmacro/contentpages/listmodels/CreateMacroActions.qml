@@ -50,5 +50,10 @@ ListModel {
         description: "Log into your Yahoo account."
         script: '_stack_page.create_macro("yahoo_login", "Yahoo - Login", "Log into your Yahoo account.");'
     }
-
+    ListElement {
+    	letters: "Bl"
+        title: "Blank - Does Nothing"
+        description: "Create your own macro from a blank slate."
+        script: '_stack_page.create_macro("blank", "Blank - Does Nothing", "A blank macro which does nothing.");'
+    }
 }
