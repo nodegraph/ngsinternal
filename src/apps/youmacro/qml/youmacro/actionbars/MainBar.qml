@@ -36,7 +36,7 @@ Rectangle {
     		if (settings_page.advanced_features) {
     			return GUITypes.NodeGraphMode
     		} else {
-    			return GUITypes.DownloadsMode
+    			return GUITypes.MacroMode
     		}
     	}
     	return mode_stack[mode_stack.length-1]
@@ -146,8 +146,7 @@ Rectangle {
     	if (settings_page.advanced_features) {
     		switch_to_node_graph()
     	} else {
-    		// Most users will just be interested in manually drag and dropping videos.
-    		on_switch_to_mode(GUITypes.DownloadsMode)
+    		on_switch_to_mode(GUITypes.MacroMode)
     	}
     }
     
