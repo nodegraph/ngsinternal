@@ -10,9 +10,15 @@ Resolve Notes:
 
 
 This is how i enabled logging on firebase storage.
-See google cloud logging fore more info.
-gsutil logging set on -b gs://robodownloader-b4698.appspot.com  -o AccessLog gs://robodownloader-b4698.appspot.com
-gs://robodownloader-b4698.appspot.com
+First open up the google cloud shell:
+
+1) gsutil mb gs://youmacro_logging_bucket
+2) gsutil acl ch -g cloud-storage-analytics@google.com:W gs://youmacro_logging_bucket
+3) gsutil defacl set project-private gs://youmacro_logging_bucket
+4) gsutil logging set on -b gs://youmacro_logging_bucket -o log_ gs://youmacro.appspot.com/
 
 Check if logging is enabled:
-gsutil logging get gs://robodownloader-b4698.appspot.com
+gsutil logging get gs://youmacro.appspot.com/
+
+If logging is enabled, the server returns the logging configuration in the response:
+{"logBucket": "youmacro_logging_bucket", "logObjectPrefix": "log_object_prefix"}
