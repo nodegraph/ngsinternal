@@ -32,6 +32,7 @@ protected:
   // Our state.
   virtual bool update_state();
   virtual void set_self_dirty(bool dirty);
+  virtual void init_dirty_state();
 
   bool _restart_timer;
   QTimer _wait_timer;

@@ -65,6 +65,11 @@ void WaitNodeCompute::set_self_dirty(bool dirty) {
   _restart_timer = true;
 }
 
+void WaitNodeCompute::init_dirty_state() {
+  Compute::init_dirty_state();
+  _restart_timer = true;
+}
+
 void WaitNodeCompute::on_done_wait() {
   _wait_timer.stop();
   _manipulator->continue_cleaning_to_ultimate_targets_on_idle();
