@@ -110,7 +110,14 @@ void MessageReceiver::on_state_changed(QAbstractSocket::SocketState s) {
 }
 
 void MessageReceiver::on_text_received(const QString & text) {
-  Message msg(text);
+  // Extract the latest message when multiple messages get jammed together.
+  // The previous messages must have been canceled allow most requests to get sent
+  // causing more responses to come back getting jammed together.
+  QStringList messages = text.split('\n', QString::SkipEmptyParts);
+  if (messages.size() > 1) {
+    std::cerr << "Message jamming detected: received jammed messages\n";
+  }
+  const Message &msg = messages.back();
 
   std::cerr << "----------------------------------------------------\n";
   std::cerr << "app has received a message:   <----\n";
@@ -131,25 +138,6 @@ void MessageReceiver::on_text_received(const QString & text) {
     _queuer->handle_info(msg);
   } else {
     std::cerr << "Error: Got message of unknown type!\n";
-  }
-}
-
-void MessageReceiver::separate_messages(const QString& text) {
-  // Multiple message may arrive concatenated in the json string, if an assert fails before
-  // completely handling the message and returning from the on_text_received method in a previous call.
-  // To split up the messages the following logic can be used.
-  QRegExp regex("(\\{[^\\{\\}]*\\})");
-  QStringList splits;
-  int pos = 0;
-  while ((pos = regex.indexIn(text, pos)) != -1) {
-      splits << regex.cap(1);
-      pos += regex.matchedLength();
-  }
-
-  // Loop over each message string.
-  for (int i=0; i<splits.size(); ++i) {
-    std::cerr << "hub --> app-" << i << ": " << splits[i].toStdString() << "\n";
-    Message msg(splits[i]);
   }
 }
 

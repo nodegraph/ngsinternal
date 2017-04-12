@@ -158,19 +158,21 @@ void TaskScheduler::done_waiting_for_response(int resp_id, const QString& error)
   // Check the ids.
   if (resp_id != req_id) {
     std::cerr << "Error: response id: " << resp_id << " did not match request id: " << req_id << "\n";
+    // We ignore the message if it's not the one we're expecting.
+    return;
   } else {
     std::cerr << "Success: response id: " << resp_id << " matches request id: " << req_id << "\n";
   }
 
-  if (resp_id != req_id) {
-    if (_ignore_outstanding_response && resp_id == _outstanding_response_id) {
-      _ignore_outstanding_response = false;
-      _outstanding_response_id = -1;
-      return;
-    } else {
-      assert(false);
-    }
-  }
+//  if (resp_id != req_id) {
+//    if (_ignore_outstanding_response && resp_id == _outstanding_response_id) {
+//      _ignore_outstanding_response = false;
+//      _outstanding_response_id = -1;
+//      return;
+//    } else {
+//      assert(false);
+//    }
+//  }
 
   // Record the fact that we've received our response.
   _waiting_for_response = false;

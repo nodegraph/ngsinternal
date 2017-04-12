@@ -38,9 +38,6 @@ Q_OBJECT
   virtual void update_wires();
 
  private:
-  // Debug methods.
-  void separate_messages(const QString& text);
-
   // Our fixed dependencies.
   Dep<TaskQueuer> _queuer;
 
