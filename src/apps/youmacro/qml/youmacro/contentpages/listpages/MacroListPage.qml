@@ -33,7 +33,7 @@ BaseListPage {
 
     // Our File Methods.
     function init() {
-    	set_title("macros")
+    	set_title("double click to run")
         list_view.currentIndex = file_model.get_working_row();
     }
     
