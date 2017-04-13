@@ -1,0 +1,57 @@
+
+Features to add:
+
+0) We need a marquee to select a bunch of nodes.
+   Currently we need to ctrl each one which gets tedious.
+
+1)
+- allow nodes to display the same name in a group
+- for example if you have a calculator app it would nice to show the
+  number value as the text on the node
+
+2)
+- the inputs to nodes currently need to be linked in order to evaluate 
+  some of kind of computed expression like value
+- what if allowed inputs to have expressions also
+- this would allow us to take values from the "in" input stream on the node
+- this would alleviate a lot of extra wires which are currently used
+  to embed properties into the data stream with the Embed node upstream and then extract
+  properteis from the data stream with the Extract node downstream.
+
+
+Todo:
+
+- rename downloads_mode and downloads_page to downloading_...
+
+- there is bug with getting image urls in ElemWrap.get_image() for images specified in style.content with  something like 
+  webkit-set-image
+- due to mouse hover the retrieved image url is different from other similar images on the page
+- this happens for the inactive star icon, due to the hover some other state's star icon is retrieved in BrowserRecorder 
+  from the crosshair. 
+
+- when creating new nodes they should connect to one of the selected nodes
+- this currently works properly for browser nodes but is not implemented for other node types
+
+- there is a bug when copy and pasting nodes where existing links disappear
+
+- when renaming nodes, the gui starts out with "new_name" as the name
+- instead it should start with the current name of the node
+
+
+Resolved Issues:
+
+- on macos it seems like the .dmg for installer is sometimes not created
+- this has been verified to happen when running the build script for both the debug and release at the same time
+- it seems to be related to a lack of memory
+- running each build separately seems to fix the issue
+
+
+Bugs:
+
+low priority features.
+- qml enter data and edit data pages should automatically focus on the first input element
+- also pressing the enter key should accpet the enter data or edit data page
+
+Quality Check:
+- build a graph which tests all nodes
+- make sure all nodes return something thru their out plug if they have one
