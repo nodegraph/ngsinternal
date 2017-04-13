@@ -48,9 +48,13 @@ Resolved Issues:
 
 Bugs:
 
+- currently you can add an MQTT publish or subscribe node without being inside an MQTT group
+- this causes a crash. So we need to make sure nodes can only be added inside of their required context group
+
 low priority features.
 - qml enter data and edit data pages should automatically focus on the first input element
 - also pressing the enter key should accpet the enter data or edit data page
+- also some of the text entry entry fields look too wide ... example for entering numbers
 
 Quality Check:
 - build a graph which tests all nodes
