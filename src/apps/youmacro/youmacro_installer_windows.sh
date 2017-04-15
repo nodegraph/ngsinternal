@@ -35,16 +35,19 @@ package ()
 	
 	# Sign the main executables.
 	# The VC++ runtime installer and the Java JRE should already be signed.
+	chmod ugo+w "${PACK}/packages/com.youmacro.main/data/bin/youmacro.exe"\
+		"${PACK}/packages/com.youmacro.main/data/bin/chromedriver.exe"\
+		"${PACK}/packages/com.youmacro.main/data/bin/ffmpeg.exe"\
+		"${PACK}/packages/com.youmacro.main/data/bin/ngs_helper.dll"
+	
 	"C:/Program Files (x86)/Windows Kits/8.1/bin/x64/signtool.exe" sign //tr http://timestamp.digicert.com //td sha256 //fd sha256 \
-		//a "${PACK}/packages/com.youmacro.main/data/bin/${installer_base_name}.exe"
+		//a "${PACK}/packages/com.youmacro.main/data/bin/youmacro.exe"
 	"C:/Program Files (x86)/Windows Kits/8.1/bin/x64/signtool.exe" sign //tr http://timestamp.digicert.com //td sha256 //fd sha256 \
 		//a "${PACK}/packages/com.youmacro.main/data/bin/chromedriver.exe"
 	"C:/Program Files (x86)/Windows Kits/8.1/bin/x64/signtool.exe" sign //tr http://timestamp.digicert.com //td sha256 //fd sha256 \
 		//a "${PACK}/packages/com.youmacro.main/data/bin/ffmpeg.exe"
 	"C:/Program Files (x86)/Windows Kits/8.1/bin/x64/signtool.exe" sign //tr http://timestamp.digicert.com //td sha256 //fd sha256 \
 		//a "${PACK}/packages/com.youmacro.main/data/bin/ngs_helper.dll"
-	"C:/Program Files (x86)/Windows Kits/8.1/bin/x64/signtool.exe" sign //tr http://timestamp.digicert.com //td sha256 //fd sha256 \
-		//a "${PACK}/packages/com.youmacro.main/data/jre/bin/javacpl.cpl"
 
 			
 	# We no longer use an online repo.
