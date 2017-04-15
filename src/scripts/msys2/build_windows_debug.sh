@@ -2,6 +2,15 @@
 
 # Jenkins Pipeline Definition.
 #node('windows') {
+#      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '1929422f-fa6e-462d-84be-8f74cbeb1809',
+#                            usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+#                //available as an env variable, but will be masked if you try to print it out any which way
+#                bat "D:\\src\\ngsinternal\\src\\scripts\\msys2\\launch_msys2.bat ARCH_WINDOWS x64 D:\\src\\ngsinternal\\src\\scripts\\msys2\\build_windows_debug.sh"
+#            }
+#}
+
+# Jenkins Pipeline Definition.
+#node('windows') {
 #    bat "D:\\src\\ngsinternal\\src\\scripts\\msys2\\launch_msys2.bat ARCH_WINDOWS x64 D:\\src\\ngsinternal\\src\\scripts\\msys2\\build_windows_debug.sh"
 #}
 
