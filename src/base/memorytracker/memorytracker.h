@@ -1,7 +1,7 @@
 #pragma once
 
-#define WINVER 0x0501
-#define _WIN32_WINNT 0x0501
+//#define WINVER 0x0501
+//#define _WIN32_WINNT 0x0501
 
 #include <base/memorytracker/memorytracker_export.h>
 #include <base/utils/permit.h>
