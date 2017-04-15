@@ -81,8 +81,8 @@ create_installer ()
 	binarycreator --offline-only -c 'config/config.xml' -p packages ${installer_base_name}.exe
 	
 	# Code sign the installer
-	"C:/Program Files (x86)/Windows Kits/8.1/bin/x64/signtool.exe" sign //debug //tr http:////timestamp.digicert.com //td sha256 //fd sha256 //f "c:\shingo\critical\code_sign_certs\my_cert.pfx" //p ${PASSWORD} "${installer_base_name}.exe"
-	#"C:/Program Files (x86)/Windows Kits/8.1/bin/x64/signtool.exe" sign //tr http:////timestamp.digicert.com //td sha256 //fd sha256 //a "${installer_base_name}.exe"
+	#"C:/Program Files (x86)/Windows Kits/8.1/bin/x64/signtool.exe" sign //debug //tr http:////timestamp.digicert.com //td sha256 //fd sha256 //f "c:\shingo\critical\code_sign_certs\my_cert.pfx" //p ${PASSWORD} "${installer_base_name}.exe"
+	"C:/Program Files (x86)/Windows Kits/8.1/bin/x64/signtool.exe" sign //tr http:////timestamp.digicert.com //td sha256 //fd sha256 //a "${installer_base_name}.exe"
 }
 
 # -------------------------------------------------------------------------
