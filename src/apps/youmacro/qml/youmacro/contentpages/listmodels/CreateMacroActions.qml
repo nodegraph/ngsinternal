@@ -32,24 +32,24 @@ ListModel {
         description: "Download the latest trending videos."
         script: '_stack_page.create_macro("vimeo_download_trending", "Vimeo - Download Trending Videos", "Download the latest trending videos.");'
     }
-    ListElement {
-    	letters: "Gl"
-        title: "GMail - Login"
-        description: "Log into your GMail account."
-        script: '_stack_page.create_macro("gmail_login", "GMail - Login", "Log into your GMail account.");'
-    }
-    ListElement {
-    	letters: "Ol"
-        title: "Outlook - Login"
-        description: "Log into your Outlook account."
-        script: '_stack_page.create_macro("outlook_login", "Outlook - Login", "Log into your Outlook account.");'
-    }
-    ListElement {
-    	letters: "Yl"
-        title: "Yahoo - Login"
-        description: "Log into your Yahoo account."
-        script: '_stack_page.create_macro("yahoo_login", "Yahoo - Login", "Log into your Yahoo account.");'
-    }
+    //ListElement {
+    //	letters: "Gl"
+    //    title: "GMail - Login"
+    //    description: "Log into your GMail account."
+    //    script: '_stack_page.create_macro("gmail_login", "GMail - Login", "Log into your GMail account.");'
+    //}
+    //ListElement {
+    //	letters: "Ol"
+    //    title: "Outlook - Login"
+    //    description: "Log into your Outlook account."
+    //    script: '_stack_page.create_macro("outlook_login", "Outlook - Login", "Log into your Outlook account.");'
+    //}
+    //ListElement {
+    //	letters: "Yl"
+    //    title: "Yahoo - Login"
+    //    description: "Log into your Yahoo account."
+    //    script: '_stack_page.create_macro("yahoo_login", "Yahoo - Login", "Log into your Yahoo account.");'
+    //}
     ListElement {
     	letters: "Bl"
         title: "Blank - Does Nothing"
