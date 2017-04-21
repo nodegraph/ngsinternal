@@ -10,9 +10,9 @@ ListModel {
     }
     ListElement {
     	letters: "Dt"
-        title: "YouTube - Download Trending Videos"
-        description: "Download the latest trending videos."
-        script: '_stack_page.create_macro("youtube_download_trending", "YouTube - Download Trending Videos", "Download the latest trending videos.");'
+        title: "YouTube - Download Videos"
+        description: "Download videos by using a search term."
+        script: '_stack_page.create_macro("youtube_download_videos", "YouTube - Download Videos", "Download videos using a search term.");'
     }
     ListElement {
     	letters: "Pr"
@@ -20,18 +20,18 @@ ListModel {
         description: "Play random videos"
         script: '_stack_page.create_macro("youtube_play_random", "YouTube - Play Random Videos", "Play random videos from YouTube.");'
     }
-    ListElement {
-    	letters: "Dc"
-        title: "Vimeo - Download Videos"
-        description: "Download the latest videos using the creator's id"
-        script: '_stack_page.create_macro("vimeo_download_videos", "Vimeo - Download Videos", "Download the latest from a creator.");'
-    }
-    ListElement {
-    	letters: "Pv"
-        title: "Vimeo - Download Trending Videos"
-        description: "Download the latest trending videos."
-        script: '_stack_page.create_macro("vimeo_download_trending", "Vimeo - Download Trending Videos", "Download the latest trending videos.");'
-    }
+    //ListElement {
+    //	letters: "Dc"
+    //    title: "Vimeo - Download Videos"
+    //    description: "Download the latest videos using the creator's id"
+    //    script: '_stack_page.create_macro("vimeo_download_videos", "Vimeo - Download Videos", "Download the latest from a creator.");'
+    //}
+    //ListElement {
+    //	letters: "Pv"
+    //    title: "Vimeo - Download Trending Videos"
+    //    description: "Download the latest trending videos."
+    //    script: '_stack_page.create_macro("vimeo_download_trending", "Vimeo - Download Trending Videos", "Download the latest trending videos.");'
+    //}
     //ListElement {
     //	letters: "Gl"
     //    title: "GMail - Login"
