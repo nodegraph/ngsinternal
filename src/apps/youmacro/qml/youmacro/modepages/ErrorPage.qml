@@ -17,7 +17,7 @@ Rectangle {
     // Positioning.
     x: app_settings.page_x
     y: app_settings.page_y
-    z: app_settings.page_z
+    z: app_settings.page_z + 100
 
     // Appearance.
     color: app_settings.menu_stack_bg_color
