@@ -137,7 +137,8 @@ BaseListPage {
         	//console.log("drop html: " + drop.html)
         	//console.log("drop keys: " + drop.keys)
             if (drop.hasText) {
-                download_manager.download(drop.text)
+            	// When you drag and drop you get the best quality video and audio.
+                download_manager.download(drop.text, "", true, "", true, 0, 0, 0)
                 drop.accept()
             }
         }

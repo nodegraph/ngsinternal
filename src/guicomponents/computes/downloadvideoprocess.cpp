@@ -260,6 +260,7 @@ void DownloadVideoProcess::start() {
       selector += "[filesize<=" + QString::number(_max_filesize) + "]";
     }
     selector += "+bestaudio/best";
+    //selector = "\"" + selector + "\"";
     args.append(selector);
 
     std::cerr << "Selector111 is: " << selector.toStdString() << "\n";
@@ -291,6 +292,7 @@ void DownloadVideoProcess::start() {
       selector += "[filesize<=" + QString::number(_max_filesize) + "]";
     }
     selector += "/best";
+    //selector = "\"" + selector + "\"";
     args.append(selector);
 
     std::cerr << "Selector222 is: " << selector.toStdString() << "\n";
