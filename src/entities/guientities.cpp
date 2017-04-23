@@ -239,6 +239,12 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("manipulator"), manipulator);
   context->setContextProperty(QStringLiteral("physical_dots_per_inch"), QGuiApplication::primaryScreen()->physicalDotsPerInch());
 
+#if (ARCH == ARCH_MACOS)
+  context->setContextProperty(QStringLiteral("base_physical_dots_per_inch"), 305);
+#else
+  context->setContextProperty(QStringLiteral("base_physical_dots_per_inch"), 108.888);
+#endif
+
   qmlRegisterType<GUITypes>("GUITypes", 1, 0, "GUITypes");
   qRegisterMetaType<GUITypes::JSType>("JSType");
   qRegisterMetaType<GUITypes::HintKey>("HintKey");
