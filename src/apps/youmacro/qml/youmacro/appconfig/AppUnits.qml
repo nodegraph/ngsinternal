@@ -10,10 +10,14 @@ import QtQuick.Controls.Styles 1.4
 
 
 QtObject {
+	// Scaling for geometry.
     function dp( x ) {
-        return Math.round( x * Settings.dpiScaleFactor );
+    	// The scaling for geometry seems to be automatically be taken care of on osx and windows.
+    	return x;
+        //return Math.round( x * Settings.dpiScaleFactor );
     }
     
+    // Scaling for font point sizes.
     function ps(x) {
     	// On a windows 10 desktop where I'm developing this app,
     	// the physical dots per inch is 108.888.
