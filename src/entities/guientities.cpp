@@ -171,6 +171,12 @@ void QMLAppEntity::create_internals(const EntityConfig& config) {
 void QMLAppEntity::init_view(QSurfaceFormat& format) {
   NodeGraphView* view = get_node_graph_view();
 
+  qDebug() << "physical dots per inch: " << QGuiApplication::primaryScreen()->physicalDotsPerInch();
+  qDebug() << "device pixel ratio: " << QGuiApplication::primaryScreen()->devicePixelRatio();
+  qDebug() << "width: " << QGuiApplication::primaryScreen()->size().width();
+  qDebug() << "height: " << QGuiApplication::primaryScreen()->size().height();
+
+
   // Set the view size.
 //#if ARCH == ARCH_WINDOWS
   view->setWidth(800);
@@ -231,6 +237,7 @@ void QMLAppEntity::expose_to_qml() {
   context->setContextProperty(QStringLiteral("browser_recorder"), browser_recorder);
   context->setContextProperty(QStringLiteral("download_manager"), download_manager);
   context->setContextProperty(QStringLiteral("manipulator"), manipulator);
+  context->setContextProperty(QStringLiteral("physical_dots_per_inch"), QGuiApplication::primaryScreen()->physicalDotsPerInch());
 
   qmlRegisterType<GUITypes>("GUITypes", 1, 0, "GUITypes");
   qRegisterMetaType<GUITypes::JSType>("JSType");

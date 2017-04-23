@@ -86,10 +86,10 @@ Item{
     property int menu_page_x: 0
     property int menu_page_y: action_bar_height
     property int menu_page_z: 0
-    property double menu_page_title_point_size: 22
-    property double menu_page_description_point_size: 19
-    property double download_title_point_size: 12
-    property double download_description_point_size: 10
+    property double menu_page_title_point_size: app_units.ps(22)
+    property double menu_page_description_point_size: app_units.ps(19)
+    property double download_title_point_size: app_units.ps(12)
+    property double download_description_point_size: app_units.ps(10)
     
     // -------------------------------------------------------------------
     // Modes
@@ -135,9 +135,9 @@ Item{
     property color ng_bg_alternate_transparent_color: "#9929B6F6" // a transparent ligher blue
         
     // Font Properties.
-    property double large_font_point_size: 30
-    property double font_point_size: 25
-    property double tree_view_font_point_size: 25
+    property double large_font_point_size: app_units.ps(30)
+    property double font_point_size: app_units.ps(25)
+    property double tree_view_font_point_size: app_units.ps(25)
 
     // Image Button Properties.
     property int image_button_width: app_units.dp(50)

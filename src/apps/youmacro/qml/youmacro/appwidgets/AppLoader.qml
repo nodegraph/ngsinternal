@@ -10,13 +10,15 @@ import QtQuick.Controls.Styles 1.4
 
 
 QtObject {
-    function dp( x ) {
-        return Math.round( x * Settings.dpiScaleFactor );
-    }
+    //function dp( x ) {
+    //	return x;
+    //    return Math.round( x * Settings.dpiScaleFactor );
+    //}
 
-    function em( x ) {
-        return Math.round( x * TextSingleton.font.pixelSize );
-    }
+    //function em( x ) {
+    //	return x;
+    //    return Math.round( x * TextSingleton.font.pixelSize );
+    //}
 
     // Load a component from a file synchronously.
     function load_component(file, parent, properties) {
