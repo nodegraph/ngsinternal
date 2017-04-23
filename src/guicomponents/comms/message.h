@@ -37,6 +37,9 @@ class COMMS_EXPORT Message: public QJsonObject {
   static const char* kDirectory;
   static const char* kFilename;
 
+  static const char* kMergeBestStreams;
+  static const char* kFormat;
+  static const char* kThumbnails;
   static const char* kMaxWidth;
   static const char* kMaxHeight;
   static const char* kMaxFilesize;

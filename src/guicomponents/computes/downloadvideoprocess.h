@@ -18,9 +18,13 @@ Q_OBJECT
 
   void set_url(const QString& url);
   void set_dir(const QString& dir);
+  void set_merge_best_streams(bool merge);
+  void set_format(const QString& format);
+  void set_thumbnails(bool thumbnails);
   void set_max_width(int w);
   void set_max_height(int h);
   void set_max_filesize(int s);
+
 
   virtual void start();
   virtual const QString& get_filename() const;
@@ -47,6 +51,9 @@ Q_OBJECT
 
   QString _url;
   QString _dir;
+  bool _merge; // merge best streams
+  QString _format; // format extension
+  bool _thumbnails; // whether to get thumbnails
   int _max_width; // in pixels
   int _max_height; // in pixels
   int _max_filesize; // in mega bytes

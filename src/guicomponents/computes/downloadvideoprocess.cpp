@@ -20,6 +20,9 @@ DownloadVideoProcess::DownloadVideoProcess()
     : BaseProcess(),
       _id(next_id++),
       _started(false),
+      _merge(false),
+      _format(""),
+      _thumbnails(true),
       _max_width(-1),
       _max_height(-1),
       _max_filesize(-1),
@@ -47,6 +50,18 @@ void DownloadVideoProcess::set_url(const QString& url) {
 
 void DownloadVideoProcess::set_dir(const QString& dir) {
   _dir = dir;
+}
+
+void DownloadVideoProcess::set_merge_best_streams(bool merge) {
+  _merge = merge;
+}
+
+void DownloadVideoProcess::set_format(const QString& format) {
+  _format = format;
+}
+
+void DownloadVideoProcess::set_thumbnails(bool thumbnails) {
+  _thumbnails = thumbnails;
 }
 
 void DownloadVideoProcess::set_max_width(int w) {
@@ -212,18 +227,29 @@ void DownloadVideoProcess::start() {
   QString program = "ngs_unavailable_on_this_platform";
 #endif
 
+  // Make sure download directory exists.
+  QFileInfo info(_dir);
+  if (!info.exists()) {
+    QDir().mkpath(_dir);
+  }
+
   // Set the program.
   set_program(program);
 
   QStringList args;
   args.append("-w"); // Don't overwrite existing files.
   args.append("-c"); // Continue downloads of partially downloaded files.
-  args.append("--write-all-thumbnails"); // Write thumbnails to disk.
 
-  // Set the preferred format.
-  if ((_max_width > 0) || (_max_height > 0) || (_max_filesize > 0)) {
-    args.append("-f");
+  if (_thumbnails) {
+    args.append("--write-all-thumbnails"); // Write thumbnails to disk.
+  }
+
+  args.append("-f");
+
+  if (_merge) {
     QString selector = "bestvideo";
+
+    // Set selection criteria.
     if (_max_width > 0) {
       selector += "[width<=" + QString::number(_max_width)+ "]";
     }
@@ -235,17 +261,50 @@ void DownloadVideoProcess::start() {
     }
     selector += "+bestaudio/best";
     args.append(selector);
-  }
 
-  // Set the filename format.
-  {
-    args.append("-o");
-    QString filename = _dir;
-    if (!filename.isEmpty()) {
-      filename += QDir::separator();
+    std::cerr << "Selector111 is: " << selector.toStdString() << "\n";
+
+    // Set the filename format.
+    {
+      args.append("-o");
+      QString filename = _dir;
+      if (!filename.isEmpty()) {
+        filename += QDir::separator();
+      }
+      filename += "%(title)s-%(id)s.%(ext)s";
+      args.append(filename);
     }
-    filename += "%(title)s-%(id)s.%(ext)s";
-    args.append(filename);
+  } else {
+    QString selector = "best";
+
+    // Set selection criteria.
+    if (!_format.isEmpty()) {
+      selector += "[ext=" + _format + "]";
+    }
+    if (_max_width > 0) {
+      selector += "[width<=" + QString::number(_max_width)+ "]";
+    }
+    if (_max_height > 0) {
+      selector += "[height<=" + QString::number(_max_height) + "]";
+    }
+    if (_max_filesize > 0) {
+      selector += "[filesize<=" + QString::number(_max_filesize) + "]";
+    }
+    selector += "/best";
+    args.append(selector);
+
+    std::cerr << "Selector222 is: " << selector.toStdString() << "\n";
+
+    // Set the filename format.
+    {
+      args.append("-o");
+      QString filename = _dir;
+      if (!filename.isEmpty()) {
+        filename += QDir::separator();
+      }
+      filename += "%(title)s-%(id)s.%(ext)s";
+      args.append(filename);
+    }
   }
 
   args.append(_url);

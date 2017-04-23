@@ -28,12 +28,12 @@ function isolate_by_type_and_value(elements: IElementInfo[], type: ElementType, 
             for (let e of elements) {
                 if (!target_value) {
                     if (e.text) {
-                        console.log('111 value:*' + target_value + '*  text:*' + e.text + '*')
+                        //console.log('111 value:*' + target_value + '*  text:*' + e.text + '*')
                         matches.push(e)
                     }
                 } else {
                     if (target_value == e.text) {
-                        console.log('222 value:*' + target_value + '*  text:*' + e.text + '*')
+                        //console.log('222 value:*' + target_value + '*  text:*' + e.text + '*')
                         matches.push(e)
                     }
                 }

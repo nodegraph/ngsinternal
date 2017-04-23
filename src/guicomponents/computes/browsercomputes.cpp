@@ -465,6 +465,27 @@ void DownloadVideosCompute::create_inputs_outputs(const EntityConfig& config) {
   {
     EntityConfig c = config;
     c.expose_plug = false;
+    c.unconnected_value = false;
+    create_input(Message::kMergeBestStreams, c);
+  }
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = "mp4";
+    create_input(Message::kFormat, c);
+  }
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
+    c.unconnected_value = true;
+    create_input(Message::kThumbnails, c);
+  }
+
+  {
+    EntityConfig c = config;
+    c.expose_plug = false;
     c.unconnected_value = 0;
     create_input(Message::kMaxWidth, c);
   }
@@ -490,6 +511,9 @@ QJsonObject DownloadVideosCompute::init_hints() {
   QJsonObject m;
   BrowserCompute::init_hints(m);
   add_hint(m, Message::kDirectory, GUITypes::HintKey::DescriptionHint, "The relative or absolute directory to save the video to. Leave empty to use the default directory.");
+  add_hint(m, Message::kMergeBestStreams, GUITypes::HintKey::DescriptionHint, "When true, the best audio and the best video streams will be processed and merged.");
+  add_hint(m, Message::kFormat, GUITypes::HintKey::DescriptionHint, "The desired video format, if available.");
+  add_hint(m, Message::kThumbnails, GUITypes::HintKey::DescriptionHint, "When true, the thumbnails will also be downloaded.");
   add_hint(m, Message::kMaxWidth, GUITypes::HintKey::DescriptionHint, "The maximum video width (in pixels) to download. Zero will download the largest.");
   add_hint(m, Message::kMaxHeight, GUITypes::HintKey::DescriptionHint, "The maximum video height (in pixels) to download. Zero will download the largest.");
   add_hint(m, Message::kMaxFilesize, GUITypes::HintKey::DescriptionHint, "The maximum video filesize (in megabytes) to download. Zero will download the largest.");
@@ -516,10 +540,21 @@ bool DownloadVideosCompute::update_state(){
 
         QString url = elem.value(Message::kHREF).toString();
         QString dir = inputs.value(Message::kDirectory).toString();
+        bool merge = inputs.value(Message::kMergeBestStreams).toBool();
+        QString format = inputs.value(Message::kFormat).toString();
+        bool thumbnails = inputs.value(Message::kThumbnails).toBool();
         int max_width = inputs.value(Message::kMaxWidth).toInt();
         int max_height = inputs.value(Message::kMaxHeight).toInt();
         int max_filesize = inputs.value(Message::kMaxFilesize).toInt();
-        _download_manager->download(url, dir, max_width, max_height, max_filesize);
+        std::cerr << "url: " << url.toStdString() << "\n";
+        std::cerr << "dir: " << dir.toStdString() << "\n";
+        std::cerr << "merge: " << merge << "\n";
+        std::cerr << "format: " << format.toStdString() << "\n";
+        std::cerr << "thumbnails: " << thumbnails << "\n";
+        std::cerr << "max_width: " << max_width << "\n";
+        std::cerr << "max_height: " << max_height << "\n";
+        std::cerr << "max_filesize: " << max_filesize << "\n";
+        _download_manager->download(url, dir, merge, format, thumbnails, max_width, max_height, max_filesize);
       }
       _scheduler->run_next_task();
     };
@@ -535,10 +570,13 @@ bool DownloadVideosCompute::update_state(){
 
       QString url = results.back().value(Message::kValue).toString();
       QString dir = inputs.value(Message::kDirectory).toString();
+      bool merge = inputs.value(Message::kMergeBestStreams).toBool();
+      QString format = inputs.value(Message::kFormat).toString();
+      bool thumbnails = inputs.value(Message::kThumbnails).toBool();
       int max_width = inputs.value(Message::kMaxWidth).toInt();
       int max_height = inputs.value(Message::kMaxHeight).toInt();
       int max_filesize = inputs.value(Message::kMaxFilesize).toInt();
-      _download_manager->download(url, dir, max_width, max_height, max_filesize);
+      _download_manager->download(url, dir, merge, format, thumbnails, max_width, max_height, max_filesize);
 
       _scheduler->run_next_task();
     };

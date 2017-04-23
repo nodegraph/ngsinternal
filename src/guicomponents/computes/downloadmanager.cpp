@@ -68,7 +68,7 @@ void DownloadManager::cancel_download(long long id) {
   remove_id_from_map(id);
 }
 
-void DownloadManager::download(const QString& url, const QString& download_dir, int max_width, int max_height, int max_filesize) {
+void DownloadManager::download(const QString& url, const QString& download_dir, bool merge_best_streams, const QString& format, bool thumbnails, int max_width, int max_height, int max_filesize) {
   DownloadVideoProcess *p = new_ff DownloadVideoProcess();
 
   // Connect to signals.
@@ -93,6 +93,9 @@ void DownloadManager::download(const QString& url, const QString& download_dir, 
   // Setup the download process.
   p->set_dir(path);
   p->set_url(url);
+  p->set_merge_best_streams(merge_best_streams);
+  p->set_format(format);
+  p->set_thumbnails(thumbnails);
   p->set_max_width(max_width);
   p->set_max_height(max_height);
   p->set_max_filesize(max_filesize);

@@ -27,8 +27,8 @@ endfunction()
 # The version number.
 set(ngs_version_major 1)
 set(ngs_version_minor 15)
-set(ngs_version_patch 3)
-set(ngs_version_tweak 6)
+set(ngs_version_patch 4)
+set(ngs_version_tweak 0)
 set(ngs_version ${ngs_version_major}.${ngs_version_minor}.${ngs_version_patch}.${ngs_version_tweak})
 
 # Our supported archictectures.

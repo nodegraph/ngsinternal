@@ -35,7 +35,14 @@ Q_OBJECT
   int get_num_running() const;
 
   // Actions.
-  Q_INVOKABLE void download(const QString& url, const QString& download_dir = "", int max_width = 0, int max_height = 0, int max_filesize = 0);
+  Q_INVOKABLE void download(const QString& url,
+                            const QString& download_dir = "",
+                            bool merge_best_streams = false,
+                            const QString& format = "mp4",
+                            bool thumbnails = true,
+                            int max_width = 0,
+                            int max_height = 0,
+                            int max_filesize = 0);
 
   Q_INVOKABLE void cancel_download(long long id);
 

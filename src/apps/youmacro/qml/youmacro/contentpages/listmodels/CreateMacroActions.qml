@@ -8,12 +8,12 @@ ListModel {
         description: "Download the latest vlogs using the vlogger's name."
         script: '_stack_page.create_macro("youtube_download_vlogs", "YouTube - Download Vlogs", "Download the latest vlogs.");'
     }
-    ListElement {
-    	letters: "Dt"
-        title: "YouTube - Download Videos"
-        description: "Download videos by using a search term."
-        script: '_stack_page.create_macro("youtube_download_videos", "YouTube - Download Videos", "Download videos using a search term.");'
-    }
+    //ListElement {
+    //	letters: "Dt"
+    //    title: "YouTube - Download Videos"
+    //    description: "Download videos by using a search term."
+    //    script: '_stack_page.create_macro("youtube_download_videos", "YouTube - Download Videos", "Download videos using a search term.");'
+    //}
     ListElement {
     	letters: "Pr"
         title: "YouTube - Play Random Videos"

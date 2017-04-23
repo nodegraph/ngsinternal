@@ -33,6 +33,9 @@ const char* Message::kUseCurrentElement = "use_current_element";
 const char* Message::kDirectory = "directory";
 const char* Message::kFilename = "filename";
 
+const char* Message::kMergeBestStreams = "merge_best_streams";
+const char* Message::kFormat = "format";
+const char* Message::kThumbnails = "thumbnails";
 const char* Message::kMaxWidth = "max_width";
 const char* Message::kMaxHeight = "max_height";
 const char* Message::kMaxFilesize = "max_filesize";
