@@ -604,7 +604,7 @@ public class WebDriverWrap {
     void click_on_element(String fe_index_path, String xpath, int local_x, int local_y, boolean hold_ctrl) {
         WebElement e = get_element(fe_index_path, xpath);
         WebElementWithPos we = new WebElementWithPos(e, local_x, local_y);
-        switch_to_top_most_element(we);
+        //switch_to_top_most_element(we);
         
         Dimension dim = we.element.getSize();
         System.err.println("click elem dim is: " + dim.getWidth() + "," + dim.getHeight());
@@ -635,7 +635,7 @@ public class WebDriverWrap {
     void mouse_over_element(String fe_index_path, String xpath, int local_x, int local_y) {
         WebElement e = get_element(fe_index_path, xpath);
         WebElementWithPos we = new WebElementWithPos(e, local_x, local_y);
-        switch_to_top_most_element(we);
+        //switch_to_top_most_element(we);
         
         Dimension dim = we.element.getSize();
         Actions seq = new Actions(_web_driver);

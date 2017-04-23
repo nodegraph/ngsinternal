@@ -830,26 +830,26 @@ bool MouseActionCompute::update_state() {
   queue_start_update(tc);
 
   MouseActionType type = static_cast<MouseActionType>(_inputs->get_input_value(Message::kMouseAction).toInt());
-  if (type != MouseActionType::kMouseOver) {
-    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
-    queue_perform_hover(tc);
-    // After we're done interacting with the page, block events on the page.
-    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
-
-    // Our hover may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
-    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
-
-    // Force wait so that the webpage can react to the mouse hover. Note this is real and makes the mouse click work 100% of the time.
-    // For example this allows the page to display an animated video under mouse hover.
-    _queuer->queue_wait(tc);
+//  if (type != MouseActionType::kMouseOver) {
+//    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
+//    queue_perform_hover(tc);
+//    // After we're done interacting with the page, block events on the page.
+//    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
+//
+//    // Our hover may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
+//    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
+//
+//    // Force wait so that the webpage can react to the mouse hover. Note this is real and makes the mouse click work 100% of the time.
+//    // For example this allows the page to display an animated video under mouse hover.
+//    _queuer->queue_wait(tc);
+//    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
+//    queue_perform_action(tc);
+//  } else {
     _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
     queue_perform_action(tc);
-  } else {
-    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
-    queue_perform_action(tc);
     _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
     _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
-  }
+//  }
 
   queue_on_results(tc);
   queue_end_update(tc);
