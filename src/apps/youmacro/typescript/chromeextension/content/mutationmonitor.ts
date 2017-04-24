@@ -145,8 +145,8 @@ class MutationMonitor {
 
         if (this.mutation_timer == null) {
             //console.log('starting mutation timer')
-            //this.start_mutation_timer()
-            //this.gui_collection.wait_popup.open()
+            this.start_mutation_timer()
+            this.gui_collection.wait_popup.open()
         } else {
             this.last_mutation_time = new Date();
         }
