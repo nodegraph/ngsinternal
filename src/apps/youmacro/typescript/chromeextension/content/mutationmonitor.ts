@@ -3,7 +3,7 @@
 class MutationMonitor {
     // Static Members.
     static mutation_check_interval = 100 // time interval to check whether we've waited long enough
-    static mutation_done_interval = 4000 // minimum time since last mutation, to be considered fully completed and done
+    static mutation_done_interval = 500 // minimum time since last mutation, to be considered fully completed and done
 
     // Our Dependencies.
     private content_comm: ContentComm
