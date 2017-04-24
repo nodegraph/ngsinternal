@@ -148,12 +148,13 @@ void BrowserCompute::queue_on_finished(TaskContext& tc) {
 
 void BrowserCompute::queue_end_update(TaskContext& tc) {
   internal();
-  //_queuer->queue_scroll_element_into_view(tc);
-  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateElementHighlights));
+  // Make tab info is in sync.
   _queuer->queue_update_current_tab(tc);
   // Make sure everything is loaded before updating the frame offsets, otherwise the frame offsets won't distribute properly.
   _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
   _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateFrameOffsets));
+  // Update the element highlights.
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateElementHighlights));
   queue_on_finished(tc);
 }
 
@@ -845,13 +846,23 @@ bool MouseActionCompute::update_state() {
 //    _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
 //    queue_perform_action(tc);
 //  } else {
+//  }
+
+  // This used to be in the else above.
+  {
     _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUnblockEvents));
     queue_perform_action(tc);
     _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
     _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
-//  }
+  }
 
   queue_on_results(tc);
+
+  // After we're done interacting with the page, block events on the page.
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
+  // Force wait as the browser might be slow in starting up the next page.
+  _queuer->queue_wait(tc);
+
   queue_end_update(tc);
   return false;
 }
@@ -867,22 +878,6 @@ void MouseActionCompute::queue_perform_action(TaskContext& tc) {
   QJsonObject params = get_params();
   Message req(WebDriverRequestType::kPerformMouseAction, params);
   _queuer->queue_send_msg(tc, req);
-}
-
-void MouseActionCompute::queue_end_update(TaskContext& tc) {
-  internal();
-
-  // After we're done interacting with the page, block events on the page.
-  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
-  // Our actions may have triggered asynchronous content loading in the page, so we wait for the page to be ready.
-  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
-  // Our actions may have moved elements arounds, so we update our overlays.
-  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateElementHighlights));
-  // Force wait so that the webpage can react to the mouse action. Note this is real and makes the mouse click work 100% of the time.
-  _queuer->queue_wait(tc);
-
-  // Do the base logic.
-  BrowserCompute::queue_end_update(tc);
 }
 
 void TextActionCompute::create_inputs_outputs(const EntityConfig& config) {
@@ -928,17 +923,14 @@ bool TextActionCompute::update_state() {
   _queuer->queue_send_msg(tc, req);
 
   queue_on_results(tc);
+
+  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
+
+  // Force wait as the browser might be slow in starting up the next page.
+  _queuer->queue_wait(tc);
+
   queue_end_update(tc);
   return false;
-}
-
-void TextActionCompute::queue_end_update(TaskContext& tc) {
-  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
-  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
-  _queuer->queue_send_msg(tc, Message(ChromeRequestType::kUpdateElementHighlights));
-
-  // Do the base logic.
-  BrowserCompute::queue_end_update(tc);
 }
 
 const QJsonObject PasswordActionCompute::_hints = PasswordActionCompute::init_hints();
@@ -994,19 +986,13 @@ bool ElementActionCompute::update_state() {
   _queuer->queue_send_msg(tc, req);
 
   queue_on_results(tc);
-  queue_end_update(tc);
-  return false;
-}
-
-void ElementActionCompute::queue_end_update(TaskContext& tc) {
-  internal();
 
   // Special
   _queuer->queue_send_msg(tc, Message(ChromeRequestType::kBlockEvents));
   _queuer->queue_send_msg(tc, Message(ChromeRequestType::kWaitUntilLoaded));
 
-  // Do the base logic.
-  BrowserCompute::queue_end_update(tc);
+  queue_end_update(tc);
+  return false;
 }
 
 // ----------------------------------------------------------------------------------

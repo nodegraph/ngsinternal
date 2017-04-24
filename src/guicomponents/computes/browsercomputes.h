@@ -266,7 +266,6 @@ class GUICOMPUTES_EXPORT MouseActionCompute: public BrowserCompute {
   virtual bool update_state();
   virtual void queue_perform_hover(TaskContext& tc);
   virtual void queue_perform_action(TaskContext& tc);
-  virtual void queue_end_update(TaskContext& tc);
 };
 
 class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
@@ -280,7 +279,6 @@ class GUICOMPUTES_EXPORT TextActionCompute: public BrowserCompute {
   virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
-  virtual void queue_end_update(TaskContext& tc);
 };
 
 // This class is exactly like TextActionCompute except that
@@ -307,7 +305,6 @@ class GUICOMPUTES_EXPORT ElementActionCompute: public BrowserCompute {
   virtual const QJsonObject& get_hints() const {return _hints;}
  protected:
   virtual bool update_state();
-  virtual void queue_end_update(TaskContext& tc);
 };
 
 class GUICOMPUTES_EXPORT ElementScrollCompute: public BrowserCompute {
